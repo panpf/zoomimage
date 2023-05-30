@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.github.panpf.zoom.ui.MainFragment" />
+
+
+    <fragment
+        android:id="@+id/zoomImageFragment"
+        android:name="com.github.panpf.zoom.ui.ZoomImageFragment" />
+    <action
+        android:id="@+id/action_global_ZoomImageFragment"
+        app:destination="@id/zoomImageFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/telephotoZoomImageFragment"
+        android:name="com.github.panpf.zoom.ui.TelephotoZoomImageFragment" />
+    <action
+        android:id="@+id/action_global_TelephotoZoomImageFragment"
+        app:destination="@id/telephotoZoomImageFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+</navigation>
