@@ -42,8 +42,11 @@ dependencies {
     api(project(":zoomimage-core"))
     api(libs.kotlin.stdlib)
     api(libs.kotlinx.coroutines.android)
-    api(libs.androidx.core.ktx)
-    api(libs.androidx.appcompat)
+    api(libs.androidx.annotation)
+    api(libs.panpf.sketch3)
+    api(libs.panpf.sketch3.viewability)
+//    api(libs.androidx.core.ktx)
+//    api(libs.androidx.appcompat)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

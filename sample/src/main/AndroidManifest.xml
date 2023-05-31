@@ -37,7 +37,7 @@
         coil.compose.base" />
 
     <application
-        android:name="com.github.panpf.zoom.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -48,7 +48,7 @@
         android:theme="@style/Theme.ZoomImage"
         tools:targetApi="31">
         <activity
-            android:name="com.github.panpf.zoom.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

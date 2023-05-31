@@ -6,6 +6,7 @@ kotlinx-coroutines = "1.6.4"
 
 # android
 android-plugin = "8.0.2"
+androidx-annotation = "1.6.0"
 androidx-compose-compiler = "1.4.6"
 androidx-compose-bom = "2023.05.01"
 androidx-core = "1.10.0"
@@ -18,6 +19,7 @@ androidx-appcompat = "1.6.1"
 google-material = "1.8.0"
 # panpf
 panpf-assemblyadapter4 = "4.1.0"
+panpf-liveevent = "1.0.0"
 panpf-sketch3 = "3.2.1-rc01"
 panpf-tools4a = "1.0.0"
 panpf-tools4j = "1.0.0"
@@ -27,6 +29,7 @@ panpf-tools4k = "1.0.0"
 junit = "4.13.2"
 telephoto = "0.3.0"
 zoomlayout = "1.9.0"
+mmkv = "1.2.13"
 
 [libraries]
 
@@ -35,6 +38,7 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 
 # android
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-compose-animation = { module = "androidx.compose.animation:animation" }
@@ -59,7 +63,10 @@ google-material = { module = "com.google.android.material:material", version.ref
 
 # panpf
 panpf-assemblyadapter4 = { module = "io.github.panpf.assemblyadapter4:assemblyadapter", version.ref = "panpf-assemblyadapter4" }
+panpf-liveevent = { module = "io.github.panpf.liveevent:liveevent", version.ref = "panpf-liveevent" }
 panpf-sketch3 = { module = "io.github.panpf.sketch3:sketch", version.ref = "panpf-sketch3" }
+panpf-sketch3-viewability = { module = "io.github.panpf.sketch3:sketch-viewability", version.ref = "panpf-sketch3" }
+panpf-sketch3-extensions = { module = "io.github.panpf.sketch3:sketch-extensions", version.ref = "panpf-sketch3" }
 panpf-tools4j = { module = "io.github.panpf.tools4j:tools4j-ktx", version.ref = "panpf-tools4j" }
 panpf-tools4a = { module = "io.github.panpf.tools4a:tools4a-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "panpf-tools4k" }
@@ -68,6 +75,7 @@ panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "pan
 junit = { module = "junit:junit", version.ref = "junit" }
 zoomlayout = { module = "com.otaliastudios:zoomlayout", version.ref = "zoomlayout" }
 telephoto = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
+mmkv = { module = "com.tencent:mmkv", version.ref = "mmkv" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "android-plugin" }

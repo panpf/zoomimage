@@ -66,12 +66,15 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.google.material)
     implementation(libs.panpf.assemblyadapter4)
+    implementation(libs.panpf.liveevent)
     implementation(libs.panpf.sketch3)
+    implementation(libs.panpf.sketch3.extensions)
     implementation(libs.panpf.tools4a)
     implementation(libs.panpf.tools4j)
     implementation(libs.panpf.tools4k)
     implementation(libs.zoomlayout)
     implementation(libs.telephoto)
+    implementation(libs.mmkv)
 
     /* compose */
     implementation(platform(libs.androidx.compose.bom))

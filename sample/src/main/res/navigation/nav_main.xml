@@ -6,14 +6,14 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.github.panpf.zoom.ui.MainFragment" />
+        android:name="com.github.panpf.zoom.sample.ui.MainFragment" />
 
 
     <fragment
         android:id="@+id/zoomImageFragment"
-        android:name="com.github.panpf.zoom.ui.ZoomImageFragment" />
+        android:name="com.github.panpf.zoom.sample.ui.ZoomImageFragment" />
     <action
-        android:id="@+id/action_global_ZoomImageFragment"
+        android:id="@+id/action_global_zoomImageFragment"
         app:destination="@id/zoomImageFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
@@ -22,12 +22,95 @@
 
     <fragment
         android:id="@+id/telephotoZoomImageFragment"
-        android:name="com.github.panpf.zoom.ui.TelephotoZoomImageFragment" />
+        android:name="com.github.panpf.zoom.sample.ui.TelephotoZoomImageFragment" />
     <action
-        android:id="@+id/action_global_TelephotoZoomImageFragment"
+        android:id="@+id/action_global_telephotoZoomImageFragment"
         app:destination="@id/telephotoZoomImageFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/myZoomImageViewFragment"
+        android:name="com.github.panpf.zoom.sample.ui.myview.MyZoomImageViewFragment" />
+    <action
+        android:id="@+id/action_global_myZoomImageViewFragment"
+        app:destination="@id/myZoomImageViewFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+
+    <fragment
+        android:id="@+id/hugeImageViewerFragment"
+        android:name="com.github.panpf.zoom.sample.ui.myview.HugeImageViewerFragment"
+        android:label="HugeImageViewerFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+
+
+    <dialog
+        android:id="@+id/imageInfoDialogFragment"
+        android:name="com.github.panpf.zoom.sample.ui.myview.ImageInfoDialogFragment"
+        android:label="ImageInfoDialogFragment">
+        <argument
+            android:name="uri"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="optionsInfo"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="imageInfo"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="bitmapInfo"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="drawableInfo"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="dataFromInfo"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="transformedInfo"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="zoomInfo"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="tilesInfo"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="throwableString"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
+    <action
+        android:id="@+id/action_global_imageInfoDialogFragment"
+        app:destination="@id/imageInfoDialogFragment" />
 </navigation>
