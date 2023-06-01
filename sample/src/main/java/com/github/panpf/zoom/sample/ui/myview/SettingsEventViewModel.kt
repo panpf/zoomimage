@@ -60,17 +60,17 @@ class SettingsEventViewModel(application: Application) : AndroidViewModel(applic
     fun observeZoomSettings(zoomImageView: MyZoomImageView) {
         zoomImageView.lifecycleOwner.lifecycleScope.launch {
             prefsService.scrollBarEnabled.stateFlow.collect {
-                zoomImageView.scrollBarEnabled = it
+                zoomImageView.zoomAbility.scrollBarEnabled = it
             }
         }
         zoomImageView.lifecycleOwner.lifecycleScope.launch {
             prefsService.readModeEnabled.stateFlow.collect {
-                zoomImageView.readModeEnabled = it
+                zoomImageView.zoomAbility.readModeEnabled = it
             }
         }
         zoomImageView.lifecycleOwner.lifecycleScope.launch {
             prefsService.showTileBoundsInHugeImagePage.stateFlow.collect {
-                zoomImageView.showTileBounds = it
+                zoomImageView.zoomAbility.showTileBounds = it
             }
         }
         zoomImageView.lifecycleOwner.lifecycleScope.launch {

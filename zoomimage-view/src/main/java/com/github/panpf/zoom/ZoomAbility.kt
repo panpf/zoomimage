@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoom.internal
+package com.github.panpf.zoom
 
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -36,56 +36,37 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.decode.internal.ImageFormat
 import com.github.panpf.sketch.decode.internal.supportBitmapRegionDecoder
-import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
-import com.github.panpf.sketch.request.isSketchGlobalLifecycle
 import com.github.panpf.sketch.sketch
 import com.github.panpf.sketch.stateimage.internal.SketchStateDrawable
 import com.github.panpf.sketch.util.Size
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.sketch.util.getLastChildDrawable
-import com.github.panpf.sketch.viewability.AttachObserver
-import com.github.panpf.sketch.viewability.DrawObserver
-import com.github.panpf.sketch.viewability.DrawableObserver
-import com.github.panpf.sketch.viewability.Host
-import com.github.panpf.sketch.viewability.ImageMatrixObserver
-import com.github.panpf.sketch.viewability.RequestListenerObserver
-import com.github.panpf.sketch.viewability.ScaleTypeObserver
-import com.github.panpf.sketch.viewability.SizeChangeObserver
-import com.github.panpf.sketch.viewability.TouchEventObserver
-import com.github.panpf.sketch.viewability.ViewAbility
-import com.github.panpf.sketch.viewability.VisibilityChangedObserver
-import com.github.panpf.zoom.DefaultScaleStateFactory
-import com.github.panpf.zoom.Edge
 import com.github.panpf.zoom.Edge.NONE
-import com.github.panpf.zoom.OnDragFlingListener
-import com.github.panpf.zoom.OnMatrixChangeListener
-import com.github.panpf.zoom.OnRotateChangeListener
-import com.github.panpf.zoom.OnScaleChangeListener
-import com.github.panpf.zoom.OnTileChangedListener
-import com.github.panpf.zoom.OnViewDragListener
-import com.github.panpf.zoom.OnViewLongPressListener
-import com.github.panpf.zoom.OnViewTapListener
-import com.github.panpf.zoom.ReadModeDecider
 import com.github.panpf.zoom.ScaleState.Factory
-import com.github.panpf.zoom.Tile
+import com.github.panpf.zoom.internal.ImageViewBridge
+import com.github.panpf.zoom.internal.SubsamplingHelper
+import com.github.panpf.zoom.internal.ZoomerHelper
+import com.github.panpf.zoom.internal.canUseSubsampling
+import com.github.panpf.zoom.internal.contentSize
+import com.github.panpf.zoom.internal.getLifecycle
+import com.github.panpf.zoom.internal.isAttachedToWindowCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver,
-    DrawableObserver, TouchEventObserver, SizeChangeObserver, VisibilityChangedObserver,
-    RequestListenerObserver, ImageMatrixObserver {
+class ZoomAbility {
 
     companion object {
         private const val MODULE = "ZoomAbility"
     }
 
+    private var view: View? = null
+    private var imageViewBridge: ImageViewBridge? = null
     private var zoomerHelper: ZoomerHelper? = null
     private var subsamplingHelper: SubsamplingHelper? = null
     private val lifecycleObserver = LifecycleEventObserver { _, event ->
@@ -93,9 +74,11 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
             ON_START -> {
                 subsamplingHelper?.paused = true
             }
+
             ON_STOP -> {
                 subsamplingHelper?.paused = false
             }
+
             else -> {}
         }
     }
@@ -111,7 +94,7 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
     )
     private var lastPostResetSubsamplingHelperJob: Job? = null
 
-    private var lifecycle: Lifecycle? = null
+    var lifecycle: Lifecycle? = null
         set(value) {
             if (value != field) {
                 unregisterLifecycleObserver()
@@ -120,27 +103,15 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
             }
         }
 
-    override var host: Host? = null
-        set(value) {
-            val oldZoomerHelper = zoomerHelper
-            if (oldZoomerHelper != null) {
-                oldZoomerHelper.clean()
-                field?.container?.superSetScaleType(oldZoomerHelper.scaleType)
-            }
-
-            field = value
-            val newZoomerHelper = if (value != null) newZoomerHelper(value) else null
-            zoomerHelper = newZoomerHelper
-            resetDrawableSize()
-            if (newZoomerHelper != null) {
-                field?.container?.superSetScaleType(ScaleType.MATRIX)
-            }
-
-            lifecycle = value?.context.getLifecycle()
-            if (value == null) {
-                scope.cancel()
-            }
-        }
+    fun init(view: View, imageViewBridge: ImageViewBridge) {
+        this.view = view
+        this.imageViewBridge = imageViewBridge
+        val newZoomerHelper = newZoomerHelper(view, imageViewBridge)
+        zoomerHelper = newZoomerHelper
+        resetDrawableSize()
+        imageViewBridge.superSetScaleType(ScaleType.MATRIX)
+        lifecycle = view.context.getLifecycle()
+    }
 
     var scrollBarEnabled: Boolean = true
         set(value) {
@@ -202,7 +173,7 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
 
     init {
         addOnMatrixChangeListener {
-            val container = host?.container
+            val container = imageViewBridge
             val zoomer = zoomerHelper
             if (container != null && zoomer != null) {
                 val matrix = imageMatrix.apply { zoomer.getDrawMatrix(this) }
@@ -409,26 +380,26 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
 
     /**************************************** Internal ********************************************/
 
-    override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        val host = host ?: return
+    fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
+        val imageView = view ?: return
         destroy()
-        if (host.view.isAttachedToWindowCompat) {
+        if (imageView.isAttachedToWindowCompat) {
             initialize()
         }
     }
 
-    override fun onAttachedToWindow() {
+    fun onAttachedToWindow() {
         initialize()
         registerLifecycleObserver()
     }
 
-    override fun onDetachedFromWindow() {
+    fun onDetachedFromWindow() {
         destroy()
         unregisterLifecycleObserver()
     }
 
     private fun registerLifecycleObserver() {
-        if (host?.view?.isAttachedToWindowCompat == true) {
+        if (view?.isAttachedToWindowCompat == true) {
             lifecycle?.addObserver(lifecycleObserver)
             subsamplingHelper?.paused = lifecycle?.currentState?.isAtLeast(STARTED) == false
         }
@@ -439,9 +410,8 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
         subsamplingHelper?.paused = false
     }
 
-    override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
-        val host = host ?: return
-        val view = host.view
+    fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
+        val view = view ?: return
         val viewWidth = view.width - view.paddingLeft - view.paddingRight
         val viewHeight = view.height - view.paddingTop - view.paddingBottom
         zoomerHelper?.viewSize = Size(viewWidth, viewHeight)
@@ -459,27 +429,23 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
         }
     }
 
-    override fun onDrawBefore(canvas: Canvas) {
-
-    }
-
-    override fun onDraw(canvas: Canvas) {
+    fun onDraw(canvas: Canvas) {
         subsamplingHelper?.onDraw(canvas)
         zoomerHelper?.onDraw(canvas)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean =
+    fun onTouchEvent(event: MotionEvent): Boolean =
         zoomerHelper?.onTouchEvent(event) ?: false
 
-    override fun setScaleType(scaleType: ScaleType): Boolean {
+    fun setScaleType(scaleType: ScaleType): Boolean {
         val zoomerHelper = zoomerHelper
         zoomerHelper?.scaleType = scaleType
         return zoomerHelper != null
     }
 
-    override fun getScaleType(): ScaleType? = zoomerHelper?.scaleType
+    fun getScaleType(): ScaleType? = zoomerHelper?.scaleType
 
-    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+    fun onVisibilityChanged(changedView: View, visibility: Int) {
         subsamplingHelper?.paused = visibility != View.VISIBLE
     }
 
@@ -494,15 +460,18 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
         subsamplingHelper = null
     }
 
-    private fun newZoomerHelper(host: Host): ZoomerHelper {
-        val scaleType = host.container.superGetScaleType()
+    private fun newZoomerHelper(
+        view: View,
+        imageViewBridge: ImageViewBridge
+    ): ZoomerHelper {
+        val scaleType = imageViewBridge.superGetScaleType()
         require(scaleType != ScaleType.MATRIX) {
             "ScaleType cannot be MATRIX"
         }
         return ZoomerHelper(
-            context = host.context,
-            logger = host.context.sketch.logger,
-            view = host.view,
+            context = view.context,
+            logger = view.context.sketch.logger,
+            view = view,
             scaleType = scaleType,
         ).apply {
             this@apply.readModeEnabled = this@ZoomAbility.readModeEnabled
@@ -534,9 +503,9 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
     }
 
     private fun resetDrawableSize() {
-        val host = host ?: return
+        val imageViewSuperBridge = imageViewBridge ?: return
         val zoomerHelper = zoomerHelper ?: return
-        val drawable = host.container.getDrawable()
+        val drawable = imageViewSuperBridge.getDrawable()
         zoomerHelper.drawableSize =
             Size(drawable?.intrinsicWidth ?: 0, drawable?.intrinsicHeight ?: 0)
         val sketchDrawable = drawable?.findLastSketchDrawable()
@@ -546,17 +515,18 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
 
     private fun newSubsamplingHelper(zoomerHelper: ZoomerHelper?): SubsamplingHelper? {
         zoomerHelper ?: return null
-        val host = host ?: return null
-        val sketch = host.context.sketch
+        val imageView = view ?: return null
+        val imageViewSuperBridge = imageViewBridge ?: return null
+        val sketch = imageView.context.sketch
         val logger = sketch.logger
 
-        val viewContentSize = host.view.contentSize
+        val viewContentSize = imageView.contentSize
         if (viewContentSize == null) {
             logger.d(MODULE) { "Can't use Subsampling. View size error" }
             return null
         }
 
-        val drawable = host.container.getDrawable()
+        val drawable = imageViewSuperBridge.getDrawable()
         if (drawable == null) {
             logger.d(MODULE) { "Can't use Subsampling. Drawable is null" }
             return null
@@ -585,33 +555,61 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
         if (drawableWidth >= imageWidth && drawableHeight >= imageHeight) {
             logger.d(MODULE) {
                 "Don't need to use Subsampling. drawableSize: %dx%d, imageSize: %dx%d, mimeType: %s. '%s'"
-                    .format(drawableWidth, drawableHeight, imageWidth, imageHeight, mimeType, requestKey)
+                    .format(
+                        drawableWidth,
+                        drawableHeight,
+                        imageWidth,
+                        imageHeight,
+                        mimeType,
+                        requestKey
+                    )
             }
             return null
         }
         if (!canUseSubsampling(imageWidth, imageHeight, drawableWidth, drawableHeight)) {
             logger.d(MODULE) {
                 "Can't use Subsampling. drawableSize error. drawableSize: %dx%d, imageSize: %dx%d, mimeType: %s. '%s'"
-                    .format(drawableWidth, drawableHeight, imageWidth, imageHeight, mimeType, requestKey)
+                    .format(
+                        drawableWidth,
+                        drawableHeight,
+                        imageWidth,
+                        imageHeight,
+                        mimeType,
+                        requestKey
+                    )
             }
             return null
         }
         if (ImageFormat.parseMimeType(mimeType)?.supportBitmapRegionDecoder() != true) {
             logger.d(MODULE) {
                 "MimeType does not support Subsampling. drawableSize: %dx%d, imageSize: %dx%d, mimeType: %s. '%s'"
-                    .format(drawableWidth, drawableHeight, imageWidth, imageHeight, mimeType, requestKey)
+                    .format(
+                        drawableWidth,
+                        drawableHeight,
+                        imageWidth,
+                        imageHeight,
+                        mimeType,
+                        requestKey
+                    )
             }
             return null
         }
 
         logger.d(MODULE) {
             "Use Subsampling. drawableSize: %dx%d, imageSize: %dx%d, mimeType: %s. '%s'"
-                .format(drawableWidth, drawableHeight, imageWidth, imageHeight, mimeType, requestKey)
+                .format(
+                    drawableWidth,
+                    drawableHeight,
+                    imageWidth,
+                    imageHeight,
+                    mimeType,
+                    requestKey
+                )
         }
 
         val memoryCachePolicy: CachePolicy
         val disallowReuseBitmap: Boolean
-        val displayResult = SketchUtils.getResult(host.view)
+        val displayResult = SketchUtils.getResult(imageView)
         if (displayResult != null && displayResult is DisplayResult.Success && displayResult.requestKey == requestKey) {
             memoryCachePolicy = displayResult.request.memoryCachePolicy
             disallowReuseBitmap = displayResult.request.disallowReuseBitmap
@@ -620,7 +618,7 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
             disallowReuseBitmap = false
         }
         return SubsamplingHelper(
-            context = host.context,
+            context = imageView.context,
             sketch = sketch,
             zoomerHelper = zoomerHelper,
             imageUri = sketchDrawable.imageUri,
@@ -637,24 +635,5 @@ class ZoomAbility : ViewAbility, AttachObserver, ScaleTypeObserver, DrawObserver
                 this@apply.addOnTileChangedListener(it)
             }
         }
-    }
-
-    override fun onRequestStart(request: DisplayRequest) {
-        lifecycle = request.lifecycle.takeIf { !it.isSketchGlobalLifecycle() }
-            ?: host?.context.getLifecycle()
-    }
-
-    override fun onRequestError(request: DisplayRequest, result: DisplayResult.Error) {
-    }
-
-    override fun onRequestSuccess(request: DisplayRequest, result: DisplayResult.Success) {
-    }
-
-    override fun setImageMatrix(imageMatrix: Matrix?): Boolean {
-        return true
-    }
-
-    override fun getImageMatrix(): Matrix? {
-        return null
     }
 }

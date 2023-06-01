@@ -66,7 +66,6 @@ google-material = { module = "com.google.android.material:material", version.ref
 panpf-assemblyadapter4 = { module = "io.github.panpf.assemblyadapter4:assemblyadapter", version.ref = "panpf-assemblyadapter4" }
 panpf-liveevent = { module = "io.github.panpf.liveevent:liveevent", version.ref = "panpf-liveevent" }
 panpf-sketch3 = { module = "io.github.panpf.sketch3:sketch", version.ref = "panpf-sketch3" }
-panpf-sketch3-viewability = { module = "io.github.panpf.sketch3:sketch-viewability", version.ref = "panpf-sketch3" }
 panpf-sketch3-extensions = { module = "io.github.panpf.sketch3:sketch-extensions", version.ref = "panpf-sketch3" }
 panpf-tools4j = { module = "io.github.panpf.tools4j:tools4j-ktx", version.ref = "panpf-tools4j" }
 panpf-tools4a = { module = "io.github.panpf.tools4a:tools4a-ktx", version.ref = "panpf-tools4a" }

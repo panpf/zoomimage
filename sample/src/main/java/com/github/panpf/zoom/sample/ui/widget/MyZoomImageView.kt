@@ -17,7 +17,6 @@ package com.github.panpf.zoom.sample.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import com.github.panpf.zoom.SketchZoomImageView
 
 class MyZoomImageView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0

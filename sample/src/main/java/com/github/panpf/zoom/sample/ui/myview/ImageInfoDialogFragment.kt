@@ -34,7 +34,7 @@ import com.github.panpf.sketch.util.calculateBitmapByteCount
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.tools4k.lang.asOrThrow
-import com.github.panpf.zoom.SketchZoomImageView
+import com.github.panpf.zoom.ZoomImageView
 import com.github.panpf.zoom.format
 import com.github.panpf.zoom.sample.NavMainDirections
 import com.github.panpf.zoom.sample.databinding.ImageInfoDialogBinding
@@ -142,22 +142,22 @@ class ImageInfoDialogFragment : BindingDialogFragment<ImageInfoDialogBinding>() 
                 throwableString = displayResult.throwable.toString()
             }
 
-            if (imageView is SketchZoomImageView) {
+            if (imageView is ZoomImageView) {
                 zoomInfo = buildList {
                     add("view=${imageView.width}x${imageView.height}")
-                    add("draw=${RectF().apply { imageView.getDrawRect(this) }.toRect()}")
-                    add("visible=${Rect().apply { imageView.getVisibleRect(this) }}")
+                    add("draw=${RectF().apply { imageView.zoomAbility.getDrawRect(this) }.toRect()}")
+                    add("visible=${Rect().apply { imageView.zoomAbility.getVisibleRect(this) }}")
                     add(
-                        "nowScale=${imageView.scale.format(2)}(${imageView.baseScale.format(2)},${
-                            imageView.supportScale.format(2)
+                        "nowScale=${imageView.zoomAbility.scale.format(2)}(${imageView.zoomAbility.baseScale.format(2)},${
+                            imageView.zoomAbility.supportScale.format(2)
                         })"
                     )
-                    add("minScale=${imageView.minScale.format(2)}")
-                    add("maxScale=${imageView.maxScale.format(2)}")
-                    val stepScales = imageView.stepScales
+                    add("minScale=${imageView.zoomAbility.minScale.format(2)}")
+                    add("maxScale=${imageView.zoomAbility.maxScale.format(2)}")
+                    val stepScales = imageView.zoomAbility.stepScales
                         ?.joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
                     add("stepScales=${stepScales}")
-                    add("rotateDegrees=${imageView.rotateDegrees}")
+                    add("rotateDegrees=${imageView.zoomAbility.rotateDegrees}")
                     add(
                         "horScroll(left/right)=${imageView.canScrollHorizontally(-1)},${
                             imageView.canScrollHorizontally(1)
@@ -168,10 +168,10 @@ class ImageInfoDialogFragment : BindingDialogFragment<ImageInfoDialogBinding>() 
                             imageView.canScrollVertically(1)
                         }"
                     )
-                    add("ScrollEdge(hor/ver)=${imageView.horScrollEdge},${imageView.verScrollEdge}")
+                    add("ScrollEdge(hor/ver)=${imageView.zoomAbility.horScrollEdge},${imageView.zoomAbility.verScrollEdge}")
                 }.joinToString(separator = "\n")
 
-                tilesInfo = imageView.tileList?.takeIf { it.isNotEmpty() }?.let {
+                tilesInfo = imageView.zoomAbility.tileList?.takeIf { it.isNotEmpty() }?.let {
                     buildList {
                         add("tileCount=${it.size}")
                         add("validTileCount=${it.count { it.bitmap != null }}")

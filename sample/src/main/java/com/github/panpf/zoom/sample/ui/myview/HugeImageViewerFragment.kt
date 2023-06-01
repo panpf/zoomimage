@@ -40,11 +40,11 @@ class HugeImageViewerFragment : BindingFragment<HugeImageViewerFragmentBinding>(
         binding.hugeImageViewerZoomImage.apply {
             settingsEventViewModel.observeZoomSettings(this)
 
-            showRingProgressIndicator()
+//            showRingProgressIndicator()
 
             eventService.hugeViewerPageRotateEvent.listen(viewLifecycleOwner) {
                 if (isResumed) {
-                    rotateBy(90)
+                    zoomAbility.rotateBy(90)
                 }
             }
 

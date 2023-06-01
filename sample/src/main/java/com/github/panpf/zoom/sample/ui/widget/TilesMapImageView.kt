@@ -59,14 +59,14 @@ class TilesMapImageView @JvmOverloads constructor(
         super.onDraw(canvas)
         val viewWidth = width.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
-        val imageSize = zoomView.imageSize?.takeIf { !it.isEmpty } ?: return
-        val drawableSize = zoomView.drawableSize?.takeIf { !it.isEmpty } ?: return
+        val imageSize = zoomView.zoomAbility.imageSize?.takeIf { !it.isEmpty } ?: return
+        val drawableSize = zoomView.zoomAbility.drawableSize?.takeIf { !it.isEmpty } ?: return
         val drawableVisibleRect = drawableVisibleRect
-            .apply { zoomView.getVisibleRect(this) }
+            .apply { zoomView.zoomAbility.getVisibleRect(this) }
             .takeIf { !it.isEmpty } ?: return
         val targetScale = imageSize.width.toFloat() / viewWidth
 
-        zoomView.eachTileList { tile, load ->
+        zoomView.zoomAbility.eachTileList { tile, load ->
             val tileBitmap = tile.bitmap
             val tileSrcRect = tile.srcRect
             val tileDrawRect = tileDrawRect.apply {
@@ -113,10 +113,10 @@ class TilesMapImageView @JvmOverloads constructor(
 
     fun setZoomImageView(zoomView: MyZoomImageView) {
         this.zoomView = zoomView
-        zoomView.addOnMatrixChangeListener {
+        zoomView.zoomAbility.addOnMatrixChangeListener {
             invalidate()
         }
-        zoomView.addOnTileChangedListener {
+        zoomView.zoomAbility.addOnTileChangedListener {
             invalidate()
         }
     }
@@ -170,6 +170,6 @@ class TilesMapImageView @JvmOverloads constructor(
         val realX = x * widthScale
         val realY = y * heightScale
 
-        zoomView.location(realX, realY, animate = true)
+        zoomView.zoomAbility.location(realX, realY, animate = true)
     }
 }
