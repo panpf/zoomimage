@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import coil.request.ImageRequest
 import com.github.panpf.zoom.sample.R
 import com.github.panpf.zoom.sample.ui.base.compose.HorizontalTabPager
-import com.github.panpf.zoom.sample.ui.base.compose.Material3ComposeAppBarFragment
+import com.github.panpf.zoom.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoom.sample.ui.base.compose.PageItem
 import com.github.panpf.zoom.sample.ui.util.newCoilResourceUri
 import me.saket.telephoto.zoomable.ZoomSpec
@@ -16,10 +16,10 @@ import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import me.saket.telephoto.zoomable.rememberZoomableImageState
 import me.saket.telephoto.zoomable.rememberZoomableState
 
-class TelephotoZoomImageFragment : Material3ComposeAppBarFragment() {
+class TelephotoZoomImageFragment : AppBarFragment() {
 
     override fun getTitle(): String {
-        return "Telephoto ZoomImage"
+        return "ZoomableAsyncImage（Telephoto）"
     }
 
     @Composable
@@ -29,7 +29,7 @@ class TelephotoZoomImageFragment : Material3ComposeAppBarFragment() {
             PageItem(
                 data = "Telephoto",
                 titleFactory = { it },
-                contentFactory = { data, _ ->
+                contentFactory = { _, _ ->
                     ZoomableAsyncImageFullSample(context.newCoilResourceUri(R.drawable.dog_hor))
                 }
             )

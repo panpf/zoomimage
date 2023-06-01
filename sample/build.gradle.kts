@@ -72,9 +72,10 @@ dependencies {
     implementation(libs.panpf.tools4a)
     implementation(libs.panpf.tools4j)
     implementation(libs.panpf.tools4k)
-    implementation(libs.zoomlayout)
     implementation(libs.telephoto)
     implementation(libs.mmkv)
+    implementation(libs.subsamplingscaleimageview)
+    implementation(libs.photoview)
 
     /* compose */
     implementation(platform(libs.androidx.compose.bom))

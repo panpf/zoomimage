@@ -18,7 +18,7 @@ class MyZoomImageViewFragment : ToolbarBindingFragment<ContainerFragmentBinding>
         binding: ContainerFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        toolbar.title = "Huge Image"
+        toolbar.title = "ZoomImageView（My）"
 
         toolbar.menu.add("Rotate").apply {
             setIcon(R.drawable.ic_rotate_right)

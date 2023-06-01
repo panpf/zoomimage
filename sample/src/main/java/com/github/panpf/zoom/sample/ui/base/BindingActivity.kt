@@ -42,6 +42,7 @@ abstract class BindingActivity<VIEW_BINDING : ViewBinding> : AppCompatActivity()
 
     protected abstract fun onCreate(binding: VIEW_BINDING, savedInstanceState: Bundle?)
 
+    @Suppress("DEPRECATION")
     private fun setTransparentStatusBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.apply {

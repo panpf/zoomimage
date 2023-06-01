@@ -44,17 +44,17 @@ import com.github.panpf.zoom.sample.R
 import com.github.panpf.zoom.toPx
 import com.github.panpf.zoom.toShortString
 import com.github.panpf.zoom.sample.ui.base.compose.HorizontalTabPager
-import com.github.panpf.zoom.sample.ui.base.compose.Material3ComposeAppBarFragment
+import com.github.panpf.zoom.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoom.sample.ui.base.compose.PageItem
 import com.github.panpf.zoom.sample.ui.common.PhotoItem
 import com.github.panpf.zoom.sample.ui.common.horPhoto
 import com.github.panpf.zoom.sample.ui.common.verPhoto
 import kotlinx.coroutines.launch
 
-class ZoomImageFragment : Material3ComposeAppBarFragment() {
+class MyZoomImageFragment : AppBarFragment() {
 
     override fun getTitle(): String {
-        return "ZoomImage"
+        return "ZoomImage（My）"
     }
 
     @Composable
@@ -63,7 +63,7 @@ class ZoomImageFragment : Material3ComposeAppBarFragment() {
             PageItem(
                 data = "My",
                 titleFactory = { it },
-                contentFactory = { data, _ ->
+                contentFactory = { _, _ ->
                     MyZoomImageFullSample()
                 }
             )

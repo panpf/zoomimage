@@ -129,7 +129,7 @@ public class VerticalTabLayout extends ScrollView {
 
     private void initStyleConfigure(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.VerticalTabLayout);
-        mColorIndicator = typedArray.getColor(R.styleable.VerticalTabLayout_indicator_color, context.getResources().getColor(R.color.colorAccent));
+        mColorIndicator = typedArray.getColor(R.styleable.VerticalTabLayout_indicator_color, context.getResources().getColor(R.color.colorSecondary));
         mIndicatorWidth = (int) typedArray.getDimension(R.styleable.VerticalTabLayout_indicator_width, dpToPx(3));
         mIndicatorCorners = typedArray.getDimension(R.styleable.VerticalTabLayout_indicator_corners, 0);
         mIndicatorGravity = typedArray.getInteger(R.styleable.VerticalTabLayout_indicator_gravity, Gravity.LEFT);

@@ -13,26 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoom.sample.ui.myview
+package com.github.panpf.zoom.sample.ui.photoview
 
 import android.os.Bundle
+import androidx.appcompat.widget.Toolbar
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoom.sample.SampleImage
 import com.github.panpf.zoom.sample.databinding.TabPagerFragmentBinding
 import com.github.panpf.zoom.sample.ui.base.BindingFragment
+import com.github.panpf.zoom.sample.ui.base.ToolbarBindingFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
-class HugeImageHorPagerFragment : BindingFragment<TabPagerFragmentBinding>() {
+class PhotoViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
 
-    override fun onViewCreated(binding: TabPagerFragmentBinding, savedInstanceState: Bundle?) {
-        val hugeSampleImages = SampleImage.HUGES
+    override fun onViewCreated(
+        toolbar: Toolbar,
+        binding: TabPagerFragmentBinding,
+        savedInstanceState: Bundle?
+    ) {
+        toolbar.title = "PhotoView"
+
+        val sampleImages = SampleImage.DOGS + SampleImage.HUGES
+
         binding.tabPagerPager.adapter = AssemblyFragmentStateAdapter(
             this,
-            listOf(HugeImageViewerFragment.ItemFactory()),
-            hugeSampleImages.map { it.uri }
+            listOf(PhotoViewFragment.ItemFactory()),
+            sampleImages.map { it.uri }
         )
+
         TabLayoutMediator(binding.tabPagerTabLayout, binding.tabPagerPager) { tab, position ->
-            tab.text = hugeSampleImages[position].name
+            tab.text = sampleImages[position].name
         }.attach()
     }
 }

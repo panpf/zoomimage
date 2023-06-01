@@ -43,24 +43,29 @@ class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
                 listOf(
                     ListSeparator("Compose"),
                     Link(
-                        title = "My ZoomImage",
-                        navDirections = NavMainDirections.actionGlobalZoomImageFragment(),
+                        title = "ZoomImage（My）",
+                        navDirections = NavMainDirections.actionGlobalMyZoomImageFragment(),
                         minSdk = 21
                     ),
                     Link(
-                        title = "Telephoto ZoomImage",
+                        title = "ZoomableAsyncImage（Telephoto）",
                         navDirections = NavMainDirections.actionGlobalTelephotoZoomImageFragment(),
                         minSdk = 21
                     ),
 
                     ListSeparator("View"),
                     Link(
-                        title = "My ZoomImageView",
+                        title = "ZoomImageView（My）",
                         navDirections = NavMainDirections.actionGlobalMyZoomImageViewFragment(),
                     ),
-                    // todo subsampingImageView,
-                    // todo photoView,
-                    // todo ZoomLayout ZoomImageView
+                    Link(
+                        title = "PhotoView",
+                        navDirections = NavMainDirections.actionGlobalPhotoViewPagerFragment(),
+                    ),
+                    Link(
+                        title = "SubsamplingScaleImageView",
+                        navDirections = NavMainDirections.actionGlobalSubsamplingViewPagerFragment(),
+                    ),
                 )
             )
         }

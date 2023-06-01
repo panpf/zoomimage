@@ -45,7 +45,7 @@ import com.github.panpf.tools4a.dimen.ktx.px2dp
 import com.github.panpf.tools4a.display.ktx.getStatusBarHeight
 import com.github.panpf.zoom.sample.R
 
-abstract class Material3ComposeAppBarFragment : Fragment() {
+abstract class AppBarFragment : Fragment() {
 
     final override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,7 +80,7 @@ fun MyTopAppBarScaffold3(title: String? = null, content: @Composable () -> Unit)
     val statusBarHeight = remember {
         context.getStatusBarHeight().px2dp.dp
     }
-    MyTheme3 {
+    MyTheme {
         Surface {
             Column(modifier = Modifier.fillMaxSize()) {
                 val colorScheme = MaterialTheme.colorScheme

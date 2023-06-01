@@ -18,7 +18,7 @@ package com.github.panpf.zoom.sample.ui.myview
 import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
-import com.github.panpf.zoom.sample.AssetImages
+import com.github.panpf.zoom.sample.SampleImage
 import com.github.panpf.zoom.sample.databinding.TabPagerVerFragmentBinding
 import com.github.panpf.zoom.sample.ui.base.BindingFragment
 import com.github.panpf.zoom.sample.ui.widget.VerTabLayoutMediator
@@ -26,23 +26,20 @@ import com.github.panpf.zoom.sample.ui.widget.VerTabLayoutMediator
 class HugeImageVerPagerFragment : BindingFragment<TabPagerVerFragmentBinding>() {
 
     override fun onViewCreated(binding: TabPagerVerFragmentBinding, savedInstanceState: Bundle?) {
-        val images = AssetImages.HUGES.toList()
-        val titles = arrayOf("WORLD", "CARD", "QMSHT", "CWB")
-
+        val hugeSampleImages = SampleImage.HUGES
         binding.tabPagerVerPager.apply {
             orientation = ViewPager2.ORIENTATION_VERTICAL
             adapter = AssemblyFragmentStateAdapter(
                 this@HugeImageVerPagerFragment,
                 listOf(HugeImageViewerFragment.ItemFactory()),
-                images
+                hugeSampleImages.map { it.uri }
             )
         }
-
         VerTabLayoutMediator(
             binding.tabPagerVerTabLayout,
             binding.tabPagerVerPager
         ) { tab, position ->
-            tab.text = titles[position]
+            tab.text = hugeSampleImages[position].name
         }.attach()
     }
 }

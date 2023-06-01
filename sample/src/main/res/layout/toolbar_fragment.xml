@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:title="@string/app_name"
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@color/colorOnPrimary" />
     </LinearLayout>
 
     <FrameLayout

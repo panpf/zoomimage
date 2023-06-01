@@ -9,9 +9,12 @@
         android:id="@+id/tabPagerVerTabLayout"
         android:layout_width="70dp"
         android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        app:indicator_color="@color/colorOnPrimary"
+        app:indicator_gravity="right"
         app:tab_mode="fixed"
-        app:tab_textColor="@android:color/white"
-        app:tab_textSelectedColor="@color/colorAccent" />
+        app:tab_textColor="@color/colorOnPrimary"
+        app:tab_textSelectedColor="@color/colorOnPrimary" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/tabPagerVerPager"

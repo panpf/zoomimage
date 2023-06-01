@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
-    <color name="colorPrimary">@color/purple_500</color>
-    <color name="colorPrimaryVariant">@color/purple_700</color>
+    <color name="colorPrimary">#6A55F8</color>
+    <color name="colorPrimaryVariant">#4535AF</color>
     <color name="colorOnPrimary">@color/white</color>
-    <color name="colorAccent">#bf5660</color>
-    <color name="colorSecondary">@color/teal_200</color>
-    <color name="colorSecondaryVariant">@color/teal_700</color>
-    <color name="colorOnSecondary">@color/black</color>
+    <color name="colorSecondary">#CA48F6</color>
+    <color name="colorSecondaryVariant">#7A2A95</color>
+    <color name="colorOnSecondary">@color/white</color>
+    <color name="colorTertiary">#F8AE6B</color>
+    <color name="colorTertiaryVariant">#8A613B</color>
+    <color name="colorOnTertiary">@color/white</color>
+    <color name="windowBackground">#171717</color>
+    <color name="windowVariant">#2C2C2C</color>
 
-    <color name="text_subtitle">#99FFFFFF</color>
+    <color name="text">#FFFFFF</color>
     <color name="placeholder_bg">#AFAFAF</color>
     <color name="placeholder_icon">#E4E4E4</color>
 </resources>
