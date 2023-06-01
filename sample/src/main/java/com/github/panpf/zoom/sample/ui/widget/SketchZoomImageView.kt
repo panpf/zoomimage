@@ -28,13 +28,13 @@ import com.github.panpf.sketch.request.ImageOptionsProvider
 import com.github.panpf.sketch.request.Listener
 import com.github.panpf.sketch.request.ProgressListener
 import com.github.panpf.sketch.request.isSketchGlobalLifecycle
-import com.github.panpf.zoom.ZoomImageView
+import com.github.panpf.zoom.SubsamplingImageView
 
 open class SketchZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : ZoomImageView(context, attrs, defStyle), ImageOptionsProvider, DisplayListenerProvider {
+) : SubsamplingImageView(context, attrs, defStyle), ImageOptionsProvider, DisplayListenerProvider {
 
     // todo 恢复 Ability 支持
 
@@ -43,8 +43,9 @@ open class SketchZoomImageView @JvmOverloads constructor(
         object : Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error> {
             override fun onStart(request: DisplayRequest) {
                 super.onStart(request)
-                zoomAbility.lifecycle = request.lifecycle.takeIf { !it.isSketchGlobalLifecycle() }
-                    ?: context.getLifecycle()
+                subsamplingAbility.lifecycle =
+                    request.lifecycle.takeIf { !it.isSketchGlobalLifecycle() }
+                        ?: context.getLifecycle()
             }
         }
 

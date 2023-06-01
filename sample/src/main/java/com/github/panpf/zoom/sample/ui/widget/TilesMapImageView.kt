@@ -60,13 +60,13 @@ class TilesMapImageView @JvmOverloads constructor(
         val viewWidth = width.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
         val imageSize = zoomView.zoomAbility.imageSize?.takeIf { !it.isEmpty } ?: return
-        val drawableSize = zoomView.zoomAbility.drawableSize?.takeIf { !it.isEmpty } ?: return
+        val drawableSize = zoomView.zoomAbility.drawableSize.takeIf { !it.isEmpty } ?: return
         val drawableVisibleRect = drawableVisibleRect
             .apply { zoomView.zoomAbility.getVisibleRect(this) }
             .takeIf { !it.isEmpty } ?: return
         val targetScale = imageSize.width.toFloat() / viewWidth
 
-        zoomView.zoomAbility.eachTileList { tile, load ->
+        zoomView.subsamplingAbility.eachTileList { tile, load ->
             val tileBitmap = tile.bitmap
             val tileSrcRect = tile.srcRect
             val tileDrawRect = tileDrawRect.apply {
@@ -116,7 +116,7 @@ class TilesMapImageView @JvmOverloads constructor(
         zoomView.zoomAbility.addOnMatrixChangeListener {
             invalidate()
         }
-        zoomView.zoomAbility.addOnTileChangedListener {
+        zoomView.subsamplingAbility.addOnTileChangedListener {
             invalidate()
         }
     }

@@ -34,7 +34,7 @@ import com.github.panpf.sketch.util.calculateBitmapByteCount
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.tools4k.lang.asOrThrow
-import com.github.panpf.zoom.ZoomImageView
+import com.github.panpf.zoom.SubsamplingImageView
 import com.github.panpf.zoom.format
 import com.github.panpf.zoom.sample.NavMainDirections
 import com.github.panpf.zoom.sample.databinding.ImageInfoDialogBinding
@@ -142,13 +142,21 @@ class ImageInfoDialogFragment : BindingDialogFragment<ImageInfoDialogBinding>() 
                 throwableString = displayResult.throwable.toString()
             }
 
-            if (imageView is ZoomImageView) {
+            if (imageView is SubsamplingImageView) {
                 zoomInfo = buildList {
                     add("view=${imageView.width}x${imageView.height}")
-                    add("draw=${RectF().apply { imageView.zoomAbility.getDrawRect(this) }.toRect()}")
+                    add(
+                        "draw=${
+                            RectF().apply { imageView.zoomAbility.getDrawRect(this) }.toRect()
+                        }"
+                    )
                     add("visible=${Rect().apply { imageView.zoomAbility.getVisibleRect(this) }}")
                     add(
-                        "nowScale=${imageView.zoomAbility.scale.format(2)}(${imageView.zoomAbility.baseScale.format(2)},${
+                        "nowScale=${imageView.zoomAbility.scale.format(2)}(${
+                            imageView.zoomAbility.baseScale.format(
+                                2
+                            )
+                        },${
                             imageView.zoomAbility.supportScale.format(2)
                         })"
                     )
@@ -171,7 +179,7 @@ class ImageInfoDialogFragment : BindingDialogFragment<ImageInfoDialogBinding>() 
                     add("ScrollEdge(hor/ver)=${imageView.zoomAbility.horScrollEdge},${imageView.zoomAbility.verScrollEdge}")
                 }.joinToString(separator = "\n")
 
-                tilesInfo = imageView.zoomAbility.tileList?.takeIf { it.isNotEmpty() }?.let {
+                tilesInfo = imageView.subsamplingAbility.tileList?.takeIf { it.isNotEmpty() }?.let {
                     buildList {
                         add("tileCount=${it.size}")
                         add("validTileCount=${it.count { it.bitmap != null }}")

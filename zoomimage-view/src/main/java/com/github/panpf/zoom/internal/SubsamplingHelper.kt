@@ -29,6 +29,7 @@ import com.github.panpf.sketch.util.Size
 import com.github.panpf.zoom.OnMatrixChangeListener
 import com.github.panpf.zoom.OnTileChangedListener
 import com.github.panpf.zoom.Tile
+import com.github.panpf.zoom.ZoomAbility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -39,7 +40,7 @@ import kotlinx.coroutines.withContext
 internal class SubsamplingHelper constructor(
     private val context: Context,
     private val sketch: Sketch,
-    private val zoomerHelper: ZoomerHelper,
+    private val zoomAbility: ZoomAbility,
     private val imageUri: String,
     private val imageInfo: ImageInfo,
     private val memoryCachePolicy: CachePolicy,
@@ -115,7 +116,7 @@ internal class SubsamplingHelper constructor(
             refreshTiles()
         }
 
-        zoomerHelper.addOnMatrixChangeListener(onMatrixChangeListener)
+        zoomAbility.addOnMatrixChangeListener(onMatrixChangeListener)
     }
 
     @MainThread
@@ -135,20 +136,20 @@ internal class SubsamplingHelper constructor(
             logger.d(MODULE) { "refreshTiles. interrupted. initializing. '$imageUri'" }
             return
         }
-        if (zoomerHelper.rotateDegrees % 90 != 0) {
+        if (zoomAbility.rotateDegrees % 90 != 0) {
             logger.d(MODULE) {
                 "refreshTiles. interrupted. rotate degrees must be in multiples of 90. '$imageUri'"
             }
             return
         }
 
-        val drawableSize = zoomerHelper.drawableSize
-        val scaling = zoomerHelper.isScaling
+        val drawableSize = zoomAbility.drawableSize
+        val scaling = zoomAbility.isScaling
         val drawMatrix = tempDrawMatrix.apply {
-            zoomerHelper.getDrawMatrix(this)
+            zoomAbility.getDrawMatrix(this)
         }
         val drawableVisibleRect = tempDrawableVisibleRect.apply {
-            zoomerHelper.getVisibleRect(this)
+            zoomAbility.getVisibleRect(this)
         }
 
         if (drawableVisibleRect.isEmpty) {
@@ -166,7 +167,7 @@ internal class SubsamplingHelper constructor(
             return
         }
 
-        if (zoomerHelper.scale.format(2) <= zoomerHelper.minScale.format(2)) {
+        if (zoomAbility.scale.format(2) <= zoomAbility.minScale.format(2)) {
             logger.d(MODULE) {
                 "refreshTiles. interrupted. minScale. '$imageUri'"
             }
@@ -182,7 +183,7 @@ internal class SubsamplingHelper constructor(
         requiredMainThread()
 
         if (destroyed) return
-        val drawableSize = zoomerHelper.drawableSize
+        val drawableSize = zoomAbility.drawableSize
         val drawMatrix = tempDrawMatrix
         val drawableVisibleRect = tempDrawableVisibleRect
         tileManager?.onDraw(canvas, drawableSize, drawableVisibleRect, drawMatrix)
@@ -191,8 +192,7 @@ internal class SubsamplingHelper constructor(
     @MainThread
     internal fun invalidateView() {
         requiredMainThread()
-
-        zoomerHelper.view.invalidate()
+        zoomAbility.view?.invalidate()
     }
 
     fun addOnTileChangedListener(listener: OnTileChangedListener) {
@@ -206,9 +206,9 @@ internal class SubsamplingHelper constructor(
     }
 
     fun eachTileList(action: (tile: Tile, load: Boolean) -> Unit) {
-        val drawableSize = zoomerHelper.drawableSize.takeIf { !it.isEmpty } ?: return
+        val drawableSize = zoomAbility.drawableSize.takeIf { !it.isEmpty } ?: return
         val drawableVisibleRect = tempDrawableVisibleRect.apply {
-            zoomerHelper.getVisibleRect(this)
+            zoomAbility.getVisibleRect(this)
         }.takeIf { !it.isEmpty } ?: return
         tileManager?.eachTileList(drawableSize, drawableVisibleRect, action)
     }
@@ -222,7 +222,7 @@ internal class SubsamplingHelper constructor(
             "destroy"
         }
         _destroyed = true
-        zoomerHelper.removeOnMatrixChangeListener(onMatrixChangeListener)
+        zoomAbility.removeOnMatrixChangeListener(onMatrixChangeListener)
         scope.cancel()
         tileManager?.destroy()
         tileManager = null

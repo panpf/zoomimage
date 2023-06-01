@@ -70,7 +70,7 @@ class SettingsEventViewModel(application: Application) : AndroidViewModel(applic
         }
         zoomImageView.lifecycleOwner.lifecycleScope.launch {
             prefsService.showTileBoundsInHugeImagePage.stateFlow.collect {
-                zoomImageView.zoomAbility.showTileBounds = it
+                zoomImageView.subsamplingAbility.showTileBounds = it
             }
         }
         zoomImageView.lifecycleOwner.lifecycleScope.launch {
