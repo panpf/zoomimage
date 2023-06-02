@@ -24,7 +24,6 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import com.github.panpf.zoom.internal.ImageViewBridge
 
@@ -34,30 +33,23 @@ open class SubsamplingImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
+    // Must be nullable, otherwise it will cause initialization in the constructor to fail
+    private var _zoomAbility: ZoomAbility? = null
     val zoomAbility: ZoomAbility
+        get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
+
+    // Must be nullable, otherwise it will cause initialization in the constructor to fail
+    private val _subsamplingAbility: SubsamplingAbility?
     val subsamplingAbility: SubsamplingAbility
+        get() = _subsamplingAbility
+            ?: throw IllegalStateException("subsamplingAbility not initialized")
 
     init {
         @Suppress("LeakingThis")
-        zoomAbility = ZoomAbility(this, this)
+        val zoomAbility = ZoomAbility(this, this)
+        _zoomAbility = zoomAbility
         @Suppress("LeakingThis")
-        subsamplingAbility = SubsamplingAbility(this, this, zoomAbility)
-    }
-
-    final override fun superSetImageMatrix(matrix: Matrix?) {
-        super.setImageMatrix(matrix)
-    }
-
-    final override fun superGetImageMatrix(): Matrix {
-        return super.getImageMatrix()
-    }
-
-    final override fun superSetScaleType(scaleType: ImageView.ScaleType) {
-        super.setScaleType(scaleType)
-    }
-
-    final override fun superGetScaleType(): ImageView.ScaleType {
-        return super.getScaleType()
+        _subsamplingAbility = SubsamplingAbility(this, this, zoomAbility)
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
@@ -65,8 +57,8 @@ open class SubsamplingImageView @JvmOverloads constructor(
         super.setImageDrawable(drawable)
         val newDrawable = this.drawable
         if (oldDrawable !== newDrawable) {
-            zoomAbility.onDrawableChanged(oldDrawable, newDrawable)
-            subsamplingAbility.onDrawableChanged(oldDrawable, newDrawable)
+            _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+            _subsamplingAbility?.onDrawableChanged(oldDrawable, newDrawable)
         }
     }
 
@@ -75,66 +67,74 @@ open class SubsamplingImageView @JvmOverloads constructor(
         super.setImageURI(uri)
         val newDrawable = this.drawable
         if (oldDrawable !== newDrawable) {
-            zoomAbility.onDrawableChanged(oldDrawable, newDrawable)
-            subsamplingAbility.onDrawableChanged(oldDrawable, newDrawable)
+            _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+            _subsamplingAbility?.onDrawableChanged(oldDrawable, newDrawable)
         }
     }
 
-    final override fun setScaleType(scaleType: ImageView.ScaleType) {
-        if (!zoomAbility.setScaleType(scaleType)) {
+    override fun setScaleType(scaleType: ScaleType) {
+        if (_zoomAbility?.setScaleType(scaleType) != true) {
             super.setScaleType(scaleType)
         }
     }
 
-    final override fun getScaleType(): ImageView.ScaleType {
-        return zoomAbility.getScaleType() ?: super.getScaleType()
+    override fun getScaleType(): ScaleType {
+        return _zoomAbility?.getScaleType() ?: super.getScaleType()
     }
 
-    final override fun setImageMatrix(matrix: Matrix?) {
+    override fun setImageMatrix(matrix: Matrix?) {
         // intercept
-    }
-
-    final override fun getImageMatrix(): Matrix {
-        return super.getImageMatrix()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        zoomAbility.onAttachedToWindow()
-        subsamplingAbility.onAttachedToWindow()
+        _zoomAbility?.onAttachedToWindow()
+        _subsamplingAbility?.onAttachedToWindow()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        zoomAbility.onDetachedFromWindow()
-        subsamplingAbility.onDetachedFromWindow()
+        _zoomAbility?.onDetachedFromWindow()
+        _subsamplingAbility?.onDetachedFromWindow()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        zoomAbility.onSizeChanged(w, h, oldw, oldh)
-        subsamplingAbility.onSizeChanged(w, h, oldw, oldh)
+        _zoomAbility?.onSizeChanged(w, h, oldw, oldh)
+        _subsamplingAbility?.onSizeChanged(w, h, oldw, oldh)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        subsamplingAbility.onDraw(canvas)
-        zoomAbility.onDraw(canvas)
+        _subsamplingAbility?.onDraw(canvas)
+        _zoomAbility?.onDraw(canvas)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return zoomAbility.onTouchEvent(event) || super.onTouchEvent(event)
+        return _zoomAbility?.onTouchEvent(event) == true || super.onTouchEvent(event)
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
-        subsamplingAbility.onVisibilityChanged(changedView, visibility)
+        _subsamplingAbility?.onVisibilityChanged(changedView, visibility)
     }
 
     override fun canScrollHorizontally(direction: Int): Boolean =
-        zoomAbility.canScrollHorizontally(direction)
+        _zoomAbility?.canScrollHorizontally(direction) == true
 
     override fun canScrollVertically(direction: Int): Boolean =
-        zoomAbility.canScrollVertically(direction)
+        _zoomAbility?.canScrollVertically(direction) == true
+
+    final override fun superSetImageMatrix(matrix: Matrix?) {
+        super.setImageMatrix(matrix)
+    }
+
+    final override fun superSetScaleType(scaleType: ScaleType) {
+        super.setScaleType(scaleType)
+    }
+
+    final override fun superGetScaleType(): ScaleType {
+        return super.getScaleType()
+    }
 }

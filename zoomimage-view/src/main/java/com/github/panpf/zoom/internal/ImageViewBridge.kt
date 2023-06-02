@@ -25,9 +25,4 @@ interface ImageViewBridge {
      * Call the parent class's setImageMatrix() method
      */
     fun superSetImageMatrix(matrix: Matrix?)
-
-    /**
-     * Call the parent class's getImageMatrix() method
-     */
-    fun superGetImageMatrix(): Matrix?
 }

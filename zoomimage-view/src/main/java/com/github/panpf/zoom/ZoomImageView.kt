@@ -32,19 +32,81 @@ open class ZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
+    // Must be nullable, otherwise it will cause initialization in the constructor to fail
+    private var _zoomAbility: ZoomAbility? = null
     val zoomAbility: ZoomAbility
+        get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
 
     init {
         @Suppress("LeakingThis")
-        zoomAbility = ZoomAbility(this, this)
+        _zoomAbility = ZoomAbility(this, this)
     }
+
+    override fun setImageDrawable(drawable: Drawable?) {
+        val oldDrawable = this.drawable
+        super.setImageDrawable(drawable)
+        val newDrawable = this.drawable
+        if (oldDrawable !== newDrawable) {
+            _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+        }
+    }
+
+    override fun setImageURI(uri: Uri?) {
+        val oldDrawable = this.drawable
+        super.setImageURI(uri)
+        val newDrawable = this.drawable
+        if (oldDrawable !== newDrawable) {
+            _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+        }
+    }
+
+    override fun setScaleType(scaleType: ScaleType) {
+        if (_zoomAbility?.setScaleType(scaleType) != true) {
+            super.setScaleType(scaleType)
+        }
+    }
+
+    override fun getScaleType(): ScaleType {
+        return _zoomAbility?.getScaleType() ?: super.getScaleType()
+    }
+
+    override fun setImageMatrix(matrix: Matrix?) {
+        // intercept
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        _zoomAbility?.onAttachedToWindow()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        _zoomAbility?.onDetachedFromWindow()
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        _zoomAbility?.onSizeChanged(w, h, oldw, oldh)
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        _zoomAbility?.onDraw(canvas)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return _zoomAbility?.onTouchEvent(event) == true || super.onTouchEvent(event)
+    }
+
+    override fun canScrollHorizontally(direction: Int): Boolean =
+        _zoomAbility?.canScrollHorizontally(direction) == true
+
+    override fun canScrollVertically(direction: Int): Boolean =
+        _zoomAbility?.canScrollVertically(direction) == true
 
     final override fun superSetImageMatrix(matrix: Matrix?) {
         super.setImageMatrix(matrix)
-    }
-
-    final override fun superGetImageMatrix(): Matrix {
-        return super.getImageMatrix()
     }
 
     final override fun superSetScaleType(scaleType: ScaleType) {
@@ -54,71 +116,4 @@ open class ZoomImageView @JvmOverloads constructor(
     final override fun superGetScaleType(): ScaleType {
         return super.getScaleType()
     }
-
-    override fun setImageDrawable(drawable: Drawable?) {
-        val oldDrawable = this.drawable
-        super.setImageDrawable(drawable)
-        val newDrawable = this.drawable
-        if (oldDrawable !== newDrawable) {
-            zoomAbility.onDrawableChanged(oldDrawable, newDrawable)
-        }
-    }
-
-    override fun setImageURI(uri: Uri?) {
-        val oldDrawable = this.drawable
-        super.setImageURI(uri)
-        val newDrawable = this.drawable
-        if (oldDrawable !== newDrawable) {
-            zoomAbility.onDrawableChanged(oldDrawable, newDrawable)
-        }
-    }
-
-    final override fun setScaleType(scaleType: ScaleType) {
-        if (!zoomAbility.setScaleType(scaleType)) {
-            super.setScaleType(scaleType)
-        }
-    }
-
-    final override fun getScaleType(): ScaleType {
-        return zoomAbility.getScaleType() ?: super.getScaleType()
-    }
-
-    final override fun setImageMatrix(matrix: Matrix?) {
-        // intercept
-    }
-
-    final override fun getImageMatrix(): Matrix {
-        return super.getImageMatrix()
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        zoomAbility.onAttachedToWindow()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        zoomAbility.onDetachedFromWindow()
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        zoomAbility.onSizeChanged(w, h, oldw, oldh)
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        zoomAbility.onDraw(canvas)
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        return zoomAbility.onTouchEvent(event) || super.onTouchEvent(event)
-    }
-
-    override fun canScrollHorizontally(direction: Int): Boolean =
-        zoomAbility.canScrollHorizontally(direction)
-
-    override fun canScrollVertically(direction: Int): Boolean =
-        zoomAbility.canScrollVertically(direction)
 }
