@@ -24,8 +24,6 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.decode.ImageInfo
 import com.github.panpf.sketch.request.LoadRequest
-import com.github.panpf.sketch.util.Logger
-import com.github.panpf.sketch.util.Size
 import com.github.panpf.zoom.OnMatrixChangeListener
 import com.github.panpf.zoom.OnTileChangedListener
 import com.github.panpf.zoom.Tile
@@ -39,6 +37,7 @@ import kotlinx.coroutines.withContext
 
 internal class SubsamplingHelper constructor(
     private val context: Context,
+    private val logger: Logger,
     private val sketch: Sketch,
     private val zoomAbility: ZoomAbility,
     private val imageUri: String,
@@ -54,7 +53,6 @@ internal class SubsamplingHelper constructor(
 
     private val tempDrawMatrix = Matrix()
     private val tempDrawableVisibleRect = Rect()
-    private val logger: Logger = sketch.logger
     private val scope = CoroutineScope(
         SupervisorJob() + Dispatchers.Main.immediate
     )
@@ -97,6 +95,7 @@ internal class SubsamplingHelper constructor(
                 sketch.components.newFetcherOrThrow(LoadRequest(context, imageUri)).fetch()
             }.getOrThrow().dataSource
             val tileDecoder = TileDecoder(
+                logger = logger,
                 sketch = sketch,
                 imageUri = imageUri,
                 imageInfo = imageInfo,
@@ -192,7 +191,7 @@ internal class SubsamplingHelper constructor(
     @MainThread
     internal fun invalidateView() {
         requiredMainThread()
-        zoomAbility.view?.invalidate()
+        zoomAbility.view.invalidate()
     }
 
     fun addOnTileChangedListener(listener: OnTileChangedListener) {

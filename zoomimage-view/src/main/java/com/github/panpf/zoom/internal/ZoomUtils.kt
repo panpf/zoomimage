@@ -26,7 +26,7 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.github.panpf.sketch.util.Size
+import com.github.panpf.zoom.internal.Size
 import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.math.atan2

@@ -27,7 +27,7 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
-import com.github.panpf.sketch.util.Logger
+import com.github.panpf.zoom.internal.Logger
 import com.github.panpf.zoom.DefaultScaleStateFactory
 import com.github.panpf.zoom.Edge
 import com.github.panpf.zoom.LongImageReadModeDecider
@@ -41,7 +41,7 @@ import com.github.panpf.zoom.OnViewTapListener
 import com.github.panpf.zoom.ReadModeDecider
 import com.github.panpf.zoom.ScaleState
 import com.github.panpf.zoom.ScaleState.Factory
-import com.github.panpf.sketch.util.Size
+import com.github.panpf.zoom.internal.Size
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
@@ -98,21 +98,21 @@ internal class ZoomerHelper constructor(
     var scaleAnimationInterpolator: Interpolator = AccelerateDecelerateInterpolator()
     var onViewLongPressListener: OnViewLongPressListener? = null
     var onViewTapListener: OnViewTapListener? = null
-    var viewSize = Size(0, 0)
+    var viewSize = Size.EMPTY
         internal set(value) {
             if (field != value) {
                 field = value
                 reset()
             }
         }
-    var imageSize = Size(0, 0)
+    var imageSize = Size.EMPTY
         internal set(value) {
             if (field != value) {
                 field = value
                 reset()
             }
         }
-    var drawableSize = Size(0, 0)
+    var drawableSize = Size.EMPTY
         internal set(value) {
             if (field != value) {
                 field = value

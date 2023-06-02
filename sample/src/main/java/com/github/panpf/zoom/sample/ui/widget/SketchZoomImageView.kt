@@ -16,55 +16,26 @@
 package com.github.panpf.zoom.sample.ui.widget
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.util.AttributeSet
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import com.github.panpf.sketch.request.DisplayListenerProvider
-import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.request.ImageOptions
 import com.github.panpf.sketch.request.ImageOptionsProvider
-import com.github.panpf.sketch.request.Listener
-import com.github.panpf.sketch.request.ProgressListener
-import com.github.panpf.sketch.request.isSketchGlobalLifecycle
-import com.github.panpf.zoom.SubsamplingImageView
+import com.github.panpf.zoom.ZoomImageView
 
 open class SketchZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : SubsamplingImageView(context, attrs, defStyle), ImageOptionsProvider, DisplayListenerProvider {
-
-    // todo 恢复 Ability 支持
+) : ZoomImageView(context, attrs, defStyle), ImageOptionsProvider {
 
     override var displayImageOptions: ImageOptions? = null
-    private val listener =
-        object : Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error> {
-            override fun onStart(request: DisplayRequest) {
-                super.onStart(request)
-                subsamplingAbility.lifecycle =
-                    request.lifecycle.takeIf { !it.isSketchGlobalLifecycle() }
-                        ?: context.getLifecycle()
-            }
-        }
 
-    override fun getDisplayListener(): Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error>? {
-        return listener
-    }
-
-    override fun getDisplayProgressListener(): ProgressListener<DisplayRequest>? {
-        return null
-    }
-
-    internal fun Context?.getLifecycle(): Lifecycle? {
-        var context: Context? = this
-        while (true) {
-            when (context) {
-                is LifecycleOwner -> return context.lifecycle
-                is ContextWrapper -> context = context.baseContext
-                else -> return null
-            }
-        }
-    }
+    // 不采样时，不需要图片的原始尺寸
+//    override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
+//        super.onDrawableChanged(oldDrawable, newDrawable)
+//        val sketchDrawable = newDrawable?.findLastSketchDrawable()
+//        val imageSize = sketchDrawable
+//            ?.let { Size(it.imageInfo.width, it.imageInfo.height) }
+//            ?: Size.EMPTY
+//        _zoomAbility?.setImageSize(imageSize)
+//    }
 }

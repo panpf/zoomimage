@@ -34,26 +34,24 @@ import com.github.panpf.sketch.decode.internal.isInBitmapError
 import com.github.panpf.sketch.decode.internal.isSrcRectError
 import com.github.panpf.sketch.decode.internal.logString
 import com.github.panpf.sketch.decode.internal.setInBitmapForRegion
-import com.github.panpf.sketch.util.Logger
-import com.github.panpf.sketch.util.Size
 import com.github.panpf.zoom.Tile
 import java.util.LinkedList
 
 internal class TileDecoder internal constructor(
+    private val logger: Logger,
     sketch: Sketch,
     val imageUri: String,
     val imageInfo: ImageInfo,
     private val disallowReuseBitmap: Boolean,
     private val dataSource: DataSource,
 ) {
-    private val logger: Logger = sketch.logger
     private val bitmapPool: BitmapPool = sketch.bitmapPool
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
     private val exifOrientationHelper: ExifOrientationHelper =
         ExifOrientationHelper(imageInfo.exifOrientation)
     private var _destroyed: Boolean = false
     private val imageSize: Size = Size(imageInfo.width, imageInfo.height)
-    private val addedImageSize: Size by lazy { exifOrientationHelper.addToSize(imageSize) }
+    private val addedImageSize: Size by lazy { exifOrientationHelper.addToSize(imageSize.toSketchSize()).toZoomSize() }
 
     @Suppress("MemberVisibilityCanBePrivate")
     val destroyed: Boolean
@@ -80,15 +78,15 @@ internal class TileDecoder internal constructor(
         requiredWorkThread()
 
         val imageSize = imageSize
-        val newSrcRect = exifOrientationHelper.addToRect(srcRect, imageSize)
+        val newSrcRect = exifOrientationHelper.addToRect(srcRect, imageSize.toSketchSize())
         val decodeOptions = BitmapFactory.Options().apply {
             this.inSampleSize = inSampleSize
         }
         bitmapPool.setInBitmapForRegion(
             options = decodeOptions,
-            regionSize = Size(newSrcRect.width(), newSrcRect.height()),
+            regionSize = Size(newSrcRect.width(), newSrcRect.height()).toSketchSize(),
             imageMimeType = imageInfo.mimeType,
-            imageSize = addedImageSize,
+            imageSize = addedImageSize.toSketchSize(),
             disallowReuseBitmap = disallowReuseBitmap,
             caller = "tile:decodeRegion"
         )

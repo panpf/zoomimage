@@ -16,6 +16,7 @@ import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.sketch.util.getLastChildDrawable
 import com.github.panpf.zoom.internal.ImageViewBridge
+import com.github.panpf.zoom.internal.Logger
 import com.github.panpf.zoom.internal.SubsamplingHelper
 import com.github.panpf.zoom.internal.canUseSubsampling
 import com.github.panpf.zoom.internal.contentSize
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
 
 class SubsamplingAbility(
     val view: View,
+    val logger: Logger,
     val imageViewBridge: ImageViewBridge,
     val zoomAbility: ZoomAbility
 ) {
@@ -92,16 +94,18 @@ class SubsamplingAbility(
         subsamplingHelper?.onDraw(canvas)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onVisibilityChanged(changedView: View, visibility: Int) {
         subsamplingHelper?.paused = visibility != View.VISIBLE
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
         postDelayResetSubsamplingHelper()
     }
 
     private fun registerLifecycleObserver() {
-        if (view?.isAttachedToWindowCompat == true) {
+        if (view.isAttachedToWindowCompat) {
             lifecycle?.addObserver(lifecycleObserver)
             subsamplingHelper?.paused =
                 lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == false
@@ -129,10 +133,10 @@ class SubsamplingAbility(
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        val imageView = view ?: return
         destroy()
-        if (imageView.isAttachedToWindowCompat) {
+        if (view.isAttachedToWindowCompat) {
             initialize()
         }
     }
@@ -142,11 +146,10 @@ class SubsamplingAbility(
     }
 
     private fun newSubsamplingHelper(): SubsamplingHelper? {
-        val zoomAbility = zoomAbility ?: return null
-        val imageView = view ?: return null
-        val imageViewSuperBridge = imageViewBridge ?: return null
+        val zoomAbility = zoomAbility
+        val imageView = view
+        val imageViewSuperBridge = imageViewBridge
         val sketch = imageView.context.sketch
-        val logger = sketch.logger
 
         val viewContentSize = imageView.contentSize
         if (viewContentSize == null) {
@@ -247,6 +250,7 @@ class SubsamplingAbility(
         }
         return SubsamplingHelper(
             context = imageView.context,
+            logger = logger,
             sketch = sketch,
             zoomAbility = zoomAbility,
             imageUri = sketchDrawable.imageUri,

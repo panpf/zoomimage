@@ -25,6 +25,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import com.github.panpf.zoom.internal.ImageViewBridge
+import com.github.panpf.zoom.internal.Logger
 
 open class ZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -33,13 +34,17 @@ open class ZoomImageView @JvmOverloads constructor(
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    private var _zoomAbility: ZoomAbility? = null
+    protected var _zoomAbility: ZoomAbility? = null
     val zoomAbility: ZoomAbility
         get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
 
     init {
         @Suppress("LeakingThis")
-        _zoomAbility = ZoomAbility(this, this)
+        _zoomAbility = ZoomAbility(this, createLogger(), this)
+    }
+
+    open fun createLogger(): Logger {
+        return Logger()
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
@@ -47,7 +52,7 @@ open class ZoomImageView @JvmOverloads constructor(
         super.setImageDrawable(drawable)
         val newDrawable = this.drawable
         if (oldDrawable !== newDrawable) {
-            _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+            onDrawableChanged(oldDrawable, newDrawable)
         }
     }
 
@@ -56,8 +61,12 @@ open class ZoomImageView @JvmOverloads constructor(
         super.setImageURI(uri)
         val newDrawable = this.drawable
         if (oldDrawable !== newDrawable) {
-            _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+            onDrawableChanged(oldDrawable, newDrawable)
         }
+    }
+
+    open fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
+        _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
     }
 
     override fun setScaleType(scaleType: ScaleType) {

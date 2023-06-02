@@ -17,7 +17,7 @@ package com.github.panpf.zoom
 
 import android.graphics.RectF
 import android.widget.ImageView.ScaleType
-import com.github.panpf.sketch.util.Size
+import com.github.panpf.zoom.internal.Size
 import com.github.panpf.zoom.ScaleState.Initial
 import com.github.panpf.zoom.ScaleState.Initial.Normal
 import com.github.panpf.zoom.internal.format

@@ -20,4 +20,4 @@ import android.util.AttributeSet
 
 class MyZoomImageView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
-) : SketchZoomImageView(context, attrs, defStyle)
+) : SketchSubsamplingImageView(context, attrs, defStyle)

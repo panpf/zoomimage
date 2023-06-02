@@ -32,7 +32,6 @@ import com.github.panpf.sketch.cache.CountBitmap
 import com.github.panpf.sketch.cache.MemoryCache
 import com.github.panpf.sketch.decode.internal.freeBitmap
 import com.github.panpf.sketch.decode.internal.logString
-import com.github.panpf.sketch.util.Size
 import com.github.panpf.zoom.Tile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -262,6 +261,7 @@ internal class TileManager constructor(
                         "loadTile. null. $tile. '$imageUri'"
                     }
                 }
+
                 isActive -> {
                     withContext(Dispatchers.Main) {
                         val newCountBitmap = CountBitmap(
@@ -290,6 +290,7 @@ internal class TileManager constructor(
                         notifyTileChanged()
                     }
                 }
+
                 else -> {
                     logger.d(SubsamplingHelper.MODULE) {
                         "loadTile. canceled. $tile. '$imageUri'"

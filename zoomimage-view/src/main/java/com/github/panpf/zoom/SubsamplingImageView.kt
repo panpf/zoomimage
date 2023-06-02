@@ -26,6 +26,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import com.github.panpf.zoom.internal.ImageViewBridge
+import com.github.panpf.zoom.internal.Logger
 
 open class SubsamplingImageView @JvmOverloads constructor(
     context: Context,
@@ -34,7 +35,7 @@ open class SubsamplingImageView @JvmOverloads constructor(
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    private var _zoomAbility: ZoomAbility? = null
+    protected var _zoomAbility: ZoomAbility? = null
     val zoomAbility: ZoomAbility
         get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
 
@@ -45,11 +46,17 @@ open class SubsamplingImageView @JvmOverloads constructor(
             ?: throw IllegalStateException("subsamplingAbility not initialized")
 
     init {
+        val logger = createLogger()
+
         @Suppress("LeakingThis")
-        val zoomAbility = ZoomAbility(this, this)
+        val zoomAbility = ZoomAbility(this, logger, this)
         _zoomAbility = zoomAbility
         @Suppress("LeakingThis")
-        _subsamplingAbility = SubsamplingAbility(this, this, zoomAbility)
+        _subsamplingAbility = SubsamplingAbility(this, logger, this, zoomAbility)
+    }
+
+    open fun createLogger(): Logger {
+        return Logger()
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
@@ -57,8 +64,7 @@ open class SubsamplingImageView @JvmOverloads constructor(
         super.setImageDrawable(drawable)
         val newDrawable = this.drawable
         if (oldDrawable !== newDrawable) {
-            _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
-            _subsamplingAbility?.onDrawableChanged(oldDrawable, newDrawable)
+            onDrawableChanged(oldDrawable, newDrawable)
         }
     }
 
@@ -67,9 +73,13 @@ open class SubsamplingImageView @JvmOverloads constructor(
         super.setImageURI(uri)
         val newDrawable = this.drawable
         if (oldDrawable !== newDrawable) {
-            _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
-            _subsamplingAbility?.onDrawableChanged(oldDrawable, newDrawable)
+            onDrawableChanged(oldDrawable, newDrawable)
         }
+    }
+
+    open fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
+        _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+        _subsamplingAbility?.onDrawableChanged(oldDrawable, newDrawable)
     }
 
     override fun setScaleType(scaleType: ScaleType) {

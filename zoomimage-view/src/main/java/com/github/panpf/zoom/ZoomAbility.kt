@@ -27,16 +27,19 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
-import com.github.panpf.sketch.sketch
-import com.github.panpf.sketch.util.Size
-import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.zoom.Edge.NONE
 import com.github.panpf.zoom.ScaleState.Factory
 import com.github.panpf.zoom.internal.ImageViewBridge
+import com.github.panpf.zoom.internal.Logger
+import com.github.panpf.zoom.internal.Size
 import com.github.panpf.zoom.internal.ZoomerHelper
 import com.github.panpf.zoom.internal.isAttachedToWindowCompat
 
-class ZoomAbility(val view: View, val imageViewBridge: ImageViewBridge) {
+class ZoomAbility(
+    val view: View,
+    private val logger: Logger,
+    val imageViewBridge: ImageViewBridge,
+) {
 
     private var zoomerHelper: ZoomerHelper? = null
     private var onMatrixChangeListenerList: MutableSet<OnMatrixChangeListener>? = null
@@ -108,7 +111,7 @@ class ZoomAbility(val view: View, val imageViewBridge: ImageViewBridge) {
         addOnMatrixChangeListener {
             val container = imageViewBridge
             val zoomer = zoomerHelper
-            if (container != null && zoomer != null) {
+            if (zoomer != null) {
                 val matrix = imageMatrix.apply { zoomer.getDrawMatrix(this) }
                 container.superSetImageMatrix(matrix)
             }
@@ -218,7 +221,7 @@ class ZoomAbility(val view: View, val imageViewBridge: ImageViewBridge) {
         get() = zoomerHelper?.imageSize
 
     val drawableSize: Size
-        get() = zoomerHelper?.drawableSize ?: Size(0, 0)
+        get() = zoomerHelper?.drawableSize ?: Size.EMPTY
 
     fun getDrawMatrix(matrix: Matrix) = zoomerHelper?.getDrawMatrix(matrix)
 
@@ -350,7 +353,7 @@ class ZoomAbility(val view: View, val imageViewBridge: ImageViewBridge) {
         }
         return ZoomerHelper(
             context = view.context,
-            logger = view.context.sketch.logger,
+            logger = logger,
             view = view,
             scaleType = scaleType,
         ).apply {
@@ -383,13 +386,12 @@ class ZoomAbility(val view: View, val imageViewBridge: ImageViewBridge) {
     }
 
     private fun resetDrawableSize() {
-        val imageViewSuperBridge = imageViewBridge ?: return
-        val zoomerHelper = zoomerHelper ?: return
-        val drawable = imageViewSuperBridge.getDrawable()
-        zoomerHelper.drawableSize =
-            Size(drawable?.intrinsicWidth ?: 0, drawable?.intrinsicHeight ?: 0)
-        val sketchDrawable = drawable?.findLastSketchDrawable()
-        zoomerHelper.imageSize =
-            Size(sketchDrawable?.imageInfo?.width ?: 0, sketchDrawable?.imageInfo?.height ?: 0)
+        val drawable = imageViewBridge.getDrawable()
+        zoomerHelper?.drawableSize =
+            drawable?.let { Size(it.intrinsicWidth, it.intrinsicHeight) } ?: Size.EMPTY
+    }
+
+    fun setImageSize(size: Size) {
+        zoomerHelper?.imageSize = size
     }
 }

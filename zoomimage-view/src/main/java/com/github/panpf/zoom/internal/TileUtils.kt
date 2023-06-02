@@ -17,7 +17,7 @@ package com.github.panpf.zoom.internal
 
 import android.graphics.Rect
 import com.github.panpf.sketch.decode.internal.maxBitmapSize
-import com.github.panpf.sketch.util.Size
+import com.github.panpf.zoom.internal.Size
 import com.github.panpf.zoom.Tile
 import kotlin.math.abs
 import kotlin.math.ceil
