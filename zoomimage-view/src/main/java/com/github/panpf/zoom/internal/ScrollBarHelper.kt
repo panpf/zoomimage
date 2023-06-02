@@ -29,7 +29,7 @@ import kotlin.math.roundToInt
 
 internal class ScrollBarHelper(
     context: Context,
-    private val zoomerHelper: ZoomerHelper
+    private val engine: ZoomEngine
 ) {
 
     private val scrollBarSize: Float = 3f * Resources.getSystem().displayMetrics.density
@@ -40,7 +40,7 @@ internal class ScrollBarHelper(
         color = Color.parseColor("#000000")
         alpha = scrollBarAlpha
     }
-    private val view = zoomerHelper.view
+    private val view = engine.view
     private val drawRectF = RectF()
     private val scrollBarRectF = RectF()
     private val fadeRunnable: FadeRunnable = FadeRunnable(context, this)
@@ -48,10 +48,10 @@ internal class ScrollBarHelper(
 
     fun onDraw(canvas: Canvas) {
         val drawRectF = drawRectF
-            .apply { zoomerHelper.getDrawRect(this) }
+            .apply { engine.getDrawRect(this) }
             .takeIf { !it.isEmpty }
             ?: return
-        val (viewWidth, viewHeight) = zoomerHelper.viewSize.takeIf { !it.isEmpty } ?: return
+        val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty } ?: return
         val drawWidth = drawRectF.width()
         val drawHeight = drawRectF.height()
         val margin = scrollBarMargin + scrollBarSize + scrollBarMargin

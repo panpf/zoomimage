@@ -17,8 +17,6 @@ package com.github.panpf.zoom.internal
 
 import android.graphics.Rect
 import com.github.panpf.sketch.decode.internal.maxBitmapSize
-import com.github.panpf.zoom.internal.Size
-import com.github.panpf.zoom.Tile
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -102,7 +100,7 @@ internal fun Rect.crossWith(other: Rect): Boolean {
             && this.bottom > other.top
 }
 
-internal fun canUseSubsampling(
+fun canUseSubsampling(
     imageWidth: Int, imageHeight: Int, drawableWidth: Int, drawableHeight: Int
 ): Boolean {
     val imageRatio = (imageWidth / imageHeight.toFloat()).format(1)

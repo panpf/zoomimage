@@ -35,24 +35,25 @@ open class SubsamplingImageView @JvmOverloads constructor(
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
+    @Suppress("PropertyName")
     protected var _zoomAbility: ZoomAbility? = null
     val zoomAbility: ZoomAbility
         get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    private val _subsamplingAbility: SubsamplingAbility?
+    protected val _subsamplingAbility: SubsamplingAbility?
     val subsamplingAbility: SubsamplingAbility
         get() = _subsamplingAbility
             ?: throw IllegalStateException("subsamplingAbility not initialized")
 
-    init {
-        val logger = createLogger()
+    protected val logger by lazy { createLogger() }
 
+    init {
         @Suppress("LeakingThis")
         val zoomAbility = ZoomAbility(this, logger, this)
         _zoomAbility = zoomAbility
         @Suppress("LeakingThis")
-        _subsamplingAbility = SubsamplingAbility(this, logger, this, zoomAbility)
+        _subsamplingAbility = SubsamplingAbility(this, logger, zoomAbility)
     }
 
     open fun createLogger(): Logger {

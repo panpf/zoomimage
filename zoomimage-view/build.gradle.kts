@@ -44,6 +44,7 @@ dependencies {
     api(libs.kotlinx.coroutines.android)
     api(libs.androidx.annotation)
     api(libs.androidx.appcompat)
+    api(libs.androidx.exifinterface)
     api(libs.panpf.sketch3)
 //    api(libs.androidx.core.ktx)
 //    api(libs.androidx.appcompat)

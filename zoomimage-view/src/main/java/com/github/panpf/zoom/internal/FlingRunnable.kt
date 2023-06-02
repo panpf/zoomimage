@@ -22,7 +22,7 @@ import kotlin.math.roundToInt
 
 internal class FlingRunnable(
     context: Context,
-    private val zoomerHelper: ZoomerHelper,
+    private val engine: ZoomEngine,
     private val scaleDragHelper: ScaleDragHelper,
     private val velocityX: Int,
     private val velocityY: Int,
@@ -43,7 +43,7 @@ internal class FlingRunnable(
             .apply { scaleDragHelper.getDrawRect(this) }
             .takeIf { !it.isEmpty }
             ?: return
-        val (viewWidth, viewHeight) = zoomerHelper.viewSize
+        val (viewWidth, viewHeight) = engine.viewSize
 
         val minX: Int
         val maxX: Int
@@ -71,12 +71,12 @@ internal class FlingRunnable(
         currentY = startY
         if (startX != maxX || startY != maxY) {
             scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY, 0, 0)
-            zoomerHelper.view.post(this)
+            engine.view.post(this)
         }
     }
 
     fun cancel() {
-        zoomerHelper.view.removeCallbacks(this)
+        engine.view.removeCallbacks(this)
         scroller.forceFinished(true)
     }
 
@@ -94,7 +94,7 @@ internal class FlingRunnable(
             currentX = newX
             currentY = newY
             // Post On animation
-            zoomerHelper.view.postOnAnimation(this)
+            engine.view.postOnAnimation(this)
         }
     }
 }

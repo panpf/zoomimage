@@ -34,13 +34,16 @@ open class ZoomImageView @JvmOverloads constructor(
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
+    @Suppress("PropertyName", "MemberVisibilityCanBePrivate")
     protected var _zoomAbility: ZoomAbility? = null
     val zoomAbility: ZoomAbility
         get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
 
+    protected val logger by lazy { createLogger() }
+
     init {
         @Suppress("LeakingThis")
-        _zoomAbility = ZoomAbility(this, createLogger(), this)
+        _zoomAbility = ZoomAbility(this, logger, this)
     }
 
     open fun createLogger(): Logger {

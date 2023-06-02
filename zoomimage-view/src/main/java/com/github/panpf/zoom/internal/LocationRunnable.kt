@@ -22,7 +22,7 @@ import androidx.core.view.ViewCompat
 
 internal class LocationRunnable(
     context: Context,
-    private val zoomerHelper: ZoomerHelper,
+    private val engine: ZoomEngine,
     private val scaleDragHelper: ScaleDragHelper,
     private val startX: Int,
     private val startY: Int,
@@ -43,11 +43,11 @@ internal class LocationRunnable(
         currentX = startX
         currentY = startY
         scroller.startScroll(startX, startY, endX - startX, endY - startY, 300)
-        zoomerHelper.view.post(this)
+        engine.view.post(this)
     }
 
     fun cancel() {
-        zoomerHelper.view.removeCallbacks(this)
+        engine.view.removeCallbacks(this)
         scroller.forceFinished(true)
     }
 
@@ -64,7 +64,7 @@ internal class LocationRunnable(
             scaleDragHelper.translateBy(dx, dy)
             currentX = newX
             currentY = newY
-            ViewCompat.postOnAnimation(zoomerHelper.view, this)
+            ViewCompat.postOnAnimation(engine.view, this)
         }
     }
 }

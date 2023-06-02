@@ -1,25 +1,14 @@
 package com.github.panpf.zoom
 
 import android.graphics.Canvas
-import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.github.panpf.sketch.cache.CachePolicy
-import com.github.panpf.sketch.decode.internal.ImageFormat
-import com.github.panpf.sketch.decode.internal.supportBitmapRegionDecoder
-import com.github.panpf.sketch.request.DisplayResult
-import com.github.panpf.sketch.sketch
-import com.github.panpf.sketch.stateimage.internal.SketchStateDrawable
-import com.github.panpf.sketch.util.SketchUtils
-import com.github.panpf.sketch.util.findLastSketchDrawable
-import com.github.panpf.sketch.util.getLastChildDrawable
-import com.github.panpf.zoom.internal.ImageViewBridge
+import androidx.lifecycle.LifecycleOwner
 import com.github.panpf.zoom.internal.Logger
-import com.github.panpf.zoom.internal.SubsamplingHelper
-import com.github.panpf.zoom.internal.canUseSubsampling
-import com.github.panpf.zoom.internal.contentSize
+import com.github.panpf.zoom.internal.SubsamplingEngine
+import com.github.panpf.zoom.internal.Tile
 import com.github.panpf.zoom.internal.getLifecycle
 import com.github.panpf.zoom.internal.isAttachedToWindowCompat
 import kotlinx.coroutines.CoroutineScope
@@ -29,259 +18,149 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@Suppress("unused", "UNUSED_PARAMETER")
 class SubsamplingAbility(
-    val view: View,
-    val logger: Logger,
-    val imageViewBridge: ImageViewBridge,
-    val zoomAbility: ZoomAbility
+    private val view: View,
+    logger: Logger,
+    zoomAbility: ZoomAbility
 ) {
 
     companion object {
-        private const val MODULE = "ZoomAbility"
+        private const val MODULE = "SubsamplingAbility"
     }
 
-    private var subsamplingHelper: SubsamplingHelper? = null
-    private val lifecycleObserver = LifecycleEventObserver { _, event ->
-        when (event) {
-            Lifecycle.Event.ON_START -> {
-                subsamplingHelper?.paused = true
-            }
-
-            Lifecycle.Event.ON_STOP -> {
-                subsamplingHelper?.paused = false
-            }
-
-            else -> {}
-        }
-    }
-    private var onTileChangedListenerList: MutableSet<OnTileChangedListener>? = null
-    private val scope = CoroutineScope(
-        SupervisorJob() + Dispatchers.Main.immediate
-    )
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val engine: SubsamplingEngine
+    private var lifecycle: Lifecycle? = null
+    private var imageSource: ImageSource? = null
+    private val engineAutoPauseLifecycleObserver = EngineAutoPauseLifecycleObserver()
     private var lastPostResetSubsamplingHelperJob: Job? = null
-    var lifecycle: Lifecycle? = null
-        set(value) {
-            if (value != field) {
-                unregisterLifecycleObserver()
-                field = value
-                registerLifecycleObserver()
-            }
+
+    init {
+        setLifecycle(view.context.getLifecycle())
+        engine = SubsamplingEngine(view.context, logger, zoomAbility.engine)
+    }
+
+
+    /* ********************************* Interact with consumers ********************************* */
+
+    fun setImageSource(imageSource: ImageSource?) {
+        this.imageSource = imageSource
+        engine.destroy()
+        if (view.isAttachedToWindowCompat) {
+            delayReset()
         }
-    var showTileBounds: Boolean = false
+    }
+
+    fun setLifecycle(lifecycle: Lifecycle?) {
+        if (this.lifecycle != lifecycle) {
+            unregisterLifecycleObserver()
+            this.lifecycle = lifecycle
+            registerLifecycleObserver()
+        }
+    }
+
+    var showTileBounds: Boolean
+        get() = engine.showTileBounds
         set(value) {
-            field = value
-            subsamplingHelper?.showTileBounds = value
+            engine.showTileBounds = value
+        }
+
+    var disallowMemoryCache: Boolean
+        get() = engine.disallowMemoryCache
+        set(value) {
+            engine.disallowMemoryCache = value
+        }
+
+    var disallowReuseBitmap: Boolean
+        get() = engine.disallowReuseBitmap
+        set(value) {
+            engine.disallowReuseBitmap = value
         }
 
     val tileList: List<Tile>?
-        get() = subsamplingHelper?.tileList
+        get() = engine.tileList
 
-    init {
-        this.lifecycle = view.context.getLifecycle()
+    fun eachTileList(action: (tile: Tile, load: Boolean) -> Unit) {
+        engine.eachTileList(action)
     }
 
+    fun addOnTileChangedListener(listener: OnTileChangedListener) {
+        engine.addOnTileChangedListener(listener)
+    }
+
+    fun removeOnTileChangedListener(listener: OnTileChangedListener): Boolean {
+        return engine.removeOnTileChangedListener(listener)
+    }
+
+
+    /* ********************************* Interact with View ********************************* */
+
     fun onAttachedToWindow() {
-        initialize()
+        delayReset()
         registerLifecycleObserver()
     }
 
     fun onDetachedFromWindow() {
-        destroy()
+        engine.destroy()
         unregisterLifecycleObserver()
     }
 
     fun onDraw(canvas: Canvas) {
-        subsamplingHelper?.onDraw(canvas)
+        engine.onDraw(canvas)
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun onVisibilityChanged(changedView: View, visibility: Int) {
-        subsamplingHelper?.paused = visibility != View.VISIBLE
+        engine.paused = visibility != View.VISIBLE
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
-        postDelayResetSubsamplingHelper()
+        delayReset()
     }
 
-    private fun registerLifecycleObserver() {
+    fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
+        engine.destroy()
         if (view.isAttachedToWindowCompat) {
-            lifecycle?.addObserver(lifecycleObserver)
-            subsamplingHelper?.paused =
-                lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == false
+            delayReset()
         }
     }
 
-    private fun unregisterLifecycleObserver() {
-        lifecycle?.removeObserver(lifecycleObserver)
-        subsamplingHelper?.paused = false
-    }
 
-    private fun destroy() {
-        subsamplingHelper?.destroy()
-        subsamplingHelper = null
-    }
+    /* ********************************* Internal ********************************* */
 
-    private fun postDelayResetSubsamplingHelper() {
+    private fun delayReset() {
         // Triggering the reset SubsamplingHelper frequently (such as changing the view size in shared element animations)
         // can cause large fluctuations in memory, so delayed resets can avoid this problem
         lastPostResetSubsamplingHelperJob?.cancel()
         lastPostResetSubsamplingHelperJob = scope.launch(Dispatchers.Main) {
             delay(60)
-            subsamplingHelper?.destroy()
-            subsamplingHelper = newSubsamplingHelper()
+            engine.destroy()
+            val imageSource = imageSource
+            if (imageSource != null) {
+                engine.setImageSource(imageSource)
+            }
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        destroy()
+    private fun registerLifecycleObserver() {
         if (view.isAttachedToWindowCompat) {
-            initialize()
+            lifecycle?.addObserver(engineAutoPauseLifecycleObserver)
+            engine.paused = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == false
         }
     }
 
-    private fun initialize() {
-        postDelayResetSubsamplingHelper()
+    private fun unregisterLifecycleObserver() {
+        lifecycle?.removeObserver(engineAutoPauseLifecycleObserver)
+        engine.paused = false
     }
 
-    private fun newSubsamplingHelper(): SubsamplingHelper? {
-        val zoomAbility = zoomAbility
-        val imageView = view
-        val imageViewSuperBridge = imageViewBridge
-        val sketch = imageView.context.sketch
-
-        val viewContentSize = imageView.contentSize
-        if (viewContentSize == null) {
-            logger.d(MODULE) { "Can't use Subsampling. View size error" }
-            return null
-        }
-
-        val drawable = imageViewSuperBridge.getDrawable()
-        if (drawable == null) {
-            logger.d(MODULE) { "Can't use Subsampling. Drawable is null" }
-            return null
-        }
-        if (drawable.getLastChildDrawable() is SketchStateDrawable) {
-            logger.d(MODULE) { "Can't use Subsampling. Drawable is StateDrawable" }
-            return null
-        }
-        val drawableWidth = drawable.intrinsicWidth
-        val drawableHeight = drawable.intrinsicHeight
-
-        val sketchDrawable = drawable.findLastSketchDrawable()
-        if (sketchDrawable == null) {
-            logger.d(MODULE) { "Can't use Subsampling. Drawable is not SketchDrawable" }
-            return null
-        }
-        if (sketchDrawable is Animatable) {
-            logger.d(MODULE) { "Can't use Subsampling. Drawable is Animatable" }
-            return null
-        }
-        val imageWidth = sketchDrawable.imageInfo.width
-        val imageHeight = sketchDrawable.imageInfo.height
-        val mimeType = sketchDrawable.imageInfo.mimeType
-        val requestKey = sketchDrawable.requestKey
-
-        if (drawableWidth >= imageWidth && drawableHeight >= imageHeight) {
-            logger.d(MODULE) {
-                "Don't need to use Subsampling. drawableSize: %dx%d, imageSize: %dx%d, mimeType: %s. '%s'"
-                    .format(
-                        drawableWidth,
-                        drawableHeight,
-                        imageWidth,
-                        imageHeight,
-                        mimeType,
-                        requestKey
-                    )
-            }
-            return null
-        }
-        if (!canUseSubsampling(imageWidth, imageHeight, drawableWidth, drawableHeight)) {
-            logger.d(MODULE) {
-                "Can't use Subsampling. drawableSize error. drawableSize: %dx%d, imageSize: %dx%d, mimeType: %s. '%s'"
-                    .format(
-                        drawableWidth,
-                        drawableHeight,
-                        imageWidth,
-                        imageHeight,
-                        mimeType,
-                        requestKey
-                    )
-            }
-            return null
-        }
-        if (ImageFormat.parseMimeType(mimeType)?.supportBitmapRegionDecoder() != true) {
-            logger.d(MODULE) {
-                "MimeType does not support Subsampling. drawableSize: %dx%d, imageSize: %dx%d, mimeType: %s. '%s'"
-                    .format(
-                        drawableWidth,
-                        drawableHeight,
-                        imageWidth,
-                        imageHeight,
-                        mimeType,
-                        requestKey
-                    )
-            }
-            return null
-        }
-
-        logger.d(MODULE) {
-            "Use Subsampling. drawableSize: %dx%d, imageSize: %dx%d, mimeType: %s. '%s'"
-                .format(
-                    drawableWidth,
-                    drawableHeight,
-                    imageWidth,
-                    imageHeight,
-                    mimeType,
-                    requestKey
-                )
-        }
-
-        val memoryCachePolicy: CachePolicy
-        val disallowReuseBitmap: Boolean
-        val displayResult = SketchUtils.getResult(imageView)
-        if (displayResult != null && displayResult is DisplayResult.Success && displayResult.requestKey == requestKey) {
-            memoryCachePolicy = displayResult.request.memoryCachePolicy
-            disallowReuseBitmap = displayResult.request.disallowReuseBitmap
-        } else {
-            memoryCachePolicy = CachePolicy.ENABLED
-            disallowReuseBitmap = false
-        }
-        return SubsamplingHelper(
-            context = imageView.context,
-            logger = logger,
-            sketch = sketch,
-            zoomAbility = zoomAbility,
-            imageUri = sketchDrawable.imageUri,
-            imageInfo = sketchDrawable.imageInfo,
-            viewSize = viewContentSize,
-            memoryCachePolicy = memoryCachePolicy,
-            disallowReuseBitmap = disallowReuseBitmap,
-        ).apply {
-            this@apply.showTileBounds = this@SubsamplingAbility.showTileBounds
-            this@apply.showTileBounds = this@SubsamplingAbility.showTileBounds
-            this@apply.paused =
-                this@SubsamplingAbility.lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == false
-            this@SubsamplingAbility.onTileChangedListenerList?.forEach {
-                this@apply.addOnTileChangedListener(it)
+    private inner class EngineAutoPauseLifecycleObserver : LifecycleEventObserver {
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            when (event) {
+                Lifecycle.Event.ON_START -> engine.paused = true
+                Lifecycle.Event.ON_STOP -> engine.paused = false
+                else -> {}
             }
         }
-    }
-
-    fun eachTileList(action: (tile: Tile, load: Boolean) -> Unit) {
-        subsamplingHelper?.eachTileList(action)
-    }
-
-    fun addOnTileChangedListener(listener: OnTileChangedListener) {
-        this.onTileChangedListenerList = (onTileChangedListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-        subsamplingHelper?.addOnTileChangedListener(listener)
-    }
-
-    fun removeOnTileChangedListener(listener: OnTileChangedListener): Boolean {
-        subsamplingHelper?.removeOnTileChangedListener(listener)
-        return onTileChangedListenerList?.remove(listener) == true
     }
 }

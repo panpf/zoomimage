@@ -16,84 +16,109 @@
 package com.github.panpf.zoom.internal
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Rect
 import androidx.annotation.MainThread
-import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.CachePolicy
-import com.github.panpf.sketch.decode.ImageInfo
-import com.github.panpf.sketch.request.LoadRequest
-import com.github.panpf.zoom.OnMatrixChangeListener
+import androidx.exifinterface.media.ExifInterface
+import com.github.panpf.zoom.ImageSource
 import com.github.panpf.zoom.OnTileChangedListener
-import com.github.panpf.zoom.Tile
-import com.github.panpf.zoom.ZoomAbility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-internal class SubsamplingHelper constructor(
+internal class SubsamplingEngine constructor(
     private val context: Context,
     private val logger: Logger,
-    private val sketch: Sketch,
-    private val zoomAbility: ZoomAbility,
-    private val imageUri: String,
-    private val imageInfo: ImageInfo,
-    private val memoryCachePolicy: CachePolicy,
-    private val disallowReuseBitmap: Boolean,
-    viewSize: Size,
+    private val zoomEngine: ZoomEngine,
 ) {
 
     companion object {
-        internal const val MODULE = "SubsamplingHelper"
+        internal const val MODULE = "SubsamplingEngine"
     }
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var _destroyed: Boolean = false
+    private var imageSource: ImageSource? = null
+    private var tileManager: TileManager? = null
     private val tempDrawMatrix = Matrix()
     private val tempDrawableVisibleRect = Rect()
-    private val scope = CoroutineScope(
-        SupervisorJob() + Dispatchers.Main.immediate
-    )
-    private val onMatrixChangeListener = OnMatrixChangeListener {
-        refreshTiles()
-    }
-
-    private var _destroyed: Boolean = false
-    private var tileManager: TileManager? = null
     internal var onTileChangedListenerList: MutableSet<OnTileChangedListener>? = null
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    val destroyed: Boolean
-        get() = _destroyed
-    val tileList: List<Tile>?
-        get() = tileManager?.tileList
-
+    var disallowMemoryCache: Boolean = false
+    var disallowReuseBitmap: Boolean = false
     var showTileBounds = false
         set(value) {
-            field = value
-            invalidateView()
+            if (field != value) {
+                field = value
+                invalidateView()
+            }
         }
     var paused = false
         set(value) {
             if (field != value) {
                 field = value
                 if (value) {
-                    logger.d(MODULE) { "pause. '$imageUri'" }
+                    imageSource?.run { logger.d(MODULE) { "pause. '$key'" } }
                     tileManager?.clean()
                 } else {
-                    logger.d(MODULE) { "resume. '$imageUri'" }
+                    imageSource?.run { logger.d(MODULE) { "resume. '$key'" } }
                     refreshTiles()
                 }
             }
         }
 
+    val destroyed: Boolean
+        get() = _destroyed
+    val tileList: List<Tile>?
+        get() = tileManager?.tileList
+
     init {
+        zoomEngine.addOnMatrixChangeListener {
+            refreshTiles()
+        }
+    }
+
+    fun setImageSource(imageSource: ImageSource) {
+        val viewContentSize = zoomEngine.viewSize
+        if (viewContentSize.isEmpty) {
+            logger.d(MODULE) { "Can't use Subsampling. View size error" }
+            return
+        }
+        scope.cancel("setImageSource")
         scope.launch(Dispatchers.Main) {
-            val dataSource = withContext(Dispatchers.IO) {
-                sketch.components.newFetcherOrThrow(LoadRequest(context, imageUri)).fetch()
-            }.getOrThrow().dataSource
+            val optionsJob= async(Dispatchers.IO) {
+                kotlin.runCatching {
+                    imageSource.openInputStream().getOrNull()?.use { inputStream ->
+                        BitmapFactory.Options().apply {
+                            inJustDecodeBounds = true
+                            BitmapFactory.decodeStream(inputStream, null, this)
+                        }
+                    }?.takeIf { it.outWidth > 0 && it.outHeight > 0 }
+                }
+            }
+            val exifOrientationJob = async(Dispatchers.IO) {
+                kotlin.runCatching {
+                    imageSource.openInputStream().getOrNull()?.use { inputStream ->
+                        ExifInterface(inputStream)
+                            .getAttributeInt(
+                                ExifInterface.TAG_ORIENTATION,
+                                ExifInterface.ORIENTATION_UNDEFINED
+                            )
+                    }
+                }
+            }
+            val options = optionsJob.await().getOrNull() ?: return@launch
+            val exifOrientation = exifOrientationJob.await().getOrNull() ?: return@launch
+            // todo 继续
+            val imageWidth = options.outWidth
+            val imageHeight = options.outHeight
+            val imageType = options.outMimeType
+            this@SubsamplingEngine.imageSource = imageSource
             val tileDecoder = TileDecoder(
                 logger = logger,
                 sketch = sketch,
@@ -110,17 +135,16 @@ internal class SubsamplingHelper constructor(
                 disallowReuseBitmap = disallowReuseBitmap,
                 viewSize = viewSize,
                 decoder = tileDecoder,
-                subsamplingHelper = this@SubsamplingHelper
+                engine = this@SubsamplingEngine
             )
             refreshTiles()
         }
-
-        zoomAbility.addOnMatrixChangeListener(onMatrixChangeListener)
     }
 
     @MainThread
     private fun refreshTiles() {
         requiredMainThread()
+        val imageSource = imageSource ?: return
 
         if (destroyed) {
             logger.d(MODULE) { "refreshTiles. interrupted. destroyed. '$imageUri'" }
@@ -135,20 +159,20 @@ internal class SubsamplingHelper constructor(
             logger.d(MODULE) { "refreshTiles. interrupted. initializing. '$imageUri'" }
             return
         }
-        if (zoomAbility.rotateDegrees % 90 != 0) {
+        if (zoomEngine.rotateDegrees % 90 != 0) {
             logger.d(MODULE) {
                 "refreshTiles. interrupted. rotate degrees must be in multiples of 90. '$imageUri'"
             }
             return
         }
 
-        val drawableSize = zoomAbility.drawableSize
-        val scaling = zoomAbility.isScaling
+        val drawableSize = zoomEngine.drawableSize
+        val scaling = zoomEngine.isScaling
         val drawMatrix = tempDrawMatrix.apply {
-            zoomAbility.getDrawMatrix(this)
+            zoomEngine.getDrawMatrix(this)
         }
         val drawableVisibleRect = tempDrawableVisibleRect.apply {
-            zoomAbility.getVisibleRect(this)
+            zoomEngine.getVisibleRect(this)
         }
 
         if (drawableVisibleRect.isEmpty) {
@@ -166,7 +190,7 @@ internal class SubsamplingHelper constructor(
             return
         }
 
-        if (zoomAbility.scale.format(2) <= zoomAbility.minScale.format(2)) {
+        if (zoomEngine.scale.format(2) <= zoomEngine.minScale.format(2)) {
             logger.d(MODULE) {
                 "refreshTiles. interrupted. minScale. '$imageUri'"
             }
@@ -182,7 +206,7 @@ internal class SubsamplingHelper constructor(
         requiredMainThread()
 
         if (destroyed) return
-        val drawableSize = zoomAbility.drawableSize
+        val drawableSize = zoomEngine.drawableSize
         val drawMatrix = tempDrawMatrix
         val drawableVisibleRect = tempDrawableVisibleRect
         tileManager?.onDraw(canvas, drawableSize, drawableVisibleRect, drawMatrix)
@@ -191,7 +215,7 @@ internal class SubsamplingHelper constructor(
     @MainThread
     internal fun invalidateView() {
         requiredMainThread()
-        zoomAbility.view.invalidate()
+        zoomEngine.view.invalidate()
     }
 
     fun addOnTileChangedListener(listener: OnTileChangedListener) {
@@ -205,9 +229,9 @@ internal class SubsamplingHelper constructor(
     }
 
     fun eachTileList(action: (tile: Tile, load: Boolean) -> Unit) {
-        val drawableSize = zoomAbility.drawableSize.takeIf { !it.isEmpty } ?: return
+        val drawableSize = zoomEngine.drawableSize.takeIf { !it.isEmpty } ?: return
         val drawableVisibleRect = tempDrawableVisibleRect.apply {
-            zoomAbility.getVisibleRect(this)
+            zoomEngine.getVisibleRect(this)
         }.takeIf { !it.isEmpty } ?: return
         tileManager?.eachTileList(drawableSize, drawableVisibleRect, action)
     }
@@ -215,13 +239,12 @@ internal class SubsamplingHelper constructor(
     @MainThread
     fun destroy() {
         requiredMainThread()
-
+        imageSource = null
         if (_destroyed) return
         logger.d(MODULE) {
             "destroy"
         }
         _destroyed = true
-        zoomAbility.removeOnMatrixChangeListener(onMatrixChangeListener)
         scope.cancel()
         tileManager?.destroy()
         tileManager = null

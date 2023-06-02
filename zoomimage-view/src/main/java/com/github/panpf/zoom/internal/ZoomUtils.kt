@@ -163,10 +163,3 @@ internal fun rotatePoint(point: PointF, rotateDegrees: Int, drawableSize: Size) 
         }
     }
 }
-
-internal val View.contentSize: Size?
-    get() {
-        val viewWidth = width - paddingLeft - paddingRight
-        val viewHeight = height - paddingTop - paddingBottom
-        return if (viewWidth > 0 && viewHeight > 0) Size(viewWidth, viewHeight) else null
-    }

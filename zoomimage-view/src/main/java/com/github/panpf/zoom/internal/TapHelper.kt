@@ -21,10 +21,10 @@ import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 
 internal class TapHelper constructor(
-    context: Context, private val zoomerHelper: ZoomerHelper
+    context: Context, private val engine: ZoomEngine
 ) : SimpleOnGestureListener() {
 
-    private val view = zoomerHelper.view
+    private val view = engine.view
     private val tapGestureDetector: GestureDetector = GestureDetector(context, this)
 
     fun onTouchEvent(event: MotionEvent): Boolean = tapGestureDetector.onTouchEvent(event)
@@ -32,19 +32,19 @@ internal class TapHelper constructor(
     override fun onDown(e: MotionEvent): Boolean = true
 
     override fun onSingleTapConfirmed(e: MotionEvent): Boolean =
-        zoomerHelper.onViewTapListener?.onViewTap(view, e.x, e.y) != null || view.performClick()
+        engine.onViewTapListener?.onViewTap(view, e.x, e.y) != null || view.performClick()
 
     override fun onLongPress(e: MotionEvent) {
         super.onLongPress(e)
-        zoomerHelper.onViewLongPressListener?.onViewLongPress(view, e.x, e.y)
+        engine.onViewLongPressListener?.onViewLongPress(view, e.x, e.y)
             ?: view.performLongClick()
     }
 
     override fun onDoubleTap(ev: MotionEvent): Boolean {
         try {
-            val currentScaleFormat = zoomerHelper.scale.format(2)
+            val currentScaleFormat = engine.scale.format(2)
             var finalScale = -1f
-            for (scale in zoomerHelper.scaleState.doubleClickSteps) {
+            for (scale in engine.scaleState.doubleClickSteps) {
                 if (finalScale == -1f) {
                     finalScale = scale
                 } else if (currentScaleFormat < scale.format(2)) {
@@ -53,9 +53,9 @@ internal class TapHelper constructor(
                 }
             }
             if (finalScale > currentScaleFormat) {
-                zoomerHelper.scale(finalScale, ev.x, ev.y, true)
+                engine.scale(finalScale, ev.x, ev.y, true)
             } else {
-                zoomerHelper.scale(finalScale, true)
+                engine.scale(finalScale, true)
             }
         } catch (e: ArrayIndexOutOfBoundsException) {
             // Can sometimes happen when getX() and getY() is called

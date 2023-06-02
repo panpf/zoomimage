@@ -32,7 +32,6 @@ import com.github.panpf.sketch.cache.CountBitmap
 import com.github.panpf.sketch.cache.MemoryCache
 import com.github.panpf.sketch.decode.internal.freeBitmap
 import com.github.panpf.sketch.decode.internal.logString
-import com.github.panpf.zoom.Tile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +52,7 @@ internal class TileManager constructor(
     private val disallowReuseBitmap: Boolean,
     viewSize: Size,
     private val decoder: TileDecoder,
-    private val subsamplingHelper: SubsamplingHelper,
+    private val engine: SubsamplingEngine,
 ) {
 
     private val logger = sketch.logger
@@ -88,7 +87,7 @@ internal class TileManager constructor(
         get() = lastTileList
 
     init {
-        logger.d(SubsamplingHelper.MODULE) {
+        logger.d(SubsamplingEngine.MODULE) {
             val tileMapInfoList = tileMap.keys.sortedDescending().map {
                 "${it}:${tileMap[it]?.size}"
             }
@@ -120,7 +119,7 @@ internal class TileManager constructor(
         }
         val tileList = lastTileList
         if (tileList == null) {
-            logger.d(SubsamplingHelper.MODULE) {
+            logger.d(SubsamplingEngine.MODULE) {
                 "refreshTiles. no tileList. " +
                         "imageSize=${imageSize}, " +
                         "drawableSize=$drawableSize, " +
@@ -133,7 +132,7 @@ internal class TileManager constructor(
         }
         resetVisibleAndLoadRect(drawableSize, drawableVisibleRect)
 
-        logger.d(SubsamplingHelper.MODULE) {
+        logger.d(SubsamplingEngine.MODULE) {
             "refreshTiles. started. " +
                     "imageSize=${imageSize}, " +
                     "imageVisibleRect=$imageVisibleRect, " +
@@ -151,7 +150,7 @@ internal class TileManager constructor(
                 freeTile(tile)
             }
         }
-        subsamplingHelper.invalidateView()
+        engine.invalidateView()
     }
 
     @MainThread
@@ -161,7 +160,7 @@ internal class TileManager constructor(
         val tileList = lastTileList
         if (tileList == null) {
             if (lastSampleSize != null) {
-                logger.d(SubsamplingHelper.MODULE) {
+                logger.d(SubsamplingEngine.MODULE) {
                     "onDraw. no tileList sampleSize is $lastSampleSize. '$imageUri'"
                 }
             }
@@ -195,7 +194,7 @@ internal class TileManager constructor(
                         )
                     }
 
-                    if (subsamplingHelper.showTileBounds) {
+                    if (engine.showTileBounds) {
                         val boundsColor = when {
                             tileBitmap != null -> Color.GREEN
                             tile.loadJob?.isActive == true -> Color.YELLOW
@@ -219,7 +218,7 @@ internal class TileManager constructor(
     private fun notifyTileChanged() {
         requiredMainThread()
 
-        subsamplingHelper.onTileChangedListenerList?.forEach {
+        engine.onTileChangedListenerList?.forEach {
             it.onTileChanged()
         }
     }
@@ -245,10 +244,10 @@ internal class TileManager constructor(
         }
         if (cachedValue != null) {
             tile.countBitmap = cachedValue.countBitmap
-            logger.d(SubsamplingHelper.MODULE) {
+            logger.d(SubsamplingEngine.MODULE) {
                 "loadTile. successful. fromMemory. $tile. '$imageUri'"
             }
-            subsamplingHelper.invalidateView()
+            engine.invalidateView()
             notifyTileChanged()
             return
         }
@@ -257,7 +256,7 @@ internal class TileManager constructor(
             val bitmap = decoder.decode(tile)
             when {
                 bitmap == null -> {
-                    logger.e(SubsamplingHelper.MODULE) {
+                    logger.e(SubsamplingEngine.MODULE) {
                         "loadTile. null. $tile. '$imageUri'"
                     }
                 }
@@ -283,20 +282,20 @@ internal class TileManager constructor(
                             memoryCache.put(memoryCacheKey, newCacheValue)
                         }
                         tile.countBitmap = newCountBitmap
-                        logger.d(SubsamplingHelper.MODULE) {
+                        logger.d(SubsamplingEngine.MODULE) {
                             "loadTile. successful. $tile. '$imageUri'"
                         }
-                        subsamplingHelper.invalidateView()
+                        engine.invalidateView()
                         notifyTileChanged()
                     }
                 }
 
                 else -> {
-                    logger.d(SubsamplingHelper.MODULE) {
+                    logger.d(SubsamplingEngine.MODULE) {
                         "loadTile. canceled. $tile. '$imageUri'"
                     }
                     bitmapPool.freeBitmap(bitmap, disallowReuseBitmap, "tile:jobCanceled")
-                    logger.d(SubsamplingHelper.MODULE) {
+                    logger.d(SubsamplingEngine.MODULE) {
                         "loadTile. freeBitmap. tile job canceled. bitmap=${bitmap.logString}. '$imageUri'"
                     }
                 }
@@ -314,7 +313,7 @@ internal class TileManager constructor(
         }
 
         tile.countBitmap?.run {
-            logger.d(SubsamplingHelper.MODULE) {
+            logger.d(SubsamplingEngine.MODULE) {
                 "freeTile. $tile. '$imageUri'"
             }
             tile.countBitmap = null
@@ -364,7 +363,7 @@ internal class TileManager constructor(
                 freeTile(tile)
             }
         }
-        subsamplingHelper.invalidateView()
+        engine.invalidateView()
     }
 
     @MainThread

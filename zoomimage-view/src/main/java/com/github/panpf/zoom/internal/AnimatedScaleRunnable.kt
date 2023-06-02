@@ -18,7 +18,7 @@ package com.github.panpf.zoom.internal
 import androidx.core.view.ViewCompat
 
 internal class AnimatedScaleRunnable(
-    private val zoomerHelper: ZoomerHelper,
+    private val engine: ZoomEngine,
     private val scaleDragHelper: ScaleDragHelper,
     private val startScale: Float,
     private val endScale: Float,
@@ -33,11 +33,11 @@ internal class AnimatedScaleRunnable(
 
     fun start() {
         isRunning = true
-        zoomerHelper.view.post(this)
+        engine.view.post(this)
     }
 
     fun cancel() {
-        zoomerHelper.view.removeCallbacks(this)
+        engine.view.removeCallbacks(this)
         isRunning = false
     }
 
@@ -49,14 +49,14 @@ internal class AnimatedScaleRunnable(
         scaleDragHelper.doScale(deltaScale, scaleFocalX, scaleFocalY, 0f, 0f)
         // We haven't hit our target scale yet, so post ourselves again
         if (isRunning) {
-            ViewCompat.postOnAnimation(zoomerHelper.view, this)
+            ViewCompat.postOnAnimation(engine.view, this)
         }
     }
 
     private fun interpolate(): Float {
-        var t = 1f * (System.currentTimeMillis() - startTime) / zoomerHelper.scaleAnimationDuration
+        var t = 1f * (System.currentTimeMillis() - startTime) / engine.scaleAnimationDuration
         t = 1f.coerceAtMost(t)
-        t = zoomerHelper.scaleAnimationInterpolator.getInterpolation(t)
+        t = engine.scaleAnimationInterpolator.getInterpolation(t)
         return t
     }
 }

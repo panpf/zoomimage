@@ -24,102 +24,47 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
-import com.github.panpf.zoom.Edge.NONE
 import com.github.panpf.zoom.ScaleState.Factory
 import com.github.panpf.zoom.internal.ImageViewBridge
 import com.github.panpf.zoom.internal.Logger
 import com.github.panpf.zoom.internal.Size
-import com.github.panpf.zoom.internal.ZoomerHelper
+import com.github.panpf.zoom.internal.ZoomEngine
 import com.github.panpf.zoom.internal.isAttachedToWindowCompat
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class ZoomAbility(
-    val view: View,
-    private val logger: Logger,
-    val imageViewBridge: ImageViewBridge,
+    private val view: View,
+    logger: Logger,
+    private val imageViewBridge: ImageViewBridge,
 ) {
 
-    private var zoomerHelper: ZoomerHelper? = null
-    private var onMatrixChangeListenerList: MutableSet<OnMatrixChangeListener>? = null
-    private var onRotateChangeListenerList: MutableSet<OnRotateChangeListener>? = null
-    private var onDragFlingListenerList: MutableSet<OnDragFlingListener>? = null
-    private var onScaleChangeListenerList: MutableSet<OnScaleChangeListener>? = null
-    private var onOnViewDragListenerList: MutableSet<OnViewDragListener>? = null
+    internal val engine: ZoomEngine
     private val imageMatrix = Matrix()
 
-
-    var scrollBarEnabled: Boolean = true
-        set(value) {
-            field = value
-            zoomerHelper?.scrollBarEnabled = value
-        }
-    var readModeEnabled: Boolean = false
-        set(value) {
-            field = value
-            zoomerHelper?.readModeEnabled = value
-        }
-    var readModeDecider: ReadModeDecider? = null
-        set(value) {
-            field = value
-            zoomerHelper?.readModeDecider = value
-        }
-    var scaleStateFactory: Factory? = null
-        set(value) {
-            if (field != value) {
-                field = value
-                zoomerHelper?.scaleStateFactory = value ?: DefaultScaleStateFactory()
-            }
-        }
-    var scaleAnimationDuration: Int = 200
-        set(value) {
-            if (value > 0) {
-                field = value
-                zoomerHelper?.scaleAnimationDuration = value
-            }
-        }
-    var scaleAnimationInterpolator: Interpolator? = null
-        set(value) {
-            if (field != value) {
-                field = value
-                zoomerHelper?.scaleAnimationInterpolator =
-                    value ?: AccelerateDecelerateInterpolator()
-            }
-        }
-    var allowParentInterceptOnEdge: Boolean = true
-        set(value) {
-            field = value
-            zoomerHelper?.allowParentInterceptOnEdge = value
-        }
-    var onViewLongPressListener: OnViewLongPressListener? = null
-        set(value) {
-            field = value
-            zoomerHelper?.onViewLongPressListener = value
-        }
-    var onViewTapListener: OnViewTapListener? = null
-        set(value) {
-            field = value
-            zoomerHelper?.onViewTapListener = value
-        }
-
     init {
-        val newZoomerHelper = newZoomerHelper(view, imageViewBridge)
-        zoomerHelper = newZoomerHelper
-        resetDrawableSize()
+        val scaleType = imageViewBridge.superGetScaleType()
+        require(scaleType != ScaleType.MATRIX) { "ScaleType cannot be MATRIX" }
         imageViewBridge.superSetScaleType(ScaleType.MATRIX)
+
+        engine = ZoomEngine(view.context, logger, view, scaleType)
+        resetDrawableSize()
         addOnMatrixChangeListener {
-            val container = imageViewBridge
-            val zoomer = zoomerHelper
-            if (zoomer != null) {
-                val matrix = imageMatrix.apply { zoomer.getDrawMatrix(this) }
-                container.superSetImageMatrix(matrix)
-            }
+            val matrix = imageMatrix.apply { engine.getDrawMatrix(this) }
+            imageViewBridge.superSetImageMatrix(matrix)
         }
     }
 
 
-    /*************************************** Interaction ******************************************/
+    /*************************************** Interaction with consumers ******************************************/
+
+    /**
+     * Sets the dimensions of the original image, which is used to calculate the scale of double-click scaling
+     */
+    fun setImageSize(size: Size?) {
+        engine.imageSize = size ?: Size.EMPTY
+    }
 
     /**
      * Locate to the location specified on the drawable image. You don't have to worry about scaling and rotation
@@ -128,7 +73,7 @@ class ZoomAbility(
      * @param y Drawable the y-coordinate on the diagram
      */
     fun location(x: Float, y: Float, animate: Boolean = false) {
-        zoomerHelper?.location(x, y, animate)
+        engine.location(x, y, animate)
     }
 
     /**
@@ -138,14 +83,14 @@ class ZoomAbility(
      * @param focalY  Scale the y coordinate of the center point on the drawable image
      */
     fun scale(scale: Float, focalX: Float, focalY: Float, animate: Boolean) {
-        zoomerHelper?.scale(scale, focalX, focalY, animate)
+        engine.scale(scale, focalX, focalY, animate)
     }
 
     /**
      * Scale to the specified scale. You don't have to worry about rotation degrees
      */
     fun scale(scale: Float, animate: Boolean = false) {
-        zoomerHelper?.scale(scale, animate)
+        engine.scale(scale, animate)
     }
 
     /**
@@ -154,7 +99,7 @@ class ZoomAbility(
      * @param degrees Rotation degrees, can only be 90°, 180°, 270°, 360°
      */
     fun rotateTo(degrees: Int) {
-        zoomerHelper?.rotateTo(degrees)
+        engine.rotateTo(degrees)
     }
 
     /**
@@ -163,235 +108,221 @@ class ZoomAbility(
      * @param addDegrees Rotation degrees, can only be 90°, 180°, 270°, 360°
      */
     fun rotateBy(addDegrees: Int) {
-        zoomerHelper?.rotateBy(addDegrees)
+        engine.rotateBy(addDegrees)
     }
 
-
-    /***************************************** Information ****************************************/
-
-    val rotateDegrees: Int
-        get() = zoomerHelper?.rotateDegrees ?: 0
-
     fun canScrollHorizontally(direction: Int): Boolean =
-        zoomerHelper?.canScrollHorizontally(direction) == true
+        engine.canScrollHorizontally(direction)
 
     fun canScrollVertically(direction: Int): Boolean =
-        zoomerHelper?.canScrollVertically(direction) == true
+        engine.canScrollVertically(direction)
+
+    var scrollBarEnabled: Boolean
+        get() = engine.scrollBarEnabled
+        set(value) {
+            engine.scrollBarEnabled = value
+        }
+
+    var readModeEnabled: Boolean
+        get() = engine.scrollBarEnabled
+        set(value) {
+            engine.readModeEnabled = value
+        }
+
+    var readModeDecider: ReadModeDecider?
+        get() = engine.readModeDecider
+        set(value) {
+            engine.readModeDecider = value
+        }
+
+    var scaleStateFactory: Factory
+        get() = engine.scaleStateFactory
+        set(value) {
+            engine.scaleStateFactory = value
+        }
+
+    var scaleAnimationDuration: Int
+        get() = engine.scaleAnimationDuration
+        set(value) {
+            engine.scaleAnimationDuration = value
+        }
+
+    var scaleAnimationInterpolator: Interpolator
+        get() = engine.scaleAnimationInterpolator
+        set(value) {
+            engine.scaleAnimationInterpolator = value
+        }
+
+    var allowParentInterceptOnEdge: Boolean
+        get() = engine.allowParentInterceptOnEdge
+        set(value) {
+            engine.allowParentInterceptOnEdge = value
+        }
+
+    var onViewLongPressListener: OnViewLongPressListener?
+        get() = engine.onViewLongPressListener
+        set(value) {
+            engine.onViewLongPressListener = value
+        }
+
+    var onViewTapListener: OnViewTapListener?
+        get() = engine.onViewTapListener
+        set(value) {
+            engine.onViewTapListener = value
+        }
+
+    val rotateDegrees: Int
+        get() = engine.rotateDegrees
 
     val horScrollEdge: Edge
-        get() = zoomerHelper?.horScrollEdge ?: NONE
+        get() = engine.horScrollEdge
 
     val verScrollEdge: Edge
-        get() = zoomerHelper?.verScrollEdge ?: NONE
+        get() = engine.verScrollEdge
 
     val scale: Float
-        get() = zoomerHelper?.scale ?: 1f
+        get() = engine.scale
 
     val baseScale: Float
-        get() = zoomerHelper?.baseScale ?: 1f
+        get() = engine.baseScale
 
     val supportScale: Float
-        get() = zoomerHelper?.supportScale ?: 1f
+        get() = engine.supportScale
 
     /** Zoom ratio that makes the image fully visible */
     val fullScale: Float
-        get() = zoomerHelper?.fullScale ?: 1f
+        get() = engine.fullScale
 
     /** Gets the zoom that fills the image with the ImageView display */
     val fillScale: Float
-        get() = zoomerHelper?.fillScale ?: 1f
+        get() = engine.fillScale
 
     /** Gets the scale that allows the image to be displayed at scale to scale */
     val originScale: Float
-        get() = zoomerHelper?.originScale ?: 1f
+        get() = engine.originScale
 
     val minScale: Float
-        get() = zoomerHelper?.minScale ?: 1f
+        get() = engine.minScale
 
     val maxScale: Float
-        get() = zoomerHelper?.maxScale ?: 1f
+        get() = engine.maxScale
 
-    val stepScales: FloatArray?
-        get() = zoomerHelper?.stepScales
+    val stepScales: FloatArray
+        get() = engine.stepScales
 
     val isScaling: Boolean
-        get() = zoomerHelper?.isScaling == true
+        get() = engine.isScaling
 
-    val imageSize: Size?
-        get() = zoomerHelper?.imageSize
+    val viewSize: Size
+        get() = engine.viewSize
+
+    val imageSize: Size
+        get() = engine.imageSize
 
     val drawableSize: Size
-        get() = zoomerHelper?.drawableSize ?: Size.EMPTY
+        get() = engine.drawableSize
 
-    fun getDrawMatrix(matrix: Matrix) = zoomerHelper?.getDrawMatrix(matrix)
+    fun getDrawMatrix(matrix: Matrix) = engine.getDrawMatrix(matrix)
 
-    fun getDrawRect(rectF: RectF) = zoomerHelper?.getDrawRect(rectF)
+    fun getDrawRect(rectF: RectF) = engine.getDrawRect(rectF)
 
     /** Gets the area that the user can see on the drawable (not affected by rotation) */
-    fun getVisibleRect(rect: Rect) = zoomerHelper?.getVisibleRect(rect)
+    fun getVisibleRect(rect: Rect) = engine.getVisibleRect(rect)
 
     fun touchPointToDrawablePoint(touchPoint: PointF): Point? {
-        return zoomerHelper?.touchPointToDrawablePoint(touchPoint)
+        return engine.touchPointToDrawablePoint(touchPoint)
     }
 
     fun addOnMatrixChangeListener(listener: OnMatrixChangeListener) {
-        this.onMatrixChangeListenerList = (onMatrixChangeListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-        zoomerHelper?.addOnMatrixChangeListener(listener)
+        engine.addOnMatrixChangeListener(listener)
     }
 
     fun removeOnMatrixChangeListener(listener: OnMatrixChangeListener): Boolean {
-        zoomerHelper?.removeOnMatrixChangeListener(listener)
-        return onMatrixChangeListenerList?.remove(listener) == true
+        return engine.removeOnMatrixChangeListener(listener)
     }
 
     fun addOnRotateChangeListener(listener: OnRotateChangeListener) {
-        this.onRotateChangeListenerList = (onRotateChangeListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-        zoomerHelper?.addOnRotateChangeListener(listener)
+        engine.addOnRotateChangeListener(listener)
     }
 
     fun removeOnRotateChangeListener(listener: OnRotateChangeListener): Boolean {
-        zoomerHelper?.removeOnRotateChangeListener(listener)
-        return onRotateChangeListenerList?.remove(listener) == true
+        return engine.removeOnRotateChangeListener(listener)
     }
 
     fun addOnDragFlingListener(listener: OnDragFlingListener) {
-        this.onDragFlingListenerList = (onDragFlingListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-        zoomerHelper?.addOnDragFlingListener(listener)
+        engine.addOnDragFlingListener(listener)
     }
 
     fun removeOnDragFlingListener(listener: OnDragFlingListener): Boolean {
-        zoomerHelper?.removeOnDragFlingListener(listener)
-        return onDragFlingListenerList?.remove(listener) == true
+        return engine.removeOnDragFlingListener(listener)
     }
 
     fun addOnScaleChangeListener(listener: OnScaleChangeListener) {
-        this.onScaleChangeListenerList = (onScaleChangeListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-        zoomerHelper?.addOnScaleChangeListener(listener)
+        engine.addOnScaleChangeListener(listener)
     }
 
     fun removeOnScaleChangeListener(listener: OnScaleChangeListener): Boolean {
-        zoomerHelper?.removeOnScaleChangeListener(listener)
-        return onScaleChangeListenerList?.remove(listener) == true
+        return engine.removeOnScaleChangeListener(listener)
     }
 
     fun addOnViewDragListener(listener: OnViewDragListener) {
-        this.onOnViewDragListenerList = (onOnViewDragListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-        zoomerHelper?.addOnViewDragListener(listener)
+        engine.addOnViewDragListener(listener)
     }
 
     fun removeOnViewDragListener(listener: OnViewDragListener): Boolean {
-        zoomerHelper?.removeOnViewDragListener(listener)
-        return onOnViewDragListenerList?.remove(listener) == true
+        return engine.removeOnViewDragListener(listener)
     }
 
 
-    /**************************************** Internal ********************************************/
+    /**************************************** Interact with View ********************************************/
 
+    @Suppress("UNUSED_PARAMETER")
     fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        val imageView = view ?: return
         destroy()
-        if (imageView.isAttachedToWindowCompat) {
-            initialize()
+        if (view.isAttachedToWindowCompat) {
+            resetDrawableSize()
         }
     }
 
     fun onAttachedToWindow() {
-        initialize()
+        resetDrawableSize()
     }
 
     fun onDetachedFromWindow() {
         destroy()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
-        val view = view ?: return
         val viewWidth = view.width - view.paddingLeft - view.paddingRight
         val viewHeight = view.height - view.paddingTop - view.paddingBottom
-        zoomerHelper?.viewSize = Size(viewWidth, viewHeight)
+        engine.viewSize = Size(viewWidth, viewHeight)
     }
 
     fun onDraw(canvas: Canvas) {
-        zoomerHelper?.onDraw(canvas)
+        engine.onDraw(canvas)
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean =
-        zoomerHelper?.onTouchEvent(event) ?: false
+        engine.onTouchEvent(event)
 
     fun setScaleType(scaleType: ScaleType): Boolean {
-        val zoomerHelper = zoomerHelper
-        zoomerHelper?.scaleType = scaleType
-        return zoomerHelper != null
+        engine.scaleType = scaleType
+        return true
     }
 
-    fun getScaleType(): ScaleType? = zoomerHelper?.scaleType
+    fun getScaleType(): ScaleType = engine.scaleType
 
-    private fun initialize() {
-        resetDrawableSize()
-    }
 
-    private fun destroy() {
-        zoomerHelper?.clean()
-    }
-
-    private fun newZoomerHelper(
-        view: View,
-        imageViewBridge: ImageViewBridge
-    ): ZoomerHelper {
-        val scaleType = imageViewBridge.superGetScaleType()
-        require(scaleType != ScaleType.MATRIX) {
-            "ScaleType cannot be MATRIX"
-        }
-        return ZoomerHelper(
-            context = view.context,
-            logger = logger,
-            view = view,
-            scaleType = scaleType,
-        ).apply {
-            this@apply.readModeEnabled = this@ZoomAbility.readModeEnabled
-            this@apply.readModeDecider = this@ZoomAbility.readModeDecider
-            this@apply.scrollBarEnabled = this@ZoomAbility.scrollBarEnabled
-            this@apply.scaleAnimationDuration = this@ZoomAbility.scaleAnimationDuration
-            this@apply.allowParentInterceptOnEdge = this@ZoomAbility.allowParentInterceptOnEdge
-            this@apply.onViewLongPressListener = this@ZoomAbility.onViewLongPressListener
-            this@apply.onViewTapListener = this@ZoomAbility.onViewTapListener
-            this@ZoomAbility.scaleAnimationInterpolator?.let {
-                this@apply.scaleAnimationInterpolator = it
-            }
-            this@ZoomAbility.scaleStateFactory?.let {
-                this@apply.scaleStateFactory = it
-            }
-            this@ZoomAbility.onMatrixChangeListenerList?.forEach {
-                this@apply.addOnMatrixChangeListener(it)
-            }
-            this@ZoomAbility.onScaleChangeListenerList?.forEach {
-                this@apply.addOnScaleChangeListener(it)
-            }
-            this@ZoomAbility.onRotateChangeListenerList?.forEach {
-                this@apply.addOnRotateChangeListener(it)
-            }
-            this@ZoomAbility.onDragFlingListenerList?.forEach {
-                this@apply.addOnDragFlingListener(it)
-            }
-        }
-    }
+    /**************************************** Internal ********************************************/
 
     private fun resetDrawableSize() {
         val drawable = imageViewBridge.getDrawable()
-        zoomerHelper?.drawableSize =
+        engine.drawableSize =
             drawable?.let { Size(it.intrinsicWidth, it.intrinsicHeight) } ?: Size.EMPTY
     }
 
-    fun setImageSize(size: Size) {
-        zoomerHelper?.imageSize = size
+    private fun destroy() {
+        engine.clean()
     }
 }

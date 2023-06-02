@@ -15,8 +15,7 @@
  */
 package com.github.panpf.zoom
 
-import com.github.panpf.sketch.resize.DefaultLongImageDecider
-import com.github.panpf.sketch.resize.LongImageDecider
+import com.github.panpf.zoom.internal.format
 
 interface ReadModeDecider {
 
@@ -26,26 +25,56 @@ interface ReadModeDecider {
 }
 
 class LongImageReadModeDecider(
-    val longImageDecider: LongImageDecider = DefaultLongImageDecider(notSameDirectionMultiple = 10f)
+    val sameDirectionMultiple: Float = 2.5f,
+    val notSameDirectionMultiple: Float = 5.0f,
 ) : ReadModeDecider {
 
     override fun should(
         imageWidth: Int, imageHeight: Int, viewWidth: Int, viewHeight: Int
-    ): Boolean = longImageDecider.isLongImage(imageWidth, imageHeight, viewWidth, viewHeight)
+    ): Boolean = isLongImage(imageWidth, imageHeight, viewWidth, viewHeight)
+
+    /**
+     * Determine whether it is a long image given the image size and target size
+     *
+     * If the directions of image and target are the same, then the aspect ratio of
+     * the two is considered as a long image when the aspect ratio reaches [sameDirectionMultiple] times,
+     * otherwise it is considered as a long image when it reaches [notSameDirectionMultiple] times
+     */
+    private fun isLongImage(
+        imageWidth: Int, imageHeight: Int, targetWidth: Int, targetHeight: Int
+    ): Boolean {
+        val imageAspectRatio = imageWidth.toFloat().div(imageHeight).format(2)
+        val targetAspectRatio = targetWidth.toFloat().div(targetHeight).format(2)
+        val sameDirection = imageAspectRatio == 1.0f
+                || targetAspectRatio == 1.0f
+                || (imageAspectRatio > 1.0f && targetAspectRatio > 1.0f)
+                || (imageAspectRatio < 1.0f && targetAspectRatio < 1.0f)
+        val ratioMultiple = if (sameDirection) sameDirectionMultiple else notSameDirectionMultiple
+        return if (ratioMultiple > 0) {
+            val maxAspectRatio = targetAspectRatio.coerceAtLeast(imageAspectRatio)
+            val minAspectRatio = targetAspectRatio.coerceAtMost(imageAspectRatio)
+            maxAspectRatio >= (minAspectRatio * ratioMultiple)
+        } else {
+            false
+        }
+    }
 
     override fun toString(): String {
-        return "LongImageReadModeDecider($longImageDecider)"
+        return "LongImageReadModeDecider(sameDirectionMultiple=$sameDirectionMultiple, notSameDirectionMultiple=$notSameDirectionMultiple)"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
         other as LongImageReadModeDecider
-        if (longImageDecider != other.longImageDecider) return false
+        if (sameDirectionMultiple != other.sameDirectionMultiple) return false
+        if (notSameDirectionMultiple != other.notSameDirectionMultiple) return false
         return true
     }
 
     override fun hashCode(): Int {
-        return longImageDecider.hashCode()
+        var result = sameDirectionMultiple.hashCode()
+        result = 31 * result + notSameDirectionMultiple.hashCode()
+        return result
     }
 }

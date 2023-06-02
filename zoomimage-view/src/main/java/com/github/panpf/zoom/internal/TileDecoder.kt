@@ -34,7 +34,6 @@ import com.github.panpf.sketch.decode.internal.isInBitmapError
 import com.github.panpf.sketch.decode.internal.isSrcRectError
 import com.github.panpf.sketch.decode.internal.logString
 import com.github.panpf.sketch.decode.internal.setInBitmapForRegion
-import com.github.panpf.zoom.Tile
 import java.util.LinkedList
 
 internal class TileDecoder internal constructor(
@@ -90,7 +89,7 @@ internal class TileDecoder internal constructor(
             disallowReuseBitmap = disallowReuseBitmap,
             caller = "tile:decodeRegion"
         )
-        logger.d(SubsamplingHelper.MODULE) {
+        logger.d(SubsamplingEngine.MODULE) {
             "decodeRegion. inBitmap=${decodeOptions.inBitmap?.logString}. '$imageUri'"
         }
 
@@ -100,7 +99,7 @@ internal class TileDecoder internal constructor(
             throwable.printStackTrace()
             val inBitmap = decodeOptions.inBitmap
             if (inBitmap != null && isInBitmapError(throwable)) {
-                logger.e(SubsamplingHelper.MODULE, throwable) {
+                logger.e(SubsamplingEngine.MODULE, throwable) {
                     "decodeRegion. Bitmap region decode inBitmap error. '$imageUri'"
                 }
 
@@ -109,7 +108,7 @@ internal class TileDecoder internal constructor(
                     disallowReuseBitmap = disallowReuseBitmap,
                     caller = "tile:decodeRegion:error"
                 )
-                logger.d(SubsamplingHelper.MODULE) {
+                logger.d(SubsamplingEngine.MODULE) {
                     "decodeRegion. freeBitmap. inBitmap error. bitmap=${inBitmap.logString}. '$imageUri'"
                 }
 
@@ -118,13 +117,13 @@ internal class TileDecoder internal constructor(
                     regionDecoder.decodeRegion(newSrcRect, decodeOptions)
                 } catch (throwable1: Throwable) {
                     throwable1.printStackTrace()
-                    logger.e(SubsamplingHelper.MODULE, throwable) {
+                    logger.e(SubsamplingEngine.MODULE, throwable) {
                         "decodeRegion. Bitmap region decode error. srcRect=${newSrcRect}. '$imageUri'"
                     }
                     null
                 }
             } else if (isSrcRectError(throwable)) {
-                logger.e(SubsamplingHelper.MODULE, throwable) {
+                logger.e(SubsamplingEngine.MODULE, throwable) {
                     "decodeRegion. Bitmap region decode srcRect error. imageSize=$imageSize, srcRect=$newSrcRect, inSampleSize=${decodeOptions.inSampleSize}. '$imageUri'"
                 }
                 null
@@ -141,7 +140,7 @@ internal class TileDecoder internal constructor(
         val newBitmap = exifOrientationHelper.applyToBitmap(bitmap, bitmapPool, disallowReuseBitmap)
         return if (newBitmap != null && newBitmap != bitmap) {
             bitmapPool.freeBitmap(bitmap, disallowReuseBitmap, "tile:applyExifOrientation")
-            logger.d(SubsamplingHelper.MODULE) {
+            logger.d(SubsamplingEngine.MODULE) {
                 "applyExifOrientation. freeBitmap. bitmap=${bitmap.logString}. '$imageUri'"
             }
             newBitmap

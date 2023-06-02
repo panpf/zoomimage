@@ -27,7 +27,6 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
-import com.github.panpf.zoom.internal.Logger
 import com.github.panpf.zoom.DefaultScaleStateFactory
 import com.github.panpf.zoom.Edge
 import com.github.panpf.zoom.LongImageReadModeDecider
@@ -41,12 +40,11 @@ import com.github.panpf.zoom.OnViewTapListener
 import com.github.panpf.zoom.ReadModeDecider
 import com.github.panpf.zoom.ScaleState
 import com.github.panpf.zoom.ScaleState.Factory
-import com.github.panpf.zoom.internal.Size
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
  */
-internal class ZoomerHelper constructor(
+internal class ZoomEngine constructor(
     private val context: Context,
     private val logger: Logger,
     val view: View,
@@ -54,14 +52,14 @@ internal class ZoomerHelper constructor(
 ) {
 
     companion object {
-        const val MODULE = "ZoomerHelper"
+        const val MODULE = "ZoomEngine"
     }
 
     private val tapHelper = TapHelper(context, this)
     private val scaleDragHelper = ScaleDragHelper(
         context = context,
         logger = logger,
-        zoomerHelper = this,
+        engine = this,
         onUpdateMatrix = {
             scrollBarHelper?.onMatrixChanged()
             onMatrixChangeListenerList?.forEach { listener ->
@@ -105,6 +103,9 @@ internal class ZoomerHelper constructor(
                 reset()
             }
         }
+    /**
+     * Dimensions of the original image, which is used to calculate the scale of double-click scaling
+     */
     var imageSize = Size.EMPTY
         internal set(value) {
             if (field != value) {
