@@ -1,12 +1,10 @@
 package com.github.panpf.zoom
 
 import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.github.panpf.zoom.internal.Logger
 import com.github.panpf.zoom.internal.SubsamplingEngine
 import com.github.panpf.zoom.internal.Tile
 import com.github.panpf.zoom.internal.getLifecycle
@@ -15,13 +13,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Suppress("unused", "UNUSED_PARAMETER")
 class SubsamplingAbility(
     private val view: View,
-    logger: Logger,
     zoomAbility: ZoomAbility
 ) {
 
@@ -33,22 +31,23 @@ class SubsamplingAbility(
     private val engine: SubsamplingEngine
     private var lifecycle: Lifecycle? = null
     private var imageSource: ImageSource? = null
+    private var initEngineJob: Job? = null
+    private val setupImageSourceChannel = Channel<ImageSource>()
     private val engineAutoPauseLifecycleObserver = EngineAutoPauseLifecycleObserver()
-    private var lastPostResetSubsamplingHelperJob: Job? = null
 
     init {
+        engine = SubsamplingEngine(view.context, zoomAbility.logger, zoomAbility.engine)
         setLifecycle(view.context.getLifecycle())
-        engine = SubsamplingEngine(view.context, logger, zoomAbility.engine)
     }
 
 
     /* ********************************* Interact with consumers ********************************* */
 
     fun setImageSource(imageSource: ImageSource?) {
-        this.imageSource = imageSource
         engine.destroy()
-        if (view.isAttachedToWindowCompat) {
-            delayReset()
+        this.imageSource = imageSource
+        if (imageSource != null && view.isAttachedToWindowCompat) {
+            initEngine()
         }
     }
 
@@ -78,6 +77,18 @@ class SubsamplingAbility(
             engine.disallowReuseBitmap = value
         }
 
+    var tinyBitmapPool: TinyBitmapPool?
+        get() = engine.tinyBitmapPool
+        set(value) {
+            engine.tinyBitmapPool = value
+        }
+
+    var tinyMemoryCache: TinyMemoryCache?
+        get() = engine.tinyMemoryCache
+        set(value) {
+            engine.tinyMemoryCache = value
+        }
+
     val tileList: List<Tile>?
         get() = engine.tileList
 
@@ -97,7 +108,7 @@ class SubsamplingAbility(
     /* ********************************* Interact with View ********************************* */
 
     fun onAttachedToWindow() {
-        delayReset()
+        initEngine()
         registerLifecycleObserver()
     }
 
@@ -115,29 +126,26 @@ class SubsamplingAbility(
     }
 
     fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
-        delayReset()
-    }
-
-    fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        engine.destroy()
-        if (view.isAttachedToWindowCompat) {
-            delayReset()
-        }
+        initEngine()
     }
 
 
     /* ********************************* Internal ********************************* */
 
-    private fun delayReset() {
+    private fun initEngine() {
         // Triggering the reset SubsamplingHelper frequently (such as changing the view size in shared element animations)
         // can cause large fluctuations in memory, so delayed resets can avoid this problem
-        lastPostResetSubsamplingHelperJob?.cancel()
-        lastPostResetSubsamplingHelperJob = scope.launch(Dispatchers.Main) {
-            delay(60)
-            engine.destroy()
-            val imageSource = imageSource
-            if (imageSource != null) {
-                engine.setImageSource(imageSource)
+        initEngineJob?.cancel()
+        val imageSource = this@SubsamplingAbility.imageSource
+        if (imageSource != null) {
+            initEngineJob = scope.launch(Dispatchers.Main) {
+                delay(60)
+                engine.destroy()
+                val imageSource1 = this@SubsamplingAbility.imageSource
+                if (imageSource1 != null) {
+                    engine.setImageSource(imageSource1)
+                }
+                initEngineJob = null
             }
         }
     }

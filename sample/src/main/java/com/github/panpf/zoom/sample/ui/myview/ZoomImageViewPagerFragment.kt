@@ -16,28 +16,36 @@
 package com.github.panpf.zoom.sample.ui.myview
 
 import android.os.Bundle
+import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoom.sample.SampleImage
-import com.github.panpf.zoom.sample.databinding.TabPagerVerFragmentBinding
+import com.github.panpf.zoom.sample.databinding.TabPagerFragmentBinding
 import com.github.panpf.zoom.sample.ui.base.BindingFragment
-import com.github.panpf.zoom.sample.ui.widget.VerTabLayoutMediator
+import com.github.panpf.zoom.sample.ui.base.ToolbarBindingFragment
+import com.google.android.material.tabs.TabLayoutMediator
 
-class HugeImageVerPagerFragment : BindingFragment<TabPagerVerFragmentBinding>() {
+class ZoomImageViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
 
-    override fun onViewCreated(binding: TabPagerVerFragmentBinding, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        toolbar: Toolbar,
+        binding: TabPagerFragmentBinding,
+        savedInstanceState: Bundle?
+    ) {
+        toolbar.title = "ZoomImageView"
+
         val hugeSampleImages = SampleImage.HUGES
-        binding.tabPagerVerPager.apply {
-            orientation = ViewPager2.ORIENTATION_VERTICAL
+        binding.tabPagerPager.apply {
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
-                this@HugeImageVerPagerFragment,
-                listOf(HugeImageViewerFragment.ItemFactory()),
-                hugeSampleImages.map { it.uri }
+                fragment = this@ZoomImageViewPagerFragment,
+                itemFactoryList = listOf(ZoomImageViewFragment.ItemFactory()),
+                initDataList = hugeSampleImages.map { it.uri }
             )
         }
-        VerTabLayoutMediator(
-            binding.tabPagerVerTabLayout,
-            binding.tabPagerVerPager
+        TabLayoutMediator(
+            binding.tabPagerTabLayout,
+            binding.tabPagerPager
         ) { tab, position ->
             tab.text = hugeSampleImages[position].name
         }.attach()

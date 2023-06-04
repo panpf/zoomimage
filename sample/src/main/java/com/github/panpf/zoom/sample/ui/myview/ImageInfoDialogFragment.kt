@@ -34,7 +34,7 @@ import com.github.panpf.sketch.util.calculateBitmapByteCount
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.tools4k.lang.asOrThrow
-import com.github.panpf.zoom.SubsamplingImageView
+import com.github.panpf.zoom.ZoomImageView
 import com.github.panpf.zoom.format
 import com.github.panpf.zoom.sample.NavMainDirections
 import com.github.panpf.zoom.sample.databinding.ImageInfoDialogBinding
@@ -142,7 +142,7 @@ class ImageInfoDialogFragment : BindingDialogFragment<ImageInfoDialogBinding>() 
                 throwableString = displayResult.throwable.toString()
             }
 
-            if (imageView is SubsamplingImageView) {
+            if (imageView is ZoomImageView) {
                 zoomInfo = buildList {
                     add("view=${imageView.width}x${imageView.height}")
                     add(
@@ -163,7 +163,7 @@ class ImageInfoDialogFragment : BindingDialogFragment<ImageInfoDialogBinding>() 
                     add("minScale=${imageView.zoomAbility.minScale.format(2)}")
                     add("maxScale=${imageView.zoomAbility.maxScale.format(2)}")
                     val stepScales = imageView.zoomAbility.stepScales
-                        ?.joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
+                        .joinToString(prefix = "[", postfix = "]") { it.format(2) }
                     add("stepScales=${stepScales}")
                     add("rotateDegrees=${imageView.zoomAbility.rotateDegrees}")
                     add(

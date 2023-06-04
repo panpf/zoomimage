@@ -30,6 +30,7 @@ import android.view.ViewGroup.LayoutParams
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.updateLayoutParams
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
+import com.github.panpf.zoom.ZoomImageView
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -46,7 +47,7 @@ class TilesMapImageView @JvmOverloads constructor(
     private val drawableVisibleRect = Rect()
     private val mapVisibleRect = Rect()
     private val tileDrawRect = Rect()
-    private var zoomView: MyZoomImageView? = null
+    private var zoomView: ZoomImageView? = null
 
     private val detector = GestureDetector(context, object : SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
@@ -59,7 +60,7 @@ class TilesMapImageView @JvmOverloads constructor(
         super.onDraw(canvas)
         val viewWidth = width.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
-        val imageSize = zoomView.zoomAbility.imageSize?.takeIf { !it.isEmpty } ?: return
+        val imageSize = zoomView.zoomAbility.imageSize.takeIf { !it.isEmpty } ?: return
         val drawableSize = zoomView.zoomAbility.drawableSize.takeIf { !it.isEmpty } ?: return
         val drawableVisibleRect = drawableVisibleRect
             .apply { zoomView.zoomAbility.getVisibleRect(this) }
@@ -111,7 +112,7 @@ class TilesMapImageView @JvmOverloads constructor(
         return true
     }
 
-    fun setZoomImageView(zoomView: MyZoomImageView) {
+    fun setZoomImageView(zoomView: ZoomImageView) {
         this.zoomView = zoomView
         zoomView.zoomAbility.addOnMatrixChangeListener {
             invalidate()

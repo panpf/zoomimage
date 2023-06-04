@@ -7,8 +7,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView.Adapter
+import com.github.panpf.zoom.ZoomImageView
 import com.github.panpf.zoom.sample.prefsService
-import com.github.panpf.zoom.sample.ui.widget.MyZoomImageView
 import com.github.panpf.zoom.sample.util.lifecycleOwner
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
@@ -57,7 +57,7 @@ class SettingsEventViewModel(application: Application) : AndroidViewModel(applic
 //        }
 //    }
 
-    fun observeZoomSettings(zoomImageView: MyZoomImageView) {
+    fun observeZoomSettings(zoomImageView: ZoomImageView) {
         zoomImageView.lifecycleOwner.lifecycleScope.launch {
             prefsService.scrollBarEnabled.stateFlow.collect {
                 zoomImageView.zoomAbility.scrollBarEnabled = it

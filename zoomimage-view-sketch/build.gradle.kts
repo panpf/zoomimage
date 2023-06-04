@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoom.view"
+    namespace = "com.github.panpf.zoomimage.view.sketch"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
@@ -39,13 +39,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-core"))
-    api(libs.kotlin.stdlib)
-    api(libs.kotlinx.coroutines.android)
-    api(libs.androidx.annotation)
-    api(libs.androidx.appcompat)
-//    api(libs.androidx.core.ktx)
-//    api(libs.androidx.appcompat)
+    api(project(":zoomimage-view"))
+    api(libs.panpf.sketch3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

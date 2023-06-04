@@ -9,6 +9,7 @@
     <color name="colorSecondaryVariant">#7A2A95</color>
     <color name="colorOnSecondary">@color/white</color>
     <color name="colorTertiary">#F8AE6B</color>
+    <color name="colorTertiaryTransparent">#80F8AE6B</color>
     <color name="colorTertiaryVariant">#8A613B</color>
     <color name="colorOnTertiary">@color/white</color>
     <color name="windowBackground">#171717</color>

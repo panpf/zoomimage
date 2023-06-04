@@ -24,7 +24,9 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoom.Edge
+import com.github.panpf.zoom.Logger
 import com.github.panpf.zoom.ScaleState.Initial
+import com.github.panpf.zoom.Size
 import com.github.panpf.zoom.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoom.internal.ScaleDragGestureDetector.OnGestureListener
 import kotlin.math.abs

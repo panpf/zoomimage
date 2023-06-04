@@ -23,36 +23,28 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.BitmapPool
-import com.github.panpf.sketch.datasource.BasedStreamDataSource
-import com.github.panpf.sketch.datasource.DataSource
-import com.github.panpf.sketch.decode.ImageInfo
-import com.github.panpf.sketch.decode.internal.ExifOrientationHelper
-import com.github.panpf.sketch.decode.internal.freeBitmap
-import com.github.panpf.sketch.decode.internal.isInBitmapError
-import com.github.panpf.sketch.decode.internal.isSrcRectError
-import com.github.panpf.sketch.decode.internal.logString
-import com.github.panpf.sketch.decode.internal.setInBitmapForRegion
+import com.github.panpf.zoom.ImageSource
+import com.github.panpf.zoom.Size
+import com.github.panpf.zoom.freeBitmap
+import com.github.panpf.zoom.setInBitmapForRegion
+import kotlinx.coroutines.runBlocking
 import java.util.LinkedList
 
 internal class TileDecoder internal constructor(
-    private val logger: Logger,
-    sketch: Sketch,
-    val imageUri: String,
-    val imageInfo: ImageInfo,
-    private val disallowReuseBitmap: Boolean,
-    private val dataSource: DataSource,
+    private val engine: SubsamplingEngine,
+    private val imageSource: ImageSource,
+    val imageSize: Size,
+    val imageMimeType: String,
+    val imageExifOrientation: Int,
 ) {
-    private val bitmapPool: BitmapPool = sketch.bitmapPool
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
     private val exifOrientationHelper: ExifOrientationHelper =
-        ExifOrientationHelper(imageInfo.exifOrientation)
+        ExifOrientationHelper(imageExifOrientation)
     private var _destroyed: Boolean = false
-    private val imageSize: Size = Size(imageInfo.width, imageInfo.height)
-    private val addedImageSize: Size by lazy { exifOrientationHelper.addToSize(imageSize.toSketchSize()).toZoomSize() }
+    private val addedImageSize: Size by lazy {
+        exifOrientationHelper.addToSize(imageSize)
+    }
 
-    @Suppress("MemberVisibilityCanBePrivate")
     val destroyed: Boolean
         get() = _destroyed
 
@@ -77,20 +69,22 @@ internal class TileDecoder internal constructor(
         requiredWorkThread()
 
         val imageSize = imageSize
-        val newSrcRect = exifOrientationHelper.addToRect(srcRect, imageSize.toSketchSize())
+        val newSrcRect = exifOrientationHelper.addToRect(srcRect, imageSize)
         val decodeOptions = BitmapFactory.Options().apply {
             this.inSampleSize = inSampleSize
         }
-        bitmapPool.setInBitmapForRegion(
+        val tinyBitmapPool = engine.tinyBitmapPool
+        tinyBitmapPool?.setInBitmapForRegion(
+            logger = engine.logger,
             options = decodeOptions,
-            regionSize = Size(newSrcRect.width(), newSrcRect.height()).toSketchSize(),
-            imageMimeType = imageInfo.mimeType,
-            imageSize = addedImageSize.toSketchSize(),
-            disallowReuseBitmap = disallowReuseBitmap,
+            regionSize = Size(newSrcRect.width(), newSrcRect.height()),
+            imageMimeType = imageMimeType,
+            imageSize = addedImageSize,
+            disallowReuseBitmap = engine.disallowReuseBitmap,
             caller = "tile:decodeRegion"
         )
-        logger.d(SubsamplingEngine.MODULE) {
-            "decodeRegion. inBitmap=${decodeOptions.inBitmap?.logString}. '$imageUri'"
+        engine.logger.d(SubsamplingEngine.MODULE) {
+            "decodeRegion. inBitmap=${decodeOptions.inBitmap?.logString}. '${imageSource.key}'"
         }
 
         return try {
@@ -99,17 +93,22 @@ internal class TileDecoder internal constructor(
             throwable.printStackTrace()
             val inBitmap = decodeOptions.inBitmap
             if (inBitmap != null && isInBitmapError(throwable)) {
-                logger.e(SubsamplingEngine.MODULE, throwable) {
-                    "decodeRegion. Bitmap region decode inBitmap error. '$imageUri'"
+                engine.logger.e(SubsamplingEngine.MODULE, throwable) {
+                    "decodeRegion. Bitmap region decode inBitmap error. '${imageSource.key}'"
                 }
 
-                bitmapPool.freeBitmap(
-                    bitmap = inBitmap,
-                    disallowReuseBitmap = disallowReuseBitmap,
-                    caller = "tile:decodeRegion:error"
-                )
-                logger.d(SubsamplingEngine.MODULE) {
-                    "decodeRegion. freeBitmap. inBitmap error. bitmap=${inBitmap.logString}. '$imageUri'"
+                if (tinyBitmapPool != null) {
+                    tinyBitmapPool.freeBitmap(
+                        logger = engine.logger,
+                        bitmap = inBitmap,
+                        disallowReuseBitmap = engine.disallowReuseBitmap,
+                        caller = "tile:decodeRegion:error"
+                    )
+                } else {
+                    inBitmap.recycle()
+                }
+                engine.logger.d(SubsamplingEngine.MODULE) {
+                    "decodeRegion. freeBitmap. inBitmap error. bitmap=${inBitmap.logString}. '${imageSource.key}'"
                 }
 
                 decodeOptions.inBitmap = null
@@ -117,14 +116,14 @@ internal class TileDecoder internal constructor(
                     regionDecoder.decodeRegion(newSrcRect, decodeOptions)
                 } catch (throwable1: Throwable) {
                     throwable1.printStackTrace()
-                    logger.e(SubsamplingEngine.MODULE, throwable) {
-                        "decodeRegion. Bitmap region decode error. srcRect=${newSrcRect}. '$imageUri'"
+                    engine.logger.e(SubsamplingEngine.MODULE, throwable) {
+                        "decodeRegion. Bitmap region decode error. srcRect=${newSrcRect}. '${imageSource.key}'"
                     }
                     null
                 }
             } else if (isSrcRectError(throwable)) {
-                logger.e(SubsamplingEngine.MODULE, throwable) {
-                    "decodeRegion. Bitmap region decode srcRect error. imageSize=$imageSize, srcRect=$newSrcRect, inSampleSize=${decodeOptions.inSampleSize}. '$imageUri'"
+                engine.logger.e(SubsamplingEngine.MODULE, throwable) {
+                    "decodeRegion. Bitmap region decode srcRect error. imageSize=$imageSize, srcRect=$newSrcRect, inSampleSize=${decodeOptions.inSampleSize}. '${imageSource.key}'"
                 }
                 null
             } else {
@@ -137,11 +136,26 @@ internal class TileDecoder internal constructor(
     private fun applyExifOrientation(bitmap: Bitmap): Bitmap {
         requiredWorkThread()
 
-        val newBitmap = exifOrientationHelper.applyToBitmap(bitmap, bitmapPool, disallowReuseBitmap)
+        val newBitmap = exifOrientationHelper.applyToBitmap(
+            logger = engine.logger,
+            inBitmap = bitmap,
+            bitmapPool = engine.tinyBitmapPool,
+            disallowReuseBitmap = engine.disallowReuseBitmap
+        )
         return if (newBitmap != null && newBitmap != bitmap) {
-            bitmapPool.freeBitmap(bitmap, disallowReuseBitmap, "tile:applyExifOrientation")
-            logger.d(SubsamplingEngine.MODULE) {
-                "applyExifOrientation. freeBitmap. bitmap=${bitmap.logString}. '$imageUri'"
+            val tinyBitmapPool = engine.tinyBitmapPool
+            if (tinyBitmapPool != null) {
+                tinyBitmapPool.freeBitmap(
+                    logger = engine.logger,
+                    bitmap = bitmap,
+                    disallowReuseBitmap = engine.disallowReuseBitmap,
+                    caller = "tile:applyExifOrientation"
+                )
+            } else {
+                bitmap.recycle()
+            }
+            engine.logger.d(SubsamplingEngine.MODULE) {
+                "applyExifOrientation. freeBitmap. bitmap=${bitmap.logString}. '${imageSource.key}'"
             }
             newBitmap
         } else {
@@ -175,8 +189,10 @@ internal class TileDecoder internal constructor(
         var bitmapRegionDecoder: BitmapRegionDecoder? = synchronized(decoderPool) {
             decoderPool.poll()
         }
-        if (bitmapRegionDecoder == null && dataSource is BasedStreamDataSource) {
-            bitmapRegionDecoder = dataSource.newInputStream().buffered().use {
+        if (bitmapRegionDecoder == null) {
+            bitmapRegionDecoder = runBlocking {
+                imageSource.openInputStream()
+            }.getOrNull()?.buffered()?.use {
                 if (VERSION.SDK_INT >= VERSION_CODES.S) {
                     BitmapRegionDecoder.newInstance(it)
                 } else {

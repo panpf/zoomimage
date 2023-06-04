@@ -28,27 +28,27 @@ import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoom.ScaleState.Factory
 import com.github.panpf.zoom.internal.ImageViewBridge
-import com.github.panpf.zoom.internal.Logger
-import com.github.panpf.zoom.internal.Size
 import com.github.panpf.zoom.internal.ZoomEngine
 import com.github.panpf.zoom.internal.isAttachedToWindowCompat
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class ZoomAbility(
     private val view: View,
-    logger: Logger,
     private val imageViewBridge: ImageViewBridge,
 ) {
 
     internal val engine: ZoomEngine
     private val imageMatrix = Matrix()
+    val logger: Logger = Logger()
 
     init {
-        val scaleType = imageViewBridge.superGetScaleType()
-        require(scaleType != ScaleType.MATRIX) { "ScaleType cannot be MATRIX" }
+        val initScaleType = imageViewBridge.superGetScaleType()
+        require(initScaleType != ScaleType.MATRIX) { "ScaleType cannot be MATRIX" }
         imageViewBridge.superSetScaleType(ScaleType.MATRIX)
 
-        engine = ZoomEngine(view.context, logger, view, scaleType)
+        engine = ZoomEngine(view.context, logger, view).apply {
+            this.scaleType = initScaleType
+        }
         resetDrawableSize()
         addOnMatrixChangeListener {
             val matrix = imageMatrix.apply { engine.getDrawMatrix(this) }

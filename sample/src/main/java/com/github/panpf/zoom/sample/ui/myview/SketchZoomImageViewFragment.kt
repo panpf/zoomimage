@@ -23,30 +23,25 @@ import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
-import com.github.panpf.sketch.viewability.showRingProgressIndicator
-import com.github.panpf.zoom.sample.databinding.HugeImageViewerFragmentBinding
-import com.github.panpf.zoom.sample.eventService
+import com.github.panpf.zoom.Logger
+import com.github.panpf.zoom.sample.BuildConfig
+import com.github.panpf.zoom.sample.databinding.SketchZoomImageViewFragmentBinding
 import com.github.panpf.zoom.sample.ui.base.BindingFragment
 
-class HugeImageViewerFragment : BindingFragment<HugeImageViewerFragmentBinding>() {
+class SketchZoomImageViewFragment : BindingFragment<SketchZoomImageViewFragmentBinding>() {
 
-    private val args by navArgs<HugeImageViewerFragmentArgs>()
+    private val args by navArgs<SketchZoomImageViewFragmentArgs>()
     private val settingsEventViewModel by viewModels<SettingsEventViewModel>()
 
     override fun onViewCreated(
-        binding: HugeImageViewerFragmentBinding,
+        binding: SketchZoomImageViewFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        binding.hugeImageViewerZoomImage.apply {
+        binding.sketchZoomImageViewImage.apply {
+            zoomAbility.logger.level = if (BuildConfig.DEBUG)
+                Logger.Level.DEBUG else Logger.Level.INFO
+
             settingsEventViewModel.observeZoomSettings(this)
-
-//            showRingProgressIndicator()
-
-            eventService.hugeViewerPageRotateEvent.listen(viewLifecycleOwner) {
-                if (isResumed) {
-                    zoomAbility.rotateBy(90)
-                }
-            }
 
             setOnLongClickListener {
                 findNavController().navigate(
@@ -60,12 +55,22 @@ class HugeImageViewerFragment : BindingFragment<HugeImageViewerFragmentBinding>(
             }
         }
 
-        binding.hugeImageViewerTileMap.apply {
-            setZoomImageView(binding.hugeImageViewerZoomImage)
+        binding.sketchZoomImageViewTileMap.apply {
+            setZoomImageView(binding.sketchZoomImageViewImage)
             displayImage(args.imageUri) {
                 resizeSize(600, 600)
                 resizePrecision(Precision.LESS_PIXELS)
             }
+        }
+
+        binding.sketchZoomImageViewRotate.setOnClickListener {
+            binding.sketchZoomImageViewImage.zoomAbility.rotateBy(90)
+        }
+
+        binding.sketchZoomImageViewSettings.setOnClickListener {
+//            findNavController().navigate(
+//                MainFragmentDirections.actionGlobalSettingsDialogFragment(Page.ZOOM.name)
+//            )
         }
     }
 
@@ -75,8 +80,8 @@ class HugeImageViewerFragment : BindingFragment<HugeImageViewerFragmentBinding>(
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
             data: String
-        ): Fragment = HugeImageViewerFragment().apply {
-            arguments = HugeImageViewerFragmentArgs(data).toBundle()
+        ): Fragment = SketchZoomImageViewFragment().apply {
+            arguments = SketchZoomImageViewFragmentArgs(data).toBundle()
         }
     }
 }

@@ -17,6 +17,7 @@ package com.github.panpf.zoom.internal
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.Rect
@@ -26,7 +27,7 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.github.panpf.zoom.internal.Size
+import com.github.panpf.zoom.Size
 import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -163,3 +164,26 @@ internal fun rotatePoint(point: PointF, rotateDegrees: Int, drawableSize: Size) 
         }
     }
 }
+
+internal val Bitmap.logString: String
+    get() = "Bitmap(${width}x${height},$config,@${toHexString()})"
+
+internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
+
+
+
+fun isInBitmapError(throwable: Throwable): Boolean =
+    if (throwable is IllegalArgumentException) {
+        val message = throwable.message.orEmpty()
+        (message == "Problem decoding into existing bitmap" || message.contains("bitmap"))
+    } else {
+        false
+    }
+
+fun isSrcRectError(throwable: Throwable): Boolean =
+    if (throwable is IllegalArgumentException) {
+        val message = throwable.message.orEmpty()
+        message == "rectangle is outside the image srcRect" || message.contains("srcRect")
+    } else {
+        false
+    }

@@ -23,9 +23,9 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import com.github.panpf.zoom.internal.ImageViewBridge
-import com.github.panpf.zoom.internal.Logger
 
 open class ZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -39,15 +39,19 @@ open class ZoomImageView @JvmOverloads constructor(
     val zoomAbility: ZoomAbility
         get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
 
-    protected val logger by lazy { createLogger() }
+    // Must be nullable, otherwise it will cause initialization in the constructor to fail
+    @Suppress("PropertyName")
+    protected val _subsamplingAbility: SubsamplingAbility?
+    val subsamplingAbility: SubsamplingAbility
+        get() = _subsamplingAbility
+            ?: throw IllegalStateException("subsamplingAbility not initialized")
 
     init {
         @Suppress("LeakingThis")
-        _zoomAbility = ZoomAbility(this, logger, this)
-    }
-
-    open fun createLogger(): Logger {
-        return Logger()
+        val zoomAbility = ZoomAbility(this, this)
+        _zoomAbility = zoomAbility
+        @Suppress("LeakingThis")
+        _subsamplingAbility = SubsamplingAbility(this, zoomAbility)
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
@@ -70,6 +74,7 @@ open class ZoomImageView @JvmOverloads constructor(
 
     open fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+        _zoomAbility?.setImageSize(Size.EMPTY)
     }
 
     override fun setScaleType(scaleType: ScaleType) {
@@ -89,26 +94,35 @@ open class ZoomImageView @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         _zoomAbility?.onAttachedToWindow()
+        _subsamplingAbility?.onAttachedToWindow()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         _zoomAbility?.onDetachedFromWindow()
+        _subsamplingAbility?.onDetachedFromWindow()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         _zoomAbility?.onSizeChanged(w, h, oldw, oldh)
+        _subsamplingAbility?.onSizeChanged(w, h, oldw, oldh)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        _subsamplingAbility?.onDraw(canvas)
         _zoomAbility?.onDraw(canvas)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return _zoomAbility?.onTouchEvent(event) == true || super.onTouchEvent(event)
+    }
+
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        _subsamplingAbility?.onVisibilityChanged(changedView, visibility)
     }
 
     override fun canScrollHorizontally(direction: Int): Boolean =

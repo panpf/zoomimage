@@ -17,14 +17,11 @@ package com.github.panpf.zoom.sample.ui.photoview
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoom.sample.databinding.PhotoViewFragmentBinding
 import com.github.panpf.zoom.sample.ui.base.BindingFragment
-import com.github.panpf.zoom.sample.ui.myview.HugeImageViewerFragmentArgs
-import com.github.panpf.zoom.sample.ui.myview.SettingsEventViewModel
 
 class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
 

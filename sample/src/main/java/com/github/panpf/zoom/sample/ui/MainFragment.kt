@@ -56,7 +56,11 @@ class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
                     ListSeparator("View"),
                     Link(
                         title = "ZoomImageView（My）",
-                        navDirections = NavMainDirections.actionGlobalMyZoomImageViewFragment(),
+                        navDirections = NavMainDirections.actionGlobalZoomImageViewPagerFragment(),
+                    ),
+                    Link(
+                        title = "SketchZoomImageView（My）",
+                        navDirections = NavMainDirections.actionGlobalSketchZoomImageViewPagerFragment(),
                     ),
                     Link(
                         title = "PhotoView",
@@ -65,6 +69,12 @@ class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
                     Link(
                         title = "SubsamplingScaleImageView",
                         navDirections = NavMainDirections.actionGlobalSubsamplingViewPagerFragment(),
+                    ),
+
+                    ListSeparator("Test"),
+                    Link(
+                        title = "ZoomImageView Orientation Test",
+                        navDirections = NavMainDirections.actionGlobalOrientationTestFragment(),
                     ),
                 )
             )

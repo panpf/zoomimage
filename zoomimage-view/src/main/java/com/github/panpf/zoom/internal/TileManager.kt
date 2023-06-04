@@ -25,13 +25,10 @@ import android.graphics.Rect
 import androidx.annotation.MainThread
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
-import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.BitmapPool
-import com.github.panpf.sketch.cache.CachePolicy
-import com.github.panpf.sketch.cache.CountBitmap
-import com.github.panpf.sketch.cache.MemoryCache
-import com.github.panpf.sketch.decode.internal.freeBitmap
-import com.github.panpf.sketch.decode.internal.logString
+import com.github.panpf.zoom.DefaultCacheBitmap
+import com.github.panpf.zoom.ImageSource
+import com.github.panpf.zoom.Size
+import com.github.panpf.zoom.freeBitmap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,17 +42,12 @@ import kotlin.math.floor
 import kotlin.math.max
 
 internal class TileManager constructor(
-    private val sketch: Sketch,
-    private val imageUri: String,
-    private val imageSize: Size,
-    private val memoryCachePolicy: CachePolicy,
-    private val disallowReuseBitmap: Boolean,
-    viewSize: Size,
-    private val decoder: TileDecoder,
     private val engine: SubsamplingEngine,
+    private val decoder: TileDecoder,
+    private val imageSource: ImageSource,
+    private val imageSize: Size,
+    viewSize: Size,
 ) {
-
-    private val logger = sketch.logger
 
     private val tileBoundsPaint: Paint by lazy {
         Paint().apply {
@@ -69,8 +61,6 @@ internal class TileManager constructor(
         Size(it.width / 2, it.height / 2)
     }
     private val tileMap: Map<Int, List<Tile>> = initializeTileMap(imageSize, tileMaxSize)
-    private val bitmapPool: BitmapPool = sketch.bitmapPool
-    private val memoryCache: MemoryCache = sketch.memoryCache
     private val scope: CoroutineScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Main.immediate
     )
@@ -87,11 +77,11 @@ internal class TileManager constructor(
         get() = lastTileList
 
     init {
-        logger.d(SubsamplingEngine.MODULE) {
+        engine.logger.d(SubsamplingEngine.MODULE) {
             val tileMapInfoList = tileMap.keys.sortedDescending().map {
                 "${it}:${tileMap[it]?.size}"
             }
-            "tileMap. $tileMapInfoList. '$imageUri'"
+            "tileMap. $tileMapInfoList. '${imageSource.key}'"
         }
     }
 
@@ -119,20 +109,20 @@ internal class TileManager constructor(
         }
         val tileList = lastTileList
         if (tileList == null) {
-            logger.d(SubsamplingEngine.MODULE) {
+            engine.logger.d(SubsamplingEngine.MODULE) {
                 "refreshTiles. no tileList. " +
                         "imageSize=${imageSize}, " +
                         "drawableSize=$drawableSize, " +
                         "drawableVisibleRect=${drawableVisibleRect}, " +
                         "zoomScale=$zoomScale, " +
                         "sampleSize=$lastSampleSize. " +
-                        imageUri
+                        imageSource.key
             }
             return
         }
         resetVisibleAndLoadRect(drawableSize, drawableVisibleRect)
 
-        logger.d(SubsamplingEngine.MODULE) {
+        engine.logger.d(SubsamplingEngine.MODULE) {
             "refreshTiles. started. " +
                     "imageSize=${imageSize}, " +
                     "imageVisibleRect=$imageVisibleRect, " +
@@ -141,7 +131,7 @@ internal class TileManager constructor(
                     "drawableVisibleRect=${drawableVisibleRect}, " +
                     "zoomScale=$zoomScale, " +
                     "sampleSize=$lastSampleSize. " +
-                    imageUri
+                    imageSource.key
         }
         tileList.forEach { tile ->
             if (tile.srcRect.crossWith(imageLoadRect)) {
@@ -160,8 +150,8 @@ internal class TileManager constructor(
         val tileList = lastTileList
         if (tileList == null) {
             if (lastSampleSize != null) {
-                logger.d(SubsamplingEngine.MODULE) {
-                    "onDraw. no tileList sampleSize is $lastSampleSize. '$imageUri'"
+                engine.logger.d(SubsamplingEngine.MODULE) {
+                    "onDraw. no tileList sampleSize is $lastSampleSize. '${imageSource.key}'"
                 }
             }
             return
@@ -236,16 +226,16 @@ internal class TileManager constructor(
             return
         }
 
-        val memoryCacheKey = "${imageUri}_tile_${tile.srcRect}_${tile.inSampleSize}"
-        val cachedValue = if (memoryCachePolicy.readEnabled) {
-            memoryCache[memoryCacheKey]
+        val memoryCacheKey = "${imageSource.key}_tile_${tile.srcRect}_${tile.inSampleSize}"
+        val cachedValue = if (!engine.disallowMemoryCache) {
+            engine.tinyMemoryCache?.get(memoryCacheKey)
         } else {
             null
         }
         if (cachedValue != null) {
-            tile.countBitmap = cachedValue.countBitmap
-            logger.d(SubsamplingEngine.MODULE) {
-                "loadTile. successful. fromMemory. $tile. '$imageUri'"
+            tile.countBitmap = cachedValue
+            engine.logger.d(SubsamplingEngine.MODULE) {
+                "loadTile. successful. fromMemory. $tile. '${imageSource.key}'"
             }
             engine.invalidateView()
             notifyTileChanged()
@@ -256,34 +246,29 @@ internal class TileManager constructor(
             val bitmap = decoder.decode(tile)
             when {
                 bitmap == null -> {
-                    logger.e(SubsamplingEngine.MODULE) {
-                        "loadTile. null. $tile. '$imageUri'"
+                    engine.logger.e(SubsamplingEngine.MODULE) {
+                        "loadTile. null. $tile. '${imageSource.key}'"
                     }
                 }
 
                 isActive -> {
                     withContext(Dispatchers.Main) {
-                        val newCountBitmap = CountBitmap(
-                            cacheKey = memoryCacheKey,
-                            originBitmap = bitmap,
-                            bitmapPool = sketch.bitmapPool,
-                            disallowReuseBitmap = disallowReuseBitmap,
-                        )
-                        if (memoryCachePolicy.writeEnabled) {
-                            val newCacheValue = MemoryCache.Value(
-                                countBitmap = newCountBitmap,
-                                imageUri = imageUri,
-                                requestKey = memoryCacheKey,
-                                requestCacheKey = memoryCacheKey,
-                                imageInfo = decoder.imageInfo,
-                                transformedList = null,
-                                extras = null,
-                            )
-                            memoryCache.put(memoryCacheKey, newCacheValue)
+                        val newCountBitmap = if (!engine.disallowMemoryCache) {
+                            engine.tinyMemoryCache?.put(
+                                key = memoryCacheKey,
+                                bitmap = bitmap,
+                                imageKey = imageSource.key,
+                                imageSize = imageSize,
+                                imageMimeType = decoder.imageMimeType,
+                                imageExifOrientation = decoder.imageExifOrientation,
+                                disallowReuseBitmap = engine.disallowReuseBitmap
+                            ) ?: DefaultCacheBitmap(memoryCacheKey, bitmap)
+                        } else {
+                            DefaultCacheBitmap(memoryCacheKey, bitmap)
                         }
                         tile.countBitmap = newCountBitmap
-                        logger.d(SubsamplingEngine.MODULE) {
-                            "loadTile. successful. $tile. '$imageUri'"
+                        engine.logger.d(SubsamplingEngine.MODULE) {
+                            "loadTile. successful. $tile. '${imageSource.key}'"
                         }
                         engine.invalidateView()
                         notifyTileChanged()
@@ -291,12 +276,22 @@ internal class TileManager constructor(
                 }
 
                 else -> {
-                    logger.d(SubsamplingEngine.MODULE) {
-                        "loadTile. canceled. $tile. '$imageUri'"
+                    engine.logger.d(SubsamplingEngine.MODULE) {
+                        "loadTile. canceled. $tile. '${imageSource.key}'"
                     }
-                    bitmapPool.freeBitmap(bitmap, disallowReuseBitmap, "tile:jobCanceled")
-                    logger.d(SubsamplingEngine.MODULE) {
-                        "loadTile. freeBitmap. tile job canceled. bitmap=${bitmap.logString}. '$imageUri'"
+                    val tinyBitmapPool = engine.tinyBitmapPool
+                    if (tinyBitmapPool != null) {
+                        tinyBitmapPool.freeBitmap(
+                            logger = engine.logger,
+                            bitmap = bitmap,
+                            disallowReuseBitmap = engine.disallowReuseBitmap,
+                            caller = "tile:jobCanceled"
+                        )
+                    } else {
+                        bitmap.recycle()
+                    }
+                    engine.logger.d(SubsamplingEngine.MODULE) {
+                        "loadTile. freeBitmap. tile job canceled. bitmap=${bitmap.logString}. '${imageSource.key}'"
                     }
                 }
             }
@@ -313,8 +308,8 @@ internal class TileManager constructor(
         }
 
         tile.countBitmap?.run {
-            logger.d(SubsamplingEngine.MODULE) {
-                "freeTile. $tile. '$imageUri'"
+            engine.logger.d(SubsamplingEngine.MODULE) {
+                "freeTile. $tile. '${imageSource.key}'"
             }
             tile.countBitmap = null
             notifyTileChanged()

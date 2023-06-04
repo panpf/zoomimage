@@ -16,15 +16,14 @@
 package com.github.panpf.zoom.internal
 
 import android.graphics.Rect
-import com.github.panpf.sketch.decode.internal.maxBitmapSize
+import com.github.panpf.zoom.Size
 import kotlin.math.abs
 import kotlin.math.ceil
 
 internal fun initializeTileMap(imageSize: Size, tileMaxSize: Size): Map<Int, List<Tile>> {
     /* The core rules are: The size of each tile does not exceed tileMaxSize */
-    val maxBitmapSize = maxBitmapSize
-    val tileMaxWith = tileMaxSize.width.coerceAtMost(maxBitmapSize.width)
-    val tileMaxHeight = tileMaxSize.height.coerceAtMost(maxBitmapSize.height)
+    val tileMaxWith = tileMaxSize.width
+    val tileMaxHeight = tileMaxSize.height
     val tileMap = HashMap<Int, List<Tile>>()
 
     var sampleSize = 1

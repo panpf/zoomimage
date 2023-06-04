@@ -20,7 +20,6 @@ androidx-appcompat = "1.6.1"
 google-material = "1.8.0"
 # panpf
 panpf-assemblyadapter4 = "4.1.0"
-panpf-liveevent = "1.0.0"
 panpf-sketch3 = "3.2.1-rc01"
 panpf-tools4a = "1.0.0"
 panpf-tools4j = "1.0.0"
@@ -66,9 +65,7 @@ google-material = { module = "com.google.android.material:material", version.ref
 
 # panpf
 panpf-assemblyadapter4 = { module = "io.github.panpf.assemblyadapter4:assemblyadapter", version.ref = "panpf-assemblyadapter4" }
-panpf-liveevent = { module = "io.github.panpf.liveevent:liveevent", version.ref = "panpf-liveevent" }
 panpf-sketch3 = { module = "io.github.panpf.sketch3:sketch", version.ref = "panpf-sketch3" }
-panpf-sketch3-extensions = { module = "io.github.panpf.sketch3:sketch-extensions", version.ref = "panpf-sketch3" }
 panpf-tools4j = { module = "io.github.panpf.tools4j:tools4j-ktx", version.ref = "panpf-tools4j" }
 panpf-tools4a = { module = "io.github.panpf.tools4a:tools4a-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "panpf-tools4k" }

@@ -22,10 +22,10 @@ import com.github.panpf.sketch.util.Size
 class SampleImage(val name: String, val uri: String, val size: Size) {
 
     companion object {
-        val DOG_HOR_RES = SampleImage("DOG_HOR", newResourceUri(R.drawable.dog_hor), Size(640, 427))
-        val DOG_VER_RES = SampleImage("DOG_VER", newResourceUri(R.drawable.dog_ver), Size(150, 266))
-        val DOG_HOR_ASSET = SampleImage("DOG_HOR", newAssetUri("sample_dog_hor.jpg"), Size(640, 427))
-        val DOG_VER_ASSET = SampleImage("DOG_VER", newAssetUri("sample_dog_ver.jpg"), Size(150, 266))
+        val DOG_HOR_RES = SampleImage("HORDOG", newResourceUri(R.drawable.dog_hor), Size(640, 427))
+        val DOG_VER_RES = SampleImage("VERDOG", newResourceUri(R.drawable.dog_ver), Size(150, 266))
+        val DOG_HOR_ASSET = SampleImage("HORDOG", newAssetUri("sample_dog_hor.jpg"), Size(640, 427))
+        val DOG_VER_ASSET = SampleImage("VERDOG", newAssetUri("sample_dog_ver.jpg"), Size(150, 266))
         val WORLD_HUGE_ASSET = SampleImage("WORLD", newAssetUri("sample_huge_world.jpg"), Size(9798, 6988))
         val CARD_HUGE_ASSET = SampleImage("CARD", newAssetUri("sample_huge_card.png"), Size(7557, 5669))
         val QMSHT_HUGE_ASSET = SampleImage("QMSHT", newAssetUri("sample_long_qmsht.jpg"), Size(30000, 926))

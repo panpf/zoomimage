@@ -56,6 +56,7 @@ android {
 dependencies {
     implementation(project(":zoomimage-compose"))
     implementation(project(":zoomimage-view"))
+    implementation(project(":zoomimage-view-sketch"))
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.appcompat)
@@ -66,9 +67,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.google.material)
     implementation(libs.panpf.assemblyadapter4)
-    implementation(libs.panpf.liveevent)
-    implementation(libs.panpf.sketch3)
-    implementation(libs.panpf.sketch3.extensions)
     implementation(libs.panpf.tools4a)
     implementation(libs.panpf.tools4j)
     implementation(libs.panpf.tools4k)

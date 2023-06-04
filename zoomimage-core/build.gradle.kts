@@ -41,8 +41,9 @@ android {
 dependencies {
     api(libs.kotlin.stdlib)
     api(libs.androidx.annotation)
-//    api(libs.kotlinx.coroutines.android)
+    api(libs.kotlinx.coroutines.android)
 //    api(libs.androidx.core.ktx)
+    api(libs.androidx.exifinterface)
 //    api(libs.androidx.appcompat)
 
     testImplementation(libs.junit)

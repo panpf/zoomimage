@@ -29,6 +29,7 @@ import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoom.DefaultScaleStateFactory
 import com.github.panpf.zoom.Edge
+import com.github.panpf.zoom.Logger
 import com.github.panpf.zoom.LongImageReadModeDecider
 import com.github.panpf.zoom.OnDragFlingListener
 import com.github.panpf.zoom.OnMatrixChangeListener
@@ -40,15 +41,15 @@ import com.github.panpf.zoom.OnViewTapListener
 import com.github.panpf.zoom.ReadModeDecider
 import com.github.panpf.zoom.ScaleState
 import com.github.panpf.zoom.ScaleState.Factory
+import com.github.panpf.zoom.Size
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
  */
 internal class ZoomEngine constructor(
-    private val context: Context,
-    private val logger: Logger,
+    val context: Context,
+    val logger: Logger,
     val view: View,
-    scaleType: ScaleType,
 ) {
 
     companion object {
@@ -120,7 +121,7 @@ internal class ZoomEngine constructor(
                 reset()
             }
         }
-    var scaleType: ScaleType = scaleType
+    var scaleType: ScaleType = ScaleType.FIT_CENTER
         internal set(value) {
             if (field != value) {
                 field = value

@@ -21,6 +21,28 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
+        android:id="@+id/zoomImageViewPagerFragment"
+        android:name="com.github.panpf.zoom.sample.ui.myview.ZoomImageViewPagerFragment" />
+    <action
+        android:id="@+id/action_global_zoomImageViewPagerFragment"
+        app:destination="@id/zoomImageViewPagerFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/sketchZoomImageViewPagerFragment"
+        android:name="com.github.panpf.zoom.sample.ui.myview.SketchZoomImageViewPagerFragment" />
+    <action
+        android:id="@+id/action_global_sketchZoomImageViewPagerFragment"
+        app:destination="@id/sketchZoomImageViewPagerFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
         android:id="@+id/telephotoZoomImageFragment"
         android:name="com.github.panpf.zoom.sample.ui.TelephotoZoomImageFragment" />
     <action
@@ -31,7 +53,7 @@
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
 
-    <fragment
+    <!--<fragment
         android:id="@+id/myZoomImageViewFragment"
         android:name="com.github.panpf.zoom.sample.ui.myview.MyZoomImageViewFragment" />
     <action
@@ -40,12 +62,20 @@
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
+        app:popExitAnim="@anim/nav_pop_exit" />-->
 
 
     <fragment
-        android:id="@+id/hugeImageViewerFragment"
-        android:name="com.github.panpf.zoom.sample.ui.myview.HugeImageViewerFragment">
+        android:id="@+id/zoomImageViewFragment"
+        android:name="com.github.panpf.zoom.sample.ui.myview.ZoomImageViewFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/sketchZoomImageViewFragment"
+        android:name="com.github.panpf.zoom.sample.ui.myview.SketchZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -151,4 +181,15 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
+
+    <fragment
+        android:id="@+id/orientationTestFragment"
+        android:name="com.github.panpf.zoom.sample.ui.myview.OrientationTestFragment" />
+    <action
+        android:id="@+id/action_global_orientationTestFragment"
+        app:destination="@id/orientationTestFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
 </navigation>
