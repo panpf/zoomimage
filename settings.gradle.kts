@@ -25,4 +25,5 @@ include(":zoomimage-compose")
 include(":zoomimage-core")
 include(":zoomimage-view")
 include(":zoomimage-view-sketch")
+include(":zoomimage-view-coil")
 // todo gilide, coil, picasso

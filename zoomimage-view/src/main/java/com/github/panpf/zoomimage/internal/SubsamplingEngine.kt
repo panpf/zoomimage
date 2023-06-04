@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 internal class SubsamplingEngine constructor(
     val context: Context,
     val logger: Logger,
-    val zoomEngine: ZoomEngine,
+    private val zoomEngine: ZoomEngine,
 ) {
 
     companion object {
@@ -79,6 +79,7 @@ internal class SubsamplingEngine constructor(
             }
         }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     val destroyed: Boolean
         get() = imageSource == null
     val tileList: List<Tile>?
@@ -91,12 +92,22 @@ internal class SubsamplingEngine constructor(
     }
 
     fun setImageSource(imageSource: ImageSource) {
+        initJob?.cancel("setImageSource")
+        initJob = null
+        tileManager?.destroy()
+        tileManager = null
+
         val viewSize = zoomEngine.viewSize
         if (viewSize.isEmpty) {
             logger.d(MODULE) { "setImageSource failed. View size error. '${imageSource.key}'" }
             return
         }
-        initJob?.cancel("setImageSource")
+        val drawableSize = zoomEngine.drawableSize
+        if (viewSize.isEmpty) {
+            logger.d(MODULE) { "setImageSource failed. Drawable size error. '${imageSource.key}'" }
+            return
+        }
+        val (drawableWidth, drawableHeight) = drawableSize
         initJob = scope.launch(Dispatchers.Main) {
             val optionsJob = async(Dispatchers.IO) {
                 kotlin.runCatching {
@@ -129,6 +140,7 @@ internal class SubsamplingEngine constructor(
                 .getOrNull()
             if (options == null) {
                 logger.d(MODULE) { "setImageSource failed. Can't decode image bounds. '${imageSource.key}'" }
+                initJob = null
                 return@launch
             }
             val exifOrientation = exifOrientationJob.await()
@@ -136,19 +148,45 @@ internal class SubsamplingEngine constructor(
                 .getOrNull()
             if (exifOrientation == null) {
                 logger.d(MODULE) { "setImageSource failed. Can't decode image exifOrientation. '${imageSource.key}'" }
+                initJob = null
                 return@launch
             }
             val imageWidth = options.outWidth
             val imageHeight = options.outHeight
-            val imageType = options.outMimeType
+            val mimeType = options.outMimeType
             this@SubsamplingEngine.imageSource = imageSource
+            if (drawableWidth >= imageWidth && drawableHeight >= imageHeight) {
+                logger.d(MODULE) {
+                    "setImageSource failed. The Drawable size is greater than or equal to the original image. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize: ${imageWidth}x${imageHeight}, mimeType: $mimeType. '${imageSource.key}'"
+                }
+                initJob = null
+                return@launch
+            }
+            if (!canUseSubsampling(imageWidth, imageHeight, drawableWidth, drawableHeight)) {
+                logger.d(MODULE) {
+                    "setImageSource failed. The drawable aspect ratio is inconsistent with the original image. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize: ${imageWidth}x${imageHeight}, mimeType: $mimeType. '${imageSource.key}'"
+                }
+                initJob = null
+                return@launch
+            }
+            if (!isSupportBitmapRegionDecoder(mimeType)) {
+                logger.d(MODULE) {
+                    "setImageSource failed. Image type not support subsampling. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize: ${imageWidth}x${imageHeight}, mimeType: $mimeType. '${imageSource.key}'"
+                }
+                initJob = null
+                return@launch
+            }
+
             val imageSize = Size(imageWidth, imageHeight)
+            logger.d(MODULE) {
+                "setImageSource success. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize=$imageSize, mimeType=$mimeType, exifOrientation=${exifOrientation}. '${imageSource.key}'"
+            }
             zoomEngine.imageSize = imageSize
             val tileDecoder = TileDecoder(
                 engine = this@SubsamplingEngine,
                 imageSource = imageSource,
                 imageSize = imageSize,
-                imageMimeType = imageType,
+                imageMimeType = mimeType,
                 imageExifOrientation = exifOrientation,
             )
             tileManager = TileManager(
@@ -158,7 +196,6 @@ internal class SubsamplingEngine constructor(
                 imageSize = imageSize,
                 viewSize = viewSize,
             )
-            logger.d(MODULE) { "setImageSource success. viewSize=$viewSize, imageSize=$imageSize, mimeType=$imageType, exifOrientation=${exifOrientation}. '${imageSource.key}'" }
             refreshTiles()
             initJob = null
         }

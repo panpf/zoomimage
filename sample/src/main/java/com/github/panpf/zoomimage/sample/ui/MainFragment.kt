@@ -63,6 +63,11 @@ class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
                         navDirections = NavMainDirections.actionGlobalSketchZoomImageViewPagerFragment(),
                     ),
                     Link(
+                        title = "CoilZoomImageView（My）",
+                        navDirections = NavMainDirections.actionGlobalCoilZoomImageViewPagerFragment(),
+                        minSdk = 21
+                    ),
+                    Link(
                         title = "PhotoView",
                         navDirections = NavMainDirections.actionGlobalPhotoViewPagerFragment(),
                     ),

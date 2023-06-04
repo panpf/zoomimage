@@ -152,8 +152,8 @@ class SubsamplingAbility(
 
     private fun registerLifecycleObserver() {
         if (view.isAttachedToWindowCompat) {
-            lifecycle?.addObserver(engineAutoPauseLifecycleObserver)
             engine.paused = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == false
+            lifecycle?.addObserver(engineAutoPauseLifecycleObserver)
         }
     }
 
@@ -165,8 +165,8 @@ class SubsamplingAbility(
     private inner class EngineAutoPauseLifecycleObserver : LifecycleEventObserver {
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
             when (event) {
-                Lifecycle.Event.ON_START -> engine.paused = true
-                Lifecycle.Event.ON_STOP -> engine.paused = false
+                Lifecycle.Event.ON_START -> engine.paused = false
+                Lifecycle.Event.ON_STOP -> engine.paused = true
                 else -> {}
             }
         }

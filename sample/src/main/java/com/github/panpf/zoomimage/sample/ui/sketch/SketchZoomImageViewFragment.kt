@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.myview
+package com.github.panpf.zoomimage.sample.ui.sketch
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -27,7 +27,8 @@ import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.databinding.SketchZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.myview.SketchZoomImageViewFragmentArgs
+import com.github.panpf.zoomimage.sample.ui.zoomimage.ImageInfoDialogFragment
+import com.github.panpf.zoomimage.sample.ui.zoomimage.SettingsEventViewModel
 
 class SketchZoomImageViewFragment : BindingFragment<SketchZoomImageViewFragmentBinding>() {
 

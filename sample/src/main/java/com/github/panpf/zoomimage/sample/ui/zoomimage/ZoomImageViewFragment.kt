@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.myview
+package com.github.panpf.zoomimage.sample.ui.zoomimage
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -27,7 +27,6 @@ import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.myview.ZoomImageViewFragmentArgs
 
 class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
 
@@ -39,6 +38,7 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
             zoomAbility.logger.level = if (BuildConfig.DEBUG)
                 Logger.Level.DEBUG else Logger.Level.INFO
 
+            // todo settings
             settingsEventViewModel.observeZoomSettings(this)
 
             setOnLongClickListener {

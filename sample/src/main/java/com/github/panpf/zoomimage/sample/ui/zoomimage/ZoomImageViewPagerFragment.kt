@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.myview
+package com.github.panpf.zoomimage.sample.ui.zoomimage
 
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
@@ -22,32 +22,31 @@ import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.SampleImage
 import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarBindingFragment
-import com.github.panpf.zoomimage.sample.ui.myview.SketchZoomImageViewFragment.ItemFactory
 import com.google.android.material.tabs.TabLayoutMediator
 
-class SketchZoomImageViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
+class ZoomImageViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
 
     override fun onViewCreated(
         toolbar: Toolbar,
         binding: TabPagerFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        toolbar.title = "SketchZoomImageView"
+        toolbar.title = "ZoomImageView"
 
-        val hugeSampleImages = SampleImage.HUGES
+        val sampleImages = SampleImage.HUGES
         binding.tabPagerPager.apply {
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
-                fragment = this@SketchZoomImageViewPagerFragment,
-                itemFactoryList = listOf(ItemFactory()),
-                initDataList = hugeSampleImages.map { it.uri }
+                fragment = this@ZoomImageViewPagerFragment,
+                itemFactoryList = listOf(ZoomImageViewFragment.ItemFactory()),
+                initDataList = sampleImages.map { it.uri }
             )
         }
         TabLayoutMediator(
             binding.tabPagerTabLayout,
             binding.tabPagerPager
         ) { tab, position ->
-            tab.text = hugeSampleImages[position].name
+            tab.text = sampleImages[position].name
         }.attach()
     }
 }

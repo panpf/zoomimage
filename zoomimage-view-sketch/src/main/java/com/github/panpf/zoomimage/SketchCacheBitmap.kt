@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.myview
+package com.github.panpf.zoomimage
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.graphics.Bitmap
+import com.github.panpf.sketch.cache.MemoryCache.Value
 
-class OrientationTestViewModel : ViewModel() {
+class SketchCacheBitmap(
+    override val key: String,
+    private val cacheValue: Value
+) : CacheBitmap {
 
-    val rowLayoutCheckedData = MutableLiveData(true)
+    override val bitmap: Bitmap?
+        get() = cacheValue.countBitmap.bitmap
 
-    fun changeTab(checked: Boolean) {
-        rowLayoutCheckedData.postValue(checked)
+    override fun setIsDisplayed(displayed: Boolean) {
+        cacheValue.countBitmap.setIsDisplayed(displayed, "SubsamplingImageView")
     }
 }

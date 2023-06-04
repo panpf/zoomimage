@@ -15,12 +15,16 @@
  */
 package com.github.panpf.zoomimage.internal
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
+import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.Rect
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Looper
 import android.view.MotionEvent
 import android.view.View

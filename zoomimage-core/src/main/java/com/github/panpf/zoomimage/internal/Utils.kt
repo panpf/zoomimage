@@ -112,3 +112,11 @@ internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
 
 internal val Bitmap.safeConfig: Bitmap.Config
     get() = config ?: Bitmap.Config.ARGB_8888
+
+@SuppressLint("ObsoleteSdkInt")
+fun isSupportBitmapRegionDecoder(mimeType: String): Boolean =
+    "image/jpeg".equals(mimeType, true)
+            || "image/png".equals(mimeType, true)
+            || "image/webp".equals(mimeType, true)
+            || ("image/heic".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
+            || ("image/heif".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)

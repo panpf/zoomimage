@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.myview
+package com.github.panpf.zoomimage.sample.ui.zoomimage
 
 import android.graphics.Bitmap.Config.ARGB_8888
 import android.graphics.Rect
@@ -38,7 +38,6 @@ import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.format
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.databinding.ImageInfoDialogBinding
-import com.github.panpf.zoomimage.sample.ui.myview.ImageInfoDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.base.BindingDialogFragment
 
 class ImageInfoDialogFragment : BindingDialogFragment<ImageInfoDialogBinding>() {

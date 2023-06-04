@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.myview
+package com.github.panpf.zoomimage.sample.ui.zoomimage
 
 import android.app.Application
 import android.widget.ImageView.ScaleType

@@ -13,34 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.myview
+package com.github.panpf.zoomimage.sample.ui.test
 
 import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.SampleImage
-import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.TabPagerVerFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.myview.ZoomImageViewFragment.ItemFactory
-import com.google.android.material.tabs.TabLayoutMediator
+import com.github.panpf.zoomimage.sample.ui.widget.VerTabLayoutMediator
+import com.github.panpf.zoomimage.sample.ui.zoomimage.ZoomImageViewFragment
 
-class ZoomImageViewHorPagerFragment : BindingFragment<TabPagerFragmentBinding>() {
+class ZoomImageViewVerPagerFragment : BindingFragment<TabPagerVerFragmentBinding>() {
 
-    override fun onViewCreated(binding: TabPagerFragmentBinding, savedInstanceState: Bundle?) {
-        val hugeSampleImages = SampleImage.HUGES
-        binding.tabPagerPager.apply {
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+    override fun onViewCreated(binding: TabPagerVerFragmentBinding, savedInstanceState: Bundle?) {
+        val sampleImages = SampleImage.HUGES
+        binding.tabPagerVerPager.apply {
+            orientation = ViewPager2.ORIENTATION_VERTICAL
             adapter = AssemblyFragmentStateAdapter(
-                fragment = this@ZoomImageViewHorPagerFragment,
-                itemFactoryList = listOf(ItemFactory()),
-                initDataList = hugeSampleImages.map { it.uri }
+                fragment = this@ZoomImageViewVerPagerFragment,
+                itemFactoryList = listOf(ZoomImageViewFragment.ItemFactory()),
+                initDataList = sampleImages.map { it.uri }
             )
         }
-        TabLayoutMediator(
-            binding.tabPagerTabLayout,
-            binding.tabPagerPager
+        VerTabLayoutMediator(
+            binding.tabPagerVerTabLayout,
+            binding.tabPagerVerPager
         ) { tab, position ->
-            tab.text = hugeSampleImages[position].name
+            tab.text = sampleImages[position].name
         }.attach()
     }
 }

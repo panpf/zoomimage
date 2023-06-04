@@ -34,7 +34,8 @@
         coil.base,
         coil.singleton,
         coil.compose.singleton,
-        coil.compose.base" />
+        coil.compose.base,
+        com.github.panpf.zoomimage.view.coil" />
 
     <application
         android:name="com.github.panpf.zoomimage.sample.MyApplication"

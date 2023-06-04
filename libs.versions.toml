@@ -31,6 +31,7 @@ telephoto = "0.3.0"
 mmkv = "1.2.13"
 subsamplingscaleimageview = "3.10.0"
 photoview = "2.3.0"
+coil = "2.3.0"
 
 [libraries]
 
@@ -76,6 +77,7 @@ telephoto = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "
 mmkv = { module = "com.tencent:mmkv", version.ref = "mmkv" }
 subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "android-plugin" }
