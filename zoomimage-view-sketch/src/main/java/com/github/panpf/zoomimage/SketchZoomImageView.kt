@@ -47,14 +47,8 @@ import com.github.panpf.sketch.stateimage.internal.SketchStateDrawable
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.sketch.util.getLastChildDrawable
-import com.github.panpf.zoom.CacheBitmap
-import com.github.panpf.zoom.ImageSource
-import com.github.panpf.zoom.Logger.Proxy
-import com.github.panpf.zoom.Size
-import com.github.panpf.zoom.TinyBitmapPool
-import com.github.panpf.zoom.TinyMemoryCache
-import com.github.panpf.zoom.ZoomImageView
-import com.github.panpf.zoom.internal.canUseSubsampling
+import com.github.panpf.zoomimage.Logger.Proxy
+import com.github.panpf.zoomimage.internal.canUseSubsampling
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoom"
+    namespace = "com.github.panpf.zoomimage"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {

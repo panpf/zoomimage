@@ -12,7 +12,7 @@
         android:contentDescription="@string/app_name"
         tools:src="@mipmap/ic_launcher" />
 
-    <com.github.panpf.zoom.sample.ui.widget.TilesMapImageView
+    <com.github.panpf.zoomimage.sample.ui.widget.TilesMapImageView
         android:id="@+id/sketchZoomImageViewTileMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk tools:overrideLibrary="com.github.panpf.zoom.compose
+    <uses-sdk tools:overrideLibrary="com.github.panpf.zoomimage.compose
         androidx.lifecycle.viewmodel.compose,
         androidx.compose.ui.tooling,
         androidx.activity.compose,
@@ -37,7 +37,7 @@
         coil.compose.base" />
 
     <application
-        android:name=".MyApplication"
+        android:name="com.github.panpf.zoomimage.sample.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -48,7 +48,7 @@
         android:theme="@style/Theme.ZoomImage"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.github.panpf.zoomimage.sample.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

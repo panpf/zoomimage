@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoom.sample"
+    namespace = "com.github.panpf.zoomimage.sample"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
-        applicationId = "com.github.panpf.zoom.sample"
+        applicationId = "com.github.panpf.zoomimage.sample"
 
         minSdk = property("minSdk").toString().toInt()
         targetSdk = property("targetSdk").toString().toInt()
