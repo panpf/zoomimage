@@ -19,18 +19,18 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.format
 import com.github.panpf.zoomimage.sample.BuildConfig
-import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.CoilZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.zoomimage.ImageInfoDialogFragment
+import com.github.panpf.zoomimage.sample.ui.util.toShortString
+import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.ui.zoomimage.SettingsEventViewModel
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilUri
 
@@ -46,51 +46,88 @@ class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBindi
         binding.coilZoomImageViewImage.apply {
             zoomAbility.logger.level = if (BuildConfig.DEBUG)
                 Logger.Level.DEBUG else Logger.Level.INFO
-
+            // todo settings
             settingsEventViewModel.observeZoomSettings(this)
-
-            setOnLongClickListener {
-                findNavController().navigate(
-                    ImageInfoDialogFragment.createDirectionsFromImageView(this, null)
-                )
-                true
-            }
-
-            load(sketchUri2CoilUri(args.imageUri)) {
-                lifecycle(viewLifecycleOwner.lifecycle)
-                crossfade(true)
-                listener(
-                    onStart = {
-                        binding.coilZoomImageViewProgress.isVisible = true
-                    },
-                    onSuccess = { _, _ ->
-                        binding.coilZoomImageViewProgress.isVisible = false
-                    },
-                    onError = { _, _ ->
-                        binding.coilZoomImageViewProgress.isVisible = false
-                    },
-                )
-            }
         }
 
-        // todo common
-        binding.coilZoomImageViewTileMap.apply {
-            setZoomImageView(binding.coilZoomImageViewImage)
-            displayImage(args.imageUri) {
-                resizeSize(600, 600)
-                resizePrecision(Precision.LESS_PIXELS)
-            }
+        binding.common.zoomImageViewErrorRetryButton.setOnClickListener {
+            loadImage(binding)
         }
 
-        binding.coilZoomImageViewRotate.setOnClickListener {
+        binding.common.zoomImageViewTileMap.setZoomImageView(binding.coilZoomImageViewImage)
+
+        binding.common.zoomImageViewRotate.setOnClickListener {
             binding.coilZoomImageViewImage.zoomAbility.rotateBy(90)
         }
 
-        binding.coilZoomImageViewSettings.setOnClickListener {
+        binding.common.zoomImageViewSettings.setOnClickListener {
+            // todo settings
 //            findNavController().navigate(
 //                MainFragmentDirections.actionGlobalSettingsDialogFragment(Page.ZOOM.name)
 //            )
         }
+
+        binding.common.zoomImageViewInfoText.apply {
+            maxLines = 4
+            setOnClickListener {
+                maxLines = if (maxLines == 4) Int.MAX_VALUE else 4
+            }
+            binding.coilZoomImageViewImage.zoomAbility.addOnMatrixChangeListener {
+                updateInfo(binding)
+            }
+            binding.coilZoomImageViewImage.zoomAbility.addOnScaleChangeListener { _, _, _ ->
+                updateInfo(binding)
+            }
+        }
+
+        loadImage(binding)
+    }
+
+    private fun loadImage(binding: CoilZoomImageViewFragmentBinding) {
+        binding.coilZoomImageViewImage.load(sketchUri2CoilUri(args.imageUri)) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade(true)
+            listener(
+                onStart = {
+                    binding.common.zoomImageViewProgress.isVisible = true
+                    binding.common.zoomImageViewError.isVisible = false
+                },
+                onSuccess = { _, _ ->
+                    binding.common.zoomImageViewProgress.isVisible = false
+                    binding.common.zoomImageViewError.isVisible = false
+                },
+                onError = { _, _ ->
+                    binding.common.zoomImageViewProgress.isVisible = false
+                    binding.common.zoomImageViewError.isVisible = true
+                },
+            )
+        }
+
+        binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
+            resizeSize(600, 600)
+            resizePrecision(Precision.LESS_PIXELS)
+        }
+    }
+
+    private fun updateInfo(binding: CoilZoomImageViewFragmentBinding) {
+        val info = binding.coilZoomImageViewImage.zoomAbility.run {
+            """
+                scale: ${scale.format(2)}, range=[${minScale.format(2)}, ${maxScale.format(2)}], steps=(${
+                stepScales.joinToString {
+                    it.format(
+                        2
+                    )
+                }
+            })
+                translation: ${translation.run { "($x, $y)" }}
+                visibleRect: ${getVisibleRect().toVeryShortString()}
+                drawRect: ${getDrawRect().toVeryShortString()}
+                size: view=${viewSize.toShortString()}, drawable=${drawableSize.toShortString()}
+                edge: hor=${horScrollEdge}, ver=${verScrollEdge}
+            """.trimIndent()
+            // todo bitmap, subsampling info
+        }
+        binding.common.zoomImageViewInfoText.text = info
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

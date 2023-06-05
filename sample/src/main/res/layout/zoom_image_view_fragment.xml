@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,40 +11,7 @@
         android:contentDescription="@string/app_name"
         tools:src="@mipmap/ic_launcher" />
 
-    <com.github.panpf.zoomimage.sample.ui.widget.TilesMapImageView
-        android:id="@+id/zoomImageViewTileMap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left|start|bottom"
-        tools:ignore="RtlHardcoded" />
-
-    <ProgressBar
-        android:id="@+id/zoomImageViewProgress"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end|right"
-        android:layout_margin="20dp"
-        android:background="@drawable/bg_bottom_toolbar">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/zoomImageViewRotate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            app:srcCompat="@drawable/ic_rotate_right"
-            app:tint="@android:color/white" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/zoomImageViewSettings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            app:srcCompat="@drawable/ic_settings"
-            app:tint="@android:color/white" />
-    </LinearLayout>
+    <include
+        android:id="@+id/common"
+        layout="@layout/common_zoom_image_view_fragment" />
 </FrameLayout>

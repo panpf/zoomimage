@@ -34,5 +34,4 @@
         <attr name="tab_textColor" format="color" />
         <attr name="tab_textSelectedColor" format="color" />
     </declare-styleable>
-
 </resources>

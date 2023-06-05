@@ -20,7 +20,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
@@ -30,10 +29,12 @@ import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ImageSource
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.format
 import com.github.panpf.zoomimage.sample.BuildConfig
-import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
+import com.github.panpf.zoomimage.sample.ui.util.toShortString
+import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
 import kotlinx.coroutines.launch
 
 class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
@@ -45,54 +46,94 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
         binding.zoomImageViewImage.apply {
             zoomAbility.logger.level = if (BuildConfig.DEBUG)
                 Logger.Level.DEBUG else Logger.Level.INFO
-
             // todo settings
             settingsEventViewModel.observeZoomSettings(this)
 
-            setOnLongClickListener {
-                findNavController().navigate(
-                    ImageInfoDialogFragment.createDirectionsFromImageView(this, null)
-                )
-                true
-            }
-
             subsamplingAbility.setLifecycle(viewLifecycleOwner.lifecycle)
+        }
+
+        binding.common.zoomImageViewErrorRetryButton.setOnClickListener {
+            loadImage(binding)
+        }
+
+        binding.common.zoomImageViewTileMap.setZoomImageView(binding.zoomImageViewImage)
+
+        binding.common.zoomImageViewRotate.setOnClickListener {
+            binding.zoomImageViewImage.zoomAbility.rotateBy(90)
+        }
+
+        binding.common.zoomImageViewSettings.setOnClickListener {
+            // todo settings
+//            findNavController().navigate(
+//                MainFragmentDirections.actionGlobalSettingsDialogFragment(Page.ZOOM.name)
+//            )
+        }
+
+        binding.common.zoomImageViewInfoText.apply {
+            maxLines = 4
+            setOnClickListener {
+                maxLines = if (maxLines == 4) Int.MAX_VALUE else 4
+            }
+            binding.zoomImageViewImage.zoomAbility.addOnMatrixChangeListener {
+                updateInfo(binding)
+            }
+            binding.zoomImageViewImage.zoomAbility.addOnScaleChangeListener { _, _, _ ->
+                updateInfo(binding)
+            }
+        }
+
+        loadImage(binding)
+    }
+
+    private fun loadImage(binding: ZoomImageViewFragmentBinding) {
+        binding.zoomImageViewImage.apply {
             viewLifecycleOwner.lifecycleScope.launch {
                 val request = DisplayRequest(requireContext(), args.imageUri) {
                     lifecycle(viewLifecycleOwner.lifecycle)
                 }
-                binding.zoomImageViewProgress.isVisible = true
+                binding.common.zoomImageViewProgress.isVisible = true
+                binding.common.zoomImageViewError.isVisible = false
                 val result = requireContext().sketch.execute(request)
-                binding.zoomImageViewProgress.isVisible = false
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
                     val assetFileName = args.imageUri.replace("asset://", "")
                     subsamplingAbility.setImageSource(
                         ImageSource.fromAsset(requireContext(), assetFileName)
                     )
+                    binding.common.zoomImageViewProgress.isVisible = false
+                    binding.common.zoomImageViewError.isVisible = false
+                } else {
+                    binding.common.zoomImageViewProgress.isVisible = false
+                    binding.common.zoomImageViewError.isVisible = true
                 }
             }
         }
 
-        // todo common
-        binding.zoomImageViewTileMap.apply {
-            setZoomImageView(binding.zoomImageViewImage)
-            displayImage(args.imageUri) {
-                resizeSize(600, 600)
-                resizePrecision(Precision.LESS_PIXELS)
-            }
+        binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
+            resizeSize(600, 600)
+            resizePrecision(Precision.LESS_PIXELS)
         }
+    }
 
-        binding.zoomImageViewRotate.setOnClickListener {
-            binding.zoomImageViewImage.zoomAbility.rotateBy(90)
+    private fun updateInfo(binding: ZoomImageViewFragmentBinding) {
+        val info = binding.zoomImageViewImage.zoomAbility.run {
+            """
+                scale: ${scale.format(2)}, range=[${minScale.format(2)}, ${maxScale.format(2)}], steps=(${
+                stepScales.joinToString {
+                    it.format(
+                        2
+                    )
+                }
+            })
+                translation: ${translation.run { "($x, $y)" }}
+                visibleRect: ${getVisibleRect().toVeryShortString()}
+                drawRect: ${getDrawRect().toVeryShortString()}
+                size: view=${viewSize.toShortString()}, drawable=${drawableSize.toShortString()}
+                edge: hor=${horScrollEdge}, ver=${verScrollEdge}
+            """.trimIndent()
+            // todo bitmap, subsampling info
         }
-
-        binding.zoomImageViewSettings.setOnClickListener {
-            // todo setting
-//            findNavController().navigate(
-//                MainFragmentDirections.actionGlobalSettingsDialogFragment(Page.ZOOM.name)
-//            )
-        }
+        binding.common.zoomImageViewInfoText.text = info
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

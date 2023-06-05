@@ -95,65 +95,6 @@
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
 
-
-    <dialog
-        android:id="@+id/imageInfoDialogFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.zoomimage.ImageInfoDialogFragment">
-        <argument
-            android:name="uri"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="optionsInfo"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="imageInfo"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="bitmapInfo"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="drawableInfo"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="dataFromInfo"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="transformedInfo"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="zoomInfo"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="tilesInfo"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="throwableString"
-            android:defaultValue="null"
-            app:argType="string"
-            app:nullable="true" />
-    </dialog>
-    <action
-        android:id="@+id/action_global_imageInfoDialogFragment"
-        app:destination="@id/imageInfoDialogFragment" />
-
     <fragment
         android:id="@+id/photoViewPagerFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.photoview.PhotoViewPagerFragment" />
