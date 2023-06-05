@@ -63,7 +63,7 @@ class ZoomAbility(
      * Sets the dimensions of the original image, which is used to calculate the scale of double-click scaling
      */
     fun setImageSize(size: Size?) {
-        engine.imageSize = size ?: Size.EMPTY
+        engine.imageSize = size ?: Size.Empty
     }
 
     /**
@@ -319,7 +319,7 @@ class ZoomAbility(
     private fun resetDrawableSize() {
         val drawable = imageViewBridge.getDrawable()
         engine.drawableSize =
-            drawable?.let { Size(it.intrinsicWidth, it.intrinsicHeight) } ?: Size.EMPTY
+            drawable?.let { Size(it.intrinsicWidth, it.intrinsicHeight) } ?: Size.Empty
     }
 
     private fun destroy() {

@@ -97,7 +97,7 @@ internal class ZoomEngine constructor(
     var scaleAnimationInterpolator: Interpolator = AccelerateDecelerateInterpolator()
     var onViewLongPressListener: OnViewLongPressListener? = null
     var onViewTapListener: OnViewTapListener? = null
-    var viewSize = Size.EMPTY
+    var viewSize = Size.Empty
         internal set(value) {
             if (field != value) {
                 field = value
@@ -107,14 +107,14 @@ internal class ZoomEngine constructor(
     /**
      * Dimensions of the original image, which is used to calculate the scale of double-click scaling
      */
-    var imageSize = Size.EMPTY
+    var imageSize = Size.Empty
         internal set(value) {
             if (field != value) {
                 field = value
                 reset()
             }
         }
-    var drawableSize = Size.EMPTY
+    var drawableSize = Size.Empty
         internal set(value) {
             if (field != value) {
                 field = value

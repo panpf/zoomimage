@@ -32,7 +32,7 @@ open class Size(val width: Int, val height: Int) {
 
     companion object {
 
-        val EMPTY = Size()
+        val Empty = Size()
 
         @Throws(NumberFormatException::class)
         fun parseSize(string: String): Size {
