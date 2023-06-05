@@ -16,7 +16,7 @@ fun Size.toShortString(): String = "(${width}x$height)"
 fun Offset.toShortString(): String = "(${x.format(1)}x${y.format(1)})"
 
 fun Rect.toShortString(): String =
-    "(${left.format(1)},${top.format(1)},${right.format(1)},${bottom.format(1)})"
+    "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
 
 fun Centroid.toShortString(): String = "(${x.format(1)}x${y.format(1)})"
 
