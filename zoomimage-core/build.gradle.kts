@@ -44,6 +44,7 @@ dependencies {
     api(libs.kotlinx.coroutines.android)
 //    api(libs.androidx.core.ktx)
     api(libs.androidx.exifinterface)
+//    api(libs.androidx.lifecycle.common)
 //    api(libs.androidx.appcompat)
 
     testImplementation(libs.junit)

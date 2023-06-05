@@ -25,6 +25,7 @@ import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.sample.BuildConfig
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
 
@@ -49,6 +50,7 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
             }
 
             displayImage(args.imageUri) {
+                placeholder(R.drawable.im_placeholder)
                 lifecycle(viewLifecycleOwner.lifecycle)
             }
         }

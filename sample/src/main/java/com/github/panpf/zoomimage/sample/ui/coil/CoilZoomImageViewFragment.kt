@@ -26,6 +26,7 @@ import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.sample.BuildConfig
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.CoilZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.zoomimage.ImageInfoDialogFragment
@@ -55,6 +56,7 @@ class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBindi
             }
 
             load(sketchUri2CoilUri(args.imageUri)) {
+                placeholder(R.drawable.im_placeholder)
                 lifecycle(viewLifecycleOwner.lifecycle)
             }
         }

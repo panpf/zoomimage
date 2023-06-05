@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CountBitmap
 import com.github.panpf.sketch.cache.MemoryCache.Value
 import com.github.panpf.sketch.decode.ImageInfo
+import com.github.panpf.zoomimage.CacheBitmap
+import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.TinyMemoryCache
 
 class SketchTinyMemoryCache(private val sketch: Sketch) : TinyMemoryCache {
 

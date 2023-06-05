@@ -16,19 +16,19 @@
 package com.github.panpf.zoomimage
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import coil.drawable.CrossfadeDrawable
 import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.SuccessResult
 import coil.util.CoilUtils
+import com.github.panpf.zoomimage.internal.CoilImageSource
+import com.github.panpf.zoomimage.internal.CoilTinyMemoryCache
+import com.github.panpf.zoomimage.internal.getLastChildDrawable
+import com.github.panpf.zoomimage.internal.getLifecycle
+import com.github.panpf.zoomimage.internal.isCoilGlobalLifecycle
 
 open class CoilZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -36,51 +36,29 @@ open class CoilZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-//    private val listener =
-//        object : Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error> {
-//            override fun onStart(request: DisplayRequest) {
-//                super.onStart(request)
-//                val lifecycle = request.lifecycle
-//                    .takeIf { !it.isSketchGlobalLifecycle() }
-//                    ?: context.getLifecycle()
-//                subsamplingAbility.setLifecycle(lifecycle)
-//            }
-//        }
-
-    // todo memory cache
-    init {
-//        _subsamplingAbility?.tinyBitmapPool = SketchTinyBitmapPool(context.sketch)
-//        _subsamplingAbility?.tinyMemoryCache = SketchTinyMemoryCache(context.sketch)
+    companion object {
+        const val MODULE = "CoilZoomImageView"
     }
 
-//    override fun getDisplayListener(): Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error>? {
-//        return listener
-//    }
-//
-//    override fun getDisplayProgressListener(): ProgressListener<DisplayRequest>? {
-//        return null
-//    }
-
-    internal fun Context?.getLifecycle(): Lifecycle? {
-        var context: Context? = this
-        while (true) {
-            when (context) {
-                is LifecycleOwner -> return context.lifecycle
-                is ContextWrapper -> context = context.baseContext
-                else -> return null
-            }
-        }
+    init {
+        _subsamplingAbility?.tinyMemoryCache = CoilTinyMemoryCache(context.imageLoader)
     }
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         post {
-            // todo filter placeholder
+            if (!isAttachedToWindow) return@post
             val result = CoilUtils.result(this)
             if (result != null && result is SuccessResult) {
                 _subsamplingAbility?.disallowMemoryCache = getDisallowMemoryCache(result)
+                _subsamplingAbility?.setLifecycle(result.request.lifecycle
+                    .takeIf { !it.isCoilGlobalLifecycle() }
+                    ?: context.getLifecycle())
                 _subsamplingAbility?.setImageSource(newImageSource(result))
-                _subsamplingAbility?.setLifecycle(result.request.lifecycle)
+            } else {
+                _subsamplingAbility?.disallowMemoryCache = false
+                _subsamplingAbility?.setImageSource(null)
+                _subsamplingAbility?.setLifecycle(context.getLifecycle())
             }
         }
     }
@@ -100,27 +78,5 @@ open class CoilZoomImageView @JvmOverloads constructor(
             return null
         }
         return CoilImageSource(context.imageLoader, result.request)
-    }
-
-    companion object {
-        const val MODULE = "CoilZoomImageView"
-    }
-
-    /**
-     * Find the last child [Drawable] from the specified Drawable
-     */
-    private fun Drawable.getLastChildDrawable(): Drawable? {
-        return when (val drawable = this) {
-            is CrossfadeDrawable -> {
-                drawable.end?.getLastChildDrawable()
-            }
-
-            is LayerDrawable -> {
-                val layerCount = drawable.numberOfLayers.takeIf { it > 0 } ?: return null
-                drawable.getDrawable(layerCount - 1).getLastChildDrawable()
-            }
-
-            else -> drawable
-        }
     }
 }

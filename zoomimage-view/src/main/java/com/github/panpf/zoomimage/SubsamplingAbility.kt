@@ -50,10 +50,12 @@ class SubsamplingAbility(
     /* ********************************* Interact with consumers ********************************* */
 
     fun setImageSource(imageSource: ImageSource?) {
-        engine.destroy()
-        this.imageSource = imageSource
-        if (imageSource != null && view.isAttachedToWindowCompat) {
-            initEngine()
+        if (this.imageSource != imageSource) {
+            engine.destroy()
+            this.imageSource = imageSource
+            if (imageSource != null && view.isAttachedToWindowCompat) {
+                initEngine()
+            }
         }
     }
 

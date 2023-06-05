@@ -13,45 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.internal
 
-import android.content.Context
 import androidx.annotation.WorkerThread
-import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.CachePolicy.ENABLED
-import com.github.panpf.sketch.datasource.BasedStreamDataSource
-import com.github.panpf.sketch.request.LoadRequest
+import coil.ImageLoader
+import coil.fetch.SourceResult
+import coil.request.CachePolicy.ENABLED
+import coil.request.ImageRequest
+import coil.request.Options
+import com.github.panpf.zoomimage.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 
-class SketchImageSource(
-    private val context: Context,
-    private val sketch: Sketch,
-    private val imageUri: String,
+class CoilImageSource(
+    private val imageLoader: ImageLoader,
+    private val request: ImageRequest,
 ) : ImageSource {
 
-    override val key: String = imageUri
+    override val key: String = request.data.toString()
 
     @WorkerThread
     override suspend fun openInputStream(): Result<InputStream> {
-        val request = LoadRequest(context, imageUri) {
-            downloadCachePolicy(ENABLED)
-        }
         val fetcher = try {
-            sketch.components.newFetcherOrThrow(request)
+            val options = Options(
+                context = request.context,
+                diskCachePolicy = ENABLED,
+                networkCachePolicy = ENABLED
+            )
+            imageLoader.components.newFetcher(request.data, options, imageLoader)?.first
+                ?: return Result.failure(IllegalStateException("Fetcher not found. data='${request.data}'"))
         } catch (e: Exception) {
             return Result.failure(e)
         }
         val fetchResult = withContext(Dispatchers.IO) {
-            fetcher.fetch()
+            kotlin.runCatching {
+                fetcher.fetch()
+            }
         }.let {
             it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!)
         }
-        val dataSource = fetchResult.dataSource
-        if (dataSource !is BasedStreamDataSource) {
-            return Result.failure(IllegalStateException("DataSource is not BasedStreamDataSource. imageUri='$imageUri'"))
+        if (fetchResult !is SourceResult) {
+            return Result.failure(IllegalStateException("FetchResult is not SourceResult. data='${request.data}'"))
         }
-        return kotlin.runCatching { dataSource.newInputStream() }
+        return kotlin.runCatching { fetchResult.source.source().inputStream() }
     }
 }

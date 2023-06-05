@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
-import com.github.panpf.sketch.cache.MemoryCache.Value
+import android.graphics.Bitmap.Config
+import com.github.panpf.sketch.Sketch
+import com.github.panpf.zoomimage.TinyBitmapPool
 
-class SketchCacheBitmap(
-    override val key: String,
-    private val cacheValue: Value
-) : CacheBitmap {
+class SketchTinyBitmapPool(private val sketch: Sketch) : TinyBitmapPool {
 
-    override val bitmap: Bitmap?
-        get() = cacheValue.countBitmap.bitmap
+    override fun put(bitmap: Bitmap): Boolean {
+        return sketch.bitmapPool.put(bitmap, "SubsamplingImageView")
+    }
 
-    override fun setIsDisplayed(displayed: Boolean) {
-        cacheValue.countBitmap.setIsDisplayed(displayed, "SubsamplingImageView")
+    override fun get(width: Int, height: Int, config: Config): Bitmap? {
+        return sketch.bitmapPool.get(width, height, config)
     }
 }

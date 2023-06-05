@@ -16,35 +16,31 @@
 package com.github.panpf.zoomimage
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
+import androidx.core.view.ViewCompat
 import com.github.panpf.sketch.cache.CachePolicy
-import com.github.panpf.sketch.decode.internal.ImageFormat
-import com.github.panpf.sketch.decode.internal.supportBitmapRegionDecoder
-import com.github.panpf.sketch.request.DisplayListenerProvider
-import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.displayResult
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.request.ImageOptions
 import com.github.panpf.sketch.request.ImageOptionsProvider
-import com.github.panpf.sketch.request.Listener
-import com.github.panpf.sketch.request.ProgressListener
 import com.github.panpf.sketch.request.isSketchGlobalLifecycle
 import com.github.panpf.sketch.sketch
 import com.github.panpf.sketch.stateimage.internal.SketchStateDrawable
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.sketch.util.getLastChildDrawable
-import com.github.panpf.zoomimage.internal.canUseSubsampling
+import com.github.panpf.zoomimage.internal.SketchImageSource
+import com.github.panpf.zoomimage.internal.SketchTinyBitmapPool
+import com.github.panpf.zoomimage.internal.SketchTinyMemoryCache
+import com.github.panpf.zoomimage.internal.getLifecycle
 
 open class SketchZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : ZoomImageView(context, attrs, defStyle), ImageOptionsProvider, DisplayListenerProvider {
+) : ZoomImageView(context, attrs, defStyle), ImageOptionsProvider {
 
     companion object {
         const val MODULE = "SketchZoomImageView"
@@ -52,46 +48,30 @@ open class SketchZoomImageView @JvmOverloads constructor(
 
     override var displayImageOptions: ImageOptions? = null
 
-    private val listener =
-        object : Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error> {
-            override fun onStart(request: DisplayRequest) {
-                super.onStart(request)
-                val lifecycle = request.lifecycle
-                    .takeIf { !it.isSketchGlobalLifecycle() }
-                    ?: context.getLifecycle()
-                subsamplingAbility.setLifecycle(lifecycle)
-            }
-        }
-
     init {
         _subsamplingAbility?.tinyBitmapPool = SketchTinyBitmapPool(context.sketch)
         _subsamplingAbility?.tinyMemoryCache = SketchTinyMemoryCache(context.sketch)
     }
 
-    override fun getDisplayListener(): Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error>? {
-        return listener
-    }
-
-    override fun getDisplayProgressListener(): ProgressListener<DisplayRequest>? {
-        return null
-    }
-
-    internal fun Context?.getLifecycle(): Lifecycle? {
-        var context: Context? = this
-        while (true) {
-            when (context) {
-                is LifecycleOwner -> return context.lifecycle
-                is ContextWrapper -> context = context.baseContext
-                else -> return null
-            }
-        }
-    }
-
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingAbility?.disallowMemoryCache = getDisallowMemoryCache(newDrawable)
-        _subsamplingAbility?.disallowReuseBitmap = getDisallowReuseBitmap(newDrawable)
-        _subsamplingAbility?.setImageSource(newImageSource(newDrawable))
+        post {
+            if (!ViewCompat.isAttachedToWindow(this)) return@post
+            val result = displayResult
+            if (result != null && result is DisplayResult.Success) {
+                _subsamplingAbility?.disallowMemoryCache = getDisallowMemoryCache(result.drawable)
+                _subsamplingAbility?.disallowReuseBitmap = getDisallowReuseBitmap(result.drawable)
+                _subsamplingAbility?.setLifecycle(result.request.lifecycle
+                    .takeIf { !it.isSketchGlobalLifecycle() }
+                    ?: context.getLifecycle())
+                _subsamplingAbility?.setImageSource(newImageSource(result.drawable))
+            } else {
+                _subsamplingAbility?.disallowMemoryCache = false
+                _subsamplingAbility?.disallowReuseBitmap = false
+                _subsamplingAbility?.setImageSource(null)
+                _subsamplingAbility?.setLifecycle(context.getLifecycle())
+            }
+        }
     }
 
     private fun getDisallowMemoryCache(drawable: Drawable?): Boolean {
