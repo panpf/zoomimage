@@ -16,6 +16,7 @@
 package com.github.panpf.zoomimage.sample.ui.coil
 
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -56,11 +57,23 @@ class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBindi
             }
 
             load(sketchUri2CoilUri(args.imageUri)) {
-                placeholder(R.drawable.im_placeholder)
                 lifecycle(viewLifecycleOwner.lifecycle)
+                crossfade(true)
+                listener(
+                    onStart = {
+                        binding.coilZoomImageViewProgress.isVisible = true
+                    },
+                    onSuccess = { _, _ ->
+                        binding.coilZoomImageViewProgress.isVisible = false
+                    },
+                    onError = { _, _ ->
+                        binding.coilZoomImageViewProgress.isVisible = false
+                    },
+                )
             }
         }
 
+        // todo common
         binding.coilZoomImageViewTileMap.apply {
             setZoomImageView(binding.coilZoomImageViewImage)
             displayImage(args.imageUri) {

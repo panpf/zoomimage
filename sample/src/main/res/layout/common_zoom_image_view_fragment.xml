@@ -5,13 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.github.panpf.zoomimage.ZoomImageView
-        android:id="@+id/zoomImageViewImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/app_name"
-        tools:src="@mipmap/ic_launcher" />
-
     <com.github.panpf.zoomimage.sample.ui.widget.TilesMapImageView
         android:id="@+id/zoomImageViewTileMap"
         android:layout_width="wrap_content"
@@ -23,7 +16,41 @@
         android:id="@+id/zoomImageViewProgress"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/zoomImageViewError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:alpha="0.5"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:srcCompat="@drawable/ic_error"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/zoomImageViewErrorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Display Failed" />
+
+        <Button
+            android:id="@+id/zoomImageViewRetryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="RETRY" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

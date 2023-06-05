@@ -16,6 +16,7 @@
 package com.github.panpf.zoomimage.sample.ui.sketch
 
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -51,28 +52,52 @@ class SketchZoomImageViewFragment : BindingFragment<SketchZoomImageViewFragmentB
                 )
                 true
             }
-
-            displayImage(args.imageUri) {
-                lifecycle(viewLifecycleOwner.lifecycle)
-            }
         }
 
-        binding.sketchZoomImageViewTileMap.apply {
+        binding.common.zoomImageViewRetryButton.setOnClickListener {
+            loadImage(binding)
+        }
+
+        binding.common.zoomImageViewTileMap.apply {
             setZoomImageView(binding.sketchZoomImageViewImage)
-            displayImage(args.imageUri) {
-                resizeSize(600, 600)
-                resizePrecision(Precision.LESS_PIXELS)
-            }
         }
 
-        binding.sketchZoomImageViewRotate.setOnClickListener {
+        binding.common.zoomImageViewRotate.setOnClickListener {
             binding.sketchZoomImageViewImage.zoomAbility.rotateBy(90)
         }
 
-        binding.sketchZoomImageViewSettings.setOnClickListener {
+        binding.common.zoomImageViewSettings.setOnClickListener {
 //            findNavController().navigate(
 //                MainFragmentDirections.actionGlobalSettingsDialogFragment(Page.ZOOM.name)
 //            )
+        }
+
+        loadImage(binding)
+    }
+
+    private fun loadImage(binding: SketchZoomImageViewFragmentBinding) {
+        binding.sketchZoomImageViewImage.displayImage(args.imageUri) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade()
+            listener(
+                onStart = {
+                    binding.common.zoomImageViewProgress.isVisible = true
+                    binding.common.zoomImageViewError.isVisible = false
+                },
+                onSuccess = { _, _ ->
+                    binding.common.zoomImageViewProgress.isVisible = false
+                    binding.common.zoomImageViewError.isVisible = false
+                },
+                onError = { _, _ ->
+                    binding.common.zoomImageViewProgress.isVisible = false
+                    binding.common.zoomImageViewError.isVisible = true
+                },
+            )
+        }
+
+        binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
+            resizeSize(600, 600)
+            resizePrecision(Precision.LESS_PIXELS)
         }
     }
 

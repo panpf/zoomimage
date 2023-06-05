@@ -16,18 +16,25 @@
 package com.github.panpf.zoomimage.sample.ui.zoomimage
 
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
+import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.resize.Precision
+import com.github.panpf.sketch.sketch
+import com.github.panpf.zoomimage.ImageSource
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
+import kotlinx.coroutines.launch
 
 class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
 
@@ -49,12 +56,25 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
                 true
             }
 
-            displayImage(args.imageUri) {
-                placeholder(R.drawable.im_placeholder)
-                lifecycle(viewLifecycleOwner.lifecycle)
+            subsamplingAbility.setLifecycle(viewLifecycleOwner.lifecycle)
+            viewLifecycleOwner.lifecycleScope.launch {
+                val request = DisplayRequest(requireContext(), args.imageUri) {
+                    lifecycle(viewLifecycleOwner.lifecycle)
+                }
+                binding.zoomImageViewProgress.isVisible = true
+                val result = requireContext().sketch.execute(request)
+                binding.zoomImageViewProgress.isVisible = false
+                if (result is DisplayResult.Success) {
+                    setImageDrawable(result.drawable)
+                    val assetFileName = args.imageUri.replace("asset://", "")
+                    subsamplingAbility.setImageSource(
+                        ImageSource.fromAsset(requireContext(), assetFileName)
+                    )
+                }
             }
         }
 
+        // todo common
         binding.zoomImageViewTileMap.apply {
             setZoomImageView(binding.zoomImageViewImage)
             displayImage(args.imageUri) {
