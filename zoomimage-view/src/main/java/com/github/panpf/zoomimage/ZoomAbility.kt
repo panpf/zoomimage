@@ -183,6 +183,9 @@ class ZoomAbility(
     val scale: Float
         get() = engine.scale
 
+    val translation: PointF
+        get() = engine.translation
+
     val baseScale: Float
         get() = engine.baseScale
 
@@ -226,8 +229,13 @@ class ZoomAbility(
 
     fun getDrawRect(rectF: RectF) = engine.getDrawRect(rectF)
 
+    fun getDrawRect(): RectF = engine.getDrawRect()
+
     /** Gets the area that the user can see on the drawable (not affected by rotation) */
     fun getVisibleRect(rect: Rect) = engine.getVisibleRect(rect)
+
+    /** Gets the area that the user can see on the drawable (not affected by rotation) */
+    fun getVisibleRect(): Rect = engine.getVisibleRect()
 
     fun touchPointToDrawablePoint(touchPoint: PointF): Point? {
         return engine.touchPointToDrawablePoint(touchPoint)

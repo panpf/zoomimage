@@ -16,7 +16,6 @@
 package com.github.panpf.zoomimage.internal
 
 import android.content.Context
-import android.graphics.RectF
 import android.widget.OverScroller
 import kotlin.math.roundToInt
 
@@ -39,8 +38,7 @@ internal class FlingRunnable(
     fun start() {
         cancel()
 
-        val drawRectF = RectF()
-            .apply { scaleDragHelper.getDrawRect(this) }
+        val drawRectF = scaleDragHelper.getDrawRect()
             .takeIf { !it.isEmpty }
             ?: return
         val (viewWidth, viewHeight) = engine.viewSize

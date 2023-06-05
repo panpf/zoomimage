@@ -298,6 +298,9 @@ internal class ZoomEngine constructor(
     val scale: Float
         get() = scaleDragHelper.scale
 
+    val translation: PointF
+        get() = scaleDragHelper.translation
+
     val baseScale: Float
         get() = scaleDragHelper.baseScale
 
@@ -332,8 +335,13 @@ internal class ZoomEngine constructor(
 
     fun getDrawRect(rectF: RectF) = scaleDragHelper.getDrawRect(rectF)
 
+    fun getDrawRect(): RectF = scaleDragHelper.getDrawRect()
+
     /** Gets the area that the user can see on the drawable (not affected by rotation) */
     fun getVisibleRect(rect: Rect) = scaleDragHelper.getVisibleRect(rect)
+
+    /** Gets the area that the user can see on the drawable (not affected by rotation) */
+    fun getVisibleRect(): Rect = scaleDragHelper.getVisibleRect()
 
     fun touchPointToDrawablePoint(touchPoint: PointF): Point? {
         return scaleDragHelper.touchPointToDrawablePoint(touchPoint)

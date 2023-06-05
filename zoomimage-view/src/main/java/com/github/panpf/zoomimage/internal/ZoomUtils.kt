@@ -15,16 +15,12 @@
  */
 package com.github.panpf.zoomimage.internal
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
-import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.Rect
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
@@ -111,6 +107,15 @@ internal fun Matrix.getTranslation(point: PointF) {
     point.y = MATRIX_VALUES[Matrix.MTRANS_Y]
 }
 
+internal fun Matrix.getTranslation(): PointF {
+    requiredMainThread()
+    getValues(MATRIX_VALUES)
+    val point = PointF()
+    point.x = MATRIX_VALUES[Matrix.MTRANS_X]
+    point.y = MATRIX_VALUES[Matrix.MTRANS_Y]
+    return point
+}
+
 internal fun reverseRotateRect(rect: Rect, rotateDegrees: Int, drawableSize: Size) {
     require(rotateDegrees % 90 == 0) {
         "rotateDegrees must be an integer multiple of 90"
@@ -125,6 +130,7 @@ internal fun reverseRotateRect(rect: Rect, rotateDegrees: Int, drawableSize: Siz
             rect.top = drawableSize.height - rect.top
             rect.bottom = drawableSize.height - rect.bottom
         }
+
         180 -> {
             var right = rect.right
             rect.right = rect.left
@@ -137,6 +143,7 @@ internal fun reverseRotateRect(rect: Rect, rotateDegrees: Int, drawableSize: Siz
             rect.left = drawableSize.width - rect.left
             rect.right = drawableSize.width - rect.right
         }
+
         270 -> {
             val bottom = rect.bottom
             rect.bottom = rect.right
@@ -158,10 +165,12 @@ internal fun rotatePoint(point: PointF, rotateDegrees: Int, drawableSize: Size) 
             point.x = drawableSize.height - point.y
             point.y = point.x
         }
+
         180 -> {
             point.x = drawableSize.width - point.x
             point.y = drawableSize.height - point.y
         }
+
         270 -> {
             point.x = point.y
             point.y = drawableSize.width - point.x
@@ -173,7 +182,6 @@ internal val Bitmap.logString: String
     get() = "Bitmap(${width}x${height},$config,@${toHexString()})"
 
 internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
-
 
 
 fun isInBitmapError(throwable: Throwable): Boolean =

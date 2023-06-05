@@ -295,9 +295,7 @@ internal class SubsamplingEngine constructor(
 
     fun eachTileList(action: (tile: Tile, load: Boolean) -> Unit) {
         val drawableSize = zoomEngine.drawableSize.takeIf { !it.isEmpty } ?: return
-        val drawableVisibleRect = tempDrawableVisibleRect.apply {
-            zoomEngine.getVisibleRect(this)
-        }.takeIf { !it.isEmpty } ?: return
+        val drawableVisibleRect = zoomEngine.getVisibleRect().takeIf { !it.isEmpty } ?: return
         tileManager?.eachTileList(drawableSize, drawableVisibleRect, action)
     }
 }

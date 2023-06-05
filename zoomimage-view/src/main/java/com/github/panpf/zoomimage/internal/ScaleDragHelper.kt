@@ -81,6 +81,8 @@ internal class ScaleDragHelper constructor(
         get() = supportMatrix.getScale()
     val scale: Float
         get() = drawMatrix.apply { getDrawMatrix(this) }.getScale()
+    val translation: PointF
+        get() = drawMatrix.apply { getDrawMatrix(this) }.getTranslation()
 
     init {
         scaleDragGestureDetector = ScaleDragGestureDetector(context, object : OnGestureListener {
@@ -140,6 +142,7 @@ internal class ScaleDragHelper constructor(
                 baseMatrix.postScale(initState.scale, initState.scale)
                 baseMatrix.postTranslate(initState.translateX, initState.translateY)
             }
+
             is Initial.FitXy -> {
                 baseMatrix.setRectToRect(
                     initState.srcRectF,
@@ -180,9 +183,11 @@ internal class ScaleDragHelper constructor(
                     else -> (viewWidth - displayWidth) / 2 - drawRectF.left
                 }
             }
+
             drawRectF.left.toInt() > 0 -> {
                 deltaX = -drawRectF.left
             }
+
             drawRectF.right.toInt() < viewWidth -> {
                 deltaX = viewWidth - drawRectF.right
             }
@@ -199,9 +204,11 @@ internal class ScaleDragHelper constructor(
                     else -> (viewHeight - displayHeight) / 2 - drawRectF.top
                 }
             }
+
             drawRectF.top.toInt() > 0 -> {
                 deltaY = -drawRectF.top
             }
+
             drawRectF.bottom.toInt() < viewHeight -> {
                 deltaY = viewHeight - drawRectF.bottom
             }
@@ -251,7 +258,7 @@ internal class ScaleDragHelper constructor(
             )
         }
 
-        val drawRectF = drawRectF.apply { getDrawRect(this) }
+        val drawRectF = getDrawRect()
         nowScale = scale
         val scaleLocationX = (newX * nowScale).toInt()
         val scaleLocationY = (newY * nowScale).toInt()
@@ -318,6 +325,10 @@ internal class ScaleDragHelper constructor(
         drawMatrix.apply { getDrawMatrix(this) }.mapRect(rectF)
     }
 
+    fun getDrawRect(): RectF {
+        return RectF().apply { getDrawRect(this) }
+    }
+
     /**
      * Gets the area that the user can see on the drawable (not affected by rotation)
      */
@@ -349,9 +360,16 @@ internal class ScaleDragHelper constructor(
         reverseRotateRect(rect, engine.rotateDegrees, drawableSize)
     }
 
+    /**
+     * Gets the area that the user can see on the drawable (not affected by rotation)
+     */
+    fun getVisibleRect(): Rect {
+        return Rect().apply { getVisibleRect(this) }
+    }
+
     fun touchPointToDrawablePoint(touchPoint: PointF): Point? {
         val drawableSize = engine.drawableSize.takeIf { !it.isEmpty } ?: return null
-        val drawRect = RectF().apply { getDrawRect(this) }
+        val drawRect = getDrawRect()
         if (!drawRect.contains(touchPoint.x, touchPoint.y)) {
             return null
         }
