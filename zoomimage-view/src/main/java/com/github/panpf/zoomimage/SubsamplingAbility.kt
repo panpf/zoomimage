@@ -2,9 +2,9 @@ package com.github.panpf.zoomimage
 
 import android.graphics.Canvas
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import com.github.panpf.zoomimage.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.internal.Tile
 import com.github.panpf.zoomimage.internal.getLifecycle
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 @Suppress("unused", "UNUSED_PARAMETER")
 class SubsamplingAbility(
     private val view: View,
-    zoomAbility: ZoomAbility
+    private val zoomAbility: ZoomAbility
 ) {
 
     companion object {
@@ -28,15 +28,21 @@ class SubsamplingAbility(
     }
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    private val engine: SubsamplingEngine
+    private val engine: SubsamplingEngine =
+        SubsamplingEngine(view.context, zoomAbility.logger, zoomAbility.engine)
     private var lifecycle: Lifecycle? = null
     private var imageSource: ImageSource? = null
     private var initEngineJob: Job? = null
     private val setupImageSourceChannel = Channel<ImageSource>()
-    private val engineAutoPauseLifecycleObserver = EngineAutoPauseLifecycleObserver()
+    private val resetPausedLifecycleObserver = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_START) {
+            resetPaused("LifecycleStateChanged:ON_START")
+        } else if (event == Lifecycle.Event.ON_STOP) {
+            resetPaused("LifecycleStateChanged:ON_STOP")
+        }
+    }
 
     init {
-        engine = SubsamplingEngine(view.context, zoomAbility.logger, zoomAbility.engine)
         setLifecycle(view.context.getLifecycle())
     }
 
@@ -56,6 +62,7 @@ class SubsamplingAbility(
             unregisterLifecycleObserver()
             this.lifecycle = lifecycle
             registerLifecycleObserver()
+            resetPaused("setLifecycle")
         }
     }
 
@@ -122,7 +129,13 @@ class SubsamplingAbility(
     }
 
     fun onVisibilityChanged(changedView: View, visibility: Int) {
-        engine.paused = visibility != View.VISIBLE
+        val visibilityName = when (visibility) {
+            View.VISIBLE -> "VISIBLE"
+            View.INVISIBLE -> "INVISIBLE"
+            View.GONE -> "GONE"
+            else -> "UNKNOWN"
+        }
+        resetPaused("onVisibilityChanged:$visibilityName")
     }
 
     fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
@@ -150,25 +163,21 @@ class SubsamplingAbility(
         }
     }
 
+    private fun resetPaused(caller: String) {
+        val viewVisible = view.isVisible
+        val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
+        val paused = !viewVisible || !lifecycleStarted
+        zoomAbility.logger.d(MODULE) { "resetPaused. $paused. $caller. viewVisible=$viewVisible, lifecycleStarted=$lifecycleStarted. '${imageSource?.key}'" }
+        engine.paused = paused
+    }
+
     private fun registerLifecycleObserver() {
         if (view.isAttachedToWindowCompat) {
-            engine.paused = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == false
-            lifecycle?.addObserver(engineAutoPauseLifecycleObserver)
+            lifecycle?.addObserver(resetPausedLifecycleObserver)
         }
     }
 
     private fun unregisterLifecycleObserver() {
-        lifecycle?.removeObserver(engineAutoPauseLifecycleObserver)
-        engine.paused = false
-    }
-
-    private inner class EngineAutoPauseLifecycleObserver : LifecycleEventObserver {
-        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            when (event) {
-                Lifecycle.Event.ON_START -> engine.paused = false
-                Lifecycle.Event.ON_STOP -> engine.paused = true
-                else -> {}
-            }
-        }
+        lifecycle?.removeObserver(resetPausedLifecycleObserver)
     }
 }
