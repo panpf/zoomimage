@@ -85,6 +85,27 @@
 
 
     <fragment
+        android:id="@+id/glideZoomImageViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.glide.GlideZoomImageViewFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/glideZoomImageViewPagerFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.glide.GlideZoomImageViewPagerFragment" />
+    <action
+        android:id="@+id/action_global_glideZoomImageViewPagerFragment"
+        app:destination="@id/glideZoomImageViewPagerFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+
+    <fragment
         android:id="@+id/telephotoZoomImageFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.TelephotoZoomImageFragment" />
     <action

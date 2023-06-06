@@ -33,6 +33,7 @@ mmkv = "1.2.13"
 subsamplingscaleimageview = "3.10.0"
 photoview = "2.3.0"
 coil = "2.3.0"
+glide="4.15.1"
 
 [libraries]
 
@@ -80,6 +81,7 @@ mmkv = { module = "com.tencent:mmkv", version.ref = "mmkv" }
 subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "android-plugin" }
