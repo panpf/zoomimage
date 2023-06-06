@@ -17,9 +17,6 @@ package com.github.panpf.zoomimage.sample
 
 import android.content.Context
 import android.widget.ImageView.ScaleType.FIT_CENTER
-import com.github.panpf.sketch.resize.Scale.CENTER_CROP
-import com.github.panpf.sketch.resize.Scale.START_CROP
-import com.github.panpf.sketch.util.Logger.Level.INFO
 import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
 import com.github.panpf.zoomimage.sample.util.StringMmkvData
 import com.tencent.mmkv.MMKV
@@ -27,65 +24,6 @@ import com.tencent.mmkv.MMKV
 class PrefsService(val context: Context) {
 
     private val mmkv = MMKV.defaultMMKV()
-
-    val disallowAnimatedImageInList by lazy {
-        BooleanMmkvData(mmkv, "disallowAnimatedImageInList", false)
-    }
-
-    val showMimeTypeLogoInLIst by lazy {
-        BooleanMmkvData(mmkv, "showMimeTypeLogoInLIst", true)
-    }
-    val showProgressIndicatorInList by lazy {
-        BooleanMmkvData(mmkv, "showProgressIndicatorInList", true)
-    }
-    val showDataFromLogo by lazy {
-        BooleanMmkvData(mmkv, "showDataFrom", true)
-    }
-    val saveCellularTrafficInList by lazy {
-        BooleanMmkvData(mmkv, "saveCellularTrafficInList", false)
-    }
-    val pauseLoadWhenScrollInList by lazy {
-        BooleanMmkvData(mmkv, "pauseLoadWhenScrollInList", false)
-    }
-
-    val resizePrecision by lazy {
-        StringMmkvData(mmkv, "resizePrecision", "LongImageClipMode")
-    }
-    val resizeScale by lazy {
-        StringMmkvData(mmkv, "resizeScale", "LongImageMode")
-    }
-    val longImageResizeScale by lazy {
-        StringMmkvData(mmkv, "longImageResizeScale", START_CROP.name)
-    }
-    val otherImageResizeScale by lazy {
-        StringMmkvData(mmkv, "otherImageResizeScale", CENTER_CROP.name)
-    }
-    val bitmapQuality by lazy {
-        StringMmkvData(mmkv, "bitmapQuality", "Default")
-    }
-
-    val colorSpace by lazy {
-        StringMmkvData(mmkv, "colorSpace", "Default")
-    }
-    val inPreferQualityOverSpeed by lazy {
-        BooleanMmkvData(mmkv, "inPreferQualityOverSpeed", false)
-    }
-    val ignoreExifOrientation by lazy {
-        BooleanMmkvData(mmkv, "ignoreExifOrientation", false)
-    }
-
-    val disabledMemoryCache by lazy {
-        BooleanMmkvData(mmkv, "disabledBitmapMemoryCache", false)
-    }
-    val disabledResultCache by lazy {
-        BooleanMmkvData(mmkv, "disabledBitmapResultCache", false)
-    }
-    val disabledDownloadCache by lazy {
-        BooleanMmkvData(mmkv, "disabledDownloadCache", false)
-    }
-    val disallowReuseBitmap by lazy {
-        BooleanMmkvData(mmkv, "disallowReuseBitmap", false)
-    }
 
     val scaleType by lazy {
         StringMmkvData(mmkv, "scaleType", FIT_CENTER.name)
@@ -96,15 +34,7 @@ class PrefsService(val context: Context) {
     val readModeEnabled by lazy {
         BooleanMmkvData(mmkv, "readModeEnabled", true)
     }
-    val showTileBoundsInHugeImagePage by lazy {
-        BooleanMmkvData(mmkv, "showTileBoundsInHugeImagePage", false)
-    }
-
-    val logLevel by lazy {
-        StringMmkvData(mmkv, "logLevel", INFO.name)
-    }
-
-    val showOriginImage by lazy {
-        BooleanMmkvData(mmkv, "showOriginImage", false)
+    val showTileBounds by lazy {
+        BooleanMmkvData(mmkv, "showTileBounds", false)
     }
 }

@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.common
+package com.github.panpf.zoomimage.sample.ui.common.menu
 
-import com.github.panpf.assemblyadapter.recycler.DiffKey
-
-data class ListSeparator(val title: String, var clickCount: Int = 0) : DiffKey {
-
-    override val diffKey: String = "ListSeparator-$title"
-}
+class MultiSelectMenu(
+    val title: String,
+    val desc: String? = null,
+    val values: List<String>,
+    val getValue: () -> String,
+    val onSelect: (which: Int, value: String) -> Unit
+)

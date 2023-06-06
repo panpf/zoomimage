@@ -15,41 +15,64 @@
  */
 package com.github.panpf.zoomimage.sample.ui.zoomimage
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.ImageView.ScaleType
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.sketch
+import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.zoomimage.ImageSource
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.format
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
+import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import kotlinx.coroutines.launch
 
 class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
 
     private val args by navArgs<ZoomImageViewFragmentArgs>()
-    private val settingsEventViewModel by viewModels<SettingsEventViewModel>()
 
     override fun onViewCreated(binding: ZoomImageViewFragmentBinding, savedInstanceState: Bundle?) {
         binding.zoomImageViewImage.apply {
             zoomAbility.logger.level = if (BuildConfig.DEBUG)
                 Logger.Level.DEBUG else Logger.Level.INFO
-            // todo settings
-            settingsEventViewModel.observeZoomSettings(this)
 
             subsamplingAbility.setLifecycle(viewLifecycleOwner.lifecycle)
+
+            lifecycleOwner.lifecycleScope.launch {
+                prefsService.scaleType.stateFlow.collect {
+                    scaleType = ScaleType.valueOf(it)
+                }
+            }
+            lifecycleOwner.lifecycleScope.launch {
+                prefsService.scrollBarEnabled.stateFlow.collect {
+                    zoomAbility.scrollBarEnabled = it
+                }
+            }
+            lifecycleOwner.lifecycleScope.launch {
+                prefsService.readModeEnabled.stateFlow.collect {
+                    zoomAbility.readModeEnabled = it
+                }
+            }
+            lifecycleOwner.lifecycleScope.launch {
+                prefsService.showTileBounds.stateFlow.collect {
+                    subsamplingAbility.showTileBounds = it
+                }
+            }
         }
 
         binding.common.zoomImageViewErrorRetryButton.setOnClickListener {
@@ -63,10 +86,7 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
         }
 
         binding.common.zoomImageViewSettings.setOnClickListener {
-            // todo settings
-//            findNavController().navigate(
-//                MainFragmentDirections.actionGlobalSettingsDialogFragment(Page.ZOOM.name)
-//            )
+            SettingsDialogFragment().show(childFragmentManager, null)
         }
 
         binding.common.zoomImageViewInfoText.apply {
@@ -115,25 +135,36 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateInfo(binding: ZoomImageViewFragmentBinding) {
-        val info = binding.zoomImageViewImage.zoomAbility.run {
+        val zoomInfo = binding.zoomImageViewImage.zoomAbility.run {
+            val stepScalesString = stepScales.joinToString { it.format(2) }
             """
-                scale: ${scale.format(2)}, range=[${minScale.format(2)}, ${maxScale.format(2)}], steps=(${
-                stepScales.joinToString {
-                    it.format(
-                        2
-                    )
-                }
-            })
+                scale: ${scale.format(2)}, range=[${minScale.format(2)}, ${maxScale.format(2)}], steps=($stepScalesString)
                 translation: ${translation.run { "($x, $y)" }}
-                visibleRect: ${getVisibleRect().toVeryShortString()}
                 drawRect: ${getDrawRect().toVeryShortString()}
-                size: view=${viewSize.toShortString()}, drawable=${drawableSize.toShortString()}
+                visibleRect: ${getVisibleRect().toVeryShortString()}
                 edge: hor=${horScrollEdge}, ver=${verScrollEdge}
+                size: view=${viewSize.toShortString()}, drawable=${drawableSize.toShortString()}
             """.trimIndent()
-            // todo bitmap, subsampling info
         }
-        binding.common.zoomImageViewInfoText.text = info
+        val imageInfo = binding.zoomImageViewImage.subsamplingAbility.run {
+            val exifOrientationName = imageExifOrientation?.let { exifOrientationName(it) }
+            """
+                image: ${imageSize?.toShortString()}, '${imageMimeType}', $exifOrientationName
+            """.trimIndent()
+        }
+        val subsamplingInfo = binding.zoomImageViewImage.subsamplingAbility.run {
+            val tileList = tileList ?: emptyList()
+            val tilesByteCount = tileList.sumOf { it.bitmap?.byteCount ?: 0 }
+                .toLong().formatFileSize()
+            """
+                tileCount=${tileList.size}
+                validTileCount=${tileList.count { it.bitmap != null }}
+                tilesByteCount=${tilesByteCount}
+            """.trimIndent()
+        }
+        binding.common.zoomImageViewInfoText.text = "$zoomInfo\n$imageInfo\n$subsamplingInfo"
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

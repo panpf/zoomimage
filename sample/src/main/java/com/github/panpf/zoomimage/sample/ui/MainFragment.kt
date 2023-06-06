@@ -11,8 +11,8 @@ import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.databinding.MainFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarBindingFragment
-import com.github.panpf.zoomimage.sample.ui.common.ListSeparator
-import com.github.panpf.zoomimage.sample.ui.common.ListSeparatorItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.list.ListSeparator
+import com.github.panpf.zoomimage.sample.ui.common.list.ListSeparatorItemFactory
 import com.github.panpf.zoomimage.sample.ui.link.Link
 import com.github.panpf.zoomimage.sample.ui.link.LinkItemFactory
 

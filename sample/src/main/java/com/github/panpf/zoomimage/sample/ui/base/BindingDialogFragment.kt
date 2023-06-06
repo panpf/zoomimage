@@ -32,7 +32,7 @@ import kotlin.math.roundToInt
 abstract class BindingDialogFragment<VIEW_BINDING : ViewBinding> : DialogFragment() {
 
     private var binding: VIEW_BINDING? = null
-    private var dialogWidthRatio: Float = 0.85f
+    private var dialogWidthRatio: Float = 0.8f
     protected var dialogHeightRatio: Float? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
