@@ -84,6 +84,12 @@ internal class SubsamplingEngine constructor(
         get() = imageSource == null
     val tileList: List<Tile>?
         get() = tileManager?.tileList
+    val imageSize: Size?
+        get() = tileManager?.imageSize
+    val imageMimeType: String?
+        get() = tileManager?.imageMimeType
+    val imageExifOrientation: Int?
+        get() = tileManager?.imageExifOrientation
 
     init {
         zoomEngine.addOnMatrixChangeListener {
@@ -179,7 +185,8 @@ internal class SubsamplingEngine constructor(
 
             val imageSize = Size(imageWidth, imageHeight)
             logger.d(MODULE) {
-                "setImageSource success. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize=$imageSize, mimeType=$mimeType, exifOrientation=${exifOrientation}. '${imageSource.key}'"
+                val exifOrientationName = exifOrientationName(exifOrientation)
+                "setImageSource success. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize=$imageSize, mimeType=$mimeType, exifOrientation=$exifOrientationName. '${imageSource.key}'"
             }
             zoomEngine.imageSize = imageSize
             val tileDecoder = TileDecoder(
@@ -193,7 +200,6 @@ internal class SubsamplingEngine constructor(
                 engine = this@SubsamplingEngine,
                 decoder = tileDecoder,
                 imageSource = imageSource,
-                imageSize = imageSize,
                 viewSize = viewSize,
             )
             refreshTiles()

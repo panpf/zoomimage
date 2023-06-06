@@ -45,7 +45,6 @@ internal class TileManager constructor(
     private val engine: SubsamplingEngine,
     private val decoder: TileDecoder,
     private val imageSource: ImageSource,
-    private val imageSize: Size,
     viewSize: Size,
 ) {
 
@@ -60,7 +59,7 @@ internal class TileManager constructor(
     private val tileMaxSize = viewSize.let {
         Size(it.width / 2, it.height / 2)
     }
-    private val tileMap: Map<Int, List<Tile>> = initializeTileMap(imageSize, tileMaxSize)
+    private val tileMap: Map<Int, List<Tile>> = initializeTileMap(decoder.imageSize, tileMaxSize)
     private val scope: CoroutineScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Main.immediate
     )
@@ -75,6 +74,12 @@ internal class TileManager constructor(
 
     val tileList: List<Tile>?
         get() = lastTileList
+    val imageSize: Size
+        get() = decoder.imageSize
+    val imageMimeType: String
+        get() = decoder.imageMimeType
+    val imageExifOrientation: Int
+        get() = decoder.imageExifOrientation
 
     init {
         engine.logger.d(SubsamplingEngine.MODULE) {

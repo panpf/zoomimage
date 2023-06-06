@@ -14,6 +14,20 @@ import com.github.panpf.zoomimage.TinyBitmapPool
 import com.github.panpf.zoomimage.getOrCreate
 import kotlin.math.abs
 
+fun exifOrientationName(exifOrientation: Int): String =
+    when (exifOrientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> "ROTATE_90"
+        ExifInterface.ORIENTATION_TRANSPOSE -> "TRANSPOSE"
+        ExifInterface.ORIENTATION_ROTATE_180 -> "ROTATE_180"
+        ExifInterface.ORIENTATION_FLIP_VERTICAL -> "FLIP_VERTICAL"
+        ExifInterface.ORIENTATION_ROTATE_270 -> "ROTATE_270"
+        ExifInterface.ORIENTATION_TRANSVERSE -> "TRANSVERSE"
+        ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> "FLIP_HORIZONTAL"
+        ExifInterface.ORIENTATION_UNDEFINED -> "UNDEFINED"
+        ExifInterface.ORIENTATION_NORMAL -> "NORMAL"
+        else -> exifOrientation.toString()
+    }
+
 /**
  * Rotate and flip the image according to the 'orientation' attribute of Exif so that the image is presented to the user at a normal angle
  */

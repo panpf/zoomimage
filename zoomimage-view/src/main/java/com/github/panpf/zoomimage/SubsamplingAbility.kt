@@ -101,6 +101,15 @@ class SubsamplingAbility(
     val tileList: List<Tile>?
         get() = engine.tileList
 
+    val imageSize: Size?
+        get() = engine.imageSize
+
+    val imageMimeType: String?
+        get() = engine.imageMimeType
+
+    val imageExifOrientation: Int?
+        get() = engine.imageExifOrientation
+
     fun eachTileList(action: (tile: Tile, load: Boolean) -> Unit) {
         engine.eachTileList(action)
     }
