@@ -81,7 +81,7 @@ internal fun findSampleSize(
     scale: Float
 ): Int {
     require(canUseSubsampling(imageWidth, imageHeight, drawableWidth, drawableHeight)) {
-        "imageSize(${imageWidth}x${imageHeight}} and drawableSize(${drawableWidth}x${drawableHeight}) must have the same aspect ratio)"
+        "imageSize(${imageWidth}x${imageHeight}) and drawableSize(${drawableWidth}x${drawableHeight}) must have the same aspect ratio"
     }
 
     val scaledWidthRatio = (imageWidth / (drawableWidth * scale))
@@ -102,7 +102,7 @@ internal fun Rect.crossWith(other: Rect): Boolean {
 fun canUseSubsampling(
     imageWidth: Int, imageHeight: Int, drawableWidth: Int, drawableHeight: Int
 ): Boolean {
-    val imageRatio = (imageWidth / imageHeight.toFloat()).format(1)
-    val drawableRatio = (drawableWidth / drawableHeight.toFloat()).format(1)
-    return abs(imageRatio - drawableRatio).format(1) <= 0.1f
+    val imageRatio = (imageWidth / imageHeight.toFloat()).format(2)
+    val drawableRatio = (drawableWidth / drawableHeight.toFloat()).format(2)
+    return abs(imageRatio - drawableRatio).format(2) <= 0.50f
 }
