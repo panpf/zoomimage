@@ -106,6 +106,27 @@
 
 
     <fragment
+        android:id="@+id/picassoZoomImageViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.picasso.PicassoZoomImageViewPagerFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/picassoZoomImageViewPagerFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.picasso.PicassoZoomImageViewPagerFragment" />
+    <action
+        android:id="@+id/action_global_picassoZoomImageViewPagerFragment"
+        app:destination="@id/picassoZoomImageViewPagerFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+
+    <fragment
         android:id="@+id/telephotoZoomImageFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.TelephotoZoomImageFragment" />
     <action

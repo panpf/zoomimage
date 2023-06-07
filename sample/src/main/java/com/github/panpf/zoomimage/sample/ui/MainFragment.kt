@@ -70,7 +70,10 @@ class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
                     Link(
                         title = "GlideZoomImageView（My）",
                         navDirections = NavMainDirections.actionGlobalGlideZoomImageViewPagerFragment(),
-                        minSdk = 21
+                    ),
+                    Link(
+                        title = "PicassoZoomImageView（My）",
+                        navDirections = NavMainDirections.actionGlobalPicassoZoomImageViewPagerFragment(),
                     ),
                     Link(
                         title = "PhotoView",

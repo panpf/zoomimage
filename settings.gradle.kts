@@ -26,5 +26,5 @@ include(":zoomimage-core")
 include(":zoomimage-view")
 include(":zoomimage-view-coil")
 include(":zoomimage-view-glide")
+include(":zoomimage-view-picasso")
 include(":zoomimage-view-sketch")
-// todo gilide, coil, picasso

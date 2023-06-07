@@ -34,6 +34,7 @@ subsamplingscaleimageview = "3.10.0"
 photoview = "2.3.0"
 coil = "2.3.0"
 glide="4.15.1"
+picasso="2.8"
 
 [libraries]
 
@@ -82,6 +83,7 @@ subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "android-plugin" }

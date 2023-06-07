@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.glide
+package com.github.panpf.zoomimage.sample.ui.picasso
 
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
@@ -24,21 +24,21 @@ import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarBindingFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
-class GlideZoomImageViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
+class PicassoZoomImageViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
 
     override fun onViewCreated(
         toolbar: Toolbar,
         binding: TabPagerFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        toolbar.title = "GlideZoomImageView"
+        toolbar.title = "PicassoZoomImageView"
 
         val sampleImages = SampleImage.HUGES
         binding.tabPagerPager.apply {
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
-                fragment = this@GlideZoomImageViewPagerFragment,
-                itemFactoryList = listOf(GlideZoomImageViewFragment.ItemFactory()),
+                fragment = this@PicassoZoomImageViewPagerFragment,
+                itemFactoryList = listOf(PicassoZoomImageViewFragment.ItemFactory()),
                 initDataList = sampleImages.map { it.uri }
             )
         }
