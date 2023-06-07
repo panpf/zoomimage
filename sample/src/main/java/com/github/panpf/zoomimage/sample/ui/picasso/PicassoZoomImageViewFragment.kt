@@ -39,7 +39,6 @@ import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.ui.zoomimage.SettingsDialogFragment
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 
 class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmentBinding>() {
@@ -109,11 +108,9 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
     private fun loadImage(binding: PicassoZoomImageViewFragmentBinding) {
         binding.common.zoomImageViewProgress.isVisible = true
         binding.common.zoomImageViewError.isVisible = false
-        Picasso.get()
-            .load(args.imageUri.replace("asset://", "file:///android_asset/"))
-            .fit()
-            .centerInside()
-            .into(binding.picassoZoomImageViewImage, object : Callback {
+        binding.picassoZoomImageViewImage.loadImage(
+            path = args.imageUri.replace("asset://", "file:///android_asset/"),
+            callback = object : Callback {
                 override fun onSuccess() {
                     binding.common.zoomImageViewProgress.isVisible = false
                     binding.common.zoomImageViewError.isVisible = false
@@ -123,7 +120,12 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
                     binding.common.zoomImageViewProgress.isVisible = false
                     binding.common.zoomImageViewError.isVisible = true
                 }
-            })
+            },
+            config = {
+                fit()
+                centerInside()
+            }
+        )
 
         binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
             resizeSize(600, 600)
