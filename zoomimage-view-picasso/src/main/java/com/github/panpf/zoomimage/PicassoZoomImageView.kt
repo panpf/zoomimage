@@ -19,9 +19,12 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
+import com.github.panpf.zoomimage.internal.PicassoHttpImageSource
+import com.github.panpf.zoomimage.internal.PicassoTinyMemoryCache
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
+import com.squareup.picasso.isDisallowMemoryCache
 import java.io.File
 
 open class PicassoZoomImageView @JvmOverloads constructor(
@@ -34,11 +37,8 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         const val MODULE = "PicassoZoomImageView"
     }
 
-    // todo 适配
-
     init {
-//        _subsamplingAbility?.tinyBitmapPool = PicassoTinyBitmapPool(context.sketch)
-//        _subsamplingAbility?.tinyMemoryCache = PicassoTinyMemoryCache(context.sketch)
+        _subsamplingAbility?.tinyMemoryCache = PicassoTinyMemoryCache(Picasso.get())
     }
 
     fun loadImage(
@@ -84,15 +84,8 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     private fun loadImage(uri: Uri?, callback: Callback?, creator: RequestCreator) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
-                val uriString = uri.toString()
-                // todo 适配多种 url
-                if (uriString.startsWith("file:///android_asset/")) {
-                    val assetFileName = uriString.replace("file:///android_asset/", "")
-                    val imageSource = ImageSource.fromAsset(context, assetFileName)
-                    _subsamplingAbility?.setImageSource(imageSource)
-                } else {
-                    _subsamplingAbility?.setImageSource(null)
-                }
+                _subsamplingAbility?.disallowMemoryCache = getDisallowMemoryCache(creator)
+                _subsamplingAbility?.setImageSource(newImageSource(uri))
                 callback?.onSuccess()
             }
 
@@ -104,48 +97,52 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
+        _subsamplingAbility?.disallowMemoryCache = false
         _subsamplingAbility?.setImageSource(null)
     }
 
-//    private fun getDisallowMemoryCache(drawable: Drawable?): Boolean {
-//        val sketchDrawable = drawable?.findLastSketchDrawable()
-//        val requestKey = sketchDrawable?.requestKey
-//        val displayResult = SketchUtils.getResult(this)
-//        return displayResult != null
-//                && displayResult is DisplayResult.Success
-//                && displayResult.requestKey == requestKey
-//                && displayResult.request.memoryCachePolicy != CachePolicy.ENABLED
-//    }
-//
-//    private fun getDisallowReuseBitmap(drawable: Drawable?): Boolean {
-//        val sketchDrawable = drawable?.findLastSketchDrawable()
-//        val requestKey = sketchDrawable?.requestKey
-//        val displayResult = SketchUtils.getResult(this)
-//        return displayResult != null
-//                && displayResult is DisplayResult.Success
-//                && displayResult.requestKey == requestKey
-//                && displayResult.request.disallowReuseBitmap
-//    }
-//
-//    private fun newImageSource(drawable: Drawable?): ImageSource? {
-//        drawable ?: return null
-//        if (drawable.getLastChildDrawable() is SketchStateDrawable) {
-//            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is SketchStateDrawable" }
-//            return null
-//        }
-//        val sketchDrawable = drawable.findLastSketchDrawable()
-//        if (sketchDrawable == null) {
-//            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is not SketchDrawable" }
-//            return null
-//        }
-//        if (sketchDrawable is Animatable) {
-//            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is Animatable" }
-//            return null
-//        }
-//        return PicassoImageSource(
-//            context = context,
-//            sketch = context.sketch,
-//            imageUri = sketchDrawable.imageUri,
-//        )
-//    }
+    private fun getDisallowMemoryCache(creator: RequestCreator): Boolean {
+        val memoryPolicy = try {
+            creator.javaClass.getDeclaredField("memoryPolicy").apply {
+                isAccessible = true
+            }.getInt(creator)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+        return isDisallowMemoryCache(memoryPolicy)
+    }
+
+    private fun newImageSource(uri: Uri?): ImageSource? {
+        uri ?: return null
+        val uriString: String = uri.toString()
+        return when {
+            uriString.startsWith("http://") || uriString.startsWith("https://") -> {
+                PicassoHttpImageSource(Picasso.get(), uri)
+            }
+
+            uriString.startsWith("file:///android_asset/") -> {
+                val assetFileName = uriString.replace("file:///android_asset/", "")
+                ImageSource.fromAsset(context, assetFileName)
+            }
+
+            uriString.startsWith("file://") -> {
+                ImageSource.fromUri(context, uri)
+            }
+
+            uriString.startsWith("content://") -> {
+                ImageSource.fromUri(context, uri)
+            }
+
+            uriString.startsWith("android.resource://") -> {
+                val resId = uriString.replace("android.resource://", "").toIntOrNull()
+                resId?.let { ImageSource.fromResource(context, it) }
+            }
+
+            else -> {
+                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Unsupported uri: $uri" }
+                null
+            }
+        }
+    }
 }
