@@ -116,15 +116,12 @@ internal class GlideEngine(
     }
 
     private fun loadFromActiveResources(key: Key): EngineResource<*>? {
-        val active: EngineResource<*>? = activeResources.get(key)
-        active?.acquire()
-        return active
+        return activeResources.get(key)
     }
 
     private fun loadFromCache(key: Key): EngineResource<*>? {
         val cached = getEngineResourceFromCache(key)
         if (cached != null) {
-            cached.acquire()
             activeResources.activate(key, cached)
         }
         return cached
