@@ -15,24 +15,130 @@
  */
 package com.github.panpf.zoomimage.sample
 
+import android.os.Environment
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.util.Size
-import com.github.panpf.zoomimage.sample.R.drawable
 
-class SampleImage(val name: String, val uri: String, val size: Size) {
+object SampleImages {
+    val FETCHERS = listOf(Asset.WORLD, Content.CARD, Resource.QMSHT, Http.COMIC)
 
-    companion object {
-        val DOG_HOR_RES = SampleImage("HORDOG", newResourceUri(drawable.dog_hor), Size(640, 427))
-        val DOG_VER_RES = SampleImage("VERDOG", newResourceUri(drawable.dog_ver), Size(150, 266))
-        val DOG_HOR_ASSET = SampleImage("HORDOG", newAssetUri("sample_dog_hor.jpg"), Size(640, 427))
-        val DOG_VER_ASSET = SampleImage("VERDOG", newAssetUri("sample_dog_ver.jpg"), Size(150, 266))
-        val WORLD_HUGE_ASSET = SampleImage("WORLD", newAssetUri("sample_huge_world.jpg"), Size(9798, 6988))
-        val CARD_HUGE_ASSET = SampleImage("CARD", newAssetUri("sample_huge_card.png"), Size(7557, 5669))
-        val QMSHT_HUGE_ASSET = SampleImage("QMSHT", newAssetUri("sample_long_qmsht.jpg"), Size(30000, 926))
-        val COMIC_HUGE_ASSET = SampleImage("COMIC", newAssetUri("sample_long_comic.jpg"), Size(690, 12176))
+    object Asset {
+        val HORDOG = SampleImage(
+            name = "HORDOG",
+            fileName = "sample_dog_hor.jpg",
+            uri = newAssetUri("sample_dog_hor.jpg"),
+            size = Size(640, 427)
+        )
+        val VERDOG = SampleImage(
+            name = "VERDOG",
+            fileName = "sample_dog_ver.jpg",
+            uri = newAssetUri("sample_dog_ver.jpg"),
+            size = Size(150, 266)
+        )
+        val WORLD = SampleImage(
+            name = "WORLD",
+            fileName = "sample_huge_world.jpg",
+            uri = newAssetUri("sample_huge_world.jpg"),
+            size = Size(9798, 6988)
+        )
+        val CARD = SampleImage(
+            name = "CARD",
+            fileName = "sample_huge_card.png",
+            uri = newAssetUri("sample_huge_card.png"),
+            size = Size(7557, 5669)
+        )
+        val QMSHT = SampleImage(
+            name = "QMSHT",
+            fileName = "sample_long_qmsht.jpg",
+            uri = newAssetUri("sample_long_qmsht.jpg"),
+            size = Size(30000, 926)
+        )
+        val COMIC = SampleImage(
+            name = "COMIC",
+            fileName = "sample_long_comic.jpg",
+            uri = newAssetUri("sample_long_comic.jpg"),
+            size = Size(690, 12176)
+        )
+        val ALL = listOf(HORDOG, VERDOG, WORLD, CARD, QMSHT, COMIC)
+    }
 
-        val HUGES = listOf(WORLD_HUGE_ASSET, CARD_HUGE_ASSET, QMSHT_HUGE_ASSET, COMIC_HUGE_ASSET)
-        val DOGS = listOf(DOG_HOR_ASSET, DOG_VER_ASSET)
+    object Http {
+        val WORLD = SampleImage(
+            name = "WORLD",
+            fileName = "sample_huge_world.jpg",
+            uri = "https://raw.githubusercontent.com/panpf/sketch/master/sample/src/main/assets/sample_huge_world.jpg",
+            size = Size(9798, 6988)
+        )
+        val CARD = SampleImage(
+            name = "CARD",
+            fileName = "sample_huge_card.png",
+            uri = "https://raw.githubusercontent.com/panpf/sketch/master/sample/src/main/assets/sample_huge_card.png",
+            size = Size(7557, 5669)
+        )
+        val QMSHT = SampleImage(
+            name = "QMSHT",
+            fileName = "sample_long_qmsht.jpg",
+            uri = "https://raw.githubusercontent.com/panpf/sketch/master/sample/src/main/assets/sample_long_qmsht.png",
+            size = Size(30000, 926)
+        )
+        val COMIC = SampleImage(
+            name = "COMIC",
+            fileName = "sample_long_comic.jpg",
+            uri = "https://raw.githubusercontent.com/panpf/sketch/master/sample/src/main/assets/sample_long_comic.png",
+            size = Size(690, 12176)
+        )
+        val ALL = listOf(WORLD, CARD, QMSHT, COMIC)
+    }
+
+    object Resource {
+        val HORDOG = SampleImage(
+            name = "HORDOG",
+            fileName = "sample_dog_hor.jpg",
+            uri = newResourceUri(R.drawable.sample_dog_hor),
+            size = Size(640, 427)
+        )
+        val VERDOG = SampleImage(
+            name = "VERDOG",
+            fileName = "sample_dog_ver.jpg",
+            uri = newResourceUri(R.drawable.sample_dog_ver),
+            size = Size(150, 266)
+        )
+        val QMSHT = SampleImage(
+            name = "WORLD",
+            fileName = "sample_long_qmsht.jpg",
+            uri = newResourceUri(R.drawable.sample_long_qmsht),
+            size = Size(30000, 926)
+        )
+        val ALL = listOf(HORDOG, VERDOG, QMSHT)
+    }
+
+    object Content {
+        val WORLD = SampleImage(
+            name = "WORLD",
+            fileName = "sample_huge_world.jpg",
+            uri = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/sample_huge_world.jpg",
+            size = Size(9798, 6988)
+        )
+        val CARD = SampleImage(
+            name = "CARD",
+            fileName = "sample_huge_card.png",
+            uri = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/sample_huge_card.png",
+            size = Size(7557, 5669)
+        )
+        val QMSHT = SampleImage(
+            name = "QMSHT",
+            fileName = "sample_long_qmsht.jpg",
+            uri = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/sample_long_qmsht.png",
+            size = Size(30000, 926)
+        )
+        val COMIC = SampleImage(
+            name = "COMIC",
+            fileName = "sample_long_comic.jpg",
+            uri = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/sample_long_comic.png",
+            size = Size(690, 12176)
+        )
     }
 }
+
+class SampleImage(val name: String, val fileName: String, val uri: String, val size: Size)

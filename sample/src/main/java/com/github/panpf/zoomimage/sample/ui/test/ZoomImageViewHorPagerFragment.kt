@@ -19,6 +19,7 @@ import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.SampleImage
+import com.github.panpf.zoomimage.sample.SampleImages
 import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.zoomimage.ZoomImageViewFragment
@@ -27,7 +28,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class ZoomImageViewHorPagerFragment : BindingFragment<TabPagerFragmentBinding>() {
 
     override fun onViewCreated(binding: TabPagerFragmentBinding, savedInstanceState: Bundle?) {
-        val sampleImages = SampleImage.HUGES
+        val sampleImages = SampleImages.FETCHERS
         binding.tabPagerPager.apply {
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(

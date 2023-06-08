@@ -5,8 +5,8 @@ import androidx.compose.ui.geometry.Size
 import com.github.panpf.zoomimage.sample.R.drawable
 
 
-val horPhoto = Photo(drawable.dog_hor, 640.toFloat() / 427)
-val verPhoto = Photo(drawable.dog_ver, 150.toFloat() / 266)
+val horPhoto = Photo(drawable.sample_dog_hor, 640.toFloat() / 427)
+val verPhoto = Photo(drawable.sample_dog_ver, 150.toFloat() / 266)
 
 data class Photo(@DrawableRes val resId: Int, val aspectRatio: Float) {
 

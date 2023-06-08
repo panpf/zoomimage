@@ -58,6 +58,8 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
             zoomAbility.logger.level = if (BuildConfig.DEBUG)
                 Logger.Level.DEBUG else Logger.Level.INFO
 
+            subsamplingAbility.setLifecycle(viewLifecycleOwner.lifecycle)
+
             lifecycleOwner.lifecycleScope.launch {
                 prefsService.scaleType.stateFlow.collect {
                     scaleType = ImageView.ScaleType.valueOf(it)

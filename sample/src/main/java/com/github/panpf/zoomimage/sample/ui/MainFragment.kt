@@ -1,20 +1,27 @@
 package com.github.panpf.zoomimage.sample.ui
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.zoomimage.sample.NavMainDirections
+import com.github.panpf.zoomimage.sample.SampleImage
+import com.github.panpf.zoomimage.sample.SampleImages
 import com.github.panpf.zoomimage.sample.databinding.MainFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.list.ListSeparator
 import com.github.panpf.zoomimage.sample.ui.common.list.ListSeparatorItemFactory
 import com.github.panpf.zoomimage.sample.ui.link.Link
 import com.github.panpf.zoomimage.sample.ui.link.LinkItemFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
 
 class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
 
@@ -25,6 +32,11 @@ class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
             this@MainFragment.pendingStartLink = null
             requestLinkPermissionsResult(grantedMap, pendingStartLink)
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exportAssetImages(requireActivity())
+    }
 
     override fun onViewCreated(
         toolbar: Toolbar,
@@ -118,6 +130,21 @@ class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
             findNavController().navigate(data.navDirections)
         } else {
             Toast.makeText(context, "Please grant permission", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun exportAssetImages(context: Context) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            SampleImages.Asset.ALL.forEach {
+                val file = File(context.getExternalFilesDir("assets"), it.fileName)
+                if (!file.exists()) {
+                    context.assets.open(it.fileName).use { inputStream ->
+                        file.outputStream().use { outputStream ->
+                            inputStream.copyTo(outputStream)
+                        }
+                    }
+                }
+            }
         }
     }
 }

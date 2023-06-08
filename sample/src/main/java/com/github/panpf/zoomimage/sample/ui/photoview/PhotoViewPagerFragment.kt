@@ -19,6 +19,7 @@ import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.SampleImage
+import com.github.panpf.zoomimage.sample.SampleImages
 import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.photoview.PhotoViewFragment.ItemFactory
@@ -33,14 +34,12 @@ class PhotoViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>()
     ) {
         toolbar.title = "PhotoView"
 
-        val sampleImages = SampleImage.DOGS + SampleImage.HUGES
-
+        val sampleImages = SampleImages.FETCHERS
         binding.tabPagerPager.adapter = AssemblyFragmentStateAdapter(
             this,
             listOf(ItemFactory()),
             sampleImages.map { it.uri }
         )
-
         TabLayoutMediator(binding.tabPagerTabLayout, binding.tabPagerPager) { tab, position ->
             tab.text = sampleImages[position].name
         }.attach()

@@ -17,12 +17,21 @@ import com.github.panpf.zoomimage.sample.util.getMaxAvailableMemoryCacheBytes
 import com.squareup.picasso.LruCache
 import com.squareup.picasso.Picasso
 import com.tencent.mmkv.MMKV
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
+
 
 class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
         MMKV.initialize(this)
+
+        handleSSLHandshake()
 
         Picasso.setSingletonInstance(Picasso.Builder(this).apply {
             memoryCache(LruCache(getMemoryCacheMaxSize().toInt()))
@@ -52,5 +61,33 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
                 }.build()
             )
             .build()
+    }
+
+    fun handleSSLHandshake() {
+        try {
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                override fun getAcceptedIssuers(): Array<X509Certificate?> {
+                    return arrayOfNulls<X509Certificate>(0)
+                }
+
+                override fun checkClientTrusted(
+                    certs: Array<X509Certificate?>?,
+                    authType: String?
+                ) {
+                }
+
+                override fun checkServerTrusted(
+                    certs: Array<X509Certificate?>?,
+                    authType: String?
+                ) {
+                }
+            })
+            val sc = SSLContext.getInstance("TLS")
+            // trustAllCerts信任所有的证书
+            sc.init(null, trustAllCerts, SecureRandom())
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.socketFactory)
+            HttpsURLConnection.setDefaultHostnameVerifier { hostname, session -> true }
+        } catch (e: Exception) {
+        }
     }
 }
