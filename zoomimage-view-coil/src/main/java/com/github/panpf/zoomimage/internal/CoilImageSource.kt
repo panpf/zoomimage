@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.internal
 import androidx.annotation.WorkerThread
 import coil.ImageLoader
 import coil.fetch.SourceResult
+import coil.request.CachePolicy.DISABLED
 import coil.request.CachePolicy.ENABLED
 import coil.request.ImageRequest
 import coil.request.Options
@@ -39,7 +40,7 @@ class CoilImageSource(
             val options = Options(
                 context = request.context,
                 diskCachePolicy = ENABLED,
-                networkCachePolicy = ENABLED
+                networkCachePolicy = DISABLED   // Do not download image, by default go here The image have been downloaded
             )
             imageLoader.components.newFetcher(request.data, options, imageLoader)?.first
                 ?: return Result.failure(IllegalStateException("Fetcher not found. data='${request.data}'"))

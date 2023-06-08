@@ -50,7 +50,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
             if (!isAttachedToWindow) return@post
             val result = CoilUtils.result(this)
             if (result != null && result is SuccessResult) {
-                _subsamplingAbility?.disallowMemoryCache = getDisallowMemoryCache(result)
+                _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(result)
                 _subsamplingAbility?.setLifecycle(result.request.lifecycle
                     .takeIf { !it.isCoilGlobalLifecycle() }
                     ?: context.getLifecycle())
@@ -63,7 +63,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
         }
     }
 
-    private fun getDisallowMemoryCache(result: SuccessResult): Boolean {
+    private fun isDisallowMemoryCache(result: SuccessResult): Boolean {
         return result.request.memoryCachePolicy != CachePolicy.ENABLED
     }
 

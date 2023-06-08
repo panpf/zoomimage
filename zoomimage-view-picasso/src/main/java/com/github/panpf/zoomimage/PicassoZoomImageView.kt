@@ -84,7 +84,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     private fun loadImage(uri: Uri?, callback: Callback?, creator: RequestCreator) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
-                _subsamplingAbility?.disallowMemoryCache = getDisallowMemoryCache(creator)
+                _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(creator)
                 _subsamplingAbility?.setImageSource(newImageSource(uri))
                 callback?.onSuccess()
             }
@@ -101,7 +101,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         _subsamplingAbility?.setImageSource(null)
     }
 
-    private fun getDisallowMemoryCache(creator: RequestCreator): Boolean {
+    private fun isDisallowMemoryCache(creator: RequestCreator): Boolean {
         val memoryPolicy = try {
             creator.javaClass.getDeclaredField("memoryPolicy").apply {
                 isAccessible = true

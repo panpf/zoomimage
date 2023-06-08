@@ -59,8 +59,8 @@ open class SketchZoomImageView @JvmOverloads constructor(
             if (!ViewCompat.isAttachedToWindow(this)) return@post
             val result = displayResult
             if (result != null && result is DisplayResult.Success) {
-                _subsamplingAbility?.disallowMemoryCache = getDisallowMemoryCache(result.drawable)
-                _subsamplingAbility?.disallowReuseBitmap = getDisallowReuseBitmap(result.drawable)
+                _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(result.drawable)
+                _subsamplingAbility?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
                 _subsamplingAbility?.setLifecycle(result.request.lifecycle
                     .takeIf { !it.isSketchGlobalLifecycle() }
                     ?: context.getLifecycle())
@@ -74,7 +74,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
         }
     }
 
-    private fun getDisallowMemoryCache(drawable: Drawable?): Boolean {
+    private fun isDisallowMemoryCache(drawable: Drawable?): Boolean {
         val sketchDrawable = drawable?.findLastSketchDrawable()
         val requestKey = sketchDrawable?.requestKey
         val displayResult = SketchUtils.getResult(this)
@@ -84,7 +84,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 && displayResult.request.memoryCachePolicy != CachePolicy.ENABLED
     }
 
-    private fun getDisallowReuseBitmap(drawable: Drawable?): Boolean {
+    private fun isDisallowReuseBitmap(drawable: Drawable?): Boolean {
         val sketchDrawable = drawable?.findLastSketchDrawable()
         val requestKey = sketchDrawable?.requestKey
         val displayResult = SketchUtils.getResult(this)

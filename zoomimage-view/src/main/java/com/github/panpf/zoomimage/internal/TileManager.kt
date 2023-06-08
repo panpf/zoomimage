@@ -121,7 +121,7 @@ internal class TileManager constructor(
                         "drawableVisibleRect=${drawableVisibleRect}, " +
                         "zoomScale=$zoomScale, " +
                         "sampleSize=$lastSampleSize. " +
-                        imageSource.key
+                        "'${imageSource.key}"
             }
             return
         }
@@ -136,7 +136,7 @@ internal class TileManager constructor(
                     "drawableVisibleRect=${drawableVisibleRect}, " +
                     "zoomScale=$zoomScale, " +
                     "sampleSize=$lastSampleSize. " +
-                    imageSource.key
+                    "'${imageSource.key}"
         }
         tileList.forEach { tile ->
             if (tile.srcRect.crossWith(imageLoadRect)) {
