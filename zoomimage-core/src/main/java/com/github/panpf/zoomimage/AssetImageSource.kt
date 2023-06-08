@@ -1,6 +1,8 @@
 package com.github.panpf.zoomimage
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.InputStream
 
 class AssetImageSource(val context: Context, val assetFileName: String) : ImageSource {
@@ -8,8 +10,10 @@ class AssetImageSource(val context: Context, val assetFileName: String) : ImageS
     override val key: String = "asset://$assetFileName"
 
     override suspend fun openInputStream(): Result<InputStream> {
-        return kotlin.runCatching {
-            context.assets.open(assetFileName)
+        return withContext(Dispatchers.IO) {
+            kotlin.runCatching {
+                context.assets.open(assetFileName)
+            }
         }
     }
 }
