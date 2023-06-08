@@ -19,8 +19,12 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.getUrl
+import com.bumptech.glide.load.engine.requestOptionsCompat
 import com.bumptech.glide.request.SingleRequest
-import com.github.panpf.zoomimage.internal.getLifecycle
+import com.github.panpf.zoomimage.internal.GlideTinyBitmapPool
+import com.github.panpf.zoomimage.internal.GlideTinyMemoryCache
 
 open class GlideZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -32,11 +36,10 @@ open class GlideZoomImageView @JvmOverloads constructor(
         const val MODULE = "GlideZoomImageView"
     }
 
-    // todo 适配
-
     init {
-//        _subsamplingAbility?.tinyBitmapPool = GlideTinyBitmapPool(context.sketch)
-//        _subsamplingAbility?.tinyMemoryCache = GlideTinyMemoryCache(context.sketch)
+        val glide = Glide.get(context)
+        _subsamplingAbility?.tinyBitmapPool = GlideTinyBitmapPool(glide)
+        _subsamplingAbility?.tinyMemoryCache = GlideTinyMemoryCache(glide)
     }
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
@@ -45,72 +48,33 @@ open class GlideZoomImageView @JvmOverloads constructor(
             if (!ViewCompat.isAttachedToWindow(this)) return@post
             val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)
             if (request != null && request is SingleRequest<*> && request.isComplete) {
-                val field = request.javaClass.getDeclaredField("model")
-                field.isAccessible = true
-                val model = field.get(request)
-                val url = model?.toString().orEmpty()
-                // todo 适配个多种 url
-                if (url.startsWith("file:///android_asset/")) {
-                    val assetFileName = url.replace("file:///android_asset/", "")
-                    val imageSource = ImageSource.fromAsset(context, assetFileName)
-                    _subsamplingAbility?.setImageSource(imageSource)
-                } else {
-                    _subsamplingAbility?.setImageSource(null)
-                }
-//                _subsamplingAbility?.disallowMemoryCache = getDisallowMemoryCache(result.drawable)
-//                _subsamplingAbility?.disallowReuseBitmap = getDisallowReuseBitmap(result.drawable)
-//                _subsamplingAbility?.setLifecycle(result.request.lifecycle
-//                    .takeIf { !it.isSketchGlobalLifecycle() }
-//                    ?: context.getLifecycle())
-//                _subsamplingAbility?.setImageSource(newImageSource(result.drawable))
+                _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(request)
+                _subsamplingAbility?.setImageSource(newImageSource(request))
             } else {
                 _subsamplingAbility?.disallowMemoryCache = false
-                _subsamplingAbility?.disallowReuseBitmap = false
                 _subsamplingAbility?.setImageSource(null)
-                _subsamplingAbility?.setLifecycle(context.getLifecycle())
             }
         }
     }
-//
-//    private fun getDisallowMemoryCache(drawable: Drawable?): Boolean {
-//        val sketchDrawable = drawable?.findLastSketchDrawable()
-//        val requestKey = sketchDrawable?.requestKey
-//        val displayResult = SketchUtils.getResult(this)
-//        return displayResult != null
-//                && displayResult is DisplayResult.Success
-//                && displayResult.requestKey == requestKey
-//                && displayResult.request.memoryCachePolicy != CachePolicy.ENABLED
-//    }
-//
-//    private fun getDisallowReuseBitmap(drawable: Drawable?): Boolean {
-//        val sketchDrawable = drawable?.findLastSketchDrawable()
-//        val requestKey = sketchDrawable?.requestKey
-//        val displayResult = SketchUtils.getResult(this)
-//        return displayResult != null
-//                && displayResult is DisplayResult.Success
-//                && displayResult.requestKey == requestKey
-//                && displayResult.request.disallowReuseBitmap
-//    }
-//
-//    private fun newImageSource(drawable: Drawable?): ImageSource? {
-//        drawable ?: return null
-//        if (drawable.getLastChildDrawable() is SketchStateDrawable) {
-//            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is SketchStateDrawable" }
-//            return null
-//        }
-//        val sketchDrawable = drawable.findLastSketchDrawable()
-//        if (sketchDrawable == null) {
-//            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is not SketchDrawable" }
-//            return null
-//        }
-//        if (sketchDrawable is Animatable) {
-//            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is Animatable" }
-//            return null
-//        }
-//        return GlideImageSource(
-//            context = context,
-//            sketch = context.sketch,
-//            imageUri = sketchDrawable.imageUri,
-//        )
-//    }
+
+    @Suppress("UsePropertyAccessSyntax")
+    private fun isDisallowMemoryCache(request: SingleRequest<*>): Boolean {
+        val requestOptions = request.requestOptionsCompat
+        return !requestOptions.isMemoryCacheable() || requestOptions.isSkipMemoryCacheSet()
+    }
+
+    private fun newImageSource(request: SingleRequest<*>): ImageSource? {
+        val url = request.getUrl() ?: return null
+        // todo 适配多种 url
+        return when {
+            url.startsWith("file:///android_asset/") -> {
+                val assetFileName = url.replace("file:///android_asset/", "")
+                ImageSource.fromAsset(context, assetFileName)
+            }
+
+            else -> {
+                null
+            }
+        }
+    }
 }

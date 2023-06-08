@@ -16,7 +16,7 @@ interface TinyMemoryCache {
         imageMimeType: String,
         imageExifOrientation: Int,
         disallowReuseBitmap: Boolean
-    ): CacheBitmap
+    ): CacheBitmap?
 }
 
 interface CacheBitmap {
