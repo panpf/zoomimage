@@ -17,16 +17,16 @@ interface ImageSource {
     suspend fun openInputStream(): Result<InputStream>
 
     companion object {
-        fun fromUri(context: Context, uri: Uri): ImageSource {
+        fun fromContent(context: Context, uri: Uri): ImageSource {
             return ContentImageSource(context, uri)
         }
 
-        fun fromResource(resources: Resources, @RawRes @DrawableRes drawableId: Int): ImageSource {
-            return ResourceImageSource(resources, drawableId)
+        fun fromResource(resources: Resources, @RawRes @DrawableRes resId: Int): ImageSource {
+            return ResourceImageSource(resources, resId)
         }
 
-        fun fromResource(context: Context, @RawRes @DrawableRes drawableId: Int): ImageSource {
-            return ResourceImageSource(context, drawableId)
+        fun fromResource(context: Context, @RawRes @DrawableRes resId: Int): ImageSource {
+            return ResourceImageSource(context, resId)
         }
 
         fun fromAsset(context: Context, assetFileName: String): ImageSource {

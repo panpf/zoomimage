@@ -126,12 +126,8 @@ open class PicassoZoomImageView @JvmOverloads constructor(
                 ImageSource.fromAsset(context, assetFileName)
             }
 
-            uriString.startsWith("file://") -> {
-                ImageSource.fromUri(context, uri)
-            }
-
-            uriString.startsWith("content://") -> {
-                ImageSource.fromUri(context, uri)
+            uriString.startsWith("file://") || uriString.startsWith("content://") -> {
+                ImageSource.fromContent(context, uri)
             }
 
             uriString.startsWith("android.resource://") -> {
@@ -140,7 +136,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             }
 
             else -> {
-                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Unsupported uri: $uri" }
+                _zoomAbility?.logger?.w(MODULE) { "Can't use Subsampling, unsupported uri: '$uri'" }
                 null
             }
         }

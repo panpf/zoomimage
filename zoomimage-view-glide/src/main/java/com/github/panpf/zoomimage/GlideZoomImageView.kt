@@ -17,6 +17,7 @@ package com.github.panpf.zoomimage
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
@@ -71,8 +72,13 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 val assetFileName = url.replace("file:///android_asset/", "")
                 ImageSource.fromAsset(context, assetFileName)
             }
+            url.startsWith("file://") || url.startsWith("content://") -> {
+                ImageSource.fromContent(context, Uri.parse(url))
+            }
+            // todo resource and http
 
             else -> {
+                _zoomAbility?.logger?.w(MODULE) { "Can't use Subsampling, unsupported uri: '$url'" }
                 null
             }
         }

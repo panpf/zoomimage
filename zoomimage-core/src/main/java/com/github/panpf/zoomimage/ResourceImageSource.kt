@@ -10,7 +10,7 @@ import java.io.InputStream
 
 class ResourceImageSource(
     val resources: Resources,
-    @RawRes @DrawableRes val drawableId: Int
+    @RawRes @DrawableRes val resId: Int
 ) : ImageSource {
 
     constructor(
@@ -18,12 +18,12 @@ class ResourceImageSource(
         @RawRes @DrawableRes drawableId: Int
     ) : this(context.resources, drawableId)
 
-    override val key: String = "android.resources://$drawableId"
+    override val key: String = "android.resources://resource?resId=$resId"
 
     override suspend fun openInputStream(): Result<InputStream> {
         return withContext(Dispatchers.IO) {
             kotlin.runCatching {
-                resources.openRawResource(drawableId)
+                resources.openRawResource(resId)
             }
         }
     }

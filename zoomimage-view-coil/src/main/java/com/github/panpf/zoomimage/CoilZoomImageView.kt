@@ -70,11 +70,11 @@ open class CoilZoomImageView @JvmOverloads constructor(
     private fun newImageSource(result: SuccessResult): ImageSource? {
         val lastChildDrawable = result.drawable.getLastChildDrawable()
         if (lastChildDrawable !is BitmapDrawable) {
-            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is not BitmapDrawable" }
+            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, drawable is not BitmapDrawable" }
             return null
         }
         if (lastChildDrawable is Animatable) {
-            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is Animatable" }
+            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, drawable is Animatable" }
             return null
         }
         return CoilImageSource(context.imageLoader, result.request)

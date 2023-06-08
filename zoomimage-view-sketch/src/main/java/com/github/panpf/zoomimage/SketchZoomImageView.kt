@@ -97,16 +97,16 @@ open class SketchZoomImageView @JvmOverloads constructor(
     private fun newImageSource(drawable: Drawable?): ImageSource? {
         drawable ?: return null
         if (drawable.getLastChildDrawable() is SketchStateDrawable) {
-            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is SketchStateDrawable" }
+            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, drawable is SketchStateDrawable" }
             return null
         }
         val sketchDrawable = drawable.findLastSketchDrawable()
         if (sketchDrawable == null) {
-            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is not SketchDrawable" }
+            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, drawable is not SketchDrawable" }
             return null
         }
         if (sketchDrawable is Animatable) {
-            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling. Drawable is Animatable" }
+            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, drawable is Animatable" }
             return null
         }
         return SketchImageSource(

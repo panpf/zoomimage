@@ -145,7 +145,7 @@ internal class SubsamplingEngine constructor(
                 .apply { exceptionOrNull()?.printStackTrace() }
                 .getOrNull()
             if (options == null) {
-                logger.d(MODULE) { "setImageSource failed. Can't decode image bounds. '${imageSource.key}'" }
+                logger.w(MODULE) { "setImageSource failed. Can't decode image bounds. '${imageSource.key}'" }
                 initJob = null
                 return@launch
             }
@@ -153,7 +153,7 @@ internal class SubsamplingEngine constructor(
                 .apply { exceptionOrNull()?.printStackTrace() }
                 .getOrNull()
             if (exifOrientation == null) {
-                logger.d(MODULE) { "setImageSource failed. Can't decode image exifOrientation. '${imageSource.key}'" }
+                logger.w(MODULE) { "setImageSource failed. Can't decode image exifOrientation. '${imageSource.key}'" }
                 initJob = null
                 return@launch
             }
@@ -169,7 +169,7 @@ internal class SubsamplingEngine constructor(
                 return@launch
             }
             if (!canUseSubsampling(imageWidth, imageHeight, drawableWidth, drawableHeight)) {
-                logger.d(MODULE) {
+                logger.w(MODULE) {
                     "setImageSource failed. The drawable aspect ratio is inconsistent with the original image. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize: ${imageWidth}x${imageHeight}, mimeType: $mimeType. '${imageSource.key}'"
                 }
                 initJob = null
