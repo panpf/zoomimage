@@ -67,25 +67,25 @@ object SampleImages {
         val WORLD = SampleImage(
             name = "WORLD",
             fileName = "sample_huge_world.jpg",
-            uri = "https://raw.githubusercontent.com/panpf/sketch/master/sample/src/main/assets/sample_huge_world.jpg",
+            uri = "http://img.panpengfei.com/sample_huge_world.jpg",
             size = Size(9798, 6988)
         )
         val CARD = SampleImage(
             name = "CARD",
             fileName = "sample_huge_card.png",
-            uri = "https://raw.githubusercontent.com/panpf/sketch/master/sample/src/main/assets/sample_huge_card.png",
+            uri = "http://img.panpengfei.com/sample_huge_card.png",
             size = Size(7557, 5669)
         )
         val QMSHT = SampleImage(
             name = "QMSHT",
             fileName = "sample_long_qmsht.jpg",
-            uri = "https://raw.githubusercontent.com/panpf/sketch/master/sample/src/main/assets/sample_long_qmsht.png",
+            uri = "http://img.panpengfei.com/sample_long_qmsht.jpg",
             size = Size(30000, 926)
         )
         val COMIC = SampleImage(
             name = "COMIC",
             fileName = "sample_long_comic.jpg",
-            uri = "https://raw.githubusercontent.com/panpf/sketch/master/sample/src/main/assets/sample_long_comic.png",
+            uri = "http://img.panpengfei.com/sample_long_comic.jpg",
             size = Size(690, 12176)
         )
         val ALL = listOf(WORLD, CARD, QMSHT, COMIC)
@@ -95,19 +95,19 @@ object SampleImages {
         val HORDOG = SampleImage(
             name = "HORDOG",
             fileName = "sample_dog_hor.jpg",
-            uri = newResourceUri(R.drawable.sample_dog_hor),
+            uri = newResourceUri(R.raw.sample_dog_hor),
             size = Size(640, 427)
         )
         val VERDOG = SampleImage(
             name = "VERDOG",
             fileName = "sample_dog_ver.jpg",
-            uri = newResourceUri(R.drawable.sample_dog_ver),
+            uri = newResourceUri(R.raw.sample_dog_ver),
             size = Size(150, 266)
         )
         val QMSHT = SampleImage(
             name = "WORLD",
             fileName = "sample_long_qmsht.jpg",
-            uri = newResourceUri(R.drawable.sample_long_qmsht),
+            uri = newResourceUri(R.raw.sample_long_qmsht),
             size = Size(30000, 926)
         )
         val ALL = listOf(HORDOG, VERDOG, QMSHT)

@@ -16,6 +16,7 @@
 package com.github.panpf.zoomimage.sample.ui.zoomimage
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import androidx.core.view.isVisible
@@ -41,6 +42,7 @@ import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import kotlinx.coroutines.launch
+import java.io.File
 
 class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
 
@@ -116,13 +118,11 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
-                    val assetFileName = args.imageUri.replace("asset://", "")
-                    subsamplingAbility.setImageSource(
-                        ImageSource.fromAsset(requireContext(), assetFileName)
-                    )
+                    subsamplingAbility.setImageSource(newImageSource(binding, args.imageUri))
                     binding.common.zoomImageViewProgress.isVisible = false
                     binding.common.zoomImageViewError.isVisible = false
                 } else {
+                    subsamplingAbility.setImageSource(null)
                     binding.common.zoomImageViewProgress.isVisible = false
                     binding.common.zoomImageViewError.isVisible = true
                 }
@@ -132,6 +132,40 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
         binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
+        }
+    }
+
+    private fun newImageSource(
+        binding: ZoomImageViewFragmentBinding,
+        imageUri: String
+    ): ImageSource? {
+        return when {
+            imageUri.startsWith("/") -> {
+                ImageSource.fromFile(File(imageUri))
+            }
+
+            imageUri.startsWith("asset://") -> {
+                val assetFileName = imageUri.replace("asset://", "")
+                ImageSource.fromAsset(requireContext(), assetFileName)
+            }
+
+            imageUri.startsWith("android.resource://") -> {
+                val resId =
+                    Uri.parse(imageUri).getQueryParameters("resId").firstOrNull()
+                        ?.toIntOrNull()
+                resId?.let { ImageSource.fromResource(requireContext(), it) }
+            }
+
+            imageUri.startsWith("content://") || imageUri.startsWith("file://") -> {
+                ImageSource.fromContent(requireContext(), Uri.parse(imageUri))
+            }
+
+            else -> {
+                binding.zoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
+                    "Can't use Subsampling, unsupported uri: '$imageUri'"
+                }
+                null
+            }
         }
     }
 

@@ -116,7 +116,7 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
         binding.common.zoomImageViewProgress.isVisible = true
         binding.common.zoomImageViewError.isVisible = false
         Glide.with(this@GlideZoomImageViewFragment)
-            .load(args.imageUri.replace("asset://", "file:///android_asset/"))
+            .load(sketchUri2GlideUri(args.imageUri))
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -179,6 +179,11 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
             """.trimIndent()
         }
         binding.common.zoomImageViewInfoText.text = "$zoomInfo\n$imageInfo\n$subsamplingInfo"
+    }
+
+    private fun sketchUri2GlideUri(sketchUri: String): String {
+        // todo support resource
+        return sketchUri.replace("asset://", "file:///android_asset/")
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

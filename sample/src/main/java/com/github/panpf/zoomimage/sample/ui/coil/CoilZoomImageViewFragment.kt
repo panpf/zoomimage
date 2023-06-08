@@ -16,11 +16,12 @@
 package com.github.panpf.zoomimage.sample.ui.coil
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import coil.load
@@ -39,7 +40,6 @@ import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.ui.zoomimage.SettingsDialogFragment
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
-import com.github.panpf.zoomimage.sample.util.sketchUri2CoilUri
 import kotlinx.coroutines.launch
 
 class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBinding>() {
@@ -163,6 +163,15 @@ class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBindi
             """.trimIndent()
         }
         binding.common.zoomImageViewInfoText.text = "$zoomInfo\n$imageInfo\n$subsamplingInfo"
+    }
+
+    private fun sketchUri2CoilUri(@Suppress("SameParameterValue") uri: String): Uri {
+        return if (uri.startsWith("asset://")) {
+            Uri.parse("file://filled/android_asset/${uri.substring("asset://".length)}")
+        } else {
+            // todo support resource
+            uri.toUri()
+        }
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

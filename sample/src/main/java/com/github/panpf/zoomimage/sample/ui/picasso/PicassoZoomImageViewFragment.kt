@@ -111,7 +111,7 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
         binding.common.zoomImageViewProgress.isVisible = true
         binding.common.zoomImageViewError.isVisible = false
         binding.picassoZoomImageViewImage.loadImage(
-            path = args.imageUri.replace("asset://", "file:///android_asset/"),
+            path = sketchUri2PicassoUri(args.imageUri),
             callback = object : Callback {
                 override fun onSuccess() {
                     binding.common.zoomImageViewProgress.isVisible = false
@@ -165,6 +165,11 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
             """.trimIndent()
         }
         binding.common.zoomImageViewInfoText.text = "$zoomInfo\n$imageInfo\n$subsamplingInfo"
+    }
+
+    private fun sketchUri2PicassoUri(sketchUri: String): String {
+        // todo support resource
+        return sketchUri.replace("asset://", "file:///android_asset/")
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

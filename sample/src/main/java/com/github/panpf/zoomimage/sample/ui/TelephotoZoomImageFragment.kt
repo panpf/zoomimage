@@ -30,7 +30,7 @@ class TelephotoZoomImageFragment : AppBarFragment() {
                 data = "Telephoto",
                 titleFactory = { it },
                 contentFactory = { _, _ ->
-                    ZoomableAsyncImageFullSample(context.newCoilResourceUri(R.drawable.sample_dog_hor))
+                    ZoomableAsyncImageFullSample(context.newCoilResourceUri(R.raw.sample_dog_hor))
                 }
             )
         )

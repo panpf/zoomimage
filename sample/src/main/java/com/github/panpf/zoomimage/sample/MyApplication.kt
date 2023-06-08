@@ -13,6 +13,7 @@ import com.github.panpf.sketch.cache.internal.LruMemoryCache
 import com.github.panpf.sketch.util.Logger
 import com.github.panpf.sketch.util.Logger.Level.DEBUG
 import com.github.panpf.sketch.util.Logger.Level.INFO
+import com.github.panpf.zoomimage.sample.util.MyResourceUriFetcher
 import com.github.panpf.zoomimage.sample.util.getMaxAvailableMemoryCacheBytes
 import com.squareup.picasso.LruCache
 import com.squareup.picasso.Picasso
@@ -43,6 +44,9 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
     override fun createSketch(): Sketch {
         return Sketch.Builder(this)
             .logger(Logger(if (BuildConfig.DEBUG) DEBUG else INFO))
+            .components {
+                addFetcher(MyResourceUriFetcher.Factory())
+            }
             .memoryCache(LruMemoryCache(maxSize = getMemoryCacheMaxSize()))
             .build()
     }
