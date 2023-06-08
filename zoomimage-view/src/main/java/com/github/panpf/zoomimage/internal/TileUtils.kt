@@ -102,6 +102,7 @@ internal fun Rect.crossWith(other: Rect): Boolean {
 fun canUseSubsampling(
     imageWidth: Int, imageHeight: Int, drawableWidth: Int, drawableHeight: Int
 ): Boolean {
+    if (imageWidth == 0 || imageHeight == 0 || drawableWidth == 0 || drawableHeight == 0) return false
     val imageRatio = (imageWidth / imageHeight.toFloat()).format(2)
     val drawableRatio = (drawableWidth / drawableHeight.toFloat()).format(2)
     return abs(imageRatio - drawableRatio).format(2) <= 0.50f

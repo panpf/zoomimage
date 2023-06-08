@@ -109,7 +109,7 @@ internal class SubsamplingEngine constructor(
             return
         }
         val drawableSize = zoomEngine.drawableSize
-        if (viewSize.isEmpty) {
+        if (drawableSize.isEmpty) {
             logger.d(MODULE) { "setImageSource failed. Drawable size error. '${imageSource.key}'" }
             return
         }
