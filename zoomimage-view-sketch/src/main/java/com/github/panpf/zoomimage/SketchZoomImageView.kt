@@ -55,22 +55,27 @@ open class SketchZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
+        _subsamplingAbility?.disallowMemoryCache = false
+        _subsamplingAbility?.disallowReuseBitmap = false
+        _subsamplingAbility?.setImageSource(null)
+        _subsamplingAbility?.setLifecycle(context.getLifecycle())
         post {
             if (!ViewCompat.isAttachedToWindow(this)) return@post
             val result = displayResult
-            if (result != null && result is DisplayResult.Success) {
-                _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(result.drawable)
-                _subsamplingAbility?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
-                _subsamplingAbility?.setLifecycle(result.request.lifecycle
-                    .takeIf { !it.isSketchGlobalLifecycle() }
-                    ?: context.getLifecycle())
-                _subsamplingAbility?.setImageSource(newImageSource(result.drawable))
-            } else {
-                _subsamplingAbility?.disallowMemoryCache = false
-                _subsamplingAbility?.disallowReuseBitmap = false
-                _subsamplingAbility?.setImageSource(null)
-                _subsamplingAbility?.setLifecycle(context.getLifecycle())
+            if (result == null) {
+                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is null" }
+                return@post
             }
+            if (result !is DisplayResult.Success) {
+                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is not Success" }
+                return@post
+            }
+            _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(result.drawable)
+            _subsamplingAbility?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
+            _subsamplingAbility?.setLifecycle(result.request.lifecycle
+                .takeIf { !it.isSketchGlobalLifecycle() }
+                ?: context.getLifecycle())
+            _subsamplingAbility?.setImageSource(newImageSource(result.drawable))
         }
     }
 
