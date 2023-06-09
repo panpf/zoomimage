@@ -25,6 +25,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
 import com.squareup.picasso.isDisallowMemoryCache
+import com.squareup.picasso.memoryPolicy
 import java.io.File
 
 open class PicassoZoomImageView @JvmOverloads constructor(
@@ -84,7 +85,8 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     private fun loadImage(uri: Uri?, callback: Callback?, creator: RequestCreator) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
-                _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(creator)
+                _subsamplingAbility?.disallowMemoryCache =
+                    isDisallowMemoryCache(creator.memoryPolicy)
                 _subsamplingAbility?.setImageSource(newImageSource(uri))
                 callback?.onSuccess()
             }
@@ -101,18 +103,6 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         _subsamplingAbility?.setImageSource(null)
     }
 
-    private fun isDisallowMemoryCache(creator: RequestCreator): Boolean {
-        val memoryPolicy = try {
-            creator.javaClass.getDeclaredField("memoryPolicy").apply {
-                isAccessible = true
-            }.getInt(creator)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
-        return isDisallowMemoryCache(memoryPolicy)
-    }
-
     private fun newImageSource(uri: Uri?): ImageSource? {
         uri ?: return null
         val uriString: String = uri.toString()
@@ -121,13 +111,17 @@ open class PicassoZoomImageView @JvmOverloads constructor(
                 PicassoHttpImageSource(Picasso.get(), uri)
             }
 
+            uriString.startsWith("content://") -> {
+                ImageSource.fromContent(context, uri)
+            }
+
             uriString.startsWith("file:///android_asset/") -> {
                 val assetFileName = uriString.replace("file:///android_asset/", "")
                 ImageSource.fromAsset(context, assetFileName)
             }
 
-            uriString.startsWith("file://") || uriString.startsWith("content://") -> {
-                ImageSource.fromContent(context, uri)
+            uriString.startsWith("file://") -> {
+                ImageSource.fromFile(File(uriString.replace("file://", "")))
             }
 
             uriString.startsWith("android.resource://") -> {

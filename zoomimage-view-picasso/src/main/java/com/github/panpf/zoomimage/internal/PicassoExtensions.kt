@@ -12,3 +12,14 @@ internal fun isDisallowMemoryCache(memoryPolicy: Int): Boolean {
     return !MemoryPolicy.shouldReadFromMemoryCache(memoryPolicy)
             || !MemoryPolicy.shouldWriteToMemoryCache(memoryPolicy)
 }
+
+internal val RequestCreator.memoryPolicy: Int
+    // todo 配置混淆
+    get() = try {
+        this.javaClass.getDeclaredField("memoryPolicy").apply {
+            isAccessible = true
+        }.getInt(this)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        0
+    }
