@@ -46,20 +46,25 @@ open class CoilZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
+        _subsamplingAbility?.disallowMemoryCache = false
+        _subsamplingAbility?.setImageSource(null)
+        _subsamplingAbility?.setLifecycle(context.getLifecycle())
         post {
             if (!isAttachedToWindow) return@post
             val result = CoilUtils.result(this)
-            if (result != null && result is SuccessResult) {
-                _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(result)
-                _subsamplingAbility?.setLifecycle(result.request.lifecycle
-                    .takeIf { !it.isCoilGlobalLifecycle() }
-                    ?: context.getLifecycle())
-                _subsamplingAbility?.setImageSource(newImageSource(result))
-            } else {
-                _subsamplingAbility?.disallowMemoryCache = false
-                _subsamplingAbility?.setImageSource(null)
-                _subsamplingAbility?.setLifecycle(context.getLifecycle())
+            if (result == null) {
+                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is null" }
+                return@post
             }
+            if (result !is SuccessResult) {
+                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is not Success" }
+                return@post
+            }
+            _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(result)
+            _subsamplingAbility?.setLifecycle(result.request.lifecycle
+                .takeIf { !it.isCoilGlobalLifecycle() }
+                ?: context.getLifecycle())
+            _subsamplingAbility?.setImageSource(newImageSource(result))
         }
     }
 
