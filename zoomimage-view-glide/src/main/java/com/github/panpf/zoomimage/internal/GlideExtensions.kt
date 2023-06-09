@@ -20,6 +20,7 @@ package com.bumptech.glide.load.engine
 import android.graphics.Bitmap
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Key
+import com.bumptech.glide.load.engine.cache.DiskCache
 import com.bumptech.glide.load.engine.cache.MemoryCache
 import com.bumptech.glide.load.resource.bitmap.BitmapResource
 import com.bumptech.glide.request.BaseRequestOptions
@@ -27,11 +28,28 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.SingleRequest
 import java.io.File
 
-internal fun SingleRequest<*>.getUrl(): String? {
+internal fun getDiskCache(glide: Glide): DiskCache? {
     return try {
+        // todo 配置混淆
+        val engine = glide.javaClass.getDeclaredField("engine")
+            .apply { isAccessible = true }
+            .get(glide) as Engine
+        val diskCacheProvider = engine.javaClass.getDeclaredField("diskCacheProvider")
+            .apply { isAccessible = true }
+            .get(engine) as DecodeJob.DiskCacheProvider
+        diskCacheProvider.diskCache
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+internal fun SingleRequest<*>.getModel(): Any? {
+    return try {
+        // todo 配置混淆
         this.javaClass.getDeclaredField("model").apply {
             isAccessible = true
-        }.get(this)?.toString()
+        }.get(this)
     } catch (e: Exception) {
         e.printStackTrace()
         return null
@@ -54,6 +72,7 @@ internal fun newEngineKey(key: String): EngineKey {
 
 internal fun createGlideEngine(glide: Glide): GlideEngine? {
     return try {
+        // todo 配置混淆
         val engine = glide.javaClass.getDeclaredField("engine")
             .apply { isAccessible = true }
             .get(glide) as Engine
@@ -71,6 +90,7 @@ internal fun createGlideEngine(glide: Glide): GlideEngine? {
 }
 
 internal val SingleRequest<*>.requestOptionsCompat: BaseRequestOptions<*>
+    // todo 配置混淆
     get() = this.javaClass.getDeclaredField("requestOptions")
         .apply { isAccessible = true }
         .get(this) as BaseRequestOptions<*>

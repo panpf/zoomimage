@@ -21,11 +21,13 @@ import android.net.Uri
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.getUrl
+import com.bumptech.glide.load.engine.getModel
 import com.bumptech.glide.load.engine.requestOptionsCompat
 import com.bumptech.glide.request.SingleRequest
+import com.github.panpf.zoomimage.internal.GlideHttpImageSource
 import com.github.panpf.zoomimage.internal.GlideTinyBitmapPool
 import com.github.panpf.zoomimage.internal.GlideTinyMemoryCache
+import java.io.File
 
 open class GlideZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -45,16 +47,25 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
+        _subsamplingAbility?.disallowMemoryCache = false
+        _subsamplingAbility?.setImageSource(null)
         post {
             if (!ViewCompat.isAttachedToWindow(this)) return@post
             val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)
-            if (request != null && request is SingleRequest<*> && request.isComplete) {
-                _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(request)
-                _subsamplingAbility?.setImageSource(newImageSource(request))
-            } else {
-                _subsamplingAbility?.disallowMemoryCache = false
-                _subsamplingAbility?.setImageSource(null)
+            if (request == null) {
+                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, request is null" }
+                return@post
             }
+            if (request !is SingleRequest<*>) {
+                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, request is not SingleRequest" }
+                return@post
+            }
+            if (!request.isComplete) {
+                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, request is not complete" }
+                return@post
+            }
+            _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(request)
+            _subsamplingAbility?.setImageSource(newImageSource(request))
         }
     }
 
@@ -65,20 +76,31 @@ open class GlideZoomImageView @JvmOverloads constructor(
     }
 
     private fun newImageSource(request: SingleRequest<*>): ImageSource? {
-        val url = request.getUrl() ?: return null
-        // todo 适配多种 url
+        val model = request.getModel()
         return when {
-            url.startsWith("file:///android_asset/") -> {
-                val assetFileName = url.replace("file:///android_asset/", "")
+            model is String && (model.startsWith("http://") || model.startsWith("https://")) -> {
+                GlideHttpImageSource(Glide.get(context), model)
+            }
+
+            model is String && model.startsWith("content://") -> {
+                ImageSource.fromContent(context, Uri.parse(model))
+            }
+
+            model is String && model.startsWith("file:///android_asset/") -> {
+                val assetFileName = model.replace("file:///android_asset/", "")
                 ImageSource.fromAsset(context, assetFileName)
             }
-            url.startsWith("file://") || url.startsWith("content://") -> {
-                ImageSource.fromContent(context, Uri.parse(url))
+
+            model is String && model.startsWith("file://") -> {
+                ImageSource.fromFile(File(model.replace("file://", "")))
             }
-            // todo resource and http
+
+            model is Int -> {
+                ImageSource.fromResource(context, model)
+            }
 
             else -> {
-                _zoomAbility?.logger?.w(MODULE) { "Can't use Subsampling, unsupported uri: '$url'" }
+                _zoomAbility?.logger?.w(MODULE) { "Can't use Subsampling, unsupported model: '$model'" }
                 null
             }
         }
