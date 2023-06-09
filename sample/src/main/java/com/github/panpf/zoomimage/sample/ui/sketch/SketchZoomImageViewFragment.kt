@@ -89,9 +89,14 @@ class SketchZoomImageViewFragment : BindingFragment<SketchZoomImageViewFragmentB
         }
 
         binding.common.zoomImageViewInfoText.apply {
-            maxLines = 4
+            var isSingleLine = true
+            binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+            binding.common.zoomImageViewInfoText.maxLines = 4
             setOnClickListener {
-                maxLines = if (maxLines == 4) Int.MAX_VALUE else 4
+                isSingleLine = !isSingleLine
+                binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+                binding.common.zoomImageViewInfoText.maxLines =
+                    if (binding.common.zoomImageViewInfoText.maxLines == 4) Int.MAX_VALUE else 4
             }
             binding.sketchZoomImageViewImage.zoomAbility.addOnMatrixChangeListener {
                 updateInfo(binding)
@@ -133,6 +138,7 @@ class SketchZoomImageViewFragment : BindingFragment<SketchZoomImageViewFragmentB
 
     @SuppressLint("SetTextI18n")
     private fun updateInfo(binding: SketchZoomImageViewFragmentBinding) {
+        binding.common.zoomImageViewUriText.text = "uri: ${args.imageUri}"
         val zoomInfo = binding.sketchZoomImageViewImage.zoomAbility.run {
             val stepScalesString = stepScales.joinToString { it.format(2) }
             """

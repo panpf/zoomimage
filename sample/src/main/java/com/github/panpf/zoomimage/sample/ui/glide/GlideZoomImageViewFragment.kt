@@ -19,6 +19,7 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.ImageView
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -97,9 +98,14 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
         }
 
         binding.common.zoomImageViewInfoText.apply {
-            maxLines = 4
+            var isSingleLine = true
+            binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+            binding.common.zoomImageViewInfoText.maxLines = 4
             setOnClickListener {
-                maxLines = if (maxLines == 4) Int.MAX_VALUE else 4
+                isSingleLine = !isSingleLine
+                binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+                binding.common.zoomImageViewInfoText.maxLines =
+                    if (binding.common.zoomImageViewInfoText.maxLines == 4) Int.MAX_VALUE else 4
             }
             binding.glideZoomImageViewImage.zoomAbility.addOnMatrixChangeListener {
                 updateInfo(binding)
@@ -116,7 +122,7 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
         binding.common.zoomImageViewProgress.isVisible = true
         binding.common.zoomImageViewError.isVisible = false
         Glide.with(this@GlideZoomImageViewFragment)
-            .load(sketchUri2GlideUri(args.imageUri))
+            .load(sketchUri2GlideModel(binding, args.imageUri))
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -151,6 +157,7 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
 
     @SuppressLint("SetTextI18n")
     private fun updateInfo(binding: GlideZoomImageViewFragmentBinding) {
+        binding.common.zoomImageViewUriText.text = "uri: ${args.imageUri}"
         val zoomInfo = binding.glideZoomImageViewImage.zoomAbility.run {
             val stepScalesString = stepScales.joinToString { it.format(2) }
             """
@@ -181,9 +188,27 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
         binding.common.zoomImageViewInfoText.text = "$zoomInfo\n$imageInfo\n$subsamplingInfo"
     }
 
-    private fun sketchUri2GlideUri(sketchUri: String): String {
-        // todo support resource
-        return sketchUri.replace("asset://", "file:///android_asset/")
+    private fun sketchUri2GlideModel(
+        binding: GlideZoomImageViewFragmentBinding,
+        sketchImageUri: String
+    ): Any? {
+        return when {
+            sketchImageUri.startsWith("asset://") ->
+                sketchImageUri.replace("asset://", "file:///android_asset/")
+
+            sketchImageUri.startsWith("android.resource://") -> {
+                val resId =
+                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
+                if (resId == null) {
+                    binding.glideZoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
+                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
+                    }
+                }
+                resId
+            }
+
+            else -> sketchImageUri
+        }
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

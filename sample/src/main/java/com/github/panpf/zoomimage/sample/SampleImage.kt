@@ -21,7 +21,29 @@ import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.util.Size
 
 object SampleImages {
-    val FETCHERS = listOf(Asset.WORLD, Content.CARD, Resource.QMSHT, Http.COMIC)
+    val FETCHERS = listOf(Asset.WORLD, Content.CHINA, LocalFile.CARD, Resource.QMSHT, Http.COMIC)
+
+    object Resource {
+        val HORDOG = SampleImage(
+            name = "HORDOG",
+            fileName = "sample_dog_hor.jpg",
+            uri = newResourceUri(R.raw.sample_dog_hor),
+            size = Size(640, 427)
+        )
+        val VERDOG = SampleImage(
+            name = "VERDOG",
+            fileName = "sample_dog_ver.jpg",
+            uri = newResourceUri(R.raw.sample_dog_ver),
+            size = Size(150, 266)
+        )
+        val QMSHT = SampleImage(
+            name = "QMSHT",
+            fileName = "sample_long_qmsht.jpg",
+            uri = newResourceUri(R.raw.sample_long_qmsht),
+            size = Size(30000, 926)
+        )
+        val ALL = listOf(HORDOG, VERDOG, QMSHT)
+    }
 
     object Asset {
         val HORDOG = SampleImage(
@@ -42,6 +64,12 @@ object SampleImages {
             uri = newAssetUri("sample_huge_world.jpg"),
             size = Size(9798, 6988)
         )
+        val CHINA = SampleImage(
+            name = "CHINA",
+            fileName = "sample_huge_china.jpg",
+            uri = newAssetUri("sample_huge_china.jpg"),
+            size = Size(3964, 1920)
+        )
         val CARD = SampleImage(
             name = "CARD",
             fileName = "sample_huge_card.png",
@@ -60,85 +88,45 @@ object SampleImages {
             uri = newAssetUri("sample_long_comic.jpg"),
             size = Size(690, 12176)
         )
-        val ALL = listOf(HORDOG, VERDOG, WORLD, CARD, QMSHT, COMIC)
+        val ALL = listOf(HORDOG, VERDOG, WORLD, CHINA, CARD, QMSHT, COMIC)
     }
 
     object Http {
-        val WORLD = SampleImage(
-            name = "WORLD",
-            fileName = "sample_huge_world.jpg",
-            uri = "http://img.panpengfei.com/sample_huge_world.jpg",
-            size = Size(9798, 6988)
-        )
-        val CARD = SampleImage(
-            name = "CARD",
-            fileName = "sample_huge_card.png",
-            uri = "http://img.panpengfei.com/sample_huge_card.png",
-            size = Size(7557, 5669)
-        )
-        val QMSHT = SampleImage(
-            name = "QMSHT",
-            fileName = "sample_long_qmsht.jpg",
-            uri = "http://img.panpengfei.com/sample_long_qmsht.jpg",
-            size = Size(30000, 926)
-        )
-        val COMIC = SampleImage(
-            name = "COMIC",
-            fileName = "sample_long_comic.jpg",
-            uri = "http://img.panpengfei.com/sample_long_comic.jpg",
-            size = Size(690, 12176)
-        )
-        val ALL = listOf(WORLD, CARD, QMSHT, COMIC)
+        private val path = "http://img.panpengfei.com/"
+        val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val COMIC = Asset.COMIC.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val ALL = listOf(WORLD, CARD, QMSHT, COMIC, CHINA)
     }
 
-    object Resource {
-        val HORDOG = SampleImage(
-            name = "HORDOG",
-            fileName = "sample_dog_hor.jpg",
-            uri = newResourceUri(R.raw.sample_dog_hor),
-            size = Size(640, 427)
-        )
-        val VERDOG = SampleImage(
-            name = "VERDOG",
-            fileName = "sample_dog_ver.jpg",
-            uri = newResourceUri(R.raw.sample_dog_ver),
-            size = Size(150, 266)
-        )
-        val QMSHT = SampleImage(
-            name = "WORLD",
-            fileName = "sample_long_qmsht.jpg",
-            uri = newResourceUri(R.raw.sample_long_qmsht),
-            size = Size(30000, 926)
-        )
-        val ALL = listOf(HORDOG, VERDOG, QMSHT)
+    object LocalFile {
+        private val path = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/"
+        val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val COMIC = Asset.COMIC.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val ALL = listOf(WORLD, CARD, QMSHT, COMIC, CHINA)
     }
 
     object Content {
-        val WORLD = SampleImage(
-            name = "WORLD",
-            fileName = "sample_huge_world.jpg",
-            uri = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/sample_huge_world.jpg",
-            size = Size(9798, 6988)
-        )
-        val CARD = SampleImage(
-            name = "CARD",
-            fileName = "sample_huge_card.png",
-            uri = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/sample_huge_card.png",
-            size = Size(7557, 5669)
-        )
-        val QMSHT = SampleImage(
-            name = "QMSHT",
-            fileName = "sample_long_qmsht.jpg",
-            uri = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/sample_long_qmsht.png",
-            size = Size(30000, 926)
-        )
-        val COMIC = SampleImage(
-            name = "COMIC",
-            fileName = "sample_long_comic.jpg",
-            uri = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/sample_long_comic.png",
-            size = Size(690, 12176)
-        )
+        private val path = "content://${BuildConfig.APPLICATION_ID}.fileprovider/asset_images/"
+        val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val COMIC = Asset.COMIC.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val ALL = listOf(WORLD, CARD, QMSHT, COMIC, CHINA)
     }
 }
 
-class SampleImage(val name: String, val fileName: String, val uri: String, val size: Size)
+class SampleImage(val name: String, val fileName: String, val uri: String, val size: Size) {
+    fun copy(
+        name: String = this.name,
+        fileName: String = this.fileName,
+        uri: String = this.uri,
+        size: Size = this.size
+    ) = SampleImage(name, fileName, uri, size)
+}

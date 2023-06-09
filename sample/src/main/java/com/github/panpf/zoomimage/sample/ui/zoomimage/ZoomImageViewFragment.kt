@@ -91,10 +91,15 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
             SettingsDialogFragment().show(childFragmentManager, null)
         }
 
-        binding.common.zoomImageViewInfoText.apply {
-            maxLines = 4
+        binding.common.zoomImageViewInfoLayout.apply {
+            var isSingleLine = true
+            binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+            binding.common.zoomImageViewInfoText.maxLines = 4
             setOnClickListener {
-                maxLines = if (maxLines == 4) Int.MAX_VALUE else 4
+                isSingleLine = !isSingleLine
+                binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+                binding.common.zoomImageViewInfoText.maxLines =
+                    if (binding.common.zoomImageViewInfoText.maxLines == 4) Int.MAX_VALUE else 4
             }
             binding.zoomImageViewImage.zoomAbility.addOnMatrixChangeListener {
                 updateInfo(binding)
@@ -137,32 +142,43 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
 
     private fun newImageSource(
         binding: ZoomImageViewFragmentBinding,
-        imageUri: String
+        sketchImageUri: String
     ): ImageSource? {
         return when {
-            imageUri.startsWith("/") -> {
-                ImageSource.fromFile(File(imageUri))
-            }
-
-            imageUri.startsWith("asset://") -> {
-                val assetFileName = imageUri.replace("asset://", "")
+            sketchImageUri.startsWith("asset://") -> {
+                val assetFileName = sketchImageUri.replace("asset://", "")
                 ImageSource.fromAsset(requireContext(), assetFileName)
             }
 
-            imageUri.startsWith("android.resource://") -> {
+            sketchImageUri.startsWith("android.resource://") -> {
                 val resId =
-                    Uri.parse(imageUri).getQueryParameters("resId").firstOrNull()
+                    Uri.parse(sketchImageUri).getQueryParameters("resId").firstOrNull()
                         ?.toIntOrNull()
-                resId?.let { ImageSource.fromResource(requireContext(), it) }
+                if (resId != null) {
+                    ImageSource.fromResource(requireContext().resources, resId)
+                } else {
+                    binding.zoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
+                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
+                    }
+                    null
+                }
             }
 
-            imageUri.startsWith("content://") || imageUri.startsWith("file://") -> {
-                ImageSource.fromContent(requireContext(), Uri.parse(imageUri))
+            sketchImageUri.startsWith("content://") -> {
+                ImageSource.fromContent(requireContext(), Uri.parse(sketchImageUri))
+            }
+
+            sketchImageUri.startsWith("/") -> {
+                ImageSource.fromFile(File(sketchImageUri))
+            }
+
+            sketchImageUri.startsWith("file://") -> {
+                ImageSource.fromFile(File(sketchImageUri.replace("file://", "")))
             }
 
             else -> {
                 binding.zoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
-                    "Can't use Subsampling, unsupported uri: '$imageUri'"
+                    "Can't use Subsampling, unsupported uri: '$sketchImageUri'"
                 }
                 null
             }
@@ -171,6 +187,7 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
 
     @SuppressLint("SetTextI18n")
     private fun updateInfo(binding: ZoomImageViewFragmentBinding) {
+        binding.common.zoomImageViewUriText.text = "uri: ${args.imageUri}"
         val zoomInfo = binding.zoomImageViewImage.zoomAbility.run {
             val stepScalesString = stepScales.joinToString { it.format(2) }
             """

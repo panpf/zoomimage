@@ -16,7 +16,6 @@
 package com.github.panpf.zoomimage.sample.ui.coil
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.core.net.toUri
@@ -41,6 +40,7 @@ import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.ui.zoomimage.SettingsDialogFragment
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import kotlinx.coroutines.launch
+import java.io.File
 
 class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBinding>() {
 
@@ -91,9 +91,14 @@ class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBindi
         }
 
         binding.common.zoomImageViewInfoText.apply {
-            maxLines = 4
+            var isSingleLine = true
+            binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+            binding.common.zoomImageViewInfoText.maxLines = 4
             setOnClickListener {
-                maxLines = if (maxLines == 4) Int.MAX_VALUE else 4
+                isSingleLine = !isSingleLine
+                binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+                binding.common.zoomImageViewInfoText.maxLines =
+                    if (binding.common.zoomImageViewInfoText.maxLines == 4) Int.MAX_VALUE else 4
             }
             binding.coilZoomImageViewImage.zoomAbility.addOnMatrixChangeListener {
                 updateInfo(binding)
@@ -107,7 +112,7 @@ class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBindi
     }
 
     private fun loadImage(binding: CoilZoomImageViewFragmentBinding) {
-        binding.coilZoomImageViewImage.load(sketchUri2CoilUri(args.imageUri)) {
+        binding.coilZoomImageViewImage.load(sketchUri2CoilModel(binding, args.imageUri)) {
             lifecycle(viewLifecycleOwner.lifecycle)
             precision(coil.size.Precision.INEXACT)
             crossfade(true)
@@ -135,6 +140,7 @@ class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBindi
 
     @SuppressLint("SetTextI18n")
     private fun updateInfo(binding: CoilZoomImageViewFragmentBinding) {
+        binding.common.zoomImageViewUriText.text = "uri: ${args.imageUri}"
         val zoomInfo = binding.coilZoomImageViewImage.zoomAbility.run {
             val stepScalesString = stepScales.joinToString { it.format(2) }
             """
@@ -165,12 +171,35 @@ class CoilZoomImageViewFragment : BindingFragment<CoilZoomImageViewFragmentBindi
         binding.common.zoomImageViewInfoText.text = "$zoomInfo\n$imageInfo\n$subsamplingInfo"
     }
 
-    private fun sketchUri2CoilUri(@Suppress("SameParameterValue") uri: String): Uri {
-        return if (uri.startsWith("asset://")) {
-            Uri.parse("file://filled/android_asset/${uri.substring("asset://".length)}")
-        } else {
-            // todo support resource
-            uri.toUri()
+    private fun sketchUri2CoilModel(
+        binding: CoilZoomImageViewFragmentBinding,
+        @Suppress("SameParameterValue") sketchImageUri: String
+    ): Any? {
+        return when {
+            sketchImageUri.startsWith("asset://") -> {
+                sketchImageUri.replace("asset://", "file://filled/android_asset/").toUri()
+            }
+
+            sketchImageUri.startsWith("file://") -> {
+                File(sketchImageUri.substring("file://".length))
+            }
+
+            sketchImageUri.startsWith("android.resource://") -> {
+                val resId =
+                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
+                if (resId != null) {
+                    "android.resource://${requireContext().packageName}/$resId".toUri()
+                } else {
+                    binding.coilZoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
+                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
+                    }
+                    null
+                }
+            }
+
+            else -> {
+                sketchImageUri.toUri()
+            }
         }
     }
 

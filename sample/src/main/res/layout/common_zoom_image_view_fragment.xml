@@ -5,18 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/zoomImageViewInfoText"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/zoomImageViewInfoLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:textColor="@android:color/white"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="4"
-        android:ellipsize="end"
-        android:shadowColor="@android:color/black"
-        tools:text="Draw：\nvisible: \nstepScales: " />
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/zoomImageViewUriText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="4"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:shadowColor="@android:color/black"
+            tools:text="uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：" />
+
+        <TextView
+            android:id="@+id/zoomImageViewInfoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="4"
+            android:ellipsize="end"
+            android:shadowColor="@android:color/black"
+            tools:text="draw：\nvisible: \nstepScales: " />
+    </LinearLayout>
 
     <com.github.panpf.zoomimage.sample.ui.widget.TilesMapImageView
         android:id="@+id/zoomImageViewTileMap"

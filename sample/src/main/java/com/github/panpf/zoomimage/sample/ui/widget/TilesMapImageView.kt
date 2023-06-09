@@ -23,6 +23,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
@@ -117,6 +118,9 @@ class TilesMapImageView @JvmOverloads constructor(
 
     fun setZoomImageView(zoomView: ZoomImageView) {
         this.zoomView = zoomView
+        zoomView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            resetViewSize()
+        }
         zoomView.zoomAbility.addOnMatrixChangeListener {
             invalidate()
         }
@@ -133,14 +137,16 @@ class TilesMapImageView @JvmOverloads constructor(
         val drawableHeight = drawable.intrinsicHeight
         val zoomViewWidth = zoomView.width
         val zoomViewHeight = zoomView.height
-        if ((zoomViewWidth / drawableWidth.toFloat()) < (zoomViewHeight / drawableHeight.toFloat())) {
+        val viewWidth: Int
+        val viewHeight: Int
+            if ((zoomViewWidth / drawableWidth.toFloat()) < (zoomViewHeight / drawableHeight.toFloat())) {
             val ratio = when {
                 drawableWidth / drawableHeight > 4 -> 0.7f
                 zoomViewWidth >= zoomViewHeight -> 0.55f
                 else -> 0.4f
             }
-            val viewWidth = (zoomViewWidth * ratio).roundToInt()
-            val viewHeight = (drawableHeight * (viewWidth / drawableWidth.toFloat())).roundToInt()
+            viewWidth = (zoomViewWidth * ratio).roundToInt()
+            viewHeight = (drawableHeight * (viewWidth / drawableWidth.toFloat())).roundToInt()
             updateLayoutParams<LayoutParams> {
                 width = viewWidth
                 height = viewHeight
@@ -151,13 +157,14 @@ class TilesMapImageView @JvmOverloads constructor(
                 zoomViewWidth < zoomViewHeight -> 0.55f
                 else -> 0.4f
             }
-            val viewHeight = (zoomViewHeight * ratio).roundToInt()
-            val viewWidth = (drawableWidth * (viewHeight / drawableHeight.toFloat())).roundToInt()
-            updateLayoutParams<LayoutParams> {
-                width = viewWidth
-                height = viewHeight
-            }
+            viewHeight = (zoomViewHeight * ratio).roundToInt()
+            viewWidth = (drawableWidth * (viewHeight / drawableHeight.toFloat())).roundToInt()
         }
+        updateLayoutParams<LayoutParams> {
+            width = viewWidth
+            height = viewHeight
+        }
+        Log.d("TilesMapImageView", "resetViewSize: viewSize=${viewWidth}x${viewHeight}. drawableSize=${drawableWidth}x${drawableHeight}, zoomViewSize=${zoomViewWidth}x${zoomViewHeight}")
         return true
     }
 

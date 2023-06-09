@@ -1,9 +1,12 @@
 package com.github.panpf.zoomimage.sample
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.multidex.MultiDexApplication
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.memory.MemoryCache
+import coil.util.DebugLogger
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.load.engine.cache.LruResourceCache
@@ -28,6 +31,7 @@ import javax.net.ssl.X509TrustManager
 
 class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
 
+    @SuppressLint("VisibleForTests")
     override fun onCreate() {
         super.onCreate()
         MMKV.initialize(this)
@@ -35,10 +39,16 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
         handleSSLHandshake()
 
         Picasso.setSingletonInstance(Picasso.Builder(this).apply {
+            loggingEnabled(true)
             memoryCache(LruCache(getMemoryCacheMaxSize().toInt()))
         }.build())
 
-        Glide.init(this, GlideBuilder().setMemoryCache(LruResourceCache(getMemoryCacheMaxSize())))
+        Glide.init(
+            this,
+            GlideBuilder()
+                .setMemoryCache(LruResourceCache(getMemoryCacheMaxSize()))
+                .setLogLevel(Log.DEBUG)
+        )
     }
 
     override fun createSketch(): Sketch {
@@ -59,6 +69,7 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
 
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
+            .logger(DebugLogger())
             .memoryCache(
                 MemoryCache.Builder(this).apply {
                     maxSizeBytes(getMemoryCacheMaxSize().toInt())
@@ -67,19 +78,22 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
             .build()
     }
 
-    fun handleSSLHandshake() {
+    private fun handleSSLHandshake() {
         try {
-            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+            val trustAllCerts = arrayOf<TrustManager>(@SuppressLint("CustomX509TrustManager")
+            object : X509TrustManager {
                 override fun getAcceptedIssuers(): Array<X509Certificate?> {
-                    return arrayOfNulls<X509Certificate>(0)
+                    return arrayOfNulls(0)
                 }
 
+                @SuppressLint("TrustAllX509TrustManager")
                 override fun checkClientTrusted(
                     certs: Array<X509Certificate?>?,
                     authType: String?
                 ) {
                 }
 
+                @SuppressLint("TrustAllX509TrustManager")
                 override fun checkServerTrusted(
                     certs: Array<X509Certificate?>?,
                     authType: String?
@@ -90,8 +104,9 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
             // trustAllCerts信任所有的证书
             sc.init(null, trustAllCerts, SecureRandom())
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.socketFactory)
-            HttpsURLConnection.setDefaultHostnameVerifier { hostname, session -> true }
+            HttpsURLConnection.setDefaultHostnameVerifier { _, _ -> true }
         } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

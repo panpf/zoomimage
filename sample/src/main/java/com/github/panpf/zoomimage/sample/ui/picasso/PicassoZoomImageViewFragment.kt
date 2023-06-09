@@ -16,8 +16,10 @@
 package com.github.panpf.zoomimage.sample.ui.picasso
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -39,7 +41,9 @@ import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.ui.zoomimage.SettingsDialogFragment
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import com.squareup.picasso.Callback
+import com.squareup.picasso.RequestCreator
 import kotlinx.coroutines.launch
+import java.io.File
 
 class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmentBinding>() {
 
@@ -92,9 +96,14 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
         }
 
         binding.common.zoomImageViewInfoText.apply {
-            maxLines = 4
+            var isSingleLine = true
+            binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+            binding.common.zoomImageViewInfoText.maxLines = 4
             setOnClickListener {
-                maxLines = if (maxLines == 4) Int.MAX_VALUE else 4
+                isSingleLine = !isSingleLine
+                binding.common.zoomImageViewUriText.isSingleLine = isSingleLine
+                binding.common.zoomImageViewInfoText.maxLines =
+                    if (binding.common.zoomImageViewInfoText.maxLines == 4) Int.MAX_VALUE else 4
             }
             binding.picassoZoomImageViewImage.zoomAbility.addOnMatrixChangeListener {
                 updateInfo(binding)
@@ -110,24 +119,65 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
     private fun loadImage(binding: PicassoZoomImageViewFragmentBinding) {
         binding.common.zoomImageViewProgress.isVisible = true
         binding.common.zoomImageViewError.isVisible = false
-        binding.picassoZoomImageViewImage.loadImage(
-            path = sketchUri2PicassoUri(args.imageUri),
-            callback = object : Callback {
-                override fun onSuccess() {
-                    binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewError.isVisible = false
-                }
-
-                override fun onError(e: Exception?) {
-                    binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewError.isVisible = true
-                }
-            },
-            config = {
-                fit()
-                centerInside()
+        val callback = object : Callback {
+            override fun onSuccess() {
+                binding.common.zoomImageViewProgress.isVisible = false
+                binding.common.zoomImageViewError.isVisible = false
             }
-        )
+
+            override fun onError(e: Exception?) {
+                binding.common.zoomImageViewProgress.isVisible = false
+                binding.common.zoomImageViewError.isVisible = true
+            }
+        }
+        val config: RequestCreator.() -> Unit = {
+            fit()
+            centerInside()
+        }
+        val sketchImageUri = args.imageUri
+        when {
+            sketchImageUri.startsWith("asset://") ->
+                binding.picassoZoomImageViewImage.loadImage(
+                    path = sketchImageUri.replace("asset://", "file:///android_asset/"),
+                    callback = callback,
+                    config = config
+                )
+
+            sketchImageUri.startsWith("file://") ->
+                binding.picassoZoomImageViewImage.loadImage(
+                    file = File(sketchImageUri.replace("file://", "")),
+                    callback = callback,
+                    config = config
+                )
+
+            sketchImageUri.startsWith("android.resource://") -> {
+                val resId =
+                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
+                if (resId != null) {
+                    binding.picassoZoomImageViewImage.loadImage(
+                        resourceId = resId,
+                        callback = callback,
+                        config = config
+                    )
+                } else {
+                    binding.picassoZoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
+                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
+                    }
+                    binding.picassoZoomImageViewImage.loadImage(
+                        path = null,
+                        callback = callback,
+                        config = config
+                    )
+                }
+            }
+
+            else ->
+                binding.picassoZoomImageViewImage.loadImage(
+                    uri = Uri.parse(sketchImageUri),
+                    callback = callback,
+                    config = config
+                )
+        }
 
         binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
             resizeSize(600, 600)
@@ -137,6 +187,7 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
 
     @SuppressLint("SetTextI18n")
     private fun updateInfo(binding: PicassoZoomImageViewFragmentBinding) {
+        binding.common.zoomImageViewUriText.text = "uri: ${args.imageUri}"
         val zoomInfo = binding.picassoZoomImageViewImage.zoomAbility.run {
             val stepScalesString = stepScales.joinToString { it.format(2) }
             """
@@ -165,11 +216,6 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
             """.trimIndent()
         }
         binding.common.zoomImageViewInfoText.text = "$zoomInfo\n$imageInfo\n$subsamplingInfo"
-    }
-
-    private fun sketchUri2PicassoUri(sketchUri: String): String {
-        // todo support resource
-        return sketchUri.replace("asset://", "file:///android_asset/")
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {
