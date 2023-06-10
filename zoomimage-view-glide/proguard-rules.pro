@@ -19,3 +19,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# ####################### for GlideExtensions - start #######################
+-keepclassmembers class com.bumptech.glide.Glide {
+    com.bumptech.glide.load.engine.Engine engine;
+}
+-keepclassmembers class com.bumptech.glide.load.engine.Engine {
+    com.bumptech.glide.load.engine.Engine$LazyDiskCacheProvider diskCacheProvider;
+    com.bumptech.glide.load.engine.cache.MemoryCache cache;
+    com.bumptech.glide.load.engine.ActiveResources activeResources;
+}
+-keepclassmembers class com.bumptech.glide.request.SingleRequest {
+    java.lang.Object model;
+    com.bumptech.glide.request.BaseRequestOptions requestOptions;
+}
+# ####################### for GlideExtensions - end #######################

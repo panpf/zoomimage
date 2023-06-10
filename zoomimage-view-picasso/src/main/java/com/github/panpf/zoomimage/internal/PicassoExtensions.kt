@@ -14,7 +14,6 @@ internal fun isDisallowMemoryCache(memoryPolicy: Int): Boolean {
 }
 
 internal val RequestCreator.memoryPolicy: Int
-    // todo 配置混淆
     get() = try {
         this.javaClass.getDeclaredField("memoryPolicy").apply {
             isAccessible = true

@@ -30,7 +30,6 @@ import java.io.File
 
 internal fun getDiskCache(glide: Glide): DiskCache? {
     return try {
-        // todo 配置混淆
         val engine = glide.javaClass.getDeclaredField("engine")
             .apply { isAccessible = true }
             .get(glide) as Engine
@@ -46,7 +45,6 @@ internal fun getDiskCache(glide: Glide): DiskCache? {
 
 internal fun SingleRequest<*>.getModel(): Any? {
     return try {
-        // todo 配置混淆
         this.javaClass.getDeclaredField("model").apply {
             isAccessible = true
         }.get(this)
@@ -72,7 +70,6 @@ internal fun newEngineKey(key: String): EngineKey {
 
 internal fun createGlideEngine(glide: Glide): GlideEngine? {
     return try {
-        // todo 配置混淆
         val engine = glide.javaClass.getDeclaredField("engine")
             .apply { isAccessible = true }
             .get(glide) as Engine
@@ -90,7 +87,6 @@ internal fun createGlideEngine(glide: Glide): GlideEngine? {
 }
 
 internal val SingleRequest<*>.requestOptionsCompat: BaseRequestOptions<*>
-    // todo 配置混淆
     get() = this.javaClass.getDeclaredField("requestOptions")
         .apply { isAccessible = true }
         .get(this) as BaseRequestOptions<*>

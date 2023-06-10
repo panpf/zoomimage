@@ -19,7 +19,7 @@ suspend fun PointerInputScope.detectTwoDowns(onTowDownsChange: (towDowns: Boolea
         awaitPointerEventScope {
             awaitTwoDowns(false)
         }
-        // todo 有错误，这个改好了就可以用新的 transformable 了
+        // todo There is a bug, this one can be corrected and the new transformable can be used
         awaitEachGesture {
             onTowDownsChange(false)
             onTowDownsChange(true)

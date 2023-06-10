@@ -51,7 +51,7 @@ android {
         release {
             multiDexEnabled = true
             isMinifyEnabled = true
-            isShrinkResources = true
+//            isShrinkResources = true
             @Suppress("UnstableApiUsage")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
