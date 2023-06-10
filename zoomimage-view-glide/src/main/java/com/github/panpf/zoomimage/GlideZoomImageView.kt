@@ -45,12 +45,27 @@ open class GlideZoomImageView @JvmOverloads constructor(
         _subsamplingAbility?.tinyMemoryCache = GlideTinyMemoryCache(glide)
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (drawable != null) {
+            resetImageSource()
+        }
+    }
+
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         _subsamplingAbility?.disallowMemoryCache = false
         _subsamplingAbility?.setImageSource(null)
+        if (ViewCompat.isAttachedToWindow(this)) {
+            resetImageSource()
+        }
+    }
+
+    private fun resetImageSource() {
         post {
-            if (!ViewCompat.isAttachedToWindow(this)) return@post
+            if (!ViewCompat.isAttachedToWindow(this)) {
+                return@post
+            }
             val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)
             if (request == null) {
                 _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, request is null" }

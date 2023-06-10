@@ -53,14 +53,29 @@ open class SketchZoomImageView @JvmOverloads constructor(
         _subsamplingAbility?.tinyMemoryCache = SketchTinyMemoryCache(context.sketch)
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (drawable != null) {
+            resetImageSource()
+        }
+    }
+
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         _subsamplingAbility?.disallowMemoryCache = false
         _subsamplingAbility?.disallowReuseBitmap = false
         _subsamplingAbility?.setImageSource(null)
         _subsamplingAbility?.setLifecycle(context.getLifecycle())
+        if (ViewCompat.isAttachedToWindow(this)) {
+            resetImageSource()
+        }
+    }
+
+    private fun resetImageSource() {
         post {
-            if (!ViewCompat.isAttachedToWindow(this)) return@post
+            if (!ViewCompat.isAttachedToWindow(this)) {
+                return@post
+            }
             val result = displayResult
             if (result == null) {
                 _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is null" }

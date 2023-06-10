@@ -20,6 +20,7 @@ import android.graphics.drawable.Animatable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.core.view.ViewCompat
 import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.SuccessResult
@@ -44,13 +45,28 @@ open class CoilZoomImageView @JvmOverloads constructor(
         _subsamplingAbility?.tinyMemoryCache = CoilTinyMemoryCache(context.imageLoader)
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (drawable != null) {
+            resetImageSource()
+        }
+    }
+
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         _subsamplingAbility?.disallowMemoryCache = false
         _subsamplingAbility?.setImageSource(null)
         _subsamplingAbility?.setLifecycle(context.getLifecycle())
+        if (ViewCompat.isAttachedToWindow(this)) {
+            resetImageSource()
+        }
+    }
+
+    private fun resetImageSource() {
         post {
-            if (!isAttachedToWindow) return@post
+            if (!isAttachedToWindow) {
+                return@post
+            }
             val result = CoilUtils.result(this)
             if (result == null) {
                 _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is null" }
