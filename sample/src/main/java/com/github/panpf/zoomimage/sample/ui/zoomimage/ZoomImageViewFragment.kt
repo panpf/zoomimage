@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.sketch.cache.CachePolicy.ENABLED
 import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.request.DisplayRequest
@@ -41,7 +42,9 @@ import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
@@ -117,6 +120,7 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
             viewLifecycleOwner.lifecycleScope.launch {
                 val request = DisplayRequest(requireContext(), args.imageUri) {
                     lifecycle(viewLifecycleOwner.lifecycle)
+                    downloadCachePolicy(ENABLED)
                 }
                 binding.common.zoomImageViewProgress.isVisible = true
                 binding.common.zoomImageViewErrorLayout.isVisible = false
@@ -142,11 +146,20 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
         }
     }
 
-    private fun newImageSource(
+    private suspend fun newImageSource(
         binding: ZoomImageViewFragmentBinding,
         sketchImageUri: String
     ): ImageSource? {
         return when {
+            sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
+                val cache = withContext(Dispatchers.IO) {
+                    kotlin.runCatching {
+                        requireContext().sketch.downloadCache[sketchImageUri]
+                    }
+                }.getOrNull()
+                cache?.let { ImageSource.fromFile(it.file) }
+            }
+
             sketchImageUri.startsWith("asset://") -> {
                 val assetFileName = sketchImageUri.replace("asset://", "")
                 ImageSource.fromAsset(requireContext(), assetFileName)
