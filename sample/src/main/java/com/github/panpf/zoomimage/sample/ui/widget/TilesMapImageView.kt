@@ -29,6 +29,7 @@ import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.ViewGroup.LayoutParams
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
@@ -107,7 +108,16 @@ class TilesMapImageView @JvmOverloads constructor(
 
     override fun setImageDrawable(drawable: Drawable?) {
         super.setImageDrawable(drawable)
-        resetViewSize()
+        if (zoomView != null && ViewCompat.isAttachedToWindow(this)) {
+            resetViewSize("setImageDrawable")
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (drawable != null && zoomView != null) {
+            resetViewSize("onAttachedToWindow")
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -119,7 +129,11 @@ class TilesMapImageView @JvmOverloads constructor(
     fun setZoomImageView(zoomView: ZoomImageView) {
         this.zoomView = zoomView
         zoomView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            resetViewSize()
+            post {
+                if (drawable != null && ViewCompat.isAttachedToWindow(this)) {
+                    resetViewSize("zoomView#addOnLayoutChangeListener")
+                }
+            }
         }
         zoomView.zoomAbility.addOnMatrixChangeListener {
             invalidate()
@@ -129,7 +143,7 @@ class TilesMapImageView @JvmOverloads constructor(
         }
     }
 
-    private fun resetViewSize(): Boolean {
+    private fun resetViewSize(caller: String): Boolean {
         val drawable = drawable ?: return true
         val zoomView = zoomView ?: return true
 
@@ -139,7 +153,7 @@ class TilesMapImageView @JvmOverloads constructor(
         val zoomViewHeight = zoomView.height
         val viewWidth: Int
         val viewHeight: Int
-            if ((zoomViewWidth / drawableWidth.toFloat()) < (zoomViewHeight / drawableHeight.toFloat())) {
+        if ((zoomViewWidth / drawableWidth.toFloat()) < (zoomViewHeight / drawableHeight.toFloat())) {
             val ratio = when {
                 drawableWidth / drawableHeight > 4 -> 0.7f
                 zoomViewWidth >= zoomViewHeight -> 0.55f
@@ -164,7 +178,10 @@ class TilesMapImageView @JvmOverloads constructor(
             width = viewWidth
             height = viewHeight
         }
-        Log.d("TilesMapImageView", "resetViewSize: viewSize=${viewWidth}x${viewHeight}. drawableSize=${drawableWidth}x${drawableHeight}, zoomViewSize=${zoomViewWidth}x${zoomViewHeight}")
+        Log.d(
+            "TilesMapImageView",
+            "$caller. resetViewSize: viewSize=${viewWidth}x${viewHeight}. drawableSize=${drawableWidth}x${drawableHeight}, zoomViewSize=${zoomViewWidth}x${zoomViewHeight}"
+        )
         return true
     }
 
