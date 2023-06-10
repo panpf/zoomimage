@@ -16,13 +16,13 @@
 package com.github.panpf.zoomimage.sample.ui.photoview
 
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.photoview.PhotoViewFragmentArgs
 
 class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
 
@@ -32,7 +32,34 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         binding: PhotoViewFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        binding.photoView.displayImage(args.imageUri)
+        binding.photoViewUriText.text = "uri: ${args.imageUri}"
+
+        binding.photoViewErrorRetryButton.setOnClickListener {
+            setImage(binding)
+        }
+
+        setImage(binding)
+    }
+
+    private fun setImage(binding: PhotoViewFragmentBinding) {
+        binding.photoView.displayImage(args.imageUri) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade()
+            listener(
+                onStart = {
+                    binding.photoViewProgress.isVisible = true
+                    binding.photoViewErrorLayout.isVisible = false
+                },
+                onSuccess = { _, _ ->
+                    binding.photoViewProgress.isVisible = false
+                    binding.photoViewErrorLayout.isVisible = false
+                },
+                onError = { _, _ ->
+                    binding.photoViewProgress.isVisible = false
+                    binding.photoViewErrorLayout.isVisible = true
+                },
+            )
+        }
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

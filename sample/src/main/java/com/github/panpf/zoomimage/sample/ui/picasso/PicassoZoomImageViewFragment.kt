@@ -118,16 +118,16 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
 
     private fun loadImage(binding: PicassoZoomImageViewFragmentBinding) {
         binding.common.zoomImageViewProgress.isVisible = true
-        binding.common.zoomImageViewError.isVisible = false
+        binding.common.zoomImageViewErrorLayout.isVisible = false
         val callback = object : Callback {
             override fun onSuccess() {
                 binding.common.zoomImageViewProgress.isVisible = false
-                binding.common.zoomImageViewError.isVisible = false
+                binding.common.zoomImageViewErrorLayout.isVisible = false
             }
 
             override fun onError(e: Exception?) {
                 binding.common.zoomImageViewProgress.isVisible = false
-                binding.common.zoomImageViewError.isVisible = true
+                binding.common.zoomImageViewErrorLayout.isVisible = true
             }
         }
         val config: RequestCreator.() -> Unit = {
@@ -180,6 +180,8 @@ class PicassoZoomImageViewFragment : BindingFragment<PicassoZoomImageViewFragmen
         }
 
         binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
         }

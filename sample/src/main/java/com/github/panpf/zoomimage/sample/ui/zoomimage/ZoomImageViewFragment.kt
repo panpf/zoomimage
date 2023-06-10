@@ -119,22 +119,24 @@ class ZoomImageViewFragment : BindingFragment<ZoomImageViewFragmentBinding>() {
                     lifecycle(viewLifecycleOwner.lifecycle)
                 }
                 binding.common.zoomImageViewProgress.isVisible = true
-                binding.common.zoomImageViewError.isVisible = false
+                binding.common.zoomImageViewErrorLayout.isVisible = false
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
                     subsamplingAbility.setImageSource(newImageSource(binding, args.imageUri))
                     binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewError.isVisible = false
+                    binding.common.zoomImageViewErrorLayout.isVisible = false
                 } else {
                     subsamplingAbility.setImageSource(null)
                     binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewError.isVisible = true
+                    binding.common.zoomImageViewErrorLayout.isVisible = true
                 }
             }
         }
 
         binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
         }

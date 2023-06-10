@@ -21,7 +21,7 @@
             android:shadowDy="1"
             android:shadowRadius="4"
             android:ellipsize="middle"
-            android:singleLine="true"
+            tools:singleLine="true"
             android:shadowColor="@android:color/black"
             tools:text="uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：" />
 
@@ -54,7 +54,7 @@
         tools:visibility="visible" />
 
     <LinearLayout
-        android:id="@+id/zoomImageViewError"
+        android:id="@+id/zoomImageViewErrorLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

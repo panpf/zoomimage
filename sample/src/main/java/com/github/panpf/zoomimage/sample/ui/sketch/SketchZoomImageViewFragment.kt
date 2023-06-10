@@ -117,20 +117,22 @@ class SketchZoomImageViewFragment : BindingFragment<SketchZoomImageViewFragmentB
             listener(
                 onStart = {
                     binding.common.zoomImageViewProgress.isVisible = true
-                    binding.common.zoomImageViewError.isVisible = false
+                    binding.common.zoomImageViewErrorLayout.isVisible = false
                 },
                 onSuccess = { _, _ ->
                     binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewError.isVisible = false
+                    binding.common.zoomImageViewErrorLayout.isVisible = false
                 },
                 onError = { _, _ ->
                     binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewError.isVisible = true
+                    binding.common.zoomImageViewErrorLayout.isVisible = true
                 },
             )
         }
 
         binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
         }

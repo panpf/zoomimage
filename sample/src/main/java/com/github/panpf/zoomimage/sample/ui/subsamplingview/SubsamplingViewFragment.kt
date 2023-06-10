@@ -16,13 +16,22 @@
 package com.github.panpf.zoomimage.sample.ui.subsamplingview
 
 import android.os.Bundle
+import android.util.Log
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.sketch.request.Depth.NETWORK
+import com.github.panpf.sketch.request.DownloadData
+import com.github.panpf.sketch.request.DownloadRequest
+import com.github.panpf.sketch.request.DownloadResult
+import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.sample.databinding.SubsamplingViewFragmentBinding
-import com.github.panpf.zoomimage.sample.ui.subsamplingview.SubsamplingViewFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.base.BindingFragment
+import kotlinx.coroutines.launch
 
 class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>() {
 
@@ -32,7 +41,89 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
         binding: SubsamplingViewFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        binding.subsamplingView.setImage(ImageSource.asset(args.imageUri.replace("asset://", "")))
+        binding.subsamplingViewUriText.text = "uri: ${args.imageUri}"
+
+        binding.subsamplingViewProgress.isVisible = false
+        binding.subsamplingViewErrorLayout.isVisible = false
+
+        binding.subsamplingViewErrorRetryButton.setOnClickListener {
+            setImage(binding)
+        }
+
+        setImage(binding)
+    }
+
+    private fun setImage(binding: SubsamplingViewFragmentBinding) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val imageSource = newImageSource(binding, args.imageUri)
+            if (imageSource != null) {
+                binding.subsamplingView.setImage(imageSource)
+            }
+        }
+    }
+
+    private suspend fun newImageSource(
+        binding: SubsamplingViewFragmentBinding,
+        sketchImageUri: String
+    ): ImageSource? {
+        return when {
+            sketchImageUri.startsWith("asset://") -> {
+                ImageSource.asset(sketchImageUri.replace("asset://", ""))
+            }
+
+            sketchImageUri.startsWith("android.resource://") -> {
+                val resId =
+                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
+                if (resId != null) {
+                    ImageSource.resource(resId)
+                } else {
+                    Log.w(
+                        "ZoomImageViewFragment",
+                        "newImageSource failed, invalid resource uri: '$sketchImageUri'"
+                    )
+                    null
+                }
+            }
+
+            sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
+                binding.subsamplingViewProgress.isVisible = true
+                binding.subsamplingViewErrorLayout.isVisible = false
+                val request = DownloadRequest(requireContext(), args.imageUri) {
+                    lifecycle(viewLifecycleOwner.lifecycle)
+                    depth(NETWORK)
+                }
+                val result = requireContext().sketch.execute(request)
+                if (result is DownloadResult.Success) {
+                    val data = result.data.data
+                    if (data is DownloadData.DiskCacheData) {
+                        binding.subsamplingViewProgress.isVisible = false
+                        binding.subsamplingViewErrorLayout.isVisible = false
+                        ImageSource.uri(data.snapshot.file.toUri())
+                    } else {
+                        binding.subsamplingViewProgress.isVisible = false
+                        binding.subsamplingViewErrorLayout.isVisible = true
+                        Log.w(
+                            "ZoomImageViewFragment",
+                            "newImageSource failed, data is byte array. uri: '$sketchImageUri'"
+                        )
+                        null
+                    }
+                } else {
+                    binding.subsamplingViewProgress.isVisible = false
+                    binding.subsamplingViewErrorLayout.isVisible = true
+                    val errorMessage = (result as DownloadResult.Error).throwable.toString()
+                    Log.w(
+                        "ZoomImageViewFragment",
+                        "newImageSource failed, image download failed: $errorMessage. uri: '$sketchImageUri'"
+                    )
+                    null
+                }
+            }
+
+            else -> {
+                ImageSource.uri(sketchImageUri)
+            }
+        }
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

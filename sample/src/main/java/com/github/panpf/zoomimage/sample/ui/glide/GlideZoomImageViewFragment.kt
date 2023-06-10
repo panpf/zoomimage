@@ -120,7 +120,7 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
 
     private fun loadImage(binding: GlideZoomImageViewFragmentBinding) {
         binding.common.zoomImageViewProgress.isVisible = true
-        binding.common.zoomImageViewError.isVisible = false
+        binding.common.zoomImageViewErrorLayout.isVisible = false
         Glide.with(this@GlideZoomImageViewFragment)
             .load(sketchUri2GlideModel(binding, args.imageUri))
             .listener(object : RequestListener<Drawable> {
@@ -131,7 +131,7 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
                     isFirstResource: Boolean
                 ): Boolean {
                     binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewError.isVisible = true
+                    binding.common.zoomImageViewErrorLayout.isVisible = true
                     return false
                 }
 
@@ -143,13 +143,15 @@ class GlideZoomImageViewFragment : BindingFragment<GlideZoomImageViewFragmentBin
                     isFirstResource: Boolean
                 ): Boolean {
                     binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewError.isVisible = false
+                    binding.common.zoomImageViewErrorLayout.isVisible = false
                     return false
                 }
             })
             .into(binding.glideZoomImageViewImage)
 
         binding.common.zoomImageViewTileMap.displayImage(args.imageUri) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
         }

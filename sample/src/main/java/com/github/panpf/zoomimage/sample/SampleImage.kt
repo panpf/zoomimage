@@ -20,6 +20,7 @@ import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.util.Size
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object SampleImages {
     val FETCHERS = listOf(Asset.WORLD, Content.CHINA, LocalFile.CARD, Resource.QMSHT, Http.COMIC)
 
@@ -92,7 +93,7 @@ object SampleImages {
     }
 
     object Http {
-        private val path = "http://img.panpengfei.com/"
+        private const val path = "http://img.panpengfei.com/"
         val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
@@ -112,7 +113,7 @@ object SampleImages {
     }
 
     object Content {
-        private val path = "content://${BuildConfig.APPLICATION_ID}.fileprovider/asset_images/"
+        private const val path = "content://${BuildConfig.APPLICATION_ID}.fileprovider/asset_images/"
         val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
