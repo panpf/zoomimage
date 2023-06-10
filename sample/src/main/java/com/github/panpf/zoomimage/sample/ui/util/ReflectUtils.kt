@@ -27,6 +27,6 @@ fun Class<*>.getSuperGenericParamClass(index: Int): Class<*> {
         }
         return type.actualTypeArguments[finalIndex] as Class<*>
     } else {
-        throw IllegalArgumentException("'$this' parent class of must have a generic parameter")
+        throw IllegalArgumentException("'$this' parent class of must have a generic parameter. type=$type")
     }
 }

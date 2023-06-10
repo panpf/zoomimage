@@ -19,3 +19,27 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# okhttp3（5.0 版本已经默认添加以下规则）
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
+
+
+# App
+
+# ################### for createViewBinding - start ###################
+-keep class com.github.panpf.zoomimage.sample.ui.base.BindingActivity
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.BindingActivity
+-keep class com.github.panpf.zoomimage.sample.ui.base.BindingDialogFragment
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.BindingDialogFragment
+-keep class com.github.panpf.zoomimage.sample.ui.base.BindingFragment
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.BindingFragment
+-keep class com.github.panpf.zoomimage.sample.ui.base.ToolbarBindingFragment
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.ToolbarBindingFragment
+-keep class com.github.panpf.zoomimage.sample.ui.base.MyBindingItemFactory
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.MyBindingItemFactory
+-keep class * implements androidx.viewbinding.ViewBinding{
+    public *;
+}
+# ################### for createViewBinding - end ###################
