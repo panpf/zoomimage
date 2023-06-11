@@ -38,7 +38,7 @@
             tools:text="draw：\nvisible: \nstepScales: " />
     </LinearLayout>
 
-    <com.github.panpf.zoomimage.sample.ui.widget.TilesMapImageView
+    <com.github.panpf.zoomimage.sample.ui.view.widget.TilesMapImageView
         android:id="@+id/zoomImageViewTileMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

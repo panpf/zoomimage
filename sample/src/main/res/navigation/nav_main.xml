@@ -6,12 +6,12 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.MainFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.main.MainFragment" />
 
 
     <fragment
         android:id="@+id/myZoomImageFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.MyZoomImageFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.compose.zoomimage.MyZoomImageFragment" />
     <action
         android:id="@+id/action_global_myZoomImageFragment"
         app:destination="@id/myZoomImageFragment"
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/zoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.zoomimage.ZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -32,7 +32,7 @@
 
     <fragment
         android:id="@+id/zoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.zoomimage.ZoomImageViewPagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewPagerFragment" />
     <action
         android:id="@+id/action_global_zoomImageViewPagerFragment"
         app:destination="@id/zoomImageViewPagerFragment"
@@ -44,7 +44,7 @@
 
     <fragment
         android:id="@+id/sketchZoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.sketch.SketchZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.SketchZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -53,7 +53,7 @@
 
     <fragment
         android:id="@+id/sketchZoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.sketch.SketchZoomImageViewPagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.SketchZoomImageViewPagerFragment" />
     <action
         android:id="@+id/action_global_sketchZoomImageViewPagerFragment"
         app:destination="@id/sketchZoomImageViewPagerFragment"
@@ -65,7 +65,7 @@
 
     <fragment
         android:id="@+id/coilZoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.coil.CoilZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.CoilZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -74,7 +74,7 @@
 
     <fragment
         android:id="@+id/coilZoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.coil.CoilZoomImageViewPagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.CoilZoomImageViewPagerFragment" />
     <action
         android:id="@+id/action_global_coilZoomImageViewPagerFragment"
         app:destination="@id/coilZoomImageViewPagerFragment"
@@ -86,7 +86,7 @@
 
     <fragment
         android:id="@+id/glideZoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.glide.GlideZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.GlideZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -95,7 +95,7 @@
 
     <fragment
         android:id="@+id/glideZoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.glide.GlideZoomImageViewPagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.GlideZoomImageViewPagerFragment" />
     <action
         android:id="@+id/action_global_glideZoomImageViewPagerFragment"
         app:destination="@id/glideZoomImageViewPagerFragment"
@@ -107,7 +107,7 @@
 
     <fragment
         android:id="@+id/picassoZoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.picasso.PicassoZoomImageViewPagerFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.PicassoZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -116,7 +116,7 @@
 
     <fragment
         android:id="@+id/picassoZoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.picasso.PicassoZoomImageViewPagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.PicassoZoomImageViewPagerFragment" />
     <action
         android:id="@+id/action_global_picassoZoomImageViewPagerFragment"
         app:destination="@id/picassoZoomImageViewPagerFragment"
@@ -128,7 +128,7 @@
 
     <fragment
         android:id="@+id/telephotoZoomImageFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.TelephotoZoomImageFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.compose.telephoto.TelephotoZoomImageFragment" />
     <action
         android:id="@+id/action_global_telephotoZoomImageFragment"
         app:destination="@id/telephotoZoomImageFragment"
@@ -139,7 +139,7 @@
 
     <fragment
         android:id="@+id/photoViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.photoview.PhotoViewPagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.photoview.PhotoViewPagerFragment" />
     <action
         android:id="@+id/action_global_photoViewPagerFragment"
         app:destination="@id/photoViewPagerFragment"
@@ -150,7 +150,7 @@
 
     <fragment
         android:id="@+id/photoViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.photoview.PhotoViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.view.photoview.PhotoViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -159,7 +159,7 @@
 
     <fragment
         android:id="@+id/subsamplingViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.subsamplingview.SubsamplingViewPagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.subsamplingview.SubsamplingViewPagerFragment" />
     <action
         android:id="@+id/action_global_subsamplingViewPagerFragment"
         app:destination="@id/subsamplingViewPagerFragment"
@@ -170,7 +170,7 @@
 
     <fragment
         android:id="@+id/subsamplingViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.subsamplingview.SubsamplingViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.view.subsamplingview.SubsamplingViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -179,7 +179,7 @@
 
     <fragment
         android:id="@+id/orientationTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.OrientationTestFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.test.OrientationTestFragment" />
     <action
         android:id="@+id/action_global_orientationTestFragment"
         app:destination="@id/orientationTestFragment"
