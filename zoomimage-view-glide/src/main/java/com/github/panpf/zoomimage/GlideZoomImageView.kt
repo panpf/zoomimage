@@ -55,7 +55,6 @@ open class GlideZoomImageView @JvmOverloads constructor(
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         _subsamplingAbility?.disableMemoryCache = false
-        _subsamplingAbility?.setImageSource(null)
         if (ViewCompat.isAttachedToWindow(this)) {
             resetImageSource()
         }
@@ -87,7 +86,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
     @Suppress("UsePropertyAccessSyntax")
     private fun isDisableMemoryCache(request: SingleRequest<*>): Boolean {
         val requestOptions = request.requestOptionsCompat
-        return !requestOptions.isMemoryCacheable() || requestOptions.isSkipMemoryCacheSet()
+        return !requestOptions.isMemoryCacheable()
     }
 
     private fun newImageSource(request: SingleRequest<*>): ImageSource? {
