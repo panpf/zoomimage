@@ -199,3 +199,6 @@ fun isSrcRectError(throwable: Throwable): Boolean =
     } else {
         false
     }
+
+internal fun Rect.toVeryShortString(): String =
+    "(${left},${top}-${right},${bottom})"

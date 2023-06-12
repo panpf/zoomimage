@@ -51,6 +51,6 @@ class Tile constructor(val srcRect: Rect, val inSampleSize: Int) {
     }
 
     override fun toString(): String {
-        return "Tile(srcRect=$srcRect, inSampleSize=$inSampleSize, bitmap=${bitmap?.run { "Bitmap(${width}x${height},$config)" }})"
+        return "Tile(srcRect=${srcRect.toVeryShortString()},inSampleSize=$inSampleSize,bitmap=${bitmap?.run { "Bitmap(${width}x${height},$config)" }})"
     }
 }

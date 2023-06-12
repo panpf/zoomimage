@@ -222,7 +222,7 @@ internal class TileManager constructor(
             return
         }
 
-        val memoryCacheKey = "${imageSource.key}_tile_${tile.srcRect}_${tile.inSampleSize}"
+        val memoryCacheKey = "${imageSource.key}_tile_${tile.srcRect.toVeryShortString()}_${tile.inSampleSize}"
         val cachedValue = if (!engine.disableMemoryCache) {
             engine.tinyMemoryCache?.get(memoryCacheKey)
         } else {
