@@ -15,23 +15,17 @@
  */
 package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 
-import android.net.Uri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.sketch.cache.CachePolicy.ENABLED
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.sketch
-import com.github.panpf.zoomimage.ImageSource
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.CommonZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
 
 class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBinding>() {
 
@@ -39,6 +33,15 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
 
     override val sketchImageUri: String
         get() = args.imageUri
+
+    override val supportMemoryCache: Boolean
+        get() = false
+
+    override val supportIgnoreExifOrientation: Boolean
+        get() = false
+
+    override val supportReuseBitmap: Boolean
+        get() = false
 
     override fun getCommonBinding(binding: ZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
         return binding.common
@@ -59,71 +62,14 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
             viewLifecycleOwner.lifecycleScope.launch {
                 val request = DisplayRequest(requireContext(), sketchImageUri) {
                     lifecycle(viewLifecycleOwner.lifecycle)
-                    downloadCachePolicy(ENABLED)
                 }
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
-                    subsamplingAbility.setImageSource(newImageSource(binding, sketchImageUri))
                     onCallSuccess()
                 } else {
-                    subsamplingAbility.setImageSource(null)
                     onCallError()
                 }
-            }
-        }
-    }
-
-    private suspend fun newImageSource(
-        binding: ZoomImageViewFragmentBinding,
-        sketchImageUri: String
-    ): ImageSource? {
-        return when {
-            sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
-                val cache = withContext(Dispatchers.IO) {
-                    kotlin.runCatching {
-                        requireContext().sketch.downloadCache[sketchImageUri]
-                    }
-                }.getOrNull()
-                cache?.let { ImageSource.fromFile(it.file) }
-            }
-
-            sketchImageUri.startsWith("asset://") -> {
-                val assetFileName = sketchImageUri.replace("asset://", "")
-                ImageSource.fromAsset(requireContext(), assetFileName)
-            }
-
-            sketchImageUri.startsWith("android.resource://") -> {
-                val resId =
-                    Uri.parse(sketchImageUri).getQueryParameters("resId").firstOrNull()
-                        ?.toIntOrNull()
-                if (resId != null) {
-                    ImageSource.fromResource(requireContext().resources, resId)
-                } else {
-                    binding.zoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
-                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
-                    }
-                    null
-                }
-            }
-
-            sketchImageUri.startsWith("content://") -> {
-                ImageSource.fromContent(requireContext(), Uri.parse(sketchImageUri))
-            }
-
-            sketchImageUri.startsWith("/") -> {
-                ImageSource.fromFile(File(sketchImageUri))
-            }
-
-            sketchImageUri.startsWith("file://") -> {
-                ImageSource.fromFile(File(sketchImageUri.replace("file://", "")))
-            }
-
-            else -> {
-                binding.zoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
-                    "Can't use Subsampling, unsupported uri: '$sketchImageUri'"
-                }
-                null
             }
         }
     }

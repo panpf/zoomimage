@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Settings_Item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:background="@drawable/bg_dialog">
 
     <TextView
         android:id="@+id/switchMenuItemTitleText"

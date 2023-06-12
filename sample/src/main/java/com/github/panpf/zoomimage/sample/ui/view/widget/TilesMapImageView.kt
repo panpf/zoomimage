@@ -33,6 +33,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.isNotEmpty
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -63,35 +64,37 @@ class TilesMapImageView @JvmOverloads constructor(
         val viewWidth = width.takeIf { it > 0 } ?: return
         val viewHeight = height.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
-        val imageSize = zoomView.zoomAbility.imageSize.takeIf { !it.isEmpty } ?: return
         val drawableSize = zoomView.zoomAbility.drawableSize.takeIf { !it.isEmpty } ?: return
+
+        val imageSize = zoomView.zoomAbility.imageSize
+        if (imageSize.isNotEmpty) {
+            val widthTargetScale = imageSize.width.toFloat() / viewWidth
+            val heightTargetScale = imageSize.height.toFloat() / viewHeight
+            zoomView.subsamplingAbility.eachTileList { tile, load ->
+                val tileBitmap = tile.bitmap
+                val tileSrcRect = tile.srcRect
+                val tileDrawRect = tileDrawRect.apply {
+                    set(
+                        floor((tileSrcRect.left / widthTargetScale) + strokeHalfWidth).toInt(),
+                        floor((tileSrcRect.top / heightTargetScale) + strokeHalfWidth).toInt(),
+                        ceil((tileSrcRect.right / widthTargetScale) - strokeHalfWidth).toInt(),
+                        ceil((tileSrcRect.bottom / heightTargetScale) - strokeHalfWidth).toInt()
+                    )
+                }
+                val boundsColor = when {
+                    !load -> Color.parseColor("#00BFFF")
+                    tileBitmap != null -> Color.GREEN
+                    tile.loadJob?.isActive == true -> Color.YELLOW
+                    else -> Color.RED
+                }
+                tileBoundsPaint.color = boundsColor
+                canvas.drawRect(tileDrawRect, tileBoundsPaint)
+            }
+        }
+
         val drawableVisibleRect = drawableVisibleRect
             .apply { zoomView.zoomAbility.getVisibleRect(this) }
             .takeIf { !it.isEmpty } ?: return
-        val widthTargetScale = imageSize.width.toFloat() / viewWidth
-        val heightTargetScale = imageSize.height.toFloat() / viewHeight
-
-        zoomView.subsamplingAbility.eachTileList { tile, load ->
-            val tileBitmap = tile.bitmap
-            val tileSrcRect = tile.srcRect
-            val tileDrawRect = tileDrawRect.apply {
-                set(
-                    floor((tileSrcRect.left / widthTargetScale) + strokeHalfWidth).toInt(),
-                    floor((tileSrcRect.top / heightTargetScale) + strokeHalfWidth).toInt(),
-                    ceil((tileSrcRect.right / widthTargetScale) - strokeHalfWidth).toInt(),
-                    ceil((tileSrcRect.bottom / heightTargetScale) - strokeHalfWidth).toInt()
-                )
-            }
-            val boundsColor = when {
-                !load -> Color.parseColor("#00BFFF")
-                tileBitmap != null -> Color.GREEN
-                tile.loadJob?.isActive == true -> Color.YELLOW
-                else -> Color.RED
-            }
-            tileBoundsPaint.color = boundsColor
-            canvas.drawRect(tileDrawRect, tileBoundsPaint)
-        }
-
         val mapVisibleRect = mapVisibleRect.apply {
             val widthScaled = drawableSize.width / viewWidth.toFloat()
             val heightScaled = drawableSize.height / viewHeight.toFloat()

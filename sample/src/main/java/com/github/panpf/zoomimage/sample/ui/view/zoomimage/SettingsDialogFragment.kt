@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import android.widget.ImageView.ScaleType.MATRIX
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.zoomimage.sample.databinding.RecyclerFragmentBinding
@@ -30,6 +31,8 @@ import com.github.panpf.zoomimage.sample.ui.view.common.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.view.common.menu.SwitchMenuItemFactory
 
 class SettingsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
+
+    private val args by navArgs<SettingsDialogFragmentArgs>()
 
     override fun onViewCreated(binding: RecyclerFragmentBinding, savedInstanceState: Bundle?) {
         binding.recyclerRecycler.apply {
@@ -51,6 +54,30 @@ class SettingsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() 
                             onSelect = { _, value ->
                                 prefsService.scaleType.value = value
                             }
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Disable Memory Cache",
+                            desc = if (args.supportMemoryCache) null else "Current *ZoomImageView not supported",
+                            data = prefsService.disableMemoryCache,
+                            disabled = !args.supportMemoryCache,
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Disallow Reuse Bitmap",
+                            desc = if (args.supportReuseBitmap) null else "Current *ZoomImageView not supported",
+                            data = prefsService.disallowReuseBitmap,
+                            disabled = !args.supportReuseBitmap,
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Ignore Exif Orientation",
+                            desc = if (args.supportReuseBitmap) null else "Current *ZoomImageView not supported",
+                            data = prefsService.ignoreExifOrientation,
+                            disabled = !args.supportIgnoreExifOrientation,
                         )
                     )
                     add(

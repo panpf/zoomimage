@@ -160,6 +160,7 @@ open class DefaultScaleStateFactory : Factory {
         scaleType: ScaleType,
         readModeDecider: ReadModeDecider?,
     ): ScaleState {
+        // todo 优化 imageSize 为 empty 时的效果
         if (drawableSize.isEmpty || viewSize.isEmpty) {
             return ScaleState.EMPTY
         }
@@ -213,6 +214,7 @@ open class DefaultScaleStateFactory : Factory {
                 initial = Normal(initScale, 0f, 0f)
                 stepsBigScale = max(originScale, initScale)
             }
+
             scaleType == ScaleType.CENTER
                     || (scaleType == ScaleType.CENTER_INSIDE && !drawableThanViewLarge) -> {
                 val initScale = keepScale
@@ -225,6 +227,7 @@ open class DefaultScaleStateFactory : Factory {
                 stepsBigScale =
                     floatArrayOf(originScale, fullScale, initScale * 2f).maxOrNull()!!
             }
+
             scaleType == ScaleType.CENTER_CROP -> {
                 val initScale = fillScale
                 minScale = fillScale
@@ -235,6 +238,7 @@ open class DefaultScaleStateFactory : Factory {
                 )
                 stepsBigScale = max(originScale, initScale * 2f)
             }
+
             scaleType == ScaleType.FIT_START -> {
                 val initScale = fullScale
                 minScale = fullScale
@@ -245,6 +249,7 @@ open class DefaultScaleStateFactory : Factory {
                     floatArrayOf(originScale, initScale * 2f, fillScale).maxOrNull()!!
                 }
             }
+
             scaleType == ScaleType.FIT_CENTER
                     || (scaleType == ScaleType.CENTER_INSIDE && drawableThanViewLarge) -> {
                 val initScale = fullScale
@@ -260,6 +265,7 @@ open class DefaultScaleStateFactory : Factory {
                     floatArrayOf(originScale, initScale * 2f, fillScale).maxOrNull()!!
                 }
             }
+
             scaleType == ScaleType.FIT_END -> {
                 val initScale = fullScale
                 minScale = fullScale
@@ -274,6 +280,7 @@ open class DefaultScaleStateFactory : Factory {
                     floatArrayOf(originScale, initScale * 2f, fillScale).maxOrNull()!!
                 }
             }
+
             else -> {   // FIX_XY
                 val initScale = keepScale
                 minScale = keepScale

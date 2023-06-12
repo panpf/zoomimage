@@ -54,8 +54,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingAbility?.disallowMemoryCache = false
-        _subsamplingAbility?.setImageSource(null)
+        _subsamplingAbility?.disableMemoryCache = false
         _subsamplingAbility?.setLifecycle(context.getLifecycle())
         if (ViewCompat.isAttachedToWindow(this)) {
             resetImageSource()
@@ -76,7 +75,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is not Success" }
                 return@post
             }
-            _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(result)
+            _subsamplingAbility?.disableMemoryCache = isDisallowMemoryCache(result)
             _subsamplingAbility?.setLifecycle(result.request.lifecycle
                 .takeIf { !it.isCoilGlobalLifecycle() }
                 ?: context.getLifecycle())

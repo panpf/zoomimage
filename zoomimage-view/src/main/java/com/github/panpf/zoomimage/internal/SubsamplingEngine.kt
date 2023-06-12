@@ -16,12 +16,10 @@
 package com.github.panpf.zoomimage.internal
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Rect
 import androidx.annotation.MainThread
-import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.ImageSource
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.OnTileChangedListener
@@ -54,8 +52,9 @@ internal class SubsamplingEngine constructor(
     private val tempDrawableVisibleRect = Rect()
     internal var onTileChangedListenerList: MutableSet<OnTileChangedListener>? = null
 
-    var disallowMemoryCache: Boolean = false
+    var disableMemoryCache: Boolean = false
     var disallowReuseBitmap: Boolean = false
+    var ignoreExifOrientation: Boolean = false
     var tinyBitmapPool: TinyBitmapPool? = null
     var tinyMemoryCache: TinyMemoryCache? = null
     var showTileBounds = false
@@ -84,12 +83,12 @@ internal class SubsamplingEngine constructor(
         get() = imageSource == null
     val tileList: List<Tile>?
         get() = tileManager?.tileList
-    val imageSize: Size?
-        get() = tileManager?.imageSize
-    val imageMimeType: String?
-        get() = tileManager?.imageMimeType
-    val imageExifOrientation: Int?
-        get() = tileManager?.imageExifOrientation
+    var imageSize: Size? = null
+        private set
+    var imageMimeType: String? = null
+        private set
+    var imageExifOrientation: Int? = null
+        private set
 
     init {
         zoomEngine.addOnMatrixChangeListener {
@@ -115,33 +114,13 @@ internal class SubsamplingEngine constructor(
         }
         val (drawableWidth, drawableHeight) = drawableSize
         initJob = scope.launch(Dispatchers.Main) {
-            val optionsJob = async(Dispatchers.IO) {
-                kotlin.runCatching {
-                    imageSource.openInputStream()
-                        .let { it.getOrNull() ?: throw it.exceptionOrNull()!! }
-                        .use { inputStream ->
-                            BitmapFactory.Options().apply {
-                                inJustDecodeBounds = true
-                                BitmapFactory.decodeStream(inputStream, null, this)
-                            }
-                        }.takeIf { it.outWidth > 0 && it.outHeight > 0 }
-                }
-            }
-            val orientationUndefined = ExifInterface.ORIENTATION_UNDEFINED
-            val exifOrientationJob = async(Dispatchers.IO) {
-                kotlin.runCatching {
-                    imageSource.openInputStream()
-                        .let { it.getOrNull() ?: throw it.exceptionOrNull()!! }
-                        .use { inputStream ->
-                            ExifInterface(inputStream)
-                                .getAttributeInt(
-                                    ExifInterface.TAG_ORIENTATION,
-                                    orientationUndefined
-                                )
-                        }
-                }
-            }
+            val optionsJob = async { imageSource.readImageBounds() }
+            val exifOrientationJob =
+                async { imageSource.readExifOrientation(ignoreExifOrientation) }
             val options = optionsJob.await()
+                .apply { exceptionOrNull()?.printStackTrace() }
+                .getOrNull()
+            val exifOrientation = exifOrientationJob.await()
                 .apply { exceptionOrNull()?.printStackTrace() }
                 .getOrNull()
             if (options == null) {
@@ -149,18 +128,21 @@ internal class SubsamplingEngine constructor(
                 initJob = null
                 return@launch
             }
-            val exifOrientation = exifOrientationJob.await()
-                .apply { exceptionOrNull()?.printStackTrace() }
-                .getOrNull()
             if (exifOrientation == null) {
                 logger.w(MODULE) { "setImageSource failed. Can't decode image exifOrientation. '${imageSource.key}'" }
                 initJob = null
                 return@launch
             }
-            val imageWidth = options.outWidth
-            val imageHeight = options.outHeight
+            val imageSize = ExifOrientationHelper(exifOrientation)
+                .applyToSize(Size(options.outWidth, options.outHeight))
+            val imageWidth = imageSize.width
+            val imageHeight = imageSize.height
             val mimeType = options.outMimeType
             this@SubsamplingEngine.imageSource = imageSource
+            this@SubsamplingEngine.imageSize = imageSize
+            this@SubsamplingEngine.imageMimeType = mimeType
+            this@SubsamplingEngine.imageExifOrientation = exifOrientation
+
             if (drawableWidth >= imageWidth && drawableHeight >= imageHeight) {
                 logger.d(MODULE) {
                     "setImageSource failed. The Drawable size is greater than or equal to the original image. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize: ${imageWidth}x${imageHeight}, mimeType: $mimeType. '${imageSource.key}'"
@@ -183,7 +165,6 @@ internal class SubsamplingEngine constructor(
                 return@launch
             }
 
-            val imageSize = Size(imageWidth, imageHeight)
             logger.d(MODULE) {
                 val exifOrientationName = exifOrientationName(exifOrientation)
                 "setImageSource success. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize=$imageSize, mimeType=$mimeType, exifOrientation=$exifOrientationName. '${imageSource.key}'"
@@ -287,6 +268,10 @@ internal class SubsamplingEngine constructor(
         tileManager?.destroy()
         tileManager = null
         imageSource = null
+        imageSize = null
+        imageMimeType = null
+        imageExifOrientation = null
+        zoomEngine.imageSize = Size.Empty
     }
 
     fun addOnTileChangedListener(listener: OnTileChangedListener) {

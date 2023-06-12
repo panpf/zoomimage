@@ -36,6 +36,15 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
     override val sketchImageUri: String
         get() = args.imageUri
 
+    override val supportMemoryCache: Boolean
+        get() = true
+
+    override val supportIgnoreExifOrientation: Boolean
+        get() = false
+
+    override val supportReuseBitmap: Boolean
+        get() = true
+
     override fun getCommonBinding(binding: GlideZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
         return binding.common
     }
@@ -43,6 +52,8 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
     override fun getZoomImageView(binding: GlideZoomImageViewFragmentBinding): ZoomImageView {
         return binding.glideZoomImageViewImage
     }
+
+    // todo Glide
 
     override fun loadImage(
         binding: GlideZoomImageViewFragmentBinding,

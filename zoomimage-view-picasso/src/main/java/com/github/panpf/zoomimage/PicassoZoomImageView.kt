@@ -24,7 +24,7 @@ import com.github.panpf.zoomimage.internal.PicassoTinyMemoryCache
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
-import com.squareup.picasso.isDisallowMemoryCache
+import com.squareup.picasso.isDisableMemoryCache
 import com.squareup.picasso.memoryPolicy
 import java.io.File
 
@@ -85,8 +85,8 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     private fun loadImage(uri: Uri?, callback: Callback?, creator: RequestCreator) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
-                _subsamplingAbility?.disallowMemoryCache =
-                    isDisallowMemoryCache(creator.memoryPolicy)
+                _subsamplingAbility?.disableMemoryCache =
+                    isDisableMemoryCache(creator.memoryPolicy)
                 _subsamplingAbility?.setImageSource(newImageSource(uri))
                 callback?.onSuccess()
             }
@@ -99,8 +99,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingAbility?.disallowMemoryCache = false
-        _subsamplingAbility?.setImageSource(null)
+        _subsamplingAbility?.disableMemoryCache = false
     }
 
     private fun newImageSource(uri: Uri?): ImageSource? {

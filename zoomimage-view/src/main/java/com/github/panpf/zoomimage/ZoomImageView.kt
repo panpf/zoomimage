@@ -73,8 +73,8 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     open fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
+        _subsamplingAbility?.onDrawableChanged(oldDrawable, newDrawable)
         _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
-        _zoomAbility?.setImageSize(Size.Empty)
     }
 
     override fun setScaleType(scaleType: ScaleType) {

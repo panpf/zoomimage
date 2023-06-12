@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage
 
 import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -74,16 +75,22 @@ class SubsamplingAbility(
             engine.showTileBounds = value
         }
 
-    var disallowMemoryCache: Boolean
-        get() = engine.disallowMemoryCache
+    var disableMemoryCache: Boolean
+        get() = engine.disableMemoryCache
         set(value) {
-            engine.disallowMemoryCache = value
+            engine.disableMemoryCache = value
         }
 
     var disallowReuseBitmap: Boolean
         get() = engine.disallowReuseBitmap
         set(value) {
             engine.disallowReuseBitmap = value
+        }
+
+    var ignoreExifOrientation: Boolean
+        get() = engine.ignoreExifOrientation
+        set(value) {
+            engine.ignoreExifOrientation = value
         }
 
     var tinyBitmapPool: TinyBitmapPool?
@@ -128,6 +135,10 @@ class SubsamplingAbility(
     fun onAttachedToWindow() {
         initEngine()
         registerLifecycleObserver()
+    }
+
+    fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
+        engine.destroy()
     }
 
     fun onDetachedFromWindow() {

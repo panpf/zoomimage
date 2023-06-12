@@ -31,7 +31,6 @@ import com.github.panpf.zoomimage.internal.ImageViewBridge
 import com.github.panpf.zoomimage.internal.ZoomEngine
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
 
-@Suppress("unused", "MemberVisibilityCanBePrivate")
 class ZoomAbility(
     private val view: View,
     private val imageViewBridge: ImageViewBridge,

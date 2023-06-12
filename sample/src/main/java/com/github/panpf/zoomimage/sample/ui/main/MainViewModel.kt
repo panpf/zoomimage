@@ -17,8 +17,8 @@ import java.io.File
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _data = MutableStateFlow<List<Any>?>(null)
-    val data: StateFlow<List<Any>?> = _data
+    private val _data = MutableStateFlow<List<Any>>(emptyList())
+    val data: StateFlow<List<Any>> = _data
 
     init {
         viewModelScope.launch {
@@ -92,7 +92,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 title = "ZoomImageView Orientation Test",
                 navDirections = NavMainDirections.actionGlobalOrientationTestFragment(),
             ),
-            // todo exifOrientation
+            Link(
+                title = "ZoomImageView ExifOrientation Test",
+                navDirections = NavMainDirections.actionGlobalExifOrientationTestFragment(),
+            ),
         )
     }
 }

@@ -47,6 +47,12 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
     abstract fun getCommonBinding(binding: VIEW_BINDING): CommonZoomImageViewFragmentBinding
 
+    abstract val supportMemoryCache: Boolean
+
+    abstract val supportIgnoreExifOrientation: Boolean
+
+    abstract val supportReuseBitmap: Boolean
+
     override fun onViewCreated(binding: VIEW_BINDING, savedInstanceState: Bundle?) {
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
@@ -89,7 +95,13 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         }
 
         common.zoomImageViewSettings.setOnClickListener {
-            SettingsDialogFragment().show(childFragmentManager, null)
+            SettingsDialogFragment().apply {
+                arguments = SettingsDialogFragmentArgs(
+                    supportMemoryCache = supportMemoryCache,
+                    supportIgnoreExifOrientation = supportIgnoreExifOrientation,
+                    supportReuseBitmap = supportReuseBitmap
+                ).toBundle()
+            }.show(childFragmentManager, null)
         }
 
         common.zoomImageViewInfoLayout.apply {
@@ -114,7 +126,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         updateInfo(zoomImageView, common, sketchImageUri)
     }
 
-    private fun loadData(
+    protected fun loadData(
         binding: VIEW_BINDING,
         common: CommonZoomImageViewFragmentBinding,
         sketchImageUri: String
@@ -143,6 +155,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
+            if (supportIgnoreExifOrientation) {
+                ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
+            }
         }
     }
 

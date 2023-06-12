@@ -28,6 +28,15 @@ class PrefsService(val context: Context) {
     val scaleType by lazy {
         StringMmkvData(mmkv, "scaleType", FIT_CENTER.name)
     }
+    val disableMemoryCache by lazy {
+        BooleanMmkvData(mmkv, "disableMemoryCache", false)
+    }
+    val disallowReuseBitmap by lazy {
+        BooleanMmkvData(mmkv, "disallowReuseBitmap", false)
+    }
+    val ignoreExifOrientation by lazy {
+        BooleanMmkvData(mmkv, "ignoreExifOrientation", false)
+    }
     val scrollBarEnabled by lazy {
         BooleanMmkvData(mmkv, "scrollBarEnabled", true)
     }

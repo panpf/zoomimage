@@ -35,6 +35,15 @@ class PicassoZoomImageViewFragment :
     override val sketchImageUri: String
         get() = args.imageUri
 
+    override val supportMemoryCache: Boolean
+        get() = true
+
+    override val supportIgnoreExifOrientation: Boolean
+        get() = false
+
+    override val supportReuseBitmap: Boolean
+        get() = false
+
     override fun getCommonBinding(binding: PicassoZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
         return binding.common
     }
@@ -42,6 +51,8 @@ class PicassoZoomImageViewFragment :
     override fun getZoomImageView(binding: PicassoZoomImageViewFragmentBinding): ZoomImageView {
         return binding.picassoZoomImageViewImage
     }
+
+    // todo Picasso
 
     override fun loadImage(
         binding: PicassoZoomImageViewFragmentBinding,

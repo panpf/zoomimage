@@ -62,9 +62,9 @@ open class SketchZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingAbility?.disallowMemoryCache = false
+        _subsamplingAbility?.disableMemoryCache = false
         _subsamplingAbility?.disallowReuseBitmap = false
-        _subsamplingAbility?.setImageSource(null)
+        _subsamplingAbility?.ignoreExifOrientation = false
         _subsamplingAbility?.setLifecycle(context.getLifecycle())
         if (ViewCompat.isAttachedToWindow(this)) {
             resetImageSource()
@@ -85,8 +85,9 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is not Success" }
                 return@post
             }
-            _subsamplingAbility?.disallowMemoryCache = isDisallowMemoryCache(result.drawable)
+            _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(result.drawable)
             _subsamplingAbility?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
+            _subsamplingAbility?.ignoreExifOrientation = isIgnoreExifOrientation(result.drawable)
             _subsamplingAbility?.setLifecycle(result.request.lifecycle
                 .takeIf { !it.isSketchGlobalLifecycle() }
                 ?: context.getLifecycle())
@@ -94,7 +95,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
         }
     }
 
-    private fun isDisallowMemoryCache(drawable: Drawable?): Boolean {
+    private fun isDisableMemoryCache(drawable: Drawable?): Boolean {
         val sketchDrawable = drawable?.findLastSketchDrawable()
         val requestKey = sketchDrawable?.requestKey
         val displayResult = SketchUtils.getResult(this)
@@ -112,6 +113,16 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 && displayResult is DisplayResult.Success
                 && displayResult.requestKey == requestKey
                 && displayResult.request.disallowReuseBitmap
+    }
+
+    private fun isIgnoreExifOrientation(drawable: Drawable?): Boolean {
+        val sketchDrawable = drawable?.findLastSketchDrawable()
+        val requestKey = sketchDrawable?.requestKey
+        val displayResult = SketchUtils.getResult(this)
+        return displayResult != null
+                && displayResult is DisplayResult.Success
+                && displayResult.requestKey == requestKey
+                && displayResult.request.ignoreExifOrientation
     }
 
     private fun newImageSource(drawable: Drawable?): ImageSource? {

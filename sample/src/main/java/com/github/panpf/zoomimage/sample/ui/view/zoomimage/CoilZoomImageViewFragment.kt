@@ -15,14 +15,20 @@
  */
 package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 
+import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import coil.load
+import coil.request.CachePolicy
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.CoilZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.CommonZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.util.collect
+import com.github.panpf.zoomimage.sample.util.lifecycleOwner
+import kotlinx.coroutines.flow.merge
 import java.io.File
 
 class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFragmentBinding>() {
@@ -32,12 +38,48 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
     override val sketchImageUri: String
         get() = args.imageUri
 
+    override val supportMemoryCache: Boolean
+        get() = true
+
+    override val supportIgnoreExifOrientation: Boolean
+        get() = false
+
+    override val supportReuseBitmap: Boolean
+        get() = false
+
     override fun getCommonBinding(binding: CoilZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
         return binding.common
     }
 
     override fun getZoomImageView(binding: CoilZoomImageViewFragmentBinding): ZoomImageView {
         return binding.coilZoomImageViewImage
+    }
+
+    override fun onViewCreated(
+        binding: CoilZoomImageViewFragmentBinding,
+        savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(binding, savedInstanceState)
+
+        binding.coilZoomImageViewImage.apply {
+            listOf(
+                prefsService.disableMemoryCache.stateFlow,
+//                prefsService.disallowReuseBitmap.stateFlow,
+//                prefsService.ignoreExifOrientation.stateFlow,
+            ).merge().collect(lifecycleOwner) {
+                subsamplingAbility.disableMemoryCache = prefsService.disableMemoryCache.value
+//                subsamplingAbility.disallowReuseBitmap = prefsService.disallowReuseBitmap.value
+//                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
+            }
+
+            listOf(
+                prefsService.disableMemoryCache.sharedFlow,
+//                prefsService.disallowReuseBitmap.sharedFlow,
+//                prefsService.ignoreExifOrientation.sharedFlow,
+            ).merge().collect(lifecycleOwner) {
+                loadData(binding, binding.common, sketchImageUri)
+            }
+        }
     }
 
     override fun loadImage(
@@ -50,6 +92,10 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
             lifecycle(viewLifecycleOwner.lifecycle)
             precision(coil.size.Precision.INEXACT)
             crossfade(true)
+            memoryCachePolicy(
+                if (prefsService.disableMemoryCache.value)
+                    CachePolicy.DISABLED else CachePolicy.ENABLED
+            )
             listener(
                 onStart = { onCallStart() },
                 onSuccess = { _, _ -> onCallSuccess() },

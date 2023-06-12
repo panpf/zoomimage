@@ -39,7 +39,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.max
 
 internal class TileManager constructor(
     private val engine: SubsamplingEngine,
@@ -74,12 +73,6 @@ internal class TileManager constructor(
 
     val tileList: List<Tile>?
         get() = lastTileList
-    val imageSize: Size
-        get() = decoder.imageSize
-    val imageMimeType: String
-        get() = decoder.imageMimeType
-    val imageExifOrientation: Int
-        get() = decoder.imageExifOrientation
 
     init {
         engine.logger.d(SubsamplingEngine.MODULE) {
@@ -96,8 +89,8 @@ internal class TileManager constructor(
 
         val zoomScale = drawMatrix.getScale().format(2)
         val sampleSize = findSampleSize(
-            imageWidth = imageSize.width,
-            imageHeight = imageSize.height,
+            imageWidth = decoder.imageSize.width,
+            imageHeight = decoder.imageSize.height,
             drawableWidth = drawableSize.width,
             drawableHeight = drawableSize.height,
             scale = zoomScale
@@ -116,7 +109,7 @@ internal class TileManager constructor(
         if (tileList == null) {
             engine.logger.d(SubsamplingEngine.MODULE) {
                 "refreshTiles. no tileList. " +
-                        "imageSize=${imageSize}, " +
+                        "imageSize=${decoder.imageSize}, " +
                         "drawableSize=$drawableSize, " +
                         "drawableVisibleRect=${drawableVisibleRect}, " +
                         "zoomScale=$zoomScale, " +
@@ -129,7 +122,7 @@ internal class TileManager constructor(
 
         engine.logger.d(SubsamplingEngine.MODULE) {
             "refreshTiles. started. " +
-                    "imageSize=${imageSize}, " +
+                    "imageSize=${decoder.imageSize}, " +
                     "imageVisibleRect=$imageVisibleRect, " +
                     "imageLoadRect=$imageLoadRect, " +
                     "drawableSize=$drawableSize, " +
@@ -162,8 +155,8 @@ internal class TileManager constructor(
             return
         }
         resetVisibleAndLoadRect(drawableSize, drawableVisibleRect)
-        val widthScale = imageSize.width / drawableSize.width.toFloat()
-        val heightScale = imageSize.height / drawableSize.height.toFloat()
+        val widthScale = decoder.imageSize.width / drawableSize.width.toFloat()
+        val heightScale = decoder.imageSize.height / drawableSize.height.toFloat()
         canvas.withSave {
             canvas.concat(drawMatrix)
             tileList.forEach { tile ->
@@ -230,7 +223,7 @@ internal class TileManager constructor(
         }
 
         val memoryCacheKey = "${imageSource.key}_tile_${tile.srcRect}_${tile.inSampleSize}"
-        val cachedValue = if (!engine.disallowMemoryCache) {
+        val cachedValue = if (!engine.disableMemoryCache) {
             engine.tinyMemoryCache?.get(memoryCacheKey)
         } else {
             null
@@ -256,12 +249,12 @@ internal class TileManager constructor(
 
                 isActive -> {
                     withContext(Dispatchers.Main) {
-                        val newCountBitmap = if (!engine.disallowMemoryCache) {
+                        val newCountBitmap = if (!engine.disableMemoryCache) {
                             engine.tinyMemoryCache?.put(
                                 key = memoryCacheKey,
                                 bitmap = bitmap,
                                 imageKey = imageSource.key,
-                                imageSize = imageSize,
+                                imageSize = decoder.imageSize,
                                 imageMimeType = decoder.imageMimeType,
                                 imageExifOrientation = decoder.imageExifOrientation,
                                 disallowReuseBitmap = engine.disallowReuseBitmap
@@ -332,7 +325,7 @@ internal class TileManager constructor(
     }
 
     private fun resetVisibleAndLoadRect(drawableSize: Size, drawableVisibleRect: Rect) {
-        val drawableScaled = imageSize.width / drawableSize.width.toFloat()
+        val drawableScaled = decoder.imageSize.width / drawableSize.width.toFloat()
         imageVisibleRect.apply {
             set(
                 floor(drawableVisibleRect.left * drawableScaled).toInt(),

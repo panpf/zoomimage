@@ -122,14 +122,14 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
 //        )
 //    }
 
-//    fun applyToSize(size: Size): Size {
-//        val matrix = Matrix().apply {
-//            applyFlipAndRotationToMatrix(this, isFlipped, rotationDegrees, true)
-//        }
-//        val newRect = RectF(0f, 0f, size.width.toFloat(), size.height.toFloat())
-//        matrix.mapRect(newRect)
-//        return Size(newRect.width().toInt(), newRect.height().toInt())
-//    }
+    fun applyToSize(size: Size): Size {
+        val matrix = Matrix().apply {
+            applyFlipAndRotationToMatrix(this, isFlipped, rotationDegrees, true)
+        }
+        val newRect = RectF(0f, 0f, size.width.toFloat(), size.height.toFloat())
+        matrix.mapRect(newRect)
+        return Size(newRect.width().toInt(), newRect.height().toInt())
+    }
 
     fun addToSize(size: Size): Size {
         val matrix = Matrix().apply {

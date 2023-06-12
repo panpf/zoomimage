@@ -59,8 +59,13 @@ class SwitchMenuItemFactory(
         absoluteAdapterPosition: Int,
         data: SwitchMenu
     ) {
+        binding.root.isEnabled = !data.disabled
+        binding.switchMenuItemTitleText.isEnabled = !data.disabled
+        binding.switchMenuItemDescText.isEnabled = !data.disabled
+        binding.switchMenuItemSwitch.isEnabled = !data.disabled
+
         binding.switchMenuItemTitleText.text = data.title
-        binding.switchMenuItemSwitch.isChecked = data.isChecked
+        binding.switchMenuItemSwitch.isChecked = if (data.disabled) false else data.isChecked
         binding.switchMenuItemDescText.text = data.desc
         binding.switchMenuItemDescText.isVisible = data.desc?.isNotEmpty() == true
     }

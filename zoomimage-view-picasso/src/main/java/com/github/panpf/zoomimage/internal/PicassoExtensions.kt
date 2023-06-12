@@ -8,7 +8,7 @@ internal val Picasso.downloader: Downloader
 internal val Picasso.cache: Cache
     get() = dispatcher.cache
 
-internal fun isDisallowMemoryCache(memoryPolicy: Int): Boolean {
+internal fun isDisableMemoryCache(memoryPolicy: Int): Boolean {
     return !MemoryPolicy.shouldReadFromMemoryCache(memoryPolicy)
             || !MemoryPolicy.shouldWriteToMemoryCache(memoryPolicy)
 }
