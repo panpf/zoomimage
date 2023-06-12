@@ -11,7 +11,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.view.base.ToolbarBindingFragment
-import com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewFragment
+import com.github.panpf.zoomimage.sample.ui.view.zoomimage.SketchZoomImageViewFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 
@@ -31,7 +31,7 @@ class ExifOrientationTestFragment : ToolbarBindingFragment<TabPagerFragmentBindi
                         orientation = ViewPager2.ORIENTATION_HORIZONTAL
                         adapter = AssemblyFragmentStateAdapter(
                             fragment = this@ExifOrientationTestFragment,
-                            itemFactoryList = listOf(ZoomImageViewFragment.ItemFactory()),
+                            itemFactoryList = listOf(SketchZoomImageViewFragment.ItemFactory()),
                             initDataList = sampleImages.map { it.second.toUri().toString() }
                         )
                     }

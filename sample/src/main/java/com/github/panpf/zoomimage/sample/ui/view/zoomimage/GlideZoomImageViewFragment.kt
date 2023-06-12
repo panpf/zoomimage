@@ -16,6 +16,7 @@
 package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -28,6 +29,10 @@ import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.CommonZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.GlideZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.util.collect
+import com.github.panpf.zoomimage.sample.util.lifecycleOwner
+import kotlinx.coroutines.flow.merge
 
 class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewFragmentBinding>() {
 
@@ -36,13 +41,13 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override val supportMemoryCache: Boolean
+    override val supportDisabledMemoryCache: Boolean
         get() = true
 
     override val supportIgnoreExifOrientation: Boolean
         get() = false
 
-    override val supportReuseBitmap: Boolean
+    override val supportDisallowReuseBitmap: Boolean
         get() = true
 
     override fun getCommonBinding(binding: GlideZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
@@ -53,7 +58,31 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
         return binding.glideZoomImageViewImage
     }
 
-    // todo Glide
+    override fun onViewCreated(
+        binding: GlideZoomImageViewFragmentBinding,
+        savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(binding, savedInstanceState)
+
+        binding.glideZoomImageViewImage.apply {
+            listOf(
+//                prefsService.disableMemoryCache.stateFlow,
+                prefsService.disallowReuseBitmap.stateFlow,
+//                prefsService.ignoreExifOrientation.stateFlow,
+            ).merge().collect(lifecycleOwner) {
+//                subsamplingAbility.disableMemoryCache = prefsService.disableMemoryCache.value
+                subsamplingAbility.disallowReuseBitmap = prefsService.disallowReuseBitmap.value
+//                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
+            }
+            listOf(
+                prefsService.disableMemoryCache.sharedFlow,
+                prefsService.disallowReuseBitmap.sharedFlow,
+//                prefsService.ignoreExifOrientation.sharedFlow,
+            ).merge().collect(lifecycleOwner) {
+                loadData(binding, binding.common, sketchImageUri)
+            }
+        }
+    }
 
     override fun loadImage(
         binding: GlideZoomImageViewFragmentBinding,
@@ -64,6 +93,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
         onCallStart()
         Glide.with(this@GlideZoomImageViewFragment)
             .load(sketchUri2GlideModel(binding, args.imageUri))
+            .skipMemoryCache(prefsService.disableMemoryCache.value)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

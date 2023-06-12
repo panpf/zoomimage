@@ -34,13 +34,13 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override val supportMemoryCache: Boolean
+    override val supportDisabledMemoryCache: Boolean
         get() = false
 
     override val supportIgnoreExifOrientation: Boolean
         get() = false
 
-    override val supportReuseBitmap: Boolean
+    override val supportDisallowReuseBitmap: Boolean
         get() = false
 
     override fun getCommonBinding(binding: ZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {

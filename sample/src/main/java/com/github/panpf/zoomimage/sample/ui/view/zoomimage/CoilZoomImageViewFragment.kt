@@ -38,13 +38,13 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override val supportMemoryCache: Boolean
+    override val supportDisabledMemoryCache: Boolean
         get() = true
 
     override val supportIgnoreExifOrientation: Boolean
         get() = false
 
-    override val supportReuseBitmap: Boolean
+    override val supportDisallowReuseBitmap: Boolean
         get() = false
 
     override fun getCommonBinding(binding: CoilZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
@@ -62,16 +62,15 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
         super.onViewCreated(binding, savedInstanceState)
 
         binding.coilZoomImageViewImage.apply {
-            listOf(
-                prefsService.disableMemoryCache.stateFlow,
+//            listOf(
+//                prefsService.disableMemoryCache.stateFlow,
 //                prefsService.disallowReuseBitmap.stateFlow,
 //                prefsService.ignoreExifOrientation.stateFlow,
-            ).merge().collect(lifecycleOwner) {
-                subsamplingAbility.disableMemoryCache = prefsService.disableMemoryCache.value
+//            ).merge().collect(lifecycleOwner) {
+//                subsamplingAbility.disableMemoryCache = prefsService.disableMemoryCache.value
 //                subsamplingAbility.disallowReuseBitmap = prefsService.disallowReuseBitmap.value
 //                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
-            }
-
+//            }
             listOf(
                 prefsService.disableMemoryCache.sharedFlow,
 //                prefsService.disallowReuseBitmap.sharedFlow,

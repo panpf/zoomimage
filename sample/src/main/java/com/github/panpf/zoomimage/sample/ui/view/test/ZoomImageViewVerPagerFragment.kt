@@ -22,6 +22,7 @@ import com.github.panpf.zoomimage.sample.SampleImages
 import com.github.panpf.zoomimage.sample.databinding.TabPagerVerFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.view.widget.VerTabLayoutMediator
+import com.github.panpf.zoomimage.sample.ui.view.zoomimage.SketchZoomImageViewFragment
 import com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewFragment
 
 class ZoomImageViewVerPagerFragment : BindingFragment<TabPagerVerFragmentBinding>() {
@@ -32,7 +33,7 @@ class ZoomImageViewVerPagerFragment : BindingFragment<TabPagerVerFragmentBinding
             orientation = ViewPager2.ORIENTATION_VERTICAL
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@ZoomImageViewVerPagerFragment,
-                itemFactoryList = listOf(ZoomImageViewFragment.ItemFactory()),
+                itemFactoryList = listOf(SketchZoomImageViewFragment.ItemFactory()),
                 initDataList = sampleImages.map { it.uri }
             )
         }

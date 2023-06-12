@@ -18,7 +18,7 @@ fun com.github.panpf.zoomimage.Size.toShortString(): String = "(${width}x$height
 
 
 fun android.graphics.Rect.toVeryShortString(): String =
-    "(${left},${top} - ${right},${bottom})"
+    "(${left},${top}-${right},${bottom})"
 
 fun android.graphics.RectF.toVeryShortString(): String =
-    "(${left.format(2)},${top.format(2)} - ${right.format(2)},${bottom.format(2)})"
+    "(${left.format(2)},${top.format(2)}-${right.format(2)},${bottom.format(2)})"
