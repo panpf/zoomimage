@@ -12,10 +12,12 @@
     <color name="colorTertiaryTransparent">#A0F8AE6B</color>
     <color name="colorTertiaryVariant">#8A613B</color>
     <color name="colorOnTertiary">@color/white</color>
-    <color name="windowBackground">#171717</color>
+    <color name="windowBackground">@color/white</color>
+    <color name="windowBackgroundDark">#171717</color>
     <color name="windowVariant">#2C2C2C</color>
 
-    <color name="text">#FFFFFF</color>
+    <color name="text_title">#000000</color>
+    <color name="text_body">#202020</color>
     <color name="placeholder_bg">#AFAFAF</color>
     <color name="placeholder_icon">#E4E4E4</color>
 </resources>

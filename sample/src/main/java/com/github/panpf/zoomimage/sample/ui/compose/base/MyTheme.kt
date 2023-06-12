@@ -26,7 +26,7 @@ fun MyTheme(
     val onSecondary = Color(ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null))
     val tertiary = Color(ResourcesCompat.getColor(context.resources, R.color.colorTertiary, null))
     val onTertiary = Color(ResourcesCompat.getColor(context.resources, R.color.colorOnTertiary, null))
-    val background = Color(ResourcesCompat.getColor(context.resources, R.color.windowBackground, null))
+    val background = Color(ResourcesCompat.getColor(context.resources, R.color.windowBackgroundDark, null))
     val colorScheme = darkColorScheme(
         primary = primary,
         onPrimary = onPrimary,
