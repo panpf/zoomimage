@@ -1,11 +1,11 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.core
 
 import android.util.Log
-import com.github.panpf.zoomimage.Logger.Level.DEBUG
-import com.github.panpf.zoomimage.Logger.Level.ERROR
-import com.github.panpf.zoomimage.Logger.Level.INFO
-import com.github.panpf.zoomimage.Logger.Level.VERBOSE
-import com.github.panpf.zoomimage.Logger.Level.WARNING
+import com.github.panpf.zoomimage.core.Logger.Level.DEBUG
+import com.github.panpf.zoomimage.core.Logger.Level.ERROR
+import com.github.panpf.zoomimage.core.Logger.Level.INFO
+import com.github.panpf.zoomimage.core.Logger.Level.VERBOSE
+import com.github.panpf.zoomimage.core.Logger.Level.WARNING
 
 class Logger {
 

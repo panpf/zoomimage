@@ -14,5 +14,5 @@
 
     <include
         android:id="@+id/common"
-        layout="@layout/common_zoom_image_view_fragment" />
+        layout="@layout/zoom_image_view_common_fragment" />
 </FrameLayout>

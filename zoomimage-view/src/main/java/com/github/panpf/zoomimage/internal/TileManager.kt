@@ -25,10 +25,10 @@ import android.graphics.Rect
 import androidx.annotation.MainThread
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
-import com.github.panpf.zoomimage.DefaultCacheBitmap
-import com.github.panpf.zoomimage.ImageSource
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.freeBitmap
+import com.github.panpf.zoomimage.core.DefaultCacheBitmap
+import com.github.panpf.zoomimage.core.ImageSource
+import com.github.panpf.zoomimage.core.Size
+import com.github.panpf.zoomimage.core.freeBitmap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

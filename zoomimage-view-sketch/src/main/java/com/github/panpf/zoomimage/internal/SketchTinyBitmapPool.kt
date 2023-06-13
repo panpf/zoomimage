@@ -18,7 +18,7 @@ package com.github.panpf.zoomimage.internal
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.zoomimage.TinyBitmapPool
+import com.github.panpf.zoomimage.core.TinyBitmapPool
 
 class SketchTinyBitmapPool(private val sketch: Sketch) : TinyBitmapPool {
 

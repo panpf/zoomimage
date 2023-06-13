@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.sample.ui.view.util
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.DrawableRes
+import com.github.panpf.zoomimage.core.Size
 import com.github.panpf.zoomimage.format
 
 
@@ -14,7 +15,9 @@ fun newCoilAssetUri(@Suppress("SameParameterValue") path: String): Uri {
     return Uri.parse("file://filled/android_asset/$path")
 }
 
-fun com.github.panpf.zoomimage.Size.toShortString(): String = "(${width}x$height)"
+fun Size.toShortString(): String = "(${width}x$height)"
+
+fun Size.toVeryShortString(): String = "${width}x$height"
 
 
 fun android.graphics.Rect.toVeryShortString(): String =

@@ -22,6 +22,8 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Velocity
+import com.github.panpf.zoomimage.core.Edge
+import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -325,17 +327,8 @@ class MyZoomState(
         )
     }
 
-    fun nextScale(): Float {
-        val scaleSteps = arrayOf(minScale, maxScale)
-        val currentScale = scale
-        val currentScaleIndex =
-            scaleSteps.findLast { currentScale >= (it - 0.1f) }?.let { scaleSteps.indexOf(it) }
-                ?: -1
-        return if (currentScaleIndex != -1) {
-            scaleSteps[(currentScaleIndex + 1) % scaleSteps.size]
-        } else {
-            scaleSteps.first()
-        }
+    fun getNextStepScale(): Float {
+        return calculateNextStepScale(floatArrayOf(minScale, maxScale), scale)
     }
 
     internal suspend fun dragStart() {

@@ -21,9 +21,9 @@ import com.bumptech.glide.load.engine.EngineResourceWrapper
 import com.bumptech.glide.load.engine.GlideEngine
 import com.bumptech.glide.load.engine.createGlideEngine
 import com.bumptech.glide.load.engine.newEngineKey
-import com.github.panpf.zoomimage.CacheBitmap
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TinyMemoryCache
+import com.github.panpf.zoomimage.core.CacheBitmap
+import com.github.panpf.zoomimage.core.Size
+import com.github.panpf.zoomimage.core.TinyMemoryCache
 
 class GlideTinyMemoryCache(private val glide: Glide) : TinyMemoryCache {
 

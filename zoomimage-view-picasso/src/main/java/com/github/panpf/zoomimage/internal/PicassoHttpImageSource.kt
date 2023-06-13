@@ -16,7 +16,7 @@
 package com.github.panpf.zoomimage.internal
 
 import android.net.Uri
-import com.github.panpf.zoomimage.ImageSource
+import com.github.panpf.zoomimage.core.ImageSource
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.downloader

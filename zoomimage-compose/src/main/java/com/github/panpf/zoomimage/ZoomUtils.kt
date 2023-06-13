@@ -8,6 +8,7 @@ import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.times
+import com.github.panpf.zoomimage.core.Edge
 import kotlin.math.absoluteValue
 
 fun computeContentInContainerRect(

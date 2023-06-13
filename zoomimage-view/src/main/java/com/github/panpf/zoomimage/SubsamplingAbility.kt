@@ -6,6 +6,10 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.github.panpf.zoomimage.core.ImageSource
+import com.github.panpf.zoomimage.core.Size
+import com.github.panpf.zoomimage.core.TinyBitmapPool
+import com.github.panpf.zoomimage.core.TinyMemoryCache
 import com.github.panpf.zoomimage.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.internal.Tile
 import com.github.panpf.zoomimage.internal.getLifecycle

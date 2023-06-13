@@ -33,7 +33,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.isNotEmpty
+import com.github.panpf.zoomimage.core.isNotEmpty
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt

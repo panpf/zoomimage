@@ -16,7 +16,7 @@
 package com.github.panpf.zoomimage.internal
 
 import android.graphics.Rect
-import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.core.Size
 import kotlin.math.abs
 import kotlin.math.ceil
 

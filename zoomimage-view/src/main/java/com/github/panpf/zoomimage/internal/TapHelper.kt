@@ -43,15 +43,7 @@ internal class TapHelper constructor(
     override fun onDoubleTap(ev: MotionEvent): Boolean {
         try {
             val currentScaleFormat = engine.scale.format(2)
-            var finalScale = -1f
-            for (scale in engine.scaleState.doubleClickSteps) {
-                if (finalScale == -1f) {
-                    finalScale = scale
-                } else if (currentScaleFormat < scale.format(2)) {
-                    finalScale = scale
-                    break
-                }
-            }
+            val finalScale = engine.getNextStepScale()
             if (finalScale > currentScaleFormat) {
                 engine.scale(finalScale, ev.x, ev.y, true)
             } else {

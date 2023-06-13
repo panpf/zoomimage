@@ -178,11 +178,11 @@
     </fragment>
 
     <fragment
-        android:id="@+id/orientationTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.test.OrientationTestFragment" />
+        android:id="@+id/layoutOrientationTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.view.test.LayoutOrientationTestFragment" />
     <action
-        android:id="@+id/action_global_orientationTestFragment"
-        app:destination="@id/orientationTestFragment"
+        android:id="@+id/action_global_layoutOrientationTestFragment"
+        app:destination="@id/layoutOrientationTestFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
@@ -200,8 +200,8 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/settingsDialogFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.SettingsDialogFragment">
+        android:id="@+id/zoomImageViewSettingsDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewSettingsDialogFragment">
         <argument
             android:name="supportMemoryCache"
             app:argType="boolean"
@@ -213,6 +213,27 @@
         <argument
             android:name="supportReuseBitmap"
             app:argType="boolean"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/zoomImageViewInfoDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewInfoDialogFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="imageInfo"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="sizeInfo"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="tilesInfo"
+            app:argType="string"
             app:nullable="false" />
     </fragment>
 </navigation>

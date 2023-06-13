@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.core.internal
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -8,10 +8,10 @@ import android.graphics.Rect
 import android.graphics.RectF
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TinyBitmapPool
-import com.github.panpf.zoomimage.getOrCreate
+import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.core.Size
+import com.github.panpf.zoomimage.core.TinyBitmapPool
+import com.github.panpf.zoomimage.core.getOrCreate
 import kotlin.math.abs
 
 fun exifOrientationName(exifOrientation: Int): String =

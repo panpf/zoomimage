@@ -18,7 +18,7 @@ package com.github.panpf.zoomimage.sample.ui.view.test
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class OrientationTestViewModel : ViewModel() {
+class LayoutOrientationTestViewModel : ViewModel() {
 
     val rowLayoutCheckedData = MutableLiveData(true)
 

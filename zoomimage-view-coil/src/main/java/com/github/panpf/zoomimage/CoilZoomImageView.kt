@@ -25,6 +25,7 @@ import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.SuccessResult
 import coil.util.CoilUtils
+import com.github.panpf.zoomimage.core.ImageSource
 import com.github.panpf.zoomimage.internal.CoilImageSource
 import com.github.panpf.zoomimage.internal.CoilTinyMemoryCache
 import com.github.panpf.zoomimage.internal.getLastChildDrawable

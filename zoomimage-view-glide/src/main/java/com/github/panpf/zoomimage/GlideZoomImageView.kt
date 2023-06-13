@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getModel
 import com.bumptech.glide.load.engine.requestOptionsCompat
 import com.bumptech.glide.request.SingleRequest
+import com.github.panpf.zoomimage.core.ImageSource
 import com.github.panpf.zoomimage.internal.GlideHttpImageSource
 import com.github.panpf.zoomimage.internal.GlideTinyBitmapPool
 import com.github.panpf.zoomimage.internal.GlideTinyMemoryCache

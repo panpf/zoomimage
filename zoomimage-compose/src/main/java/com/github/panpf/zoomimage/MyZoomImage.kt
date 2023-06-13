@@ -90,7 +90,7 @@ private fun Modifier.createZoomModifier(
         .pointerInput(scaleAnimationConfig) {
             detectTapGestures(onDoubleTap = { offset ->
                 coroutineScope.launch {
-                    val newScale = state.nextScale()
+                    val newScale = state.getNextStepScale()
                     if (scaleAnimationConfig.animateDoubleTapScale) {
                         state.animateScaleTo(
                             newScale = newScale,

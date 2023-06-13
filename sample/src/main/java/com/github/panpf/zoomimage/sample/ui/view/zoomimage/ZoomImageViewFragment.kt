@@ -23,7 +23,7 @@ import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.CommonZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
 import kotlinx.coroutines.launch
 
@@ -43,7 +43,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
     override val supportDisallowReuseBitmap: Boolean
         get() = false
 
-    override fun getCommonBinding(binding: ZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
+    override fun getCommonBinding(binding: ZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
         return binding.common
     }
 

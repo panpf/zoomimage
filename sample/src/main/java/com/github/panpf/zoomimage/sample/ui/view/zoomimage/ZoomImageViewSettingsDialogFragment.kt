@@ -30,14 +30,14 @@ import com.github.panpf.zoomimage.sample.ui.view.common.menu.MultiSelectMenuItem
 import com.github.panpf.zoomimage.sample.ui.view.common.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.view.common.menu.SwitchMenuItemFactory
 
-class SettingsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
+class ZoomImageViewSettingsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
 
-    private val args by navArgs<SettingsDialogFragmentArgs>()
+    private val args by navArgs<ZoomImageViewSettingsDialogFragmentArgs>()
 
     override fun onViewCreated(binding: RecyclerFragmentBinding, savedInstanceState: Bundle?) {
         binding.recyclerRecycler.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = AssemblyRecyclerAdapter<Any>(
+            adapter = AssemblyRecyclerAdapter(
                 listOf(
                     SwitchMenuItemFactory(compactModel = true),
                     MultiSelectMenuItemFactory(requireActivity(), compactModel = true),
@@ -54,6 +54,27 @@ class SettingsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() 
                             onSelect = { _, value ->
                                 prefsService.scaleType.value = value
                             }
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Scroll Bar",
+                            desc = null,
+                            data = prefsService.scrollBarEnabled,
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Read Mode",
+                            data = prefsService.readModeEnabled,
+                            desc = "Long images are displayed in full screen by default"
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Show Tile Bounds",
+                            desc = "Overlay the state and area of the tile on the View",
+                            data = prefsService.showTileBounds,
                         )
                     )
                     add(
@@ -78,27 +99,6 @@ class SettingsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() 
                             desc = if (args.supportReuseBitmap) null else "Current *ZoomImageView not supported",
                             data = prefsService.ignoreExifOrientation,
                             disabled = !args.supportIgnoreExifOrientation,
-                        )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Scroll Bar",
-                            desc = null,
-                            data = prefsService.scrollBarEnabled,
-                        )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Read Mode",
-                            data = prefsService.readModeEnabled,
-                            desc = "Long images are displayed in full screen by default"
-                        )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Show Tile Bounds",
-                            desc = "Overlay the state and area of the tile on the View",
-                            data = prefsService.showTileBounds,
                         )
                     )
                 }

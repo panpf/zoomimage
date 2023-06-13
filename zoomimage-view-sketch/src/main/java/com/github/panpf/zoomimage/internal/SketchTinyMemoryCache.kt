@@ -20,9 +20,9 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CountBitmap
 import com.github.panpf.sketch.cache.MemoryCache.Value
 import com.github.panpf.sketch.decode.ImageInfo
-import com.github.panpf.zoomimage.CacheBitmap
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TinyMemoryCache
+import com.github.panpf.zoomimage.core.CacheBitmap
+import com.github.panpf.zoomimage.core.Size
+import com.github.panpf.zoomimage.core.TinyMemoryCache
 
 class SketchTinyMemoryCache(private val sketch: Sketch) : TinyMemoryCache {
 

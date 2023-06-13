@@ -22,10 +22,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.CommonZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.PicassoZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
-import com.github.panpf.zoomimage.sample.util.collect
+import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import com.squareup.picasso.Callback
 import com.squareup.picasso.RequestCreator
@@ -49,7 +49,7 @@ class PicassoZoomImageViewFragment :
     override val supportDisallowReuseBitmap: Boolean
         get() = false
 
-    override fun getCommonBinding(binding: PicassoZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
+    override fun getCommonBinding(binding: PicassoZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
         return binding.common
     }
 
@@ -77,7 +77,7 @@ class PicassoZoomImageViewFragment :
                 prefsService.disableMemoryCache.sharedFlow,
 //                prefsService.disallowReuseBitmap.sharedFlow,
 //                prefsService.ignoreExifOrientation.sharedFlow,
-            ).merge().collect(lifecycleOwner) {
+            ).merge().collectWithLifecycle(lifecycleOwner) {
                 loadData(binding, binding.common, sketchImageUri)
             }
         }

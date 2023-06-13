@@ -17,7 +17,7 @@ package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
 import com.bumptech.glide.load.engine.EngineResourceWrapper
-import com.github.panpf.zoomimage.CacheBitmap
+import com.github.panpf.zoomimage.core.CacheBitmap
 
 internal class GlideCacheBitmap(
     override val key: String,

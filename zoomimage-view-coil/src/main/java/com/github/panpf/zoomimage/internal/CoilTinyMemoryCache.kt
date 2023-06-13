@@ -18,9 +18,9 @@ package com.github.panpf.zoomimage.internal
 import android.graphics.Bitmap
 import coil.ImageLoader
 import coil.memory.MemoryCache
-import com.github.panpf.zoomimage.CacheBitmap
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TinyMemoryCache
+import com.github.panpf.zoomimage.core.CacheBitmap
+import com.github.panpf.zoomimage.core.Size
+import com.github.panpf.zoomimage.core.TinyMemoryCache
 
 class CoilTinyMemoryCache(private val imageLoader: ImageLoader) : TinyMemoryCache {
 

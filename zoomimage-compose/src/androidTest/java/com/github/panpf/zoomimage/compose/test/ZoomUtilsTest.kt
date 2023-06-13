@@ -7,10 +7,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.zoomimage.Centroid
-import com.github.panpf.zoomimage.Edge.BOTH
-import com.github.panpf.zoomimage.Edge.END
-import com.github.panpf.zoomimage.Edge.NONE
-import com.github.panpf.zoomimage.Edge.START
+import com.github.panpf.zoomimage.core.Edge.BOTH
+import com.github.panpf.zoomimage.core.Edge.END
+import com.github.panpf.zoomimage.core.Edge.NONE
+import com.github.panpf.zoomimage.core.Edge.START
 import com.github.panpf.zoomimage.computeContainerCentroidByTouchPosition
 import com.github.panpf.zoomimage.computeContainerVisibleRect
 import com.github.panpf.zoomimage.computeContentInContainerRect

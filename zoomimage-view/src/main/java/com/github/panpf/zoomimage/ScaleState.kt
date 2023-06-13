@@ -20,6 +20,7 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.ScaleState.Factory
 import com.github.panpf.zoomimage.ScaleState.Initial
 import com.github.panpf.zoomimage.ScaleState.Initial.Normal
+import com.github.panpf.zoomimage.core.Size
 import com.github.panpf.zoomimage.internal.format
 import kotlin.math.max
 import kotlin.math.min

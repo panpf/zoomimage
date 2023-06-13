@@ -6,8 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.SampleImages.Asset
-import com.github.panpf.zoomimage.sample.ui.model.ListSeparator
 import com.github.panpf.zoomimage.sample.ui.model.Link
+import com.github.panpf.zoomimage.sample.ui.model.ListSeparator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -89,11 +89,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             ListSeparator("Test"),
             Link(
-                title = "ZoomImageView Orientation Test",
-                navDirections = NavMainDirections.actionGlobalOrientationTestFragment(),
+                title = "ZoomImageView Layout Orientation Test",
+                navDirections = NavMainDirections.actionGlobalLayoutOrientationTestFragment(),
             ),
             Link(
-                title = "ZoomImageView ExifOrientation Test",
+                title = "ZoomImageView Exif Orientation Test",
                 navDirections = NavMainDirections.actionGlobalExifOrientationTestFragment(),
             ),
         )

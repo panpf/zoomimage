@@ -17,7 +17,7 @@ package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
 import android.graphics.Rect
-import com.github.panpf.zoomimage.CacheBitmap
+import com.github.panpf.zoomimage.core.CacheBitmap
 import kotlinx.coroutines.Job
 
 class Tile constructor(val srcRect: Rect, val inSampleSize: Int) {

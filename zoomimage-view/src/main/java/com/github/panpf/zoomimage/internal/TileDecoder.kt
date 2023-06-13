@@ -23,10 +23,11 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.ImageSource
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.freeBitmap
-import com.github.panpf.zoomimage.setInBitmapForRegion
+import com.github.panpf.zoomimage.core.ImageSource
+import com.github.panpf.zoomimage.core.Size
+import com.github.panpf.zoomimage.core.internal.ExifOrientationHelper
+import com.github.panpf.zoomimage.core.freeBitmap
+import com.github.panpf.zoomimage.core.setInBitmapForRegion
 import kotlinx.coroutines.runBlocking
 import java.util.LinkedList
 

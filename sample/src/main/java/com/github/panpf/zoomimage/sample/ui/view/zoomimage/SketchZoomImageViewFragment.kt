@@ -22,10 +22,10 @@ import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.CommonZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.SketchZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
-import com.github.panpf.zoomimage.sample.util.collect
+import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import kotlinx.coroutines.flow.merge
 
@@ -46,7 +46,7 @@ class SketchZoomImageViewFragment :
     override val supportDisallowReuseBitmap: Boolean
         get() = true
 
-    override fun getCommonBinding(binding: SketchZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
+    override fun getCommonBinding(binding: SketchZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
         return binding.common
     }
 
@@ -74,7 +74,7 @@ class SketchZoomImageViewFragment :
                 prefsService.disableMemoryCache.sharedFlow,
                 prefsService.disallowReuseBitmap.sharedFlow,
                 prefsService.ignoreExifOrientation.sharedFlow,
-            ).merge().collect(lifecycleOwner) {
+            ).merge().collectWithLifecycle(lifecycleOwner) {
                 loadData(binding, binding.common, sketchImageUri)
             }
         }

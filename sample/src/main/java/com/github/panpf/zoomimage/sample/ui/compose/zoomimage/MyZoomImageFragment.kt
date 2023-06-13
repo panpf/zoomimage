@@ -96,7 +96,7 @@ private fun MyZoomImageFullSample() {
         val myZoomState = rememberMyZoomState(debugMode = BuildConfig.DEBUG)
         val zoomIn = remember {
             derivedStateOf {
-                val nextScale = myZoomState.nextScale()
+                val nextScale = myZoomState.getNextStepScale()
                 nextScale > myZoomState.minScale
             }
         }
@@ -163,7 +163,7 @@ private fun MyZoomImageFullSample() {
             IconButton(
                 onClick = {
                     coroutineScope.launch {
-                        val newScale = myZoomState.nextScale()
+                        val newScale = myZoomState.getNextStepScale()
                         if (!zoomOptionsDialogState.closeScaleAnimation) {
                             myZoomState.animateScaleTo(newScale = newScale)
                         } else {

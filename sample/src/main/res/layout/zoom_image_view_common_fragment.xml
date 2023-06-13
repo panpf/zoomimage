@@ -3,38 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:background="@color/windowBackgroundDark">
 
     <LinearLayout
-        android:id="@+id/zoomImageViewInfoLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="20dp">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/zoomImageViewUriText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="4"
-            android:ellipsize="middle"
-            tools:singleLine="true"
-            android:shadowColor="@android:color/black"
-            tools:text="uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：" />
-
         <TextView
-            android:id="@+id/zoomImageViewInfoText"
-            android:layout_width="match_parent"
+            android:id="@+id/zoomImageViewInfoHeaderText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="4"
             android:ellipsize="end"
             android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="4"
+            android:textColor="@android:color/white"
+            tools:text="draw：\nvisible: \nstepScales: " />
+        <TextView
+            android:id="@+id/zoomImageViewInfoContentText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="4"
+            android:textColor="@android:color/white"
             tools:text="draw：\nvisible: \nstepScales: " />
     </LinearLayout>
 
@@ -99,6 +97,22 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             app:srcCompat="@drawable/ic_rotate_right"
+            app:tint="@android:color/white" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/zoomImageViewZoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:srcCompat="@drawable/ic_zoom_in"
+            app:tint="@android:color/white" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/zoomImageViewInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:srcCompat="@drawable/ic_info"
             app:tint="@android:color/white" />
 
         <androidx.appcompat.widget.AppCompatImageView

@@ -1,14 +1,14 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.core
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory.Options
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.internal.calculateSampledBitmapSizeForRegion
-import com.github.panpf.zoomimage.internal.isAndSupportHardware
-import com.github.panpf.zoomimage.internal.isMainThread
-import com.github.panpf.zoomimage.internal.isSupportInBitmapForRegion
-import com.github.panpf.zoomimage.internal.logString
-import com.github.panpf.zoomimage.internal.requiredWorkThread
+import com.github.panpf.zoomimage.core.internal.calculateSampledBitmapSizeForRegion
+import com.github.panpf.zoomimage.core.internal.isAndSupportHardware
+import com.github.panpf.zoomimage.core.internal.isMainThread
+import com.github.panpf.zoomimage.core.internal.isSupportInBitmapForRegion
+import com.github.panpf.zoomimage.core.internal.logString
+import com.github.panpf.zoomimage.core.internal.requiredWorkThread
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

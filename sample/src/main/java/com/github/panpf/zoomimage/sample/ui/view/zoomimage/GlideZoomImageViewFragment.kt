@@ -27,10 +27,10 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.CommonZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.GlideZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
-import com.github.panpf.zoomimage.sample.util.collect
+import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import kotlinx.coroutines.flow.merge
 
@@ -50,7 +50,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
     override val supportDisallowReuseBitmap: Boolean
         get() = true
 
-    override fun getCommonBinding(binding: GlideZoomImageViewFragmentBinding): CommonZoomImageViewFragmentBinding {
+    override fun getCommonBinding(binding: GlideZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
         return binding.common
     }
 
@@ -69,7 +69,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
 //                prefsService.disableMemoryCache.stateFlow,
                 prefsService.disallowReuseBitmap.stateFlow,
 //                prefsService.ignoreExifOrientation.stateFlow,
-            ).merge().collect(lifecycleOwner) {
+            ).merge().collectWithLifecycle(lifecycleOwner) {
 //                subsamplingAbility.disableMemoryCache = prefsService.disableMemoryCache.value
                 subsamplingAbility.disallowReuseBitmap = prefsService.disallowReuseBitmap.value
 //                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
@@ -78,7 +78,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
                 prefsService.disableMemoryCache.sharedFlow,
                 prefsService.disallowReuseBitmap.sharedFlow,
 //                prefsService.ignoreExifOrientation.sharedFlow,
-            ).merge().collect(lifecycleOwner) {
+            ).merge().collectWithLifecycle(lifecycleOwner) {
                 loadData(binding, binding.common, sketchImageUri)
             }
         }

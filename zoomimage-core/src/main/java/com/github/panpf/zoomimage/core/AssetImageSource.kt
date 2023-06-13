@@ -1,19 +1,18 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.core
 
+import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 
-class FileImageSource(val file: File) : ImageSource {
+class AssetImageSource(val context: Context, val assetFileName: String) : ImageSource {
 
-    override val key: String = file.path
+    override val key: String = "asset://$assetFileName"
 
     override suspend fun openInputStream(): Result<InputStream> {
         return withContext(Dispatchers.IO) {
             kotlin.runCatching {
-                FileInputStream(file)
+                context.assets.open(assetFileName)
             }
         }
     }

@@ -15,28 +15,26 @@
  */
 package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.tools4j.io.ktx.formatFileSize
-import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.core.Logger
 import com.github.panpf.zoomimage.format
 import com.github.panpf.zoomimage.sample.BuildConfig
-import com.github.panpf.zoomimage.sample.databinding.CommonZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.view.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.view.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.ui.view.widget.TilesMapImageView
+import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
-import kotlinx.coroutines.launch
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {
@@ -45,7 +43,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
     abstract fun getZoomImageView(binding: VIEW_BINDING): ZoomImageView
 
-    abstract fun getCommonBinding(binding: VIEW_BINDING): CommonZoomImageViewFragmentBinding
+    abstract fun getCommonBinding(binding: VIEW_BINDING): ZoomImageViewCommonFragmentBinding
 
     abstract val supportDisabledMemoryCache: Boolean
 
@@ -57,29 +55,23 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
         zoomImageView.apply {
-            zoomAbility.logger.level = if (BuildConfig.DEBUG)
-                Logger.Level.DEBUG else Logger.Level.INFO
-
-            subsamplingAbility.setLifecycle(viewLifecycleOwner.lifecycle)
-
-            lifecycleOwner.lifecycleScope.launch {
-                prefsService.scaleType.stateFlow.collect {
-                    scaleType = ScaleType.valueOf(it)
+            prefsService.scaleType.stateFlow.collectWithLifecycle(lifecycleOwner) {
+                scaleType = ScaleType.valueOf(it)
+            }
+            zoomAbility.apply {
+                logger.level = if (BuildConfig.DEBUG)
+                    Logger.Level.DEBUG else Logger.Level.INFO
+                prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(lifecycleOwner) {
+                    scrollBarEnabled = it
+                }
+                prefsService.readModeEnabled.stateFlow.collectWithLifecycle(lifecycleOwner) {
+                    readModeEnabled = it
                 }
             }
-            lifecycleOwner.lifecycleScope.launch {
-                prefsService.scrollBarEnabled.stateFlow.collect {
-                    zoomAbility.scrollBarEnabled = it
-                }
-            }
-            lifecycleOwner.lifecycleScope.launch {
-                prefsService.readModeEnabled.stateFlow.collect {
-                    zoomAbility.readModeEnabled = it
-                }
-            }
-            lifecycleOwner.lifecycleScope.launch {
-                prefsService.showTileBounds.stateFlow.collect {
-                    subsamplingAbility.showTileBounds = it
+            subsamplingAbility.apply {
+                setLifecycle(viewLifecycleOwner.lifecycle)
+                prefsService.showTileBounds.stateFlow.collectWithLifecycle(lifecycleOwner) {
+                    showTileBounds = it
                 }
             }
         }
@@ -94,9 +86,35 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             zoomImageView.zoomAbility.rotateBy(90)
         }
 
+        common.zoomImageViewZoom.apply {
+            setOnClickListener {
+                val nextStepScale = zoomImageView.zoomAbility.getNextStepScale()
+                zoomImageView.zoomAbility.scale(nextStepScale, true)
+            }
+            val resetIcon = {
+                val currentScale = zoomImageView.zoomAbility.scale
+                val nextStepScale = zoomImageView.zoomAbility.getNextStepScale()
+                if (currentScale == nextStepScale || nextStepScale > currentScale) {
+                    setImageResource(R.drawable.ic_zoom_in)
+                } else {
+                    setImageResource(R.drawable.ic_zoom_out)
+                }
+            }
+            zoomImageView.zoomAbility.addOnScaleChangeListener { _, _, _ ->
+                resetIcon()
+            }
+            resetIcon()
+        }
+
+        common.zoomImageViewInfo.setOnClickListener {
+            ZoomImageViewInfoDialogFragment().apply {
+                arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
+            }.show(childFragmentManager, null)
+        }
+
         common.zoomImageViewSettings.setOnClickListener {
-            SettingsDialogFragment().apply {
-                arguments = SettingsDialogFragmentArgs(
+            ZoomImageViewSettingsDialogFragment().apply {
+                arguments = ZoomImageViewSettingsDialogFragmentArgs(
                     supportMemoryCache = supportDisabledMemoryCache,
                     supportIgnoreExifOrientation = supportIgnoreExifOrientation,
                     supportReuseBitmap = supportDisallowReuseBitmap
@@ -104,31 +122,20 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }.show(childFragmentManager, null)
         }
 
-        common.zoomImageViewInfoLayout.apply {
-            var isSingleLine = true
-            common.zoomImageViewUriText.isSingleLine = isSingleLine
-            common.zoomImageViewInfoText.maxLines = 4
-            setOnClickListener {
-                isSingleLine = !isSingleLine
-                common.zoomImageViewUriText.isSingleLine = isSingleLine
-                common.zoomImageViewInfoText.maxLines =
-                    if (common.zoomImageViewInfoText.maxLines == 4) Int.MAX_VALUE else 4
-            }
-            zoomImageView.zoomAbility.addOnMatrixChangeListener {
-                updateInfo(zoomImageView, common, sketchImageUri)
-            }
-            zoomImageView.zoomAbility.addOnScaleChangeListener { _, _, _ ->
-                updateInfo(zoomImageView, common, sketchImageUri)
-            }
+        zoomImageView.zoomAbility.addOnMatrixChangeListener {
+            updateInfo(zoomImageView, common)
         }
+        zoomImageView.zoomAbility.addOnScaleChangeListener { _, _, _ ->
+            updateInfo(zoomImageView, common)
+        }
+        updateInfo(zoomImageView, common)
 
         loadData(binding, common, sketchImageUri)
-        updateInfo(zoomImageView, common, sketchImageUri)
     }
 
     protected fun loadData(
         binding: VIEW_BINDING,
-        common: CommonZoomImageViewFragmentBinding,
+        common: ZoomImageViewCommonFragmentBinding,
         sketchImageUri: String
     ) {
         loadImage(
@@ -168,40 +175,52 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         onCallError: () -> Unit
     )
 
-    @SuppressLint("SetTextI18n")
     private fun updateInfo(
         zoomImageView: ZoomImageView,
-        common: CommonZoomImageViewFragmentBinding,
-        sketchImageUri: String
+        common: ZoomImageViewCommonFragmentBinding
     ) {
-        common.zoomImageViewUriText.text = "uri: $sketchImageUri"
-        val zoomInfo = zoomImageView.zoomAbility.run {
+        common.zoomImageViewInfoHeaderText.text = zoomImageView.zoomAbility.run {
+            """
+                translate: 
+                visible: 
+                scale: 
+            """.trimIndent()
+        }
+        common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
             val stepScalesString = stepScales.joinToString { it.format(2) }
             """
-                scale: ${scale.format(2)}, range=[${minScale.format(2)}, ${maxScale.format(2)}], steps=($stepScalesString)
-                translation: ${translation.run { "($x, $y)" }}
-                drawRect: ${getDrawRect().toVeryShortString()}
-                visibleRect: ${getVisibleRect().toVeryShortString()}
-                edge: hor=${horScrollEdge}, ver=${verScrollEdge}
-                size: view=${viewSize.toShortString()}, drawable=${drawableSize.toShortString()}
+                ${translation.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
+                ${getVisibleRect().toVeryShortString()}
+                ${scale.format(2)} in [${minScale.format(2)},${maxScale.format(2)}], steps=($stepScalesString)
             """.trimIndent()
         }
-        val imageInfo = zoomImageView.subsamplingAbility.run {
-            val exifOrientationName = imageExifOrientation?.let { exifOrientationName(it) }
-            """
-                image: ${imageSize?.toShortString()}, '${imageMimeType}', $exifOrientationName
-            """.trimIndent()
-        }
-        val subsamplingInfo = zoomImageView.subsamplingAbility.run {
-            val tileList = tileList ?: emptyList()
-            val tilesByteCount = tileList.sumOf { it.bitmap?.byteCount ?: 0 }
-                .toLong().formatFileSize()
-            """
+    }
+
+    private fun buildOtherInfo(
+        zoomImageView: ZoomImageView,
+        sketchImageUri: String
+    ): ZoomImageViewInfoDialogFragmentArgs {
+        val zoomAbility = zoomImageView.zoomAbility
+        val subsamplingAbility = zoomImageView.subsamplingAbility
+        val tileList = subsamplingAbility.tileList ?: emptyList()
+        val tilesByteCount = tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()
+        return ZoomImageViewInfoDialogFragmentArgs(
+            imageUri = sketchImageUri,
+            imageInfo = """
+                ${subsamplingAbility.imageSize?.toVeryShortString()}
+                ${subsamplingAbility.imageMimeType}
+                ${subsamplingAbility.imageExifOrientation?.let { exifOrientationName(it) }}
+            """.trimIndent(),
+            sizeInfo = """
+                view=${zoomAbility.viewSize.toVeryShortString()}
+                drawable=${zoomAbility.drawableSize.toVeryShortString()}
+            """.trimIndent(),
+            tilesInfo = """
                 tileCount=${tileList.size}
-                validTileCount=${tileList.count { it.bitmap != null }}
-                tilesByteCount=${tilesByteCount}
+                tilesBytes=${tilesByteCount}
+                loadedTileCount=${tileList.count { it.bitmap != null }}
             """.trimIndent()
-        }
-        common.zoomImageViewInfoText.text = "$zoomInfo\n$imageInfo\n$subsamplingInfo"
+        )
     }
 }
+

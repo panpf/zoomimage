@@ -31,6 +31,7 @@ import com.github.panpf.sketch.stateimage.internal.SketchStateDrawable
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.sketch.util.getLastChildDrawable
+import com.github.panpf.zoomimage.core.ImageSource
 import com.github.panpf.zoomimage.internal.SketchImageSource
 import com.github.panpf.zoomimage.internal.SketchTinyBitmapPool
 import com.github.panpf.zoomimage.internal.SketchTinyMemoryCache

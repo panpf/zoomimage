@@ -16,7 +16,7 @@
 package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.CacheBitmap
+import com.github.panpf.zoomimage.core.CacheBitmap
 
 class PicassoCacheBitmap(
     override val key: String,
