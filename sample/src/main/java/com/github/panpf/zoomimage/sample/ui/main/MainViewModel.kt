@@ -47,12 +47,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             ListSeparator("Compose"),
             Link(
                 title = "ZoomImage（My）",
-                navDirections = NavMainDirections.actionGlobalMyZoomImageFragment(),
+                navDirections = NavMainDirections.actionGlobalMyZoomImagePagerFragment(),
                 minSdk = 21
             ),
             Link(
                 title = "ZoomableAsyncImage（Telephoto）",
-                navDirections = NavMainDirections.actionGlobalTelephotoZoomImageFragment(),
+                navDirections = NavMainDirections.actionGlobalTelephotoZoomableAsyncImagePagerFragment(),
                 minSdk = 21
             ),
 

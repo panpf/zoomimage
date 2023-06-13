@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.compose.base
+package com.github.panpf.zoomimage.sample.ui.compose.base.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

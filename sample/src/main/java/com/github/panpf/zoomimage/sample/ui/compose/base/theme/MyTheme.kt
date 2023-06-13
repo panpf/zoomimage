@@ -1,8 +1,8 @@
-package com.github.panpf.zoomimage.sample.ui.compose.base
+package com.github.panpf.zoomimage.sample.ui.compose.base.theme
 
 import android.app.Activity
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
@@ -26,8 +26,8 @@ fun MyTheme(
     val onSecondary = Color(ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null))
     val tertiary = Color(ResourcesCompat.getColor(context.resources, R.color.colorTertiary, null))
     val onTertiary = Color(ResourcesCompat.getColor(context.resources, R.color.colorOnTertiary, null))
-    val background = Color(ResourcesCompat.getColor(context.resources, R.color.windowBackgroundDark, null))
-    val colorScheme = darkColorScheme(
+    val background = Color(ResourcesCompat.getColor(context.resources, R.color.windowBackground, null))
+    val colorScheme = lightColorScheme(
         primary = primary,
         onPrimary = onPrimary,
         secondary = secondary,
@@ -42,7 +42,7 @@ fun MyTheme(
             val activity = view.context as Activity
 //            activity.window.statusBarColor = colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(activity.window, view)
-                .isAppearanceLightStatusBars = true
+                .isAppearanceLightStatusBars = false
         }
     }
 

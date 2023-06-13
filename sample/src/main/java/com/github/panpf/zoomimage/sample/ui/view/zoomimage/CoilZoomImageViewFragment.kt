@@ -16,7 +16,6 @@
 package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 
 import android.os.Bundle
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import coil.load
@@ -28,8 +27,8 @@ import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragment
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
+import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import kotlinx.coroutines.flow.merge
-import java.io.File
 
 class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFragmentBinding>() {
 
@@ -87,7 +86,8 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
         onCallSuccess: () -> Unit,
         onCallError: () -> Unit
     ) {
-        binding.coilZoomImageViewImage.load(sketchUri2CoilModel(binding, args.imageUri)) {
+        val model = sketchUri2CoilModel(requireContext(), args.imageUri)
+        binding.coilZoomImageViewImage.load(model) {
             lifecycle(viewLifecycleOwner.lifecycle)
             precision(coil.size.Precision.INEXACT)
             crossfade(true)
@@ -100,38 +100,6 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
                 onSuccess = { _, _ -> onCallSuccess() },
                 onError = { _, _ -> onCallError() },
             )
-        }
-    }
-
-    private fun sketchUri2CoilModel(
-        binding: CoilZoomImageViewFragmentBinding,
-        @Suppress("SameParameterValue") sketchImageUri: String
-    ): Any? {
-        return when {
-            sketchImageUri.startsWith("asset://") -> {
-                sketchImageUri.replace("asset://", "file://filled/android_asset/").toUri()
-            }
-
-            sketchImageUri.startsWith("file://") -> {
-                File(sketchImageUri.substring("file://".length))
-            }
-
-            sketchImageUri.startsWith("android.resource://") -> {
-                val resId =
-                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
-                if (resId != null) {
-                    "android.resource://${requireContext().packageName}/$resId".toUri()
-                } else {
-                    binding.coilZoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
-                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
-                    }
-                    null
-                }
-            }
-
-            else -> {
-                sketchImageUri.toUri()
-            }
         }
     }
 

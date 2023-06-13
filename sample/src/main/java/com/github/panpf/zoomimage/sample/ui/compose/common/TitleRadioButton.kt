@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.compose.base
+package com.github.panpf.zoomimage.sample.ui.compose.common
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

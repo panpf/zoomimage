@@ -10,11 +10,23 @@
 
 
     <fragment
-        android:id="@+id/myZoomImageFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.compose.zoomimage.MyZoomImageFragment" />
+        android:id="@+id/myZoomImagePagerFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.compose.zoomimage.MyZoomImagePagerFragment" />
     <action
-        android:id="@+id/action_global_myZoomImageFragment"
-        app:destination="@id/myZoomImageFragment"
+        android:id="@+id/action_global_myZoomImagePagerFragment"
+        app:destination="@id/myZoomImagePagerFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+
+    <fragment
+        android:id="@+id/telephotoZoomableAsyncImagePagerFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.compose.telephoto.TelephotoZoomableAsyncImagePagerFragment" />
+    <action
+        android:id="@+id/action_global_telephotoZoomableAsyncImagePagerFragment"
+        app:destination="@id/telephotoZoomableAsyncImagePagerFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
@@ -120,18 +132,6 @@
     <action
         android:id="@+id/action_global_picassoZoomImageViewPagerFragment"
         app:destination="@id/picassoZoomImageViewPagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
-
-
-    <fragment
-        android:id="@+id/telephotoZoomImageFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.compose.telephoto.TelephotoZoomImageFragment" />
-    <action
-        android:id="@+id/action_global_telephotoZoomImageFragment"
-        app:destination="@id/telephotoZoomImageFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"

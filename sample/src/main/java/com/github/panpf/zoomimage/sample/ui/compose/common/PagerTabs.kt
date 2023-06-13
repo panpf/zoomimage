@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.compose.base
+package com.github.panpf.zoomimage.sample.ui.compose.common
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState

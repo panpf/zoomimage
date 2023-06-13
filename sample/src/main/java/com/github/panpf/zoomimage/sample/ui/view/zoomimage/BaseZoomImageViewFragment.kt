@@ -31,10 +31,10 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.view.util.toVeryShortString
 import com.github.panpf.zoomimage.sample.ui.view.widget.TilesMapImageView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
+import com.github.panpf.zoomimage.sample.util.toVeryShortString
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {

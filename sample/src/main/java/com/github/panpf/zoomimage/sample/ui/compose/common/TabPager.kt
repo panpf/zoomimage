@@ -1,7 +1,6 @@
-package com.github.panpf.zoomimage.sample.ui.compose.base
+package com.github.panpf.zoomimage.sample.ui.compose.common
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,11 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-data class PageItem<T>(
+data class PagerItem<T>(
     val data: T,
     val titleFactory: (T) -> String,
     val contentFactory: @Composable (data: T, index: Int) -> Unit
@@ -28,14 +26,10 @@ data class PageItem<T>(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HorizontalTabPager(vararg pageItems: PageItem<String>) {
+fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
             containerColor = MaterialTheme.colorScheme.primary,
@@ -47,7 +41,7 @@ fun HorizontalTabPager(vararg pageItems: PageItem<String>) {
                 )
             }
         ) {
-            pageItems.forEachIndexed { index, item ->
+            pagerItems.forEachIndexed { index, item ->
                 Tab(
                     selected = index == pagerState.currentPage,
                     onClick = {
@@ -64,14 +58,14 @@ fun HorizontalTabPager(vararg pageItems: PageItem<String>) {
             }
         }
         HorizontalPager(
-            pageCount = pageItems.size,
+            pageCount = pagerItems.size,
             state = pagerState,
             userScrollEnabled = true,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
         ) { index ->
-            val item = pageItems[index]
+            val item = pagerItems[index]
             item.contentFactory(item.data, index)
         }
     }

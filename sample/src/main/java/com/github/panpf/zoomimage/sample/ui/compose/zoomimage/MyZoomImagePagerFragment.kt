@@ -41,16 +41,14 @@ import com.github.panpf.zoomimage.ScaleAnimationConfig
 import com.github.panpf.zoomimage.rememberMyZoomState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.toPx
-import com.github.panpf.zoomimage.toShortString
-import com.github.panpf.zoomimage.sample.ui.compose.base.HorizontalTabPager
 import com.github.panpf.zoomimage.sample.ui.compose.base.AppBarFragment
-import com.github.panpf.zoomimage.sample.ui.compose.base.PageItem
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.model.PhotoItem
+import com.github.panpf.zoomimage.toPx
+import com.github.panpf.zoomimage.toShortString
 import kotlinx.coroutines.launch
 
-class MyZoomImageFragment : AppBarFragment() {
+class MyZoomImagePagerFragment : AppBarFragment() {
 
     override fun getTitle(): String {
         return "ZoomImage（My）"
@@ -58,15 +56,7 @@ class MyZoomImageFragment : AppBarFragment() {
 
     @Composable
     override fun DrawContent() {
-        HorizontalTabPager(
-            PageItem(
-                data = "My",
-                titleFactory = { it },
-                contentFactory = { _, _ ->
-                    MyZoomImageFullSample()
-                }
-            )
-        )
+        MyZoomImageFullSample()
     }
 }
 
@@ -92,7 +82,10 @@ private fun MyZoomImageFullSample() {
         mutableStateOf(if (zoomOptionsDialogState.slowerScaleAnimation) 3000 else ScaleAnimationConfig.DefaultDurationMillis)
     }
     var zoomOptionsDialogShow by remember { mutableStateOf(false) }
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Black)
+    ) {
         val myZoomState = rememberMyZoomState(debugMode = BuildConfig.DEBUG)
         val zoomIn = remember {
             derivedStateOf {

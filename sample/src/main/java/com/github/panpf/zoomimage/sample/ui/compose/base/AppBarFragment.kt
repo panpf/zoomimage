@@ -27,9 +27,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Surface
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,10 +40,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import com.github.panpf.tools4a.dimen.ktx.px2dp
 import com.github.panpf.tools4a.display.ktx.getStatusBarHeight
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.ui.compose.base.theme.MyTheme
 
 abstract class AppBarFragment : Fragment() {
 
@@ -54,7 +56,7 @@ abstract class AppBarFragment : Fragment() {
     ): View {
         return ComposeView(inflater.context).apply {
             setContent {
-                MyTopAppBarScaffold3(getTitle()) {
+                MyTopAppBarScaffold3(getTitle(), getSubtitle()) {
                     DrawContent()
                 }
             }
@@ -69,13 +71,19 @@ abstract class AppBarFragment : Fragment() {
         return requireContext().resources.getString(R.string.app_name)
     }
 
+    open fun getSubtitle(): String? = null
+
     @Composable
     abstract fun DrawContent()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBarScaffold3(title: String? = null, content: @Composable () -> Unit) {
+fun MyTopAppBarScaffold3(
+    title: String? = null,
+    subtitle: String? = null,
+    content: @Composable () -> Unit
+) {
     val context = LocalContext.current
     val statusBarHeight = remember {
         context.getStatusBarHeight().px2dp.dp
@@ -93,7 +101,12 @@ fun MyTopAppBarScaffold3(title: String? = null, content: @Composable () -> Unit)
                 if (title != null) {
                     TopAppBar(
                         title = {
-                            Text(text = title)
+                            Column {
+                                Text(text = title)
+                                if (subtitle != null) {
+                                    Text(text = subtitle, fontSize = 16.sp)
+                                }
+                            }
                         },
                         windowInsets = WindowInsets(0.dp),
                         colors = TopAppBarDefaults.topAppBarColors(

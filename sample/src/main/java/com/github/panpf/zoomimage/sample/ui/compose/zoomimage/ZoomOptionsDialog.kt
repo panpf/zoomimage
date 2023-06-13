@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.name
-import com.github.panpf.zoomimage.sample.ui.compose.base.TitleRadioButton
+import com.github.panpf.zoomimage.sample.ui.compose.common.TitleRadioButton
 
 class ZoomOptionsDialogState {
     var horImageSelected: Boolean by mutableStateOf(true)
