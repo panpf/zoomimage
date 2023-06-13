@@ -28,8 +28,8 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.DefaultScaleStateFactory
-import com.github.panpf.zoomimage.core.Edge
-import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.Edge
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.LongImageReadModeDecider
 import com.github.panpf.zoomimage.OnDragFlingListener
 import com.github.panpf.zoomimage.OnMatrixChangeListener
@@ -41,8 +41,7 @@ import com.github.panpf.zoomimage.OnViewTapListener
 import com.github.panpf.zoomimage.ReadModeDecider
 import com.github.panpf.zoomimage.ScaleState
 import com.github.panpf.zoomimage.ScaleState.Factory
-import com.github.panpf.zoomimage.core.Size
-import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
+import com.github.panpf.zoomimage.Size
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120

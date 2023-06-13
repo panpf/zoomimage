@@ -6,14 +6,11 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.github.panpf.zoomimage.core.ImageSource
-import com.github.panpf.zoomimage.core.Size
-import com.github.panpf.zoomimage.core.TinyBitmapPool
-import com.github.panpf.zoomimage.core.TinyMemoryCache
 import com.github.panpf.zoomimage.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.internal.Tile
 import com.github.panpf.zoomimage.internal.getLifecycle
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -97,16 +94,16 @@ class SubsamplingAbility(
             engine.ignoreExifOrientation = value
         }
 
-    var tinyBitmapPool: TinyBitmapPool?
-        get() = engine.tinyBitmapPool
+    var tileBitmapPool: TileBitmapPool?
+        get() = engine.tileBitmapPool
         set(value) {
-            engine.tinyBitmapPool = value
+            engine.tileBitmapPool = value
         }
 
-    var tinyMemoryCache: TinyMemoryCache?
-        get() = engine.tinyMemoryCache
+    var tileMemoryCache: TileMemoryCache?
+        get() = engine.tileMemoryCache
         set(value) {
-            engine.tinyMemoryCache = value
+            engine.tileMemoryCache = value
         }
 
     val tileList: List<Tile>?

@@ -25,10 +25,9 @@ import android.graphics.Rect
 import androidx.annotation.MainThread
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
-import com.github.panpf.zoomimage.core.DefaultCacheBitmap
-import com.github.panpf.zoomimage.core.ImageSource
-import com.github.panpf.zoomimage.core.Size
-import com.github.panpf.zoomimage.core.freeBitmap
+import com.github.panpf.zoomimage.DefaultTileBitmap
+import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -224,7 +223,7 @@ internal class TileManager constructor(
 
         val memoryCacheKey = "${imageSource.key}_tile_${tile.srcRect.toVeryShortString()}_${tile.inSampleSize}"
         val cachedValue = if (!engine.disableMemoryCache) {
-            engine.tinyMemoryCache?.get(memoryCacheKey)
+            engine.tileMemoryCache?.get(memoryCacheKey)
         } else {
             null
         }
@@ -250,7 +249,7 @@ internal class TileManager constructor(
                 isActive -> {
                     withContext(Dispatchers.Main) {
                         val newCountBitmap = if (!engine.disableMemoryCache) {
-                            engine.tinyMemoryCache?.put(
+                            engine.tileMemoryCache?.put(
                                 key = memoryCacheKey,
                                 bitmap = bitmap,
                                 imageKey = imageSource.key,
@@ -258,9 +257,9 @@ internal class TileManager constructor(
                                 imageMimeType = decoder.imageMimeType,
                                 imageExifOrientation = decoder.imageExifOrientation,
                                 disallowReuseBitmap = engine.disallowReuseBitmap
-                            ) ?: DefaultCacheBitmap(memoryCacheKey, bitmap)
+                            ) ?: DefaultTileBitmap(memoryCacheKey, bitmap)
                         } else {
-                            DefaultCacheBitmap(memoryCacheKey, bitmap)
+                            DefaultTileBitmap(memoryCacheKey, bitmap)
                         }
                         tile.countBitmap = newCountBitmap
                         engine.logger.d(SubsamplingEngine.MODULE) {
@@ -275,9 +274,9 @@ internal class TileManager constructor(
                     engine.logger.d(SubsamplingEngine.MODULE) {
                         "loadTile. canceled. $tile. '${imageSource.key}'"
                     }
-                    val tinyBitmapPool = engine.tinyBitmapPool
-                    if (tinyBitmapPool != null) {
-                        tinyBitmapPool.freeBitmap(
+                    val bitmapPool = engine.tileBitmapPool
+                    if (bitmapPool != null) {
+                        bitmapPool.freeBitmap(
                             logger = engine.logger,
                             bitmap = bitmap,
                             disallowReuseBitmap = engine.disallowReuseBitmap,

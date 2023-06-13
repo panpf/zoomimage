@@ -27,9 +27,6 @@ import android.view.View
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.ScaleState.Factory
-import com.github.panpf.zoomimage.core.Edge
-import com.github.panpf.zoomimage.core.Logger
-import com.github.panpf.zoomimage.core.Size
 import com.github.panpf.zoomimage.internal.ImageViewBridge
 import com.github.panpf.zoomimage.internal.ZoomEngine
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat

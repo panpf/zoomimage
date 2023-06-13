@@ -8,6 +8,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
+import com.github.panpf.zoomimage.internal.format
 
 
 /**
@@ -224,3 +225,5 @@ val Centroid.isUnspecified: Boolean get() = value.isUnspecified
  */
 inline fun Centroid.takeOrElse(block: () -> Centroid): Centroid =
     if (isSpecified) this else block()
+
+fun Centroid.toShortString(): String = "(${x.format(1)}x${y.format(1)})"

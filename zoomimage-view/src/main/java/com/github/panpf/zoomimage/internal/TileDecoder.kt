@@ -23,11 +23,8 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.core.ImageSource
-import com.github.panpf.zoomimage.core.Size
-import com.github.panpf.zoomimage.core.internal.ExifOrientationHelper
-import com.github.panpf.zoomimage.core.freeBitmap
-import com.github.panpf.zoomimage.core.setInBitmapForRegion
+import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.runBlocking
 import java.util.LinkedList
 
@@ -74,8 +71,8 @@ internal class TileDecoder internal constructor(
         val decodeOptions = BitmapFactory.Options().apply {
             this.inSampleSize = inSampleSize
         }
-        val tinyBitmapPool = engine.tinyBitmapPool
-        tinyBitmapPool?.setInBitmapForRegion(
+        val bitmapPool = engine.tileBitmapPool
+        bitmapPool?.setInBitmapForRegion(
             logger = engine.logger,
             options = decodeOptions,
             regionSize = Size(newSrcRect.width(), newSrcRect.height()),
@@ -98,8 +95,8 @@ internal class TileDecoder internal constructor(
                     "decodeRegion. Bitmap region decode inBitmap error. '${imageSource.key}'"
                 }
 
-                if (tinyBitmapPool != null) {
-                    tinyBitmapPool.freeBitmap(
+                if (bitmapPool != null) {
+                    bitmapPool.freeBitmap(
                         logger = engine.logger,
                         bitmap = inBitmap,
                         disallowReuseBitmap = engine.disallowReuseBitmap,
@@ -140,13 +137,13 @@ internal class TileDecoder internal constructor(
         val newBitmap = exifOrientationHelper.applyToBitmap(
             logger = engine.logger,
             inBitmap = bitmap,
-            bitmapPool = engine.tinyBitmapPool,
+            bitmapPool = engine.tileBitmapPool,
             disallowReuseBitmap = engine.disallowReuseBitmap
         )
         return if (newBitmap != null && newBitmap != bitmap) {
-            val tinyBitmapPool = engine.tinyBitmapPool
-            if (tinyBitmapPool != null) {
-                tinyBitmapPool.freeBitmap(
+            val bitmapPool = engine.tileBitmapPool
+            if (bitmapPool != null) {
+                bitmapPool.freeBitmap(
                     logger = engine.logger,
                     bitmap = bitmap,
                     disallowReuseBitmap = engine.disallowReuseBitmap,

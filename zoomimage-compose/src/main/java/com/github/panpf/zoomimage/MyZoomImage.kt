@@ -23,6 +23,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.zoomimage.internal.pointerInputCentroid
+import com.github.panpf.zoomimage.internal.transformableTwoDowns
 import kotlinx.coroutines.launch
 
 @Composable

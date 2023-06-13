@@ -22,8 +22,17 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Velocity
-import com.github.panpf.zoomimage.core.Edge
-import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
+import com.github.panpf.zoomimage.internal.calculateNextStepScale
+import com.github.panpf.zoomimage.internal.computeContainerCentroidByTouchPosition
+import com.github.panpf.zoomimage.internal.computeContainerVisibleRect
+import com.github.panpf.zoomimage.internal.computeContentInContainerRect
+import com.github.panpf.zoomimage.internal.computeContentVisibleRect
+import com.github.panpf.zoomimage.internal.computeScaleTargetTranslation
+import com.github.panpf.zoomimage.internal.computeScrollEdge
+import com.github.panpf.zoomimage.internal.computeTranslationBounds
+import com.github.panpf.zoomimage.internal.containerCentroidToContentCentroid
+import com.github.panpf.zoomimage.internal.contentCentroidToContainerCentroid
+import com.github.panpf.zoomimage.internal.toShortString
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 

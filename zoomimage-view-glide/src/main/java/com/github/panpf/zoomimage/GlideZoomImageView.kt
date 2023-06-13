@@ -24,10 +24,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getModel
 import com.bumptech.glide.load.engine.requestOptionsCompat
 import com.bumptech.glide.request.SingleRequest
-import com.github.panpf.zoomimage.core.ImageSource
 import com.github.panpf.zoomimage.internal.GlideHttpImageSource
-import com.github.panpf.zoomimage.internal.GlideTinyBitmapPool
-import com.github.panpf.zoomimage.internal.GlideTinyMemoryCache
+import com.github.panpf.zoomimage.internal.GlideTileBitmapPool
+import com.github.panpf.zoomimage.internal.GlideTileMemoryCache
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import java.io.File
 
 open class GlideZoomImageView @JvmOverloads constructor(
@@ -42,8 +42,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     init {
         val glide = Glide.get(context)
-        _subsamplingAbility?.tinyBitmapPool = GlideTinyBitmapPool(glide)
-        _subsamplingAbility?.tinyMemoryCache = GlideTinyMemoryCache(glide)
+        _subsamplingAbility?.tileBitmapPool = GlideTileBitmapPool(glide)
+        _subsamplingAbility?.tileMemoryCache = GlideTileMemoryCache(glide)
     }
 
     override fun onAttachedToWindow() {

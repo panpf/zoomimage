@@ -20,17 +20,12 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Rect
 import androidx.annotation.MainThread
-import com.github.panpf.zoomimage.core.ImageSource
-import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.OnTileChangedListener
-import com.github.panpf.zoomimage.core.Size
-import com.github.panpf.zoomimage.core.TinyBitmapPool
-import com.github.panpf.zoomimage.core.TinyMemoryCache
-import com.github.panpf.zoomimage.core.internal.ExifOrientationHelper
-import com.github.panpf.zoomimage.core.internal.exifOrientationName
-import com.github.panpf.zoomimage.core.internal.isSupportBitmapRegionDecoder
-import com.github.panpf.zoomimage.core.internal.readExifOrientation
-import com.github.panpf.zoomimage.core.internal.readImageBounds
+import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.TileBitmapPool
+import com.github.panpf.zoomimage.TileMemoryCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -60,8 +55,8 @@ internal class SubsamplingEngine constructor(
     var disableMemoryCache: Boolean = false
     var disallowReuseBitmap: Boolean = false
     var ignoreExifOrientation: Boolean = false
-    var tinyBitmapPool: TinyBitmapPool? = null
-    var tinyMemoryCache: TinyMemoryCache? = null
+    var tileBitmapPool: TileBitmapPool? = null
+    var tileMemoryCache: TileMemoryCache? = null
     var showTileBounds = false
         set(value) {
             if (field != value) {

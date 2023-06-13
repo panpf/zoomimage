@@ -16,7 +16,7 @@
 package com.github.panpf.zoomimage.internal
 
 import android.graphics.Rect
-import com.github.panpf.zoomimage.core.Size
+import com.github.panpf.zoomimage.Size
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -99,7 +99,7 @@ internal fun Rect.crossWith(other: Rect): Boolean {
             && this.bottom > other.top
 }
 
-fun canUseSubsampling(
+internal fun canUseSubsampling(
     imageWidth: Int, imageHeight: Int, drawableWidth: Int, drawableHeight: Int
 ): Boolean {
     if (imageWidth == 0 || imageHeight == 0 || drawableWidth == 0 || drawableHeight == 0) return false

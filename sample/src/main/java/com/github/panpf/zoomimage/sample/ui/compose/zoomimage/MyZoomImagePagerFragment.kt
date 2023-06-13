@@ -36,16 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.MyZoomImage
-import com.github.panpf.zoomimage.MyZoomVisibleRectImage
 import com.github.panpf.zoomimage.ScaleAnimationConfig
 import com.github.panpf.zoomimage.rememberMyZoomState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.compose.base.AppBarFragment
+import com.github.panpf.zoomimage.sample.ui.compose.util.toPx
+import com.github.panpf.zoomimage.sample.ui.compose.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.model.PhotoItem
-import com.github.panpf.zoomimage.toPx
-import com.github.panpf.zoomimage.toShortString
 import kotlinx.coroutines.launch
 
 class MyZoomImagePagerFragment : AppBarFragment() {
@@ -111,7 +110,7 @@ private fun MyZoomImageFullSample() {
             ),
         )
 
-        MyZoomVisibleRectImage(
+        MyZoomImageVisibleRect(
             painter = painter,
             state = myZoomState,
             animateScale = !zoomOptionsDialogState.closeScaleAnimation,
@@ -183,7 +182,7 @@ private fun MyZoomImageFullSample() {
         }
 
         if (zoomOptionsDialogShow) {
-            ZoomOptionsDialog(state = zoomOptionsDialogState) {
+            MyZoomImageOptionsDialog(state = zoomOptionsDialogState) {
                 zoomOptionsDialogShow = false
             }
         }

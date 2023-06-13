@@ -24,8 +24,7 @@ import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.core.Logger
-import com.github.panpf.zoomimage.format
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
@@ -33,6 +32,7 @@ import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.view.widget.TilesMapImageView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 
@@ -187,7 +187,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             """.trimIndent()
         }
         common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
-            val stepScalesString = stepScales.joinToString { it.format(2) }
+            val stepScalesString = stepScales.joinToString { it.format(2).toString() }
             """
                 ${translation.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
                 ${getVisibleRect().toVeryShortString()}

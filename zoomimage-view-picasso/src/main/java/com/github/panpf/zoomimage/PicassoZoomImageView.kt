@@ -19,9 +19,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import com.github.panpf.zoomimage.core.ImageSource
 import com.github.panpf.zoomimage.internal.PicassoHttpImageSource
-import com.github.panpf.zoomimage.internal.PicassoTinyMemoryCache
+import com.github.panpf.zoomimage.internal.PicassoTileMemoryCache
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
@@ -40,7 +40,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     }
 
     init {
-        _subsamplingAbility?.tinyMemoryCache = PicassoTinyMemoryCache(Picasso.get())
+        _subsamplingAbility?.tileMemoryCache = PicassoTileMemoryCache(Picasso.get())
     }
 
     fun loadImage(

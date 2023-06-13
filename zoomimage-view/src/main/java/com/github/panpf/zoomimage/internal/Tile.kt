@@ -17,12 +17,12 @@ package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
 import android.graphics.Rect
-import com.github.panpf.zoomimage.core.CacheBitmap
+import com.github.panpf.zoomimage.TileBitmap
 import kotlinx.coroutines.Job
 
 class Tile constructor(val srcRect: Rect, val inSampleSize: Int) {
 
-    internal var countBitmap: CacheBitmap? = null
+    internal var countBitmap: TileBitmap? = null
         set(value) {
             field?.setIsDisplayed(false)
             field = value
