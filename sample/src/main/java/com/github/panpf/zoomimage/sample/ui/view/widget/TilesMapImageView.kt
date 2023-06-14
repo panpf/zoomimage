@@ -34,6 +34,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.isNotEmpty
+import com.github.panpf.zoomimage.sample.util.crossWith
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -70,7 +71,9 @@ class TilesMapImageView @JvmOverloads constructor(
         if (imageSize.isNotEmpty) {
             val widthTargetScale = imageSize.width.toFloat() / viewWidth
             val heightTargetScale = imageSize.height.toFloat() / viewHeight
-            zoomView.subsamplingAbility.eachTileList { tile, load ->
+            val imageLoadRect = zoomView.subsamplingAbility.imageLoadRect
+            zoomView.subsamplingAbility.tileList?.forEach { tile ->
+                val load = tile.srcRect.crossWith(imageLoadRect)
                 val tileBitmap = tile.bitmap
                 val tileSrcRect = tile.srcRect
                 val tileDrawRect = tileDrawRect.apply {

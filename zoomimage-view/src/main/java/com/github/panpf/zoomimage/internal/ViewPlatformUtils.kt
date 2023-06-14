@@ -28,3 +28,10 @@ internal fun getPointerIndex(action: Int): Int {
 
 internal fun Rect.toVeryShortString(): String =
     "(${left},${top}-${right},${bottom})"
+
+internal fun Rect.crossWith(other: Rect): Boolean {
+    return this.left < other.right
+            && this.right > other.left
+            && this.top < other.bottom
+            && this.bottom > other.top
+}

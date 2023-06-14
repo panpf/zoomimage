@@ -66,12 +66,16 @@ internal class TileManager constructor(
     private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(4)
     private var lastTileList: List<Tile>? = null
     private var lastSampleSize: Int? = null
-    private val imageVisibleRect = Rect()
-    private val imageLoadRect = Rect()
-    private val tileDrawRect = Rect()
+    private val _imageVisibleRect = Rect()
+    private val _imageLoadRect = Rect()
+    private val _tileDrawRect = Rect()
 
     val tileList: List<Tile>?
-        get() = lastTileList
+        get() = lastTileList?.toList()
+    val imageVisibleRect: Rect
+        get() = Rect().apply { set(_imageVisibleRect) }
+    val imageLoadRect: Rect
+        get() = Rect().apply { set(_imageLoadRect) }
 
     init {
         engine.logger.d(SubsamplingEngine.MODULE) {
@@ -122,8 +126,8 @@ internal class TileManager constructor(
         engine.logger.d(SubsamplingEngine.MODULE) {
             "refreshTiles. started. " +
                     "imageSize=${decoder.imageSize}, " +
-                    "imageVisibleRect=$imageVisibleRect, " +
-                    "imageLoadRect=$imageLoadRect, " +
+                    "imageVisibleRect=$_imageVisibleRect, " +
+                    "imageLoadRect=$_imageLoadRect, " +
                     "drawableSize=$drawableSize, " +
                     "drawableVisibleRect=${drawableVisibleRect}, " +
                     "zoomScale=$zoomScale, " +
@@ -131,7 +135,7 @@ internal class TileManager constructor(
                     "'${imageSource.key}"
         }
         tileList.forEach { tile ->
-            if (tile.srcRect.crossWith(imageLoadRect)) {
+            if (tile.srcRect.crossWith(_imageLoadRect)) {
                 loadTile(tile)
             } else {
                 freeTile(tile)
@@ -159,10 +163,10 @@ internal class TileManager constructor(
         canvas.withSave {
             canvas.concat(drawMatrix)
             tileList.forEach { tile ->
-                if (tile.srcRect.crossWith(imageLoadRect)) {
+                if (tile.srcRect.crossWith(_imageLoadRect)) {
                     val tileBitmap = tile.bitmap
                     val tileSrcRect = tile.srcRect
-                    val tileDrawRect = tileDrawRect.apply {
+                    val tileDrawRect = _tileDrawRect.apply {
                         set(
                             floor(tileSrcRect.left / widthScale).toInt(),
                             floor(tileSrcRect.top / heightScale).toInt(),
@@ -311,21 +315,9 @@ internal class TileManager constructor(
         }
     }
 
-    fun eachTileList(
-        drawableSize: Size,
-        drawableVisibleRect: Rect,
-        action: (tile: Tile, load: Boolean) -> Unit
-    ) {
-        val tileList = lastTileList ?: return
-        resetVisibleAndLoadRect(drawableSize, drawableVisibleRect)
-        tileList.forEach {
-            action(it, it.srcRect.crossWith(imageLoadRect))
-        }
-    }
-
     private fun resetVisibleAndLoadRect(drawableSize: Size, drawableVisibleRect: Rect) {
         val drawableScaled = decoder.imageSize.width / drawableSize.width.toFloat()
-        imageVisibleRect.apply {
+        _imageVisibleRect.apply {
             set(
                 floor(drawableVisibleRect.left * drawableScaled).toInt(),
                 floor(drawableVisibleRect.top * drawableScaled).toInt(),
@@ -336,12 +328,12 @@ internal class TileManager constructor(
         // Increase the visible area as the loading area,
         // this preloads tiles around the visible area,
         // the user will no longer feel the loading process while sliding slowly
-        imageLoadRect.apply {
+        _imageLoadRect.apply {
             set(
-                imageVisibleRect.left - tileMaxSize.width / 2,
-                imageVisibleRect.top - tileMaxSize.height / 2,
-                imageVisibleRect.right + tileMaxSize.width / 2,
-                imageVisibleRect.bottom + tileMaxSize.height / 2
+                _imageVisibleRect.left - tileMaxSize.width / 2,
+                _imageVisibleRect.top - tileMaxSize.height / 2,
+                _imageVisibleRect.right + tileMaxSize.width / 2,
+                _imageVisibleRect.bottom + tileMaxSize.height / 2
             )
         }
     }

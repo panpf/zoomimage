@@ -1,16 +1,17 @@
 package com.github.panpf.zoomimage
 
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import com.github.panpf.zoomimage.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.internal.Tile
 import com.github.panpf.zoomimage.internal.getLifecycle
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
-import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -109,6 +110,12 @@ class SubsamplingAbility(
     val tileList: List<Tile>?
         get() = engine.tileList
 
+    val imageVisibleRect: Rect
+        get() = engine.imageVisibleRect
+
+    val imageLoadRect: Rect
+        get() = engine.imageLoadRect
+
     val imageSize: Size?
         get() = engine.imageSize
 
@@ -117,10 +124,6 @@ class SubsamplingAbility(
 
     val imageExifOrientation: Int?
         get() = engine.imageExifOrientation
-
-    fun eachTileList(action: (tile: Tile, load: Boolean) -> Unit) {
-        engine.eachTileList(action)
-    }
 
     fun addOnTileChangedListener(listener: OnTileChangedListener) {
         engine.addOnTileChangedListener(listener)

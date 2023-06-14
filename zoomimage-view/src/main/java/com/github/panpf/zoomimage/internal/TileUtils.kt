@@ -92,13 +92,6 @@ internal fun findSampleSize(
     return sampleSize
 }
 
-internal fun Rect.crossWith(other: Rect): Boolean {
-    return this.left < other.right
-            && this.right > other.left
-            && this.top < other.bottom
-            && this.bottom > other.top
-}
-
 internal fun canUseSubsampling(
     imageWidth: Int, imageHeight: Int, drawableWidth: Int, drawableHeight: Int
 ): Boolean {

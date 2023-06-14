@@ -20,12 +20,12 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Rect
 import androidx.annotation.MainThread
-import com.github.panpf.zoomimage.imagesource.ImageSource
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.OnTileChangedListener
 import com.github.panpf.zoomimage.Size
 import com.github.panpf.zoomimage.TileBitmapPool
 import com.github.panpf.zoomimage.TileMemoryCache
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -83,6 +83,10 @@ internal class SubsamplingEngine constructor(
         get() = imageSource == null
     val tileList: List<Tile>?
         get() = tileManager?.tileList
+    val imageVisibleRect: Rect
+        get() = tileManager?.imageVisibleRect ?: Rect()
+    val imageLoadRect: Rect
+        get() = tileManager?.imageLoadRect ?: Rect()
     var imageSize: Size? = null
         private set
     var imageMimeType: String? = null
@@ -282,11 +286,5 @@ internal class SubsamplingEngine constructor(
 
     fun removeOnTileChangedListener(listener: OnTileChangedListener): Boolean {
         return onTileChangedListenerList?.remove(listener) == true
-    }
-
-    fun eachTileList(action: (tile: Tile, load: Boolean) -> Unit) {
-        val drawableSize = zoomEngine.drawableSize.takeIf { !it.isEmpty } ?: return
-        val drawableVisibleRect = zoomEngine.getVisibleRect().takeIf { !it.isEmpty } ?: return
-        tileManager?.eachTileList(drawableSize, drawableVisibleRect, action)
     }
 }

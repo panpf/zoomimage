@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.sample.util
 
 import android.content.Context
+import android.graphics.Rect
 import android.net.Uri
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -56,6 +57,13 @@ internal fun android.graphics.Rect.toVeryShortString(): String =
 
 internal fun android.graphics.RectF.toVeryShortString(): String =
     "(${left.format(2)},${top.format(2)}-${right.format(2)},${bottom.format(2)})"
+
+internal fun Rect.crossWith(other: Rect): Boolean {
+    return this.left < other.right
+            && this.right > other.left
+            && this.top < other.bottom
+            && this.bottom > other.top
+}
 
 internal fun Float.format(newScale: Int): Float =
     BigDecimal(toDouble()).setScale(newScale, BigDecimal.ROUND_HALF_UP).toFloat()
