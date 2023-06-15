@@ -15,6 +15,7 @@
  */
 package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import androidx.core.view.isVisible
@@ -23,8 +24,8 @@ import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.tools4j.io.ktx.formatFileSize
-import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
@@ -33,7 +34,6 @@ import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.view.widget.TilesMapImageView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
-import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
@@ -55,22 +55,25 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
         zoomImageView.apply {
-            prefsService.scaleType.stateFlow.collectWithLifecycle(lifecycleOwner) {
+            prefsService.scaleType.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 scaleType = ScaleType.valueOf(it)
             }
             zoomAbility.apply {
                 logger.level = if (BuildConfig.DEBUG)
                     Logger.Level.DEBUG else Logger.Level.INFO
-                prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(lifecycleOwner) {
+                prefsService.threeStepScaleEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    threeStepScaleEnabled = it
+                }
+                prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     scrollBarEnabled = it
                 }
-                prefsService.readModeEnabled.stateFlow.collectWithLifecycle(lifecycleOwner) {
+                prefsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     readModeEnabled = it
                 }
             }
             subsamplingAbility.apply {
                 setLifecycle(viewLifecycleOwner.lifecycle)
-                prefsService.showTileBounds.stateFlow.collectWithLifecycle(lifecycleOwner) {
+                prefsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBounds = it
                 }
             }
@@ -175,23 +178,23 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         onCallError: () -> Unit
     )
 
+    @SuppressLint("SetTextI18n")
     private fun updateInfo(
         zoomImageView: ZoomImageView,
         common: ZoomImageViewCommonFragmentBinding
     ) {
-        common.zoomImageViewInfoHeaderText.text = zoomImageView.zoomAbility.run {
-            """
-                translate: 
-                visible: 
+        common.zoomImageViewInfoHeaderText.text = """
                 scale: 
+                visible: 
+                translation: 
             """.trimIndent()
-        }
         common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
-            val stepScalesString = stepScales.joinToString { it.format(2).toString() }
+            val scales = floatArrayOf(minScale, mediumScale, maxScale)
+                .joinToString(prefix = "(", postfix = ")") { it.format(2).toString() }
             """
-                ${translation.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
+                ${scale.format(2)} in $scales
                 ${getVisibleRect().toVeryShortString()}
-                ${scale.format(2)} in [${minScale.format(2)},${maxScale.format(2)}], steps=($stepScalesString)
+                ${translation.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
             """.trimIndent()
         }
     }
@@ -207,9 +210,15 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         return ZoomImageViewInfoDialogFragmentArgs(
             imageUri = sketchImageUri,
             imageInfo = """
-                ${subsamplingAbility.imageSize?.toVeryShortString()}
-                ${subsamplingAbility.imageMimeType}
-                ${subsamplingAbility.imageExifOrientation?.let { exifOrientationName(it) }}
+                size=${subsamplingAbility.imageSize?.toVeryShortString()}
+                mimeType=${subsamplingAbility.imageMimeType}
+                exifOrientation=${
+                subsamplingAbility.imageExifOrientation?.let {
+                    exifOrientationName(
+                        it
+                    )
+                }
+            }
             """.trimIndent(),
             sizeInfo = """
                 view=${zoomAbility.viewSize.toVeryShortString()}

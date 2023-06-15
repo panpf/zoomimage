@@ -67,6 +67,10 @@ fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
     return false
 }
 
+fun Size.rotate(rotateDegrees: Int): Size {
+    return if (rotateDegrees % 180 == 0) this else Size(height, width)
+}
+
 //fun Size.toSketchSize(): com.github.panpf.sketch.util.Size {
 //    return com.github.panpf.sketch.util.Size(width, height)
 //}

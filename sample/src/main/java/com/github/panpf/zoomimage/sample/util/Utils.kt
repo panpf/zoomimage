@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.sample.util
 
 import android.content.Context
+import android.graphics.PointF
 import android.graphics.Rect
 import android.net.Uri
 import android.util.Log
@@ -10,6 +11,7 @@ import androidx.core.net.toUri
 import com.github.panpf.zoomimage.Size
 import java.io.File
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 internal fun sketchUri2CoilModel(context: Context, sketchImageUri: String): Any? {
     return when {
@@ -50,6 +52,8 @@ internal fun newCoilAssetUri(@Suppress("SameParameterValue") path: String): Uri 
 
 internal fun Size.toShortString(): String = "(${width}x$height)"
 
+internal fun PointF.toShortString(): String = "(${x}x$y)"
+
 internal fun Size.toVeryShortString(): String = "${width}x$height"
 
 internal fun android.graphics.Rect.toVeryShortString(): String =
@@ -65,8 +69,13 @@ internal fun Rect.crossWith(other: Rect): Boolean {
             && this.bottom > other.top
 }
 
-internal fun Float.format(newScale: Int): Float =
-    BigDecimal(toDouble()).setScale(newScale, BigDecimal.ROUND_HALF_UP).toFloat()
+internal fun Float.format(newScale: Int): Float {
+    return if (this.isNaN()) {
+        this
+    } else {
+        BigDecimal(toDouble()).setScale(newScale, RoundingMode.HALF_UP).toFloat()
+    }
+}
 
 internal fun String.formatLength(targetLength: Int, padChar: Char = ' '): String {
     return if (this.length >= targetLength) {

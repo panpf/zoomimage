@@ -42,13 +42,12 @@ internal class TapHelper constructor(
 
     override fun onDoubleTap(ev: MotionEvent): Boolean {
         try {
-            val currentScaleFormat = engine.scale.format(2)
-            val finalScale = engine.getNextStepScale()
-            if (finalScale > currentScaleFormat) {
-                engine.scale(finalScale, ev.x, ev.y, true)
-            } else {
-                engine.scale(finalScale, true)
-            }
+            engine.scale(
+                newScale = engine.getNextStepScale(),
+                focalX = ev.x,
+                focalY = ev.y,
+                animate = true
+            )
         } catch (e: ArrayIndexOutOfBoundsException) {
             // Can sometimes happen when getX() and getY() is called
         }

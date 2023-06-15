@@ -18,10 +18,7 @@ package com.github.panpf.zoomimage
 import com.github.panpf.zoomimage.internal.format
 
 interface ReadModeDecider {
-
-    fun should(
-        imageWidth: Int, imageHeight: Int, viewWidth: Int, viewHeight: Int
-    ): Boolean
+    fun should(srcSize: Size, dstSize: Size): Boolean
 }
 
 class LongImageReadModeDecider(
@@ -29,9 +26,8 @@ class LongImageReadModeDecider(
     val notSameDirectionMultiple: Float = 5.0f,
 ) : ReadModeDecider {
 
-    override fun should(
-        imageWidth: Int, imageHeight: Int, viewWidth: Int, viewHeight: Int
-    ): Boolean = isLongImage(imageWidth, imageHeight, viewWidth, viewHeight)
+    override fun should(srcSize: Size, dstSize: Size): Boolean =
+        isLongImage(srcSize = srcSize, dstSize = dstSize)
 
     /**
      * Determine whether it is a long image given the image size and target size
@@ -41,18 +37,18 @@ class LongImageReadModeDecider(
      * otherwise it is considered as a long image when it reaches [notSameDirectionMultiple] times
      */
     private fun isLongImage(
-        imageWidth: Int, imageHeight: Int, targetWidth: Int, targetHeight: Int
+        srcSize: Size, dstSize: Size
     ): Boolean {
-        val imageAspectRatio = imageWidth.toFloat().div(imageHeight).format(2)
-        val targetAspectRatio = targetWidth.toFloat().div(targetHeight).format(2)
-        val sameDirection = imageAspectRatio == 1.0f
-                || targetAspectRatio == 1.0f
-                || (imageAspectRatio > 1.0f && targetAspectRatio > 1.0f)
-                || (imageAspectRatio < 1.0f && targetAspectRatio < 1.0f)
+        val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
+        val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
+        val sameDirection = srcAspectRatio == 1.0f
+                || dstAspectRatio == 1.0f
+                || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
+                || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
         val ratioMultiple = if (sameDirection) sameDirectionMultiple else notSameDirectionMultiple
         return if (ratioMultiple > 0) {
-            val maxAspectRatio = targetAspectRatio.coerceAtLeast(imageAspectRatio)
-            val minAspectRatio = targetAspectRatio.coerceAtMost(imageAspectRatio)
+            val maxAspectRatio = dstAspectRatio.coerceAtLeast(srcAspectRatio)
+            val minAspectRatio = dstAspectRatio.coerceAtMost(srcAspectRatio)
             maxAspectRatio >= (minAspectRatio * ratioMultiple)
         } else {
             false

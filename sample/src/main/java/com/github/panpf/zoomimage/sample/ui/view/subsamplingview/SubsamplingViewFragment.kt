@@ -15,6 +15,9 @@
  */
 package com.github.panpf.zoomimage.sample.ui.view.subsamplingview
 
+import android.annotation.SuppressLint
+import android.graphics.PointF
+import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
 import androidx.core.net.toUri
@@ -23,6 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.request.Depth.NETWORK
 import com.github.panpf.sketch.request.DownloadData
@@ -31,6 +35,9 @@ import com.github.panpf.sketch.request.DownloadResult
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.sample.databinding.SubsamplingViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
+import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.sample.util.toShortString
+import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import kotlinx.coroutines.launch
 
 class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>() {
@@ -41,7 +48,18 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
         binding: SubsamplingViewFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        binding.subsamplingViewUriText.text = "uri: ${args.imageUri}"
+//        binding.subsamplingViewUriText.text = "uri: ${args.imageUri}"
+
+        binding.subsamplingView.setOnStateChangedListener(object : OnStateChangedListener {
+            override fun onScaleChanged(newScale: Float, origin: Int) {
+                updateInfo(binding)
+            }
+
+            override fun onCenterChanged(newCenter: PointF?, origin: Int) {
+                updateInfo(binding)
+            }
+        })
+        updateInfo(binding)
 
         binding.subsamplingViewProgress.isVisible = false
         binding.subsamplingViewErrorLayout.isVisible = false
@@ -123,6 +141,22 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
             else -> {
                 ImageSource.uri(sketchImageUri)
             }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateInfo(binding: SubsamplingViewFragmentBinding) {
+        binding.subsamplingViewInfoHeaderText.text = """
+                scale: 
+                space: 
+                center: 
+            """.trimIndent()
+        binding.subsamplingViewInfoContentText.text = binding.subsamplingView.run {
+            """
+                ${scale.format(2)} in (${minScale.format(2)},${maxScale.format(2)})
+                ${RectF().apply { getPanRemaining(this) }.toVeryShortString()}
+                ${center?.toShortString()}
+            """.trimIndent()
         }
     }
 

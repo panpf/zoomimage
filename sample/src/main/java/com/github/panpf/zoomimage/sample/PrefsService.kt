@@ -28,6 +28,19 @@ class PrefsService(val context: Context) {
     val scaleType by lazy {
         StringMmkvData(mmkv, "scaleType", FIT_CENTER.name)
     }
+    val scrollBarEnabled by lazy {
+        BooleanMmkvData(mmkv, "scrollBarEnabled", true)
+    }
+    val readModeEnabled by lazy {
+        BooleanMmkvData(mmkv, "readModeEnabled", true)
+    }
+    val threeStepScaleEnabled by lazy {
+        BooleanMmkvData(mmkv, "threeStepScaleEnabled", false)
+    }
+
+    val showTileBounds by lazy {
+        BooleanMmkvData(mmkv, "showTileBounds", false)
+    }
     val disableMemoryCache by lazy {
         BooleanMmkvData(mmkv, "disableMemoryCache", false)
     }
@@ -36,14 +49,5 @@ class PrefsService(val context: Context) {
     }
     val ignoreExifOrientation by lazy {
         BooleanMmkvData(mmkv, "ignoreExifOrientation", false)
-    }
-    val scrollBarEnabled by lazy {
-        BooleanMmkvData(mmkv, "scrollBarEnabled", true)
-    }
-    val readModeEnabled by lazy {
-        BooleanMmkvData(mmkv, "readModeEnabled", true)
-    }
-    val showTileBounds by lazy {
-        BooleanMmkvData(mmkv, "showTileBounds", false)
     }
 }

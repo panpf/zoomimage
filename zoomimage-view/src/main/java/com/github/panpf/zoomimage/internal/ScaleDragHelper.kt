@@ -25,7 +25,6 @@ import android.view.MotionEvent
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.ScaleState.Initial
 import com.github.panpf.zoomimage.Size
 import com.github.panpf.zoomimage.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoomimage.internal.ScaleDragGestureDetector.OnGestureListener
@@ -77,8 +76,12 @@ internal class ScaleDragHelper constructor(
         get() = animatedScaleRunnable?.isRunning == true || manualScaling
     val baseScale: Float
         get() = baseMatrix.getScale()
+    val baseTranslation: PointF
+        get() = baseMatrix.getTranslation()
     val supportScale: Float
         get() = supportMatrix.getScale()
+    val supportTranslation: PointF
+        get() = supportMatrix.getTranslation()
     val scale: Float
         get() = drawMatrix.apply { getDrawMatrix(this) }.getScale()
     val translation: PointF
@@ -136,22 +139,20 @@ internal class ScaleDragHelper constructor(
     }
 
     private fun resetBaseMatrix() {
-        baseMatrix.reset()
-        when (val initState = engine.scaleState.initial) {
-            is Initial.Normal -> {
-                baseMatrix.postScale(initState.scale, initState.scale)
-                baseMatrix.postTranslate(initState.translateX, initState.translateY)
-            }
-
-            is Initial.FitXy -> {
-                baseMatrix.setRectToRect(
-                    initState.srcRectF,
-                    initState.dstRectF,
-                    Matrix.ScaleToFit.FILL
-                )
-            }
+        baseMatrix.apply {
+            reset()
+            val transform = engine.baseInitialTransform
+            postScale(transform.scaleX, transform.scaleY)
+            postTranslate(transform.translateX, transform.translateY)
+            postRotate(engine.rotateDegrees.toFloat())
         }
-        baseMatrix.postRotate(engine.rotateDegrees.toFloat())
+
+        supportMatrix.apply {
+            reset()
+            val transform = engine.supportInitialTransform
+            postScale(transform.scaleX, transform.scaleY)
+            postTranslate(transform.translateX, transform.translateY)
+        }
     }
 
     private fun resetSupportMatrix() {
@@ -247,11 +248,11 @@ internal class ScaleDragHelper constructor(
         }
         val newX = pointF.x
         val newY = pointF.y
-        var nowScale = scale.format(2)
-        val fullZoomScale = engine.fullScale.format(2)
-        if (nowScale == fullZoomScale) {
+        var formattedNowScale = scale.format(2)
+        val formattedMinScale = engine.minScale
+        if (formattedNowScale == formattedMinScale) {
             scale(
-                scale = engine.originScale,
+                newScale = engine.getNextStepScale(),
                 focalX = engine.viewSize.width / 2f,
                 focalY = engine.viewSize.height / 2f,
                 animate = false
@@ -259,9 +260,9 @@ internal class ScaleDragHelper constructor(
         }
 
         val drawRectF = getDrawRect()
-        nowScale = scale
-        val scaleLocationX = (newX * nowScale).toInt()
-        val scaleLocationY = (newY * nowScale).toInt()
+        formattedNowScale = scale
+        val scaleLocationX = (newX * formattedNowScale).toInt()
+        val scaleLocationY = (newY * formattedNowScale).toInt()
         val scaledLocationX =
             scaleLocationX.coerceAtLeast(0).coerceAtMost(drawRectF.width().toInt())
         val scaledLocationY =
@@ -293,24 +294,21 @@ internal class ScaleDragHelper constructor(
         }
     }
 
-    fun scale(scale: Float, focalX: Float, focalY: Float, animate: Boolean) {
+    fun scale(newScale: Float, focalX: Float, focalY: Float, animate: Boolean) {
         animatedScaleRunnable?.cancel()
+        val currentScale = engine.scale
         if (animate) {
             animatedScaleRunnable = AnimatedScaleRunnable(
                 engine = engine,
                 scaleDragHelper = this@ScaleDragHelper,
-                startScale = engine.scale,
-                endScale = scale,
+                startScale = currentScale,
+                endScale = newScale,
                 scaleFocalX = focalX,
                 scaleFocalY = focalY
             )
             animatedScaleRunnable?.start()
         } else {
-            val baseScale = baseScale
-            val supportZoomScale = supportScale
-            val finalScale = scale / baseScale
-            val addScale = finalScale / supportZoomScale
-            scaleBy(addScale, focalX, focalY)
+            scaleBy(addScale = newScale / currentScale, focalX = focalX, focalY = focalY)
         }
     }
 
@@ -340,6 +338,7 @@ internal class ScaleDragHelper constructor(
         val (drawableWidth, drawableHeight) = drawableSize.let {
             if (engine.rotateDegrees % 180 == 0) it else Size(it.height, it.width)
         }
+        // todo fit_xy 时不准
         val displayWidth = drawRectF.width()
         val displayHeight = drawRectF.height()
         val widthScale = displayWidth / drawableWidth
@@ -499,25 +498,25 @@ internal class ScaleDragHelper constructor(
         var newScaleFactor = scaleFactor
         lastScaleFocusX = focusX
         lastScaleFocusY = focusY
-        val oldSupportScale = supportScale
-        var newSupportScale = oldSupportScale * newScaleFactor
+        val currentSupportScale = supportScale
+        var newSupportScale = currentSupportScale * newScaleFactor
         if (newScaleFactor > 1.0f) {
             // The maximum zoom has been reached. Simulate the effect of pulling a rubber band
-            val maxSupportScale = engine.maxScale / baseMatrix.getScale()
-            if (oldSupportScale >= maxSupportScale) {
-                var addScale = newSupportScale - oldSupportScale
+            val maxSupportScale = engine.maxScale / engine.baseScale
+            if (currentSupportScale >= maxSupportScale) {
+                var addScale = newSupportScale - currentSupportScale
                 addScale *= 0.4f
-                newSupportScale = oldSupportScale + addScale
-                newScaleFactor = newSupportScale / oldSupportScale
+                newSupportScale = currentSupportScale + addScale
+                newScaleFactor = newSupportScale / currentSupportScale
             }
         } else if (newScaleFactor < 1.0f) {
             // The minimum zoom has been reached. Simulate the effect of pulling a rubber band
-            val minSupportScale = engine.minScale / baseMatrix.getScale()
-            if (oldSupportScale <= minSupportScale) {
-                var addScale = newSupportScale - oldSupportScale
+            val minSupportScale = engine.minScale / engine.baseScale
+            if (currentSupportScale <= minSupportScale) {
+                var addScale = newSupportScale - currentSupportScale
                 addScale *= 0.4f
-                newSupportScale = oldSupportScale + addScale
-                newScaleFactor = newSupportScale / oldSupportScale
+                newSupportScale = currentSupportScale + addScale
+                newScaleFactor = newSupportScale / currentSupportScale
             }
         }
 

@@ -12,24 +12,33 @@
         android:layout_height="match_parent" />
 
     <LinearLayout
-        android:id="@+id/subsamplingViewInfoLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="20dp">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/subsamplingViewUriText"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/subsamplingViewInfoHeaderText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:ellipsize="end"
+            android:shadowColor="@android:color/black"
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="4"
-            android:ellipsize="middle"
-            tools:singleLine="true"
+            android:textColor="@android:color/white"
+            tools:text="draw：\nvisible: \nstepScales: " />
+        <TextView
+            android:id="@+id/subsamplingViewInfoContentText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
             android:shadowColor="@android:color/black"
-            tools:text="uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：uri：" />
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="4"
+            android:textColor="@android:color/white"
+            tools:text="draw：\nvisible: \nstepScales: " />
     </LinearLayout>
 
     <ProgressBar

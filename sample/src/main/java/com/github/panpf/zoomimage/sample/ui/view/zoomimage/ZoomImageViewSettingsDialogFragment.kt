@@ -58,9 +58,9 @@ class ZoomImageViewSettingsDialogFragment : BindingDialogFragment<RecyclerFragme
                     )
                     add(
                         SwitchMenuFlow(
-                            title = "Scroll Bar",
-                            desc = null,
-                            data = prefsService.scrollBarEnabled,
+                            title = "Three Step Scale",
+                            data = prefsService.threeStepScaleEnabled,
+                            desc = "Double-click zoom in three steps"
                         )
                     )
                     add(
@@ -70,6 +70,14 @@ class ZoomImageViewSettingsDialogFragment : BindingDialogFragment<RecyclerFragme
                             desc = "Long images are displayed in full screen by default"
                         )
                     )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Scroll Bar",
+                            desc = null,
+                            data = prefsService.scrollBarEnabled,
+                        )
+                    )
+
                     add(
                         SwitchMenuFlow(
                             title = "Show Tile Bounds",

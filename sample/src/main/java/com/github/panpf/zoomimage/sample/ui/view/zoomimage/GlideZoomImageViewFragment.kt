@@ -31,7 +31,6 @@ import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragment
 import com.github.panpf.zoomimage.sample.databinding.GlideZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
-import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import kotlinx.coroutines.flow.merge
 
 class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewFragmentBinding>() {
@@ -69,7 +68,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
 //                prefsService.disableMemoryCache.stateFlow,
                 prefsService.disallowReuseBitmap.stateFlow,
 //                prefsService.ignoreExifOrientation.stateFlow,
-            ).merge().collectWithLifecycle(lifecycleOwner) {
+            ).merge().collectWithLifecycle(viewLifecycleOwner) {
 //                subsamplingAbility.disableMemoryCache = prefsService.disableMemoryCache.value
                 subsamplingAbility.disallowReuseBitmap = prefsService.disallowReuseBitmap.value
 //                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
@@ -78,7 +77,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
                 prefsService.disableMemoryCache.sharedFlow,
                 prefsService.disallowReuseBitmap.sharedFlow,
 //                prefsService.ignoreExifOrientation.sharedFlow,
-            ).merge().collectWithLifecycle(lifecycleOwner) {
+            ).merge().collectWithLifecycle(viewLifecycleOwner) {
                 loadData(binding, binding.common, sketchImageUri)
             }
         }

@@ -22,11 +22,10 @@ import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.SketchZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
-import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import kotlinx.coroutines.flow.merge
 
 class SketchZoomImageViewFragment :
@@ -74,7 +73,7 @@ class SketchZoomImageViewFragment :
                 prefsService.disableMemoryCache.sharedFlow,
                 prefsService.disallowReuseBitmap.sharedFlow,
                 prefsService.ignoreExifOrientation.sharedFlow,
-            ).merge().collectWithLifecycle(lifecycleOwner) {
+            ).merge().collectWithLifecycle(viewLifecycleOwner) {
                 loadData(binding, binding.common, sketchImageUri)
             }
         }

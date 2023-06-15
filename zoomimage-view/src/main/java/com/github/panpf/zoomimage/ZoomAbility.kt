@@ -26,7 +26,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
-import com.github.panpf.zoomimage.ScaleState.Factory
 import com.github.panpf.zoomimage.internal.ImageViewBridge
 import com.github.panpf.zoomimage.internal.ZoomEngine
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
@@ -118,6 +117,12 @@ class ZoomAbility(
     fun canScrollVertically(direction: Int): Boolean =
         engine.canScrollVertically(direction)
 
+    var threeStepScaleEnabled: Boolean
+        get() = engine.threeStepScaleEnabled
+        set(value) {
+            engine.threeStepScaleEnabled = value
+        }
+
     var scrollBarEnabled: Boolean
         get() = engine.scrollBarEnabled
         set(value) {
@@ -134,12 +139,6 @@ class ZoomAbility(
         get() = engine.readModeDecider
         set(value) {
             engine.readModeDecider = value
-        }
-
-    var scaleStateFactory: Factory
-        get() = engine.scaleStateFactory
-        set(value) {
-            engine.scaleStateFactory = value
         }
 
     var scaleAnimationDuration: Int
@@ -181,32 +180,29 @@ class ZoomAbility(
     val verScrollEdge: Edge
         get() = engine.verScrollEdge
 
+    val baseScale: Float
+        get() = engine.baseScale
+
+    val baseTranslation: PointF
+        get() = engine.baseTranslation
+
+    val supportScale: Float
+        get() = engine.supportScale
+
+    val supportTranslation: PointF
+        get() = engine.supportTranslation
+
     val scale: Float
         get() = engine.scale
 
     val translation: PointF
         get() = engine.translation
 
-    val baseScale: Float
-        get() = engine.baseScale
-
-    val supportScale: Float
-        get() = engine.supportScale
-
-    /** Zoom ratio that makes the image fully visible */
-    val fullScale: Float
-        get() = engine.fullScale
-
-    /** Gets the zoom that fills the image with the ImageView display */
-    val fillScale: Float
-        get() = engine.fillScale
-
-    /** Gets the scale that allows the image to be displayed at scale to scale */
-    val originScale: Float
-        get() = engine.originScale
-
     val minScale: Float
         get() = engine.minScale
+
+    val mediumScale: Float
+        get() = engine.mediumScale
 
     val maxScale: Float
         get() = engine.maxScale

@@ -27,7 +27,6 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
-import com.github.panpf.zoomimage.DefaultScaleStateFactory
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.LongImageReadModeDecider
@@ -39,9 +38,9 @@ import com.github.panpf.zoomimage.OnViewDragListener
 import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.OnViewTapListener
 import com.github.panpf.zoomimage.ReadModeDecider
-import com.github.panpf.zoomimage.ScaleState
-import com.github.panpf.zoomimage.ScaleState.Factory
 import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.Transform
+import com.github.panpf.zoomimage.rotate
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
@@ -145,13 +144,6 @@ internal class ZoomEngine constructor(
         }
     private val finalReadModeDecider: ReadModeDecider?
         get() = if (readModeEnabled) readModeDecider ?: LongImageReadModeDecider() else null
-    var scaleStateFactory: Factory = DefaultScaleStateFactory()
-        internal set(value) {
-            if (field != value) {
-                field = value
-                reset()
-            }
-        }
     var scrollBarEnabled: Boolean
         get() = scrollBarHelper != null
         internal set(value) {
@@ -170,7 +162,36 @@ internal class ZoomEngine constructor(
                 field = value
             }
         }
-    var scaleState: ScaleState = ScaleState.EMPTY
+    var threeStepScaleEnabled: Boolean = false
+        internal set(value) {
+            if (field != value) {
+                field = value
+                reset()
+            }
+        }
+
+    var minScale: Float = 1.0f
+        private set
+
+    var mediumScale: Float = 1.0f
+        private set
+
+    var maxScale: Float = 1.0f
+        private set
+
+    var stepScales: FloatArray = floatArrayOf()
+        private set
+
+    /**
+     * Initial scale and translate for base matrix
+     */
+    var baseInitialTransform: Transform = Transform.EMPTY
+        private set
+
+    /**
+     * Initial scale and translate for support matrix
+     */
+    var supportInitialTransform: Transform = Transform.EMPTY
         private set
 
 
@@ -181,14 +202,42 @@ internal class ZoomEngine constructor(
     }
 
     private fun reset() {
-        scaleState = scaleStateFactory.create(
-            viewSize = viewSize,
-            imageSize = imageSize,
-            drawableSize = drawableSize,
-            rotateDegrees = _rotateDegrees,
-            scaleType = scaleType,
-            readModeDecider = finalReadModeDecider
-        )
+        val drawableSize = drawableSize
+        val imageSize = imageSize
+        val viewSize = viewSize
+        if (drawableSize.isEmpty || viewSize.isEmpty) {
+            minScale = 1.0f
+            mediumScale = 1.0f
+            maxScale = 1.0f
+            baseInitialTransform = Transform.EMPTY
+            supportInitialTransform = Transform.EMPTY
+        } else {
+            val finalDrawableSize = drawableSize.rotate(rotateDegrees)
+            val finalImageSize = imageSize.rotate(rotateDegrees)
+            val scales = computeSupportScales(
+                scaleType = scaleType,
+                drawableSize = finalDrawableSize,
+                imageSize = finalImageSize,
+                viewSize = viewSize,
+                readModeDecider = readModeDecider
+            )
+            minScale = scales[0]
+            mediumScale = scales[1]
+            maxScale = scales[2]
+            baseInitialTransform = scaleType
+                .computeTransform(srcSize = finalDrawableSize, dstSize = viewSize)
+            supportInitialTransform = readModeDecider
+                ?.computeTransform(
+                    scaleType = scaleType,
+                    srcSize = finalDrawableSize,
+                    dstSize = viewSize
+                ) ?: Transform.EMPTY
+        }
+        stepScales = if (threeStepScaleEnabled) {
+            floatArrayOf(minScale, mediumScale, maxScale)
+        } else {
+            floatArrayOf(minScale, mediumScale)
+        }
         scaleDragHelper.reset()
         logger.d(MODULE) {
             "reset. viewSize=$viewSize, " +
@@ -197,7 +246,12 @@ internal class ZoomEngine constructor(
                     "rotateDegrees=$rotateDegrees, " +
                     "scaleType=$scaleType, " +
                     "finalReadModeDecider=$finalReadModeDecider, " +
-                    "scaleState=$scaleState"
+                    "minScale=$minScale, " +
+                    "mediumScale=$mediumScale, " +
+                    "maxScale=$maxScale, " +
+                    "stepScales=$stepScales, " +
+                    "baseInitialTransform=$baseInitialTransform, " +
+                    "supportInitialTransform=$supportInitialTransform"
         }
     }
 
@@ -235,11 +289,23 @@ internal class ZoomEngine constructor(
      * @param focalX  Scale the x coordinate of the center point on the view
      * @param focalY  Scale the y coordinate of the center point on the view
      */
-    fun scale(scale: Float, focalX: Float, focalY: Float, animate: Boolean) {
-        val finalScale = scale
-            .coerceAtLeast(scaleState.min)
-            .coerceAtMost(scaleState.max)
-        scaleDragHelper.scale(finalScale, focalX, focalY, animate)
+    fun scale(newScale: Float, focalX: Float, focalY: Float, animate: Boolean) {
+        val currentScale = scale
+        if (newScale > currentScale) {
+            scaleDragHelper.scale(
+                newScale = newScale.coerceIn(minScale, maxScale),
+                focalX = focalX,
+                focalY = focalY,
+                animate = animate
+            )
+        } else {
+            scaleDragHelper.scale(
+                newScale = newScale.coerceIn(minScale, maxScale),
+                focalX = (view.right / 2).toFloat(),
+                focalY = (view.bottom / 2).toFloat(),
+                animate = animate
+            )
+        }
     }
 
     /**
@@ -279,7 +345,7 @@ internal class ZoomEngine constructor(
     }
 
     fun getNextStepScale(): Float {
-        return calculateNextStepScale(scaleState.doubleClickSteps, scale)
+        return calculateNextStepScale(stepScales, scale)
     }
 
 
@@ -300,38 +366,23 @@ internal class ZoomEngine constructor(
     val verScrollEdge: Edge
         get() = scaleDragHelper.verScrollEdge
 
+    val baseScale: Float
+        get() = scaleDragHelper.baseScale
+
+    val baseTranslation: PointF
+        get() = scaleDragHelper.baseTranslation
+
+    val supportScale: Float
+        get() = scaleDragHelper.supportScale
+
+    val supportTranslation: PointF
+        get() = scaleDragHelper.supportTranslation
+
     val scale: Float
         get() = scaleDragHelper.scale
 
     val translation: PointF
         get() = scaleDragHelper.translation
-
-    val baseScale: Float
-        get() = scaleDragHelper.baseScale
-
-    val supportScale: Float
-        get() = scaleDragHelper.supportScale
-
-    /** Zoom ratio that makes the image fully visible */
-    val fullScale: Float
-        get() = scaleState.full
-
-    /** Gets the zoom that fills the image with the ImageView display */
-    val fillScale: Float
-        get() = scaleState.fill
-
-    /** Gets the scale that allows the image to be displayed at scale to scale */
-    val originScale: Float
-        get() = scaleState.origin
-
-    val minScale: Float
-        get() = scaleState.min
-
-    val maxScale: Float
-        get() = scaleState.max
-
-    val stepScales: FloatArray
-        get() = scaleState.doubleClickSteps
 
     val isScaling: Boolean
         get() = scaleDragHelper.isScaling

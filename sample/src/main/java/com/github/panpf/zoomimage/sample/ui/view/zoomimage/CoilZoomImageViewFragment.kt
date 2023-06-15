@@ -26,7 +26,6 @@ import com.github.panpf.zoomimage.sample.databinding.CoilZoomImageViewFragmentBi
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
-import com.github.panpf.zoomimage.sample.util.lifecycleOwner
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import kotlinx.coroutines.flow.merge
 
@@ -74,7 +73,7 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
                 prefsService.disableMemoryCache.sharedFlow,
 //                prefsService.disallowReuseBitmap.sharedFlow,
 //                prefsService.ignoreExifOrientation.sharedFlow,
-            ).merge().collectWithLifecycle(lifecycleOwner) {
+            ).merge().collectWithLifecycle(viewLifecycleOwner) {
                 loadData(binding, binding.common, sketchImageUri)
             }
         }

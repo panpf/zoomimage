@@ -15,6 +15,9 @@
  */
 package com.github.panpf.zoomimage.sample.ui.view.photoview
 
+import android.annotation.SuppressLint
+import android.graphics.Matrix
+import android.graphics.PointF
 import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -23,6 +26,9 @@ import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
+import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.sample.util.toShortString
+import com.github.panpf.zoomimage.sample.util.toVeryShortString
 
 class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
 
@@ -32,7 +38,17 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         binding: PhotoViewFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        binding.photoViewUriText.text = "uri: ${args.imageUri}"
+//        binding.photoViewUriText.text = "uri: ${args.imageUri}"
+
+        binding.photoView.apply {
+            setOnScaleChangeListener { _, _, _ ->
+                updateInfo(binding)
+            }
+            setOnMatrixChangeListener {
+                updateInfo(binding)
+            }
+        }
+        updateInfo(binding)
 
         binding.photoViewErrorRetryButton.setOnClickListener {
             setImage(binding)
@@ -62,6 +78,24 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun updateInfo(binding: PhotoViewFragmentBinding) {
+        binding.photoViewInfoHeaderText.text = """
+                scale: 
+                visible: 
+                translation: 
+            """.trimIndent()
+        binding.photoViewInfoContentText.text = binding.photoView.run {
+            val scales = floatArrayOf(minimumScale, mediumScale, maximumScale)
+                .joinToString(prefix = "(", postfix = ")") { it.format(2).toString() }
+            """
+                ${scale.format(2)} in $scales
+                ${displayRect?.toVeryShortString()}
+                ${imageMatrix?.getTranslation()?.toShortString()}
+            """.trimIndent()
+        }
+    }
+
     class ItemFactory : FragmentItemFactory<String>(String::class) {
 
         override fun createFragment(
@@ -71,5 +105,13 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         ): Fragment = PhotoViewFragment().apply {
             arguments = PhotoViewFragmentArgs(data).toBundle()
         }
+    }
+
+    private fun Matrix.getTranslation(): PointF {
+        val point = PointF()
+        val values = FloatArray(9).apply { getValues(this) }
+        point.x = values[Matrix.MTRANS_X]
+        point.y = values[Matrix.MTRANS_Y]
+        return point
     }
 }

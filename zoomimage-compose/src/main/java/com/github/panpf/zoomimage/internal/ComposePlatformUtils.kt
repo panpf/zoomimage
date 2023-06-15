@@ -12,10 +12,10 @@ import androidx.compose.ui.unit.Dp
 
 internal fun Size.toShortString(): String = "(${width}x$height)"
 
-internal fun Offset.toShortString(): String = "(${x.format(1)}x${y.format(1)})"
+internal fun Offset.toShortString(): String = "(${x.formatString(1)}x${y.formatString(1)})"
 
 internal fun Rect.toShortString(): String =
-    "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
+    "(${left.formatString(1)},${top.formatString(1)} - ${right.formatString(1)},${bottom.formatString(1)})"
 
 
 internal fun Rect.scale(scale: Float): Rect {
