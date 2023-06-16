@@ -236,17 +236,16 @@ internal fun ImageView.ScaleType.computeScaleTranslation(
     }
 }
 
-internal fun ReadModeDecider.computeTransform(
+internal fun ReadModeDecider.isShouldReadMode(
     scaleType: ImageView.ScaleType,
     srcSize: Size,
     dstSize: Size
-): Transform {
-    if (scaleType != ImageView.ScaleType.FIT_CENTER
-        || !should(srcSize = srcSize, dstSize = dstSize)
-    ) {
-        return Transform.EMPTY
-    }
+): Boolean {
+    return scaleType == ImageView.ScaleType.FIT_CENTER
+            && should(srcSize = srcSize, dstSize = dstSize)
+}
 
+internal fun computeReadModeTransform(srcSize: Size, dstSize: Size): Transform {
     val widthScale = dstSize.width / srcSize.width.toFloat()
     val heightScale = dstSize.height / srcSize.height.toFloat()
     val fillMaxDimension = max(widthScale, heightScale)
@@ -258,12 +257,12 @@ internal fun ReadModeDecider.computeTransform(
     )
 }
 
-internal fun computeSupportScales(
+internal fun computeScales(
     scaleType: ImageView.ScaleType,
     drawableSize: Size,
     imageSize: Size,
     viewSize: Size,
-    readModeDecider: ReadModeDecider?
+    readMode: Boolean,
 ): FloatArray {
     if (scaleType == ImageView.ScaleType.FIT_XY) {
         return floatArrayOf(1.0f, 4.0f, 8.0f)
@@ -324,7 +323,7 @@ internal fun computeSupportScales(
             }
 
         ImageView.ScaleType.FIT_CENTER -> {
-            if (readModeDecider?.should(srcSize = drawableSize, dstSize = viewSize) == true) {
+            if (readMode) {
                 floatArrayOf(originShowScale, fillViewScale).maxOrNull()!!
             } else if (sameDirection) {
                 floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!

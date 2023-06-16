@@ -142,8 +142,6 @@ internal class ZoomEngine constructor(
                 reset()
             }
         }
-    private val finalReadModeDecider: ReadModeDecider?
-        get() = if (readModeEnabled) readModeDecider ?: LongImageReadModeDecider() else null
     var scrollBarEnabled: Boolean
         get() = scrollBarHelper != null
         internal set(value) {
@@ -212,26 +210,45 @@ internal class ZoomEngine constructor(
             baseInitialTransform = Transform.EMPTY
             supportInitialTransform = Transform.EMPTY
         } else {
+            val finalReadModeDecider = if (readModeEnabled) {
+                readModeDecider ?: LongImageReadModeDecider.DEFAULT
+            } else {
+                null
+            }
+            val readMode = finalReadModeDecider?.isShouldReadMode(
+                scaleType = scaleType,
+                srcSize = drawableSize,
+                dstSize = viewSize
+            ) == true
             val finalDrawableSize = drawableSize.rotate(rotateDegrees)
             val finalImageSize = imageSize.rotate(rotateDegrees)
-            val scales = computeSupportScales(
+            val scales = computeScales(
                 scaleType = scaleType,
                 drawableSize = finalDrawableSize,
                 imageSize = finalImageSize,
                 viewSize = viewSize,
-                readModeDecider = readModeDecider
+                readMode = readMode
             )
             minScale = scales[0]
             mediumScale = scales[1]
             maxScale = scales[2]
             baseInitialTransform = scaleType
                 .computeTransform(srcSize = finalDrawableSize, dstSize = viewSize)
-            supportInitialTransform = readModeDecider
-                ?.computeTransform(
-                    scaleType = scaleType,
+            supportInitialTransform = if (readMode) {
+                computeReadModeTransform(
                     srcSize = finalDrawableSize,
                     dstSize = viewSize
-                ) ?: Transform.EMPTY
+                ).let {
+                    Transform(
+                        scaleX = it.scaleX / baseInitialTransform.scaleX,
+                        scaleY = it.scaleY / baseInitialTransform.scaleY,
+                        translateX = it.translateX / baseInitialTransform.scaleX,
+                        translateY = it.translateY / baseInitialTransform.scaleY,
+                    )
+                }
+            } else {
+                Transform.EMPTY
+            }
         }
         stepScales = if (threeStepScaleEnabled) {
             floatArrayOf(minScale, mediumScale, maxScale)
@@ -245,11 +262,12 @@ internal class ZoomEngine constructor(
                     "drawableSize=$drawableSize, " +
                     "rotateDegrees=$rotateDegrees, " +
                     "scaleType=$scaleType, " +
-                    "finalReadModeDecider=$finalReadModeDecider, " +
+                    "readModeEnabled=$readModeEnabled, " +
+                    "readModeDecider=$readModeDecider, " +
                     "minScale=$minScale, " +
                     "mediumScale=$mediumScale, " +
                     "maxScale=$maxScale, " +
-                    "stepScales=$stepScales, " +
+                    "stepScales=${stepScales.contentToString()}, " +
                     "baseInitialTransform=$baseInitialTransform, " +
                     "supportInitialTransform=$supportInitialTransform"
         }

@@ -26,6 +26,10 @@ class LongImageReadModeDecider(
     val notSameDirectionMultiple: Float = 5.0f,
 ) : ReadModeDecider {
 
+    companion object {
+        val DEFAULT = LongImageReadModeDecider()
+    }
+
     override fun should(srcSize: Size, dstSize: Size): Boolean =
         isLongImage(srcSize = srcSize, dstSize = dstSize)
 

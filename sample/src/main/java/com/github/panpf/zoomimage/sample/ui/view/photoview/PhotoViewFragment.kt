@@ -22,6 +22,7 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
@@ -29,6 +30,8 @@ import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
 
@@ -87,9 +90,9 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
             """.trimIndent()
         binding.photoViewInfoContentText.text = binding.photoView.run {
             val scales = floatArrayOf(minimumScale, mediumScale, maximumScale)
-                .joinToString(prefix = "(", postfix = ")") { it.format(2).toString() }
+                .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             """
-                ${scale.format(2)} in $scales
+                ${displayScale.format(2)}(${baseScale.format(2)}x${suppScale.format(2)}) in $scales
                 ${displayRect?.toVeryShortString()}
                 ${imageMatrix?.getTranslation()?.toShortString()}
             """.trimIndent()
@@ -114,4 +117,20 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         point.y = values[Matrix.MTRANS_Y]
         return point
     }
+
+    private fun Matrix.getScale(): Float {
+        val values = FloatArray(9).apply { getValues(this) }
+        val scaleX: Float = values[Matrix.MSCALE_X]
+        val skewY: Float = values[Matrix.MSKEW_Y]
+        return sqrt(scaleX.toDouble().pow(2.0) + skewY.toDouble().pow(2.0)).toFloat()
+    }
+
+    private val PhotoView.baseScale: Float
+        get() = displayScale / suppScale
+
+    private val PhotoView.suppScale: Float
+        get() = scale
+
+    private val PhotoView.displayScale: Float
+        get() = Matrix().apply { getDisplayMatrix(this) }.getScale()
 }

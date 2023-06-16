@@ -146,17 +146,15 @@ internal class ScaleDragHelper constructor(
             postTranslate(transform.translateX, transform.translateY)
             postRotate(engine.rotateDegrees.toFloat())
         }
+    }
 
+    private fun resetSupportMatrix() {
         supportMatrix.apply {
             reset()
             val transform = engine.supportInitialTransform
             postScale(transform.scaleX, transform.scaleY)
             postTranslate(transform.translateX, transform.translateY)
         }
-    }
-
-    private fun resetSupportMatrix() {
-        supportMatrix.reset()
     }
 
     private fun checkAndApplyMatrix() {
