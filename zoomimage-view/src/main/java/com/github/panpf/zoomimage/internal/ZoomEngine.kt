@@ -215,11 +215,8 @@ internal class ZoomEngine constructor(
             } else {
                 null
             }
-            val readMode = finalReadModeDecider?.isShouldReadMode(
-                scaleType = scaleType,
-                srcSize = drawableSize,
-                dstSize = viewSize
-            ) == true
+            val readMode = scaleType.supportReadMode()
+                    && finalReadModeDecider?.should(srcSize = drawableSize, viewSize) == true
             val finalDrawableSize = drawableSize.rotate(rotateDegrees)
             val finalImageSize = imageSize.rotate(rotateDegrees)
             val scales = computeScales(

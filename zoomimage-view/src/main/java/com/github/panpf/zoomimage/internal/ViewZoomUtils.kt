@@ -19,7 +19,6 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.Rect
 import android.widget.ImageView
-import com.github.panpf.zoomimage.ReadModeDecider
 import com.github.panpf.zoomimage.Size
 import com.github.panpf.zoomimage.Transform
 import com.github.panpf.zoomimage.isNotEmpty
@@ -236,13 +235,9 @@ internal fun ImageView.ScaleType.computeScaleTranslation(
     }
 }
 
-internal fun ReadModeDecider.isShouldReadMode(
-    scaleType: ImageView.ScaleType,
-    srcSize: Size,
-    dstSize: Size
-): Boolean {
-    return scaleType == ImageView.ScaleType.FIT_CENTER
-            && should(srcSize = srcSize, dstSize = dstSize)
+internal fun ImageView.ScaleType.supportReadMode(): Boolean {
+    return this != ImageView.ScaleType.FIT_XY
+            && this != ImageView.ScaleType.CENTER_CROP
 }
 
 internal fun computeReadModeTransform(srcSize: Size, dstSize: Size): Transform {
@@ -265,13 +260,11 @@ internal fun computeScales(
     readMode: Boolean,
 ): FloatArray {
     if (scaleType == ImageView.ScaleType.FIT_XY) {
-        return floatArrayOf(1.0f, 4.0f, 8.0f)
+        return floatArrayOf(1.0f, 2.0f, 4.0f)
     }
 
     val drawableToViewWidthScale = viewSize.width / drawableSize.width.toFloat()
     val drawableToViewHeightScale = viewSize.height / drawableSize.height.toFloat()
-    // The width or height of the drawable fills the view
-    val fullShowScale = min(drawableToViewWidthScale, drawableToViewHeightScale)
     // The width and height of drawable fill the view at the same time
     val fillViewScale = max(drawableToViewWidthScale, drawableToViewHeightScale)
     // Enlarge drawable to the same size as its original image
@@ -286,64 +279,40 @@ internal fun computeScales(
         drawableSize.width > viewSize.width || drawableSize.height > viewSize.height
     val drawableAspectRatio = drawableSize.width.toFloat().div(drawableSize.height).format(2)
     val viewAspectRatio = viewSize.width.toFloat().div(viewSize.height).format(2)
-    val sameDirection = drawableAspectRatio == 1.0f
-            || viewAspectRatio == 1.0f
-            || (drawableAspectRatio > 1.0f && viewAspectRatio > 1.0f)
-            || (drawableAspectRatio < 1.0f && viewAspectRatio < 1.0f)
+//    val sameDirection = drawableAspectRatio == 1.0f
+//            || viewAspectRatio == 1.0f
+//            || (drawableAspectRatio > 1.0f && viewAspectRatio > 1.0f)
+//            || (drawableAspectRatio < 1.0f && viewAspectRatio < 1.0f)
     val baseScale = scaleType.computeScaleFactor(srcSize = drawableSize, dstSize = viewSize).scaleX
-    @Suppress("UnnecessaryVariable") val minScale = baseScale
 
-    /*
-     * mediumScale 通常用于双击后的缩放比例；
-     * imageSize 不为空，通常意味着当前开启了子采样功能，因此需要在双击后缩放到图片的原始大小以查看原始图片
-     */
-    val defaultMediumScale = if (imageSize.isNotEmpty) minScale * 2f else minScale * 4f
-    val mediumScale = when (scaleType) {
-        ImageView.ScaleType.CENTER_CROP ->
-            floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
-
-        ImageView.ScaleType.CENTER_INSIDE ->
-            if (drawableThanViewLarge) {
-                // same as fitCenter
-                if (sameDirection) {
-                    floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
-                } else {
-                    floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
-                }
-            } else {
-                // same as center
-                floatArrayOf(originShowScale, fullShowScale, defaultMediumScale).maxOrNull()!!
-            }
-
-        ImageView.ScaleType.FIT_START ->
-            if (sameDirection) {
-                floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
-            } else {
-                floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
-            }
-
-        ImageView.ScaleType.FIT_CENTER -> {
-            if (readMode) {
-                floatArrayOf(originShowScale, fillViewScale).maxOrNull()!!
-            } else if (sameDirection) {
-                floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
-            } else {
-                floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
-            }
-        }
-
-        ImageView.ScaleType.FIT_END ->
-            if (sameDirection) {
-                floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
-            } else {
-                floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
-            }
-
-        // CENTER, MATRIX
-        else -> floatArrayOf(originShowScale, fullShowScale, defaultMediumScale).maxOrNull()!!
+    @Suppress("UnnecessaryVariable")
+    val minScale = baseScale
+    val defaultMediumScale = minScale * 2f
+    val defaultMaxScale = minScale * 4f
+//    val defaultMediumScale = if (imageSize.isNotEmpty) minScale * 2f else minScale * 4f
+//    val defaultMaxScale = if (imageSize.isNotEmpty) minScale * 4f else minScale * 8f
+    // todo 优化，验证
+    val isFit = scaleType == ImageView.ScaleType.FIT_START
+            || scaleType == ImageView.ScaleType.FIT_CENTER
+            || scaleType == ImageView.ScaleType.FIT_END
+            || (scaleType == ImageView.ScaleType.CENTER_INSIDE && drawableThanViewLarge)
+    val isFill = scaleType == ImageView.ScaleType.CENTER_CROP
+    val useReadMode = scaleType.supportReadMode() && readMode
+    val mediumScale = if (useReadMode) {
+        floatArrayOf(originShowScale, fillViewScale).maxOrNull()!!
+    } else if (isFill) {
+        floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
+    } else if (isFit) {
+//        if (sameDirection) {
+//            floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
+//        } else {
+        floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
+//        }
+    } else {
+        floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
     }
 
-    val maxScale = floatArrayOf(mediumScale * 2f, minScale * 8f).maxOrNull()!!
+    val maxScale = floatArrayOf(mediumScale * 2f, defaultMaxScale).maxOrNull()!!
 
     return floatArrayOf(minScale, mediumScale, maxScale)
 }
