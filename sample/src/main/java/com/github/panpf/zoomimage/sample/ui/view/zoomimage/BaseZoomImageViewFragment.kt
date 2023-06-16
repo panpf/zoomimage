@@ -31,7 +31,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.view.base.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.view.widget.TilesMapImageView
+import com.github.panpf.zoomimage.sample.ui.view.widget.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
@@ -156,11 +156,11 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 common.zoomImageViewErrorLayout.isVisible = true
             },
         )
-        loadTilesMapImage(common.zoomImageViewTileMap, sketchImageUri)
+        loadMinimap(common.zoomImageViewTileMap, sketchImageUri)
     }
 
-    private fun loadTilesMapImage(tilesMapImageView: TilesMapImageView, sketchImageUri: String) {
-        tilesMapImageView.displayImage(sketchImageUri) {
+    private fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        zoomImageMinimapView.displayImage(sketchImageUri) {
             lifecycle(viewLifecycleOwner.lifecycle)
             crossfade()
             resizeSize(600, 600)

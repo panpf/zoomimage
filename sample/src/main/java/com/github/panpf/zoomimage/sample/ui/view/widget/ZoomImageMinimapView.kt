@@ -31,15 +31,17 @@ import android.view.ViewGroup.LayoutParams
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
+import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.isNotEmpty
 import com.github.panpf.zoomimage.sample.util.crossWith
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.min
 import kotlin.math.roundToInt
 
-class TilesMapImageView @JvmOverloads constructor(
+class ZoomImageMinimapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle) {
 
@@ -155,38 +157,29 @@ class TilesMapImageView @JvmOverloads constructor(
 
         val drawableWidth = drawable.intrinsicWidth
         val drawableHeight = drawable.intrinsicHeight
-        val zoomViewWidth = zoomView.width
-        val zoomViewHeight = zoomView.height
-        val viewWidth: Int
-        val viewHeight: Int
-        if ((zoomViewWidth / drawableWidth.toFloat()) < (zoomViewHeight / drawableHeight.toFloat())) {
-            val ratio = when {
-                drawableWidth / drawableHeight > 4 -> 0.7f
-                zoomViewWidth >= zoomViewHeight -> 0.55f
-                else -> 0.4f
-            }
-            viewWidth = (zoomViewWidth * ratio).roundToInt()
-            viewHeight = (drawableHeight * (viewWidth / drawableWidth.toFloat())).roundToInt()
-            updateLayoutParams<LayoutParams> {
-                width = viewWidth
-                height = viewHeight
-            }
-        } else {
-            val ratio = when {
-                drawableHeight / drawableWidth > 4 -> 0.7f
-                zoomViewWidth < zoomViewHeight -> 0.55f
-                else -> 0.4f
-            }
-            viewHeight = (zoomViewHeight * ratio).roundToInt()
-            viewWidth = (drawableWidth * (viewHeight / drawableHeight.toFloat())).roundToInt()
+        val containerWidth = zoomView.width
+        val containerHeight = zoomView.height
+        if (drawableWidth <= 0 || drawableHeight <= 0 || containerWidth <= 0 || containerHeight <= 0) {
+            return false
         }
+        val sameDirection =
+            (drawableWidth >= drawableHeight && containerWidth >= containerHeight) ||
+                    (drawableWidth < drawableHeight && containerWidth < containerHeight)
+        val isLongImage = DefaultLongImageDecider()
+            .isLongImage(drawableWidth, drawableHeight, containerWidth, containerHeight)
+        val maxPercentage = if (isLongImage) 0.6f else if (sameDirection) 0.3f else 0.4f
+        val maxWidth = containerWidth * maxPercentage
+        val maxHeight = containerHeight * maxPercentage
+        val scale = min(maxWidth / drawableWidth, maxHeight / drawableHeight)
+        val viewWidth: Int = (drawableWidth * scale).roundToInt()
+        val viewHeight: Int = (drawableHeight * scale).roundToInt()
         updateLayoutParams<LayoutParams> {
             width = viewWidth
             height = viewHeight
         }
         Log.d(
-            "TilesMapImageView",
-            "$caller. resetViewSize: viewSize=${viewWidth}x${viewHeight}. drawableSize=${drawableWidth}x${drawableHeight}, zoomViewSize=${zoomViewWidth}x${zoomViewHeight}"
+            "ZoomImageMinimapView",
+            "resetViewSize. $caller. viewSize=${viewWidth}x${viewHeight}. drawableSize=${drawableWidth}x${drawableHeight}, containerSize=${containerWidth}x${containerHeight}"
         )
         return true
     }

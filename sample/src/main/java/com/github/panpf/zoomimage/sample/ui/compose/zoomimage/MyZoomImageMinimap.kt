@@ -21,15 +21,18 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.zoomimage.Centroid
 import com.github.panpf.zoomimage.MyZoomState
 import com.github.panpf.zoomimage.sample.ui.compose.util.scale
 import com.github.panpf.zoomimage.sample.ui.compose.util.toDp
 import com.github.panpf.zoomimage.sample.ui.compose.util.toPx
 import kotlinx.coroutines.launch
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 @Composable
-fun MyZoomImageVisibleRect(
+fun MyZoomImageMinimap(
     painter: Painter,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
@@ -39,10 +42,21 @@ fun MyZoomImageVisibleRect(
 ) {
     val coroutineScope = rememberCoroutineScope()
     BoxWithConstraints(modifier = modifier.then(Modifier.fillMaxSize())) {
-        val imageMaxWidth = (this.maxWidth * 0.3f).toPx()
-        val imageMaxHeight = (this.maxHeight * 0.3f).toPx()
-        val scale =
-            (imageMaxWidth / painter.intrinsicSize.width).coerceAtMost(imageMaxHeight / painter.intrinsicSize.height)
+        val drawableWidth = painter.intrinsicSize.width
+        val drawableHeight = painter.intrinsicSize.height
+        val containerWidth = this.maxWidth
+        val containerHeight = this.maxHeight
+        val sameDirection =
+            (drawableWidth >= drawableHeight && containerWidth >= containerHeight) ||
+                    (drawableWidth < drawableHeight && containerWidth < containerHeight)
+        val isLongImage = DefaultLongImageDecider()
+            .isLongImage(drawableWidth.toInt(), drawableHeight.toInt(), containerWidth.toPx().toInt(), containerHeight.toPx().toInt())
+        val maxPercentage = if (isLongImage) 0.6f else if (sameDirection) 0.3f else 0.4f
+        val imageMaxWidth = (containerWidth * maxPercentage).toPx()
+        val imageMaxHeight = (containerHeight * maxPercentage).toPx()
+        val scale = min(imageMaxWidth / drawableWidth, imageMaxHeight / drawableHeight)
+        val viewWidth = drawableWidth * scale
+        val viewHeight = drawableHeight * scale
         val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
         Image(
             painter = painter,
@@ -50,8 +64,8 @@ fun MyZoomImageVisibleRect(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .size(
-                    width = (painter.intrinsicSize.width * scale).toDp(),
-                    height = (painter.intrinsicSize.height * scale).toDp()
+                    width = viewWidth.toDp(),
+                    height = viewHeight.toDp()
                 )
                 .aspectRatio(painter.intrinsicSize.let { it.width / it.height })
                 .drawWithContent {

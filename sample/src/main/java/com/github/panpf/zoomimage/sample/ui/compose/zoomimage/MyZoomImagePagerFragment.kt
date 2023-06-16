@@ -110,7 +110,7 @@ private fun MyZoomImageFullSample() {
             ),
         )
 
-        MyZoomImageVisibleRect(
+        MyZoomImageMinimap(
             painter = painter,
             state = myZoomState,
             animateScale = !zoomOptionsDialogState.closeScaleAnimation,
