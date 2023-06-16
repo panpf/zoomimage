@@ -93,7 +93,12 @@
 
     <fragment
         android:id="@+id/zoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewPagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewPagerFragment" >
+        <argument
+            android:name="zoomViewType"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
     <action
         android:id="@+id/action_global_zoomImageViewPagerFragment"
         app:destination="@id/zoomImageViewPagerFragment"
@@ -112,17 +117,6 @@
             app:nullable="false" />
     </fragment>
 
-    <fragment
-        android:id="@+id/sketchZoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.SketchZoomImageViewPagerFragment" />
-    <action
-        android:id="@+id/action_global_sketchZoomImageViewPagerFragment"
-        app:destination="@id/sketchZoomImageViewPagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
-
 
     <fragment
         android:id="@+id/coilZoomImageViewFragment"
@@ -132,17 +126,6 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
-
-    <fragment
-        android:id="@+id/coilZoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.CoilZoomImageViewPagerFragment" />
-    <action
-        android:id="@+id/action_global_coilZoomImageViewPagerFragment"
-        app:destination="@id/coilZoomImageViewPagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
 
 
     <fragment
@@ -154,17 +137,6 @@
             app:nullable="false" />
     </fragment>
 
-    <fragment
-        android:id="@+id/glideZoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.GlideZoomImageViewPagerFragment" />
-    <action
-        android:id="@+id/action_global_glideZoomImageViewPagerFragment"
-        app:destination="@id/glideZoomImageViewPagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
-
 
     <fragment
         android:id="@+id/picassoZoomImageViewFragment"
@@ -174,17 +146,6 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
-
-    <fragment
-        android:id="@+id/picassoZoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.PicassoZoomImageViewPagerFragment" />
-    <action
-        android:id="@+id/action_global_picassoZoomImageViewPagerFragment"
-        app:destination="@id/picassoZoomImageViewPagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
         android:id="@+id/photoViewPagerFragment"

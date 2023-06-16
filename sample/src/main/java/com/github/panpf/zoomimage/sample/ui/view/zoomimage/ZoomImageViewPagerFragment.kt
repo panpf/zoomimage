@@ -15,14 +15,44 @@
  */
 package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 
-import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import android.os.Bundle
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.navArgs
+import androidx.viewpager2.widget.ViewPager2
+import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
+import com.github.panpf.zoomimage.sample.SampleImages
+import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
+import com.github.panpf.zoomimage.sample.ui.view.ZoomViewType
+import com.github.panpf.zoomimage.sample.ui.view.base.ToolbarBindingFragment
+import com.google.android.material.tabs.TabLayoutMediator
 
-class ZoomImageViewPagerFragment : BaseZoomImageViewPagerFragment() {
+class ZoomImageViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
 
-    override val title: String
-        get() = "ZoomImageView"
+    private val args by navArgs<ZoomImageViewPagerFragmentArgs>()
 
-    override fun createItemFactoryList(): List<FragmentItemFactory<String>> {
-        return listOf(ZoomImageViewFragment.ItemFactory())
+    override fun onViewCreated(
+        toolbar: Toolbar,
+        binding: TabPagerFragmentBinding,
+        savedInstanceState: Bundle?
+    ) {
+        toolbar.title = args.zoomViewType
+
+        val sampleImages = SampleImages.FETCHERS
+        binding.tabPagerPager.apply {
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            adapter = AssemblyFragmentStateAdapter(
+                fragment = this@ZoomImageViewPagerFragment,
+                itemFactoryList = listOf(
+                    ZoomViewType.valueOf(args.zoomViewType).createItemFactory()
+                ),
+                initDataList = sampleImages.map { it.uri }
+            )
+        }
+        TabLayoutMediator(
+            binding.tabPagerTabLayout,
+            binding.tabPagerPager
+        ) { tab, position ->
+            tab.text = sampleImages[position].name
+        }.attach()
     }
 }

@@ -1,8 +1,12 @@
 package com.github.panpf.zoomimage.sample.ui.view
 
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.zoomimage.sample.ui.view.photoview.PhotoViewFragment
 import com.github.panpf.zoomimage.sample.ui.view.subsamplingview.SubsamplingViewFragment
+import com.github.panpf.zoomimage.sample.ui.view.zoomimage.CoilZoomImageViewFragment
+import com.github.panpf.zoomimage.sample.ui.view.zoomimage.GlideZoomImageViewFragment
 import com.github.panpf.zoomimage.sample.ui.view.zoomimage.PicassoZoomImageViewFragment
+import com.github.panpf.zoomimage.sample.ui.view.zoomimage.SketchZoomImageViewFragment
 import com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewFragment
 
 enum class ZoomViewType(
@@ -16,17 +20,17 @@ enum class ZoomViewType(
 
     SketchZoomImageView(
         title = "SketchZoomImageView",
-        createItemFactory = { com.github.panpf.zoomimage.sample.ui.view.zoomimage.SketchZoomImageViewFragment.ItemFactory() }
+        createItemFactory = { SketchZoomImageViewFragment.ItemFactory() }
     ),
 
     CoilZoomImageView(
         title = "CoilZoomImageView",
-        createItemFactory = { com.github.panpf.zoomimage.sample.ui.view.zoomimage.CoilZoomImageViewFragment.ItemFactory() }
+        createItemFactory = { CoilZoomImageViewFragment.ItemFactory() }
     ),
 
     GlideZoomImageView(
         title = "GlideZoomImageView",
-        createItemFactory = { com.github.panpf.zoomimage.sample.ui.view.zoomimage.GlideZoomImageViewFragment.ItemFactory() }
+        createItemFactory = { GlideZoomImageViewFragment.ItemFactory() }
     ),
 
     PicassoZoomImageView(
@@ -36,7 +40,7 @@ enum class ZoomViewType(
 
     PhotoView(
         title = "PhotoView",
-        createItemFactory = { com.github.panpf.zoomimage.sample.ui.view.photoview.PhotoViewFragment.ItemFactory() }
+        createItemFactory = { PhotoViewFragment.ItemFactory() }
     ),
 
     SubsamplingScaleImageView(
