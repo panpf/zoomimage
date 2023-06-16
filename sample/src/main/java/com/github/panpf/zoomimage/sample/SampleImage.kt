@@ -23,8 +23,10 @@ import com.github.panpf.sketch.util.Size
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object SampleImages {
     val MIXING_PHOTO_ALBUM = listOf(
-        Asset.HORDOG,
-        Asset.VERDOG,
+        Asset.DOG,
+        Asset.CAT,
+        Asset.ELEPHANT,
+        Asset.WHALE,
         Asset.WORLD,
         Content.CHINA,
         LocalFile.CARD,
@@ -40,16 +42,16 @@ object SampleImages {
     )
 
     object Resource {
-        val HORDOG = SampleImage(
-            name = "HORDOG",
-            fileName = "sample_dog_hor.jpg",
-            uri = newResourceUri(R.raw.sample_dog_hor),
+        val DOG = SampleImage(
+            name = "DOG",
+            fileName = "sample_dog.jpg",
+            uri = newResourceUri(R.raw.sample_dog),
             size = Size(640, 427)
         )
-        val VERDOG = SampleImage(
-            name = "VERDOG",
-            fileName = "sample_dog_ver.jpg",
-            uri = newResourceUri(R.raw.sample_dog_ver),
+        val CAT = SampleImage(
+            name = "CAT",
+            fileName = "sample_cat.jpg",
+            uri = newResourceUri(R.raw.sample_cat),
             size = Size(150, 266)
         )
         val QMSHT = SampleImage(
@@ -58,20 +60,32 @@ object SampleImages {
             uri = newResourceUri(R.raw.sample_long_qmsht),
             size = Size(30000, 926)
         )
-        val ALL = listOf(HORDOG, VERDOG, QMSHT)
+        val ALL = listOf(DOG, CAT, QMSHT)
     }
 
     object Asset {
-        val HORDOG = SampleImage(
-            name = "HORDOG",
-            fileName = "sample_dog_hor.jpg",
-            uri = newAssetUri("sample_dog_hor.jpg"),
+        val DOG = SampleImage(
+            name = "DOG",
+            fileName = "sample_dog.jpg",
+            uri = newAssetUri("sample_dog.jpg"),
             size = Size(640, 427)
         )
-        val VERDOG = SampleImage(
-            name = "VERDOG",
-            fileName = "sample_dog_ver.jpg",
-            uri = newAssetUri("sample_dog_ver.jpg"),
+        val CAT = SampleImage(
+            name = "CAT",
+            fileName = "sample_cat.jpg",
+            uri = newAssetUri("sample_cat.jpg"),
+            size = Size(150, 266)
+        )
+        val ELEPHANT = SampleImage(
+            name = "ELEPHANT",
+            fileName = "sample_elephant.png",
+            uri = newAssetUri("sample_elephant.png"),
+            size = Size(150, 266)
+        )
+        val WHALE = SampleImage(
+            name = "WHALE",
+            fileName = "sample_whale.png",
+            uri = newAssetUri("sample_whale.png"),
             size = Size(150, 266)
         )
         val WORLD = SampleImage(
@@ -104,7 +118,7 @@ object SampleImages {
             uri = newAssetUri("sample_long_comic.jpg"),
             size = Size(690, 12176)
         )
-        val ALL = listOf(HORDOG, VERDOG, WORLD, CHINA, CARD, QMSHT, COMIC)
+        val ALL = listOf(DOG, CAT, ELEPHANT, WHALE, WORLD, CHINA, CARD, QMSHT, COMIC)
     }
 
     object Http {

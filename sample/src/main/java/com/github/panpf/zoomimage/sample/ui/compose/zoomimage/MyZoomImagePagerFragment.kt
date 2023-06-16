@@ -44,7 +44,6 @@ import com.github.panpf.zoomimage.sample.ui.compose.base.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.compose.util.toPx
 import com.github.panpf.zoomimage.sample.ui.compose.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.model.ResPhoto
-import com.github.panpf.zoomimage.sample.ui.model.ResPhotoFetcher
 import kotlinx.coroutines.launch
 
 class MyZoomImagePagerFragment : AppBarFragment() {
@@ -64,10 +63,10 @@ private fun MyZoomImageFullSample() {
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
     val zoomOptionsDialogState = rememberZoomOptionsDialogState()
-    val horSmall = remember { ResPhotoFetcher(ResPhoto.horDog, "横向图片 - 小", false) }
-    val verSmall = remember { ResPhotoFetcher(ResPhoto.verDog, "竖向图片 - 小", false) }
-    val horBig = remember { ResPhotoFetcher(ResPhoto.horDog, "横向图片 - 大", true) }
-    val verBig = remember { ResPhotoFetcher(ResPhoto.verDog, "竖向图片 - 大", true) }
+    val horSmall = remember { ResPhoto.dog.newFetcher(name = "横向图片 - 小", big = false) }
+    val horBig = remember { ResPhoto.dog.newFetcher(name = "横向图片 - 大", big = true) }
+    val verSmall = remember { ResPhoto.cat.newFetcher(name = "竖向图片 - 小", big = false) }
+    val verBig = remember { ResPhoto.cat.newFetcher(name = "竖向图片 - 大", big = true) }
     val image by remember {
         derivedStateOf {
             if (zoomOptionsDialogState.horImageSelected) {
@@ -81,9 +80,10 @@ private fun MyZoomImageFullSample() {
         mutableStateOf(if (zoomOptionsDialogState.slowerScaleAnimation) 3000 else ScaleAnimationConfig.DefaultDurationMillis)
     }
     var zoomOptionsDialogShow by remember { mutableStateOf(false) }
-    BoxWithConstraints(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Black)
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
     ) {
         val myZoomState = rememberMyZoomState(debugMode = BuildConfig.DEBUG)
         val zoomIn = remember {

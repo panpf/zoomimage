@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.sample.ui.view.photoalbum
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
@@ -35,6 +36,7 @@ class PhotoPagerFragment : ToolbarBindingFragment<PhotoPagerFragmentBinding>() {
         binding: PhotoPagerFragmentBinding,
         savedInstanceState: Bundle?
     ) {
+        toolbar.isVisible = false
         toolbar.title = args.zoomViewType
         val imageUrlList = args.imageUris.split(",")
 
