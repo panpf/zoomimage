@@ -15,6 +15,7 @@
  */
 package com.github.panpf.zoomimage.sample.ui.view.photoalbum
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.navArgs
@@ -28,6 +29,7 @@ class PhotoPagerFragment : ToolbarBindingFragment<PhotoPagerFragmentBinding>() {
 
     private val args by navArgs<PhotoPagerFragmentArgs>()
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(
         toolbar: Toolbar,
         binding: PhotoPagerFragmentBinding,
@@ -45,7 +47,22 @@ class PhotoPagerFragment : ToolbarBindingFragment<PhotoPagerFragmentBinding>() {
                 ),
                 initDataList = imageUrlList
             )
-            setCurrentItem(args.position, false)
+            setCurrentItem(args.position - args.startPosition, false)
+        }
+
+        binding.photoPagerTotalPage.text = args.totalCount.toString()
+
+        binding.photoPagerCurrentPage.apply {
+            val updateCurrentPageNumber: () -> Unit = {
+                text = (args.startPosition + binding.photoPagerPager.currentItem + 1).toString()
+            }
+            binding.photoPagerPager.registerOnPageChangeCallback(object :
+                ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    updateCurrentPageNumber()
+                }
+            })
+            updateCurrentPageNumber()
         }
     }
 }

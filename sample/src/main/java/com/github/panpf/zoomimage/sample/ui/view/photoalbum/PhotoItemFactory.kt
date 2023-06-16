@@ -24,6 +24,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.request.updateDisplayImageOptions
+import com.github.panpf.sketch.resize.LongImageClipPrecisionDecider
+import com.github.panpf.sketch.resize.LongImageScaleDecider
+import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.stateimage.IconStateImage
 import com.github.panpf.sketch.stateimage.ResColor
 import com.github.panpf.tools4a.display.ktx.getScreenWidth
@@ -58,15 +61,13 @@ class PhotoItemFactory : MyBindingItemFactory<Photo, PhotoItemBinding>(Photo::cl
 
         binding.photoItemImage.apply {
             updateDisplayImageOptions {
-                placeholder(
-                    IconStateImage(
-                        R.drawable.ic_image_outline,
-                        ResColor(R.color.placeholder_bg)
-                    )
-                )
-                error(IconStateImage(R.drawable.ic_error, ResColor(R.color.placeholder_bg)))
+                val bgColor = ResColor(R.color.placeholder_bg)
+                placeholder(IconStateImage(R.drawable.ic_image_outline, bgColor))
+                error(IconStateImage(R.drawable.ic_error, bgColor))
                 crossfade()
                 resizeApplyToDrawable()
+                resizePrecision(LongImageClipPrecisionDecider(Precision.SAME_ASPECT_RATIO))
+                resizeScale(LongImageScaleDecider())
             }
         }
     }

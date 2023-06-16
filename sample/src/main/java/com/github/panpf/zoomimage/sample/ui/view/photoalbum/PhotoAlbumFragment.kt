@@ -31,6 +31,7 @@ import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.RefreshRecyclerFragmentBinding
+import com.github.panpf.zoomimage.sample.ui.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.view.base.ToolbarBindingFragment
 import kotlinx.coroutines.launch
 
@@ -46,7 +47,10 @@ class PhotoAlbumFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBinding
     ) {
         toolbar.apply {
             title = "Photo album"
+            subtitle = ZoomViewType.valueOf(args.zoomViewType).title
         }
+
+        binding.root.setBackgroundResource(R.color.windowBackgroundDark)
 
         val pagingAdapter = AssemblyPagingDataAdapter<Photo>(listOf(
             PhotoItemFactory().setOnViewClickListener(R.id.photoItemImage) { _, _, _, absoluteAdapterPosition, _ ->
@@ -87,20 +91,23 @@ class PhotoAlbumFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBinding
     }
 
     private fun startImageDetail(binding: RefreshRecyclerFragmentBinding, position: Int) {
-        val imageList = binding.recyclerRecycler
+        val currentList = binding.recyclerRecycler
             .adapter!!.asOrThrow<AssemblyPagingDataAdapter<Photo>>()
-            .currentList.mapIndexedNotNull { index, photo ->
-                if (index >= position - 50 && index <= position + 50) {
-                    photo?.uri
-                } else {
-                    null
-                }
-            }.joinToString(separator = ",")
+            .currentList
+        val imageList = currentList.mapIndexedNotNull { index, photo ->
+            if (index >= position - 50 && index <= position + 50) {
+                photo?.uri
+            } else {
+                null
+            }
+        }.joinToString(separator = ",")
         findNavController().navigate(
             NavMainDirections.actionGlobalPhotoPagerFragment(
                 zoomViewType = args.zoomViewType,
                 imageUris = imageList,
                 position = position,
+                startPosition = (position - 50).coerceAtLeast(0),
+                totalCount = currentList.size
             ),
         )
     }

@@ -22,7 +22,22 @@ import com.github.panpf.sketch.util.Size
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object SampleImages {
-    val FETCHERS = listOf(Asset.WORLD, Content.CHINA, LocalFile.CARD, Resource.QMSHT, Http.COMIC)
+    val MIXING_PHOTO_ALBUM = listOf(
+        Asset.HORDOG,
+        Asset.VERDOG,
+        Asset.WORLD,
+        Content.CHINA,
+        LocalFile.CARD,
+        Resource.QMSHT,
+        Http.COMIC
+    )
+    val FETCHERS = listOf(
+        Asset.WORLD,
+        Content.CHINA,
+        LocalFile.CARD,
+        Resource.QMSHT,
+        Http.COMIC
+    )
 
     object Resource {
         val HORDOG = SampleImage(
@@ -103,7 +118,8 @@ object SampleImages {
     }
 
     object LocalFile {
-        private val path = "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/"
+        private val path =
+            "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/"
         val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
@@ -113,7 +129,8 @@ object SampleImages {
     }
 
     object Content {
-        private const val path = "content://${BuildConfig.APPLICATION_ID}.fileprovider/asset_images/"
+        private const val path =
+            "content://${BuildConfig.APPLICATION_ID}.fileprovider/asset_images/"
         val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }

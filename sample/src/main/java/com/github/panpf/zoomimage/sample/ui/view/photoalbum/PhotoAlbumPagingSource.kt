@@ -39,7 +39,7 @@ class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, P
     }
 
     private suspend fun readAssetPhotos(): List<Photo> = withToIO {
-        SampleImages.Asset.ALL.map { Photo(it.uri) }
+        SampleImages.MIXING_PHOTO_ALBUM.map { Photo(it.uri) }
     }
 
     private suspend fun readLocalPhotos(startPosition: Int, pageSize: Int): Result<List<Photo>> =
