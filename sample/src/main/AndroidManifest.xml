@@ -37,6 +37,8 @@
         coil.compose.base,
         com.github.panpf.zoomimage.view.coil" />
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name="com.github.panpf.zoomimage.sample.MyApplication"
         android:allowBackup="true"

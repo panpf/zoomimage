@@ -4,11 +4,11 @@ import androidx.annotation.DrawableRes
 import androidx.compose.ui.geometry.Size
 import com.github.panpf.zoomimage.sample.R
 
-data class Photo(@DrawableRes val resId: Int, val aspectRatio: Float) {
+data class ResPhoto(@DrawableRes val resId: Int, val aspectRatio: Float) {
 
     companion object {
-        val horDog = Photo(R.raw.sample_dog_hor, 640.toFloat() / 427)
-        val verDog = Photo(R.raw.sample_dog_ver, 150.toFloat() / 266)
+        val horDog = ResPhoto(R.raw.sample_dog_hor, 640.toFloat() / 427)
+        val verDog = ResPhoto(R.raw.sample_dog_ver, 150.toFloat() / 266)
     }
 
     fun calculateTargetSize(viewSize: Int, toBig: Boolean): Size {

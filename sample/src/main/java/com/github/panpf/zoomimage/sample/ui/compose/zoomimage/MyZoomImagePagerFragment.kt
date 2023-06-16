@@ -43,8 +43,8 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.compose.base.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.compose.util.toPx
 import com.github.panpf.zoomimage.sample.ui.compose.util.toShortString
-import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sample.ui.model.PhotoItem
+import com.github.panpf.zoomimage.sample.ui.model.ResPhoto
+import com.github.panpf.zoomimage.sample.ui.model.ResPhotoFetcher
 import kotlinx.coroutines.launch
 
 class MyZoomImagePagerFragment : AppBarFragment() {
@@ -64,10 +64,10 @@ private fun MyZoomImageFullSample() {
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
     val zoomOptionsDialogState = rememberZoomOptionsDialogState()
-    val horSmall = remember { PhotoItem(Photo.horDog, "横向图片 - 小", false) }
-    val verSmall = remember { PhotoItem(Photo.verDog, "竖向图片 - 小", false) }
-    val horBig = remember { PhotoItem(Photo.horDog, "横向图片 - 大", true) }
-    val verBig = remember { PhotoItem(Photo.verDog, "竖向图片 - 大", true) }
+    val horSmall = remember { ResPhotoFetcher(ResPhoto.horDog, "横向图片 - 小", false) }
+    val verSmall = remember { ResPhotoFetcher(ResPhoto.verDog, "竖向图片 - 小", false) }
+    val horBig = remember { ResPhotoFetcher(ResPhoto.horDog, "横向图片 - 大", true) }
+    val verBig = remember { ResPhotoFetcher(ResPhoto.verDog, "竖向图片 - 大", true) }
     val image by remember {
         derivedStateOf {
             if (zoomOptionsDialogState.horImageSelected) {
