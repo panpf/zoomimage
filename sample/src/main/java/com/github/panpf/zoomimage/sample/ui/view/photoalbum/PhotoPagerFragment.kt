@@ -52,11 +52,10 @@ class PhotoPagerFragment : ToolbarBindingFragment<PhotoPagerFragmentBinding>() {
             setCurrentItem(args.position - args.startPosition, false)
         }
 
-        binding.photoPagerTotalPage.text = args.totalCount.toString()
-
         binding.photoPagerCurrentPage.apply {
             val updateCurrentPageNumber: () -> Unit = {
-                text = (args.startPosition + binding.photoPagerPager.currentItem + 1).toString()
+                val pageNumber = args.startPosition + binding.photoPagerPager.currentItem + 1
+                text = "$pageNumber\n·\n${args.totalCount}"
             }
             binding.photoPagerPager.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {

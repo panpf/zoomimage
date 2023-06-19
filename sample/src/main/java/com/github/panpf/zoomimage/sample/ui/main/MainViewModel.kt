@@ -62,7 +62,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             Link(
                 title = "ZoomImageView（My）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.ZoomImageView.name),
-                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE) // todo api 33 上直接拒绝
             ),
             Link(
                 title = "SketchZoomImageView（My）",
