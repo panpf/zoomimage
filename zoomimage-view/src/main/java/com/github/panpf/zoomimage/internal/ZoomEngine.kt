@@ -219,16 +219,16 @@ internal class ZoomEngine constructor(
                     && finalReadModeDecider?.should(srcSize = drawableSize, viewSize) == true
             val finalDrawableSize = drawableSize.rotate(rotateDegrees)
             val finalImageSize = imageSize.rotate(rotateDegrees)
-            val scales = computeScales(
+            val supportStepScales = computeSupportScales(
                 scaleType = scaleType,
                 drawableSize = finalDrawableSize,
                 imageSize = finalImageSize,
                 viewSize = viewSize,
                 readMode = readMode
             )
-            minScale = scales[0]
-            mediumScale = scales[1]
-            maxScale = scales[2]
+            minScale = supportStepScales[0]
+            mediumScale = supportStepScales[1]
+            maxScale = supportStepScales[2]
             baseInitialTransform = scaleType
                 .computeTransform(srcSize = finalDrawableSize, dstSize = viewSize)
             supportInitialTransform = if (readMode) {
@@ -377,36 +377,32 @@ internal class ZoomEngine constructor(
 
     val horScrollEdge: Edge
         get() = scaleDragHelper.horScrollEdge
-
     val verScrollEdge: Edge
         get() = scaleDragHelper.verScrollEdge
-
-    val baseScale: Float
-        get() = scaleDragHelper.baseScale
-
-    val baseTranslation: PointF
-        get() = scaleDragHelper.baseTranslation
-
-    val supportScale: Float
-        get() = scaleDragHelper.supportScale
-
-    val supportTranslation: PointF
-        get() = scaleDragHelper.supportTranslation
-
-    val scale: Float
-        get() = scaleDragHelper.scale
-
-    val translation: PointF
-        get() = scaleDragHelper.translation
 
     val isScaling: Boolean
         get() = scaleDragHelper.isScaling
 
-    fun getDrawMatrix(matrix: Matrix) = scaleDragHelper.getDrawMatrix(matrix)
+    val scale: Float
+        get() = scaleDragHelper.scale
+    val translation: PointF
+        get() = scaleDragHelper.translation
 
-    fun getDrawRect(rectF: RectF) = scaleDragHelper.getDrawRect(rectF)
+    val baseScale: PointF
+        get() = scaleDragHelper.baseScale
+    val baseTranslation: PointF
+        get() = scaleDragHelper.baseTranslation
 
-    fun getDrawRect(): RectF = scaleDragHelper.getDrawRect()
+    val displayScale: PointF
+        get() = scaleDragHelper.displayScale
+    val displayTranslation: PointF
+        get() = scaleDragHelper.displayTranslation
+
+    fun getDisplayMatrix(matrix: Matrix) = scaleDragHelper.getDisplayMatrix(matrix)
+
+    fun getDisplayRect(rectF: RectF) = scaleDragHelper.getDisplayRect(rectF)
+
+    fun getDisplayRect(): RectF = scaleDragHelper.getDisplayRect()
 
     /** Gets the area that the user can see on the drawable (not affected by rotation) */
     fun getVisibleRect(rect: Rect) = scaleDragHelper.getVisibleRect(rect)

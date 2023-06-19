@@ -41,19 +41,19 @@ internal class ScrollBarHelper(
         alpha = scrollBarAlpha
     }
     private val view = engine.view
-    private val drawRectF = RectF()
+    private val displayRectF = RectF()
     private val scrollBarRectF = RectF()
     private val fadeRunnable: FadeRunnable = FadeRunnable(context, this)
     private val delayFadeRunnable: DelayFadeRunnable = DelayFadeRunnable(this, fadeRunnable)
 
     fun onDraw(canvas: Canvas) {
-        val drawRectF = drawRectF
-            .apply { engine.getDrawRect(this) }
+        val displayRectF = displayRectF
+            .apply { engine.getDisplayRect(this) }
             .takeIf { !it.isEmpty }
             ?: return
         val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty } ?: return
-        val drawWidth = drawRectF.width()
-        val drawHeight = drawRectF.height()
+        val drawWidth = displayRectF.width()
+        val drawHeight = displayRectF.height()
         val margin = scrollBarMargin + scrollBarSize + scrollBarMargin
         val viewAvailableWidth = viewWidth - (margin * 2) - view.paddingLeft - view.paddingRight
         val viewAvailableHeight = viewHeight - (margin * 2) - view.paddingTop - view.paddingBottom
@@ -64,8 +64,8 @@ internal class ScrollBarHelper(
             val horScrollBarWidth =
                 (viewAvailableWidth * widthScale).coerceAtLeast(scrollBarSize).toInt()
             val horScrollBarRectF = scrollBarRectF.apply {
-                val mapLeft = if (drawRectF.left < 0) {
-                    (abs(drawRectF.left) / drawRectF.width() * viewAvailableWidth).toInt()
+                val mapLeft = if (displayRectF.left < 0) {
+                    (abs(displayRectF.left) / displayRectF.width() * viewAvailableWidth).toInt()
                 } else 0
                 left = (view.paddingLeft + margin + mapLeft)
                 right = left + horScrollBarWidth
@@ -86,8 +86,8 @@ internal class ScrollBarHelper(
             val verScrollBarHeight =
                 (viewAvailableHeight * heightScale).coerceAtLeast(scrollBarSize).toInt()
             val verScrollBarRectF = scrollBarRectF.apply {
-                val mapTop = if (drawRectF.top < 0) {
-                    (abs(drawRectF.top) / drawRectF.height() * viewAvailableHeight).toInt()
+                val mapTop = if (displayRectF.top < 0) {
+                    (abs(displayRectF.top) / displayRectF.height() * viewAvailableHeight).toInt()
                 } else 0
                 left = (view.paddingLeft + margin + viewAvailableWidth + scrollBarMargin)
                 right = left + scrollBarSize

@@ -48,7 +48,7 @@ internal class SubsamplingEngine constructor(
     private var initJob: Job? = null
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
-    private val tempDrawMatrix = Matrix()
+    private val tempDisplayMatrix = Matrix()
     private val tempDrawableVisibleRect = Rect()
     internal var onTileChangedListenerList: MutableSet<OnTileChangedListener>? = null
 
@@ -216,8 +216,8 @@ internal class SubsamplingEngine constructor(
 
         val drawableSize = zoomEngine.drawableSize
         val scaling = zoomEngine.isScaling
-        val drawMatrix = tempDrawMatrix.apply {
-            zoomEngine.getDrawMatrix(this)
+        val displayMatrix = tempDisplayMatrix.apply {
+            zoomEngine.getDisplayMatrix(this)
         }
         val drawableVisibleRect = tempDrawableVisibleRect.apply {
             zoomEngine.getVisibleRect(this)
@@ -246,16 +246,16 @@ internal class SubsamplingEngine constructor(
             return
         }
 
-        tileManager?.refreshTiles(drawableSize, drawableVisibleRect, drawMatrix)
+        tileManager?.refreshTiles(drawableSize, drawableVisibleRect, displayMatrix)
     }
 
     @MainThread
     fun onDraw(canvas: Canvas) {
         if (destroyed) return
         val drawableSize = zoomEngine.drawableSize
-        val drawMatrix = tempDrawMatrix
+        val displayMatrix = tempDisplayMatrix
         val drawableVisibleRect = tempDrawableVisibleRect
-        tileManager?.onDraw(canvas, drawableSize, drawableVisibleRect, drawMatrix)
+        tileManager?.onDraw(canvas, drawableSize, drawableVisibleRect, displayMatrix)
     }
 
     @MainThread

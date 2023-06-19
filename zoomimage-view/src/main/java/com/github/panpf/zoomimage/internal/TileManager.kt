@@ -87,10 +87,10 @@ internal class TileManager constructor(
     }
 
     @MainThread
-    fun refreshTiles(drawableSize: Size, drawableVisibleRect: Rect, drawMatrix: Matrix) {
+    fun refreshTiles(drawableSize: Size, drawableVisibleRect: Rect, displayMatrix: Matrix) {
         requiredMainThread()
 
-        val zoomScale = drawMatrix.getScale().format(2)
+        val zoomScale = displayMatrix.getScale().x.format(2)
         val sampleSize = findSampleSize(
             imageWidth = decoder.imageSize.width,
             imageHeight = decoder.imageSize.height,
@@ -145,7 +145,7 @@ internal class TileManager constructor(
     }
 
     @MainThread
-    fun onDraw(canvas: Canvas, drawableSize: Size, drawableVisibleRect: Rect, drawMatrix: Matrix) {
+    fun onDraw(canvas: Canvas, drawableSize: Size, drawableVisibleRect: Rect, displayMatrix: Matrix) {
         requiredMainThread()
 
         val tileList = lastTileList
@@ -161,7 +161,7 @@ internal class TileManager constructor(
         val widthScale = decoder.imageSize.width / drawableSize.width.toFloat()
         val heightScale = decoder.imageSize.height / drawableSize.height.toFloat()
         canvas.withSave {
-            canvas.concat(drawMatrix)
+            canvas.concat(displayMatrix)
             tileList.forEach { tile ->
                 if (tile.srcRect.crossWith(_imageLoadRect)) {
                     val tileBitmap = tile.bitmap

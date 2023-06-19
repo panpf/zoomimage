@@ -49,7 +49,7 @@ class ZoomAbility(
         }
         resetDrawableSize()
         addOnMatrixChangeListener {
-            val matrix = imageMatrix.apply { engine.getDrawMatrix(this) }
+            val matrix = imageMatrix.apply { engine.getDisplayMatrix(this) }
             imageViewBridge.superSetImageMatrix(matrix)
         }
     }
@@ -176,57 +176,48 @@ class ZoomAbility(
 
     val horScrollEdge: Edge
         get() = engine.horScrollEdge
-
     val verScrollEdge: Edge
         get() = engine.verScrollEdge
-
-    val baseScale: Float
-        get() = engine.baseScale
-
-    val baseTranslation: PointF
-        get() = engine.baseTranslation
-
-    val supportScale: Float
-        get() = engine.supportScale
-
-    val supportTranslation: PointF
-        get() = engine.supportTranslation
-
-    val scale: Float
-        get() = engine.scale
-
-    val translation: PointF
-        get() = engine.translation
-
-    val minScale: Float
-        get() = engine.minScale
-
-    val mediumScale: Float
-        get() = engine.mediumScale
-
-    val maxScale: Float
-        get() = engine.maxScale
-
-    val stepScales: FloatArray
-        get() = engine.stepScales
 
     val isScaling: Boolean
         get() = engine.isScaling
 
+    val scale: Float
+        get() = engine.scale
+    val translation: PointF
+        get() = engine.translation
+
+    val baseScale: PointF
+        get() = engine.baseScale
+    val baseTranslation: PointF
+        get() = engine.baseTranslation
+
+    val displayScale: PointF
+        get() = engine.displayScale
+    val displayTranslation: PointF
+        get() = engine.displayTranslation
+
+    val minScale: Float
+        get() = engine.minScale
+    val mediumScale: Float
+        get() = engine.mediumScale
+    val maxScale: Float
+        get() = engine.maxScale
+    val stepScales: FloatArray
+        get() = engine.stepScales
+
     val viewSize: Size
         get() = engine.viewSize
-
     val imageSize: Size
         get() = engine.imageSize
-
     val drawableSize: Size
         get() = engine.drawableSize
 
-    fun getDrawMatrix(matrix: Matrix) = engine.getDrawMatrix(matrix)
+    fun getDisplayMatrix(matrix: Matrix) = engine.getDisplayMatrix(matrix)
 
-    fun getDrawRect(rectF: RectF) = engine.getDrawRect(rectF)
+    fun getDisplayRect(rectF: RectF) = engine.getDisplayRect(rectF)
 
-    fun getDrawRect(): RectF = engine.getDrawRect()
+    fun getDisplayRect(): RectF = engine.getDisplayRect()
 
     /** Gets the area that the user can see on the drawable (not affected by rotation) */
     fun getVisibleRect(rect: Rect) = engine.getVisibleRect(rect)

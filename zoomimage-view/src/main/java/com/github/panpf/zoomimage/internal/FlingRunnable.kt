@@ -38,17 +38,17 @@ internal class FlingRunnable(
     fun start() {
         cancel()
 
-        val drawRectF = scaleDragHelper.getDrawRect()
+        val displayRectF = scaleDragHelper.getDisplayRect()
             .takeIf { !it.isEmpty }
             ?: return
         val (viewWidth, viewHeight) = engine.viewSize
 
         val minX: Int
         val maxX: Int
-        val startX = (-drawRectF.left).roundToInt()
-        if (viewWidth < drawRectF.width()) {
+        val startX = (-displayRectF.left).roundToInt()
+        if (viewWidth < displayRectF.width()) {
             minX = 0
-            maxX = (drawRectF.width() - viewWidth).roundToInt()
+            maxX = (displayRectF.width() - viewWidth).roundToInt()
         } else {
             maxX = startX
             minX = maxX
@@ -56,10 +56,10 @@ internal class FlingRunnable(
 
         val minY: Int
         val maxY: Int
-        val startY = (-drawRectF.top).roundToInt()
-        if (viewHeight < drawRectF.height()) {
+        val startY = (-displayRectF.top).roundToInt()
+        if (viewHeight < displayRectF.height()) {
             minY = 0
-            maxY = (drawRectF.height() - viewHeight).roundToInt()
+            maxY = (displayRectF.height() - viewHeight).roundToInt()
         } else {
             maxY = startY
             minY = maxY

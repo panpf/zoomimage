@@ -50,8 +50,8 @@ internal class ScaleDragHelper constructor(
     private val supportMatrix = Matrix()
 
     /* Store the fused information of baseMatrix and supportMatrix for drawing */
-    private val drawMatrix = Matrix()
-    private val drawRectF = RectF()
+    private val displayMatrix = Matrix()
+    private val displayRectF = RectF()
 
     /* Cache the coordinates of the last zoom gesture, used when restoring zoom */
     private var lastScaleFocusX: Float = 0f
@@ -74,18 +74,21 @@ internal class ScaleDragHelper constructor(
 
     val isScaling: Boolean
         get() = animatedScaleRunnable?.isRunning == true || manualScaling
-    val baseScale: Float
+
+    val scale: Float
+        get() = supportMatrix.getScale().x
+    val translation: PointF
+        get() = supportMatrix.getTranslation()
+
+    val baseScale: PointF
         get() = baseMatrix.getScale()
     val baseTranslation: PointF
         get() = baseMatrix.getTranslation()
-    val supportScale: Float
-        get() = supportMatrix.getScale()
-    val supportTranslation: PointF
-        get() = supportMatrix.getTranslation()
-    val scale: Float
-        get() = drawMatrix.apply { getDrawMatrix(this) }.getScale()
-    val translation: PointF
-        get() = drawMatrix.apply { getDrawMatrix(this) }.getTranslation()
+
+    val displayScale: PointF
+        get() = displayMatrix.apply { getDisplayMatrix(this) }.getScale()
+    val displayTranslation: PointF
+        get() = displayMatrix.apply { getDisplayMatrix(this) }.getTranslation()
 
     init {
         scaleDragGestureDetector = ScaleDragGestureDetector(context, object : OnGestureListener {
@@ -164,8 +167,8 @@ internal class ScaleDragHelper constructor(
     }
 
     private fun checkMatrixBounds(): Boolean {
-        val drawRectF = drawRectF.apply { getDrawRect(this) }
-        if (drawRectF.isEmpty) {
+        val displayRectF = displayRectF.apply { getDisplayRect(this) }
+        if (displayRectF.isEmpty) {
             _horScrollEdge = Edge.NONE
             _verScrollEdge = Edge.NONE
             return false
@@ -173,43 +176,43 @@ internal class ScaleDragHelper constructor(
 
         var deltaX = 0f
         val viewWidth = engine.viewSize.width
-        val displayWidth = drawRectF.width()
+        val displayWidth = displayRectF.width()
         when {
             displayWidth.toInt() <= viewWidth -> {
                 deltaX = when (engine.scaleType) {
-                    ScaleType.FIT_START -> -drawRectF.left
-                    ScaleType.FIT_END -> viewWidth - displayWidth - drawRectF.left
-                    else -> (viewWidth - displayWidth) / 2 - drawRectF.left
+                    ScaleType.FIT_START -> -displayRectF.left
+                    ScaleType.FIT_END -> viewWidth - displayWidth - displayRectF.left
+                    else -> (viewWidth - displayWidth) / 2 - displayRectF.left
                 }
             }
 
-            drawRectF.left.toInt() > 0 -> {
-                deltaX = -drawRectF.left
+            displayRectF.left.toInt() > 0 -> {
+                deltaX = -displayRectF.left
             }
 
-            drawRectF.right.toInt() < viewWidth -> {
-                deltaX = viewWidth - drawRectF.right
+            displayRectF.right.toInt() < viewWidth -> {
+                deltaX = viewWidth - displayRectF.right
             }
         }
 
         var deltaY = 0f
         val viewHeight = engine.viewSize.height
-        val displayHeight = drawRectF.height()
+        val displayHeight = displayRectF.height()
         when {
             displayHeight.toInt() <= viewHeight -> {
                 deltaY = when (engine.scaleType) {
-                    ScaleType.FIT_START -> -drawRectF.top
-                    ScaleType.FIT_END -> viewHeight - displayHeight - drawRectF.top
-                    else -> (viewHeight - displayHeight) / 2 - drawRectF.top
+                    ScaleType.FIT_START -> -displayRectF.top
+                    ScaleType.FIT_END -> viewHeight - displayHeight - displayRectF.top
+                    else -> (viewHeight - displayHeight) / 2 - displayRectF.top
                 }
             }
 
-            drawRectF.top.toInt() > 0 -> {
-                deltaY = -drawRectF.top
+            displayRectF.top.toInt() > 0 -> {
+                deltaY = -displayRectF.top
             }
 
-            drawRectF.bottom.toInt() < viewHeight -> {
-                deltaY = viewHeight - drawRectF.bottom
+            displayRectF.bottom.toInt() < viewHeight -> {
+                deltaY = viewHeight - displayRectF.bottom
             }
         }
 
@@ -218,14 +221,14 @@ internal class ScaleDragHelper constructor(
 
         _verScrollEdge = when {
             displayHeight.toInt() <= viewHeight -> Edge.BOTH
-            drawRectF.top.toInt() >= 0 -> Edge.START
-            drawRectF.bottom.toInt() <= viewHeight -> Edge.END
+            displayRectF.top.toInt() >= 0 -> Edge.START
+            displayRectF.bottom.toInt() <= viewHeight -> Edge.END
             else -> Edge.NONE
         }
         _horScrollEdge = when {
             displayWidth.toInt() <= viewWidth -> Edge.BOTH
-            drawRectF.left.toInt() >= 0 -> Edge.START
-            drawRectF.right.toInt() <= viewWidth -> Edge.END
+            displayRectF.left.toInt() >= 0 -> Edge.START
+            displayRectF.right.toInt() <= viewWidth -> Edge.END
             else -> Edge.NONE
         }
         return true
@@ -256,18 +259,18 @@ internal class ScaleDragHelper constructor(
             )
         }
 
-        val drawRectF = getDrawRect()
-        val currentScale = scale
-        val scaleLocationX = (newX * currentScale).toInt()
-        val scaleLocationY = (newY * currentScale).toInt()
+        val displayRectF = getDisplayRect()
+        val currentScale = displayScale
+        val scaleLocationX = (newX * currentScale.x).toInt()
+        val scaleLocationY = (newY * currentScale.y).toInt()
         val scaledLocationX =
-            scaleLocationX.coerceAtLeast(0).coerceAtMost(drawRectF.width().toInt())
+            scaleLocationX.coerceIn(0, displayRectF.width().toInt())
         val scaledLocationY =
-            scaleLocationY.coerceAtLeast(0).coerceAtMost(drawRectF.height().toInt())
+            scaleLocationY.coerceIn(0, displayRectF.height().toInt())
         val centerLocationX = (scaledLocationX - viewWidth / 2).coerceAtLeast(0)
         val centerLocationY = (scaledLocationY - viewHeight / 2).coerceAtLeast(0)
-        val startX = abs(drawRectF.left.toInt())
-        val startY = abs(drawRectF.top.toInt())
+        val startX = abs(displayRectF.left.toInt())
+        val startY = abs(displayRectF.top.toInt())
         logger.d(ZoomEngine.MODULE) {
             "location. inDrawable=${xInDrawable}x${yInDrawable}, start=${startX}x${startY}, end=${centerLocationX}x${centerLocationY}"
         }
@@ -292,7 +295,7 @@ internal class ScaleDragHelper constructor(
 
     fun scale(newScale: Float, focalX: Float, focalY: Float, animate: Boolean) {
         animatedScaleRunnable?.cancel()
-        val currentScale = engine.scale
+        val currentScale = scale
         if (animate) {
             animatedScaleRunnable = AnimatedScaleRunnable(
                 engine = engine,
@@ -308,19 +311,19 @@ internal class ScaleDragHelper constructor(
         }
     }
 
-    fun getDrawMatrix(matrix: Matrix) {
+    fun getDisplayMatrix(matrix: Matrix) {
         matrix.set(baseMatrix)
         matrix.postConcat(supportMatrix)
     }
 
-    fun getDrawRect(rectF: RectF) {
+    fun getDisplayRect(rectF: RectF) {
         val drawableSize = engine.drawableSize
         rectF[0f, 0f, drawableSize.width.toFloat()] = drawableSize.height.toFloat()
-        drawMatrix.apply { getDrawMatrix(this) }.mapRect(rectF)
+        displayMatrix.apply { getDisplayMatrix(this) }.mapRect(rectF)
     }
 
-    fun getDrawRect(): RectF {
-        return RectF().apply { getDrawRect(this) }
+    fun getDisplayRect(): RectF {
+        return RectF().apply { getDisplayRect(this) }
     }
 
     /**
@@ -328,25 +331,24 @@ internal class ScaleDragHelper constructor(
      */
     fun getVisibleRect(rect: Rect) {
         rect.setEmpty()
-        val drawRectF = drawRectF.apply { getDrawRect(this) }.takeIf { !it.isEmpty } ?: return
+        val displayRectF = displayRectF.apply { getDisplayRect(this) }.takeIf { !it.isEmpty } ?: return
         val viewSize = engine.viewSize.takeIf { !it.isEmpty } ?: return
         val drawableSize = engine.drawableSize.takeIf { !it.isEmpty } ?: return
         val (drawableWidth, drawableHeight) = drawableSize.let {
             if (engine.rotateDegrees % 180 == 0) it else Size(it.height, it.width)
         }
-        // todo fit_xy 时不准
-        val displayWidth = drawRectF.width()
-        val displayHeight = drawRectF.height()
+        val displayWidth = displayRectF.width()
+        val displayHeight = displayRectF.height()
         val widthScale = displayWidth / drawableWidth
         val heightScale = displayHeight / drawableHeight
-        var left: Float = if (drawRectF.left >= 0)
-            0f else abs(drawRectF.left)
+        var left: Float = if (displayRectF.left >= 0)
+            0f else abs(displayRectF.left)
         var right: Float = if (displayWidth >= viewSize.width)
-            viewSize.width + left else drawRectF.right - drawRectF.left
-        var top: Float = if (drawRectF.top >= 0)
-            0f else abs(drawRectF.top)
+            viewSize.width + left else displayRectF.right - displayRectF.left
+        var top: Float = if (displayRectF.top >= 0)
+            0f else abs(displayRectF.top)
         var bottom: Float = if (displayHeight >= viewSize.height)
-            viewSize.height + top else drawRectF.bottom - drawRectF.top
+            viewSize.height + top else displayRectF.bottom - displayRectF.top
         left /= widthScale
         right /= widthScale
         top /= heightScale
@@ -364,18 +366,18 @@ internal class ScaleDragHelper constructor(
 
     fun touchPointToDrawablePoint(touchPoint: PointF): Point? {
         val drawableSize = engine.drawableSize.takeIf { !it.isEmpty } ?: return null
-        val drawRect = getDrawRect()
-        if (!drawRect.contains(touchPoint.x, touchPoint.y)) {
+        val displayRect = getDisplayRect()
+        if (!displayRect.contains(touchPoint.x, touchPoint.y)) {
             return null
         }
 
-        val zoomScale: Float = scale
+        val zoomScale = displayScale
         val drawableX =
-            ((touchPoint.x - drawRect.left) / zoomScale).roundToInt().coerceAtLeast(0)
-                .coerceAtMost(drawableSize.width)
+            ((touchPoint.x - displayRect.left) / zoomScale.x).roundToInt()
+                .coerceIn(0, drawableSize.width)
         val drawableY =
-            ((touchPoint.y - drawRect.top) / zoomScale).roundToInt().coerceAtLeast(0)
-                .coerceAtMost(drawableSize.height)
+            ((touchPoint.y - displayRect.top) / zoomScale.y).roundToInt()
+                .coerceIn(0, drawableSize.height)
         return Point(drawableX, drawableY)
     }
 
@@ -486,11 +488,11 @@ internal class ScaleDragHelper constructor(
         var newScaleFactor = scaleFactor
         lastScaleFocusX = focusX
         lastScaleFocusY = focusY
-        val currentSupportScale = supportScale
+        val currentSupportScale = scale
         var newSupportScale = currentSupportScale * newScaleFactor
         if (newScaleFactor > 1.0f) {
             // The maximum zoom has been reached. Simulate the effect of pulling a rubber band
-            val maxSupportScale = engine.maxScale / baseScale
+            val maxSupportScale = engine.maxScale
             if (currentSupportScale >= maxSupportScale) {
                 var addScale = newSupportScale - currentSupportScale
                 addScale *= 0.4f
@@ -499,7 +501,7 @@ internal class ScaleDragHelper constructor(
             }
         } else if (newScaleFactor < 1.0f) {
             // The minimum zoom has been reached. Simulate the effect of pulling a rubber band
-            val minSupportScale = engine.minScale / baseScale
+            val minSupportScale = engine.minScale
             if (currentSupportScale <= minSupportScale) {
                 var addScale = newSupportScale - currentSupportScale
                 addScale *= 0.4f
@@ -541,9 +543,9 @@ internal class ScaleDragHelper constructor(
         val minZoomScale = engine.minScale.format(2)
         val maxZoomScale = engine.maxScale.format(2)
         if (currentScale < minZoomScale) {
-            val drawRectF = drawRectF.apply { getDrawRect(this) }
-            if (!drawRectF.isEmpty) {
-                scale(minZoomScale, drawRectF.centerX(), drawRectF.centerY(), true)
+            val displayRectF = displayRectF.apply { getDisplayRect(this) }
+            if (!displayRectF.isEmpty) {
+                scale(minZoomScale, displayRectF.centerX(), displayRectF.centerY(), true)
             }
         } else if (currentScale > maxZoomScale) {
             val lastScaleFocusX = lastScaleFocusX

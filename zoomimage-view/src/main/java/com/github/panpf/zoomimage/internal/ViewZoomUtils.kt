@@ -26,9 +26,7 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 private val MATRIX_VALUES = FloatArray(9)
 
@@ -41,12 +39,20 @@ internal fun Matrix.getValue(whichValue: Int): Float {
     return MATRIX_VALUES[whichValue]
 }
 
-internal fun Matrix.getScale(): Float {
+//internal fun Matrix.getScale(): Float {
+//    requiredMainThread()
+//    getValues(MATRIX_VALUES)
+//    val scaleX: Float = MATRIX_VALUES[Matrix.MSCALE_X]
+//    val skewY: Float = MATRIX_VALUES[Matrix.MSKEW_Y]
+//    return sqrt(scaleX.toDouble().pow(2.0) + skewY.toDouble().pow(2.0)).toFloat()
+//}
+
+internal fun Matrix.getScale(): PointF {
     requiredMainThread()
     getValues(MATRIX_VALUES)
     val scaleX: Float = MATRIX_VALUES[Matrix.MSCALE_X]
-    val skewY: Float = MATRIX_VALUES[Matrix.MSKEW_Y]
-    return sqrt(scaleX.toDouble().pow(2.0) + skewY.toDouble().pow(2.0)).toFloat()
+    val scaleY: Float = MATRIX_VALUES[Matrix.MSCALE_Y]
+    return PointF(scaleX, scaleY)
 }
 
 internal fun Matrix.getRotateDegrees(): Int {
@@ -252,7 +258,7 @@ internal fun computeReadModeTransform(srcSize: Size, dstSize: Size): Transform {
     )
 }
 
-internal fun computeScales(
+internal fun computeSupportScales(
     scaleType: ImageView.ScaleType,
     drawableSize: Size,
     imageSize: Size,
@@ -263,35 +269,27 @@ internal fun computeScales(
         return floatArrayOf(1.0f, 2.0f, 4.0f)
     }
 
-    val drawableToViewWidthScale = viewSize.width / drawableSize.width.toFloat()
-    val drawableToViewHeightScale = viewSize.height / drawableSize.height.toFloat()
     // The width and height of drawable fill the view at the same time
-    val fillViewScale = max(drawableToViewWidthScale, drawableToViewHeightScale)
+    val fillViewScale = max(
+        viewSize.width / drawableSize.width.toFloat(),
+        viewSize.height / drawableSize.height.toFloat()
+    )
     // Enlarge drawable to the same size as its original image
     val originShowScale = if (imageSize.isNotEmpty) {
-        val drawableToImageWidthScale = imageSize.width / drawableSize.width.toFloat()
-        val drawableToImageHeightScale = imageSize.height / drawableSize.height.toFloat()
-        max(drawableToImageWidthScale, drawableToImageHeightScale)
+        max(
+            imageSize.width / drawableSize.width.toFloat(),
+            imageSize.height / drawableSize.height.toFloat()
+        )
     } else {
         1.0f
     }
     val drawableThanViewLarge =
         drawableSize.width > viewSize.width || drawableSize.height > viewSize.height
-    val drawableAspectRatio = drawableSize.width.toFloat().div(drawableSize.height).format(2)
-    val viewAspectRatio = viewSize.width.toFloat().div(viewSize.height).format(2)
-//    val sameDirection = drawableAspectRatio == 1.0f
-//            || viewAspectRatio == 1.0f
-//            || (drawableAspectRatio > 1.0f && viewAspectRatio > 1.0f)
-//            || (drawableAspectRatio < 1.0f && viewAspectRatio < 1.0f)
-    val baseScale = scaleType.computeScaleFactor(srcSize = drawableSize, dstSize = viewSize).scaleX
 
-    @Suppress("UnnecessaryVariable")
-    val minScale = baseScale
+    val baseScale = scaleType.computeScaleFactor(srcSize = drawableSize, dstSize = viewSize).scaleX
+    @Suppress("UnnecessaryVariable") val minScale = baseScale
+
     val defaultMediumScale = minScale * 2f
-    val defaultMaxScale = minScale * 4f
-//    val defaultMediumScale = if (imageSize.isNotEmpty) minScale * 2f else minScale * 4f
-//    val defaultMaxScale = if (imageSize.isNotEmpty) minScale * 4f else minScale * 8f
-    // todo 优化，验证
     val isFit = scaleType == ImageView.ScaleType.FIT_START
             || scaleType == ImageView.ScaleType.FIT_CENTER
             || scaleType == ImageView.ScaleType.FIT_END
@@ -303,16 +301,12 @@ internal fun computeScales(
     } else if (isFill) {
         floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
     } else if (isFit) {
-//        if (sameDirection) {
-//            floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
-//        } else {
         floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
-//        }
     } else {
         floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
     }
 
-    val maxScale = floatArrayOf(mediumScale * 2f, defaultMaxScale).maxOrNull()!!
+    val maxScale = mediumScale * 2f
 
-    return floatArrayOf(minScale, mediumScale, maxScale)
+    return floatArrayOf(minScale, mediumScale, maxScale).map { it / baseScale }.toFloatArray()
 }
