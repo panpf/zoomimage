@@ -78,14 +78,14 @@ object SampleImages {
         )
         val ELEPHANT = SampleImage(
             name = "ELEPHANT",
-            fileName = "sample_elephant.png",
-            uri = newAssetUri("sample_elephant.png"),
+            fileName = "sample_elephant.jpg",
+            uri = newAssetUri("sample_elephant.jpg"),
             size = Size(150, 266)
         )
         val WHALE = SampleImage(
             name = "WHALE",
-            fileName = "sample_whale.png",
-            uri = newAssetUri("sample_whale.png"),
+            fileName = "sample_whale.jpg",
+            uri = newAssetUri("sample_whale.jpg"),
             size = Size(150, 266)
         )
         val WORLD = SampleImage(
@@ -102,8 +102,8 @@ object SampleImages {
         )
         val CARD = SampleImage(
             name = "CARD",
-            fileName = "sample_huge_card.png",
-            uri = newAssetUri("sample_huge_card.png"),
+            fileName = "sample_huge_card.jpg",
+            uri = newAssetUri("sample_huge_card.jpg"),
             size = Size(7557, 5669)
         )
         val QMSHT = SampleImage(
