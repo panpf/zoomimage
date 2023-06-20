@@ -28,6 +28,7 @@ class ExifOrientationTestFragment : ToolbarBindingFragment<TabPagerFragmentBindi
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.showContentState.collect { sampleImages ->
                     binding.tabPagerPager.apply {
+                        offscreenPageLimit = 1
                         orientation = ViewPager2.ORIENTATION_HORIZONTAL
                         adapter = AssemblyFragmentStateAdapter(
                             fragment = this@ExifOrientationTestFragment,

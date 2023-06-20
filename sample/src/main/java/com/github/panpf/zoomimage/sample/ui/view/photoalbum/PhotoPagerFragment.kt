@@ -41,6 +41,7 @@ class PhotoPagerFragment : ToolbarBindingFragment<PhotoPagerFragmentBinding>() {
         val imageUrlList = args.imageUris.split(",")
 
         binding.photoPagerPager.apply {
+            offscreenPageLimit = 1
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@PhotoPagerFragment,

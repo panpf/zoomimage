@@ -34,11 +34,14 @@ class SubsamplingViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBind
     ) {
         toolbar.title = "SubsamplingScaleImageView"
         val sampleImages = SampleImages.FETCHERS
-        binding.tabPagerPager.adapter = AssemblyFragmentStateAdapter(
-            this,
-            listOf(ItemFactory()),
-            sampleImages.map { it.uri }
-        )
+        binding.tabPagerPager.apply{
+            offscreenPageLimit = 1
+            adapter = AssemblyFragmentStateAdapter(
+                fragment = this@SubsamplingViewPagerFragment,
+                itemFactoryList = listOf(ItemFactory()),
+                initDataList = sampleImages.map { it.uri }
+            )
+        }
         TabLayoutMediator(binding.tabPagerTabLayout, binding.tabPagerPager) { tab, position ->
             tab.text = sampleImages[position].name
         }.attach()

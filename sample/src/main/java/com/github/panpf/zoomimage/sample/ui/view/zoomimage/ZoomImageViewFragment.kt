@@ -16,16 +16,12 @@
 package com.github.panpf.zoomimage.sample.ui.view.zoomimage
 
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.sketch.request.DisplayResult
-import com.github.panpf.sketch.sketch
+import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
-import kotlinx.coroutines.launch
 
 class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBinding>() {
 
@@ -57,20 +53,18 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
         onCallSuccess: () -> Unit,
         onCallError: () -> Unit
     ) {
-        onCallStart()
-        binding.zoomImageViewImage.apply {
-            viewLifecycleOwner.lifecycleScope.launch {
-                val request = DisplayRequest(requireContext(), sketchImageUri) {
-                    lifecycle(viewLifecycleOwner.lifecycle)
-                }
-                val result = requireContext().sketch.execute(request)
-                if (result is DisplayResult.Success) {
-                    setImageDrawable(result.drawable)
+        binding.zoomImageViewImage.displayImage(sketchImageUri) {
+            listener(
+                onStart = {
+                    onCallStart()
+                },
+                onSuccess = { _, _ ->
                     onCallSuccess()
-                } else {
+                },
+                onError = { _, _ ->
                     onCallError()
                 }
-            }
+            )
         }
     }
 

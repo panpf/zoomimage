@@ -29,6 +29,7 @@ class ZoomImageViewHorPagerFragment : BindingFragment<TabPagerFragmentBinding>()
     override fun onViewCreated(binding: TabPagerFragmentBinding, savedInstanceState: Bundle?) {
         val sampleImages = SampleImages.FETCHERS
         binding.tabPagerPager.apply {
+            offscreenPageLimit = 1
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@ZoomImageViewHorPagerFragment,

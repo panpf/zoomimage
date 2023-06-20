@@ -35,11 +35,14 @@ class PhotoViewPagerFragment : ToolbarBindingFragment<TabPagerFragmentBinding>()
         toolbar.title = "PhotoView"
 
         val sampleImages = SampleImages.FETCHERS
-        binding.tabPagerPager.adapter = AssemblyFragmentStateAdapter(
-            this,
-            listOf(ItemFactory()),
-            sampleImages.map { it.uri }
-        )
+        binding.tabPagerPager.apply{
+            offscreenPageLimit = 1
+            adapter = AssemblyFragmentStateAdapter(
+                fragment = this@PhotoViewPagerFragment,
+                itemFactoryList = listOf(ItemFactory()),
+                initDataList = sampleImages.map { it.uri }
+            )
+        }
         TabLayoutMediator(binding.tabPagerTabLayout, binding.tabPagerPager) { tab, position ->
             tab.text = sampleImages[position].name
         }.attach()
