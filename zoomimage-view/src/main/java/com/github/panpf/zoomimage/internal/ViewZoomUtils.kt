@@ -18,7 +18,7 @@ package com.github.panpf.zoomimage.internal
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.Rect
-import android.widget.ImageView
+import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Size
 import com.github.panpf.zoomimage.Transform
 import com.github.panpf.zoomimage.isNotEmpty
@@ -146,25 +146,25 @@ internal fun rotatePoint(point: PointF, rotateDegrees: Int, drawableSize: Size) 
     }
 }
 
-internal fun ImageView.ScaleType.computeTransform(srcSize: Size, dstSize: Size): Transform {
+internal fun ScaleType.computeTransform(srcSize: Size, dstSize: Size): Transform {
     val scaleFactor = this.computeScaleFactor(srcSize, dstSize)
     val translation = this.computeScaleTranslation(srcSize, dstSize)
     return Transform(scaleFactor, translation)
 }
 
-internal fun ImageView.ScaleType.computeScaleFactor(srcSize: Size, dstSize: Size): ScaleFactor {
+internal fun ScaleType.computeScaleFactor(srcSize: Size, dstSize: Size): ScaleFactor {
     val widthScale = dstSize.width / srcSize.width.toFloat()
     val heightScale = dstSize.height / srcSize.height.toFloat()
     val fillMaxDimension = max(widthScale, heightScale)
     val fillMinDimension = min(widthScale, heightScale)
     return when (this) {
-        ImageView.ScaleType.CENTER -> ScaleFactor(scaleX = 1.0f, scaleY = 1.0f)
+        ScaleType.CENTER -> ScaleFactor(scaleX = 1.0f, scaleY = 1.0f)
 
-        ImageView.ScaleType.CENTER_CROP -> {
+        ScaleType.CENTER_CROP -> {
             ScaleFactor(scaleX = fillMaxDimension, scaleY = fillMaxDimension)
         }
 
-        ImageView.ScaleType.CENTER_INSIDE -> {
+        ScaleType.CENTER_INSIDE -> {
             if (srcSize.width <= dstSize.width && srcSize.height <= dstSize.height) {
                 ScaleFactor(scaleX = 1.0f, scaleY = 1.0f)
             } else {
@@ -172,64 +172,64 @@ internal fun ImageView.ScaleType.computeScaleFactor(srcSize: Size, dstSize: Size
             }
         }
 
-        ImageView.ScaleType.FIT_START,
-        ImageView.ScaleType.FIT_CENTER,
-        ImageView.ScaleType.FIT_END -> {
+        ScaleType.FIT_START,
+        ScaleType.FIT_CENTER,
+        ScaleType.FIT_END -> {
             ScaleFactor(scaleX = fillMinDimension, scaleY = fillMinDimension)
         }
 
-        ImageView.ScaleType.FIT_XY -> {
+        ScaleType.FIT_XY -> {
             ScaleFactor(scaleX = widthScale, scaleY = heightScale)
         }
 
-        ImageView.ScaleType.MATRIX -> ScaleFactor(1.0f, 1.0f)
+        ScaleType.MATRIX -> ScaleFactor(1.0f, 1.0f)
         else -> ScaleFactor(scaleX = 1.0f, scaleY = 1.0f)
     }
 }
 
-internal fun ImageView.ScaleType.computeScaleTranslation(
+internal fun ScaleType.computeScaleTranslation(
     srcSize: Size,
     dstSize: Size
 ): Translation {
     val scaleFactor = this.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
     val scaledSrcSize = srcSize.times(scaleFactor)
     return when (this) {
-        ImageView.ScaleType.CENTER -> Translation(
+        ScaleType.CENTER -> Translation(
             translationX = (dstSize.width - scaledSrcSize.width) / 2.0f,
             translationY = (dstSize.height - scaledSrcSize.height) / 2.0f
         )
 
-        ImageView.ScaleType.CENTER_CROP -> Translation(
+        ScaleType.CENTER_CROP -> Translation(
             translationX = (dstSize.width - scaledSrcSize.width) / 2.0f,
             translationY = (dstSize.height - scaledSrcSize.height) / 2.0f
         )
 
-        ImageView.ScaleType.CENTER_INSIDE -> Translation(
+        ScaleType.CENTER_INSIDE -> Translation(
             translationX = (dstSize.width - scaledSrcSize.width) / 2.0f,
             translationY = (dstSize.height - scaledSrcSize.height) / 2.0f
         )
 
-        ImageView.ScaleType.FIT_START -> Translation(
+        ScaleType.FIT_START -> Translation(
             translationX = 0.0f,
             translationY = 0.0f
         )
 
-        ImageView.ScaleType.FIT_CENTER -> Translation(
+        ScaleType.FIT_CENTER -> Translation(
             translationX = (dstSize.width - scaledSrcSize.width) / 2.0f,
             translationY = (dstSize.height - scaledSrcSize.height) / 2.0f
         )
 
-        ImageView.ScaleType.FIT_END -> Translation(
+        ScaleType.FIT_END -> Translation(
             translationX = dstSize.width - scaledSrcSize.width.toFloat(),
             translationY = dstSize.height - scaledSrcSize.height.toFloat()
         )
 
-        ImageView.ScaleType.FIT_XY -> Translation(
+        ScaleType.FIT_XY -> Translation(
             translationX = 0.0f,
             translationY = 0.0f
         )
 
-        ImageView.ScaleType.MATRIX -> Translation(
+        ScaleType.MATRIX -> Translation(
             translationX = 0.0f,
             translationY = 0.0f
         )
@@ -241,31 +241,39 @@ internal fun ImageView.ScaleType.computeScaleTranslation(
     }
 }
 
-internal fun ImageView.ScaleType.supportReadMode(): Boolean {
-    return this != ImageView.ScaleType.FIT_XY
-            && this != ImageView.ScaleType.CENTER_CROP
-}
+internal fun ScaleType.supportReadMode(): Boolean = this != ScaleType.FIT_XY
 
-internal fun computeReadModeTransform(srcSize: Size, dstSize: Size): Transform {
+internal fun computeReadModeTransform(
+    scaleType: ScaleType,
+    srcSize: Size,
+    dstSize: Size
+): Transform {
     val widthScale = dstSize.width / srcSize.width.toFloat()
     val heightScale = dstSize.height / srcSize.height.toFloat()
     val fillMaxDimension = max(widthScale, heightScale)
+    @Suppress("UnnecessaryVariable") val scaleX = fillMaxDimension
+    @Suppress("UnnecessaryVariable") val scaleY = fillMaxDimension
+    val baseTransform = scaleType.computeTransform(srcSize = srcSize, dstSize = dstSize)
+    val translateX =
+        if (baseTransform.translationX < 0) baseTransform.translationX * -1 * scaleX else 0.0f
+    val translateY =
+        if (baseTransform.translationY < 0) baseTransform.translationY * -1 * scaleY else 0.0f
     return Transform(
-        scaleX = fillMaxDimension,
-        scaleY = fillMaxDimension,
-        translateX = 0.0f,
-        translateY = 0.0f
+        scaleX = scaleX,
+        scaleY = scaleY,
+        translationX = translateX,
+        translationY = translateY
     )
 }
 
 internal fun computeSupportScales(
-    scaleType: ImageView.ScaleType,
+    scaleType: ScaleType,
     drawableSize: Size,
     imageSize: Size,
     viewSize: Size,
     readMode: Boolean,
 ): FloatArray {
-    if (scaleType == ImageView.ScaleType.FIT_XY) {
+    if (scaleType == ScaleType.FIT_XY) {
         return floatArrayOf(1.0f, 2.0f, 4.0f)
     }
 
@@ -283,27 +291,26 @@ internal fun computeSupportScales(
     } else {
         1.0f
     }
-    val drawableThanViewLarge =
-        drawableSize.width > viewSize.width || drawableSize.height > viewSize.height
 
     val baseScale = scaleType.computeScaleFactor(srcSize = drawableSize, dstSize = viewSize).scaleX
     @Suppress("UnnecessaryVariable") val minScale = baseScale
 
     val defaultMediumScale = minScale * 2f
-    val isFit = scaleType == ImageView.ScaleType.FIT_START
-            || scaleType == ImageView.ScaleType.FIT_CENTER
-            || scaleType == ImageView.ScaleType.FIT_END
-            || (scaleType == ImageView.ScaleType.CENTER_INSIDE && drawableThanViewLarge)
-    val isFill = scaleType == ImageView.ScaleType.CENTER_CROP
+    val isFill = scaleType == ScaleType.CENTER_CROP
     val useReadMode = scaleType.supportReadMode() && readMode
     val mediumScale = if (useReadMode) {
-        floatArrayOf(originShowScale, fillViewScale).maxOrNull()!!
-    } else if (isFill) {
-        floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
-    } else if (isFit) {
-        floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
+        if (isFill) {
+            floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
+        } else {
+            floatArrayOf(originShowScale, fillViewScale).maxOrNull()!!
+        }
     } else {
-        floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
+        // fit, center, matrix
+        if (isFill) {
+            floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
+        } else {
+            floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
+        }
     }
 
     val maxScale = mediumScale * 2f

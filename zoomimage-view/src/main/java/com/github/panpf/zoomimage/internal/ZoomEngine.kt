@@ -233,14 +233,15 @@ internal class ZoomEngine constructor(
                 .computeTransform(srcSize = finalDrawableSize, dstSize = viewSize)
             supportInitialTransform = if (readMode) {
                 computeReadModeTransform(
+                    scaleType = scaleType,
                     srcSize = finalDrawableSize,
                     dstSize = viewSize
                 ).let {
                     Transform(
                         scaleX = it.scaleX / baseInitialTransform.scaleX,
                         scaleY = it.scaleY / baseInitialTransform.scaleY,
-                        translateX = it.translateX / baseInitialTransform.scaleX,
-                        translateY = it.translateY / baseInitialTransform.scaleY,
+                        translationX = it.translationX / baseInitialTransform.scaleX,
+                        translationY = it.translationY / baseInitialTransform.scaleY,
                     )
                 }
             } else {

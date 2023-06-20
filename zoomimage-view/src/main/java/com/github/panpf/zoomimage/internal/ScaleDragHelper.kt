@@ -146,7 +146,7 @@ internal class ScaleDragHelper constructor(
             reset()
             val transform = engine.baseInitialTransform
             postScale(transform.scaleX, transform.scaleY)
-            postTranslate(transform.translateX, transform.translateY)
+            postTranslate(transform.translationX, transform.translationY)
             postRotate(engine.rotateDegrees.toFloat())
         }
     }
@@ -156,7 +156,7 @@ internal class ScaleDragHelper constructor(
             reset()
             val transform = engine.supportInitialTransform
             postScale(transform.scaleX, transform.scaleY)
-            postTranslate(transform.translateX, transform.translateY)
+            postTranslate(transform.translationX, transform.translationY)
         }
     }
 
