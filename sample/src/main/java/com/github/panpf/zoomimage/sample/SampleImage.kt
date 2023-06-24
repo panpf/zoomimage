@@ -161,4 +161,15 @@ class SampleImage(val name: String, val fileName: String, val uri: String, val s
         uri: String = this.uri,
         size: Size = this.size
     ) = SampleImage(name, fileName, uri, size)
+
+    val type: String by lazy {
+        when{
+            uri.startsWith("http") -> "Http"
+            uri.startsWith("asset") -> "Asset"
+            uri.startsWith("file") -> "File"
+            uri.startsWith("content") -> "Content"
+            uri.startsWith("android.resource") -> "Res"
+            else -> "Unknown"
+        }
+    }
 }

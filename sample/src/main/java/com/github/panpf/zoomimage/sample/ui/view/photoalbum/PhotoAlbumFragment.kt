@@ -94,20 +94,19 @@ class PhotoAlbumFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBinding
         val currentList = binding.recyclerRecycler
             .adapter!!.asOrThrow<AssemblyPagingDataAdapter<Photo>>()
             .currentList
-        val imageList = currentList.mapIndexedNotNull { index, photo ->
-            if (index >= position - 50 && index <= position + 50) {
-                photo?.uri
-            } else {
-                null
-            }
-        }.joinToString(separator = ",")
+        val startPosition = (position - 50).coerceAtLeast(0)
+        val totalCount = currentList.size
+        val endPosition = (position + 50).coerceAtMost(totalCount - 1)
+        val imageList = (startPosition..endPosition).map {
+            currentList[it]?.uri
+        }
         findNavController().navigate(
             NavMainDirections.actionGlobalPhotoPagerFragment(
                 zoomViewType = args.zoomViewType,
-                imageUris = imageList,
+                imageUris = imageList.joinToString(separator = ","),
                 position = position,
-                startPosition = (position - 50).coerceAtLeast(0),
-                totalCount = currentList.size
+                startPosition = startPosition,
+                totalCount = totalCount
             ),
         )
     }

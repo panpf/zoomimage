@@ -35,7 +35,8 @@
         coil.singleton,
         coil.compose.singleton,
         coil.compose.base,
-        com.github.panpf.zoomimage.view.coil" />
+        com.github.panpf.zoomimage.view.coil,
+        com.github.panpf.sketch.compose" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 

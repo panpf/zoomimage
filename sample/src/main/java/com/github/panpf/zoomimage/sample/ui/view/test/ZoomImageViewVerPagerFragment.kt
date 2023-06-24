@@ -28,7 +28,7 @@ import com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewFragment
 class ZoomImageViewVerPagerFragment : BindingFragment<TabPagerVerFragmentBinding>() {
 
     override fun onViewCreated(binding: TabPagerVerFragmentBinding, savedInstanceState: Bundle?) {
-        val sampleImages = SampleImages.FETCHERS
+        val sampleImages = SampleImages.Asset.ALL
         binding.tabPagerVerPager.apply {
             offscreenPageLimit = 1
             orientation = ViewPager2.ORIENTATION_VERTICAL

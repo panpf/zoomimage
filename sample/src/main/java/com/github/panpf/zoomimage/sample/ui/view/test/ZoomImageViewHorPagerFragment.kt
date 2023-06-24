@@ -27,7 +27,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class ZoomImageViewHorPagerFragment : BindingFragment<TabPagerFragmentBinding>() {
 
     override fun onViewCreated(binding: TabPagerFragmentBinding, savedInstanceState: Bundle?) {
-        val sampleImages = SampleImages.FETCHERS
+        val sampleImages = SampleImages.Asset.ALL
         binding.tabPagerPager.apply {
             offscreenPageLimit = 1
             orientation = ViewPager2.ORIENTATION_HORIZONTAL

@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.SampleImages.Asset
+import com.github.panpf.zoomimage.sample.ui.compose.ComposeZoomImageType
 import com.github.panpf.zoomimage.sample.ui.model.Link
 import com.github.panpf.zoomimage.sample.ui.model.ListSeparator
 import com.github.panpf.zoomimage.sample.ui.view.ZoomViewType
@@ -46,19 +47,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun buildData(): List<Any> {
         return listOf(
-            ListSeparator("Compose"),
+            ListSeparator("PhotoAlbum (Compose)"),
             Link(
                 title = "ZoomImage（My）",
-                navDirections = NavMainDirections.actionGlobalMyZoomImagePagerFragment(),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
+                    ComposeZoomImageType.MyZoomImage.name),
                 minSdk = 21
             ),
+//            Link(
+//                title = "ZoomImage（My）",
+//                navDirections = NavMainDirections.actionGlobalMyZoomImagePagerFragment(),
+//                minSdk = 21
+//            ),
             Link(
                 title = "ZoomableAsyncImage（Telephoto）",
-                navDirections = NavMainDirections.actionGlobalTelephotoZoomableAsyncImagePagerFragment(),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
+                    ComposeZoomImageType.TelephotoZoomableImage.name),
                 minSdk = 21
             ),
 
-            ListSeparator("View"),
+            ListSeparator("PhotoAlbum (View)"),
             Link(
                 title = "ZoomImageView（My）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.ZoomImageView.name),
@@ -105,7 +113,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 title = "ZoomImageView Exif Orientation Test",
                 navDirections = NavMainDirections.actionGlobalExifOrientationTestFragment(),
             ),
-            // todo 增加 scales 测试，提供正方形的，长的，宽的，超宽的，超长的，超宽超长的图片
         )
     }
 }

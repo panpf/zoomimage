@@ -91,22 +91,6 @@
             app:nullable="false" />
     </fragment>
 
-    <fragment
-        android:id="@+id/zoomImageViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewPagerFragment" >
-        <argument
-            android:name="zoomViewType"
-            app:argType="string"
-            app:nullable="false" />
-    </fragment>
-    <action
-        android:id="@+id/action_global_zoomImageViewPagerFragment"
-        app:destination="@id/zoomImageViewPagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
-
 
     <fragment
         android:id="@+id/sketchZoomImageViewFragment"
@@ -147,16 +131,6 @@
             app:nullable="false" />
     </fragment>
 
-    <fragment
-        android:id="@+id/photoViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.photoview.PhotoViewPagerFragment" />
-    <action
-        android:id="@+id/action_global_photoViewPagerFragment"
-        app:destination="@id/photoViewPagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
         android:id="@+id/photoViewFragment"
@@ -166,17 +140,6 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
-
-    <fragment
-        android:id="@+id/subsamplingViewPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.subsamplingview.SubsamplingViewPagerFragment" />
-    <action
-        android:id="@+id/action_global_subsamplingViewPagerFragment"
-        app:destination="@id/subsamplingViewPagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
         android:id="@+id/subsamplingViewFragment"
@@ -246,4 +209,52 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
+
+    <fragment
+        android:id="@+id/photoAlbumComposeFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.compose.photoalbum.PhotoAlbumComposeFragment" >
+        <argument
+            android:name="composeZoomImageType"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_photoAlbumComposeFragment"
+        app:destination="@id/photoAlbumComposeFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/photoPagerComposeFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.compose.photoalbum.PhotoPagerComposeFragment" >
+        <argument
+            android:name="composeZoomImageType"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="imageUris"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="position"
+            app:argType="integer"
+            app:nullable="false" />
+        <argument
+            android:name="startPosition"
+            app:argType="integer"
+            app:nullable="false" />
+        <argument
+            android:name="totalCount"
+            app:argType="integer"
+            app:nullable="false" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_photoPagerComposeFragment"
+        app:destination="@id/photoPagerComposeFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
 </navigation>

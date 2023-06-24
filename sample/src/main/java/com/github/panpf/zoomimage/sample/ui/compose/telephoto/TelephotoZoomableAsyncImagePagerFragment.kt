@@ -47,7 +47,7 @@ class TelephotoZoomableAsyncImagePagerFragment : AppBarFragment() {
 }
 
 @Composable
-private fun ZoomableAsyncImageFullSample(model: Any?) {
+fun ZoomableAsyncImageFullSample(model: Any?) {
     val context = LocalContext.current
     ZoomableAsyncImage(
         model = ImageRequest.Builder(context).apply {

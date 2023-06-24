@@ -47,7 +47,7 @@ import com.github.panpf.tools4a.display.ktx.getStatusBarHeight
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.compose.base.theme.MyTheme
 
-abstract class AppBarFragment : Fragment() {
+abstract class ComposeFragment : Fragment() {
 
     final override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +56,7 @@ abstract class AppBarFragment : Fragment() {
     ): View {
         return ComposeView(inflater.context).apply {
             setContent {
-                MyTopAppBarScaffold3(getTitle(), getSubtitle()) {
+                MyScaffold3 {
                     DrawContent()
                 }
             }
@@ -67,21 +67,12 @@ abstract class AppBarFragment : Fragment() {
         }
     }
 
-    open fun getTitle(): String? {
-        return requireContext().resources.getString(R.string.app_name)
-    }
-
-    open fun getSubtitle(): String? = null
-
     @Composable
     abstract fun DrawContent()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MyTopAppBarScaffold3(
-    title: String? = null,
-    subtitle: String? = null,
+private fun MyScaffold3(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -98,26 +89,6 @@ private fun MyTopAppBarScaffold3(
                         .height(statusBarHeight)
                         .background(colorScheme.primary)
                 )
-                if (title != null) {
-                    TopAppBar(
-                        title = {
-                            Column {
-                                Text(text = title)
-                                if (subtitle != null) {
-                                    Text(text = subtitle, fontSize = 16.sp)
-                                }
-                            }
-                        },
-                        windowInsets = WindowInsets(0.dp),
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = colorScheme.primary,
-                            scrolledContainerColor = colorScheme.primary,
-                            navigationIconContentColor = colorScheme.onPrimary,
-                            titleContentColor = colorScheme.onPrimary,
-                            actionIconContentColor = colorScheme.onPrimary,
-                        )
-                    )
-                }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -132,8 +103,8 @@ private fun MyTopAppBarScaffold3(
 
 @Preview
 @Composable
-private fun MyTopAppBarScaffold3Preview() {
-    MyTopAppBarScaffold3("Sample") {
+private fun MyScaffold3Preview() {
+    MyScaffold3 {
 
     }
 }

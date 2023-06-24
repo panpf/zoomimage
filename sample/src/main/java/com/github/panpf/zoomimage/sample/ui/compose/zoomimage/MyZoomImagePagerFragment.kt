@@ -59,7 +59,7 @@ class MyZoomImagePagerFragment : AppBarFragment() {
 }
 
 @Composable
-private fun MyZoomImageFullSample() {
+fun MyZoomImageFullSample() {
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
     val zoomOptionsDialogState = rememberZoomOptionsDialogState()
