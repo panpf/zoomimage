@@ -163,7 +163,7 @@ class SampleImage(val name: String, val fileName: String, val uri: String, val s
     ) = SampleImage(name, fileName, uri, size)
 
     val type: String by lazy {
-        when{
+        when {
             uri.startsWith("http") -> "Http"
             uri.startsWith("asset") -> "Asset"
             uri.startsWith("file") -> "File"

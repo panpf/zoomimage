@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment
 import com.github.panpf.zoomimage.sample.util.ParamLazy
 
 object MyServices {
-//    val apiServiceLazy = ParamLazy<Context, ApiServices> { ApiServices(it) }
+    //    val apiServiceLazy = ParamLazy<Context, ApiServices> { ApiServices(it) }
     val prefsServiceLazy = ParamLazy<Context, PrefsService> { PrefsService(it) }
 }
 

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <com.github.panpf.zoomimage.sample.ui.view.widget.VerticalTabLayout
+    <com.github.panpf.zoomimage.sample.ui.widget.view.VerticalTabLayout
         android:id="@+id/tabPagerVerTabLayout"
         android:layout_width="70dp"
         android:layout_height="match_parent"

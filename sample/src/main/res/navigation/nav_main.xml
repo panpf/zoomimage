@@ -10,24 +10,24 @@
 
 
     <fragment
-        android:id="@+id/photoAlbumFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.photoalbum.PhotoAlbumFragment">
+        android:id="@+id/photoAlbumViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.photoalbum.view.PhotoAlbumViewFragment">
         <argument
             android:name="zoomViewType"
             app:argType="string"
             app:nullable="false" />
     </fragment>
     <action
-        android:id="@+id/action_global_photoAlbumFragment"
-        app:destination="@id/photoAlbumFragment"
+        android:id="@+id/action_global_photoAlbumViewFragment"
+        app:destination="@id/photoAlbumViewFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/photoPagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.photoalbum.PhotoPagerFragment">
+        android:id="@+id/photoPagerViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.photoalbum.view.PhotoPagerViewFragment">
         <argument
             android:name="zoomViewType"
             app:argType="string"
@@ -50,8 +50,8 @@
             app:nullable="false" />
     </fragment>
     <action
-        android:id="@+id/action_global_photoPagerFragment"
-        app:destination="@id/photoPagerFragment"
+        android:id="@+id/action_global_photoPagerViewFragment"
+        app:destination="@id/photoPagerViewFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
@@ -60,7 +60,7 @@
 
     <fragment
         android:id="@+id/myZoomImagePagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.compose.zoomimage.MyZoomImagePagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.compose.MyZoomImageFragment" />
     <action
         android:id="@+id/action_global_myZoomImagePagerFragment"
         app:destination="@id/myZoomImagePagerFragment"
@@ -72,7 +72,7 @@
 
     <fragment
         android:id="@+id/telephotoZoomableAsyncImagePagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.compose.telephoto.TelephotoZoomableAsyncImagePagerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.compose.TelephotoZoomableAsyncImagePagerFragment" />
     <action
         android:id="@+id/action_global_telephotoZoomableAsyncImagePagerFragment"
         app:destination="@id/telephotoZoomableAsyncImagePagerFragment"
@@ -84,7 +84,7 @@
 
     <fragment
         android:id="@+id/zoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -94,7 +94,7 @@
 
     <fragment
         android:id="@+id/sketchZoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.SketchZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.SketchZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -104,7 +104,7 @@
 
     <fragment
         android:id="@+id/coilZoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.CoilZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.CoilZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -114,7 +114,7 @@
 
     <fragment
         android:id="@+id/glideZoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.GlideZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.GlideZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -124,7 +124,7 @@
 
     <fragment
         android:id="@+id/picassoZoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.PicassoZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.PicassoZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -134,7 +134,7 @@
 
     <fragment
         android:id="@+id/photoViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.photoview.PhotoViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.PhotoViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -143,7 +143,7 @@
 
     <fragment
         android:id="@+id/subsamplingViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.subsamplingview.SubsamplingViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.SubsamplingViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -152,7 +152,7 @@
 
     <fragment
         android:id="@+id/layoutOrientationTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.test.LayoutOrientationTestFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.test.view.LayoutOrientationTestFragment" />
     <action
         android:id="@+id/action_global_layoutOrientationTestFragment"
         app:destination="@id/layoutOrientationTestFragment"
@@ -163,7 +163,7 @@
 
     <fragment
         android:id="@+id/exifOrientationTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.test.ExifOrientationTestFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.test.view.ExifOrientationTestFragment" />
     <action
         android:id="@+id/action_global_exifOrientationTestFragment"
         app:destination="@id/exifOrientationTestFragment"
@@ -174,7 +174,7 @@
 
     <fragment
         android:id="@+id/zoomImageViewSettingsDialogFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewSettingsDialogFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewSettingsDialogFragment">
         <argument
             android:name="supportMemoryCache"
             app:argType="boolean"
@@ -191,7 +191,7 @@
 
     <fragment
         android:id="@+id/zoomImageViewInfoDialogFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.view.zoomimage.ZoomImageViewInfoDialogFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewInfoDialogFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
@@ -212,9 +212,9 @@
 
     <fragment
         android:id="@+id/photoAlbumComposeFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.compose.photoalbum.PhotoAlbumComposeFragment" >
+        android:name="com.github.panpf.zoomimage.sample.ui.photoalbum.compose.PhotoAlbumComposeFragment">
         <argument
-            android:name="composeZoomImageType"
+            android:name="zoomImageType"
             app:argType="string"
             app:nullable="false" />
     </fragment>
@@ -228,9 +228,9 @@
 
     <fragment
         android:id="@+id/photoPagerComposeFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.compose.photoalbum.PhotoPagerComposeFragment" >
+        android:name="com.github.panpf.zoomimage.sample.ui.photoalbum.compose.PhotoPagerComposeFragment">
         <argument
-            android:name="composeZoomImageType"
+            android:name="zoomImageType"
             app:argType="string"
             app:nullable="false" />
         <argument

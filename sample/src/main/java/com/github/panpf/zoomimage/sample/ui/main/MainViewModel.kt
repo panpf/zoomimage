@@ -7,10 +7,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.SampleImages.Asset
-import com.github.panpf.zoomimage.sample.ui.compose.ComposeZoomImageType
+import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.model.Link
 import com.github.panpf.zoomimage.sample.ui.model.ListSeparator
-import com.github.panpf.zoomimage.sample.ui.view.ZoomViewType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,56 +51,53 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             Link(
                 title = "ZoomImage（My）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
-                    ComposeZoomImageType.MyZoomImage.name),
+                    ZoomImageType.MyZoomImage.name
+                ),
                 minSdk = 21
             ),
-//            Link(
-//                title = "ZoomImage（My）",
-//                navDirections = NavMainDirections.actionGlobalMyZoomImagePagerFragment(),
-//                minSdk = 21
-//            ),
             Link(
                 title = "ZoomableAsyncImage（Telephoto）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
-                    ComposeZoomImageType.TelephotoZoomableImage.name),
+                    ZoomImageType.TelephotoZoomableImage.name
+                ),
                 minSdk = 21
             ),
 
             ListSeparator("PhotoAlbum (View)"),
             Link(
                 title = "ZoomImageView（My）",
-                navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.ZoomImageView.name),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.ZoomImageView.name),
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE) // todo api 33 上直接拒绝
             ),
             Link(
                 title = "SketchZoomImageView（My）",
-                navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.SketchZoomImageView.name),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.SketchZoomImageView.name),
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
             Link(
                 title = "CoilZoomImageView（My）",
-                navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.CoilZoomImageView.name),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.CoilZoomImageView.name),
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                 minSdk = 21
             ),
             Link(
                 title = "GlideZoomImageView（My）",
-                navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.GlideZoomImageView.name),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.GlideZoomImageView.name),
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
             Link(
                 title = "PicassoZoomImageView（My）",
-                navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.PicassoZoomImageView.name),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.PicassoZoomImageView.name),
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
             Link(
                 title = "PhotoView",
-                navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.PhotoView.name),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.PhotoView.name),
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
             Link(
                 title = "SubsamplingScaleImageView",
-                navDirections = NavMainDirections.actionGlobalPhotoAlbumFragment(ZoomViewType.SubsamplingScaleImageView.name),
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.SubsamplingScaleImageView.name),
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
 

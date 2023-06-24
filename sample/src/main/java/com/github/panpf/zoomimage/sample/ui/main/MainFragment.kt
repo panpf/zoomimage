@@ -13,10 +13,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.zoomimage.sample.databinding.MainFragmentBinding
-import com.github.panpf.zoomimage.sample.ui.view.base.ToolbarBindingFragment
-import com.github.panpf.zoomimage.sample.ui.view.common.list.ListSeparatorItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.common.view.list.LinkItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
 import com.github.panpf.zoomimage.sample.ui.model.Link
-import com.github.panpf.zoomimage.sample.ui.view.common.list.LinkItemFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import kotlin.math.min
 import kotlin.math.roundToLong
 
 

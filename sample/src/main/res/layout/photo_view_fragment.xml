@@ -27,6 +27,7 @@
             android:shadowRadius="4"
             android:textColor="@android:color/white"
             tools:text="draw：\nvisible: \nstepScales: " />
+
         <TextView
             android:id="@+id/photoViewInfoContentText"
             android:layout_width="0dp"

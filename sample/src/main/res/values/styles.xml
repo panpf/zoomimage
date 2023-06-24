@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Settings_Item">
         <item name="android:minHeight">40dp</item>
         <item name="android:paddingLeft">20dp</item>

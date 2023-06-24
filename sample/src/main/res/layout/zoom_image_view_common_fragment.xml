@@ -22,6 +22,7 @@
             android:shadowRadius="4"
             android:textColor="@android:color/white"
             tools:text="draw：\nvisible: \nstepScales: " />
+
         <TextView
             android:id="@+id/zoomImageViewInfoContentText"
             android:layout_width="0dp"
@@ -36,7 +37,7 @@
             tools:text="draw：\nvisible: \nstepScales: " />
     </LinearLayout>
 
-    <com.github.panpf.zoomimage.sample.ui.view.widget.ZoomImageMinimapView
+    <com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
         android:id="@+id/zoomImageViewTileMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
