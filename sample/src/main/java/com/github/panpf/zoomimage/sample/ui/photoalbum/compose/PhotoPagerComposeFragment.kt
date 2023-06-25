@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,10 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.ui.base.compose.ComposeFragment
-import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType.MyZoomImage
-import com.github.panpf.zoomimage.sample.ui.examples.compose.MyZoomImageFullSample
-import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomableAsyncImageFullSample
-import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
+import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 
 class PhotoPagerComposeFragment : ComposeFragment() {
 
@@ -36,22 +32,14 @@ class PhotoPagerComposeFragment : ComposeFragment() {
     override fun DrawContent() {
         val imageUrlList = remember { args.imageUris.split(",") }
         val pagerState = rememberPagerState(initialPage = args.position - args.startPosition)
+        val zoomImageType = remember { ZoomImageType.valueOf(args.zoomImageType) }
         Box(modifier = Modifier.fillMaxSize()) {
             HorizontalPager(
                 pageCount = imageUrlList.size,
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { index ->
-                if (args.zoomImageType == MyZoomImage.name) {
-                    MyZoomImageFullSample()
-                } else {
-                    ZoomableAsyncImageFullSample(
-                        sketchUri2CoilModel(
-                            LocalContext.current,
-                            imageUrlList[index]
-                        )
-                    )
-                }
+                zoomImageType.drawContent(imageUrlList[index])
             }
             PageNumber(
                 number = pagerState.currentPage + 1,

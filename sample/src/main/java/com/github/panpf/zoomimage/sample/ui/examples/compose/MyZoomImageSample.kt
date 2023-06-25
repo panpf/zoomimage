@@ -35,32 +35,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.zoomimage.MyZoomImage
-import com.github.panpf.zoomimage.ScaleAnimationConfig
+import com.github.panpf.zoomimage.AnimationConfig
 import com.github.panpf.zoomimage.rememberMyZoomState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.model.ResPhoto
 import com.github.panpf.zoomimage.sample.ui.util.compose.toPx
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.ui.widget.compose.MyZoomImageMinimap
 import kotlinx.coroutines.launch
 
-class MyZoomImageFragment : AppBarFragment() {
-
-    override fun getTitle(): String {
-        return "ZoomImage（My）"
-    }
-
-    @Composable
-    override fun DrawContent() {
-        MyZoomImageFullSample()
-    }
-}
-
 @Composable
-fun MyZoomImageFullSample() {
+fun MyZoomImageSample(sketchImageUri: String) {
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
     val zoomOptionsDialogState = rememberZoomSettingsDialogState()
@@ -78,7 +66,7 @@ fun MyZoomImageFullSample() {
         }
     }
     val animationDurationMillisState = remember(zoomOptionsDialogState.slowerScaleAnimation) {
-        mutableStateOf(if (zoomOptionsDialogState.slowerScaleAnimation) 3000 else ScaleAnimationConfig.DefaultDurationMillis)
+        mutableStateOf(if (zoomOptionsDialogState.slowerScaleAnimation) 3000 else AnimationConfig.DefaultDurationMillis)
     }
     var zoomOptionsDialogShow by remember { mutableStateOf(false) }
     BoxWithConstraints(
@@ -105,9 +93,9 @@ fun MyZoomImageFullSample() {
             alignment = zoomOptionsDialogState.alignment,
             modifier = Modifier.fillMaxSize(),
             state = myZoomState,
-            scaleAnimationConfig = ScaleAnimationConfig(
-                animateDoubleTapScale = !zoomOptionsDialogState.closeScaleAnimation,
-                animationDurationMillis = animationDurationMillisState.value,
+            animationConfig = AnimationConfig(
+                doubleTapScaleEnabled = !zoomOptionsDialogState.closeScaleAnimation,
+                durationMillis = animationDurationMillisState.value,
             ),
         )
 
@@ -193,5 +181,5 @@ fun MyZoomImageFullSample() {
 @Preview
 @Composable
 private fun MyZoomImageFullSamplePreview() {
-    MyZoomImageFullSample()
+    MyZoomImageSample(newResourceUri(R.drawable.im_placeholder))
 }
