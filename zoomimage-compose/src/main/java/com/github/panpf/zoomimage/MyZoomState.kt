@@ -138,9 +138,9 @@ class MyZoomState(
     suspend fun animateScaleTo(
         newScale: Float,
         newScaleContentCentroid: Centroid = Centroid(0.5f, 0.5f),
-        animationDurationMillis: Int = ScaleAnimationConfig.DefaultDurationMillis,
-        animationEasing: Easing = ScaleAnimationConfig.DefaultEasing,
-        initialVelocity: Float = ScaleAnimationConfig.DefaultInitialVelocity,
+        animationDurationMillis: Int = AnimationConfig.DefaultDurationMillis,
+        animationEasing: Easing = AnimationConfig.DefaultEasing,
+        initialVelocity: Float = AnimationConfig.DefaultInitialVelocity,
     ) {
         stopAllAnimation("animateScaleTo")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
@@ -218,9 +218,9 @@ class MyZoomState(
     suspend fun animateScaleTo(
         newScale: Float,
         touchPosition: Offset,
-        animationDurationMillis: Int = ScaleAnimationConfig.DefaultDurationMillis,
-        animationEasing: Easing = ScaleAnimationConfig.DefaultEasing,
-        initialVelocity: Float = ScaleAnimationConfig.DefaultInitialVelocity,
+        animationDurationMillis: Int = AnimationConfig.DefaultDurationMillis,
+        animationEasing: Easing = AnimationConfig.DefaultEasing,
+        initialVelocity: Float = AnimationConfig.DefaultInitialVelocity,
     ) {
         stopAllAnimation("animateScaleTo")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return

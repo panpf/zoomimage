@@ -33,7 +33,7 @@ fun MyZoomImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     state: MyZoomState = rememberMyZoomState(),
-    scaleAnimationConfig: ScaleAnimationConfig = ScaleAnimationConfig(),
+    animationConfig: AnimationConfig = AnimationConfig(),
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -48,7 +48,7 @@ fun MyZoomImage(
                 painter = painter,
                 contentScale = contentScale,
                 alignment = alignment,
-                scaleAnimationConfig = scaleAnimationConfig
+                animationConfig = animationConfig
             )
         ),
         alignment = alignment,
@@ -74,7 +74,7 @@ private fun Modifier.createZoomModifier(
     painter: Painter,
     contentScale: ContentScale,
     alignment: Alignment,
-    scaleAnimationConfig: ScaleAnimationConfig = ScaleAnimationConfig()
+    animationConfig: AnimationConfig = AnimationConfig()
 ): Modifier = composed {
     // todo compat viewpager
     val coroutineScope = rememberCoroutineScope()
@@ -89,17 +89,17 @@ private fun Modifier.createZoomModifier(
                 contentAlignment = alignment
             )
         }
-        .pointerInput(scaleAnimationConfig) {
+        .pointerInput(animationConfig) {
             detectTapGestures(onDoubleTap = { offset ->
                 coroutineScope.launch {
                     val newScale = state.getNextStepScale()
-                    if (scaleAnimationConfig.animateDoubleTapScale) {
+                    if (animationConfig.doubleTapScaleEnabled) {
                         state.animateScaleTo(
                             newScale = newScale,
                             touchPosition = offset,
-                            animationDurationMillis = scaleAnimationConfig.animationDurationMillis,
-                            animationEasing = scaleAnimationConfig.animationEasing,
-                            initialVelocity = scaleAnimationConfig.initialVelocity
+                            animationDurationMillis = animationConfig.durationMillis,
+                            animationEasing = animationConfig.easing,
+                            initialVelocity = animationConfig.initialVelocity
                         )
                     } else {
                         state.snapScaleTo(newScale = newScale, touchPosition = offset)
