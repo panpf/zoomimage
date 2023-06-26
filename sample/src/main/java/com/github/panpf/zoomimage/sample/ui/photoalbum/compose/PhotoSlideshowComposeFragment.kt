@@ -23,9 +23,9 @@ import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.ui.base.compose.ComposeFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 
-class PhotoPagerComposeFragment : ComposeFragment() {
+class PhotoSlideshowComposeFragment : ComposeFragment() {
 
-    private val args by navArgs<PhotoPagerComposeFragmentArgs>()
+    private val args by navArgs<PhotoSlideshowComposeFragmentArgs>()
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable

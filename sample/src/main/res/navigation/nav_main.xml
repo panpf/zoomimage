@@ -26,8 +26,8 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/photoPagerViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.photoalbum.view.PhotoPagerViewFragment">
+        android:id="@+id/photoSlideshowViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.photoalbum.view.PhotoSlideshowViewFragment">
         <argument
             android:name="zoomViewType"
             app:argType="string"
@@ -50,8 +50,8 @@
             app:nullable="false" />
     </fragment>
     <action
-        android:id="@+id/action_global_photoPagerViewFragment"
-        app:destination="@id/photoPagerViewFragment"
+        android:id="@+id/action_global_photoSlideshowViewFragment"
+        app:destination="@id/photoSlideshowViewFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
@@ -67,7 +67,6 @@
             app:nullable="false" />
     </fragment>
 
-
     <fragment
         android:id="@+id/sketchZoomImageViewFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.view.SketchZoomImageViewFragment">
@@ -77,7 +76,6 @@
             app:nullable="false" />
     </fragment>
 
-
     <fragment
         android:id="@+id/coilZoomImageViewFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.view.CoilZoomImageViewFragment">
@@ -86,8 +84,6 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
-
-
     <fragment
         android:id="@+id/glideZoomImageViewFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.view.GlideZoomImageViewFragment">
@@ -97,7 +93,6 @@
             app:nullable="false" />
     </fragment>
 
-
     <fragment
         android:id="@+id/picassoZoomImageViewFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.view.PicassoZoomImageViewFragment">
@@ -106,7 +101,6 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
-
 
     <fragment
         android:id="@+id/photoViewFragment"
@@ -125,6 +119,7 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
+
 
     <fragment
         android:id="@+id/layoutOrientationTestFragment"
@@ -203,8 +198,8 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/photoPagerComposeFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.photoalbum.compose.PhotoPagerComposeFragment">
+        android:id="@+id/photoSlideshowComposeFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.photoalbum.compose.PhotoSlideshowComposeFragment">
         <argument
             android:name="zoomImageType"
             app:argType="string"
@@ -227,8 +222,8 @@
             app:nullable="false" />
     </fragment>
     <action
-        android:id="@+id/action_global_photoPagerComposeFragment"
-        app:destination="@id/photoPagerComposeFragment"
+        android:id="@+id/action_global_photoSlideshowComposeFragment"
+        app:destination="@id/photoSlideshowComposeFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"

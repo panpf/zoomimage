@@ -22,29 +22,29 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
-import com.github.panpf.zoomimage.sample.databinding.PhotoPagerFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.PhotoSlideshowFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 
-class PhotoPagerViewFragment : ToolbarBindingFragment<PhotoPagerFragmentBinding>() {
+class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragmentBinding>() {
 
-    private val args by navArgs<PhotoPagerViewFragmentArgs>()
+    private val args by navArgs<PhotoSlideshowViewFragmentArgs>()
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(
         toolbar: Toolbar,
-        binding: PhotoPagerFragmentBinding,
+        binding: PhotoSlideshowFragmentBinding,
         savedInstanceState: Bundle?
     ) {
         toolbar.isVisible = false
         toolbar.title = args.zoomViewType
         val imageUrlList = args.imageUris.split(",")
 
-        binding.photoPagerPager.apply {
+        binding.photoSlideshowPager.apply {
             offscreenPageLimit = 1
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(
-                fragment = this@PhotoPagerViewFragment,
+                fragment = this@PhotoSlideshowViewFragment,
                 itemFactoryList = listOf(
                     ZoomViewType.valueOf(args.zoomViewType).createItemFactory()
                 ),
@@ -53,12 +53,12 @@ class PhotoPagerViewFragment : ToolbarBindingFragment<PhotoPagerFragmentBinding>
             setCurrentItem(args.position - args.startPosition, false)
         }
 
-        binding.photoPagerCurrentPage.apply {
+        binding.photoSlideshowCurrentPage.apply {
             val updateCurrentPageNumber: () -> Unit = {
-                val pageNumber = args.startPosition + binding.photoPagerPager.currentItem + 1
+                val pageNumber = args.startPosition + binding.photoSlideshowPager.currentItem + 1
                 text = "$pageNumber\n·\n${args.totalCount}"
             }
-            binding.photoPagerPager.registerOnPageChangeCallback(object :
+            binding.photoSlideshowPager.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     updateCurrentPageNumber()

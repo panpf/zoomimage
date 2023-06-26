@@ -55,9 +55,10 @@ class PhotoAlbumViewFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBin
         binding.root.setBackgroundResource(R.color.windowBackgroundDark)
 
         val pagingAdapter = AssemblyPagingDataAdapter<Photo>(listOf(
-            PhotoItemFactory().setOnViewClickListener(R.id.photoItemImage) { _, _, _, absoluteAdapterPosition, _ ->
-                startImageDetail(binding, absoluteAdapterPosition)
-            }
+            PhotoGridItemFactory()
+                .setOnItemClickListener { _, _, _, absoluteAdapterPosition, _ ->
+                    startImageDetail(binding, absoluteAdapterPosition)
+                }
         )).apply {
             viewLifecycleOwner.lifecycleScope.launch {
                 photoAlbumViewModel.pagingFlow.collect {
@@ -84,8 +85,6 @@ class PhotoAlbumViewFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBin
                 val gridDivider = context.resources.getDimensionPixelSize(R.dimen.grid_divider)
                 divider(Divider.space(gridDivider))
                 sideDivider(Divider.space(gridDivider))
-                useDividerAsHeaderAndFooterDivider()
-                useSideDividerAsSideHeaderAndFooterDivider()
             }
             addItemDecoration(itemDecoration)
             adapter = pagingAdapter
@@ -103,7 +102,7 @@ class PhotoAlbumViewFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBin
             currentList[it]?.uri
         }
         findNavController().navigate(
-            NavMainDirections.actionGlobalPhotoPagerViewFragment(
+            NavMainDirections.actionGlobalPhotoSlideshowViewFragment(
                 zoomViewType = args.zoomViewType,
                 imageUris = imageList.joinToString(separator = ","),
                 position = position,

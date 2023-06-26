@@ -36,7 +36,7 @@ import com.github.panpf.zoomimage.sample.databinding.PhotoItemBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
 
-class PhotoItemFactory : MyBindingItemFactory<Photo, PhotoItemBinding>(Photo::class) {
+class PhotoGridItemFactory : MyBindingItemFactory<Photo, PhotoItemBinding>(Photo::class) {
 
     private var itemSize: Int? = null
 
@@ -49,7 +49,7 @@ class PhotoItemFactory : MyBindingItemFactory<Photo, PhotoItemBinding>(Photo::cl
             val screenWidth = context.getScreenWidth()
             val gridDivider = context.resources.getDimensionPixelSize(R.dimen.grid_divider)
             val spanCount = parent.layoutManager?.asOrNull<GridLayoutManager>()?.spanCount ?: 1
-            itemSize = (screenWidth - (gridDivider * (spanCount + 1))) / spanCount
+            itemSize = (screenWidth - (gridDivider * (spanCount - 1))) / spanCount
         }
         return super.createItemViewBinding(context, inflater, parent)
     }

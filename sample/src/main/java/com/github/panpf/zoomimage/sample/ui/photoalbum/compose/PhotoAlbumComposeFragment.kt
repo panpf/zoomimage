@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.sample.ui.photoalbum.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -63,7 +62,6 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
         ) {
             LazyVerticalGrid(
                 columns = Fixed(3),
-                contentPadding = PaddingValues(dimensionResource(id = dimen.grid_divider)),
                 horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = dimen.grid_divider)),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = dimen.grid_divider)),
                 modifier = Modifier
@@ -116,7 +114,7 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
             pagingItems.peek(it)?.uri
         }
         findNavController().navigate(
-            NavMainDirections.actionGlobalPhotoPagerComposeFragment(
+            NavMainDirections.actionGlobalPhotoSlideshowComposeFragment(
                 zoomImageType = args.zoomImageType,
                 imageUris = imageList.joinToString(separator = ","),
                 position = position,

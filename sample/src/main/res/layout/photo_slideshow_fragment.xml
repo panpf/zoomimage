@@ -5,12 +5,12 @@
     android:layout_height="match_parent">
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/photoPagerPager"
+        android:id="@+id/photoSlideshowPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/photoPagerCurrentPage"
+        android:id="@+id/photoSlideshowCurrentPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
