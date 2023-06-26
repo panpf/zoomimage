@@ -3,10 +3,7 @@ package com.github.panpf.zoomimage
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -23,8 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.internal.detectCanDragGestures
-import com.github.panpf.zoomimage.internal.pointerInputCentroid
-import com.github.panpf.zoomimage.internal.transformableTwoDowns
+import com.github.panpf.zoomimage.internal.detectZoomGestures
 import kotlinx.coroutines.launch
 
 @Composable
@@ -77,7 +73,6 @@ private fun Modifier.createZoomModifier(
     animationConfig: AnimationConfig = AnimationConfig()
 ): Modifier = composed {
     val coroutineScope = rememberCoroutineScope()
-    val centroidState = remember { mutableStateOf(Offset.Zero) }
     Modifier
         .onSizeChanged {
             state.init(
@@ -135,20 +130,13 @@ private fun Modifier.createZoomModifier(
                 }
             )
         }
-        .pointerInputCentroid {
-            centroidState.value = it
-        }
-        .transformableTwoDowns(
-            state = rememberTransformableState { zoomChange: Float, panChange: Offset, rotationChange: Float ->
+        .pointerInput(Unit) {
+            detectZoomGestures(panZoomLock = true) { centroid: Offset, zoom: Float, _ ->
                 coroutineScope.launch {
-                    state.transform(
-                        zoomChange = zoomChange,
-                        touchCentroid = centroidState.value
-                    )
+                    state.transform(zoomChange = zoom, touchCentroid = centroid)
                 }
-            },
-            lockRotationOnZoomPan = true,
-        )
+            }
+        }
         .clipToBounds()
         .graphicsLayer {
             scaleX = state.scale
