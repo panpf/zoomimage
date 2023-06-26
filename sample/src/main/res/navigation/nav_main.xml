@@ -59,30 +59,6 @@
 
 
     <fragment
-        android:id="@+id/myZoomImagePagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.examples.compose.MyZoomImageFragment" />
-    <action
-        android:id="@+id/action_global_myZoomImagePagerFragment"
-        app:destination="@id/myZoomImagePagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
-
-
-    <fragment
-        android:id="@+id/telephotoZoomableAsyncImagePagerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.examples.compose.TelephotoZoomableAsyncImagePagerFragment" />
-    <action
-        android:id="@+id/action_global_telephotoZoomableAsyncImagePagerFragment"
-        app:destination="@id/telephotoZoomableAsyncImagePagerFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
-
-
-    <fragment
         android:id="@+id/zoomImageViewFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewFragment">
         <argument

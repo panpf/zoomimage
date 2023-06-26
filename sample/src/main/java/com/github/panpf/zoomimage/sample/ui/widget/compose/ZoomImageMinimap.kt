@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.zoomimage.Centroid
-import com.github.panpf.zoomimage.MyZoomState
+import com.github.panpf.zoomimage.ZoomState
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.sample.ui.util.compose.toPx
@@ -31,11 +31,11 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 
 @Composable
-fun MyZoomImageMinimap(
+fun ZoomImageMinimap(
     painter: Painter,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    state: MyZoomState,
+    state: ZoomState,
     animateScale: Boolean,
     animationDurationMillis: Int,
 ) {

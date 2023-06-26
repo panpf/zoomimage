@@ -36,7 +36,7 @@ import com.github.panpf.zoomimage.internal.toShortString
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-class MyZoomState(
+class ZoomState(
     @FloatRange(from = 0.0) val minScale: Float = 1f,
     @FloatRange(from = 0.0) val maxScale: Float = 4f,
     @FloatRange(from = 0.0) initialTranslateX: Float = 0f,
@@ -54,7 +54,6 @@ class MyZoomState(
     private val _contentScale = mutableStateOf(ContentScale.Fit)
     private val _contentAlignment = mutableStateOf(Alignment.Center)
     private val _translationBounds = mutableStateOf<Rect?>(null)
-    // todo rotate
 
     val transformOrigin = TransformOrigin(0f, 0f)
 
@@ -67,13 +66,13 @@ class MyZoomState(
     val contentAlignment: Alignment by _contentAlignment
 
     /**
-     * The current scale value for [MyZoomImage]
+     * The current scale value for [ZoomImage]
      */
     @get:FloatRange(from = 0.0)
     val scale: Float by derivedStateOf { _scale.value }
 
     /**
-     * The current translation value for [MyZoomImage]
+     * The current translation value for [ZoomImage]
      */
     val translation: Offset by derivedStateOf { Offset(_translationX.value, _translationY.value) }
 
@@ -133,7 +132,7 @@ class MyZoomState(
     }
 
     /**
-     * Animates scale of [MyZoomImage] to given [newScale]
+     * Animates scale of [ZoomImage] to given [newScale]
      */
     suspend fun animateScaleTo(
         newScale: Float,
@@ -213,7 +212,7 @@ class MyZoomState(
     }
 
     /**
-     * Animates scale of [MyZoomImage] to given [newScale]
+     * Animates scale of [ZoomImage] to given [newScale]
      */
     suspend fun animateScaleTo(
         newScale: Float,
@@ -253,7 +252,7 @@ class MyZoomState(
     }
 
     /**
-     * Instantly sets scale of [MyZoomImage] to given [newScale]
+     * Instantly sets scale of [ZoomImage] to given [newScale]
      */
     suspend fun snapScaleTo(
         newScale: Float,
@@ -306,7 +305,7 @@ class MyZoomState(
     }
 
     /**
-     * Instantly sets scale of [MyZoomImage] to given [newScale]
+     * Instantly sets scale of [ZoomImage] to given [newScale]
      */
     suspend fun snapScaleTo(newScale: Float, touchPosition: Offset) {
         stopAllAnimation("snapScaleTo")
@@ -463,9 +462,9 @@ class MyZoomState(
     companion object {
 
         /**
-         * The default [Saver] implementation for [MyZoomState].
+         * The default [Saver] implementation for [ZoomState].
          */
-        val Saver: Saver<MyZoomState, *> = mapSaver(
+        val Saver: Saver<ZoomState, *> = mapSaver(
             save = {
                 mapOf(
                     "translationX" to it.translation.x,
@@ -477,7 +476,7 @@ class MyZoomState(
                 )
             },
             restore = {
-                MyZoomState(
+                ZoomState(
                     initialTranslateX = it["translationX"] as Float,
                     initialTranslateY = it["translationY"] as Float,
                     initialScale = it["scale"] as Float,

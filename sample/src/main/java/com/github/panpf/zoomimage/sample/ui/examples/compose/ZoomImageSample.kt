@@ -36,37 +36,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.github.panpf.sketch.fetch.newResourceUri
-import com.github.panpf.zoomimage.MyZoomImage
 import com.github.panpf.zoomimage.AnimationConfig
-import com.github.panpf.zoomimage.rememberMyZoomState
+import com.github.panpf.zoomimage.ZoomImage
+import com.github.panpf.zoomimage.rememberZoomState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.model.ResPhoto
 import com.github.panpf.zoomimage.sample.ui.util.compose.toPx
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
-import com.github.panpf.zoomimage.sample.ui.widget.compose.MyZoomImageMinimap
+import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import kotlinx.coroutines.launch
 
 @Composable
-fun MyZoomImageSample(sketchImageUri: String) {
+fun ZoomImageSample(sketchImageUri: String) {
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
-    val zoomOptionsDialogState = rememberZoomSettingsDialogState()
+    val settingsDialogState = rememberZoomImageSettingsDialogState()
     val horSmall = remember { ResPhoto.dog.newFetcher(name = "横向图片 - 小", big = false) }
     val horBig = remember { ResPhoto.dog.newFetcher(name = "横向图片 - 大", big = true) }
     val verSmall = remember { ResPhoto.cat.newFetcher(name = "竖向图片 - 小", big = false) }
     val verBig = remember { ResPhoto.cat.newFetcher(name = "竖向图片 - 大", big = true) }
     val image by remember {
         derivedStateOf {
-            if (zoomOptionsDialogState.horImageSelected) {
-                if (zoomOptionsDialogState.smallImageSelected) horSmall else horBig
+            if (settingsDialogState.horImageSelected) {
+                if (settingsDialogState.smallImageSelected) horSmall else horBig
             } else {
-                if (zoomOptionsDialogState.smallImageSelected) verSmall else verBig
+                if (settingsDialogState.smallImageSelected) verSmall else verBig
             }
         }
     }
-    val animationDurationMillisState = remember(zoomOptionsDialogState.slowerScaleAnimation) {
-        mutableStateOf(if (zoomOptionsDialogState.slowerScaleAnimation) 3000 else AnimationConfig.DefaultDurationMillis)
+    val animationDurationMillisState = remember(settingsDialogState.slowerScaleAnimation) {
+        mutableStateOf(if (settingsDialogState.slowerScaleAnimation) 3000 else AnimationConfig.DefaultDurationMillis)
     }
     var zoomOptionsDialogShow by remember { mutableStateOf(false) }
     BoxWithConstraints(
@@ -74,7 +74,7 @@ fun MyZoomImageSample(sketchImageUri: String) {
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        val myZoomState = rememberMyZoomState(debugMode = BuildConfig.DEBUG)
+        val myZoomState = rememberZoomState(debugMode = BuildConfig.DEBUG)
         val zoomIn = remember {
             derivedStateOf {
                 val nextScale = myZoomState.getNextStepScale()
@@ -86,23 +86,23 @@ fun MyZoomImageSample(sketchImageUri: String) {
         val painter = remember(viewSize, image) {
             image.getBitmap(context, viewSize).asImageBitmap().let { BitmapPainter(it) }
         }
-        MyZoomImage(
+        ZoomImage(
             painter = painter,
             contentDescription = "",
-            contentScale = zoomOptionsDialogState.contentScale,
-            alignment = zoomOptionsDialogState.alignment,
+            contentScale = settingsDialogState.contentScale,
+            alignment = settingsDialogState.alignment,
             modifier = Modifier.fillMaxSize(),
             state = myZoomState,
             animationConfig = AnimationConfig(
-                doubleTapScaleEnabled = !zoomOptionsDialogState.closeScaleAnimation,
+                doubleTapScaleEnabled = !settingsDialogState.closeScaleAnimation,
                 durationMillis = animationDurationMillisState.value,
             ),
         )
 
-        MyZoomImageMinimap(
+        ZoomImageMinimap(
             painter = painter,
             state = myZoomState,
-            animateScale = !zoomOptionsDialogState.closeScaleAnimation,
+            animateScale = !settingsDialogState.closeScaleAnimation,
             animationDurationMillis = animationDurationMillisState.value,
         )
 
@@ -145,7 +145,7 @@ fun MyZoomImageSample(sketchImageUri: String) {
                 onClick = {
                     coroutineScope.launch {
                         val newScale = myZoomState.getNextStepScale()
-                        if (!zoomOptionsDialogState.closeScaleAnimation) {
+                        if (!settingsDialogState.closeScaleAnimation) {
                             myZoomState.animateScaleTo(newScale = newScale)
                         } else {
                             myZoomState.snapScaleTo(newScale = newScale)
@@ -171,7 +171,7 @@ fun MyZoomImageSample(sketchImageUri: String) {
         }
 
         if (zoomOptionsDialogShow) {
-            MyZoomImageSettingsDialog(state = zoomOptionsDialogState) {
+            ZoomImageSettingsDialog(state = settingsDialogState) {
                 zoomOptionsDialogShow = false
             }
         }
@@ -180,6 +180,6 @@ fun MyZoomImageSample(sketchImageUri: String) {
 
 @Preview
 @Composable
-private fun MyZoomImageFullSamplePreview() {
-    MyZoomImageSample(newResourceUri(R.drawable.im_placeholder))
+private fun ZoomImageSamplePreview() {
+    ZoomImageSample(newResourceUri(R.drawable.im_placeholder))
 }

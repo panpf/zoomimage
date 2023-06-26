@@ -24,11 +24,11 @@ import com.github.panpf.zoomimage.internal.detectZoomGestures
 import kotlinx.coroutines.launch
 
 @Composable
-fun MyZoomImage(
+fun ZoomImage(
     painter: Painter,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    state: MyZoomState = rememberMyZoomState(),
+    state: ZoomState = rememberZoomState(),
     animationConfig: AnimationConfig = AnimationConfig(),
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
@@ -55,18 +55,18 @@ fun MyZoomImage(
 }
 
 @Composable
-fun rememberMyZoomState(
+fun rememberZoomState(
     @FloatRange(from = 0.0) minScale: Float = 1f,
     @FloatRange(from = 0.0) maxScale: Float = 4f,
     debugMode: Boolean = false
-): MyZoomState {
-    return rememberSaveable(saver = MyZoomState.Saver) {
-        MyZoomState(minScale = minScale, maxScale = maxScale, debugMode = debugMode)
+): ZoomState {
+    return rememberSaveable(saver = ZoomState.Saver) {
+        ZoomState(minScale = minScale, maxScale = maxScale, debugMode = debugMode)
     }
 }
 
 private fun Modifier.createZoomModifier(
-    state: MyZoomState,
+    state: ZoomState,
     painter: Painter,
     contentScale: ContentScale,
     alignment: Alignment,

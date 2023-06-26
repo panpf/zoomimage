@@ -30,7 +30,7 @@ import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.sample.ui.common.compose.TitleRadioButton
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 
-class ZoomOptionsSettingsState {
+class ZoomImageSettingsDialogState {
     var horImageSelected: Boolean by mutableStateOf(true)
         internal set
     var smallImageSelected: Boolean by mutableStateOf(true)
@@ -45,7 +45,7 @@ class ZoomOptionsSettingsState {
         internal set
 }
 
-class ZoomOptionsDialogConfig(
+class ZoomImageSettingsDialogConfig(
     val horImageSelectedEnabled: Boolean = true,
     val smallImageSelectedEnabled: Boolean = true,
     val contentScaleEnabled: Boolean = true,
@@ -55,17 +55,17 @@ class ZoomOptionsDialogConfig(
 )
 
 @Composable
-fun rememberZoomSettingsDialogState(): ZoomOptionsSettingsState =
-    remember { ZoomOptionsSettingsState() }
+fun rememberZoomImageSettingsDialogState(): ZoomImageSettingsDialogState =
+    remember { ZoomImageSettingsDialogState() }
 
 @Composable
-fun rememberZoomSettingsDialogConfig(): ZoomOptionsDialogConfig =
-    remember { ZoomOptionsDialogConfig() }
+fun rememberZoomImageSettingsDialogConfig(): ZoomImageSettingsDialogConfig =
+    remember { ZoomImageSettingsDialogConfig() }
 
 @Composable
-fun MyZoomImageSettingsDialog(
-    state: ZoomOptionsSettingsState = rememberZoomSettingsDialogState(),
-    config: ZoomOptionsDialogConfig = rememberZoomSettingsDialogConfig(),
+fun ZoomImageSettingsDialog(
+    state: ZoomImageSettingsDialogState = rememberZoomImageSettingsDialogState(),
+    config: ZoomImageSettingsDialogConfig = rememberZoomImageSettingsDialogConfig(),
     onDismissRequest: () -> Unit
 ) {
     var contentScaleMenuExpanded by remember { mutableStateOf(false) }
@@ -290,8 +290,8 @@ fun MyZoomImageSettingsDialog(
 
 @Composable
 @Preview
-private fun ZoomOptionsDialogPreview() {
-    MyZoomImageSettingsDialog {
+private fun ZoomImageSettingsDialogPreview() {
+    ZoomImageSettingsDialog {
         // close dialog
     }
 }
