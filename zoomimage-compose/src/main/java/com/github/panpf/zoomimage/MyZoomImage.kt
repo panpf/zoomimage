@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage
 
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.runtime.Composable
@@ -23,6 +22,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.zoomimage.internal.detectCanDragGestures
 import com.github.panpf.zoomimage.internal.pointerInputCentroid
 import com.github.panpf.zoomimage.internal.transformableTwoDowns
 import kotlinx.coroutines.launch
@@ -76,10 +76,8 @@ private fun Modifier.createZoomModifier(
     alignment: Alignment,
     animationConfig: AnimationConfig = AnimationConfig()
 ): Modifier = composed {
-    // todo compat viewpager
     val coroutineScope = rememberCoroutineScope()
     val centroidState = remember { mutableStateOf(Offset.Zero) }
-//    val transformableEnabledState = remember { mutableStateOf(false) }
     Modifier
         .onSizeChanged {
             state.init(
@@ -108,7 +106,13 @@ private fun Modifier.createZoomModifier(
             })
         }
         .pointerInput(Unit) {
-            detectDragGestures(
+            detectCanDragGestures(
+                canDrag = { horizontally: Boolean, direction: Int ->
+                    val scrollEdge =
+                        if (horizontally) state.horizontalScrollEdge else state.verticalScrollEdge
+                    val targetEdge = if (direction > 0) Edge.END else Edge.START
+                    scrollEdge == Edge.NONE || scrollEdge == targetEdge
+                },
                 onDragStart = {
                     coroutineScope.launch {
                         state.dragStart()
@@ -134,26 +138,6 @@ private fun Modifier.createZoomModifier(
         .pointerInputCentroid {
             centroidState.value = it
         }
-//        .pointerInput(Unit) {
-//            detectTwoDowns {
-//                transformableEnabledState.value = it
-//            }
-//        }
-//        .transformable(
-//            state = rememberTransformableState { zoomChange: Float, panChange: Offset, rotationChange: Float ->
-//                coroutineScope.launch {
-//                    state.transform(
-//                        zoomChange = zoomChange,
-//                        panChange = panChange,
-//                        rotationChange = rotationChange,
-//                        touchCentroid = centroidState.value
-//                    )
-//                }
-//            },
-//            lockRotationOnZoomPan = true,
-//            enabled = transformableEnabledState.value
-////            enabled = true
-//        )
         .transformableTwoDowns(
             state = rememberTransformableState { zoomChange: Float, panChange: Offset, rotationChange: Float ->
                 coroutineScope.launch {
@@ -164,15 +148,14 @@ private fun Modifier.createZoomModifier(
                 }
             },
             lockRotationOnZoomPan = true,
-//            enabled = true
         )
         .clipToBounds()
         .graphicsLayer {
             scaleX = state.scale
             scaleY = state.scale
+//            rotationZ = state.rotation    // todo support rotation
             translationX = state.translation.x
             translationY = state.translation.y
             transformOrigin = state.transformOrigin
         }
-//        .rotate(0f)// todo rotation
 }
