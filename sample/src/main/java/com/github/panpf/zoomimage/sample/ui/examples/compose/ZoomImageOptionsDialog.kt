@@ -27,7 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 
-class ZoomImageSettingsDialogState {
+class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
+
+    var showing: Boolean by mutableStateOf(initialShow)
+
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
         internal set
     var alignment: Alignment by mutableStateOf(Alignment.Center)
@@ -38,61 +41,50 @@ class ZoomImageSettingsDialogState {
         internal set
 }
 
-class ZoomImageSettingsDialogConfig(
-    val contentScaleEnabled: Boolean = true,
-    val alignmentEnabled: Boolean = true,
-    val closeScaleAnimationEnabled: Boolean = true,
-    val slowerScaleAnimationEnabled: Boolean = true,
-)
+@Composable
+fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImageOptionsDialogState =
+    remember { ZoomImageOptionsDialogState(initialShow) }
 
 @Composable
-fun rememberZoomImageSettingsDialogState(): ZoomImageSettingsDialogState =
-    remember { ZoomImageSettingsDialogState() }
-
-@Composable
-fun rememberZoomImageSettingsDialogConfig(): ZoomImageSettingsDialogConfig =
-    remember { ZoomImageSettingsDialogConfig() }
-
-@Composable
-fun ZoomImageSettingsDialog(
-    state: ZoomImageSettingsDialogState = rememberZoomImageSettingsDialogState(),
-    config: ZoomImageSettingsDialogConfig = rememberZoomImageSettingsDialogConfig(),
-    onDismissRequest: () -> Unit
+fun ZoomImageOptionsDialog(
+    state: ZoomImageOptionsDialogState = rememberZoomImageOptionsDialogState(),
 ) {
-    var contentScaleMenuExpanded by remember { mutableStateOf(false) }
-    val contentScales = remember {
-        listOf(
-            ContentScale.Fit,
-            ContentScale.Crop,
-            ContentScale.Inside,
-            ContentScale.FillWidth,
-            ContentScale.FillHeight,
-            ContentScale.FillBounds,
-            ContentScale.None,
-        )
-    }
-    var alignmentMenuExpanded by remember { mutableStateOf(false) }
-    val alignments = remember {
-        listOf(
-            Alignment.TopStart,
-            Alignment.TopCenter,
-            Alignment.TopEnd,
-            Alignment.CenterStart,
-            Alignment.Center,
-            Alignment.CenterEnd,
-            Alignment.BottomStart,
-            Alignment.BottomCenter,
-            Alignment.BottomEnd,
-        )
-    }
-    Dialog(onDismissRequest) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White, shape = RoundedCornerShape(20.dp))
-                .padding(vertical = 10.dp)
-        ) {
-            if (config.contentScaleEnabled) {
+    if (state.showing) {
+        var contentScaleMenuExpanded by remember { mutableStateOf(false) }
+        val contentScales = remember {
+            listOf(
+                ContentScale.Fit,
+                ContentScale.Crop,
+                ContentScale.Inside,
+                ContentScale.FillWidth,
+                ContentScale.FillHeight,
+                ContentScale.FillBounds,
+                ContentScale.None,
+            )
+        }
+        var alignmentMenuExpanded by remember { mutableStateOf(false) }
+        val alignments = remember {
+            listOf(
+                Alignment.TopStart,
+                Alignment.TopCenter,
+                Alignment.TopEnd,
+                Alignment.CenterStart,
+                Alignment.Center,
+                Alignment.CenterEnd,
+                Alignment.BottomStart,
+                Alignment.BottomCenter,
+                Alignment.BottomEnd,
+            )
+        }
+        Dialog(onDismissRequest = {
+            state.showing = false
+        }) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, shape = RoundedCornerShape(20.dp))
+                    .padding(vertical = 10.dp)
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -126,15 +118,13 @@ fun ZoomImageSettingsDialog(
                                 onClick = {
                                     state.contentScale = contentScale
                                     contentScaleMenuExpanded = !contentScaleMenuExpanded
-                                    onDismissRequest()
+                                    state.showing = false
                                 }
                             )
                         }
                     }
                 }
-            }
 
-            if (config.alignmentEnabled) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -168,23 +158,20 @@ fun ZoomImageSettingsDialog(
                                 onClick = {
                                     state.alignment = alignment
                                     alignmentMenuExpanded = !alignmentMenuExpanded
-                                    onDismissRequest()
+                                    state.showing = false
                                 }
                             )
                         }
                     }
                 }
-            }
 
-            if (config.closeScaleAnimationEnabled) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            state.closeScaleAnimation =
-                                !state.closeScaleAnimation
-                            onDismissRequest()
+                            state.closeScaleAnimation = !state.closeScaleAnimation
+                            state.showing = false
                         }
                         .padding(horizontal = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -195,17 +182,14 @@ fun ZoomImageSettingsDialog(
                         onCheckedChange = null
                     )
                 }
-            }
 
-            if (config.slowerScaleAnimationEnabled) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            state.slowerScaleAnimation =
-                                !state.slowerScaleAnimation
-                            onDismissRequest()
+                            state.slowerScaleAnimation = !state.slowerScaleAnimation
+                            state.showing = false
                         }
                         .padding(horizontal = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -223,8 +207,6 @@ fun ZoomImageSettingsDialog(
 
 @Composable
 @Preview
-private fun ZoomImageSettingsDialogPreview() {
-    ZoomImageSettingsDialog {
-        // close dialog
-    }
+private fun ZoomImageOptionsDialogPreview() {
+    ZoomImageOptionsDialog(rememberZoomImageOptionsDialogState(initialShow = true))
 }

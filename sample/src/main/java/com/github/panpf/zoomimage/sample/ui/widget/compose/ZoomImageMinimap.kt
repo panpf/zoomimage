@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.widget.compose
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,12 +16,12 @@ import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.zoomimage.Centroid
 import com.github.panpf.zoomimage.ZoomableState
@@ -33,7 +32,7 @@ import kotlin.math.min
 
 @Composable
 fun ZoomImageMinimap(
-    painter: Painter,
+    sketchImageUri: String,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     state: ZoomableState,
@@ -50,8 +49,8 @@ fun ZoomImageMinimap(
         }
         if (viewSize.isSpecified) {
             val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
-            Image(
-                painter = painter,
+            AsyncImage(
+                imageUri = sketchImageUri,
                 contentDescription = contentDescription ?: "Visible Rect",
                 modifier = Modifier
                     .align(Alignment.BottomStart)
