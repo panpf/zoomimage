@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
+import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -55,6 +56,9 @@ fun rememberZoomableState(
         state.contentScale,
         state.contentAlignment
     ) {
+        if (state.contentSize.isUnspecified && state.containerSize.isSpecified) {
+            state.contentSize = state.containerSize
+        }
         state.reset()
     }
     return state
@@ -73,8 +77,6 @@ class ZoomableState(
     private val scaleAnimatable = Animatable(initialScale)
     private val translationXAnimatable = Animatable(initialTranslateX)
     private val translationYAnimatable = Animatable(initialTranslateY)
-    private val finalContentSize: Size
-        get() = contentSize.takeIf { it.isSpecified } ?: containerSize
 
     var containerSize: Size by mutableStateOf(Size.Unspecified)
     var contentSize: Size by mutableStateOf(Size.Unspecified)
@@ -105,7 +107,7 @@ class ZoomableState(
     val contentVisibleRect: Rect by derivedStateOf {
         computeContentVisibleRect(
             containerSize = containerSize,
-            contentSize = finalContentSize,
+            contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
             scale = scale,
@@ -115,7 +117,7 @@ class ZoomableState(
     val contentInContainerRect: Rect by derivedStateOf {
         computeContentInContainerRect(
             containerSize = containerSize,
-            contentSize = finalContentSize,
+            contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
         )
@@ -124,10 +126,10 @@ class ZoomableState(
     var translationBounds: Rect? by mutableStateOf(null)
         private set
     val horizontalScrollEdge: Edge by derivedStateOf {
-        computeScrollEdge(finalContentSize, contentVisibleRect, horizontal = true)
+        computeScrollEdge(contentSize, contentVisibleRect, horizontal = true)
     }
     val verticalScrollEdge: Edge by derivedStateOf {
-        computeScrollEdge(finalContentSize, contentVisibleRect, horizontal = false)
+        computeScrollEdge(contentSize, contentVisibleRect, horizontal = false)
     }
 
     init {
@@ -150,7 +152,7 @@ class ZoomableState(
     ) {
         stopAllAnimation("animateScaleTo")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = finalContentSize.takeIf { it.isSpecified } ?: return
+        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentScale = scale
@@ -230,7 +232,7 @@ class ZoomableState(
     ) {
         stopAllAnimation("animateScaleTo")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = finalContentSize.takeIf { it.isSpecified } ?: return
+        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentScale = scale
@@ -267,7 +269,7 @@ class ZoomableState(
     ) {
         stopAllAnimation("snapScaleTo")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = finalContentSize.takeIf { it.isSpecified } ?: return
+        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentScale = scale
@@ -322,7 +324,7 @@ class ZoomableState(
     suspend fun snapScaleTo(newScale: Float, touchPosition: Offset) {
         stopAllAnimation("snapScaleTo")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = finalContentSize.takeIf { it.isSpecified } ?: return
+        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentScale = scale
@@ -435,7 +437,7 @@ class ZoomableState(
 
     private fun updateTranslationBounds(caller: String) {
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = finalContentSize.takeIf { it.isSpecified } ?: return
+        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentScale = scale

@@ -11,6 +11,7 @@ import com.github.panpf.zoomimage.Centroid
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.isUnspecified
 import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 internal fun computeContentInContainerRect(
     containerSize: Size,
@@ -412,9 +413,9 @@ internal fun contentCentroidToContainerCentroid(
 internal fun computeScrollEdge(contentSize: Size, contentVisibleRect: Rect, horizontal: Boolean): Edge {
     if (contentSize.isUnspecified || contentVisibleRect.isEmpty) return Edge.BOTH
     if (horizontal) {
-        return if (contentVisibleRect.left <= 0f && contentVisibleRect.right >= contentSize.width) {
+        return if (contentVisibleRect.left <= 0f && contentVisibleRect.right.roundToInt() >= contentSize.width.roundToInt()) {
             Edge.BOTH
-        } else if (contentVisibleRect.left > 0f && contentVisibleRect.right < contentSize.width) {
+        } else if (contentVisibleRect.left > 0f && contentVisibleRect.right.roundToInt() < contentSize.width.roundToInt()) {
             Edge.NONE
         } else if (contentVisibleRect.left <= 0f) {
             Edge.START
@@ -424,9 +425,9 @@ internal fun computeScrollEdge(contentSize: Size, contentVisibleRect: Rect, hori
         }
     } else {
         // vertical
-        return if (contentVisibleRect.top <= 0f && contentVisibleRect.bottom >= contentSize.height) {
+        return if (contentVisibleRect.top <= 0f && contentVisibleRect.bottom.roundToInt() >= contentSize.height.roundToInt()) {
             Edge.BOTH
-        } else if (contentVisibleRect.top > 0f && contentVisibleRect.bottom < contentSize.height) {
+        } else if (contentVisibleRect.top > 0f && contentVisibleRect.bottom.roundToInt() < contentSize.height.roundToInt()) {
             Edge.NONE
         } else if (contentVisibleRect.top <= 0f) {
             Edge.START
