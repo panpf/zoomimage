@@ -17,8 +17,7 @@ fun Modifier.zoomable(
     animationConfig: AnimationConfig
 ): Modifier = composed {
     val coroutineScope = rememberCoroutineScope()
-    val zoomableModifier = Modifier
-        .onSizeChanged {
+    this.onSizeChanged {
             val newContainerSize = it.toSize()
             val oldContainerSize = state.containerSize
             if (newContainerSize != oldContainerSize) {
@@ -80,5 +79,4 @@ fun Modifier.zoomable(
                 }
             }
         }
-    this.then(zoomableModifier)
 }

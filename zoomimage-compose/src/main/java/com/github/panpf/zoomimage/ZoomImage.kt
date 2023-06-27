@@ -18,6 +18,7 @@ fun ZoomImage(
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
     animationConfig: AnimationConfig = AnimationConfig(),
+    scrollBarEnabled: Boolean = true,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -34,8 +35,10 @@ fun ZoomImage(
         state.contentSize = painterSize
     }
 
-    val modifier1 = modifier.zoomable(state, animationConfig)
+    val modifier1 = modifier
         .clipToBounds()
+        .let { if (scrollBarEnabled) it.zoomScrollBar(state) else it }
+        .zoomable(state, animationConfig)
         .graphicsLayer {
             scaleX = state.scale
             scaleY = state.scale
@@ -54,6 +57,4 @@ fun ZoomImage(
         alpha = alpha,
         colorFilter = colorFilter
     )
-
-    // todo support scroll bar
 }
