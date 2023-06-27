@@ -5,15 +5,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.github.panpf.zoomimage.sample.util.format
 
-internal fun Size.toShortString(): String = "(${width}x$height)"
+internal fun Size.toShortString(): String = if (isSpecified) "(${width}x$height)" else "Unspecified"
 
-internal fun Offset.toShortString(): String = "(${x.format(1)}x${y.format(1)})"
+internal fun Offset.toShortString(): String =
+    if (isSpecified) "(${x.format(1)}x${y.format(1)})" else "Unspecified"
 
 internal fun Rect.toShortString(): String =
     "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"

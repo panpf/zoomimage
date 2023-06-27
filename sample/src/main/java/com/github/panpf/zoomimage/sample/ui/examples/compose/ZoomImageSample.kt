@@ -38,13 +38,14 @@ import androidx.compose.ui.unit.sp
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.zoomimage.AnimationConfig
 import com.github.panpf.zoomimage.ZoomImage
-import com.github.panpf.zoomimage.rememberZoomState
+import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.model.ResPhoto
 import com.github.panpf.zoomimage.sample.ui.util.compose.toPx
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
+import com.github.panpf.zoomimage.sample.util.format
 import kotlinx.coroutines.launch
 
 @Composable
@@ -74,11 +75,11 @@ fun ZoomImageSample(sketchImageUri: String) {
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        val myZoomState = rememberZoomState(debugMode = BuildConfig.DEBUG)
+        val zoomableState = rememberZoomableState(debugMode = BuildConfig.DEBUG)
         val zoomIn = remember {
             derivedStateOf {
-                val nextScale = myZoomState.getNextStepScale()
-                nextScale > myZoomState.minScale
+                val nextScale = zoomableState.getNextStepScale()
+                nextScale > zoomableState.minScale
             }
         }
         val context = LocalContext.current
@@ -92,7 +93,7 @@ fun ZoomImageSample(sketchImageUri: String) {
             contentScale = settingsDialogState.contentScale,
             alignment = settingsDialogState.alignment,
             modifier = Modifier.fillMaxSize(),
-            state = myZoomState,
+            state = zoomableState,
             animationConfig = AnimationConfig(
                 doubleTapScaleEnabled = !settingsDialogState.closeScaleAnimation,
                 durationMillis = animationDurationMillisState.value,
@@ -101,7 +102,7 @@ fun ZoomImageSample(sketchImageUri: String) {
 
         ZoomImageMinimap(
             painter = painter,
-            state = myZoomState,
+            state = zoomableState,
             animateScale = !settingsDialogState.closeScaleAnimation,
             animationDurationMillis = animationDurationMillisState.value,
         )
@@ -110,15 +111,15 @@ fun ZoomImageSample(sketchImageUri: String) {
             val expandedState = remember { mutableStateOf(false) }
             Text(
                 text = """
-                    scale: ${myZoomState.scale}, ${if (myZoomState.zooming) "zooming" else ""}
-                    translation: ${myZoomState.translation.toShortString()}
-                    translationBounds: ${myZoomState.translationBounds?.toShortString()}
-                    contentVisibleRect: ${myZoomState.contentVisibleRect.toShortString()}
-                    containerVisibleRect: ${myZoomState.containerVisibleRect.toShortString()}
-                    scrollEdge: horizontal=${myZoomState.horizontalScrollEdge}, vertical=${myZoomState.verticalScrollEdge}
-                    contentSize: ${myZoomState.contentSize}
-                    containerSize: ${myZoomState.containerSize}
-                    contentInContainerRect: ${myZoomState.contentInContainerRect.toShortString()}
+                    scale: ${zoomableState.scale.format(2)}
+                    translation: ${zoomableState.translation.toShortString()}
+                    translationBounds: ${zoomableState.translationBounds?.toShortString()}
+                    contentVisibleRect: ${zoomableState.contentVisibleRect.toShortString()}
+                    containerVisibleRect: ${zoomableState.containerVisibleRect.toShortString()}
+                    scrollEdge: horizontal=${zoomableState.horizontalScrollEdge}, vertical=${zoomableState.verticalScrollEdge}
+                    contentSize: ${zoomableState.contentSize.toShortString()}
+                    containerSize: ${zoomableState.containerSize.toShortString()}
+                    contentInContainerRect: ${zoomableState.contentInContainerRect.toShortString()}
                 """.trimIndent(),
                 color = Color.White,
                 fontSize = 13.sp,
@@ -144,11 +145,11 @@ fun ZoomImageSample(sketchImageUri: String) {
             IconButton(
                 onClick = {
                     coroutineScope.launch {
-                        val newScale = myZoomState.getNextStepScale()
+                        val newScale = zoomableState.getNextStepScale()
                         if (!settingsDialogState.closeScaleAnimation) {
-                            myZoomState.animateScaleTo(newScale = newScale)
+                            zoomableState.animateScaleTo(newScale = newScale)
                         } else {
-                            myZoomState.snapScaleTo(newScale = newScale)
+                            zoomableState.snapScaleTo(newScale = newScale)
                         }
                     }
                 }

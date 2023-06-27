@@ -3,9 +3,6 @@ package com.github.panpf.zoomimage.internal
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
@@ -24,7 +21,7 @@ import kotlin.math.abs
 import kotlin.math.sign
 
 /**
- * Copied from androidx.compose.foundation.gestures.detectDragGestures() extends the canDrag(Boolean, Int)
+ * Copied from androidx.compose.foundation.gestures.detectDragGestures() extends the [canDrag]
  * parameter to achieve the effect that you can drag to the boundary, and is suitable for nesting in Pager
  *
  * Gesture detector that waits for pointer down and touch slop in any direction and then
@@ -40,13 +37,6 @@ import kotlin.math.sign
  *
  * [onDragEnd] is called after all pointers are up and [onDragCancel] is called if another gesture
  * has consumed pointer input, canceling this gesture.
- *
- * Example Usage:
- * @sample androidx.compose.foundation.samples.DetectDragGesturesSample
- *
- * @see detectVerticalDragGestures
- * @see detectHorizontalDragGestures
- * @see detectDragGesturesAfterLongPress to detect gestures after long press
  */
 internal suspend fun PointerInputScope.detectCanDragGestures(
     canDrag: (horizontally: Boolean, direction: Int) -> Boolean,

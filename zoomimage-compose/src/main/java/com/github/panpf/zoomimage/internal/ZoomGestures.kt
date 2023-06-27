@@ -22,6 +22,9 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 /**
+ * Copied from androidx.compose.foundation.gestures.detectTransformGestures(), the drag function is removed,
+ * and only the zoom and rotation are retained so that it does not conflict with the detectDragGestures gesture
+ *
  * A gesture detector for zoom. Once touch slop has been reached, the
  * user can use zoom gestures. [onGesture] will be called when any of the zoom occurs, passing the zoom in scale factor and
  * pan as an offset in pixels. Each of these changes is a difference between the previous call
@@ -35,7 +38,7 @@ import kotlin.math.abs
  */
 internal suspend fun PointerInputScope.detectZoomGestures(
     panZoomLock: Boolean = false,
-    onGesture: (centroid: Offset, zoom: Float, rotation: Float) -> Unit
+    onGesture: (centroid: Offset, zoomChange: Float, rotationChange: Float) -> Unit
 ) {
     awaitEachGesture {
         var rotation = 0f
