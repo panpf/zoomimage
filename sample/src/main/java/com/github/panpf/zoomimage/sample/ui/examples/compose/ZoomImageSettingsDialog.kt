@@ -4,11 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
@@ -27,14 +25,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.github.panpf.zoomimage.sample.ui.common.compose.TitleRadioButton
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 
 class ZoomImageSettingsDialogState {
-    var horImageSelected: Boolean by mutableStateOf(true)
-        internal set
-    var smallImageSelected: Boolean by mutableStateOf(true)
-        internal set
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
         internal set
     var alignment: Alignment by mutableStateOf(Alignment.Center)
@@ -46,8 +39,6 @@ class ZoomImageSettingsDialogState {
 }
 
 class ZoomImageSettingsDialogConfig(
-    val horImageSelectedEnabled: Boolean = true,
-    val smallImageSelectedEnabled: Boolean = true,
     val contentScaleEnabled: Boolean = true,
     val alignmentEnabled: Boolean = true,
     val closeScaleAnimationEnabled: Boolean = true,
@@ -101,64 +92,6 @@ fun ZoomImageSettingsDialog(
                 .background(Color.White, shape = RoundedCornerShape(20.dp))
                 .padding(vertical = 10.dp)
         ) {
-            if (config.horImageSelectedEnabled) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "图片比例", modifier = Modifier.weight(1f))
-                    TitleRadioButton(
-                        selected = state.horImageSelected,
-                        title = "横图",
-                        onClick = {
-                            state.horImageSelected = true
-                            onDismissRequest()
-                        },
-                    )
-                    Spacer(modifier = Modifier.size(20.dp))
-                    TitleRadioButton(
-                        selected = !state.horImageSelected,
-                        title = "竖图",
-                        onClick = {
-                            state.horImageSelected = false
-                            onDismissRequest()
-                        },
-                    )
-                }
-            }
-
-            if (config.smallImageSelectedEnabled) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "图片大小", modifier = Modifier.weight(1f))
-                    TitleRadioButton(
-                        selected = state.smallImageSelected,
-                        title = "小图",
-                        onClick = {
-                            state.smallImageSelected = true
-                            onDismissRequest()
-                        },
-                    )
-                    Spacer(modifier = Modifier.size(20.dp))
-                    TitleRadioButton(
-                        selected = !state.smallImageSelected,
-                        title = "大图",
-                        onClick = {
-                            state.smallImageSelected = false
-                            onDismissRequest()
-                        },
-                    )
-                }
-            }
-
             if (config.contentScaleEnabled) {
                 Row(
                     modifier = Modifier

@@ -26,23 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.zoomimage.AnimationConfig
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.ui.model.ResPhoto
-import com.github.panpf.zoomimage.sample.ui.util.compose.toPx
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.util.format
@@ -53,19 +48,6 @@ fun ZoomImageSample(sketchImageUri: String) {
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
     val settingsDialogState = rememberZoomImageSettingsDialogState()
-    val horSmall = remember { ResPhoto.dog.newFetcher(name = "横向图片 - 小", big = false) }
-    val horBig = remember { ResPhoto.dog.newFetcher(name = "横向图片 - 大", big = true) }
-    val verSmall = remember { ResPhoto.cat.newFetcher(name = "竖向图片 - 小", big = false) }
-    val verBig = remember { ResPhoto.cat.newFetcher(name = "竖向图片 - 大", big = true) }
-    val image by remember {
-        derivedStateOf {
-            if (settingsDialogState.horImageSelected) {
-                if (settingsDialogState.smallImageSelected) horSmall else horBig
-            } else {
-                if (settingsDialogState.smallImageSelected) verSmall else verBig
-            }
-        }
-    }
     val animationDurationMillisState = remember(settingsDialogState.slowerScaleAnimation) {
         mutableStateOf(if (settingsDialogState.slowerScaleAnimation) 3000 else AnimationConfig.DefaultDurationMillis)
     }
@@ -82,13 +64,8 @@ fun ZoomImageSample(sketchImageUri: String) {
                 nextScale > zoomableState.minScale
             }
         }
-        val context = LocalContext.current
-        val viewSize = min(maxWidth, maxHeight).toPx().toInt()
-        val painter = remember(viewSize, image) {
-            image.getBitmap(context, viewSize).asImageBitmap().let { BitmapPainter(it) }
-        }
         ZoomImage(
-            painter = painter,
+            painter = rememberAsyncImagePainter(imageUri = sketchImageUri),
             contentDescription = "",
             contentScale = settingsDialogState.contentScale,
             alignment = settingsDialogState.alignment,
@@ -101,7 +78,7 @@ fun ZoomImageSample(sketchImageUri: String) {
         )
 
         ZoomImageMinimap(
-            painter = painter,
+            painter = rememberAsyncImagePainter(imageUri = sketchImageUri),
             state = zoomableState,
             animateScale = !settingsDialogState.closeScaleAnimation,
             animationDurationMillis = animationDurationMillisState.value,

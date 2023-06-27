@@ -20,7 +20,6 @@ import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.util.Size
 
-@Suppress("unused", "MemberVisibilityCanBePrivate")
 object SampleImages {
     val MIXING_PHOTO_ALBUM = listOf(
         Asset.DOG,
@@ -33,35 +32,6 @@ object SampleImages {
         Resource.QMSHT,
         Http.COMIC
     )
-    val FETCHERS = listOf(
-        Asset.WORLD,
-        Content.CHINA,
-        LocalFile.CARD,
-        Resource.QMSHT,
-        Http.COMIC
-    )
-
-    object Resource {
-        val DOG = SampleImage(
-            name = "DOG",
-            fileName = "sample_dog.jpg",
-            uri = newResourceUri(R.raw.sample_dog),
-            size = Size(640, 427)
-        )
-        val CAT = SampleImage(
-            name = "CAT",
-            fileName = "sample_cat.jpg",
-            uri = newResourceUri(R.raw.sample_cat),
-            size = Size(150, 266)
-        )
-        val QMSHT = SampleImage(
-            name = "QMSHT",
-            fileName = "sample_long_qmsht.jpg",
-            uri = newResourceUri(R.raw.sample_long_qmsht),
-            size = Size(30000, 926)
-        )
-        val ALL = listOf(DOG, CAT, QMSHT)
-    }
 
     object Asset {
         val DOG = SampleImage(
@@ -121,36 +91,58 @@ object SampleImages {
         val ALL = listOf(DOG, CAT, ELEPHANT, WHALE, WORLD, CHINA, CARD, QMSHT, COMIC)
     }
 
+    object Resource {
+        val QMSHT = SampleImage(
+            name = "QMSHT",
+            fileName = "sample_long_qmsht.jpg",
+            uri = newResourceUri(R.raw.sample_long_qmsht),
+            size = Size(30000, 926)
+        )
+        val ALL = listOf(QMSHT)
+    }
+
     object Http {
         private const val path = "http://img.panpengfei.com/"
+        val DOG = Asset.DOG.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CAT = Asset.CAT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val ELEPHANT = Asset.ELEPHANT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val WHALE = Asset.WHALE.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val COMIC = Asset.COMIC.let { it.copy(uri = it.uri.replace("asset://", path)) }
-        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
-        val ALL = listOf(WORLD, CARD, QMSHT, COMIC, CHINA)
+        val ALL = listOf(DOG, CAT, ELEPHANT, WHALE, WORLD, CHINA, CARD, QMSHT, COMIC)
     }
 
     object LocalFile {
         private val path =
             "file://${Environment.getExternalStorageDirectory()}/Android/data/${BuildConfig.APPLICATION_ID}/files/assets/"
+        val DOG = Asset.DOG.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CAT = Asset.CAT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val ELEPHANT = Asset.ELEPHANT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val WHALE = Asset.WHALE.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val COMIC = Asset.COMIC.let { it.copy(uri = it.uri.replace("asset://", path)) }
-        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
-        val ALL = listOf(WORLD, CARD, QMSHT, COMIC, CHINA)
+        val ALL = listOf(DOG, CAT, ELEPHANT, WHALE, WORLD, CHINA, CARD, QMSHT, COMIC)
     }
 
     object Content {
         private const val path =
             "content://${BuildConfig.APPLICATION_ID}.fileprovider/asset_images/"
+        val DOG = Asset.DOG.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CAT = Asset.CAT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val ELEPHANT = Asset.ELEPHANT.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val WHALE = Asset.WHALE.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val WORLD = Asset.WORLD.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val CARD = Asset.CARD.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val QMSHT = Asset.QMSHT.let { it.copy(uri = it.uri.replace("asset://", path)) }
         val COMIC = Asset.COMIC.let { it.copy(uri = it.uri.replace("asset://", path)) }
-        val CHINA = Asset.CHINA.let { it.copy(uri = it.uri.replace("asset://", path)) }
-        val ALL = listOf(WORLD, CARD, QMSHT, COMIC, CHINA)
+        val ALL = listOf(DOG, CAT, ELEPHANT, WHALE, WORLD, CHINA, CARD, QMSHT, COMIC)
     }
 }
 
