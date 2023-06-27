@@ -72,8 +72,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":zoomimage-compose"))
-    implementation(project(":zoomimage-view"))
+    implementation(project(":zoomimage-compose-sketch"))
     implementation(project(":zoomimage-view-coil"))
     implementation(project(":zoomimage-view-glide"))
     implementation(project(":zoomimage-view-picasso"))

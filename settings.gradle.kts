@@ -22,6 +22,7 @@ dependencyResolutionManagement {
 rootProject.name = "zoomimage"
 include(":sample")
 include(":zoomimage-compose")
+include(":zoomimage-compose-sketch")
 include(":zoomimage-core")
 include(":zoomimage-view")
 include(":zoomimage-view-coil")

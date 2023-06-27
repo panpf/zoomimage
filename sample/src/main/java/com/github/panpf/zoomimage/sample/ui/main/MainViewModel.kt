@@ -56,6 +56,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 minSdk = 21
             ),
             Link(
+                title = "SketchZoomAsyncImage（My）",
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
+                    ZoomImageType.SketchZoomAsyncImage.name
+                ),
+                minSdk = 21
+            ),
+            Link(
                 title = "ZoomableAsyncImage（Telephoto）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
                     ZoomImageType.TelephotoZoomableAsyncImage.name

@@ -73,6 +73,9 @@ class ZoomableState(
     val debugMode: Boolean = false
 ) {
 
+    // todo support dynamic minScale and maxScale
+    // todo support click and long press
+
     private val velocityTracker = VelocityTracker()
     private val scaleAnimatable = Animatable(initialScale)
     private val translationXAnimatable = Animatable(initialTranslateX)

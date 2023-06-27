@@ -54,9 +54,6 @@ fun ZoomImage(
         alpha = alpha,
         colorFilter = colorFilter
     )
-}
 
-//@Composable
-//fun ZoomAsyncImage() {
-//
-//}
+    // todo support scroll bar
+}

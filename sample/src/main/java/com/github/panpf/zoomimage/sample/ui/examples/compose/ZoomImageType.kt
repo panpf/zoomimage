@@ -13,6 +13,13 @@ enum class ZoomImageType(
         }
     ),
 
+    SketchZoomAsyncImage(
+        title = "SketchZoomAsyncImageSample (My)",
+        drawContent = { sketchImageUri ->
+            SketchZoomAsyncImageSample(sketchImageUri)
+        }
+    ),
+
     TelephotoZoomableAsyncImage(
         title = "ZoomableAsyncImage (Telephoto)",
         drawContent = { sketchImageUri ->
