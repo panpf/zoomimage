@@ -39,7 +39,9 @@ fun ZoomImageSample(sketchImageUri: String) {
         val context = LocalContext.current
         var drawablePainter: Painter? by remember { mutableStateOf(null) }
         LaunchedEffect(sketchImageUri) {
-            val drawable = DisplayRequest(context, sketchImageUri).execute().drawable
+            val drawable = DisplayRequest(context, sketchImageUri){
+                crossfade()
+            }.execute().drawable
             drawablePainter = drawable?.let { DrawablePainter(it) }
         }
 

@@ -18,10 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.sketch.compose.AsyncImage
+import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.zoomimage.Centroid
 import com.github.panpf.zoomimage.ZoomableState
@@ -50,7 +52,9 @@ fun ZoomImageMinimap(
         if (viewSize.isSpecified) {
             val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
             AsyncImage(
-                imageUri = sketchImageUri,
+                request = DisplayRequest(LocalContext.current, sketchImageUri) {
+                    crossfade()
+                },
                 contentDescription = contentDescription ?: "Visible Rect",
                 modifier = Modifier
                     .align(Alignment.BottomStart)

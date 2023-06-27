@@ -53,28 +53,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
                     ZoomImageType.MyZoomImage.name
                 ),
-                minSdk = 21
+                minSdk = 21,
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE) // todo api 33 上直接拒绝
             ),
             Link(
                 title = "SketchZoomAsyncImage（My）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
                     ZoomImageType.SketchZoomAsyncImage.name
                 ),
-                minSdk = 21
+                minSdk = 21,
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
             Link(
                 title = "ZoomableAsyncImage（Telephoto）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
                     ZoomImageType.TelephotoZoomableAsyncImage.name
                 ),
-                minSdk = 21
+                minSdk = 21,
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
 
             ListSeparator("PhotoAlbum (View)"),
             Link(
                 title = "ZoomImageView（My）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.ZoomImageView.name),
-                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE) // todo api 33 上直接拒绝
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
             Link(
                 title = "SketchZoomImageView（My）",

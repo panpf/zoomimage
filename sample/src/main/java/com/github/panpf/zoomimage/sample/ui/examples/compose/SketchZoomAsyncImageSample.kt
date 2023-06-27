@@ -8,8 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
+import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.AnimationConfig
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
@@ -30,7 +32,9 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             .background(Color.Black)
     ) {
         ZoomAsyncImage(
-            imageUri = sketchImageUri,
+            request = DisplayRequest(LocalContext.current, sketchImageUri) {
+                crossfade()
+            },
             contentDescription = "",
             contentScale = zoomImageOptionsDialogState.contentScale,
             alignment = zoomImageOptionsDialogState.alignment,

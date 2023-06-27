@@ -37,6 +37,7 @@ class PhotoSlideshowComposeFragment : ComposeFragment() {
             HorizontalPager(
                 pageCount = imageUrlList.size,
                 state = pagerState,
+                beyondBoundsPageCount = 1,
                 modifier = Modifier.fillMaxSize()
             ) { index ->
                 zoomImageType.drawContent(imageUrlList[index])
