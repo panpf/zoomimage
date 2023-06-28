@@ -20,6 +20,7 @@ import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
 import com.github.panpf.zoomimage.AnimationConfig
 import com.github.panpf.zoomimage.ZoomableState
+import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.zoomScrollBar
 import com.github.panpf.zoomimage.zoomable
@@ -32,7 +33,7 @@ fun ZoomAsyncImage(
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
     animationConfig: AnimationConfig = AnimationConfig(),
-    scrollBarEnabled: Boolean = true,
+    scrollBar: ScrollBar? = ScrollBar.Default,
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
@@ -50,7 +51,7 @@ fun ZoomAsyncImage(
     modifier = modifier,
     state = state,
     animationConfig = animationConfig,
-    scrollBarEnabled = scrollBarEnabled,
+    scrollBar = scrollBar,
     transform = transformOf(placeholder, error, uriEmpty),
     onState = onStateOf(onLoading, onSuccess, onError),
     alignment = alignment,
@@ -68,7 +69,7 @@ fun ZoomAsyncImage(
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
     animationConfig: AnimationConfig = AnimationConfig(),
-    scrollBarEnabled: Boolean = true,
+    scrollBar: ScrollBar? = ScrollBar.Default,
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
@@ -86,7 +87,7 @@ fun ZoomAsyncImage(
     modifier = modifier,
     state = state,
     animationConfig = animationConfig,
-    scrollBarEnabled = scrollBarEnabled,
+    scrollBar = scrollBar,
     transform = transformOf(placeholder, error, uriEmpty),
     onState = onStateOf(onLoading, onSuccess, onError),
     alignment = alignment,
@@ -104,7 +105,7 @@ fun ZoomAsyncImage(
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
     animationConfig: AnimationConfig = AnimationConfig(),
-    scrollBarEnabled: Boolean = true,
+    scrollBar: ScrollBar? = ScrollBar.Default,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
     onState: ((AsyncImagePainter.State) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
@@ -118,7 +119,7 @@ fun ZoomAsyncImage(
     modifier = modifier,
     state = state,
     animationConfig = animationConfig,
-    scrollBarEnabled = scrollBarEnabled,
+    scrollBar = scrollBar,
     transform = transform,
     onState = onState,
     alignment = alignment,
@@ -135,7 +136,7 @@ fun ZoomAsyncImage(
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
     animationConfig: AnimationConfig = AnimationConfig(),
-    scrollBarEnabled: Boolean = true,
+    scrollBar: ScrollBar? = ScrollBar.Default,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
     onState: ((AsyncImagePainter.State) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
@@ -153,7 +154,7 @@ fun ZoomAsyncImage(
 
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBarEnabled) it.zoomScrollBar(state) else it }
+        .let { if (scrollBar != null) it.zoomScrollBar(state, scrollBar) else it }
         .zoomable(state, animationConfig)
         .graphicsLayer {
             scaleX = state.scale

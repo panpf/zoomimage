@@ -35,7 +35,9 @@ class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
         internal set
     var alignment: Alignment by mutableStateOf(Alignment.Center)
         internal set
-    var closeScaleAnimation: Boolean by mutableStateOf(false)
+    var scrollBar: Boolean by mutableStateOf(true)
+        internal set
+    var animateScale: Boolean by mutableStateOf(true)
         internal set
     var slowerScaleAnimation: Boolean by mutableStateOf(false)
         internal set
@@ -170,15 +172,33 @@ fun ZoomImageOptionsDialog(
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            state.closeScaleAnimation = !state.closeScaleAnimation
+                            state.scrollBar = !state.scrollBar
                             state.showing = false
                         }
                         .padding(horizontal = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "关闭缩放动画", modifier = Modifier.weight(1f))
+                    Text(text = "Scroll Bar", modifier = Modifier.weight(1f))
                     Checkbox(
-                        checked = state.closeScaleAnimation,
+                        checked = state.scrollBar,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            state.animateScale = !state.animateScale
+                            state.showing = false
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Animate Scale", modifier = Modifier.weight(1f))
+                    Checkbox(
+                        checked = state.animateScale,
                         onCheckedChange = null
                     )
                 }
@@ -194,7 +214,7 @@ fun ZoomImageOptionsDialog(
                         .padding(horizontal = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "更慢的缩放动画", modifier = Modifier.weight(1f))
+                    Text(text = "Slower Scale Animation", modifier = Modifier.weight(1f))
                     Checkbox(
                         checked = state.slowerScaleAnimation,
                         onCheckedChange = null

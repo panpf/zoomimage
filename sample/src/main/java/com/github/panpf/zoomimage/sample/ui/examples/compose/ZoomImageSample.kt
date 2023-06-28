@@ -18,6 +18,7 @@ import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.AnimationConfig
 import com.github.panpf.zoomimage.ZoomImage
+import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
@@ -39,7 +40,7 @@ fun ZoomImageSample(sketchImageUri: String) {
         val context = LocalContext.current
         var drawablePainter: Painter? by remember { mutableStateOf(null) }
         LaunchedEffect(sketchImageUri) {
-            val drawable = DisplayRequest(context, sketchImageUri){
+            val drawable = DisplayRequest(context, sketchImageUri) {
                 crossfade()
             }.execute().drawable
             drawablePainter = drawable?.let { DrawablePainter(it) }
@@ -55,16 +56,17 @@ fun ZoomImageSample(sketchImageUri: String) {
                 modifier = Modifier.fillMaxSize(),
                 state = zoomableState,
                 animationConfig = AnimationConfig(
-                    doubleTapScaleEnabled = !zoomImageOptionsDialogState.closeScaleAnimation,
+                    doubleTapScaleEnabled = zoomImageOptionsDialogState.animateScale,
                     durationMillis = animationDurationMillisState.value,
                 ),
+                scrollBar = if (zoomImageOptionsDialogState.scrollBar) ScrollBar.Default else null,
             )
         }
 
         ZoomImageMinimap(
             sketchImageUri = sketchImageUri,
             state = zoomableState,
-            animateScale = !zoomImageOptionsDialogState.closeScaleAnimation,
+            animateScale = zoomImageOptionsDialogState.animateScale,
             animationDurationMillis = animationDurationMillisState.value,
         )
 

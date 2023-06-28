@@ -1,5 +1,11 @@
 package com.github.panpf.zoomimage
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -8,29 +14,32 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import com.github.panpf.zoomimage.compose.ScrollBar
+import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 fun Modifier.zoomScrollBar(
     zoomableState: ZoomableState,
-    color: Color = Color.Black.copy(alpha = 0.2f),
-    strokeColor: Color = Color.White.copy(alpha = 0.3f),
-    size: Dp = 3.dp,
-    margin: Dp = 6.dp
+    scrollBar: ScrollBar = ScrollBar.Default
 ): Modifier = composed {
-    // todo support animate hidden
     val contentSize = zoomableState.contentSize
     val contentVisibleRect = zoomableState.contentVisibleRect
     val density = LocalDensity.current
-    val sizePx = remember(size) { with(density) { size.toPx() } }
-    val marginPx = remember(margin) { with(density) { margin.toPx() } }
+    val sizePx = remember(scrollBar.size) { with(density) { scrollBar.size.toPx() } }
+    val marginPx = remember(scrollBar.margin) { with(density) { scrollBar.margin.toPx() } }
     val cornerRadius = remember(sizePx) { CornerRadius(sizePx / 2f, sizePx / 2f) }
-    val stroke = remember { Stroke(width = with(density) { 0.5.dp.toPx() }) }
+    val alphaAnimatable = remember { Animatable(1f) }
+    LaunchedEffect(contentVisibleRect) {
+        alphaAnimatable.snapTo(targetValue = 1f)
+        delay(800)
+        alphaAnimatable.animateTo(
+            targetValue = 0f,
+            animationSpec = TweenSpec(300, easing = LinearOutSlowInEasing)
+        )
+    }
+    val alpha by remember { derivedStateOf { alphaAnimatable.value } }
     if (contentSize.isSpecified && !contentSize.isEmpty() && !contentVisibleRect.isEmpty) {
         this.drawWithContent {
             drawContent()
@@ -40,29 +49,37 @@ fun Modifier.zoomScrollBar(
             val drawSize = this.size
             if (contentVisibleRect.width.roundToInt() < contentSize.width.roundToInt()) {
                 val widthScale = (drawSize.width - marginPx * 4) / contentSize.width
-                val topLeft = Offset(
-                    x = (marginPx * 2) + (contentVisibleRect.left * widthScale),
-                    y = drawSize.height - marginPx - scrollBarSize
+                drawRoundRect(
+                    color = scrollBar.color,
+                    topLeft = Offset(
+                        x = (marginPx * 2) + (contentVisibleRect.left * widthScale),
+                        y = drawSize.height - marginPx - scrollBarSize
+                    ),
+                    size = Size(
+                        width = contentVisibleRect.width * widthScale,
+                        height = scrollBarSize
+                    ),
+                    cornerRadius = cornerRadius,
+                    style = Fill,
+                    alpha = alpha
                 )
-                val scrollBarRectSize = Size(
-                    width = contentVisibleRect.width * widthScale,
-                    height = scrollBarSize
-                )
-                drawRoundRect(color, topLeft, scrollBarRectSize, cornerRadius, Fill)
-                drawRoundRect(strokeColor, topLeft, scrollBarRectSize, cornerRadius, stroke)
             }
             if (contentVisibleRect.height.roundToInt() < contentSize.height.roundToInt()) {
                 val heightScale = (drawSize.height - marginPx * 4) / contentSize.height
-                val topLeft = Offset(
-                    x = drawSize.width - marginPx - scrollBarSize,
-                    y = (marginPx * 2) + (contentVisibleRect.top * heightScale)
+                drawRoundRect(
+                    color = scrollBar.color,
+                    topLeft = Offset(
+                        x = drawSize.width - marginPx - scrollBarSize,
+                        y = (marginPx * 2) + (contentVisibleRect.top * heightScale)
+                    ),
+                    size = Size(
+                        width = scrollBarSize,
+                        height = contentVisibleRect.height * heightScale
+                    ),
+                    cornerRadius = cornerRadius,
+                    style = Fill,
+                    alpha = alpha
                 )
-                val scrollBarRectSize = Size(
-                    width = scrollBarSize,
-                    height = contentVisibleRect.height * heightScale
-                )
-                drawRoundRect(color, topLeft, scrollBarRectSize, cornerRadius, Fill)
-                drawRoundRect(strokeColor, topLeft, scrollBarRectSize, cornerRadius, stroke)
             }
         }
     } else {
