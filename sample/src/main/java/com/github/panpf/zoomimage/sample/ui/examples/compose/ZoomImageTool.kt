@@ -47,9 +47,11 @@ fun ZoomImageTool(
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             val expandedState = remember { mutableStateOf(false) }
+            val scales = floatArrayOf(zoomableState.minScale, zoomableState.mediumScale, zoomableState.maxScale)
+                .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             Text(
                 text = """
-                    scale: ${zoomableState.scale.format(2)}
+                    scale: ${zoomableState.scale.format(2)}(${zoomableState.displayScale.scaleX.format(2)}/${zoomableState.baseScale.scaleX.format(2)}) in $scales
                     translation: ${zoomableState.translation.toShortString()}
                     translationBounds: ${zoomableState.translationBounds?.toShortString()}
                     contentVisibleRect: ${zoomableState.contentVisibleRect.toShortString()}

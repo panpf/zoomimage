@@ -35,6 +35,8 @@ class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
         internal set
     var alignment: Alignment by mutableStateOf(Alignment.Center)
         internal set
+    var threeStepScaleEnabled: Boolean by mutableStateOf(false)
+        internal set
     var scrollBar: Boolean by mutableStateOf(true)
         internal set
     var animateScale: Boolean by mutableStateOf(true)
@@ -165,6 +167,24 @@ fun ZoomImageOptionsDialog(
                             )
                         }
                     }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            state.threeStepScaleEnabled = !state.threeStepScaleEnabled
+                            state.showing = false
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Three Step Scale", modifier = Modifier.weight(1f))
+                    Checkbox(
+                        checked = state.threeStepScaleEnabled,
+                        onCheckedChange = null
+                    )
                 }
 
                 Row(

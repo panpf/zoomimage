@@ -6,7 +6,7 @@ import kotlin.math.roundToInt
 /**
  * Holds 2 dimensional scaling factors for horizontal and vertical axes
  */
-internal class ScaleFactor(
+class ScaleFactor(
     /**
      * Returns the scale factor to apply along the horizontal axis
      */
@@ -72,20 +72,20 @@ private fun Float.roundToTenths(): Float {
 /**
  * `false` when this is [ScaleFactor.Unspecified].
  */
-internal inline val ScaleFactor.isSpecified: Boolean
+inline val ScaleFactor.isSpecified: Boolean
     get() = !scaleX.isNaN() && !scaleY.isNaN()
 
 /**
  * `true` when this is [ScaleFactor.Unspecified].
  */
-internal inline val ScaleFactor.isUnspecified: Boolean
+inline val ScaleFactor.isUnspecified: Boolean
     get() = scaleX.isNaN() || scaleY.isNaN()
 
 /**
  * If this [ScaleFactor] [isSpecified] then this is returned, otherwise [block] is executed
  * and its result is returned.
  */
-internal inline fun ScaleFactor.takeOrElse(block: () -> ScaleFactor): ScaleFactor =
+inline fun ScaleFactor.takeOrElse(block: () -> ScaleFactor): ScaleFactor =
     if (isSpecified) this else block()
 
 /**
@@ -94,7 +94,7 @@ internal inline fun ScaleFactor.takeOrElse(block: () -> ScaleFactor): ScaleFacto
  * Return a new [Size] with the width and height multiplied by the [ScaleFactor.scaleX] and
  * [ScaleFactor.scaleY] respectively
  */
-internal operator fun Size.times(scaleFactor: ScaleFactor): Size =
+operator fun Size.times(scaleFactor: ScaleFactor): Size =
     Size(
         (this.width * scaleFactor.scaleX).roundToInt(),
         (this.height * scaleFactor.scaleY).roundToInt()
@@ -107,7 +107,7 @@ internal operator fun Size.times(scaleFactor: ScaleFactor): Size =
  * Return a new [Size] with the width and height multiplied by the [ScaleFactor.scaleX] and
  * [ScaleFactor.scaleY] respectively
  */
-internal operator fun ScaleFactor.times(size: Size): Size = size * this
+operator fun ScaleFactor.times(size: Size): Size = size * this
 
 /**
  * Division operator with [Size]
@@ -115,7 +115,7 @@ internal operator fun ScaleFactor.times(size: Size): Size = size * this
  * Return a new [Size] with the width and height divided by [ScaleFactor.scaleX] and
  * [ScaleFactor.scaleY] respectively
  */
-internal operator fun Size.div(scaleFactor: ScaleFactor): Size =
+operator fun Size.div(scaleFactor: ScaleFactor): Size =
     Size((width / scaleFactor.scaleX).roundToInt(), (height / scaleFactor.scaleY).roundToInt())
 
 /**
@@ -133,7 +133,7 @@ internal operator fun Size.div(scaleFactor: ScaleFactor): Size =
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
-internal fun lerp(start: ScaleFactor, stop: ScaleFactor, fraction: Float): ScaleFactor {
+fun lerp(start: ScaleFactor, stop: ScaleFactor, fraction: Float): ScaleFactor {
     return ScaleFactor(
         lerp(start.scaleX, stop.scaleX, fraction),
         lerp(start.scaleY, stop.scaleY, fraction)

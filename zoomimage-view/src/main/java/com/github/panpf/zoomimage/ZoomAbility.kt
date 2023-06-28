@@ -204,8 +204,6 @@ class ZoomAbility(
         get() = engine.mediumScale
     val maxScale: Float
         get() = engine.maxScale
-    val stepScales: FloatArray
-        get() = engine.stepScales
 
     val viewSize: Size
         get() = engine.viewSize

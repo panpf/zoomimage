@@ -20,8 +20,6 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.Transform
-import com.github.panpf.zoomimage.isNotEmpty
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.max
@@ -266,54 +264,14 @@ internal fun computeReadModeTransform(
     )
 }
 
-internal fun computeSupportScales(
-    scaleType: ScaleType,
-    drawableSize: Size,
-    imageSize: Size,
-    viewSize: Size,
-    readMode: Boolean,
-): FloatArray {
-    if (scaleType == ScaleType.FIT_XY) {
-        return floatArrayOf(1.0f, 2.0f, 4.0f)
-    }
-
-    // The width and height of drawable fill the view at the same time
-    val fillViewScale = max(
-        viewSize.width / drawableSize.width.toFloat(),
-        viewSize.height / drawableSize.height.toFloat()
-    )
-    // Enlarge drawable to the same size as its original image
-    val originShowScale = if (imageSize.isNotEmpty) {
-        max(
-            imageSize.width / drawableSize.width.toFloat(),
-            imageSize.height / drawableSize.height.toFloat()
-        )
-    } else {
-        1.0f
-    }
-
-    val baseScale = scaleType.computeScaleFactor(srcSize = drawableSize, dstSize = viewSize).scaleX
-    @Suppress("UnnecessaryVariable") val minScale = baseScale
-
-    val defaultMediumScale = minScale * 2f
-    val isFill = scaleType == ScaleType.CENTER_CROP
-    val useReadMode = scaleType.supportReadMode() && readMode
-    val mediumScale = if (useReadMode) {
-        if (isFill) {
-            floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
-        } else {
-            floatArrayOf(originShowScale, fillViewScale).maxOrNull()!!
-        }
-    } else {
-        // fit, center, matrix
-        if (isFill) {
-            floatArrayOf(originShowScale, defaultMediumScale).maxOrNull()!!
-        } else {
-            floatArrayOf(originShowScale, fillViewScale, defaultMediumScale).maxOrNull()!!
-        }
-    }
-
-    val maxScale = mediumScale * 2f
-
-    return floatArrayOf(minScale, mediumScale, maxScale).map { it / baseScale }.toFloatArray()
+fun ScaleType.toScaleMode(): ScaleMode = when (this) {
+    ScaleType.CENTER -> ScaleMode.NONE
+    ScaleType.CENTER_CROP -> ScaleMode.CROP
+    ScaleType.CENTER_INSIDE -> ScaleMode.INSIDE
+    ScaleType.FIT_START -> ScaleMode.FIT
+    ScaleType.FIT_CENTER -> ScaleMode.FIT
+    ScaleType.FIT_END -> ScaleMode.FIT
+    ScaleType.FIT_XY -> ScaleMode.FILL_BOUNDS
+    ScaleType.MATRIX -> ScaleMode.NONE
+    else -> ScaleMode.NONE
 }

@@ -39,7 +39,6 @@ import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.OnViewTapListener
 import com.github.panpf.zoomimage.ReadModeDecider
 import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.Transform
 import com.github.panpf.zoomimage.rotate
 import com.github.panpf.zoomimage.view.ScrollBar
 
@@ -157,12 +156,7 @@ internal class ZoomEngine constructor(
             }
         }
     var threeStepScaleEnabled: Boolean = false
-        internal set(value) {
-            if (field != value) {
-                field = value
-                reset()
-            }
-        }
+        internal set
 
     var minScale: Float = 1.0f
         private set
@@ -171,9 +165,6 @@ internal class ZoomEngine constructor(
         private set
 
     var maxScale: Float = 1.0f
-        private set
-
-    var stepScales: FloatArray = floatArrayOf()
         private set
 
     /**
@@ -212,22 +203,25 @@ internal class ZoomEngine constructor(
             } else {
                 null
             }
-            val readMode = scaleType.supportReadMode()
-                    && finalReadModeDecider?.should(srcSize = drawableSize, viewSize) == true
             val finalDrawableSize = drawableSize.rotate(rotateDegrees)
             val finalImageSize = imageSize.rotate(rotateDegrees)
             val supportStepScales = computeSupportScales(
-                scaleType = scaleType,
-                drawableSize = finalDrawableSize,
-                imageSize = finalImageSize,
-                viewSize = viewSize,
-                readMode = readMode
+                contentSize = finalDrawableSize,
+                contentOriginSize = finalImageSize,
+                containerSize = viewSize,
+                scaleMode = scaleType.toScaleMode(),
+                baseScale = scaleType.computeScaleFactor(
+                    srcSize = finalDrawableSize,
+                    dstSize = viewSize
+                ),
             )
             minScale = supportStepScales[0]
             mediumScale = supportStepScales[1]
             maxScale = supportStepScales[2]
             baseInitialTransform = scaleType
                 .computeTransform(srcSize = finalDrawableSize, dstSize = viewSize)
+            val readMode = scaleType.supportReadMode()
+                    && finalReadModeDecider?.should(srcSize = drawableSize, viewSize) == true
             supportInitialTransform = if (readMode) {
                 computeReadModeTransform(
                     scaleType = scaleType,
@@ -245,11 +239,6 @@ internal class ZoomEngine constructor(
                 Transform.EMPTY
             }
         }
-        stepScales = if (threeStepScaleEnabled) {
-            floatArrayOf(minScale, mediumScale, maxScale)
-        } else {
-            floatArrayOf(minScale, mediumScale)
-        }
         scaleDragHelper.reset()
         logger.d(MODULE) {
             "reset. viewSize=$viewSize, " +
@@ -262,7 +251,6 @@ internal class ZoomEngine constructor(
                     "minScale=$minScale, " +
                     "mediumScale=$mediumScale, " +
                     "maxScale=$maxScale, " +
-                    "stepScales=${stepScales.contentToString()}, " +
                     "baseInitialTransform=$baseInitialTransform, " +
                     "supportInitialTransform=$supportInitialTransform"
         }
@@ -367,6 +355,11 @@ internal class ZoomEngine constructor(
     }
 
     fun getNextStepScale(): Float {
+        val stepScales = if (threeStepScaleEnabled) {
+            floatArrayOf(minScale, mediumScale, maxScale)
+        } else {
+            floatArrayOf(minScale, mediumScale)
+        }
         return calculateNextStepScale(stepScales, scale)
     }
 

@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.internal
 
-internal class Translation(
+class Translation(
     val translationX: Float,
     val translationY: Float
 ) {
@@ -40,20 +40,20 @@ private fun Float.roundToTenths(): Float {
 /**
  * `false` when this is [Translation.Unspecified].
  */
-internal inline val Translation.isSpecified: Boolean
+inline val Translation.isSpecified: Boolean
     get() = !translationX.isNaN() && !translationY.isNaN()
 
 /**
  * `true` when this is [Translation.Unspecified].
  */
-internal inline val Translation.isUnspecified: Boolean
+inline val Translation.isUnspecified: Boolean
     get() = translationX.isNaN() || translationY.isNaN()
 
 /**
  * If this [Translation] [isSpecified] then this is returned, otherwise [block] is executed
  * and its result is returned.
  */
-internal inline fun Translation.takeOrElse(block: () -> Translation): Translation =
+inline fun Translation.takeOrElse(block: () -> Translation): Translation =
     if (isSpecified) this else block()
 
 /**
@@ -71,7 +71,7 @@ internal inline fun Translation.takeOrElse(block: () -> Translation): Translatio
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
-internal fun lerp(start: Translation, stop: Translation, fraction: Float): Translation {
+fun lerp(start: Translation, stop: Translation, fraction: Float): Translation {
     return Translation(
         lerp(start.translationX, stop.translationX, fraction),
         lerp(start.translationY, stop.translationY, fraction)

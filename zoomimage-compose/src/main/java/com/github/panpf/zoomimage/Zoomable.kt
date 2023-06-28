@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 fun Modifier.zoomable(
     state: ZoomableState,
-    animationConfig: AnimationConfig
+    animationConfig: AnimationConfig    // todo 挪到 ZoomableState 里
 ): Modifier = composed {
     val coroutineScope = rememberCoroutineScope()
     this.onSizeChanged {

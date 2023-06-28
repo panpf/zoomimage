@@ -4,6 +4,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.times
@@ -410,7 +411,11 @@ internal fun contentCentroidToContainerCentroid(
 
 /* ******************************************* Other ***************************************** */
 
-internal fun computeScrollEdge(contentSize: Size, contentVisibleRect: Rect, horizontal: Boolean): Edge {
+internal fun computeScrollEdge(
+    contentSize: Size,
+    contentVisibleRect: Rect,
+    horizontal: Boolean
+): Edge {
     if (contentSize.isUnspecified || contentVisibleRect.isEmpty) return Edge.BOTH
     if (horizontal) {
         return if (contentVisibleRect.left <= 0f && contentVisibleRect.right.roundToInt() >= contentSize.width.roundToInt()) {
@@ -436,4 +441,25 @@ internal fun computeScrollEdge(contentSize: Size, contentVisibleRect: Rect, hori
             Edge.END
         }
     }
+}
+
+fun ContentScale.toScaleMode(): ScaleMode = when (this) {
+    ContentScale.Fit -> ScaleMode.FIT
+    ContentScale.FillBounds -> ScaleMode.FILL_BOUNDS
+    ContentScale.FillWidth -> ScaleMode.FILL_UNILATERAL
+    ContentScale.FillHeight -> ScaleMode.FILL_UNILATERAL
+    ContentScale.Crop -> ScaleMode.CROP
+    ContentScale.Inside -> ScaleMode.INSIDE
+    ContentScale.None -> ScaleMode.NONE
+    else -> ScaleMode.NONE
+}
+
+fun androidx.compose.ui.geometry.Size.toSize(): com.github.panpf.zoomimage.Size {
+    return takeIf { it.isSpecified }
+        ?.let { com.github.panpf.zoomimage.Size(it.width.roundToInt(), it.height.roundToInt()) }
+        ?: com.github.panpf.zoomimage.Size.Empty
+}
+
+fun androidx.compose.ui.layout.ScaleFactor.toScaleFactor(): com.github.panpf.zoomimage.internal.ScaleFactor {
+    return com.github.panpf.zoomimage.internal.ScaleFactor(scaleX = scaleX, scaleY = scaleY)
 }

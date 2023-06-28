@@ -27,6 +27,7 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Velocity
+import com.github.panpf.zoomimage.internal.ScaleFactor
 import com.github.panpf.zoomimage.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.internal.computeContainerCentroidByTouchPosition
 import com.github.panpf.zoomimage.internal.computeContainerVisibleRect
@@ -34,25 +35,31 @@ import com.github.panpf.zoomimage.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.internal.computeScaleTargetTranslation
 import com.github.panpf.zoomimage.internal.computeScrollEdge
+import com.github.panpf.zoomimage.internal.computeSupportScales
 import com.github.panpf.zoomimage.internal.computeTranslationBounds
 import com.github.panpf.zoomimage.internal.containerCentroidToContentCentroid
 import com.github.panpf.zoomimage.internal.contentCentroidToContainerCentroid
+import com.github.panpf.zoomimage.internal.toScaleFactor
+import com.github.panpf.zoomimage.internal.toScaleMode
 import com.github.panpf.zoomimage.internal.toShortString
+import com.github.panpf.zoomimage.internal.toSize
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun rememberZoomableState(
-    @FloatRange(from = 0.0) minScale: Float = 1f,
-    @FloatRange(from = 0.0) maxScale: Float = 4f,
-    debugMode: Boolean = false
+    threeStepScaleEnabled: Boolean = false,
+    debugMode: Boolean = false,
 ): ZoomableState {
     val state = rememberSaveable(saver = ZoomableState.Saver) {
-        ZoomableState(minScale = minScale, maxScale = maxScale, debugMode = debugMode)
+        ZoomableState()
     }
+    state.threeStepScaleEnabled = threeStepScaleEnabled
+    state.debugMode = debugMode
     LaunchedEffect(
         state.containerSize,
         state.contentSize,
+        state.contentOriginSize,
         state.contentScale,
         state.contentAlignment
     ) {
@@ -65,16 +72,14 @@ fun rememberZoomableState(
 }
 
 class ZoomableState(
-    @FloatRange(from = 0.0) val minScale: Float = 1f,
-    @FloatRange(from = 0.0) val maxScale: Float = 4f,
+    @FloatRange(from = 0.0) initialScale: Float = 1f,
     @FloatRange(from = 0.0) initialTranslateX: Float = 0f,
     @FloatRange(from = 0.0) initialTranslateY: Float = 0f,
-    @FloatRange(from = 0.0) initialScale: Float = minScale,
-    val debugMode: Boolean = false
 ) {
 
-    // todo support dynamic minScale and maxScale
     // todo support click and long press
+    // todo support rubber band effect
+    // todo support read mode
 
     private val velocityTracker = VelocityTracker()
     private val scaleAnimatable = Animatable(initialScale)
@@ -83,14 +88,38 @@ class ZoomableState(
 
     var containerSize: Size by mutableStateOf(Size.Unspecified)
     var contentSize: Size by mutableStateOf(Size.Unspecified)
+    var contentOriginSize: Size by mutableStateOf(Size.Unspecified)
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
     var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
+    var threeStepScaleEnabled: Boolean = false
+    var debugMode: Boolean = false
+
+    var minScale: Float by mutableStateOf(1f)
+        private set
+    var mediumScale: Float by mutableStateOf(1f)
+        private set
+    var maxScale: Float by mutableStateOf(1f)
+        private set
 
     /**
      * The current scale value for [ZoomImage]
      */
     @get:FloatRange(from = 0.0)
     val scale: Float by derivedStateOf { scaleAnimatable.value }
+    val baseScale: ScaleFactor by derivedStateOf {
+        val contentSize = contentSize
+        val containerSize = containerSize
+        if (containerSize.isUnspecified || containerSize.isEmpty()
+            || contentSize.isUnspecified || contentSize.isEmpty()
+        ) {
+            ScaleFactor(1f, 1f)
+        } else {
+            contentScale.computeScaleFactor(contentSize, containerSize).toScaleFactor()
+        }
+    }
+    val displayScale: ScaleFactor by derivedStateOf {
+        baseScale.times(scale)
+    }
 
     /**
      * The current translation value for [ZoomImage]
@@ -135,11 +164,8 @@ class ZoomableState(
         computeScrollEdge(contentSize, contentVisibleRect, horizontal = false)
     }
 
-    init {
-        require(minScale < maxScale) { "minScale must be < maxScale" }
-    }
-
     internal fun reset() {
+        resetScales()
         updateTranslationBounds("reset")
     }
 
@@ -353,7 +379,12 @@ class ZoomableState(
     }
 
     fun getNextStepScale(): Float {
-        return calculateNextStepScale(floatArrayOf(minScale, maxScale), scale)
+        val stepScales = if (threeStepScaleEnabled) {
+            floatArrayOf(minScale, mediumScale, maxScale)
+        } else {
+            floatArrayOf(minScale, mediumScale)
+        }
+        return calculateNextStepScale(stepScales, scale)
     }
 
     internal suspend fun dragStart() {
@@ -438,6 +469,32 @@ class ZoomableState(
     override fun toString(): String =
         "MyZoomState(minScale=$minScale, maxScale=$maxScale, scale=$scale, translation=${translation.toShortString()}"
 
+    private fun resetScales() {
+        val contentSize = contentSize
+        val contentOriginSize = contentOriginSize
+        val containerSize = containerSize
+        val contentScale = contentScale
+        if (containerSize.isUnspecified || containerSize.isEmpty()
+            || contentSize.isUnspecified || contentSize.isEmpty()
+        ) {
+            minScale = 1.0f
+            mediumScale = 1.0f
+            maxScale = 1.0f
+        } else {
+            val scales = computeSupportScales(
+                contentSize = contentSize.toSize(),
+                contentOriginSize = contentOriginSize.toSize(),
+                containerSize = containerSize.toSize(),
+                scaleMode = contentScale.toScaleMode(),
+                baseScale = contentScale.computeScaleFactor(contentSize, containerSize)
+                    .toScaleFactor()
+            )
+            minScale = scales[0]
+            mediumScale = scales[1]
+            maxScale = scales[2]
+        }
+    }
+
     private fun updateTranslationBounds(caller: String) {
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
@@ -484,22 +541,16 @@ class ZoomableState(
         val Saver: Saver<ZoomableState, *> = mapSaver(
             save = {
                 mapOf(
+                    "scale" to it.scale,
                     "translationX" to it.translation.x,
                     "translationY" to it.translation.y,
-                    "scale" to it.scale,
-                    "minScale" to it.minScale,
-                    "maxScale" to it.maxScale,
-                    "debugMode" to it.debugMode,
                 )
             },
             restore = {
                 ZoomableState(
+                    initialScale = it["scale"] as Float,
                     initialTranslateX = it["translationX"] as Float,
                     initialTranslateY = it["translationY"] as Float,
-                    initialScale = it["scale"] as Float,
-                    minScale = it["minScale"] as Float,
-                    maxScale = it["maxScale"] as Float,
-                    debugMode = it["debugMode"] as Boolean,
                 )
             }
         )
