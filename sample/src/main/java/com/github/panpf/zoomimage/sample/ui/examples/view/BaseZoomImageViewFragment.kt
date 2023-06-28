@@ -193,9 +193,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             val scales = floatArrayOf(minScale, mediumScale, maxScale)
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             """
-                ${scale.format(2)}(${displayScale.x.format(2)}/${baseScale.x.format(2)}) in $scales
+                ${scale.format(2)}(${displayScale.scaleX.format(2)}/${baseScale.scaleX.format(2)}) in $scales
                 ${getVisibleRect().toVeryShortString()}
-                ${displayTranslation.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
+                ${translation.run { "(${translationX.format(1)}, ${translationY.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
             """.trimIndent()
         }
     }

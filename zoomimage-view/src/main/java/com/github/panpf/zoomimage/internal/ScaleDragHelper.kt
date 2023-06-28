@@ -76,18 +76,18 @@ internal class ScaleDragHelper constructor(
         get() = animatedScaleRunnable?.isRunning == true || manualScaling
 
     val scale: Float
-        get() = supportMatrix.getScale().x
-    val translation: PointF
+        get() = supportMatrix.getScale().scaleX
+    val translation: Translation
         get() = supportMatrix.getTranslation()
 
-    val baseScale: PointF
+    val baseScale: ScaleFactor
         get() = baseMatrix.getScale()
-    val baseTranslation: PointF
+    val baseTranslation: Translation
         get() = baseMatrix.getTranslation()
 
-    val displayScale: PointF
+    val displayScale: ScaleFactor
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getScale()
-    val displayTranslation: PointF
+    val displayTranslation: Translation
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getTranslation()
 
     init {
@@ -261,8 +261,8 @@ internal class ScaleDragHelper constructor(
 
         val displayRectF = getDisplayRect()
         val currentScale = displayScale
-        val scaleLocationX = (newX * currentScale.x).toInt()
-        val scaleLocationY = (newY * currentScale.y).toInt()
+        val scaleLocationX = (newX * currentScale.scaleX).toInt()
+        val scaleLocationY = (newY * currentScale.scaleY).toInt()
         val scaledLocationX =
             scaleLocationX.coerceIn(0, displayRectF.width().toInt())
         val scaledLocationY =
@@ -373,10 +373,10 @@ internal class ScaleDragHelper constructor(
 
         val zoomScale = displayScale
         val drawableX =
-            ((touchPoint.x - displayRect.left) / zoomScale.x).roundToInt()
+            ((touchPoint.x - displayRect.left) / zoomScale.scaleX).roundToInt()
                 .coerceIn(0, drawableSize.width)
         val drawableY =
-            ((touchPoint.y - displayRect.top) / zoomScale.y).roundToInt()
+            ((touchPoint.y - displayRect.top) / zoomScale.scaleY).roundToInt()
                 .coerceIn(0, drawableSize.height)
         return Point(drawableX, drawableY)
     }

@@ -385,17 +385,17 @@ internal class ZoomEngine constructor(
 
     val scale: Float
         get() = scaleDragHelper.scale
-    val translation: PointF
+    val translation: Translation
         get() = scaleDragHelper.translation
 
-    val baseScale: PointF
+    val baseScale: ScaleFactor
         get() = scaleDragHelper.baseScale
-    val baseTranslation: PointF
+    val baseTranslation: Translation
         get() = scaleDragHelper.baseTranslation
 
-    val displayScale: PointF
+    val displayScale: ScaleFactor
         get() = scaleDragHelper.displayScale
-    val displayTranslation: PointF
+    val displayTranslation: Translation
         get() = scaleDragHelper.displayTranslation
 
     fun getDisplayMatrix(matrix: Matrix) = scaleDragHelper.getDisplayMatrix(matrix)

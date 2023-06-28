@@ -26,60 +26,41 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-private val MATRIX_VALUES = FloatArray(9)
+private val matrixValuesLocal = ThreadLocal<FloatArray>()
+private val Matrix.localValues: FloatArray
+    get() {
+        val values = matrixValuesLocal.get()
+            ?: FloatArray(9).apply { matrixValuesLocal.set(this) }
+        getValues(values)
+        return values
+    }
 
-/**
- * @param whichValue Example: [Matrix.MSCALE_X]
- */
-internal fun Matrix.getValue(whichValue: Int): Float {
-    requiredMainThread()
-    getValues(MATRIX_VALUES)
-    return MATRIX_VALUES[whichValue]
+internal fun Matrix.getScale(): ScaleFactor {
+    val values = localValues
+    return ScaleFactor(
+        scaleX = values[Matrix.MSCALE_X],
+        scaleY = values[Matrix.MSCALE_Y]
+    )
 }
 
-//internal fun Matrix.getScale(): Float {
-//    requiredMainThread()
-//    getValues(MATRIX_VALUES)
-//    val scaleX: Float = MATRIX_VALUES[Matrix.MSCALE_X]
-//    val skewY: Float = MATRIX_VALUES[Matrix.MSKEW_Y]
-//    return sqrt(scaleX.toDouble().pow(2.0) + skewY.toDouble().pow(2.0)).toFloat()
-//}
-
-internal fun Matrix.getScale(): PointF {
-    requiredMainThread()
-    getValues(MATRIX_VALUES)
-    val scaleX: Float = MATRIX_VALUES[Matrix.MSCALE_X]
-    val scaleY: Float = MATRIX_VALUES[Matrix.MSCALE_Y]
-    return PointF(scaleX, scaleY)
+internal fun Matrix.getTranslation(): Translation {
+    val values = localValues
+    return Translation(
+        translationX = values[Matrix.MTRANS_X],
+        translationY = values[Matrix.MTRANS_Y]
+    )
 }
 
 internal fun Matrix.getRotateDegrees(): Int {
-    requiredMainThread()
-    getValues(MATRIX_VALUES)
-    val skewX: Float = MATRIX_VALUES[Matrix.MSKEW_X]
-    val scaleX: Float = MATRIX_VALUES[Matrix.MSCALE_X]
+    val values = localValues
+    val skewX: Float = values[Matrix.MSKEW_X]
+    val scaleX: Float = values[Matrix.MSCALE_X]
     val degrees = (atan2(skewX.toDouble(), scaleX.toDouble()) * (180 / Math.PI)).roundToInt()
     return when {
         degrees < 0 -> abs(degrees)
         degrees > 0 -> 360 - degrees
         else -> 0
     }
-}
-
-internal fun Matrix.getTranslation(point: PointF) {
-    requiredMainThread()
-    getValues(MATRIX_VALUES)
-    point.x = MATRIX_VALUES[Matrix.MTRANS_X]
-    point.y = MATRIX_VALUES[Matrix.MTRANS_Y]
-}
-
-internal fun Matrix.getTranslation(): PointF {
-    requiredMainThread()
-    getValues(MATRIX_VALUES)
-    val point = PointF()
-    point.x = MATRIX_VALUES[Matrix.MTRANS_X]
-    point.y = MATRIX_VALUES[Matrix.MTRANS_Y]
-    return point
 }
 
 internal fun reverseRotateRect(rect: Rect, rotateDegrees: Int, drawableSize: Size) {

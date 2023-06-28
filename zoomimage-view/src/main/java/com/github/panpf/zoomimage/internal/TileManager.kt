@@ -90,7 +90,7 @@ internal class TileManager constructor(
     fun refreshTiles(drawableSize: Size, drawableVisibleRect: Rect, displayMatrix: Matrix) {
         requiredMainThread()
 
-        val zoomScale = displayMatrix.getScale().x.format(2)
+        val zoomScale = displayMatrix.getScale().scaleX.format(2)
         val sampleSize = findSampleSize(
             imageWidth = decoder.imageSize.width,
             imageHeight = decoder.imageSize.height,

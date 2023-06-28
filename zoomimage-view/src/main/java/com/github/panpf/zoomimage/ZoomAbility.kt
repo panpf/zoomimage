@@ -27,6 +27,8 @@ import android.view.View
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.internal.ImageViewBridge
+import com.github.panpf.zoomimage.internal.ScaleFactor
+import com.github.panpf.zoomimage.internal.Translation
 import com.github.panpf.zoomimage.internal.ZoomEngine
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.ScrollBar
@@ -185,17 +187,17 @@ class ZoomAbility(
 
     val scale: Float
         get() = engine.scale
-    val translation: PointF
+    val translation: Translation
         get() = engine.translation
 
-    val baseScale: PointF
+    val baseScale: ScaleFactor
         get() = engine.baseScale
-    val baseTranslation: PointF
+    val baseTranslation: Translation
         get() = engine.baseTranslation
 
-    val displayScale: PointF
+    val displayScale: ScaleFactor
         get() = engine.displayScale
-    val displayTranslation: PointF
+    val displayTranslation: Translation
         get() = engine.displayTranslation
 
     val minScale: Float
