@@ -44,8 +44,8 @@ fun ZoomImage(
             scaleX = state.scale
             scaleY = state.scale
             rotationZ = state.rotation
-            translationX = state.translation.x
-            translationY = state.translation.y
+            translationX = state.translation.translationX
+            translationY = state.translation.translationY
             transformOrigin = state.transformOrigin
         }
 

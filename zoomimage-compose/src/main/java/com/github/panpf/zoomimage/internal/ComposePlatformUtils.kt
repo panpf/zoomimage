@@ -10,9 +10,9 @@ import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 
-internal fun Size.toShortString(): String = "(${width}x$height)"
+internal fun Size.toShortString(): String = "(${width},$height)"
 
-internal fun Offset.toShortString(): String = "(${x.formatString(1)}x${y.formatString(1)})"
+internal fun Offset.toShortString(): String = "(${x.formatString(1)},${y.formatString(1)})"
 
 internal fun Rect.toShortString(): String =
     "(${left.formatString(1)},${top.formatString(1)} - ${right.formatString(1)},${bottom.formatString(1)})"

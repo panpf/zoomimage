@@ -11,16 +11,20 @@ class Translation(
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun component2(): Float = translationY
 
-    fun copy(translationX: Float = this.translationX, translationY: Float = this.translationY) = Translation(translationX, translationY)
+    fun copy(translationX: Float = this.translationX, translationY: Float = this.translationY) =
+        Translation(translationX, translationY)
 
     operator fun times(operand: Float) = Translation(translationX * operand, translationY * operand)
 
     operator fun div(operand: Float) = Translation(translationX / operand, translationY / operand)
 
-    override fun toString() = "Translation(${translationX.roundToTenths()}, ${translationY.roundToTenths()})"
+    override fun toString() =
+        "Translation(${translationX.roundToTenths()}, ${translationY.roundToTenths()})"
 
     companion object {
-        val Unspecified = Translation(Float.NaN, Float.NaN)
+        val Unspecified = Translation(translationX = Float.NaN, translationY = Float.NaN)
+
+        val Empty = Translation(translationX = 0f, translationY = 0f)
     }
 }
 
@@ -84,3 +88,6 @@ fun lerp(start: Translation, stop: Translation, fraction: Float): Translation {
 private fun lerp(start: Float, stop: Float, fraction: Float): Float {
     return (1 - fraction) * start + fraction * stop
 }
+
+fun Translation.toShortString(): String =
+    "(${translationX.format(1)},${translationY.format(1)})"

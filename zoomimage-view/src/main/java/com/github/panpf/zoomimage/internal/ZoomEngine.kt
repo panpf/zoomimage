@@ -170,13 +170,13 @@ internal class ZoomEngine constructor(
     /**
      * Initial scale and translate for base matrix
      */
-    var baseInitialTransform: Transform = Transform.EMPTY
+    var baseInitialTransform: Transform = Transform.Empty
         private set
 
     /**
      * Initial scale and translate for support matrix
      */
-    var supportInitialTransform: Transform = Transform.EMPTY
+    var supportInitialTransform: Transform = Transform.Empty
         private set
 
 
@@ -195,8 +195,8 @@ internal class ZoomEngine constructor(
             minScale = 1.0f
             mediumScale = 1.0f
             maxScale = 1.0f
-            baseInitialTransform = Transform.EMPTY
-            supportInitialTransform = Transform.EMPTY
+            baseInitialTransform = Transform.Empty
+            supportInitialTransform = Transform.Empty
         } else {
             val finalReadModeDecider = if (readModeEnabled) {
                 readModeDecider ?: LongImageReadModeDecider.DEFAULT
@@ -236,7 +236,7 @@ internal class ZoomEngine constructor(
                     )
                 }
             } else {
-                Transform.EMPTY
+                Transform.Empty
             }
         }
         scaleDragHelper.reset()

@@ -18,10 +18,14 @@ data class Transform(val scale: ScaleFactor, val translation: Translation) {
     val translationY: Float = translation.translationY
 
     companion object {
-        val EMPTY = Transform(scaleX = 1f, scaleY = 1f, translationX = 0f, translationY = 0f)
+        val Empty = Transform(scaleX = 1f, scaleY = 1f, translationX = 0f, translationY = 0f)
     }
 
     override fun toString(): String {
-        return "Transform(scale=($scaleX,$scaleY),translation=($translationX,$translationY))"
+        return "Transform(scale=${scaleX.format(2)}x${scaleY.format(2)}, " +
+                "translation=${translationX.format(1)}x${translationY.format(1)}))"
     }
 }
+
+fun Transform.toShortString(): String =
+    "(${scaleX.format(2)}x${scaleY.format(2)}),${translationX.format(1)}x${translationY.format(1)})"

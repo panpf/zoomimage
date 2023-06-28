@@ -43,7 +43,7 @@ class ScaleFactor(
      */
     operator fun div(operand: Float) = ScaleFactor(scaleX / operand, scaleY / operand)
 
-    override fun toString() = "ScaleFactor(${scaleX.roundToTenths()}, ${scaleY.roundToTenths()})"
+    override fun toString() = "ScaleFactor(${scaleX.format(2)}, ${scaleY.format(2)})"
 
     companion object {
 
@@ -52,21 +52,10 @@ class ScaleFactor(
          * value used to initialize a non-null parameter.
          * Access to scaleX or scaleY on an unspecified size is not allowed
          */
-        val Unspecified = ScaleFactor(Float.NaN, Float.NaN)
-    }
-}
+        val Unspecified = ScaleFactor(scaleX = Float.NaN, scaleY = Float.NaN)
 
-private fun Float.roundToTenths(): Float {
-    val shifted = this * 10
-    val decimal = shifted - shifted.toInt()
-    // Kotlin's round operator rounds 0.5f down to 0. Manually compare against
-    // 0.5f and round up if necessary
-    val roundedShifted = if (decimal >= 0.5f) {
-        shifted.toInt() + 1
-    } else {
-        shifted.toInt()
+        val Origin = ScaleFactor(scaleX = 1f, scaleY = 1f)
     }
-    return roundedShifted.toFloat() / 10
 }
 
 /**
@@ -146,3 +135,5 @@ fun lerp(start: ScaleFactor, stop: ScaleFactor, fraction: Float): ScaleFactor {
 private fun lerp(start: Float, stop: Float, fraction: Float): Float {
     return (1 - fraction) * start + fraction * stop
 }
+
+fun ScaleFactor.toShortString(): String = "(${scaleX.format(2)},${scaleY.format(2)})"

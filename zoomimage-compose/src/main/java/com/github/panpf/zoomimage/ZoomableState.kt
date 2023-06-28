@@ -28,12 +28,14 @@ import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Velocity
 import com.github.panpf.zoomimage.internal.ScaleFactor
+import com.github.panpf.zoomimage.internal.Translation
 import com.github.panpf.zoomimage.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.internal.computeContainerCentroidByTouchPosition
 import com.github.panpf.zoomimage.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.internal.computeScaleTargetTranslation
+import com.github.panpf.zoomimage.internal.computeScaleTranslation
 import com.github.panpf.zoomimage.internal.computeScrollEdge
 import com.github.panpf.zoomimage.internal.computeSupportScales
 import com.github.panpf.zoomimage.internal.computeTranslationBounds
@@ -124,12 +126,29 @@ class ZoomableState(
     /**
      * The current translation value for [ZoomImage]
      */
-    val translation: Offset by derivedStateOf {
-        Offset(
-            translationXAnimatable.value,
-            translationYAnimatable.value
+    val translation: Translation by derivedStateOf {
+        Translation(
+            translationX = translationXAnimatable.value,
+            translationY = translationYAnimatable.value
         )
     }
+    val baseTranslation: Translation by derivedStateOf {
+        computeScaleTranslation(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            contentAlignment = contentAlignment,
+        )
+    }
+    val displayTranslation: Translation by derivedStateOf {
+        val baseTranslation = baseTranslation
+        val translation = translation
+        Translation(
+            translationX = baseTranslation.translationX + translation.translationX,
+            translationY = baseTranslation.translationY + translation.translationY
+        )
+    }
+
     val rotation: Float by mutableStateOf(0f)    // todo support rotation
     val transformOrigin = TransformOrigin(0f, 0f)
 
@@ -542,8 +561,8 @@ class ZoomableState(
             save = {
                 mapOf(
                     "scale" to it.scale,
-                    "translationX" to it.translation.x,
-                    "translationY" to it.translation.y,
+                    "translationX" to it.translation.translationX,
+                    "translationY" to it.translation.translationY,
                 )
             },
             restore = {
