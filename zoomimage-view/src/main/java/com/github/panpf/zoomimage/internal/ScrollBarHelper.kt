@@ -16,28 +16,25 @@
 package com.github.panpf.zoomimage.internal
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.core.view.ViewCompat
+import com.github.panpf.zoomimage.view.ScrollBar
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 internal class ScrollBarHelper(
     context: Context,
-    private val engine: ZoomEngine
+    private val engine: ZoomEngine,
+    private val scrollBar: ScrollBar,
 ) {
-
-    private val scrollBarSize: Float = 3f * Resources.getSystem().displayMetrics.density
-    private val scrollBarMargin: Float = 6f * Resources.getSystem().displayMetrics.density
-    private val scrollBarRadius: Int = (scrollBarSize / 2).roundToInt()
-    private val scrollBarAlpha: Int = 51
+    private val scrollBarRadius: Int = (scrollBar.size / 2).roundToInt()
+    private val scrollBarAlpha: Int = 255
     private val scrollBarPaint: Paint = Paint().apply {
-        color = Color.parseColor("#000000")
+        color = scrollBar.color
         alpha = scrollBarAlpha
     }
     private val view = engine.view
@@ -54,7 +51,7 @@ internal class ScrollBarHelper(
         val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty } ?: return
         val drawWidth = displayRectF.width()
         val drawHeight = displayRectF.height()
-        val margin = scrollBarMargin + scrollBarSize + scrollBarMargin
+        val margin = scrollBar.margin + scrollBar.size + scrollBar.margin
         val viewAvailableWidth = viewWidth - (margin * 2) - view.paddingLeft - view.paddingRight
         val viewAvailableHeight = viewHeight - (margin * 2) - view.paddingTop - view.paddingBottom
 
@@ -62,15 +59,15 @@ internal class ScrollBarHelper(
         if (drawWidth.toInt() > viewWidth) {
             val widthScale = viewWidth.toFloat() / drawWidth
             val horScrollBarWidth =
-                (viewAvailableWidth * widthScale).coerceAtLeast(scrollBarSize).toInt()
+                (viewAvailableWidth * widthScale).coerceAtLeast(scrollBar.size).toInt()
             val horScrollBarRectF = scrollBarRectF.apply {
                 val mapLeft = if (displayRectF.left < 0) {
                     (abs(displayRectF.left) / displayRectF.width() * viewAvailableWidth).toInt()
                 } else 0
                 left = (view.paddingLeft + margin + mapLeft)
                 right = left + horScrollBarWidth
-                top = (view.paddingTop + margin + viewAvailableHeight + scrollBarMargin)
-                bottom = top + scrollBarSize
+                top = (view.paddingTop + margin + viewAvailableHeight + scrollBar.margin)
+                bottom = top + scrollBar.size
             }
             canvas.drawRoundRect(
                 horScrollBarRectF,
@@ -84,13 +81,13 @@ internal class ScrollBarHelper(
         if (drawHeight.toInt() > viewHeight) {
             val heightScale = viewHeight.toFloat() / drawHeight
             val verScrollBarHeight =
-                (viewAvailableHeight * heightScale).coerceAtLeast(scrollBarSize).toInt()
+                (viewAvailableHeight * heightScale).coerceAtLeast(scrollBar.size).toInt()
             val verScrollBarRectF = scrollBarRectF.apply {
                 val mapTop = if (displayRectF.top < 0) {
                     (abs(displayRectF.top) / displayRectF.height() * viewAvailableHeight).toInt()
                 } else 0
-                left = (view.paddingLeft + margin + viewAvailableWidth + scrollBarMargin)
-                right = left + scrollBarSize
+                left = (view.paddingLeft + margin + viewAvailableWidth + scrollBar.margin)
+                right = left + scrollBar.size
                 top = (view.paddingTop + margin + mapTop)
                 bottom = top + verScrollBarHeight
             }
@@ -111,6 +108,11 @@ internal class ScrollBarHelper(
         delayFadeRunnable.start()
     }
 
+    fun cancel() {
+        delayFadeRunnable.cancel()
+        fadeRunnable.cancel()
+    }
+
     private class DelayFadeRunnable(
         val scrollBarHelper: ScrollBarHelper,
         val fadeRunnable: FadeRunnable
@@ -121,8 +123,12 @@ internal class ScrollBarHelper(
         }
 
         fun start() {
-            scrollBarHelper.view.removeCallbacks(this)
+            cancel()
             scrollBarHelper.view.postDelayed(this, 800)
+        }
+
+        fun cancel() {
+            scrollBarHelper.view.removeCallbacks(this)
         }
     }
 

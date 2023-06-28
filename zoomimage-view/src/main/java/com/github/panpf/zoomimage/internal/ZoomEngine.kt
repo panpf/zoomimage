@@ -41,6 +41,7 @@ import com.github.panpf.zoomimage.ReadModeDecider
 import com.github.panpf.zoomimage.Size
 import com.github.panpf.zoomimage.Transform
 import com.github.panpf.zoomimage.rotate
+import com.github.panpf.zoomimage.view.ScrollBar
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
@@ -82,7 +83,7 @@ internal class ZoomEngine constructor(
             }
         }
     )
-    private var scrollBarHelper: ScrollBarHelper? = ScrollBarHelper(context, this)
+    private var scrollBarHelper: ScrollBarHelper? = null
     private var _rotateDegrees = 0
 
     private var onMatrixChangeListenerList: MutableSet<OnMatrixChangeListener>? = null
@@ -142,16 +143,11 @@ internal class ZoomEngine constructor(
                 reset()
             }
         }
-    var scrollBarEnabled: Boolean
-        get() = scrollBarHelper != null
+    var scrollBar: ScrollBar? = ScrollBar.Default
         internal set(value) {
-            val enabled = scrollBarHelper != null
-            if (enabled != value) {
-                scrollBarHelper = if (value) {
-                    ScrollBarHelper(context, this).apply { reset() }
-                } else {
-                    null
-                }
+            if (field != value) {
+                field = value
+                resetScrollBarHelper()
             }
         }
     var scaleAnimationDuration: Int = 200
@@ -197,6 +193,7 @@ internal class ZoomEngine constructor(
 
     init {
         reset()
+        resetScrollBarHelper()
     }
 
     private fun reset() {
@@ -268,6 +265,15 @@ internal class ZoomEngine constructor(
                     "stepScales=${stepScales.contentToString()}, " +
                     "baseInitialTransform=$baseInitialTransform, " +
                     "supportInitialTransform=$supportInitialTransform"
+        }
+    }
+
+    private fun resetScrollBarHelper() {
+        scrollBarHelper?.cancel()
+        scrollBarHelper = null
+        val scrollBar = scrollBar
+        if (scrollBar != null) {
+            scrollBarHelper = ScrollBarHelper(context, this@ZoomEngine, scrollBar).apply { reset() }
         }
     }
 

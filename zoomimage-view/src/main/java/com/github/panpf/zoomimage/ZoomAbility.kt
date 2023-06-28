@@ -29,6 +29,7 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.internal.ImageViewBridge
 import com.github.panpf.zoomimage.internal.ZoomEngine
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
+import com.github.panpf.zoomimage.view.ScrollBar
 
 class ZoomAbility(
     private val view: View,
@@ -123,14 +124,14 @@ class ZoomAbility(
             engine.threeStepScaleEnabled = value
         }
 
-    var scrollBarEnabled: Boolean
-        get() = engine.scrollBarEnabled
+    var scrollBar: ScrollBar?
+        get() = engine.scrollBar
         set(value) {
-            engine.scrollBarEnabled = value
+            engine.scrollBar = value
         }
 
     var readModeEnabled: Boolean
-        get() = engine.scrollBarEnabled
+        get() = engine.readModeEnabled
         set(value) {
             engine.readModeEnabled = value
         }
