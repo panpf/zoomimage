@@ -37,7 +37,7 @@ class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
         internal set
     var threeStepScaleEnabled: Boolean by mutableStateOf(false)
         internal set
-    var scrollBar: Boolean by mutableStateOf(true)
+    var scrollBarEnabled: Boolean by mutableStateOf(true)
         internal set
     var animateScale: Boolean by mutableStateOf(true)
         internal set
@@ -192,7 +192,7 @@ fun ZoomImageOptionsDialog(
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            state.scrollBar = !state.scrollBar
+                            state.scrollBarEnabled = !state.scrollBarEnabled
                             state.showing = false
                         }
                         .padding(horizontal = 20.dp),
@@ -200,7 +200,7 @@ fun ZoomImageOptionsDialog(
                 ) {
                     Text(text = "Scroll Bar", modifier = Modifier.weight(1f))
                     Checkbox(
-                        checked = state.scrollBar,
+                        checked = state.scrollBarEnabled,
                         onCheckedChange = null
                     )
                 }

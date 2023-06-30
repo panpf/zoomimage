@@ -40,7 +40,7 @@ import com.github.panpf.zoomimage.OnViewTapListener
 import com.github.panpf.zoomimage.ReadModeDecider
 import com.github.panpf.zoomimage.Size
 import com.github.panpf.zoomimage.rotate
-import com.github.panpf.zoomimage.view.ScrollBar
+import com.github.panpf.zoomimage.view.ScrollBarStyle
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
@@ -135,14 +135,21 @@ internal class ZoomEngine constructor(
                 reset()
             }
         }
-    var readModeDecider: ReadModeDecider? = null
+    var readModeDecider: ReadModeDecider = LongImageReadModeDecider.DEFAULT
         internal set(value) {
             if (field != value) {
                 field = value
                 reset()
             }
         }
-    var scrollBar: ScrollBar? = ScrollBar.Default
+    var scrollBarEnabled: Boolean = true
+        internal set(value) {
+            if (field != value) {
+                field = value
+                resetScrollBarHelper()
+            }
+        }
+    var scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default
         internal set(value) {
             if (field != value) {
                 field = value
@@ -198,11 +205,6 @@ internal class ZoomEngine constructor(
             baseInitialTransform = Transform.Empty
             supportInitialTransform = Transform.Empty
         } else {
-            val finalReadModeDecider = if (readModeEnabled) {
-                readModeDecider ?: LongImageReadModeDecider.DEFAULT
-            } else {
-                null
-            }
             val finalDrawableSize = drawableSize.rotate(rotateDegrees)
             val finalImageSize = imageSize.rotate(rotateDegrees)
             val supportStepScales = computeSupportScales(
@@ -220,8 +222,7 @@ internal class ZoomEngine constructor(
             maxScale = supportStepScales[2]
             baseInitialTransform = scaleType
                 .computeTransform(srcSize = finalDrawableSize, dstSize = viewSize)
-            val readMode = scaleType.supportReadMode()
-                    && finalReadModeDecider?.should(srcSize = drawableSize, viewSize) == true
+            val readMode = readModeEnabled && scaleType.supportReadMode() && readModeDecider.should(srcSize = drawableSize, viewSize)
             supportInitialTransform = if (readMode) {
                 computeReadModeTransform(
                     scaleType = scaleType,
@@ -259,9 +260,8 @@ internal class ZoomEngine constructor(
     private fun resetScrollBarHelper() {
         scrollBarHelper?.cancel()
         scrollBarHelper = null
-        val scrollBar = scrollBar
-        if (scrollBar != null) {
-            scrollBarHelper = ScrollBarHelper(context, this@ZoomEngine, scrollBar).apply { reset() }
+        if (scrollBarEnabled) {
+            scrollBarHelper = ScrollBarHelper(context, this@ZoomEngine, scrollBarStyle).apply { reset() }
         }
     }
 

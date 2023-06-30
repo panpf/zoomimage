@@ -16,19 +16,19 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
-import com.github.panpf.zoomimage.compose.ScrollBar
+import com.github.panpf.zoomimage.compose.ScrollBarStyle
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 fun Modifier.zoomScrollBar(
     zoomableState: ZoomableState,
-    scrollBar: ScrollBar = ScrollBar.Default
+    style: ScrollBarStyle = ScrollBarStyle.Default
 ): Modifier = composed {
     val contentSize = zoomableState.contentSize
     val contentVisibleRect = zoomableState.contentVisibleRect
     val density = LocalDensity.current
-    val sizePx = remember(scrollBar.size) { with(density) { scrollBar.size.toPx() } }
-    val marginPx = remember(scrollBar.margin) { with(density) { scrollBar.margin.toPx() } }
+    val sizePx = remember(style.size) { with(density) { style.size.toPx() } }
+    val marginPx = remember(style.margin) { with(density) { style.margin.toPx() } }
     val cornerRadius = remember(sizePx) { CornerRadius(sizePx / 2f, sizePx / 2f) }
     val alphaAnimatable = remember { Animatable(1f) }
     LaunchedEffect(contentVisibleRect) {
@@ -50,7 +50,7 @@ fun Modifier.zoomScrollBar(
             if (contentVisibleRect.width.roundToInt() < contentSize.width.roundToInt()) {
                 val widthScale = (drawSize.width - marginPx * 4) / contentSize.width
                 drawRoundRect(
-                    color = scrollBar.color,
+                    color = style.color,
                     topLeft = Offset(
                         x = (marginPx * 2) + (contentVisibleRect.left * widthScale),
                         y = drawSize.height - marginPx - scrollBarSize
@@ -67,7 +67,7 @@ fun Modifier.zoomScrollBar(
             if (contentVisibleRect.height.roundToInt() < contentSize.height.roundToInt()) {
                 val heightScale = (drawSize.height - marginPx * 4) / contentSize.height
                 drawRoundRect(
-                    color = scrollBar.color,
+                    color = style.color,
                     topLeft = Offset(
                         x = drawSize.width - marginPx - scrollBarSize,
                         y = (marginPx * 2) + (contentVisibleRect.top * heightScale)

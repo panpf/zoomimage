@@ -31,7 +31,7 @@ import com.github.panpf.zoomimage.internal.ScaleFactor
 import com.github.panpf.zoomimage.internal.Translation
 import com.github.panpf.zoomimage.internal.ZoomEngine
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
-import com.github.panpf.zoomimage.view.ScrollBar
+import com.github.panpf.zoomimage.view.ScrollBarStyle
 
 class ZoomAbility(
     private val view: View,
@@ -126,10 +126,16 @@ class ZoomAbility(
             engine.threeStepScaleEnabled = value
         }
 
-    var scrollBar: ScrollBar?
-        get() = engine.scrollBar
+    var scrollBarEnabled: Boolean
+        get() = engine.scrollBarEnabled
         set(value) {
-            engine.scrollBar = value
+            engine.scrollBarEnabled = value
+        }
+
+    var scrollBarStyle: ScrollBarStyle
+        get() = engine.scrollBarStyle
+        set(value) {
+            engine.scrollBarStyle = value
         }
 
     var readModeEnabled: Boolean
@@ -138,7 +144,7 @@ class ZoomAbility(
             engine.readModeEnabled = value
         }
 
-    var readModeDecider: ReadModeDecider?
+    var readModeDecider: ReadModeDecider
         get() = engine.readModeDecider
         set(value) {
             engine.readModeDecider = value

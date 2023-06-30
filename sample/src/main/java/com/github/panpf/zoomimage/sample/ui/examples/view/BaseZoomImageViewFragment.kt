@@ -35,7 +35,6 @@ import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
-import com.github.panpf.zoomimage.view.ScrollBar
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {
@@ -66,7 +65,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     threeStepScaleEnabled = it
                 }
                 prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    scrollBar = if (it) ScrollBar.Default else null
+                    scrollBarEnabled = it
                 }
                 prefsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     readModeEnabled = it

@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.AnimationConfig
-import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
@@ -45,7 +44,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
                 doubleTapScaleEnabled = zoomImageOptionsDialogState.animateScale,
                 durationMillis = animationDurationMillisState.value,
             ),
-            scrollBar = if (zoomImageOptionsDialogState.scrollBar) ScrollBar.Default else null,
+            scrollBarEnabled = zoomImageOptionsDialogState.scrollBarEnabled,
         )
 
         ZoomImageMinimap(

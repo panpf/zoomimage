@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import com.github.panpf.zoomimage.compose.ScrollBar
+import com.github.panpf.zoomimage.compose.ScrollBarStyle
 
 @Composable
 fun ZoomImage(
@@ -19,7 +19,8 @@ fun ZoomImage(
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
     animationConfig: AnimationConfig = AnimationConfig(),
-    scrollBar: ScrollBar? = ScrollBar.Default,
+    scrollBarEnabled: Boolean = true,
+    scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -38,7 +39,7 @@ fun ZoomImage(
 
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBar != null) it.zoomScrollBar(state, scrollBar) else it }
+        .let { if (scrollBarEnabled) it.zoomScrollBar(state, scrollBarStyle) else it }
         .zoomable(state, animationConfig)
         .graphicsLayer {
             scaleX = state.scale
