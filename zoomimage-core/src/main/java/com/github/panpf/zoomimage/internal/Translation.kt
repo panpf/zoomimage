@@ -1,18 +1,9 @@
 package com.github.panpf.zoomimage.internal
 
-class Translation(
+data class Translation(
     val translationX: Float,
     val translationY: Float
 ) {
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun component1(): Float = translationX
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun component2(): Float = translationY
-
-    fun copy(translationX: Float = this.translationX, translationY: Float = this.translationY) =
-        Translation(translationX, translationY)
 
     operator fun times(operand: Float) = Translation(translationX * operand, translationY * operand)
 

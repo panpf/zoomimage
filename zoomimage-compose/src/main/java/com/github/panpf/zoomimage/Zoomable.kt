@@ -62,7 +62,7 @@ fun Modifier.zoomable(
                 },
                 onDragEnd = {
                     coroutineScope.launch {
-                        state.dragEnd()
+                        state.dragEnd(it)
                     }
                 },
                 onDragCancel = {

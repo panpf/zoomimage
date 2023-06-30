@@ -6,7 +6,7 @@ import kotlin.math.roundToInt
 /**
  * Holds 2 dimensional scaling factors for horizontal and vertical axes
  */
-class ScaleFactor(
+data class ScaleFactor(
     /**
      * Returns the scale factor to apply along the horizontal axis
      */
@@ -16,18 +16,6 @@ class ScaleFactor(
      */
     val scaleY: Float
 ) {
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun component1(): Float = scaleX
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline operator fun component2(): Float = scaleY
-
-    /**
-     * Returns a copy of this ScaleFactor instance optionally overriding the
-     * scaleX or scaleY parameters
-     */
-    fun copy(scaleX: Float = this.scaleX, scaleY: Float = this.scaleY) = ScaleFactor(scaleX, scaleY)
 
     /**
      * Multiplication operator.

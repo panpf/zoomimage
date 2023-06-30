@@ -10,7 +10,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.times
 import com.github.panpf.zoomimage.Centroid
 import com.github.panpf.zoomimage.Edge
-import com.github.panpf.zoomimage.isUnspecified
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -159,42 +158,42 @@ internal fun computeScaleTargetTranslation(
     containerSize: Size,
     scale: Float,
     containerCentroid: Centroid
-): Offset {
-    if (containerSize.isUnspecified || containerCentroid.isUnspecified) return Offset.Zero
+): Translation {
+    if (containerSize.isUnspecified || containerSize.isEmpty()) return Translation.Empty
     val scaledContainerSize = containerSize.times(scale)
     val scaledContainerOffset = Offset(
         x = scaledContainerSize.width * containerCentroid.x,
         y = scaledContainerSize.height * containerCentroid.y,
     )
-    return Offset(
-        x = scaledContainerOffset.x - (containerSize.width / 2),
-        y = scaledContainerOffset.y - (containerSize.height / 2),
+    return Translation(
+        translationX = scaledContainerOffset.x - (containerSize.width / 2),
+        translationY = scaledContainerOffset.y - (containerSize.height / 2),
     ).run {
-        Offset(
-            x = (x * -1).coerceIn(-scaledContainerSize.width, 0f),
-            y = (y * -1).coerceIn(-scaledContainerSize.height, 0f)
+        Translation(
+            translationX = (translationX * -1).coerceIn(-scaledContainerSize.width, 0f),
+            translationY = (translationY * -1).coerceIn(-scaledContainerSize.height, 0f)
         )
     }
 }
 
-internal fun computeTranslationBounds(
+internal fun computeSupportTranslationBounds(
     containerSize: Size,
     contentSize: Size,
     contentScale: ContentScale,
     contentAlignment: Alignment,
-    scale: Float
+    supportScale: Float
 ): Rect {
     // based on the top left zoom
-    if (scale <= 1.0f || containerSize.isUnspecified || contentSize.isUnspecified) {
+    if (supportScale <= 1.0f || containerSize.isUnspecified || contentSize.isUnspecified) {
         return Rect.Zero
     }
-    val scaledContainerSize = containerSize.times(scale)
+    val scaledContainerSize = containerSize.times(supportScale)
     val scaledContentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
         contentAlignment = contentAlignment
-    ).scale(scale)
+    ).scale(supportScale)
 
     val horizontalBounds = if (scaledContentInContainerRect.width > containerSize.width) {
         ((scaledContentInContainerRect.right - containerSize.width) * -1)..(scaledContentInContainerRect.left * -1)

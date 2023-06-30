@@ -16,10 +16,10 @@ internal fun Size.rotate(rotateDegrees: Int): Size {
     return if (rotateDegrees % 180 == 0) this else Size(height, width)
 }
 
-internal fun Offset.toShortString(): String = "(${x.formatString(1)},${y.formatString(1)})"
+internal fun Offset.toShortString(): String = "(${x.format(1)},${y.format(1)})"
 
 internal fun Rect.toShortString(): String =
-    "(${left.formatString(1)},${top.formatString(1)} - ${right.formatString(1)},${bottom.formatString(1)})"
+    "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
 
 
 internal fun Rect.scale(scale: Float): Rect {

@@ -14,7 +14,10 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.platform.ViewConfiguration
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastFirstOrNull
 import kotlin.math.abs
@@ -41,7 +44,7 @@ import kotlin.math.sign
 internal suspend fun PointerInputScope.detectCanDragGestures(
     canDrag: (horizontally: Boolean, direction: Int) -> Boolean,
     onDragStart: (Offset) -> Unit = { },
-    onDragEnd: () -> Unit = { },
+    onDragEnd: (velocity: Velocity) -> Unit = { },
     onDragCancel: () -> Unit = { },
     onDrag: (change: PointerInputChange, dragAmount: Offset) -> Unit
 ) {
@@ -49,10 +52,12 @@ internal suspend fun PointerInputScope.detectCanDragGestures(
         val down = awaitFirstDown(requireUnconsumed = false)
         var drag: PointerInputChange?
         var overSlop = Offset.Zero
+        val velocityTracker = VelocityTracker()
         do {
             drag = awaitPointerSlopOrCancellation(
-                down.id,
-                down.type,
+                pointerId = down.id,
+                pointerType = down.type,
+                velocityTracker = velocityTracker,
                 canDrag = canDrag,
                 triggerOnMainAxisSlop = false
             ) { change, over ->
@@ -65,13 +70,14 @@ internal suspend fun PointerInputScope.detectCanDragGestures(
             onDrag(drag, overSlop)
             if (
                 !drag(drag.id) {
+                    velocityTracker.addPointerInputChange(it)
                     onDrag(it, it.positionChange())
                     it.consume()
                 }
             ) {
                 onDragCancel()
             } else {
-                onDragEnd()
+                onDragEnd(velocityTracker.calculateVelocity())
             }
         }
     }
@@ -105,6 +111,7 @@ internal suspend fun PointerInputScope.detectCanDragGestures(
 internal suspend inline fun AwaitPointerEventScope.awaitPointerSlopOrCancellation(
     pointerId: PointerId,
     pointerType: PointerType,
+    velocityTracker: VelocityTracker,
     pointerDirectionConfig: PointerDirectionConfig = HorizontalPointerDirectionConfig,
     triggerOnMainAxisSlop: Boolean = true,
     canDrag: (horizontally: Boolean, direction: Int) -> Boolean,
@@ -120,8 +127,8 @@ internal suspend inline fun AwaitPointerEventScope.awaitPointerSlopOrCancellatio
 
     while (true) {
         val event = awaitPointerEvent()
-        // todo 此处就开始记录 velocityTracker，这样才是完整的 velocityTracker
         val dragEvent = event.changes.fastFirstOrNull { it.id == pointer } ?: return null
+        velocityTracker.addPointerInputChange(dragEvent)
         if (dragEvent.isConsumed) {
             return null
         } else if (dragEvent.changedToUpIgnoreConsumed()) {

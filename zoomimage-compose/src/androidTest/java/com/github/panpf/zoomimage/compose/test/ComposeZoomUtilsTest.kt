@@ -11,6 +11,7 @@ import com.github.panpf.zoomimage.Edge.BOTH
 import com.github.panpf.zoomimage.Edge.END
 import com.github.panpf.zoomimage.Edge.NONE
 import com.github.panpf.zoomimage.Edge.START
+import com.github.panpf.zoomimage.internal.Translation
 import com.github.panpf.zoomimage.internal.computeContainerCentroidByTouchPosition
 import com.github.panpf.zoomimage.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.internal.computeContentInContainerRect
@@ -18,7 +19,7 @@ import com.github.panpf.zoomimage.internal.computeContentInContainerVisibleRect
 import com.github.panpf.zoomimage.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.internal.computeScaleTargetTranslation
 import com.github.panpf.zoomimage.internal.computeScrollEdge
-import com.github.panpf.zoomimage.internal.computeTranslationBounds
+import com.github.panpf.zoomimage.internal.computeSupportTranslationBounds
 import com.github.panpf.zoomimage.internal.containerCentroidToContentCentroid
 import com.github.panpf.zoomimage.internal.contentCentroidToContainerCentroid
 import com.github.panpf.zoomimage.internal.name
@@ -80,7 +81,7 @@ class ComposeZoomUtilsTest {
     }
 
     data class Item3(
-        val translation: Offset,
+        val translation: Translation,
         val expected: Rect
     ) {
         fun getMessage(
@@ -97,7 +98,7 @@ class ComposeZoomUtilsTest {
     private fun List<Item3>.printlnExpectedMessage3(computeExpected: (Item3) -> Rect): List<Item3> {
         this.map {
             val visibleRect = computeExpected(it)
-            "Offset(${it.translation.x}f, ${it.translation.y}f) to Rect(${visibleRect.left}f, ${visibleRect.top}f, ${visibleRect.right}f, ${visibleRect.bottom}f)"
+            "Translation(${it.translation.translationX}f, ${it.translation.translationY}f) to Rect(${visibleRect.left}f, ${visibleRect.top}f, ${visibleRect.right}f, ${visibleRect.bottom}f)"
         }.apply {
             Assert.fail(joinToString(separator = ", \n"))
         }
@@ -820,11 +821,11 @@ class ComposeZoomUtilsTest {
 
         var scale = 1f
         listOf(
-            Centroid(0.25f, 0.25f) to Offset(0f, 0f),
-            Centroid(0.75f, 0.25f) to Offset(-250f, 0f),
-            Centroid(0.5f, 0.5f) to Offset(-0f, -0f),
-            Centroid(0.25f, 0.75f) to Offset(0f, -500f),
-            Centroid(0.75f, 0.75f) to Offset(-250f, -500f),
+            Centroid(0.25f, 0.25f) to Translation(0f, 0f),
+            Centroid(0.75f, 0.25f) to Translation(-250f, 0f),
+            Centroid(0.5f, 0.5f) to Translation(-0f, -0f),
+            Centroid(0.25f, 0.75f) to Translation(0f, -500f),
+            Centroid(0.75f, 0.75f) to Translation(-250f, -500f),
         ).forEach { (containerCentroid, expected) ->
             Assert.assertEquals(
                 "containerSize=$containerSize, scale=$scale, containerCentroid=$containerCentroid",
@@ -835,11 +836,11 @@ class ComposeZoomUtilsTest {
 
         scale = 2f
         listOf(
-            Centroid(0.25f, 0.25f) to Offset(-0f, -0f),
-            Centroid(0.75f, 0.25f) to Offset(-1000f, -0f),
-            Centroid(0.5f, 0.5f) to Offset(-500f, -1000f),
-            Centroid(0.25f, 0.75f) to Offset(-0f, -2000f),
-            Centroid(0.75f, 0.75f) to Offset(-1000f, -2000f),
+            Centroid(0.25f, 0.25f) to Translation(-0f, -0f),
+            Centroid(0.75f, 0.25f) to Translation(-1000f, -0f),
+            Centroid(0.5f, 0.5f) to Translation(-500f, -1000f),
+            Centroid(0.25f, 0.75f) to Translation(-0f, -2000f),
+            Centroid(0.75f, 0.75f) to Translation(-1000f, -2000f),
         ).forEach { (containerCentroid, expected) ->
             Assert.assertEquals(
                 "containerSize=$containerSize, scale=$scale, containerCentroid=$containerCentroid",
@@ -850,7 +851,7 @@ class ComposeZoomUtilsTest {
     }
 
     @Test
-    fun testComputeTranslationBounds() {
+    fun testComputeSupportTranslationBounds() {
         val containerSize = Size(1000f, 1000f)
 
         var contentSize = Size(800f, 400f)
@@ -933,12 +934,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeTranslationBounds(
+                computeSupportTranslationBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    scale = scale,
+                    supportScale = scale,
                 )
             )
         }
@@ -1023,12 +1024,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeTranslationBounds(
+                computeSupportTranslationBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    scale = scale,
+                    supportScale = scale,
                 )
             )
         }
@@ -1113,12 +1114,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeTranslationBounds(
+                computeSupportTranslationBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    scale = scale,
+                    supportScale = scale,
                 )
             )
         }
@@ -1203,12 +1204,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeTranslationBounds(
+                computeSupportTranslationBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    scale = scale,
+                    supportScale = scale,
                 )
             )
         }
@@ -1409,12 +1410,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeTranslationBounds(
+                computeSupportTranslationBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    scale = scale,
+                    supportScale = scale,
                 )
             )
         }
@@ -1603,12 +1604,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeTranslationBounds(
+                computeSupportTranslationBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    scale = scale,
+                    supportScale = scale,
                 )
             )
         }
@@ -1793,12 +1794,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeTranslationBounds(
+                computeSupportTranslationBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    scale = scale,
+                    supportScale = scale,
                 )
             )
         }
@@ -1987,12 +1988,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeTranslationBounds(
+                computeSupportTranslationBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    scale = scale,
+                    supportScale = scale,
                 )
             )
         }
@@ -2004,17 +2005,17 @@ class ComposeZoomUtilsTest {
 
         var scale = 1f
         listOf(
-            Offset(0f, 0f) to Rect(0f, 0f, 1000f, 2000f),
-            Offset(250f, 500f) to Rect(0f, 0f, 750f, 1500f),
-            Offset(750f, 500f) to Rect(0f, 0f, 250f, 1500f),
-            Offset(250f, 1500f) to Rect(0f, 0f, 750f, 500f),
-            Offset(750f, 1500f) to Rect(0f, 0f, 250f, 500f),
-            Offset(1000f, 2000f) to Rect(0f, 0f, 0f, 0f),
-            Offset(-250f, -500f) to Rect(250f, 500f, 1000f, 2000f),
-            Offset(-750f, -500f) to Rect(750f, 500f, 1000f, 2000f),
-            Offset(-250f, -1500f) to Rect(250f, 1500f, 1000f, 2000f),
-            Offset(-750f, -1500f) to Rect(750f, 1500f, 1000f, 2000f),
-            Offset(-1000f, -2000f) to Rect(0f, 0f, 0f, 0f),
+            Translation(0f, 0f) to Rect(0f, 0f, 1000f, 2000f),
+            Translation(250f, 500f) to Rect(0f, 0f, 750f, 1500f),
+            Translation(750f, 500f) to Rect(0f, 0f, 250f, 1500f),
+            Translation(250f, 1500f) to Rect(0f, 0f, 750f, 500f),
+            Translation(750f, 1500f) to Rect(0f, 0f, 250f, 500f),
+            Translation(1000f, 2000f) to Rect(0f, 0f, 0f, 0f),
+            Translation(-250f, -500f) to Rect(250f, 500f, 1000f, 2000f),
+            Translation(-750f, -500f) to Rect(750f, 500f, 1000f, 2000f),
+            Translation(-250f, -1500f) to Rect(250f, 1500f, 1000f, 2000f),
+            Translation(-750f, -1500f) to Rect(750f, 1500f, 1000f, 2000f),
+            Translation(-1000f, -2000f) to Rect(0f, 0f, 0f, 0f),
         ).forEach { (translation, expectedVisibleRect) ->
             Assert.assertEquals(
                 "containerSize=$containerSize, scale=$scale, translation=$translation",
@@ -2025,17 +2026,17 @@ class ComposeZoomUtilsTest {
 
         scale = 2f
         listOf(
-            Offset(0f, 0f) to Rect(0f, 0f, 500f, 1000f),
-            Offset(250f, 500f) to Rect(0f, 0f, 375f, 750f),
-            Offset(750f, 500f) to Rect(0f, 0f, 125f, 750f),
-            Offset(250f, 1500f) to Rect(0f, 0f, 375f, 250f),
-            Offset(750f, 1500f) to Rect(0f, 0f, 125f, 250f),
-            Offset(1000f, 2000f) to Rect(0f, 0f, 0f, 0f),
-            Offset(-250f, -500f) to Rect(125f, 250f, 625f, 1250f),
-            Offset(-750f, -500f) to Rect(375f, 250f, 875f, 1250f),
-            Offset(-250f, -1500f) to Rect(125f, 750f, 625f, 1750f),
-            Offset(-750f, -1500f) to Rect(375f, 750f, 875f, 1750f),
-            Offset(-1000f, -2000f) to Rect(500f, 1000f, 1000f, 2000f),
+            Translation(0f, 0f) to Rect(0f, 0f, 500f, 1000f),
+            Translation(250f, 500f) to Rect(0f, 0f, 375f, 750f),
+            Translation(750f, 500f) to Rect(0f, 0f, 125f, 750f),
+            Translation(250f, 1500f) to Rect(0f, 0f, 375f, 250f),
+            Translation(750f, 1500f) to Rect(0f, 0f, 125f, 250f),
+            Translation(1000f, 2000f) to Rect(0f, 0f, 0f, 0f),
+            Translation(-250f, -500f) to Rect(125f, 250f, 625f, 1250f),
+            Translation(-750f, -500f) to Rect(375f, 250f, 875f, 1250f),
+            Translation(-250f, -1500f) to Rect(125f, 750f, 625f, 1750f),
+            Translation(-750f, -1500f) to Rect(375f, 750f, 875f, 1750f),
+            Translation(-1000f, -2000f) to Rect(500f, 1000f, 1000f, 2000f),
         ).forEach { (translation, expectedVisibleRect) ->
             Assert.assertEquals(
                 "containerSize=$containerSize, scale=$scale, translation=$translation",
@@ -2053,17 +2054,17 @@ class ComposeZoomUtilsTest {
         var contentAlignment = Alignment.Center
         var scale = 1f
         listOf(
-            Item3(Offset(0f, 0f), Rect(0f, 0f, 800f, 1200f)),
-            Item3(Offset(250f, 500f), Rect(0f, 0f, 600f, 1000f)),
-            Item3(Offset(750f, 500f), Rect(0f, 0f, 200f, 1000f)),
-            Item3(Offset(250f, 1500f), Rect(0f, 0f, 600f, 200f)),
-            Item3(Offset(750f, 1500f), Rect(0f, 0f, 200f, 200f)),
-            Item3(Offset(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(-250f, -500f), Rect(200f, 200f, 800f, 1200f)),
-            Item3(Offset(-750f, -500f), Rect(600f, 200f, 800f, 1200f)),
-            Item3(Offset(-250f, -1500f), Rect(200f, 1000f, 800f, 1200f)),
-            Item3(Offset(-750f, -1500f), Rect(600f, 1000f, 800f, 1200f)),
-            Item3(Offset(-1000f, -2000f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(0f, 0f), Rect(0f, 0f, 800f, 1200f)),
+            Item3(Translation(250f, 500f), Rect(0f, 0f, 600f, 1000f)),
+            Item3(Translation(750f, 500f), Rect(0f, 0f, 200f, 1000f)),
+            Item3(Translation(250f, 1500f), Rect(0f, 0f, 600f, 200f)),
+            Item3(Translation(750f, 1500f), Rect(0f, 0f, 200f, 200f)),
+            Item3(Translation(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(-250f, -500f), Rect(200f, 200f, 800f, 1200f)),
+            Item3(Translation(-750f, -500f), Rect(600f, 200f, 800f, 1200f)),
+            Item3(Translation(-250f, -1500f), Rect(200f, 1000f, 800f, 1200f)),
+            Item3(Translation(-750f, -1500f), Rect(600f, 1000f, 800f, 1200f)),
+            Item3(Translation(-1000f, -2000f), Rect(0f, 0f, 0f, 0f)),
 //        ).printlnExpectedMessage3(
 //            computeExpected = {
 //                computeContentVisibleRect(
@@ -2096,17 +2097,17 @@ class ComposeZoomUtilsTest {
         contentAlignment = Alignment.Center
         scale = 2f
         listOf(
-            Item3(Offset(0f, 0f), Rect(0f, 0f, 400f, 600f)),
-            Item3(Offset(250f, 500f), Rect(0f, 0f, 300f, 400f)),
-            Item3(Offset(750f, 500f), Rect(0f, 0f, 100f, 400f)),
-            Item3(Offset(250f, 1500f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(750f, 1500f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(-250f, -500f), Rect(100f, 0f, 500f, 800f)),
-            Item3(Offset(-750f, -500f), Rect(300f, 0f, 700f, 800f)),
-            Item3(Offset(-250f, -1500f), Rect(100f, 400f, 500f, 1200f)),
-            Item3(Offset(-750f, -1500f), Rect(300f, 400f, 700f, 1200f)),
-            Item3(Offset(-1000f, -2000f), Rect(400f, 600f, 800f, 1200f)),
+            Item3(Translation(0f, 0f), Rect(0f, 0f, 400f, 600f)),
+            Item3(Translation(250f, 500f), Rect(0f, 0f, 300f, 400f)),
+            Item3(Translation(750f, 500f), Rect(0f, 0f, 100f, 400f)),
+            Item3(Translation(250f, 1500f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(750f, 1500f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(-250f, -500f), Rect(100f, 0f, 500f, 800f)),
+            Item3(Translation(-750f, -500f), Rect(300f, 0f, 700f, 800f)),
+            Item3(Translation(-250f, -1500f), Rect(100f, 400f, 500f, 1200f)),
+            Item3(Translation(-750f, -1500f), Rect(300f, 400f, 700f, 1200f)),
+            Item3(Translation(-1000f, -2000f), Rect(400f, 600f, 800f, 1200f)),
 //        ).printlnExpectedMessage3(
 //            computeExpected = {
 //                computeContentVisibleRect(
@@ -2139,17 +2140,17 @@ class ComposeZoomUtilsTest {
         contentAlignment = Alignment.Center
         scale = 1f
         listOf(
-            Item3(Offset(0f, 0f), Rect(0f, 0f, 800f, 1200f)),
-            Item3(Offset(250f, 500f), Rect(0f, 0f, 650f, 1100f)),
-            Item3(Offset(750f, 500f), Rect(0f, 0f, 150f, 1100f)),
-            Item3(Offset(250f, 1500f), Rect(0f, 0f, 650f, 100f)),
-            Item3(Offset(750f, 1500f), Rect(0f, 0f, 150f, 100f)),
-            Item3(Offset(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(-250f, -500f), Rect(150f, 100f, 800f, 1200f)),
-            Item3(Offset(-750f, -500f), Rect(650f, 100f, 800f, 1200f)),
-            Item3(Offset(-250f, -1500f), Rect(150f, 1100f, 800f, 1200f)),
-            Item3(Offset(-750f, -1500f), Rect(650f, 1100f, 800f, 1200f)),
-            Item3(Offset(-1000f, -2000f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(0f, 0f), Rect(0f, 0f, 800f, 1200f)),
+            Item3(Translation(250f, 500f), Rect(0f, 0f, 650f, 1100f)),
+            Item3(Translation(750f, 500f), Rect(0f, 0f, 150f, 1100f)),
+            Item3(Translation(250f, 1500f), Rect(0f, 0f, 650f, 100f)),
+            Item3(Translation(750f, 1500f), Rect(0f, 0f, 150f, 100f)),
+            Item3(Translation(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(-250f, -500f), Rect(150f, 100f, 800f, 1200f)),
+            Item3(Translation(-750f, -500f), Rect(650f, 100f, 800f, 1200f)),
+            Item3(Translation(-250f, -1500f), Rect(150f, 1100f, 800f, 1200f)),
+            Item3(Translation(-750f, -1500f), Rect(650f, 1100f, 800f, 1200f)),
+            Item3(Translation(-1000f, -2000f), Rect(0f, 0f, 0f, 0f)),
 //        ).printlnExpectedMessage3(
 //            computeExpected = {
 //                computeContentVisibleRect(
@@ -2182,17 +2183,17 @@ class ComposeZoomUtilsTest {
         contentAlignment = Alignment.Center
         scale = 2f
         listOf(
-            Item3(Offset(0f, 0f), Rect(0f, 0f, 400f, 600f)),
-            Item3(Offset(250f, 500f), Rect(0f, 0f, 275f, 350f)),
-            Item3(Offset(750f, 500f), Rect(0f, 0f, 25f, 350f)),
-            Item3(Offset(250f, 1500f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(750f, 1500f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(-250f, -500f), Rect(25f, 0f, 525f, 850f)),
-            Item3(Offset(-750f, -500f), Rect(275f, 0f, 775f, 850f)),
-            Item3(Offset(-250f, -1500f), Rect(25f, 350f, 525f, 1200f)),
-            Item3(Offset(-750f, -1500f), Rect(275f, 350f, 775f, 1200f)),
-            Item3(Offset(-1000f, -2000f), Rect(400f, 600f, 800f, 1200f)),
+            Item3(Translation(0f, 0f), Rect(0f, 0f, 400f, 600f)),
+            Item3(Translation(250f, 500f), Rect(0f, 0f, 275f, 350f)),
+            Item3(Translation(750f, 500f), Rect(0f, 0f, 25f, 350f)),
+            Item3(Translation(250f, 1500f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(750f, 1500f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(-250f, -500f), Rect(25f, 0f, 525f, 850f)),
+            Item3(Translation(-750f, -500f), Rect(275f, 0f, 775f, 850f)),
+            Item3(Translation(-250f, -1500f), Rect(25f, 350f, 525f, 1200f)),
+            Item3(Translation(-750f, -1500f), Rect(275f, 350f, 775f, 1200f)),
+            Item3(Translation(-1000f, -2000f), Rect(400f, 600f, 800f, 1200f)),
 //        ).printlnExpectedMessage3(
 //            computeExpected = {
 //                computeContentVisibleRect(
@@ -2225,17 +2226,17 @@ class ComposeZoomUtilsTest {
         contentAlignment = Alignment.Center
         scale = 1f
         listOf(
-            Item3(Offset(0f, 0f), Rect(99.99998f, 0f, 700f, 1200f)),
-            Item3(Offset(250f, 500f), Rect(99.99998f, 0f, 550f, 900f)),
-            Item3(Offset(750f, 500f), Rect(99.99998f, 0f, 249.99997f, 900f)),
-            Item3(Offset(250f, 1500f), Rect(99.99998f, 0f, 550f, 300f)),
-            Item3(Offset(750f, 1500f), Rect(99.99998f, 0f, 249.99997f, 300f)),
-            Item3(Offset(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
-            Item3(Offset(-250f, -500f), Rect(249.99997f, 300f, 700f, 1200f)),
-            Item3(Offset(-750f, -500f), Rect(550f, 300f, 700f, 1200f)),
-            Item3(Offset(-250f, -1500f), Rect(249.99997f, 900f, 700f, 1200f)),
-            Item3(Offset(-750f, -1500f), Rect(550f, 900f, 700f, 1200f)),
-            Item3(Offset(-1000f, -2000f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(0f, 0f), Rect(99.99998f, 0f, 700f, 1200f)),
+            Item3(Translation(250f, 500f), Rect(99.99998f, 0f, 550f, 900f)),
+            Item3(Translation(750f, 500f), Rect(99.99998f, 0f, 249.99997f, 900f)),
+            Item3(Translation(250f, 1500f), Rect(99.99998f, 0f, 550f, 300f)),
+            Item3(Translation(750f, 1500f), Rect(99.99998f, 0f, 249.99997f, 300f)),
+            Item3(Translation(1000f, 2000f), Rect(0f, 0f, 0f, 0f)),
+            Item3(Translation(-250f, -500f), Rect(249.99997f, 300f, 700f, 1200f)),
+            Item3(Translation(-750f, -500f), Rect(550f, 300f, 700f, 1200f)),
+            Item3(Translation(-250f, -1500f), Rect(249.99997f, 900f, 700f, 1200f)),
+            Item3(Translation(-750f, -1500f), Rect(550f, 900f, 700f, 1200f)),
+            Item3(Translation(-1000f, -2000f), Rect(0f, 0f, 0f, 0f)),
 //        ).printlnExpectedMessage3(
 //            computeExpected = {
 //                computeContentVisibleRect(
@@ -2268,17 +2269,17 @@ class ComposeZoomUtilsTest {
         contentAlignment = Alignment.Center
         scale = 2f
         listOf(
-            Item3(Offset(0.0f, 0.0f), Rect(99.99998f, 0.0f, 399.99997f, 600.0f)),
-            Item3(Offset(250.0f, 500.0f), Rect(99.99998f, 0.0f, 324.99997f, 450.0f)),
-            Item3(Offset(750.0f, 500.0f), Rect(99.99998f, 0.0f, 174.99997f, 450.0f)),
-            Item3(Offset(250.0f, 1500.0f), Rect(99.99998f, 0.0f, 324.99997f, 150.0f)),
-            Item3(Offset(750.0f, 1500.0f), Rect(99.99998f, 0.0f, 174.99997f, 150.0f)),
-            Item3(Offset(1000.0f, 2000.0f), Rect(0.0f, 0.0f, 0.0f, 0.0f)),
-            Item3(Offset(-250.0f, -500.0f), Rect(174.99997f, 150.0f, 474.99997f, 750.0f)),
-            Item3(Offset(-750.0f, -500.0f), Rect(324.99997f, 150.0f, 625.0f, 750.0f)),
-            Item3(Offset(-250.0f, -1500.0f), Rect(174.99997f, 450.0f, 474.99997f, 1050.0f)),
-            Item3(Offset(-750.0f, -1500.0f), Rect(324.99997f, 450.0f, 625.0f, 1050.0f)),
-            Item3(Offset(-1000.0f, -2000.0f), Rect(399.99997f, 600.0f, 700.0f, 1200.0f)),
+            Item3(Translation(0.0f, 0.0f), Rect(99.99998f, 0.0f, 399.99997f, 600.0f)),
+            Item3(Translation(250.0f, 500.0f), Rect(99.99998f, 0.0f, 324.99997f, 450.0f)),
+            Item3(Translation(750.0f, 500.0f), Rect(99.99998f, 0.0f, 174.99997f, 450.0f)),
+            Item3(Translation(250.0f, 1500.0f), Rect(99.99998f, 0.0f, 324.99997f, 150.0f)),
+            Item3(Translation(750.0f, 1500.0f), Rect(99.99998f, 0.0f, 174.99997f, 150.0f)),
+            Item3(Translation(1000.0f, 2000.0f), Rect(0.0f, 0.0f, 0.0f, 0.0f)),
+            Item3(Translation(-250.0f, -500.0f), Rect(174.99997f, 150.0f, 474.99997f, 750.0f)),
+            Item3(Translation(-750.0f, -500.0f), Rect(324.99997f, 150.0f, 625.0f, 750.0f)),
+            Item3(Translation(-250.0f, -1500.0f), Rect(174.99997f, 450.0f, 474.99997f, 1050.0f)),
+            Item3(Translation(-750.0f, -1500.0f), Rect(324.99997f, 450.0f, 625.0f, 1050.0f)),
+            Item3(Translation(-1000.0f, -2000.0f), Rect(399.99997f, 600.0f, 700.0f, 1200.0f)),
 //        ).printlnExpectedMessage3(
 //            computeExpected = {
 //                computeContentVisibleRect(
@@ -2311,17 +2312,17 @@ class ComposeZoomUtilsTest {
         contentAlignment = Alignment.Center
         scale = 1f
         listOf(
-            Item3(Offset(0.0f, 0.0f), Rect(250.0f, 300.0f, 1250.0f, 2300.0f)),
-            Item3(Offset(250.0f, 500.0f), Rect(250.0f, 300.0f, 1000.0f, 1800.0f)),
-            Item3(Offset(750.0f, 500.0f), Rect(250.0f, 300.0f, 500.0f, 1800.0f)),
-            Item3(Offset(250.0f, 1500.0f), Rect(250.0f, 300.0f, 1000.0f, 800.0f)),
-            Item3(Offset(750.0f, 1500.0f), Rect(250.0f, 300.0f, 500.0f, 800.0f)),
-            Item3(Offset(1000.0f, 2000.0f), Rect(0.0f, 0.0f, 0.0f, 0.0f)),
-            Item3(Offset(-250.0f, -500.0f), Rect(500.0f, 800.0f, 1250.0f, 2300.0f)),
-            Item3(Offset(-750.0f, -500.0f), Rect(1000.0f, 800.0f, 1250.0f, 2300.0f)),
-            Item3(Offset(-250.0f, -1500.0f), Rect(500.0f, 1800.0f, 1250.0f, 2300.0f)),
-            Item3(Offset(-750.0f, -1500.0f), Rect(1000.0f, 1800.0f, 1250.0f, 2300.0f)),
-            Item3(Offset(-1000.0f, -2000.0f), Rect(0.0f, 0.0f, 0.0f, 0.0f)),
+            Item3(Translation(0.0f, 0.0f), Rect(250.0f, 300.0f, 1250.0f, 2300.0f)),
+            Item3(Translation(250.0f, 500.0f), Rect(250.0f, 300.0f, 1000.0f, 1800.0f)),
+            Item3(Translation(750.0f, 500.0f), Rect(250.0f, 300.0f, 500.0f, 1800.0f)),
+            Item3(Translation(250.0f, 1500.0f), Rect(250.0f, 300.0f, 1000.0f, 800.0f)),
+            Item3(Translation(750.0f, 1500.0f), Rect(250.0f, 300.0f, 500.0f, 800.0f)),
+            Item3(Translation(1000.0f, 2000.0f), Rect(0.0f, 0.0f, 0.0f, 0.0f)),
+            Item3(Translation(-250.0f, -500.0f), Rect(500.0f, 800.0f, 1250.0f, 2300.0f)),
+            Item3(Translation(-750.0f, -500.0f), Rect(1000.0f, 800.0f, 1250.0f, 2300.0f)),
+            Item3(Translation(-250.0f, -1500.0f), Rect(500.0f, 1800.0f, 1250.0f, 2300.0f)),
+            Item3(Translation(-750.0f, -1500.0f), Rect(1000.0f, 1800.0f, 1250.0f, 2300.0f)),
+            Item3(Translation(-1000.0f, -2000.0f), Rect(0.0f, 0.0f, 0.0f, 0.0f)),
 //        ).printlnExpectedMessage3(
 //            computeExpected = {
 //                computeContentVisibleRect(
@@ -2354,17 +2355,17 @@ class ComposeZoomUtilsTest {
         contentAlignment = Alignment.Center
         scale = 2f
         listOf(
-            Item3(Offset(0.0f, 0.0f), Rect(250.0f, 300.0f, 750.0f, 1300.0f)),
-            Item3(Offset(250.0f, 500.0f), Rect(250.0f, 300.0f, 625.0f, 1050.0f)),
-            Item3(Offset(750.0f, 500.0f), Rect(250.0f, 300.0f, 375.0f, 1050.0f)),
-            Item3(Offset(250.0f, 1500.0f), Rect(250.0f, 300.0f, 625.0f, 550.0f)),
-            Item3(Offset(750.0f, 1500.0f), Rect(250.0f, 300.0f, 375.0f, 550.0f)),
-            Item3(Offset(1000.0f, 2000.0f), Rect(0.0f, 0.0f, 0.0f, 0.0f)),
-            Item3(Offset(-250.0f, -500.0f), Rect(375.0f, 550.0f, 875.0f, 1550.0f)),
-            Item3(Offset(-750.0f, -500.0f), Rect(625.0f, 550.0f, 1125.0f, 1550.0f)),
-            Item3(Offset(-250.0f, -1500.0f), Rect(375.0f, 1050.0f, 875.0f, 2050.0f)),
-            Item3(Offset(-750.0f, -1500.0f), Rect(625.0f, 1050.0f, 1125.0f, 2050.0f)),
-            Item3(Offset(-1000.0f, -2000.0f), Rect(750.0f, 1300.0f, 1250.0f, 2300.0f)),
+            Item3(Translation(0.0f, 0.0f), Rect(250.0f, 300.0f, 750.0f, 1300.0f)),
+            Item3(Translation(250.0f, 500.0f), Rect(250.0f, 300.0f, 625.0f, 1050.0f)),
+            Item3(Translation(750.0f, 500.0f), Rect(250.0f, 300.0f, 375.0f, 1050.0f)),
+            Item3(Translation(250.0f, 1500.0f), Rect(250.0f, 300.0f, 625.0f, 550.0f)),
+            Item3(Translation(750.0f, 1500.0f), Rect(250.0f, 300.0f, 375.0f, 550.0f)),
+            Item3(Translation(1000.0f, 2000.0f), Rect(0.0f, 0.0f, 0.0f, 0.0f)),
+            Item3(Translation(-250.0f, -500.0f), Rect(375.0f, 550.0f, 875.0f, 1550.0f)),
+            Item3(Translation(-750.0f, -500.0f), Rect(625.0f, 550.0f, 1125.0f, 1550.0f)),
+            Item3(Translation(-250.0f, -1500.0f), Rect(375.0f, 1050.0f, 875.0f, 2050.0f)),
+            Item3(Translation(-750.0f, -1500.0f), Rect(625.0f, 1050.0f, 1125.0f, 2050.0f)),
+            Item3(Translation(-1000.0f, -2000.0f), Rect(750.0f, 1300.0f, 1250.0f, 2300.0f)),
 //        ).printlnExpectedMessage3(
 //            computeExpected = {
 //                computeContentVisibleRect(
@@ -2398,7 +2399,7 @@ class ComposeZoomUtilsTest {
         var containerSize = Size(1080f, 1920f)
 
         var scale = 1f
-        var translation = Offset(0f, 0f)
+        var translation = Translation(0f, 0f)
         listOf(
             Offset(216f, 960f) to Centroid(0.2f, 0.5f),
             Offset(540f, 384f) to Centroid(0.5f, 0.2f),
@@ -2415,7 +2416,7 @@ class ComposeZoomUtilsTest {
         }
 
         scale = 1f
-        translation = Offset(540f, 960f)
+        translation = Translation(540f, 960f)
         listOf(
             Offset(216f, 960f) to Centroid(0f, 0f),
             Offset(540f, 384f) to Centroid(0f, 0f),
@@ -2432,7 +2433,7 @@ class ComposeZoomUtilsTest {
         }
 
         scale = 1f
-        translation = Offset(-540f, -960f)
+        translation = Translation(-540f, -960f)
         listOf(
             Offset(216f, 960f) to Centroid(0.7f, 1f),
             Offset(540f, 384f) to Centroid(1f, 0.7f),
@@ -2449,7 +2450,7 @@ class ComposeZoomUtilsTest {
         }
 
         scale = 2f
-        translation = Offset(0f, 0f)
+        translation = Translation(0f, 0f)
         listOf(
             Offset(216f, 960f) to Centroid(0.1f, 0.25f),
             Offset(540f, 384f) to Centroid(0.25f, 0.1f),
@@ -2466,7 +2467,7 @@ class ComposeZoomUtilsTest {
         }
 
         scale = 2f
-        translation = Offset(540f, 960f)
+        translation = Translation(540f, 960f)
         listOf(
             Offset(216f, 960f) to Centroid(0f, 0f),
             Offset(540f, 384f) to Centroid(0f, 0f),
@@ -2483,7 +2484,7 @@ class ComposeZoomUtilsTest {
         }
 
         scale = 2f
-        translation = Offset(-540f, -960f)
+        translation = Translation(-540f, -960f)
         listOf(
             Offset(216f, 960f) to Centroid(0.35f, 0.5f),
             Offset(540f, 384f) to Centroid(0.5f, 0.35f),
@@ -2501,7 +2502,7 @@ class ComposeZoomUtilsTest {
 
         containerSize = Size.Unspecified
         scale = 1f
-        translation = Offset(0f, 0f)
+        translation = Translation(0f, 0f)
         listOf(
             Offset(216f, 960f) to Centroid(0f, 0f),
             Offset(540f, 384f) to Centroid(0f, 0f),

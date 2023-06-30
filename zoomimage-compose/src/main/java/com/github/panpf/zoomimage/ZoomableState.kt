@@ -23,8 +23,6 @@ import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.util.VelocityTracker
-import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Velocity
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
@@ -40,8 +38,8 @@ import com.github.panpf.zoomimage.internal.computeReadModeTransform
 import com.github.panpf.zoomimage.internal.computeScaleTargetTranslation
 import com.github.panpf.zoomimage.internal.computeScaleTranslation
 import com.github.panpf.zoomimage.internal.computeScrollEdge
+import com.github.panpf.zoomimage.internal.computeSupportTranslationBounds
 import com.github.panpf.zoomimage.internal.computeTransform
-import com.github.panpf.zoomimage.internal.computeTranslationBounds
 import com.github.panpf.zoomimage.internal.containerCentroidToContentCentroid
 import com.github.panpf.zoomimage.internal.contentCentroidToContainerCentroid
 import com.github.panpf.zoomimage.internal.rotate
@@ -94,7 +92,6 @@ class ZoomableState(
     // todo support click and long press
     // todo support rubber band effect
 
-    private val velocityTracker = VelocityTracker()
     private val scaleAnimatable = Animatable(initialScale)
     private val translationXAnimatable = Animatable(initialTranslateX)
     private val translationYAnimatable = Animatable(initialTranslateY)
@@ -150,6 +147,7 @@ class ZoomableState(
             translationY = translationYAnimatable.value
         )
     }
+    @Suppress("MemberVisibilityCanBePrivate")
     val baseTranslation: Translation by derivedStateOf {
         computeScaleTranslation(
             srcSize = contentSize,
@@ -158,6 +156,7 @@ class ZoomableState(
             alignment = contentAlignment,
         )
     }
+    @Suppress("unused")
     val displayTranslation: Translation by derivedStateOf {
         val baseTranslation = baseTranslation
         val translation = translation
@@ -206,6 +205,7 @@ class ZoomableState(
         val contentOriginSize = contentOriginSize
         val containerSize = containerSize
         val contentScale = contentScale
+        val contentAlignment = contentAlignment
         if (containerSize.isUnspecified || containerSize.isEmpty()
             || contentSize.isUnspecified || contentSize.isEmpty()
         ) {
@@ -255,6 +255,17 @@ class ZoomableState(
                 Transform.Empty
             }
         }
+        log {
+            "reset. contentSize=$contentSize, " +
+                    "contentOriginSize=$contentOriginSize, " +
+                    "containerSize=$containerSize, " +
+                    "contentScale=$contentScale, " +
+                    "contentAlignment=$contentAlignment, " +
+                    "minScale=$minScale, " +
+                    "mediumScale=$mediumScale, " +
+                    "maxScale=$maxScale, " +
+                    "supportInitialTransform=$supportInitialTransform"
+        }
         scaleAnimatable.snapTo(supportInitialTransform.scaleX)
         translationXAnimatable.snapTo(supportInitialTransform.translationX)
         translationYAnimatable.snapTo(supportInitialTransform.translationY)
@@ -283,12 +294,12 @@ class ZoomableState(
             durationMillis = animationDurationMillis,
             easing = animationEasing
         )
-        val futureTranslationBounds = computeTranslationBounds(
+        val futureTranslationBounds = computeSupportTranslationBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            scale = newScale
+            supportScale = newScale
         )
         val containerCentroid = contentCentroidToContainerCentroid(
             containerSize = containerSize,
@@ -303,11 +314,11 @@ class ZoomableState(
             containerCentroid = containerCentroid
         ).let {
             it.copy(
-                x = it.x.coerceIn(futureTranslationBounds.left, futureTranslationBounds.right),
-                y = it.y.coerceIn(futureTranslationBounds.top, futureTranslationBounds.bottom),
+                translationX = it.translationX.coerceIn(futureTranslationBounds.left, futureTranslationBounds.right),
+                translationY = it.translationY.coerceIn(futureTranslationBounds.top, futureTranslationBounds.bottom),
             )
         }
-        logI {
+        log {
             """animateScaleTo. size: containerSize=${containerSize.toShortString()}, contentSize=${contentSize.toShortString()}
                 scale: $currentScale -> $newScale, contentCentroid=${newScaleContentCentroid.toShortString()}, containerCentroid=${containerCentroid.toShortString()}
                 translation: ${currentTranslation.toShortString()} -> ${targetTranslation.toShortString()}, bounds=${futureTranslationBounds.toShortString()}
@@ -321,20 +332,20 @@ class ZoomableState(
                     animationSpec = animationSpec,
                     initialVelocity = initialVelocity,
                 ) {
-                    logD { "animateScaleTo. running. scale=${this.value}, translation=${translation.toShortString()}" }
+                    log { "animateScaleTo. running. scale=${this.value}, translation=${translation.toShortString()}" }
                 }
                 updateTranslationBounds("animateScaleTo. end")
-                logD { "animateScaleTo. end. scale=${scale}, translation=${translation.toShortString()}" }
+                log { "animateScaleTo. end. scale=${scale}, translation=${translation.toShortString()}" }
             }
             launch {
                 translationXAnimatable.animateTo(
-                    targetValue = targetTranslation.x,
+                    targetValue = targetTranslation.translationX,
                     animationSpec = animationSpec,
                 )
             }
             launch {
                 translationYAnimatable.animateTo(
-                    targetValue = targetTranslation.y,
+                    targetValue = targetTranslation.translationY,
                     animationSpec = animationSpec,
                 )
             }
@@ -371,7 +382,7 @@ class ZoomableState(
             contentAlignment = contentAlignment,
             containerCentroid = containerCentroid
         )
-        logI { "animateScaleTo. newScale=$newScale, touchPosition=${touchPosition.toShortString()}, containerCentroid=${containerCentroid.toShortString()}, contentCentroid=${contentCentroid.toShortString()}" }
+        log { "animateScaleTo. newScale=$newScale, touchPosition=${touchPosition.toShortString()}, containerCentroid=${containerCentroid.toShortString()}, contentCentroid=${contentCentroid.toShortString()}" }
         animateScaleTo(
             newScale = newScale,
             newScaleContentCentroid = contentCentroid,
@@ -396,12 +407,12 @@ class ZoomableState(
         val currentScale = scale
         val currentTranslation = translation
 
-        val futureTranslationBounds = computeTranslationBounds(
+        val futureTranslationBounds = computeSupportTranslationBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            scale = newScale
+            supportScale = newScale
         )
         val containerCentroid = contentCentroidToContainerCentroid(
             containerSize = containerSize,
@@ -416,11 +427,11 @@ class ZoomableState(
             containerCentroid = containerCentroid
         ).let {
             it.copy(
-                x = it.x.coerceIn(futureTranslationBounds.left, futureTranslationBounds.right),
-                y = it.y.coerceIn(futureTranslationBounds.top, futureTranslationBounds.bottom),
+                translationX = it.translationX.coerceIn(futureTranslationBounds.left, futureTranslationBounds.right),
+                translationY = it.translationY.coerceIn(futureTranslationBounds.top, futureTranslationBounds.bottom),
             )
         }
-        logI {
+        log {
             """snapScaleTo. size: containerSize=${containerSize.toShortString()}, contentSize=${contentSize.toShortString()} 
                  scale: $currentScale -> $newScale, contentCentroid=${newScaleContentCentroid.toShortString()}, containerCentroid=${containerCentroid.toShortString()}
                 translation: ${currentTranslation.toShortString()} -> ${targetTranslation.toShortString()}, bounds=${futureTranslationBounds.toShortString()}
@@ -434,8 +445,8 @@ class ZoomableState(
                 )
             )
             updateTranslationBounds("snapScaleTo")
-            translationXAnimatable.snapTo(targetValue = targetTranslation.x)
-            translationYAnimatable.snapTo(targetValue = targetTranslation.y)
+            translationXAnimatable.snapTo(targetValue = targetTranslation.translationX)
+            translationYAnimatable.snapTo(targetValue = targetTranslation.translationY)
         }
     }
 
@@ -463,7 +474,7 @@ class ZoomableState(
             contentAlignment = contentAlignment,
             containerCentroid = containerCentroid
         )
-        logI { "snapScaleTo. newScale=$newScale, touchPosition=${touchPosition.toShortString()}, contentCentroid=${contentCentroid.toShortString()}" }
+        log { "snapScaleTo. newScale=$newScale, touchPosition=${touchPosition.toShortString()}, contentCentroid=${contentCentroid.toShortString()}" }
         snapScaleTo(
             newScale = newScale,
             newScaleContentCentroid = contentCentroid
@@ -481,17 +492,18 @@ class ZoomableState(
 
     internal suspend fun dragStart() {
         stopAllAnimation("dragStart")
-        logI { "drag. start. resetTracking" }
-        velocityTracker.resetTracking()
+        log { "drag. start" }
     }
 
-    internal suspend fun drag(change: PointerInputChange, dragAmount: Offset) {
+    internal suspend fun drag(
+        @Suppress("UNUSED_PARAMETER") change: PointerInputChange,
+        dragAmount: Offset
+    ) {
         val newTranslation = Offset(
             x = translationXAnimatable.value + dragAmount.x,
             y = translationYAnimatable.value + dragAmount.y
         )
-        logD { "drag. running. dragAmount=${dragAmount.toShortString()}, newTranslation=${newTranslation.toShortString()}" }
-        velocityTracker.addPointerInputChange(change)
+        log { "drag. running. dragAmount=${dragAmount.toShortString()}, newTranslation=${newTranslation.toShortString()}" }
         coroutineScope {
             launch {
                 translationXAnimatable.snapTo(newTranslation.x)
@@ -500,13 +512,13 @@ class ZoomableState(
         }
     }
 
-    internal suspend fun dragEnd() {
-        logI { "drag. end" }
-        fling(velocityTracker.calculateVelocity())
+    internal suspend fun dragEnd(velocity: Velocity) {
+        log { "drag. end. velocity=$velocity" }
+        fling(velocity)
     }
 
     internal fun dragCancel() {
-        logI { "drag. cancel" }
+        log { "drag. cancel" }
     }
 
     internal suspend fun transform(zoomChange: Float, touchCentroid: Offset) {
@@ -522,7 +534,7 @@ class ZoomableState(
             x = translationXAnimatable.value + addCentroidOffset.x,
             y = translationYAnimatable.value + addCentroidOffset.y
         )
-        logD { "transform. zoomChange=$zoomChange, touchCentroid=${touchCentroid.toShortString()}, newScale=$newScale, addCentroidOffset=${addCentroidOffset.toShortString()}, targetTranslation=${targetTranslation.toShortString()}" }
+        log { "transform. zoomChange=$zoomChange, touchCentroid=${touchCentroid.toShortString()}, newScale=$newScale, addCentroidOffset=${addCentroidOffset.toShortString()}, targetTranslation=${targetTranslation.toShortString()}" }
         coroutineScope {
             scaleAnimatable.snapTo(newScale)
             updateTranslationBounds("snapScaleTo")
@@ -534,26 +546,33 @@ class ZoomableState(
     private suspend fun stopAllAnimation(caller: String) {
         if (scaleAnimatable.isRunning) {
             scaleAnimatable.stop()
-            logI { "stopAllAnimation. stop scale. scale=$scale" }
+            log { "stopAllAnimation. stop scale. scale=$scale" }
             updateTranslationBounds(caller)
         }
         if (translationXAnimatable.isRunning || translationYAnimatable.isRunning) {
             translationXAnimatable.stop()
             translationYAnimatable.stop()
-            logI { "stopAllAnimation. stop translation. translation=${translation.toShortString()}" }
+            log { "stopAllAnimation. stop translation. translation=${translation.toShortString()}" }
         }
     }
 
     private suspend fun fling(velocity: Velocity) = coroutineScope {
-        logI { "fling. velocity=$velocity, translation=${translation.toShortString()}" }
+        log { "fling. velocity=$velocity, translation=${translation.toShortString()}" }
         launch {
+            // todo fling 滚动距离总是很近，不知道为什么，比 View 版的差一倍
+            val startX = translationXAnimatable.value
             translationXAnimatable.animateDecay(velocity.x, exponentialDecay()) {
-                logD { "fling. running. velocity=$velocity, translationX=${this.value}" }
+                val translationX = this.value
+                val distanceX = translationX - startX
+                log { "fling. running. velocity=$velocity, startX=$startX, translationX=$translationX, distanceX=$distanceX" }
             }
         }
         launch {
+            val startY = translationYAnimatable.value
             translationYAnimatable.animateDecay(velocity.y, exponentialDecay()) {
-                logD { "fling. running. velocity=$velocity, translationY=${this.value}" }
+                val translationY = this.value
+                val distanceY = translationY - startY
+                log { "fling. running. velocity=$velocity, startY=$startY, translationY=$translationY, distanceY=$distanceY" }
             }
         }
     }
@@ -567,35 +586,29 @@ class ZoomableState(
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentScale = scale
-        val bounds = computeTranslationBounds(
+        val bounds = computeSupportTranslationBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            scale = currentScale
+            supportScale = currentScale
         )
         this.translationBounds = bounds
-        logD { "updateTranslationBounds. $caller. bounds=${bounds.toShortString()}, containerSize=${containerSize.toShortString()}, contentSize=${contentSize.toShortString()}, scale=$currentScale" }
+        log { "updateTranslationBounds. $caller. bounds=${bounds.toShortString()}, containerSize=${containerSize.toShortString()}, contentSize=${contentSize.toShortString()}, scale=$currentScale" }
         translationXAnimatable.updateBounds(lowerBound = bounds.left, upperBound = bounds.right)
         translationYAnimatable.updateBounds(lowerBound = bounds.top, upperBound = bounds.bottom)
     }
 
     private fun clearTranslationBounds(@Suppress("SameParameterValue") caller: String) {
-        logD { "updateTranslationBounds. ${caller}. clear" }
+        log { "updateTranslationBounds. ${caller}. clear" }
         this.translationBounds = null
         translationXAnimatable.updateBounds(lowerBound = null, upperBound = null)
         translationYAnimatable.updateBounds(lowerBound = null, upperBound = null)
     }
 
-    private fun logD(message: () -> String) {
+    private fun log(message: () -> String) {
         if (debugMode) {
             Log.d("MyZoomState", message())
-        }
-    }
-
-    private fun logI(message: () -> String) {
-        if (debugMode) {
-            Log.i("MyZoomState", message())
         }
     }
 
