@@ -37,7 +37,7 @@ internal class ScaleDragHelper constructor(
     private val engine: ZoomEngine,
     val onUpdateMatrix: () -> Unit,
     val onViewDrag: (dx: Float, dy: Float) -> Unit,
-    val onDragFling: (startX: Float, startY: Float, velocityX: Float, velocityY: Float) -> Unit,
+    val onDragFling: (velocityX: Float, velocityY: Float) -> Unit,
     val onScaleChanged: (scaleFactor: Float, focusX: Float, focusY: Float) -> Unit,
 ) {
 
@@ -94,9 +94,7 @@ internal class ScaleDragHelper constructor(
         scaleDragGestureDetector = ScaleDragGestureDetector(context, object : OnGestureListener {
             override fun onDrag(dx: Float, dy: Float) = doDrag(dx, dy)
 
-            override fun onFling(
-                startX: Float, startY: Float, velocityX: Float, velocityY: Float
-            ) = doFling(startX, startY, velocityX, velocityY)
+            override fun onFling(velocityX: Float, velocityY: Float) = doFling(velocityX, velocityY)
 
             override fun onScaleBegin(): Boolean = doScaleBegin()
 
@@ -236,6 +234,12 @@ internal class ScaleDragHelper constructor(
 
     fun translateBy(dx: Float, dy: Float) {
         supportMatrix.postTranslate(dx, dy)
+        checkAndApplyMatrix()
+    }
+
+    fun translateTo(dx: Float, dy: Float) {
+        val translation = translation
+        supportMatrix.postTranslate(dx - translation.translationX, dy - translation.translationY)
         checkAndApplyMatrix()
     }
 
@@ -446,9 +450,9 @@ internal class ScaleDragHelper constructor(
         requestDisallowInterceptTouchEvent(disallow)
     }
 
-    private fun doFling(startX: Float, startY: Float, velocityX: Float, velocityY: Float) {
+    private fun doFling(velocityX: Float, velocityY: Float) {
         logger.d(ZoomEngine.MODULE) {
-            "fling. startX=$startX, startY=$startY, velocityX=$velocityX, velocityY=$velocityY"
+            "fling. velocity=($velocityX, $velocityY), translation=${translation.toShortString()}"
         }
 
         flingRunnable?.cancel()
@@ -461,7 +465,7 @@ internal class ScaleDragHelper constructor(
         )
         flingRunnable?.start()
 
-        onDragFling(startX, startY, velocityX, velocityY)
+        onDragFling(velocityX, velocityY)
     }
 
     private fun cancelFling() {

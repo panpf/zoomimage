@@ -72,9 +72,9 @@ internal class ZoomEngine constructor(
                 it.onDrag(dx, dy)
             }
         },
-        onDragFling = { startX: Float, startY: Float, velocityX: Float, velocityY: Float ->
+        onDragFling = {velocityX: Float, velocityY: Float ->
             onDragFlingListenerList?.forEach {
-                it.onFling(startX, startY, velocityX, velocityY)
+                it.onFling(velocityX, velocityY)
             }
         },
         onScaleChanged = { scaleFactor: Float, focusX: Float, focusY: Float ->

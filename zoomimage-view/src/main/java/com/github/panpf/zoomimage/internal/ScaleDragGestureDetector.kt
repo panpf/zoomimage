@@ -164,7 +164,7 @@ internal class ScaleDragGestureDetector(
 
                         // If the velocity is greater than minVelocity, call listener
                         if (max(abs(vX), abs(vY)) >= minimumVelocity) {
-                            onGestureListener.onFling(lastTouchX, lastTouchY, -vX, -vY)
+                            onGestureListener.onFling(vX, vY)
                         }
                     }
                 }
@@ -203,7 +203,7 @@ internal class ScaleDragGestureDetector(
 
     interface OnGestureListener {
         fun onDrag(dx: Float, dy: Float)
-        fun onFling(startX: Float, startY: Float, velocityX: Float, velocityY: Float)
+        fun onFling(velocityX: Float, velocityY: Float)
         fun onScale(scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float)
         fun onScaleBegin(): Boolean
         fun onScaleEnd()

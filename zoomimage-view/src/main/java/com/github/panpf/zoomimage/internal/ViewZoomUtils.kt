@@ -127,7 +127,7 @@ internal fun rotatePoint(point: PointF, rotateDegrees: Int, drawableSize: Size) 
 
 internal fun ScaleType.computeTransform(srcSize: Size, dstSize: Size): Transform {
     val scaleFactor = this.computeScaleFactor(srcSize, dstSize)
-    val translation = this.computeScaleTranslation(srcSize, dstSize)
+    val translation = computeScaleTranslation(srcSize, dstSize, this)
     return Transform(scaleFactor, translation)
 }
 
@@ -166,13 +166,14 @@ internal fun ScaleType.computeScaleFactor(srcSize: Size, dstSize: Size): ScaleFa
     }
 }
 
-internal fun ScaleType.computeScaleTranslation(
+internal fun computeScaleTranslation(
     srcSize: Size,
-    dstSize: Size
+    dstSize: Size,
+    scaleType: ScaleType
 ): Translation {
-    val scaleFactor = this.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
+    val scaleFactor = scaleType.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
     val scaledSrcSize = srcSize.times(scaleFactor)
-    return when (this) {
+    return when (scaleType) {
         ScaleType.CENTER -> Translation(
             translationX = (dstSize.width - scaledSrcSize.width) / 2.0f,
             translationY = (dstSize.height - scaledSrcSize.height) / 2.0f
@@ -245,4 +246,129 @@ fun ScaleType.toScaleMode(): ScaleMode = when (this) {
     ScaleType.FIT_XY -> ScaleMode.FILL_BOUNDS
     ScaleType.MATRIX -> ScaleMode.NONE
     else -> ScaleMode.NONE
+}
+
+internal fun computeContentInContainerRect(
+    containerSize: Size,
+    contentSize: Size,
+    scaleType: ScaleType,
+): Rect {
+    if (containerSize.isEmpty || contentSize.isEmpty) return ZeroRect
+    val contentScaleFactor =
+        scaleType.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
+    val contentScaledContentSize = contentSize.times(contentScaleFactor)
+    val translation = computeScaleTranslation(
+        srcSize = contentSize,
+        dstSize = containerSize,
+        scaleType = scaleType,
+    )
+    return Rect(
+        left = translation.translationX.coerceAtLeast(0f).roundToInt(),
+        top = translation.translationY.coerceAtLeast(0f).roundToInt(),
+        right = (translation.translationX + contentScaledContentSize.width).roundToInt()
+            .coerceAtMost(containerSize.width),
+        bottom = (translation.translationY + contentScaledContentSize.height).roundToInt()
+            .coerceAtMost(containerSize.height),
+    )
+}
+
+
+internal fun computeSupportTranslationBounds(
+    containerSize: Size,
+    contentSize: Size,
+    scaleType: ScaleType,
+    supportScale: Float
+): Rect {
+    // based on the top left zoom
+    if (supportScale <= 1.0f || containerSize.isEmpty || contentSize.isEmpty) {
+        return ZeroRect
+    }
+    val scaledContainerSize = containerSize.times(supportScale)
+    val scaledContentInContainerRect = computeContentInContainerRect(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        scaleType = scaleType,
+    ).scale(supportScale)
+
+    val horizontalBounds = if (scaledContentInContainerRect.width() > containerSize.width) {
+        ((scaledContentInContainerRect.right - containerSize.width) * -1)..(scaledContentInContainerRect.left * -1)
+    } else if (scaleType.isStart(srcSize = contentSize, dstSize = containerSize)) {
+        0..0
+    } else if (scaleType.isHorizontalCenter(srcSize = contentSize, dstSize = containerSize)) {
+        val horizontalSpace = (scaledContainerSize.width - containerSize.width) / 2 * -1
+        horizontalSpace..horizontalSpace
+    } else {   // contentAlignment.isEnd
+        val horizontalSpace = (scaledContainerSize.width - containerSize.width) * -1
+        horizontalSpace..horizontalSpace
+    }
+
+    val verticalBounds = if (scaledContentInContainerRect.height() > containerSize.height) {
+        ((scaledContentInContainerRect.bottom - containerSize.height) * -1)..(scaledContentInContainerRect.top * -1)
+    } else if (scaleType.isTop(srcSize = contentSize, dstSize = containerSize)) {
+        0..0
+    } else if (scaleType.isVerticalCenter(srcSize = contentSize, dstSize = containerSize)) {
+        val verticalSpace = (scaledContainerSize.height - containerSize.height) / 2 * -1
+        verticalSpace..verticalSpace
+    } else {   // contentAlignment.isBottom
+        val verticalSpace = (scaledContainerSize.height - containerSize.height) * -1
+        verticalSpace..verticalSpace
+    }
+
+    return Rect(
+        left = horizontalBounds.first,
+        top = verticalBounds.first,
+        right = horizontalBounds.last,
+        bottom = verticalBounds.last
+    )
+}
+
+
+internal fun ScaleType.isStart(srcSize: Size, dstSize: Size): Boolean {
+    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
+    return this == ScaleType.MATRIX
+            || this == ScaleType.FIT_XY
+            || (this == ScaleType.FIT_START && scaledSrcSize.width < dstSize.width)
+}
+
+internal fun ScaleType.isHorizontalCenter(srcSize: Size, dstSize: Size): Boolean {
+    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
+    return this == ScaleType.CENTER
+            || this == ScaleType.CENTER_CROP
+            || this == ScaleType.CENTER_INSIDE
+            || this == ScaleType.FIT_CENTER
+            || (this == ScaleType.FIT_START && scaledSrcSize.width >= dstSize.width)
+            || (this == ScaleType.FIT_END && scaledSrcSize.width >= dstSize.width)
+}
+
+internal fun ScaleType.isCenter(srcSize: Size, dstSize: Size): Boolean =
+    this == ScaleType.CENTER
+            || this == ScaleType.CENTER_CROP
+            || this == ScaleType.CENTER_INSIDE
+            || this == ScaleType.FIT_CENTER
+
+internal fun ScaleType.isEnd(srcSize: Size, dstSize: Size): Boolean {
+    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
+    return this == ScaleType.FIT_END && scaledSrcSize.width < dstSize.width
+}
+
+internal fun ScaleType.isTop(srcSize: Size, dstSize: Size): Boolean {
+    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
+    return this == ScaleType.MATRIX
+            || this == ScaleType.FIT_XY
+            || (this == ScaleType.FIT_START && scaledSrcSize.height < dstSize.height)
+}
+
+internal fun ScaleType.isVerticalCenter(srcSize: Size, dstSize: Size): Boolean {
+    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
+    return this == ScaleType.CENTER
+            || this == ScaleType.CENTER_CROP
+            || this == ScaleType.CENTER_INSIDE
+            || this == ScaleType.FIT_CENTER
+            || (this == ScaleType.FIT_START && scaledSrcSize.height >= dstSize.height)
+            || (this == ScaleType.FIT_END && scaledSrcSize.height >= dstSize.height)
+}
+
+internal fun ScaleType.isBottom(srcSize: Size, dstSize: Size): Boolean {
+    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
+    return this == ScaleType.FIT_END && scaledSrcSize.height < dstSize.height
 }

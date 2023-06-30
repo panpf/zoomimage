@@ -28,8 +28,6 @@ internal class FlingRunnable(
 ) : Runnable {
 
     private val scroller: OverScroller = OverScroller(context)
-    private var currentX: Int = 0
-    private var currentY: Int = 0
 
     @Suppress("unused")
     val isRunning: Boolean
@@ -38,39 +36,24 @@ internal class FlingRunnable(
     fun start() {
         cancel()
 
-        val displayRectF = scaleDragHelper.getDisplayRect()
-            .takeIf { !it.isEmpty }
-            ?: return
-        val (viewWidth, viewHeight) = engine.viewSize
-
-        val minX: Int
-        val maxX: Int
-        val startX = (-displayRectF.left).roundToInt()
-        if (viewWidth < displayRectF.width()) {
-            minX = 0
-            maxX = (displayRectF.width() - viewWidth).roundToInt()
-        } else {
-            maxX = startX
-            minX = maxX
+        val translation = engine.translation
+        val startX = translation.translationX.roundToInt()
+        val startY = translation.translationY.roundToInt()
+        val bounds = computeSupportTranslationBounds(
+            containerSize = engine.viewSize,
+            contentSize = engine.drawableSize,
+            scaleType = engine.scaleType,
+            supportScale = engine.scale
+        )
+        val minX: Int = bounds.left
+        val maxX: Int = bounds.right
+        val minY: Int = bounds.top
+        val maxY: Int = bounds.bottom
+        engine.logger.d(ZoomEngine.MODULE) {
+            "fling. start. velocity=($velocityX, $velocityY), start=($startX,$startY), min=($minX,$minY), max=($maxX,$maxY), translation=${translation.toShortString()}"
         }
-
-        val minY: Int
-        val maxY: Int
-        val startY = (-displayRectF.top).roundToInt()
-        if (viewHeight < displayRectF.height()) {
-            minY = 0
-            maxY = (displayRectF.height() - viewHeight).roundToInt()
-        } else {
-            maxY = startY
-            minY = maxY
-        }
-
-        currentX = startX
-        currentY = startY
-        if (startX != maxX || startY != maxY) {
-            scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY, 0, 0)
-            engine.view.post(this)
-        }
+        scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY, 0, 0)
+        engine.view.post(this)
     }
 
     fun cancel() {
@@ -84,13 +67,16 @@ internal class FlingRunnable(
         }
 
         if (scroller.computeScrollOffset()) {
-            val newX = scroller.currX
-            val newY = scroller.currY
-            val dx = (currentX - newX).toFloat()
-            val dy = (currentY - newY).toFloat()
-            scaleDragHelper.translateBy(dx, dy)
-            currentX = newX
-            currentY = newY
+            val start = Translation(scroller.startX.toFloat(), scroller.startY.toFloat())
+            scaleDragHelper.translateTo(scroller.currX.toFloat(), scroller.currY.toFloat())
+            val translation = engine.translation
+            val distance = Translation(
+                translationX = translation.translationX - start.translationX,
+                translationY = translation.translationY - start.translationY
+            )
+            engine.logger.d(ZoomEngine.MODULE) {
+                "fling. running. velocity=($velocityX, $velocityY), start=${start.toShortString()}, translation=${translation.toShortString()}, distance=${distance.toShortString()}"
+            }
             // Post On animation
             engine.view.postOnAnimation(this)
         }

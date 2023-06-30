@@ -16,5 +16,5 @@
 package com.github.panpf.zoomimage
 
 fun interface OnDragFlingListener {
-    fun onFling(startX: Float, startY: Float, velocityX: Float, velocityY: Float)
+    fun onFling(velocityX: Float, velocityY: Float)
 }
