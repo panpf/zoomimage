@@ -120,6 +120,7 @@ internal suspend inline fun AwaitPointerEventScope.awaitPointerSlopOrCancellatio
 
     while (true) {
         val event = awaitPointerEvent()
+        // todo 此处就开始记录 velocityTracker，这样才是完整的 velocityTracker
         val dragEvent = event.changes.fastFirstOrNull { it.id == pointer } ?: return null
         if (dragEvent.isConsumed) {
             return null
@@ -174,12 +175,10 @@ internal suspend inline fun AwaitPointerEventScope.awaitPointerSlopOrCancellatio
                     offset - touchSlopOffset
                 }
 
-                val canDragged = if (postSlopOffset.x != 0f) {
-                    canDrag(true, if (postSlopOffset.x > 0f) 1 else -1)
-                } else if (postSlopOffset.y != 0f) {
-                    canDrag(false, if (postSlopOffset.y > 0f) 1 else -1)
+                val canDragged = if (abs(postSlopOffset.x) > abs(postSlopOffset.y)) {
+                    postSlopOffset.x != 0f && canDrag(true, if (postSlopOffset.x > 0f) 1 else -1)
                 } else {
-                    false
+                    postSlopOffset.y != 0f && canDrag(false, if (postSlopOffset.y > 0f) 1 else -1)
                 }
                 if (!canDragged) {
                     return null
