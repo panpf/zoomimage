@@ -116,8 +116,8 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         }
 
         common.zoomImageViewSettings.setOnClickListener {
-            ZoomImageViewSettingsDialogFragment().apply {
-                arguments = ZoomImageViewSettingsDialogFragmentArgs(
+            ZoomImageViewOptionsDialogFragment().apply {
+                arguments = ZoomImageViewOptionsDialogFragmentArgs(
                     supportMemoryCache = supportDisabledMemoryCache,
                     supportIgnoreExifOrientation = supportIgnoreExifOrientation,
                     supportReuseBitmap = supportDisallowReuseBitmap

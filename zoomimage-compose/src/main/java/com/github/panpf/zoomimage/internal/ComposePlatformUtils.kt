@@ -12,6 +12,10 @@ import androidx.compose.ui.unit.Dp
 
 internal fun Size.toShortString(): String = "(${width},$height)"
 
+internal fun Size.rotate(rotateDegrees: Int): Size {
+    return if (rotateDegrees % 180 == 0) this else Size(height, width)
+}
+
 internal fun Offset.toShortString(): String = "(${x.formatString(1)},${y.formatString(1)})"
 
 internal fun Rect.toShortString(): String =

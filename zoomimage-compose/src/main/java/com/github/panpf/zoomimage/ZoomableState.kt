@@ -27,43 +27,55 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Velocity
+import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
+import com.github.panpf.zoomimage.core.internal.computeSupportScales
 import com.github.panpf.zoomimage.internal.ScaleFactor
+import com.github.panpf.zoomimage.internal.Transform
 import com.github.panpf.zoomimage.internal.Translation
-import com.github.panpf.zoomimage.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.internal.computeContainerCentroidByTouchPosition
 import com.github.panpf.zoomimage.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.internal.computeContentVisibleRect
+import com.github.panpf.zoomimage.internal.computeReadModeTransform
 import com.github.panpf.zoomimage.internal.computeScaleTargetTranslation
 import com.github.panpf.zoomimage.internal.computeScaleTranslation
 import com.github.panpf.zoomimage.internal.computeScrollEdge
-import com.github.panpf.zoomimage.internal.computeSupportScales
+import com.github.panpf.zoomimage.internal.computeTransform
 import com.github.panpf.zoomimage.internal.computeTranslationBounds
 import com.github.panpf.zoomimage.internal.containerCentroidToContentCentroid
 import com.github.panpf.zoomimage.internal.contentCentroidToContainerCentroid
+import com.github.panpf.zoomimage.internal.rotate
+import com.github.panpf.zoomimage.internal.supportReadMode
 import com.github.panpf.zoomimage.internal.toScaleFactor
 import com.github.panpf.zoomimage.internal.toScaleMode
 import com.github.panpf.zoomimage.internal.toShortString
 import com.github.panpf.zoomimage.internal.toSize
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
 fun rememberZoomableState(
     threeStepScaleEnabled: Boolean = false,
+    readModeEnabled: Boolean = false,
+    readModeDecider: ReadModeDecider = ReadModeDecider.Default,
     debugMode: Boolean = false,
 ): ZoomableState {
     val state = rememberSaveable(saver = ZoomableState.Saver) {
         ZoomableState()
     }
     state.threeStepScaleEnabled = threeStepScaleEnabled
+    state.readModeEnabled = readModeEnabled
+    state.readModeDecider = readModeDecider
     state.debugMode = debugMode
     LaunchedEffect(
         state.containerSize,
         state.contentSize,
         state.contentOriginSize,
         state.contentScale,
-        state.contentAlignment
+        state.contentAlignment,
+        readModeEnabled,
+        readModeDecider,
     ) {
         if (state.contentSize.isUnspecified && state.containerSize.isSpecified) {
             state.contentSize = state.containerSize
@@ -81,12 +93,16 @@ class ZoomableState(
 
     // todo support click and long press
     // todo support rubber band effect
-    // todo support read mode
 
     private val velocityTracker = VelocityTracker()
     private val scaleAnimatable = Animatable(initialScale)
     private val translationXAnimatable = Animatable(initialTranslateX)
     private val translationYAnimatable = Animatable(initialTranslateY)
+
+    /**
+     * Initial scale and translate for support
+     */
+    private var supportInitialTransform: Transform = Transform.Empty
 
     var containerSize: Size by mutableStateOf(Size.Unspecified)
     var contentSize: Size by mutableStateOf(Size.Unspecified)
@@ -95,6 +111,8 @@ class ZoomableState(
     var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
     var threeStepScaleEnabled: Boolean = false
     var debugMode: Boolean = false
+    var readModeEnabled: Boolean = false
+    var readModeDecider: ReadModeDecider = ReadModeDecider.Default
 
     var minScale: Float by mutableStateOf(1f)
         private set
@@ -134,10 +152,10 @@ class ZoomableState(
     }
     val baseTranslation: Translation by derivedStateOf {
         computeScaleTranslation(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            srcSize = contentSize,
+            dstSize = containerSize,
+            scale = contentScale,
+            alignment = contentAlignment,
         )
     }
     val displayTranslation: Translation by derivedStateOf {
@@ -183,8 +201,63 @@ class ZoomableState(
         computeScrollEdge(contentSize, contentVisibleRect, horizontal = false)
     }
 
-    internal fun reset() {
-        resetScales()
+    internal suspend fun reset() {
+        val contentSize = contentSize
+        val contentOriginSize = contentOriginSize
+        val containerSize = containerSize
+        val contentScale = contentScale
+        if (containerSize.isUnspecified || containerSize.isEmpty()
+            || contentSize.isUnspecified || contentSize.isEmpty()
+        ) {
+            minScale = 1.0f
+            mediumScale = 1.0f
+            maxScale = 1.0f
+            supportInitialTransform = Transform.Empty
+        } else {
+            val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
+            val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
+            val scales = computeSupportScales(
+                contentSize = rotatedContentSize.toSize(),
+                contentOriginSize = rotatedContentOriginSize.toSize(),
+                containerSize = containerSize.toSize(),
+                scaleMode = contentScale.toScaleMode(),
+                baseScale = contentScale.computeScaleFactor(rotatedContentSize, containerSize)
+                    .toScaleFactor()
+            )
+            minScale = scales[0]
+            mediumScale = scales[1]
+            maxScale = scales[2]
+            val readMode = readModeEnabled
+                    && contentScale.supportReadMode()
+                    && readModeDecider
+                .should(srcSize = rotatedContentSize.toSize(), dstSize = containerSize.toSize())
+            val baseTransform = computeTransform(
+                srcSize = rotatedContentSize,
+                dstSize = containerSize,
+                scale = contentScale,
+                alignment = contentAlignment,
+            )
+            supportInitialTransform = if (readMode) {
+                computeReadModeTransform(
+                    srcSize = rotatedContentSize,
+                    dstSize = containerSize,
+                    scale = contentScale,
+                    alignment = contentAlignment,
+                ).let {
+                    Transform(
+                        scaleX = it.scaleX / baseTransform.scaleX,
+                        scaleY = it.scaleY / baseTransform.scaleY,
+                        translationX = it.translationX / baseTransform.scaleX,
+                        translationY = it.translationY / baseTransform.scaleY,
+                    )
+                }
+            } else {
+                Transform.Empty
+            }
+        }
+        scaleAnimatable.snapTo(supportInitialTransform.scaleX)
+        translationXAnimatable.snapTo(supportInitialTransform.translationX)
+        translationYAnimatable.snapTo(supportInitialTransform.translationY)
         updateTranslationBounds("reset")
     }
 
@@ -487,32 +560,6 @@ class ZoomableState(
 
     override fun toString(): String =
         "MyZoomState(minScale=$minScale, maxScale=$maxScale, scale=$scale, translation=${translation.toShortString()}"
-
-    private fun resetScales() {
-        val contentSize = contentSize
-        val contentOriginSize = contentOriginSize
-        val containerSize = containerSize
-        val contentScale = contentScale
-        if (containerSize.isUnspecified || containerSize.isEmpty()
-            || contentSize.isUnspecified || contentSize.isEmpty()
-        ) {
-            minScale = 1.0f
-            mediumScale = 1.0f
-            maxScale = 1.0f
-        } else {
-            val scales = computeSupportScales(
-                contentSize = contentSize.toSize(),
-                contentOriginSize = contentOriginSize.toSize(),
-                containerSize = containerSize.toSize(),
-                scaleMode = contentScale.toScaleMode(),
-                baseScale = contentScale.computeScaleFactor(contentSize, containerSize)
-                    .toScaleFactor()
-            )
-            minScale = scales[0]
-            mediumScale = scales[1]
-            maxScale = scales[2]
-        }
-    }
 
     private fun updateTranslationBounds(caller: String) {
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return

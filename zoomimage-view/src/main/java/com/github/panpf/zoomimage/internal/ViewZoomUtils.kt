@@ -223,27 +223,17 @@ internal fun ScaleType.computeScaleTranslation(
 internal fun ScaleType.supportReadMode(): Boolean = this != ScaleType.FIT_XY
 
 internal fun computeReadModeTransform(
-    scaleType: ScaleType,
     srcSize: Size,
-    dstSize: Size
+    dstSize: Size,
+    scaleType: ScaleType,
 ): Transform {
-    val widthScale = dstSize.width / srcSize.width.toFloat()
-    val heightScale = dstSize.height / srcSize.height.toFloat()
-    val fillMaxDimension = max(widthScale, heightScale)
-    @Suppress("UnnecessaryVariable") val scaleX = fillMaxDimension
-    @Suppress("UnnecessaryVariable") val scaleY = fillMaxDimension
-    val baseTransform = scaleType.computeTransform(srcSize = srcSize, dstSize = dstSize)
-    val translateX =
-        if (baseTransform.translationX < 0) baseTransform.translationX * -1 * scaleX else 0.0f
-    val translateY =
-        if (baseTransform.translationY < 0) baseTransform.translationY * -1 * scaleY else 0.0f
-    return Transform(
-        scaleX = scaleX,
-        scaleY = scaleY,
-        translationX = translateX,
-        translationY = translateY
+    return com.github.panpf.zoomimage.core.internal.computeReadModeTransform(
+        srcSize = srcSize,
+        dstSize = dstSize,
+        baseTransform = scaleType.computeTransform(srcSize = srcSize, dstSize = dstSize)
     )
 }
+
 
 fun ScaleType.toScaleMode(): ScaleMode = when (this) {
     ScaleType.CENTER -> ScaleMode.NONE

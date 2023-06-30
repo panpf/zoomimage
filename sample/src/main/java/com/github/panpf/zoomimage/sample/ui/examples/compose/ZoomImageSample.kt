@@ -27,7 +27,11 @@ import com.google.accompanist.drawablepainter.DrawablePainter
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
     val zoomImageOptionsDialogState = rememberZoomImageOptionsDialogState()
-    val zoomableState = rememberZoomableState(threeStepScaleEnabled = zoomImageOptionsDialogState.threeStepScaleEnabled, debugMode = BuildConfig.DEBUG)
+    val zoomableState = rememberZoomableState(
+        threeStepScaleEnabled = zoomImageOptionsDialogState.threeStepScaleEnabled,
+        readModeEnabled = zoomImageOptionsDialogState.readModeEnabled,
+        debugMode = BuildConfig.DEBUG
+    )
     val animationDurationMillisState = remember(zoomImageOptionsDialogState.slowerScaleAnimation) {
         mutableStateOf(if (zoomImageOptionsDialogState.slowerScaleAnimation) 3000 else AnimationConfig.DefaultDurationMillis)
     }

@@ -1,6 +1,10 @@
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.core.internal
 
 import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.internal.ScaleFactor
+import com.github.panpf.zoomimage.internal.ScaleMode
+import com.github.panpf.zoomimage.internal.Transform
+import com.github.panpf.zoomimage.internal.format
 import com.github.panpf.zoomimage.isNotEmpty
 import kotlin.math.max
 
@@ -51,4 +55,26 @@ fun computeSupportScales(
             .map { it / baseScale.scaleX }
             .toFloatArray()
     }
+}
+
+fun computeReadModeTransform(
+    srcSize: Size,
+    dstSize: Size,
+    baseTransform: Transform,
+): Transform {
+    val widthScale = dstSize.width / srcSize.width.toFloat()
+    val heightScale = dstSize.height / srcSize.height.toFloat()
+    val fillMaxDimension = max(widthScale, heightScale)
+    @Suppress("UnnecessaryVariable") val scaleX = fillMaxDimension
+    @Suppress("UnnecessaryVariable") val scaleY = fillMaxDimension
+    val translateX =
+        if (baseTransform.translationX < 0) baseTransform.translationX * -1 * scaleX else 0.0f
+    val translateY =
+        if (baseTransform.translationY < 0) baseTransform.translationY * -1 * scaleY else 0.0f
+    return Transform(
+        scaleX = scaleX,
+        scaleY = scaleY,
+        translationX = translateX,
+        translationY = translateY
+    )
 }

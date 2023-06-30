@@ -144,8 +144,8 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/zoomImageViewSettingsDialogFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewSettingsDialogFragment">
+        android:id="@+id/zoomImageViewOptionsDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment">
         <argument
             android:name="supportMemoryCache"
             app:argType="boolean"

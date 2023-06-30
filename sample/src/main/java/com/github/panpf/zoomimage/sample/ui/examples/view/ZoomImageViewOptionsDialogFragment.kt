@@ -30,9 +30,9 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiSelectMenuItem
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
 
-class ZoomImageViewSettingsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
+class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
 
-    private val args by navArgs<ZoomImageViewSettingsDialogFragmentArgs>()
+    private val args by navArgs<ZoomImageViewOptionsDialogFragmentArgs>()
 
     override fun onViewCreated(binding: RecyclerFragmentBinding, savedInstanceState: Bundle?) {
         binding.recyclerRecycler.apply {

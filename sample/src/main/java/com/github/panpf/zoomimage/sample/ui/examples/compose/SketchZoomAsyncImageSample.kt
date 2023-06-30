@@ -21,8 +21,12 @@ import com.github.panpf.zoomimage.sketch.ZoomAsyncImage
 
 @Composable
 fun SketchZoomAsyncImageSample(sketchImageUri: String) {
-    val zoomableState = rememberZoomableState(debugMode = BuildConfig.DEBUG)
     val zoomImageOptionsDialogState = rememberZoomImageOptionsDialogState()
+    val zoomableState = rememberZoomableState(
+        threeStepScaleEnabled = zoomImageOptionsDialogState.threeStepScaleEnabled,
+        readModeEnabled = zoomImageOptionsDialogState.readModeEnabled,
+        debugMode = BuildConfig.DEBUG
+    )
     val animationDurationMillisState = remember(zoomImageOptionsDialogState.slowerScaleAnimation) {
         mutableStateOf(if (zoomImageOptionsDialogState.slowerScaleAnimation) 3000 else AnimationConfig.DefaultDurationMillis)
     }

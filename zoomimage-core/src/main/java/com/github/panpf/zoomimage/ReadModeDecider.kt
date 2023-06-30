@@ -19,16 +19,16 @@ import com.github.panpf.zoomimage.internal.format
 
 interface ReadModeDecider {
     fun should(srcSize: Size, dstSize: Size): Boolean
+
+    companion object {
+        val Default = LongImageReadModeDecider()
+    }
 }
 
 class LongImageReadModeDecider(
     val sameDirectionMultiple: Float = 2.5f,
     val notSameDirectionMultiple: Float = 5.0f,
 ) : ReadModeDecider {
-
-    companion object {
-        val DEFAULT = LongImageReadModeDecider()
-    }
 
     override fun should(srcSize: Size, dstSize: Size): Boolean =
         isLongImage(srcSize = srcSize, dstSize = dstSize)

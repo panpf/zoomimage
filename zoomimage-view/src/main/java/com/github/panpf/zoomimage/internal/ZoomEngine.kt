@@ -29,7 +29,6 @@ import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.LongImageReadModeDecider
 import com.github.panpf.zoomimage.OnDragFlingListener
 import com.github.panpf.zoomimage.OnMatrixChangeListener
 import com.github.panpf.zoomimage.OnRotateChangeListener
@@ -39,6 +38,8 @@ import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.OnViewTapListener
 import com.github.panpf.zoomimage.ReadModeDecider
 import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
+import com.github.panpf.zoomimage.core.internal.computeSupportScales
 import com.github.panpf.zoomimage.rotate
 import com.github.panpf.zoomimage.view.ScrollBarStyle
 
@@ -135,7 +136,7 @@ internal class ZoomEngine constructor(
                 reset()
             }
         }
-    var readModeDecider: ReadModeDecider = LongImageReadModeDecider.DEFAULT
+    var readModeDecider: ReadModeDecider = ReadModeDecider.Default
         internal set(value) {
             if (field != value) {
                 field = value
@@ -205,15 +206,15 @@ internal class ZoomEngine constructor(
             baseInitialTransform = Transform.Empty
             supportInitialTransform = Transform.Empty
         } else {
-            val finalDrawableSize = drawableSize.rotate(rotateDegrees)
-            val finalImageSize = imageSize.rotate(rotateDegrees)
+            val rotatedDrawableSize = drawableSize.rotate(rotateDegrees)
+            val rotatedImageSize = imageSize.rotate(rotateDegrees)
             val supportStepScales = computeSupportScales(
-                contentSize = finalDrawableSize,
-                contentOriginSize = finalImageSize,
+                contentSize = rotatedDrawableSize,
+                contentOriginSize = rotatedImageSize,
                 containerSize = viewSize,
                 scaleMode = scaleType.toScaleMode(),
                 baseScale = scaleType.computeScaleFactor(
-                    srcSize = finalDrawableSize,
+                    srcSize = rotatedDrawableSize,
                     dstSize = viewSize
                 ),
             )
@@ -221,13 +222,15 @@ internal class ZoomEngine constructor(
             mediumScale = supportStepScales[1]
             maxScale = supportStepScales[2]
             baseInitialTransform = scaleType
-                .computeTransform(srcSize = finalDrawableSize, dstSize = viewSize)
-            val readMode = readModeEnabled && scaleType.supportReadMode() && readModeDecider.should(srcSize = drawableSize, viewSize)
+                .computeTransform(srcSize = rotatedDrawableSize, dstSize = viewSize)
+            val readMode = readModeEnabled
+                    && scaleType.supportReadMode()
+                    && readModeDecider.should(srcSize = rotatedDrawableSize, dstSize = viewSize)
             supportInitialTransform = if (readMode) {
                 computeReadModeTransform(
+                    srcSize = rotatedDrawableSize,
+                    dstSize = viewSize,
                     scaleType = scaleType,
-                    srcSize = finalDrawableSize,
-                    dstSize = viewSize
                 ).let {
                     Transform(
                         scaleX = it.scaleX / baseInitialTransform.scaleX,
@@ -261,7 +264,8 @@ internal class ZoomEngine constructor(
         scrollBarHelper?.cancel()
         scrollBarHelper = null
         if (scrollBarEnabled) {
-            scrollBarHelper = ScrollBarHelper(context, this@ZoomEngine, scrollBarStyle).apply { reset() }
+            scrollBarHelper =
+                ScrollBarHelper(context, this@ZoomEngine, scrollBarStyle).apply { reset() }
         }
     }
 

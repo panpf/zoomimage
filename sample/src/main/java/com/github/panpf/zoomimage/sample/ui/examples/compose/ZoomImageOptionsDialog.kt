@@ -37,6 +37,8 @@ class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
         internal set
     var threeStepScaleEnabled: Boolean by mutableStateOf(false)
         internal set
+    var readModeEnabled: Boolean by mutableStateOf(true)
+        internal set
     var scrollBarEnabled: Boolean by mutableStateOf(true)
         internal set
     var animateScale: Boolean by mutableStateOf(true)
@@ -183,6 +185,24 @@ fun ZoomImageOptionsDialog(
                     Text(text = "Three Step Scale", modifier = Modifier.weight(1f))
                     Checkbox(
                         checked = state.threeStepScaleEnabled,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            state.readModeEnabled = !state.readModeEnabled
+                            state.showing = false
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Read Mode", modifier = Modifier.weight(1f))
+                    Checkbox(
+                        checked = state.readModeEnabled,
                         onCheckedChange = null
                     )
                 }

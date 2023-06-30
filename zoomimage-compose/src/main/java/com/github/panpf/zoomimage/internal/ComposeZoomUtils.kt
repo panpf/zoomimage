@@ -15,63 +15,63 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 internal fun computeScaleTranslation(
-    containerSize: Size,
-    contentSize: Size,
-    contentScale: ContentScale,
-    contentAlignment: Alignment,
+    srcSize: Size,
+    dstSize: Size,
+    scale: ContentScale,
+    alignment: Alignment,
 ): Translation {
-    if (containerSize.isUnspecified || containerSize.isEmpty()
-        || contentSize.isUnspecified || contentSize.isEmpty()
+    if (dstSize.isUnspecified || dstSize.isEmpty()
+        || srcSize.isUnspecified || srcSize.isEmpty()
     ) {
         return Translation.Empty
     }
     val contentScaleFactor =
-        contentScale.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
-    val contentScaledContentSize = contentSize.times(contentScaleFactor)
-    return when (contentAlignment) {
+        scale.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
+    val contentScaledContentSize = srcSize.times(contentScaleFactor)
+    return when (alignment) {
         Alignment.TopStart -> Translation(
             translationX = 0f,
             translationY = 0f,
         )
 
         Alignment.TopCenter -> Translation(
-            translationX = (containerSize.width - contentScaledContentSize.width) / 2,
+            translationX = (dstSize.width - contentScaledContentSize.width) / 2,
             translationY = 0f,
         )
 
         Alignment.TopEnd -> Translation(
-            translationX = containerSize.width - contentScaledContentSize.width,
+            translationX = dstSize.width - contentScaledContentSize.width,
             translationY = 0f,
         )
 
         Alignment.CenterStart -> Translation(
             translationX = 0f,
-            translationY = (containerSize.height - contentScaledContentSize.height) / 2,
+            translationY = (dstSize.height - contentScaledContentSize.height) / 2,
         )
 
         Alignment.Center -> Translation(
-            translationX = (containerSize.width - contentScaledContentSize.width) / 2,
-            translationY = (containerSize.height - contentScaledContentSize.height) / 2,
+            translationX = (dstSize.width - contentScaledContentSize.width) / 2,
+            translationY = (dstSize.height - contentScaledContentSize.height) / 2,
         )
 
         Alignment.CenterEnd -> Translation(
-            translationX = containerSize.width - contentScaledContentSize.width,
-            translationY = (containerSize.height - contentScaledContentSize.height) / 2,
+            translationX = dstSize.width - contentScaledContentSize.width,
+            translationY = (dstSize.height - contentScaledContentSize.height) / 2,
         )
 
         Alignment.BottomStart -> Translation(
             translationX = 0f,
-            translationY = containerSize.height - contentScaledContentSize.height,
+            translationY = dstSize.height - contentScaledContentSize.height,
         )
 
         Alignment.BottomCenter -> Translation(
-            translationX = (containerSize.width - contentScaledContentSize.width) / 2,
-            translationY = containerSize.height - contentScaledContentSize.height,
+            translationX = (dstSize.width - contentScaledContentSize.width) / 2,
+            translationY = dstSize.height - contentScaledContentSize.height,
         )
 
         Alignment.BottomEnd -> Translation(
-            translationX = containerSize.width - contentScaledContentSize.width,
-            translationY = containerSize.height - contentScaledContentSize.height,
+            translationX = dstSize.width - contentScaledContentSize.width,
+            translationY = dstSize.height - contentScaledContentSize.height,
         )
 
         else -> Translation(
@@ -92,10 +92,10 @@ internal fun computeContentInContainerRect(
         contentScale.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
     val contentScaledContentSize = contentSize.times(contentScaleFactor)
     val translation = computeScaleTranslation(
-        containerSize = containerSize,
-        contentSize = contentSize,
-        contentScale = contentScale,
-        contentAlignment = contentAlignment
+        srcSize = contentSize,
+        dstSize = containerSize,
+        scale = contentScale,
+        alignment = contentAlignment
     )
     return Rect(
         left = translation.translationX.coerceAtLeast(0f),
@@ -476,12 +476,48 @@ fun ContentScale.toScaleMode(): ScaleMode = when (this) {
     else -> ScaleMode.NONE
 }
 
-fun androidx.compose.ui.geometry.Size.toSize(): com.github.panpf.zoomimage.Size {
+fun Size.toSize(): com.github.panpf.zoomimage.Size {
     return takeIf { it.isSpecified }
         ?.let { com.github.panpf.zoomimage.Size(it.width.roundToInt(), it.height.roundToInt()) }
         ?: com.github.panpf.zoomimage.Size.Empty
 }
 
-fun androidx.compose.ui.layout.ScaleFactor.toScaleFactor(): com.github.panpf.zoomimage.internal.ScaleFactor {
-    return com.github.panpf.zoomimage.internal.ScaleFactor(scaleX = scaleX, scaleY = scaleY)
+fun androidx.compose.ui.layout.ScaleFactor.toScaleFactor(): ScaleFactor {
+    return ScaleFactor(scaleX = scaleX, scaleY = scaleY)
+}
+
+internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds
+
+internal fun computeTransform(
+    srcSize: Size,
+    dstSize: Size,
+    scale: ContentScale,
+    alignment: Alignment,
+): Transform {
+    val scaleFactor = scale.computeScaleFactor(srcSize, dstSize)
+    val translation = computeScaleTranslation(
+        srcSize = srcSize,
+        dstSize = dstSize,
+        scale = scale,
+        alignment = alignment
+    )
+    return Transform(scaleFactor.toScaleFactor(), translation)
+}
+
+internal fun computeReadModeTransform(
+    srcSize: Size,
+    dstSize: Size,
+    scale: ContentScale,
+    alignment: Alignment,
+): Transform {
+    return com.github.panpf.zoomimage.core.internal.computeReadModeTransform(
+        srcSize = srcSize.toSize(),
+        dstSize = dstSize.toSize(),
+        baseTransform = computeTransform(
+            srcSize = srcSize,
+            dstSize = dstSize,
+            scale = scale,
+            alignment = alignment
+        )
+    )
 }
