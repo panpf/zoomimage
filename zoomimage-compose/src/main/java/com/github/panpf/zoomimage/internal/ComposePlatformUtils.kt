@@ -5,18 +5,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 
-internal fun Size.toShortString(): String = "(${width},$height)"
+internal fun Size.toShortString(): String = if (isSpecified) "(${width},$height)" else "Unspecified"
 
 internal fun Size.rotate(rotateDegrees: Int): Size {
     return if (rotateDegrees % 180 == 0) this else Size(height, width)
 }
 
-internal fun Offset.toShortString(): String = "(${x.format(1)},${y.format(1)})"
+internal fun Offset.toShortString(): String = if (isSpecified) "(${x.format(1)},${y.format(1)})" else "Unspecified"
 
 internal fun Rect.toShortString(): String =
     "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
