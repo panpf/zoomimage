@@ -18,7 +18,6 @@ import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
-import com.github.panpf.zoomimage.AnimationConfig
 import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.compose.ScrollBarStyle
 import com.github.panpf.zoomimage.rememberZoomableState
@@ -32,7 +31,6 @@ fun ZoomAsyncImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
-    animationConfig: AnimationConfig = AnimationConfig(),
     scrollBarEnabled: Boolean = true,
     scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     placeholder: Painter? = null,
@@ -51,7 +49,6 @@ fun ZoomAsyncImage(
     contentDescription = contentDescription,
     modifier = modifier,
     state = state,
-    animationConfig = animationConfig,
     scrollBarEnabled = scrollBarEnabled,
     scrollBarStyle = scrollBarStyle,
     transform = transformOf(placeholder, error, uriEmpty),
@@ -70,7 +67,6 @@ fun ZoomAsyncImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
-    animationConfig: AnimationConfig = AnimationConfig(),
     scrollBarEnabled: Boolean = true,
     scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     placeholder: Painter? = null,
@@ -89,7 +85,6 @@ fun ZoomAsyncImage(
     contentDescription = contentDescription,
     modifier = modifier,
     state = state,
-    animationConfig = animationConfig,
     scrollBarEnabled = scrollBarEnabled,
     scrollBarStyle = scrollBarStyle,
     transform = transformOf(placeholder, error, uriEmpty),
@@ -108,7 +103,6 @@ fun ZoomAsyncImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
-    animationConfig: AnimationConfig = AnimationConfig(),
     scrollBarEnabled: Boolean = true,
     scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
@@ -123,7 +117,6 @@ fun ZoomAsyncImage(
     contentDescription = contentDescription,
     modifier = modifier,
     state = state,
-    animationConfig = animationConfig,
     scrollBarEnabled = scrollBarEnabled,
     scrollBarStyle = scrollBarStyle,
     transform = transform,
@@ -141,7 +134,6 @@ fun ZoomAsyncImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
-    animationConfig: AnimationConfig = AnimationConfig(),
     scrollBarEnabled: Boolean = true,
     scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
@@ -162,7 +154,7 @@ fun ZoomAsyncImage(
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarEnabled) it.zoomScrollBar(state, scrollBarStyle) else it }
-        .zoomable(state, animationConfig)
+        .zoomable(state)
         .graphicsLayer {
             scaleX = state.scale
             scaleY = state.scale

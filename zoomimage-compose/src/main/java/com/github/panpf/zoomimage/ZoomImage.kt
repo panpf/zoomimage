@@ -18,7 +18,6 @@ fun ZoomImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
-    animationConfig: AnimationConfig = AnimationConfig(),
     scrollBarEnabled: Boolean = true,
     scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     alignment: Alignment = Alignment.Center,
@@ -40,7 +39,7 @@ fun ZoomImage(
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarEnabled) it.zoomScrollBar(state, scrollBarStyle) else it }
-        .zoomable(state, animationConfig)
+        .zoomable(state)
         .graphicsLayer {
             scaleX = state.scale
             scaleY = state.scale

@@ -17,6 +17,13 @@ package com.github.panpf.zoomimage
 
 import com.github.panpf.zoomimage.internal.format
 
+data class ReadMode(val enabled: Boolean, val decider: ReadModeDecider) {
+
+    companion object {
+        val Default = ReadMode(enabled = false, decider = ReadModeDecider.Default)
+    }
+}
+
 interface ReadModeDecider {
     fun should(srcSize: Size, dstSize: Size): Boolean
 

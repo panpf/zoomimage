@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage
 
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -13,12 +12,8 @@ import com.github.panpf.zoomimage.internal.detectCanDragGestures
 import com.github.panpf.zoomimage.internal.detectZoomGestures
 import kotlinx.coroutines.launch
 
-fun Modifier.zoomable(
-    state: ZoomableState,
-    animationConfig: AnimationConfig    // todo 挪到 ZoomableState 里
-): Modifier = composed {
+fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
     val coroutineScope = rememberCoroutineScope()
-    val flingAnimationSpec = rememberSplineBasedDecay<Float>()
     this
         .onSizeChanged {
             val newContainerSize = it.toSize()
@@ -27,25 +22,17 @@ fun Modifier.zoomable(
                 state.containerSize = newContainerSize
             }
         }
-        .pointerInput(animationConfig) {
+        .pointerInput(Unit) {
             detectTapGestures(
                 onPress = {
                     state.stopAllAnimation("onPress")
                 },
                 onDoubleTap = { offset ->
                     coroutineScope.launch {
-                        val nextStepScale = state.getNextStepScale()
-                        if (animationConfig.doubleTapScaleEnabled) {
-                            state.animateScaleTo(
-                                newScale = nextStepScale,
-                                touchPosition = offset,
-                                animationDurationMillis = animationConfig.durationMillis,
-                                animationEasing = animationConfig.easing,
-                                initialVelocity = animationConfig.initialVelocity
-                            )
-                        } else {
-                            state.snapScaleTo(newScale = nextStepScale, touchPosition = offset)
-                        }
+                        state.animateScaleTo(
+                            newScale = state.getNextStepScale(),
+                            touchPosition = offset
+                        )
                     }
                 })
         }
@@ -64,7 +51,7 @@ fun Modifier.zoomable(
                 },
                 onDragEnd = {
                     coroutineScope.launch {
-                        state.fling(it, flingAnimationSpec)
+                        state.fling(it)
                     }
                 },
             )

@@ -16,7 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.zoomimage.AnimationConfig
+import com.github.panpf.zoomimage.ReadMode
+import com.github.panpf.zoomimage.ScaleAnimationSpec
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
@@ -27,14 +28,21 @@ import com.google.accompanist.drawablepainter.DrawablePainter
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
     val zoomImageOptionsDialogState = rememberZoomImageOptionsDialogState()
+    val scaleAnimationSpec = remember(
+        zoomImageOptionsDialogState.animateScale,
+        zoomImageOptionsDialogState.slowerScaleAnimation
+    ) {
+        val durationMillis = zoomImageOptionsDialogState.let {
+            if (it.animateScale) (if (it.slowerScaleAnimation) 3000 else 300) else 0
+        }
+        mutableStateOf(ScaleAnimationSpec.Default.copy(durationMillis = durationMillis))
+    }
     val zoomableState = rememberZoomableState(
         threeStepScaleEnabled = zoomImageOptionsDialogState.threeStepScaleEnabled,
-        readModeEnabled = zoomImageOptionsDialogState.readModeEnabled,
+        scaleAnimationSpec = scaleAnimationSpec.value,
+        readMode = ReadMode.Default.copy(enabled = zoomImageOptionsDialogState.readModeEnabled),
         debugMode = BuildConfig.DEBUG
     )
-    val animationDurationMillisState = remember(zoomImageOptionsDialogState.slowerScaleAnimation) {
-        mutableStateOf(if (zoomImageOptionsDialogState.slowerScaleAnimation) 3000 else AnimationConfig.DefaultDurationMillis)
-    }
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
@@ -58,10 +66,6 @@ fun ZoomImageSample(sketchImageUri: String) {
                 alignment = zoomImageOptionsDialogState.alignment,
                 modifier = Modifier.fillMaxSize(),
                 state = zoomableState,
-                animationConfig = AnimationConfig(
-                    doubleTapScaleEnabled = zoomImageOptionsDialogState.animateScale,
-                    durationMillis = animationDurationMillisState.value,
-                ),
                 scrollBarEnabled = zoomImageOptionsDialogState.scrollBarEnabled,
             )
         }
@@ -69,8 +73,6 @@ fun ZoomImageSample(sketchImageUri: String) {
         ZoomImageMinimap(
             sketchImageUri = sketchImageUri,
             state = zoomableState,
-            animateScale = zoomImageOptionsDialogState.animateScale,
-            animationDurationMillis = animationDurationMillisState.value,
         )
 
         ZoomImageTool(

@@ -39,8 +39,6 @@ fun ZoomImageMinimap(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     state: ZoomableState,
-    animateScale: Boolean,
-    animationDurationMillis: Int,
 ) {
     val contentSize = state.contentSize.takeIf { it.isSpecified } ?: Size.Zero
     val coroutineScope = rememberCoroutineScope()
@@ -81,30 +79,19 @@ fun ZoomImageMinimap(
                     .onSizeChanged {
                         imageNodeSizeState.value = it.toSize()
                     }
-                    .pointerInput(animateScale, animationDurationMillis) {
+                    .pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
                                 val imageNodeSize = imageNodeSizeState.value
                                 if (!imageNodeSize.isEmpty()) {
                                     coroutineScope.launch {
-                                        if (animateScale) {
-                                            state.animateScaleTo(
-                                                newScale = state.maxScale,
-                                                newScaleContentCentroid = Centroid(
-                                                    x = it.x / imageNodeSize.width,
-                                                    y = it.y / imageNodeSize.height
-                                                ),
-                                                animationDurationMillis = animationDurationMillis
-                                            )
-                                        } else {
-                                            state.snapScaleTo(
-                                                newScale = state.maxScale,
-                                                newScaleContentCentroid = Centroid(
-                                                    x = it.x / imageNodeSize.width,
-                                                    y = it.y / imageNodeSize.height
-                                                )
-                                            )
-                                        }
+                                        state.animateScaleTo(
+                                            newScale = state.maxScale,
+                                            newScaleContentCentroid = Centroid(
+                                                x = it.x / imageNodeSize.width,
+                                                y = it.y / imageNodeSize.height
+                                            ),
+                                        )
                                     }
                                 }
                             }

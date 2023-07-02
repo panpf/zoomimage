@@ -86,12 +86,7 @@ fun ZoomImageTool(
             IconButton(
                 onClick = {
                     coroutineScope.launch {
-                        val newScale = zoomableState.getNextStepScale()
-                        if (zoomImageOptionsDialogState.animateScale) {
-                            zoomableState.animateScaleTo(newScale = newScale)
-                        } else {
-                            zoomableState.snapScaleTo(newScale = newScale)
-                        }
+                        zoomableState.animateScaleTo(newScale = zoomableState.getNextStepScale())
                     }
                 }
             ) {

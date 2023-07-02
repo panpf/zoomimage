@@ -4,8 +4,9 @@ import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.DecayAnimationSpec
-import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -56,16 +57,18 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberZoomableState(
     threeStepScaleEnabled: Boolean = false,
-    readModeEnabled: Boolean = false,
-    readModeDecider: ReadModeDecider = ReadModeDecider.Default,
+    scaleAnimationSpec: ScaleAnimationSpec = ScaleAnimationSpec.Default,
+    readMode: ReadMode = ReadMode.Default,
     debugMode: Boolean = false,
 ): ZoomableState {
     val state = rememberSaveable(saver = ZoomableState.Saver) {
         ZoomableState()
     }
+    val flingAnimationSpec = rememberSplineBasedDecay<Float>()
     state.threeStepScaleEnabled = threeStepScaleEnabled
-    state.readModeEnabled = readModeEnabled
-    state.readModeDecider = readModeDecider
+    state.scaleAnimationSpec = scaleAnimationSpec
+    state.flingAnimationSpec = flingAnimationSpec
+    state.readMode = readMode
     state.debugMode = debugMode
     LaunchedEffect(
         state.containerSize,
@@ -73,8 +76,7 @@ fun rememberZoomableState(
         state.contentOriginSize,
         state.contentScale,
         state.contentAlignment,
-        readModeEnabled,
-        readModeDecider,
+        readMode,
     ) {
         if (state.contentSize.isUnspecified && state.containerSize.isSpecified) {
             state.contentSize = state.containerSize
@@ -108,9 +110,10 @@ class ZoomableState(
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
     var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
     var threeStepScaleEnabled: Boolean = false
+    var scaleAnimationSpec: ScaleAnimationSpec = ScaleAnimationSpec.Default
+    var flingAnimationSpec: DecayAnimationSpec<Float>? = null
+    var readMode: ReadMode = ReadMode.Default
     var debugMode: Boolean = false
-    var readModeEnabled: Boolean = false
-    var readModeDecider: ReadModeDecider = ReadModeDecider.Default
 
     var minScale: Float by mutableStateOf(1f)
         private set
@@ -230,17 +233,19 @@ class ZoomableState(
             minScale = scales[0]
             mediumScale = scales[1]
             maxScale = scales[2]
-            val readMode = readModeEnabled
+            val readModeResult = readMode.enabled
                     && contentScale.supportReadMode()
-                    && readModeDecider
-                .should(srcSize = rotatedContentSize.toSize(), dstSize = containerSize.toSize())
+                    && readMode.decider.should(
+                srcSize = rotatedContentSize.toSize(),
+                dstSize = containerSize.toSize()
+            )
             val baseTransform = computeTransform(
                 srcSize = rotatedContentSize,
                 dstSize = containerSize,
                 scale = contentScale,
                 alignment = contentAlignment,
             )
-            supportInitialTransform = if (readMode) {
+            supportInitialTransform = if (readModeResult) {
                 computeReadModeTransform(
                     srcSize = rotatedContentSize,
                     dstSize = containerSize,
@@ -264,6 +269,7 @@ class ZoomableState(
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
                     "contentAlignment=${contentAlignment.name}, " +
+                    "readMode=${readMode}, " +
                     "minScale=${minScale.format(2)}, " +
                     "mediumScale=${mediumScale.format(2)}, " +
                     "maxScale=${maxScale.format(2)}, " +
@@ -281,9 +287,6 @@ class ZoomableState(
     suspend fun animateScaleTo(
         newScale: Float,
         newScaleContentCentroid: Centroid = Centroid(0.5f, 0.5f),
-        animationDurationMillis: Int = AnimationConfig.DefaultDurationMillis,
-        animationEasing: Easing = AnimationConfig.DefaultEasing,
-        initialVelocity: Float = AnimationConfig.DefaultInitialVelocity,
     ) {
         stopAllAnimation("animateScaleTo")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
@@ -294,8 +297,8 @@ class ZoomableState(
         val currentTranslation = translation
 
         val animationSpec = tween<Float>(
-            durationMillis = animationDurationMillis,
-            easing = animationEasing
+            durationMillis = scaleAnimationSpec.durationMillis,
+            easing = scaleAnimationSpec.easing
         )
         val futureTranslationBounds = computeSupportTranslationBounds(
             containerSize = containerSize,
@@ -343,7 +346,7 @@ class ZoomableState(
                 scaleAnimatable.animateTo(
                     targetValue = newScale.coerceIn(minScale, maxScale),
                     animationSpec = animationSpec,
-                    initialVelocity = initialVelocity,
+                    initialVelocity = scaleAnimationSpec.initialVelocity,
                 ) {
                     log { "animateScaleTo. running. scale=${this.value.format(2)}, translation=${translation.toShortString()}" }
                 }
@@ -354,12 +357,14 @@ class ZoomableState(
                 translationXAnimatable.animateTo(
                     targetValue = targetTranslation.translationX,
                     animationSpec = animationSpec,
+                    initialVelocity = scaleAnimationSpec.initialVelocity,
                 )
             }
             launch {
                 translationYAnimatable.animateTo(
                     targetValue = targetTranslation.translationY,
                     animationSpec = animationSpec,
+                    initialVelocity = scaleAnimationSpec.initialVelocity,
                 )
             }
         }
@@ -371,9 +376,6 @@ class ZoomableState(
     suspend fun animateScaleTo(
         newScale: Float,
         touchPosition: Offset,
-        animationDurationMillis: Int = AnimationConfig.DefaultDurationMillis,
-        animationEasing: Easing = AnimationConfig.DefaultEasing,
-        initialVelocity: Float = AnimationConfig.DefaultInitialVelocity,
     ) {
         stopAllAnimation("animateScaleTo")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
@@ -405,9 +407,6 @@ class ZoomableState(
         animateScaleTo(
             newScale = newScale,
             newScaleContentCentroid = contentCentroid,
-            animationDurationMillis = animationDurationMillis,
-            animationEasing = animationEasing,
-            initialVelocity = initialVelocity,
         )
     }
 
@@ -572,9 +571,10 @@ class ZoomableState(
         }
     }
 
-    suspend fun fling(velocity: Velocity, animationSpec: DecayAnimationSpec<Float>) {
+    suspend fun fling(velocity: Velocity) {
         stopAllAnimation("fling")
         log { "fling. velocity=$velocity, translation=${translation.toShortString()}" }
+        val animationSpec = flingAnimationSpec ?: exponentialDecay()
         coroutineScope {
             launch {
                 val startX = translationXAnimatable.value
