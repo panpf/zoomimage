@@ -28,12 +28,15 @@ fun computeSupportScales(
     scaleMode: ScaleMode,
     baseScale: ScaleFactor,
 ): FloatArray {
+    val defaultMediumMultiple = 2.5f
     if (contentSize.isEmpty || containerSize.isEmpty) {
         return floatArrayOf(1.0f, 1.0f, 1.0f)
     } else if (scaleMode == ScaleMode.FILL_BOUNDS
         || baseScale.scaleX.format(2) != baseScale.scaleY.format(2)
     ) {
-        return floatArrayOf(1.0f, 2.0f, 4.0f)
+        val minScale = 1.0f
+        val mediumScale = minScale * defaultMediumMultiple
+        return floatArrayOf(minScale, mediumScale, mediumScale * 2f)
     } else {
         // The width and height of content fill the container at the same time
         val fillContainerScale = max(
@@ -49,8 +52,9 @@ fun computeSupportScales(
             1.0f
         }
         val minScale = baseScale.scaleX
-        val mediumScale = floatArrayOf(contentOriginScale, fillContainerScale, minScale * 2f)
-            .maxOrNull()!!
+        val mediumScale =
+            floatArrayOf(contentOriginScale, fillContainerScale, minScale * defaultMediumMultiple)
+                .maxOrNull()!!
         val maxScale = mediumScale * 2f
         return floatArrayOf(minScale, mediumScale, maxScale)
             .map { it / baseScale.scaleX }
