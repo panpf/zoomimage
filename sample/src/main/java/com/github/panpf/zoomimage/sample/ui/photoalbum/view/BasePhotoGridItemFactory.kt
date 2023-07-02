@@ -19,16 +19,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import android.widget.ImageView
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.panpf.sketch.displayImage
-import com.github.panpf.sketch.request.updateDisplayImageOptions
-import com.github.panpf.sketch.resize.LongImageClipPrecisionDecider
-import com.github.panpf.sketch.resize.LongImageScaleDecider
-import com.github.panpf.sketch.resize.Precision
-import com.github.panpf.sketch.stateimage.IconStateImage
-import com.github.panpf.sketch.stateimage.ResColor
 import com.github.panpf.tools4a.display.ktx.getScreenWidth
 import com.github.panpf.tools4k.lang.asOrNull
 import com.github.panpf.zoomimage.sample.R
@@ -36,11 +30,12 @@ import com.github.panpf.zoomimage.sample.databinding.PhotoItemBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
 
-class PhotoGridItemFactory : MyBindingItemFactory<Photo, PhotoItemBinding>(Photo::class) {
+abstract class BasePhotoGridItemFactory :
+    MyBindingItemFactory<Photo, PhotoItemBinding>(Photo::class) {
 
     private var itemSize: Int? = null
 
-    override fun createItemViewBinding(
+    final override fun createItemViewBinding(
         context: Context,
         inflater: LayoutInflater,
         parent: ViewGroup
@@ -54,26 +49,15 @@ class PhotoGridItemFactory : MyBindingItemFactory<Photo, PhotoItemBinding>(Photo
         return super.createItemViewBinding(context, inflater, parent)
     }
 
-    override fun initItem(
+    final override fun initItem(
         context: Context,
         binding: PhotoItemBinding,
         item: BindingItem<Photo, PhotoItemBinding>
     ) {
 
-        binding.photoItemImage.apply {
-            updateDisplayImageOptions {
-                val bgColor = ResColor(R.color.placeholder_bg)
-                placeholder(IconStateImage(R.drawable.ic_image_outline, bgColor))
-                error(IconStateImage(R.drawable.ic_error, bgColor))
-                crossfade()
-                resizeApplyToDrawable()
-                resizePrecision(LongImageClipPrecisionDecider(Precision.SAME_ASPECT_RATIO))
-                resizeScale(LongImageScaleDecider())
-            }
-        }
     }
 
-    override fun bindItemData(
+    final override fun bindItemData(
         context: Context,
         binding: PhotoItemBinding,
         item: BindingItem<Photo, PhotoItemBinding>,
@@ -87,7 +71,9 @@ class PhotoGridItemFactory : MyBindingItemFactory<Photo, PhotoItemBinding>(Photo
                 width = itemSize
                 height = itemSize
             }
-            displayImage(data.uri)
+            displayImage(binding.photoItemImage, data.uri)
         }
     }
+
+    abstract fun displayImage(imageView: ImageView, sketchImageUri: String)
 }

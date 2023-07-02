@@ -67,7 +67,7 @@ class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, P
                 val list = ArrayList<Photo>(cursor?.count ?: 0)
                 cursor?.use {
                     while (cursor.moveToNext()) {
-                        list.add(Photo(cursor.getString(cursor.getColumnIndexOrThrow(Media.DATA))))
+                        list.add(Photo("file://${cursor.getString(cursor.getColumnIndexOrThrow(Media.DATA))}"))
                     }
                 }
                 list

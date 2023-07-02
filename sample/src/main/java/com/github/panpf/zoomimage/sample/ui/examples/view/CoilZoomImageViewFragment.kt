@@ -20,11 +20,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import coil.load
 import coil.request.CachePolicy
+import coil.size.Precision.INEXACT
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.CoilZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import kotlinx.coroutines.flow.merge
@@ -99,6 +101,16 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
                 onSuccess = { _, _ -> onCallSuccess() },
                 onError = { _, _ -> onCallError() },
             )
+        }
+    }
+
+    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        val model = sketchUri2CoilModel(requireContext(), args.imageUri)
+        zoomImageMinimapView.load(model) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade(true)
+            size(600, 600)
+            precision(INEXACT)
         }
     }
 

@@ -41,6 +41,7 @@ class PhotoAlbumViewFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBin
 
     private val photoAlbumViewModel by viewModels<PhotoAlbumViewModel>()
     private val args by navArgs<PhotoAlbumViewFragmentArgs>()
+    private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
 
     override fun onViewCreated(
         toolbar: Toolbar,
@@ -49,13 +50,13 @@ class PhotoAlbumViewFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBin
     ) {
         toolbar.apply {
             title = "Photo album"
-            subtitle = ZoomViewType.valueOf(args.zoomViewType).title
+            subtitle = zoomViewType.title
         }
 
         binding.root.setBackgroundResource(R.color.windowBackgroundDark)
 
         val pagingAdapter = AssemblyPagingDataAdapter<Photo>(listOf(
-            PhotoGridItemFactory()
+            zoomViewType.createListItemFactory()
                 .setOnItemClickListener { _, _, _, absoluteAdapterPosition, _ ->
                     startImageDetail(binding, absoluteAdapterPosition)
                 }

@@ -21,10 +21,12 @@ import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.displayImage
+import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.SketchZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import kotlinx.coroutines.flow.merge
 
@@ -96,6 +98,18 @@ class SketchZoomImageViewFragment :
                 onSuccess = { _, _ -> onCallSuccess() },
                 onError = { _, _ -> onCallError() },
             )
+        }
+    }
+
+    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        zoomImageMinimapView.displayImage(sketchImageUri) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade()
+            resizeSize(600, 600)
+            resizePrecision(Precision.LESS_PIXELS)
+            if (supportIgnoreExifOrientation) {
+                ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
+            }
         }
     }
 

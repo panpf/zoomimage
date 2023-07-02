@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.core.content.res.ResourcesCompat
@@ -21,17 +20,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState.Loading
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.github.panpf.sketch.compose.AsyncImage
-import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.sketch.resize.LongImageClipPrecisionDecider
-import com.github.panpf.sketch.resize.LongImageScaleDecider
-import com.github.panpf.sketch.resize.Precision.SAME_ASPECT_RATIO
-import com.github.panpf.sketch.stateimage.IconStateImage
-import com.github.panpf.sketch.stateimage.ResColor
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R.color
 import com.github.panpf.zoomimage.sample.R.dimen
-import com.github.panpf.zoomimage.sample.R.drawable
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
@@ -43,13 +34,14 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
 
     private val photoAlbumViewModel by viewModels<PhotoAlbumViewModel>()
     private val args by navArgs<PhotoAlbumComposeFragmentArgs>()
+    private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
 
     override fun getTitle(): String {
         return "Photo Album (Compose)"
     }
 
     override fun getSubtitle(): String {
-        return ZoomImageType.valueOf(args.zoomImageType).title
+        return zoomImageType.title
     }
 
     @Composable
@@ -66,40 +58,29 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = dimen.grid_divider)),
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(ResourcesCompat.getColor(LocalContext.current.resources, color.windowBackgroundDark, null)))
+                    .background(
+                        Color(
+                            ResourcesCompat.getColor(
+                                LocalContext.current.resources,
+                                color.windowBackgroundDark,
+                                null
+                            )
+                        )
+                    )
             ) {
                 items(
                     count = pagingItems.itemCount,
                     key = { pagingItems.peek(it)?.diffKey ?: "" },
                 ) { index ->
                     val photo = pagingItems.peek(index)
-                    AsyncImage(
-                        request = DisplayRequest(LocalContext.current, photo?.uri) {
-                            placeholder(
-                                IconStateImage(
-                                    drawable.ic_image_outline,
-                                    ResColor(color.placeholder_bg)
-                                )
-                            )
-                            error(
-                                IconStateImage(
-                                    drawable.ic_error,
-                                    ResColor(color.placeholder_bg)
-                                )
-                            )
-                            crossfade()
-                            resizeApplyToDrawable()
-                            resizePrecision(LongImageClipPrecisionDecider(SAME_ASPECT_RATIO))
-                            resizeScale(LongImageScaleDecider())
-                        },
+                    zoomImageType.drawListContent(
+                        sketchImageUri = photo?.uri.orEmpty(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f)
                             .clickable {
                                 startImageDetail(pagingItems, index)
-                            },
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "photo",
+                            }
                     )
                 }
             }

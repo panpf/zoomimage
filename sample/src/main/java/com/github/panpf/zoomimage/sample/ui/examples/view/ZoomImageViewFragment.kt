@@ -21,13 +21,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.cache.CachePolicy
+import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.DisplayResult
+import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.imagesource.ImageSource
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,6 +73,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                 val request = DisplayRequest(requireContext(), sketchImageUri) {
                     lifecycle(viewLifecycleOwner.lifecycle)
                     downloadCachePolicy(CachePolicy.ENABLED)
+                    ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
                 }
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
@@ -79,6 +84,18 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                     subsamplingAbility.setImageSource(null)
                     onCallError()
                 }
+            }
+        }
+    }
+
+    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        zoomImageMinimapView.displayImage(sketchImageUri) {
+            lifecycle(viewLifecycleOwner.lifecycle)
+            crossfade()
+            resizeSize(600, 600)
+            resizePrecision(Precision.LESS_PIXELS)
+            if (supportIgnoreExifOrientation) {
+                ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
             }
         }
     }

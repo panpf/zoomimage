@@ -1,43 +1,57 @@
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
+import com.github.panpf.assemblyadapter.ItemFactory
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
+import com.github.panpf.zoomimage.sample.ui.photoalbum.view.CoilPhotoGridItemFactory
+import com.github.panpf.zoomimage.sample.ui.photoalbum.view.GlidePhotoGridItemFactory
+import com.github.panpf.zoomimage.sample.ui.photoalbum.view.PicassoPhotoGridItemFactory
+import com.github.panpf.zoomimage.sample.ui.photoalbum.view.SketchPhotoGridItemFactory
 
 enum class ZoomViewType(
     val title: String,
-    val createItemFactory: () -> FragmentItemFactory<String>
+    val createListItemFactory: () -> ItemFactory<Photo>,
+    val createPageItemFactory: () -> FragmentItemFactory<String>,
 ) {
     ZoomImageView(
         title = "ZoomImageView",
-        createItemFactory = { ZoomImageViewFragment.ItemFactory() }
+        createListItemFactory = { SketchPhotoGridItemFactory() },
+        createPageItemFactory = { ZoomImageViewFragment.ItemFactory() }
     ),
 
     SketchZoomImageView(
         title = "SketchZoomImageView",
-        createItemFactory = { SketchZoomImageViewFragment.ItemFactory() }
+        createListItemFactory = { SketchPhotoGridItemFactory() },
+        createPageItemFactory = { SketchZoomImageViewFragment.ItemFactory() }
     ),
 
     CoilZoomImageView(
         title = "CoilZoomImageView",
-        createItemFactory = { CoilZoomImageViewFragment.ItemFactory() }
+        createListItemFactory = { CoilPhotoGridItemFactory() },
+        createPageItemFactory = { CoilZoomImageViewFragment.ItemFactory() }
     ),
 
     GlideZoomImageView(
         title = "GlideZoomImageView",
-        createItemFactory = { GlideZoomImageViewFragment.ItemFactory() }
+        createListItemFactory = { GlidePhotoGridItemFactory() },
+        createPageItemFactory = { GlideZoomImageViewFragment.ItemFactory() }
     ),
 
     PicassoZoomImageView(
         title = "PicassoZoomImageView",
-        createItemFactory = { PicassoZoomImageViewFragment.ItemFactory() }
+        createListItemFactory = { PicassoPhotoGridItemFactory() },
+        createPageItemFactory = { PicassoZoomImageViewFragment.ItemFactory() }
     ),
 
     PhotoView(
         title = "PhotoView",
-        createItemFactory = { PhotoViewFragment.ItemFactory() }
+        createListItemFactory = { SketchPhotoGridItemFactory() },
+        createPageItemFactory = { PhotoViewFragment.ItemFactory() }
     ),
 
     SubsamplingScaleImageView(
         title = "SubsamplingScaleImageView",
-        createItemFactory = { SubsamplingViewFragment.ItemFactory() }
+        createListItemFactory = { SketchPhotoGridItemFactory() },
+        createPageItemFactory = { SubsamplingViewFragment.ItemFactory() }
     ),
 }

@@ -179,7 +179,11 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         }
         Log.d(
             "ZoomImageMinimapView",
-            "resetViewSize. $caller. viewSize=${viewWidth}x${viewHeight}. drawableSize=${drawableWidth}x${drawableHeight}, containerSize=${containerWidth}x${containerHeight}"
+            "resetViewSize. " +
+                    "$caller. " +
+                    "viewSize=${viewWidth}x${viewHeight}. " +
+                    "drawableSize=${drawableWidth}x${drawableHeight}, " +
+                    "containerSize=${containerWidth}x${containerHeight}"
         )
         return true
     }

@@ -13,42 +13,6 @@ import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-internal fun sketchUri2CoilModel(context: Context, sketchImageUri: String): Any? {
-    return when {
-        sketchImageUri.startsWith("asset://") -> {
-            sketchImageUri.replace("asset://", "file://filled/android_asset/").toUri()
-        }
-
-        sketchImageUri.startsWith("file://") -> {
-            File(sketchImageUri.substring("file://".length))
-        }
-
-        sketchImageUri.startsWith("android.resource://") -> {
-            val resId =
-                sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
-            if (resId != null) {
-                "android.resource://${context.packageName}/$resId".toUri()
-            } else {
-                Log.w("sketchUri2CoilModel", "Unsupported sketch resource uri: '$sketchImageUri'")
-                null
-            }
-        }
-
-        else -> {
-            sketchImageUri.toUri()
-        }
-    }
-}
-
-
-internal fun Context.newCoilResourceUri(@DrawableRes @RawRes id: Int): Uri {
-    return Uri.parse("android.resource://${packageName}/${id}")
-}
-
-internal fun newCoilAssetUri(@Suppress("SameParameterValue") path: String): Uri {
-    return Uri.parse("file://filled/android_asset/$path")
-}
-
 
 internal fun Size.toShortString(): String = "(${width}x$height)"
 

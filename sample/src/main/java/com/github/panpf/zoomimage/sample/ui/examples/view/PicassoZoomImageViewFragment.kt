@@ -22,14 +22,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.PicassoZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
 import kotlinx.coroutines.flow.merge
-import java.io.File
 
 class PicassoZoomImageViewFragment :
     BaseZoomImageViewFragment<PicassoZoomImageViewFragmentBinding>() {
@@ -117,32 +119,16 @@ class PicassoZoomImageViewFragment :
                     config = config
                 )
 
-            sketchImageUri.startsWith("file://") ->
+            sketchImageUri.startsWith("android.resource://") -> {
+                val resId =
+                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()
+                        ?.toIntOrNull()
+                        ?: throw IllegalArgumentException("Can't use Subsampling, invalid resource uri: '$sketchImageUri'")
                 binding.picassoZoomImageViewImage.loadImage(
-                    file = File(sketchImageUri.replace("file://", "")),
+                    resourceId = resId,
                     callback = callback,
                     config = config
                 )
-
-            sketchImageUri.startsWith("android.resource://") -> {
-                val resId =
-                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
-                if (resId != null) {
-                    binding.picassoZoomImageViewImage.loadImage(
-                        resourceId = resId,
-                        callback = callback,
-                        config = config
-                    )
-                } else {
-                    binding.picassoZoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
-                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
-                    }
-                    binding.picassoZoomImageViewImage.loadImage(
-                        path = null,
-                        callback = callback,
-                        config = config
-                    )
-                }
             }
 
             else ->
@@ -152,6 +138,31 @@ class PicassoZoomImageViewFragment :
                     config = config
                 )
         }
+    }
+
+    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        Picasso.get()
+            .let {
+                when {
+                    sketchImageUri.startsWith("asset://") ->
+                        it.load(sketchImageUri.replace("asset://", "file:///android_asset/"))
+
+                    sketchImageUri.startsWith("android.resource://") -> {
+                        val resId =
+                            sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()
+                                ?.toIntOrNull()
+                                ?: throw IllegalArgumentException("Can't use Subsampling, invalid resource uri: '$sketchImageUri'")
+                        it.load(resId)
+                    }
+
+                    else -> it.load(Uri.parse(sketchImageUri))
+                }
+            }
+            .placeholder(R.drawable.im_placeholder)
+            .error(R.drawable.im_error)
+            .resize(600, 600)
+            .centerInside()
+            .into(zoomImageMinimapView)
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

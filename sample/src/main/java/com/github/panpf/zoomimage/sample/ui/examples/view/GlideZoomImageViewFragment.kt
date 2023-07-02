@@ -17,7 +17,6 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -27,10 +26,14 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.GlideZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
+import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 import kotlinx.coroutines.flow.merge
 
 class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewFragmentBinding>() {
@@ -91,7 +94,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
     ) {
         onCallStart()
         Glide.with(this@GlideZoomImageViewFragment)
-            .load(sketchUri2GlideModel(binding, args.imageUri))
+            .load(sketchUri2GlideModel(args.imageUri))
             .skipMemoryCache(prefsService.disableMemoryCache.value)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -118,27 +121,13 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
             .into(binding.glideZoomImageViewImage)
     }
 
-    private fun sketchUri2GlideModel(
-        binding: GlideZoomImageViewFragmentBinding,
-        sketchImageUri: String
-    ): Any? {
-        return when {
-            sketchImageUri.startsWith("asset://") ->
-                sketchImageUri.replace("asset://", "file:///android_asset/")
-
-            sketchImageUri.startsWith("android.resource://") -> {
-                val resId =
-                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
-                if (resId == null) {
-                    binding.glideZoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
-                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
-                    }
-                }
-                resId
-            }
-
-            else -> sketchImageUri
-        }
+    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        Glide.with(zoomImageMinimapView.context)
+            .load(sketchUri2GlideModel(sketchImageUri))
+            .placeholder(R.drawable.im_placeholder)
+            .error(R.drawable.im_error)
+            .override(600, 600)
+            .into(zoomImageMinimapView)
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

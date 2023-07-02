@@ -159,23 +159,16 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         loadMinimap(common.zoomImageViewTileMap, sketchImageUri)
     }
 
-    private fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
-        zoomImageMinimapView.displayImage(sketchImageUri) {
-            lifecycle(viewLifecycleOwner.lifecycle)
-            crossfade()
-            resizeSize(600, 600)
-            resizePrecision(Precision.LESS_PIXELS)
-            if (supportIgnoreExifOrientation) {
-                ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
-            }
-        }
-    }
-
     abstract fun loadImage(
         binding: VIEW_BINDING,
         onCallStart: () -> Unit,
         onCallSuccess: () -> Unit,
         onCallError: () -> Unit
+    )
+
+    abstract fun loadMinimap(
+        zoomImageMinimapView: ZoomImageMinimapView,
+        sketchImageUri: String
     )
 
     @SuppressLint("SetTextI18n")
