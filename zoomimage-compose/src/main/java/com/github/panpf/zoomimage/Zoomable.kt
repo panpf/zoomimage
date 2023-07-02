@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage
 
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -17,7 +18,9 @@ fun Modifier.zoomable(
     animationConfig: AnimationConfig    // todo 挪到 ZoomableState 里
 ): Modifier = composed {
     val coroutineScope = rememberCoroutineScope()
-    this.onSizeChanged {
+    val flingAnimationSpec = rememberSplineBasedDecay<Float>()
+    this
+        .onSizeChanged {
             val newContainerSize = it.toSize()
             val oldContainerSize = state.containerSize
             if (newContainerSize != oldContainerSize) {
@@ -62,7 +65,7 @@ fun Modifier.zoomable(
                 },
                 onDragEnd = {
                     coroutineScope.launch {
-                        state.dragEnd(it)
+                        state.dragEnd(it, flingAnimationSpec)
                     }
                 },
                 onDragCancel = {

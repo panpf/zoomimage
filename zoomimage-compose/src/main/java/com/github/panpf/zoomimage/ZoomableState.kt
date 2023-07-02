@@ -3,8 +3,8 @@ package com.github.panpf.zoomimage
 import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.Easing
-import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -547,9 +547,9 @@ class ZoomableState(
         }
     }
 
-    internal suspend fun dragEnd(velocity: Velocity) {
+    internal suspend fun dragEnd(velocity: Velocity, animationSpec: DecayAnimationSpec<Float>) {
         log { "drag. end. velocity=$velocity" }
-        fling(velocity)
+        fling(velocity, animationSpec)
     }
 
     internal fun dragCancel() {
@@ -602,12 +602,11 @@ class ZoomableState(
         }
     }
 
-    private suspend fun fling(velocity: Velocity) = coroutineScope {
+    private suspend fun fling(velocity: Velocity, animationSpec: DecayAnimationSpec<Float>) = coroutineScope {
         log { "fling. velocity=$velocity, translation=${translation.toShortString()}" }
         launch {
-            // todo fling 滚动距离总是很近，不知道为什么，比 View 版的差一倍
             val startX = translationXAnimatable.value
-            translationXAnimatable.animateDecay(velocity.x, exponentialDecay()) {
+            translationXAnimatable.animateDecay(velocity.x, animationSpec) {
                 val translationX = this.value
                 val distanceX = translationX - startX
                 log { "fling. running. velocity=$velocity, startX=$startX, translationX=$translationX, distanceX=$distanceX" }
@@ -615,7 +614,7 @@ class ZoomableState(
         }
         launch {
             val startY = translationYAnimatable.value
-            translationYAnimatable.animateDecay(velocity.y, exponentialDecay()) {
+            translationYAnimatable.animateDecay(velocity.y, animationSpec) {
                 val translationY = this.value
                 val distanceY = translationY - startY
                 log { "fling. running. velocity=$velocity, startY=$startY, translationY=$translationY, distanceY=$distanceY" }
