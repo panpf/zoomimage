@@ -589,7 +589,7 @@ class ZoomableState(
         }
     }
 
-    private suspend fun stopAllAnimation(caller: String) {
+    suspend fun stopAllAnimation(caller: String) {
         if (scaleAnimatable.isRunning) {
             scaleAnimatable.stop()
             log { "stopAllAnimation. stop scale. scale=${scale.format(2)}" }

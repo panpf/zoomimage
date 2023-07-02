@@ -28,22 +28,26 @@ fun Modifier.zoomable(
             }
         }
         .pointerInput(animationConfig) {
-            detectTapGestures(onDoubleTap = { offset ->
-                coroutineScope.launch {
-                    val nextStepScale = state.getNextStepScale()
-                    if (animationConfig.doubleTapScaleEnabled) {
-                        state.animateScaleTo(
-                            newScale = nextStepScale,
-                            touchPosition = offset,
-                            animationDurationMillis = animationConfig.durationMillis,
-                            animationEasing = animationConfig.easing,
-                            initialVelocity = animationConfig.initialVelocity
-                        )
-                    } else {
-                        state.snapScaleTo(newScale = nextStepScale, touchPosition = offset)
+            detectTapGestures(
+                onPress = {
+                    state.stopAllAnimation("onPress")
+                },
+                onDoubleTap = { offset ->
+                    coroutineScope.launch {
+                        val nextStepScale = state.getNextStepScale()
+                        if (animationConfig.doubleTapScaleEnabled) {
+                            state.animateScaleTo(
+                                newScale = nextStepScale,
+                                touchPosition = offset,
+                                animationDurationMillis = animationConfig.durationMillis,
+                                animationEasing = animationConfig.easing,
+                                initialVelocity = animationConfig.initialVelocity
+                            )
+                        } else {
+                            state.snapScaleTo(newScale = nextStepScale, touchPosition = offset)
+                        }
                     }
-                }
-            })
+                })
         }
         .pointerInput(Unit) {
             detectCanDragGestures(
