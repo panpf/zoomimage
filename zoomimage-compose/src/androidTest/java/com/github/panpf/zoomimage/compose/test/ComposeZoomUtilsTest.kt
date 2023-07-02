@@ -7,10 +7,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.zoomimage.Centroid
-import com.github.panpf.zoomimage.Edge.BOTH
-import com.github.panpf.zoomimage.Edge.END
-import com.github.panpf.zoomimage.Edge.NONE
-import com.github.panpf.zoomimage.Edge.START
 import com.github.panpf.zoomimage.internal.Translation
 import com.github.panpf.zoomimage.internal.computeContainerCentroidByTouchPosition
 import com.github.panpf.zoomimage.internal.computeContainerVisibleRect
@@ -18,7 +14,7 @@ import com.github.panpf.zoomimage.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.internal.computeContentInContainerVisibleRect
 import com.github.panpf.zoomimage.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.internal.computeScaleTargetTranslation
-import com.github.panpf.zoomimage.internal.computeScrollEdge
+//import com.github.panpf.zoomimage.internal.computeScrollEdge
 import com.github.panpf.zoomimage.internal.computeSupportTranslationBounds
 import com.github.panpf.zoomimage.internal.containerCentroidToContentCentroid
 import com.github.panpf.zoomimage.internal.contentCentroidToContainerCentroid
@@ -3253,43 +3249,43 @@ class ComposeZoomUtilsTest {
         }
     }
 
-    @Test
-    fun testComputeScrollEdge() {
-        val contentSize = Size(1000f, 1000f)
-
-        listOf(
-            (Rect(0f, 0f, 1000f, 1000f) to true) to BOTH,
-            (Rect(0f, 0f, 1000f, 1000f) to false) to BOTH,
-
-            (Rect(0f, 0f, 500f, 500f) to true) to START,
-            (Rect(0f, 0f, 500f, 500f) to false) to START,
-            (Rect(200f, 0f, 800f, 500f) to true) to NONE,
-            (Rect(200f, 0f, 800f, 500f) to false) to START,
-            (Rect(500f, 0f, 1000f, 1000f) to true) to END,
-            (Rect(500f, 0f, 1000f, 500f) to false) to START,
-
-            (Rect(0f, 200f, 500f, 800f) to true) to START,
-            (Rect(0f, 200f, 500f, 800f) to false) to NONE,
-            (Rect(200f, 200f, 800f, 800f) to true) to NONE,
-            (Rect(200f, 200f, 800f, 800f) to false) to NONE,
-            (Rect(500f, 200f, 1000f, 800f) to true) to END,
-            (Rect(500f, 200f, 1000f, 800f) to false) to NONE,
-
-            (Rect(0f, 500f, 500f, 1000f) to true) to START,
-            (Rect(0f, 500f, 500f, 1000f) to false) to END,
-            (Rect(200f, 500f, 800f, 1000f) to true) to NONE,
-            (Rect(200f, 500f, 800f, 1000f) to false) to END,
-            (Rect(500f, 500f, 1000f, 1000f) to true) to END,
-            (Rect(500f, 500f, 1000f, 1000f) to false) to END,
-        ).forEach {
-            val visibleRect = it.first.first
-            val horizontal = it.first.second
-            val expected = it.second
-            Assert.assertEquals(
-                "contentSize=${contentSize.toShortString()}, visibleRect=${visibleRect.toShortString()}, horizontal=$horizontal",
-                expected,
-                computeScrollEdge(contentSize, visibleRect, horizontal = horizontal)
-            )
-        }
-    }
+//    @Test
+//    fun testComputeScrollEdge() {
+//        val contentSize = Size(1000f, 1000f)
+//
+//        listOf(
+//            (Rect(0f, 0f, 1000f, 1000f) to true) to BOTH,
+//            (Rect(0f, 0f, 1000f, 1000f) to false) to BOTH,
+//
+//            (Rect(0f, 0f, 500f, 500f) to true) to START,
+//            (Rect(0f, 0f, 500f, 500f) to false) to START,
+//            (Rect(200f, 0f, 800f, 500f) to true) to NONE,
+//            (Rect(200f, 0f, 800f, 500f) to false) to START,
+//            (Rect(500f, 0f, 1000f, 1000f) to true) to END,
+//            (Rect(500f, 0f, 1000f, 500f) to false) to START,
+//
+//            (Rect(0f, 200f, 500f, 800f) to true) to START,
+//            (Rect(0f, 200f, 500f, 800f) to false) to NONE,
+//            (Rect(200f, 200f, 800f, 800f) to true) to NONE,
+//            (Rect(200f, 200f, 800f, 800f) to false) to NONE,
+//            (Rect(500f, 200f, 1000f, 800f) to true) to END,
+//            (Rect(500f, 200f, 1000f, 800f) to false) to NONE,
+//
+//            (Rect(0f, 500f, 500f, 1000f) to true) to START,
+//            (Rect(0f, 500f, 500f, 1000f) to false) to END,
+//            (Rect(200f, 500f, 800f, 1000f) to true) to NONE,
+//            (Rect(200f, 500f, 800f, 1000f) to false) to END,
+//            (Rect(500f, 500f, 1000f, 1000f) to true) to END,
+//            (Rect(500f, 500f, 1000f, 1000f) to false) to END,
+//        ).forEach {
+//            val visibleRect = it.first.first
+//            val horizontal = it.first.second
+//            val expected = it.second
+//            Assert.assertEquals(
+//                "contentSize=${contentSize.toShortString()}, visibleRect=${visibleRect.toShortString()}, horizontal=$horizontal",
+//                expected,
+//                computeScrollEdge(contentSize, visibleRect, horizontal = horizontal)
+//            )
+//        }
+//    }
 }

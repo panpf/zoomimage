@@ -9,7 +9,6 @@ import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.times
 import com.github.panpf.zoomimage.Centroid
-import com.github.panpf.zoomimage.Edge
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -432,37 +431,37 @@ internal fun contentCentroidToContainerCentroid(
 
 /* ******************************************* Other ***************************************** */
 
-internal fun computeScrollEdge(
-    contentSize: Size,
-    contentVisibleRect: Rect,
-    horizontal: Boolean
-): Edge {
-    if (contentSize.isUnspecified || contentVisibleRect.isEmpty) return Edge.BOTH
-    if (horizontal) {
-        return if (contentVisibleRect.left <= 0f && contentVisibleRect.right.roundToInt() >= contentSize.width.roundToInt()) {
-            Edge.BOTH
-        } else if (contentVisibleRect.left > 0f && contentVisibleRect.right.roundToInt() < contentSize.width.roundToInt()) {
-            Edge.NONE
-        } else if (contentVisibleRect.left <= 0f) {
-            Edge.START
-        } else {
-            // contentVisibleRect.right >= contentSize.width
-            Edge.END
-        }
-    } else {
-        // vertical
-        return if (contentVisibleRect.top <= 0f && contentVisibleRect.bottom.roundToInt() >= contentSize.height.roundToInt()) {
-            Edge.BOTH
-        } else if (contentVisibleRect.top > 0f && contentVisibleRect.bottom.roundToInt() < contentSize.height.roundToInt()) {
-            Edge.NONE
-        } else if (contentVisibleRect.top <= 0f) {
-            Edge.START
-        } else {
-            // contentVisibleRect.bottom >= contentSize.height
-            Edge.END
-        }
-    }
-}
+//internal fun computeScrollEdge(
+//    contentSize: Size,
+//    contentVisibleRect: Rect,
+//    horizontal: Boolean
+//): Edge {
+//    if (contentSize.isUnspecified || contentVisibleRect.isEmpty) return Edge.BOTH
+//    if (horizontal) {
+//        return if (contentVisibleRect.left <= 0f && contentVisibleRect.right.roundToInt() >= contentSize.width.roundToInt()) {
+//            Edge.BOTH
+//        } else if (contentVisibleRect.left > 0f && contentVisibleRect.right.roundToInt() < contentSize.width.roundToInt()) {
+//            Edge.NONE
+//        } else if (contentVisibleRect.left <= 0f) {
+//            Edge.START
+//        } else {
+//            // contentVisibleRect.right >= contentSize.width
+//            Edge.END
+//        }
+//    } else {
+//        // vertical
+//        return if (contentVisibleRect.top <= 0f && contentVisibleRect.bottom.roundToInt() >= contentSize.height.roundToInt()) {
+//            Edge.BOTH
+//        } else if (contentVisibleRect.top > 0f && contentVisibleRect.bottom.roundToInt() < contentSize.height.roundToInt()) {
+//            Edge.NONE
+//        } else if (contentVisibleRect.top <= 0f) {
+//            Edge.START
+//        } else {
+//            // contentVisibleRect.bottom >= contentSize.height
+//            Edge.END
+//        }
+//    }
+//}
 
 fun ContentScale.toScaleMode(): ScaleMode = when (this) {
     ContentScale.Fit -> ScaleMode.FIT
@@ -479,6 +478,15 @@ fun Size.toSize(): com.github.panpf.zoomimage.Size {
     return takeIf { it.isSpecified }
         ?.let { com.github.panpf.zoomimage.Size(it.width.roundToInt(), it.height.roundToInt()) }
         ?: com.github.panpf.zoomimage.Size.Empty
+}
+
+fun Rect.toRect(): android.graphics.Rect {
+    return android.graphics.Rect(
+        left.roundToInt(),
+        top.roundToInt(),
+        right.roundToInt(),
+        bottom.roundToInt()
+    )
 }
 
 fun androidx.compose.ui.layout.ScaleFactor.toScaleFactor(): ScaleFactor {

@@ -37,7 +37,6 @@ import com.github.panpf.zoomimage.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.internal.computeReadModeTransform
 import com.github.panpf.zoomimage.internal.computeScaleTargetTranslation
 import com.github.panpf.zoomimage.internal.computeScaleTranslation
-import com.github.panpf.zoomimage.internal.computeScrollEdge
 import com.github.panpf.zoomimage.internal.computeSupportTranslationBounds
 import com.github.panpf.zoomimage.internal.computeTransform
 import com.github.panpf.zoomimage.internal.containerCentroidToContentCentroid
@@ -151,6 +150,8 @@ class ZoomableState(
             translationY = translationYAnimatable.value
         )
     }
+    var translationBounds: Rect? by mutableStateOf(null)
+        private set
 
     @Suppress("MemberVisibilityCanBePrivate")
     val baseTranslation: Translation by derivedStateOf {
@@ -195,15 +196,6 @@ class ZoomableState(
             contentScale = contentScale,
             contentAlignment = contentAlignment,
         )
-    }
-
-    var translationBounds: Rect? by mutableStateOf(null)
-        private set
-    val horizontalScrollEdge: Edge by derivedStateOf {
-        computeScrollEdge(contentSize, contentVisibleRect, horizontal = true)
-    }
-    val verticalScrollEdge: Edge by derivedStateOf {
-        computeScrollEdge(contentSize, contentVisibleRect, horizontal = false)
     }
 
     internal suspend fun reset() {

@@ -42,7 +42,7 @@ import kotlin.math.sign
  * has consumed pointer input, canceling this gesture.
  */
 internal suspend fun PointerInputScope.detectCanDragGestures(
-    canDrag: (horizontally: Boolean, direction: Int) -> Boolean,
+    canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
     onDragStart: (Offset) -> Unit = { },
     onDragEnd: (velocity: Velocity) -> Unit = { },
     onDragCancel: () -> Unit = { },

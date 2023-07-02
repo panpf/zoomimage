@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.core.internal
 
+import android.graphics.Rect
 import com.github.panpf.zoomimage.Size
 import com.github.panpf.zoomimage.internal.ScaleFactor
 import com.github.panpf.zoomimage.internal.ScaleMode
@@ -77,4 +78,18 @@ fun computeReadModeTransform(
         translationX = translateX,
         translationY = translateY
     )
+}
+
+fun computeCanDrag(
+    contentSize: Size,
+    contentVisibleRect: Rect,
+    horizontal: Boolean,
+    direction: Int
+): Boolean {
+    if (contentSize.isEmpty || contentVisibleRect.isEmpty) return false
+    return if (horizontal) {
+        (direction > 0 && contentVisibleRect.left > 0) || (direction < 0 && contentVisibleRect.right < contentSize.width)
+    } else {
+        (direction > 0 && contentVisibleRect.top > 0) || (direction < 0 && contentVisibleRect.bottom < contentSize.height)
+    }
 }

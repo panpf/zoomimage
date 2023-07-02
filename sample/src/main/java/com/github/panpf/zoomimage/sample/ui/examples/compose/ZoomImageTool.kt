@@ -57,7 +57,6 @@ fun ZoomImageTool(
                     translationBounds: ${zoomableState.translationBounds?.toShortString()}
                     contentVisibleRect: ${zoomableState.contentVisibleRect.toShortString()}
                     containerVisibleRect: ${zoomableState.containerVisibleRect.toShortString()}
-                    scrollEdge: horizontal=${zoomableState.horizontalScrollEdge}, vertical=${zoomableState.verticalScrollEdge}
                     contentSize: ${zoomableState.contentSize.toShortString()}
                     containerSize: ${zoomableState.containerSize.toShortString()}
                     contentInContainerRect: ${zoomableState.contentInContainerRect.toShortString()}
