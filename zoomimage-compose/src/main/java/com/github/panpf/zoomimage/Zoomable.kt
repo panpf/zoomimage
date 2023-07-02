@@ -57,32 +57,26 @@ fun Modifier.zoomable(
                     val targetEdge = if (direction > 0) Edge.END else Edge.START
                     scrollEdge == Edge.NONE || scrollEdge == targetEdge
                 },
-                onDragStart = {
+                onDrag = { _, dragAmount ->
                     coroutineScope.launch {
-                        state.dragStart()
-                    }
-                },
-                onDrag = { change, dragAmount ->
-                    coroutineScope.launch {
-                        state.drag(change, dragAmount)
+                        state.snapTranslationBy(dragAmount)
                     }
                 },
                 onDragEnd = {
                     coroutineScope.launch {
-                        state.dragEnd(it, flingAnimationSpec)
+                        state.fling(it, flingAnimationSpec)
                     }
                 },
-                onDragCancel = {
-                    coroutineScope.launch {
-                        state.dragCancel()
-                    }
-                }
             )
         }
         .pointerInput(Unit) {
-            detectZoomGestures(panZoomLock = true) { centroid: Offset, zoom: Float, _ ->
+            detectZoomGestures(panZoomLock = true) { centroid: Offset, zoomChange: Float, rotationChange: Float ->
                 coroutineScope.launch {
-                    state.transform(zoomChange = zoom, touchCentroid = centroid)
+                    state.transform(
+                        centroid = centroid,
+                        zoomChange = zoomChange,
+                        rotationChange = rotationChange
+                    )
                 }
             }
         }

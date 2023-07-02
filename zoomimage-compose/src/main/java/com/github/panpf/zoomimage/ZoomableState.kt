@@ -22,7 +22,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Velocity
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
@@ -516,47 +515,31 @@ class ZoomableState(
         )
     }
 
-    fun getNextStepScale(): Float {
-        val stepScales = if (threeStepScaleEnabled) {
-            floatArrayOf(minScale, mediumScale, maxScale)
-        } else {
-            floatArrayOf(minScale, mediumScale)
-        }
-        return calculateNextStepScale(stepScales, scale)
-    }
-
-    internal suspend fun dragStart() {
-        stopAllAnimation("dragStart")
-        log { "drag. start" }
-    }
-
-    internal suspend fun drag(
-        @Suppress("UNUSED_PARAMETER") change: PointerInputChange,
-        dragAmount: Offset
-    ) {
-        val newTranslation = Offset(
-            x = translationXAnimatable.value + dragAmount.x,
-            y = translationYAnimatable.value + dragAmount.y
+    suspend fun snapTranslationBy(add: Offset) {
+        stopAllAnimation("snapTranslationBy")
+        val currentTranslation = translation
+        val targetTranslation = Offset(
+            x = currentTranslation.translationX + add.x,
+            y = currentTranslation.translationY + add.y
         )
-        log { "drag. running. dragAmount=${dragAmount.toShortString()}, newTranslation=${newTranslation.toShortString()}" }
+        log {
+            "snapTranslationBy. " +
+                    "add=${add.toShortString()}, " +
+                    "translation=${currentTranslation.toShortString()} -> ${targetTranslation.toShortString()}"
+        }
         coroutineScope {
             launch {
-                translationXAnimatable.snapTo(newTranslation.x)
-                translationYAnimatable.snapTo(newTranslation.y)
+                translationXAnimatable.snapTo(targetTranslation.x)
+                translationYAnimatable.snapTo(targetTranslation.y)
             }
         }
     }
 
-    internal suspend fun dragEnd(velocity: Velocity, animationSpec: DecayAnimationSpec<Float>) {
-        log { "drag. end. velocity=$velocity" }
-        fling(velocity, animationSpec)
-    }
-
-    internal fun dragCancel() {
-        log { "drag. cancel" }
-    }
-
-    internal suspend fun transform(zoomChange: Float, touchCentroid: Offset) {
+    suspend fun transform(
+        centroid: Offset,
+        zoomChange: Float,
+        @Suppress("UNUSED_PARAMETER") rotationChange: Float
+    ) {
         // todo 初始是 mediumScale 比例时（阅读模式）放大或缩小时 zoomChange 变化很大，导致中心点偏移很大
         stopAllAnimation("transform")
         val currentScale = scale
@@ -564,22 +547,22 @@ class ZoomableState(
             .coerceIn(minimumValue = minScale, maximumValue = maxScale)
         val addScale = newScale - currentScale
         val addTranslation = Offset(
-            x = addScale * touchCentroid.x * -1,
-            y = addScale * touchCentroid.y * -1
+            x = addScale * centroid.x * -1,
+            y = addScale * centroid.y * -1
         )
-        val translation = translation
+        val currentTranslation = translation
         val targetTranslation = Translation(
-            translationX = translation.translationX + addTranslation.x,
-            translationY = translation.translationY + addTranslation.y
+            translationX = currentTranslation.translationX + addTranslation.x,
+            translationY = currentTranslation.translationY + addTranslation.y
         )
         log {
             "transform. " +
                     "zoomChange=${zoomChange.format(4)}, " +
-                    "touchCentroid=${touchCentroid.toShortString()}, " +
+                    "touchCentroid=${centroid.toShortString()}, " +
                     "addScale=${addScale.format(4)}, " +
                     "scale=${currentScale.format(4)} -> ${newScale.format(4)}, " +
                     "addTranslation=${addTranslation.toShortString()}, " +
-                    "translation=${translation.toShortString()} -> ${targetTranslation.toShortString()}"
+                    "translation=${currentTranslation.toShortString()} -> ${targetTranslation.toShortString()}"
         }
         coroutineScope {
             scaleAnimatable.snapTo(newScale)
@@ -589,37 +572,49 @@ class ZoomableState(
         }
     }
 
+    suspend fun fling(velocity: Velocity, animationSpec: DecayAnimationSpec<Float>) {
+        stopAllAnimation("fling")
+        log { "fling. velocity=$velocity, translation=${translation.toShortString()}" }
+        coroutineScope {
+            launch {
+                val startX = translationXAnimatable.value
+                translationXAnimatable.animateDecay(velocity.x, animationSpec) {
+                    val translationX = this.value
+                    val distanceX = translationX - startX
+                    log { "fling. running. velocity=$velocity, startX=$startX, translationX=$translationX, distanceX=$distanceX" }
+                }
+            }
+            launch {
+                val startY = translationYAnimatable.value
+                translationYAnimatable.animateDecay(velocity.y, animationSpec) {
+                    val translationY = this.value
+                    val distanceY = translationY - startY
+                    log { "fling. running. velocity=$velocity, startY=$startY, translationY=$translationY, distanceY=$distanceY" }
+                }
+            }
+        }
+    }
+
     suspend fun stopAllAnimation(caller: String) {
         if (scaleAnimatable.isRunning) {
             scaleAnimatable.stop()
-            log { "stopAllAnimation. stop scale. scale=${scale.format(2)}" }
+            log { "stopAllAnimation. stop scale animation. scale=${scale.format(2)}" }
             updateTranslationBounds(caller)
         }
         if (translationXAnimatable.isRunning || translationYAnimatable.isRunning) {
             translationXAnimatable.stop()
             translationYAnimatable.stop()
-            log { "stopAllAnimation. stop translation. translation=${translation.toShortString()}" }
+            log { "stopAllAnimation. stop translation animation. translation=${translation.toShortString()}" }
         }
     }
 
-    private suspend fun fling(velocity: Velocity, animationSpec: DecayAnimationSpec<Float>) = coroutineScope {
-        log { "fling. velocity=$velocity, translation=${translation.toShortString()}" }
-        launch {
-            val startX = translationXAnimatable.value
-            translationXAnimatable.animateDecay(velocity.x, animationSpec) {
-                val translationX = this.value
-                val distanceX = translationX - startX
-                log { "fling. running. velocity=$velocity, startX=$startX, translationX=$translationX, distanceX=$distanceX" }
-            }
+    fun getNextStepScale(): Float {
+        val stepScales = if (threeStepScaleEnabled) {
+            floatArrayOf(minScale, mediumScale, maxScale)
+        } else {
+            floatArrayOf(minScale, mediumScale)
         }
-        launch {
-            val startY = translationYAnimatable.value
-            translationYAnimatable.animateDecay(velocity.y, animationSpec) {
-                val translationY = this.value
-                val distanceY = translationY - startY
-                log { "fling. running. velocity=$velocity, startY=$startY, translationY=$translationY, distanceY=$distanceY" }
-            }
-        }
+        return calculateNextStepScale(stepScales, scale)
     }
 
     override fun toString(): String =
