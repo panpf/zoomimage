@@ -79,8 +79,8 @@ fun ZoomImageTool(
         Row(
             Modifier
                 .align(Alignment.BottomEnd)
-                .padding(20.dp)
-                .background(colors.tertiary.copy(alpha = 0.8f), RoundedCornerShape(50)),
+                .padding(12.dp)
+                .background(colors.tertiary.copy(alpha = 0.7f), RoundedCornerShape(50)),
             horizontalArrangement = Arrangement.End
         ) {
             IconButton(

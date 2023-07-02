@@ -7,21 +7,21 @@ enum class ZoomImageType(
     val drawContent: @Composable (sketchImageUri: String) -> Unit
 ) {
     MyZoomImage(
-        title = "ZoomImage (My)",
+        title = "ZoomImage",
         drawContent = { sketchImageUri ->
             ZoomImageSample(sketchImageUri)
         }
     ),
 
     SketchZoomAsyncImage(
-        title = "SketchZoomAsyncImageSample (My)",
+        title = "SketchZoomAsyncImage",
         drawContent = { sketchImageUri ->
             SketchZoomAsyncImageSample(sketchImageUri)
         }
     ),
 
     TelephotoZoomableAsyncImage(
-        title = "ZoomableAsyncImage (Telephoto)",
+        title = "ZoomableAsyncImage",
         drawContent = { sketchImageUri ->
             TelephotoZoomableAsyncImageSample(sketchImageUri)
         }

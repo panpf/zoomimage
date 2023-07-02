@@ -29,6 +29,7 @@ import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragmentBinding>() {
 
     private val args by navArgs<PhotoSlideshowViewFragmentArgs>()
+    private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(
@@ -36,10 +37,9 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
         binding: PhotoSlideshowFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        toolbar.isVisible = false
-        toolbar.title = args.zoomViewType
-        val imageUrlList = args.imageUris.split(",")
+        toolbar.title = zoomViewType.title
 
+        val imageUrlList = args.imageUris.split(",")
         binding.photoSlideshowPager.apply {
             offscreenPageLimit = 1
             orientation = ViewPager2.ORIENTATION_HORIZONTAL

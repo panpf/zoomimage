@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -20,19 +21,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.fragment.navArgs
-import com.github.panpf.zoomimage.sample.ui.base.compose.ComposeFragment
+import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 
-class PhotoSlideshowComposeFragment : ComposeFragment() {
+class PhotoSlideshowComposeFragment : AppBarFragment() {
 
     private val args by navArgs<PhotoSlideshowComposeFragmentArgs>()
+    private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
+
+    override fun getTitle(): String {
+        return zoomImageType.title
+    }
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun DrawContent() {
         val imageUrlList = remember { args.imageUris.split(",") }
         val pagerState = rememberPagerState(initialPage = args.position - args.startPosition)
-        val zoomImageType = remember { ZoomImageType.valueOf(args.zoomImageType) }
         Box(modifier = Modifier.fillMaxSize()) {
             HorizontalPager(
                 pageCount = imageUrlList.size,
@@ -53,15 +58,16 @@ class PhotoSlideshowComposeFragment : ComposeFragment() {
 
 @Composable
 private fun PageNumber(modifier: Modifier = Modifier, number: Int, total: Int) {
+    val colors = MaterialTheme.colorScheme
     Text(
         text = "${number}\n·\n${total}",
         textAlign = TextAlign.Center,
-        color = Color.White,
+        color = colors.onTertiary,
         style = TextStyle(lineHeight = 12.sp),
         modifier = Modifier
             .padding(12.dp) // margin
             .background(
-                color = Color(0x60000000),
+                color = colors.tertiary.copy(alpha = 0.7f),
                 shape = RoundedCornerShape(50)
             )
             .padding(horizontal = 8.dp, vertical = 12.dp)
