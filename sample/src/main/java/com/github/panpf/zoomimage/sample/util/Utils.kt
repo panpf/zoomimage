@@ -1,24 +1,17 @@
 package com.github.panpf.zoomimage.sample.util
 
-import android.content.Context
 import android.graphics.PointF
 import android.graphics.Rect
-import android.net.Uri
-import android.util.Log
-import androidx.annotation.DrawableRes
-import androidx.annotation.RawRes
-import androidx.core.net.toUri
-import com.github.panpf.zoomimage.Size
-import java.io.File
+import com.github.panpf.zoomimage.core.SizeCompat
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 
-internal fun Size.toShortString(): String = "(${width}x$height)"
+internal fun SizeCompat.toShortString(): String = "(${width}x$height)"
 
 internal fun PointF.toShortString(): String = "(${x}x$y)"
 
-internal fun Size.toVeryShortString(): String = "${width}x$height"
+internal fun SizeCompat.toVeryShortString(): String = "${width}x$height"
 
 internal fun android.graphics.Rect.toVeryShortString(): String =
     "(${left},${top}-${right},${bottom})"

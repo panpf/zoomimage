@@ -159,8 +159,8 @@ fun ZoomAsyncImage(
             scaleX = state.scale
             scaleY = state.scale
             rotationZ = state.rotation
-            translationX = state.translation.translationX
-            translationY = state.translation.translationY
+            translationX = state.offset.x
+            translationY = state.offset.y
             transformOrigin = state.transformOrigin
         }
 

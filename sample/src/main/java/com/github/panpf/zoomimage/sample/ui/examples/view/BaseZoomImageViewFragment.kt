@@ -21,10 +21,8 @@ import android.widget.ImageView.ScaleType
 import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.sketch.decode.internal.exifOrientationName
-import com.github.panpf.sketch.displayImage
-import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.tools4j.io.ktx.formatFileSize
-import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.core.Logger
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
@@ -178,16 +176,16 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     ) {
         common.zoomImageViewInfoHeaderText.text = """
                 scale: 
+                offset: 
                 visible: 
-                translation: 
             """.trimIndent()
         common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
             val scales = floatArrayOf(minScale, mediumScale, maxScale)
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             """
                 ${scale.format(2)}(${displayScale.scaleX.format(2)}/${baseScale.scaleX.format(2)}) in $scales
+                ${offset.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
                 ${getVisibleRect().toVeryShortString()}
-                ${translation.run { "(${translationX.format(1)}, ${translationY.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
             """.trimIndent()
         }
     }

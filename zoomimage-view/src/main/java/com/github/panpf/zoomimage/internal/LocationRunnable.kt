@@ -61,7 +61,7 @@ internal class LocationRunnable(
             val newY = scroller.currY
             val dx = (currentX - newX).toFloat()
             val dy = (currentY - newY).toFloat()
-            scaleDragHelper.translateBy(dx, dy)
+            scaleDragHelper.offsetBy(dx, dy)
             currentX = newX
             currentY = newY
             ViewCompat.postOnAnimation(engine.view, this)

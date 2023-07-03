@@ -17,7 +17,7 @@ package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
 import coil.memory.MemoryCache
-import com.github.panpf.zoomimage.TileBitmap
+import com.github.panpf.zoomimage.core.TileBitmap
 
 class CoilTileBitmap(
     override val key: String,

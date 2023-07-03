@@ -20,12 +20,16 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Rect
 import androidx.annotation.MainThread
-import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.core.Logger
 import com.github.panpf.zoomimage.OnTileChangedListener
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TileBitmapPool
-import com.github.panpf.zoomimage.TileMemoryCache
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.TileBitmapPool
+import com.github.panpf.zoomimage.core.TileMemoryCache
+import com.github.panpf.zoomimage.core.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.internal.ExifOrientationHelper
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.internal.exifOrientationName
+import com.github.panpf.zoomimage.core.internal.readExifOrientation
+import com.github.panpf.zoomimage.core.internal.readImageBounds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -87,7 +91,7 @@ internal class SubsamplingEngine constructor(
         get() = tileManager?.imageVisibleRect ?: Rect()
     val imageLoadRect: Rect
         get() = tileManager?.imageLoadRect ?: Rect()
-    var imageSize: Size? = null
+    var imageSize: SizeCompat? = null
         private set
     var imageMimeType: String? = null
         private set
@@ -138,7 +142,7 @@ internal class SubsamplingEngine constructor(
                 return@launch
             }
             val imageSize = ExifOrientationHelper(exifOrientation)
-                .applyToSize(Size(options.outWidth, options.outHeight))
+                .applyToSize(SizeCompat(options.outWidth, options.outHeight))
             val imageWidth = imageSize.width
             val imageHeight = imageSize.height
             val mimeType = options.outMimeType
@@ -275,7 +279,7 @@ internal class SubsamplingEngine constructor(
         imageSize = null
         imageMimeType = null
         imageExifOrientation = null
-        zoomEngine.imageSize = Size.Empty
+        zoomEngine.imageSize = SizeCompat.Empty
     }
 
     fun addOnTileChangedListener(listener: OnTileChangedListener) {

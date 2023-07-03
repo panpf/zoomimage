@@ -34,7 +34,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.isNotEmpty
+import com.github.panpf.zoomimage.core.isNotEmpty
 import com.github.panpf.zoomimage.sample.util.crossWith
 import kotlin.math.ceil
 import kotlin.math.floor

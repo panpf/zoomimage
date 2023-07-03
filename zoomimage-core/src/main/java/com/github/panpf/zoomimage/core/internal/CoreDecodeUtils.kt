@@ -1,12 +1,12 @@
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.core.internal
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.imagesource.ImageSource
-import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.imagesource.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.ceil
@@ -60,8 +60,8 @@ internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
  * Calculate the size of the sampled Bitmap, support for BitmapFactory or ImageDecoder
  */
 internal fun calculateSampledBitmapSize(
-    imageSize: Size, sampleSize: Int, mimeType: String? = null
-): Size {
+    imageSize: SizeCompat, sampleSize: Int, mimeType: String? = null
+): SizeCompat {
     val widthValue = imageSize.width / sampleSize.toDouble()
     val heightValue = imageSize.height / sampleSize.toDouble()
     val isPNGFormat = "image/png".equals(mimeType, true)
@@ -74,7 +74,7 @@ internal fun calculateSampledBitmapSize(
         width = ceil(widthValue).toInt()
         height = ceil(heightValue).toInt()
     }
-    return Size(width, height)
+    return SizeCompat(width, height)
 }
 
 
@@ -82,8 +82,8 @@ internal fun calculateSampledBitmapSize(
  * Calculate the size of the sampled Bitmap, support for BitmapRegionDecoder
  */
 internal fun calculateSampledBitmapSizeForRegion(
-    regionSize: Size, sampleSize: Int, mimeType: String? = null, imageSize: Size? = null
-): Size {
+    regionSize: SizeCompat, sampleSize: Int, mimeType: String? = null, imageSize: SizeCompat? = null
+): SizeCompat {
     val widthValue = regionSize.width / sampleSize.toDouble()
     val heightValue = regionSize.height / sampleSize.toDouble()
     val width: Int
@@ -96,7 +96,7 @@ internal fun calculateSampledBitmapSizeForRegion(
         width = floor(widthValue).toInt()
         height = floor(heightValue).toInt()
     }
-    return Size(width, height)
+    return SizeCompat(width, height)
 }
 
 internal val Bitmap.logString: String

@@ -22,7 +22,7 @@ import coil.request.CachePolicy.DISABLED
 import coil.request.CachePolicy.ENABLED
 import coil.request.ImageRequest
 import coil.request.Options
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.imagesource.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream

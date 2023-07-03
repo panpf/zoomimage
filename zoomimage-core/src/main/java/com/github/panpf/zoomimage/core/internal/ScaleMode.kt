@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.core.internal
 
 enum class ScaleMode {
     CROP,

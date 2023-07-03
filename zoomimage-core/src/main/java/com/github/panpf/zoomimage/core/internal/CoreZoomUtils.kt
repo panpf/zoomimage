@@ -1,13 +1,12 @@
 package com.github.panpf.zoomimage.core.internal
 
-import android.graphics.Rect
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.internal.ScaleFactor
-import com.github.panpf.zoomimage.internal.ScaleMode
-import com.github.panpf.zoomimage.internal.Transform
-import com.github.panpf.zoomimage.internal.format
-import com.github.panpf.zoomimage.isNotEmpty
+import com.github.panpf.zoomimage.core.RectFCompat
+import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.Transform
+import com.github.panpf.zoomimage.core.isNotEmpty
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 fun calculateNextStepScale(
     stepScales: FloatArray,
@@ -22,11 +21,11 @@ fun calculateNextStepScale(
 }
 
 fun computeSupportScales(
-    contentSize: Size,
-    contentOriginSize: Size,
-    containerSize: Size,
+    contentSize: SizeCompat,
+    contentOriginSize: SizeCompat,
+    containerSize: SizeCompat,
     scaleMode: ScaleMode,
-    baseScale: ScaleFactor,
+    baseScale: ScaleFactorCompat,
 ): FloatArray {
     val defaultMediumMultiple = 2.5f
     if (contentSize.isEmpty || containerSize.isEmpty) {
@@ -63,8 +62,8 @@ fun computeSupportScales(
 }
 
 fun computeReadModeTransform(
-    srcSize: Size,
-    dstSize: Size,
+    srcSize: SizeCompat,
+    dstSize: SizeCompat,
     baseTransform: Transform,
 ): Transform {
     val widthScale = dstSize.width / srcSize.width.toFloat()
@@ -73,27 +72,29 @@ fun computeReadModeTransform(
     @Suppress("UnnecessaryVariable") val scaleX = fillMaxDimension
     @Suppress("UnnecessaryVariable") val scaleY = fillMaxDimension
     val translateX =
-        if (baseTransform.translationX < 0) baseTransform.translationX * -1 * scaleX else 0.0f
+        if (baseTransform.offsetX < 0) baseTransform.offsetX * -1 * scaleX else 0.0f
     val translateY =
-        if (baseTransform.translationY < 0) baseTransform.translationY * -1 * scaleY else 0.0f
+        if (baseTransform.offsetY < 0) baseTransform.offsetY * -1 * scaleY else 0.0f
     return Transform(
         scaleX = scaleX,
         scaleY = scaleY,
-        translationX = translateX,
-        translationY = translateY
+        offsetX = translateX,
+        offsetY = translateY
     )
 }
 
 fun computeCanDrag(
-    contentSize: Size,
-    contentVisibleRect: Rect,
+    contentSize: SizeCompat,
+    contentVisibleRect: RectFCompat,
     horizontal: Boolean,
     direction: Int
 ): Boolean {
     if (contentSize.isEmpty || contentVisibleRect.isEmpty) return false
     return if (horizontal) {
-        (direction > 0 && contentVisibleRect.left > 0) || (direction < 0 && contentVisibleRect.right < contentSize.width)
+        (direction > 0 && contentVisibleRect.left.roundToInt() > 0)
+                || (direction < 0 && contentVisibleRect.right.roundToInt() < contentSize.width)
     } else {
-        (direction > 0 && contentVisibleRect.top > 0) || (direction < 0 && contentVisibleRect.bottom < contentSize.height)
+        (direction > 0 && contentVisibleRect.top.roundToInt() > 0)
+                || (direction < 0 && contentVisibleRect.bottom.roundToInt() < contentSize.height)
     }
 }

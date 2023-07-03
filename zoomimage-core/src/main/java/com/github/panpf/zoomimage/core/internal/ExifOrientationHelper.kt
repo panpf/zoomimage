@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.core.internal
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -8,9 +8,9 @@ import android.graphics.Rect
 import android.graphics.RectF
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TileBitmapPool
+import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.TileBitmapPool
 import kotlin.math.abs
 
 fun exifOrientationName(exifOrientation: Int): String =
@@ -121,22 +121,22 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
 //        )
 //    }
 
-    fun applyToSize(size: Size): Size {
+    fun applyToSize(size: SizeCompat): SizeCompat {
         val matrix = Matrix().apply {
             applyFlipAndRotationToMatrix(this, isFlipped, rotationDegrees, true)
         }
         val newRect = RectF(0f, 0f, size.width.toFloat(), size.height.toFloat())
         matrix.mapRect(newRect)
-        return Size(newRect.width().toInt(), newRect.height().toInt())
+        return SizeCompat(newRect.width().toInt(), newRect.height().toInt())
     }
 
-    fun addToSize(size: Size): Size {
+    fun addToSize(size: SizeCompat): SizeCompat {
         val matrix = Matrix().apply {
             applyFlipAndRotationToMatrix(this, isFlipped, -rotationDegrees, false)
         }
         val newRect = RectF(0f, 0f, size.width.toFloat(), size.height.toFloat())
         matrix.mapRect(newRect)
-        return Size(newRect.width().toInt(), newRect.height().toInt())
+        return SizeCompat(newRect.width().toInt(), newRect.height().toInt())
     }
 
 //    fun addToResize(resize: Resize, imageSize: Size): Resize {
@@ -150,7 +150,7 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
 //        )
 //    }
 
-    fun addToRect(srcRect: Rect, imageSize: Size): Rect =
+    fun addToRect(srcRect: Rect, imageSize: SizeCompat): Rect =
         when (exifOrientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> Rect(
                 srcRect.top,

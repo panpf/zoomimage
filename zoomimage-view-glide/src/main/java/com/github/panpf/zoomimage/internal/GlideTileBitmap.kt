@@ -17,7 +17,7 @@ package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
 import com.bumptech.glide.load.engine.EngineResourceWrapper
-import com.github.panpf.zoomimage.TileBitmap
+import com.github.panpf.zoomimage.core.TileBitmap
 
 internal class GlideTileBitmap(
     override val key: String,

@@ -1,8 +1,8 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.core
 
 import kotlin.math.abs
 
-open class Size(val width: Int, val height: Int) {
+open class SizeCompat(val width: Int, val height: Int) {
 
     constructor() : this(0, 0)
 
@@ -18,7 +18,7 @@ open class Size(val width: Int, val height: Int) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        other as Size
+        other as SizeCompat
         if (width != other.width) return false
         if (height != other.height) return false
         return true
@@ -32,10 +32,10 @@ open class Size(val width: Int, val height: Int) {
 
     companion object {
 
-        val Empty = Size()
+        val Empty = SizeCompat()
 
         @Throws(NumberFormatException::class)
-        fun parseSize(string: String): Size {
+        fun parseSize(string: String): SizeCompat {
             var sepIx = string.indexOf('*')
             if (sepIx < 0) {
                 sepIx = string.indexOf('x')
@@ -44,7 +44,7 @@ open class Size(val width: Int, val height: Int) {
                 throw NumberFormatException("Invalid Size: \"$string\"")
             }
             return try {
-                Size(string.substring(0, sepIx).toInt(), string.substring(sepIx + 1).toInt())
+                SizeCompat(string.substring(0, sepIx).toInt(), string.substring(sepIx + 1).toInt())
             } catch (e: NumberFormatException) {
                 throw NumberFormatException("Invalid Size: \"$string\"")
             }
@@ -52,10 +52,10 @@ open class Size(val width: Int, val height: Int) {
     }
 }
 
-val Size.isNotEmpty: Boolean
+val SizeCompat.isNotEmpty: Boolean
     get() = !isEmpty
 
-fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
+fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height.toFloat()
     val otherScale = other.width / other.height.toFloat()
     if (selfScale.compareTo(otherScale) == 0) {
@@ -67,9 +67,9 @@ fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
     return false
 }
 
-fun Size.rotate(rotateDegrees: Int): Size {
-    return if (rotateDegrees % 180 == 0) this else Size(height, width)
+fun SizeCompat.rotate(rotateDegrees: Int): SizeCompat {
+    return if (rotateDegrees % 180 == 0) this else SizeCompat(height, width)
 }
 
 
-fun Size.toShortString(): String = "(${width},$height)"
+fun SizeCompat.toShortString(): String = "(${width},$height)"

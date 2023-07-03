@@ -3,6 +3,7 @@
 package com.github.panpf.zoomimage
 
 import androidx.compose.runtime.Stable
+import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.internal.format
 import kotlin.math.roundToInt
 
@@ -46,34 +47,34 @@ data class Centroid(
 }
 
 /**
- * Multiplication operator with [Size].
+ * Multiplication operator with [SizeCompat].
  *
- * Return a new [Size] with the width and height multiplied by the [Centroid.x] and
+ * Return a new [SizeCompat] with the width and height multiplied by the [Centroid.x] and
  * [Centroid.y] respectively
  */
-operator fun Size.times(scaleFactor: Centroid): Size =
-    Size(
+operator fun SizeCompat.times(scaleFactor: Centroid): SizeCompat =
+    SizeCompat(
         (this.width * scaleFactor.x).roundToInt(),
         (this.height * scaleFactor.y).roundToInt()
     )
 
 /**
- * Multiplication operator with [Size] with reverse parameter types to maintain
+ * Multiplication operator with [SizeCompat] with reverse parameter types to maintain
  * commutative properties of multiplication
  *
- * Return a new [Size] with the width and height multiplied by the [Centroid.x] and
+ * Return a new [SizeCompat] with the width and height multiplied by the [Centroid.x] and
  * [Centroid.y] respectively
  */
-operator fun Centroid.times(size: Size): Size = size * this
+operator fun Centroid.times(size: SizeCompat): SizeCompat = size * this
 
 /**
- * Division operator with [Size]
+ * Division operator with [SizeCompat]
  *
- * Return a new [Size] with the width and height divided by [Centroid.x] and
+ * Return a new [SizeCompat] with the width and height divided by [Centroid.x] and
  * [Centroid.y] respectively
  */
-operator fun Size.div(scaleFactor: Centroid): Size =
-    Size((width / scaleFactor.x).roundToInt(), (height / scaleFactor.y).roundToInt())
+operator fun SizeCompat.div(scaleFactor: Centroid): SizeCompat =
+    SizeCompat((width / scaleFactor.x).roundToInt(), (height / scaleFactor.y).roundToInt())
 
 /**
  * Linearly interpolate between two [Centroid] parameters

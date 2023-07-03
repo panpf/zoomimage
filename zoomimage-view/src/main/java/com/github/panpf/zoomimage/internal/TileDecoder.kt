@@ -23,15 +23,18 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.internal.ExifOrientationHelper
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.internal.freeBitmap
+import com.github.panpf.zoomimage.core.internal.setInBitmapForRegion
 import kotlinx.coroutines.runBlocking
 import java.util.LinkedList
 
 internal class TileDecoder internal constructor(
     private val engine: SubsamplingEngine,
     private val imageSource: ImageSource,
-    val imageSize: Size,
+    val imageSize: SizeCompat,
     val imageMimeType: String,
     val imageExifOrientation: Int,
 ) {
@@ -39,7 +42,7 @@ internal class TileDecoder internal constructor(
     private val exifOrientationHelper: ExifOrientationHelper =
         ExifOrientationHelper(imageExifOrientation)
     private var _destroyed: Boolean = false
-    private val addedImageSize: Size by lazy {
+    private val addedImageSize: SizeCompat by lazy {
         exifOrientationHelper.addToSize(imageSize)
     }
 
@@ -75,7 +78,7 @@ internal class TileDecoder internal constructor(
         bitmapPool?.setInBitmapForRegion(
             logger = engine.logger,
             options = decodeOptions,
-            regionSize = Size(newSrcRect.width(), newSrcRect.height()),
+            regionSize = SizeCompat(newSrcRect.width(), newSrcRect.height()),
             imageMimeType = imageMimeType,
             imageSize = addedImageSize,
             disallowReuseBitmap = engine.disallowReuseBitmap,

@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.ZoomableState
-import com.github.panpf.zoomimage.internal.toShortString
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.format
@@ -53,8 +52,8 @@ fun ZoomImageTool(
             Text(
                 text = """
                     scale: ${zoomableState.scale.format(2)}(${zoomableState.displayScale.scaleX.format(2)}/${zoomableState.baseScale.scaleX.format(2)}) in $scales
-                    translation: ${zoomableState.translation.toShortString()}
-                    translationBounds: ${zoomableState.translationBounds?.toShortString()}
+                    offset: ${zoomableState.offset.toShortString()}
+                    offsetBounds: ${zoomableState.offsetBounds?.toShortString()}
                     contentVisibleRect: ${zoomableState.contentVisibleRect.toShortString()}
                     containerVisibleRect: ${zoomableState.containerVisibleRect.toShortString()}
                     contentSize: ${zoomableState.contentSize.toShortString()}

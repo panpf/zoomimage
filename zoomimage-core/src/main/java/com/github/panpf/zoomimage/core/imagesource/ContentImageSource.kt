@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.imagesource
+package com.github.panpf.zoomimage.core.imagesource
 
 import android.content.Context
 import android.net.Uri

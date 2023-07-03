@@ -7,7 +7,10 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.TileBitmapPool
+import com.github.panpf.zoomimage.core.TileMemoryCache
+import com.github.panpf.zoomimage.core.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.internal.Tile
 import com.github.panpf.zoomimage.internal.getLifecycle
@@ -116,7 +119,7 @@ class SubsamplingAbility(
     val imageLoadRect: Rect
         get() = engine.imageLoadRect
 
-    val imageSize: Size?
+    val imageSize: SizeCompat?
         get() = engine.imageSize
 
     val imageMimeType: String?

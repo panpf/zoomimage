@@ -1,80 +1,80 @@
 package com.github.panpf.zoomimage.internal
 
+import androidx.compose.ui.layout.ScaleFactor as ComposeScaleFactor
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.times
 import com.github.panpf.zoomimage.Centroid
+import com.github.panpf.zoomimage.core.Transform
 import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
 
-internal fun computeScaleTranslation(
+internal fun computeScaleOffset(
     srcSize: Size,
     dstSize: Size,
     scale: ContentScale,
     alignment: Alignment,
-): Translation {
+): Offset {
     if (dstSize.isUnspecified || dstSize.isEmpty()
         || srcSize.isUnspecified || srcSize.isEmpty()
     ) {
-        return Translation.Empty
+        return Offset.Zero
     }
     val contentScaleFactor =
         scale.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
     val contentScaledContentSize = srcSize.times(contentScaleFactor)
     return when (alignment) {
-        Alignment.TopStart -> Translation(
-            translationX = 0f,
-            translationY = 0f,
+        Alignment.TopStart -> Offset(
+            x = 0f,
+            y = 0f,
         )
 
-        Alignment.TopCenter -> Translation(
-            translationX = (dstSize.width - contentScaledContentSize.width) / 2,
-            translationY = 0f,
+        Alignment.TopCenter -> Offset(
+            x = (dstSize.width - contentScaledContentSize.width) / 2,
+            y = 0f,
         )
 
-        Alignment.TopEnd -> Translation(
-            translationX = dstSize.width - contentScaledContentSize.width,
-            translationY = 0f,
+        Alignment.TopEnd -> Offset(
+            x = dstSize.width - contentScaledContentSize.width,
+            y = 0f,
         )
 
-        Alignment.CenterStart -> Translation(
-            translationX = 0f,
-            translationY = (dstSize.height - contentScaledContentSize.height) / 2,
+        Alignment.CenterStart -> Offset(
+            x = 0f,
+            y = (dstSize.height - contentScaledContentSize.height) / 2,
         )
 
-        Alignment.Center -> Translation(
-            translationX = (dstSize.width - contentScaledContentSize.width) / 2,
-            translationY = (dstSize.height - contentScaledContentSize.height) / 2,
+        Alignment.Center -> Offset(
+            x = (dstSize.width - contentScaledContentSize.width) / 2,
+            y = (dstSize.height - contentScaledContentSize.height) / 2,
         )
 
-        Alignment.CenterEnd -> Translation(
-            translationX = dstSize.width - contentScaledContentSize.width,
-            translationY = (dstSize.height - contentScaledContentSize.height) / 2,
+        Alignment.CenterEnd -> Offset(
+            x = dstSize.width - contentScaledContentSize.width,
+            y = (dstSize.height - contentScaledContentSize.height) / 2,
         )
 
-        Alignment.BottomStart -> Translation(
-            translationX = 0f,
-            translationY = dstSize.height - contentScaledContentSize.height,
+        Alignment.BottomStart -> Offset(
+            x = 0f,
+            y = dstSize.height - contentScaledContentSize.height,
         )
 
-        Alignment.BottomCenter -> Translation(
-            translationX = (dstSize.width - contentScaledContentSize.width) / 2,
-            translationY = dstSize.height - contentScaledContentSize.height,
+        Alignment.BottomCenter -> Offset(
+            x = (dstSize.width - contentScaledContentSize.width) / 2,
+            y = dstSize.height - contentScaledContentSize.height,
         )
 
-        Alignment.BottomEnd -> Translation(
-            translationX = dstSize.width - contentScaledContentSize.width,
-            translationY = dstSize.height - contentScaledContentSize.height,
+        Alignment.BottomEnd -> Offset(
+            x = dstSize.width - contentScaledContentSize.width,
+            y = dstSize.height - contentScaledContentSize.height,
         )
 
-        else -> Translation(
-            translationX = 0f,
-            translationY = 0f,
+        else -> Offset(
+            x = 0f,
+            y = 0f,
         )
     }
 }
@@ -89,18 +89,18 @@ internal fun computeContentInContainerRect(
     val contentScaleFactor =
         contentScale.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
     val contentScaledContentSize = contentSize.times(contentScaleFactor)
-    val translation = computeScaleTranslation(
+    val offset = computeScaleOffset(
         srcSize = contentSize,
         dstSize = containerSize,
         scale = contentScale,
         alignment = contentAlignment
     )
     return Rect(
-        left = translation.translationX.coerceAtLeast(0f),
-        top = translation.translationY.coerceAtLeast(0f),
-        right = (translation.translationX + contentScaledContentSize.width)
+        left = offset.x.coerceAtLeast(0f),
+        top = offset.y.coerceAtLeast(0f),
+        right = (offset.x + contentScaledContentSize.width)
             .coerceAtMost(containerSize.width),
-        bottom = (translation.translationY + contentScaledContentSize.height)
+        bottom = (offset.y + contentScaledContentSize.height)
             .coerceAtMost(containerSize.height),
     )
 }
@@ -153,29 +153,29 @@ internal fun computeContentInContainerVisibleRect(
         .restoreScale(contentScaleFactor)
 }
 
-internal fun computeScaleTargetTranslation(
+internal fun computeScaleTargetOffset(
     containerSize: Size,
     scale: Float,
     containerCentroid: Centroid
-): Translation {
-    if (containerSize.isUnspecified || containerSize.isEmpty()) return Translation.Empty
+): Offset {
+    if (containerSize.isUnspecified || containerSize.isEmpty()) return Offset.Zero
     val scaledContainerSize = containerSize.times(scale)
     val scaledContainerOffset = Offset(
         x = scaledContainerSize.width * containerCentroid.x,
         y = scaledContainerSize.height * containerCentroid.y,
     )
-    return Translation(
-        translationX = scaledContainerOffset.x - (containerSize.width / 2),
-        translationY = scaledContainerOffset.y - (containerSize.height / 2),
+    return Offset(
+        x = scaledContainerOffset.x - (containerSize.width / 2),
+        y = scaledContainerOffset.y - (containerSize.height / 2),
     ).run {
-        Translation(
-            translationX = (translationX * -1).coerceIn(-scaledContainerSize.width, 0f),
-            translationY = (translationY * -1).coerceIn(-scaledContainerSize.height, 0f)
+        Offset(
+            x = (x * -1).coerceIn(-scaledContainerSize.width, 0f),
+            y = (y * -1).coerceIn(-scaledContainerSize.height, 0f)
         )
     }
 }
 
-internal fun computeSupportTranslationBounds(
+internal fun computeSupportOffsetBounds(
     containerSize: Size,
     contentSize: Size,
     contentScale: ContentScale,
@@ -232,36 +232,34 @@ internal fun computeSupportTranslationBounds(
 internal fun computeContainerVisibleRect(
     containerSize: Size,
     scale: Float,
-    translation: Translation
+    offset: Offset
 ): Rect {
     if (containerSize.isUnspecified) return Rect.Zero
     val scaledContainerSize = containerSize.times(scale)
-    val translationX = translation.translationX
-    val translationY = translation.translationY
     val left: Float
     val right: Float
-    if (translationX >= scaledContainerSize.width || translationX <= -scaledContainerSize.width) {
+    if (offset.x >= scaledContainerSize.width || offset.x <= -scaledContainerSize.width) {
         left = 0f
         right = 0f
-    } else if (translationX > 0) {
+    } else if (offset.x > 0) {
         left = 0f
-        right = (containerSize.width - translationX).coerceIn(0f..scaledContainerSize.width)
-    } else { // translationX < 0
-        left = translationX.absoluteValue
-        right = (translationX.absoluteValue + containerSize.width)
+        right = (containerSize.width - offset.x).coerceIn(0f..scaledContainerSize.width)
+    } else { // offset.x < 0
+        left = offset.x.absoluteValue
+        right = (offset.x.absoluteValue + containerSize.width)
             .coerceAtMost(scaledContainerSize.width)
     }
     val top: Float
     val bottom: Float
-    if (translationY >= scaledContainerSize.height || translationY <= -scaledContainerSize.height) {
+    if (offset.y >= scaledContainerSize.height || offset.y <= -scaledContainerSize.height) {
         top = 0f
         bottom = 0f
-    } else if (translationY > 0) {
+    } else if (offset.y > 0) {
         top = 0f
-        bottom = (containerSize.height - translationY).coerceAtMost(scaledContainerSize.height)
-    } else { // translationY < 0
-        top = translationY.absoluteValue
-        bottom = (translationY.absoluteValue + containerSize.height)
+        bottom = (containerSize.height - offset.y).coerceAtMost(scaledContainerSize.height)
+    } else { // offset.y < 0
+        top = offset.y.absoluteValue
+        bottom = (offset.y.absoluteValue + containerSize.height)
             .coerceAtMost(scaledContainerSize.height)
     }
     return Rect(left = left, top = top, right = right, bottom = bottom)
@@ -274,10 +272,10 @@ internal fun computeContentVisibleRect(
     contentScale: ContentScale,
     contentAlignment: Alignment,
     scale: Float,
-    translation: Translation,
+    offset: Offset,
 ): Rect {
     if (containerSize.isUnspecified || contentSize.isUnspecified) return Rect.Zero
-    val containerVisibleRect = computeContainerVisibleRect(containerSize, scale, translation)
+    val containerVisibleRect = computeContainerVisibleRect(containerSize, scale, offset)
     val contentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
         contentSize = contentSize,
@@ -316,15 +314,14 @@ internal fun computeContentVisibleRect(
 internal fun computeContainerCentroidByTouchPosition(
     containerSize: Size,
     scale: Float,
-    translation: Translation,
-    touchPosition: Offset
+    offset: Offset,
+    touch: Offset
 ): Centroid {
     if (containerSize.isUnspecified) return Centroid.Zero
-    val touchPositionOfContainerX = touchPosition.x - translation.translationX
-    val touchPositionOfContainerY = touchPosition.y - translation.translationY
+    val touchOfContainer = touch - offset
     return Centroid(
-        x = ((touchPositionOfContainerX / scale) / containerSize.width).coerceIn(0f, 1f),
-        y = ((touchPositionOfContainerY / scale) / containerSize.height).coerceIn(0f, 1f),
+        x = ((touchOfContainer.x / scale) / containerSize.width).coerceIn(0f, 1f),
+        y = ((touchOfContainer.y / scale) / containerSize.height).coerceIn(0f, 1f),
     )
 }
 
@@ -463,38 +460,6 @@ internal fun contentCentroidToContainerCentroid(
 //    }
 //}
 
-fun ContentScale.toScaleMode(): ScaleMode = when (this) {
-    ContentScale.Fit -> ScaleMode.FIT
-    ContentScale.FillBounds -> ScaleMode.FILL_BOUNDS
-    ContentScale.FillWidth -> ScaleMode.FILL_UNILATERAL
-    ContentScale.FillHeight -> ScaleMode.FILL_UNILATERAL
-    ContentScale.Crop -> ScaleMode.CROP
-    ContentScale.Inside -> ScaleMode.INSIDE
-    ContentScale.None -> ScaleMode.NONE
-    else -> ScaleMode.NONE
-}
-
-fun Size.toSize(): com.github.panpf.zoomimage.Size {
-    return takeIf { it.isSpecified }
-        ?.let { com.github.panpf.zoomimage.Size(it.width.roundToInt(), it.height.roundToInt()) }
-        ?: com.github.panpf.zoomimage.Size.Empty
-}
-
-fun Rect.toRect(): android.graphics.Rect {
-    return android.graphics.Rect(
-        left.roundToInt(),
-        top.roundToInt(),
-        right.roundToInt(),
-        bottom.roundToInt()
-    )
-}
-
-fun androidx.compose.ui.layout.ScaleFactor.toScaleFactor(): ScaleFactor {
-    return ScaleFactor(scaleX = scaleX, scaleY = scaleY)
-}
-
-internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds
-
 internal fun computeTransform(
     srcSize: Size,
     dstSize: Size,
@@ -502,13 +467,13 @@ internal fun computeTransform(
     alignment: Alignment,
 ): Transform {
     val scaleFactor = scale.computeScaleFactor(srcSize, dstSize)
-    val translation = computeScaleTranslation(
+    val offset = computeScaleOffset(
         srcSize = srcSize,
         dstSize = dstSize,
         scale = scale,
         alignment = alignment
     )
-    return Transform(scaleFactor.toScaleFactor(), translation)
+    return Transform(scaleFactor.toCompatScaleFactor(), offset.toCompatOffset())
 }
 
 internal fun computeReadModeTransform(
@@ -518,8 +483,8 @@ internal fun computeReadModeTransform(
     alignment: Alignment,
 ): Transform {
     return com.github.panpf.zoomimage.core.internal.computeReadModeTransform(
-        srcSize = srcSize.toSize(),
-        dstSize = dstSize.toSize(),
+        srcSize = srcSize.toCompatSize(),
+        dstSize = dstSize.toCompatSize(),
         baseTransform = computeTransform(
             srcSize = srcSize,
             dstSize = dstSize,
@@ -528,3 +493,17 @@ internal fun computeReadModeTransform(
         )
     )
 }
+
+internal fun computeScaleFactor(
+    srcSize: Size,
+    dstSize: Size,
+    contentScale: ContentScale
+): ComposeScaleFactor {
+    return if (dstSize.isUnspecified || dstSize.isEmpty() || srcSize.isUnspecified || srcSize.isEmpty()) {
+        ComposeScaleFactor(1f, 1f)
+    } else {
+        contentScale.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
+    }
+}
+
+internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds

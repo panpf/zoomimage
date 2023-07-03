@@ -25,9 +25,10 @@ import android.graphics.Rect
 import androidx.annotation.MainThread
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
-import com.github.panpf.zoomimage.DefaultTileBitmap
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.DefaultTileBitmap
+import com.github.panpf.zoomimage.core.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.internal.freeBitmap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +44,7 @@ internal class TileManager constructor(
     private val engine: SubsamplingEngine,
     private val decoder: TileDecoder,
     private val imageSource: ImageSource,
-    viewSize: Size,
+    viewSize: SizeCompat,
 ) {
 
     private val tileBoundsPaint: Paint by lazy {
@@ -55,7 +56,7 @@ internal class TileManager constructor(
     private val strokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
 
     private val tileMaxSize = viewSize.let {
-        Size(it.width / 2, it.height / 2)
+        SizeCompat(it.width / 2, it.height / 2)
     }
     private val tileMap: Map<Int, List<Tile>> = initializeTileMap(decoder.imageSize, tileMaxSize)
     private val scope: CoroutineScope = CoroutineScope(
@@ -87,7 +88,7 @@ internal class TileManager constructor(
     }
 
     @MainThread
-    fun refreshTiles(drawableSize: Size, drawableVisibleRect: Rect, displayMatrix: Matrix) {
+    fun refreshTiles(drawableSize: SizeCompat, drawableVisibleRect: Rect, displayMatrix: Matrix) {
         requiredMainThread()
 
         val zoomScale = displayMatrix.getScale().scaleX.format(2)
@@ -145,7 +146,7 @@ internal class TileManager constructor(
     }
 
     @MainThread
-    fun onDraw(canvas: Canvas, drawableSize: Size, drawableVisibleRect: Rect, displayMatrix: Matrix) {
+    fun onDraw(canvas: Canvas, drawableSize: SizeCompat, drawableVisibleRect: Rect, displayMatrix: Matrix) {
         requiredMainThread()
 
         val tileList = lastTileList
@@ -315,7 +316,7 @@ internal class TileManager constructor(
         }
     }
 
-    private fun resetVisibleAndLoadRect(drawableSize: Size, drawableVisibleRect: Rect) {
+    private fun resetVisibleAndLoadRect(drawableSize: SizeCompat, drawableVisibleRect: Rect) {
         val drawableScaled = decoder.imageSize.width / drawableSize.width.toFloat()
         _imageVisibleRect.apply {
             set(

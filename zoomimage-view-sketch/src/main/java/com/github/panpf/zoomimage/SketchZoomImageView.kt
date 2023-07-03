@@ -35,7 +35,7 @@ import com.github.panpf.zoomimage.internal.SketchImageSource
 import com.github.panpf.zoomimage.internal.SketchTileBitmapPool
 import com.github.panpf.zoomimage.internal.SketchTileMemoryCache
 import com.github.panpf.zoomimage.internal.getLifecycle
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.imagesource.ImageSource
 
 open class SketchZoomImageView @JvmOverloads constructor(
     context: Context,

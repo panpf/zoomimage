@@ -21,9 +21,9 @@ import com.bumptech.glide.load.engine.EngineResourceWrapper
 import com.bumptech.glide.load.engine.GlideEngine
 import com.bumptech.glide.load.engine.createGlideEngine
 import com.bumptech.glide.load.engine.newEngineKey
-import com.github.panpf.zoomimage.TileBitmap
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TileMemoryCache
+import com.github.panpf.zoomimage.core.TileBitmap
+import com.github.panpf.zoomimage.core.TileMemoryCache
+import com.github.panpf.zoomimage.core.SizeCompat
 
 class GlideTileMemoryCache(private val glide: Glide) : TileMemoryCache {
 
@@ -43,7 +43,7 @@ class GlideTileMemoryCache(private val glide: Glide) : TileMemoryCache {
         key: String,
         bitmap: Bitmap,
         imageKey: String,
-        imageSize: Size,
+        imageSize: SizeCompat,
         imageMimeType: String,
         imageExifOrientation: Int,
         disallowReuseBitmap: Boolean

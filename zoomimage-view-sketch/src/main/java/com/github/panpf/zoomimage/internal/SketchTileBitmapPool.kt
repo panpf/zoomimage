@@ -18,7 +18,7 @@ package com.github.panpf.zoomimage.internal
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.zoomimage.TileBitmapPool
+import com.github.panpf.zoomimage.core.TileBitmapPool
 
 class SketchTileBitmapPool(private val sketch: Sketch) : TileBitmapPool {
 

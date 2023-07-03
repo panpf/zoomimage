@@ -16,7 +16,7 @@
 package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.TileBitmap
+import com.github.panpf.zoomimage.core.TileBitmap
 
 class PicassoTileBitmap(
     override val key: String,

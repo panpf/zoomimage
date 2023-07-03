@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.internal.getLastChildDrawable
 import com.github.panpf.zoomimage.internal.getLifecycle
 import com.github.panpf.zoomimage.internal.isCoilGlobalLifecycle
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.imagesource.ImageSource
 
 open class CoilZoomImageView @JvmOverloads constructor(
     context: Context,

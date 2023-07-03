@@ -18,9 +18,9 @@ package com.github.panpf.zoomimage.internal
 import android.graphics.Bitmap
 import coil.ImageLoader
 import coil.memory.MemoryCache
-import com.github.panpf.zoomimage.TileBitmap
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TileMemoryCache
+import com.github.panpf.zoomimage.core.TileBitmap
+import com.github.panpf.zoomimage.core.TileMemoryCache
+import com.github.panpf.zoomimage.core.SizeCompat
 
 class CoilTileMemoryCache(private val imageLoader: ImageLoader) : TileMemoryCache {
 
@@ -34,7 +34,7 @@ class CoilTileMemoryCache(private val imageLoader: ImageLoader) : TileMemoryCach
         key: String,
         bitmap: Bitmap,
         imageKey: String,
-        imageSize: Size,
+        imageSize: SizeCompat,
         imageMimeType: String,
         imageExifOrientation: Int,
         disallowReuseBitmap: Boolean

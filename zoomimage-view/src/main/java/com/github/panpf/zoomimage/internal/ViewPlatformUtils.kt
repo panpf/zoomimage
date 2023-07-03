@@ -5,7 +5,7 @@ import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.ViewCompat
-import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.core.SizeCompat
 import kotlin.math.roundToInt
 
 
@@ -40,8 +40,8 @@ internal fun Rect.crossWith(other: Rect): Boolean {
 
 val ZeroRect = Rect(0, 0, 0, 0)
 
-internal fun Size.times(scale: Float): Size =
-    Size(
+internal fun SizeCompat.times(scale: Float): SizeCompat =
+    SizeCompat(
         (this.width * scale).roundToInt(),
         (this.height * scale).roundToInt()
     )

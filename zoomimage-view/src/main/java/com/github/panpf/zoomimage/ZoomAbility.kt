@@ -26,9 +26,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
+import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.core.OffsetCompat
+import com.github.panpf.zoomimage.core.ReadModeDecider
+import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.internal.ImageViewBridge
-import com.github.panpf.zoomimage.internal.ScaleFactor
-import com.github.panpf.zoomimage.internal.Translation
 import com.github.panpf.zoomimage.internal.ZoomEngine
 import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.ScrollBarStyle
@@ -63,8 +66,8 @@ class ZoomAbility(
     /**
      * Sets the dimensions of the original image, which is used to calculate the scale of double-click scaling
      */
-    fun setImageSize(size: Size?) {
-        engine.imageSize = size ?: Size.Empty
+    fun setImageSize(size: SizeCompat?) {
+        engine.imageSize = size ?: SizeCompat.Empty
     }
 
     /**
@@ -138,6 +141,7 @@ class ZoomAbility(
             engine.scrollBarStyle = value
         }
 
+    // todo 使用 ReadMode
     var readModeEnabled: Boolean
         get() = engine.readModeEnabled
         set(value) {
@@ -193,18 +197,18 @@ class ZoomAbility(
 
     val scale: Float
         get() = engine.scale
-    val translation: Translation
-        get() = engine.translation
+    val offset: OffsetCompat
+        get() = engine.offset
 
-    val baseScale: ScaleFactor
+    val baseScale: ScaleFactorCompat
         get() = engine.baseScale
-    val baseTranslation: Translation
-        get() = engine.baseTranslation
+    val baseOffset: OffsetCompat
+        get() = engine.baseOffset
 
-    val displayScale: ScaleFactor
+    val displayScale: ScaleFactorCompat
         get() = engine.displayScale
-    val displayTranslation: Translation
-        get() = engine.displayTranslation
+    val displayOffset: OffsetCompat
+        get() = engine.displayOffset
 
     val minScale: Float
         get() = engine.minScale
@@ -213,11 +217,11 @@ class ZoomAbility(
     val maxScale: Float
         get() = engine.maxScale
 
-    val viewSize: Size
+    val viewSize: SizeCompat
         get() = engine.viewSize
-    val imageSize: Size
+    val imageSize: SizeCompat
         get() = engine.imageSize
-    val drawableSize: Size
+    val drawableSize: SizeCompat
         get() = engine.drawableSize
 
     fun getDisplayMatrix(matrix: Matrix) = engine.getDisplayMatrix(matrix)
@@ -299,7 +303,7 @@ class ZoomAbility(
     fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
         val viewWidth = view.width - view.paddingLeft - view.paddingRight
         val viewHeight = view.height - view.paddingTop - view.paddingBottom
-        engine.viewSize = Size(viewWidth, viewHeight)
+        engine.viewSize = SizeCompat(viewWidth, viewHeight)
     }
 
     fun onDraw(canvas: Canvas) {
@@ -322,7 +326,7 @@ class ZoomAbility(
     private fun resetDrawableSize() {
         val drawable = imageViewBridge.getDrawable()
         engine.drawableSize =
-            drawable?.let { Size(it.intrinsicWidth, it.intrinsicHeight) } ?: Size.Empty
+            drawable?.let { SizeCompat(it.intrinsicWidth, it.intrinsicHeight) } ?: SizeCompat.Empty
     }
 
     private fun destroy() {

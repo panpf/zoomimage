@@ -24,8 +24,11 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Edge
-import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.core.OffsetCompat
+import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoomimage.internal.ScaleDragGestureDetector.OnGestureListener
 import kotlin.math.abs
@@ -77,17 +80,17 @@ internal class ScaleDragHelper constructor(
 
     val scale: Float
         get() = supportMatrix.getScale().scaleX
-    val translation: Translation
+    val offset: OffsetCompat
         get() = supportMatrix.getTranslation()
 
-    val baseScale: ScaleFactor
+    val baseScale: ScaleFactorCompat
         get() = baseMatrix.getScale()
-    val baseTranslation: Translation
+    val baseOffset: OffsetCompat
         get() = baseMatrix.getTranslation()
 
-    val displayScale: ScaleFactor
+    val displayScale: ScaleFactorCompat
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getScale()
-    val displayTranslation: Translation
+    val displayOffset: OffsetCompat
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getTranslation()
 
     init {
@@ -144,7 +147,7 @@ internal class ScaleDragHelper constructor(
             reset()
             val transform = engine.baseInitialTransform
             postScale(transform.scaleX, transform.scaleY)
-            postTranslate(transform.translationX, transform.translationY)
+            postTranslate(transform.offsetX, transform.offsetY)
             postRotate(engine.rotateDegrees.toFloat())
         }
     }
@@ -154,7 +157,7 @@ internal class ScaleDragHelper constructor(
             reset()
             val transform = engine.supportInitialTransform
             postScale(transform.scaleX, transform.scaleY)
-            postTranslate(transform.translationX, transform.translationY)
+            postTranslate(transform.offsetX, transform.offsetY)
         }
     }
 
@@ -232,14 +235,14 @@ internal class ScaleDragHelper constructor(
         return true
     }
 
-    fun translateBy(dx: Float, dy: Float) {
+    fun offsetBy(dx: Float, dy: Float) {
         supportMatrix.postTranslate(dx, dy)
         checkAndApplyMatrix()
     }
 
-    fun translateTo(dx: Float, dy: Float) {
-        val translation = translation
-        supportMatrix.postTranslate(dx - translation.translationX, dy - translation.translationY)
+    fun offsetTo(dx: Float, dy: Float) {
+        val offset = offset
+        supportMatrix.postTranslate(dx - offset.x, dy - offset.y)
         checkAndApplyMatrix()
     }
 
@@ -293,7 +296,7 @@ internal class ScaleDragHelper constructor(
         } else {
             val dx = -(centerLocationX - startX).toFloat()
             val dy = -(centerLocationY - startY).toFloat()
-            translateBy(dx, dy)
+            offsetBy(dx, dy)
         }
     }
 
@@ -339,7 +342,7 @@ internal class ScaleDragHelper constructor(
         val viewSize = engine.viewSize.takeIf { !it.isEmpty } ?: return
         val drawableSize = engine.drawableSize.takeIf { !it.isEmpty } ?: return
         val (drawableWidth, drawableHeight) = drawableSize.let {
-            if (engine.rotateDegrees % 180 == 0) it else Size(it.height, it.width)
+            if (engine.rotateDegrees % 180 == 0) it else SizeCompat(it.height, it.width)
         }
         val displayWidth = displayRectF.width()
         val displayHeight = displayRectF.height()
@@ -452,7 +455,7 @@ internal class ScaleDragHelper constructor(
 
     private fun doFling(velocityX: Float, velocityY: Float) {
         logger.d(ZoomEngine.MODULE) {
-            "fling. velocity=($velocityX, $velocityY), translation=${translation.toShortString()}"
+            "fling. velocity=($velocityX, $velocityY), offset=${offset.toShortString()}"
         }
 
         flingRunnable?.cancel()

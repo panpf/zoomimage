@@ -28,7 +28,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Edge
-import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.core.Logger
 import com.github.panpf.zoomimage.OnDragFlingListener
 import com.github.panpf.zoomimage.OnMatrixChangeListener
 import com.github.panpf.zoomimage.OnRotateChangeListener
@@ -36,11 +36,14 @@ import com.github.panpf.zoomimage.OnScaleChangeListener
 import com.github.panpf.zoomimage.OnViewDragListener
 import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.OnViewTapListener
-import com.github.panpf.zoomimage.ReadModeDecider
-import com.github.panpf.zoomimage.Size
+import com.github.panpf.zoomimage.core.ReadModeDecider
+import com.github.panpf.zoomimage.core.OffsetCompat
+import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.Transform
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
-import com.github.panpf.zoomimage.rotate
+import com.github.panpf.zoomimage.core.rotate
 import com.github.panpf.zoomimage.view.ScrollBarStyle
 
 /**
@@ -97,7 +100,7 @@ internal class ZoomEngine constructor(
     var scaleAnimationInterpolator: Interpolator = AccelerateDecelerateInterpolator()
     var onViewLongPressListener: OnViewLongPressListener? = null
     var onViewTapListener: OnViewTapListener? = null
-    var viewSize = Size.Empty
+    var viewSize = SizeCompat.Empty
         internal set(value) {
             if (field != value) {
                 field = value
@@ -108,14 +111,14 @@ internal class ZoomEngine constructor(
     /**
      * Dimensions of the original image, which is used to calculate the scale of double-click scaling
      */
-    var imageSize = Size.Empty
+    var imageSize = SizeCompat.Empty
         internal set(value) {
             if (field != value) {
                 field = value
                 reset()
             }
         }
-    var drawableSize = Size.Empty
+    var drawableSize = SizeCompat.Empty
         internal set(value) {
             if (field != value) {
                 field = value
@@ -235,8 +238,8 @@ internal class ZoomEngine constructor(
                     Transform(
                         scaleX = it.scaleX / baseInitialTransform.scaleX,
                         scaleY = it.scaleY / baseInitialTransform.scaleY,
-                        translationX = it.translationX / baseInitialTransform.scaleX,
-                        translationY = it.translationY / baseInitialTransform.scaleY,
+                        offsetX = it.offsetX / baseInitialTransform.scaleX,
+                        offsetY = it.offsetY / baseInitialTransform.scaleY,
                     )
                 }
             } else {
@@ -389,18 +392,18 @@ internal class ZoomEngine constructor(
 
     val scale: Float
         get() = scaleDragHelper.scale
-    val translation: Translation
-        get() = scaleDragHelper.translation
+    val offset: OffsetCompat
+        get() = scaleDragHelper.offset
 
-    val baseScale: ScaleFactor
+    val baseScale: ScaleFactorCompat
         get() = scaleDragHelper.baseScale
-    val baseTranslation: Translation
-        get() = scaleDragHelper.baseTranslation
+    val baseOffset: OffsetCompat
+        get() = scaleDragHelper.baseOffset
 
-    val displayScale: ScaleFactor
+    val displayScale: ScaleFactorCompat
         get() = scaleDragHelper.displayScale
-    val displayTranslation: Translation
-        get() = scaleDragHelper.displayTranslation
+    val displayOffset: OffsetCompat
+        get() = scaleDragHelper.displayOffset
 
     fun getDisplayMatrix(matrix: Matrix) = scaleDragHelper.getDisplayMatrix(matrix)
 

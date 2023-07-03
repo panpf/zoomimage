@@ -17,6 +17,8 @@ package com.github.panpf.zoomimage.internal
 
 import android.content.Context
 import android.widget.OverScroller
+import com.github.panpf.zoomimage.core.OffsetCompat
+import com.github.panpf.zoomimage.core.toShortString
 import kotlin.math.roundToInt
 
 internal class FlingRunnable(
@@ -36,10 +38,10 @@ internal class FlingRunnable(
     fun start() {
         cancel()
 
-        val translation = engine.translation
-        val startX = translation.translationX.roundToInt()
-        val startY = translation.translationY.roundToInt()
-        val bounds = computeSupportTranslationBounds(
+        val offset = engine.offset
+        val startX = offset.x.roundToInt()
+        val startY = offset.y.roundToInt()
+        val bounds = computeSupportOffsetBounds(
             containerSize = engine.viewSize,
             contentSize = engine.drawableSize,
             scaleType = engine.scaleType,
@@ -50,7 +52,12 @@ internal class FlingRunnable(
         val minY: Int = bounds.top
         val maxY: Int = bounds.bottom
         engine.logger.d(ZoomEngine.MODULE) {
-            "fling. start. velocity=($velocityX, $velocityY), start=($startX,$startY), min=($minX,$minY), max=($maxX,$maxY), translation=${translation.toShortString()}"
+            "fling. start. " +
+                    "velocity=($velocityX, $velocityY), " +
+                    "start=($startX,$startY), " +
+                    "min=($minX,$minY), " +
+                    "max=($maxX,$maxY), " +
+                    "offset=${offset.toShortString()}"
         }
         scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY, 0, 0)
         engine.view.post(this)
@@ -67,15 +74,19 @@ internal class FlingRunnable(
         }
 
         if (scroller.computeScrollOffset()) {
-            val start = Translation(scroller.startX.toFloat(), scroller.startY.toFloat())
-            scaleDragHelper.translateTo(scroller.currX.toFloat(), scroller.currY.toFloat())
-            val translation = engine.translation
-            val distance = Translation(
-                translationX = translation.translationX - start.translationX,
-                translationY = translation.translationY - start.translationY
+            val start = OffsetCompat(scroller.startX.toFloat(), scroller.startY.toFloat())
+            scaleDragHelper.offsetTo(scroller.currX.toFloat(), scroller.currY.toFloat())
+            val offset = engine.offset
+            val distance = OffsetCompat(
+                x = offset.x - start.x,
+                y = offset.y - start.y
             )
             engine.logger.d(ZoomEngine.MODULE) {
-                "fling. running. velocity=($velocityX, $velocityY), start=${start.toShortString()}, translation=${translation.toShortString()}, distance=${distance.toShortString()}"
+                "fling. running. " +
+                        "velocity=($velocityX, $velocityY), " +
+                        "start=${start.toShortString()}, " +
+                        "offset=${offset.toShortString()}, " +
+                        "distance=${distance.toShortString()}"
             }
             // Post On animation
             engine.view.postOnAnimation(this)

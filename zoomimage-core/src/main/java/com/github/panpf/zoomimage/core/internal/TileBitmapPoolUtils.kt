@@ -1,11 +1,11 @@
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.core.internal
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory.Options
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.Size
-import com.github.panpf.zoomimage.TileBitmapPool
+import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.TileBitmapPool
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -111,9 +111,9 @@ private val bitmapPoolLock = Mutex()
 private fun TileBitmapPool.realSetInBitmapForRegion(
     logger: Logger?,
     options: Options,
-    regionSize: Size,
+    regionSize: SizeCompat,
     imageMimeType: String?,
-    imageSize: Size,
+    imageSize: SizeCompat,
     disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ): Boolean {
@@ -176,9 +176,9 @@ private fun TileBitmapPool.realSetInBitmapForRegion(
 fun TileBitmapPool.setInBitmapForRegion(
     logger: Logger?,
     options: Options,
-    regionSize: Size,
+    regionSize: SizeCompat,
     imageMimeType: String?,
-    imageSize: Size,
+    imageSize: SizeCompat,
     disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ): Boolean {

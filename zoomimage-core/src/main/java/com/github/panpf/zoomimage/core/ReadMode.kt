@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.core
 
-import com.github.panpf.zoomimage.internal.format
+import com.github.panpf.zoomimage.core.internal.format
 
 data class ReadMode(val enabled: Boolean, val decider: ReadModeDecider) {
 
@@ -25,7 +25,7 @@ data class ReadMode(val enabled: Boolean, val decider: ReadModeDecider) {
 }
 
 interface ReadModeDecider {
-    fun should(srcSize: Size, dstSize: Size): Boolean
+    fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean
 
     companion object {
         val Default = LongImageReadModeDecider()
@@ -37,7 +37,7 @@ class LongImageReadModeDecider(
     val notSameDirectionMultiple: Float = 5.0f,
 ) : ReadModeDecider {
 
-    override fun should(srcSize: Size, dstSize: Size): Boolean =
+    override fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean =
         isLongImage(srcSize = srcSize, dstSize = dstSize)
 
     /**
@@ -48,7 +48,7 @@ class LongImageReadModeDecider(
      * otherwise it is considered as a long image when it reaches [notSameDirectionMultiple] times
      */
     private fun isLongImage(
-        srcSize: Size, dstSize: Size
+        srcSize: SizeCompat, dstSize: SizeCompat
     ): Boolean {
         val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
         val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
