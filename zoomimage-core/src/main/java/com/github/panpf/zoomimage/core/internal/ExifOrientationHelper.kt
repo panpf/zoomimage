@@ -8,9 +8,9 @@ import android.graphics.Rect
 import android.graphics.RectF
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.core.TileBitmapPool
+import com.github.panpf.zoomimage.TileBitmapPool
 import kotlin.math.abs
 
 fun exifOrientationName(exifOrientation: Int): String =

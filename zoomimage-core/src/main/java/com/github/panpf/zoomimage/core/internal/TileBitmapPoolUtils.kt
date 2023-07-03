@@ -3,9 +3,9 @@ package com.github.panpf.zoomimage.core.internal
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory.Options
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.TileBitmapPool
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.core.TileBitmapPool
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

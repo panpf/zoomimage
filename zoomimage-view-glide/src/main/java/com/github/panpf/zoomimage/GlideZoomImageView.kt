@@ -24,10 +24,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getModel
 import com.bumptech.glide.load.engine.requestOptionsCompat
 import com.bumptech.glide.request.SingleRequest
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import com.github.panpf.zoomimage.internal.GlideHttpImageSource
 import com.github.panpf.zoomimage.internal.GlideTileBitmapPool
 import com.github.panpf.zoomimage.internal.GlideTileMemoryCache
-import com.github.panpf.zoomimage.core.imagesource.ImageSource
 import java.io.File
 
 open class GlideZoomImageView @JvmOverloads constructor(

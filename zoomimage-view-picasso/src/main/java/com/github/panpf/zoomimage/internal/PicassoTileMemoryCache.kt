@@ -16,8 +16,8 @@
 package com.github.panpf.zoomimage.internal
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.core.TileBitmap
-import com.github.panpf.zoomimage.core.TileMemoryCache
+import com.github.panpf.zoomimage.TileBitmap
+import com.github.panpf.zoomimage.TileMemoryCache
 import com.github.panpf.zoomimage.core.SizeCompat
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.cache

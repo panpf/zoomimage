@@ -27,7 +27,7 @@ import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.core.imagesource.ImageSource
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService

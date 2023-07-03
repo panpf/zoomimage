@@ -26,15 +26,13 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
-import com.github.panpf.zoomimage.core.Logger
 import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.ReadModeDecider
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.internal.ImageViewBridge
-import com.github.panpf.zoomimage.internal.ZoomEngine
-import com.github.panpf.zoomimage.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.ScrollBarStyle
+import com.github.panpf.zoomimage.view.internal.ImageViewBridge
+import com.github.panpf.zoomimage.view.internal.ZoomEngine
+import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 
 class ZoomAbility(
     private val view: View,

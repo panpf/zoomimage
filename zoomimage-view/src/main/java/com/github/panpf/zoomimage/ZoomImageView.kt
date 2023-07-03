@@ -25,7 +25,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
-import com.github.panpf.zoomimage.internal.ImageViewBridge
+import com.github.panpf.zoomimage.view.internal.ImageViewBridge
 
 open class ZoomImageView @JvmOverloads constructor(
     context: Context,

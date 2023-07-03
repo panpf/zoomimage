@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.core.imagesource.ImageSource
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.ceil

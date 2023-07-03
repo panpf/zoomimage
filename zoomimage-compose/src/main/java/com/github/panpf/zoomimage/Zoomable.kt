@@ -9,10 +9,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.core.internal.computeCanDrag
-import com.github.panpf.zoomimage.internal.detectCanDragGestures
-import com.github.panpf.zoomimage.internal.detectZoomGestures
-import com.github.panpf.zoomimage.internal.toCompatRectF
-import com.github.panpf.zoomimage.internal.toCompatSize
+import com.github.panpf.zoomimage.compose.internal.detectCanDragGestures
+import com.github.panpf.zoomimage.compose.internal.detectZoomGestures
+import com.github.panpf.zoomimage.compose.internal.toCompatRectF
+import com.github.panpf.zoomimage.compose.internal.toCompatSize
 import kotlinx.coroutines.launch
 
 fun Modifier.zoomable(state: ZoomableState): Modifier = composed {

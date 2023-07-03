@@ -19,7 +19,7 @@ import androidx.annotation.WorkerThread
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getDiskCache
 import com.bumptech.glide.load.model.GlideUrl
-import com.github.panpf.zoomimage.core.imagesource.ImageSource
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream

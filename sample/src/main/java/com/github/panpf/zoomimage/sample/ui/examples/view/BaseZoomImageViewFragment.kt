@@ -22,7 +22,7 @@ import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.tools4j.io.ktx.formatFileSize
-import com.github.panpf.zoomimage.core.Logger
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R

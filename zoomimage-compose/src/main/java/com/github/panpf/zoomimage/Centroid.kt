@@ -4,7 +4,7 @@ package com.github.panpf.zoomimage
 
 import androidx.compose.runtime.Stable
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.internal.format
+import com.github.panpf.zoomimage.compose.internal.format
 import kotlin.math.roundToInt
 
 data class Centroid(
