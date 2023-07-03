@@ -85,12 +85,12 @@ fun ZoomImageMinimap(
                                 val imageNodeSize = imageNodeSizeState.value
                                 if (!imageNodeSize.isEmpty()) {
                                     coroutineScope.launch {
-                                        state.animateScaleTo(
-                                            newScale = state.maxScale,
-                                            newScaleContentCentroid = Centroid(
+                                        state.animateLocation(
+                                            contentCentroid = Centroid(
                                                 x = it.x / imageNodeSize.width,
                                                 y = it.y / imageNodeSize.height
                                             ),
+                                            targetScale = state.scale.coerceAtLeast(state.mediumScale),
                                         )
                                     }
                                 }

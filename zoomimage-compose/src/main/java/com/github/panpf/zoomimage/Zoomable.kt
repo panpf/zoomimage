@@ -32,10 +32,7 @@ fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
                 },
                 onDoubleTap = { offset ->
                     coroutineScope.launch {
-                        state.animateScaleTo(
-                            newScale = state.getNextStepScale(),
-                            touchPosition = offset
-                        )
+                        state.switchScale(touchOffset = offset)
                     }
                 })
         }

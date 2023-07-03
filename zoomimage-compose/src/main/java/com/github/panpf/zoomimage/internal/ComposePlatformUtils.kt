@@ -17,7 +17,8 @@ internal fun Size.rotate(rotateDegrees: Int): Size {
     return if (rotateDegrees % 180 == 0) this else Size(height, width)
 }
 
-internal fun Offset.toShortString(): String = if (isSpecified) "(${x.format(1)},${y.format(1)})" else "Unspecified"
+internal fun Offset.toShortString(): String =
+    if (isSpecified) "(${x.format(1)},${y.format(1)})" else "Unspecified"
 
 internal fun Rect.toShortString(): String =
     "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
@@ -100,3 +101,28 @@ internal fun Dp.toPx(): Float {
 internal fun Float.toDp(): Dp {
     return with(LocalDensity.current) { this@toDp.toDp() }
 }
+
+
+/**
+ * Binary subtraction operator.
+ *
+ * Returns an offset whose [translationX] value is the left-hand-side operand's [translationX]
+ * minus the right-hand-side operand's [translationX] and whose [translationY] value is the
+ * left-hand-side operand's [translationY] minus the right-hand-side operand's [translationY].
+ */
+//    @Stable
+operator fun Translation.minus(other: Offset): Translation =
+    Translation(translationX - other.x, translationY - other.y)
+
+/**
+ * Binary addition operator.
+ *
+ * Returns an offset whose [translationX] value is the sum of the [translationX] values of the
+ * two operands, and whose [translationY] value is the sum of the [translationY] values of the
+ * two operands.
+ */
+//    @Stable
+operator fun Translation.plus(other: Offset): Translation =
+    Translation(translationX + other.x, translationY + other.y)
+
+fun Translation.toOffset(): Offset = Offset(x = translationX, y = translationY)

@@ -43,8 +43,10 @@ import com.github.panpf.zoomimage.internal.containerCentroidToContentCentroid
 import com.github.panpf.zoomimage.internal.contentCentroidToContainerCentroid
 import com.github.panpf.zoomimage.internal.format
 import com.github.panpf.zoomimage.internal.name
+import com.github.panpf.zoomimage.internal.plus
 import com.github.panpf.zoomimage.internal.rotate
 import com.github.panpf.zoomimage.internal.supportReadMode
+import com.github.panpf.zoomimage.internal.toOffset
 import com.github.panpf.zoomimage.internal.toScaleFactor
 import com.github.panpf.zoomimage.internal.toScaleMode
 import com.github.panpf.zoomimage.internal.toShortString
@@ -137,14 +139,14 @@ class ZoomableState(
             contentScale.computeScaleFactor(contentSize, containerSize).toScaleFactor()
         }
     }
-    val displayScale: ScaleFactor by derivedStateOf {
+    val displayScale: ScaleFactor by derivedStateOf {   // todo 换成 compose 的 ScaleFactor
         baseScale.times(scale)
     }
 
     /**
      * The current translation value for [ZoomImage]
      */
-    val translation: Translation by derivedStateOf {
+    val translation: Translation by derivedStateOf {    // todo 换成 compose 的 Offset
         Translation(
             translationX = translationXAnimatable.value,
             translationY = translationYAnimatable.value
@@ -262,9 +264,9 @@ class ZoomableState(
                     "contentScale=${contentScale.name}, " +
                     "contentAlignment=${contentAlignment.name}, " +
                     "readMode=${readMode}, " +
-                    "minScale=${minScale.format(2)}, " +
-                    "mediumScale=${mediumScale.format(2)}, " +
-                    "maxScale=${maxScale.format(2)}, " +
+                    "minScale=${minScale.format(4)}, " +
+                    "mediumScale=${mediumScale.format(4)}, " +
+                    "maxScale=${maxScale.format(4)}, " +
                     "supportInitialTransform=${supportInitialTransform.toShortString()}"
         }
         scaleAnimatable.snapTo(supportInitialTransform.scaleX)
@@ -273,14 +275,137 @@ class ZoomableState(
         updateTranslationBounds("reset")
     }
 
-    /**
-     * Animates scale of [ZoomImage] to given [newScale]
-     */
-    suspend fun animateScaleTo(
-        newScale: Float,
-        newScaleContentCentroid: Centroid = Centroid(0.5f, 0.5f),
-    ) {
+
+    suspend fun snapScaleTo(targetScale: Float) {
+        stopAllAnimation("snapScaleTo")
+        val currentScale = scale
+        val limitedTargetScale = limitScale(targetScale)
+        log {
+            "snapScaleTo. " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, "
+        }
+        coroutineScope {
+            launch {
+                scaleAnimatable.snapTo(limitedTargetScale)
+                updateTranslationBounds("snapScaleTo")
+            }
+        }
+    }
+
+    suspend fun animateScaleTo(targetScale: Float) {
         stopAllAnimation("animateScaleTo")
+        val currentScale = scale
+        val limitedTargetScale = limitScale(targetScale)
+        val animationSpec = tween<Float>(
+            durationMillis = scaleAnimationSpec.durationMillis,
+            easing = scaleAnimationSpec.easing
+        )
+        log {
+            "animateScaleTo. " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, "
+        }
+        coroutineScope {
+            launch {
+                scaleAnimatable.animateTo(
+                    targetValue = limitedTargetScale,
+                    animationSpec = animationSpec,
+                    initialVelocity = scaleAnimationSpec.initialVelocity,
+                )
+                updateTranslationBounds("animateScaleTo")
+            }
+        }
+    }
+
+    suspend fun snapScaleBy(addScale: Float) {
+        stopAllAnimation("snapScaleBy")
+        val currentScale = scale
+        val targetScale = currentScale * addScale
+        val limitedTargetScale = limitScale(currentScale * addScale)
+        log {
+            "snapScaleBy. " +
+                    "addScale=${addScale.format(4)}, " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, "
+        }
+        coroutineScope {
+            launch {
+                scaleAnimatable.snapTo(limitedTargetScale)
+                updateTranslationBounds("snapScaleBy")
+            }
+        }
+    }
+
+    suspend fun snapTranslationTo(targetOffset: Offset) {
+        stopAllAnimation("snapTranslationTo")
+        val currentTranslation = translation
+        val limitedTargetOffset = limitTranslation(targetOffset)
+        log {
+            "snapTranslationTo. " +
+                    "targetOffset=${targetOffset.toShortString()}, " +
+                    "translation=${currentTranslation.toShortString()} -> ${limitedTargetOffset.toShortString()}"
+        }
+        coroutineScope {
+            launch {
+                translationXAnimatable.snapTo(limitedTargetOffset.x)
+                translationYAnimatable.snapTo(limitedTargetOffset.y)
+            }
+        }
+    }
+
+    suspend fun animateTranslationTo(targetOffset: Offset) {
+        stopAllAnimation("animateTranslationTo")
+        val currentTranslation = translation
+        val limitedTargetOffset = limitTranslation(targetOffset)
+        val animationSpec = tween<Float>(
+            durationMillis = scaleAnimationSpec.durationMillis,
+            easing = scaleAnimationSpec.easing
+        )
+        log {
+            "animateTranslationTo. " +
+                    "targetOffset=${targetOffset.toShortString()}, " +
+                    "translation=${currentTranslation.toShortString()} -> ${limitedTargetOffset.toShortString()}"
+        }
+        coroutineScope {
+            launch {
+                translationXAnimatable.animateTo(
+                    targetValue = limitedTargetOffset.x,
+                    animationSpec = animationSpec,
+                    initialVelocity = scaleAnimationSpec.initialVelocity,
+                )
+            }
+            launch {
+                translationYAnimatable.animateTo(
+                    targetValue = limitedTargetOffset.y,
+                    animationSpec = animationSpec,
+                    initialVelocity = scaleAnimationSpec.initialVelocity,
+                )
+            }
+        }
+    }
+
+    suspend fun snapTranslationBy(addOffset: Offset) {
+        stopAllAnimation("snapTranslationBy")
+        val currentTranslation = translation
+        val targetTranslation = currentTranslation.plus(addOffset)
+        val limitedTargetOffset = limitTranslation(targetTranslation.toOffset())
+        log {
+            "snapTranslationBy. " +
+                    "addOffset=${addOffset.toShortString()}, " +
+                    "targetOffset=${targetTranslation.toShortString()}, " +
+                    "translation=${currentTranslation.toShortString()} -> ${limitedTargetOffset.toShortString()}"
+        }
+        coroutineScope {
+            launch {
+                translationXAnimatable.snapTo(limitedTargetOffset.x)
+                translationYAnimatable.snapTo(limitedTargetOffset.y)
+            }
+        }
+    }
+
+    suspend fun animateLocation(contentCentroid: Centroid, targetScale: Float = scale) {
+        stopAllAnimation("animateLocation")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
@@ -288,6 +413,7 @@ class ZoomableState(
         val currentScale = scale
         val currentTranslation = translation
 
+        val limitedTargetScale = limitScale(targetScale)
         val animationSpec = tween<Float>(
             durationMillis = scaleAnimationSpec.durationMillis,
             easing = scaleAnimationSpec.easing
@@ -297,64 +423,51 @@ class ZoomableState(
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            supportScale = newScale
+            supportScale = limitedTargetScale
         )
         val containerCentroid = contentCentroidToContainerCentroid(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            contentCentroid = newScaleContentCentroid
+            contentCentroid = contentCentroid
         )
-        val targetTranslation = computeScaleTargetTranslation(
+        val limitedTargetTranslation = computeScaleTargetTranslation(
             containerSize = containerSize,
-            scale = newScale,
+            scale = limitedTargetScale,
             containerCentroid = containerCentroid
-        ).let {
-            it.copy(
-                translationX = it.translationX.coerceIn(
-                    futureTranslationBounds.left,
-                    futureTranslationBounds.right
-                ),
-                translationY = it.translationY.coerceIn(
-                    futureTranslationBounds.top,
-                    futureTranslationBounds.bottom
-                ),
-            )
-        }
+        ).let { limitTranslation(it.toOffset(), futureTranslationBounds) }
         log {
-            "animateScaleTo. " +
+            "animateLocation. " +
+                    "contentCentroid=${contentCentroid.toShortString()}, " +
+                    "targetScale=${targetScale.format(4)}, " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
-                    "scale: ${currentScale.format(2)} -> ${newScale.format(2)}, " +
-                    "contentCentroid=${newScaleContentCentroid.toShortString()}, " +
                     "containerCentroid=${containerCentroid.toShortString()}, " +
-                    "translation: ${currentTranslation.toShortString()} -> ${targetTranslation.toShortString()}, " +
-                    "bounds=${futureTranslationBounds.toShortString()}"
+                    "futureBounds=${futureTranslationBounds.toShortString()}, " +
+                    "scale: ${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, " +
+                    "translation: ${currentTranslation.toShortString()} -> ${limitedTargetTranslation.toShortString()}"
         }
-        clearTranslationBounds("animateScaleTo. before")
+        clearTranslationBounds("animateLocation")
         coroutineScope {
             launch {
                 scaleAnimatable.animateTo(
-                    targetValue = newScale.coerceIn(minScale, maxScale),
+                    targetValue = limitedTargetScale,
                     animationSpec = animationSpec,
                     initialVelocity = scaleAnimationSpec.initialVelocity,
-                ) {
-                    log { "animateScaleTo. running. scale=${this.value.format(2)}, translation=${translation.toShortString()}" }
-                }
-                updateTranslationBounds("animateScaleTo. end")
-                log { "animateScaleTo. end. scale=${scale.format(2)}, translation=${translation.toShortString()}" }
+                )
+                updateTranslationBounds("animateLocation")
             }
             launch {
                 translationXAnimatable.animateTo(
-                    targetValue = targetTranslation.translationX,
+                    targetValue = limitedTargetTranslation.x,
                     animationSpec = animationSpec,
                     initialVelocity = scaleAnimationSpec.initialVelocity,
                 )
             }
             launch {
                 translationYAnimatable.animateTo(
-                    targetValue = targetTranslation.translationY,
+                    targetValue = limitedTargetTranslation.y,
                     animationSpec = animationSpec,
                     initialVelocity = scaleAnimationSpec.initialVelocity,
                 )
@@ -362,14 +475,7 @@ class ZoomableState(
         }
     }
 
-    /**
-     * Animates scale of [ZoomImage] to given [newScale]
-     */
-    suspend fun animateScaleTo(
-        newScale: Float,
-        touchPosition: Offset,
-    ) {
-        stopAllAnimation("animateScaleTo")
+    suspend fun animateLocation(touchOffset: Offset, targetScale: Float = scale) {
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
@@ -380,7 +486,7 @@ class ZoomableState(
             containerSize = containerSize,
             scale = currentScale,
             translation = currentTranslation,
-            touchPosition = touchPosition
+            touchPosition = touchOffset
         )
         val contentCentroid = containerCentroidToContentCentroid(
             containerSize = containerSize,
@@ -390,26 +496,20 @@ class ZoomableState(
             containerCentroid = containerCentroid
         )
         log {
-            "animateScaleTo. " +
-                    "newScale=${newScale.format(2)}, " +
-                    "touchPosition=${touchPosition.toShortString()}, " +
+            "animateLocation. " +
+                    "touchOffset=${touchOffset.toShortString()}, " +
+                    "targetScale=${targetScale.format(4)}, " +
                     "containerCentroid=${containerCentroid.toShortString()}, " +
                     "contentCentroid=${contentCentroid.toShortString()}"
         }
-        animateScaleTo(
-            newScale = newScale,
-            newScaleContentCentroid = contentCentroid,
+        animateLocation(
+            contentCentroid = contentCentroid,
+            targetScale = targetScale,
         )
     }
 
-    /**
-     * Instantly sets scale of [ZoomImage] to given [newScale]
-     */
-    suspend fun snapScaleTo(
-        newScale: Float,
-        newScaleContentCentroid: Centroid = Centroid(0.5f, 0.5f)
-    ) {
-        stopAllAnimation("snapScaleTo")
+    suspend fun snapLocation(contentCentroid: Centroid, targetScale: Float = scale) {
+        stopAllAnimation("snapLocation")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
@@ -417,64 +517,47 @@ class ZoomableState(
         val currentScale = scale
         val currentTranslation = translation
 
+        val limitedTargetValue = limitScale(targetScale)
         val futureTranslationBounds = computeSupportTranslationBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            supportScale = newScale
+            supportScale = limitedTargetValue
         )
         val containerCentroid = contentCentroidToContainerCentroid(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            contentCentroid = newScaleContentCentroid
+            contentCentroid = contentCentroid
         )
-        val targetTranslation = computeScaleTargetTranslation(
+        val limitedTargetTranslation = computeScaleTargetTranslation(
             containerSize = containerSize,
-            scale = newScale,
+            scale = limitedTargetValue,
             containerCentroid = containerCentroid
-        ).let {
-            it.copy(
-                translationX = it.translationX.coerceIn(
-                    futureTranslationBounds.left,
-                    futureTranslationBounds.right
-                ),
-                translationY = it.translationY.coerceIn(
-                    futureTranslationBounds.top,
-                    futureTranslationBounds.bottom
-                ),
-            )
-        }
+        ).let { limitTranslation(it.toOffset(), futureTranslationBounds) }
+
         log {
-            "snapScaleTo. " +
+            "snapLocation. " +
+                    "contentCentroid=${contentCentroid.toShortString()}, " +
+                    "targetScale=${targetScale.format(4)}, " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
-                    "scale: ${currentScale.format(2)} -> ${newScale.format(2)}, " +
-                    "contentCentroid=${newScaleContentCentroid.toShortString()}, " +
                     "containerCentroid=${containerCentroid.toShortString()}, " +
-                    "translation: ${currentTranslation.toShortString()} -> ${targetTranslation.toShortString()}, " +
-                    "bounds=${futureTranslationBounds.toShortString()}"
+                    "futureBounds=${futureTranslationBounds.toShortString()}, " +
+                    "scale: ${currentScale.format(4)} -> ${limitedTargetValue.format(4)}, " +
+                    "translation: ${currentTranslation.toShortString()} -> ${limitedTargetTranslation.toShortString()}"
         }
         coroutineScope {
-            scaleAnimatable.snapTo(
-                newScale.coerceIn(
-                    minimumValue = minScale,
-                    maximumValue = maxScale
-                )
-            )
-            updateTranslationBounds("snapScaleTo")
-            translationXAnimatable.snapTo(targetValue = targetTranslation.translationX)
-            translationYAnimatable.snapTo(targetValue = targetTranslation.translationY)
+            scaleAnimatable.snapTo(limitedTargetValue)
+            updateTranslationBounds("snapLocation")
+            translationXAnimatable.snapTo(targetValue = limitedTargetTranslation.x)
+            translationYAnimatable.snapTo(targetValue = limitedTargetTranslation.y)
         }
     }
 
-    /**
-     * Instantly sets scale of [ZoomImage] to given [newScale]
-     */
-    suspend fun snapScaleTo(newScale: Float, touchPosition: Offset) {
-        stopAllAnimation("snapScaleTo")
+    suspend fun snapLocation(touchOffset: Offset, targetScale: Float = scale) {
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
@@ -485,7 +568,7 @@ class ZoomableState(
             containerSize = containerSize,
             scale = currentScale,
             translation = currentTranslation,
-            touchPosition = touchPosition
+            touchPosition = touchOffset
         )
         val contentCentroid = containerCentroidToContentCentroid(
             containerSize = containerSize,
@@ -495,35 +578,34 @@ class ZoomableState(
             containerCentroid = containerCentroid
         )
         log {
-            "snapScaleTo. " +
-                    "newScale=${newScale.format(2)}, " +
-                    "touchPosition=${touchPosition.toShortString()}, " +
+            "snapLocation. " +
+                    "touchOffset=${touchOffset.toShortString()}, " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "containerCentroid=${containerCentroid.toShortString()}, " +
                     "contentCentroid=${contentCentroid.toShortString()}"
         }
-        snapScaleTo(
-            newScale = newScale,
-            newScaleContentCentroid = contentCentroid
+        snapLocation(
+            contentCentroid = contentCentroid,
+            targetScale = targetScale
         )
     }
 
-    suspend fun snapTranslationBy(add: Offset) {
-        stopAllAnimation("snapTranslationBy")
-        val currentTranslation = translation
-        val targetTranslation = Offset(
-            x = currentTranslation.translationX + add.x,
-            y = currentTranslation.translationY + add.y
+    suspend fun switchScale(contentCentroid: Centroid = Centroid(0.5f, 0.5f)): Float {
+        val nextScale = getNextStepScale()
+        animateLocation(
+            contentCentroid = contentCentroid,
+            targetScale = nextScale
         )
-        log {
-            "snapTranslationBy. " +
-                    "add=${add.toShortString()}, " +
-                    "translation=${currentTranslation.toShortString()} -> ${targetTranslation.toShortString()}"
-        }
-        coroutineScope {
-            launch {
-                translationXAnimatable.snapTo(targetTranslation.x)
-                translationYAnimatable.snapTo(targetTranslation.y)
-            }
-        }
+        return nextScale
+    }
+
+    suspend fun switchScale(touchOffset: Offset): Float {
+        val nextScale = getNextStepScale()
+        animateLocation(
+            touchOffset = touchOffset,
+            targetScale = nextScale
+        )
+        return nextScale
     }
 
     suspend fun transform(
@@ -590,8 +672,8 @@ class ZoomableState(
     suspend fun stopAllAnimation(caller: String) {
         if (scaleAnimatable.isRunning) {
             scaleAnimatable.stop()
-            log { "stopAllAnimation. stop scale animation. scale=${scale.format(2)}" }
-            updateTranslationBounds(caller)
+            log { "stopAllAnimation. stop scale animation. scale=${scale.format(4)}" }
+            updateTranslationBounds("stopAllAnimation:$caller")
         }
         if (translationXAnimatable.isRunning || translationYAnimatable.isRunning) {
             translationXAnimatable.stop()
@@ -614,10 +696,10 @@ class ZoomableState(
                 "containerSize=${containerSize.toShortString()}, " +
                 "contentSize=${contentSize.toShortString()}, " +
                 "contentOriginSize=${contentOriginSize.toShortString()}, " +
-                "minScale=${minScale.format(2)}, " +
-                "mediumScale=${mediumScale.format(2)}, " +
-                "maxScale=${maxScale.format(2)}, " +
-                "scale=${scale.format(2)}, " +
+                "minScale=${minScale.format(4)}, " +
+                "mediumScale=${mediumScale.format(4)}, " +
+                "maxScale=${maxScale.format(4)}, " +
+                "scale=${scale.format(4)}, " +
                 "translation=${translation.toShortString()}" +
                 ")"
 
@@ -652,6 +734,28 @@ class ZoomableState(
         this.translationBounds = null
         translationXAnimatable.updateBounds(lowerBound = null, upperBound = null)
         translationYAnimatable.updateBounds(lowerBound = null, upperBound = null)
+    }
+
+    private fun limitScale(
+        scale: Float,
+        minimumValue: Float = minScale,
+        maximumValue: Float = maxScale
+    ): Float {
+        return scale.coerceIn(minimumValue = minimumValue, maximumValue = maximumValue)
+    }
+
+    private fun limitTranslation(offset: Offset, bounds: Rect? = translationBounds): Offset {
+        val translationBounds = bounds ?: translationBounds ?: return offset
+        return Offset(
+            x = offset.x.coerceIn(
+                minimumValue = translationBounds.left,
+                maximumValue = translationBounds.right
+            ),
+            y = offset.y.coerceIn(
+                minimumValue = translationBounds.top,
+                maximumValue = translationBounds.bottom
+            ),
+        )
     }
 
     private fun log(message: () -> String) {

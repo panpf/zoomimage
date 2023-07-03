@@ -85,7 +85,7 @@ fun ZoomImageTool(
             IconButton(
                 onClick = {
                     coroutineScope.launch {
-                        zoomableState.animateScaleTo(newScale = zoomableState.getNextStepScale())
+                        zoomableState.switchScale()
                     }
                 }
             ) {
