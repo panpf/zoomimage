@@ -17,18 +17,23 @@ package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.PhotoSlideshowFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
+import com.github.panpf.zoomimage.sample.ui.test.view.LayoutOrientationTestViewModel
 
 class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragmentBinding>() {
 
     private val args by navArgs<PhotoSlideshowViewFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
+    private val viewModel by viewModels<LayoutOrientationTestViewModel>()
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(
@@ -38,10 +43,25 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
     ) {
         toolbar.title = zoomViewType.title
 
+        toolbar.menu.add("Layout").apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            setOnMenuItemClickListener {
+                viewModel.changeLayoutOrientation()
+                true
+            }
+            viewModel.horizontalLayoutData.observe(viewLifecycleOwner) {
+                val meuIcon = if (it!!) R.drawable.ic_layout_column else R.drawable.ic_layout_row
+                setIcon(meuIcon)
+            }
+        }
+
         val imageUrlList = args.imageUris.split(",")
         binding.photoSlideshowPager.apply {
             offscreenPageLimit = 1
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            viewModel.horizontalLayoutData.observe(viewLifecycleOwner) {
+                orientation =
+                    if (it!!) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL
+            }
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@PhotoSlideshowViewFragment,
                 itemFactoryList = listOf(zoomViewType.createPageItemFactory()),

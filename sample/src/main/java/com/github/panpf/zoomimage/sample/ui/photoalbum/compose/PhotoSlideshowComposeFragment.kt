@@ -3,49 +3,84 @@ package com.github.panpf.zoomimage.sample.ui.photoalbum.compose
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.asFlow
 import androidx.navigation.fragment.navArgs
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
+import com.github.panpf.zoomimage.sample.ui.test.view.LayoutOrientationTestViewModel
 
 class PhotoSlideshowComposeFragment : AppBarFragment() {
 
     private val args by navArgs<PhotoSlideshowComposeFragmentArgs>()
     private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
+    private val viewModel by viewModels<LayoutOrientationTestViewModel>()
 
     override fun getTitle(): String {
         return zoomImageType.title
     }
 
+    @Composable
+    override fun RowScope.DrawActions() {
+        val horizontalLayout by viewModel.horizontalLayoutData.asFlow()
+            .collectAsState(initial = true)
+        IconButton(onClick = { viewModel.changeLayoutOrientation() }) {
+            val meuIcon =
+                if (horizontalLayout) R.drawable.ic_layout_column else R.drawable.ic_layout_row
+            Icon(painter = painterResource(id = meuIcon), contentDescription = "Icon")
+        }
+    }
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun DrawContent() {
+        val horizontalLayout by viewModel.horizontalLayoutData.asFlow()
+            .collectAsState(initial = true)
         val imageUrlList = remember { args.imageUris.split(",") }
         val pagerState = rememberPagerState(initialPage = args.position - args.startPosition)
         Box(modifier = Modifier.fillMaxSize()) {
-            HorizontalPager(
-                pageCount = imageUrlList.size,
-                state = pagerState,
-                beyondBoundsPageCount = 1,
-                modifier = Modifier.fillMaxSize()
-            ) { index ->
-                zoomImageType.drawContent(imageUrlList[index])
+            if (horizontalLayout) {
+                HorizontalPager(
+                    pageCount = imageUrlList.size,
+                    state = pagerState,
+                    beyondBoundsPageCount = 1,
+                    modifier = Modifier.fillMaxSize()
+                ) { index ->
+                    zoomImageType.drawContent(imageUrlList[index])
+                }
+            } else {
+                VerticalPager(
+                    pageCount = imageUrlList.size,
+                    state = pagerState,
+                    beyondBoundsPageCount = 1,
+                    modifier = Modifier.fillMaxSize()
+                ) { index ->
+                    zoomImageType.drawContent(imageUrlList[index])
+                }
             }
             PageNumber(
                 number = pagerState.currentPage + 1,

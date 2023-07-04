@@ -22,6 +22,7 @@ import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,9 +57,12 @@ abstract class AppBarFragment : Fragment() {
     ): View {
         return ComposeView(inflater.context).apply {
             setContent {
-                MyTopAppBarScaffold3(getTitle(), getSubtitle()) {
-                    DrawContent()
-                }
+                MyTopAppBarScaffold3(
+                    title = getTitle(),
+                    subtitle = getSubtitle(),
+                    actions = { DrawActions() },
+                    content = { DrawContent() }
+                )
             }
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -74,6 +78,11 @@ abstract class AppBarFragment : Fragment() {
     open fun getSubtitle(): String? = null
 
     @Composable
+    open fun RowScope.DrawActions() {
+
+    }
+
+    @Composable
     abstract fun DrawContent()
 }
 
@@ -82,6 +91,7 @@ abstract class AppBarFragment : Fragment() {
 private fun MyTopAppBarScaffold3(
     title: String? = null,
     subtitle: String? = null,
+    actions: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -108,6 +118,7 @@ private fun MyTopAppBarScaffold3(
                                 }
                             }
                         },
+                        actions = { actions() },
                         windowInsets = WindowInsets(0.dp),
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = colorScheme.primary,

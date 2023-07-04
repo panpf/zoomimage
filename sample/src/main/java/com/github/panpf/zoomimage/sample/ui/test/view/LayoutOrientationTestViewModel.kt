@@ -20,9 +20,9 @@ import androidx.lifecycle.ViewModel
 
 class LayoutOrientationTestViewModel : ViewModel() {
 
-    val rowLayoutCheckedData = MutableLiveData(true)
+    val horizontalLayoutData = MutableLiveData(true)
 
-    fun changeTab(checked: Boolean) {
-        rowLayoutCheckedData.postValue(checked)
+    fun changeLayoutOrientation() {
+        horizontalLayoutData.postValue(horizontalLayoutData.value!!.not())
     }
 }
