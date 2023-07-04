@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.test.view
+package com.github.panpf.zoomimage.sample.ui.photoalbum
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class LayoutOrientationTestViewModel : ViewModel() {
+class LayoutOrientationViewModel : ViewModel() {
 
     val horizontalLayoutData = MutableLiveData(true)
 

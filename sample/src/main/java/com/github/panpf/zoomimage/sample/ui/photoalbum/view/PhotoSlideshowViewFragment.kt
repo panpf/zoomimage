@@ -27,13 +27,13 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.PhotoSlideshowFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
-import com.github.panpf.zoomimage.sample.ui.test.view.LayoutOrientationTestViewModel
+import com.github.panpf.zoomimage.sample.ui.photoalbum.LayoutOrientationViewModel
 
 class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragmentBinding>() {
 
     private val args by navArgs<PhotoSlideshowViewFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
-    private val viewModel by viewModels<LayoutOrientationTestViewModel>()
+    private val layoutOrientationViewModel by viewModels<LayoutOrientationViewModel>()
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(
@@ -46,10 +46,10 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
         toolbar.menu.add("Layout").apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             setOnMenuItemClickListener {
-                viewModel.changeLayoutOrientation()
+                layoutOrientationViewModel.changeLayoutOrientation()
                 true
             }
-            viewModel.horizontalLayoutData.observe(viewLifecycleOwner) {
+            layoutOrientationViewModel.horizontalLayoutData.observe(viewLifecycleOwner) {
                 val meuIcon = if (it!!) R.drawable.ic_layout_column else R.drawable.ic_layout_row
                 setIcon(meuIcon)
             }
@@ -58,7 +58,7 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
         val imageUrlList = args.imageUris.split(",")
         binding.photoSlideshowPager.apply {
             offscreenPageLimit = 1
-            viewModel.horizontalLayoutData.observe(viewLifecycleOwner) {
+            layoutOrientationViewModel.horizontalLayoutData.observe(viewLifecycleOwner) {
                 orientation =
                     if (it!!) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL
             }

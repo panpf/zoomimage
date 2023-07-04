@@ -32,13 +32,13 @@ import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
-import com.github.panpf.zoomimage.sample.ui.test.view.LayoutOrientationTestViewModel
+import com.github.panpf.zoomimage.sample.ui.photoalbum.LayoutOrientationViewModel
 
 class PhotoSlideshowComposeFragment : AppBarFragment() {
 
     private val args by navArgs<PhotoSlideshowComposeFragmentArgs>()
     private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
-    private val viewModel by viewModels<LayoutOrientationTestViewModel>()
+    private val layoutOrientationViewModel by viewModels<LayoutOrientationViewModel>()
 
     override fun getTitle(): String {
         return zoomImageType.title
@@ -46,9 +46,9 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
 
     @Composable
     override fun RowScope.DrawActions() {
-        val horizontalLayout by viewModel.horizontalLayoutData.asFlow()
+        val horizontalLayout by layoutOrientationViewModel.horizontalLayoutData.asFlow()
             .collectAsState(initial = true)
-        IconButton(onClick = { viewModel.changeLayoutOrientation() }) {
+        IconButton(onClick = { layoutOrientationViewModel.changeLayoutOrientation() }) {
             val meuIcon =
                 if (horizontalLayout) R.drawable.ic_layout_column else R.drawable.ic_layout_row
             Icon(painter = painterResource(id = meuIcon), contentDescription = "Icon")
@@ -58,7 +58,7 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun DrawContent() {
-        val horizontalLayout by viewModel.horizontalLayoutData.asFlow()
+        val horizontalLayout by layoutOrientationViewModel.horizontalLayoutData.asFlow()
             .collectAsState(initial = true)
         val imageUrlList = remember { args.imageUris.split(",") }
         val pagerState = rememberPagerState(initialPage = args.position - args.startPosition)
