@@ -20,8 +20,8 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import com.github.panpf.zoomimage.imagesource.ImageSource
-import com.github.panpf.zoomimage.internal.PicassoHttpImageSource
-import com.github.panpf.zoomimage.internal.PicassoTileMemoryCache
+import com.github.panpf.zoomimage.view.picasso.internal.PicassoHttpImageSource
+import com.github.panpf.zoomimage.view.picasso.internal.PicassoTileMemoryCache
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator

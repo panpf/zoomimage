@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.view.glide.internal
 
 import android.content.Context
 import android.content.ContextWrapper

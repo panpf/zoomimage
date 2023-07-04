@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.view.coil.internal
 
 import android.graphics.Bitmap
+import coil.memory.MemoryCache
 import com.github.panpf.zoomimage.TileBitmap
 
-class PicassoTileBitmap(
+class CoilTileBitmap(
     override val key: String,
-    private val cacheValue: Bitmap
+    private val cacheValue: MemoryCache.Value
 ) : TileBitmap {
 
     override val bitmap: Bitmap
-        get() = cacheValue
+        get() = cacheValue.bitmap
 
     override fun setIsDisplayed(displayed: Boolean) {
+
     }
 }

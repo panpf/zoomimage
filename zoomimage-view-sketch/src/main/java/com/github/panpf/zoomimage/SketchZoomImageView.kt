@@ -32,10 +32,10 @@ import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.sketch.util.getLastChildDrawable
 import com.github.panpf.zoomimage.imagesource.ImageSource
-import com.github.panpf.zoomimage.internal.SketchImageSource
-import com.github.panpf.zoomimage.internal.SketchTileBitmapPool
-import com.github.panpf.zoomimage.internal.SketchTileMemoryCache
-import com.github.panpf.zoomimage.internal.getLifecycle
+import com.github.panpf.zoomimage.view.sketch.internal.SketchImageSource
+import com.github.panpf.zoomimage.view.sketch.internal.SketchTileBitmapPool
+import com.github.panpf.zoomimage.view.sketch.internal.SketchTileMemoryCache
+import com.github.panpf.zoomimage.view.sketch.internal.getLifecycle
 
 open class SketchZoomImageView @JvmOverloads constructor(
     context: Context,

@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.view.picasso.internal
 
 import android.graphics.Bitmap
-import android.graphics.Bitmap.Config
-import com.github.panpf.sketch.Sketch
-import com.github.panpf.zoomimage.TileBitmapPool
+import com.github.panpf.zoomimage.TileBitmap
 
-class SketchTileBitmapPool(private val sketch: Sketch) : TileBitmapPool {
+class PicassoTileBitmap(
+    override val key: String,
+    private val cacheValue: Bitmap
+) : TileBitmap {
 
-    override fun put(bitmap: Bitmap): Boolean {
-        return sketch.bitmapPool.put(bitmap, "SubsamplingImageView")
-    }
+    override val bitmap: Bitmap
+        get() = cacheValue
 
-    override fun get(width: Int, height: Int, config: Config): Bitmap? {
-        return sketch.bitmapPool.get(width, height, config)
+    override fun setIsDisplayed(displayed: Boolean) {
     }
 }

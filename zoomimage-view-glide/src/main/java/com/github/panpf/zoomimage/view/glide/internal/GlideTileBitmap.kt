@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.view.glide.internal
 
 import android.graphics.Bitmap
-import com.github.panpf.sketch.cache.MemoryCache.Value
+import com.bumptech.glide.load.engine.EngineResourceWrapper
 import com.github.panpf.zoomimage.TileBitmap
 
-class SketchTileBitmap(
+internal class GlideTileBitmap(
     override val key: String,
-    private val cacheValue: Value
+    private val resource: EngineResourceWrapper
 ) : TileBitmap {
 
-    override val bitmap: Bitmap?
-        get() = cacheValue.countBitmap.bitmap
+    override val bitmap: Bitmap
+        get() = resource.bitmap
 
     override fun setIsDisplayed(displayed: Boolean) {
-        cacheValue.countBitmap.setIsDisplayed(displayed, "SubsamplingImageView")
+        resource.setIsDisplayed(displayed)
     }
 }

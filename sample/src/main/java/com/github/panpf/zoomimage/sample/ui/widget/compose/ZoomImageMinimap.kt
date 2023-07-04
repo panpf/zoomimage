@@ -27,10 +27,10 @@ import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.zoomimage.Centroid
+import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import kotlinx.coroutines.launch
-import me.saket.telephoto.zoomable.ZoomableState
 import kotlin.math.min
 
 @Composable

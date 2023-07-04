@@ -13,23 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.view.glide.internal
 
 import android.graphics.Bitmap
-import coil.ImageLoader
-import coil.memory.MemoryCache
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.EngineResourceWrapper
+import com.bumptech.glide.load.engine.GlideEngine
+import com.bumptech.glide.load.engine.createGlideEngine
+import com.bumptech.glide.load.engine.newEngineKey
 import com.github.panpf.zoomimage.TileBitmap
 import com.github.panpf.zoomimage.TileMemoryCache
 import com.github.panpf.zoomimage.core.SizeCompat
 
-class CoilTileMemoryCache(private val imageLoader: ImageLoader) : TileMemoryCache {
+class GlideTileMemoryCache(private val glide: Glide) : TileMemoryCache {
 
-    override fun get(key: String): TileBitmap? {
-        return imageLoader.memoryCache
-            ?.get(MemoryCache.Key(key))
-            ?.let { CoilTileBitmap(key, it) }
+    private val glideEngine: GlideEngine? by lazy {
+        createGlideEngine(glide)
     }
 
+    @Suppress("INACCESSIBLE_TYPE")
+    override fun get(key: String): TileBitmap? {
+        val engineKey = newEngineKey(key)
+        val resource = glideEngine?.loadFromMemory(key = engineKey, isMemoryCacheable = true)
+        return resource?.let { GlideTileBitmap(key, it) }
+    }
+
+    @Suppress("INACCESSIBLE_TYPE")
     override fun put(
         key: String,
         bitmap: Bitmap,
@@ -38,9 +47,9 @@ class CoilTileMemoryCache(private val imageLoader: ImageLoader) : TileMemoryCach
         imageMimeType: String,
         imageExifOrientation: Int,
         disallowReuseBitmap: Boolean
-    ): TileBitmap {
-        val newCacheValue = MemoryCache.Value(bitmap)
-        imageLoader.memoryCache?.set(MemoryCache.Key(key), newCacheValue)
-        return CoilTileBitmap(key, newCacheValue)
+    ): TileBitmap? {
+        val engineKey = newEngineKey(key)
+        val resource = glideEngine?.put(bitmap, engineKey) ?: return null
+        return GlideTileBitmap(key, EngineResourceWrapper(resource))
     }
 }

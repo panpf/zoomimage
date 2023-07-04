@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.internal
+package com.github.panpf.zoomimage.view.sketch.internal
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
-import com.bumptech.glide.Glide
+import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.TileBitmapPool
 
-class GlideTileBitmapPool(private val glide: Glide) : TileBitmapPool {
+class SketchTileBitmapPool(private val sketch: Sketch) : TileBitmapPool {
 
     override fun put(bitmap: Bitmap): Boolean {
-        glide.bitmapPool.put(bitmap)
-        return true
+        return sketch.bitmapPool.put(bitmap, "SubsamplingImageView")
     }
 
     override fun get(width: Int, height: Int, config: Config): Bitmap? {
-        return glide.bitmapPool.get(width, height, config)
+        return sketch.bitmapPool.get(width, height, config)
     }
 }
