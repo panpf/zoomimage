@@ -42,6 +42,7 @@ import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.supportReadMode
+import com.github.panpf.zoomimage.compose.internal.toCompatRectF
 import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.internal.toCompatSize
 import com.github.panpf.zoomimage.compose.internal.toScaleMode
@@ -49,6 +50,7 @@ import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.Transform
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
+import com.github.panpf.zoomimage.core.internal.computeCanDrag
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
 import com.github.panpf.zoomimage.core.toShortString
 import kotlinx.coroutines.coroutineScope
@@ -682,6 +684,14 @@ class ZoomableState(
         }
         return calculateNextStepScale(stepScales, scale)
     }
+
+    fun canDrag(horizontal: Boolean, direction: Int): Boolean =
+        computeCanDrag(
+            contentSize = contentSize.toCompatSize(),
+            contentVisibleRect = contentVisibleRect.toCompatRectF(),
+            horizontal = horizontal,
+            direction = direction
+        )
 
     override fun toString(): String =
         "ZoomableState(" +

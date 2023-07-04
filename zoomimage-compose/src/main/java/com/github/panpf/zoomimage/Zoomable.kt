@@ -8,11 +8,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.toSize
-import com.github.panpf.zoomimage.core.internal.computeCanDrag
 import com.github.panpf.zoomimage.compose.internal.detectCanDragGestures
 import com.github.panpf.zoomimage.compose.internal.detectZoomGestures
-import com.github.panpf.zoomimage.compose.internal.toCompatRectF
-import com.github.panpf.zoomimage.compose.internal.toCompatSize
 import kotlinx.coroutines.launch
 
 fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
@@ -39,12 +36,7 @@ fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
         .pointerInput(Unit) {
             detectCanDragGestures(
                 canDrag = { horizontal: Boolean, direction: Int ->
-                    computeCanDrag(
-                        contentSize = state.contentSize.toCompatSize(),
-                        contentVisibleRect = state.contentVisibleRect.toCompatRectF(),
-                        horizontal = horizontal,
-                        direction = direction
-                    )
+                    state.canDrag(horizontal = horizontal, direction = direction)
                 },
                 onDrag = { _, dragAmount ->
                     coroutineScope.launch {
