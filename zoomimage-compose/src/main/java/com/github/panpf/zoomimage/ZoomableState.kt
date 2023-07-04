@@ -178,6 +178,7 @@ class ZoomableState(
         computeContainerVisibleRect(containerSize, scale, offset)
     }
     val contentVisibleRect: Rect by derivedStateOf {
+        // todo 长微博图片示例，显示区域框框底部没有到底，但是图片已经到底了
         computeContentVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -222,7 +223,7 @@ class ZoomableState(
                 defaultMediumScaleMultiple = defaultMediumScaleMultiple,
             )
             minScale = scales[0]
-            mediumScale = scales[1]
+            mediumScale = scales[1] // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
             maxScale = scales[2]
             val readModeResult = readMode.enabled
                     && contentScale.supportReadMode()
@@ -429,11 +430,12 @@ class ZoomableState(
             contentAlignment = contentAlignment,
             contentCentroid = contentCentroid
         )
-        val limitedTargetOffset = computeScaleTargetOffset(
+        val targetOffset = computeScaleTargetOffset(
             containerSize = containerSize,
             scale = limitedTargetScale,
             containerCentroid = containerCentroid
-        ).let { limitOffset(it, futureOffsetBounds) }
+        )
+        val limitedTargetOffset = limitOffset(targetOffset, futureOffsetBounds)
         log {
             "animateLocation. " +
                     "contentCentroid=${contentCentroid.toShortString()}, " +
@@ -442,8 +444,9 @@ class ZoomableState(
                     "contentSize=${contentSize.toShortString()}, " +
                     "containerCentroid=${containerCentroid.toShortString()}, " +
                     "futureBounds=${futureOffsetBounds.toShortString()}, " +
+                    "targetOffset=${targetOffset.toShortString()}, " +
                     "scale: ${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, " +
-                    "Offset: ${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
+                    "offset: ${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
         }
         clearOffsetBounds("animateLocation")
         coroutineScope {
@@ -529,11 +532,12 @@ class ZoomableState(
             contentAlignment = contentAlignment,
             contentCentroid = contentCentroid
         )
-        val limitedTargetOffset = computeScaleTargetOffset(
+        val targetOffset = computeScaleTargetOffset(
             containerSize = containerSize,
             scale = limitedTargetValue,
             containerCentroid = containerCentroid
-        ).let { limitOffset(it, futureOffsetBounds) }
+        )
+        val limitedTargetOffset = limitOffset(targetOffset, futureOffsetBounds)
 
         log {
             "snapLocation. " +
@@ -543,6 +547,7 @@ class ZoomableState(
                     "contentSize=${contentSize.toShortString()}, " +
                     "containerCentroid=${containerCentroid.toShortString()}, " +
                     "futureBounds=${futureOffsetBounds.toShortString()}, " +
+                    "targetOffset=${targetOffset.toShortString()}, " +
                     "scale: ${currentScale.format(4)} -> ${limitedTargetValue.format(4)}, " +
                     "offset: ${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
         }
@@ -762,7 +767,7 @@ class ZoomableState(
 
     private fun log(message: () -> String) {
         if (debugMode) {
-            Log.d("MyZoomState", message())
+            Log.d("ZoomableState", message())
         }
     }
 
