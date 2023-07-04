@@ -41,6 +41,7 @@ import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.Transform
+import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
 import com.github.panpf.zoomimage.core.rotate
@@ -75,7 +76,7 @@ internal class ZoomEngine constructor(
                 it.onDrag(dx, dy)
             }
         },
-        onDragFling = {velocityX: Float, velocityY: Float ->
+        onDragFling = { velocityX: Float, velocityY: Float ->
             onDragFlingListenerList?.forEach {
                 it.onFling(velocityX, velocityY)
             }
@@ -140,6 +141,13 @@ internal class ZoomEngine constructor(
             }
         }
     var readModeDecider: ReadModeDecider = ReadModeDecider.Default
+        internal set(value) {
+            if (field != value) {
+                field = value
+                reset()
+            }
+        }
+    var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
         internal set(value) {
             if (field != value) {
                 field = value
@@ -220,6 +228,7 @@ internal class ZoomEngine constructor(
                     srcSize = rotatedDrawableSize,
                     dstSize = viewSize
                 ),
+                defaultMediumScaleMultiple = defaultMediumScaleMultiple
             )
             minScale = supportStepScales[0]
             mediumScale = supportStepScales[1]

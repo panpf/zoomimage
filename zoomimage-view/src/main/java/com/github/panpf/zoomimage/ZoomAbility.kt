@@ -152,6 +152,12 @@ class ZoomAbility(
             engine.readModeDecider = value
         }
 
+    var defaultMediumScaleMultiple: Float
+        get() = engine.defaultMediumScaleMultiple
+        set(value) {
+            engine.defaultMediumScaleMultiple = value
+        }
+
     var scaleAnimationDuration: Int
         get() = engine.scaleAnimationDuration
         set(value) {

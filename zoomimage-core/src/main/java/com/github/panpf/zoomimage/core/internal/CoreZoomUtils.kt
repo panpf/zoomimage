@@ -20,21 +20,23 @@ fun calculateNextStepScale(
         ?: stepScales.first()
 }
 
+val DEFAULT_MEDIUM_SCALE_MULTIPLE: Float = 3f
+
 fun computeSupportScales(
     contentSize: SizeCompat,
     contentOriginSize: SizeCompat,
     containerSize: SizeCompat,
     scaleMode: ScaleMode,
     baseScale: ScaleFactorCompat,
+    defaultMediumScaleMultiple: Float
 ): FloatArray {
-    val defaultMediumMultiple = 2.5f
     if (contentSize.isEmpty || containerSize.isEmpty) {
         return floatArrayOf(1.0f, 1.0f, 1.0f)
     } else if (scaleMode == ScaleMode.FILL_BOUNDS
         || baseScale.scaleX.format(2) != baseScale.scaleY.format(2)
     ) {
         val minScale = 1.0f
-        val mediumScale = minScale * defaultMediumMultiple
+        val mediumScale = minScale * defaultMediumScaleMultiple
         return floatArrayOf(minScale, mediumScale, mediumScale * 2f)
     } else {
         // The width and height of content fill the container at the same time
@@ -51,9 +53,11 @@ fun computeSupportScales(
             1.0f
         }
         val minScale = baseScale.scaleX
-        val mediumScale =
-            floatArrayOf(contentOriginScale, fillContainerScale, minScale * defaultMediumMultiple)
-                .maxOrNull()!!
+        val mediumScale = floatArrayOf(
+            contentOriginScale,
+            fillContainerScale,
+            minScale * defaultMediumScaleMultiple
+        ).maxOrNull()!!
         val maxScale = mediumScale * 2f
         return floatArrayOf(minScale, mediumScale, maxScale)
             .map { it / baseScale.scaleX }

@@ -47,6 +47,7 @@ import com.github.panpf.zoomimage.compose.internal.toCompatSize
 import com.github.panpf.zoomimage.compose.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.Transform
+import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
 import com.github.panpf.zoomimage.core.toShortString
@@ -59,6 +60,7 @@ fun rememberZoomableState(
     threeStepScaleEnabled: Boolean = false,
     scaleAnimationSpec: ScaleAnimationSpec = ScaleAnimationSpec.Default,
     readMode: ReadMode = ReadMode.Default,
+    defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE,
     debugMode: Boolean = false,
 ): ZoomableState {
     val state = rememberSaveable(saver = ZoomableState.Saver) {
@@ -69,6 +71,7 @@ fun rememberZoomableState(
     state.scaleAnimationSpec = scaleAnimationSpec
     state.flingAnimationSpec = flingAnimationSpec
     state.readMode = readMode
+    state.defaultMediumScaleMultiple = defaultMediumScaleMultiple
     state.debugMode = debugMode
     LaunchedEffect(
         state.containerSize,
@@ -77,6 +80,7 @@ fun rememberZoomableState(
         state.contentScale,
         state.contentAlignment,
         readMode,
+        defaultMediumScaleMultiple,
     ) {
         if (state.contentSize.isUnspecified && state.containerSize.isSpecified) {
             state.contentSize = state.containerSize
@@ -114,6 +118,7 @@ class ZoomableState(
     var flingAnimationSpec: DecayAnimationSpec<Float>? = null
     var readMode: ReadMode = ReadMode.Default
     var debugMode: Boolean = false
+    var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
 
     var minScale: Float by mutableStateOf(1f)
         private set
@@ -211,7 +216,8 @@ class ZoomableState(
                 containerSize = containerSize.toCompatSize(),
                 scaleMode = contentScale.toScaleMode(),
                 baseScale = contentScale.computeScaleFactor(rotatedContentSize, containerSize)
-                    .toCompatScaleFactor()
+                    .toCompatScaleFactor(),
+                defaultMediumScaleMultiple = defaultMediumScaleMultiple,
             )
             minScale = scales[0]
             mediumScale = scales[1]
