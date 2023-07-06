@@ -1,13 +1,11 @@
-@file:JvmName("CentroidKt")
-
 package com.github.panpf.zoomimage
 
 import androidx.compose.runtime.Stable
-import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.core.SizeCompat
 import kotlin.math.roundToInt
 
-data class Centroid(
+data class Origin(
     val x: Float,
     val y: Float,
 ) {
@@ -22,18 +20,18 @@ data class Centroid(
     /**
      * Multiplication operator.
      *
-     * Returns a [Centroid] with scale x and y values multiplied by the operand
+     * Returns a [Origin] with scale x and y values multiplied by the operand
      */
-    operator fun times(operand: Float) = Centroid(x * operand, y * operand)
+    operator fun times(operand: Float) = Origin(x * operand, y * operand)
 
     /**
      * Division operator.
      *
-     * Returns a [Centroid] with scale x and y values divided by the operand
+     * Returns a [Origin] with scale x and y values divided by the operand
      */
-    operator fun div(operand: Float) = Centroid(x / operand, y / operand)
+    operator fun div(operand: Float) = Origin(x / operand, y / operand)
 
-    override fun toString() = "Centroid(${x.format(2)}, ${y.format(2)}))"
+    override fun toString() = "Origin(${x.format(2)}, ${y.format(2)}))"
 
     companion object {
         /**
@@ -42,17 +40,17 @@ data class Centroid(
          * This can be used to represent the origin of a coordinate space.
          */
         @Stable
-        val Zero = Centroid(0f, 0f)
+        val Zero = Origin(0f, 0f)
     }
 }
 
 /**
  * Multiplication operator with [SizeCompat].
  *
- * Return a new [SizeCompat] with the width and height multiplied by the [Centroid.x] and
- * [Centroid.y] respectively
+ * Return a new [SizeCompat] with the width and height multiplied by the [Origin.x] and
+ * [Origin.y] respectively
  */
-operator fun SizeCompat.times(scaleFactor: Centroid): SizeCompat =
+operator fun SizeCompat.times(scaleFactor: Origin): SizeCompat =
     SizeCompat(
         (this.width * scaleFactor.x).roundToInt(),
         (this.height * scaleFactor.y).roundToInt()
@@ -62,22 +60,22 @@ operator fun SizeCompat.times(scaleFactor: Centroid): SizeCompat =
  * Multiplication operator with [SizeCompat] with reverse parameter types to maintain
  * commutative properties of multiplication
  *
- * Return a new [SizeCompat] with the width and height multiplied by the [Centroid.x] and
- * [Centroid.y] respectively
+ * Return a new [SizeCompat] with the width and height multiplied by the [Origin.x] and
+ * [Origin.y] respectively
  */
-operator fun Centroid.times(size: SizeCompat): SizeCompat = size * this
+operator fun Origin.times(size: SizeCompat): SizeCompat = size * this
 
 /**
  * Division operator with [SizeCompat]
  *
- * Return a new [SizeCompat] with the width and height divided by [Centroid.x] and
- * [Centroid.y] respectively
+ * Return a new [SizeCompat] with the width and height divided by [Origin.x] and
+ * [Origin.y] respectively
  */
-operator fun SizeCompat.div(scaleFactor: Centroid): SizeCompat =
+operator fun SizeCompat.div(scaleFactor: Origin): SizeCompat =
     SizeCompat((width / scaleFactor.x).roundToInt(), (height / scaleFactor.y).roundToInt())
 
 /**
- * Linearly interpolate between two [Centroid] parameters
+ * Linearly interpolate between two [Origin] parameters
  *
  * The [fraction] argument represents position on the timeline, with 0.0 meaning
  * that the interpolation has not started, returning [start] (or something
@@ -91,8 +89,8 @@ operator fun SizeCompat.div(scaleFactor: Centroid): SizeCompat =
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
-fun lerp(start: Centroid, stop: Centroid, fraction: Float): Centroid {
-    return Centroid(
+fun lerp(start: Origin, stop: Origin, fraction: Float): Origin {
+    return Origin(
         lerp(start.x, stop.x, fraction),
         lerp(start.y, stop.y, fraction)
     )
@@ -105,4 +103,4 @@ private fun lerp(start: Float, stop: Float, fraction: Float): Float {
     return (1 - fraction) * start + fraction * stop
 }
 
-fun Centroid.toShortString(): String = "(${x.format(2)},${y.format(2)})"
+fun Origin.toShortString(): String = "(${x.format(2)},${y.format(2)})"

@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.Velocity
-import com.github.panpf.zoomimage.compose.internal.computeContainerCentroidByTouchPosition
+import com.github.panpf.zoomimage.compose.internal.computeContainerOriginByTouchPosition
 import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
@@ -36,8 +36,8 @@ import com.github.panpf.zoomimage.compose.internal.computeScaleOffset
 import com.github.panpf.zoomimage.compose.internal.computeScaleTargetOffset
 import com.github.panpf.zoomimage.compose.internal.computeSupportOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.computeTransform
-import com.github.panpf.zoomimage.compose.internal.containerCentroidToContentCentroid
-import com.github.panpf.zoomimage.compose.internal.contentCentroidToContainerCentroid
+import com.github.panpf.zoomimage.compose.internal.containerOriginToContentOrigin
+import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
@@ -402,7 +402,7 @@ class ZoomableState(
         }
     }
 
-    suspend fun animateLocation(contentCentroid: Centroid, targetScale: Float = scale) {
+    suspend fun animateLocation(contentOrigin: Origin, targetScale: Float = scale) {
         stopAllAnimation("animateLocation")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
@@ -423,26 +423,26 @@ class ZoomableState(
             contentAlignment = contentAlignment,
             supportScale = limitedTargetScale
         )
-        val containerCentroid = contentCentroidToContainerCentroid(
+        val containerOrigin = contentOriginToContainerOrigin(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            contentCentroid = contentCentroid
+            contentOrigin = contentOrigin
         )
         val targetOffset = computeScaleTargetOffset(
             containerSize = containerSize,
             scale = limitedTargetScale,
-            containerCentroid = containerCentroid
+            containerOrigin = containerOrigin
         )
         val limitedTargetOffset = limitOffset(targetOffset, futureOffsetBounds)
         log {
             "animateLocation. " +
-                    "contentCentroid=${contentCentroid.toShortString()}, " +
+                    "contentOrigin=${contentOrigin.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
-                    "containerCentroid=${containerCentroid.toShortString()}, " +
+                    "containerOrigin=${containerOrigin.toShortString()}, " +
                     "futureBounds=${futureOffsetBounds.toShortString()}, " +
                     "targetOffset=${targetOffset.toShortString()}, " +
                     "scale: ${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, " +
@@ -482,33 +482,33 @@ class ZoomableState(
         val contentAlignment = contentAlignment
         val currentScale = scale
         val currentOffset = offset
-        val containerCentroid = computeContainerCentroidByTouchPosition(
+        val containerOrigin = computeContainerOriginByTouchPosition(
             containerSize = containerSize,
             scale = currentScale,
             offset = currentOffset,
             touch = touch
         )
-        val contentCentroid = containerCentroidToContentCentroid(
+        val contentOrigin = containerOriginToContentOrigin(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            containerCentroid = containerCentroid
+            containerOrigin = containerOrigin
         )
         log {
             "animateLocation. " +
                     "touch=${touch.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "containerCentroid=${containerCentroid.toShortString()}, " +
-                    "contentCentroid=${contentCentroid.toShortString()}"
+                    "containerOrigin=${containerOrigin.toShortString()}, " +
+                    "contentOrigin=${contentOrigin.toShortString()}"
         }
         animateLocation(
-            contentCentroid = contentCentroid,
+            contentOrigin = contentOrigin,
             targetScale = targetScale,
         )
     }
 
-    suspend fun snapLocation(contentCentroid: Centroid, targetScale: Float = scale) {
+    suspend fun snapLocation(contentOrigin: Origin, targetScale: Float = scale) {
         stopAllAnimation("snapLocation")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
@@ -525,27 +525,27 @@ class ZoomableState(
             contentAlignment = contentAlignment,
             supportScale = limitedTargetValue
         )
-        val containerCentroid = contentCentroidToContainerCentroid(
+        val containerOrigin = contentOriginToContainerOrigin(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            contentCentroid = contentCentroid
+            contentOrigin = contentOrigin
         )
         val targetOffset = computeScaleTargetOffset(
             containerSize = containerSize,
             scale = limitedTargetValue,
-            containerCentroid = containerCentroid
+            containerOrigin = containerOrigin
         )
         val limitedTargetOffset = limitOffset(targetOffset, futureOffsetBounds)
 
         log {
             "snapLocation. " +
-                    "contentCentroid=${contentCentroid.toShortString()}, " +
+                    "contentOrigin=${contentOrigin.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
-                    "containerCentroid=${containerCentroid.toShortString()}, " +
+                    "containerOrigin=${containerOrigin.toShortString()}, " +
                     "futureBounds=${futureOffsetBounds.toShortString()}, " +
                     "targetOffset=${targetOffset.toShortString()}, " +
                     "scale: ${currentScale.format(4)} -> ${limitedTargetValue.format(4)}, " +
@@ -566,36 +566,36 @@ class ZoomableState(
         val contentAlignment = contentAlignment
         val currentScale = scale
         val currentOffset = offset
-        val containerCentroid = computeContainerCentroidByTouchPosition(
+        val containerOrigin = computeContainerOriginByTouchPosition(
             containerSize = containerSize,
             scale = currentScale,
             offset = currentOffset,
             touch = touch
         )
-        val contentCentroid = containerCentroidToContentCentroid(
+        val contentOrigin = containerOriginToContentOrigin(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            containerCentroid = containerCentroid
+            containerOrigin = containerOrigin
         )
         log {
             "snapLocation. " +
                     "touch=${touch.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "containerCentroid=${containerCentroid.toShortString()}, " +
-                    "contentCentroid=${contentCentroid.toShortString()}"
+                    "containerOrigin=${containerOrigin.toShortString()}, " +
+                    "contentOrigin=${contentOrigin.toShortString()}"
         }
         snapLocation(
-            contentCentroid = contentCentroid,
+            contentOrigin = contentOrigin,
             targetScale = targetScale
         )
     }
 
-    suspend fun switchScale(contentCentroid: Centroid = Centroid(0.5f, 0.5f)): Float {
+    suspend fun switchScale(contentOrigin: Origin = Origin(0.5f, 0.5f)): Float {
         val nextScale = getNextStepScale()
         animateLocation(
-            contentCentroid = contentCentroid,
+            contentOrigin = contentOrigin,
             targetScale = nextScale
         )
         return nextScale

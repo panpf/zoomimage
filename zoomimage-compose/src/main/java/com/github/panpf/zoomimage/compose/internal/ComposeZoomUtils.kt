@@ -8,7 +8,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.times
-import com.github.panpf.zoomimage.Centroid
+import com.github.panpf.zoomimage.Origin
 import com.github.panpf.zoomimage.core.Transform
 import kotlin.math.absoluteValue
 
@@ -156,13 +156,13 @@ internal fun computeContentInContainerVisibleRect(
 internal fun computeScaleTargetOffset(
     containerSize: Size,
     scale: Float,
-    containerCentroid: Centroid
+    containerOrigin: Origin
 ): Offset {
     if (containerSize.isUnspecified || containerSize.isEmpty()) return Offset.Zero
     val scaledContainerSize = containerSize.times(scale)
     val scaledContainerOffset = Offset(
-        x = scaledContainerSize.width * containerCentroid.x,
-        y = scaledContainerSize.height * containerCentroid.y,
+        x = scaledContainerSize.width * containerOrigin.x,
+        y = scaledContainerSize.height * containerOrigin.y,
     )
     return Offset(
         x = scaledContainerOffset.x - (containerSize.width / 2),
@@ -309,30 +309,30 @@ internal fun computeContentVisibleRect(
 }
 
 
-/* ******************************************* Centroid ***************************************** */
+/* ******************************************* Origin ***************************************** */
 
-internal fun computeContainerCentroidByTouchPosition(
+internal fun computeContainerOriginByTouchPosition(
     containerSize: Size,
     scale: Float,
     offset: Offset,
     touch: Offset
-): Centroid {
-    if (containerSize.isUnspecified) return Centroid.Zero
+): Origin {
+    if (containerSize.isUnspecified) return Origin.Zero
     val touchOfContainer = touch - offset
-    return Centroid(
+    return Origin(
         x = ((touchOfContainer.x / scale) / containerSize.width).coerceIn(0f, 1f),
         y = ((touchOfContainer.y / scale) / containerSize.height).coerceIn(0f, 1f),
     )
 }
 
-internal fun containerCentroidToContentCentroid(
+internal fun containerOriginToContentOrigin(
     containerSize: Size,
     contentSize: Size,
     contentScale: ContentScale,
     contentAlignment: Alignment,
-    containerCentroid: Centroid
-): Centroid {
-    if (containerSize.isUnspecified || contentSize.isUnspecified) return Centroid.Zero
+    containerOrigin: Origin
+): Origin {
+    if (containerSize.isUnspecified || contentSize.isUnspecified) return Origin.Zero
     val contentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
         contentSize = contentSize,
@@ -347,17 +347,17 @@ internal fun containerCentroidToContentCentroid(
     )
     val contentScaleFactor =
         contentScale.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
-    val containerCentroidOffset = Offset(
-        x = containerSize.width * containerCentroid.x,
-        y = containerSize.height * containerCentroid.y
+    val containerOriginOffset = Offset(
+        x = containerSize.width * containerOrigin.x,
+        y = containerSize.height * containerOrigin.y
     )
-    val contentScaledContentCentroidOffset = Offset(
-        x = containerCentroidOffset.x - contentInContainerRect.left,
-        y = containerCentroidOffset.y - contentInContainerRect.top,
+    val contentScaledContentOriginOffset = Offset(
+        x = containerOriginOffset.x - contentInContainerRect.left,
+        y = containerOriginOffset.y - contentInContainerRect.top,
     )
-    val contentCentroidOffset = Offset(
-        x = contentScaledContentCentroidOffset.x / contentScaleFactor.scaleX,
-        y = contentScaledContentCentroidOffset.y / contentScaleFactor.scaleY,
+    val contentOriginOffset = Offset(
+        x = contentScaledContentOriginOffset.x / contentScaleFactor.scaleX,
+        y = contentScaledContentOriginOffset.y / contentScaleFactor.scaleY,
     ).let {
         Offset(
             x = it.x + contentInContainerVisibleRect.left,
@@ -369,20 +369,20 @@ internal fun containerCentroidToContentCentroid(
             y = it.y.coerceIn(0f, contentSize.height)
         )
     }
-    return Centroid(
-        x = contentCentroidOffset.x / contentSize.width,
-        y = contentCentroidOffset.y / contentSize.height
+    return Origin(
+        x = contentOriginOffset.x / contentSize.width,
+        y = contentOriginOffset.y / contentSize.height
     )
 }
 
-internal fun contentCentroidToContainerCentroid(
+internal fun contentOriginToContainerOrigin(
     containerSize: Size,
     contentSize: Size,
     contentScale: ContentScale,
     contentAlignment: Alignment,
-    contentCentroid: Centroid
-): Centroid {
-    if (containerSize.isUnspecified || contentSize.isUnspecified) return Centroid.Zero
+    contentOrigin: Origin
+): Origin {
+    if (containerSize.isUnspecified || contentSize.isUnspecified) return Origin.Zero
     val contentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
         contentSize = contentSize,
@@ -397,31 +397,31 @@ internal fun contentCentroidToContainerCentroid(
     )
     val contentScaleFactor =
         contentScale.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
-    val contentCentroidOffset = Offset(
-        x = contentSize.width * contentCentroid.x,
-        y = contentSize.height * contentCentroid.y,
+    val contentOriginOffset = Offset(
+        x = contentSize.width * contentOrigin.x,
+        y = contentSize.height * contentOrigin.y,
     ).let {
         Offset(
             x = it.x - contentInContainerVisibleRect.left,
             y = it.y - contentInContainerVisibleRect.top,
         )
     }
-    val contentScaledContentCentroidOffset = Offset(
-        x = contentCentroidOffset.x * contentScaleFactor.scaleX,
-        y = contentCentroidOffset.y * contentScaleFactor.scaleY,
+    val contentScaledContentOriginOffset = Offset(
+        x = contentOriginOffset.x * contentScaleFactor.scaleX,
+        y = contentOriginOffset.y * contentScaleFactor.scaleY,
     )
-    val containerCentroidOffset = Offset(
-        x = contentInContainerRect.left + contentScaledContentCentroidOffset.x,
-        y = contentInContainerRect.top + contentScaledContentCentroidOffset.y,
+    val containerOriginOffset = Offset(
+        x = contentInContainerRect.left + contentScaledContentOriginOffset.x,
+        y = contentInContainerRect.top + contentScaledContentOriginOffset.y,
     ).let {
         Offset(
             x = it.x.coerceIn(0f, containerSize.width),
             y = it.y.coerceIn(0f, containerSize.height),
         )
     }
-    return Centroid(
-        x = containerCentroidOffset.x / containerSize.width,
-        y = containerCentroidOffset.y / containerSize.height
+    return Origin(
+        x = containerOriginOffset.x / containerSize.width,
+        y = containerOriginOffset.y / containerSize.height
     )
 }
 
