@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.compose.internal
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -24,6 +25,14 @@ internal fun Rect.toShortString(): String =
     "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
 
 fun ScaleFactor.toShortString(): String = "(${scaleX.format(2)},${scaleY.format(2)})"
+
+@Stable
+operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
+    ScaleFactor(scaleX * scaleFactor.scaleX, scaleY * scaleFactor.scaleY)
+
+@Stable
+operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
+    ScaleFactor(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
 
 
 internal fun Rect.scale(scale: Float): Rect {

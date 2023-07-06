@@ -41,6 +41,7 @@ import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.TransformCompat
+import com.github.panpf.zoomimage.core.div
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
@@ -239,22 +240,12 @@ internal class ZoomEngine constructor(
                     && scaleType.supportReadMode()
                     && readModeDecider.should(srcSize = rotatedDrawableSize, dstSize = viewSize)
             supportInitialTransform = if (readMode) {
-                computeReadModeTransform(
+                val readModeTransform = computeReadModeTransform(
                     srcSize = rotatedDrawableSize,
                     dstSize = viewSize,
                     scaleType = scaleType,
-                ).let {
-                    TransformCompat(
-                        scale = ScaleFactorCompat(
-                            scaleX = it.scale.scaleX / baseInitialTransform.scale.scaleX,
-                            scaleY = it.scale.scaleY / baseInitialTransform.scale.scaleY,
-                        ),
-                        offset = OffsetCompat(
-                            x = it.offset.x / baseInitialTransform.scale.scaleX,
-                            y = it.offset.y / baseInitialTransform.scale.scaleY,
-                        )
-                    )
-                }
+                )
+                readModeTransform.div(baseInitialTransform.scale)
             } else {
                 TransformCompat.Origin
             }

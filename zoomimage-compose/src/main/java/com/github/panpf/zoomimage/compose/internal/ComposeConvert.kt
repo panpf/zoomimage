@@ -6,10 +6,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
+import com.github.panpf.zoomimage.compose.Transform
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.RectFCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.ScaleMode
 import kotlin.math.roundToInt
 
@@ -60,3 +62,19 @@ fun Offset.toCompatOffset(): OffsetCompat =
         ?: OffsetCompat.Zero
 
 fun OffsetCompat.toOffset(): Offset = Offset(x = x, y = y)
+
+fun Transform.toCompatTransform(): TransformCompat {
+    return TransformCompat(
+        scale = scale.toCompatScaleFactor(),
+        offset = offset.toCompatOffset(),
+        rotation = rotation,
+    )
+}
+
+fun TransformCompat.toTransform(): Transform {
+    return Transform(
+        scale = scale.toScaleFactor(),
+        offset = offset.toOffset(),
+        rotation = rotation,
+    )
+}

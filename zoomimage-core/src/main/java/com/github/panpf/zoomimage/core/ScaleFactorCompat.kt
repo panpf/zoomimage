@@ -66,6 +66,12 @@ inline val ScaleFactorCompat.isUnspecified: Boolean
 inline fun ScaleFactorCompat.takeOrElse(block: () -> ScaleFactorCompat): ScaleFactorCompat =
     if (isSpecified) this else block()
 
+operator fun ScaleFactorCompat.times(scaleFactor: ScaleFactorCompat) =
+    ScaleFactorCompat(scaleX * scaleFactor.scaleX, scaleY * scaleFactor.scaleY)
+
+operator fun ScaleFactorCompat.div(scaleFactor: ScaleFactorCompat) =
+    ScaleFactorCompat(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
+
 /**
  * Multiplication operator with [SizeCompat].
  *

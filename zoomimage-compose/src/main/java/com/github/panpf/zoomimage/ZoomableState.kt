@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.Velocity
 import com.github.panpf.zoomimage.compose.internal.computeContainerOriginByTouchPosition
+import com.github.panpf.zoomimage.compose.div
 import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
@@ -49,6 +50,7 @@ import com.github.panpf.zoomimage.compose.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
@@ -240,23 +242,13 @@ class ZoomableState(
                 alignment = contentAlignment,
             )
             supportInitialTransform = if (readModeResult) {
-                computeReadModeTransform(
+                val readModeTransform = computeReadModeTransform(
                     srcSize = rotatedContentSize,
                     dstSize = containerSize,
                     scale = contentScale,
                     alignment = contentAlignment,
-                ).let {
-                    TransformCompat(
-                        scale = ScaleFactorCompat(
-                            scaleX = it.scale.scaleX / baseTransform.scale.scaleX,
-                            scaleY = it.scale.scaleY / baseTransform.scale.scaleY,
-                        ),
-                        offset = OffsetCompat(
-                            x = it.offset.x / baseTransform.scale.scaleX,
-                            y = it.offset.y / baseTransform.scale.scaleY,
-                        )
-                    )
-                }
+                )
+                readModeTransform.div(baseTransform.scale)
             } else {
                 TransformCompat.Origin
             }
