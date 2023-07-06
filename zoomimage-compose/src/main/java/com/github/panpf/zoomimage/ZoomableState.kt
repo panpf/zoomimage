@@ -47,7 +47,9 @@ import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.internal.toCompatSize
 import com.github.panpf.zoomimage.compose.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.core.Transform
+import com.github.panpf.zoomimage.core.OffsetCompat
+import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeCanDrag
@@ -108,7 +110,7 @@ class ZoomableState(
     /**
      * Initial scale and translate for support
      */
-    private var supportInitialTransform: Transform = Transform.Empty
+    private var supportInitialTransform: TransformCompat = TransformCompat.Origin
 
     var containerSize: Size by mutableStateOf(Size.Unspecified)
     var contentSize: Size by mutableStateOf(Size.Unspecified)
@@ -209,7 +211,7 @@ class ZoomableState(
             minScale = 1.0f
             mediumScale = 1.0f
             maxScale = 1.0f
-            supportInitialTransform = Transform.Empty
+            supportInitialTransform = TransformCompat.Origin
         } else {
             val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
             val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
@@ -244,15 +246,19 @@ class ZoomableState(
                     scale = contentScale,
                     alignment = contentAlignment,
                 ).let {
-                    Transform(
-                        scaleX = it.scaleX / baseTransform.scaleX,
-                        scaleY = it.scaleY / baseTransform.scaleY,
-                        offsetX = it.offsetX / baseTransform.scaleX,
-                        offsetY = it.offsetY / baseTransform.scaleY,
+                    TransformCompat(
+                        scale = ScaleFactorCompat(
+                            scaleX = it.scale.scaleX / baseTransform.scale.scaleX,
+                            scaleY = it.scale.scaleY / baseTransform.scale.scaleY,
+                        ),
+                        offset = OffsetCompat(
+                            x = it.offset.x / baseTransform.scale.scaleX,
+                            y = it.offset.y / baseTransform.scale.scaleY,
+                        )
                     )
                 }
             } else {
-                Transform.Empty
+                TransformCompat.Origin
             }
         }
         log {
@@ -267,9 +273,9 @@ class ZoomableState(
                     "maxScale=${maxScale.format(4)}, " +
                     "supportInitialTransform=${supportInitialTransform.toShortString()}"
         }
-        scaleAnimatable.snapTo(supportInitialTransform.scaleX)
-        offsetXAnimatable.snapTo(supportInitialTransform.offsetX)
-        offsetYAnimatable.snapTo(supportInitialTransform.offsetY)
+        scaleAnimatable.snapTo(supportInitialTransform.scale.scaleX)
+        offsetXAnimatable.snapTo(supportInitialTransform.offset.x)
+        offsetYAnimatable.snapTo(supportInitialTransform.offset.y)
         updateOffsetBounds("reset")
     }
 

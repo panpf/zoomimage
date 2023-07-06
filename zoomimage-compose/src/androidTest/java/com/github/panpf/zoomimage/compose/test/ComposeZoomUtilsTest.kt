@@ -7,7 +7,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.panpf.zoomimage.Origin
+import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.compose.internal.computeContainerOriginByTouchPosition
 import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
@@ -20,7 +20,7 @@ import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigi
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.toShortString
+import com.github.panpf.zoomimage.core.toShortString
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

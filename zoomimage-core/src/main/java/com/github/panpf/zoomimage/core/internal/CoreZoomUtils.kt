@@ -1,9 +1,10 @@
 package com.github.panpf.zoomimage.core.internal
 
+import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.RectFCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.core.Transform
+import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.isNotEmpty
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -68,22 +69,20 @@ fun computeSupportScales(
 fun computeReadModeTransform(
     srcSize: SizeCompat,
     dstSize: SizeCompat,
-    baseTransform: Transform,
-): Transform {
+    baseTransform: TransformCompat,
+): TransformCompat {
     val widthScale = dstSize.width / srcSize.width.toFloat()
     val heightScale = dstSize.height / srcSize.height.toFloat()
     val fillMaxDimension = max(widthScale, heightScale)
     @Suppress("UnnecessaryVariable") val scaleX = fillMaxDimension
     @Suppress("UnnecessaryVariable") val scaleY = fillMaxDimension
     val translateX =
-        if (baseTransform.offsetX < 0) baseTransform.offsetX * -1 * scaleX else 0.0f
+        if (baseTransform.offset.x < 0) baseTransform.offset.x * -1 * scaleX else 0.0f
     val translateY =
-        if (baseTransform.offsetY < 0) baseTransform.offsetY * -1 * scaleY else 0.0f
-    return Transform(
-        scaleX = scaleX,
-        scaleY = scaleY,
-        offsetX = translateX,
-        offsetY = translateY
+        if (baseTransform.offset.y < 0) baseTransform.offset.y * -1 * scaleY else 0.0f
+    return TransformCompat(
+        scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
+        offset = OffsetCompat(x = translateX, y = translateY)
     )
 }
 

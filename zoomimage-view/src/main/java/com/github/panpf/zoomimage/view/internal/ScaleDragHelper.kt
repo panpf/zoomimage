@@ -146,8 +146,8 @@ internal class ScaleDragHelper constructor(
         baseMatrix.apply {
             reset()
             val transform = engine.baseInitialTransform
-            postScale(transform.scaleX, transform.scaleY)
-            postTranslate(transform.offsetX, transform.offsetY)
+            postScale(transform.scale.scaleX, transform.scale.scaleY)
+            postTranslate(transform.offset.x, transform.offset.y)
             postRotate(engine.rotateDegrees.toFloat())
         }
     }
@@ -156,8 +156,8 @@ internal class ScaleDragHelper constructor(
         supportMatrix.apply {
             reset()
             val transform = engine.supportInitialTransform
-            postScale(transform.scaleX, transform.scaleY)
-            postTranslate(transform.offsetX, transform.offsetY)
+            postScale(transform.scale.scaleX, transform.scale.scaleY)
+            postTranslate(transform.offset.x, transform.offset.y)
         }
     }
 
@@ -325,8 +325,9 @@ internal class ScaleDragHelper constructor(
 
     fun getDisplayRect(rectF: RectF) {
         val drawableSize = engine.drawableSize
-        rectF[0f, 0f, drawableSize.width.toFloat()] = drawableSize.height.toFloat()
-        displayMatrix.apply { getDisplayMatrix(this) }.mapRect(rectF)
+        val displayMatrix = displayMatrix.apply { getDisplayMatrix(this) }
+        rectF.set(0f, 0f, drawableSize.width.toFloat(), drawableSize.height.toFloat())
+        displayMatrix.mapRect(rectF)
     }
 
     fun getDisplayRect(): RectF {

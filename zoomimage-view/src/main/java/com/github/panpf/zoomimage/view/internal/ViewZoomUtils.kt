@@ -22,7 +22,7 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.core.Transform
+import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.ScaleMode
 import com.github.panpf.zoomimage.core.times
 import kotlin.math.abs
@@ -130,10 +130,10 @@ internal fun rotatePoint(point: PointF, rotateDegrees: Int, drawableSize: SizeCo
     }
 }
 
-internal fun ScaleType.computeTransform(srcSize: SizeCompat, dstSize: SizeCompat): Transform {
+internal fun ScaleType.computeTransform(srcSize: SizeCompat, dstSize: SizeCompat): TransformCompat {
     val scaleFactor = this.computeScaleFactor(srcSize, dstSize)
     val offset = computeScaleOffset(srcSize, dstSize, this)
-    return Transform(scale = scaleFactor, offset = offset)
+    return TransformCompat(scale = scaleFactor, offset = offset)
 }
 
 internal fun ScaleType.computeScaleFactor(srcSize: SizeCompat, dstSize: SizeCompat): ScaleFactorCompat {
@@ -232,7 +232,7 @@ internal fun computeReadModeTransform(
     srcSize: SizeCompat,
     dstSize: SizeCompat,
     scaleType: ScaleType,
-): Transform {
+): TransformCompat {
     return com.github.panpf.zoomimage.core.internal.computeReadModeTransform(
         srcSize = srcSize,
         dstSize = dstSize,

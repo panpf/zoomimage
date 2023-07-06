@@ -1,8 +1,6 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.core
 
-import androidx.compose.runtime.Stable
-import com.github.panpf.zoomimage.compose.internal.format
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.internal.format
 import kotlin.math.roundToInt
 
 data class Origin(
@@ -39,7 +37,6 @@ data class Origin(
          *
          * This can be used to represent the origin of a coordinate space.
          */
-        @Stable
         val Zero = Origin(0f, 0f)
     }
 }

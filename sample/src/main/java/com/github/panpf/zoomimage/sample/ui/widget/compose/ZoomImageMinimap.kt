@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.toSize
 import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
-import com.github.panpf.zoomimage.Origin
+import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp

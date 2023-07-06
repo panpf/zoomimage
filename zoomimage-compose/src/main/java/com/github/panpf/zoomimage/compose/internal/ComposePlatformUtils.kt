@@ -23,6 +23,8 @@ internal fun Offset.toShortString(): String =
 internal fun Rect.toShortString(): String =
     "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
 
+fun ScaleFactor.toShortString(): String = "(${scaleX.format(2)},${scaleY.format(2)})"
+
 
 internal fun Rect.scale(scale: Float): Rect {
     return Rect(

@@ -8,8 +8,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.times
-import com.github.panpf.zoomimage.Origin
-import com.github.panpf.zoomimage.core.Transform
+import com.github.panpf.zoomimage.core.Origin
+import com.github.panpf.zoomimage.core.TransformCompat
 import kotlin.math.absoluteValue
 
 internal fun computeScaleOffset(
@@ -465,7 +465,7 @@ internal fun computeTransform(
     dstSize: Size,
     scale: ContentScale,
     alignment: Alignment,
-): Transform {
+): TransformCompat {
     val scaleFactor = scale.computeScaleFactor(srcSize, dstSize)
     val offset = computeScaleOffset(
         srcSize = srcSize,
@@ -473,7 +473,7 @@ internal fun computeTransform(
         scale = scale,
         alignment = alignment
     )
-    return Transform(scaleFactor.toCompatScaleFactor(), offset.toCompatOffset())
+    return TransformCompat(scaleFactor.toCompatScaleFactor(), offset.toCompatOffset())
 }
 
 internal fun computeReadModeTransform(
@@ -481,7 +481,7 @@ internal fun computeReadModeTransform(
     dstSize: Size,
     scale: ContentScale,
     alignment: Alignment,
-): Transform {
+): TransformCompat {
     return com.github.panpf.zoomimage.core.internal.computeReadModeTransform(
         srcSize = srcSize.toCompatSize(),
         dstSize = dstSize.toCompatSize(),

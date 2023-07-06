@@ -40,7 +40,7 @@ import com.github.panpf.zoomimage.ReadModeDecider
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.core.Transform
+import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
@@ -189,13 +189,13 @@ internal class ZoomEngine constructor(
     /**
      * Initial scale and translate for base matrix
      */
-    var baseInitialTransform: Transform = Transform.Empty
+    var baseInitialTransform: TransformCompat = TransformCompat.Origin
         private set
 
     /**
      * Initial scale and translate for support matrix
      */
-    var supportInitialTransform: Transform = Transform.Empty
+    var supportInitialTransform: TransformCompat = TransformCompat.Origin
         private set
 
 
@@ -214,8 +214,8 @@ internal class ZoomEngine constructor(
             minScale = 1.0f
             mediumScale = 1.0f
             maxScale = 1.0f
-            baseInitialTransform = Transform.Empty
-            supportInitialTransform = Transform.Empty
+            baseInitialTransform = TransformCompat.Origin
+            supportInitialTransform = TransformCompat.Origin
         } else {
             val rotatedDrawableSize = drawableSize.rotate(rotateDegrees)
             val rotatedImageSize = imageSize.rotate(rotateDegrees)
@@ -244,15 +244,19 @@ internal class ZoomEngine constructor(
                     dstSize = viewSize,
                     scaleType = scaleType,
                 ).let {
-                    Transform(
-                        scaleX = it.scaleX / baseInitialTransform.scaleX,
-                        scaleY = it.scaleY / baseInitialTransform.scaleY,
-                        offsetX = it.offsetX / baseInitialTransform.scaleX,
-                        offsetY = it.offsetY / baseInitialTransform.scaleY,
+                    TransformCompat(
+                        scale = ScaleFactorCompat(
+                            scaleX = it.scale.scaleX / baseInitialTransform.scale.scaleX,
+                            scaleY = it.scale.scaleY / baseInitialTransform.scale.scaleY,
+                        ),
+                        offset = OffsetCompat(
+                            x = it.offset.x / baseInitialTransform.scale.scaleX,
+                            y = it.offset.y / baseInitialTransform.scale.scaleY,
+                        )
                     )
                 }
             } else {
-                Transform.Empty
+                TransformCompat.Origin
             }
         }
         scaleDragHelper.reset()
