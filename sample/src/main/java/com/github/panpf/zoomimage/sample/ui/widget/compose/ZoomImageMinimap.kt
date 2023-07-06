@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.toSize
 import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
-import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.ZoomableState
+import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import kotlinx.coroutines.launch
@@ -90,7 +90,7 @@ fun ZoomImageMinimap(
                                                 x = it.x / imageNodeSize.width,
                                                 y = it.y / imageNodeSize.height
                                             ),
-                                            targetScale = state.scale.coerceAtLeast(state.mediumScale),
+                                            targetScale = state.transform.scale.scaleX.coerceAtLeast(state.mediumScale),
                                         )
                                     }
                                 }

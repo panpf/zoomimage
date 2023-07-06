@@ -156,11 +156,11 @@ fun ZoomAsyncImage(
         .let { if (scrollBarEnabled) it.zoomScrollBar(state, scrollBarStyle) else it }
         .zoomable(state)
         .graphicsLayer {
-            scaleX = state.scale
-            scaleY = state.scale
-            rotationZ = state.rotation
-            translationX = state.offset.x
-            translationY = state.offset.y
+            scaleX = state.transform.scale.scaleX
+            scaleY = state.transform.scale.scaleY
+            rotationZ = state.transform.rotation
+            translationX = state.transform.offset.x
+            translationY = state.transform.offset.y
             transformOrigin = state.transformOrigin
         }
 

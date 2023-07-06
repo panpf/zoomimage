@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.ScaleAnimationSpec
+import com.github.panpf.zoomimage.ZoomAnimationSpec
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
@@ -28,18 +28,18 @@ import com.google.accompanist.drawablepainter.DrawablePainter
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
     val zoomImageOptionsDialogState = rememberZoomImageOptionsDialogState()
-    val scaleAnimationSpec = remember(
+    val zoomAnimationSpec = remember(
         zoomImageOptionsDialogState.animateScale,
         zoomImageOptionsDialogState.slowerScaleAnimation
     ) {
         val durationMillis = zoomImageOptionsDialogState.let {
             if (it.animateScale) (if (it.slowerScaleAnimation) 3000 else 300) else 0
         }
-        mutableStateOf(ScaleAnimationSpec.Default.copy(durationMillis = durationMillis))
+        mutableStateOf(ZoomAnimationSpec.Default.copy(durationMillis = durationMillis))
     }
     val zoomableState = rememberZoomableState(
         threeStepScaleEnabled = zoomImageOptionsDialogState.threeStepScaleEnabled,
-        scaleAnimationSpec = scaleAnimationSpec.value,
+        animationSpec = zoomAnimationSpec.value,
         readMode = ReadMode.Default.copy(enabled = zoomImageOptionsDialogState.readModeEnabled),
         debugMode = BuildConfig.DEBUG
     )

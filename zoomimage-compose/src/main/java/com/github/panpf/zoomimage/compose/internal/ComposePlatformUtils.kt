@@ -34,6 +34,8 @@ operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
 operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
     ScaleFactor(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
 
+fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
+
 
 internal fun Rect.scale(scale: Float): Rect {
     return Rect(

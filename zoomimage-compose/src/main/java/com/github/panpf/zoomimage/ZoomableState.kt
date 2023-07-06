@@ -3,10 +3,10 @@ package com.github.panpf.zoomimage
 import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.DecayAnimationSpec
-import androidx.compose.animation.core.exponentialDecay
+import androidx.compose.animation.core.AnimationVector
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.rememberSplineBasedDecay
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -25,15 +25,18 @@ import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Velocity
-import com.github.panpf.zoomimage.compose.internal.computeContainerOriginByTouchPosition
+import androidx.compose.ui.util.lerp
+import com.github.panpf.zoomimage.compose.Transform
+import com.github.panpf.zoomimage.compose.concat
 import com.github.panpf.zoomimage.compose.div
+import com.github.panpf.zoomimage.compose.internal.ScaleFactor
+import com.github.panpf.zoomimage.compose.internal.computeContainerOriginByTouchPosition
 import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeReadModeTransform
-import com.github.panpf.zoomimage.compose.internal.computeScaleFactor
-import com.github.panpf.zoomimage.compose.internal.computeScaleOffset
 import com.github.panpf.zoomimage.compose.internal.computeScaleTargetOffset
 import com.github.panpf.zoomimage.compose.internal.computeSupportOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.computeTransform
@@ -48,10 +51,9 @@ import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.internal.toCompatSize
 import com.github.panpf.zoomimage.compose.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.compose.internal.toTransform
+import com.github.panpf.zoomimage.compose.toShortString
 import com.github.panpf.zoomimage.core.Origin
-import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeCanDrag
@@ -64,7 +66,7 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberZoomableState(
     threeStepScaleEnabled: Boolean = false,
-    scaleAnimationSpec: ScaleAnimationSpec = ScaleAnimationSpec.Default,
+    animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
     readMode: ReadMode = ReadMode.Default,
     defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE,
     debugMode: Boolean = false,
@@ -72,10 +74,8 @@ fun rememberZoomableState(
     val state = rememberSaveable(saver = ZoomableState.Saver) {
         ZoomableState()
     }
-    val flingAnimationSpec = rememberSplineBasedDecay<Float>()
     state.threeStepScaleEnabled = threeStepScaleEnabled
-    state.scaleAnimationSpec = scaleAnimationSpec
-    state.flingAnimationSpec = flingAnimationSpec
+    state.defaultAnimationSpec = animationSpec
     state.readMode = readMode
     state.defaultMediumScaleMultiple = defaultMediumScaleMultiple
     state.debugMode = debugMode
@@ -100,19 +100,13 @@ class ZoomableState(
     @FloatRange(from = 0.0) initialScale: Float = 1f,
     @FloatRange(from = 0.0) initialTranslateX: Float = 0f,
     @FloatRange(from = 0.0) initialTranslateY: Float = 0f,
+    @FloatRange(from = 0.0) initialRotation: Float = 0f,
 ) {
 
     // todo support click and long press
     // todo support rubber band effect
 
-    private val scaleAnimatable = Animatable(initialScale)
-    private val offsetXAnimatable = Animatable(initialTranslateX)
-    private val offsetYAnimatable = Animatable(initialTranslateY)
-
-    /**
-     * Initial scale and translate for support
-     */
-    private var supportInitialTransform: TransformCompat = TransformCompat.Origin
+    private var lastAnimatable: Animatable<*, *>? = null
 
     var containerSize: Size by mutableStateOf(Size.Unspecified)
     var contentSize: Size by mutableStateOf(Size.Unspecified)
@@ -120,8 +114,7 @@ class ZoomableState(
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
     var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
     var threeStepScaleEnabled: Boolean = false
-    var scaleAnimationSpec: ScaleAnimationSpec = ScaleAnimationSpec.Default
-    var flingAnimationSpec: DecayAnimationSpec<Float>? = null
+    var defaultAnimationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
     var readMode: ReadMode = ReadMode.Default
     var debugMode: Boolean = false
     var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
@@ -133,53 +126,26 @@ class ZoomableState(
     var maxScale: Float by mutableStateOf(1f)
         private set
 
-    /**
-     * The current scale value for [ZoomImage]
-     */
-    @get:FloatRange(from = 0.0)
-    val scale: Float by derivedStateOf { scaleAnimatable.value }
-    val baseScale: ScaleFactor by derivedStateOf {
-        computeScaleFactor(
-            srcSize = contentSize,
-            dstSize = containerSize,
-            contentScale = contentScale
+    var transform: Transform by mutableStateOf(   // todo support rotation
+        Transform(
+            scale = ScaleFactor(scaleX = initialScale, scaleY = initialScale),
+            offset = Offset(x = initialTranslateX, y = initialTranslateY),
+            rotation = initialRotation,
         )
+    )
+        private set
+    var baseTransform: Transform by mutableStateOf(Transform.Origin)
+        private set
+    val displayTransform: Transform by derivedStateOf {
+        baseTransform.concat(transform)
     }
-    val displayScale: ScaleFactor by derivedStateOf {
-        baseScale.times(scale)
-    }
+    val transformOrigin = TransformOrigin(0f, 0f)
 
-    val offset: Offset by derivedStateOf {
-        Offset(
-            x = offsetXAnimatable.value,
-            y = offsetYAnimatable.value
-        )
-    }
     var offsetBounds: Rect? by mutableStateOf(null)
         private set
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    val baseOffset: Offset by derivedStateOf {
-        computeScaleOffset(
-            srcSize = contentSize,
-            dstSize = containerSize,
-            scale = contentScale,
-            alignment = contentAlignment,
-        )
-    }
-
-    @Suppress("unused")
-    val displayOffset: Offset by derivedStateOf {
-        val baseOffset = baseOffset
-        val supportOffset = offset
-        baseOffset + supportOffset
-    }
-
-    val rotation: Float by mutableStateOf(0f)    // todo support rotation
-    val transformOrigin = TransformOrigin(0f, 0f)
-
     val containerVisibleRect: Rect by derivedStateOf {
-        computeContainerVisibleRect(containerSize, scale, offset)
+        computeContainerVisibleRect(containerSize, transform.scale.scaleX, transform.offset)
     }
     val contentVisibleRect: Rect by derivedStateOf {
         // todo 长微博图片示例，显示区域框框底部没有到底，但是图片已经到底了
@@ -188,8 +154,8 @@ class ZoomableState(
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            scale = scale,
-            offset = offset,
+            scale = transform.scale.scaleX,
+            offset = transform.offset,
         )
     }
     val contentInContainerRect: Rect by derivedStateOf {
@@ -202,21 +168,25 @@ class ZoomableState(
     }
 
     internal suspend fun reset() {
+        stopAnimation("reset")
+
         val contentSize = contentSize
         val contentOriginSize = contentOriginSize
         val containerSize = containerSize
         val contentScale = contentScale
         val contentAlignment = contentAlignment
+        val supportInitialTransform: Transform
         if (containerSize.isUnspecified || containerSize.isEmpty()
             || contentSize.isUnspecified || contentSize.isEmpty()
         ) {
             minScale = 1.0f
             mediumScale = 1.0f
             maxScale = 1.0f
-            supportInitialTransform = TransformCompat.Origin
+            baseTransform = Transform.Origin
+            supportInitialTransform = Transform.Origin
         } else {
-            val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
-            val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
+            val rotatedContentSize = contentSize.rotate(transform.rotation.roundToInt())
+            val rotatedContentOriginSize = contentOriginSize.rotate(transform.rotation.roundToInt())
             val scales = computeSupportScales(
                 contentSize = rotatedContentSize.toCompatSize(),
                 contentOriginSize = rotatedContentOriginSize.toCompatSize(),
@@ -227,7 +197,8 @@ class ZoomableState(
                 defaultMediumScaleMultiple = defaultMediumScaleMultiple,
             )
             minScale = scales[0]
-            mediumScale = scales[1] // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
+            mediumScale =
+                scales[1] // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
             maxScale = scales[2]
             val readModeResult = readMode.enabled
                     && contentScale.supportReadMode()
@@ -235,24 +206,26 @@ class ZoomableState(
                 srcSize = rotatedContentSize.toCompatSize(),
                 dstSize = containerSize.toCompatSize()
             )
-            val baseTransform = computeTransform(
+            baseTransform = computeTransform(
                 srcSize = rotatedContentSize,
                 dstSize = containerSize,
                 scale = contentScale,
                 alignment = contentAlignment,
-            )
+            ).toTransform()
             supportInitialTransform = if (readModeResult) {
                 val readModeTransform = computeReadModeTransform(
                     srcSize = rotatedContentSize,
                     dstSize = containerSize,
                     scale = contentScale,
                     alignment = contentAlignment,
-                )
+                ).toTransform()
                 readModeTransform.div(baseTransform.scale)
             } else {
-                TransformCompat.Origin
+                Transform.Origin
             }
         }
+        updateOffsetBounds("reset", supportInitialTransform.scale.scaleX)
+        val limitInitialSupportTransform = limitTransform(supportInitialTransform)
         log {
             "reset. contentSize=${contentSize.toShortString()}, " +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
@@ -263,127 +236,83 @@ class ZoomableState(
                     "minScale=${minScale.format(4)}, " +
                     "mediumScale=${mediumScale.format(4)}, " +
                     "maxScale=${maxScale.format(4)}, " +
-                    "supportInitialTransform=${supportInitialTransform.toShortString()}"
+                    "baseTransform=${baseTransform.toShortString()}, " +
+                    "supportInitialTransform=${supportInitialTransform.toShortString()}, " +
+                    "limitInitialSupportTransform=${limitInitialSupportTransform.toShortString()}"
         }
-        scaleAnimatable.snapTo(supportInitialTransform.scale.scaleX)
-        offsetXAnimatable.snapTo(supportInitialTransform.offset.x)
-        offsetYAnimatable.snapTo(supportInitialTransform.offset.y)
-        updateOffsetBounds("reset")
+        updateTransform(limitInitialSupportTransform, "reset")
     }
 
-
-    suspend fun snapScaleTo(targetScale: Float) {
-        stopAllAnimation("snapScaleTo")
-        val currentScale = scale
-        val limitedTargetScale = limitScale(targetScale)
-        log {
-            "snapScaleTo. " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, "
-        }
-        coroutineScope {
-            launch {
-                scaleAnimatable.snapTo(limitedTargetScale)
-                updateOffsetBounds("snapScaleTo")
-            }
-        }
-    }
-
-    suspend fun animateScaleTo(targetScale: Float) {
-        stopAllAnimation("animateScaleTo")
-        val currentScale = scale
-        val limitedTargetScale = limitScale(targetScale)
-        val animationSpec = tween<Float>(
-            durationMillis = scaleAnimationSpec.durationMillis,
-            easing = scaleAnimationSpec.easing
-        )
-        log {
-            "animateScaleTo. " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, "
-        }
-        coroutineScope {
-            launch {
-                scaleAnimatable.animateTo(
-                    targetValue = limitedTargetScale,
-                    animationSpec = animationSpec,
-                    initialVelocity = scaleAnimationSpec.initialVelocity,
-                )
-                updateOffsetBounds("animateScaleTo")
-            }
-        }
-    }
 
     suspend fun snapScaleBy(addScale: Float) {
-        stopAllAnimation("snapScaleBy")
-        val currentScale = scale
+        stopAnimation("snapScaleBy")
+        val currentScale = transform.scale.scaleX
         val targetScale = currentScale * addScale
         val limitedTargetScale = limitScale(currentScale * addScale)
+        // todo 构建新的 Transform，然后 limited，打印日志
         log {
             "snapScaleBy. " +
                     "addScale=${addScale.format(4)}, " +
                     "targetScale=${targetScale.format(4)}, " +
                     "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, "
         }
-        coroutineScope {
-            launch {
-                scaleAnimatable.snapTo(limitedTargetScale)
-                updateOffsetBounds("snapScaleBy")
-            }
-        }
+        updateTransform(
+            newTransform = transform.copy(scale = ScaleFactor(limitedTargetScale)),
+            caller = "snapScaleBy"
+        )
     }
 
-    suspend fun snapOffsetTo(targetOffset: Offset) {
-        stopAllAnimation("snapOffsetTo")
-        val currentOffset = offset
-        val limitedTargetOffset = limitOffset(targetOffset)
+    suspend fun snapScaleTo(targetScale: Float) {
+        stopAnimation("snapScaleTo")
+        val currentScale = transform.scale.scaleX
+        val limitedTargetScale = limitScale(targetScale)
         log {
-            "snapOffsetTo. " +
-                    "targetOffset=${targetOffset.toShortString()}, " +
-                    "offset=${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
+            "snapScaleTo. " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, "
         }
-        coroutineScope {
-            launch {
-                offsetXAnimatable.snapTo(limitedTargetOffset.x)
-                offsetYAnimatable.snapTo(limitedTargetOffset.y)
-            }
-        }
+        updateTransform(
+            newTransform = transform.copy(scale = ScaleFactor(limitedTargetScale)),
+            caller = "snapScaleTo"
+        )
     }
 
-    suspend fun animateOffsetTo(targetOffset: Offset) {
-        stopAllAnimation("animateOffsetTo")
-        val currentOffset = offset
-        val limitedTargetOffset = limitOffset(targetOffset)
+    suspend fun animateScaleTo(targetScale: Float) {
+        stopAnimation("animateScaleTo")
+        val currentScale = transform.scale.scaleX
+        val limitedTargetScale = limitScale(targetScale)
         val animationSpec = tween<Float>(
-            durationMillis = scaleAnimationSpec.durationMillis,
-            easing = scaleAnimationSpec.easing
+            durationMillis = defaultAnimationSpec.durationMillis,
+            easing = defaultAnimationSpec.easing
         )
         log {
-            "animateOffsetTo. " +
-                    "targetOffset=${targetOffset.toShortString()}, " +
-                    "offset=${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
+            "animateScaleTo. " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, "
         }
+
+        val scaleAnimatable = Animatable(currentScale)
+        this.lastAnimatable = scaleAnimatable
         coroutineScope {
             launch {
-                offsetXAnimatable.animateTo(
-                    targetValue = limitedTargetOffset.x,
+                scaleAnimatable.animateTo(
+                    targetValue = limitedTargetScale,
                     animationSpec = animationSpec,
-                    initialVelocity = scaleAnimationSpec.initialVelocity,
-                )
-            }
-            launch {
-                offsetYAnimatable.animateTo(
-                    targetValue = limitedTargetOffset.y,
-                    animationSpec = animationSpec,
-                    initialVelocity = scaleAnimationSpec.initialVelocity,
-                )
+                    initialVelocity = defaultAnimationSpec.initialVelocity,
+                ) {
+                    updateTransform(
+                        newTransform = transform.copy(scale = ScaleFactor(value)),
+                        caller = "animateScaleTo"
+                    )
+                }
             }
         }
     }
 
+
     suspend fun snapOffsetBy(addOffset: Offset) {
-        stopAllAnimation("snapOffsetBy")
-        val currentOffset = offset
+        stopAnimation("snapOffsetBy")
+        val currentOffset = transform.offset
         val targetOffset = currentOffset.plus(addOffset)
         val limitedTargetOffset = limitOffset(targetOffset)
         log {
@@ -392,128 +321,72 @@ class ZoomableState(
                     "targetOffset=${targetOffset.toShortString()}, " +
                     "offset=${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
         }
-        coroutineScope {
-            launch {
-                offsetXAnimatable.snapTo(limitedTargetOffset.x)
-                offsetYAnimatable.snapTo(limitedTargetOffset.y)
-            }
-        }
+        updateTransform(
+            newTransform = transform.copy(offset = limitedTargetOffset),
+            caller = "snapOffsetBy"
+        )
     }
 
-    suspend fun animateLocation(contentOrigin: Origin, targetScale: Float = scale) {
-        stopAllAnimation("animateLocation")
-        val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
-        val contentScale = contentScale
-        val contentAlignment = contentAlignment
-        val currentScale = scale
-        val currentOffset = offset
-
-        val limitedTargetScale = limitScale(targetScale)
-        val animationSpec = tween<Float>(
-            durationMillis = scaleAnimationSpec.durationMillis,
-            easing = scaleAnimationSpec.easing
-        )
-        val futureOffsetBounds = computeSupportOffsetBounds(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
-            supportScale = limitedTargetScale
-        )
-        val containerOrigin = contentOriginToContainerOrigin(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
-            contentOrigin = contentOrigin
-        )
-        val targetOffset = computeScaleTargetOffset(
-            containerSize = containerSize,
-            scale = limitedTargetScale,
-            containerOrigin = containerOrigin
-        )
-        val limitedTargetOffset = limitOffset(targetOffset, futureOffsetBounds)
+    suspend fun snapOffsetTo(targetOffset: Offset) {
+        stopAnimation("snapOffsetTo")
+        val currentOffset = transform.offset
+        val limitedTargetOffset = limitOffset(targetOffset)
         log {
-            "animateLocation. " +
-                    "contentOrigin=${contentOrigin.toShortString()}, " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "containerSize=${containerSize.toShortString()}, " +
-                    "contentSize=${contentSize.toShortString()}, " +
-                    "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "futureBounds=${futureOffsetBounds.toShortString()}, " +
+            "snapOffsetTo. " +
                     "targetOffset=${targetOffset.toShortString()}, " +
-                    "scale: ${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, " +
-                    "offset: ${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
+                    "offset=${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
         }
-        clearOffsetBounds("animateLocation")
-        coroutineScope {
-            launch {
-                scaleAnimatable.animateTo(
-                    targetValue = limitedTargetScale,
-                    animationSpec = animationSpec,
-                    initialVelocity = scaleAnimationSpec.initialVelocity,
-                )
-                updateOffsetBounds("animateLocation")
-            }
-            launch {
-                offsetXAnimatable.animateTo(
-                    targetValue = limitedTargetOffset.x,
-                    animationSpec = animationSpec,
-                    initialVelocity = scaleAnimationSpec.initialVelocity,
-                )
-            }
-            launch {
-                offsetYAnimatable.animateTo(
-                    targetValue = limitedTargetOffset.y,
-                    animationSpec = animationSpec,
-                    initialVelocity = scaleAnimationSpec.initialVelocity,
-                )
-            }
-        }
+        updateTransform(
+            newTransform = transform.copy(offset = limitedTargetOffset),
+            caller = "snapOffsetTo"
+        )
     }
 
-    suspend fun animateLocation(touch: Offset, targetScale: Float = scale) {
-        val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
-        val contentScale = contentScale
-        val contentAlignment = contentAlignment
-        val currentScale = scale
-        val currentOffset = offset
-        val containerOrigin = computeContainerOriginByTouchPosition(
-            containerSize = containerSize,
-            scale = currentScale,
-            offset = currentOffset,
-            touch = touch
-        )
-        val contentOrigin = containerOriginToContentOrigin(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
-            containerOrigin = containerOrigin
+    suspend fun animateOffsetTo(targetOffset: Offset) {
+        stopAnimation("animateOffsetTo")
+        val currentOffset = transform.offset
+        val limitedTargetOffset = limitOffset(targetOffset)
+        val animationSpec = tween<Float>(
+            durationMillis = defaultAnimationSpec.durationMillis,
+            easing = defaultAnimationSpec.easing
         )
         log {
-            "animateLocation. " +
-                    "touch=${touch.toShortString()}, " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "contentOrigin=${contentOrigin.toShortString()}"
+            "animateOffsetTo. " +
+                    "targetOffset=${targetOffset.toShortString()}, " +
+                    "offset=${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
         }
-        animateLocation(
-            contentOrigin = contentOrigin,
-            targetScale = targetScale,
-        )
+        val offsetAnimatable = Animatable(0f)
+        this.lastAnimatable = offsetAnimatable
+        coroutineScope {
+            launch {
+                offsetAnimatable.animateTo(
+                    targetValue = 1f,
+                    animationSpec = animationSpec,
+                    initialVelocity = defaultAnimationSpec.initialVelocity,
+                ) {
+                    val offset = androidx.compose.ui.geometry.lerp(
+                        start = currentOffset,
+                        stop = limitedTargetOffset,
+                        fraction = value
+                    )
+                    updateTransform(
+                        newTransform = transform.copy(offset = offset),
+                        caller = "animateOffsetTo"
+                    )
+                }
+            }
+        }
     }
 
-    suspend fun snapLocation(contentOrigin: Origin, targetScale: Float = scale) {
-        stopAllAnimation("snapLocation")
+
+    suspend fun snapLocation(contentOrigin: Origin, targetScale: Float = transform.scale.scaleX) {
+        stopAnimation("snapLocation")
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
-        val currentScale = scale
-        val currentOffset = offset
+        val currentScale = transform.scale.scaleX
+        val currentOffset = transform.offset
 
         val limitedTargetValue = limitScale(targetScale)
         val futureOffsetBounds = computeSupportOffsetBounds(
@@ -549,21 +422,22 @@ class ZoomableState(
                     "scale: ${currentScale.format(4)} -> ${limitedTargetValue.format(4)}, " +
                     "offset: ${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
         }
-        coroutineScope {
-            scaleAnimatable.snapTo(limitedTargetValue)
-            updateOffsetBounds("snapLocation")
-            offsetXAnimatable.snapTo(targetValue = limitedTargetOffset.x)
-            offsetYAnimatable.snapTo(targetValue = limitedTargetOffset.y)
-        }
+        updateTransform(
+            newTransform = transform.copy(
+                scale = ScaleFactor(limitedTargetValue, limitedTargetValue),
+                offset = limitedTargetOffset
+            ),
+            caller = "snapLocation"
+        )
     }
 
-    suspend fun snapLocation(touch: Offset, targetScale: Float = scale) {
+    suspend fun snapLocation(touch: Offset, targetScale: Float = transform.scale.scaleX) {
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
-        val currentScale = scale
-        val currentOffset = offset
+        val currentScale = transform.scale.scaleX
+        val currentOffset = transform.offset
         val containerOrigin = computeContainerOriginByTouchPosition(
             containerSize = containerSize,
             scale = currentScale,
@@ -590,6 +464,115 @@ class ZoomableState(
         )
     }
 
+    suspend fun animateLocation(
+        contentOrigin: Origin,
+        targetScale: Float = transform.scale.scaleX
+    ) {
+        stopAnimation("animateLocation")
+        val containerSize = containerSize.takeIf { it.isSpecified } ?: return
+        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
+        val contentScale = contentScale
+        val contentAlignment = contentAlignment
+        val currentScale = transform.scale.scaleX
+        val currentOffset = transform.offset
+
+        val limitedTargetScale = limitScale(targetScale)
+        val animationSpec = tween<Float>(
+            durationMillis = defaultAnimationSpec.durationMillis,
+            easing = defaultAnimationSpec.easing
+        )
+        val futureOffsetBounds = computeSupportOffsetBounds(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            contentAlignment = contentAlignment,
+            supportScale = limitedTargetScale
+        )
+        val containerOrigin = contentOriginToContainerOrigin(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            contentAlignment = contentAlignment,
+            contentOrigin = contentOrigin
+        )
+        val targetOffset = computeScaleTargetOffset(
+            containerSize = containerSize,
+            scale = limitedTargetScale,
+            containerOrigin = containerOrigin
+        )
+        val limitedTargetOffset = limitOffset(targetOffset, futureOffsetBounds)
+        log {
+            "animateLocation. " +
+                    "contentOrigin=${contentOrigin.toShortString()}, " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "containerSize=${containerSize.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "containerOrigin=${containerOrigin.toShortString()}, " +
+                    "futureBounds=${futureOffsetBounds.toShortString()}, " +
+                    "targetOffset=${targetOffset.toShortString()}, " +
+                    "scale: ${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, " +
+                    "offset: ${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
+        }
+        val locationAnimatable = Animatable(0f)
+        this.lastAnimatable = locationAnimatable
+        coroutineScope {
+            launch {
+                locationAnimatable.animateTo(
+                    targetValue = 1f,
+                    animationSpec = animationSpec,
+                    initialVelocity = defaultAnimationSpec.initialVelocity,
+                ) {
+                    val scale =
+                        lerp(start = currentScale, stop = limitedTargetScale, fraction = value)
+                    val offset = androidx.compose.ui.geometry.lerp(
+                        start = currentOffset,
+                        stop = limitedTargetOffset,
+                        fraction = value
+                    )
+                    // todo 还是得需要 clearOffsetBounds
+                    updateTransform(
+                        newTransform = transform.copy(scale = ScaleFactor(scale), offset = offset),
+                        caller = "animateLocation"
+                    )
+                }
+            }
+        }
+    }
+
+    suspend fun animateLocation(touch: Offset, targetScale: Float = transform.scale.scaleX) {
+        val containerSize = containerSize.takeIf { it.isSpecified } ?: return
+        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
+        val contentScale = contentScale
+        val contentAlignment = contentAlignment
+        val currentScale = transform.scale.scaleX
+        val currentOffset = transform.offset
+        val containerOrigin = computeContainerOriginByTouchPosition(
+            containerSize = containerSize,
+            scale = currentScale,
+            offset = currentOffset,
+            touch = touch
+        )
+        val contentOrigin = containerOriginToContentOrigin(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            contentAlignment = contentAlignment,
+            containerOrigin = containerOrigin
+        )
+        log {
+            "animateLocation. " +
+                    "touch=${touch.toShortString()}, " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "containerOrigin=${containerOrigin.toShortString()}, " +
+                    "contentOrigin=${contentOrigin.toShortString()}"
+        }
+        animateLocation(
+            contentOrigin = contentOrigin,
+            targetScale = targetScale,
+        )
+    }
+
+
     suspend fun switchScale(contentOrigin: Origin = Origin(0.5f, 0.5f)): Float {
         val nextScale = getNextStepScale()
         animateLocation(
@@ -614,68 +597,78 @@ class ZoomableState(
         @Suppress("UNUSED_PARAMETER") rotationChange: Float
     ) {
         // todo 初始是 mediumScale 比例时（阅读模式）放大或缩小时 zoomChange 变化很大，导致中心点偏移很大
-        stopAllAnimation("transform")
-        val currentScale = scale
-        val newScale = (currentScale * zoomChange)
-            .coerceIn(minimumValue = minScale, maximumValue = maxScale)
-        val addScale = newScale - currentScale
+        stopAnimation("transform")
+        val currentScale = transform.scale.scaleX
+        val targetScale = currentScale * zoomChange
+        val limitedTargetScale = limitScale(targetScale)
+        val addScale = limitedTargetScale - currentScale
         val addOffset = Offset(
             x = addScale * centroid.x * -1,
             y = addScale * centroid.y * -1
         )
-        val currentOffset = offset
+        val currentOffset = transform.offset
         val targetOffset = currentOffset + addOffset
+        val limitedTargetOffset = limitOffset(targetOffset)
         log {
             "transform. " +
                     "zoomChange=${zoomChange.format(4)}, " +
                     "centroid=${centroid.toShortString()}, " +
                     "addScale=${addScale.format(4)}, " +
-                    "scale=${currentScale.format(4)} -> ${newScale.format(4)}, " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "scale=${currentScale.format(4)} -> ${limitedTargetScale.format(4)}, " +
                     "addOffset=${addOffset.toShortString()}, " +
-                    "offset=${currentOffset.toShortString()} -> ${targetOffset.toShortString()}"
+                    "targetOffset=${targetOffset.toShortString()}, " +
+                    "offset=${currentOffset.toShortString()} -> ${limitedTargetOffset.toShortString()}"
         }
+        updateTransform(
+            newTransform = transform.copy(
+                scale = ScaleFactor(limitedTargetScale),
+                offset = limitedTargetOffset
+            ),
+            caller = "transform"
+        )
+    }
+
+    suspend fun fling(velocity: Velocity, density: Density) {
+        stopAnimation("fling")
+        val currentOffset = transform.offset
+        val flingAnimatable = Animatable(
+            initialValue = currentOffset,
+            typeConverter = Offset.VectorConverter,
+        )
+        this.lastAnimatable = flingAnimatable
         coroutineScope {
-            scaleAnimatable.snapTo(newScale)
-            updateOffsetBounds("snapScaleTo")
-            offsetXAnimatable.snapTo(targetValue = targetOffset.x)
-            offsetYAnimatable.snapTo(targetValue = targetOffset.y)
+            launch {
+                val initialVelocity = Offset.VectorConverter
+                    .convertFromVector(AnimationVector(velocity.x, velocity.y))
+                flingAnimatable.animateDecay(
+                    initialVelocity = initialVelocity,
+                    animationSpec = splineBasedDecay(density)
+                ) {
+                    val targetOffset = this.value
+                    val limitedTargetOffset = limitOffset(targetOffset)
+                    val distance = limitedTargetOffset - currentOffset
+                    log {
+                        "fling. running. " +
+                                "velocity=$velocity, " +
+                                "startOffset=${currentOffset.toShortString()}, " +
+                                "currentOffset=${limitedTargetOffset.toShortString()}, " +
+                                "distance=$distance"
+                    }
+                    updateTransform(
+                        newTransform = transform.copy(offset = limitedTargetOffset),
+                        caller = "fling"
+                    )
+                }
+            }
         }
     }
 
-    suspend fun fling(velocity: Velocity) {
-        stopAllAnimation("fling")
-        log { "fling. velocity=$velocity, offset=${offset.toShortString()}" }
-        val animationSpec = flingAnimationSpec ?: exponentialDecay()
-        coroutineScope {
-            launch {
-                val startX = offsetXAnimatable.value
-                offsetXAnimatable.animateDecay(velocity.x, animationSpec) {
-                    val offsetX = this.value
-                    val distanceX = offsetX - startX
-                    log { "fling. running. velocity=$velocity, startX=$startX, offsetX=$offsetX, distanceX=$distanceX" }
-                }
-            }
-            launch {
-                val startY = offsetYAnimatable.value
-                offsetYAnimatable.animateDecay(velocity.y, animationSpec) {
-                    val offsetY = this.value
-                    val distanceY = offsetY - startY
-                    log { "fling. running. velocity=$velocity, startY=$startY, offsetY=$offsetY, distanceY=$distanceY" }
-                }
-            }
-        }
-    }
-
-    suspend fun stopAllAnimation(caller: String) {
-        if (scaleAnimatable.isRunning) {
-            scaleAnimatable.stop()
-            log { "stopAllAnimation. stop scale animation. scale=${scale.format(4)}" }
-            updateOffsetBounds("stopAllAnimation:$caller")
-        }
-        if (offsetXAnimatable.isRunning || offsetYAnimatable.isRunning) {
-            offsetXAnimatable.stop()
-            offsetYAnimatable.stop()
-            log { "stopAllAnimation. stop offset animation. offset=${offset.toShortString()}" }
+    suspend fun stopAnimation(caller: String) {
+        val lastAnimatable = lastAnimatable
+        if (lastAnimatable?.isRunning == true) {
+            lastAnimatable.stop()
+            log { "stopAnimation:$caller" }
         }
     }
 
@@ -685,7 +678,7 @@ class ZoomableState(
         } else {
             floatArrayOf(minScale, mediumScale)
         }
-        return calculateNextStepScale(stepScales, scale)
+        return calculateNextStepScale(stepScales, transform.scale.scaleX)
     }
 
     fun canDrag(horizontal: Boolean, direction: Int): Boolean =
@@ -696,30 +689,26 @@ class ZoomableState(
             direction = direction
         )
 
-    override fun toString(): String =
-        "ZoomableState(" +
-                "containerSize=${containerSize.toShortString()}, " +
-                "contentSize=${contentSize.toShortString()}, " +
-                "contentOriginSize=${contentOriginSize.toShortString()}, " +
-                "minScale=${minScale.format(4)}, " +
-                "mediumScale=${mediumScale.format(4)}, " +
-                "maxScale=${maxScale.format(4)}, " +
-                "scale=${scale.format(4)}, " +
-                "offset=${offset.toShortString()}" +
-                ")"
+    private fun updateTransform(newTransform: Transform, caller: String) {
+        val oldTransform = transform
+        if (oldTransform == newTransform) return
+        if (oldTransform.scale != newTransform.scale) {
+            updateOffsetBounds("updateTransform:$caller", newTransform.scale.scaleX)
+        }
+        transform = newTransform.copy(offset = limitOffset(newTransform.offset))
+    }
 
-    private fun updateOffsetBounds(caller: String) {
+    private fun updateOffsetBounds(caller: String, scale: Float = transform.scale.scaleX) {
         val containerSize = containerSize.takeIf { it.isSpecified } ?: return
         val contentSize = contentSize.takeIf { it.isSpecified } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
-        val currentScale = scale
         val bounds = computeSupportOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            supportScale = currentScale
+            supportScale = scale
         )
         this.offsetBounds = bounds
         log {
@@ -728,18 +717,19 @@ class ZoomableState(
                     "bounds=${bounds.toShortString()}, " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
-                    "scale=$currentScale"
+                    "scale=$scale"
         }
-        offsetXAnimatable.updateBounds(lowerBound = bounds.left, upperBound = bounds.right)
-        offsetYAnimatable.updateBounds(lowerBound = bounds.top, upperBound = bounds.bottom)
+        // todo 不更改
+//        offsetXAnimatable.updateBounds(lowerBound = bounds.left, upperBound = bounds.right)
+//        offsetYAnimatable.updateBounds(lowerBound = bounds.top, upperBound = bounds.bottom)
     }
 
-    private fun clearOffsetBounds(@Suppress("SameParameterValue") caller: String) {
-        log { "updateOffsetBounds. ${caller}. clear" }
-        this.offsetBounds = null
-        offsetXAnimatable.updateBounds(lowerBound = null, upperBound = null)
-        offsetYAnimatable.updateBounds(lowerBound = null, upperBound = null)
-    }
+//    private fun clearOffsetBounds(@Suppress("SameParameterValue") caller: String) {
+//        log { "updateOffsetBounds. ${caller}. clear" }
+//        this.offsetBounds = null
+//        offsetXAnimatable.updateBounds(lowerBound = null, upperBound = null)
+//        offsetYAnimatable.updateBounds(lowerBound = null, upperBound = null)
+//    }
 
     private fun limitScale(
         scale: Float,
@@ -751,6 +741,13 @@ class ZoomableState(
 
     private fun limitOffset(offset: Offset, bounds: Rect? = offsetBounds): Offset {
         val offsetBounds = bounds ?: offsetBounds ?: return offset
+        if (offset.x >= offsetBounds.left
+            && offset.x <= offsetBounds.right
+            && offset.y >= offsetBounds.top
+            && offset.y <= offsetBounds.bottom
+        ) {
+            return offset
+        }
         return Offset(
             x = offset.x.coerceIn(
                 minimumValue = offsetBounds.left,
@@ -763,11 +760,45 @@ class ZoomableState(
         )
     }
 
+    private fun limitTransform(
+        transform: Transform,
+        minimumValue: Float = minScale,
+        maximumValue: Float = maxScale,
+        bounds: Rect? = offsetBounds
+    ): Transform {
+        return transform.copy(
+            scale = ScaleFactor(
+                scaleX = limitScale(
+                    transform.scale.scaleX,
+                    minimumValue = minimumValue,
+                    maximumValue = maximumValue
+                ),
+                scaleY = limitScale(
+                    transform.scale.scaleY,
+                    minimumValue = minimumValue,
+                    maximumValue = maximumValue
+                ),
+            ),
+            offset = limitOffset(transform.offset, bounds)
+        )
+    }
+
     private fun log(message: () -> String) {
         if (debugMode) {
             Log.d("ZoomableState", message())
         }
     }
+
+    override fun toString(): String =
+        "ZoomableState(" +
+                "containerSize=${containerSize.toShortString()}, " +
+                "contentSize=${contentSize.toShortString()}, " +
+                "contentOriginSize=${contentOriginSize.toShortString()}, " +
+                "minScale=${minScale.format(4)}, " +
+                "mediumScale=${mediumScale.format(4)}, " +
+                "maxScale=${maxScale.format(4)}, " +
+                "transform=${transform.toShortString()}" +
+                ")"
 
     companion object {
 
@@ -777,9 +808,10 @@ class ZoomableState(
         val Saver: Saver<ZoomableState, *> = mapSaver(
             save = {
                 mapOf(
-                    "scale" to it.scale,
-                    "offsetX" to it.offset.x,
-                    "offsetY" to it.offset.y,
+                    "scale" to it.transform.scale.scaleX,
+                    "offsetX" to it.transform.offset.x,
+                    "offsetY" to it.transform.offset.y,
+                    "rotation" to it.transform.rotation,
                 )
             },
             restore = {
@@ -787,6 +819,7 @@ class ZoomableState(
                     initialScale = it["scale"] as Float,
                     initialTranslateX = it["offsetX"] as Float,
                     initialTranslateY = it["offsetY"] as Float,
+                    initialRotation = it["rotation"] as Float,
                 )
             }
         )

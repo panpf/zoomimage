@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage
 import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.internal.format
 
+// todo 添加图片方向，例如为了不影响 Pager 横向滑动的连贯性，只有竖的长图才允许使用阅读模式，分为 Horizontal，vertical，both
 data class ReadMode(val enabled: Boolean, val decider: ReadModeDecider) {
 
     companion object {

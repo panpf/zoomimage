@@ -7,6 +7,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.internal.detectCanDragGestures
 import com.github.panpf.zoomimage.compose.internal.detectZoomGestures
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 
 fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
     val coroutineScope = rememberCoroutineScope()
+    val density = LocalDensity.current
     this
         .onSizeChanged {
             val newContainerSize = it.toSize()
@@ -25,7 +27,7 @@ fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
         .pointerInput(Unit) {
             detectTapGestures(
                 onPress = {
-                    state.stopAllAnimation("onPress")
+                    state.stopAnimation("onPress")
                 },
                 onDoubleTap = { offset ->
                     coroutineScope.launch {
@@ -45,7 +47,7 @@ fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
                 },
                 onDragEnd = {
                     coroutineScope.launch {
-                        state.fling(it)
+                        state.fling(it, density)
                     }
                 },
             )

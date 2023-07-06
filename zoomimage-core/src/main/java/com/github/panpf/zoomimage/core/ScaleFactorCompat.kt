@@ -125,3 +125,5 @@ fun lerp(start: ScaleFactorCompat, stop: ScaleFactorCompat, fraction: Float): Sc
 }
 
 fun ScaleFactorCompat.toShortString(): String = "(${scaleX.format(2)},${scaleY.format(2)})"
+
+fun ScaleFactorCompat(scale: Float): ScaleFactorCompat = ScaleFactorCompat(scale, scale)

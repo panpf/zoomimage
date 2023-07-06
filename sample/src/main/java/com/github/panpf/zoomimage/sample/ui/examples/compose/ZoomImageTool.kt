@@ -50,9 +50,11 @@ fun ZoomImageTool(
             val scales = floatArrayOf(zoomableState.minScale, zoomableState.mediumScale, zoomableState.maxScale)
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             Text(
+//                    scale: ${zoomableState.scale.format(2)}(${zoomableState.displayScale.scaleX.format(2)}/${zoomableState.baseScale.scaleX.format(2)}) in $scales
+//                    offset: ${zoomableState.offset.toShortString()}
                 text = """
-                    scale: ${zoomableState.scale.format(2)}(${zoomableState.displayScale.scaleX.format(2)}/${zoomableState.baseScale.scaleX.format(2)}) in $scales
-                    offset: ${zoomableState.offset.toShortString()}
+                    scale: ${zoomableState.transform.scale.scaleX.format(2)}(${zoomableState.displayTransform.scale.scaleX.format(2)}/${zoomableState.baseTransform.scale.scaleX.format(2)}) in $scales
+                    offset: ${zoomableState.transform.offset.toShortString()}
                     offsetBounds: ${zoomableState.offsetBounds?.toShortString()}
                     contentVisibleRect: ${zoomableState.contentVisibleRect.toShortString()}
                     containerVisibleRect: ${zoomableState.containerVisibleRect.toShortString()}
