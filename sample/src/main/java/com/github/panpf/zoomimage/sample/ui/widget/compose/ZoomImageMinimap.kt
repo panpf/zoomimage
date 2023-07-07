@@ -90,7 +90,7 @@ fun ZoomImageMinimap(
                                                 x = it.x / imageNodeSize.width,
                                                 y = it.y / imageNodeSize.height
                                             ),
-                                            targetScale = state.transform.scale.scaleX.coerceAtLeast(state.mediumScale),
+                                            targetScale = state.transform.scaleX.coerceAtLeast(state.mediumScale),
                                         )
                                     }
                                 }

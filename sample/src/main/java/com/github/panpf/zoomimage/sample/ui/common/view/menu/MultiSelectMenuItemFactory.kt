@@ -17,16 +17,11 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
 import android.app.Activity
 import android.content.Context
-import android.util.TypedValue
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import com.github.panpf.zoomimage.sample.databinding.MultiSelectMenuItemBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
 
-class MultiSelectMenuItemFactory(
-    val activity: Activity,
-    private val compactModel: Boolean = false
-) :
+class MultiSelectMenuItemFactory(private val activity: Activity) :
     MyBindingItemFactory<MultiSelectMenu, MultiSelectMenuItemBinding>(MultiSelectMenu::class) {
 
     override fun initItem(
@@ -40,12 +35,6 @@ class MultiSelectMenuItemFactory(
                 binding.multiSelectMenuItemInfoText.text = data.getValue()
             }
         }
-
-        if (compactModel) {
-            binding.multiSelectMenuItemTitleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            binding.multiSelectMenuItemDescText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
-            binding.multiSelectMenuItemInfoText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-        }
     }
 
     override fun bindItemData(
@@ -58,8 +47,6 @@ class MultiSelectMenuItemFactory(
     ) {
         binding.multiSelectMenuItemTitleText.text = data.title
         binding.multiSelectMenuItemInfoText.text = data.getValue()
-        binding.multiSelectMenuItemDescText.text = data.desc
-        binding.multiSelectMenuItemDescText.isVisible = data.desc?.isNotEmpty() == true
     }
 
     private fun showDialog(data: MultiSelectMenu, after: () -> Unit) {

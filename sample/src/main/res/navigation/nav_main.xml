@@ -136,15 +136,7 @@
         android:id="@+id/zoomImageViewOptionsDialogFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment">
         <argument
-            android:name="supportMemoryCache"
-            app:argType="boolean"
-            app:nullable="false" />
-        <argument
             android:name="supportIgnoreExifOrientation"
-            app:argType="boolean"
-            app:nullable="false" />
-        <argument
-            android:name="supportReuseBitmap"
             app:argType="boolean"
             app:nullable="false" />
     </fragment>

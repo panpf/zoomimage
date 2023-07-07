@@ -17,7 +17,6 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
 class MultiSelectMenu(
     val title: String,
-    val desc: String? = null,
     val values: List<String>,
     val getValue: () -> String,
     val onSelect: (which: Int, value: String) -> Unit

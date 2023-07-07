@@ -25,13 +25,10 @@ import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.PicassoZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
-import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
-import kotlinx.coroutines.flow.merge
 
 class PicassoZoomImageViewFragment :
     BaseZoomImageViewFragment<PicassoZoomImageViewFragmentBinding>() {
@@ -41,13 +38,7 @@ class PicassoZoomImageViewFragment :
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override val supportDisabledMemoryCache: Boolean
-        get() = true
-
     override val supportIgnoreExifOrientation: Boolean
-        get() = false
-
-    override val supportDisallowReuseBitmap: Boolean
         get() = false
 
     override fun getCommonBinding(binding: PicassoZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
@@ -64,24 +55,14 @@ class PicassoZoomImageViewFragment :
     ) {
         super.onViewCreated(binding, savedInstanceState)
 
-        binding.picassoZoomImageViewImage.apply {
+//        binding.picassoZoomImageViewImage.apply {
 //            listOf(
-//                prefsService.disableMemoryCache.stateFlow,
-//                prefsService.disallowReuseBitmap.stateFlow,
 //                prefsService.ignoreExifOrientation.stateFlow,
 //            ).merge().collect(lifecycleOwner) {
-//                subsamplingAbility.disableMemoryCache = prefsService.disableMemoryCache.value
-//                subsamplingAbility.disallowReuseBitmap = prefsService.disallowReuseBitmap.value
 //                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
+//                loadData(binding, binding.common, sketchImageUri)
 //            }
-            listOf(
-                prefsService.disableMemoryCache.sharedFlow,
-//                prefsService.disallowReuseBitmap.sharedFlow,
-//                prefsService.ignoreExifOrientation.sharedFlow,
-            ).merge().collectWithLifecycle(viewLifecycleOwner) {
-                loadData(binding, binding.common, sketchImageUri)
-            }
-        }
+//        }
     }
 
     override fun loadImage(
@@ -103,12 +84,6 @@ class PicassoZoomImageViewFragment :
         val config: RequestCreator.() -> Unit = {
             fit()
             centerInside()
-            if (prefsService.disableMemoryCache.value) {
-                memoryPolicy(
-                    com.squareup.picasso.MemoryPolicy.NO_CACHE,
-                    com.squareup.picasso.MemoryPolicy.NO_STORE
-                )
-            }
         }
         val sketchImageUri = args.imageUri
         when {

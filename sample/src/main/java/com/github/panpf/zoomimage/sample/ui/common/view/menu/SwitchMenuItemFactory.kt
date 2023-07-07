@@ -16,14 +16,11 @@
 package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
 import android.content.Context
-import android.util.TypedValue
-import androidx.core.view.isVisible
 import com.github.panpf.zoomimage.sample.databinding.SwitchMenuItemBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
 
-class SwitchMenuItemFactory(
-    private val compactModel: Boolean = false,
-) : MyBindingItemFactory<SwitchMenu, SwitchMenuItemBinding>(SwitchMenu::class) {
+class SwitchMenuItemFactory :
+    MyBindingItemFactory<SwitchMenu, SwitchMenuItemBinding>(SwitchMenu::class) {
 
     override fun initItem(
         context: Context,
@@ -44,11 +41,6 @@ class SwitchMenuItemFactory(
                 data.isChecked = isChecked
             }
         }
-
-        if (compactModel) {
-            binding.switchMenuItemTitleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            binding.switchMenuItemDescText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
-        }
     }
 
     override fun bindItemData(
@@ -61,12 +53,9 @@ class SwitchMenuItemFactory(
     ) {
         binding.root.isEnabled = !data.disabled
         binding.switchMenuItemTitleText.isEnabled = !data.disabled
-        binding.switchMenuItemDescText.isEnabled = !data.disabled
         binding.switchMenuItemSwitch.isEnabled = !data.disabled
 
         binding.switchMenuItemTitleText.text = data.title
         binding.switchMenuItemSwitch.isChecked = if (data.disabled) false else data.isChecked
-        binding.switchMenuItemDescText.text = data.desc
-        binding.switchMenuItemDescText.isVisible = data.desc?.isNotEmpty() == true
     }
 }

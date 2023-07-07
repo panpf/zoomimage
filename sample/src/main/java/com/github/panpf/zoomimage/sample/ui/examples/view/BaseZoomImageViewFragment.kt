@@ -43,11 +43,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
     abstract fun getCommonBinding(binding: VIEW_BINDING): ZoomImageViewCommonFragmentBinding
 
-    abstract val supportDisabledMemoryCache: Boolean
-
     abstract val supportIgnoreExifOrientation: Boolean
-
-    abstract val supportDisallowReuseBitmap: Boolean
 
     override fun onViewCreated(binding: VIEW_BINDING, savedInstanceState: Bundle?) {
         val zoomImageView = getZoomImageView(binding)
@@ -116,9 +112,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewSettings.setOnClickListener {
             ZoomImageViewOptionsDialogFragment().apply {
                 arguments = ZoomImageViewOptionsDialogFragmentArgs(
-                    supportMemoryCache = supportDisabledMemoryCache,
                     supportIgnoreExifOrientation = supportIgnoreExifOrientation,
-                    supportReuseBitmap = supportDisallowReuseBitmap
                 ).toBundle()
             }.show(childFragmentManager, null)
         }

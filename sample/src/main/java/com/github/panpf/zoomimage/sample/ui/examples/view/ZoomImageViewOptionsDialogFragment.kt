@@ -39,15 +39,14 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             layoutManager = LinearLayoutManager(context)
             adapter = AssemblyRecyclerAdapter(
                 listOf(
-                    SwitchMenuItemFactory(compactModel = true),
-                    MultiSelectMenuItemFactory(requireActivity(), compactModel = true),
+                    SwitchMenuItemFactory(),
+                    MultiSelectMenuItemFactory(requireActivity()),
                     ListSeparatorItemFactory(),
                 ),
                 buildList {
                     add(
                         MultiSelectMenu(
                             title = "Scale Type",
-                            desc = null,
                             values = ScaleType.values()
                                 .filter { it != MATRIX }.map { it.name },
                             getValue = { prefsService.scaleType.value },
@@ -60,20 +59,17 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                         SwitchMenuFlow(
                             title = "Three Step Scale",
                             data = prefsService.threeStepScaleEnabled,
-                            desc = "Double-click zoom in three steps"
                         )
                     )
                     add(
                         SwitchMenuFlow(
                             title = "Read Mode",
                             data = prefsService.readModeEnabled,
-                            desc = "Long images are displayed in full screen by default"
                         )
                     )
                     add(
                         SwitchMenuFlow(
                             title = "Scroll Bar",
-                            desc = null,
                             data = prefsService.scrollBarEnabled,
                         )
                     )
@@ -81,30 +77,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     add(
                         SwitchMenuFlow(
                             title = "Show Tile Bounds",
-                            desc = "Overlay the state and area of the tile on the View",
                             data = prefsService.showTileBounds,
                         )
                     )
                     add(
                         SwitchMenuFlow(
-                            title = "Disable Memory Cache",
-                            desc = if (args.supportMemoryCache) null else "Current *ZoomImageView not supported",
-                            data = prefsService.disableMemoryCache,
-                            disabled = !args.supportMemoryCache,
-                        )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Disallow Reuse Bitmap",
-                            desc = if (args.supportReuseBitmap) null else "Current *ZoomImageView not supported",
-                            data = prefsService.disallowReuseBitmap,
-                            disabled = !args.supportReuseBitmap,
-                        )
-                    )
-                    add(
-                        SwitchMenuFlow(
                             title = "Ignore Exif Orientation",
-                            desc = if (args.supportReuseBitmap) null else "Current *ZoomImageView not supported",
                             data = prefsService.ignoreExifOrientation,
                             disabled = !args.supportIgnoreExifOrientation,
                         )

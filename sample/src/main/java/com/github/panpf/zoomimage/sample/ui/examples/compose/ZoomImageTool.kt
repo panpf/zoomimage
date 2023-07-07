@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -37,42 +35,53 @@ import kotlinx.coroutines.launch
 @Composable
 fun ZoomImageTool(
     zoomableState: ZoomableState,
-    zoomImageOptionsDialogState: ZoomImageOptionsDialogState
+    optionsDialogState: ZoomImageOptionsDialogState,
+    imageUri: String,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
     val zoomIn = remember {
         derivedStateOf { zoomableState.getNextStepScale() > zoomableState.minScale }
     }
+    val infoDialogState = rememberZoomImageInfoDialogState()
+    val info = remember(
+        zoomableState.minScale,
+        zoomableState.mediumScale,
+        zoomableState.maxScale,
+        zoomableState.transform,
+        zoomableState.displayTransform,
+        zoomableState.baseTransform,
+        zoomableState.contentVisibleRect
+    ) {
+        val scales = floatArrayOf(
+            zoomableState.minScale,
+            zoomableState.mediumScale,
+            zoomableState.maxScale
+        ).joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
+        val transform = zoomableState.transform
+        val displayTransform = zoomableState.displayTransform
+        val baseTransform = zoomableState.baseTransform
+        val scaleFormatted = transform.scaleX.format(2)
+        val displayScaleFormatted = displayTransform.scaleX.format(2)
+        val baseScaleFormatted = baseTransform.scaleX.format(2)
+        """
+            scale: $scaleFormatted($displayScaleFormatted/${baseScaleFormatted}) in $scales
+            offset: ${transform.offset.toShortString()}
+            visible: ${zoomableState.contentVisibleRect.toShortString()}
+        """.trimIndent()
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
-            val expandedState = remember { mutableStateOf(false) }
-            val scales = floatArrayOf(zoomableState.minScale, zoomableState.mediumScale, zoomableState.maxScale)
-                .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             Text(
-//                    scale: ${zoomableState.scale.format(2)}(${zoomableState.displayScale.scaleX.format(2)}/${zoomableState.baseScale.scaleX.format(2)}) in $scales
-//                    offset: ${zoomableState.offset.toShortString()}
-                text = """
-                    scale: ${zoomableState.transform.scale.scaleX.format(2)}(${zoomableState.displayTransform.scale.scaleX.format(2)}/${zoomableState.baseTransform.scale.scaleX.format(2)}) in $scales
-                    offset: ${zoomableState.transform.offset.toShortString()}
-                    offsetBounds: ${zoomableState.offsetBounds?.toShortString()}
-                    contentVisibleRect: ${zoomableState.contentVisibleRect.toShortString()}
-                    containerVisibleRect: ${zoomableState.containerVisibleRect.toShortString()}
-                    contentSize: ${zoomableState.contentSize.toShortString()}
-                    containerSize: ${zoomableState.containerSize.toShortString()}
-                    contentInContainerRect: ${zoomableState.contentInContainerRect.toShortString()}
-                """.trimIndent(),
+                text = info,
                 color = Color.White,
                 fontSize = 13.sp,
                 lineHeight = 16.sp,
                 style = LocalTextStyle.current.copy(
                     shadow = Shadow(offset = Offset(1f, 1f), blurRadius = 4f),
                 ),
-                maxLines = if (expandedState.value) Int.MAX_VALUE else 6,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .clickable { expandedState.value = !expandedState.value }
-                    .padding(10.dp)
+                modifier = Modifier.padding(10.dp)
             )
         }
 
@@ -83,13 +92,7 @@ fun ZoomImageTool(
                 .background(colors.tertiary.copy(alpha = 0.7f), RoundedCornerShape(50)),
             horizontalArrangement = Arrangement.End
         ) {
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        zoomableState.switchScale()
-                    }
-                }
-            ) {
+            IconButton(onClick = { coroutineScope.launch { zoomableState.switchScale() } }) {
                 val icon = if (zoomIn.value)
                     R.drawable.ic_zoom_in to "zoom in" else R.drawable.ic_zoom_out to "zoom out"
                 Icon(
@@ -98,9 +101,14 @@ fun ZoomImageTool(
                     tint = colors.onTertiary
                 )
             }
-            IconButton(onClick = {
-                zoomImageOptionsDialogState.showing = !zoomImageOptionsDialogState.showing
-            }) {
+            IconButton(onClick = { infoDialogState.showing = !infoDialogState.showing }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = "Options",
+                    tint = colors.onTertiary
+                )
+            }
+            IconButton(onClick = { optionsDialogState.showing = !optionsDialogState.showing }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_settings),
                     contentDescription = "Options",
@@ -109,6 +117,11 @@ fun ZoomImageTool(
             }
         }
 
-        ZoomImageOptionsDialog(state = zoomImageOptionsDialogState)
+        ZoomImageOptionsDialog(state = optionsDialogState)
+        ZoomImageInfoDialog(
+            state = infoDialogState,
+            imageUri = imageUri,
+            zoomableState = zoomableState
+        )
     }
 }

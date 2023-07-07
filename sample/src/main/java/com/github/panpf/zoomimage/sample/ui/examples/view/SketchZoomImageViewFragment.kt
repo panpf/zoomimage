@@ -19,7 +19,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.zoomimage.ZoomImageView
@@ -38,13 +37,7 @@ class SketchZoomImageViewFragment :
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override val supportDisabledMemoryCache: Boolean
-        get() = true
-
     override val supportIgnoreExifOrientation: Boolean
-        get() = true
-
-    override val supportDisallowReuseBitmap: Boolean
         get() = true
 
     override fun getCommonBinding(binding: SketchZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
@@ -62,18 +55,7 @@ class SketchZoomImageViewFragment :
         super.onViewCreated(binding, savedInstanceState)
 
         binding.sketchZoomImageViewImage.apply {
-//            listOf(
-//                prefsService.disableMemoryCache.stateFlow,
-//                prefsService.disallowReuseBitmap.stateFlow,
-//                prefsService.ignoreExifOrientation.stateFlow,
-//            ).merge().collect(lifecycleOwner) {
-//                subsamplingAbility.disableMemoryCache = prefsService.disableMemoryCache.value
-//                subsamplingAbility.disallowReuseBitmap = prefsService.disallowReuseBitmap.value
-//                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
-//            }
             listOf(
-                prefsService.disableMemoryCache.sharedFlow,
-                prefsService.disallowReuseBitmap.sharedFlow,
                 prefsService.ignoreExifOrientation.sharedFlow,
             ).merge().collectWithLifecycle(viewLifecycleOwner) {
                 loadData(binding, binding.common, sketchImageUri)
@@ -90,8 +72,6 @@ class SketchZoomImageViewFragment :
         binding.sketchZoomImageViewImage.displayImage(args.imageUri) {
             lifecycle(viewLifecycleOwner.lifecycle)
             crossfade()
-            memoryCachePolicy(if (prefsService.disableMemoryCache.value) CachePolicy.DISABLED else CachePolicy.ENABLED)
-            disallowReuseBitmap(prefsService.disallowReuseBitmap.value)
             ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
             listener(
                 onStart = { onCallStart() },

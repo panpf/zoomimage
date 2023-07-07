@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Settings_Item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="50dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
 
     <TextView
         android:id="@+id/multiSelectMenuItemTitleText"
@@ -13,25 +14,12 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_weight="1"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@id/multiSelectMenuItemDescText"
+        android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/multiSelectMenuItemInfoText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="显示按下状态显示按下状态显示按下状态显示按下状态" />
-
-    <TextView
-        android:id="@+id/multiSelectMenuItemDescText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_weight="1"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/multiSelectMenuItemTitleText"
-        app:layout_constraintStart_toStartOf="@id/multiSelectMenuItemTitleText"
-        app:layout_constraintTop_toBottomOf="@id/multiSelectMenuItemTitleText"
-        tools:text="这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述这是描述" />
+        tools:text="显示按下状态显示按" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/multiSelectMenuItemInfoText"
@@ -41,6 +29,7 @@
         android:textSize="14sp"
         app:drawableEndCompat="@drawable/ic_expand_more"
         app:drawableRightCompat="@drawable/ic_expand_more"
+        app:drawableTint="@android:color/secondary_text_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -41,12 +41,6 @@ class PrefsService(val context: Context) {
     val showTileBounds by lazy {
         BooleanMmkvData(mmkv, "showTileBounds", false)
     }
-    val disableMemoryCache by lazy {
-        BooleanMmkvData(mmkv, "disableMemoryCache", false)
-    }
-    val disallowReuseBitmap by lazy {
-        BooleanMmkvData(mmkv, "disallowReuseBitmap", false)
-    }
     val ignoreExifOrientation by lazy {
         BooleanMmkvData(mmkv, "ignoreExifOrientation", false)
     }

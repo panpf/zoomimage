@@ -8,10 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,9 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 
 class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
@@ -103,6 +106,10 @@ fun ZoomImageOptionsDialog(
                 ) {
                     Text(text = "ContentScale", modifier = Modifier.weight(1f))
                     Text(text = state.contentScale.name)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_expand_more),
+                        contentDescription = "more"
+                    )
                     DropdownMenu(
                         expanded = contentScaleMenuExpanded,
                         onDismissRequest = {
@@ -143,6 +150,10 @@ fun ZoomImageOptionsDialog(
                 ) {
                     Text(text = "Alignment", modifier = Modifier.weight(1f))
                     Text(text = state.alignment.name)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_expand_more),
+                        contentDescription = "more"
+                    )
                     DropdownMenu(
                         expanded = alignmentMenuExpanded,
                         onDismissRequest = {
@@ -183,7 +194,7 @@ fun ZoomImageOptionsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Three Step Scale", modifier = Modifier.weight(1f))
-                    Checkbox(
+                    Switch(
                         checked = state.threeStepScaleEnabled,
                         onCheckedChange = null
                     )
@@ -201,7 +212,7 @@ fun ZoomImageOptionsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Read Mode", modifier = Modifier.weight(1f))
-                    Checkbox(
+                    Switch(
                         checked = state.readModeEnabled,
                         onCheckedChange = null
                     )
@@ -219,7 +230,7 @@ fun ZoomImageOptionsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Scroll Bar", modifier = Modifier.weight(1f))
-                    Checkbox(
+                    Switch(
                         checked = state.scrollBarEnabled,
                         onCheckedChange = null
                     )
@@ -237,7 +248,7 @@ fun ZoomImageOptionsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Animate Scale", modifier = Modifier.weight(1f))
-                    Checkbox(
+                    Switch(
                         checked = state.animateScale,
                         onCheckedChange = null
                     )
@@ -255,7 +266,7 @@ fun ZoomImageOptionsDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Slower Scale Animation", modifier = Modifier.weight(1f))
-                    Checkbox(
+                    Switch(
                         checked = state.slowerScaleAnimation,
                         onCheckedChange = null
                     )

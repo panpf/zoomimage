@@ -62,7 +62,8 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
 
         ZoomImageTool(
             zoomableState = zoomableState,
-            zoomImageOptionsDialogState = zoomImageOptionsDialogState
+            optionsDialogState = zoomImageOptionsDialogState,
+            imageUri = sketchImageUri,
         )
     }
 }
