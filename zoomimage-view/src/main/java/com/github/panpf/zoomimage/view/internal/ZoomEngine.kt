@@ -169,9 +169,9 @@ internal class ZoomEngine constructor(
                 resetScrollBarHelper()
             }
         }
-    var scaleAnimationDuration: Int = 200
+    var scaleAnimationDuration: Int = 300
         internal set(value) {
-            if (value > 0 && field != value) {
+            if (value >= 0 && field != value) {
                 field = value
             }
         }

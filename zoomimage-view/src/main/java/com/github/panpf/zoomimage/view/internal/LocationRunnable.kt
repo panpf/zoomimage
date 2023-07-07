@@ -42,7 +42,7 @@ internal class LocationRunnable(
 
         currentX = startX
         currentY = startY
-        scroller.startScroll(startX, startY, endX - startX, endY - startY, 300)
+        scroller.startScroll(startX, startY, endX - startX, endY - startY, engine.scaleAnimationDuration)
         engine.view.post(this)
     }
 
