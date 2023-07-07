@@ -14,7 +14,7 @@ import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeScaleTargetOffset
-import com.github.panpf.zoomimage.compose.internal.computeSupportOffsetBounds
+import com.github.panpf.zoomimage.compose.internal.computeOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.containerOriginToContentOrigin
 import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
 import com.github.panpf.zoomimage.compose.internal.name
@@ -847,7 +847,7 @@ class ComposeZoomUtilsTest {
     }
 
     @Test
-    fun testComputeSupportOffsetBounds() {
+    fun testComputeOffsetBounds() {
         val containerSize = Size(1000f, 1000f)
 
         var contentSize = Size(800f, 400f)
@@ -930,12 +930,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeSupportOffsetBounds(
+                computeOffsetBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    supportScale = scale,
+                    scale = scale,
                 )
             )
         }
@@ -1020,12 +1020,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeSupportOffsetBounds(
+                computeOffsetBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    supportScale = scale,
+                    scale = scale,
                 )
             )
         }
@@ -1110,12 +1110,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeSupportOffsetBounds(
+                computeOffsetBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    supportScale = scale,
+                    scale = scale,
                 )
             )
         }
@@ -1200,12 +1200,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeSupportOffsetBounds(
+                computeOffsetBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    supportScale = scale,
+                    scale = scale,
                 )
             )
         }
@@ -1406,12 +1406,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeSupportOffsetBounds(
+                computeOffsetBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    supportScale = scale,
+                    scale = scale,
                 )
             )
         }
@@ -1600,12 +1600,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeSupportOffsetBounds(
+                computeOffsetBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    supportScale = scale,
+                    scale = scale,
                 )
             )
         }
@@ -1790,12 +1790,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeSupportOffsetBounds(
+                computeOffsetBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    supportScale = scale,
+                    scale = scale,
                 )
             )
         }
@@ -1984,12 +1984,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 it.getMessage(containerSize, contentSize, scale),
                 it.expected,
-                computeSupportOffsetBounds(
+                computeOffsetBounds(
                     containerSize = containerSize,
                     contentSize = contentSize,
                     contentScale = it.contentScale,
                     contentAlignment = it.contentAlignment,
-                    supportScale = scale,
+                    scale = scale,
                 )
             )
         }

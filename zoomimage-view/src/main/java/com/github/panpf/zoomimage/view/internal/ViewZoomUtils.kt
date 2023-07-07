@@ -278,22 +278,22 @@ internal fun computeContentInContainerRect(
 }
 
 
-internal fun computeSupportOffsetBounds(
+internal fun computeOffsetBounds(
     containerSize: SizeCompat,
     contentSize: SizeCompat,
     scaleType: ScaleType,
-    supportScale: Float
+    scale: Float
 ): Rect {
     // based on the top left zoom
-    if (supportScale <= 1.0f || containerSize.isEmpty || contentSize.isEmpty) {
+    if (scale <= 1.0f || containerSize.isEmpty || contentSize.isEmpty) {
         return ZeroRect
     }
-    val scaledContainerSize = containerSize.times(supportScale)
+    val scaledContainerSize = containerSize.times(scale)
     val scaledContentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
         contentSize = contentSize,
         scaleType = scaleType,
-    ).scale(supportScale)
+    ).scale(scale)
 
     val horizontalBounds = if (scaledContentInContainerRect.width() > containerSize.width) {
         ((scaledContentInContainerRect.right - containerSize.width) * -1)..(scaledContentInContainerRect.left * -1)

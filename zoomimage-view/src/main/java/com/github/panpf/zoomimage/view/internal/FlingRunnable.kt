@@ -41,11 +41,11 @@ internal class FlingRunnable(
         val offset = engine.offset
         val startX = offset.x.roundToInt()
         val startY = offset.y.roundToInt()
-        val bounds = computeSupportOffsetBounds(
+        val bounds = computeOffsetBounds(
             containerSize = engine.viewSize,
             contentSize = engine.drawableSize,
             scaleType = engine.scaleType,
-            supportScale = engine.scale
+            scale = engine.scale
         )
         val minX: Int = bounds.left
         val maxX: Int = bounds.right

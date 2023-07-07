@@ -175,24 +175,24 @@ internal fun computeScaleTargetOffset(
     }
 }
 
-internal fun computeSupportOffsetBounds(
+internal fun computeOffsetBounds(
     containerSize: Size,
     contentSize: Size,
     contentScale: ContentScale,
     contentAlignment: Alignment,
-    supportScale: Float
+    scale: Float
 ): Rect {
     // based on the top left zoom
-    if (supportScale <= 1.0f || containerSize.isUnspecified || contentSize.isUnspecified) {
+    if (scale <= 1.0f || containerSize.isUnspecified || contentSize.isUnspecified) {
         return Rect.Zero
     }
-    val scaledContainerSize = containerSize.times(supportScale)
+    val scaledContainerSize = containerSize.times(scale)
     val scaledContentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
         contentAlignment = contentAlignment
-    ).scale(supportScale)
+    ).scale(scale)
 
     val horizontalBounds = if (scaledContentInContainerRect.width > containerSize.width) {
         ((scaledContentInContainerRect.right - containerSize.width) * -1)..(scaledContentInContainerRect.left * -1)
