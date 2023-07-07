@@ -7,10 +7,15 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
+import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+
+internal fun Size.isAvailable(): Boolean = isSpecified && !isEmpty()
+
+internal fun Size.isNotAvailable(): Boolean = isUnspecified || isEmpty()
 
 internal fun Size.toShortString(): String = if (isSpecified) "(${width},$height)" else "Unspecified"
 
@@ -24,17 +29,17 @@ internal fun Offset.toShortString(): String =
 internal fun Rect.toShortString(): String =
     "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
 
-fun ScaleFactor.toShortString(): String = "(${scaleX.format(2)},${scaleY.format(2)})"
+internal fun ScaleFactor.toShortString(): String = "(${scaleX.format(2)},${scaleY.format(2)})"
 
 @Stable
-operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
+internal operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
     ScaleFactor(scaleX * scaleFactor.scaleX, scaleY * scaleFactor.scaleY)
 
 @Stable
-operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
+internal operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
     ScaleFactor(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
 
-fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
+internal fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
 
 
 internal fun Rect.scale(scale: Float): Rect {

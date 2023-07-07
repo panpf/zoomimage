@@ -20,8 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.isSpecified
-import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
@@ -41,6 +39,8 @@ import com.github.panpf.zoomimage.compose.internal.computeScaleTargetOffset
 import com.github.panpf.zoomimage.compose.internal.computeTransform
 import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
 import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.compose.internal.isAvailable
+import com.github.panpf.zoomimage.compose.internal.isNotAvailable
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.supportReadMode
@@ -86,7 +86,7 @@ fun rememberZoomableState(
         readMode,
         defaultMediumScaleMultiple,
     ) {
-        if (state.contentSize.isUnspecified && state.containerSize.isSpecified) {
+        if (!state.contentSize.isAvailable() && state.containerSize.isAvailable()) {
             state.contentSize = state.containerSize
         }
         state.reset()
@@ -106,9 +106,9 @@ class ZoomableState(
 
     private var lastAnimatable: Animatable<*, *>? = null
 
-    var containerSize: Size by mutableStateOf(Size.Unspecified)
-    var contentSize: Size by mutableStateOf(Size.Unspecified)
-    var contentOriginSize: Size by mutableStateOf(Size.Unspecified)
+    var containerSize: Size by mutableStateOf(Size.Zero)
+    var contentSize: Size by mutableStateOf(Size.Zero)
+    var contentOriginSize: Size by mutableStateOf(Size.Zero)
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
     var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
     var threeStepScaleEnabled: Boolean = false
@@ -181,9 +181,7 @@ class ZoomableState(
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val initialTransform: Transform
-        if (containerSize.isUnspecified || containerSize.isEmpty()
-            || contentSize.isUnspecified || contentSize.isEmpty()
-        ) {
+        if (containerSize.isNotAvailable() || contentSize.isNotAvailable()) {
             minScale = 1.0f
             mediumScale = 1.0f
             maxScale = 1.0f
@@ -398,8 +396,8 @@ class ZoomableState(
     suspend fun snapLocation(contentOrigin: Origin, targetScale: Float = transform.scaleX) {
         stopAnimation("snapLocation")
 
-        val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
+        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
+        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentTransform = transform
@@ -438,8 +436,8 @@ class ZoomableState(
     suspend fun snapLocation(touch: Offset, targetScale: Float = transform.scaleX) {
         stopAnimation("snapLocation")
 
-        val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
+        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
+        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
         val currentTransform = transform
         val limitedTargetScale = limitScale(targetScale)
         val containerOrigin = computeContainerOriginByTouchPosition(
@@ -478,8 +476,8 @@ class ZoomableState(
     ) {
         stopAnimation("animateLocation")
 
-        val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
+        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
+        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentTransform = transform
@@ -538,8 +536,8 @@ class ZoomableState(
     suspend fun animateLocation(touch: Offset, targetScale: Float = transform.scaleX) {
         stopAnimation("animateLocation")
 
-        val containerSize = containerSize.takeIf { it.isSpecified } ?: return
-        val contentSize = contentSize.takeIf { it.isSpecified } ?: return
+        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
+        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
         val currentTransform = transform
         val limitedTargetScale = limitScale(targetScale)
         val containerOrigin = computeContainerOriginByTouchPosition(

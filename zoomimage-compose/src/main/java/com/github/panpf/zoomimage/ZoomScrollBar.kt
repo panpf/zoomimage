@@ -13,10 +13,10 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.ScrollBarStyle
+import com.github.panpf.zoomimage.compose.internal.isAvailable
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
@@ -40,7 +40,7 @@ fun Modifier.zoomScrollBar(
         )
     }
     val alpha by remember { derivedStateOf { alphaAnimatable.value } }
-    if (contentSize.isSpecified && !contentSize.isEmpty() && !contentVisibleRect.isEmpty) {
+    if (contentSize.isAvailable() && !contentVisibleRect.isEmpty) {
         this.drawWithContent {
             drawContent()
 

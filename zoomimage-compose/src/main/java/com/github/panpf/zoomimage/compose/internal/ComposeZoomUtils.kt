@@ -5,7 +5,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.times
 import com.github.panpf.zoomimage.core.Origin
@@ -18,8 +17,8 @@ internal fun computeScaleOffset(
     scale: ContentScale,
     alignment: Alignment,
 ): Offset {
-    if (dstSize.isUnspecified || dstSize.isEmpty()
-        || srcSize.isUnspecified || srcSize.isEmpty()
+    if (dstSize.isNotAvailable() || dstSize.isEmpty()
+        || srcSize.isNotAvailable() || srcSize.isEmpty()
     ) {
         return Offset.Zero
     }
@@ -85,7 +84,7 @@ internal fun computeContentInContainerRect(
     contentScale: ContentScale,
     contentAlignment: Alignment,
 ): Rect {
-    if (containerSize.isUnspecified || contentSize.isUnspecified) return Rect.Zero
+    if (containerSize.isNotAvailable() || contentSize.isNotAvailable()) return Rect.Zero
     val contentScaleFactor =
         contentScale.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
     val contentScaledContentSize = contentSize.times(contentScaleFactor)
@@ -158,7 +157,7 @@ internal fun computeScaleTargetOffset(
     scale: Float,
     containerOrigin: Origin
 ): Offset {
-    if (containerSize.isUnspecified || containerSize.isEmpty()) return Offset.Zero
+    if (containerSize.isNotAvailable() || containerSize.isEmpty()) return Offset.Zero
     val scaledContainerSize = containerSize.times(scale)
     val scaledContainerOffset = Offset(
         x = scaledContainerSize.width * containerOrigin.x,
@@ -183,7 +182,7 @@ internal fun computeOffsetBounds(
     scale: Float
 ): Rect {
     // based on the top left zoom
-    if (scale <= 1.0f || containerSize.isUnspecified || contentSize.isUnspecified) {
+    if (scale <= 1.0f || containerSize.isNotAvailable() || contentSize.isNotAvailable()) {
         return Rect.Zero
     }
     val scaledContainerSize = containerSize.times(scale)
@@ -234,7 +233,7 @@ internal fun computeContainerVisibleRect(
     scale: Float,
     offset: Offset
 ): Rect {
-    if (containerSize.isUnspecified) return Rect.Zero
+    if (containerSize.isNotAvailable()) return Rect.Zero
     val scaledContainerSize = containerSize.times(scale)
     val left: Float
     val right: Float
@@ -274,7 +273,7 @@ internal fun computeContentVisibleRect(
     scale: Float,
     offset: Offset,
 ): Rect {
-    if (containerSize.isUnspecified || contentSize.isUnspecified) return Rect.Zero
+    if (containerSize.isNotAvailable() || contentSize.isNotAvailable()) return Rect.Zero
     val containerVisibleRect = computeContainerVisibleRect(containerSize, scale, offset)
     val contentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
@@ -317,7 +316,7 @@ internal fun computeContainerOriginByTouchPosition(
     offset: Offset,
     touch: Offset
 ): Origin {
-    if (containerSize.isUnspecified) return Origin.Zero
+    if (containerSize.isNotAvailable()) return Origin.Zero
     val touchOfContainer = touch - offset
     return Origin(
         x = ((touchOfContainer.x / scale) / containerSize.width).coerceIn(0f, 1f),
@@ -332,7 +331,7 @@ internal fun containerOriginToContentOrigin(
     contentAlignment: Alignment,
     containerOrigin: Origin
 ): Origin {
-    if (containerSize.isUnspecified || contentSize.isUnspecified) return Origin.Zero
+    if (containerSize.isNotAvailable() || contentSize.isNotAvailable()) return Origin.Zero
     val contentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
         contentSize = contentSize,
@@ -382,7 +381,7 @@ internal fun contentOriginToContainerOrigin(
     contentAlignment: Alignment,
     contentOrigin: Origin
 ): Origin {
-    if (containerSize.isUnspecified || contentSize.isUnspecified) return Origin.Zero
+    if (containerSize.isNotAvailable() || contentSize.isNotAvailable()) return Origin.Zero
     val contentInContainerRect = computeContentInContainerRect(
         containerSize = containerSize,
         contentSize = contentSize,
@@ -433,7 +432,7 @@ internal fun contentOriginToContainerOrigin(
 //    contentVisibleRect: Rect,
 //    horizontal: Boolean
 //): Edge {
-//    if (contentSize.isUnspecified || contentVisibleRect.isEmpty) return Edge.BOTH
+//    if (contentSize.isNotAvailable() || contentVisibleRect.isEmpty) return Edge.BOTH
 //    if (horizontal) {
 //        return if (contentVisibleRect.left <= 0f && contentVisibleRect.right.roundToInt() >= contentSize.width.roundToInt()) {
 //            Edge.BOTH
@@ -499,7 +498,7 @@ internal fun computeScaleFactor(
     dstSize: Size,
     contentScale: ContentScale
 ): ComposeScaleFactor {
-    return if (dstSize.isUnspecified || dstSize.isEmpty() || srcSize.isUnspecified || srcSize.isEmpty()) {
+    return if (dstSize.isNotAvailable() || dstSize.isEmpty() || srcSize.isNotAvailable() || srcSize.isEmpty()) {
         ComposeScaleFactor(1f, 1f)
     } else {
         contentScale.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
