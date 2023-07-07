@@ -64,6 +64,20 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 prefsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     readModeEnabled = it
                 }
+                prefsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    scaleAnimationDuration = if (prefsService.animateScale.value) {
+                        (if (prefsService.slowerScaleAnimation.value) 3000 else 300)
+                    } else {
+                        0
+                    }
+                }
+                prefsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    scaleAnimationDuration = if (prefsService.animateScale.value) {
+                        (if (prefsService.slowerScaleAnimation.value) 3000 else 300)
+                    } else {
+                        0
+                    }
+                }
             }
             subsamplingAbility.apply {
                 setLifecycle(viewLifecycleOwner.lifecycle)

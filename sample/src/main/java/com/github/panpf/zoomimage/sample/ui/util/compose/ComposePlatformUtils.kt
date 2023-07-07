@@ -61,6 +61,19 @@ internal val ContentScale.name: String
         else -> "Unknown"
     }
 
+internal fun contentScale(name: String): ContentScale {
+    return when (name) {
+        "FillWidth" -> ContentScale.FillWidth
+        "FillHeight" -> ContentScale.FillHeight
+        "FillBounds" -> ContentScale.FillBounds
+        "Fit" -> ContentScale.Fit
+        "Crop" -> ContentScale.Crop
+        "Inside" -> ContentScale.Inside
+        "None" -> ContentScale.None
+        else -> throw IllegalArgumentException("Unknown ContentScale name: $name")
+    }
+}
+
 internal val Alignment.name: String
     get() = when (this) {
         Alignment.TopStart -> "TopStart"
@@ -74,6 +87,21 @@ internal val Alignment.name: String
         Alignment.BottomEnd -> "BottomEnd"
         else -> "Unknown"
     }
+
+internal fun alignment(name: String): Alignment {
+    return when (name) {
+        "TopStart" -> Alignment.TopStart
+        "TopCenter" -> Alignment.TopCenter
+        "TopEnd" -> Alignment.TopEnd
+        "CenterStart" -> Alignment.CenterStart
+        "Center" -> Alignment.Center
+        "CenterEnd" -> Alignment.CenterEnd
+        "BottomStart" -> Alignment.BottomStart
+        "BottomCenter" -> Alignment.BottomCenter
+        "BottomEnd" -> Alignment.BottomEnd
+        else -> throw IllegalArgumentException("Unknown alignment name: $name")
+    }
+}
 
 
 @Composable

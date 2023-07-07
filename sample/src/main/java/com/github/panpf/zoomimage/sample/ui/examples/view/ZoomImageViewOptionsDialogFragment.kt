@@ -55,10 +55,11 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                             }
                         )
                     )
+
                     add(
                         SwitchMenuFlow(
-                            title = "Three Step Scale",
-                            data = prefsService.threeStepScaleEnabled,
+                            title = "Scroll Bar",
+                            data = prefsService.scrollBarEnabled,
                         )
                     )
                     add(
@@ -69,8 +70,20 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     )
                     add(
                         SwitchMenuFlow(
-                            title = "Scroll Bar",
-                            data = prefsService.scrollBarEnabled,
+                            title = "Animate Scale",
+                            data = prefsService.animateScale,
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Three Step Scale",
+                            data = prefsService.threeStepScaleEnabled,
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
+                            title = "Slower Scale Animation",
+                            data = prefsService.slowerScaleAnimation,
                         )
                     )
 

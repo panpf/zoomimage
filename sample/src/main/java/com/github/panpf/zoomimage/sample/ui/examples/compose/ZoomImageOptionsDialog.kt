@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,12 +24,52 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
+import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
+
+@Composable
+fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImageOptionsDialogState {
+    val context = LocalContext.current
+    val state = remember {
+        val prefsService = context.prefsService
+        ZoomImageOptionsDialogState(initialShow).apply {
+            contentScale = contentScale(prefsService.contentScale.value)
+            alignment = alignment(prefsService.alignment.value)
+            threeStepScaleEnabled = prefsService.threeStepScaleEnabled.value
+            readModeEnabled = prefsService.readModeEnabled.value
+            scrollBarEnabled = prefsService.scrollBarEnabled.value
+            animateScale = prefsService.animateScale.value
+            slowerScaleAnimation = prefsService.slowerScaleAnimation.value
+        }
+    }
+    LaunchedEffect(
+        state.contentScale,
+        state.alignment,
+        state.threeStepScaleEnabled,
+        state.readModeEnabled,
+        state.scrollBarEnabled,
+        state.animateScale,
+        state.slowerScaleAnimation,
+    ) {
+        val prefsService = context.prefsService
+        prefsService.contentScale.value = state.contentScale.name
+        prefsService.alignment.value = state.alignment.name
+        prefsService.threeStepScaleEnabled.value = state.threeStepScaleEnabled
+        prefsService.readModeEnabled.value = state.readModeEnabled
+        prefsService.scrollBarEnabled.value = state.scrollBarEnabled
+        prefsService.animateScale.value = state.animateScale
+        prefsService.slowerScaleAnimation.value = state.slowerScaleAnimation
+    }
+    return state
+}
 
 class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
 
@@ -49,10 +90,6 @@ class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
     var slowerScaleAnimation: Boolean by mutableStateOf(false)
         internal set
 }
-
-@Composable
-fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImageOptionsDialogState =
-    remember { ZoomImageOptionsDialogState(initialShow) }
 
 @Composable
 fun ZoomImageOptionsDialog(
@@ -187,15 +224,15 @@ fun ZoomImageOptionsDialog(
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            state.threeStepScaleEnabled = !state.threeStepScaleEnabled
+                            state.scrollBarEnabled = !state.scrollBarEnabled
                             state.showing = false
                         }
                         .padding(horizontal = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Three Step Scale", modifier = Modifier.weight(1f))
+                    Text(text = "Scroll Bar", modifier = Modifier.weight(1f))
                     Switch(
-                        checked = state.threeStepScaleEnabled,
+                        checked = state.scrollBarEnabled,
                         onCheckedChange = null
                     )
                 }
@@ -223,24 +260,6 @@ fun ZoomImageOptionsDialog(
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            state.scrollBarEnabled = !state.scrollBarEnabled
-                            state.showing = false
-                        }
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Scroll Bar", modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = state.scrollBarEnabled,
-                        onCheckedChange = null
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
                             state.animateScale = !state.animateScale
                             state.showing = false
                         }
@@ -250,6 +269,24 @@ fun ZoomImageOptionsDialog(
                     Text(text = "Animate Scale", modifier = Modifier.weight(1f))
                     Switch(
                         checked = state.animateScale,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            state.threeStepScaleEnabled = !state.threeStepScaleEnabled
+                            state.showing = false
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Three Step Scale", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = state.threeStepScaleEnabled,
                         onCheckedChange = null
                     )
                 }

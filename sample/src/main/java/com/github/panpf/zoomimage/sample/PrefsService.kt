@@ -28,6 +28,14 @@ class PrefsService(val context: Context) {
     val scaleType by lazy {
         StringMmkvData(mmkv, "scaleType", FIT_CENTER.name)
     }
+
+    val contentScale by lazy {
+        StringMmkvData(mmkv, "contentScale", "Fit")
+    }
+    val alignment by lazy {
+        StringMmkvData(mmkv, "alignment", "Center")
+    }
+
     val scrollBarEnabled by lazy {
         BooleanMmkvData(mmkv, "scrollBarEnabled", true)
     }
@@ -43,5 +51,12 @@ class PrefsService(val context: Context) {
     }
     val ignoreExifOrientation by lazy {
         BooleanMmkvData(mmkv, "ignoreExifOrientation", false)
+    }
+
+    val animateScale by lazy {
+        BooleanMmkvData(mmkv, "animateScale", true)
+    }
+    val slowerScaleAnimation by lazy {
+        BooleanMmkvData(mmkv, "slowerScaleAnimation", false)
     }
 }
