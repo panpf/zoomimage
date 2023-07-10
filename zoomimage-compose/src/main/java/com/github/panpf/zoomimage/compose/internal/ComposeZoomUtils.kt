@@ -11,7 +11,7 @@ import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.TransformCompat
 import kotlin.math.absoluteValue
 
-internal fun computeScaleOffset(
+internal fun computeContentScaleOffset(
     srcSize: Size,
     dstSize: Size,
     scale: ContentScale,
@@ -88,7 +88,7 @@ internal fun computeContentInContainerRect(
     val contentScaleFactor =
         contentScale.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
     val contentScaledContentSize = contentSize.times(contentScaleFactor)
-    val offset = computeScaleOffset(
+    val offset = computeContentScaleOffset(
         srcSize = contentSize,
         dstSize = containerSize,
         scale = contentScale,
@@ -152,13 +152,13 @@ internal fun computeContentInContainerVisibleRect(
         .restoreScale(contentScaleFactor)
 }
 
-internal fun computeScaleTargetOffset(
+internal fun computeLocationOffset(
+    containerOrigin: Origin,
+    newScale: Float,
     containerSize: Size,
-    scale: Float,
-    containerOrigin: Origin
 ): Offset {
     if (containerSize.isNotAvailable() || containerSize.isEmpty()) return Offset.Zero
-    val scaledContainerSize = containerSize.times(scale)
+    val scaledContainerSize = containerSize.times(newScale)
     val scaledContainerOffset = Offset(
         x = scaledContainerSize.width * containerOrigin.x,
         y = scaledContainerSize.height * containerOrigin.y,
@@ -466,7 +466,7 @@ internal fun computeTransform(
     alignment: Alignment,
 ): TransformCompat {
     val scaleFactor = scale.computeScaleFactor(srcSize, dstSize)
-    val offset = computeScaleOffset(
+    val offset = computeContentScaleOffset(
         srcSize = srcSize,
         dstSize = dstSize,
         scale = scale,
@@ -506,3 +506,14 @@ internal fun computeScaleFactor(
 }
 
 internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds
+
+internal fun computeScaleOffsetByCentroid(
+    currentScale: Float,
+    currentOffset: Offset,
+    centroid: Offset,
+    pan: Offset,
+    zoomChange: Float,
+    rotationChange: Float
+){
+
+}

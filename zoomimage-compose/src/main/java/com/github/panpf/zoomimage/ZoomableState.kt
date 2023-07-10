@@ -35,7 +35,7 @@ import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.computeReadModeTransform
-import com.github.panpf.zoomimage.compose.internal.computeScaleTargetOffset
+import com.github.panpf.zoomimage.compose.internal.computeLocationOffset
 import com.github.panpf.zoomimage.compose.internal.computeTransform
 import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
 import com.github.panpf.zoomimage.compose.internal.format
@@ -411,10 +411,10 @@ class ZoomableState(
         )
         val targetTransform = currentTransform.copy(
             scale = ScaleFactor(limitedTargetScale),
-            offset = computeScaleTargetOffset(
+            offset = computeLocationOffset(
+                containerOrigin = containerOrigin,
+                newScale = limitedTargetScale,
                 containerSize = containerSize,
-                scale = limitedTargetScale,
-                containerOrigin = containerOrigin
             )
         )
         val limitedTargetTransform = limitTransform(targetTransform)
@@ -448,10 +448,10 @@ class ZoomableState(
         )
         val targetTransform = currentTransform.copy(
             scale = ScaleFactor(limitedTargetScale),
-            offset = computeScaleTargetOffset(
+            offset = computeLocationOffset(
+                containerOrigin = containerOrigin,
+                newScale = limitedTargetScale,
                 containerSize = containerSize,
-                scale = limitedTargetScale,
-                containerOrigin = containerOrigin
             )
         )
         val limitedTargetTransform = limitTransform(targetTransform)
@@ -491,10 +491,10 @@ class ZoomableState(
         )
         val targetTransform = currentTransform.copy(
             scale = ScaleFactor(limitedTargetScale),
-            offset = computeScaleTargetOffset(
+            offset = computeLocationOffset(
+                containerOrigin = containerOrigin,
+                newScale = limitedTargetScale,
                 containerSize = containerSize,
-                scale = limitedTargetScale,
-                containerOrigin = containerOrigin
             )
         )
         val limitedTargetTransform = limitTransform(targetTransform)
@@ -548,10 +548,10 @@ class ZoomableState(
         )
         val targetTransform = currentTransform.copy(
             scale = ScaleFactor(limitedTargetScale),
-            offset = computeScaleTargetOffset(
+            offset = computeLocationOffset(
+                containerOrigin = containerOrigin,
+                newScale = limitedTargetScale,
                 containerSize = containerSize,
-                scale = limitedTargetScale,
-                containerOrigin = containerOrigin
             )
         )
         val limitedTargetTransform = limitTransform(targetTransform)
@@ -602,6 +602,45 @@ class ZoomableState(
         animateLocation(touch = touch, targetScale = nextScale)
         return nextScale
     }
+
+//    fun computeOffsetWithCentroid(currentScale: Float, currentOffset: Offset, scaleCentroid: Offset, zoomChange: Float): Offset {
+////        val currentScaleCentroid = scaleCentroid / currentScale
+////        val newScaleCentroid = scaleCentroid / (currentScale * zoomChange)
+////        return (currentOffset + currentScaleCentroid - newScaleCentroid * (currentScale * zoomChange))
+//        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return currentOffset
+//        val addSize = containerSize * (zoomChange - 1f)
+//        val newOffset = Offset(x = currentOffset.x - addSize.width, y = currentOffset.y - addSize.height)
+//        return newOffset
+//    }
+
+//    suspend fun transform2(centroid: Offset, pan: Offset, zoomChange: Float, rotationChange: Float) {
+//        val currentTransform = transform
+//        val oldScale = currentTransform.scaleX
+//        val oldOffset = currentTransform.offset
+//        val oldOriginOffset = oldOffset
+//            .let { Offset(it.x / oldScale * -1, it.y / oldScale * -1) }
+//
+//        val newScale = limitScale(oldScale * zoomChange)
+//        // For natural zooming and rotating, the centroid of the gesture should
+//        // be the fixed point where zooming and rotating occurs.
+//        // We compute where the centroid was (in the pre-transformed coordinate
+//        // space), and then compute where it will be after this delta.
+//        // We then compute what the new offset should be to keep the centroid
+//        // visually stationary for rotating and zooming, and also apply the pan.
+//        val newOriginOffset = (oldOriginOffset + centroid / oldScale).rotateBy(rotationChange) -
+//                (centroid / newScale + pan / oldScale)
+//        val newOffset = newOriginOffset
+//            .let { Offset(it.x * newScale * -1, it.y * newScale * -1) }
+//        val targetTransform = currentTransform.copy(scale = ScaleFactor(newScale), offset = newOffset)
+//        val limitedTargetTransform = limitTransform(targetTransform)
+//        Log.d("TransformGestures", "zoomable2. detectTransformGestures. " +
+//                "scale: $oldScale -> $newScale, " +
+//                "offset: ${oldOffset.toShortString()} -> ${newOffset.toShortString()}, " +
+//                "originOffset: ${oldOriginOffset.toShortString()} -> ${newOriginOffset.toShortString()}, " +
+//                "transform: ${currentTransform.toShortString()} -> ${limitedTargetTransform.toShortString()}")
+//
+//        transform = limitedTargetTransform
+//    }
 
     // todo 初始是 mediumScale 比例时（阅读模式）放大或缩小时 zoomChange 变化很大，导致中心点偏移很大
     suspend fun transform(centroid: Offset, zoomChange: Float, rotationChange: Float) {

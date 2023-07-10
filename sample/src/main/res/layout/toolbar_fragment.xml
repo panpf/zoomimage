@@ -26,10 +26,10 @@
             android:id="@+id/toolbarToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:subtitle="@string/app_name"
             app:subtitleTextColor="@color/colorOnPrimary"
             app:title="@string/app_name"
-            app:titleTextColor="@color/colorOnPrimary" />
+            app:titleTextColor="@color/colorOnPrimary"
+            tools:subtitle="@string/app_name" />
     </LinearLayout>
 
     <FrameLayout

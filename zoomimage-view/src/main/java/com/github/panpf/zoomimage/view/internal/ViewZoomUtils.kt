@@ -132,7 +132,7 @@ internal fun rotatePoint(point: PointF, rotateDegrees: Int, drawableSize: SizeCo
 
 internal fun ScaleType.computeTransform(srcSize: SizeCompat, dstSize: SizeCompat): TransformCompat {
     val scaleFactor = this.computeScaleFactor(srcSize, dstSize)
-    val offset = computeScaleOffset(srcSize, dstSize, this)
+    val offset = computeContentScaleOffset(srcSize, dstSize, this)
     return TransformCompat(scale = scaleFactor, offset = offset)
 }
 
@@ -171,7 +171,7 @@ internal fun ScaleType.computeScaleFactor(srcSize: SizeCompat, dstSize: SizeComp
     }
 }
 
-internal fun computeScaleOffset(
+internal fun computeContentScaleOffset(
     srcSize: SizeCompat,
     dstSize: SizeCompat,
     scaleType: ScaleType
@@ -262,7 +262,7 @@ internal fun computeContentInContainerRect(
     val contentScaleFactor =
         scaleType.computeScaleFactor(srcSize = contentSize, dstSize = containerSize)
     val contentScaledContentSize = contentSize.times(contentScaleFactor)
-    val offset = computeScaleOffset(
+    val offset = computeContentScaleOffset(
         srcSize = contentSize,
         dstSize = containerSize,
         scaleType = scaleType,

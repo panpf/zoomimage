@@ -123,38 +123,44 @@
 //        .pointerInput(Unit) {
 //            detectTransformGestures { centroid, pan, gestureZoom, gestureRotate ->
 //                coroutineScope.launch {
-//                    val oldScale = state.scale
-//                    val oldOffset = state.offset
-//                    val oldOriginOffset = oldOffset
-//                        .let { Offset(it.x / oldScale * -1, it.y / oldScale * -1) }
-//
-//                    val newScale = oldScale * gestureZoom
-//                    // For natural zooming and rotating, the centroid of the gesture should
-//                    // be the fixed point where zooming and rotating occurs.
-//                    // We compute where the centroid was (in the pre-transformed coordinate
-//                    // space), and then compute where it will be after this delta.
-//                    // We then compute what the new offset should be to keep the centroid
-//                    // visually stationary for rotating and zooming, and also apply the pan.
-//                    val newOriginOffset = (oldOriginOffset + centroid / oldScale).rotateBy(gestureRotate) -
-//                            (centroid / newScale + pan / oldScale)
-//                    val newOffset = newOriginOffset
-//                        .let { Offset(it.x * newScale * -1, it.y * newScale * -1) }
-//                    Log.d("TransformGestures", "zoomable2. detectTransformGestures. " +
-//                            "scale: $oldScale -> $newScale, " +
-//                            "offset: ${oldOffset.toShortString()} -> ${newOffset.toShortString()}, " +
-//                            "originOffset: ${oldOriginOffset.toShortString()} -> ${newOriginOffset.toShortString()}")
-//                    state.snapScaleTo(newScale)
-//                    state.snapOffsetTo(newOffset)
+////                    val oldScale = state.scale
+////                    val oldOffset = state.offset
+////                    val oldOriginOffset = oldOffset
+////                        .let { Offset(it.x / oldScale * -1, it.y / oldScale * -1) }
+////
+////                    val newScale = oldScale * gestureZoom
+////                    // For natural zooming and rotating, the centroid of the gesture should
+////                    // be the fixed point where zooming and rotating occurs.
+////                    // We compute where the centroid was (in the pre-transformed coordinate
+////                    // space), and then compute where it will be after this delta.
+////                    // We then compute what the new offset should be to keep the centroid
+////                    // visually stationary for rotating and zooming, and also apply the pan.
+////                    val newOriginOffset = (oldOriginOffset + centroid / oldScale).rotateBy(gestureRotate) -
+////                            (centroid / newScale + pan / oldScale)
+////                    val newOffset = newOriginOffset
+////                        .let { Offset(it.x * newScale * -1, it.y * newScale * -1) }
+////                    Log.d("TransformGestures", "zoomable2. detectTransformGestures. " +
+////                            "scale: $oldScale -> $newScale, " +
+////                            "offset: ${oldOffset.toShortString()} -> ${newOffset.toShortString()}, " +
+////                            "originOffset: ${oldOriginOffset.toShortString()} -> ${newOriginOffset.toShortString()}")
+////                    state.snapScaleTo(newScale)
+////                    state.snapOffsetTo(newOffset)
+//                    state.transform2(
+//                        centroid = centroid,
+//                        pan = pan,
+//                        zoomChange = gestureZoom,
+//                        rotationChange = gestureRotate,
+//                    )
 //                }
 //            }
 //        }
 //        .graphicsLayer {
-//            Log.d("TransformGestures", "zoomable2. graphicsLayer. scale: ${state.scale}, translation: ${state.offset.toShortString()}")
-//            scaleX = state.scale
-//            scaleY = state.scale
-//            rotationZ = state.rotation
-//            translationX = state.offset.x
-//            translationY = state.offset.y
+//            Log.d("TransformGestures", "zoomable2. graphicsLayer. ${state.transform}")
+//            scaleX = state.transform.scaleX
+//            scaleY = state.transform.scaleY
+//            rotationZ = state.transform.rotation
+//            translationX = state.transform.offsetX
+//            translationY = state.transform.offsetY
 //            transformOrigin = state.transformOrigin
 //        }
 //}
@@ -179,20 +185,26 @@
 //                // space), and then compute where it will be after this delta.
 //                // We then compute what the new offset should be to keep the centroid
 //                // visually stationary for rotating and zooming, and also apply the pan.
-//                val newOriginOffset = (oldOriginOffset + centroid / oldScale).rotateBy(gestureRotate) -
-//                        (centroid / newScale + pan / oldScale)
+//                val newOriginOffset =
+//                    (oldOriginOffset + centroid / oldScale).rotateBy(gestureRotate) -
+//                            (centroid / newScale + pan / oldScale)
 //                val newOffset = newOriginOffset
 //                    .let { Offset(it.x * newScale * -1, it.y * newScale * -1) }
-//                Log.d("TransformGestures", "zoomable3. detectTransformGestures. " +
-//                        "scale: $oldScale -> $newScale, " +
-//                        "offset: ${oldOffset.toShortString()} -> ${newOffset.toShortString()}, " +
-//                        "originOffset: ${oldOriginOffset.toShortString()} -> ${newOriginOffset.toShortString()}")
+//                Log.d(
+//                    "TransformGestures", "zoomable3. detectTransformGestures. " +
+//                            "scale: $oldScale -> $newScale, " +
+//                            "offset: ${oldOffset.toShortString()} -> ${newOffset.toShortString()}, " +
+//                            "originOffset: ${oldOriginOffset.toShortString()} -> ${newOriginOffset.toShortString()}"
+//                )
 //                scale = newScale
 //                offset = newOffset
 //            }
 //        }
 //        .graphicsLayer {
-//            Log.d("TransformGestures", "zoomable3. graphicsLayer. scale: ${scale}, translation: ${offset.toShortString()}")
+//            Log.d(
+//                "TransformGestures",
+//                "zoomable3. graphicsLayer. scale: ${scale}, translation: ${offset.toShortString()}"
+//            )
 //            scaleX = scale
 //            scaleY = scale
 //            translationX = offset.x
@@ -216,3 +228,49 @@
 //        (x * sin(angleInRadians) + y * cos(angleInRadians)).toFloat()
 //    )
 //}
+//
+//fun computeOffset(
+//    currentScale: Float,
+//    currentOffset: Offset,
+//    centroid: Offset,
+//    pan: Offset,
+//    zoomChange: Float,
+//    rotationChange: Float
+//): Offset {
+//    // https://github.com/androidx/androidx/blob/643b1cfdd7dfbc5ccce1ad951b6999df049678b3/compose/foundation/foundation/samples/src/main/java/androidx/compose/foundation/samples/TransformGestureSamples.kt#L87
+//    val oldOriginOffset = currentOffset
+//        .let { Offset(it.x / currentScale * -1, it.y / currentScale * -1) }
+//    val newScale = currentScale * zoomChange
+//    // For natural zooming and rotating, the centroid of the gesture should
+//    // be the fixed point where zooming and rotating occurs.
+//    // We compute where the centroid was (in the pre-transformed coordinate
+//    // space), and then compute where it will be after this delta.
+//    // We then compute what the new offset should be to keep the centroid
+//    // visually stationary for rotating and zooming, and also apply the pan.
+//    val newOriginOffset = (oldOriginOffset + centroid / currentScale).rotateBy(rotationChange) -
+//            (centroid / newScale + pan / currentScale)
+//    return newOriginOffset.let { Offset(it.x * newScale * -1, it.y * newScale * -1) }
+//}
+//
+////fun computeOffset(
+////    currentScale: Float,
+////    currentOffset: Offset,
+////    centroid: Offset,
+////    pan: Offset,
+////    zoomChange: Float,
+////    rotationChange: Float
+////): Offset {
+////    // https://github.com/androidx/androidx/blob/643b1cfdd7dfbc5ccce1ad951b6999df049678b3/compose/foundation/foundation/samples/src/main/java/androidx/compose/foundation/samples/TransformGestureSamples.kt#L87
+////    val oldOriginOffset = currentOffset
+////        .let { Offset(it.x / currentScale * -1, it.y / currentScale * -1) }
+////    val newScale = currentScale * zoomChange
+////    // For natural zooming and rotating, the centroid of the gesture should
+////    // be the fixed point where zooming and rotating occurs.
+////    // We compute where the centroid was (in the pre-transformed coordinate
+////    // space), and then compute where it will be after this delta.
+////    // We then compute what the new offset should be to keep the centroid
+////    // visually stationary for rotating and zooming, and also apply the pan.
+////    val newOriginOffset = (oldOriginOffset + centroid / currentScale).rotateBy(rotationChange) -
+////            (centroid / newScale + pan / currentScale)
+////    return newOriginOffset.let { Offset(it.x * newScale * -1, it.y * newScale * -1) }
+////}

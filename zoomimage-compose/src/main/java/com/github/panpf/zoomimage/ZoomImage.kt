@@ -39,6 +39,7 @@ fun ZoomImage(
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarEnabled) it.zoomScrollBar(state, scrollBarStyle) else it }
+//        .zoomable2(state)
         .zoomable(state)
         .graphicsLayer {
             scaleX = state.transform.scaleX

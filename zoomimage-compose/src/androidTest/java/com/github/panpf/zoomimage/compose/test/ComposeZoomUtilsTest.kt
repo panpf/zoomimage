@@ -13,7 +13,7 @@ import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
-import com.github.panpf.zoomimage.compose.internal.computeScaleTargetOffset
+import com.github.panpf.zoomimage.compose.internal.computeLocationOffset
 import com.github.panpf.zoomimage.compose.internal.computeOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.containerOriginToContentOrigin
 import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
@@ -826,7 +826,7 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
                 expected,
-                computeScaleTargetOffset(containerSize, scale, containerOrigin)
+                computeLocationOffset(containerSize, scale, containerOrigin)
             )
         }
 
@@ -841,7 +841,7 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
                 expected,
-                computeScaleTargetOffset(containerSize, scale, containerOrigin)
+                computeLocationOffset(containerSize, scale, containerOrigin)
             )
         }
     }
