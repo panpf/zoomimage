@@ -512,11 +512,18 @@ internal fun computeScaleOffsetByCentroid(
     currentOffset: Offset,
     targetScale: Float,
     centroid: Offset,
+    gestureRotate: Float,
 ): Offset {
-    val addScale = targetScale - currentScale
-    val addOffset = Offset(
-        x = addScale * centroid.x * -1,
-        y = addScale * centroid.y * -1
-    )
-    return currentOffset + addOffset
+    // copied https://github.com/androidx/androidx/blob/643b1cfdd7dfbc5ccce1ad951b6999df049678b3/compose/foundation/foundation/samples/src/main/java/androidx/compose/foundation/samples/TransformGestureSamples.kt
+    @Suppress("UnnecessaryVariable") val oldScale = currentScale
+    @Suppress("UnnecessaryVariable") val newScale = targetScale
+    var contentOffset = currentOffset / currentScale * -1f
+    // For natural zooming and rotating, the centroid of the gesture should
+    // be the fixed point where zooming and rotating occurs.
+    // We compute where the centroid was (in the pre-transformed coordinate
+    // space), and then compute where it will be after this delta.
+    // We then compute what the new offset should be to keep the centroid
+    // visually stationary for rotating and zooming, and also apply the pan.
+    contentOffset = (contentOffset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale)
+    return contentOffset * newScale * -1f
 }

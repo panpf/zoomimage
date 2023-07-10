@@ -643,7 +643,6 @@ class ZoomableState(
 //        transform = limitedTargetTransform
 //    }
 
-    // todo 初始是 mediumScale 比例时（阅读模式）放大或缩小时 zoomChange 变化很大，导致中心点偏移很大
     suspend fun transform(centroid: Offset, zoomChange: Float, rotationChange: Float) {
         stopAnimation("transform")
 
@@ -657,6 +656,7 @@ class ZoomableState(
             currentOffset = currentOffset,
             targetScale = targetScale,
             centroid = centroid,
+            gestureRotate = rotationChange,
         )
         val addOffset = targetOffset - currentOffset
         val targetTransform = currentTransform.copy(

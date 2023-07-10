@@ -12,6 +12,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 internal fun Size.isAvailable(): Boolean = isSpecified && !isEmpty()
 
@@ -25,6 +28,21 @@ internal fun Size.rotate(rotateDegrees: Int): Size {
 
 internal fun Offset.toShortString(): String =
     if (isSpecified) "(${x.format(1)},${y.format(1)})" else "Unspecified"
+/**
+ * Rotates the given offset around the origin by the given angle in degrees.
+ *
+ * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
+ * coordinate system.
+ *
+ * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
+ */
+fun Offset.rotateBy(angle: Float): Offset {
+    val angleInRadians = angle * PI / 180
+    return Offset(
+        (x * cos(angleInRadians) - y * sin(angleInRadians)).toFloat(),
+        (x * sin(angleInRadians) + y * cos(angleInRadians)).toFloat()
+    )
+}
 
 internal fun Rect.toShortString(): String =
     "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
