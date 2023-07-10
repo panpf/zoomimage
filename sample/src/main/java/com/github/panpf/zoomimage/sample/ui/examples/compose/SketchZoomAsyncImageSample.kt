@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -17,6 +19,7 @@ import com.github.panpf.zoomimage.ZoomAnimationSpec
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.sketch.ZoomAsyncImage
 
@@ -32,14 +35,30 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String, onClick: () -> Unit) {
         }
         mutableStateOf(ZoomAnimationSpec.Default.copy(durationMillis = durationMillis))
     }
+    val context = LocalContext.current
+    val horizontalLayout by context.prefsService.horizontalPagerLayout.stateFlow
+        .collectAsState(initial = true)
+    val readModeModeDirection = remember(
+        horizontalLayout,
+        zoomImageOptionsDialogState.readModeDirectionBoth
+    ) {
+        if (zoomImageOptionsDialogState.readModeDirectionBoth) {
+            ReadMode.Direction.Both
+        } else if (horizontalLayout) {
+            ReadMode.Direction.OnlyVertical
+        } else {
+            ReadMode.Direction.OnlyHorizontal
+        }
+    }
+    val readMode =
+        if (zoomImageOptionsDialogState.readModeEnabled) ReadMode.Default.copy(direction = readModeModeDirection) else null
     val zoomableState = rememberZoomableState(
         threeStepScaleEnabled = zoomImageOptionsDialogState.threeStepScaleEnabled,
         animationSpec = zoomAnimationSpec.value,
-        readMode = ReadMode.Default.copy(enabled = zoomImageOptionsDialogState.readModeEnabled),
+        readMode = readMode,
         debugMode = BuildConfig.DEBUG
     )
     val infoDialogState = rememberZoomImageInfoDialogState()
-    val context = LocalContext.current
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()

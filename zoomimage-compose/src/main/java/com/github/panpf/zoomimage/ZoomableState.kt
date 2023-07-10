@@ -66,8 +66,8 @@ import kotlin.math.roundToInt
 fun rememberZoomableState(
     threeStepScaleEnabled: Boolean = false,
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
-    readMode: ReadMode = ReadMode.Default,
     defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE,
+    readMode: ReadMode? = null,
     debugMode: Boolean = false,
 ): ZoomableState {
     val state = rememberSaveable(saver = ZoomableState.Saver) {
@@ -113,7 +113,7 @@ class ZoomableState(
     var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
     var threeStepScaleEnabled: Boolean = false
     var defaultAnimationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
-    var readMode: ReadMode = ReadMode.Default
+    var readMode: ReadMode? = null
     var debugMode: Boolean = false
     var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
 
@@ -203,18 +203,17 @@ class ZoomableState(
             mediumScale =
                 scales[1] // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
             maxScale = scales[2]
-            val readModeResult = readMode.enabled
-                    && contentScale.supportReadMode()
-                    && readMode.decider.should(
-                srcSize = rotatedContentSize.toCompatSize(),
-                dstSize = containerSize.toCompatSize()
-            )
             baseTransform = computeTransform(
                 srcSize = rotatedContentSize,
                 dstSize = containerSize,
                 scale = contentScale,
                 alignment = contentAlignment,
             ).toTransform()
+            val readModeResult = contentScale.supportReadMode() &&
+                    readMode?.should(
+                        srcSize = rotatedContentSize.toCompatSize(),
+                        dstSize = containerSize.toCompatSize()
+                    ) == true
             initialTransform = if (readModeResult) {
                 val readModeTransform = computeReadModeTransform(
                     srcSize = rotatedContentSize,

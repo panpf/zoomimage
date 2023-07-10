@@ -25,6 +25,10 @@ class PrefsService(val context: Context) {
 
     private val mmkv = MMKV.defaultMMKV()
 
+    val horizontalPagerLayout by lazy {
+        BooleanMmkvData(mmkv, "horizontalPagerLayout", true)
+    }
+
     val scaleType by lazy {
         StringMmkvData(mmkv, "scaleType", FIT_CENTER.name)
     }
@@ -41,6 +45,9 @@ class PrefsService(val context: Context) {
     }
     val readModeEnabled by lazy {
         BooleanMmkvData(mmkv, "readModeEnabled", true)
+    }
+    val readModeDirectionBoth by lazy {
+        BooleanMmkvData(mmkv, "readModeDirectionBoth", true)
     }
     val threeStepScaleEnabled by lazy {
         BooleanMmkvData(mmkv, "threeStepScaleEnabled", false)

@@ -20,26 +20,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.asFlow
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
-import com.github.panpf.zoomimage.sample.ui.photoalbum.LayoutOrientationViewModel
 
 class PhotoSlideshowComposeFragment : AppBarFragment() {
 
     private val args by navArgs<PhotoSlideshowComposeFragmentArgs>()
     private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
-    private val layoutOrientationViewModel by viewModels<LayoutOrientationViewModel>()
 
     override fun getTitle(): String {
         return zoomImageType.title
@@ -47,9 +45,12 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
 
     @Composable
     override fun RowScope.DrawActions() {
-        val horizontalLayout by layoutOrientationViewModel.horizontalLayoutData.asFlow()
+        val context = LocalContext.current
+        val horizontalLayout by context.prefsService.horizontalPagerLayout.stateFlow
             .collectAsState(initial = true)
-        IconButton(onClick = { layoutOrientationViewModel.changeLayoutOrientation() }) {
+        IconButton(onClick = {
+            context.prefsService.horizontalPagerLayout.value = !horizontalLayout
+        }) {
             val meuIcon =
                 if (horizontalLayout) R.drawable.ic_layout_column else R.drawable.ic_layout_row
             Icon(painter = painterResource(id = meuIcon), contentDescription = "Icon")
@@ -59,7 +60,8 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun DrawContent() {
-        val horizontalLayout by layoutOrientationViewModel.horizontalLayoutData.asFlow()
+        val context = LocalContext.current
+        val horizontalLayout by context.prefsService.horizontalPagerLayout.stateFlow
             .collectAsState(initial = true)
         val imageUrlList = remember { args.imageUris.split(",") }
         val pagerState = rememberPagerState(initialPage = args.position - args.startPosition)

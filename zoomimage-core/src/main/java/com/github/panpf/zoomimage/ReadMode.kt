@@ -18,14 +18,30 @@ package com.github.panpf.zoomimage
 import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.internal.format
 
-// todo 添加图片方向，例如为了不影响 Pager 横向滑动的连贯性，只有竖的长图才允许使用阅读模式，分为 Horizontal，vertical，both
-data class ReadMode(val enabled: Boolean, val decider: ReadModeDecider) {
+data class ReadMode(
+    val direction: Direction = Direction.Both,
+    val decider: ReadModeDecider = ReadModeDecider.Default
+) {
+
+    fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
+        val directionMatched = when (direction) {
+            Direction.OnlyHorizontal -> srcSize.width > srcSize.height
+            Direction.OnlyVertical -> srcSize.width < srcSize.height
+            else -> true
+        }
+        return if (directionMatched) decider.should(srcSize = srcSize, dstSize = dstSize) else false
+    }
 
     companion object {
-        val Default = ReadMode(enabled = false, decider = ReadModeDecider.Default)
+        val Default = ReadMode(direction = Direction.Both, decider = ReadModeDecider.Default)
+    }
+
+    enum class Direction {
+        Both, OnlyHorizontal, OnlyVertical
     }
 }
 
+// todo 挪入 ReadMode
 interface ReadModeDecider {
     fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean
 

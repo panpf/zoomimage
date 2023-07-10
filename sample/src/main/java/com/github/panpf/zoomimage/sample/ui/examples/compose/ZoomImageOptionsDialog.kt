@@ -45,6 +45,7 @@ fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImage
             alignment = alignment(prefsService.alignment.value)
             threeStepScaleEnabled = prefsService.threeStepScaleEnabled.value
             readModeEnabled = prefsService.readModeEnabled.value
+            readModeDirectionBoth = prefsService.readModeDirectionBoth.value
             scrollBarEnabled = prefsService.scrollBarEnabled.value
             animateScale = prefsService.animateScale.value
             slowerScaleAnimation = prefsService.slowerScaleAnimation.value
@@ -55,6 +56,7 @@ fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImage
         state.alignment,
         state.threeStepScaleEnabled,
         state.readModeEnabled,
+        state.readModeDirectionBoth,
         state.scrollBarEnabled,
         state.animateScale,
         state.slowerScaleAnimation,
@@ -64,6 +66,7 @@ fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImage
         prefsService.alignment.value = state.alignment.name
         prefsService.threeStepScaleEnabled.value = state.threeStepScaleEnabled
         prefsService.readModeEnabled.value = state.readModeEnabled
+        prefsService.readModeDirectionBoth.value = state.readModeDirectionBoth
         prefsService.scrollBarEnabled.value = state.scrollBarEnabled
         prefsService.animateScale.value = state.animateScale
         prefsService.slowerScaleAnimation.value = state.slowerScaleAnimation
@@ -82,6 +85,8 @@ class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
     var threeStepScaleEnabled: Boolean by mutableStateOf(false)
         internal set
     var readModeEnabled: Boolean by mutableStateOf(true)
+        internal set
+    var readModeDirectionBoth: Boolean by mutableStateOf(true)
         internal set
     var scrollBarEnabled: Boolean by mutableStateOf(true)
         internal set
@@ -251,6 +256,24 @@ fun ZoomImageOptionsDialog(
                     Text(text = "Read Mode", modifier = Modifier.weight(1f))
                     Switch(
                         checked = state.readModeEnabled,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            state.readModeEnabled = !state.readModeEnabled
+                            state.showing = false
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Read Mode Direction Both", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = state.readModeDirectionBoth,
                         onCheckedChange = null
                     )
                 }
