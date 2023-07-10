@@ -33,9 +33,10 @@ import com.github.panpf.zoomimage.compose.internal.computeContainerOriginByTouch
 import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
+import com.github.panpf.zoomimage.compose.internal.computeLocationOffset
 import com.github.panpf.zoomimage.compose.internal.computeOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.computeReadModeTransform
-import com.github.panpf.zoomimage.compose.internal.computeLocationOffset
+import com.github.panpf.zoomimage.compose.internal.computeScaleOffsetByCentroid
 import com.github.panpf.zoomimage.compose.internal.computeTransform
 import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
 import com.github.panpf.zoomimage.compose.internal.format
@@ -648,17 +649,18 @@ class ZoomableState(
 
         val currentTransform = transform
         val currentScale = currentTransform.scaleX
-        val targetScale = currentScale * zoomChange
-        val limitedTargetScale = limitScale(targetScale)
-        val addScale = limitedTargetScale - currentScale
-        val addOffset = Offset(
-            x = addScale * centroid.x * -1,
-            y = addScale * centroid.y * -1
-        )
+        val targetScale = limitScale(currentScale * zoomChange)
+        val addScale = targetScale - currentScale
         val currentOffset = currentTransform.offset
-        val targetOffset = currentOffset + addOffset
+        val targetOffset = computeScaleOffsetByCentroid(
+            currentScale = currentScale,
+            currentOffset = currentOffset,
+            targetScale = targetScale,
+            centroid = centroid,
+        )
+        val addOffset = targetOffset - currentOffset
         val targetTransform = currentTransform.copy(
-            scale = ScaleFactor(limitedTargetScale),
+            scale = ScaleFactor(targetScale),
             offset = targetOffset
         )
         val limitedTargetTransform = limitTransform(targetTransform)

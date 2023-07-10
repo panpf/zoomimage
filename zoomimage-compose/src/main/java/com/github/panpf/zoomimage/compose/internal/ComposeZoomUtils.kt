@@ -510,10 +510,13 @@ internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.Fill
 internal fun computeScaleOffsetByCentroid(
     currentScale: Float,
     currentOffset: Offset,
+    targetScale: Float,
     centroid: Offset,
-    pan: Offset,
-    zoomChange: Float,
-    rotationChange: Float
-){
-
+): Offset {
+    val addScale = targetScale - currentScale
+    val addOffset = Offset(
+        x = addScale * centroid.x * -1,
+        y = addScale * centroid.y * -1
+    )
+    return currentOffset + addOffset
 }
