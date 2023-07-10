@@ -101,3 +101,11 @@ fun computeCanDrag(
                 || (direction < 0 && contentVisibleRect.bottom.roundToInt() < contentSize.height)
     }
 }
+
+fun isSameDirection(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
+    val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
+    val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
+    return (srcAspectRatio == 1.0f || dstAspectRatio == 1.0f)
+            || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
+            || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
+}

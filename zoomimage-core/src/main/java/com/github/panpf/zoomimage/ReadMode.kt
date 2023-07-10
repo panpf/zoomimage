@@ -15,8 +15,12 @@
  */
 package com.github.panpf.zoomimage
 
+import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.internal.format
+import com.github.panpf.zoomimage.core.internal.isSameDirection
+import com.github.panpf.zoomimage.core.times
+import kotlin.math.max
 
 data class ReadMode(
     val direction: Direction = Direction.Both,
@@ -49,39 +53,23 @@ data class ReadMode(
         }
     }
 
-    // todo 改成以 fillDstScale > 8f 为标准
     class LongImageDecider(
         val sameDirectionMultiple: Float = 2.5f,
         val notSameDirectionMultiple: Float = 5.0f,
     ) : Decider {
 
-        override fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean =
-            isLongImage(srcSize = srcSize, dstSize = dstSize)
-
-        /**
-         * Determine whether it is a long image given the image size and target size
-         *
-         * If the directions of image and target are the same, then the aspect ratio of
-         * the two is considered as a long image when the aspect ratio reaches [sameDirectionMultiple] times,
-         * otherwise it is considered as a long image when it reaches [notSameDirectionMultiple] times
-         */
-        private fun isLongImage(
-            srcSize: SizeCompat, dstSize: SizeCompat
-        ): Boolean {
-            val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
-            val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
-            val sameDirection = srcAspectRatio == 1.0f
-                    || dstAspectRatio == 1.0f
-                    || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
-                    || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
-            val ratioMultiple = if (sameDirection) sameDirectionMultiple else notSameDirectionMultiple
-            return if (ratioMultiple > 0) {
-                val maxAspectRatio = dstAspectRatio.coerceAtLeast(srcAspectRatio)
-                val minAspectRatio = dstAspectRatio.coerceAtMost(srcAspectRatio)
-                maxAspectRatio >= (minAspectRatio * ratioMultiple)
-            } else {
-                false
-            }
+        override fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
+            val fillScale = max(
+                dstSize.width / srcSize.width.toFloat(), dstSize.height / srcSize.height.toFloat()
+            )
+            val filledSrcSize = srcSize.times(ScaleFactorCompat(fillScale))
+            val maxScaleMultiple = max(
+                filledSrcSize.width / dstSize.width.toFloat(),
+                filledSrcSize.height / dstSize.height.toFloat()
+            )
+            val sameDirection = isSameDirection(srcSize = srcSize, dstSize = dstSize)
+            val minMultiple = if (sameDirection) sameDirectionMultiple else notSameDirectionMultiple
+            return maxScaleMultiple.format(1) >= minMultiple.format(1)
         }
 
         override fun toString(): String {
