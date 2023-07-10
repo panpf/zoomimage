@@ -20,7 +20,7 @@ import com.github.panpf.zoomimage.core.internal.format
 
 data class ReadMode(
     val direction: Direction = Direction.Both,
-    val decider: ReadModeDecider = ReadModeDecider.Default
+    val decider: Decider = Decider.Default
 ) {
 
     fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
@@ -33,73 +33,74 @@ data class ReadMode(
     }
 
     companion object {
-        val Default = ReadMode(direction = Direction.Both, decider = ReadModeDecider.Default)
+        val Default = ReadMode(direction = Direction.Both, decider = Decider.Default)
     }
 
     enum class Direction {
         Both, OnlyHorizontal, OnlyVertical
     }
-}
 
-// todo 挪入 ReadMode
-interface ReadModeDecider {
-    fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean
+    interface Decider {
 
-    companion object {
-        val Default = LongImageReadModeDecider()
-    }
-}
+        fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean
 
-class LongImageReadModeDecider(
-    val sameDirectionMultiple: Float = 2.5f,
-    val notSameDirectionMultiple: Float = 5.0f,
-) : ReadModeDecider {
-
-    override fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean =
-        isLongImage(srcSize = srcSize, dstSize = dstSize)
-
-    /**
-     * Determine whether it is a long image given the image size and target size
-     *
-     * If the directions of image and target are the same, then the aspect ratio of
-     * the two is considered as a long image when the aspect ratio reaches [sameDirectionMultiple] times,
-     * otherwise it is considered as a long image when it reaches [notSameDirectionMultiple] times
-     */
-    private fun isLongImage(
-        srcSize: SizeCompat, dstSize: SizeCompat
-    ): Boolean {
-        val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
-        val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
-        val sameDirection = srcAspectRatio == 1.0f
-                || dstAspectRatio == 1.0f
-                || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
-                || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
-        val ratioMultiple = if (sameDirection) sameDirectionMultiple else notSameDirectionMultiple
-        return if (ratioMultiple > 0) {
-            val maxAspectRatio = dstAspectRatio.coerceAtLeast(srcAspectRatio)
-            val minAspectRatio = dstAspectRatio.coerceAtMost(srcAspectRatio)
-            maxAspectRatio >= (minAspectRatio * ratioMultiple)
-        } else {
-            false
+        companion object {
+            val Default = LongImageDecider()
         }
     }
 
-    override fun toString(): String {
-        return "LongImageReadModeDecider(sameDirectionMultiple=$sameDirectionMultiple, notSameDirectionMultiple=$notSameDirectionMultiple)"
-    }
+    // todo 改成以 fillDstScale > 8f 为标准
+    class LongImageDecider(
+        val sameDirectionMultiple: Float = 2.5f,
+        val notSameDirectionMultiple: Float = 5.0f,
+    ) : Decider {
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as LongImageReadModeDecider
-        if (sameDirectionMultiple != other.sameDirectionMultiple) return false
-        if (notSameDirectionMultiple != other.notSameDirectionMultiple) return false
-        return true
-    }
+        override fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean =
+            isLongImage(srcSize = srcSize, dstSize = dstSize)
 
-    override fun hashCode(): Int {
-        var result = sameDirectionMultiple.hashCode()
-        result = 31 * result + notSameDirectionMultiple.hashCode()
-        return result
+        /**
+         * Determine whether it is a long image given the image size and target size
+         *
+         * If the directions of image and target are the same, then the aspect ratio of
+         * the two is considered as a long image when the aspect ratio reaches [sameDirectionMultiple] times,
+         * otherwise it is considered as a long image when it reaches [notSameDirectionMultiple] times
+         */
+        private fun isLongImage(
+            srcSize: SizeCompat, dstSize: SizeCompat
+        ): Boolean {
+            val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
+            val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
+            val sameDirection = srcAspectRatio == 1.0f
+                    || dstAspectRatio == 1.0f
+                    || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
+                    || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
+            val ratioMultiple = if (sameDirection) sameDirectionMultiple else notSameDirectionMultiple
+            return if (ratioMultiple > 0) {
+                val maxAspectRatio = dstAspectRatio.coerceAtLeast(srcAspectRatio)
+                val minAspectRatio = dstAspectRatio.coerceAtMost(srcAspectRatio)
+                maxAspectRatio >= (minAspectRatio * ratioMultiple)
+            } else {
+                false
+            }
+        }
+
+        override fun toString(): String {
+            return "LongImageDecider(same=$sameDirectionMultiple,notSame=$notSameDirectionMultiple)"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            other as LongImageDecider
+            if (sameDirectionMultiple != other.sameDirectionMultiple) return false
+            if (notSameDirectionMultiple != other.notSameDirectionMultiple) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = sameDirectionMultiple.hashCode()
+            result = 31 * result + notSameDirectionMultiple.hashCode()
+            return result
+        }
     }
 }

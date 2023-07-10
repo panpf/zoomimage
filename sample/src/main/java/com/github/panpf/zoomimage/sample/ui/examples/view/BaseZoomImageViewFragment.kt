@@ -23,6 +23,7 @@ import androidx.viewbinding.ViewBinding
 import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
@@ -62,7 +63,24 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     scrollBarEnabled = it
                 }
                 prefsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    readModeEnabled = it
+                    val direction = if (prefsService.readModeDirectionBoth.value) {
+                        ReadMode.Direction.Both
+                    } else if (prefsService.horizontalPagerLayout.value) {
+                        ReadMode.Direction.OnlyVertical
+                    } else {
+                        ReadMode.Direction.OnlyHorizontal
+                    }
+                    readMode = if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
+                }
+                prefsService.readModeDirectionBoth.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    val direction = if (prefsService.readModeDirectionBoth.value) {
+                        ReadMode.Direction.Both
+                    } else if (prefsService.horizontalPagerLayout.value) {
+                        ReadMode.Direction.OnlyVertical
+                    } else {
+                        ReadMode.Direction.OnlyHorizontal
+                    }
+                    readMode = if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
                 }
                 prefsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     scaleAnimationDuration = if (prefsService.animateScale.value) {

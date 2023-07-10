@@ -70,6 +70,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     )
                     add(
                         SwitchMenuFlow(
+                            title = "Read Mode Direction Both",
+                            data = prefsService.readModeDirectionBoth,
+                        )
+                    )
+                    add(
+                        SwitchMenuFlow(
                             title = "Animate Scale",
                             data = prefsService.animateScale,
                         )

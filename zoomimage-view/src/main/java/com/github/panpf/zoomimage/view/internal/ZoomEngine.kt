@@ -36,7 +36,7 @@ import com.github.panpf.zoomimage.OnScaleChangeListener
 import com.github.panpf.zoomimage.OnViewDragListener
 import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.OnViewTapListener
-import com.github.panpf.zoomimage.ReadModeDecider
+import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
@@ -134,14 +134,7 @@ internal class ZoomEngine constructor(
                 reset()
             }
         }
-    var readModeEnabled: Boolean = false
-        internal set(value) {
-            if (field != value) {
-                field = value
-                reset()
-            }
-        }
-    var readModeDecider: ReadModeDecider = ReadModeDecider.Default
+    var readMode: ReadMode? = null
         internal set(value) {
             if (field != value) {
                 field = value
@@ -236,9 +229,8 @@ internal class ZoomEngine constructor(
             maxScale = supportStepScales[2]
             baseInitialTransform = scaleType
                 .computeTransform(srcSize = rotatedDrawableSize, dstSize = viewSize)
-            val readMode = readModeEnabled
-                    && scaleType.supportReadMode()
-                    && readModeDecider.should(srcSize = rotatedDrawableSize, dstSize = viewSize)
+            val readMode = scaleType.supportReadMode()
+                    && readMode?.should(srcSize = rotatedDrawableSize, dstSize = viewSize) == true
             supportInitialTransform = if (readMode) {
                 val readModeTransform = computeReadModeTransform(
                     srcSize = rotatedDrawableSize,
@@ -257,8 +249,7 @@ internal class ZoomEngine constructor(
                     "drawableSize=$drawableSize, " +
                     "rotateDegrees=$rotateDegrees, " +
                     "scaleType=$scaleType, " +
-                    "readModeEnabled=$readModeEnabled, " +
-                    "readModeDecider=$readModeDecider, " +
+                    "readMode=$readMode, " +
                     "minScale=$minScale, " +
                     "mediumScale=$mediumScale, " +
                     "maxScale=$maxScale, " +

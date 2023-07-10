@@ -139,17 +139,10 @@ class ZoomAbility(
             engine.scrollBarStyle = value
         }
 
-    // todo 使用 ReadMode
-    var readModeEnabled: Boolean
-        get() = engine.readModeEnabled
+    var readMode: ReadMode?
+        get() = engine.readMode
         set(value) {
-            engine.readModeEnabled = value
-        }
-
-    var readModeDecider: ReadModeDecider
-        get() = engine.readModeDecider
-        set(value) {
-            engine.readModeDecider = value
+            engine.readMode = value
         }
 
     var defaultMediumScaleMultiple: Float
