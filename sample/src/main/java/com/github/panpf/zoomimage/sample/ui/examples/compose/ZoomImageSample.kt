@@ -42,11 +42,10 @@ fun ZoomImageSample(sketchImageUri: String, onClick: () -> Unit) {
     val context = LocalContext.current
     val horizontalLayout by context.prefsService.horizontalPagerLayout.stateFlow
         .collectAsState(initial = true)
-    val readModeModeDirection = remember(
+    val readModeDirection = remember(
         horizontalLayout,
         zoomImageOptionsDialogState.readModeDirectionBoth
     ) {
-        // todo 不生效
         if (zoomImageOptionsDialogState.readModeDirectionBoth) {
             ReadMode.Direction.Both
         } else if (horizontalLayout) {
@@ -56,7 +55,7 @@ fun ZoomImageSample(sketchImageUri: String, onClick: () -> Unit) {
         }
     }
     val readMode =
-        if (zoomImageOptionsDialogState.readModeEnabled) ReadMode.Default.copy(direction = readModeModeDirection) else null
+        if (zoomImageOptionsDialogState.readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
     val zoomableState = rememberZoomableState(
         threeStepScaleEnabled = zoomImageOptionsDialogState.threeStepScaleEnabled,
         animationSpec = zoomAnimationSpec.value,

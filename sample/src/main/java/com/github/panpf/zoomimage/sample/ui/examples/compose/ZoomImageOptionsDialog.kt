@@ -265,7 +265,7 @@ fun ZoomImageOptionsDialog(
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            state.readModeEnabled = !state.readModeEnabled
+                            state.readModeDirectionBoth = !state.readModeDirectionBoth
                             state.showing = false
                         }
                         .padding(horizontal = 20.dp),
