@@ -64,9 +64,9 @@ import kotlin.math.roundToInt
 
 @Composable
 fun rememberZoomableState(
+    defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE,
     threeStepScaleEnabled: Boolean = false,
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
-    defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE,
     readMode: ReadMode? = null,
     debugMode: Boolean = false,
 ): ZoomableState {
