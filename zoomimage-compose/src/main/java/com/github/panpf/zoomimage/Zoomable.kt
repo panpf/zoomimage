@@ -13,7 +13,11 @@ import com.github.panpf.zoomimage.compose.internal.detectCanDragGestures
 import com.github.panpf.zoomimage.compose.internal.detectZoomGestures
 import kotlinx.coroutines.launch
 
-fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
+fun Modifier.zoomable(
+    state: ZoomableState,
+    onLongPress: ((Offset) -> Unit)? = null,
+    onTap: ((Offset) -> Unit)? = null,
+): Modifier = composed {
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
     this
@@ -33,7 +37,14 @@ fun Modifier.zoomable(state: ZoomableState): Modifier = composed {
                     coroutineScope.launch {
                         state.switchScale(touch = offset)
                     }
-                })
+                },
+                onLongPress = {
+                    onLongPress?.invoke(it)
+                },
+                onTap = {
+                    onTap?.invoke(it)
+                },
+            )
         }
         .pointerInput(Unit) {
             detectCanDragGestures(

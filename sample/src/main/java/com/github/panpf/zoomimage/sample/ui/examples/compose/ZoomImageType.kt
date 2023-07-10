@@ -8,15 +8,15 @@ import com.github.panpf.zoomimage.sample.ui.photoalbum.compose.SketchListImage
 enum class ZoomImageType(
     val title: String,
     val drawListContent: @Composable (sketchImageUri: String, modifier: Modifier) -> Unit,
-    val drawContent: @Composable (sketchImageUri: String) -> Unit,
+    val drawContent: @Composable (sketchImageUri: String, onClick: () -> Unit) -> Unit,
 ) {
     MyZoomImage(
         title = "ZoomImage",
         drawListContent = { sketchImageUri, modifier ->
             SketchListImage(sketchImageUri, modifier)
         },
-        drawContent = { sketchImageUri ->
-            ZoomImageSample(sketchImageUri)
+        drawContent = { sketchImageUri, onClick ->
+            ZoomImageSample(sketchImageUri, onClick)
         },
     ),
 
@@ -25,8 +25,8 @@ enum class ZoomImageType(
         drawListContent = { sketchImageUri, modifier ->
             SketchListImage(sketchImageUri, modifier)
         },
-        drawContent = { sketchImageUri ->
-            SketchZoomAsyncImageSample(sketchImageUri)
+        drawContent = { sketchImageUri, onClick ->
+            SketchZoomAsyncImageSample(sketchImageUri, onClick)
         },
     ),
 
@@ -35,8 +35,8 @@ enum class ZoomImageType(
         drawListContent = { sketchImageUri, modifier ->
             CoilListImage(sketchImageUri, modifier)
         },
-        drawContent = { sketchImageUri ->
-            TelephotoZoomableAsyncImageSample(sketchImageUri)
+        drawContent = { sketchImageUri, onClick ->
+            TelephotoZoomableAsyncImageSample(sketchImageUri, onClick)
         },
     ),
 }

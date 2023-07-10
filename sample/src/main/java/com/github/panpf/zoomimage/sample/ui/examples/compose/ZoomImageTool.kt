@@ -36,6 +36,7 @@ import kotlinx.coroutines.launch
 fun ZoomImageTool(
     zoomableState: ZoomableState,
     optionsDialogState: ZoomImageOptionsDialogState,
+    infoDialogState: ZoomImageInfoDialogState,
     imageUri: String,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -43,7 +44,6 @@ fun ZoomImageTool(
     val zoomIn = remember {
         derivedStateOf { zoomableState.getNextStepScale() > zoomableState.minScale }
     }
-    val infoDialogState = rememberZoomImageInfoDialogState()
     val info = remember(
         zoomableState.minScale,
         zoomableState.mediumScale,

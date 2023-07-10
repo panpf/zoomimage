@@ -6,6 +6,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
@@ -44,6 +45,8 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    onLongPress: ((Offset) -> Unit)? = null,
+    onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
     request = DisplayRequest(LocalContext.current, imageUri),
     contentDescription = contentDescription,
@@ -58,6 +61,8 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    onLongPress = onLongPress,
+    onTap = onTap,
 )
 
 @Composable
@@ -80,6 +85,8 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    onLongPress: ((Offset) -> Unit)? = null,
+    onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
     request = request,
     contentDescription = contentDescription,
@@ -94,6 +101,8 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    onLongPress = onLongPress,
+    onTap = onTap,
 )
 
 @Composable
@@ -112,6 +121,8 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    onLongPress: ((Offset) -> Unit)? = null,
+    onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
     request = DisplayRequest(LocalContext.current, imageUri),
     contentDescription = contentDescription,
@@ -126,6 +137,8 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    onLongPress = onLongPress,
+    onTap = onTap,
 )
 
 @Composable
@@ -143,6 +156,8 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    onLongPress: ((Offset) -> Unit)? = null,
+    onTap: ((Offset) -> Unit)? = null,
 ) {
     if (state.contentAlignment != alignment) {
         state.contentAlignment = alignment
@@ -154,7 +169,7 @@ fun ZoomAsyncImage(
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarEnabled) it.zoomScrollBar(state, scrollBarStyle) else it }
-        .zoomable(state)
+        .zoomable(state = state, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = state.transform.scaleX
             scaleY = state.transform.scaleY

@@ -21,7 +21,7 @@ import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.sketch.ZoomAsyncImage
 
 @Composable
-fun SketchZoomAsyncImageSample(sketchImageUri: String) {
+fun SketchZoomAsyncImageSample(sketchImageUri: String, onClick: () -> Unit) {
     val zoomImageOptionsDialogState = rememberZoomImageOptionsDialogState()
     val zoomAnimationSpec = remember(
         zoomImageOptionsDialogState.animateScale,
@@ -38,6 +38,8 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         readMode = ReadMode.Default.copy(enabled = zoomImageOptionsDialogState.readModeEnabled),
         debugMode = BuildConfig.DEBUG
     )
+    val infoDialogState = rememberZoomImageInfoDialogState()
+    val context = LocalContext.current
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
@@ -53,6 +55,12 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             modifier = Modifier.fillMaxSize(),
             state = zoomableState,
             scrollBarEnabled = zoomImageOptionsDialogState.scrollBarEnabled,
+            onTap = {
+                onClick()
+            },
+            onLongPress = {
+                infoDialogState.showing = true
+            }
         )
 
         ZoomImageMinimap(
@@ -63,6 +71,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         ZoomImageTool(
             zoomableState = zoomableState,
             optionsDialogState = zoomImageOptionsDialogState,
+            infoDialogState = infoDialogState,
             imageUri = sketchImageUri,
         )
     }
@@ -71,5 +80,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
 @Preview
 @Composable
 private fun SketchZoomAsyncImageSamplePreview() {
-    SketchZoomAsyncImageSample(newResourceUri(R.drawable.im_placeholder))
+    SketchZoomAsyncImageSample(newResourceUri(R.drawable.im_placeholder)) {
+
+    }
 }

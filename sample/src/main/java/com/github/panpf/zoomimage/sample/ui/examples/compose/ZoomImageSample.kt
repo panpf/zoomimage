@@ -26,7 +26,7 @@ import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable
-fun ZoomImageSample(sketchImageUri: String) {
+fun ZoomImageSample(sketchImageUri: String, onClick: () -> Unit) {
     val zoomImageOptionsDialogState = rememberZoomImageOptionsDialogState()
     val zoomAnimationSpec = remember(
         zoomImageOptionsDialogState.animateScale,
@@ -43,6 +43,7 @@ fun ZoomImageSample(sketchImageUri: String) {
         readMode = ReadMode.Default.copy(enabled = zoomImageOptionsDialogState.readModeEnabled),
         debugMode = BuildConfig.DEBUG
     )
+    val infoDialogState = rememberZoomImageInfoDialogState()
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
@@ -67,6 +68,12 @@ fun ZoomImageSample(sketchImageUri: String) {
                 modifier = Modifier.fillMaxSize(),
                 state = zoomableState,
                 scrollBarEnabled = zoomImageOptionsDialogState.scrollBarEnabled,
+                onTap = {
+                    onClick()
+                },
+                onLongPress = {
+                    infoDialogState.showing = true
+                }
             )
         }
 
@@ -78,6 +85,7 @@ fun ZoomImageSample(sketchImageUri: String) {
         ZoomImageTool(
             zoomableState = zoomableState,
             optionsDialogState = zoomImageOptionsDialogState,
+            infoDialogState = infoDialogState,
             imageUri = sketchImageUri,
         )
     }
@@ -86,5 +94,7 @@ fun ZoomImageSample(sketchImageUri: String) {
 @Preview
 @Composable
 private fun ZoomImageSamplePreview() {
-    ZoomImageSample(newResourceUri(R.drawable.im_placeholder))
+    ZoomImageSample(newResourceUri(R.drawable.im_placeholder)){
+
+    }
 }

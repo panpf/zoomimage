@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.graphicsLayer
@@ -24,6 +25,8 @@ fun ZoomImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
+    onLongPress: ((Offset) -> Unit)? = null,
+    onTap: ((Offset) -> Unit)? = null,
 ) {
     if (state.contentAlignment != alignment) {
         state.contentAlignment = alignment
@@ -40,7 +43,7 @@ fun ZoomImage(
         .clipToBounds()
         .let { if (scrollBarEnabled) it.zoomScrollBar(state, scrollBarStyle) else it }
 //        .zoomable2(state)
-        .zoomable(state)
+        .zoomable(state = state, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = state.transform.scaleX
             scaleY = state.transform.scaleY

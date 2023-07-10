@@ -25,7 +25,7 @@ import me.saket.telephoto.zoomable.rememberZoomableImageState
 import me.saket.telephoto.zoomable.rememberZoomableState
 
 @Composable
-fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
+fun TelephotoZoomableAsyncImageSample(sketchImageUri: String, onClick: () -> Unit) {
     val context = LocalContext.current
     val coilData =
         remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
@@ -50,7 +50,10 @@ fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black),
-            state = rememberZoomableImageState(zoomableState)
+            state = rememberZoomableImageState(zoomableState),
+            onClick = {
+                onClick()
+            }
         )
 
         Text(

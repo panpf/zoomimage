@@ -102,7 +102,6 @@ class ZoomableState(
     @FloatRange(from = 0.0) initialRotation: Float = 0f,
 ) {
 
-    // todo support click and long press
     // todo support rubber band effect
 
     private var lastAnimatable: Animatable<*, *>? = null
