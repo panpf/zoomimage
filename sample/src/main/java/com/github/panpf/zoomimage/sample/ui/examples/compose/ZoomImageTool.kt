@@ -93,7 +93,7 @@ fun ZoomImageTool(
                 .background(colors.tertiary.copy(alpha = 0.7f), RoundedCornerShape(50)),
             horizontalArrangement = Arrangement.End
         ) {
-            IconButton(onClick = { coroutineScope.launch { zoomableState.switchScale() } }) {
+            IconButton(onClick = { coroutineScope.launch { zoomableState.switchScale(animated = true) } }) {
                 val icon = if (zoomIn.value)
                     R.drawable.ic_zoom_in to "zoom in" else R.drawable.ic_zoom_out to "zoom out"
                 Icon(

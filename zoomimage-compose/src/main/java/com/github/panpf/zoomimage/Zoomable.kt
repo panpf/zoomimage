@@ -35,7 +35,10 @@ fun Modifier.zoomable(
                 },
                 onDoubleTap = { offset ->
                     coroutineScope.launch {
-                        state.switchScale(touch = offset)
+                        state.switchScale(
+                            contentOrigin = state.touchOffsetToContentOrigin(offset),
+                            animated = true
+                        )
                     }
                 },
                 onLongPress = {
@@ -53,7 +56,10 @@ fun Modifier.zoomable(
                 },
                 onDrag = { _, dragAmount ->
                     coroutineScope.launch {
-                        state.snapOffsetBy(dragAmount)
+                        state.offset(
+                            targetOffset = state.transform.offset + dragAmount,
+                            animated = false
+                        )
                     }
                 },
                 onDragEnd = {
@@ -64,14 +70,22 @@ fun Modifier.zoomable(
             )
         }
         .pointerInput(Unit) {
-            detectZoomGestures(panZoomLock = true) { centroid: Offset, zoomChange: Float, rotationChange: Float ->
-                coroutineScope.launch {
-                    state.transform(
-                        centroid = centroid,
-                        zoomChange = zoomChange,
-                        rotationChange = rotationChange
-                    )
-                }
-            }
+            detectZoomGestures(
+                panZoomLock = true,
+                onGesture = { centroid: Offset, zoomChange: Float, _ ->
+                    coroutineScope.launch {
+                        state.scale(
+                            targetScale = state.transform.scaleX * zoomChange,
+                            centroid = centroid,
+                            animated = false,
+                        )
+                    }
+                },
+//                onEnd = { centroid ->
+//                    coroutineScope.launch {
+//                        state.backBoundsScale(centroid = centroid)
+//                    }
+//                }
+            )
         }
 }

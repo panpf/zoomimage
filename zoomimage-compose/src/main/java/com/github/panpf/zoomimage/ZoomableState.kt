@@ -39,6 +39,7 @@ import com.github.panpf.zoomimage.compose.internal.computeOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.computeReadModeTransform
 import com.github.panpf.zoomimage.compose.internal.computeScaleOffsetByCentroid
 import com.github.panpf.zoomimage.compose.internal.computeTransform
+import com.github.panpf.zoomimage.compose.internal.containerOriginToContentOrigin
 import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isAvailable
@@ -250,441 +251,137 @@ class ZoomableState(
                     "limitedInitialTransform=${limitedInitialTransform.toShortString()}"
         }
 
-        transform = limitedInitialTransform
-    }
-
-
-    suspend fun snapScaleBy(addScale: Float) {
-        stopAnimation("snapScaleBy")
-
-        val currentTransform = transform
-        val targetScale = currentTransform.scaleX * addScale
-        val targetTransform = currentTransform.copy(scale = ScaleFactor(targetScale))
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "snapScaleBy. " +
-                    "addScale=${addScale.format(4)}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        transform = limitedTargetTransform
-    }
-
-    suspend fun snapScaleTo(targetScale: Float) {
-        stopAnimation("snapScaleTo")
-
-        val currentTransform = transform
-        val targetTransform = currentTransform.copy(scale = ScaleFactor(targetScale))
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "snapScaleTo. " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        transform = limitedTargetTransform
-    }
-
-    suspend fun animateScaleTo(targetScale: Float) {
-        stopAnimation("animateScaleTo")
-
-        val currentTransform = transform
-        val targetTransform = currentTransform.copy(scale = ScaleFactor(targetScale))
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "animateScaleTo. " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        val scaleAnimatable = Animatable(0f)
-        this.lastAnimatable = scaleAnimatable
-        coroutineScope {
-            launch {
-                scaleAnimatable.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(
-                        durationMillis = defaultAnimationSpec.durationMillis,
-                        easing = defaultAnimationSpec.easing
-                    ),
-                    initialVelocity = defaultAnimationSpec.initialVelocity,
-                ) {
-                    val transform = com.github.panpf.zoomimage.compose.lerp(
-                        start = currentTransform,
-                        stop = limitedTargetTransform,
-                        fraction = value
-                    )
-                    this@ZoomableState.transform = transform
-                }
-            }
-        }
-    }
-
-
-    suspend fun snapOffsetBy(addOffset: Offset) {
-        stopAnimation("snapOffsetBy")
-
-        val currentTransform = transform
-        val targetOffset = currentTransform.offset.plus(addOffset)
-        val targetTransform = currentTransform.copy(offset = targetOffset)
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "snapOffsetBy. " +
-                    "addOffset=${addOffset.toShortString()}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        transform = limitedTargetTransform
-    }
-
-    suspend fun snapOffsetTo(targetOffset: Offset) {
-        stopAnimation("snapOffsetTo")
-
-        val currentTransform = transform
-        val targetTransform = currentTransform.copy(offset = targetOffset)
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "snapOffsetTo. " +
-                    "targetOffset=${targetOffset.toShortString()}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        transform = limitedTargetTransform
-    }
-
-    suspend fun animateOffsetTo(targetOffset: Offset) {
-        stopAnimation("animateOffsetTo")
-
-        val currentTransform = transform
-        val targetTransform = currentTransform.copy(offset = targetOffset)
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "animateOffsetTo. " +
-                    "targetOffset=${targetOffset.toShortString()}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        val offsetAnimatable = Animatable(0f)
-        this.lastAnimatable = offsetAnimatable
-        coroutineScope {
-            launch {
-                offsetAnimatable.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(
-                        durationMillis = defaultAnimationSpec.durationMillis,
-                        easing = defaultAnimationSpec.easing
-                    ),
-                    initialVelocity = defaultAnimationSpec.initialVelocity,
-                ) {
-                    val transform = com.github.panpf.zoomimage.compose.lerp(
-                        start = currentTransform,
-                        stop = limitedTargetTransform,
-                        fraction = value
-                    )
-                    this@ZoomableState.transform = transform
-                }
-            }
-        }
-    }
-
-
-    suspend fun snapLocation(contentOrigin: Origin, targetScale: Float = transform.scaleX) {
-        stopAnimation("snapLocation")
-
-        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
-        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
-        val contentScale = contentScale
-        val contentAlignment = contentAlignment
-        val currentTransform = transform
-        val limitedTargetScale = limitScale(targetScale)
-        val containerOrigin = contentOriginToContainerOrigin(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
-            contentOrigin = contentOrigin
+        updateTransform(
+            targetTransform = limitedInitialTransform,
+            animated = false,
+            caller = "reset"
         )
-        val targetTransform = currentTransform.copy(
-            scale = ScaleFactor(limitedTargetScale),
-            offset = computeLocationOffset(
-                containerOrigin = containerOrigin,
-                newScale = limitedTargetScale,
-                containerSize = containerSize,
-            )
-        )
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "snapLocation. " +
-                    "contentOrigin=${contentOrigin.toShortString()}, " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "containerSize=${containerSize.toShortString()}, " +
-                    "contentSize=${contentSize.toShortString()}, " +
-                    "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        transform = limitedTargetTransform
     }
 
-    suspend fun snapLocation(touch: Offset, targetScale: Float = transform.scaleX) {
-        stopAnimation("snapLocation")
 
-        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
-        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
-        val currentTransform = transform
-        val limitedTargetScale = limitScale(targetScale)
-        val containerOrigin = computeContainerOriginByTouchPosition(
-            containerSize = containerSize,
-            scale = currentTransform.scaleX,
-            offset = currentTransform.offset,
-            touch = touch
-        )
-        val targetTransform = currentTransform.copy(
-            scale = ScaleFactor(limitedTargetScale),
-            offset = computeLocationOffset(
-                containerOrigin = containerOrigin,
-                newScale = limitedTargetScale,
-                containerSize = containerSize,
-            )
-        )
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "snapLocation. " +
-                    "touch=${touch.toShortString()}, " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "containerSize=${containerSize.toShortString()}, " +
-                    "contentSize=${contentSize.toShortString()}, " +
-                    "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        transform = limitedTargetTransform
-    }
-
-    suspend fun animateLocation(
-        contentOrigin: Origin,
-        targetScale: Float = transform.scaleX
+    suspend fun scale(
+        targetScale: Float,
+        centroid: Offset = Offset(x = containerSize.width / 2, y = containerSize.height / 2),
+        animated: Boolean = false,
     ) {
-        stopAnimation("animateLocation")
-
-        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
-        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
-        val contentScale = contentScale
-        val contentAlignment = contentAlignment
-        val currentTransform = transform
-        val limitedTargetScale = limitScale(targetScale)
-        val containerOrigin = contentOriginToContainerOrigin(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
-            contentOrigin = contentOrigin
-        )
-        val targetTransform = currentTransform.copy(
-            scale = ScaleFactor(limitedTargetScale),
-            offset = computeLocationOffset(
-                containerOrigin = containerOrigin,
-                newScale = limitedTargetScale,
-                containerSize = containerSize,
-            )
-        )
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "animateLocation. " +
-                    "contentOrigin=${contentOrigin.toShortString()}, " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "containerSize=${containerSize.toShortString()}, " +
-                    "contentSize=${contentSize.toShortString()}, " +
-                    "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        val locationAnimatable = Animatable(0f)
-        this.lastAnimatable = locationAnimatable
-        coroutineScope {
-            launch {
-                locationAnimatable.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(
-                        durationMillis = defaultAnimationSpec.durationMillis,
-                        easing = defaultAnimationSpec.easing
-                    ),
-                    initialVelocity = defaultAnimationSpec.initialVelocity,
-                ) {
-                    val transform = com.github.panpf.zoomimage.compose.lerp(
-                        start = currentTransform,
-                        stop = limitedTargetTransform,
-                        fraction = value
-                    )
-                    this@ZoomableState.transform = transform
-                }
-            }
-        }
-    }
-
-    suspend fun animateLocation(touch: Offset, targetScale: Float = transform.scaleX) {
-        stopAnimation("animateLocation")
-
-        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
-        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
-        val currentTransform = transform
-        val limitedTargetScale = limitScale(targetScale)
-        val containerOrigin = computeContainerOriginByTouchPosition(
-            containerSize = containerSize,
-            scale = currentTransform.scaleX,
-            offset = currentTransform.offset,
-            touch = touch
-        )
-        val targetTransform = currentTransform.copy(
-            scale = ScaleFactor(limitedTargetScale),
-            offset = computeLocationOffset(
-                containerOrigin = containerOrigin,
-                newScale = limitedTargetScale,
-                containerSize = containerSize,
-            )
-        )
-        val limitedTargetTransform = limitTransform(targetTransform)
-        log {
-            "animateLocation. " +
-                    "touch=${touch.toShortString()}, " +
-                    "targetScale=${targetScale.format(4)}, " +
-                    "containerSize=${containerSize.toShortString()}, " +
-                    "contentSize=${contentSize.toShortString()}, " +
-                    "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
-        }
-
-        val locationAnimatable = Animatable(0f)
-        this.lastAnimatable = locationAnimatable
-        coroutineScope {
-            launch {
-                locationAnimatable.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(
-                        durationMillis = defaultAnimationSpec.durationMillis,
-                        easing = defaultAnimationSpec.easing
-                    ),
-                    initialVelocity = defaultAnimationSpec.initialVelocity,
-                ) {
-                    val transform = com.github.panpf.zoomimage.compose.lerp(
-                        start = currentTransform,
-                        stop = limitedTargetTransform,
-                        fraction = value
-                    )
-                    this@ZoomableState.transform = transform
-                }
-            }
-        }
-    }
-
-
-    suspend fun switchScale(contentOrigin: Origin = Origin(0.5f, 0.5f)): Float {
-        val nextScale = getNextStepScale()
-        animateLocation(contentOrigin = contentOrigin, targetScale = nextScale)
-        return nextScale
-    }
-
-    suspend fun switchScale(touch: Offset): Float {
-        val nextScale = getNextStepScale()
-        animateLocation(touch = touch, targetScale = nextScale)
-        return nextScale
-    }
-
-//    fun computeOffsetWithCentroid(currentScale: Float, currentOffset: Offset, scaleCentroid: Offset, zoomChange: Float): Offset {
-////        val currentScaleCentroid = scaleCentroid / currentScale
-////        val newScaleCentroid = scaleCentroid / (currentScale * zoomChange)
-////        return (currentOffset + currentScaleCentroid - newScaleCentroid * (currentScale * zoomChange))
-//        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return currentOffset
-//        val addSize = containerSize * (zoomChange - 1f)
-//        val newOffset = Offset(x = currentOffset.x - addSize.width, y = currentOffset.y - addSize.height)
-//        return newOffset
-//    }
-
-//    suspend fun transform2(centroid: Offset, pan: Offset, zoomChange: Float, rotationChange: Float) {
-//        val currentTransform = transform
-//        val oldScale = currentTransform.scaleX
-//        val oldOffset = currentTransform.offset
-//        val oldOriginOffset = oldOffset
-//            .let { Offset(it.x / oldScale * -1, it.y / oldScale * -1) }
-//
-//        val newScale = limitScale(oldScale * zoomChange)
-//        // For natural zooming and rotating, the centroid of the gesture should
-//        // be the fixed point where zooming and rotating occurs.
-//        // We compute where the centroid was (in the pre-transformed coordinate
-//        // space), and then compute where it will be after this delta.
-//        // We then compute what the new offset should be to keep the centroid
-//        // visually stationary for rotating and zooming, and also apply the pan.
-//        val newOriginOffset = (oldOriginOffset + centroid / oldScale).rotateBy(rotationChange) -
-//                (centroid / newScale + pan / oldScale)
-//        val newOffset = newOriginOffset
-//            .let { Offset(it.x * newScale * -1, it.y * newScale * -1) }
-//        val targetTransform = currentTransform.copy(scale = ScaleFactor(newScale), offset = newOffset)
-//        val limitedTargetTransform = limitTransform(targetTransform)
-//        Log.d("TransformGestures", "zoomable2. detectTransformGestures. " +
-//                "scale: $oldScale -> $newScale, " +
-//                "offset: ${oldOffset.toShortString()} -> ${newOffset.toShortString()}, " +
-//                "originOffset: ${oldOriginOffset.toShortString()} -> ${newOriginOffset.toShortString()}, " +
-//                "transform: ${currentTransform.toShortString()} -> ${limitedTargetTransform.toShortString()}")
-//
-//        transform = limitedTargetTransform
-//    }
-
-    suspend fun transform(centroid: Offset, zoomChange: Float, rotationChange: Float) {
-        stopAnimation("transform")
+        stopAnimation("scale")
 
         val currentTransform = transform
         val currentScale = currentTransform.scaleX
-        val targetScale = limitScale(currentScale * zoomChange)
-        val addScale = targetScale - currentScale
+        val targetAddScale = targetScale - currentScale
+        val limitedTargetScale = limitScale(targetScale)
+        val limitedAddScale = limitedTargetScale - currentScale
         val currentOffset = currentTransform.offset
         val targetOffset = computeScaleOffsetByCentroid(
             currentScale = currentScale,
             currentOffset = currentOffset,
-            targetScale = targetScale,
+            targetScale = limitedTargetScale,
             centroid = centroid,
-            gestureRotate = rotationChange,
+            gestureRotate = 0f,
         )
-        val addOffset = targetOffset - currentOffset
+        val targetAddOffset = targetOffset - currentOffset
+        val limitedTargetOffset = limitOffset(targetOffset, limitedTargetScale)
+        val limitedAddOffset = limitedTargetOffset - currentOffset
+        val limitedTargetTransform = currentTransform.copy(
+            scale = ScaleFactor(limitedTargetScale),
+            offset = limitedTargetOffset
+        )
+        log {
+            "scale. " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "centroid=${centroid.toShortString()}, " +
+                    "animated=${animated}, " +
+                    "addScale=${targetAddScale.format(4)} -> ${limitedAddScale.format(4)}, " +
+                    "addOffset=${targetAddOffset.toShortString()} -> ${limitedAddOffset.toShortString()}, " +
+                    "transform=${currentTransform.toShortString()} -> ${limitedTargetTransform.toShortString()}"
+        }
+
+        updateTransform(
+            targetTransform = limitedTargetTransform,
+            animated = animated,
+            caller = "scale"
+        )
+    }
+
+    suspend fun offset(targetOffset: Offset, animated: Boolean = false) {
+        stopAnimation("offset")
+
+        val currentTransform = transform
+        val currentScale = currentTransform.scaleX
+        val currentOffset = currentTransform.offset
+        val targetAddOffset = targetOffset - currentOffset
+        val limitedTargetOffset = limitOffset(targetOffset, currentScale)
+        val limitedAddOffset = limitedTargetOffset - currentOffset
+        val limitedTargetTransform = currentTransform.copy(offset = limitedTargetOffset)
+        log {
+            "offset. " +
+                    "targetOffset=${targetOffset.toShortString()}, " +
+                    "animated=${animated}, " +
+                    "currentScale=${currentScale.format(4)}, " +
+                    "addOffset=${targetAddOffset.toShortString()} -> ${limitedAddOffset}, " +
+                    "transform=${currentTransform.toShortString()} -> ${limitedTargetTransform.toShortString()}"
+        }
+
+        updateTransform(
+            targetTransform = limitedTargetTransform,
+            animated = animated,
+            caller = "offset"
+        )
+    }
+
+    suspend fun location(
+        contentOrigin: Origin,
+        targetScale: Float = transform.scaleX,
+        animated: Boolean = false,
+    ) {
+        stopAnimation("location")
+
+        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
+        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
+        val contentScale = contentScale
+        val contentAlignment = contentAlignment
+        val currentTransform = transform
+        val limitedTargetScale = limitScale(targetScale)
+        val containerOrigin = contentOriginToContainerOrigin(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            contentAlignment = contentAlignment,
+            contentOrigin = contentOrigin
+        )
         val targetTransform = currentTransform.copy(
-            scale = ScaleFactor(targetScale),
-            offset = targetOffset
+            scale = ScaleFactor(limitedTargetScale),
+            offset = computeLocationOffset(
+                containerOrigin = containerOrigin,
+                newScale = limitedTargetScale,
+                containerSize = containerSize,
+            )
         )
         val limitedTargetTransform = limitTransform(targetTransform)
         log {
-            "transform. " +
-                    "centroid=${centroid.toShortString()}, " +
-                    "zoomChange=${zoomChange.format(4)}, " +
-                    "rotationChange=${rotationChange.format(4)}, " +
-                    "addScale=${addScale.format(4)}, " +
+            "location. " +
+                    "contentOrigin=${contentOrigin.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "addOffset=${addOffset.toShortString()}, " +
-                    "targetOffset=${targetOffset.toShortString()}, " +
+                    "animated=${animated}, " +
+                    "containerSize=${containerSize.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "containerOrigin=${containerOrigin.toShortString()}, " +
                     "currentTransform=${currentTransform.toShortString()}, " +
                     "targetTransform=${targetTransform.toShortString()}, " +
                     "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
         }
 
-        transform = limitedTargetTransform
+        updateTransform(
+            targetTransform = limitedTargetTransform,
+            animated = animated,
+            caller = "location"
+        )
+    }
+
+    suspend fun switchScale(contentOrigin: Origin = Origin(0.5f, 0.5f), animated: Boolean = true): Float {
+        val nextScale = getNextStepScale()
+        location(contentOrigin = contentOrigin, targetScale = nextScale, animated = animated)
+        return nextScale
     }
 
     suspend fun fling(velocity: Velocity, density: Density) {
@@ -730,6 +427,17 @@ class ZoomableState(
         }
     }
 
+//    suspend fun backBoundsScale(centroid: Offset) {
+////        val minScale = minScale
+////        val maxScale = maxScale
+////        val currentScale = transform.scaleX
+////        if (currentScale > maxScale) {
+//////            animateScaleTo(targetScale = maxScale)
+////        } else if (currentScale < minScale) {
+//////            animateScaleTo(targetScale = minScale)
+////        }
+//    }
+
     fun getNextStepScale(): Float {
         val stepScales = if (threeStepScaleEnabled) {
             floatArrayOf(minScale, mediumScale, maxScale)
@@ -742,12 +450,27 @@ class ZoomableState(
     fun canDrag(horizontal: Boolean, direction: Int): Boolean =
         canScroll(horizontal, direction * -1, scrollEdge)
 
-    private fun limitScale(
-        scale: Float,
-        minimumValue: Float = minScale,
-        maximumValue: Float = maxScale
-    ): Float {
-        return scale.coerceIn(minimumValue = minimumValue, maximumValue = maximumValue)
+    fun touchOffsetToContentOrigin(touch: Offset): Origin {
+        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return Origin.Zero
+        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return Origin.Zero
+        val currentTransform = transform
+        val containerOrigin = computeContainerOriginByTouchPosition(
+            containerSize = containerSize,
+            scale = currentTransform.scaleX,
+            offset = currentTransform.offset,
+            touch = touch
+        )
+        return containerOriginToContentOrigin(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            contentAlignment = contentAlignment,
+            containerOrigin = containerOrigin
+        )
+    }
+
+    private fun limitScale(scale: Float): Float {
+        return scale.coerceIn(minimumValue = minScale, maximumValue = maxScale)
     }
 
     private fun limitOffset(offset: Offset, scale: Float): Offset {
@@ -787,6 +510,41 @@ class ZoomableState(
             )
         } else {
             transform
+        }
+    }
+
+    private suspend fun updateTransform(
+        targetTransform: Transform,
+        animated: Boolean,
+        caller: String
+    ) {
+        stopAnimation(caller)
+
+        if (animated) {
+            val currentTransform = transform
+            val updateAnimatable = Animatable(0f)
+            this.lastAnimatable = updateAnimatable
+            coroutineScope {
+                launch {
+                    updateAnimatable.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(
+                            durationMillis = defaultAnimationSpec.durationMillis,
+                            easing = defaultAnimationSpec.easing
+                        ),
+                        initialVelocity = defaultAnimationSpec.initialVelocity,
+                    ) {
+                        val transform = com.github.panpf.zoomimage.compose.lerp(
+                            start = currentTransform,
+                            stop = targetTransform,
+                            fraction = value
+                        )
+                        this@ZoomableState.transform = transform
+                    }
+                }
+            }
+        } else {
+            this.transform = targetTransform
         }
     }
 

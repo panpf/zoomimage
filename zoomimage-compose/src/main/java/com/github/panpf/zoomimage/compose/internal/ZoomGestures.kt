@@ -38,7 +38,8 @@ import kotlin.math.abs
  */
 internal suspend fun PointerInputScope.detectZoomGestures(
     panZoomLock: Boolean = false,
-    onGesture: (centroid: Offset, zoomChange: Float, rotationChange: Float) -> Unit
+    onGesture: (centroid: Offset, zoomChange: Float, rotationChange: Float) -> Unit,
+    onEnd: (centroid: Offset) -> Unit = {},
 ) {
     awaitEachGesture {
         var rotation = 0f
@@ -46,6 +47,7 @@ internal suspend fun PointerInputScope.detectZoomGestures(
         var pastTouchSlop = false
         val touchSlop = viewConfiguration.touchSlop
         var lockedToPanZoom = false
+        var lastCentroid: Offset? = null
 
         awaitTwoDowns(requireUnconsumed = false)
         do {
@@ -73,6 +75,7 @@ internal suspend fun PointerInputScope.detectZoomGestures(
                     val centroid = event.calculateCentroid(useCurrent = false)
                     val effectiveRotation = if (lockedToPanZoom) 0f else rotationChange
                     if (effectiveRotation != 0f || zoomChange != 1f) {
+                        lastCentroid = centroid
                         onGesture(centroid, zoomChange, effectiveRotation)
                     }
                     event.changes.fastForEach {
@@ -83,6 +86,10 @@ internal suspend fun PointerInputScope.detectZoomGestures(
                 }
             }
         } while (!canceled && event.changes.size > 1 && event.changes.fastAny { it.pressed })
+
+        if (lastCentroid != null) {
+            onEnd(lastCentroid)
+        }
     }
 }
 

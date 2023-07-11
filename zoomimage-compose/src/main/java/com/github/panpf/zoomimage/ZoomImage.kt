@@ -41,7 +41,6 @@ fun ZoomImage(
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBar != null) it.zoomScrollBar(state, scrollBar) else it }
-//        .zoomable2(state)
         .zoomable(state = state, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = state.transform.scaleX
