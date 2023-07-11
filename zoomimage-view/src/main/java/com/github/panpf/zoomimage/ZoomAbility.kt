@@ -29,7 +29,7 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
-import com.github.panpf.zoomimage.view.ScrollBarStyle
+import com.github.panpf.zoomimage.view.ScrollBar
 import com.github.panpf.zoomimage.view.internal.ImageViewBridge
 import com.github.panpf.zoomimage.view.internal.ZoomEngine
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
@@ -127,16 +127,10 @@ class ZoomAbility(
             engine.threeStepScaleEnabled = value
         }
 
-    var scrollBarEnabled: Boolean
-        get() = engine.scrollBarEnabled
+    var scrollBar: ScrollBar?
+        get() = engine.scrollBar
         set(value) {
-            engine.scrollBarEnabled = value
-        }
-
-    var scrollBarStyle: ScrollBarStyle
-        get() = engine.scrollBarStyle
-        set(value) {
-            engine.scrollBarStyle = value
+            engine.scrollBar = value
         }
 
     var readMode: ReadMode?

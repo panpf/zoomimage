@@ -22,19 +22,19 @@ import android.graphics.RectF
 import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.core.view.ViewCompat
-import com.github.panpf.zoomimage.view.ScrollBarStyle
+import com.github.panpf.zoomimage.view.ScrollBar
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 internal class ScrollBarHelper(
     context: Context,
     private val engine: ZoomEngine,
-    private val scrollBarStyle: ScrollBarStyle,
+    private val scrollBar: ScrollBar,
 ) {
-    private val scrollBarRadius: Int = (scrollBarStyle.size / 2).roundToInt()
+    private val scrollBarRadius: Int = (scrollBar.size / 2).roundToInt()
     private val scrollBarAlpha: Int = 255
     private val scrollBarPaint: Paint = Paint().apply {
-        color = scrollBarStyle.color
+        color = scrollBar.color
         alpha = scrollBarAlpha
     }
     private val view = engine.view
@@ -51,7 +51,7 @@ internal class ScrollBarHelper(
         val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty } ?: return
         val drawWidth = displayRectF.width()
         val drawHeight = displayRectF.height()
-        val margin = scrollBarStyle.margin + scrollBarStyle.size + scrollBarStyle.margin
+        val margin = scrollBar.margin + scrollBar.size + scrollBar.margin
         val viewAvailableWidth = viewWidth - (margin * 2) - view.paddingLeft - view.paddingRight
         val viewAvailableHeight = viewHeight - (margin * 2) - view.paddingTop - view.paddingBottom
 
@@ -59,15 +59,15 @@ internal class ScrollBarHelper(
         if (drawWidth.toInt() > viewWidth) {
             val widthScale = viewWidth.toFloat() / drawWidth
             val horScrollBarWidth =
-                (viewAvailableWidth * widthScale).coerceAtLeast(scrollBarStyle.size).toInt()
+                (viewAvailableWidth * widthScale).coerceAtLeast(scrollBar.size).toInt()
             val horScrollBarRectF = scrollBarRectF.apply {
                 val mapLeft = if (displayRectF.left < 0) {
                     (abs(displayRectF.left) / displayRectF.width() * viewAvailableWidth).toInt()
                 } else 0
                 left = (view.paddingLeft + margin + mapLeft)
                 right = left + horScrollBarWidth
-                top = (view.paddingTop + margin + viewAvailableHeight + scrollBarStyle.margin)
-                bottom = top + scrollBarStyle.size
+                top = (view.paddingTop + margin + viewAvailableHeight + scrollBar.margin)
+                bottom = top + scrollBar.size
             }
             canvas.drawRoundRect(
                 horScrollBarRectF,
@@ -81,13 +81,13 @@ internal class ScrollBarHelper(
         if (drawHeight.toInt() > viewHeight) {
             val heightScale = viewHeight.toFloat() / drawHeight
             val verScrollBarHeight =
-                (viewAvailableHeight * heightScale).coerceAtLeast(scrollBarStyle.size).toInt()
+                (viewAvailableHeight * heightScale).coerceAtLeast(scrollBar.size).toInt()
             val verScrollBarRectF = scrollBarRectF.apply {
                 val mapTop = if (displayRectF.top < 0) {
                     (abs(displayRectF.top) / displayRectF.height() * viewAvailableHeight).toInt()
                 } else 0
-                left = (view.paddingLeft + margin + viewAvailableWidth + scrollBarStyle.margin)
-                right = left + scrollBarStyle.size
+                left = (view.paddingLeft + margin + viewAvailableWidth + scrollBar.margin)
+                right = left + scrollBar.size
                 top = (view.paddingTop + margin + mapTop)
                 bottom = top + verScrollBarHeight
             }

@@ -20,7 +20,7 @@ import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
 import com.github.panpf.zoomimage.ZoomableState
-import com.github.panpf.zoomimage.compose.ScrollBarStyle
+import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.zoomScrollBar
 import com.github.panpf.zoomimage.zoomable
@@ -31,9 +31,6 @@ fun ZoomAsyncImage(
     imageUri: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    state: ZoomableState = rememberZoomableState(),
-    scrollBarEnabled: Boolean = true,
-    scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
@@ -45,15 +42,14 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    state: ZoomableState = rememberZoomableState(),
+    scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
     request = DisplayRequest(LocalContext.current, imageUri),
     contentDescription = contentDescription,
     modifier = modifier,
-    state = state,
-    scrollBarEnabled = scrollBarEnabled,
-    scrollBarStyle = scrollBarStyle,
     transform = transformOf(placeholder, error, uriEmpty),
     onState = onStateOf(onLoading, onSuccess, onError),
     alignment = alignment,
@@ -61,6 +57,8 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    state = state,
+    scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -71,9 +69,6 @@ fun ZoomAsyncImage(
     request: DisplayRequest,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    state: ZoomableState = rememberZoomableState(),
-    scrollBarEnabled: Boolean = true,
-    scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
@@ -85,15 +80,14 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    state: ZoomableState = rememberZoomableState(),
+    scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
     request = request,
     contentDescription = contentDescription,
     modifier = modifier,
-    state = state,
-    scrollBarEnabled = scrollBarEnabled,
-    scrollBarStyle = scrollBarStyle,
     transform = transformOf(placeholder, error, uriEmpty),
     onState = onStateOf(onLoading, onSuccess, onError),
     alignment = alignment,
@@ -101,6 +95,8 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    state = state,
+    scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -111,9 +107,6 @@ fun ZoomAsyncImage(
     imageUri: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    state: ZoomableState = rememberZoomableState(),
-    scrollBarEnabled: Boolean = true,
-    scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
     onState: ((AsyncImagePainter.State) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
@@ -121,15 +114,14 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    state: ZoomableState = rememberZoomableState(),
+    scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
     request = DisplayRequest(LocalContext.current, imageUri),
     contentDescription = contentDescription,
     modifier = modifier,
-    state = state,
-    scrollBarEnabled = scrollBarEnabled,
-    scrollBarStyle = scrollBarStyle,
     transform = transform,
     onState = onState,
     alignment = alignment,
@@ -137,6 +129,8 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    state = state,
+    scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -146,9 +140,6 @@ fun ZoomAsyncImage(
     request: DisplayRequest,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    state: ZoomableState = rememberZoomableState(),
-    scrollBarEnabled: Boolean = true,
-    scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
     onState: ((AsyncImagePainter.State) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
@@ -156,6 +147,8 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    state: ZoomableState = rememberZoomableState(),
+    scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
@@ -168,7 +161,7 @@ fun ZoomAsyncImage(
 
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBarEnabled) it.zoomScrollBar(state, scrollBarStyle) else it }
+        .let { if (scrollBar != null) it.zoomScrollBar(state, scrollBar) else it }
         .zoomable(state = state, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = state.transform.scaleX

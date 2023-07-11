@@ -16,6 +16,7 @@ import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomAnimationSpec
+import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
@@ -73,7 +74,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String, onClick: () -> Unit) {
             alignment = zoomImageOptionsDialogState.alignment,
             modifier = Modifier.fillMaxSize(),
             state = zoomableState,
-            scrollBarEnabled = zoomImageOptionsDialogState.scrollBarEnabled,
+            scrollBar = if(zoomImageOptionsDialogState.scrollBarEnabled) ScrollBar.Default else null,
             onTap = {
                 onClick()
             },

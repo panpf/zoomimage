@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
+import com.github.panpf.zoomimage.view.ScrollBar
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {
@@ -60,7 +61,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     threeStepScaleEnabled = it
                 }
                 prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    scrollBarEnabled = it
+                    scrollBar = if (it) ScrollBar.Default else null
                 }
                 prefsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     val direction = if (prefsService.readModeDirectionBoth.value) {
@@ -70,7 +71,8 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     } else {
                         ReadMode.Direction.OnlyHorizontal
                     }
-                    readMode = if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
+                    readMode =
+                        if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
                 }
                 prefsService.readModeDirectionBoth.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     val direction = if (prefsService.readModeDirectionBoth.value) {
@@ -80,7 +82,8 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     } else {
                         ReadMode.Direction.OnlyHorizontal
                     }
-                    readMode = if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
+                    readMode =
+                        if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
                 }
                 prefsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     scaleAnimationDuration = if (prefsService.animateScale.value) {

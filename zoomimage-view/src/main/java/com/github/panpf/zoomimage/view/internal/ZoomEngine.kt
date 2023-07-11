@@ -46,7 +46,7 @@ import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
 import com.github.panpf.zoomimage.core.rotate
-import com.github.panpf.zoomimage.view.ScrollBarStyle
+import com.github.panpf.zoomimage.view.ScrollBar
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
@@ -148,14 +148,7 @@ internal class ZoomEngine constructor(
                 reset()
             }
         }
-    var scrollBarEnabled: Boolean = true
-        internal set(value) {
-            if (field != value) {
-                field = value
-                resetScrollBarHelper()
-            }
-        }
-    var scrollBarStyle: ScrollBarStyle = ScrollBarStyle.Default
+    var scrollBar: ScrollBar? = ScrollBar.Default
         internal set(value) {
             if (field != value) {
                 field = value
@@ -261,9 +254,9 @@ internal class ZoomEngine constructor(
     private fun resetScrollBarHelper() {
         scrollBarHelper?.cancel()
         scrollBarHelper = null
-        if (scrollBarEnabled) {
-            scrollBarHelper =
-                ScrollBarHelper(context, this@ZoomEngine, scrollBarStyle).apply { reset() }
+        val scrollBar = scrollBar
+        if (scrollBar != null) {
+            scrollBarHelper = ScrollBarHelper(context, this@ZoomEngine, scrollBar)
         }
     }
 
