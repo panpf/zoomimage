@@ -25,7 +25,6 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
-import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.OnDragFlingListener
 import com.github.panpf.zoomimage.OnMatrixChangeListener
@@ -35,6 +34,7 @@ import com.github.panpf.zoomimage.OnViewDragListener
 import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.OnViewTapListener
 import com.github.panpf.zoomimage.ReadMode
+import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
@@ -357,16 +357,11 @@ internal class ZoomEngine constructor(
     val rotateDegrees: Int
         get() = _rotateDegrees
 
-    fun canScrollHorizontally(direction: Int): Boolean =
-        scaleDragHelper.canScrollHorizontally(direction)
+    fun canScroll(horizontal: Boolean, direction: Int): Boolean =
+        scaleDragHelper.canScroll(horizontal, direction)
 
-    fun canScrollVertically(direction: Int): Boolean =
-        scaleDragHelper.canScrollVertically(direction)
-
-    val horScrollEdge: Edge
-        get() = scaleDragHelper.horScrollEdge
-    val verScrollEdge: Edge
-        get() = scaleDragHelper.verScrollEdge
+    val scrollEdge: ScrollEdge
+        get() = scaleDragHelper.scrollEdge
 
     val isScaling: Boolean
         get() = scaleDragHelper.isScaling

@@ -30,6 +30,7 @@ import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.toShortString
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,7 +67,7 @@ fun ZoomImageTool(
         val baseScaleFormatted = baseTransform.scaleX.format(2)
         """
             scale: $scaleFormatted($displayScaleFormatted/${baseScaleFormatted}) in $scales
-            offset: ${transform.offset.toShortString()}
+            offset: ${transform.offset.toShortString()}, edge=${zoomableState.scrollEdge.toShortString()}
             visible: ${zoomableState.contentVisibleRect.toShortString()}
         """.trimIndent()
     }

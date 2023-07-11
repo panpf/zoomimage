@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
+import com.github.panpf.zoomimage.toShortString
 import com.github.panpf.zoomimage.view.ScrollBar
 import com.github.panpf.zoomimage.view.ZoomAnimationSpec
 
@@ -216,7 +217,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             """
                 ${scale.format(2)}(${displayScale.scaleX.format(2)}/${baseScale.scaleX.format(2)}) in $scales
-                ${offset.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=(${horScrollEdge}, ${verScrollEdge})
+                ${offset.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=${scrollEdge.toShortString()}
                 ${getVisibleRect().toVeryShortString()}
             """.trimIndent()
         }

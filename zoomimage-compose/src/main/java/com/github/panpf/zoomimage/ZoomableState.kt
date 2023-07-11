@@ -56,7 +56,8 @@ import com.github.panpf.zoomimage.compose.toShortString
 import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
-import com.github.panpf.zoomimage.core.internal.computeCanDrag
+import com.github.panpf.zoomimage.core.internal.canScroll
+import com.github.panpf.zoomimage.core.internal.computeScrollEdge
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
 import com.github.panpf.zoomimage.core.toShortString
 import kotlinx.coroutines.coroutineScope
@@ -150,6 +151,12 @@ class ZoomableState(
         )
     }
 
+    val scrollEdge: ScrollEdge by derivedStateOf {
+        computeScrollEdge(
+            contentSize = contentSize.toCompatSize(),
+            contentVisibleRect = contentVisibleRect.toCompatRectF(),
+        )
+    }
     val containerVisibleRect: Rect by derivedStateOf {
         computeContainerVisibleRect(containerSize, transform.scaleX, transform.offset)
     }
@@ -733,12 +740,7 @@ class ZoomableState(
     }
 
     fun canDrag(horizontal: Boolean, direction: Int): Boolean =
-        computeCanDrag(
-            contentSize = contentSize.toCompatSize(),
-            contentVisibleRect = contentVisibleRect.toCompatRectF(),
-            horizontal = horizontal,
-            direction = direction
-        )
+        canScroll(horizontal, direction * -1, scrollEdge)
 
     private fun limitScale(
         scale: Float,

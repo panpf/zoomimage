@@ -115,11 +115,8 @@ class ZoomAbility(
 
     fun getNextStepScale(): Float = engine.getNextStepScale()
 
-    fun canScrollHorizontally(direction: Int): Boolean =
-        engine.canScrollHorizontally(direction)
-
-    fun canScrollVertically(direction: Int): Boolean =
-        engine.canScrollVertically(direction)
+    fun canScroll(horizontal: Boolean, direction: Int): Boolean =
+        engine.canScroll(horizontal, direction)
 
     var threeStepScaleEnabled: Boolean
         get() = engine.threeStepScaleEnabled
@@ -172,10 +169,8 @@ class ZoomAbility(
     val rotateDegrees: Int
         get() = engine.rotateDegrees
 
-    val horScrollEdge: Edge
-        get() = engine.horScrollEdge
-    val verScrollEdge: Edge
-        get() = engine.verScrollEdge
+    val scrollEdge: ScrollEdge
+        get() = engine.scrollEdge
 
     val isScaling: Boolean
         get() = engine.isScaling

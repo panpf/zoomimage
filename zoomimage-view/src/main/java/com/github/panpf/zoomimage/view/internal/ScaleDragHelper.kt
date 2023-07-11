@@ -25,9 +25,11 @@ import android.view.MotionEvent
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.internal.canScroll
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.view.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoomimage.view.internal.ScaleDragGestureDetector.OnGestureListener
@@ -64,16 +66,13 @@ internal class ScaleDragHelper constructor(
     private var locationRunnable: LocationRunnable? = null
     private var animatedScaleRunnable: AnimatedScaleRunnable? = null
     private val scaleDragGestureDetector: ScaleDragGestureDetector
-    private var _horScrollEdge: Edge = Edge.NONE
-    private var _verScrollEdge: Edge = Edge.NONE
+    private var _scrollEdge: ScrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
     private var blockParentIntercept: Boolean = false
     private var dragging = false
     private var manualScaling = false
 
-    val horScrollEdge: Edge
-        get() = _horScrollEdge
-    val verScrollEdge: Edge
-        get() = _verScrollEdge
+    val scrollEdge: ScrollEdge
+        get() = _scrollEdge
 
     val isScaling: Boolean
         get() = animatedScaleRunnable?.isRunning == true || manualScaling
@@ -170,8 +169,7 @@ internal class ScaleDragHelper constructor(
     private fun checkMatrixBounds(): Boolean {
         val displayRectF = displayRectF.apply { getDisplayRect(this) }
         if (displayRectF.isEmpty) {
-            _horScrollEdge = Edge.NONE
-            _verScrollEdge = Edge.NONE
+            _scrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
             return false
         }
 
@@ -220,18 +218,20 @@ internal class ScaleDragHelper constructor(
         // Finally actually translate the matrix
         supportMatrix.postTranslate(deltaX, deltaY)
 
-        _verScrollEdge = when {
-            displayHeight.toInt() <= viewHeight -> Edge.BOTH
-            displayRectF.top.toInt() >= 0 -> Edge.START
-            displayRectF.bottom.toInt() <= viewHeight -> Edge.END
-            else -> Edge.NONE
-        }
-        _horScrollEdge = when {
-            displayWidth.toInt() <= viewWidth -> Edge.BOTH
-            displayRectF.left.toInt() >= 0 -> Edge.START
-            displayRectF.right.toInt() <= viewWidth -> Edge.END
-            else -> Edge.NONE
-        }
+        _scrollEdge = ScrollEdge(
+            horizontal = when {
+                displayWidth.toInt() <= viewWidth -> Edge.BOTH
+                displayRectF.left.toInt() >= 0 -> Edge.START
+                displayRectF.right.toInt() <= viewWidth -> Edge.END
+                else -> Edge.NONE
+            },
+            vertical = when {
+                displayHeight.toInt() <= viewHeight -> Edge.BOTH
+                displayRectF.top.toInt() >= 0 -> Edge.START
+                displayRectF.bottom.toInt() <= viewHeight -> Edge.END
+                else -> Edge.NONE
+            },
+        )
         return true
     }
 
@@ -339,7 +339,8 @@ internal class ScaleDragHelper constructor(
      */
     fun getVisibleRect(rect: Rect) {
         rect.setEmpty()
-        val displayRectF = displayRectF.apply { getDisplayRect(this) }.takeIf { !it.isEmpty } ?: return
+        val displayRectF =
+            displayRectF.apply { getDisplayRect(this) }.takeIf { !it.isEmpty } ?: return
         val viewSize = engine.viewSize.takeIf { !it.isEmpty } ?: return
         val drawableSize = engine.drawableSize.takeIf { !it.isEmpty } ?: return
         val (drawableWidth, drawableHeight) = drawableSize.let {
@@ -390,29 +391,12 @@ internal class ScaleDragHelper constructor(
     }
 
     /**
-     * Whether you can scroll horizontally in the specified direction
+     * Whether you can scroll horizontally or vertical in the specified direction
      *
      * @param direction Negative to check scrolling left, positive to check scrolling right.
      */
-    fun canScrollHorizontally(direction: Int): Boolean {
-        return if (direction < 0) {
-            horScrollEdge != Edge.START && horScrollEdge != Edge.BOTH
-        } else {
-            horScrollEdge != Edge.END && horScrollEdge != Edge.BOTH
-        }
-    }
-
-    /**
-     * Whether you can scroll vertically in the specified direction
-     *
-     * @param direction Negative to check scrolling up, positive to check scrolling down.
-     */
-    fun canScrollVertically(direction: Int): Boolean {
-        return if (direction < 0) {
-            verScrollEdge != Edge.START && horScrollEdge != Edge.BOTH
-        } else {
-            verScrollEdge != Edge.END && horScrollEdge != Edge.BOTH
-        }
+    fun canScroll(horizontal: Boolean, direction: Int): Boolean {
+        return canScroll(horizontal, direction, scrollEdge)
     }
 
     private fun doDrag(dx: Float, dy: Float) {
@@ -438,15 +422,15 @@ internal class ScaleDragHelper constructor(
             true
         } else {
             val slop = engine.view.resources.displayMetrics.density * 3
-            val result = (horScrollEdge == Edge.NONE && (dx >= slop || dx <= -slop))
-                    || (horScrollEdge == Edge.START && dx <= -slop)
-                    || (horScrollEdge == Edge.END && dx >= slop)
-                    || (verScrollEdge == Edge.NONE && (dy >= slop || dy <= -slop))
-                    || (verScrollEdge == Edge.START && dy <= -slop)
-                    || (verScrollEdge == Edge.END && dy >= slop)
+            val result = (scrollEdge.horizontal == Edge.NONE && (dx >= slop || dx <= -slop))
+                    || (scrollEdge.horizontal == Edge.START && dx <= -slop)
+                    || (scrollEdge.horizontal == Edge.END && dx >= slop)
+                    || (scrollEdge.vertical == Edge.NONE && (dy >= slop || dy <= -slop))
+                    || (scrollEdge.vertical == Edge.START && dy <= -slop)
+                    || (scrollEdge.vertical == Edge.END && dy >= slop)
             val type = if (result) "DisallowParentIntercept" else "AllowParentIntercept"
             logger.d(ZoomEngine.MODULE) {
-                "onDrag. $type. scrollEdge=${horScrollEdge}-${verScrollEdge}, d=${dx}x${dy}"
+                "onDrag. $type. scrollEdge=${scrollEdge.horizontal}-${scrollEdge.vertical}, d=${dx}x${dy}"
             }
             dragging = result
             result

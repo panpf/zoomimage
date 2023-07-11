@@ -1,5 +1,7 @@
 package com.github.panpf.zoomimage.core.internal
 
+import com.github.panpf.zoomimage.Edge
+import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.RectFCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
@@ -86,21 +88,21 @@ fun computeReadModeTransform(
     )
 }
 
-fun computeCanDrag(
-    contentSize: SizeCompat,
-    contentVisibleRect: RectFCompat,
-    horizontal: Boolean,
-    direction: Int
-): Boolean {
-    if (contentSize.isEmpty || contentVisibleRect.isEmpty) return false
-    return if (horizontal) {
-        (direction > 0 && contentVisibleRect.left.roundToInt() > 0)
-                || (direction < 0 && contentVisibleRect.right.roundToInt() < contentSize.width)
-    } else {
-        (direction > 0 && contentVisibleRect.top.roundToInt() > 0)
-                || (direction < 0 && contentVisibleRect.bottom.roundToInt() < contentSize.height)
-    }
-}
+//fun computeCanDrag(
+//    contentSize: SizeCompat,
+//    contentVisibleRect: RectFCompat,
+//    horizontal: Boolean,
+//    direction: Int
+//): Boolean {
+//    if (contentSize.isEmpty || contentVisibleRect.isEmpty) return false
+//    return if (horizontal) {
+//        (direction > 0 && contentVisibleRect.left.roundToInt() > 0)
+//                || (direction < 0 && contentVisibleRect.right.roundToInt() < contentSize.width)
+//    } else {
+//        (direction > 0 && contentVisibleRect.top.roundToInt() > 0)
+//                || (direction < 0 && contentVisibleRect.bottom.roundToInt() < contentSize.height)
+//    }
+//}
 
 fun isSameDirection(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
     val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
@@ -108,4 +110,48 @@ fun isSameDirection(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
     return (srcAspectRatio == 1.0f || dstAspectRatio == 1.0f)
             || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
             || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
+}
+
+
+fun computeScrollEdge(
+    contentSize: SizeCompat,
+    contentVisibleRect: RectFCompat,
+): ScrollEdge {
+    if (contentSize.isEmpty || contentVisibleRect.isEmpty)
+        return ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
+    return ScrollEdge(
+        horizontal = when {
+            contentVisibleRect.width.roundToInt() >= contentSize.width -> Edge.BOTH
+            contentVisibleRect.left.roundToInt() == 0 -> Edge.START
+            contentVisibleRect.right.roundToInt() == contentSize.width -> Edge.END
+            else -> Edge.NONE
+        },
+        vertical = when {
+            contentVisibleRect.height.roundToInt() >= contentSize.height -> Edge.BOTH
+            contentVisibleRect.top.roundToInt() == 0 -> Edge.START
+            contentVisibleRect.bottom.roundToInt() == contentSize.height -> Edge.END
+            else -> Edge.NONE
+        },
+    )
+}
+
+/**
+ * Whether you can scroll horizontally or vertical in the specified direction
+ *
+ * @param direction Negative to check scrolling left, positive to check scrolling right.
+ */
+fun canScroll(horizontal: Boolean, direction: Int, scrollEdge: ScrollEdge): Boolean {
+    return if(horizontal) {
+        if (direction < 0) {
+            scrollEdge.horizontal != Edge.START && scrollEdge.horizontal != Edge.BOTH
+        } else {
+            scrollEdge.horizontal != Edge.END && scrollEdge.horizontal != Edge.BOTH
+        }
+    } else {
+        if (direction < 0) {
+            scrollEdge.vertical != Edge.START && scrollEdge.vertical != Edge.BOTH
+        } else {
+            scrollEdge.vertical != Edge.END && scrollEdge.vertical != Edge.BOTH
+        }
+    }
 }

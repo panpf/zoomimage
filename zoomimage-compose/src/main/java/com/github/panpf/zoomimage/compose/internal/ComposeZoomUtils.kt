@@ -427,38 +427,6 @@ internal fun contentOriginToContainerOrigin(
 
 /* ******************************************* Other ***************************************** */
 
-//internal fun computeScrollEdge(
-//    contentSize: Size,
-//    contentVisibleRect: Rect,
-//    horizontal: Boolean
-//): Edge {
-//    if (contentSize.isNotAvailable() || contentVisibleRect.isEmpty) return Edge.BOTH
-//    if (horizontal) {
-//        return if (contentVisibleRect.left <= 0f && contentVisibleRect.right.roundToInt() >= contentSize.width.roundToInt()) {
-//            Edge.BOTH
-//        } else if (contentVisibleRect.left > 0f && contentVisibleRect.right.roundToInt() < contentSize.width.roundToInt()) {
-//            Edge.NONE
-//        } else if (contentVisibleRect.left <= 0f) {
-//            Edge.START
-//        } else {
-//            // contentVisibleRect.right >= contentSize.width
-//            Edge.END
-//        }
-//    } else {
-//        // vertical
-//        return if (contentVisibleRect.top <= 0f && contentVisibleRect.bottom.roundToInt() >= contentSize.height.roundToInt()) {
-//            Edge.BOTH
-//        } else if (contentVisibleRect.top > 0f && contentVisibleRect.bottom.roundToInt() < contentSize.height.roundToInt()) {
-//            Edge.NONE
-//        } else if (contentVisibleRect.top <= 0f) {
-//            Edge.START
-//        } else {
-//            // contentVisibleRect.bottom >= contentSize.height
-//            Edge.END
-//        }
-//    }
-//}
-
 internal fun computeTransform(
     srcSize: Size,
     dstSize: Size,
@@ -524,6 +492,7 @@ internal fun computeScaleOffsetByCentroid(
     // space), and then compute where it will be after this delta.
     // We then compute what the new offset should be to keep the centroid
     // visually stationary for rotating and zooming, and also apply the pan.
-    contentOffset = (contentOffset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale)
+    contentOffset =
+        (contentOffset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale)
     return contentOffset * newScale * -1f
 }

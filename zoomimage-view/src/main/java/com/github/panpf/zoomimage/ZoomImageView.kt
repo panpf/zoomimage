@@ -126,10 +126,10 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     override fun canScrollHorizontally(direction: Int): Boolean =
-        _zoomAbility?.canScrollHorizontally(direction) == true
+        _zoomAbility?.canScroll(horizontal = true, direction) == true
 
     override fun canScrollVertically(direction: Int): Boolean =
-        _zoomAbility?.canScrollVertically(direction) == true
+        _zoomAbility?.canScroll(horizontal = false, direction) == true
 
     final override fun superSetImageMatrix(matrix: Matrix?) {
         super.setImageMatrix(matrix)
