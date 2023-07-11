@@ -24,12 +24,12 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
-import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.view.ScrollBar
+import com.github.panpf.zoomimage.view.ZoomAnimationSpec
 import com.github.panpf.zoomimage.view.internal.ImageViewBridge
 import com.github.panpf.zoomimage.view.internal.ZoomEngine
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
@@ -145,16 +145,10 @@ class ZoomAbility(
             engine.defaultMediumScaleMultiple = value
         }
 
-    var scaleAnimationDuration: Int
-        get() = engine.scaleAnimationDuration
+    var animationSpec: ZoomAnimationSpec
+        get() = engine.animationSpec
         set(value) {
-            engine.scaleAnimationDuration = value
-        }
-
-    var scaleAnimationInterpolator: Interpolator
-        get() = engine.scaleAnimationInterpolator
-        set(value) {
-            engine.scaleAnimationInterpolator = value
+            engine.animationSpec = value
         }
 
     var allowParentInterceptOnEdge: Boolean

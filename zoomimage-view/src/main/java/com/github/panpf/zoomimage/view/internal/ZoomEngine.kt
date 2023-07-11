@@ -24,8 +24,6 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.Interpolator
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
@@ -47,6 +45,7 @@ import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
 import com.github.panpf.zoomimage.core.rotate
 import com.github.panpf.zoomimage.view.ScrollBar
+import com.github.panpf.zoomimage.view.ZoomAnimationSpec
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
@@ -99,7 +98,6 @@ internal class ZoomEngine constructor(
 
     /** Allows the parent ViewGroup to intercept events while sliding to an edge */
     var allowParentInterceptOnEdge: Boolean = true
-    var scaleAnimationInterpolator: Interpolator = AccelerateDecelerateInterpolator()
     var onViewLongPressListener: OnViewLongPressListener? = null
     var onViewTapListener: OnViewTapListener? = null
     var viewSize = SizeCompat.Empty
@@ -155,12 +153,7 @@ internal class ZoomEngine constructor(
                 resetScrollBarHelper()
             }
         }
-    var scaleAnimationDuration: Int = 300
-        internal set(value) {
-            if (value >= 0 && field != value) {
-                field = value
-            }
-        }
+    var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
     var threeStepScaleEnabled: Boolean = false
         internal set
 

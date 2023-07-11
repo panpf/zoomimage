@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.ZoomAnimationSpec
+import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig

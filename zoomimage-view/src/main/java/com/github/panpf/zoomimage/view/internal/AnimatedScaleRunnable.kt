@@ -55,9 +55,9 @@ internal class AnimatedScaleRunnable(
     }
 
     private fun interpolate(): Float {
-        var t = 1f * (System.currentTimeMillis() - startTime) / engine.scaleAnimationDuration
+        var t = 1f * (System.currentTimeMillis() - startTime) / engine.animationSpec.durationMillis
         t = 1f.coerceAtMost(t)
-        t = engine.scaleAnimationInterpolator.getInterpolation(t)
+        t = engine.animationSpec.interpolator.getInterpolation(t)
         return t
     }
 }

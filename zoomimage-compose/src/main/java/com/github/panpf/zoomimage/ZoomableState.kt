@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Velocity
 import com.github.panpf.zoomimage.compose.Transform
+import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.concat
 import com.github.panpf.zoomimage.compose.div
 import com.github.panpf.zoomimage.compose.internal.ScaleFactor

@@ -35,6 +35,7 @@ import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.view.ScrollBar
+import com.github.panpf.zoomimage.view.ZoomAnimationSpec
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {
@@ -86,18 +87,20 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                         if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
                 }
                 prefsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    scaleAnimationDuration = if (prefsService.animateScale.value) {
+                    val durationMillis = if (prefsService.animateScale.value) {
                         (if (prefsService.slowerScaleAnimation.value) 3000 else 300)
                     } else {
                         0
                     }
+                    animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
                 prefsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    scaleAnimationDuration = if (prefsService.animateScale.value) {
+                    val durationMillis = if (prefsService.animateScale.value) {
                         (if (prefsService.slowerScaleAnimation.value) 3000 else 300)
                     } else {
                         0
                     }
+                    animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
             }
             subsamplingAbility.apply {
