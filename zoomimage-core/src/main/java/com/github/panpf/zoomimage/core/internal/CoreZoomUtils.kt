@@ -141,7 +141,7 @@ fun computeScrollEdge(
  * @param direction Negative to check scrolling left, positive to check scrolling right.
  */
 fun canScroll(horizontal: Boolean, direction: Int, scrollEdge: ScrollEdge): Boolean {
-    return if(horizontal) {
+    return if (horizontal) {
         if (direction < 0) {
             scrollEdge.horizontal != Edge.START && scrollEdge.horizontal != Edge.BOTH
         } else {
@@ -153,5 +153,38 @@ fun canScroll(horizontal: Boolean, direction: Int, scrollEdge: ScrollEdge): Bool
         } else {
             scrollEdge.vertical != Edge.END && scrollEdge.vertical != Edge.BOTH
         }
+    }
+}
+
+fun limitScaleWithRubberBand(
+    currentScale: Float,
+    targetScale: Float,
+    minScale: Float,
+    maxScale: Float,
+): Float {
+    return when {
+        targetScale > maxScale -> {
+            val addScale = targetScale - currentScale
+            val rubberBandMaxScale = maxScale * 2f
+            val overScale = targetScale - maxScale
+            val overMaxScale = rubberBandMaxScale - maxScale
+            val progress = overScale / overMaxScale
+            // Multiplying by 0.5f is to be a little slower
+            val limitedAddScale = addScale * (1 - progress) * 0.5f
+            currentScale + limitedAddScale
+        }
+
+        targetScale < minScale -> {
+            val addScale = targetScale - currentScale
+            val rubberBandMinScale = minScale * 0.75f
+            val overScale = targetScale - minScale
+            val overMinScale = rubberBandMinScale - minScale
+            val progress = overScale / overMinScale
+            // Multiplying by 0.5f is to be a little slower
+            val limitedAddScale = addScale * (1 - progress) * 0.5f
+            currentScale + limitedAddScale
+        }
+
+        else -> targetScale
     }
 }

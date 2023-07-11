@@ -83,9 +83,10 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     add(
                         SwitchMenuFlow(
                             title = "Three Step Scale",
-                            data = prefsService.threeStepScaleEnabled,
+                            data = prefsService.threeStepScale,
                         )
                     )
+                    // todo 支持配置橡皮筋效果
                     add(
                         SwitchMenuFlow(
                             title = "Slower Scale Animation",

@@ -78,14 +78,15 @@ fun Modifier.zoomable(
                             targetScale = state.transform.scaleX * zoomChange,
                             centroid = centroid,
                             animated = false,
+                            rubberBandScale = true,
                         )
                     }
                 },
-//                onEnd = { centroid ->
-//                    coroutineScope.launch {
-//                        state.backBoundsScale(centroid = centroid)
-//                    }
-//                }
+                onEnd = { centroid ->
+                    coroutineScope.launch {
+                        state.reboundScale(centroid = centroid)
+                    }
+                }
             )
         }
 }

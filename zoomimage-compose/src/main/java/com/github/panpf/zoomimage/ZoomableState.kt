@@ -60,6 +60,7 @@ import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.canScroll
 import com.github.panpf.zoomimage.core.internal.computeScrollEdge
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
+import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.toShortString
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -68,7 +69,8 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberZoomableState(
     defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE,
-    threeStepScaleEnabled: Boolean = false,
+    threeStepScale: Boolean = false,
+    rubberBandScale: Boolean = true,
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
     readMode: ReadMode? = null,
     debugMode: Boolean = false,
@@ -76,10 +78,11 @@ fun rememberZoomableState(
     val state = rememberSaveable(saver = ZoomableState.Saver) {
         ZoomableState()
     }
-    state.threeStepScaleEnabled = threeStepScaleEnabled
-    state.defaultAnimationSpec = animationSpec
-    state.readMode = readMode
     state.defaultMediumScaleMultiple = defaultMediumScaleMultiple
+    state.threeStepScale = threeStepScale
+    state.rubberBandScale = rubberBandScale
+    state.animationSpec = animationSpec
+    state.readMode = readMode
     state.debugMode = debugMode
     LaunchedEffect(
         state.containerSize,
@@ -114,8 +117,9 @@ class ZoomableState(
     var contentOriginSize: Size by mutableStateOf(Size.Zero)
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
     var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
-    var threeStepScaleEnabled: Boolean = false
-    var defaultAnimationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
+    var threeStepScale: Boolean = false
+    var rubberBandScale: Boolean = true
+    var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
     var readMode: ReadMode? = null
     var debugMode: Boolean = false
     var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
@@ -263,14 +267,18 @@ class ZoomableState(
         targetScale: Float,
         centroid: Offset = Offset(x = containerSize.width / 2, y = containerSize.height / 2),
         animated: Boolean = false,
+        rubberBandScale: Boolean = false,
     ) {
+        // todo scale 小于 1.0 时，图片会跑到左上角，而不是居中
         stopAnimation("scale")
 
+        val limitedTargetScale = if (rubberBandScale && this@ZoomableState.rubberBandScale) {
+            limitScaleWithRubberBand(targetScale)
+        } else {
+            limitScale(targetScale)
+        }
         val currentTransform = transform
         val currentScale = currentTransform.scaleX
-        val targetAddScale = targetScale - currentScale
-        val limitedTargetScale = limitScale(targetScale)
-        val limitedAddScale = limitedTargetScale - currentScale
         val currentOffset = currentTransform.offset
         val targetOffset = computeScaleOffsetByCentroid(
             currentScale = currentScale,
@@ -279,20 +287,22 @@ class ZoomableState(
             centroid = centroid,
             gestureRotate = 0f,
         )
-        val targetAddOffset = targetOffset - currentOffset
         val limitedTargetOffset = limitOffset(targetOffset, limitedTargetScale)
-        val limitedAddOffset = limitedTargetOffset - currentOffset
         val limitedTargetTransform = currentTransform.copy(
             scale = ScaleFactor(limitedTargetScale),
             offset = limitedTargetOffset
         )
         log {
+            val targetAddScale = targetScale - currentScale
+            val limitedAddScale = limitedTargetScale - currentScale
+            val targetAddOffset = targetOffset - currentOffset
+            val limitedTargetAddOffset = limitedTargetOffset - currentOffset
             "scale. " +
                     "targetScale=${targetScale.format(4)}, " +
                     "centroid=${centroid.toShortString()}, " +
                     "animated=${animated}, " +
                     "addScale=${targetAddScale.format(4)} -> ${limitedAddScale.format(4)}, " +
-                    "addOffset=${targetAddOffset.toShortString()} -> ${limitedAddOffset.toShortString()}, " +
+                    "addOffset=${targetAddOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
                     "transform=${currentTransform.toShortString()} -> ${limitedTargetTransform.toShortString()}"
         }
 
@@ -308,17 +318,17 @@ class ZoomableState(
 
         val currentTransform = transform
         val currentScale = currentTransform.scaleX
-        val currentOffset = currentTransform.offset
-        val targetAddOffset = targetOffset - currentOffset
         val limitedTargetOffset = limitOffset(targetOffset, currentScale)
-        val limitedAddOffset = limitedTargetOffset - currentOffset
         val limitedTargetTransform = currentTransform.copy(offset = limitedTargetOffset)
         log {
+            val currentOffset = currentTransform.offset
+            val targetAddOffset = targetOffset - currentOffset
+            val limitedTargetAddOffset = limitedTargetOffset - currentOffset
             "offset. " +
                     "targetOffset=${targetOffset.toShortString()}, " +
                     "animated=${animated}, " +
                     "currentScale=${currentScale.format(4)}, " +
-                    "addOffset=${targetAddOffset.toShortString()} -> ${limitedAddOffset}, " +
+                    "addOffset=${targetAddOffset.toShortString()} -> ${limitedTargetAddOffset}, " +
                     "transform=${currentTransform.toShortString()} -> ${limitedTargetTransform.toShortString()}"
         }
 
@@ -341,7 +351,6 @@ class ZoomableState(
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentTransform = transform
-        val limitedTargetScale = limitScale(targetScale)
         val containerOrigin = contentOriginToContainerOrigin(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -349,16 +358,24 @@ class ZoomableState(
             contentAlignment = contentAlignment,
             contentOrigin = contentOrigin
         )
-        val targetTransform = currentTransform.copy(
-            scale = ScaleFactor(limitedTargetScale),
-            offset = computeLocationOffset(
-                containerOrigin = containerOrigin,
-                newScale = limitedTargetScale,
-                containerSize = containerSize,
-            )
+        val limitedTargetScale = limitScale(targetScale)
+        val targetOffset = computeLocationOffset(
+            containerOrigin = containerOrigin,
+            newScale = limitedTargetScale,
+            containerSize = containerSize,
         )
-        val limitedTargetTransform = limitTransform(targetTransform)
+        val limitedTargetOffset = limitOffset(targetOffset, limitedTargetScale)
+        val limitedTargetTransform = currentTransform.copy(
+            scale = ScaleFactor(limitedTargetScale),
+            offset = limitedTargetOffset
+        )
         log {
+            val currentScale = currentTransform.scaleX
+            val currentOffset = currentTransform.offset
+            val targetAddScale = targetScale - currentScale
+            val limitedTargetAddScale = limitedTargetScale - currentScale
+            val targetAddOffset = targetOffset - currentOffset
+            val limitedTargetAddOffset = limitedTargetOffset - currentOffset
             "location. " +
                     "contentOrigin=${contentOrigin.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
@@ -366,9 +383,9 @@ class ZoomableState(
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "currentTransform=${currentTransform.toShortString()}, " +
-                    "targetTransform=${targetTransform.toShortString()}, " +
-                    "limitedTargetTransform=${limitedTargetTransform.toShortString()}"
+                    "addScale=${targetAddScale.format(4)} -> ${limitedTargetAddScale.format(4)}, " +
+                    "addOffset=${targetAddOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
+                    "transform=${currentTransform.toShortString()} -> ${limitedTargetTransform.toShortString()}"
         }
 
         updateTransform(
@@ -376,12 +393,6 @@ class ZoomableState(
             animated = animated,
             caller = "location"
         )
-    }
-
-    suspend fun switchScale(contentOrigin: Origin = Origin(0.5f, 0.5f), animated: Boolean = true): Float {
-        val nextScale = getNextStepScale()
-        location(contentOrigin = contentOrigin, targetScale = nextScale, animated = animated)
-        return nextScale
     }
 
     suspend fun fling(velocity: Velocity, density: Density) {
@@ -419,32 +430,49 @@ class ZoomableState(
         }
     }
 
+    suspend fun switchScale(
+        contentOrigin: Origin = Origin(0.5f, 0.5f),
+        animated: Boolean = true
+    ): Float {
+        val nextScale = getNextStepScale()
+        location(contentOrigin = contentOrigin, targetScale = nextScale, animated = animated)
+        return nextScale
+    }
+
+    suspend fun reboundScale(centroid: Offset) {
+        val minScale = minScale
+        val maxScale = maxScale
+        val currentScale = transform.scaleX
+        val targetScale = when {
+            currentScale.format(2) > maxScale.format(2) -> maxScale
+            currentScale.format(2) < minScale.format(2) -> minScale
+            else -> null
+        }
+        if (targetScale != null) {
+            scale(
+                targetScale = targetScale,
+                centroid = centroid,
+                animated = true,
+                rubberBandScale = false
+            )
+        }
+    }
+
+    fun getNextStepScale(): Float {
+        val stepScales = if (threeStepScale) {
+            floatArrayOf(minScale, mediumScale, maxScale)
+        } else {
+            floatArrayOf(minScale, mediumScale)
+        }
+        return calculateNextStepScale(stepScales, transform.scaleX)
+    }
+
     suspend fun stopAnimation(caller: String) {
         val lastAnimatable = lastAnimatable
         if (lastAnimatable?.isRunning == true) {
             lastAnimatable.stop()
             log { "stopAnimation:$caller" }
         }
-    }
-
-//    suspend fun backBoundsScale(centroid: Offset) {
-////        val minScale = minScale
-////        val maxScale = maxScale
-////        val currentScale = transform.scaleX
-////        if (currentScale > maxScale) {
-//////            animateScaleTo(targetScale = maxScale)
-////        } else if (currentScale < minScale) {
-//////            animateScaleTo(targetScale = minScale)
-////        }
-//    }
-
-    fun getNextStepScale(): Float {
-        val stepScales = if (threeStepScaleEnabled) {
-            floatArrayOf(minScale, mediumScale, maxScale)
-        } else {
-            floatArrayOf(minScale, mediumScale)
-        }
-        return calculateNextStepScale(stepScales, transform.scaleX)
     }
 
     fun canDrag(horizontal: Boolean, direction: Int): Boolean =
@@ -469,8 +497,17 @@ class ZoomableState(
         )
     }
 
-    private fun limitScale(scale: Float): Float {
-        return scale.coerceIn(minimumValue = minScale, maximumValue = maxScale)
+    private fun limitScale(targetScale: Float): Float {
+        return targetScale.coerceIn(minimumValue = minScale, maximumValue = maxScale)
+    }
+
+    private fun limitScaleWithRubberBand(targetScale: Float): Float {
+        return limitScaleWithRubberBand(
+            currentScale = transform.scaleX,
+            targetScale = targetScale,
+            minScale = minScale,
+            maxScale = maxScale
+        )
     }
 
     private fun limitOffset(offset: Offset, scale: Float): Offset {
@@ -529,16 +566,19 @@ class ZoomableState(
                     updateAnimatable.animateTo(
                         targetValue = 1f,
                         animationSpec = tween(
-                            durationMillis = defaultAnimationSpec.durationMillis,
-                            easing = defaultAnimationSpec.easing
+                            durationMillis = animationSpec.durationMillis,
+                            easing = animationSpec.easing
                         ),
-                        initialVelocity = defaultAnimationSpec.initialVelocity,
+                        initialVelocity = animationSpec.initialVelocity,
                     ) {
                         val transform = com.github.panpf.zoomimage.compose.lerp(
                             start = currentTransform,
                             stop = targetTransform,
                             fraction = value
                         )
+                        log {
+                            "$caller. animated running. transform=${transform.toShortString()}"
+                        }
                         this@ZoomableState.transform = transform
                     }
                 }
@@ -559,6 +599,8 @@ class ZoomableState(
                 "containerSize=${containerSize.toShortString()}, " +
                 "contentSize=${contentSize.toShortString()}, " +
                 "contentOriginSize=${contentOriginSize.toShortString()}, " +
+                "contentScale=${contentScale.name}, " +
+                "contentAlignment=${contentAlignment.name}, " +
                 "minScale=${minScale.format(4)}, " +
                 "mediumScale=${mediumScale.format(4)}, " +
                 "maxScale=${maxScale.format(4)}, " +

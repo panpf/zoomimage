@@ -60,9 +60,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             zoomAbility.apply {
                 logger.level = if (BuildConfig.DEBUG)
                     Logger.Level.DEBUG else Logger.Level.INFO
-                prefsService.threeStepScaleEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                prefsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScaleEnabled = it
                 }
+                // todo 支持配置橡皮筋效果
                 prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     scrollBar = if (it) ScrollBar.Default else null
                 }

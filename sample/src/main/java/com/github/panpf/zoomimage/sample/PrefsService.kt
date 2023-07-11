@@ -49,8 +49,11 @@ class PrefsService(val context: Context) {
     val readModeDirectionBoth by lazy {
         BooleanMmkvData(mmkv, "readModeDirectionBoth", true)
     }
-    val threeStepScaleEnabled by lazy {
-        BooleanMmkvData(mmkv, "threeStepScaleEnabled", false)
+    val threeStepScale by lazy {
+        BooleanMmkvData(mmkv, "threeStepScale", false)
+    }
+    val rubberBandScale by lazy {
+        BooleanMmkvData(mmkv, "rubberBandScale", true)
     }
 
     val showTileBounds by lazy {

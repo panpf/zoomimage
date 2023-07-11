@@ -43,7 +43,8 @@ fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImage
         ZoomImageOptionsDialogState(initialShow).apply {
             contentScale = contentScale(prefsService.contentScale.value)
             alignment = alignment(prefsService.alignment.value)
-            threeStepScaleEnabled = prefsService.threeStepScaleEnabled.value
+            threeStepScale = prefsService.threeStepScale.value
+            rubberBandScale = prefsService.rubberBandScale.value
             readModeEnabled = prefsService.readModeEnabled.value
             readModeDirectionBoth = prefsService.readModeDirectionBoth.value
             scrollBarEnabled = prefsService.scrollBarEnabled.value
@@ -54,7 +55,8 @@ fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImage
     LaunchedEffect(
         state.contentScale,
         state.alignment,
-        state.threeStepScaleEnabled,
+        state.threeStepScale,
+        state.rubberBandScale,
         state.readModeEnabled,
         state.readModeDirectionBoth,
         state.scrollBarEnabled,
@@ -64,7 +66,8 @@ fun rememberZoomImageOptionsDialogState(initialShow: Boolean = false): ZoomImage
         val prefsService = context.prefsService
         prefsService.contentScale.value = state.contentScale.name
         prefsService.alignment.value = state.alignment.name
-        prefsService.threeStepScaleEnabled.value = state.threeStepScaleEnabled
+        prefsService.threeStepScale.value = state.threeStepScale
+        prefsService.rubberBandScale.value = state.rubberBandScale
         prefsService.readModeEnabled.value = state.readModeEnabled
         prefsService.readModeDirectionBoth.value = state.readModeDirectionBoth
         prefsService.scrollBarEnabled.value = state.scrollBarEnabled
@@ -82,7 +85,9 @@ class ZoomImageOptionsDialogState(initialShow: Boolean = false) {
         internal set
     var alignment: Alignment by mutableStateOf(Alignment.Center)
         internal set
-    var threeStepScaleEnabled: Boolean by mutableStateOf(false)
+    var threeStepScale: Boolean by mutableStateOf(false)
+        internal set
+    var rubberBandScale: Boolean by mutableStateOf(true)
         internal set
     var readModeEnabled: Boolean by mutableStateOf(true)
         internal set
@@ -301,7 +306,7 @@ fun ZoomImageOptionsDialog(
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            state.threeStepScaleEnabled = !state.threeStepScaleEnabled
+                            state.threeStepScale = !state.threeStepScale
                             state.showing = false
                         }
                         .padding(horizontal = 20.dp),
@@ -309,7 +314,25 @@ fun ZoomImageOptionsDialog(
                 ) {
                     Text(text = "Three Step Scale", modifier = Modifier.weight(1f))
                     Switch(
-                        checked = state.threeStepScaleEnabled,
+                        checked = state.threeStepScale,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            state.rubberBandScale = !state.rubberBandScale
+                            state.showing = false
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Rubber Band Scale", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = state.rubberBandScale,
                         onCheckedChange = null
                     )
                 }

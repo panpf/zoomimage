@@ -58,7 +58,8 @@ fun ZoomImageSample(sketchImageUri: String) {
     val readMode =
         if (zoomImageOptionsDialogState.readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
     val zoomableState = rememberZoomableState(
-        threeStepScaleEnabled = zoomImageOptionsDialogState.threeStepScaleEnabled,
+        threeStepScale = zoomImageOptionsDialogState.threeStepScale,
+        rubberBandScale = zoomImageOptionsDialogState.rubberBandScale,
         animationSpec = zoomAnimationSpec.value,
         readMode = readMode,
         debugMode = BuildConfig.DEBUG
