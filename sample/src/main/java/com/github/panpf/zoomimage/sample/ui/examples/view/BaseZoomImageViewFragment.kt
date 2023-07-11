@@ -23,6 +23,7 @@ import androidx.viewbinding.ViewBinding
 import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.BuildConfig
@@ -143,6 +144,11 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         }
 
         common.zoomImageViewInfo.setOnClickListener {
+            ZoomImageViewInfoDialogFragment().apply {
+                arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
+            }.show(childFragmentManager, null)
+        }
+        zoomImageView.zoomAbility.onViewLongPressListener = OnViewLongPressListener { _, _, _ ->
             ZoomImageViewInfoDialogFragment().apply {
                 arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
             }.show(childFragmentManager, null)

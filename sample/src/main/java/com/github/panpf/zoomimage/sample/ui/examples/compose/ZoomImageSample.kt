@@ -18,9 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.ScrollBar
+import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
@@ -29,7 +29,7 @@ import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable
-fun ZoomImageSample(sketchImageUri: String, onClick: () -> Unit) {
+fun ZoomImageSample(sketchImageUri: String) {
     val zoomImageOptionsDialogState = rememberZoomImageOptionsDialogState()
     val zoomAnimationSpec = remember(
         zoomImageOptionsDialogState.animateScale,
@@ -87,9 +87,6 @@ fun ZoomImageSample(sketchImageUri: String, onClick: () -> Unit) {
                 modifier = Modifier.fillMaxSize(),
                 state = zoomableState,
                 scrollBar = if(zoomImageOptionsDialogState.scrollBarEnabled) ScrollBar.Default else null,
-                onTap = {
-                    onClick()
-                },
                 onLongPress = {
                     infoDialogState.showing = true
                 }
@@ -113,7 +110,5 @@ fun ZoomImageSample(sketchImageUri: String, onClick: () -> Unit) {
 @Preview
 @Composable
 private fun ZoomImageSamplePreview() {
-    ZoomImageSample(newResourceUri(R.drawable.im_placeholder)) {
-
-    }
+    ZoomImageSample(newResourceUri(R.drawable.im_placeholder))
 }

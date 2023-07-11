@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.prefsService
@@ -73,9 +72,7 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    zoomImageType.drawContent(imageUrlList[index]) {
-                        findNavController().popBackStack()
-                    }
+                    zoomImageType.drawContent(imageUrlList[index])
                 }
             } else {
                 VerticalPager(
@@ -84,9 +81,7 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
                     beyondBoundsPageCount = 1,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    zoomImageType.drawContent(imageUrlList[index]) {
-                        findNavController().popBackStack()
-                    }
+                    zoomImageType.drawContent(imageUrlList[index])
                 }
             }
             PageNumber(
