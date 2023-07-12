@@ -64,11 +64,9 @@ fun ZoomImageMinimap(
                     .clipToBounds()
                     .drawWithContent {
                         drawContent()
-                        val drawSize = size
-                        val coreSize = state.contentSize
-                        val coreVisibleRect = state.contentVisibleRect
-                        val drawScaleWithCore = drawSize.width / coreSize.width
-                        val drawVisibleRect = coreVisibleRect.scale(drawScaleWithCore)
+                        val contentVisibleRect = state.contentVisibleRect
+                        val drawScaleWithContent = viewSize.width / contentSize.width
+                        val drawVisibleRect = contentVisibleRect.scale(drawScaleWithContent)
                         drawRect(
                             color = Color.Red,
                             topLeft = drawVisibleRect.topLeft,

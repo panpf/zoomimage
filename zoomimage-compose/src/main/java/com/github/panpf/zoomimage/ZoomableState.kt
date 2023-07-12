@@ -107,9 +107,6 @@ class ZoomableState(
     @FloatRange(from = 0.0) initialTranslateY: Float = 0f,
     @FloatRange(from = 0.0) initialRotation: Float = 0f,
 ) {
-
-    // todo support rubber band effect
-
     private var lastAnimatable: Animatable<*, *>? = null
 
     var containerSize: Size by mutableStateOf(Size.Zero)
@@ -166,7 +163,6 @@ class ZoomableState(
         computeContainerVisibleRect(containerSize, transform.scaleX, transform.offset)
     }
     val contentVisibleRect: Rect by derivedStateOf {
-        // todo 长微博图片示例，显示区域框框底部没有到底，但是图片已经到底了
         computeContentVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -269,7 +265,6 @@ class ZoomableState(
         animated: Boolean = false,
         rubberBandScale: Boolean = false,
     ) {
-        // todo scale 小于 1.0 时，图片会跑到左上角，而不是居中
         stopAnimation("scale")
 
         val limitedTargetScale = if (rubberBandScale && this@ZoomableState.rubberBandScale) {
