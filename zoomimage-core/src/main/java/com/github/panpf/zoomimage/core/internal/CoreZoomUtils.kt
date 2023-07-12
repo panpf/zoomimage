@@ -161,11 +161,12 @@ fun limitScaleWithRubberBand(
     targetScale: Float,
     minScale: Float,
     maxScale: Float,
+    rubberBandRatio: Float = 2f
 ): Float {
     return when {
         targetScale > maxScale -> {
             val addScale = targetScale - currentScale
-            val rubberBandMaxScale = maxScale * 2f
+            val rubberBandMaxScale = maxScale * rubberBandRatio
             val overScale = targetScale - maxScale
             val overMaxScale = rubberBandMaxScale - maxScale
             val progress = overScale / overMaxScale
@@ -176,7 +177,7 @@ fun limitScaleWithRubberBand(
 
         targetScale < minScale -> {
             val addScale = targetScale - currentScale
-            val rubberBandMinScale = minScale * 0.75f
+            val rubberBandMinScale = minScale / rubberBandRatio
             val overScale = targetScale - minScale
             val overMinScale = rubberBandMinScale - minScale
             val progress = overScale / overMinScale

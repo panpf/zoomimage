@@ -182,7 +182,7 @@ internal fun computeOffsetBounds(
     scale: Float
 ): Rect {
     // based on the top left zoom
-    if (scale <= 1.0f || containerSize.isNotAvailable() || contentSize.isNotAvailable()) {
+    if (containerSize.isNotAvailable() || contentSize.isNotAvailable()) {
         return Rect.Zero
     }
     val scaledContainerSize = containerSize.times(scale)
