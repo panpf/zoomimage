@@ -302,6 +302,7 @@ internal class ScaleDragHelper constructor(
     }
 
     fun scale(newScale: Float, focalX: Float, focalY: Float, animate: Boolean) {
+        cancelFling()
         animatedScaleRunnable?.cancel()
         val currentScale = scale
         if (animate) {
@@ -477,34 +478,6 @@ internal class ScaleDragHelper constructor(
             "onScale. scaleFactor: $scaleFactor, focusX: $focusX, focusY: $focusY, dx: $dx, dy: $dy"
         }
 
-//        /* Simulate a rubber band effect when zoomed to max or min */
-//        var newScaleFactor = scaleFactor
-//        lastScaleFocusX = focusX
-//        lastScaleFocusY = focusY
-//        val currentSupportScale = scale
-//        var newSupportScale = currentSupportScale * newScaleFactor
-//        if (newScaleFactor > 1.0f) {
-//            // The maximum zoom has been reached. Simulate the effect of pulling a rubber band
-//            val maxSupportScale = engine.maxScale
-//            if (currentSupportScale >= maxSupportScale) {
-//                var addScale = newSupportScale - currentSupportScale
-//                addScale *= 0.4f
-//                newSupportScale = currentSupportScale + addScale
-//                newScaleFactor = newSupportScale / currentSupportScale
-//            }
-//        } else if (newScaleFactor < 1.0f) {
-//            // The minimum zoom has been reached. Simulate the effect of pulling a rubber band
-//            val minSupportScale = engine.minScale
-//            if (currentSupportScale <= minSupportScale) {
-//                var addScale = newSupportScale - currentSupportScale
-//                addScale *= 0.4f
-//                newSupportScale = currentSupportScale + addScale
-//                newScaleFactor = newSupportScale / currentSupportScale
-//            }
-//        }
-
-        // todo 使用 CoreZoomUtils 中的橡皮筋算法
-        // todo 现在缩放后橡皮筋恢复后会有一段诡异的移动，需要修复
         /* Simulate a rubber band effect when zoomed to max or min */
         var newScaleFactor = scaleFactor
         lastScaleFocusX = focusX

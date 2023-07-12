@@ -38,7 +38,7 @@ class ZoomAbility(
     private val view: View,
     private val imageViewBridge: ImageViewBridge,
 ) {
-
+    // todo 参考 ZoomImage 将 ZoomEngine 拆分成 State 和 手势处理两部分
     internal val engine: ZoomEngine
     private val imageMatrix = Matrix()
     val logger: Logger = Logger()
