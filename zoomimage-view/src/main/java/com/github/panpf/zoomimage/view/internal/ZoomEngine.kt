@@ -154,7 +154,7 @@ internal class ZoomEngine constructor(
             }
         }
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
-    var threeStepScaleEnabled: Boolean = false
+    var threeStepScale: Boolean = false
         internal set
 
     var minScale: Float = 1.0f
@@ -343,7 +343,7 @@ internal class ZoomEngine constructor(
     }
 
     fun getNextStepScale(): Float {
-        val stepScales = if (threeStepScaleEnabled) {
+        val stepScales = if (threeStepScale) {
             floatArrayOf(minScale, mediumScale, maxScale)
         } else {
             floatArrayOf(minScale, mediumScale)

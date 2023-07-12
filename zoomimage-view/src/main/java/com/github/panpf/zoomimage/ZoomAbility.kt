@@ -118,10 +118,10 @@ class ZoomAbility(
     fun canScroll(horizontal: Boolean, direction: Int): Boolean =
         engine.canScroll(horizontal, direction)
 
-    var threeStepScaleEnabled: Boolean
-        get() = engine.threeStepScaleEnabled
+    var threeStepScale: Boolean
+        get() = engine.threeStepScale
         set(value) {
-            engine.threeStepScaleEnabled = value
+            engine.threeStepScale = value
         }
 
     var scrollBar: ScrollBar?
