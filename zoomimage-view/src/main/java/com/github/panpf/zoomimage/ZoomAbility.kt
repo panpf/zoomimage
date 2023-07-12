@@ -124,6 +124,12 @@ class ZoomAbility(
             engine.threeStepScale = value
         }
 
+    var rubberBandScale: Boolean
+        get() = engine.rubberBandScale
+        set(value) {
+            engine.rubberBandScale = value
+        }
+
     var scrollBar: ScrollBar?
         get() = engine.scrollBar
         set(value) {

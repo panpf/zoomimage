@@ -63,7 +63,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 prefsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScale = it
                 }
-                // todo 支持配置橡皮筋效果
+                prefsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    rubberBandScale = it
+                }
                 prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     scrollBar = if (it) ScrollBar.Default else null
                 }

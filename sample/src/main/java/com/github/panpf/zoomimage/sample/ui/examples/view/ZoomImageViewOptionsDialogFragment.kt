@@ -86,7 +86,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                             data = prefsService.threeStepScale,
                         )
                     )
-                    // todo 支持配置橡皮筋效果
+                    add(
+                        SwitchMenuFlow(
+                            title = "Rubber Band Scale",
+                            data = prefsService.rubberBandScale,
+                        )
+                    )
                     add(
                         SwitchMenuFlow(
                             title = "Slower Scale Animation",

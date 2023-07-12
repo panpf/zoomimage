@@ -156,6 +156,8 @@ internal class ZoomEngine constructor(
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
     var threeStepScale: Boolean = false
         internal set
+    var rubberBandScale: Boolean = true
+        internal set
 
     var minScale: Float = 1.0f
         private set

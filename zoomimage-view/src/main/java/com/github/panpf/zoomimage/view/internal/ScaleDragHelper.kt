@@ -484,12 +484,16 @@ internal class ScaleDragHelper constructor(
         lastScaleFocusY = focusY
         val currentSupportScale = scale
         val newSupportScale = currentSupportScale * newScaleFactor
-        val limitedNewSupportScale = limitScaleWithRubberBand(
-            currentScale = currentSupportScale,
-            targetScale = newSupportScale,
-            minScale = engine.minScale,
-            maxScale = engine.maxScale
-        )
+        val limitedNewSupportScale = if (engine.rubberBandScale) {
+            limitScaleWithRubberBand(
+                currentScale = currentSupportScale,
+                targetScale = newSupportScale,
+                minScale = engine.minScale,
+                maxScale = engine.maxScale
+            )
+        } else {
+            newSupportScale.coerceIn(minimumValue = engine.minScale, maximumValue = engine.maxScale)
+        }
         newScaleFactor = limitedNewSupportScale / currentSupportScale
 
         supportMatrix.postScale(newScaleFactor, newScaleFactor, focusX, focusY)
