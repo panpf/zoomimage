@@ -22,7 +22,7 @@ import com.github.panpf.sketch.cache.MemoryCache.Value
 import com.github.panpf.sketch.decode.ImageInfo
 import com.github.panpf.zoomimage.TileBitmap
 import com.github.panpf.zoomimage.TileMemoryCache
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
 
 class SketchTileMemoryCache(private val sketch: Sketch) : TileMemoryCache {
 
@@ -36,7 +36,7 @@ class SketchTileMemoryCache(private val sketch: Sketch) : TileMemoryCache {
         key: String,
         bitmap: Bitmap,
         imageKey: String,
-        imageSize: SizeCompat,
+        imageSize: IntSizeCompat,
         imageMimeType: String,
         imageExifOrientation: Int,
         disallowReuseBitmap: Boolean

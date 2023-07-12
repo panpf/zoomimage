@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
@@ -226,7 +227,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             """
                 ${scale.format(2)}(${displayScale.scaleX.format(2)}/${baseScale.scaleX.format(2)}) in $scales
-                ${offset.run { "(${x.format(1)}, ${y.format(1)})" }}, edge=${scrollEdge.toShortString()}
+                ${offset.toShortString()}; edge=${scrollEdge.toShortString()}
                 ${getVisibleRect().toVeryShortString()}
             """.trimIndent()
         }
@@ -240,22 +241,18 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val subsamplingAbility = zoomImageView.subsamplingAbility
         val tileList = subsamplingAbility.tileList ?: emptyList()
         val tilesByteCount = tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()
+        val exifOrientationName =
+            subsamplingAbility.imageExifOrientation?.let { exifOrientationName(it) }
         return ZoomImageViewInfoDialogFragmentArgs(
             imageUri = sketchImageUri,
             imageInfo = """
-                size=${subsamplingAbility.imageSize?.toVeryShortString()}
+                size=${subsamplingAbility.imageSize?.toShortString()}
                 mimeType=${subsamplingAbility.imageMimeType}
-                exifOrientation=${
-                subsamplingAbility.imageExifOrientation?.let {
-                    exifOrientationName(
-                        it
-                    )
-                }
-            }
+                exifOrientation=$exifOrientationName
             """.trimIndent(),
             sizeInfo = """
-                view=${zoomAbility.viewSize.toVeryShortString()}
-                drawable=${zoomAbility.drawableSize.toVeryShortString()}
+                view=${zoomAbility.viewSize.toShortString()}
+                drawable=${zoomAbility.drawableSize.toShortString()}
             """.trimIndent(),
             tilesInfo = """
                 tileCount=${tileList.size}

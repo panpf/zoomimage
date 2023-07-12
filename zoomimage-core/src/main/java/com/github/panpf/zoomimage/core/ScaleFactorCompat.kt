@@ -73,34 +73,37 @@ operator fun ScaleFactorCompat.div(scaleFactor: ScaleFactorCompat) =
     ScaleFactorCompat(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
 
 /**
- * Multiplication operator with [SizeCompat].
+ * Multiplication operator with [IntSizeCompat].
  *
- * Return a new [SizeCompat] with the width and height multiplied by the [ScaleFactorCompat.scaleX] and
+ * Return a new [IntSizeCompat] with the width and height multiplied by the [ScaleFactorCompat.scaleX] and
  * [ScaleFactorCompat.scaleY] respectively
  */
-operator fun SizeCompat.times(scaleFactor: ScaleFactorCompat): SizeCompat =
-    SizeCompat(
+operator fun IntSizeCompat.times(scaleFactor: ScaleFactorCompat): IntSizeCompat =
+    IntSizeCompat(
         (this.width * scaleFactor.scaleX).roundToInt(),
         (this.height * scaleFactor.scaleY).roundToInt()
     )
 
 /**
- * Multiplication operator with [SizeCompat] with reverse parameter types to maintain
+ * Multiplication operator with [IntSizeCompat] with reverse parameter types to maintain
  * commutative properties of multiplication
  *
- * Return a new [SizeCompat] with the width and height multiplied by the [ScaleFactorCompat.scaleX] and
+ * Return a new [IntSizeCompat] with the width and height multiplied by the [ScaleFactorCompat.scaleX] and
  * [ScaleFactorCompat.scaleY] respectively
  */
-operator fun ScaleFactorCompat.times(size: SizeCompat): SizeCompat = size * this
+operator fun ScaleFactorCompat.times(size: IntSizeCompat): IntSizeCompat = size * this
 
 /**
- * Division operator with [SizeCompat]
+ * Division operator with [IntSizeCompat]
  *
- * Return a new [SizeCompat] with the width and height divided by [ScaleFactorCompat.scaleX] and
+ * Return a new [IntSizeCompat] with the width and height divided by [ScaleFactorCompat.scaleX] and
  * [ScaleFactorCompat.scaleY] respectively
  */
-operator fun SizeCompat.div(scaleFactor: ScaleFactorCompat): SizeCompat =
-    SizeCompat((width / scaleFactor.scaleX).roundToInt(), (height / scaleFactor.scaleY).roundToInt())
+operator fun IntSizeCompat.div(scaleFactor: ScaleFactorCompat): IntSizeCompat =
+    IntSizeCompat(
+        (width / scaleFactor.scaleX).roundToInt(),
+        (height / scaleFactor.scaleY).roundToInt()
+    )
 
 /**
  * Linearly interpolate between two [ScaleFactorCompat] parameters
@@ -124,6 +127,7 @@ fun lerp(start: ScaleFactorCompat, stop: ScaleFactorCompat, fraction: Float): Sc
     )
 }
 
-fun ScaleFactorCompat.toShortString(): String = "(${scaleX.format(2)},${scaleY.format(2)})"
+
+fun ScaleFactorCompat.toShortString(): String = "${scaleX.format(2)}x${scaleY.format(2)}"
 
 fun ScaleFactorCompat(scale: Float): ScaleFactorCompat = ScaleFactorCompat(scale, scale)

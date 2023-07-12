@@ -25,9 +25,9 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.view.ScrollBar
 import com.github.panpf.zoomimage.view.ZoomAnimationSpec
 import com.github.panpf.zoomimage.view.internal.ImageViewBridge
@@ -64,8 +64,8 @@ class ZoomAbility(
     /**
      * Sets the dimensions of the original image, which is used to calculate the scale of double-click scaling
      */
-    fun setImageSize(size: SizeCompat?) {
-        engine.imageSize = size ?: SizeCompat.Empty
+    fun setImageSize(size: IntSizeCompat?) {
+        engine.imageSize = size ?: IntSizeCompat.Zero
     }
 
     /**
@@ -203,11 +203,11 @@ class ZoomAbility(
     val maxScale: Float
         get() = engine.maxScale
 
-    val viewSize: SizeCompat
+    val viewSize: IntSizeCompat
         get() = engine.viewSize
-    val imageSize: SizeCompat
+    val imageSize: IntSizeCompat
         get() = engine.imageSize
-    val drawableSize: SizeCompat
+    val drawableSize: IntSizeCompat
         get() = engine.drawableSize
 
     fun getDisplayMatrix(matrix: Matrix) = engine.getDisplayMatrix(matrix)
@@ -289,7 +289,7 @@ class ZoomAbility(
     fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
         val viewWidth = view.width - view.paddingLeft - view.paddingRight
         val viewHeight = view.height - view.paddingTop - view.paddingBottom
-        engine.viewSize = SizeCompat(viewWidth, viewHeight)
+        engine.viewSize = IntSizeCompat(viewWidth, viewHeight)
     }
 
     fun onDraw(canvas: Canvas) {
@@ -312,7 +312,7 @@ class ZoomAbility(
     private fun resetDrawableSize() {
         val drawable = imageViewBridge.getDrawable()
         engine.drawableSize =
-            drawable?.let { SizeCompat(it.intrinsicWidth, it.intrinsicHeight) } ?: SizeCompat.Empty
+            drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) } ?: IntSizeCompat.Zero
     }
 
     private fun destroy() {

@@ -16,11 +16,11 @@
 package com.github.panpf.zoomimage.view.internal
 
 import android.graphics.Rect
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import kotlin.math.abs
 import kotlin.math.ceil
 
-internal fun initializeTileMap(imageSize: SizeCompat, tileMaxSize: SizeCompat): Map<Int, List<Tile>> {
+internal fun initializeTileMap(imageSize: IntSizeCompat, tileMaxSize: IntSizeCompat): Map<Int, List<Tile>> {
     /* The core rules are: The size of each tile does not exceed tileMaxSize */
     val tileMaxWith = tileMaxSize.width
     val tileMaxHeight = tileMaxSize.height

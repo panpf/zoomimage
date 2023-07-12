@@ -22,6 +22,7 @@ import android.graphics.RectF
 import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.core.view.ViewCompat
+import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.view.ScrollBar
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -48,7 +49,7 @@ internal class ScrollBarHelper(
             .apply { engine.getDisplayRect(this) }
             .takeIf { !it.isEmpty }
             ?: return
-        val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty } ?: return
+        val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty() } ?: return
         val drawWidth = displayRectF.width()
         val drawHeight = displayRectF.height()
         val margin = scrollBar.margin + scrollBar.size + scrollBar.margin

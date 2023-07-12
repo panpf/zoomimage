@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -60,8 +60,8 @@ internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
  * Calculate the size of the sampled Bitmap, support for BitmapFactory or ImageDecoder
  */
 internal fun calculateSampledBitmapSize(
-    imageSize: SizeCompat, sampleSize: Int, mimeType: String? = null
-): SizeCompat {
+    imageSize: IntSizeCompat, sampleSize: Int, mimeType: String? = null
+): IntSizeCompat {
     val widthValue = imageSize.width / sampleSize.toDouble()
     val heightValue = imageSize.height / sampleSize.toDouble()
     val isPNGFormat = "image/png".equals(mimeType, true)
@@ -74,7 +74,7 @@ internal fun calculateSampledBitmapSize(
         width = ceil(widthValue).toInt()
         height = ceil(heightValue).toInt()
     }
-    return SizeCompat(width, height)
+    return IntSizeCompat(width, height)
 }
 
 
@@ -82,8 +82,8 @@ internal fun calculateSampledBitmapSize(
  * Calculate the size of the sampled Bitmap, support for BitmapRegionDecoder
  */
 internal fun calculateSampledBitmapSizeForRegion(
-    regionSize: SizeCompat, sampleSize: Int, mimeType: String? = null, imageSize: SizeCompat? = null
-): SizeCompat {
+    regionSize: IntSizeCompat, sampleSize: Int, mimeType: String? = null, imageSize: IntSizeCompat? = null
+): IntSizeCompat {
     val widthValue = regionSize.width / sampleSize.toDouble()
     val heightValue = regionSize.height / sampleSize.toDouble()
     val width: Int
@@ -96,7 +96,7 @@ internal fun calculateSampledBitmapSizeForRegion(
         width = floor(widthValue).toInt()
         height = floor(heightValue).toInt()
     }
-    return SizeCompat(width, height)
+    return IntSizeCompat(width, height)
 }
 
 internal val Bitmap.logString: String

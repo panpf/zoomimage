@@ -10,15 +10,27 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.sample.util.format
 
-internal fun Size.toShortString(): String = if (isSpecified) "(${width}x$height)" else "Unspecified"
+internal fun Size.toShortString(): String =
+    if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
 
 internal fun Offset.toShortString(): String =
-    if (isSpecified) "(${x.format(1)}x${y.format(1)})" else "Unspecified"
+    if (isSpecified) "${x.format(2)}x${y.format(2)}" else "Unspecified"
 
-internal fun Rect.toShortString(): String =
-    "(${left.format(1)},${top.format(1)} - ${right.format(1)},${bottom.format(1)})"
+internal fun androidx.compose.ui.geometry.Rect.toShortString(): String =
+    "${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}"
+
+internal fun ScaleFactor.toShortString(): String = "${scaleX.format(2)}x${scaleY.format(2)}"
+
+internal fun IntSize.toShortString(): String = "${width}x${height}"
+
+internal fun IntOffset.toShortString(): String = "${x}x${y}"
+
+internal fun IntRect.toShortString(): String = "${left}x${top},${right}x${bottom}"
 
 
 internal fun Rect.scale(scale: Float): Rect {

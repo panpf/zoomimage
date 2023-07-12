@@ -1,63 +1,91 @@
 package com.github.panpf.zoomimage.core
 
+import com.github.panpf.zoomimage.core.internal.format
 import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
 
-open class SizeCompat(val width: Int, val height: Int) {
-
-    constructor() : this(0, 0)
-
-    val isEmpty: Boolean
-        get() = width == 0 || height == 0
-
-    operator fun component1(): Int = width
-
-    operator fun component2(): Int = height
-
-    override fun toString(): String = "Size(${width}, $height)"
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as SizeCompat
-        if (width != other.width) return false
-        if (height != other.height) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = width
-        result = 31 * result + height
-        return result
-    }
+data class SizeCompat(val width: Float, val height: Float) {
 
     companion object {
-
-        val Empty = SizeCompat()
-
-        @Throws(NumberFormatException::class)
-        fun parseSize(string: String): SizeCompat {
-            var sepIx = string.indexOf('*')
-            if (sepIx < 0) {
-                sepIx = string.indexOf('x')
-            }
-            if (sepIx < 0) {
-                throw NumberFormatException("Invalid Size: \"$string\"")
-            }
-            return try {
-                SizeCompat(string.substring(0, sepIx).toInt(), string.substring(sepIx + 1).toInt())
-            } catch (e: NumberFormatException) {
-                throw NumberFormatException("Invalid Size: \"$string\"")
-            }
-        }
+        val Zero = SizeCompat(width = 0f, height = 0f)
     }
+
+    fun isEmpty(): Boolean = width == 0f || height == 0f
+
+    /**
+     * Multiplication operator.
+     *
+     * Returns a [SizeCompat] whose dimensions are the dimensions of the left-hand-side
+     * operand (a [SizeCompat]) multiplied by the scalar right-hand-side operand (a
+     * [Float]).
+     */
+    operator fun times(operand: Float) = SizeCompat(width * operand, height * operand)
+
+    /**
+     * Division operator.
+     *
+     * Returns a [SizeCompat] whose dimensions are the dimensions of the left-hand-side
+     * operand (a [SizeCompat]) divided by the scalar right-hand-side operand (a
+     * [Float]).
+     */
+    operator fun div(operand: Float) = SizeCompat(width / operand, height / operand)
+
+    /**
+     * The lesser of the magnitudes of the [width] and the [height].
+     */
+    val minDimension: Float
+        get() = min(width.absoluteValue, height.absoluteValue)
+
+    /**
+     * The greater of the magnitudes of the [width] and the [height].
+     */
+    val maxDimension: Float
+        get() = max(width.absoluteValue, height.absoluteValue)
+
+    override fun toString(): String =
+        "Size(${width.format(2)}x${height.format(2)})"
 }
 
+/**
+ * Returns a [SizeCompat] with [size]'s [SizeCompat.width] and [SizeCompat.height] multiplied by [this]
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun Int.times(size: SizeCompat) = size * this.toFloat()
+
+/**
+ * Returns a [SizeCompat] with [size]'s [SizeCompat.width] and [SizeCompat.height] multiplied by [this]
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun Double.times(size: SizeCompat) = size * this.toFloat()
+
+/**
+ * Convert a [SizeCompat] to a [RectCompat].
+ */
+fun SizeCompat.toCompatRect(): RectCompat {
+    return RectCompat(OffsetCompat.Zero, this)
+}
+
+/**
+ * Returns a [SizeCompat] with [size]'s [SizeCompat.width] and [SizeCompat.height] multiplied by [this]
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun Float.times(size: SizeCompat) = size * this
+
+/**
+ * Returns the [OffsetCompat] of the center of the rect from the point of [0, 0]
+ * with this [SizeCompat].
+ */
+val SizeCompat.center: OffsetCompat get() = OffsetCompat(x = width / 2f, y = height / 2f)
+
+
 val SizeCompat.isNotEmpty: Boolean
-    get() = !isEmpty
+    get() = !isEmpty()
 
 fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean {
-    val selfScale = this.width / this.height.toFloat()
-    val otherScale = other.width / other.height.toFloat()
+    val selfScale = this.width / this.height
+    val otherScale = other.width / other.height
     if (selfScale.compareTo(otherScale) == 0) {
         return true
     }
@@ -68,8 +96,7 @@ fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean 
 }
 
 fun SizeCompat.rotate(rotateDegrees: Int): SizeCompat {
-    return if (rotateDegrees % 180 == 0) this else SizeCompat(height, width)
+    return if (rotateDegrees % 180 == 0) this else SizeCompat(width = height, height = width)
 }
 
-
-fun SizeCompat.toShortString(): String = "(${width},$height)"
+fun SizeCompat.toShortString(): String = "${width.format(2)}x${height.format(2)}"

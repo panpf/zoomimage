@@ -35,14 +35,15 @@ import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.OnViewTapListener
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.div
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeSupportScales
+import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.rotate
 import com.github.panpf.zoomimage.view.ScrollBar
 import com.github.panpf.zoomimage.view.ZoomAnimationSpec
@@ -100,7 +101,7 @@ internal class ZoomEngine constructor(
     var allowParentInterceptOnEdge: Boolean = true
     var onViewLongPressListener: OnViewLongPressListener? = null
     var onViewTapListener: OnViewTapListener? = null
-    var viewSize = SizeCompat.Empty
+    var viewSize = IntSizeCompat.Zero
         internal set(value) {
             if (field != value) {
                 field = value
@@ -111,14 +112,14 @@ internal class ZoomEngine constructor(
     /**
      * Dimensions of the original image, which is used to calculate the scale of double-click scaling
      */
-    var imageSize = SizeCompat.Empty
+    var imageSize = IntSizeCompat.Zero
         internal set(value) {
             if (field != value) {
                 field = value
                 reset()
             }
         }
-    var drawableSize = SizeCompat.Empty
+    var drawableSize = IntSizeCompat.Zero
         internal set(value) {
             if (field != value) {
                 field = value
@@ -192,7 +193,7 @@ internal class ZoomEngine constructor(
         val drawableSize = drawableSize
         val imageSize = imageSize
         val viewSize = viewSize
-        if (drawableSize.isEmpty || viewSize.isEmpty) {
+        if (drawableSize.isEmpty() || viewSize.isEmpty()) {
             minScale = 1.0f
             mediumScale = 1.0f
             maxScale = 1.0f
@@ -264,7 +265,7 @@ internal class ZoomEngine constructor(
     }
 
     internal fun onTouchEvent(event: MotionEvent): Boolean {
-        if (drawableSize.isEmpty) return false
+        if (drawableSize.isEmpty()) return false
         val scaleAndDragConsumed = scaleDragHelper.onTouchEvent(event)
         val tapConsumed = tapHelper.onTouchEvent(event)
         return scaleAndDragConsumed || tapConsumed

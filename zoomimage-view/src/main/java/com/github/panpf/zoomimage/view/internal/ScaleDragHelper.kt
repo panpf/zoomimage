@@ -26,11 +26,12 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.internal.canScroll
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
+import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.view.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoomimage.view.internal.ScaleDragGestureDetector.OnGestureListener
@@ -251,7 +252,7 @@ internal class ScaleDragHelper constructor(
         locationRunnable?.cancel()
         cancelFling()
 
-        val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty } ?: return
+        val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty() } ?: return
         val pointF = PointF(xInDrawable, yInDrawable).apply {
             rotatePoint(this, engine.rotateDegrees, engine.drawableSize)
         }
@@ -343,10 +344,10 @@ internal class ScaleDragHelper constructor(
         rect.setEmpty()
         val displayRectF =
             displayRectF.apply { getDisplayRect(this) }.takeIf { !it.isEmpty } ?: return
-        val viewSize = engine.viewSize.takeIf { !it.isEmpty } ?: return
-        val drawableSize = engine.drawableSize.takeIf { !it.isEmpty } ?: return
+        val viewSize = engine.viewSize.takeIf { !it.isEmpty() } ?: return
+        val drawableSize = engine.drawableSize.takeIf { !it.isEmpty() } ?: return
         val (drawableWidth, drawableHeight) = drawableSize.let {
-            if (engine.rotateDegrees % 180 == 0) it else SizeCompat(it.height, it.width)
+            if (engine.rotateDegrees % 180 == 0) it else IntSizeCompat(it.height, it.width)
         }
         val displayWidth = displayRectF.width()
         val displayHeight = displayRectF.height()
@@ -376,7 +377,7 @@ internal class ScaleDragHelper constructor(
     }
 
     fun touchPointToDrawablePoint(touchPoint: PointF): Point? {
-        val drawableSize = engine.drawableSize.takeIf { !it.isEmpty } ?: return null
+        val drawableSize = engine.drawableSize.takeIf { !it.isEmpty() } ?: return null
         val displayRect = getDisplayRect()
         if (!displayRect.contains(touchPoint.x, touchPoint.y)) {
             return null

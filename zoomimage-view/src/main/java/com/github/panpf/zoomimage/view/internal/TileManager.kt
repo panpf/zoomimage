@@ -27,7 +27,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
 import com.github.panpf.zoomimage.DefaultTileBitmap
 import com.github.panpf.zoomimage.imagesource.ImageSource
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.freeBitmap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +44,7 @@ internal class TileManager constructor(
     private val engine: SubsamplingEngine,
     private val decoder: TileDecoder,
     private val imageSource: ImageSource,
-    viewSize: SizeCompat,
+    viewSize: IntSizeCompat,
 ) {
 
     private val tileBoundsPaint: Paint by lazy {
@@ -56,7 +56,7 @@ internal class TileManager constructor(
     private val strokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
 
     private val tileMaxSize = viewSize.let {
-        SizeCompat(it.width / 2, it.height / 2)
+        IntSizeCompat(it.width / 2, it.height / 2)
     }
     private val tileMap: Map<Int, List<Tile>> = initializeTileMap(decoder.imageSize, tileMaxSize)
     private val scope: CoroutineScope = CoroutineScope(
@@ -88,7 +88,7 @@ internal class TileManager constructor(
     }
 
     @MainThread
-    fun refreshTiles(drawableSize: SizeCompat, drawableVisibleRect: Rect, displayMatrix: Matrix) {
+    fun refreshTiles(drawableSize: IntSizeCompat, drawableVisibleRect: Rect, displayMatrix: Matrix) {
         requiredMainThread()
 
         val zoomScale = displayMatrix.getScale().scaleX.format(2)
@@ -146,7 +146,7 @@ internal class TileManager constructor(
     }
 
     @MainThread
-    fun onDraw(canvas: Canvas, drawableSize: SizeCompat, drawableVisibleRect: Rect, displayMatrix: Matrix) {
+    fun onDraw(canvas: Canvas, drawableSize: IntSizeCompat, drawableVisibleRect: Rect, displayMatrix: Matrix) {
         requiredMainThread()
 
         val tileList = lastTileList
@@ -316,7 +316,7 @@ internal class TileManager constructor(
         }
     }
 
-    private fun resetVisibleAndLoadRect(drawableSize: SizeCompat, drawableVisibleRect: Rect) {
+    private fun resetVisibleAndLoadRect(drawableSize: IntSizeCompat, drawableVisibleRect: Rect) {
         val drawableScaled = decoder.imageSize.width / drawableSize.width.toFloat()
         _imageVisibleRect.apply {
             set(

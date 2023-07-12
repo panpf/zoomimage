@@ -16,7 +16,7 @@
 package com.github.panpf.zoomimage
 
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.format
 import com.github.panpf.zoomimage.core.internal.isSameDirection
 import com.github.panpf.zoomimage.core.times
@@ -27,7 +27,7 @@ data class ReadMode(
     val decider: Decider = Decider.Default
 ) {
 
-    fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
+    fun should(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
         val directionMatched = when (direction) {
             Direction.OnlyHorizontal -> srcSize.width > srcSize.height
             Direction.OnlyVertical -> srcSize.width < srcSize.height
@@ -46,7 +46,7 @@ data class ReadMode(
 
     interface Decider {
 
-        fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean
+        fun should(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean
 
         companion object {
             val Default = LongImageDecider()
@@ -58,7 +58,7 @@ data class ReadMode(
         val notSameDirectionMultiple: Float = 5.0f,
     ) : Decider {
 
-        override fun should(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
+        override fun should(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
             val fillScale = max(
                 dstSize.width / srcSize.width.toFloat(), dstSize.height / srcSize.height.toFloat()
             )

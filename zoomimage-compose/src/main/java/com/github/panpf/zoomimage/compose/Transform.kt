@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.compose
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ScaleFactor
-import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
 
@@ -68,7 +67,7 @@ fun lerp(start: Transform, stop: Transform, fraction: Float): Transform {
 }
 
 fun Transform.toShortString(): String =
-    "(${scaleX.format(2)}x${scaleY.format(2)},${offsetX.format(2)}x${offsetY.format(2)},$rotation)"
+    "${scale.toShortString()},${offset.toShortString()},$rotation"
 
 fun Transform.times(scaleFactor: ScaleFactor): Transform {
     return this.copy(

@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.core
 
 import com.github.panpf.zoomimage.core.internal.format
+import com.github.panpf.zoomimage.core.internal.lerp
 import kotlin.math.roundToInt
 
 data class Origin(
@@ -42,34 +43,34 @@ data class Origin(
 }
 
 /**
- * Multiplication operator with [SizeCompat].
+ * Multiplication operator with [IntSizeCompat].
  *
- * Return a new [SizeCompat] with the width and height multiplied by the [Origin.x] and
+ * Return a new [IntSizeCompat] with the width and height multiplied by the [Origin.x] and
  * [Origin.y] respectively
  */
-operator fun SizeCompat.times(scaleFactor: Origin): SizeCompat =
-    SizeCompat(
+operator fun IntSizeCompat.times(scaleFactor: Origin): IntSizeCompat =
+    IntSizeCompat(
         (this.width * scaleFactor.x).roundToInt(),
         (this.height * scaleFactor.y).roundToInt()
     )
 
 /**
- * Multiplication operator with [SizeCompat] with reverse parameter types to maintain
+ * Multiplication operator with [IntSizeCompat] with reverse parameter types to maintain
  * commutative properties of multiplication
  *
- * Return a new [SizeCompat] with the width and height multiplied by the [Origin.x] and
+ * Return a new [IntSizeCompat] with the width and height multiplied by the [Origin.x] and
  * [Origin.y] respectively
  */
-operator fun Origin.times(size: SizeCompat): SizeCompat = size * this
+operator fun Origin.times(size: IntSizeCompat): IntSizeCompat = size * this
 
 /**
- * Division operator with [SizeCompat]
+ * Division operator with [IntSizeCompat]
  *
- * Return a new [SizeCompat] with the width and height divided by [Origin.x] and
+ * Return a new [IntSizeCompat] with the width and height divided by [Origin.x] and
  * [Origin.y] respectively
  */
-operator fun SizeCompat.div(scaleFactor: Origin): SizeCompat =
-    SizeCompat((width / scaleFactor.x).roundToInt(), (height / scaleFactor.y).roundToInt())
+operator fun IntSizeCompat.div(scaleFactor: Origin): IntSizeCompat =
+    IntSizeCompat((width / scaleFactor.x).roundToInt(), (height / scaleFactor.y).roundToInt())
 
 /**
  * Linearly interpolate between two [Origin] parameters
@@ -93,11 +94,5 @@ fun lerp(start: Origin, stop: Origin, fraction: Float): Origin {
     )
 }
 
-/**
- * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
- */
-private fun lerp(start: Float, stop: Float, fraction: Float): Float {
-    return (1 - fraction) * start + fraction * stop
-}
 
-fun Origin.toShortString(): String = "(${x.format(2)},${y.format(2)})"
+fun Origin.toShortString(): String = "${x.format(2)}x${y.format(2)}"

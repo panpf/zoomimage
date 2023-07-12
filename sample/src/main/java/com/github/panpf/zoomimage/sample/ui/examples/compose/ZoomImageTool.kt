@@ -67,7 +67,7 @@ fun ZoomImageTool(
         val baseScaleFormatted = baseTransform.scaleX.format(2)
         """
             scale: $scaleFormatted($displayScaleFormatted/${baseScaleFormatted}) in $scales
-            offset: ${transform.offset.toShortString()}, edge=${zoomableState.scrollEdge.toShortString()}
+            offset: ${transform.offset.toShortString()}; edge=${zoomableState.scrollEdge.toShortString()}
             visible: ${zoomableState.contentVisibleRect.toShortString()}
         """.trimIndent()
     }

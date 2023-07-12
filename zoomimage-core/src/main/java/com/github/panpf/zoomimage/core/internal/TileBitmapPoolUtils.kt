@@ -5,7 +5,8 @@ import android.graphics.BitmapFactory.Options
 import androidx.annotation.WorkerThread
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.TileBitmapPool
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.core.isEmpty
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -111,9 +112,9 @@ private val bitmapPoolLock = Mutex()
 private fun TileBitmapPool.realSetInBitmapForRegion(
     logger: Logger?,
     options: Options,
-    regionSize: SizeCompat,
+    regionSize: IntSizeCompat,
     imageMimeType: String?,
-    imageSize: SizeCompat,
+    imageSize: IntSizeCompat,
     disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ): Boolean {
@@ -124,7 +125,7 @@ private fun TileBitmapPool.realSetInBitmapForRegion(
         }
         return false
     }
-    if (regionSize.isEmpty) {
+    if (regionSize.isEmpty()) {
         logger?.e(MODULE, "setInBitmapForRegion. error. regionSize is empty: $regionSize. $caller")
         return false
     }
@@ -176,9 +177,9 @@ private fun TileBitmapPool.realSetInBitmapForRegion(
 fun TileBitmapPool.setInBitmapForRegion(
     logger: Logger?,
     options: Options,
-    regionSize: SizeCompat,
+    regionSize: IntSizeCompat,
     imageMimeType: String?,
-    imageSize: SizeCompat,
+    imageSize: IntSizeCompat,
     disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ): Boolean {

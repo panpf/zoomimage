@@ -46,10 +46,10 @@ import com.github.panpf.zoomimage.compose.internal.isAvailable
 import com.github.panpf.zoomimage.compose.internal.isNotAvailable
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
+import com.github.panpf.zoomimage.compose.internal.roundToCompatIntSize
 import com.github.panpf.zoomimage.compose.internal.supportReadMode
-import com.github.panpf.zoomimage.compose.internal.toCompatRectF
+import com.github.panpf.zoomimage.compose.internal.toCompatRect
 import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
-import com.github.panpf.zoomimage.compose.internal.toCompatSize
 import com.github.panpf.zoomimage.compose.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.internal.toTransform
@@ -155,8 +155,8 @@ class ZoomableState(
 
     val scrollEdge: ScrollEdge by derivedStateOf {
         computeScrollEdge(
-            contentSize = contentSize.toCompatSize(),
-            contentVisibleRect = contentVisibleRect.toCompatRectF(),
+            contentSize = contentSize.roundToCompatIntSize(),
+            contentVisibleRect = contentVisibleRect.toCompatRect(),
         )
     }
     val containerVisibleRect: Rect by derivedStateOf {
@@ -200,9 +200,9 @@ class ZoomableState(
             val rotatedContentSize = contentSize.rotate(transform.rotation.roundToInt())
             val rotatedContentOriginSize = contentOriginSize.rotate(transform.rotation.roundToInt())
             val scales = computeSupportScales(
-                contentSize = rotatedContentSize.toCompatSize(),
-                contentOriginSize = rotatedContentOriginSize.toCompatSize(),
-                containerSize = containerSize.toCompatSize(),
+                contentSize = rotatedContentSize.roundToCompatIntSize(),
+                contentOriginSize = rotatedContentOriginSize.roundToCompatIntSize(),
+                containerSize = containerSize.roundToCompatIntSize(),
                 scaleMode = contentScale.toScaleMode(),
                 baseScale = contentScale.computeScaleFactor(rotatedContentSize, containerSize)
                     .toCompatScaleFactor(),
@@ -220,8 +220,8 @@ class ZoomableState(
             ).toTransform()
             val readModeResult = contentScale.supportReadMode() &&
                     readMode?.should(
-                        srcSize = rotatedContentSize.toCompatSize(),
-                        dstSize = containerSize.toCompatSize()
+                        srcSize = rotatedContentSize.roundToCompatIntSize(),
+                        dstSize = containerSize.roundToCompatIntSize()
                     ) == true
             initialTransform = if (readModeResult) {
                 val readModeTransform = computeReadModeTransform(

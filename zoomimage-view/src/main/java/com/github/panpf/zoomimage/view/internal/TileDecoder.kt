@@ -25,7 +25,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import com.github.panpf.zoomimage.imagesource.ImageSource
 import com.github.panpf.zoomimage.core.internal.ExifOrientationHelper
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.freeBitmap
 import com.github.panpf.zoomimage.core.internal.setInBitmapForRegion
 import kotlinx.coroutines.runBlocking
@@ -34,7 +34,7 @@ import java.util.LinkedList
 internal class TileDecoder internal constructor(
     private val engine: SubsamplingEngine,
     private val imageSource: ImageSource,
-    val imageSize: SizeCompat,
+    val imageSize: IntSizeCompat,
     val imageMimeType: String,
     val imageExifOrientation: Int,
 ) {
@@ -42,7 +42,7 @@ internal class TileDecoder internal constructor(
     private val exifOrientationHelper: ExifOrientationHelper =
         ExifOrientationHelper(imageExifOrientation)
     private var _destroyed: Boolean = false
-    private val addedImageSize: SizeCompat by lazy {
+    private val addedImageSize: IntSizeCompat by lazy {
         exifOrientationHelper.addToSize(imageSize)
     }
 
@@ -78,7 +78,7 @@ internal class TileDecoder internal constructor(
         bitmapPool?.setInBitmapForRegion(
             logger = engine.logger,
             options = decodeOptions,
-            regionSize = SizeCompat(newSrcRect.width(), newSrcRect.height()),
+            regionSize = IntSizeCompat(newSrcRect.width(), newSrcRect.height()),
             imageMimeType = imageMimeType,
             imageSize = addedImageSize,
             disallowReuseBitmap = engine.disallowReuseBitmap,

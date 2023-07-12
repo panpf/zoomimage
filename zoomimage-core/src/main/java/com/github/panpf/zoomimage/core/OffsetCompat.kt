@@ -1,15 +1,44 @@
 package com.github.panpf.zoomimage.core
 
 import com.github.panpf.zoomimage.core.internal.format
+import com.github.panpf.zoomimage.core.internal.lerp
+import kotlin.math.sqrt
 
 data class OffsetCompat(
     val x: Float,
     val y: Float
 ) {
 
-    operator fun times(operand: Float) = OffsetCompat(x * operand, y * operand)
+    companion object {
+        val Zero = OffsetCompat(x = 0f, y = 0f)
+        val Infinite = OffsetCompat(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+    }
 
-    operator fun div(operand: Float) = OffsetCompat(x / operand, y / operand)
+
+    /**
+     * The magnitude of the offset.
+     *
+     * If you need this value to compare it to another [OffsetCompat]'s distance,
+     * consider using [getDistanceSquared] instead, since it is cheaper to compute.
+     */
+    fun getDistance() = sqrt(x * x + y * y)
+
+    /**
+     * The square of the magnitude of the offset.
+     *
+     * This is cheaper than computing the [getDistance] itself.
+     */
+    fun getDistanceSquared() = x * x + y * y
+
+    /**
+     * Unary negation operator.
+     *
+     * Returns an offset with the coordinates negated.
+     *
+     * If the [OffsetCompat] represents an arrow on a plane, this operator returns the
+     * same arrow but pointing in the reverse direction.
+     */
+    operator fun unaryMinus(): OffsetCompat = OffsetCompat(-x, -y)
 
     /**
      * Binary subtraction operator.
@@ -29,45 +58,35 @@ data class OffsetCompat(
      */
     operator fun plus(other: OffsetCompat): OffsetCompat = OffsetCompat(x + other.x, y + other.y)
 
-    override fun toString() = "Offset(${x.roundToTenths()}, ${y.roundToTenths()})"
+    /**
+     * Multiplication operator.
+     *
+     * Returns an offset whose coordinates are the coordinates of the
+     * left-hand-side operand (an OffsetCompat) multiplied by the scalar
+     * right-hand-side operand (a Float).
+     */
+    operator fun times(operand: Float): OffsetCompat = OffsetCompat(x * operand, y * operand)
 
-    companion object {
-        val Unspecified = OffsetCompat(x = Float.NaN, y = Float.NaN)
-        val Zero = OffsetCompat(x = 0f, y = 0f)
-    }
+    /**
+     * Division operator.
+     *
+     * Returns an offset whose coordinates are the coordinates of the
+     * left-hand-side operand (an OffsetCompat) divided by the scalar right-hand-side
+     * operand (a Float).
+     */
+    operator fun div(operand: Float): OffsetCompat = OffsetCompat(x / operand, y / operand)
+
+    /**
+     * Modulo (remainder) operator.
+     *
+     * Returns an offset whose coordinates are the remainder of dividing the
+     * coordinates of the left-hand-side operand (an OffsetCompat) by the scalar
+     * right-hand-side operand (a Float).
+     */
+    operator fun rem(operand: Float) = OffsetCompat(x % operand, y % operand)
+
+    override fun toString() = "Offset(${x.format(2)}x${y.format(2)})"
 }
-
-private fun Float.roundToTenths(): Float {
-    val shifted = this * 10
-    val decimal = shifted - shifted.toInt()
-    // Kotlin's round operator rounds 0.5f down to 0. Manually compare against
-    // 0.5f and round up if necessary
-    val roundedShifted = if (decimal >= 0.5f) {
-        shifted.toInt() + 1
-    } else {
-        shifted.toInt()
-    }
-    return roundedShifted.toFloat() / 10
-}
-
-/**
- * `false` when this is [OffsetCompat.Unspecified].
- */
-inline val OffsetCompat.isSpecified: Boolean
-    get() = !x.isNaN() && !y.isNaN()
-
-/**
- * `true` when this is [OffsetCompat.Unspecified].
- */
-inline val OffsetCompat.isUnspecified: Boolean
-    get() = x.isNaN() || y.isNaN()
-
-/**
- * If this [OffsetCompat] [isSpecified] then this is returned, otherwise [block] is executed
- * and its result is returned.
- */
-inline fun OffsetCompat.takeOrElse(block: () -> OffsetCompat): OffsetCompat =
-    if (isSpecified) this else block()
 
 /**
  * Linearly interpolate between two [OffsetCompat] parameters
@@ -92,11 +111,9 @@ fun lerp(start: OffsetCompat, stop: OffsetCompat, fraction: Float): OffsetCompat
 }
 
 /**
- * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
+ * True if both x and y values of the [OffsetCompat] are finite
  */
-private fun lerp(start: Float, stop: Float, fraction: Float): Float {
-    return (1 - fraction) * start + fraction * stop
-}
+val OffsetCompat.isFinite: Boolean get() = x.isFinite() && y.isFinite()
 
-fun OffsetCompat.toShortString(): String =
-    "(${x.format(1)},${y.format(1)})"
+
+fun OffsetCompat.toShortString(): String = "${x.format(2)}x${y.format(2)}"

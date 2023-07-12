@@ -2,11 +2,12 @@ package com.github.panpf.zoomimage.core.internal
 
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.RectFCompat
+import com.github.panpf.zoomimage.core.RectCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.TransformCompat
+import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.isNotEmpty
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -26,14 +27,14 @@ fun calculateNextStepScale(
 val DEFAULT_MEDIUM_SCALE_MULTIPLE: Float = 3f
 
 fun computeSupportScales(
-    contentSize: SizeCompat,
-    contentOriginSize: SizeCompat,
-    containerSize: SizeCompat,
+    contentSize: IntSizeCompat,
+    contentOriginSize: IntSizeCompat,
+    containerSize: IntSizeCompat,
     scaleMode: ScaleMode,
     baseScale: ScaleFactorCompat,
     defaultMediumScaleMultiple: Float
 ): FloatArray {
-    if (contentSize.isEmpty || containerSize.isEmpty) {
+    if (contentSize.isEmpty() || containerSize.isEmpty()) {
         return floatArrayOf(1.0f, 1.0f, 1.0f)
     } else if (scaleMode == ScaleMode.FILL_BOUNDS
         || baseScale.scaleX.format(2) != baseScale.scaleY.format(2)
@@ -69,8 +70,8 @@ fun computeSupportScales(
 }
 
 fun computeReadModeTransform(
-    srcSize: SizeCompat,
-    dstSize: SizeCompat,
+    srcSize: IntSizeCompat,
+    dstSize: IntSizeCompat,
     baseTransform: TransformCompat,
 ): TransformCompat {
     val widthScale = dstSize.width / srcSize.width.toFloat()
@@ -104,7 +105,7 @@ fun computeReadModeTransform(
 //    }
 //}
 
-fun isSameDirection(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
+fun isSameDirection(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
     val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
     val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
     return (srcAspectRatio == 1.0f || dstAspectRatio == 1.0f)
@@ -114,10 +115,10 @@ fun isSameDirection(srcSize: SizeCompat, dstSize: SizeCompat): Boolean {
 
 
 fun computeScrollEdge(
-    contentSize: SizeCompat,
-    contentVisibleRect: RectFCompat,
+    contentSize: IntSizeCompat,
+    contentVisibleRect: RectCompat,
 ): ScrollEdge {
-    if (contentSize.isEmpty || contentVisibleRect.isEmpty)
+    if (contentSize.isEmpty() || contentVisibleRect.isEmpty)
         return ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
     return ScrollEdge(
         horizontal = when {

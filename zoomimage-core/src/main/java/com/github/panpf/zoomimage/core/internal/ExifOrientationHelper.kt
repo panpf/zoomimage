@@ -9,8 +9,8 @@ import android.graphics.RectF
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.TileBitmapPool
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import kotlin.math.abs
 
 fun exifOrientationName(exifOrientation: Int): String =
@@ -121,22 +121,22 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
 //        )
 //    }
 
-    fun applyToSize(size: SizeCompat): SizeCompat {
+    fun applyToSize(size: IntSizeCompat): IntSizeCompat {
         val matrix = Matrix().apply {
             applyFlipAndRotationToMatrix(this, isFlipped, rotationDegrees, true)
         }
         val newRect = RectF(0f, 0f, size.width.toFloat(), size.height.toFloat())
         matrix.mapRect(newRect)
-        return SizeCompat(newRect.width().toInt(), newRect.height().toInt())
+        return IntSizeCompat(newRect.width().toInt(), newRect.height().toInt())
     }
 
-    fun addToSize(size: SizeCompat): SizeCompat {
+    fun addToSize(size: IntSizeCompat): IntSizeCompat {
         val matrix = Matrix().apply {
             applyFlipAndRotationToMatrix(this, isFlipped, -rotationDegrees, false)
         }
         val newRect = RectF(0f, 0f, size.width.toFloat(), size.height.toFloat())
         matrix.mapRect(newRect)
-        return SizeCompat(newRect.width().toInt(), newRect.height().toInt())
+        return IntSizeCompat(newRect.width().toInt(), newRect.height().toInt())
     }
 
 //    fun addToResize(resize: Resize, imageSize: Size): Resize {
@@ -150,7 +150,7 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
 //        )
 //    }
 
-    fun addToRect(srcRect: Rect, imageSize: SizeCompat): Rect =
+    fun addToRect(srcRect: Rect, imageSize: IntSizeCompat): Rect =
         when (exifOrientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> Rect(
                 srcRect.top,

@@ -34,6 +34,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.isNotEmpty
 import com.github.panpf.zoomimage.sample.util.crossWith
 import kotlin.math.ceil
@@ -67,7 +68,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val viewWidth = width.takeIf { it > 0 } ?: return
         val viewHeight = height.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
-        val drawableSize = zoomView.zoomAbility.drawableSize.takeIf { !it.isEmpty } ?: return
+        val drawableSize = zoomView.zoomAbility.drawableSize.takeIf { !it.isEmpty() } ?: return
 
         val imageSize = zoomView.zoomAbility.imageSize
         if (imageSize.isNotEmpty) {

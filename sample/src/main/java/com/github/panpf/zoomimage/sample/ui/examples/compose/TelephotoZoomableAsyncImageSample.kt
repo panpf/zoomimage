@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.request.ImageRequest
-import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import me.saket.telephoto.zoomable.ZoomSpec
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
@@ -35,8 +35,8 @@ fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
     val info = remember(zoomableState.contentTransformation) {
         zoomableState.contentTransformation.run {
             """
-                scale: ${scale.scaleX.format(2)}, ${scale.scaleY.format(2)}
-                offset: (${offset.x.format(2)}x${offset.y.format(2)})
+                scale: ${scale.toShortString()}
+                offset: ${offset.toShortString()}
             """.trimIndent()
         }
     }

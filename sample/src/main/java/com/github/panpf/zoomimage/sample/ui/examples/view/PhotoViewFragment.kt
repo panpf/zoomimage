@@ -17,7 +17,6 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.annotation.SuppressLint
 import android.graphics.Matrix
-import android.graphics.PointF
 import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -25,10 +24,11 @@ import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
+import com.github.panpf.zoomimage.core.OffsetCompat
+import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.util.format
-import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -85,16 +85,16 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
     private fun updateInfo(binding: PhotoViewFragmentBinding) {
         binding.photoViewInfoHeaderText.text = """
                 scale: 
+                offset: 
                 visible: 
-                translation: 
             """.trimIndent()
         binding.photoViewInfoContentText.text = binding.photoView.run {
             val scales = floatArrayOf(minimumScale, mediumScale, maximumScale)
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             """
                 ${displayScale.format(2)}(${baseScale.format(2)}x${suppScale.format(2)}) in $scales
-                ${displayRect?.toVeryShortString()}
                 ${imageMatrix?.getTranslation()?.toShortString()}
+                ${displayRect?.toVeryShortString()}
             """.trimIndent()
         }
     }
@@ -110,12 +110,12 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         }
     }
 
-    private fun Matrix.getTranslation(): PointF {
-        val point = PointF()
+    private fun Matrix.getTranslation(): OffsetCompat {
         val values = FloatArray(9).apply { getValues(this) }
-        point.x = values[Matrix.MTRANS_X]
-        point.y = values[Matrix.MTRANS_Y]
-        return point
+        return OffsetCompat(
+            x = values[Matrix.MTRANS_X],
+            y = values[Matrix.MTRANS_Y],
+        )
     }
 
     private fun Matrix.getScale(): Float {

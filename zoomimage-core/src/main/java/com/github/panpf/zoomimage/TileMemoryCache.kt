@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.core.SizeCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
 
 interface TileMemoryCache {
     /**
@@ -13,7 +13,7 @@ interface TileMemoryCache {
         key: String,
         bitmap: Bitmap,
         imageKey: String,
-        imageSize: SizeCompat,
+        imageSize: IntSizeCompat,
         imageMimeType: String,
         imageExifOrientation: Int,
         disallowReuseBitmap: Boolean

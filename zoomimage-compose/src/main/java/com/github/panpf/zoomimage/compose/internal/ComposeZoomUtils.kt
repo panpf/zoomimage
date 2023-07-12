@@ -25,6 +25,17 @@ internal fun computeContentScaleOffset(
     val contentScaleFactor =
         scale.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
     val contentScaledContentSize = srcSize.times(contentScaleFactor)
+//    return alignment.align(
+//        size = IntSize(
+//            width = contentScaledContentSize.width.roundToInt(),
+//            height = contentScaledContentSize.height.roundToInt()
+//        ),
+//        space = IntSize(
+//            width = dstSize.width.roundToInt(),
+//            height = dstSize.height.roundToInt()
+//        ),
+//        layoutDirection = LayoutDirection.Ltr
+//    )
     return when (alignment) {
         Alignment.TopStart -> Offset(
             x = 0f,
@@ -450,8 +461,8 @@ internal fun computeReadModeTransform(
     alignment: Alignment,
 ): TransformCompat {
     return com.github.panpf.zoomimage.core.internal.computeReadModeTransform(
-        srcSize = srcSize.toCompatSize(),
-        dstSize = dstSize.toCompatSize(),
+        srcSize = srcSize.roundToCompatIntSize(),
+        dstSize = dstSize.roundToCompatIntSize(),
         baseTransform = computeTransform(
             srcSize = srcSize,
             dstSize = dstSize,

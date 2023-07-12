@@ -24,12 +24,13 @@ import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.OnTileChangedListener
 import com.github.panpf.zoomimage.TileBitmapPool
 import com.github.panpf.zoomimage.TileMemoryCache
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.ExifOrientationHelper
-import com.github.panpf.zoomimage.core.SizeCompat
 import com.github.panpf.zoomimage.core.internal.exifOrientationName
 import com.github.panpf.zoomimage.core.internal.readExifOrientation
 import com.github.panpf.zoomimage.core.internal.readImageBounds
+import com.github.panpf.zoomimage.core.isEmpty
+import com.github.panpf.zoomimage.imagesource.ImageSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -91,7 +92,7 @@ internal class SubsamplingEngine constructor(
         get() = tileManager?.imageVisibleRect ?: Rect()
     val imageLoadRect: Rect
         get() = tileManager?.imageLoadRect ?: Rect()
-    var imageSize: SizeCompat? = null
+    var imageSize: IntSizeCompat? = null
         private set
     var imageMimeType: String? = null
         private set
@@ -111,12 +112,12 @@ internal class SubsamplingEngine constructor(
         tileManager = null
 
         val viewSize = zoomEngine.viewSize
-        if (viewSize.isEmpty) {
+        if (viewSize.isEmpty()) {
             logger.d(MODULE) { "setImageSource failed. View size error. '${imageSource.key}'" }
             return
         }
         val drawableSize = zoomEngine.drawableSize
-        if (drawableSize.isEmpty) {
+        if (drawableSize.isEmpty()) {
             logger.d(MODULE) { "setImageSource failed. Drawable size error. '${imageSource.key}'" }
             return
         }
@@ -142,7 +143,7 @@ internal class SubsamplingEngine constructor(
                 return@launch
             }
             val imageSize = ExifOrientationHelper(exifOrientation)
-                .applyToSize(SizeCompat(options.outWidth, options.outHeight))
+                .applyToSize(IntSizeCompat(options.outWidth, options.outHeight))
             val imageWidth = imageSize.width
             val imageHeight = imageSize.height
             val mimeType = options.outMimeType
@@ -279,7 +280,7 @@ internal class SubsamplingEngine constructor(
         imageSize = null
         imageMimeType = null
         imageExifOrientation = null
-        zoomEngine.imageSize = SizeCompat.Empty
+        zoomEngine.imageSize = IntSizeCompat.Zero
     }
 
     fun addOnTileChangedListener(listener: OnTileChangedListener) {

@@ -1,7 +1,5 @@
 package com.github.panpf.zoomimage.core
 
-import com.github.panpf.zoomimage.core.internal.format
-
 data class TransformCompat(
     val scale: ScaleFactorCompat,
     val offset: OffsetCompat,
@@ -67,7 +65,7 @@ fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): Transf
 }
 
 fun TransformCompat.toShortString(): String =
-    "(${scaleX.format(2)}x${scaleY.format(2)},${offsetX.format(2)}x${offsetY.format(2)},$rotation)"
+    "${scale.toShortString()},${offset.toShortString()},$rotation"
 
 fun TransformCompat.times(scaleFactor: ScaleFactorCompat): TransformCompat {
     return this.copy(
