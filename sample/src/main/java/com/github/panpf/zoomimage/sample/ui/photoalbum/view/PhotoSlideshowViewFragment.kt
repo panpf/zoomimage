@@ -57,7 +57,7 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
 
         val imageUrlList = args.imageUris.split(",")
         binding.photoSlideshowPager.apply {
-            offscreenPageLimit = 1
+            offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
             prefsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 orientation =
                     if (it) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL

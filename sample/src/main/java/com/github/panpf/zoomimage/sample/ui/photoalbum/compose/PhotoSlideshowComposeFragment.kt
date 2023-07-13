@@ -78,7 +78,7 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
                 VerticalPager(
                     pageCount = imageUrlList.size,
                     state = pagerState,
-                    beyondBoundsPageCount = 1,
+                    beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
                     zoomImageType.drawContent(imageUrlList[index])
