@@ -123,14 +123,14 @@ fun computeScrollEdge(
     return ScrollEdge(
         horizontal = when {
             contentVisibleRect.width.roundToInt() >= contentSize.width -> Edge.BOTH
-            contentVisibleRect.left.roundToInt() == 0 -> Edge.START
-            contentVisibleRect.right.roundToInt() == contentSize.width -> Edge.END
+            contentVisibleRect.left.roundToInt() <= 0 -> Edge.START
+            contentVisibleRect.right.roundToInt() >= contentSize.width -> Edge.END
             else -> Edge.NONE
         },
         vertical = when {
             contentVisibleRect.height.roundToInt() >= contentSize.height -> Edge.BOTH
-            contentVisibleRect.top.roundToInt() == 0 -> Edge.START
-            contentVisibleRect.bottom.roundToInt() == contentSize.height -> Edge.END
+            contentVisibleRect.top.roundToInt() <= 0 -> Edge.START
+            contentVisibleRect.bottom.roundToInt() >= contentSize.height -> Edge.END
             else -> Edge.NONE
         },
     )
