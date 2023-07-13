@@ -8,7 +8,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.internal.detectCanDragGestures
 import com.github.panpf.zoomimage.compose.internal.detectZoomGestures
 import kotlinx.coroutines.launch
@@ -22,7 +21,7 @@ fun Modifier.zoomable(
     val density = LocalDensity.current
     this
         .onSizeChanged {
-            val newContainerSize = it.toSize()
+            val newContainerSize = it
             val oldContainerSize = state.containerSize
             if (newContainerSize != oldContainerSize) {
                 state.containerSize = newContainerSize

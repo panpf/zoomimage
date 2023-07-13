@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.request.DisplayRequest
@@ -24,6 +26,7 @@ import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.zoomScrollBar
 import com.github.panpf.zoomimage.zoomable
+import kotlin.math.roundToInt
 
 @Composable
 @NonRestartableComposable
@@ -178,7 +181,7 @@ fun ZoomAsyncImage(
         modifier = modifier1,
         transform = transform,
         onState = {
-            val painterSize = it.painter?.intrinsicSize
+            val painterSize = it.painter?.intrinsicSize?.roundToIntSize()
             if (painterSize != null && state.contentSize != painterSize) {
                 state.contentSize = painterSize
             }
@@ -239,4 +242,8 @@ private fun onStateOf(
     } else {
         null
     }
+}
+
+private fun Size.roundToIntSize(): IntSize {
+    return IntSize(width.roundToInt(), height.roundToInt())
 }

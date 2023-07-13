@@ -254,7 +254,7 @@ fun ScaleType.toScaleMode(): ScaleMode = when (this) {
     else -> ScaleMode.NONE
 }
 
-internal fun computeContentInContainerRect(
+internal fun computeContentInContainerInnerRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     scaleType: ScaleType,
@@ -290,14 +290,14 @@ internal fun computeOffsetBounds(
         return ZeroRect
     }
     val scaledContainerSize = containerSize.times(scale)
-    val scaledContentInContainerRect = computeContentInContainerRect(
+    val scaledContentInContainerInnerRect = computeContentInContainerInnerRect(
         containerSize = containerSize,
         contentSize = contentSize,
         scaleType = scaleType,
     ).scale(scale)
 
-    val horizontalBounds = if (scaledContentInContainerRect.width() > containerSize.width) {
-        ((scaledContentInContainerRect.right - containerSize.width) * -1)..(scaledContentInContainerRect.left * -1)
+    val horizontalBounds = if (scaledContentInContainerInnerRect.width() > containerSize.width) {
+        ((scaledContentInContainerInnerRect.right - containerSize.width) * -1)..(scaledContentInContainerInnerRect.left * -1)
     } else if (scaleType.isStart(srcSize = contentSize, dstSize = containerSize)) {
         0..0
     } else if (scaleType.isHorizontalCenter(srcSize = contentSize, dstSize = containerSize)) {
@@ -308,8 +308,8 @@ internal fun computeOffsetBounds(
         horizontalSpace..horizontalSpace
     }
 
-    val verticalBounds = if (scaledContentInContainerRect.height() > containerSize.height) {
-        ((scaledContentInContainerRect.bottom - containerSize.height) * -1)..(scaledContentInContainerRect.top * -1)
+    val verticalBounds = if (scaledContentInContainerInnerRect.height() > containerSize.height) {
+        ((scaledContentInContainerInnerRect.bottom - containerSize.height) * -1)..(scaledContentInContainerInnerRect.top * -1)
     } else if (scaleType.isTop(srcSize = contentSize, dstSize = containerSize)) {
         0..0
     } else if (scaleType.isVerticalCenter(srcSize = contentSize, dstSize = containerSize)) {

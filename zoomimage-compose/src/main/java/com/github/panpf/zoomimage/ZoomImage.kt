@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.zoomimage.compose.ScrollBar
+import com.github.panpf.zoomimage.compose.internal.roundToIntSize
 
 @Composable
 fun ZoomImage(
@@ -33,7 +34,7 @@ fun ZoomImage(
     if (state.contentScale != contentScale) {
         state.contentScale = contentScale
     }
-    val painterSize = painter.intrinsicSize
+    val painterSize = painter.intrinsicSize.roundToIntSize()
     if (state.contentSize != painterSize) {
         state.contentSize = painterSize
     }

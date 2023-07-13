@@ -16,9 +16,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.ScrollBar
-import com.github.panpf.zoomimage.compose.internal.isAvailable
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import kotlinx.coroutines.delay
-import kotlin.math.roundToInt
 
 fun Modifier.zoomScrollBar(
     zoomableState: ZoomableState,
@@ -40,14 +39,14 @@ fun Modifier.zoomScrollBar(
         )
     }
     val alpha by remember { derivedStateOf { alphaAnimatable.value } }
-    if (contentSize.isAvailable() && !contentVisibleRect.isEmpty) {
+    if (contentSize.isNotEmpty() && !contentVisibleRect.isEmpty) {
         this.drawWithContent {
             drawContent()
 
             @Suppress("UnnecessaryVariable")
             val scrollBarSize = sizePx
             val drawSize = this.size
-            if (contentVisibleRect.width.roundToInt() < contentSize.width.roundToInt()) {
+            if (contentVisibleRect.width < contentSize.width) {
                 val widthScale = (drawSize.width - marginPx * 4) / contentSize.width
                 drawRoundRect(
                     color = scrollBar.color,
@@ -64,7 +63,7 @@ fun Modifier.zoomScrollBar(
                     alpha = alpha
                 )
             }
-            if (contentVisibleRect.height.roundToInt() < contentSize.height.roundToInt()) {
+            if (contentVisibleRect.height < contentSize.height) {
                 val heightScale = (drawSize.height - marginPx * 4) / contentSize.height
                 drawRoundRect(
                     color = scrollBar.color,

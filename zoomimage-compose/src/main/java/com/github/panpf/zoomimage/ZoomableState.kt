@@ -18,13 +18,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.Transform
 import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.concat
@@ -42,17 +43,16 @@ import com.github.panpf.zoomimage.compose.internal.computeTransform
 import com.github.panpf.zoomimage.compose.internal.containerOriginToContentOrigin
 import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
 import com.github.panpf.zoomimage.compose.internal.format
-import com.github.panpf.zoomimage.compose.internal.isAvailable
-import com.github.panpf.zoomimage.compose.internal.isNotAvailable
+import com.github.panpf.zoomimage.compose.internal.isEmpty
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
-import com.github.panpf.zoomimage.compose.internal.roundToCompatIntSize
 import com.github.panpf.zoomimage.compose.internal.supportReadMode
+import com.github.panpf.zoomimage.compose.internal.toCompatIntSize
 import com.github.panpf.zoomimage.compose.internal.toCompatRect
 import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.internal.toTransform
 import com.github.panpf.zoomimage.compose.toShortString
 import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
@@ -93,7 +93,7 @@ fun rememberZoomableState(
         readMode,
         defaultMediumScaleMultiple,
     ) {
-        if (!state.contentSize.isAvailable() && state.containerSize.isAvailable()) {
+        if (!state.contentSize.isEmpty() && state.containerSize.isEmpty()) {
             state.contentSize = state.containerSize
         }
         state.reset()
@@ -109,9 +109,9 @@ class ZoomableState(
 ) {
     private var lastAnimatable: Animatable<*, *>? = null
 
-    var containerSize: Size by mutableStateOf(Size.Zero)
-    var contentSize: Size by mutableStateOf(Size.Zero)
-    var contentOriginSize: Size by mutableStateOf(Size.Zero)
+    var containerSize: IntSize by mutableStateOf(IntSize.Zero)
+    var contentSize: IntSize by mutableStateOf(IntSize.Zero)
+    var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
     var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
     var threeStepScale: Boolean = false
@@ -143,41 +143,41 @@ class ZoomableState(
     }
     val transformOrigin = TransformOrigin(0f, 0f)
 
-    val offsetBounds: Rect by derivedStateOf {
+    val offsetBounds: IntRect by derivedStateOf {
         computeOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            alignment = contentAlignment,
             scale = transform.scaleX,
         )
     }
 
     val scrollEdge: ScrollEdge by derivedStateOf {
         computeScrollEdge(
-            contentSize = contentSize.roundToCompatIntSize(),
+            contentSize = contentSize.toCompatIntSize(),
             contentVisibleRect = contentVisibleRect.toCompatRect(),
         )
     }
-    val containerVisibleRect: Rect by derivedStateOf {
+    val containerVisibleRect: IntRect by derivedStateOf {
         computeContainerVisibleRect(containerSize, transform.scaleX, transform.offset)
     }
-    val contentVisibleRect: Rect by derivedStateOf {
+    val contentVisibleRect: IntRect by derivedStateOf {
         computeContentVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            alignment = contentAlignment,
             scale = transform.scaleX,
             offset = transform.offset,
         )
     }
-    val contentInContainerRect: Rect by derivedStateOf {
+    val contentInContainerRect: IntRect by derivedStateOf {
         computeContentInContainerRect(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            alignment = contentAlignment,
         )
     }
 
@@ -190,7 +190,7 @@ class ZoomableState(
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val initialTransform: Transform
-        if (containerSize.isNotAvailable() || contentSize.isNotAvailable()) {
+        if (containerSize.isEmpty() || contentSize.isEmpty()) {
             minScale = 1.0f
             mediumScale = 1.0f
             maxScale = 1.0f
@@ -200,11 +200,14 @@ class ZoomableState(
             val rotatedContentSize = contentSize.rotate(transform.rotation.roundToInt())
             val rotatedContentOriginSize = contentOriginSize.rotate(transform.rotation.roundToInt())
             val scales = computeSupportScales(
-                contentSize = rotatedContentSize.roundToCompatIntSize(),
-                contentOriginSize = rotatedContentOriginSize.roundToCompatIntSize(),
-                containerSize = containerSize.roundToCompatIntSize(),
+                contentSize = rotatedContentSize.toCompatIntSize(),
+                contentOriginSize = rotatedContentOriginSize.toCompatIntSize(),
+                containerSize = containerSize.toCompatIntSize(),
                 scaleMode = contentScale.toScaleMode(),
-                baseScale = contentScale.computeScaleFactor(rotatedContentSize, containerSize)
+                baseScale = contentScale.computeScaleFactor(
+                    rotatedContentSize.toSize(),
+                    containerSize.toSize()
+                )
                     .toCompatScaleFactor(),
                 defaultMediumScaleMultiple = defaultMediumScaleMultiple,
             )
@@ -213,23 +216,23 @@ class ZoomableState(
                 scales[1] // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
             maxScale = scales[2]
             baseTransform = computeTransform(
-                srcSize = rotatedContentSize,
-                dstSize = containerSize,
-                scale = contentScale,
+                contentSize = rotatedContentSize,
+                containerSize = containerSize,
+                contentScale = contentScale,
                 alignment = contentAlignment,
-            ).toTransform()
+            )
             val readModeResult = contentScale.supportReadMode() &&
                     readMode?.should(
-                        srcSize = rotatedContentSize.roundToCompatIntSize(),
-                        dstSize = containerSize.roundToCompatIntSize()
+                        srcSize = rotatedContentSize.toCompatIntSize(),
+                        dstSize = containerSize.toCompatIntSize()
                     ) == true
             initialTransform = if (readModeResult) {
                 val readModeTransform = computeReadModeTransform(
-                    srcSize = rotatedContentSize,
-                    dstSize = containerSize,
-                    scale = contentScale,
+                    contentSize = rotatedContentSize,
+                    containerSize = containerSize,
+                    contentScale = contentScale,
                     alignment = contentAlignment,
-                ).toTransform()
+                )
                 readModeTransform.div(baseTransform.scale)
             } else {
                 Transform.Origin
@@ -237,9 +240,9 @@ class ZoomableState(
         }
         val limitedInitialTransform = limitTransform(initialTransform)
         log {
-            "reset. contentSize=${contentSize.toShortString()}, " +
+            "reset. containerSize=${containerSize.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
-                    "containerSize=${containerSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
                     "contentAlignment=${contentAlignment.name}, " +
                     "readMode=${readMode}, " +
@@ -261,7 +264,7 @@ class ZoomableState(
 
     suspend fun scale(
         targetScale: Float,
-        centroid: Offset = Offset(x = containerSize.width / 2, y = containerSize.height / 2),
+        centroid: Offset = Offset(x = containerSize.width / 2f, y = containerSize.height / 2f),
         animated: Boolean = false,
         rubberBandScale: Boolean = false,
     ) {
@@ -341,8 +344,8 @@ class ZoomableState(
     ) {
         stopAnimation("location")
 
-        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return
-        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentTransform = transform
@@ -355,9 +358,9 @@ class ZoomableState(
         )
         val limitedTargetScale = limitScale(targetScale)
         val targetOffset = computeLocationOffset(
-            containerOrigin = containerOrigin,
-            newScale = limitedTargetScale,
             containerSize = containerSize,
+            scale = limitedTargetScale,
+            containerOrigin = containerOrigin,
         )
         val limitedTargetOffset = limitOffset(targetOffset, limitedTargetScale)
         val limitedTargetTransform = currentTransform.copy(
@@ -474,8 +477,8 @@ class ZoomableState(
         canScroll(horizontal, direction * -1, scrollEdge)
 
     fun touchOffsetToContentOrigin(touch: Offset): Origin {
-        val containerSize = containerSize.takeIf { it.isAvailable() } ?: return Origin.Zero
-        val contentSize = contentSize.takeIf { it.isAvailable() } ?: return Origin.Zero
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return Origin.Zero
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return Origin.Zero
         val currentTransform = transform
         val containerOrigin = computeContainerOriginByTouchPosition(
             containerSize = containerSize,
@@ -510,7 +513,7 @@ class ZoomableState(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            alignment = contentAlignment,
             scale = scale
         )
         if (offset.x >= offsetBounds.left
@@ -522,12 +525,12 @@ class ZoomableState(
         }
         return Offset(
             x = offset.x.coerceIn(
-                minimumValue = offsetBounds.left,
-                maximumValue = offsetBounds.right
+                minimumValue = offsetBounds.left.toFloat(),
+                maximumValue = offsetBounds.right.toFloat()
             ),
             y = offset.y.coerceIn(
-                minimumValue = offsetBounds.top,
-                maximumValue = offsetBounds.bottom
+                minimumValue = offsetBounds.top.toFloat(),
+                maximumValue = offsetBounds.bottom.toFloat()
             ),
         )
     }

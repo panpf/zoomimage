@@ -46,7 +46,7 @@ internal fun Size.rotate(rotateDegrees: Int): Size {
     return if (rotateDegrees % 180 == 0) this else Size(height, width)
 }
 
-internal fun Size.toIntSize(): IntSize {
+internal fun Size.roundToIntSize(): IntSize {
     return IntSize(width.roundToInt(), height.roundToInt())
 }
 
@@ -131,6 +131,15 @@ internal fun IntRect.restoreScale(scaleFactor: ScaleFactor): IntRect {
     )
 }
 
+internal fun IntRect.limitTo(rect: IntRect): IntRect {
+    return IntRect(
+        left = left.coerceAtLeast(rect.left),
+        top = top.coerceAtLeast(rect.top),
+        right = right.coerceIn(rect.left, rect.right),
+        bottom = bottom.coerceIn(rect.top, rect.bottom),
+    )
+}
+
 internal val ContentScale.name: String
     get() = when (this) {
         ContentScale.FillWidth -> "FillWidth"
@@ -180,4 +189,40 @@ internal fun Dp.toPx(): Float {
 @Composable
 internal fun Float.toDp(): Dp {
     return with(LocalDensity.current) { this@toDp.toDp() }
+}
+
+/**
+ * Multiplication operator with [Size].
+ *
+ * Return a new [Size] with the width and height multiplied by the [ScaleFactor.scaleX] and
+ * [ScaleFactor.scaleY] respectively
+ */
+@Stable
+operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
+    IntSize(
+        width = (this.width * scaleFactor.scaleX).roundToInt(),
+        height = (this.height * scaleFactor.scaleY).roundToInt()
+    )
+
+/**
+ * Multiplication operator with [Size].
+ *
+ * Return a new [Size] with the width and height multiplied by the [ScaleFactor.scaleX] and
+ * [ScaleFactor.scaleY] respectively
+ */
+@Stable
+operator fun IntSize.times(scale: Float): IntSize =
+    IntSize(
+        width = (this.width * scale).roundToInt(),
+        height = (this.height * scale).roundToInt()
+    )
+
+@Stable
+fun IntSize.isEmpty(): Boolean = width == 0 || height == 0
+
+@Stable
+fun IntSize.isNotEmpty(): Boolean = !isEmpty()
+
+internal fun IntSize.rotate(rotateDegrees: Int): IntSize {
+    return if (rotateDegrees % 180 == 0) this else IntSize(height, width)
 }

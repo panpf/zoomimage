@@ -13,25 +13,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.isSpecified
-import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.sketch.resize.DefaultLongImageDecider
+import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomableState
+import com.github.panpf.zoomimage.compose.internal.isEmpty
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.toCompatIntSize
 import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import kotlinx.coroutines.launch
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 @Composable
 fun ZoomImageMinimap(
@@ -40,15 +44,16 @@ fun ZoomImageMinimap(
     contentDescription: String? = null,
     state: ZoomableState,
 ) {
-    val contentSize = state.contentSize.takeIf { it.isSpecified } ?: Size.Zero
+    val contentSize = state.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
     val coroutineScope = rememberCoroutineScope()
     BoxWithConstraints(modifier = modifier.then(Modifier.fillMaxSize())) {
         val density = LocalDensity.current
         val viewSize = remember(contentSize) {
-            val containerSize = with(density) { Size(maxWidth.toPx(), maxHeight.toPx()) }
+            val containerSize =
+                with(density) { IntSize(maxWidth.roundToPx(), maxHeight.roundToPx()) }
             computeViewSize(contentSize, containerSize)
         }
-        if (viewSize.isSpecified) {
+        if (viewSize.isNotEmpty()) {
             val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
             AsyncImage(
                 request = DisplayRequest(LocalContext.current, sketchImageUri) {
@@ -58,15 +63,22 @@ fun ZoomImageMinimap(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .size(
-                        width = viewSize.width.toDp(),
-                        height = viewSize.height.toDp()
+                        width = viewSize.width
+                            .toFloat()
+                            .toDp(),
+                        height = viewSize.height
+                            .toFloat()
+                            .toDp()
                     )
                     .clipToBounds()
                     .drawWithContent {
                         drawContent()
                         val contentVisibleRect = state.contentVisibleRect
-                        val drawScaleWithContent = viewSize.width / contentSize.width
-                        val drawVisibleRect = contentVisibleRect.scale(drawScaleWithContent)
+                        val drawScaleWithContent = viewSize.width / contentSize.width.toFloat()
+                        val drawVisibleRect =
+                            contentVisibleRect
+                                .scale(drawScaleWithContent)
+                                .toRect()
                         drawRect(
                             color = Color.Red,
                             topLeft = drawVisibleRect.topLeft,
@@ -101,9 +113,9 @@ fun ZoomImageMinimap(
     }
 }
 
-private fun computeViewSize(contentSize: Size, containerSize: Size): Size {
-    if (contentSize.isUnspecified || contentSize.isEmpty()) return Size.Unspecified
-    if (containerSize.isUnspecified || containerSize.isEmpty()) return Size.Unspecified
+private fun computeViewSize(contentSize: IntSize, containerSize: IntSize): IntSize {
+    if (contentSize.isEmpty()) return IntSize.Zero
+    if (containerSize.isEmpty()) return IntSize.Zero
     val contentWidth = contentSize.width
     val contentHeight = contentSize.height
     val containerWidth = containerSize.width
@@ -111,16 +123,11 @@ private fun computeViewSize(contentSize: Size, containerSize: Size): Size {
     val sameDirection =
         (contentWidth >= contentHeight && containerWidth >= containerHeight) ||
                 (contentWidth < contentHeight && containerWidth < containerHeight)
-    val isLongImage = DefaultLongImageDecider()
-        .isLongImage(
-            imageWidth = contentWidth.toInt(),
-            imageHeight = contentHeight.toInt(),
-            targetWidth = containerWidth.toInt(),
-            targetHeight = containerHeight.toInt()
-        )
+    val isLongImage = ReadMode.LongImageDecider()
+        .should(srcSize = contentSize.toCompatIntSize(), dstSize = containerSize.toCompatIntSize())
     val maxPercentage = if (isLongImage) 0.6f else if (sameDirection) 0.3f else 0.4f
     val maxWidth = containerWidth * maxPercentage
     val maxHeight = containerHeight * maxPercentage
     val scale = min(maxWidth / contentWidth, maxHeight / contentHeight)
-    return Size(contentWidth * scale, contentHeight * scale)
+    return IntSize((contentWidth * scale).roundToInt(), (contentHeight * scale).roundToInt())
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.sample.util.format
+import kotlin.math.roundToInt
 
 internal fun Size.toShortString(): String =
     if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
@@ -38,7 +39,16 @@ internal fun Rect.scale(scale: Float): Rect {
         left = (left * scale),
         top = (top * scale),
         right = (right * scale),
-        bottom = (bottom * scale)
+        bottom = (bottom * scale),
+    )
+}
+
+internal fun IntRect.scale(scale: Float): IntRect {
+    return IntRect(
+        left = (left * scale).roundToInt(),
+        top = (top * scale).roundToInt(),
+        right = (right * scale).roundToInt(),
+        bottom = (bottom * scale).roundToInt(),
     )
 }
 
@@ -47,7 +57,7 @@ internal fun Rect.restoreScale(scale: Float): Rect {
         left = (left / scale),
         top = (top / scale),
         right = (right / scale),
-        bottom = (bottom / scale)
+        bottom = (bottom / scale),
     )
 }
 
@@ -56,7 +66,25 @@ internal fun Rect.restoreScale(scaleFactor: ScaleFactor): Rect {
         left = (left / scaleFactor.scaleX),
         top = (top / scaleFactor.scaleY),
         right = (right / scaleFactor.scaleX),
-        bottom = (bottom / scaleFactor.scaleY)
+        bottom = (bottom / scaleFactor.scaleY),
+    )
+}
+
+internal fun IntRect.restoreScale(scale: Float): IntRect {
+    return IntRect(
+        left = (left / scale).roundToInt(),
+        top = (top / scale).roundToInt(),
+        right = (right / scale).roundToInt(),
+        bottom = (bottom / scale).roundToInt(),
+    )
+}
+
+internal fun IntRect.restoreScale(scaleFactor: ScaleFactor): IntRect {
+    return IntRect(
+        left = (left / scaleFactor.scaleX).roundToInt(),
+        top = (top / scaleFactor.scaleY).roundToInt(),
+        right = (right / scaleFactor.scaleX).roundToInt(),
+        bottom = (bottom / scaleFactor.scaleY).roundToInt(),
     )
 }
 
