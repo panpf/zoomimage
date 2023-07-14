@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,7 +69,7 @@ fun ZoomImageSample(sketchImageUri: String) {
         debugMode = BuildConfig.DEBUG
     )
     val infoDialogState = rememberZoomImageInfoDialogState()
-    BoxWithConstraints(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)

@@ -43,6 +43,7 @@ fun ZoomImageMinimap(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     state: ZoomableState,
+    alignment: Alignment = Alignment.BottomStart,
 ) {
     val contentSize = state.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
     val coroutineScope = rememberCoroutineScope()
@@ -61,7 +62,7 @@ fun ZoomImageMinimap(
                 },
                 contentDescription = contentDescription ?: "Visible Rect",
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
+                    .align(alignment)
                     .size(
                         width = viewSize.width
                             .toFloat()
