@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,6 +19,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.request.ImageRequest
+import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
+import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import me.saket.telephoto.zoomable.ZoomSpec
@@ -27,6 +32,11 @@ import me.saket.telephoto.zoomable.rememberZoomableState
 @Composable
 fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
     val context = LocalContext.current
+    val prefsService = remember { context.prefsService }
+    val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
+    val alignmentName by prefsService.alignment.stateFlow.collectAsState()
+    val contentScale = remember(contentScaleName) { contentScale(contentScaleName) }
+    val alignment = remember(alignmentName) { alignment(alignmentName) }
     val coilData =
         remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
     val zoomableState = rememberZoomableState(
@@ -47,6 +57,8 @@ fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
                 crossfade(true)
             }.build(),
             contentDescription = "",
+            contentScale = contentScale,
+            alignment = alignment,
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black),

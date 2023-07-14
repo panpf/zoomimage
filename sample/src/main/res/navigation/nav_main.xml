@@ -136,8 +136,8 @@
         android:id="@+id/zoomImageViewOptionsDialogFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment">
         <argument
-            android:name="supportIgnoreExifOrientation"
-            app:argType="boolean"
+            android:name="zoomViewType"
+            app:argType="string"
             app:nullable="false" />
     </fragment>
 

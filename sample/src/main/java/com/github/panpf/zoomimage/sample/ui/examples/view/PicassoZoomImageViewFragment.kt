@@ -38,9 +38,6 @@ class PicassoZoomImageViewFragment :
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override val supportIgnoreExifOrientation: Boolean
-        get() = false
-
     override fun getCommonBinding(binding: PicassoZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
         return binding.common
     }

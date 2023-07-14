@@ -34,9 +34,6 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override val supportIgnoreExifOrientation: Boolean
-        get() = false
-
     override fun getCommonBinding(binding: CoilZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
         return binding.common
     }

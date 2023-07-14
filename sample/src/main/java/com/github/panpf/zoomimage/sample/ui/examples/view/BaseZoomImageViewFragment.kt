@@ -49,8 +49,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
     abstract fun getCommonBinding(binding: VIEW_BINDING): ZoomImageViewCommonFragmentBinding
 
-    abstract val supportIgnoreExifOrientation: Boolean
-
     override fun onViewCreated(binding: VIEW_BINDING, savedInstanceState: Bundle?) {
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
@@ -155,14 +153,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         zoomImageView.zoomAbility.onViewLongPressListener = OnViewLongPressListener { _, _, _ ->
             ZoomImageViewInfoDialogFragment().apply {
                 arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
-            }.show(childFragmentManager, null)
-        }
-
-        common.zoomImageViewSettings.setOnClickListener {
-            ZoomImageViewOptionsDialogFragment().apply {
-                arguments = ZoomImageViewOptionsDialogFragmentArgs(
-                    supportIgnoreExifOrientation = supportIgnoreExifOrientation,
-                ).toBundle()
             }.show(childFragmentManager, null)
         }
 

@@ -36,7 +36,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun ZoomImageTool(
     zoomableState: ZoomableState,
-    optionsDialogState: ZoomImageOptionsDialogState,
     infoDialogState: ZoomImageInfoDialogState,
     imageUri: String,
 ) {
@@ -109,16 +108,15 @@ fun ZoomImageTool(
                     tint = colors.onTertiary
                 )
             }
-            IconButton(onClick = { optionsDialogState.showing = !optionsDialogState.showing }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_settings),
-                    contentDescription = "Options",
-                    tint = colors.onTertiary
-                )
-            }
+//            IconButton(onClick = { optionsDialogState.showing = !optionsDialogState.showing }) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.ic_settings),
+//                    contentDescription = "Options",
+//                    tint = colors.onTertiary
+//                )
+//            }
         }
 
-        ZoomImageOptionsDialog(state = optionsDialogState)
         ZoomImageInfoDialog(
             state = infoDialogState,
             imageUri = imageUri,

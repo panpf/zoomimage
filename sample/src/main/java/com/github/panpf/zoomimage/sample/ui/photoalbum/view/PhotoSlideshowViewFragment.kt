@@ -26,6 +26,8 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.PhotoSlideshowFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 
@@ -33,7 +35,6 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
 
     private val args by navArgs<PhotoSlideshowViewFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
-//    private val layoutOrientationViewModel by viewModels<LayoutOrientationViewModel>()
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(
@@ -52,6 +53,21 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
             prefsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 val meuIcon = if (it) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
                 setIcon(meuIcon)
+            }
+        }
+
+        if (zoomViewType != ZoomViewType.SubsamplingScaleImageView) {
+            toolbar.menu.add("Options").apply {
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                setOnMenuItemClickListener {
+                    ZoomImageViewOptionsDialogFragment().apply {
+                        arguments = ZoomImageViewOptionsDialogFragmentArgs(
+                            zoomViewType = args.zoomViewType,
+                        ).toBundle()
+                    }.show(childFragmentManager, null)
+                    true
+                }
+                setIcon(R.drawable.ic_settings)
             }
         }
 

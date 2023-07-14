@@ -48,17 +48,17 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
         binding: SubsamplingViewFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-//        binding.subsamplingViewUriText.text = "uri: ${args.imageUri}"
+        binding.subsamplingView.apply {
+            setOnStateChangedListener(object : OnStateChangedListener {
+                override fun onScaleChanged(newScale: Float, origin: Int) {
+                    updateInfo(binding)
+                }
 
-        binding.subsamplingView.setOnStateChangedListener(object : OnStateChangedListener {
-            override fun onScaleChanged(newScale: Float, origin: Int) {
-                updateInfo(binding)
-            }
-
-            override fun onCenterChanged(newCenter: PointF?, origin: Int) {
-                updateInfo(binding)
-            }
-        })
+                override fun onCenterChanged(newCenter: PointF?, origin: Int) {
+                    updateInfo(binding)
+                }
+            })
+        }
         updateInfo(binding)
 
         binding.subsamplingViewProgress.isVisible = false

@@ -25,29 +25,33 @@ import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
+import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
-    val zoomImageOptionsDialogState = rememberZoomImageOptionsDialogState()
-    val zoomAnimationSpec = remember(
-        zoomImageOptionsDialogState.animateScale,
-        zoomImageOptionsDialogState.slowerScaleAnimation
-    ) {
-        val durationMillis = zoomImageOptionsDialogState.let {
-            if (it.animateScale) (if (it.slowerScaleAnimation) 3000 else 300) else 0
-        }
+    val context = LocalContext.current
+    val prefsService = remember { context.prefsService }
+    val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
+    val alignmentName by prefsService.alignment.stateFlow.collectAsState()
+    val contentScale = remember(contentScaleName) { contentScale(contentScaleName) }
+    val alignment = remember(alignmentName) { alignment(alignmentName) }
+    val threeStepScale by prefsService.threeStepScale.stateFlow.collectAsState()
+    val rubberBandScale by prefsService.rubberBandScale.stateFlow.collectAsState()
+    val readModeEnabled by prefsService.readModeEnabled.stateFlow.collectAsState()
+    val readModeDirectionBoth by prefsService.readModeDirectionBoth.stateFlow.collectAsState()
+    val scrollBarEnabled by prefsService.scrollBarEnabled.stateFlow.collectAsState()
+    val animateScale by prefsService.animateScale.stateFlow.collectAsState()
+    val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
+    val zoomAnimationSpec = remember(animateScale, slowerScaleAnimation) {
+        val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
         mutableStateOf(ZoomAnimationSpec.Default.copy(durationMillis = durationMillis))
     }
-    val context = LocalContext.current
-    val horizontalLayout by context.prefsService.horizontalPagerLayout.stateFlow
-        .collectAsState(initial = true)
-    val readModeDirection = remember(
-        horizontalLayout,
-        zoomImageOptionsDialogState.readModeDirectionBoth
-    ) {
-        if (zoomImageOptionsDialogState.readModeDirectionBoth) {
+    val horizontalLayout by prefsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
+    val readModeDirection = remember(horizontalLayout, readModeDirectionBoth) {
+        if (readModeDirectionBoth) {
             ReadMode.Direction.Both
         } else if (horizontalLayout) {
             ReadMode.Direction.OnlyVertical
@@ -56,10 +60,10 @@ fun ZoomImageSample(sketchImageUri: String) {
         }
     }
     val readMode =
-        if (zoomImageOptionsDialogState.readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
+        if (readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
     val zoomableState = rememberZoomableState(
-        threeStepScale = zoomImageOptionsDialogState.threeStepScale,
-        rubberBandScale = zoomImageOptionsDialogState.rubberBandScale,
+        threeStepScale = threeStepScale,
+        rubberBandScale = rubberBandScale,
         animationSpec = zoomAnimationSpec.value,
         readMode = readMode,
         debugMode = BuildConfig.DEBUG
@@ -83,11 +87,11 @@ fun ZoomImageSample(sketchImageUri: String) {
             ZoomImage(
                 painter = drawablePainter1,
                 contentDescription = "",
-                contentScale = zoomImageOptionsDialogState.contentScale,
-                alignment = zoomImageOptionsDialogState.alignment,
+                contentScale = contentScale,
+                alignment = alignment,
                 modifier = Modifier.fillMaxSize(),
                 state = zoomableState,
-                scrollBar = if(zoomImageOptionsDialogState.scrollBarEnabled) ScrollBar.Default else null,
+                scrollBar = if (scrollBarEnabled) ScrollBar.Default else null,
                 onLongPress = {
                     infoDialogState.showing = true
                 }
@@ -101,7 +105,6 @@ fun ZoomImageSample(sketchImageUri: String) {
 
         ZoomImageTool(
             zoomableState = zoomableState,
-            optionsDialogState = zoomImageOptionsDialogState,
             infoDialogState = infoDialogState,
             imageUri = sketchImageUri,
         )

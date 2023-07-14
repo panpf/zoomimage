@@ -27,16 +27,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
+import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 
 class PhotoSlideshowComposeFragment : AppBarFragment() {
 
     private val args by navArgs<PhotoSlideshowComposeFragmentArgs>()
     private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
+    private val optionDialogShowViewModel by viewModels<OptionsDialogShowViewModel>()
 
     override fun getTitle(): String {
         return zoomImageType.title
@@ -53,6 +56,13 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
             val meuIcon =
                 if (horizontalLayout) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
             Icon(painter = painterResource(id = meuIcon), contentDescription = "Icon")
+        }
+
+        IconButton(onClick = { optionDialogShowViewModel.toggleOptionDialogShow() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_settings),
+                contentDescription = "Options",
+            )
         }
     }
 
@@ -89,6 +99,13 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
                 total = args.totalCount,
                 modifier = Modifier.align(Alignment.TopEnd)
             )
+        }
+
+        val showingOptionsDialog by optionDialogShowViewModel.showStateFlow.collectAsState(initial = false)
+        if (showingOptionsDialog) {
+            ZoomImageOptionsDialog(my = zoomImageType.my) {
+                optionDialogShowViewModel.toggleOptionDialogShow()
+            }
         }
     }
 }

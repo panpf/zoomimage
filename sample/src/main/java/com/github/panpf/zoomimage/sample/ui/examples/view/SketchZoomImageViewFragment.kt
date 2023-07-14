@@ -37,9 +37,6 @@ class SketchZoomImageViewFragment :
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override val supportIgnoreExifOrientation: Boolean
-        get() = true
-
     override fun getCommonBinding(binding: SketchZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
         return binding.common
     }
@@ -87,9 +84,7 @@ class SketchZoomImageViewFragment :
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
-            if (supportIgnoreExifOrientation) {
-                ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
-            }
+            ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
         }
     }
 

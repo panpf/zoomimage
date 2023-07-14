@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 import android.annotation.SuppressLint
 import android.graphics.Matrix
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -27,7 +28,9 @@ import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
+import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
+import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import kotlin.math.pow
@@ -41,9 +44,10 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         binding: PhotoViewFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-//        binding.photoViewUriText.text = "uri: ${args.imageUri}"
-
         binding.photoView.apply {
+            prefsService.scaleType.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                scaleType = ImageView.ScaleType.valueOf(it)
+            }
             setOnScaleChangeListener { _, _, _ ->
                 updateInfo(binding)
             }

@@ -29,6 +29,7 @@
             app:subtitleTextColor="@color/colorOnPrimary"
             app:title="@string/app_name"
             app:titleTextColor="@color/colorOnPrimary"
+            app:navigationIconTint="@color/colorOnPrimary"
             tools:subtitle="@string/app_name" />
     </LinearLayout>
 

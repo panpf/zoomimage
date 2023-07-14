@@ -33,6 +33,7 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFacto
 class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
 
     private val args by navArgs<ZoomImageViewOptionsDialogFragmentArgs>()
+    private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
 
     override fun onViewCreated(binding: RecyclerFragmentBinding, savedInstanceState: Bundle?) {
         binding.recyclerRecycler.apply {
@@ -56,62 +57,64 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                         )
                     )
 
-                    add(
-                        SwitchMenuFlow(
-                            title = "Scroll Bar",
-                            data = prefsService.scrollBarEnabled,
+                    if (zoomViewType.my) {
+                        add(
+                            SwitchMenuFlow(
+                                title = "Scroll Bar",
+                                data = prefsService.scrollBarEnabled,
+                            )
                         )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Read Mode",
-                            data = prefsService.readModeEnabled,
+                        add(
+                            SwitchMenuFlow(
+                                title = "Read Mode",
+                                data = prefsService.readModeEnabled,
+                            )
                         )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Read Mode Direction Both",
-                            data = prefsService.readModeDirectionBoth,
+                        add(
+                            SwitchMenuFlow(
+                                title = "Read Mode Direction Both",
+                                data = prefsService.readModeDirectionBoth,
+                            )
                         )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Animate Scale",
-                            data = prefsService.animateScale,
+                        add(
+                            SwitchMenuFlow(
+                                title = "Animate Scale",
+                                data = prefsService.animateScale,
+                            )
                         )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Three Step Scale",
-                            data = prefsService.threeStepScale,
+                        add(
+                            SwitchMenuFlow(
+                                title = "Three Step Scale",
+                                data = prefsService.threeStepScale,
+                            )
                         )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Rubber Band Scale",
-                            data = prefsService.rubberBandScale,
+                        add(
+                            SwitchMenuFlow(
+                                title = "Rubber Band Scale",
+                                data = prefsService.rubberBandScale,
+                            )
                         )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Slower Scale Animation",
-                            data = prefsService.slowerScaleAnimation,
+                        add(
+                            SwitchMenuFlow(
+                                title = "Slower Scale Animation",
+                                data = prefsService.slowerScaleAnimation,
+                            )
                         )
-                    )
 
-                    add(
-                        SwitchMenuFlow(
-                            title = "Show Tile Bounds",
-                            data = prefsService.showTileBounds,
+                        add(
+                            SwitchMenuFlow(
+                                title = "Show Tile Bounds",
+                                data = prefsService.showTileBounds,
+                            )
                         )
-                    )
-                    add(
-                        SwitchMenuFlow(
-                            title = "Ignore Exif Orientation",
-                            data = prefsService.ignoreExifOrientation,
-                            disabled = !args.supportIgnoreExifOrientation,
+                        add(
+                            SwitchMenuFlow(
+                                title = "Ignore Exif Orientation",
+                                data = prefsService.ignoreExifOrientation,
+                                disabled = !zoomViewType.supportIgnoreExifOrientation,
+                            )
                         )
-                    )
+                    }
                 }
             )
         }
