@@ -53,12 +53,14 @@ fun ZoomImageInfoDialog(
     val otherInfo = remember(
         zoomableState.offsetBounds,
         zoomableState.containerVisibleRect,
-        zoomableState.contentInContainerRect
+        zoomableState.contentInContainerRect,
+        zoomableState.contentInContainerVisibleRect,
     ) {
         """
             offsetBounds: ${zoomableState.offsetBounds.toShortString()}
             containerVisible: ${zoomableState.containerVisibleRect.toShortString()}
             contentInContainer: ${zoomableState.contentInContainerRect.toShortString()}
+            contentInContainerVisible: ${zoomableState.contentInContainerVisibleRect.toShortString()}
         """.trimIndent()
     }
     if (state.showing) {

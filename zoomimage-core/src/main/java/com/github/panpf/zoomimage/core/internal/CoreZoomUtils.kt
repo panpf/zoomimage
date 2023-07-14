@@ -2,15 +2,14 @@ package com.github.panpf.zoomimage.core.internal
 
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.RectCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.isNotEmpty
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 fun calculateNextStepScale(
     stepScales: FloatArray,
@@ -115,22 +114,22 @@ fun isSameDirection(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
 
 
 fun computeScrollEdge(
-    contentSize: IntSizeCompat,
-    contentVisibleRect: RectCompat,
+    contentInContainerVisibleRect: IntRectCompat,
+    contentVisibleRect: IntRectCompat,
 ): ScrollEdge {
-    if (contentSize.isEmpty() || contentVisibleRect.isEmpty)
+    if (contentInContainerVisibleRect.isEmpty || contentVisibleRect.isEmpty)
         return ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
     return ScrollEdge(
         horizontal = when {
-            contentVisibleRect.width.roundToInt() >= contentSize.width -> Edge.BOTH
-            contentVisibleRect.left.roundToInt() <= 0 -> Edge.START
-            contentVisibleRect.right.roundToInt() >= contentSize.width -> Edge.END
+            contentVisibleRect.width >= contentInContainerVisibleRect.width -> Edge.BOTH
+            contentVisibleRect.left <= contentInContainerVisibleRect.left -> Edge.START
+            contentVisibleRect.right >= contentInContainerVisibleRect.right -> Edge.END
             else -> Edge.NONE
         },
         vertical = when {
-            contentVisibleRect.height.roundToInt() >= contentSize.height -> Edge.BOTH
-            contentVisibleRect.top.roundToInt() <= 0 -> Edge.START
-            contentVisibleRect.bottom.roundToInt() >= contentSize.height -> Edge.END
+            contentVisibleRect.height >= contentInContainerVisibleRect.height -> Edge.BOTH
+            contentVisibleRect.top <= contentInContainerVisibleRect.top -> Edge.START
+            contentVisibleRect.bottom >= contentInContainerVisibleRect.bottom -> Edge.END
             else -> Edge.NONE
         },
     )

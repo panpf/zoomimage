@@ -84,7 +84,7 @@ fun Rect.toCompatRect(): RectCompat {
     return RectCompat(left = left, top = top, right = right, bottom = bottom)
 }
 
-fun IntRect.roundToCompatIntRect(): IntRectCompat {
+fun IntRect.toCompatIntRect(): IntRectCompat {
     return IntRectCompat(left = left, top = top, right = right, bottom = bottom)
 }
 

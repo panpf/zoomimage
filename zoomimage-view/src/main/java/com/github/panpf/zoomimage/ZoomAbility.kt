@@ -39,6 +39,7 @@ class ZoomAbility(
     private val imageViewBridge: ImageViewBridge,
 ) {
     // todo 参考 ZoomImage 将 ZoomEngine 拆分成 State 和 手势处理两部分
+    // todo 不支持 center 等 ScaleType
     internal val engine: ZoomEngine
     private val imageMatrix = Matrix()
     val logger: Logger = Logger()

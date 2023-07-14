@@ -35,6 +35,7 @@ import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.computeContainerOriginByTouchPosition
 import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
+import com.github.panpf.zoomimage.compose.internal.computeContentInContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeLocationOffset
 import com.github.panpf.zoomimage.compose.internal.computeOffsetBounds
@@ -49,8 +50,8 @@ import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.supportReadMode
+import com.github.panpf.zoomimage.compose.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.internal.toCompatIntSize
-import com.github.panpf.zoomimage.compose.internal.toCompatRect
 import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.internal.toShortString
@@ -154,14 +155,29 @@ class ZoomableState(
         ).roundToIntRect()
     }
 
-    val scrollEdge: ScrollEdge by derivedStateOf {
-        computeScrollEdge(
-            contentSize = contentSize.toCompatIntSize(),
-            contentVisibleRect = contentVisibleRect.toCompatRect(),
-        )
+    val contentInContainerRect: IntRect by derivedStateOf {
+        computeContentInContainerRect(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = contentAlignment,
+        ).roundToIntRect()
     }
+    val contentInContainerVisibleRect: IntRect by derivedStateOf {
+        computeContentInContainerVisibleRect(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = contentAlignment,
+        ).roundToIntRect()
+    }
+
     val containerVisibleRect: IntRect by derivedStateOf {
-        computeContainerVisibleRect(containerSize, transform.scaleX, transform.offset).roundToIntRect()
+        computeContainerVisibleRect(
+            containerSize = containerSize,
+            scale = transform.scaleX,
+            offset = transform.offset
+        ).roundToIntRect()
     }
     val contentVisibleRect: IntRect by derivedStateOf {
         computeContentVisibleRect(
@@ -173,13 +189,11 @@ class ZoomableState(
             offset = transform.offset,
         ).roundToIntRect()
     }
-    val contentInContainerRect: IntRect by derivedStateOf {
-        computeContentInContainerRect(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = contentAlignment,
-        ).roundToIntRect()
+    val scrollEdge: ScrollEdge by derivedStateOf {
+        computeScrollEdge(
+            contentInContainerVisibleRect = contentInContainerVisibleRect.toCompatIntRect(),
+            contentVisibleRect = contentVisibleRect.toCompatIntRect(),
+        )
     }
 
     internal suspend fun reset() {
