@@ -50,7 +50,7 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
                 true
             }
             prefsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                val meuIcon = if (it) R.drawable.ic_layout_column else R.drawable.ic_layout_row
+                val meuIcon = if (it) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
                 setIcon(meuIcon)
             }
         }

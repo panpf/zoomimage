@@ -51,7 +51,7 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
             context.prefsService.horizontalPagerLayout.value = !horizontalLayout
         }) {
             val meuIcon =
-                if (horizontalLayout) R.drawable.ic_layout_column else R.drawable.ic_layout_row
+                if (horizontalLayout) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
             Icon(painter = painterResource(id = meuIcon), contentDescription = "Icon")
         }
     }
