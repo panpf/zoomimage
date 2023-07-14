@@ -22,12 +22,14 @@ import androidx.compose.ui.layout.ContentScale.Companion.None
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.roundToIntRect
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.panpf.zoomimage.compose.internal.computeAlignmentOffset
+import com.github.panpf.zoomimage.compose.internal.computeAlignmentIntOffset
 import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerInnerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.internal.computeLocationOffset
+import com.github.panpf.zoomimage.compose.internal.computeOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.Origin
@@ -60,7 +62,7 @@ class ComposeZoomUtilsTest {
                     Item6(p1, p2, p3, IntOffset.Zero)
                 },
             ) {
-                computeAlignmentOffset(
+                computeAlignmentIntOffset(
                     containerSize = containerSize,
                     contentSize = it.contentSize,
                     contentScale = it.contentScale,
@@ -323,7 +325,7 @@ class ComposeZoomUtilsTest {
             Item6(IntSize(551, 1038), Crop, BottomCenter, IntOffset(0, -379)),
             Item6(IntSize(551, 1038), Crop, BottomEnd, IntOffset(0, -379)),
         ).forEach { item ->
-            val result = computeAlignmentOffset(
+            val result = computeAlignmentIntOffset(
                 containerSize = containerSize,
                 contentSize = item.contentSize,
                 contentScale = item.contentScale,
@@ -399,7 +401,7 @@ class ComposeZoomUtilsTest {
                     contentSize = it.contentSize,
                     contentScale = it.contentScale,
                     alignment = it.alignment,
-                )
+                ).roundToIntRect()
             }
         }
 
@@ -662,7 +664,7 @@ class ComposeZoomUtilsTest {
                 contentSize = item.contentSize,
                 contentScale = item.contentScale,
                 alignment = item.alignment,
-            )
+            ).roundToIntRect()
             Assert.assertEquals(
                 /* message = */ item.getMessage(containerSize),
                 /* expected = */ item.expected,
@@ -697,7 +699,7 @@ class ComposeZoomUtilsTest {
                     contentSize = it.contentSize,
                     contentScale = it.contentScale,
                     alignment = it.alignment,
-                )
+                ).roundToIntRect()
             }
         }
 
@@ -960,7 +962,7 @@ class ComposeZoomUtilsTest {
                 contentSize = item.contentSize,
                 contentScale = item.contentScale,
                 alignment = item.alignment,
-            )
+            ).roundToIntRect()
             Assert.assertEquals(
                 /* message = */ item.getMessage(containerSize),
                 /* expected = */ item.expected,
@@ -991,7 +993,7 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 "containerSize=$containerSize, scale=$scale, offset=$offset",
                 expectedVisibleRect,
-                computeContainerVisibleRect(containerSize, scale, offset)
+                computeContainerVisibleRect(containerSize, scale, offset).roundToIntRect()
             )
         }
 
@@ -1012,10 +1014,12 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 "containerSize=$containerSize, scale=$scale, offset=$offset",
                 expectedVisibleRect,
-                computeContainerVisibleRect(containerSize, scale, offset)
+                computeContainerVisibleRect(containerSize, scale, offset).roundToIntRect()
             )
         }
     }
+
+    // todo test
 
     //    @Test
 //    fun testComputeContentInContainerVisibleRect() {
@@ -1370,1155 +1374,559 @@ class ComposeZoomUtilsTest {
 //        }
 //    }
 //
-//    @Test
-//    fun testComputeOffsetBounds() {
-//        val containerSize = IntSize(1000, 1000)
-//
-//        var contentSize = IntSize(800, 400)
-//        var scale = 1f
-//        listOf(
-//            Item(ContentScale.None, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-////        ).printlnExpectedMessage(
-////            computeExpected =  {
-////                computeOffsetBounds(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = it.contentScale,
-////                    alignment = it.alignment,
-////                    scale = scale,
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, scale),
-//                it.expected,
-//                computeOffsetBounds(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                    scale = scale,
-//                )
-//            )
-//        }
-//
-//        contentSize = IntSize(400, 800)
-//        scale = 1f
-//        listOf(
-//            Item(ContentScale.None, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-////        ).printlnExpectedMessage(
-////            computeExpected =  {
-////                computeOffsetBounds(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = it.contentScale,
-////                    alignment = it.alignment,
-////                    scale = scale,
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, scale),
-//                it.expected,
-//                computeOffsetBounds(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                    scale = scale,
-//                )
-//            )
-//        }
-//
-//        contentSize = IntSize(1600, 1200)
-//        scale = 1f
-//        listOf(
-//            Item(ContentScale.None, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-////        ).printlnExpectedMessage(
-////            computeExpected =  {
-////                computeOffsetBounds(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = it.contentScale,
-////                    alignment = it.alignment,
-////                    scale = scale,
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, scale),
-//                it.expected,
-//                computeOffsetBounds(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                    scale = scale,
-//                )
-//            )
-//        }
-//
-//        contentSize = IntSize(1200, 1600)
-//        scale = 1f
-//        listOf(
-//            Item(ContentScale.None, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillHeight, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.FillBounds, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.TopEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.Center, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomStart, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomCenter, IntRect(0.0, 0.0, 0.0, 0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomEnd, IntRect(0.0, 0.0, 0.0, 0.0)),
-////        ).printlnExpectedMessage(
-////            computeExpected =  {
-////                computeOffsetBounds(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = it.contentScale,
-////                    alignment = it.alignment,
-////                    scale = scale,
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, scale),
-//                it.expected,
-//                computeOffsetBounds(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                    scale = scale,
-//                )
-//            )
-//        }
-//
-//        contentSize = IntSize(800, 400)
-//        scale = 2f
-//        listOf(
-//            Item(ContentScale.None, Alignment.TopStart, IntRect(-600.0, 0.0, -0.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopCenter, IntRect(-800.0, 0.0, -200.0, 0.0)),
-//            Item(ContentScale.None, Alignment.TopEnd, IntRect(-1000.0, 0.0, -400.0, 0.0)),
-//            Item(ContentScale.None, Alignment.CenterStart, IntRect(-600.0, -500.0, -0.0, -500.0)),
-//            Item(ContentScale.None, Alignment.Center, IntRect(-800.0, -500.0, -200.0, -500.0)),
-//            Item(ContentScale.None, Alignment.CenterEnd, IntRect(-1000.0, -500.0, -400.0, -500.0)),
-//            Item(
-//                ContentScale.None,
-//                Alignment.BottomStart,
-//                IntRect(-600.0, -1000.0, -0.0, -1000.0)
-//            ),
-//            Item(
-//                ContentScale.None,
-//                Alignment.BottomCenter,
-//                IntRect(-800.0, -1000.0, -200.0, -1000.0)
-//            ),
-//            Item(
-//                ContentScale.None,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -400.0, -1000.0)
-//            ),
-//            Item(ContentScale.Inside, Alignment.TopStart, IntRect(-600.0, 0.0, -0.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopCenter, IntRect(-800.0, 0.0, -200.0, 0.0)),
-//            Item(ContentScale.Inside, Alignment.TopEnd, IntRect(-1000.0, 0.0, -400.0, 0.0)),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.CenterStart,
-//                IntRect(-600.0, -500.0, -0.0, -500.0)
-//            ),
-//            Item(ContentScale.Inside, Alignment.Center, IntRect(-800.0, -500.0, -200.0, -500.0)),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -500.0, -400.0, -500.0)
-//            ),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomStart,
-//                IntRect(-600.0, -1000.0, -0.0, -1000.0)
-//            ),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomCenter,
-//                IntRect(-800.0, -1000.0, -200.0, -1000.0)
-//            ),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -400.0, -1000.0)
-//            ),
-//            Item(ContentScale.Fit, Alignment.TopStart, IntRect(-1000.0, 0.0, -0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopCenter, IntRect(-1000.0, 0.0, -0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.TopEnd, IntRect(-1000.0, 0.0, -0.0, 0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterStart, IntRect(-1000.0, -500.0, -0.0, -500.0)),
-//            Item(ContentScale.Fit, Alignment.Center, IntRect(-1000.0, -500.0, -0.0, -500.0)),
-//            Item(ContentScale.Fit, Alignment.CenterEnd, IntRect(-1000.0, -500.0, -0.0, -500.0)),
-//            Item(
-//                ContentScale.Fit,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -1000.0)
-//            ),
-//            Item(
-//                ContentScale.Fit,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -1000.0)
-//            ),
-//            Item(ContentScale.Fit, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -0.0, -1000.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopStart, IntRect(-1000.0, 0.0, -0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopCenter, IntRect(-1000.0, 0.0, -0.0, 0.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopEnd, IntRect(-1000.0, 0.0, -0.0, 0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -500.0, -0.0, -500.0)
-//            ),
-//            Item(ContentScale.FillWidth, Alignment.Center, IntRect(-1000.0, -500.0, -0.0, -500.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -500.0, -0.0, -500.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -1000.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -1000.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -1000.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillHeight, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillHeight, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.TopStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillBounds, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillBounds, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.Crop, Alignment.TopStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.TopCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-////        ).printlnExpectedMessage(
-////            computeExpected =  {
-////                computeOffsetBounds(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = it.contentScale,
-////                    alignment = it.alignment,
-////                    scale = scale,
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, scale),
-//                it.expected,
-//                computeOffsetBounds(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                    scale = scale,
-//                )
-//            )
-//        }
-//
-//        contentSize = IntSize(400, 800)
-//        scale = 2f
-//        listOf(
-//            Item(ContentScale.None, Alignment.TopStart, IntRect(0.0, -600.0, 0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.TopCenter, IntRect(-500.0, -600.0, -500.0, -0.0)),
-//            Item(ContentScale.None, Alignment.TopEnd, IntRect(-1000.0, -600.0, -1000.0, -0.0)),
-//            Item(ContentScale.None, Alignment.CenterStart, IntRect(0.0, -800.0, 0.0, -200.0)),
-//            Item(ContentScale.None, Alignment.Center, IntRect(-500.0, -800.0, -500.0, -200.0)),
-//            Item(
-//                ContentScale.None,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -800.0, -1000.0, -200.0)
-//            ),
-//            Item(ContentScale.None, Alignment.BottomStart, IntRect(0.0, -1000.0, 0.0, -400.0)),
-//            Item(
-//                ContentScale.None,
-//                Alignment.BottomCenter,
-//                IntRect(-500.0, -1000.0, -500.0, -400.0)
-//            ),
-//            Item(
-//                ContentScale.None,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -1000.0, -400.0)
-//            ),
-//            Item(ContentScale.Inside, Alignment.TopStart, IntRect(0.0, -600.0, 0.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.TopCenter, IntRect(-500.0, -600.0, -500.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.TopEnd, IntRect(-1000.0, -600.0, -1000.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterStart, IntRect(0.0, -800.0, 0.0, -200.0)),
-//            Item(ContentScale.Inside, Alignment.Center, IntRect(-500.0, -800.0, -500.0, -200.0)),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -800.0, -1000.0, -200.0)
-//            ),
-//            Item(ContentScale.Inside, Alignment.BottomStart, IntRect(0.0, -1000.0, 0.0, -400.0)),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomCenter,
-//                IntRect(-500.0, -1000.0, -500.0, -400.0)
-//            ),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -1000.0, -400.0)
-//            ),
-//            Item(ContentScale.Fit, Alignment.TopStart, IntRect(0.0, -1000.0, 0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.TopCenter, IntRect(-500.0, -1000.0, -500.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -1000.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterStart, IntRect(0.0, -1000.0, 0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.Center, IntRect(-500.0, -1000.0, -500.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterEnd, IntRect(-1000.0, -1000.0, -1000.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomStart, IntRect(0.0, -1000.0, 0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomCenter, IntRect(-500.0, -1000.0, -500.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -1000.0, -0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.TopStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillWidth, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillWidth, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillHeight, Alignment.TopStart, IntRect(0.0, -1000.0, 0.0, -0.0)),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopCenter,
-//                IntRect(-500.0, -1000.0, -500.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopEnd,
-//                IntRect(-1000.0, -1000.0, -1000.0, -0.0)
-//            ),
-//            Item(ContentScale.FillHeight, Alignment.CenterStart, IntRect(0.0, -1000.0, 0.0, -0.0)),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.Center,
-//                IntRect(-500.0, -1000.0, -500.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -1000.0, -0.0)
-//            ),
-//            Item(ContentScale.FillHeight, Alignment.BottomStart, IntRect(0.0, -1000.0, 0.0, -0.0)),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomCenter,
-//                IntRect(-500.0, -1000.0, -500.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -1000.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.TopStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillBounds, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillBounds, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.Crop, Alignment.TopStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.TopCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-////        ).printlnExpectedMessage(
-////            computeExpected =  {
-////                computeOffsetBounds(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = it.contentScale,
-////                    alignment = it.alignment,
-////                    scale = scale,
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, scale),
-//                it.expected,
-//                computeOffsetBounds(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                    scale = scale,
-//                )
-//            )
-//        }
-//
-//        contentSize = IntSize(1600, 1200)
-//        scale = 2f
-//        listOf(
-//            Item(ContentScale.None, Alignment.TopStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.TopCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.CenterStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.CenterEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.BottomStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.BottomCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.TopStart, IntRect(-1000.0, -500.0, -0.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.TopCenter, IntRect(-1000.0, -500.0, -0.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.TopEnd, IntRect(-1000.0, -500.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -750.0, -0.0, -250.0)
-//            ),
-//            Item(ContentScale.Inside, Alignment.Center, IntRect(-1000.0, -750.0, -0.0, -250.0)),
-//            Item(ContentScale.Inside, Alignment.CenterEnd, IntRect(-1000.0, -750.0, -0.0, -250.0)),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -500.0)
-//            ),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -500.0)
-//            ),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -500.0)
-//            ),
-//            Item(ContentScale.Fit, Alignment.TopStart, IntRect(-1000.0, -500.0, -0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.TopCenter, IntRect(-1000.0, -500.0, -0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.TopEnd, IntRect(-1000.0, -500.0, -0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterStart, IntRect(-1000.0, -750.0, -0.0, -250.0)),
-//            Item(ContentScale.Fit, Alignment.Center, IntRect(-1000.0, -750.0, -0.0, -250.0)),
-//            Item(ContentScale.Fit, Alignment.CenterEnd, IntRect(-1000.0, -750.0, -0.0, -250.0)),
-//            Item(ContentScale.Fit, Alignment.BottomStart, IntRect(-1000.0, -1000.0, -0.0, -500.0)),
-//            Item(
-//                ContentScale.Fit,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -500.0)
-//            ),
-//            Item(ContentScale.Fit, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -0.0, -500.0)),
-//            Item(ContentScale.FillWidth, Alignment.TopStart, IntRect(-1000.0, -500.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -500.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillWidth, Alignment.TopEnd, IntRect(-1000.0, -500.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -750.0, -0.0, -250.0)
-//            ),
-//            Item(ContentScale.FillWidth, Alignment.Center, IntRect(-1000.0, -750.0, -0.0, -250.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -750.0, -0.0, -250.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -500.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -500.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -500.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillHeight, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillHeight, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.TopStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillBounds, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillBounds, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.Crop, Alignment.TopStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.TopCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-////        ).printlnExpectedMessage(
-////            computeExpected =  {
-////                computeOffsetBounds(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = it.contentScale,
-////                    alignment = it.alignment,
-////                    scale = scale,
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, scale),
-//                it.expected,
-//                computeOffsetBounds(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                    scale = scale,
-//                )
-//            )
-//        }
-//
-//        contentSize = IntSize(1200, 1600)
-//        scale = 2f
-//        listOf(
-//            Item(ContentScale.None, Alignment.TopStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.TopCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.CenterStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.CenterEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.BottomStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.BottomCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.None, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.TopStart, IntRect(-500.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.TopCenter, IntRect(-750.0, -1000.0, -250.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -500.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.CenterStart, IntRect(-500.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Inside, Alignment.Center, IntRect(-750.0, -1000.0, -250.0, -0.0)),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -500.0, -0.0)
-//            ),
-//            Item(ContentScale.Inside, Alignment.BottomStart, IntRect(-500.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomCenter,
-//                IntRect(-750.0, -1000.0, -250.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.Inside,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -500.0, -0.0)
-//            ),
-//            Item(ContentScale.Fit, Alignment.TopStart, IntRect(-500.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.TopCenter, IntRect(-750.0, -1000.0, -250.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -500.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterStart, IntRect(-500.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.Center, IntRect(-750.0, -1000.0, -250.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.CenterEnd, IntRect(-1000.0, -1000.0, -500.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomStart, IntRect(-500.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomCenter, IntRect(-750.0, -1000.0, -250.0, -0.0)),
-//            Item(ContentScale.Fit, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -500.0, -0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.TopStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillWidth, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillWidth, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillWidth,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopStart,
-//                IntRect(-500.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopCenter,
-//                IntRect(-750.0, -1000.0, -250.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.TopEnd,
-//                IntRect(-1000.0, -1000.0, -500.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.CenterStart,
-//                IntRect(-500.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.Center,
-//                IntRect(-750.0, -1000.0, -250.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -500.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomStart,
-//                IntRect(-500.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomCenter,
-//                IntRect(-750.0, -1000.0, -250.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillHeight,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -500.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.TopStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.TopCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillBounds, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.CenterStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.FillBounds, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.CenterEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomStart,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomCenter,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(
-//                ContentScale.FillBounds,
-//                Alignment.BottomEnd,
-//                IntRect(-1000.0, -1000.0, -0.0, -0.0)
-//            ),
-//            Item(ContentScale.Crop, Alignment.TopStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.TopCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.TopEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.Center, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.CenterEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomStart, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomCenter, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-//            Item(ContentScale.Crop, Alignment.BottomEnd, IntRect(-1000.0, -1000.0, -0.0, -0.0)),
-////        ).printlnExpectedMessage(
-////            computeExpected =  {
-////                computeOffsetBounds(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = it.contentScale,
-////                    alignment = it.alignment,
-////                    scale = scale,
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, scale),
-//                it.expected,
-//                computeOffsetBounds(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                    scale = scale,
-//                )
-//            )
-//        }
-//    }
-//
+    @Test
+    fun testComputeOffsetBounds() {
+        val containerSize = IntSize(1080, 1656)
+        val printBatchBuildExpression = false
+//        val printBatchBuildExpression = true
+
+        if (printBatchBuildExpression) {
+            printlnBatchBuildExpression(
+                p1s = listOf(
+                    IntSize(7500, 232), IntSize(173, 3044), IntSize(575, 427), IntSize(551, 1038),
+                ),
+                p2s = listOf(None, Inside, Fit, FillWidth, FillHeight, FillBounds, Crop),
+                p3s = listOf(
+                    TopStart, TopCenter, TopEnd,
+                    CenterStart, Center, CenterEnd,
+                    BottomStart, BottomCenter, BottomEnd,
+                ),
+                p4s = listOf(1.0f, 2.0f),
+                buildItem = { p1, p2, p3, p4 ->
+                    Item7(p1, p2, p3, p4, IntRect.Zero)
+                },
+            ) {
+                computeOffsetBounds(
+                    containerSize = containerSize,
+                    contentSize = it.contentSize,
+                    contentScale = it.contentScale,
+                    alignment = it.alignment,
+                    scale = it.scale,
+                ).roundToIntRect()
+            }
+        }
+
+        listOf(
+            Item7(IntSize(7500, 232), None, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, TopStart, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, TopCenter, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, TopEnd, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, CenterStart, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), None, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, Center, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), None, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, CenterEnd, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), None, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, BottomStart, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), None, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), None, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), None, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), Inside, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, TopStart, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, TopCenter, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, TopEnd, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, CenterStart, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), Inside, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, Center, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), Inside, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, CenterEnd, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), Inside, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, BottomStart, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), Inside, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), Inside, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Inside, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), Fit, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, TopStart, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, TopCenter, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, TopEnd, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, CenterStart, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), Fit, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, Center, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), Fit, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, CenterEnd, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), Fit, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, BottomStart, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), Fit, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), Fit, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Fit, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), FillWidth, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, TopStart, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, TopCenter, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, TopEnd, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, CenterStart, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), FillWidth, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, Center, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), FillWidth, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, CenterEnd, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(7500, 232), FillWidth, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, BottomStart, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), FillWidth, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), FillWidth, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillWidth, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(7500, 232), FillHeight, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillHeight, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), FillBounds, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(7500, 232), Crop, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), None, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, TopStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), None, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, TopCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), None, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, TopEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), None, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, CenterStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), None, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, Center, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), None, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, CenterEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), None, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, BottomStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), None, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, BottomCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), None, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), None, BottomEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), Inside, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, TopStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, TopCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), Inside, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, TopEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), Inside, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, CenterStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, Center, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), Inside, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, CenterEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), Inside, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, BottomStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, BottomCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), Inside, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Inside, BottomEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), Fit, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, TopStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, TopCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), Fit, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, TopEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), Fit, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, CenterStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, Center, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), Fit, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, CenterEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), Fit, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, BottomStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, BottomCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), Fit, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Fit, BottomEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), FillWidth, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillWidth, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, TopStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, TopCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), FillHeight, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, TopEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), FillHeight, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, CenterStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, Center, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), FillHeight, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, CenterEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), FillHeight, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, BottomStart, 2.0f, IntRect(0, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, BottomCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(IntSize(173, 3044), FillHeight, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillHeight, BottomEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
+            Item7(IntSize(173, 3044), FillBounds, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), FillBounds, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(173, 3044), Crop, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), None, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, TopStart, 2.0f, IntRect(-70, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, TopCenter, 2.0f, IntRect(-576, 0, -506, 0)),
+            Item7(IntSize(575, 427), None, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, TopEnd, 2.0f, IntRect(-1080, 0, -1010, 0)),
+            Item7(IntSize(575, 427), None, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, CenterStart, 2.0f, IntRect(-70, -828, 0, -828)),
+            Item7(IntSize(575, 427), None, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, Center, 2.0f, IntRect(-576, -828, -506, -828)),
+            Item7(IntSize(575, 427), None, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, CenterEnd, 2.0f, IntRect(-1080, -828, -1010, -828)),
+            Item7(IntSize(575, 427), None, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, BottomStart, 2.0f, IntRect(-70, -1656, 0, -1656)),
+            Item7(IntSize(575, 427), None, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, BottomCenter, 2.0f, IntRect(-576, -1656, -506, -1656)),
+            Item7(IntSize(575, 427), None, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), None, BottomEnd, 2.0f, IntRect(-1080, -1656, -1010, -1656)),
+            Item7(IntSize(575, 427), Inside, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, TopStart, 2.0f, IntRect(-70, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, TopCenter, 2.0f, IntRect(-576, 0, -506, 0)),
+            Item7(IntSize(575, 427), Inside, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, TopEnd, 2.0f, IntRect(-1080, 0, -1010, 0)),
+            Item7(IntSize(575, 427), Inside, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, CenterStart, 2.0f, IntRect(-70, -828, 0, -828)),
+            Item7(IntSize(575, 427), Inside, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, Center, 2.0f, IntRect(-576, -828, -506, -828)),
+            Item7(IntSize(575, 427), Inside, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, CenterEnd, 2.0f, IntRect(-1080, -828, -1010, -828)),
+            Item7(IntSize(575, 427), Inside, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, BottomStart, 2.0f, IntRect(-70, -1656, 0, -1656)),
+            Item7(IntSize(575, 427), Inside, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, BottomCenter, 2.0f, IntRect(-576, -1656, -506, -1656)),
+            Item7(IntSize(575, 427), Inside, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Inside, BottomEnd, 2.0f, IntRect(-1080, -1656, -1010, -1656)),
+            Item7(IntSize(575, 427), Fit, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, TopStart, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, TopCenter, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, TopEnd, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, CenterStart, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(575, 427), Fit, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, Center, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(575, 427), Fit, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, CenterEnd, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(575, 427), Fit, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, BottomStart, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(575, 427), Fit, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(575, 427), Fit, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Fit, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(575, 427), FillWidth, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, TopStart, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, TopCenter, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, TopEnd, 2.0f, IntRect(-1080, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, CenterStart, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(575, 427), FillWidth, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, Center, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(575, 427), FillWidth, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, CenterEnd, 2.0f, IntRect(-1080, -828, 0, -828)),
+            Item7(IntSize(575, 427), FillWidth, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, BottomStart, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(575, 427), FillWidth, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(575, 427), FillWidth, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillWidth, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(IntSize(575, 427), FillHeight, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillHeight, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), FillBounds, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(575, 427), Crop, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(575, 427), Crop, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), None, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, TopStart, 2.0f, IntRect(-22, -420, 0, 0)),
+            Item7(IntSize(551, 1038), None, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, TopCenter, 2.0f, IntRect(-552, -420, -530, 0)),
+            Item7(IntSize(551, 1038), None, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, TopEnd, 2.0f, IntRect(-1080, -420, -1058, 0)),
+            Item7(IntSize(551, 1038), None, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, CenterStart, 2.0f, IntRect(-22, -1038, 0, -618)),
+            Item7(IntSize(551, 1038), None, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, Center, 2.0f, IntRect(-552, -1038, -530, -618)),
+            Item7(IntSize(551, 1038), None, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, CenterEnd, 2.0f, IntRect(-1080, -1038, -1058, -618)),
+            Item7(IntSize(551, 1038), None, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, BottomStart, 2.0f, IntRect(-22, -1656, 0, -1236)),
+            Item7(IntSize(551, 1038), None, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, BottomCenter, 2.0f, IntRect(-552, -1656, -530, -1236)),
+            Item7(IntSize(551, 1038), None, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), None, BottomEnd, 2.0f, IntRect(-1080, -1656, -1058, -1236)),
+            Item7(IntSize(551, 1038), Inside, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, TopStart, 2.0f, IntRect(-22, -420, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, TopCenter, 2.0f, IntRect(-552, -420, -530, 0)),
+            Item7(IntSize(551, 1038), Inside, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, TopEnd, 2.0f, IntRect(-1080, -420, -1058, 0)),
+            Item7(IntSize(551, 1038), Inside, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, CenterStart, 2.0f, IntRect(-22, -1038, 0, -618)),
+            Item7(IntSize(551, 1038), Inside, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, Center, 2.0f, IntRect(-552, -1038, -530, -618)),
+            Item7(IntSize(551, 1038), Inside, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, CenterEnd, 2.0f, IntRect(-1080, -1038, -1058, -618)),
+            Item7(IntSize(551, 1038), Inside, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, BottomStart, 2.0f, IntRect(-22, -1656, 0, -1236)),
+            Item7(IntSize(551, 1038), Inside, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, BottomCenter, 2.0f, IntRect(-552, -1656, -530, -1236)),
+            Item7(IntSize(551, 1038), Inside, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Inside, BottomEnd, 2.0f, IntRect(-1080, -1656, -1058, -1236)),
+            Item7(IntSize(551, 1038), Fit, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, TopStart, 2.0f, IntRect(-678, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, TopCenter, 2.0f, IntRect(-880, -1656, -202, 0)),
+            Item7(IntSize(551, 1038), Fit, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, TopEnd, 2.0f, IntRect(-1080, -1656, -402, 0)),
+            Item7(IntSize(551, 1038), Fit, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, CenterStart, 2.0f, IntRect(-678, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, Center, 2.0f, IntRect(-880, -1656, -202, 0)),
+            Item7(IntSize(551, 1038), Fit, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, CenterEnd, 2.0f, IntRect(-1080, -1656, -402, 0)),
+            Item7(IntSize(551, 1038), Fit, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, BottomStart, 2.0f, IntRect(-678, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, BottomCenter, 2.0f, IntRect(-880, -1656, -202, 0)),
+            Item7(IntSize(551, 1038), Fit, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Fit, BottomEnd, 2.0f, IntRect(-1080, -1656, -402, 0)),
+            Item7(IntSize(551, 1038), FillWidth, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, BottomStart, 2.0f, IntRect(-1080, -1655, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, BottomCenter, 2.0f, IntRect(-1080, -1655, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillWidth, BottomEnd, 2.0f, IntRect(-1080, -1655, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, TopStart, 2.0f, IntRect(-678, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, TopCenter, 2.0f, IntRect(-880, -1656, -202, 0)),
+            Item7(IntSize(551, 1038), FillHeight, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, TopEnd, 2.0f, IntRect(-1080, -1656, -402, 0)),
+            Item7(IntSize(551, 1038), FillHeight, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, CenterStart, 2.0f, IntRect(-678, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, Center, 2.0f, IntRect(-880, -1656, -202, 0)),
+            Item7(IntSize(551, 1038), FillHeight, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, CenterEnd, 2.0f, IntRect(-1080, -1656, -402, 0)),
+            Item7(IntSize(551, 1038), FillHeight, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, BottomStart, 2.0f, IntRect(-678, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, BottomCenter, 2.0f, IntRect(-880, -1656, -202, 0)),
+            Item7(IntSize(551, 1038), FillHeight, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillHeight, BottomEnd, 2.0f, IntRect(-1080, -1656, -402, 0)),
+            Item7(IntSize(551, 1038), FillBounds, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, BottomStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), FillBounds, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, TopStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, TopCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, TopCenter, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, TopEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, TopEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, CenterStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, CenterStart, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, Center, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, Center, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, CenterEnd, 2.0f, IntRect(-1080, -1656, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, BottomStart, 2.0f, IntRect(-1080, -1655, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, BottomCenter, 2.0f, IntRect(-1080, -1655, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
+            Item7(IntSize(551, 1038), Crop, BottomEnd, 2.0f, IntRect(-1080, -1655, 0, 0)),
+        ).forEach { item ->
+            val result = computeOffsetBounds(
+                containerSize = containerSize,
+                contentSize = item.contentSize,
+                contentScale = item.contentScale,
+                alignment = item.alignment,
+                scale = item.scale,
+            ).roundToIntRect()
+            Assert.assertEquals(
+                /* message = */ item.getMessage(containerSize),
+                /* expected = */ item.expected,
+                /* actual = */ result,
+            )
+        }
+    }
+
 //    @Test
 //    fun testComputeContentVisibleRect() {
 //        var containerSize = IntSize(1000, 2000)
@@ -3855,6 +3263,34 @@ class ComposeZoomUtilsTest {
         }
     }
 
+    data class Item7(
+        val contentSize: IntSize,
+        val contentScale: ContentScale,
+        val alignment: Alignment,
+        val scale: Float,
+        override val expected: IntRect
+    ) : A<IntRect> {
+        override fun getMessage(containerSize: IntSize): String {
+            return "Item7(" +
+                    "containerSize=${containerSize.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "contentScale=${contentScale.name}, " +
+                    "alignment=${alignment.name}, " +
+                    "scale=${scale}" +
+                    ")"
+        }
+
+        override fun getBuildExpression(r: IntRect): String {
+            return "Item7(" +
+                    "IntSize(${contentSize.width}, ${contentSize.height}), " +
+                    "${contentScale.name}, " +
+                    "${alignment.name}, " +
+                    "${scale}f, " +
+                    "IntRect(${r.left}, ${r.top}, ${r.right}, ${r.bottom})" +
+                    ")"
+        }
+    }
+
     interface A<R> {
         val expected: R
         fun getMessage(containerSize: IntSize): String
@@ -3906,6 +3342,32 @@ class ComposeZoomUtilsTest {
             p2s.forEach { p2 ->
                 p3s.forEach { p3 ->
                     paramList.add(buildItem(p1, p2, p3))
+                }
+            }
+        }
+        val buildExpression =
+            paramList.joinToString(separator = ", \n", prefix = "\n", postfix = ",") { item ->
+                val expected = computeExpected(item)
+                item.getBuildExpression(expected)
+            }
+        Assert.fail(buildExpression)
+    }
+
+    private fun <P1, P2, P3, P4, R, T : A<R>> printlnBatchBuildExpression(
+        p1s: List<P1>,
+        p2s: List<P2>,
+        p3s: List<P3>,
+        p4s: List<P4>,
+        buildItem: (P1, P2, P3, P4) -> T,
+        computeExpected: (T) -> R
+    ) {
+        val paramList = mutableListOf<T>()
+        p1s.forEach { p1 ->
+            p2s.forEach { p2 ->
+                p3s.forEach { p3 ->
+                    p4s.forEach { p4 ->
+                        paramList.add(buildItem(p1, p2, p3, p4))
+                    }
                 }
             }
         }

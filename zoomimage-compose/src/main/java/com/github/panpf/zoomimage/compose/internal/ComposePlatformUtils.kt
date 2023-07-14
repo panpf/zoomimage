@@ -140,6 +140,15 @@ internal fun IntRect.limitTo(rect: IntRect): IntRect {
     )
 }
 
+internal fun Rect.limitTo(rect: Rect): Rect {
+    return Rect(
+        left = left.coerceAtLeast(rect.left),
+        top = top.coerceAtLeast(rect.top),
+        right = right.coerceIn(rect.left, rect.right),
+        bottom = bottom.coerceIn(rect.top, rect.bottom),
+    )
+}
+
 internal val ContentScale.name: String
     get() = when (this) {
         ContentScale.FillWidth -> "FillWidth"
@@ -190,6 +199,19 @@ internal fun Dp.toPx(): Float {
 internal fun Float.toDp(): Dp {
     return with(LocalDensity.current) { this@toDp.toDp() }
 }
+
+/**
+ * Multiplication operator with [Size].
+ *
+ * Return a new [Size] with the width and height multiplied by the [ScaleFactor.scaleX] and
+ * [ScaleFactor.scaleY] respectively
+ */
+@Stable
+operator fun Size.times(scaleFactor: ScaleFactor): Size =
+    Size(
+        width = this.width * scaleFactor.scaleX,
+        height = this.height * scaleFactor.scaleY,
+    )
 
 /**
  * Multiplication operator with [Size].

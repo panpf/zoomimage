@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.Transform
 import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
@@ -150,7 +151,7 @@ class ZoomableState(
             contentScale = contentScale,
             alignment = contentAlignment,
             scale = transform.scaleX,
-        )
+        ).roundToIntRect()
     }
 
     val scrollEdge: ScrollEdge by derivedStateOf {
@@ -160,7 +161,7 @@ class ZoomableState(
         )
     }
     val containerVisibleRect: IntRect by derivedStateOf {
-        computeContainerVisibleRect(containerSize, transform.scaleX, transform.offset)
+        computeContainerVisibleRect(containerSize, transform.scaleX, transform.offset).roundToIntRect()
     }
     val contentVisibleRect: IntRect by derivedStateOf {
         computeContentVisibleRect(
@@ -170,7 +171,7 @@ class ZoomableState(
             alignment = contentAlignment,
             scale = transform.scaleX,
             offset = transform.offset,
-        )
+        ).roundToIntRect()
     }
     val contentInContainerRect: IntRect by derivedStateOf {
         computeContentInContainerRect(
@@ -178,7 +179,7 @@ class ZoomableState(
             contentSize = contentSize,
             contentScale = contentScale,
             alignment = contentAlignment,
-        )
+        ).roundToIntRect()
     }
 
     internal suspend fun reset() {
@@ -205,15 +206,14 @@ class ZoomableState(
                 containerSize = containerSize.toCompatIntSize(),
                 scaleMode = contentScale.toScaleMode(),
                 baseScale = contentScale.computeScaleFactor(
-                    rotatedContentSize.toSize(),
-                    containerSize.toSize()
-                )
-                    .toCompatScaleFactor(),
+                    srcSize = rotatedContentSize.toSize(),
+                    dstSize = containerSize.toSize()
+                ).toCompatScaleFactor(),
                 defaultMediumScaleMultiple = defaultMediumScaleMultiple,
             )
             minScale = scales[0]
-            mediumScale =
-                scales[1] // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
+            // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
+            mediumScale = scales[1]
             maxScale = scales[2]
             baseTransform = computeTransform(
                 contentSize = rotatedContentSize,
@@ -525,12 +525,12 @@ class ZoomableState(
         }
         return Offset(
             x = offset.x.coerceIn(
-                minimumValue = offsetBounds.left.toFloat(),
-                maximumValue = offsetBounds.right.toFloat()
+                minimumValue = offsetBounds.left,
+                maximumValue = offsetBounds.right
             ),
             y = offset.y.coerceIn(
-                minimumValue = offsetBounds.top.toFloat(),
-                maximumValue = offsetBounds.bottom.toFloat()
+                minimumValue = offsetBounds.top,
+                maximumValue = offsetBounds.bottom
             ),
         )
     }
