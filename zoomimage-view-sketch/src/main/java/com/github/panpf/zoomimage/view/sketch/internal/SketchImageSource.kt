@@ -22,7 +22,7 @@ import com.github.panpf.sketch.cache.CachePolicy.ENABLED
 import com.github.panpf.sketch.datasource.BasedStreamDataSource
 import com.github.panpf.sketch.request.Depth
 import com.github.panpf.sketch.request.LoadRequest
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
@@ -56,5 +56,26 @@ class SketchImageSource(
             return Result.failure(IllegalStateException("DataSource is not BasedStreamDataSource. imageUri='$imageUri'"))
         }
         return kotlin.runCatching { dataSource.newInputStream() }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as SketchImageSource
+        if (context != other.context) return false
+        if (sketch != other.sketch) return false
+        if (imageUri != other.imageUri) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = context.hashCode()
+        result = 31 * result + sketch.hashCode()
+        result = 31 * result + imageUri.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "SketchImageSource('$imageUri')"
     }
 }

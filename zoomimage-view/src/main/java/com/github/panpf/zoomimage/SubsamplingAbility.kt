@@ -1,16 +1,18 @@
 package com.github.panpf.zoomimage
 
 import android.graphics.Canvas
-import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.view.internal.SubsamplingEngine
-import com.github.panpf.zoomimage.view.internal.Tile
+import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.view.internal.getLifecycle
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import kotlinx.coroutines.CoroutineScope
@@ -111,10 +113,10 @@ class SubsamplingAbility(
     val tileList: List<Tile>?
         get() = engine.tileList
 
-    val imageVisibleRect: Rect
+    val imageVisibleRect: IntRectCompat
         get() = engine.imageVisibleRect
 
-    val imageLoadRect: Rect
+    val imageLoadRect: IntRectCompat
         get() = engine.imageLoadRect
 
     val imageSize: IntSizeCompat?

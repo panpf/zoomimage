@@ -5,6 +5,7 @@ import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.ViewCompat
+import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import kotlin.math.roundToInt
 
@@ -28,16 +29,6 @@ internal fun getPointerIndex(action: Int): Int {
     return action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
 }
 
-internal fun Rect.toVeryShortString(): String =
-    "(${left},${top}-${right},${bottom})"
-
-internal fun Rect.crossWith(other: Rect): Boolean {
-    return this.left < other.right
-            && this.right > other.left
-            && this.top < other.bottom
-            && this.bottom > other.top
-}
-
 val ZeroRect = Rect(0, 0, 0, 0)
 
 internal fun IntSizeCompat.times(scale: Float): IntSizeCompat =
@@ -57,4 +48,8 @@ internal fun Rect.scale(scale: Float): Rect {
 
 fun Rect(left: Int, top: Int, right: Int, bottom: Int): Rect {
     return Rect(left, top, right, bottom)
+}
+
+internal fun Rect.toIntRectCompat(): IntRectCompat {
+    return IntRectCompat(left, top, right, bottom)
 }

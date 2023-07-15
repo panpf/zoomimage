@@ -7,6 +7,8 @@ import com.github.panpf.zoomimage.Logger.Level.INFO
 import com.github.panpf.zoomimage.Logger.Level.VERBOSE
 import com.github.panpf.zoomimage.Logger.Level.WARNING
 
+
+// todo 改成内置 module，可以直接使用，然后可以 new 一个新的修改 module
 class Logger {
 
     companion object {

@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.core.internal
+package com.github.panpf.zoomimage.subsampling.internal
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -6,7 +6,9 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.internal.toHexString
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.ceil
@@ -25,10 +27,13 @@ internal fun isSupportInBitmap(mimeType: String?, sampleSize: Int): Boolean =
     when {
         "image/jpeg".equals(mimeType, true) ->
             if (sampleSize == 1) Build.VERSION.SDK_INT >= 16 else Build.VERSION.SDK_INT >= 19
+
         "image/png".equals(mimeType, true) ->
             if (sampleSize == 1) Build.VERSION.SDK_INT >= 16 else Build.VERSION.SDK_INT >= 19
+
         "image/gif".equals(mimeType, true) ->
             if (sampleSize == 1) Build.VERSION.SDK_INT >= 19 else Build.VERSION.SDK_INT >= 21
+
         "image/webp".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 19
 //        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 26 animated
         "image/bmp".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 19
@@ -45,8 +50,8 @@ internal fun isSupportInBitmap(mimeType: String?, sampleSize: Int): Boolean =
 @SuppressLint("ObsoleteSdkInt")
 internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
     when {
-        "image/jpeg".equals(mimeType, true) ->  Build.VERSION.SDK_INT >= 16
-        "image/png".equals(mimeType, true) ->  Build.VERSION.SDK_INT >= 16
+        "image/jpeg".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 16
+        "image/png".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 16
         "image/gif".equals(mimeType, true) -> false
         "image/webp".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 16
 //        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 26 animated
@@ -82,7 +87,10 @@ internal fun calculateSampledBitmapSize(
  * Calculate the size of the sampled Bitmap, support for BitmapRegionDecoder
  */
 internal fun calculateSampledBitmapSizeForRegion(
-    regionSize: IntSizeCompat, sampleSize: Int, mimeType: String? = null, imageSize: IntSizeCompat? = null
+    regionSize: IntSizeCompat,
+    sampleSize: Int,
+    mimeType: String? = null,
+    imageSize: IntSizeCompat? = null
 ): IntSizeCompat {
     val widthValue = regionSize.width / sampleSize.toDouble()
     val heightValue = regionSize.height / sampleSize.toDouble()
@@ -99,6 +107,7 @@ internal fun calculateSampledBitmapSizeForRegion(
     return IntSizeCompat(width, height)
 }
 
+// todo chang to toShortString
 internal val Bitmap.logString: String
     get() = "Bitmap(${width}x${height},$config,@${toHexString()})"
 
@@ -106,10 +115,10 @@ internal val Bitmap.safeConfig: Bitmap.Config
     get() = config ?: Bitmap.Config.ARGB_8888
 
 suspend fun ImageSource.readImageBounds(): Result<BitmapFactory.Options?> {
-    return openInputStream()
-        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-        .use { inputStream ->
-            withContext(Dispatchers.IO) {
+    return withContext(Dispatchers.IO) {
+        openInputStream()
+            .let { it.getOrNull() ?: return@withContext Result.failure(it.exceptionOrNull()!!) }
+            .use { inputStream ->
                 kotlin.runCatching {
                     BitmapFactory.Options().apply {
                         inJustDecodeBounds = true
@@ -117,23 +126,29 @@ suspend fun ImageSource.readImageBounds(): Result<BitmapFactory.Options?> {
                     }.takeIf { it.outWidth > 0 && it.outHeight > 0 }
                 }
             }
-        }
+    }
 }
 
-suspend fun ImageSource.readExifOrientation(ignoreExifOrientation: Boolean): Result<Int> {
+suspend fun ImageSource.readExifOrientation(): Result<Int> {
     val orientationUndefined = ExifInterface.ORIENTATION_UNDEFINED
-    return if (!ignoreExifOrientation) {
+    return withContext(Dispatchers.IO) {
         openInputStream()
-            .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
+            .let { it.getOrNull() ?: return@withContext Result.failure(it.exceptionOrNull()!!) }
             .use { inputStream ->
-                withContext(Dispatchers.IO) {
-                    kotlin.runCatching {
-                        ExifInterface(inputStream)
-                            .getAttributeInt(ExifInterface.TAG_ORIENTATION, orientationUndefined)
-                    }
+                kotlin.runCatching {
+                    ExifInterface(inputStream)
+                        .getAttributeInt(ExifInterface.TAG_ORIENTATION, orientationUndefined)
                 }
             }
-    } else {
-        Result.success(orientationUndefined)
     }
+}
+
+suspend fun ImageSource.readImageInfo(): ImageInfo? {
+    val options = readImageBounds().getOrNull() ?: return null
+    val exifOrientation = readExifOrientation().getOrNull() ?: return null
+    return ImageInfo(
+        size = IntSizeCompat(options.outWidth, options.outHeight),
+        mimeType = options.outMimeType,
+        exifOrientation = exifOrientation,
+    )
 }

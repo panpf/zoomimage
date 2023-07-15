@@ -25,6 +25,7 @@ import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
 import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.sketch.ZoomAsyncImage
+import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
 
 @Composable
 fun SketchZoomAsyncImageSample(sketchImageUri: String) {
@@ -65,6 +66,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         debugMode = BuildConfig.DEBUG
     )
     val infoDialogState = rememberZoomImageInfoDialogState()
+    val subsamplingState = rememberSubsamplingState(debugMode = BuildConfig.DEBUG)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +80,8 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),
-            state = zoomableState,
+            zoomableState = zoomableState,
+            subsamplingState = subsamplingState,
             scrollBar = if (scrollBarEnabled) ScrollBar.Default else null,
             onLongPress = {
                 infoDialogState.showing = true
@@ -87,7 +90,8 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
 
         ZoomImageMinimap(
             sketchImageUri = sketchImageUri,
-            state = zoomableState,
+            zoomableState = zoomableState,
+            subsamplingState = subsamplingState,
         )
 
         ZoomImageTool(

@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
 

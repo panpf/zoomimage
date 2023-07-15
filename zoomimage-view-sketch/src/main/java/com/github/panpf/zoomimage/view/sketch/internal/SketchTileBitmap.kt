@@ -17,7 +17,7 @@ package com.github.panpf.zoomimage.view.sketch.internal
 
 import android.graphics.Bitmap
 import com.github.panpf.sketch.cache.MemoryCache.Value
-import com.github.panpf.zoomimage.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 
 class SketchTileBitmap(
     override val key: String,

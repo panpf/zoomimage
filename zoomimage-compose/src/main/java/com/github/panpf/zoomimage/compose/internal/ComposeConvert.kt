@@ -148,6 +148,10 @@ fun IntOffsetCompat.toIntOffset(): IntOffset = IntOffset(x = x, y = y)
 
 fun IntOffsetCompat.toOffset(): Offset = Offset(x = x.toFloat(), y = y.toFloat())
 
+fun IntSize.toOffset(): Offset = Offset(x = width.toFloat(), y = height.toFloat())
+
+fun Size.toOffset(): Offset = Offset(x = width, y = height)
+
 
 fun ScaleFactor.toCompatScaleFactor(): ScaleFactorCompat {
     return ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY)

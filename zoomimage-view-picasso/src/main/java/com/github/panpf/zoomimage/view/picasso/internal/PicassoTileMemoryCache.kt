@@ -16,9 +16,11 @@
 package com.github.panpf.zoomimage.view.picasso.internal
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.TileBitmap
-import com.github.panpf.zoomimage.TileMemoryCache
+import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.cache
 
@@ -33,10 +35,8 @@ class PicassoTileMemoryCache(private val picasso: Picasso) : TileMemoryCache {
         key: String,
         bitmap: Bitmap,
         imageKey: String,
-        imageSize: IntSizeCompat,
-        imageMimeType: String,
-        imageExifOrientation: Int,
-        disallowReuseBitmap: Boolean
+        imageInfo: ImageInfo,
+        tileBitmapPool: TileBitmapPool?
     ): TileBitmap {
         picasso.cache.set(key, bitmap)
         return PicassoTileBitmap(key, bitmap)

@@ -1,12 +1,14 @@
-package com.github.panpf.zoomimage.core.internal
+package com.github.panpf.zoomimage.subsampling.internal
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory.Options
 import androidx.annotation.WorkerThread
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.TileBitmapPool
 import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.core.internal.isMainThread
+import com.github.panpf.zoomimage.core.internal.requiredWorkThread
 import com.github.panpf.zoomimage.core.isEmpty
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -115,16 +117,9 @@ private fun TileBitmapPool.realSetInBitmapForRegion(
     regionSize: IntSizeCompat,
     imageMimeType: String?,
     imageSize: IntSizeCompat,
-    disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ): Boolean {
     requiredWorkThread()
-    if (disallowReuseBitmap) {
-        logger?.d(MODULE) {
-            "setInBitmapForRegion. disallowReuseBitmap. imageSize=$imageSize, imageMimeType=$imageMimeType. $caller"
-        }
-        return false
-    }
     if (regionSize.isEmpty()) {
         logger?.e(MODULE, "setInBitmapForRegion. error. regionSize is empty: $regionSize. $caller")
         return false
@@ -180,7 +175,6 @@ fun TileBitmapPool.setInBitmapForRegion(
     regionSize: IntSizeCompat,
     imageMimeType: String?,
     imageSize: IntSizeCompat,
-    disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ): Boolean {
     return runBlocking {
@@ -192,7 +186,6 @@ fun TileBitmapPool.setInBitmapForRegion(
                 regionSize = regionSize,
                 imageMimeType = imageMimeType,
                 imageSize = imageSize,
-                disallowReuseBitmap = disallowReuseBitmap,
                 caller = caller
             )
         } finally {
@@ -207,17 +200,9 @@ private fun TileBitmapPool.realGetOrCreate(
     width: Int,
     height: Int,
     config: Bitmap.Config,
-    disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ): Bitmap {
     requiredWorkThread()
-    if (disallowReuseBitmap) {
-        return Bitmap.createBitmap(width, height, config).apply {
-            logger?.d(MODULE) {
-                "getOrCreate. new disallowReuseBitmap. ${this.logString}. $caller"
-            }
-        }
-    }
     return get(width, height, config) ?: Bitmap.createBitmap(width, height, config)
         .apply {
             logger?.d(MODULE) {
@@ -232,13 +217,12 @@ fun TileBitmapPool.getOrCreate(
     width: Int,
     height: Int,
     config: Bitmap.Config,
-    disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ): Bitmap {
     return runBlocking {
         bitmapPoolLock.lock()
         try {
-            realGetOrCreate(logger, width, height, config, disallowReuseBitmap, caller)
+            realGetOrCreate(logger, width, height, config, caller)
         } finally {
             bitmapPoolLock.unlock()
         }
@@ -265,19 +249,11 @@ private fun TileBitmapPool.realFreeBitmap(logger: Logger?, bitmap: Bitmap, calle
 fun TileBitmapPool.freeBitmap(
     logger: Logger?,
     bitmap: Bitmap?,
-    disallowReuseBitmap: Boolean = false,
     caller: String? = null,
 ) {
     if (bitmap == null || bitmap.isRecycled) {
         logger?.w(MODULE) {
             "freeBitmap. error. bitmap null or recycled. $caller. ${bitmap?.logString}"
-        }
-        return
-    }
-    if (disallowReuseBitmap) {
-        bitmap.recycle()
-        logger?.d(MODULE) {
-            "freeBitmap. disallowReuseBitmap. execute recycle. $caller. ${bitmap.logString}"
         }
         return
     }

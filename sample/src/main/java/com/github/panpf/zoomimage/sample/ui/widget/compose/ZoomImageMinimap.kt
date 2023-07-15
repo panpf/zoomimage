@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -14,14 +16,17 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.sketch.compose.AsyncImage
@@ -31,10 +36,16 @@ import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompatIntSize
+import com.github.panpf.zoomimage.compose.internal.toIntSize
+import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
+import com.github.panpf.zoomimage.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.subsampling.Tile
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -43,10 +54,11 @@ fun ZoomImageMinimap(
     sketchImageUri: String,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    state: ZoomableState,
+    zoomableState: ZoomableState,
+    subsamplingState: SubsamplingState,
     alignment: Alignment = Alignment.BottomStart,
 ) {
-    val contentSize = state.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
+    val contentSize = zoomableState.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
     val coroutineScope = rememberCoroutineScope()
     BoxWithConstraints(modifier = modifier.then(Modifier.fillMaxSize())) {
         val density = LocalDensity.current
@@ -75,21 +87,29 @@ fun ZoomImageMinimap(
                     .clipToBounds()
                     .drawWithContent {
                         drawContent()
-                        val contentVisibleRect = state.contentVisibleRect
-                        val drawScaleWithContent = ScaleFactor(
-                            scaleX = viewSize.width / contentSize.width.toFloat(),
-                            scaleY = viewSize.height / contentSize.height.toFloat()
-                        )
-                        val drawVisibleRect =
-                            contentVisibleRect
-                                .scale(drawScaleWithContent)
-                                .toRect()
-                        drawRect(
-                            color = Color.Red,
-                            topLeft = drawVisibleRect.topLeft,
-                            size = drawVisibleRect.size,
-                            style = Stroke(width = 2.dp.toPx())
-                        )
+
+                        @Suppress("UNUSED_VARIABLE") val changeCount = subsamplingState.tilesChanged  // Trigger a refresh
+                        val imageSize by derivedStateOf {
+                            subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
+                        }
+                        val tileList = subsamplingState.tileList
+                        val imageLoadRect by derivedStateOf { subsamplingState.imageLoadRect }
+                        if (contentSize.isNotEmpty() && imageSize.isNotEmpty()) {
+                            drawTilesBounds(
+                                tileList = tileList,
+                                imageSize = imageSize,
+                                viewSize = viewSize,
+                                imageLoadRect = imageLoadRect,
+                            )
+                        }
+
+                        if (contentSize.isNotEmpty() && viewSize.isNotEmpty()) {
+                            drawVisibleRect(
+                                contentVisibleRect = zoomableState.contentVisibleRect,
+                                contentSize = contentSize,
+                                viewSize = viewSize
+                            )
+                        }
                     }
                     .onSizeChanged {
                         imageNodeSizeState.value = it.toSize()
@@ -100,12 +120,14 @@ fun ZoomImageMinimap(
                                 val imageNodeSize = imageNodeSizeState.value
                                 if (!imageNodeSize.isEmpty()) {
                                     coroutineScope.launch {
-                                        state.location(
+                                        zoomableState.location(
                                             contentOrigin = Origin(
                                                 x = it.x / imageNodeSize.width,
                                                 y = it.y / imageNodeSize.height
                                             ),
-                                            targetScale = state.transform.scaleX.coerceAtLeast(state.mediumScale),
+                                            targetScale = zoomableState.transform.scaleX.coerceAtLeast(
+                                                zoomableState.mediumScale
+                                            ),
                                             animated = true,
                                         )
                                     }
@@ -135,4 +157,57 @@ private fun computeViewSize(contentSize: IntSize, containerSize: IntSize): IntSi
     val maxHeight = containerHeight * maxPercentage
     val scale = min(maxWidth / contentWidth, maxHeight / contentHeight)
     return IntSize((contentWidth * scale).roundToInt(), (contentHeight * scale).roundToInt())
+}
+
+private fun ContentDrawScope.drawTilesBounds(
+    tileList: List<Tile>,
+    imageSize: IntSize,
+    viewSize: IntSize,
+    imageLoadRect: IntRectCompat
+) {
+    val widthTargetScale = imageSize.width.toFloat() / viewSize.width
+    val heightTargetScale = imageSize.height.toFloat() / viewSize.height
+    val strokeWidth = 1.dp.toPx()
+    val strokeHalfWidth = strokeWidth / 2
+    tileList.forEach { tile ->
+        val load = tile.srcRect.overlaps(imageLoadRect)
+        val tileBitmap = tile.bitmap
+        val tileSrcRect = tile.srcRect
+        val tileDrawRect = IntRect(
+            left = floor((tileSrcRect.left / widthTargetScale) + strokeHalfWidth).toInt(),
+            top = floor((tileSrcRect.top / heightTargetScale) + strokeHalfWidth).toInt(),
+            right = ceil((tileSrcRect.right / widthTargetScale) - strokeHalfWidth).toInt(),
+            bottom = ceil((tileSrcRect.bottom / heightTargetScale) - strokeHalfWidth).toInt()
+        )
+        val boundsColor = when {
+            !load -> android.graphics.Color.parseColor("#00BFFF")
+            tileBitmap != null -> android.graphics.Color.GREEN
+            tile.loadJob?.isActive == true -> android.graphics.Color.YELLOW
+            else -> android.graphics.Color.RED
+        }
+        drawRect(
+            color = Color(boundsColor),
+            topLeft = tileDrawRect.topLeft.toOffset(),
+            size = tileDrawRect.size.toSize(),
+            style = Stroke(width = 2.dp.toPx())
+        )
+    }
+}
+
+private fun ContentDrawScope.drawVisibleRect(
+    contentVisibleRect: IntRect,
+    contentSize: IntSize,
+    viewSize: IntSize,
+) {
+    val drawScaleWithContent = ScaleFactor(
+        scaleX = viewSize.width / contentSize.width.toFloat(),
+        scaleY = viewSize.height / contentSize.height.toFloat()
+    )
+    val drawVisibleRect = contentVisibleRect.scale(drawScaleWithContent).toRect()
+    drawRect(
+        color = Color.Red,
+        topLeft = drawVisibleRect.topLeft,
+        size = drawVisibleRect.size,
+        style = Stroke(width = 2.dp.toPx())
+    )
 }

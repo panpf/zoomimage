@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.subsampling
 
-import android.graphics.Rect
+import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.core.internal.format
+import com.github.panpf.zoomimage.subsampling.internal.isSupportBitmapRegionDecoder
 import kotlin.math.abs
 import kotlin.math.ceil
 
-internal fun initializeTileMap(imageSize: IntSizeCompat, tileMaxSize: IntSizeCompat): Map<Int, List<Tile>> {
+const val SUBSAMPLING_MODULE = "Subsampling"
+
+internal fun initializeTileMap(
+    imageSize: IntSizeCompat,
+    tileMaxSize: IntSizeCompat
+): Map<Int, List<Tile>> {
     /* The core rules are: The size of each tile does not exceed tileMaxSize */
     val tileMaxWith = tileMaxSize.width
     val tileMaxHeight = tileMaxSize.height
@@ -52,7 +59,7 @@ internal fun initializeTileMap(imageSize: IntSizeCompat, tileMaxSize: IntSizeCom
         while (true) {
             val right = (left + sourceTileWidth).coerceAtMost(imageSize.width)
             val bottom = (top + sourceTileHeight).coerceAtMost(imageSize.height)
-            tileList.add(Tile(Rect(left, top, right, bottom), sampleSize))
+            tileList.add(Tile(IntRectCompat(left, top, right, bottom), sampleSize))
             if (right >= imageSize.width && bottom >= imageSize.height) {
                 break
             } else if (right >= imageSize.width) {
@@ -80,7 +87,14 @@ internal fun findSampleSize(
     drawableHeight: Int,
     scale: Float
 ): Int {
-    require(canUseSubsampling(imageWidth, imageHeight, drawableWidth, drawableHeight)) {
+    require(
+        canUseSubsamplingByAspectRatio(
+            imageWidth,
+            imageHeight,
+            drawableWidth,
+            drawableHeight
+        )
+    ) {
         "imageSize(${imageWidth}x${imageHeight}) and drawableSize(${drawableWidth}x${drawableHeight}) must have the same aspect ratio"
     }
 
@@ -92,11 +106,27 @@ internal fun findSampleSize(
     return sampleSize
 }
 
-internal fun canUseSubsampling(
+fun canUseSubsamplingByAspectRatio(
     imageWidth: Int, imageHeight: Int, drawableWidth: Int, drawableHeight: Int
 ): Boolean {
     if (imageWidth == 0 || imageHeight == 0 || drawableWidth == 0 || drawableHeight == 0) return false
     val imageRatio = (imageWidth / imageHeight.toFloat()).format(2)
     val drawableRatio = (drawableWidth / drawableHeight.toFloat()).format(2)
     return abs(imageRatio - drawableRatio).format(2) <= 0.50f
+}
+
+fun canUseSubsampling(imageInfo: ImageInfo, drawableSize: IntSizeCompat): Int {
+    if (drawableSize.width >= imageInfo.width && drawableSize.height >= imageInfo.height) {
+        return -1
+    }
+    if (!canUseSubsamplingByAspectRatio(
+            imageInfo.width, imageInfo.height, drawableSize.width, drawableSize.height
+        )
+    ) {
+        return -2
+    }
+    if (!isSupportBitmapRegionDecoder(imageInfo.mimeType)) {
+        return -3
+    }
+    return 0
 }

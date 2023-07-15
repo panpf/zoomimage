@@ -19,7 +19,7 @@ import androidx.annotation.WorkerThread
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getDiskCache
 import com.bumptech.glide.load.model.GlideUrl
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
@@ -44,5 +44,24 @@ class GlideHttpImageSource(
                 FileInputStream(file)
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as GlideHttpImageSource
+        if (glide != other.glide) return false
+        if (imageUri != other.imageUri) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = glide.hashCode()
+        result = 31 * result + imageUri.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "GlideHttpImageSource('$imageUri')"
     }
 }

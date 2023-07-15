@@ -39,6 +39,7 @@ import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.sketch.ZoomAsyncImage
+import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
 
 class ScaleAlignmentTestFragment : AppBarFragment() {
 
@@ -99,19 +100,22 @@ private fun ScaleAlignmentTestScreen() {
             }
         }
     }
+    val subsamplingState = rememberSubsamplingState(debugMode = BuildConfig.DEBUG)
     Box(modifier = Modifier.fillMaxSize()) {
         ZoomAsyncImage(
             imageUri = imageUri,
             contentDescription = "ZoomImage",
             modifier = Modifier.fillMaxSize(),
-            state = zoomableState,
+            zoomableState = zoomableState,
+            subsamplingState = subsamplingState,
             contentScale = contentScaleState.value,
             alignment = alignmentState.value,
         )
 
         ZoomImageMinimap(
             sketchImageUri = imageUri,
-            state = zoomableState,
+            zoomableState = zoomableState,
+            subsamplingState = subsamplingState,
             alignment = Alignment.TopStart,
         )
 

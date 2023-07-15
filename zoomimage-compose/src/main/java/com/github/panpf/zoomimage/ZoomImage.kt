@@ -13,6 +13,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.compose.internal.roundToIntSize
+import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
+import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
+import com.github.panpf.zoomimage.subsampling.subsampling
 
 @Composable
 fun ZoomImage(
@@ -23,34 +28,40 @@ fun ZoomImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    state: ZoomableState = rememberZoomableState(),
+    zoomableState: ZoomableState = rememberZoomableState(),
+    subsamplingState: SubsamplingState = rememberSubsamplingState(),
+    subsamplingImageSource: ImageSource? = null,
     scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    if (state.contentAlignment != alignment) {
-        state.contentAlignment = alignment
+    if (zoomableState.contentAlignment != alignment) {
+        zoomableState.contentAlignment = alignment
     }
-    if (state.contentScale != contentScale) {
-        state.contentScale = contentScale
+    if (zoomableState.contentScale != contentScale) {
+        zoomableState.contentScale = contentScale
     }
     val painterSize = painter.intrinsicSize.roundToIntSize()
-    if (state.contentSize != painterSize) {
-        state.contentSize = painterSize
+    if (zoomableState.contentSize != painterSize) {
+        zoomableState.contentSize = painterSize
     }
+
+    BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
+    subsamplingState.setImageSource(subsamplingImageSource)
 
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBar != null) it.zoomScrollBar(state, scrollBar) else it }
-        .zoomable(state = state, onLongPress = onLongPress, onTap = onTap)
+        .let { if (scrollBar != null) it.zoomScrollBar(zoomableState, scrollBar) else it }
+        .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            scaleX = state.transform.scaleX
-            scaleY = state.transform.scaleY
-            rotationZ = state.transform.rotation
-            translationX = state.transform.offsetX
-            translationY = state.transform.offsetY
-            transformOrigin = state.transformOrigin
+            scaleX = zoomableState.transform.scaleX
+            scaleY = zoomableState.transform.scaleY
+            rotationZ = zoomableState.transform.rotation
+            translationX = zoomableState.transform.offsetX
+            translationY = zoomableState.transform.offsetY
+            transformOrigin = zoomableState.transformOrigin
         }
+        .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
 
     Image(
         painter = painter,

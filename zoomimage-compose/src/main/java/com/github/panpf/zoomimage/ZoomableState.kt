@@ -77,30 +77,30 @@ fun rememberZoomableState(
     readMode: ReadMode? = null,
     debugMode: Boolean = false,
 ): ZoomableState {
-    val state = rememberSaveable(saver = ZoomableState.Saver) {
+    val zoomableState = rememberSaveable(saver = ZoomableState.Saver) {
         ZoomableState()
     }
-    state.defaultMediumScaleMultiple = defaultMediumScaleMultiple
-    state.threeStepScale = threeStepScale
-    state.rubberBandScale = rubberBandScale
-    state.animationSpec = animationSpec
-    state.readMode = readMode
-    state.debugMode = debugMode
+    zoomableState.defaultMediumScaleMultiple = defaultMediumScaleMultiple
+    zoomableState.threeStepScale = threeStepScale
+    zoomableState.rubberBandScale = rubberBandScale
+    zoomableState.animationSpec = animationSpec
+    zoomableState.readMode = readMode
+    zoomableState.debugMode = debugMode
     LaunchedEffect(
-        state.containerSize,
-        state.contentSize,
-        state.contentOriginSize,
-        state.contentScale,
-        state.contentAlignment,
+        zoomableState.containerSize,
+        zoomableState.contentSize,
+        zoomableState.contentOriginSize,
+        zoomableState.contentScale,
+        zoomableState.contentAlignment,
         readMode,
         defaultMediumScaleMultiple,
     ) {
-        if (!state.contentSize.isEmpty() && state.containerSize.isEmpty()) {
-            state.contentSize = state.containerSize
+        if (!zoomableState.contentSize.isEmpty() && zoomableState.containerSize.isEmpty()) {
+            zoomableState.contentSize = zoomableState.containerSize
         }
-        state.reset()
+        zoomableState.reset()
     }
-    return state
+    return zoomableState
 }
 
 class ZoomableState(
@@ -130,6 +130,7 @@ class ZoomableState(
     var maxScale: Float by mutableStateOf(1f)
         private set
 
+    // todo transform 和 displayTransform 表达的意思要换一下
     var transform: Transform by mutableStateOf(   // todo support rotation
         Transform(
             scale = ScaleFactor(scaleX = initialScale, scaleY = initialScale),
@@ -138,14 +139,14 @@ class ZoomableState(
         )
     )
         private set
-    var baseTransform: Transform by mutableStateOf(Transform.Origin)
+    var baseTransform: Transform by mutableStateOf(Transform.Origin)    // todo 使用 Compat 版本
         private set
     val displayTransform: Transform by derivedStateOf {
         baseTransform.concat(transform)
     }
     val transformOrigin = TransformOrigin(0f, 0f)
 
-    val offsetBounds: IntRect by derivedStateOf {
+    val offsetBounds: IntRect by derivedStateOf {    // todo 使用 Compat 版本
         computeOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -155,7 +156,7 @@ class ZoomableState(
         ).roundToIntRect()
     }
 
-    val contentInContainerRect: IntRect by derivedStateOf {
+    val contentInContainerRect: IntRect by derivedStateOf {    // todo 使用 Compat 版本
         computeContentInContainerRect(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -163,7 +164,7 @@ class ZoomableState(
             alignment = contentAlignment,
         ).roundToIntRect()
     }
-    val contentInContainerVisibleRect: IntRect by derivedStateOf {
+    val contentInContainerVisibleRect: IntRect by derivedStateOf {    // todo 使用 Compat 版本
         computeContentInContainerVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -172,14 +173,14 @@ class ZoomableState(
         ).roundToIntRect()
     }
 
-    val containerVisibleRect: IntRect by derivedStateOf {
+    val containerVisibleRect: IntRect by derivedStateOf {    // todo 使用 Compat 版本
         computeContainerVisibleRect(
             containerSize = containerSize,
             scale = transform.scaleX,
             offset = transform.offset
         ).roundToIntRect()
     }
-    val contentVisibleRect: IntRect by derivedStateOf {
+    val contentVisibleRect: IntRect by derivedStateOf {    // todo 使用 Compat 版本
         computeContentVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,

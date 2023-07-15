@@ -20,9 +20,10 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CountBitmap
 import com.github.panpf.sketch.cache.MemoryCache.Value
 import com.github.panpf.sketch.decode.ImageInfo
-import com.github.panpf.zoomimage.TileBitmap
-import com.github.panpf.zoomimage.TileMemoryCache
+import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 
 class SketchTileMemoryCache(private val sketch: Sketch) : TileMemoryCache {
 
@@ -36,16 +37,14 @@ class SketchTileMemoryCache(private val sketch: Sketch) : TileMemoryCache {
         key: String,
         bitmap: Bitmap,
         imageKey: String,
-        imageSize: IntSizeCompat,
-        imageMimeType: String,
-        imageExifOrientation: Int,
-        disallowReuseBitmap: Boolean
+        imageInfo: com.github.panpf.zoomimage.subsampling.ImageInfo,
+        tileBitmapPool: TileBitmapPool?
     ): TileBitmap {
         val newCountBitmap = CountBitmap(
             cacheKey = key,
             originBitmap = bitmap,
             bitmapPool = sketch.bitmapPool,
-            disallowReuseBitmap = disallowReuseBitmap,
+            disallowReuseBitmap = tileBitmapPool == null,
         )
         val newCacheValue = Value(
             countBitmap = newCountBitmap,
@@ -53,10 +52,10 @@ class SketchTileMemoryCache(private val sketch: Sketch) : TileMemoryCache {
             requestKey = imageKey,
             requestCacheKey = key,
             imageInfo = ImageInfo(
-                imageSize.width,
-                imageSize.height,
-                imageMimeType,
-                imageExifOrientation
+                imageInfo.width,
+                imageInfo.height,
+                imageInfo.mimeType,
+                imageInfo.exifOrientation
             ),
             transformedList = null,
             extras = null,

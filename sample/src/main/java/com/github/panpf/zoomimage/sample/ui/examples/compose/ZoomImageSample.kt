@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.ScrollBar
@@ -28,6 +29,8 @@ import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
 import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
+import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
+import com.github.panpf.zoomimage.view.sketch.internal.SketchImageSource
 import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable
@@ -69,6 +72,7 @@ fun ZoomImageSample(sketchImageUri: String) {
         debugMode = BuildConfig.DEBUG
     )
     val infoDialogState = rememberZoomImageInfoDialogState()
+    val subsamplingState = rememberSubsamplingState(debugMode = BuildConfig.DEBUG)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -82,6 +86,10 @@ fun ZoomImageSample(sketchImageUri: String) {
             drawablePainter = drawable?.let { DrawablePainter(it) }
         }
 
+        val imageSource = remember(sketchImageUri) {
+            SketchImageSource(context, context.sketch, sketchImageUri)
+        }
+
         val drawablePainter1 = drawablePainter
         if (drawablePainter1 != null) {
             ZoomImage(
@@ -90,7 +98,9 @@ fun ZoomImageSample(sketchImageUri: String) {
                 contentScale = contentScale,
                 alignment = alignment,
                 modifier = Modifier.fillMaxSize(),
-                state = zoomableState,
+                zoomableState = zoomableState,
+                subsamplingState = subsamplingState,
+                subsamplingImageSource = imageSource,
                 scrollBar = if (scrollBarEnabled) ScrollBar.Default else null,
                 onLongPress = {
                     infoDialogState.showing = true
@@ -100,7 +110,8 @@ fun ZoomImageSample(sketchImageUri: String) {
 
         ZoomImageMinimap(
             sketchImageUri = sketchImageUri,
-            state = zoomableState,
+            zoomableState = zoomableState,
+            subsamplingState = subsamplingState,
         )
 
         ZoomImageTool(

@@ -22,7 +22,7 @@ import coil.request.CachePolicy.DISABLED
 import coil.request.CachePolicy.ENABLED
 import coil.request.ImageRequest
 import coil.request.Options
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
@@ -58,5 +58,24 @@ class CoilImageSource(
             return Result.failure(IllegalStateException("FetchResult is not SourceResult. data='${request.data}'"))
         }
         return kotlin.runCatching { fetchResult.source.source().inputStream() }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as CoilImageSource
+        if (imageLoader != other.imageLoader) return false
+        if (request.data != other.request.data) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = imageLoader.hashCode()
+        result = 31 * result + request.data.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "CoilImageSource('${request.data}')"
     }
 }

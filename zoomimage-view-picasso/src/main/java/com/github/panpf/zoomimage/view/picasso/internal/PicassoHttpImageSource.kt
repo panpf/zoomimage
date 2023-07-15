@@ -16,7 +16,7 @@
 package com.github.panpf.zoomimage.view.picasso.internal
 
 import android.net.Uri
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.downloader
@@ -67,5 +67,24 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
                 body.source().inputStream()
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as PicassoHttpImageSource
+        if (picasso != other.picasso) return false
+        if (uri != other.uri) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = picasso.hashCode()
+        result = 31 * result + uri.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "PicassoHttpImageSource('$uri')"
     }
 }

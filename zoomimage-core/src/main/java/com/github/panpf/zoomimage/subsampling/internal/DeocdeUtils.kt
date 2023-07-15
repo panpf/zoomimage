@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.subsampling.internal
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -20,11 +20,8 @@ internal fun isSrcRectError(throwable: Throwable): Boolean =
         false
     }
 
-internal val Bitmap.logString: String
-    get() = "Bitmap(${width}x${height},$config,@${toHexString()})"
-
 @SuppressLint("ObsoleteSdkInt")
-internal fun isSupportBitmapRegionDecoder(mimeType: String): Boolean =
+fun isSupportBitmapRegionDecoder(mimeType: String): Boolean =
     "image/jpeg".equals(mimeType, true)
             || "image/png".equals(mimeType, true)
             || "image/webp".equals(mimeType, true)

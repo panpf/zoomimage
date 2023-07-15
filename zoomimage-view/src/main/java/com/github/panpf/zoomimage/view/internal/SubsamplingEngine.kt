@@ -16,33 +16,44 @@
 package com.github.panpf.zoomimage.view.internal
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
 import androidx.annotation.MainThread
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.withSave
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.OnTileChangedListener
-import com.github.panpf.zoomimage.TileBitmapPool
-import com.github.panpf.zoomimage.TileMemoryCache
+import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.internal.ExifOrientationHelper
-import com.github.panpf.zoomimage.core.internal.exifOrientationName
-import com.github.panpf.zoomimage.core.internal.readExifOrientation
-import com.github.panpf.zoomimage.core.internal.readImageBounds
 import com.github.panpf.zoomimage.core.isEmpty
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileManager
+import com.github.panpf.zoomimage.subsampling.TileMemoryCache
+import com.github.panpf.zoomimage.subsampling.canUseSubsampling
+import com.github.panpf.zoomimage.subsampling.internal.applyExifOrientation
+import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 internal class SubsamplingEngine constructor(
     val context: Context,
     val logger: Logger,
-    private val zoomEngine: ZoomEngine,
+    private val zoomEngine: ZoomEngine, // todo 避免直接依赖 ZoomEngine
 ) {
 
     companion object {
@@ -56,6 +67,13 @@ internal class SubsamplingEngine constructor(
     private val tempDisplayMatrix = Matrix()
     private val tempDrawableVisibleRect = Rect()
     internal var onTileChangedListenerList: MutableSet<OnTileChangedListener>? = null
+    private val tileBoundsPaint: Paint by lazy {
+        Paint().apply {
+            style = STROKE
+            strokeWidth = 1f * Resources.getSystem().displayMetrics.density
+        }
+    }
+    private val strokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
 
     var disableMemoryCache: Boolean = false
     var disallowReuseBitmap: Boolean = false
@@ -88,10 +106,10 @@ internal class SubsamplingEngine constructor(
         get() = imageSource == null
     val tileList: List<Tile>?
         get() = tileManager?.tileList
-    val imageVisibleRect: Rect
-        get() = tileManager?.imageVisibleRect ?: Rect()
-    val imageLoadRect: Rect
-        get() = tileManager?.imageLoadRect ?: Rect()
+    val imageVisibleRect: IntRectCompat
+        get() = tileManager?.imageVisibleRect ?: IntRectCompat.Zero
+    val imageLoadRect: IntRectCompat
+        get() = tileManager?.imageLoadRect ?: IntRectCompat.Zero
     var imageSize: IntSizeCompat? = null
         private set
     var imageMimeType: String? = null
@@ -111,6 +129,8 @@ internal class SubsamplingEngine constructor(
         tileManager?.destroy()
         tileManager = null
 
+        // todo 抽离后续的重置逻辑为一个单独的方法，并在这里保存 imageSource，drawableSiz 额和 viewsize 满足条件重新初始化
+
         val viewSize = zoomEngine.viewSize
         if (viewSize.isEmpty()) {
             logger.d(MODULE) { "setImageSource failed. View size error. '${imageSource.key}'" }
@@ -121,78 +141,49 @@ internal class SubsamplingEngine constructor(
             logger.d(MODULE) { "setImageSource failed. Drawable size error. '${imageSource.key}'" }
             return
         }
-        val (drawableWidth, drawableHeight) = drawableSize
         initJob = scope.launch(Dispatchers.Main) {
-            val optionsJob = async { imageSource.readImageBounds() }
-            val exifOrientationJob =
-                async { imageSource.readExifOrientation(ignoreExifOrientation) }
-            val options = optionsJob.await()
-                .apply { exceptionOrNull()?.printStackTrace() }
-                .getOrNull()
-            val exifOrientation = exifOrientationJob.await()
-                .apply { exceptionOrNull()?.printStackTrace() }
-                .getOrNull()
-            if (options == null) {
-                logger.w(MODULE) { "setImageSource failed. Can't decode image bounds. '${imageSource.key}'" }
-                initJob = null
-                return@launch
-            }
-            if (exifOrientation == null) {
-                logger.w(MODULE) { "setImageSource failed. Can't decode image exifOrientation. '${imageSource.key}'" }
-                initJob = null
-                return@launch
-            }
-            val imageSize = ExifOrientationHelper(exifOrientation)
-                .applyToSize(IntSizeCompat(options.outWidth, options.outHeight))
-            val imageWidth = imageSize.width
-            val imageHeight = imageSize.height
-            val mimeType = options.outMimeType
-            this@SubsamplingEngine.imageSource = imageSource
-            this@SubsamplingEngine.imageSize = imageSize
-            this@SubsamplingEngine.imageMimeType = mimeType
-            this@SubsamplingEngine.imageExifOrientation = exifOrientation
-
-            if (drawableWidth >= imageWidth && drawableHeight >= imageHeight) {
+            val imageInfo = imageSource.readImageInfo()
+                ?.let { if (!ignoreExifOrientation) it.applyExifOrientation() else it }
+            val result =
+                imageInfo?.let { canUseSubsampling(it, drawableSize) } ?: -10
+            if (imageInfo != null && result >= 0) {
                 logger.d(MODULE) {
-                    "setImageSource failed. The Drawable size is greater than or equal to the original image. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize: ${imageWidth}x${imageHeight}, mimeType: $mimeType. '${imageSource.key}'"
+                    "setImageSource success. " +
+                            "viewSize=$viewSize, " +
+                            "drawableSize: ${drawableSize.toShortString()}, " +
+                            "imageInfo=${imageInfo.toShortString()}. " +
+                            "'${imageSource.key}'"
                 }
-                initJob = null
-                return@launch
-            }
-            if (!canUseSubsampling(imageWidth, imageHeight, drawableWidth, drawableHeight)) {
-                logger.w(MODULE) {
-                    "setImageSource failed. The drawable aspect ratio is inconsistent with the original image. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize: ${imageWidth}x${imageHeight}, mimeType: $mimeType. '${imageSource.key}'"
+                tileManager = TileManager(
+                    logger = logger,
+                    imageSource = imageSource,
+                    viewSize = viewSize,
+                    tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
+                    tileMemoryCache = if (disableMemoryCache) null else tileMemoryCache,
+                    imageInfo = imageInfo,
+                    onTileChanged = {
+                        this@SubsamplingEngine.invalidateView()
+                    }
+                )
+                this@SubsamplingEngine.imageSource = imageSource
+                zoomEngine.imageSize = imageInfo.size   // todo 改成回调的方式，提供成功初始化监听
+                refreshTiles()
+            } else {
+                val cause = when (result) {
+                    -1 -> "The Drawable size is greater than or equal to the original image"
+                    -2 -> "The drawable aspect ratio is inconsistent with the original image"
+                    -3 -> "Image type not support subsampling"
+                    -10 -> "Can't decode image bounds or exif orientation"
+                    else -> "Unknown"
                 }
-                initJob = null
-                return@launch
-            }
-            if (!isSupportBitmapRegionDecoder(mimeType)) {
                 logger.d(MODULE) {
-                    "setImageSource failed. Image type not support subsampling. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize: ${imageWidth}x${imageHeight}, mimeType: $mimeType. '${imageSource.key}'"
+                    "setImageSource failed. $cause. " +
+                            "viewSize=$viewSize, " +
+                            "drawableSize: ${drawableSize.toShortString()}, " +
+                            "imageInfo: ${imageInfo?.toShortString()}. " +
+                            "'${imageSource.key}'"
                 }
-                initJob = null
-                return@launch
             }
-
-            logger.d(MODULE) {
-                val exifOrientationName = exifOrientationName(exifOrientation)
-                "setImageSource success. viewSize=$viewSize, drawableSize: ${drawableWidth}x${drawableHeight}, imageSize=$imageSize, mimeType=$mimeType, exifOrientation=$exifOrientationName. '${imageSource.key}'"
-            }
-            zoomEngine.imageSize = imageSize
-            val tileDecoder = TileDecoder(
-                engine = this@SubsamplingEngine,
-                imageSource = imageSource,
-                imageSize = imageSize,
-                imageMimeType = mimeType,
-                imageExifOrientation = exifOrientation,
-            )
-            tileManager = TileManager(
-                engine = this@SubsamplingEngine,
-                decoder = tileDecoder,
-                imageSource = imageSource,
-                viewSize = viewSize,
-            )
-            refreshTiles()
             initJob = null
         }
     }
@@ -251,7 +242,11 @@ internal class SubsamplingEngine constructor(
             return
         }
 
-        tileManager?.refreshTiles(drawableSize, drawableVisibleRect, displayMatrix)
+        tileManager?.refreshTiles(
+            drawableSize,
+            drawableVisibleRect.toIntRectCompat(),
+            displayMatrix.getScale().scaleX.format(2)
+        )
     }
 
     @MainThread
@@ -260,7 +255,7 @@ internal class SubsamplingEngine constructor(
         val drawableSize = zoomEngine.drawableSize
         val displayMatrix = tempDisplayMatrix
         val drawableVisibleRect = tempDrawableVisibleRect
-        tileManager?.onDraw(canvas, drawableSize, drawableVisibleRect, displayMatrix)
+        drawTiles(canvas, drawableSize, drawableVisibleRect, displayMatrix)
     }
 
     @MainThread
@@ -291,5 +286,58 @@ internal class SubsamplingEngine constructor(
 
     fun removeOnTileChangedListener(listener: OnTileChangedListener): Boolean {
         return onTileChangedListenerList?.remove(listener) == true
+    }
+
+    @MainThread
+    private fun drawTiles(
+        canvas: Canvas,
+        drawableSize: IntSizeCompat,
+        drawableVisibleRect: Rect,
+        displayMatrix: Matrix
+    ) {
+        requiredMainThread()
+        val tileManager = tileManager ?: return
+        val tileList = tileManager.rowTileList ?: return
+        val widthScale = tileManager.imageInfo.width / drawableSize.width.toFloat()
+        val heightScale = tileManager.imageInfo.height / drawableSize.height.toFloat()
+        canvas.withSave {
+            canvas.concat(displayMatrix)
+            tileList.forEach { tile ->
+                if (tile.srcRect.overlaps(tileManager.imageLoadRect)) {
+                    val tileBitmap = tile.bitmap
+                    val tileSrcRect = tile.srcRect
+                    val tileDrawRect = Rect(
+                        left = floor(tileSrcRect.left / widthScale).roundToInt(),
+                        top = floor(tileSrcRect.top / heightScale).roundToInt(),
+                        right = ceil(tileSrcRect.right / widthScale).roundToInt(),
+                        bottom = ceil(tileSrcRect.bottom / heightScale).roundToInt()
+                    )
+                    if (tileBitmap != null) {
+                        canvas.drawBitmap(
+                            /* bitmap = */ tileBitmap,
+                            /* src = */ Rect(0, 0, tileBitmap.width, tileBitmap.height),
+                            /* dst = */ tileDrawRect,
+                            /* paint = */ null
+                        )
+                    }
+
+                    if (showTileBounds) {
+                        val boundsColor = when {
+                            tileBitmap != null -> Color.GREEN
+                            tile.loadJob?.isActive == true -> Color.YELLOW
+                            else -> Color.RED
+                        }
+                        tileBoundsPaint.color = ColorUtils.setAlphaComponent(boundsColor, 100)
+                        val tileBoundsRect = Rect(
+                            left = floor(tileDrawRect.left + strokeHalfWidth).toInt(),
+                            top = floor(tileDrawRect.top + strokeHalfWidth).toInt(),
+                            right = ceil(tileDrawRect.right - strokeHalfWidth).toInt(),
+                            bottom = ceil(tileDrawRect.bottom - strokeHalfWidth).toInt()
+                        )
+                        canvas.drawRect(/* r = */ tileBoundsRect, /* paint = */ tileBoundsPaint)
+                    }
+                }
+            }
+        }
     }
 }

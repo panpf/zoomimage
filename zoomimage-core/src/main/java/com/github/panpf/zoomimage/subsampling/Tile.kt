@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
-import android.graphics.Rect
-import com.github.panpf.zoomimage.TileBitmap
+import com.github.panpf.zoomimage.core.IntRectCompat
+import com.github.panpf.zoomimage.core.internal.toShortString
+import com.github.panpf.zoomimage.core.toShortString
 import kotlinx.coroutines.Job
 
-class Tile constructor(val srcRect: Rect, val inSampleSize: Int) {
+class Tile constructor(val srcRect: IntRectCompat, val inSampleSize: Int) {
 
     internal var countBitmap: TileBitmap? = null
         set(value) {
@@ -51,6 +52,9 @@ class Tile constructor(val srcRect: Rect, val inSampleSize: Int) {
     }
 
     override fun toString(): String {
-        return "Tile(srcRect=${srcRect.toVeryShortString()},inSampleSize=$inSampleSize,bitmap=${bitmap?.run { "Bitmap(${width}x${height},$config)" }})"
+        return "Tile(" +
+                "srcRect=${srcRect.toShortString()}," +
+                "inSampleSize=$inSampleSize," +
+                "bitmap=${bitmap?.toShortString().orEmpty()})"
     }
 }

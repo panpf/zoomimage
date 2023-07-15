@@ -19,7 +19,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import com.github.panpf.zoomimage.imagesource.ImageSource
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.view.picasso.internal.PicassoHttpImageSource
 import com.github.panpf.zoomimage.view.picasso.internal.PicassoTileMemoryCache
 import com.squareup.picasso.Callback

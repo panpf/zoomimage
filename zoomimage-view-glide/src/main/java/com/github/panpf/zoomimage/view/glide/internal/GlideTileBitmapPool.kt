@@ -18,7 +18,7 @@ package com.github.panpf.zoomimage.view.glide.internal
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import com.bumptech.glide.Glide
-import com.github.panpf.zoomimage.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 
 class GlideTileBitmapPool(private val glide: Glide) : TileBitmapPool {
 

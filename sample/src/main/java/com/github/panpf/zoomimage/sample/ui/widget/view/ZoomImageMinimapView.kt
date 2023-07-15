@@ -36,7 +36,6 @@ import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.isNotEmpty
-import com.github.panpf.zoomimage.sample.util.crossWith
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
@@ -48,7 +47,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
 
     private val tileBoundsPaint = Paint().apply {
         style = Paint.Style.STROKE
-        strokeWidth = 1.5f.dp2pxF
+        strokeWidth = 1f.dp2pxF
     }
     private val strokeHalfWidth = tileBoundsPaint.strokeWidth / 2
     private val drawableVisibleRect = Rect()
@@ -76,7 +75,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
             val heightTargetScale = imageSize.height.toFloat() / viewHeight
             val imageLoadRect = zoomView.subsamplingAbility.imageLoadRect
             zoomView.subsamplingAbility.tileList?.forEach { tile ->
-                val load = tile.srcRect.crossWith(imageLoadRect)
+                val load = tile.srcRect.overlaps(imageLoadRect)
                 val tileBitmap = tile.bitmap
                 val tileSrcRect = tile.srcRect
                 val tileDrawRect = tileDrawRect.apply {

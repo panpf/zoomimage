@@ -1,16 +1,17 @@
-package com.github.panpf.zoomimage.core.internal
+package com.github.panpf.zoomimage.subsampling.internal
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.RectF
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.TileBitmapPool
+import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import kotlin.math.abs
 
 fun exifOrientationName(exifOrientation: Int): String =
@@ -26,6 +27,11 @@ fun exifOrientationName(exifOrientation: Int): String =
         ExifInterface.ORIENTATION_NORMAL -> "NORMAL"
         else -> exifOrientation.toString()
     }
+
+fun ImageInfo.applyExifOrientation(): ImageInfo {
+    val applyImageSize = ExifOrientationHelper(exifOrientation).applyToSize(size)
+    return this.copy(size = applyImageSize)
+}
 
 /**
  * Rotate and flip the image according to the 'orientation' attribute of Exif so that the image is presented to the user at a normal angle
@@ -90,7 +96,6 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
         logger: Logger?,
         inBitmap: Bitmap,
         bitmapPool: TileBitmapPool?,
-        disallowReuseBitmap: Boolean
     ): Bitmap? {
         return applyFlipAndRotation(
             logger = logger,
@@ -98,7 +103,6 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
             isFlipped = isFlipped,
             rotationDegrees = rotationDegrees,
             bitmapPool = bitmapPool,
-            disallowReuseBitmap = disallowReuseBitmap,
             apply = true
         )
     }
@@ -150,51 +154,51 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
 //        )
 //    }
 
-    fun addToRect(srcRect: Rect, imageSize: IntSizeCompat): Rect =
+    fun addToRect(srcRect: IntRectCompat, imageSize: IntSizeCompat): IntRectCompat =
         when (exifOrientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> Rect(
+            ExifInterface.ORIENTATION_ROTATE_90 -> IntRectCompat(
                 srcRect.top,
                 imageSize.width - srcRect.right,
                 srcRect.bottom,
                 imageSize.width - srcRect.left,
             )
 
-            ExifInterface.ORIENTATION_TRANSVERSE -> Rect(
+            ExifInterface.ORIENTATION_TRANSVERSE -> IntRectCompat(
                 imageSize.height - srcRect.bottom,
                 imageSize.width - srcRect.right,
                 imageSize.height - srcRect.top,
                 imageSize.width - srcRect.left,
             )
 
-            ExifInterface.ORIENTATION_ROTATE_180 -> Rect(
+            ExifInterface.ORIENTATION_ROTATE_180 -> IntRectCompat(
                 imageSize.width - srcRect.right,
                 imageSize.height - srcRect.bottom,
                 imageSize.width - srcRect.left,
                 imageSize.height - srcRect.top
             )
 
-            ExifInterface.ORIENTATION_FLIP_VERTICAL -> Rect(
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> IntRectCompat(
                 srcRect.left,
                 imageSize.height - srcRect.bottom,
                 srcRect.right,
                 imageSize.height - srcRect.top,
             )
 
-            ExifInterface.ORIENTATION_ROTATE_270 -> Rect(
+            ExifInterface.ORIENTATION_ROTATE_270 -> IntRectCompat(
                 imageSize.height - srcRect.bottom,
                 srcRect.left,
                 imageSize.height - srcRect.top,
                 srcRect.right
             )
 
-            ExifInterface.ORIENTATION_TRANSPOSE -> Rect(
+            ExifInterface.ORIENTATION_TRANSPOSE -> IntRectCompat(
                 srcRect.top,
                 srcRect.left,
                 srcRect.bottom,
                 srcRect.right
             )
 
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> Rect(
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> IntRectCompat(
                 imageSize.width - srcRect.right,
                 srcRect.top,
                 imageSize.width - srcRect.left,
@@ -236,7 +240,6 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
         isFlipped: Boolean,
         rotationDegrees: Int,
         bitmapPool: TileBitmapPool?,
-        disallowReuseBitmap: Boolean,
         apply: Boolean,
     ): Bitmap? {
         val isRotated = abs(rotationDegrees % 360) != 0
@@ -259,7 +262,6 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
             width = newWidth,
             height = newHeight,
             config = config,
-            disallowReuseBitmap = disallowReuseBitmap,
             caller = "applyFlipAndRotation"
         ) ?: Bitmap.createBitmap(newWidth, newHeight, config)
 
