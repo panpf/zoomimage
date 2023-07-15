@@ -16,6 +16,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -75,7 +76,10 @@ fun ZoomImageMinimap(
                     .drawWithContent {
                         drawContent()
                         val contentVisibleRect = state.contentVisibleRect
-                        val drawScaleWithContent = viewSize.width / contentSize.width.toFloat()
+                        val drawScaleWithContent = ScaleFactor(
+                            scaleX = viewSize.width / contentSize.width.toFloat(),
+                            scaleY = viewSize.height / contentSize.height.toFloat()
+                        )
                         val drawVisibleRect =
                             contentVisibleRect
                                 .scale(drawScaleWithContent)

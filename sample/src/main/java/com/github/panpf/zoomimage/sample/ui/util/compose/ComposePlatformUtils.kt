@@ -52,6 +52,15 @@ internal fun IntRect.scale(scale: Float): IntRect {
     )
 }
 
+internal fun IntRect.scale(scale: ScaleFactor): IntRect {
+    return IntRect(
+        left = (left * scale.scaleX).roundToInt(),
+        top = (top * scale.scaleY).roundToInt(),
+        right = (right * scale.scaleX).roundToInt(),
+        bottom = (bottom * scale.scaleY).roundToInt(),
+    )
+}
+
 internal fun Rect.restoreScale(scale: Float): Rect {
     return Rect(
         left = (left / scale),
