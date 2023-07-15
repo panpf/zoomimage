@@ -3,12 +3,18 @@ package com.github.panpf.zoomimage.sample.ui.photoalbum.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells.Fixed
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -27,8 +33,6 @@ import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
 import com.github.panpf.zoomimage.sample.ui.photoalbum.PhotoAlbumViewModel
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshState
 
 class PhotoAlbumComposeFragment : AppBarFragment() {
 
@@ -44,14 +48,15 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
         return zoomImageType.title
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun DrawContent() {
         val pagingItems = photoAlbumViewModel.pagingFlow.collectAsLazyPagingItems()
-        SwipeRefresh(
-            modifier = Modifier.fillMaxSize(),
-            state = SwipeRefreshState(pagingItems.loadState.refresh is Loading),
+        val pullRefreshState = rememberPullRefreshState(
+            refreshing = pagingItems.loadState.refresh is Loading,
             onRefresh = { pagingItems.refresh() }
-        ) {
+        )
+        Box(modifier = Modifier.fillMaxSize()) {
             LazyVerticalGrid(
                 columns = Fixed(3),
                 horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = dimen.grid_divider)),
@@ -67,6 +72,7 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
                             )
                         )
                     )
+                    .pullRefresh(pullRefreshState)
             ) {
                 items(
                     count = pagingItems.itemCount,
@@ -84,6 +90,12 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
                     )
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing = pagingItems.loadState.refresh is Loading,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 
