@@ -51,10 +51,10 @@ fun Modifier.subsampling(
                 val tileBitmap = tile.bitmap
                 val tileSrcRect = tile.srcRect
                 val tileDrawRect0 = IntRect(
-                    left = floor(tileSrcRect.left / widthScale).roundToInt(),
-                    top = floor(tileSrcRect.top / heightScale).roundToInt(),
-                    right = ceil(tileSrcRect.right / widthScale).roundToInt(),
-                    bottom = ceil(tileSrcRect.bottom / heightScale).roundToInt()
+                    left = floor(tileSrcRect.left / widthScale).toInt(),
+                    top = floor(tileSrcRect.top / heightScale).toInt(),
+                    right = floor(tileSrcRect.right / widthScale).toInt(),
+                    bottom = floor(tileSrcRect.bottom / heightScale).toInt()
                 ).translate(baseTransform.offset.round())
                 if (tileBitmap != null) {
                     val srcRect = IntRect(0, 0, tileBitmap.width, tileBitmap.height)

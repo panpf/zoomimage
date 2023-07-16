@@ -304,10 +304,10 @@ internal class SubsamplingEngine constructor(
                     val tileBitmap = tile.bitmap
                     val tileSrcRect = tile.srcRect
                     val tileDrawRect = Rect(
-                        left = floor(tileSrcRect.left / widthScale).roundToInt(),
-                        top = floor(tileSrcRect.top / heightScale).roundToInt(),
-                        right = ceil(tileSrcRect.right / widthScale).roundToInt(),
-                        bottom = ceil(tileSrcRect.bottom / heightScale).roundToInt()
+                        left = floor(tileSrcRect.left / widthScale).toInt(),
+                        top = floor(tileSrcRect.top / heightScale).toInt(),
+                        right = floor(tileSrcRect.right / widthScale).toInt(),
+                        bottom = floor(tileSrcRect.bottom / heightScale).toInt()
                     )
                     if (tileBitmap != null) {
                         canvas.drawBitmap(
