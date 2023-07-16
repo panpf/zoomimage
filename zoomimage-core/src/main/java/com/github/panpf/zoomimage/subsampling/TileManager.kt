@@ -35,7 +35,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 class TileManager constructor(
-    private val logger: Logger,
+    logger: Logger,
     private val tileBitmapPool: TileBitmapPool?,
     private val tileMemoryCache: TileMemoryCache?,
     private val imageSource: ImageSource,
@@ -43,12 +43,13 @@ class TileManager constructor(
     viewSize: IntSizeCompat,
     private val onTileChanged: () -> Unit,
 ) {
-    val decoder: TileDecoder = TileDecoder(
+    private val decoder: TileDecoder = TileDecoder(
         imageSource = imageSource,
         tileBitmapPool = tileBitmapPool,
-        logger = Logger(),
+        logger = logger,
         imageInfo = imageInfo,
     )
+    private val logger: Logger = logger.newLogger(module = "Subsampling-TileManager")
 
     private val tileMaxSize = viewSize.let {
         IntSizeCompat(it.width / 2, it.height / 2)
@@ -66,22 +67,17 @@ class TileManager constructor(
         private set
     var imageLoadRect = IntRectCompat.Zero
         private set
-//    private val _tileDrawRect = Rect()
 
     val rowTileList: List<Tile>?
         get() = lastTileList
     val tileList: List<Tile>?
         get() = lastTileList?.toList()
 
-    //    val imageVisibleRect: IntRectCompat
-//        get() = IntRectCompat().apply { set(_imageVisibleRect) }
-//    val imageLoadRect: IntRectCompat
-//        get() = IntRectCompat().apply { set(_imageLoadRect) }
     val sampleSize: Int?
         get() = lastSampleSize
 
     init {
-        logger.d(SUBSAMPLING_MODULE) {
+        logger.d {
             val tileMapInfoList = tileMap.keys.sortedDescending().map {
                 "${it}:${tileMap[it]?.size}"
             }
@@ -113,7 +109,7 @@ class TileManager constructor(
         }
         val tileList = lastTileList
         if (tileList == null) {
-            logger.d(SUBSAMPLING_MODULE) {
+            logger.d {
                 "refreshTiles. no tileList. " +
                         "imageInfo=${imageInfo.toShortString()}, " +
                         "drawableSize=$drawableSize, " +
@@ -126,7 +122,7 @@ class TileManager constructor(
         }
         resetVisibleAndLoadRect(drawableSize, drawableVisibleRect)
 
-        logger.d(SUBSAMPLING_MODULE) {
+        logger.d {
             "refreshTiles. started. " +
                     "imageInfo=${imageInfo.toShortString()}, " +
                     "imageVisibleRect=$imageVisibleRect, " +
@@ -147,6 +143,21 @@ class TileManager constructor(
     }
 
     @MainThread
+    fun destroy() {
+        requiredMainThread()
+        clean()
+        decoder.destroy()
+    }
+
+    @MainThread
+    fun clean() {
+        requiredMainThread()
+        freeAllTile()
+        lastSampleSize = null
+        lastTileList = null
+    }
+
+    @MainThread
     private fun loadTile(tile: Tile) {
         requiredMainThread()
 
@@ -164,7 +175,7 @@ class TileManager constructor(
         val cachedValue = tileMemoryCache?.get(memoryCacheKey)
         if (cachedValue != null) {
             tile.countBitmap = cachedValue
-            logger.d(SUBSAMPLING_MODULE) {
+            logger.d {
                 "loadTile. successful. fromMemory. $tile. '${imageSource.key}'"
             }
             onTileChanged()
@@ -175,9 +186,7 @@ class TileManager constructor(
             val bitmap = decoder.decode(tile)
             when {
                 bitmap == null -> {
-                    logger.e(SUBSAMPLING_MODULE) {
-                        "loadTile. null. $tile. '${imageSource.key}'"
-                    }
+                    logger.e("loadTile. null. $tile. '${imageSource.key}'")
                 }
 
                 isActive -> {
@@ -190,7 +199,7 @@ class TileManager constructor(
                             tileBitmapPool = tileBitmapPool,
                         ) ?: DefaultTileBitmap(memoryCacheKey, bitmap)
                         tile.countBitmap = newCountBitmap
-                        logger.d(SUBSAMPLING_MODULE) {
+                        logger.d {
                             "loadTile. successful. $tile. '${imageSource.key}'"
                         }
                         onTileChanged()
@@ -198,7 +207,7 @@ class TileManager constructor(
                 }
 
                 else -> {
-                    logger.d(SUBSAMPLING_MODULE) {
+                    logger.d {
                         "loadTile. canceled. $tile. '${imageSource.key}'"
                     }
                     val bitmapPool = tileBitmapPool
@@ -211,7 +220,7 @@ class TileManager constructor(
                     } else {
                         bitmap.recycle()
                     }
-                    logger.d(SUBSAMPLING_MODULE) {
+                    logger.d {
                         "loadTile. freeBitmap. tile job canceled. bitmap=${bitmap.logString}. '${imageSource.key}'"
                     }
                 }
@@ -229,7 +238,7 @@ class TileManager constructor(
         }
 
         tile.countBitmap?.run {
-            logger.d(SUBSAMPLING_MODULE) {
+            logger.d {
                 "freeTile. $tile. '${imageSource.key}'"
             }
             tile.countBitmap = null
@@ -264,20 +273,5 @@ class TileManager constructor(
             }
         }
         onTileChanged()
-    }
-
-    @MainThread
-    fun destroy() {
-        requiredMainThread()
-        clean()
-        decoder.destroy()
-    }
-
-    @MainThread
-    fun clean() {
-        requiredMainThread()
-        freeAllTile()
-        lastSampleSize = null
-        lastTileList = null
     }
 }

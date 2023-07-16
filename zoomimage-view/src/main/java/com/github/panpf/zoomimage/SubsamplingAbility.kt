@@ -9,10 +9,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.view.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
+import com.github.panpf.zoomimage.view.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.view.internal.getLifecycle
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import kotlinx.coroutines.CoroutineScope
@@ -26,16 +26,13 @@ import kotlinx.coroutines.launch
 @Suppress("unused", "UNUSED_PARAMETER")
 class SubsamplingAbility(
     private val view: View,
-    private val zoomAbility: ZoomAbility
+    private val zoomAbility: ZoomAbility    // todo 不在传入，而是外部绑定
 ) {
 
-    companion object {
-        private const val MODULE = "SubsamplingAbility"
-    }
-
+    val logger: Logger = zoomAbility.logger.newLogger(module = "SubsamplingAbility")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val engine: SubsamplingEngine =
-        SubsamplingEngine(view.context, zoomAbility.logger, zoomAbility.engine)
+        SubsamplingEngine(view.context, logger, zoomAbility.engine)
     private var lifecycle: Lifecycle? = null
     private var imageSource: ImageSource? = null
     private var initEngineJob: Job? = null
@@ -196,7 +193,10 @@ class SubsamplingAbility(
         val viewVisible = view.isVisible
         val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
         val paused = !viewVisible || !lifecycleStarted
-        zoomAbility.logger.d(MODULE) { "resetPaused. $paused. $caller. viewVisible=$viewVisible, lifecycleStarted=$lifecycleStarted. '${imageSource?.key}'" }
+        zoomAbility.logger.d { "resetPaused. $paused. $caller. " +
+                "viewVisible=$viewVisible, " +
+                "lifecycleStarted=$lifecycleStarted. " +
+                "'${imageSource?.key}'" }
         engine.paused = paused
     }
 

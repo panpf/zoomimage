@@ -51,7 +51,7 @@ internal class FlingRunnable(
         val maxX: Int = bounds.right
         val minY: Int = bounds.top
         val maxY: Int = bounds.bottom
-        engine.logger.d(ZoomEngine.MODULE) {
+        engine.logger.d {
             "fling. start. " +
                     "velocity=($velocityX, $velocityY), " +
                     "start=($startX,$startY), " +
@@ -81,7 +81,7 @@ internal class FlingRunnable(
                 x = offset.x - start.x,
                 y = offset.y - start.y
             )
-            engine.logger.d(ZoomEngine.MODULE) {
+            engine.logger.d {
                 "fling. running. " +
                         "velocity=($velocityX, $velocityY), " +
                         "start=${start.toShortString()}, " +

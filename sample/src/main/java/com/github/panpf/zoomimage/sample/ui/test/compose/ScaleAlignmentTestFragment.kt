@@ -100,7 +100,7 @@ private fun ScaleAlignmentTestScreen() {
             }
         }
     }
-    val subsamplingState = rememberSubsamplingState(debugMode = BuildConfig.DEBUG)
+    val subsamplingState = rememberSubsamplingState()
     Box(modifier = Modifier.fillMaxSize()) {
         ZoomAsyncImage(
             imageUri = imageUri,

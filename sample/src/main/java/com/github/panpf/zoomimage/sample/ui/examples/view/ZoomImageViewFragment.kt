@@ -115,8 +115,8 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                 if (resId != null) {
                     ImageSource.fromResource(requireContext().resources, resId)
                 } else {
-                    binding.zoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
-                        "Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
+                    binding.zoomImageViewImage.zoomAbility.logger.w {
+                        "ZoomImageViewFragment. Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
                     }
                     null
                 }
@@ -135,8 +135,8 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
             }
 
             else -> {
-                binding.zoomImageViewImage.zoomAbility.logger.w("ZoomImageViewFragment") {
-                    "Can't use Subsampling, unsupported uri: '$sketchImageUri'"
+                binding.zoomImageViewImage.zoomAbility.logger.w {
+                    "ZoomImageViewFragment. Can't use Subsampling, unsupported uri: '$sketchImageUri'"
                 }
                 null
             }

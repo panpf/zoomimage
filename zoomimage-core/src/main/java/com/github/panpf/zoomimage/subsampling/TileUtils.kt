@@ -22,8 +22,6 @@ import com.github.panpf.zoomimage.subsampling.internal.isSupportBitmapRegionDeco
 import kotlin.math.abs
 import kotlin.math.ceil
 
-const val SUBSAMPLING_MODULE = "Subsampling"
-
 internal fun initializeTileMap(
     imageSize: IntSizeCompat,
     tileMaxSize: IntSizeCompat

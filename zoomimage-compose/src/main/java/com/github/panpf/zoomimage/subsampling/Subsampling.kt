@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.subsampling
 
-import android.util.Log
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
@@ -28,23 +27,23 @@ fun Modifier.subsampling(
         val imageInfo = subsamplingState.imageInfo
         val drawableSize = subsamplingState.contentSize
         if (tileList.isEmpty() || imageInfo == null || drawableSize.isEmpty()) {
-            Log.d(
-                "SubsamplingState", "subsampling drawWithContent. params is empty. " +
+            subsamplingState.logger.d {
+                "drawTiles. params is empty. " +
                         "tileListSize=${tileList.size}, " +
                         "imageInfo=${imageInfo?.toShortString()}, " +
                         "drawableSize=${drawableSize.toShortString()}"
-            )
+            }
             return@drawWithContent
         }
 
         val baseTransform = zoomableState.baseTransform
-        Log.d(
-            "SubsamplingState", "subsampling drawWithContent. " +
+        subsamplingState.logger.d {
+            "drawTiles. " +
                     "tileListSize=${tileList.size}, " +
                     "imageInfo=${imageInfo.toShortString()}, " +
                     "drawableSize=${drawableSize.toShortString()}, " +
                     "baseTransform=${baseTransform.toShortString()}"
-        )
+        }
         val widthScale = imageInfo.width / (drawableSize.width * baseTransform.scaleX)
         val heightScale = imageInfo.height / (drawableSize.height * baseTransform.scaleY)
         tileList.forEach { tile ->

@@ -173,6 +173,8 @@ fun ZoomAsyncImage(
         zoomableState.contentScale = contentScale
     }
 
+    request.listener
+
     BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
 //     todo subsamplingImageSource
 //    subsamplingState.setImageSource(subsamplingImageSource)
@@ -209,8 +211,6 @@ fun ZoomAsyncImage(
         colorFilter = colorFilter,
         filterQuality = filterQuality
     )
-
-    // todo support subsampling
 }
 
 @Stable

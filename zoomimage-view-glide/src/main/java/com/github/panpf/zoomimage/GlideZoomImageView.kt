@@ -36,10 +36,6 @@ open class GlideZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    companion object {
-        const val MODULE = "GlideZoomImageView"
-    }
-
     init {
         val glide = Glide.get(context)
         _subsamplingAbility?.tileBitmapPool = GlideTileBitmapPool(glide)
@@ -68,15 +64,15 @@ open class GlideZoomImageView @JvmOverloads constructor(
             }
             val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)
             if (request == null) {
-                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, request is null" }
+                _zoomAbility?.logger?.d{ "GlideZoomImageView. Can't use Subsampling, request is null" }
                 return@post
             }
             if (request !is SingleRequest<*>) {
-                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, request is not SingleRequest" }
+                _zoomAbility?.logger?.d{ "GlideZoomImageView. Can't use Subsampling, request is not SingleRequest" }
                 return@post
             }
             if (!request.isComplete) {
-                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, request is not complete" }
+                _zoomAbility?.logger?.d{ "GlideZoomImageView. Can't use Subsampling, request is not complete" }
                 return@post
             }
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(request)
@@ -115,7 +111,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
             }
 
             else -> {
-                _zoomAbility?.logger?.w(MODULE) { "Can't use Subsampling, unsupported model: '$model'" }
+                _zoomAbility?.logger?.w{ "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
                 null
             }
         }

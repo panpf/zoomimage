@@ -17,98 +17,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 
-private const val MODULE = "TileBitmapPoolUtils.kt"
-
 private val bitmapPoolLock = Mutex()
-
-//@WorkerThread
-//private fun TileBitmapPool.realSetInBitmap(
-//    logger: Logger?,
-//    options: Options,
-//    imageSize: Size,
-//    imageMimeType: String?,
-//    disallowReuseBitmap: Boolean = false,
-//    caller: String? = null,
-//): Boolean {
-//    requiredWorkThread()
-//    if (disallowReuseBitmap) {
-//        logger?.d(MODULE) {
-//            "setInBitmap. disallowReuseBitmap. imageSize=$imageSize, imageMimeType=$imageMimeType. $caller"
-//        }
-//        return false
-//    }
-//    if (imageSize.isEmpty) {
-//        logger?.e(MODULE, "setInBitmap. error. imageSize is empty: $imageSize. $caller")
-//        return false
-//    }
-//    if (options.inPreferredConfig?.isAndSupportHardware() == true) {
-//        logger?.d(MODULE) {
-//            "setInBitmap. error. inPreferredConfig is HARDWARE does not support inBitmap. $caller"
-//        }
-//        return false
-//    }
-//
-//    // Going here can make the decoded Bitmap mutable so that it can be put into BitmapPoolHelper
-//    options.inMutable = true
-//
-//    val inSampleSize = options.inSampleSize.coerceAtLeast(1)
-//    if (!isSupportInBitmap(imageMimeType, inSampleSize)) {
-//        logger?.d(MODULE) {
-//            "setInBitmap. error. " +
-//                    "The current configuration does not support the use of inBitmap in BitmapFactory. " +
-//                    "imageMimeType=$imageMimeType, inSampleSize=${options.inSampleSize}. " +
-//                    "For details, please refer to 'DecodeUtils.isSupportInBitmap()'. " +
-//                    "$caller"
-//        }
-//        return false
-//    }
-//
-//    val sampledBitmapSize =
-//        calculateSampledBitmapSize(imageSize, inSampleSize, imageMimeType)
-//    val inBitmap: Bitmap? = get(
-//        width = sampledBitmapSize.width,
-//        height = sampledBitmapSize.height,
-//        config = options.inPreferredConfig
-//    )
-//    if (inBitmap != null) {
-//        logger?.d(MODULE) {
-//            "setInBitmap. successful. " +
-//                    "imageSize=$imageSize, inSampleSize=$inSampleSize, imageMimeType=$imageMimeType. " +
-//                    "inBitmap=${inBitmap.logString}. " +
-//                    "$caller"
-//        }
-//    } else {
-//        logger?.d(MODULE) {
-//            "setInBitmap. failed. " +
-//                    "imageSize=$imageSize, inSampleSize=$inSampleSize, imageMimeType=$imageMimeType. " +
-//                    "$caller"
-//        }
-//    }
-//
-//    // IllegalArgumentException("Problem decoding into existing bitmap") is thrown when inSampleSize is 0 but inBitmap is not null
-//    options.inSampleSize = inSampleSize
-//    options.inBitmap = inBitmap
-//    return inBitmap != null
-//}
-
-//@WorkerThread
-//fun TileBitmapPool.setInBitmap(
-//    logger: Logger?,
-//    options: Options,
-//    imageSize: Size,
-//    imageMimeType: String?,
-//    disallowReuseBitmap: Boolean = false,
-//    caller: String? = null,
-//): Boolean {
-//    return runBlocking {
-//        bitmapPoolLock.lock()
-//        try {
-//            realSetInBitmap(logger, options, imageSize, imageMimeType, disallowReuseBitmap, caller)
-//        } finally {
-//            bitmapPoolLock.unlock()
-//        }
-//    }
-//}
 
 @WorkerThread
 private fun TileBitmapPool.realSetInBitmapForRegion(
@@ -121,17 +30,17 @@ private fun TileBitmapPool.realSetInBitmapForRegion(
 ): Boolean {
     requiredWorkThread()
     if (regionSize.isEmpty()) {
-        logger?.e(MODULE, "setInBitmapForRegion. error. regionSize is empty: $regionSize. $caller")
+        logger?.e("setInBitmapForRegion. error. regionSize is empty: $regionSize. $caller")
         return false
     }
     if (options.inPreferredConfig?.isAndSupportHardware() == true) {
-        logger?.d(MODULE) {
+        logger?.d {
             "setInBitmapForRegion. error. inPreferredConfig is HARDWARE does not support inBitmap. $caller"
         }
         return false
     }
     if (!isSupportInBitmapForRegion(imageMimeType)) {
-        logger?.d(MODULE) {
+        logger?.d {
             "setInBitmapForRegion. error. " +
                     "The current configuration does not support the use of inBitmap in BitmapFactory. " +
                     "imageMimeType=$imageMimeType. " +
@@ -154,7 +63,7 @@ private fun TileBitmapPool.realSetInBitmapForRegion(
     )!!.apply {
         newCreate = true
     }
-    logger?.d(MODULE) {
+    logger?.d {
         "setInBitmapForRegion. successful. " +
                 "newCreate $newCreate. " +
                 "regionSize=$regionSize, inSampleSize=$inSampleSize, imageSize=$imageSize. " +
@@ -205,7 +114,7 @@ private fun TileBitmapPool.realGetOrCreate(
     requiredWorkThread()
     return get(width, height, config) ?: Bitmap.createBitmap(width, height, config)
         .apply {
-            logger?.d(MODULE) {
+            logger?.d {
                 "getOrCreate. new . ${this.logString}. $caller"
             }
         }
@@ -230,16 +139,20 @@ fun TileBitmapPool.getOrCreate(
 }
 
 @WorkerThread
-private fun TileBitmapPool.realFreeBitmap(logger: Logger?, bitmap: Bitmap, caller: String? = null) {
+private fun TileBitmapPool.realFreeBitmap(
+    logger: Logger?,
+    bitmap: Bitmap,
+    caller: String? = null
+) {
     requiredWorkThread()
     val success = put(bitmap)
     if (success) {
-        logger?.d(MODULE) {
+        logger?.d {
             "freeBitmap. successful. $caller. ${bitmap.logString}"
         }
     } else {
         bitmap.recycle()
-        logger?.d(MODULE) {
+        logger?.d {
             "freeBitmap. failed. execute recycle. $caller. ${bitmap.logString}"
         }
     }
@@ -252,7 +165,7 @@ fun TileBitmapPool.freeBitmap(
     caller: String? = null,
 ) {
     if (bitmap == null || bitmap.isRecycled) {
-        logger?.w(MODULE) {
+        logger?.w {
             "freeBitmap. error. bitmap null or recycled. $caller. ${bitmap?.logString}"
         }
         return

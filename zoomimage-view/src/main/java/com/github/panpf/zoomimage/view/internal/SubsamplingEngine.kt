@@ -52,14 +52,11 @@ import kotlin.math.roundToInt
 
 internal class SubsamplingEngine constructor(
     val context: Context,
-    val logger: Logger,
+    logger: Logger,
     private val zoomEngine: ZoomEngine, // todo 避免直接依赖 ZoomEngine
 ) {
 
-    companion object {
-        internal const val MODULE = "SubsamplingEngine"
-    }
-
+    val logger: Logger = logger.newLogger(module = "Subsampling-Engine")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var initJob: Job? = null
     private var imageSource: ImageSource? = null
@@ -92,10 +89,10 @@ internal class SubsamplingEngine constructor(
             if (field != value) {
                 field = value
                 if (value) {
-                    imageSource?.run { logger.d(MODULE) { "pause. '$key'" } }
+                    imageSource?.run { logger.d { "pause. '$key'" } }
                     tileManager?.clean()
                 } else {
-                    imageSource?.run { logger.d(MODULE) { "resume. '$key'" } }
+                    imageSource?.run { logger.d { "resume. '$key'" } }
                     refreshTiles()
                 }
             }
@@ -133,12 +130,12 @@ internal class SubsamplingEngine constructor(
 
         val viewSize = zoomEngine.viewSize
         if (viewSize.isEmpty()) {
-            logger.d(MODULE) { "setImageSource failed. View size error. '${imageSource.key}'" }
+            logger.d { "setImageSource failed. View size error. '${imageSource.key}'" }
             return
         }
         val drawableSize = zoomEngine.drawableSize
         if (drawableSize.isEmpty()) {
-            logger.d(MODULE) { "setImageSource failed. Drawable size error. '${imageSource.key}'" }
+            logger.d { "setImageSource failed. Drawable size error. '${imageSource.key}'" }
             return
         }
         initJob = scope.launch(Dispatchers.Main) {
@@ -147,7 +144,7 @@ internal class SubsamplingEngine constructor(
             val result =
                 imageInfo?.let { canUseSubsampling(it, drawableSize) } ?: -10
             if (imageInfo != null && result >= 0) {
-                logger.d(MODULE) {
+                logger.d {
                     "setImageSource success. " +
                             "viewSize=$viewSize, " +
                             "drawableSize: ${drawableSize.toShortString()}, " +
@@ -176,7 +173,7 @@ internal class SubsamplingEngine constructor(
                     -10 -> "Can't decode image bounds or exif orientation"
                     else -> "Unknown"
                 }
-                logger.d(MODULE) {
+                logger.d {
                     "setImageSource failed. $cause. " +
                             "viewSize=$viewSize, " +
                             "drawableSize: ${drawableSize.toShortString()}, " +
@@ -193,20 +190,20 @@ internal class SubsamplingEngine constructor(
         requiredMainThread()
         val imageSource = imageSource ?: return
         if (destroyed) {
-            logger.d(MODULE) { "refreshTiles. interrupted. destroyed. '${imageSource.key}'" }
+            logger.d { "refreshTiles. interrupted. destroyed. '${imageSource.key}'" }
             return
         }
         if (paused) {
-            logger.d(MODULE) { "refreshTiles. interrupted. paused. '${imageSource.key}'" }
+            logger.d { "refreshTiles. interrupted. paused. '${imageSource.key}'" }
             return
         }
         val manager = tileManager
         if (manager == null) {
-            logger.d(MODULE) { "refreshTiles. interrupted. initializing. '${imageSource.key}'" }
+            logger.d { "refreshTiles. interrupted. initializing. '${imageSource.key}'" }
             return
         }
         if (zoomEngine.rotateDegrees % 90 != 0) {
-            logger.d(MODULE) { "refreshTiles. interrupted. rotate degrees must be in multiples of 90. '${imageSource.key}'" }
+            logger.d { "refreshTiles. interrupted. rotate degrees must be in multiples of 90. '${imageSource.key}'" }
             return
         }
 
@@ -220,7 +217,7 @@ internal class SubsamplingEngine constructor(
         }
 
         if (drawableVisibleRect.isEmpty) {
-            logger.d(MODULE) {
+            logger.d {
                 "refreshTiles. interrupted. drawableVisibleRect is empty. drawableVisibleRect=${drawableVisibleRect}. '${imageSource.key}'"
             }
             tileManager?.clean()
@@ -228,14 +225,14 @@ internal class SubsamplingEngine constructor(
         }
 
         if (scaling) {
-            logger.d(MODULE) {
+            logger.d {
                 "refreshTiles. interrupted. scaling. '${imageSource.key}'"
             }
             return
         }
 
         if (zoomEngine.scale.format(2) <= zoomEngine.minScale.format(2)) {
-            logger.d(MODULE) {
+            logger.d {
                 "refreshTiles. interrupted. minScale. '${imageSource.key}'"
             }
             tileManager?.clean()
@@ -267,7 +264,7 @@ internal class SubsamplingEngine constructor(
     fun destroy() {
         requiredMainThread()
         if (destroyed) return
-        logger.d(MODULE) { "destroy. '${imageSource?.key}'" }
+        logger.d { "destroy. '${imageSource?.key}'" }
         initJob?.cancel("destroy")
         tileManager?.destroy()
         tileManager = null

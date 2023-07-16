@@ -25,24 +25,25 @@ import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.requiredMainThread
-import com.github.panpf.zoomimage.subsampling.internal.freeBitmap
-import com.github.panpf.zoomimage.subsampling.internal.logString
 import com.github.panpf.zoomimage.core.internal.requiredWorkThread
+import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
+import com.github.panpf.zoomimage.subsampling.internal.freeBitmap
 import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
 import com.github.panpf.zoomimage.subsampling.internal.isSrcRectError
+import com.github.panpf.zoomimage.subsampling.internal.logString
 import com.github.panpf.zoomimage.subsampling.internal.setInBitmapForRegion
 import kotlinx.coroutines.runBlocking
 import java.util.LinkedList
 
 class TileDecoder constructor(
+    logger: Logger,
     private val imageSource: ImageSource,
     val tileBitmapPool: TileBitmapPool?,
-    val logger: Logger,
     val imageInfo: ImageInfo,
 ) {
+    private val logger: Logger = logger.newLogger(module = "Subsampling-TileDecoder")
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
     private val exifOrientationHelper: ExifOrientationHelper =
         ExifOrientationHelper(imageInfo.exifOrientation)
@@ -88,7 +89,7 @@ class TileDecoder constructor(
             imageSize = addedImageSize,
             caller = "tile:decodeRegion"
         )
-        logger.d(SUBSAMPLING_MODULE) {
+        logger.d {
             "decodeRegion. inBitmap=${decodeOptions.inBitmap?.logString}. '${imageSource.key}'"
         }
 
@@ -98,7 +99,7 @@ class TileDecoder constructor(
             throwable.printStackTrace()
             val inBitmap = decodeOptions.inBitmap
             if (inBitmap != null && isInBitmapError(throwable)) {
-                logger.e(SUBSAMPLING_MODULE, throwable) {
+                logger.e {
                     "decodeRegion. Bitmap region decode inBitmap error. '${imageSource.key}'"
                 }
 
@@ -111,7 +112,7 @@ class TileDecoder constructor(
                 } else {
                     inBitmap.recycle()
                 }
-                logger.d(SUBSAMPLING_MODULE) {
+                logger.d {
                     "decodeRegion. freeBitmap. inBitmap error. bitmap=${inBitmap.logString}. '${imageSource.key}'"
                 }
 
@@ -120,13 +121,13 @@ class TileDecoder constructor(
                     regionDecoder.decodeRegion(newSrcRect.toAndroidRect(), decodeOptions)
                 } catch (throwable1: Throwable) {
                     throwable1.printStackTrace()
-                    logger.e(SUBSAMPLING_MODULE, throwable) {
+                    logger.e(throwable) {
                         "decodeRegion. Bitmap region decode error. srcRect=${newSrcRect}. '${imageSource.key}'"
                     }
                     null
                 }
             } else if (isSrcRectError(throwable)) {
-                logger.e(SUBSAMPLING_MODULE, throwable) {
+                logger.e(throwable) {
                     "decodeRegion. Bitmap region decode srcRect error. imageSize=$imageSize, srcRect=$newSrcRect, inSampleSize=${decodeOptions.inSampleSize}. '${imageSource.key}'"
                 }
                 null
@@ -156,7 +157,7 @@ class TileDecoder constructor(
             } else {
                 bitmap.recycle()
             }
-            logger.d(SUBSAMPLING_MODULE) {
+            logger.d {
                 "applyExifOrientation. freeBitmap. bitmap=${bitmap.logString}. '${imageSource.key}'"
             }
             newBitmap

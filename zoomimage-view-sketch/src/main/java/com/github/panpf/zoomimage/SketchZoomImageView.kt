@@ -43,10 +43,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle), ImageOptionsProvider {
 
-    companion object {
-        const val MODULE = "SketchZoomImageView"
-    }
-
     override var displayImageOptions: ImageOptions? = null
 
     init {
@@ -79,11 +75,11 @@ open class SketchZoomImageView @JvmOverloads constructor(
             }
             val result = displayResult
             if (result == null) {
-                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is null" }
+                _zoomAbility?.logger?.d{ "SketchZoomImageView. Can't use Subsampling, result is null" }
                 return@post
             }
             if (result !is DisplayResult.Success) {
-                _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, result is not Success" }
+                _zoomAbility?.logger?.d{ "SketchZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(result.drawable)
@@ -129,16 +125,16 @@ open class SketchZoomImageView @JvmOverloads constructor(
     private fun newImageSource(drawable: Drawable?): ImageSource? {
         drawable ?: return null
         if (drawable.getLastChildDrawable() is SketchStateDrawable) {
-            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, drawable is SketchStateDrawable" }
+            _zoomAbility?.logger?.d{ "SketchZoomImageView. Can't use Subsampling, drawable is SketchStateDrawable" }
             return null
         }
         val sketchDrawable = drawable.findLastSketchDrawable()
         if (sketchDrawable == null) {
-            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, drawable is not SketchDrawable" }
+            _zoomAbility?.logger?.d{ "SketchZoomImageView. Can't use Subsampling, drawable is not SketchDrawable" }
             return null
         }
         if (sketchDrawable is Animatable) {
-            _zoomAbility?.logger?.d(MODULE) { "Can't use Subsampling, drawable is Animatable" }
+            _zoomAbility?.logger?.d{ "SketchZoomImageView. Can't use Subsampling, drawable is Animatable" }
             return null
         }
         return SketchImageSource(

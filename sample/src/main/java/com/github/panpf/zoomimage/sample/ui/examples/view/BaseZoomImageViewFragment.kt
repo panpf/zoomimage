@@ -57,8 +57,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 scaleType = ScaleType.valueOf(it)
             }
             zoomAbility.apply {
-                logger.level = if (BuildConfig.DEBUG)
-                    Logger.Level.DEBUG else Logger.Level.INFO
+                logger.level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO
                 prefsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScale = it
                 }

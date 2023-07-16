@@ -35,10 +35,6 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    companion object {
-        const val MODULE = "PicassoZoomImageView"
-    }
-
     init {
         _subsamplingAbility?.tileMemoryCache = PicassoTileMemoryCache(Picasso.get())
     }
@@ -130,7 +126,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             }
 
             else -> {
-                _zoomAbility?.logger?.w(MODULE) { "Can't use Subsampling, unsupported uri: '$uri'" }
+                _zoomAbility?.logger?.w{ "PicassoZoomImageView. Can't use Subsampling, unsupported uri: '$uri'" }
                 null
             }
         }

@@ -66,7 +66,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         debugMode = BuildConfig.DEBUG
     )
     val infoDialogState = rememberZoomImageInfoDialogState()
-    val subsamplingState = rememberSubsamplingState(debugMode = BuildConfig.DEBUG)
+    val subsamplingState = rememberSubsamplingState()
     Box(
         modifier = Modifier
             .fillMaxSize()

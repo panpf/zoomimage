@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage
 
-import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector
@@ -111,6 +110,8 @@ class ZoomableState(
 ) {
     private var lastAnimatable: Animatable<*, *>? = null
 
+    val logger: Logger = Logger(tag = "ZoomImage", module = "ZoomableState")
+
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -121,6 +122,11 @@ class ZoomableState(
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
     var readMode: ReadMode? = null
     var debugMode: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            logger.level = if (value) Logger.DEBUG else Logger.INFO
+        }
     var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
 
     var minScale: Float by mutableStateOf(1f)
@@ -197,6 +203,10 @@ class ZoomableState(
         )
     }
 
+    init {
+        logger.level = if (debugMode) Logger.DEBUG else Logger.INFO
+    }
+
     internal suspend fun reset() {
         stopAnimation("reset")
 
@@ -254,7 +264,7 @@ class ZoomableState(
             }
         }
         val limitedInitialTransform = limitTransform(initialTransform)
-        log {
+        logger.d {
             "reset. containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
@@ -305,7 +315,7 @@ class ZoomableState(
             scale = ScaleFactor(limitedTargetScale),
             offset = limitedTargetOffset
         )
-        log {
+        logger.d {
             val targetAddScale = targetScale - currentScale
             val limitedAddScale = limitedTargetScale - currentScale
             val targetAddOffset = targetOffset - currentOffset
@@ -333,7 +343,7 @@ class ZoomableState(
         val currentScale = currentTransform.scaleX
         val limitedTargetOffset = limitOffset(targetOffset, currentScale)
         val limitedTargetTransform = currentTransform.copy(offset = limitedTargetOffset)
-        log {
+        logger.d {
             val currentOffset = currentTransform.offset
             val targetAddOffset = targetOffset - currentOffset
             val limitedTargetAddOffset = limitedTargetOffset - currentOffset
@@ -382,7 +392,7 @@ class ZoomableState(
             scale = ScaleFactor(limitedTargetScale),
             offset = limitedTargetOffset
         )
-        log {
+        logger.d {
             val currentScale = currentTransform.scaleX
             val currentOffset = currentTransform.offset
             val targetAddScale = targetScale - currentScale
@@ -430,7 +440,7 @@ class ZoomableState(
                     val targetOffset = this.value
                     val limitedTargetOffset = limitOffset(targetOffset, currentTransform2.scaleX)
                     val distance = limitedTargetOffset - startOffset
-                    log {
+                    logger.d {
                         "fling. running. " +
                                 "velocity=$velocity, " +
                                 "startOffset=${startOffset.toShortString()}, " +
@@ -484,7 +494,7 @@ class ZoomableState(
         val lastAnimatable = lastAnimatable
         if (lastAnimatable?.isRunning == true) {
             lastAnimatable.stop()
-            log { "stopAnimation:$caller" }
+            logger.d { "stopAnimation:$caller" }
         }
     }
 
@@ -589,7 +599,7 @@ class ZoomableState(
                             stop = targetTransform,
                             fraction = value
                         )
-                        log {
+                        logger.d {
                             "$caller. animated running. transform=${transform.toShortString()}"
                         }
                         this@ZoomableState.transform = transform
@@ -598,12 +608,6 @@ class ZoomableState(
             }
         } else {
             this.transform = targetTransform
-        }
-    }
-
-    private fun log(message: () -> String) {
-        if (debugMode) {
-            Log.d("ZoomableState", message())
         }
     }
 

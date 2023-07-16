@@ -42,7 +42,7 @@ class ZoomAbility(
     // todo 不支持 center 等 ScaleType
     internal val engine: ZoomEngine
     private val imageMatrix = Matrix()
-    val logger: Logger = Logger()
+    val logger: Logger = Logger(tag = "ZoomImageView", module = "ZoomAbility")
 
     init {
         val initScaleType = imageViewBridge.superGetScaleType()

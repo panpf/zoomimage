@@ -53,14 +53,11 @@ import com.github.panpf.zoomimage.view.ZoomAnimationSpec
  */
 internal class ZoomEngine constructor(
     val context: Context,
-    val logger: Logger,
+    logger: Logger,
     val view: View,
 ) {
 
-    companion object {
-        const val MODULE = "ZoomEngine"
-    }
-
+    val logger: Logger = logger.newLogger(module = "Zoom-Engine")
     private val tapHelper = TapHelper(context, this)
     private val scaleDragHelper = ScaleDragHelper(
         context = context,
@@ -232,7 +229,7 @@ internal class ZoomEngine constructor(
             }
         }
         scaleDragHelper.reset()
-        logger.d(MODULE) {
+        logger.d {
             "reset. viewSize=$viewSize, " +
                     "imageSize=$imageSize, " +
                     "drawableSize=$drawableSize, " +

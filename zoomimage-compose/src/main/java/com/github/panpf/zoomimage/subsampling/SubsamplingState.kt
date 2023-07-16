@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.subsampling
 
-import android.util.Log
 import androidx.annotation.MainThread
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,13 +32,10 @@ import kotlinx.coroutines.launch
 fun rememberSubsamplingState(
     tileMemoryCache: TileMemoryCache? = null,
     tileBitmapPool: TileBitmapPool? = null,
-    debugMode: Boolean = false,
 ): SubsamplingState {
     val subsamplingState = remember { SubsamplingState() }
-    subsamplingState.debugMode = debugMode
     subsamplingState.tileMemoryCache = tileMemoryCache
     subsamplingState.tileBitmapPool = tileBitmapPool
-    // todo 销毁时调用 state.clean()
     return subsamplingState
 }
 
@@ -47,7 +43,7 @@ fun rememberSubsamplingState(
 fun BindZoomableStateAndSubsamplingState(
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState
-){
+) {
     LaunchedEffect(subsamplingState.imageInfo) {
         zoomableState.contentOriginSize =
             subsamplingState.imageInfo?.let { IntSize(it.width, it.height) } ?: IntSize.Zero
@@ -71,6 +67,9 @@ fun BindZoomableStateAndSubsamplingState(
             contentVisibleRect = zoomableState.contentVisibleRect
         )
     }
+    LaunchedEffect(key1 = zoomableState.logger) {
+        subsamplingState.setRootLogger(zoomableState.logger)
+    }
 }
 
 class SubsamplingState : RememberObserver {
@@ -80,10 +79,12 @@ class SubsamplingState : RememberObserver {
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
 
+    var logger: Logger = Logger(tag = "ZoomImage", module = "SubsamplingState")
+        private set
+
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var imageInfo by mutableStateOf<ImageInfo?>(null)
-    var debugMode: Boolean = false
     var ignoreExifOrientation: Boolean = false
     var disallowReuseBitmap: Boolean = false
     var disableMemoryCache: Boolean = false
@@ -111,6 +112,10 @@ class SubsamplingState : RememberObserver {
         reset("setImageSource")
     }
 
+    fun setRootLogger(rootLogger: Logger) {
+        logger = rootLogger.newLogger(module = "SubsamplingState")
+    }
+
     private fun notifyTileChanged() {
         if (tilesChanged < Int.MAX_VALUE) {
             tilesChanged++
@@ -134,7 +139,7 @@ class SubsamplingState : RememberObserver {
             val result =
                 imageInfo?.let { canUseSubsampling(it, drawableSize.toCompatIntSize()) } ?: -10
             if (imageInfo != null && result >= 0) {
-                log {
+                logger.d {
                     "setImageSource success. $caller. " +
                             "viewSize=$viewSize, " +
                             "drawableSize: ${drawableSize.toShortString()}, " +
@@ -142,7 +147,7 @@ class SubsamplingState : RememberObserver {
                             "'${imageSource.key}'"
                 }
                 tileManager = TileManager(
-                    logger = Logger(),
+                    logger = logger,
                     imageSource = imageSource,
                     viewSize = viewSize.toCompatIntSize(),
                     tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
@@ -161,7 +166,7 @@ class SubsamplingState : RememberObserver {
                     -10 -> "Can't decode image bounds or exif orientation"
                     else -> "Unknown"
                 }
-                log {
+                logger.d {
                     "setImageSource failed. $caller. $cause. " +
                             "viewSize=$viewSize, " +
                             "drawableSize: ${drawableSize.toShortString()}, " +
@@ -185,18 +190,18 @@ class SubsamplingState : RememberObserver {
         val drawableSize = contentSize.takeIf { it.isNotEmpty() } ?: return
         // todo 支持 paused
 //        if (paused) {
-//            log { "refreshTiles. interrupted. paused. '${imageSource.key}'" }
+//            logger.d { "refreshTiles. interrupted. paused. '${imageSource.key}'" }
 //            return
 //        }
         if (transform.rotation % 90 != 0f) {
-            log { "refreshTiles. interrupted. rotate degrees must be in multiples of 90. '${imageSource.key}'" }
+            logger.d { "refreshTiles. interrupted. rotate degrees must be in multiples of 90. '${imageSource.key}'" }
             return
         }
 
         // todo 支持 scaling
 //        val scaling = zoomEngine.isScaling
 //        if (scaling) {
-//            log {
+//            logger.d {
 //                "refreshTiles. interrupted. scaling. '${imageSource.key}'"
 //            }
 //            return
@@ -209,7 +214,7 @@ class SubsamplingState : RememberObserver {
 //        }
 
         if (contentVisibleRect.isEmpty) {
-            log {
+            logger.d {
                 "refreshTiles. interrupted. drawableVisibleRect is empty. " +
                         "contentVisibleRect=${contentVisibleRect.toShortString()}. '${imageSource.key}'"
             }
@@ -219,7 +224,7 @@ class SubsamplingState : RememberObserver {
         }
 
         if (transform.scaleX.format(2) <= minScale.format(2)) {
-            log { "refreshTiles. interrupted. minScale. '${imageSource.key}'" }
+            logger.d { "refreshTiles. interrupted. minScale. '${imageSource.key}'" }
             tileManager?.clean()
             notifyTileChanged()
             return
@@ -235,18 +240,12 @@ class SubsamplingState : RememberObserver {
     @MainThread
     fun clean(caller: String) {
         if (imageInfo == null || imageSource == null) return
-        log { "clean. $caller. '${imageSource?.key}'" }
+        logger.d { "clean. $caller. '${imageSource?.key}'" }
         initJob?.cancel("destroy")
         tileManager?.destroy()
         tileManager = null
         imageSource = null
         imageInfo = null
-    }
-
-    private fun log(message: () -> String) {
-        if (debugMode) {
-            Log.d("SubsamplingState", message())
-        }
     }
 
     override fun onRemembered() {
