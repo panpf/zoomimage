@@ -34,7 +34,7 @@ fun Modifier.zoomable(
                 },
                 onDoubleTap = { offset ->
                     coroutineScope.launch {
-                        state.switchScale(
+                        state.switchUserScale(
                             contentOrigin = state.touchOffsetToContentOrigin(offset),
                             animated = true
                         )
@@ -56,7 +56,7 @@ fun Modifier.zoomable(
                 onDrag = { _, dragAmount ->
                     coroutineScope.launch {
                         state.offset(
-                            targetOffset = state.transform.offset + dragAmount,
+                            targetUserOffset = state.userTransform.offset + dragAmount,
                             animated = false
                         )
                     }
@@ -74,7 +74,7 @@ fun Modifier.zoomable(
                 onGesture = { centroid: Offset, zoomChange: Float, _ ->
                     coroutineScope.launch {
                         state.scale(
-                            targetScale = state.transform.scaleX * zoomChange,
+                            targetUserScale = state.userTransform.scaleX * zoomChange,
                             centroid = centroid,
                             animated = false,
                             rubberBandScale = true,
@@ -83,7 +83,7 @@ fun Modifier.zoomable(
                 },
                 onEnd = { centroid ->
                     coroutineScope.launch {
-                        state.reboundScale(centroid = centroid)
+                        state.reboundUserScale(centroid = centroid)
                     }
                 }
             )

@@ -8,6 +8,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
@@ -49,6 +50,10 @@ internal fun Size.rotate(rotateDegrees: Int): Size {
 internal fun Size.roundToIntSize(): IntSize {
     return IntSize(width.roundToInt(), height.roundToInt())
 }
+
+private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
+val TransformOrigin.Companion.TopStart: TransformOrigin
+    get() = transformOriginTopStart
 
 /**
  * Rotates the given offset around the origin by the given angle in degrees.

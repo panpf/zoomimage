@@ -48,9 +48,9 @@ fun BindZoomableStateAndSubsamplingState(
         zoomableState.contentOriginSize =
             subsamplingState.imageInfo?.let { IntSize(it.width, it.height) } ?: IntSize.Zero
         subsamplingState.refreshTiles(
-            transform = zoomableState.transform,
+            transform = zoomableState.userTransform,
             displayTransform = zoomableState.displayTransform,
-            minScale = zoomableState.minScale,
+            minScale = zoomableState.minUserScale,
             contentVisibleRect = zoomableState.contentVisibleRect
         )
     }
@@ -61,9 +61,9 @@ fun BindZoomableStateAndSubsamplingState(
     }
     LaunchedEffect(zoomableState.displayTransform) {
         subsamplingState.refreshTiles(
-            transform = zoomableState.transform,
+            transform = zoomableState.userTransform,
             displayTransform = zoomableState.displayTransform,
-            minScale = zoomableState.minScale,
+            minScale = zoomableState.minUserScale,
             contentVisibleRect = zoomableState.contentVisibleRect
         )
     }

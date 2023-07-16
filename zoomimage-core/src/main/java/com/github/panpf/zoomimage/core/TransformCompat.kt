@@ -1,9 +1,12 @@
 package com.github.panpf.zoomimage.core
 
+import com.github.panpf.zoomimage.core.internal.format
+
 data class TransformCompat(
     val scale: ScaleFactorCompat,
     val offset: OffsetCompat,
-    val rotation: Float = 0f
+    val rotation: Float = 0f,
+    val origin: Origin = com.github.panpf.zoomimage.core.Origin.TopStart,
 ) {
 
     constructor(
@@ -12,10 +15,13 @@ data class TransformCompat(
         offsetX: Float,
         offsetY: Float,
         rotation: Float = 0f,
+        originX: Float = 0f,
+        originY: Float = 0f,
     ) : this(
         scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
         offset = OffsetCompat(x = offsetX, y = offsetY),
         rotation = rotation,
+        origin = Origin(pivotFractionX = originX, pivotFractionY = originY)
     )
 
     val scaleX: Float
@@ -26,17 +32,27 @@ data class TransformCompat(
         get() = offset.x
     val offsetY: Float
         get() = offset.y
+    val originX: Float
+        get() = origin.pivotFractionX
+    val originY: Float
+        get() = origin.pivotFractionY
 
     companion object {
         val Origin = TransformCompat(
             scale = ScaleFactorCompat(1f, 1f),
             offset = OffsetCompat.Zero,
-            rotation = 0f
+            rotation = 0f,
+            origin = com.github.panpf.zoomimage.core.Origin.TopStart,
         )
     }
 
     override fun toString(): String {
-        return "Transform(scale=${scale.toShortString()}, offset=${offset.toShortString()}, rotation=$rotation)"
+        return "TransformCompat(" +
+                "scale=${scale.toShortString()}, " +
+                "offset=${offset.toShortString()}, " +
+                "rotation=$rotation, " +
+                "origin=${originX.format(2)}x${originY.format(2)}" +
+                ")"
     }
 }
 
@@ -56,7 +72,10 @@ data class TransformCompat(
  * an `AnimationController`.
  */
 fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): TransformCompat {
-    return TransformCompat(
+    require(start.origin == stop.origin) {
+        "Transform origin must be the same: start.origin=${start.origin}, stop.origin=${stop.origin}"
+    }
+    return start.copy(
         scale = lerp(start.scale, stop.scale, fraction),
         offset = lerp(start.offset, stop.offset, fraction),
         rotation = com.github.panpf.zoomimage.core.internal
@@ -65,7 +84,8 @@ fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): Transf
 }
 
 fun TransformCompat.toShortString(): String =
-    "${scale.toShortString()},${offset.toShortString()},$rotation"
+    "(${scale.toShortString()},${offset.toShortString()}," +
+            "$rotation,${originX.format(2)}x${originY.format(2)})"
 
 fun TransformCompat.times(scaleFactor: ScaleFactorCompat): TransformCompat {
     return this.copy(
@@ -94,7 +114,10 @@ fun TransformCompat.div(scaleFactor: ScaleFactorCompat): TransformCompat {
 }
 
 fun TransformCompat.concat(other: TransformCompat): TransformCompat {
-    return TransformCompat(
+    require(this.origin == other.origin) {
+        "Transform origin must be the same: this.origin=${this.origin}, other.origin=${other.origin}"
+    }
+    return this.copy(
         scale = scale.times(other.scale),
         offset = offset + other.offset,
         rotation = rotation + other.rotation,

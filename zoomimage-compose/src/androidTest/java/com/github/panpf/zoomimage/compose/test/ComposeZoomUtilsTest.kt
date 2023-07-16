@@ -28,8 +28,8 @@ import com.github.panpf.zoomimage.compose.internal.computeAlignmentIntOffset
 import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerInnerRect
 import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
-import com.github.panpf.zoomimage.compose.internal.computeLocationOffset
-import com.github.panpf.zoomimage.compose.internal.computeOffsetBounds
+import com.github.panpf.zoomimage.compose.internal.computeLocationUserOffset
+import com.github.panpf.zoomimage.compose.internal.computeUserOffsetBounds
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.Origin
@@ -354,7 +354,7 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
                 /* expected = */ expected,
-                /* actual = */ computeLocationOffset(containerSize, scale, containerOrigin)
+                /* actual = */ computeLocationUserOffset(containerSize, containerOrigin, scale)
             )
         }
 
@@ -369,7 +369,7 @@ class ComposeZoomUtilsTest {
             Assert.assertEquals(
                 /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
                 /* expected = */ expected,
-                /* actual = */ computeLocationOffset(containerSize, scale, containerOrigin)
+                /* actual = */ computeLocationUserOffset(containerSize, containerOrigin, scale)
             )
         }
     }
@@ -1396,12 +1396,12 @@ class ComposeZoomUtilsTest {
                     Item7(p1, p2, p3, p4, IntRect.Zero)
                 },
             ) {
-                computeOffsetBounds(
+                computeUserOffsetBounds(
                     containerSize = containerSize,
                     contentSize = it.contentSize,
                     contentScale = it.contentScale,
                     alignment = it.alignment,
-                    scale = it.scale,
+                    userScale = it.scale,
                 ).roundToIntRect()
             }
         }
@@ -1912,12 +1912,12 @@ class ComposeZoomUtilsTest {
             Item7(IntSize(551, 1038), Crop, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(551, 1038), Crop, BottomEnd, 2.0f, IntRect(-1080, -1655, 0, 0)),
         ).forEach { item ->
-            val result = computeOffsetBounds(
+            val result = computeUserOffsetBounds(
                 containerSize = containerSize,
                 contentSize = item.contentSize,
                 contentScale = item.contentScale,
                 alignment = item.alignment,
-                scale = item.scale,
+                userScale = item.scale,
             ).roundToIntRect()
             Assert.assertEquals(
                 /* message = */ item.getMessage(containerSize),
@@ -3405,7 +3405,7 @@ class ComposeZoomUtilsTest {
             "Item2(" +
                     "ContentScale.${it.contentScale.name}, " +
                     "Alignment.${it.alignment.name}, " +
-                    "Origin(${expected.run { "${x},${y}f" }})" +
+                    "Origin(${expected.run { "${pivotFractionX},${pivotFractionY}f" }})" +
                     ")"
         }.apply {
             Assert.fail(joinToString(separator = ", \n", postfix = ","))

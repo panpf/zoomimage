@@ -54,12 +54,13 @@ fun ZoomImage(
         .let { if (scrollBar != null) it.zoomScrollBar(zoomableState, scrollBar) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            scaleX = zoomableState.transform.scaleX
-            scaleY = zoomableState.transform.scaleY
-            rotationZ = zoomableState.transform.rotation
-            translationX = zoomableState.transform.offsetX
-            translationY = zoomableState.transform.offsetY
-            transformOrigin = zoomableState.transformOrigin
+            val transform = zoomableState.userTransform
+            scaleX = transform.scaleX
+            scaleY = transform.scaleY
+            rotationZ = transform.rotation
+            translationX = transform.offsetX
+            translationY = transform.offsetY
+            transformOrigin = transform.origin
         }
         .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
 

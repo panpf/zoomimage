@@ -122,11 +122,11 @@ fun ZoomImageMinimap(
                                     coroutineScope.launch {
                                         zoomableState.location(
                                             contentOrigin = Origin(
-                                                x = it.x / imageNodeSize.width,
-                                                y = it.y / imageNodeSize.height
+                                                pivotFractionX = it.x / imageNodeSize.width,
+                                                pivotFractionY = it.y / imageNodeSize.height
                                             ),
-                                            targetScale = zoomableState.transform.scaleX.coerceAtLeast(
-                                                zoomableState.mediumScale
+                                            targetUserScale = zoomableState.userTransform.scaleX.coerceAtLeast(
+                                                zoomableState.mediumUserScale
                                             ),
                                             animated = true,
                                         )

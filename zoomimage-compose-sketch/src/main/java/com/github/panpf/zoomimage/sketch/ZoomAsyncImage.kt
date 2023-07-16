@@ -24,8 +24,8 @@ import com.github.panpf.sketch.request.UriInvalidException
 import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.rememberZoomableState
-import com.github.panpf.zoomimage.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
+import com.github.panpf.zoomimage.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.subsampling.subsampling
 import com.github.panpf.zoomimage.zoomScrollBar
@@ -184,12 +184,13 @@ fun ZoomAsyncImage(
         .let { if (scrollBar != null) it.zoomScrollBar(zoomableState, scrollBar) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            scaleX = zoomableState.transform.scaleX
-            scaleY = zoomableState.transform.scaleY
-            rotationZ = zoomableState.transform.rotation
-            translationX = zoomableState.transform.offsetX
-            translationY = zoomableState.transform.offsetY
-            transformOrigin = zoomableState.transformOrigin
+            val transform1 = zoomableState.userTransform
+            scaleX = transform1.scaleX
+            scaleY = transform1.scaleY
+            rotationZ = transform1.rotation
+            translationX = transform1.offsetX
+            translationY = transform1.offsetY
+            transformOrigin = transform1.origin
         }
         .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
 

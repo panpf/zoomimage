@@ -42,7 +42,7 @@ import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.div
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
-import com.github.panpf.zoomimage.core.internal.computeSupportScales
+import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.rotate
 import com.github.panpf.zoomimage.view.ScrollBar
@@ -199,7 +199,7 @@ internal class ZoomEngine constructor(
         } else {
             val rotatedDrawableSize = drawableSize.rotate(rotateDegrees)
             val rotatedImageSize = imageSize.rotate(rotateDegrees)
-            val supportStepScales = computeSupportScales(
+            val supportStepScales = computeUserScales(
                 contentSize = rotatedDrawableSize,
                 contentOriginSize = rotatedImageSize,
                 containerSize = viewSize,

@@ -40,18 +40,18 @@ internal fun computeAlignmentIntOffset(
     return alignmentOffset
 }
 
-internal fun computeLocationOffset(
+internal fun computeLocationUserOffset(
     containerSize: IntSize,
-    scale: Float,
     containerOrigin: Origin,
+    userScale: Float,
 ): Offset {
     if (containerSize.isEmpty()) {
         return Offset.Zero
     }
-    val scaledContainerSize = containerSize.toSize().times(scale)
+    val scaledContainerSize = containerSize.toSize().times(userScale)
     val originInScaledContainerLocation = Offset(
-        x = scaledContainerSize.width * containerOrigin.x,
-        y = scaledContainerSize.height * containerOrigin.y,
+        x = scaledContainerSize.width * containerOrigin.pivotFractionX,
+        y = scaledContainerSize.height * containerOrigin.pivotFractionY,
     )
     val containerCenter = Offset(x = containerSize.width / 2f, y = containerSize.height / 2f)
     val originMoveToCenterOffset = originInScaledContainerLocation - containerCenter
@@ -123,19 +123,19 @@ internal fun computeContentInContainerInnerRect(
 
 internal fun computeContainerVisibleRect(
     containerSize: IntSize,
-    scale: Float,
-    offset: Offset
+    userScale: Float,
+    userOffset: Offset
 ): Rect {
     if (containerSize.isEmpty()) {
         return Rect.Zero
     }
-    val scaledContainerSize = containerSize.toSize().times(scale)
-    val topLeft = Offset(x = offset.x * -1, y = offset.y * -1)
+    val scaledContainerSize = containerSize.toSize().times(userScale)
+    val topLeft = Offset(x = userOffset.x * -1, y = userOffset.y * -1)
     val scaledContainerVisibleRect = Rect(offset = topLeft, size = containerSize.toSize())
     val boundsRect = Rect(offset = Offset(0f, 0f), size = scaledContainerSize)
     val limitedScaledContainerVisibleRect = scaledContainerVisibleRect.limitTo(boundsRect)
     val filteredEmptyRect = limitedScaledContainerVisibleRect.takeIf { !it.isEmpty } ?: Rect.Zero
-    val containerVisibleRect = filteredEmptyRect.restoreScale(scale)
+    val containerVisibleRect = filteredEmptyRect.restoreScale(userScale)
     return containerVisibleRect
 }
 
@@ -198,13 +198,13 @@ internal fun computeContentVisibleRect(
     contentSize: IntSize,
     contentScale: ContentScale,
     alignment: Alignment,
-    scale: Float,
-    offset: Offset,
+    userScale: Float,
+    userOffset: Offset,
 ): Rect {
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return Rect.Zero
     }
-    val containerVisibleRect = computeContainerVisibleRect(containerSize, scale, offset)
+    val containerVisibleRect = computeContainerVisibleRect(containerSize, userScale, userOffset)
     val contentInContainerInnerRect = computeContentInContainerInnerRect(
         containerSize = containerSize,
         contentSize = contentSize,
@@ -250,25 +250,25 @@ internal fun computeContentVisibleRect(
 
 internal fun computeContainerOriginByTouchPosition(
     containerSize: IntSize,
-    scale: Float,
-    offset: Offset,
+    userScale: Float,
+    userOffset: Offset,
     touch: Offset
 ): Origin {
     if (containerSize.isEmpty()) {
-        return Origin.Zero
+        return Origin.TopStart
     }
-    val touchOfContainer = touch - offset
+    val touchOfContainer = touch - userOffset
     val restoreScaledTouchOfContainer = Offset(
-        x = touchOfContainer.x / scale,
-        y = touchOfContainer.y / scale,
+        x = touchOfContainer.x / userScale,
+        y = touchOfContainer.y / userScale,
     )
     val containerOrigin = Origin(
-        x = restoreScaledTouchOfContainer.x / containerSize.width,
-        y = restoreScaledTouchOfContainer.y / containerSize.height,
+        pivotFractionX = restoreScaledTouchOfContainer.x / containerSize.width,
+        pivotFractionY = restoreScaledTouchOfContainer.y / containerSize.height,
     )
     val limitedContainerOrigin = Origin(
-        x = containerOrigin.x.coerceIn(0f, 1f),
-        y = containerOrigin.y.coerceIn(0f, 1f),
+        pivotFractionX = containerOrigin.pivotFractionX.coerceIn(0f, 1f),
+        pivotFractionY = containerOrigin.pivotFractionY.coerceIn(0f, 1f),
     )
     return limitedContainerOrigin
 }
@@ -281,7 +281,7 @@ internal fun containerOriginToContentOrigin(
     containerOrigin: Origin
 ): Origin {
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return Origin.Zero
+        return Origin.TopStart
     }
     val contentInContainerInnerRect = computeContentInContainerInnerRect(
         containerSize = containerSize,
@@ -300,8 +300,8 @@ internal fun containerOriginToContentOrigin(
         dstSize = containerSize.toSize()
     )
     val containerOriginOffset = Offset(
-        x = containerSize.width * containerOrigin.x,
-        y = containerSize.height * containerOrigin.y
+        x = containerSize.width * containerOrigin.pivotFractionX,
+        y = containerSize.height * containerOrigin.pivotFractionY
     )
     val contentScaledContentOriginOffset = Offset(
         x = containerOriginOffset.x - contentInContainerInnerRect.left,
@@ -322,8 +322,8 @@ internal fun containerOriginToContentOrigin(
         )
     }
     return Origin(
-        x = contentOriginOffset.x / contentSize.width,
-        y = contentOriginOffset.y / contentSize.height
+        pivotFractionX = contentOriginOffset.x / contentSize.width,
+        pivotFractionY = contentOriginOffset.y / contentSize.height
     )
 }
 
@@ -335,7 +335,7 @@ internal fun contentOriginToContainerOrigin(
     contentOrigin: Origin
 ): Origin {
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return Origin.Zero
+        return Origin.TopStart
     }
     val contentInContainerInnerRect = computeContentInContainerInnerRect(
         containerSize = containerSize,
@@ -354,8 +354,8 @@ internal fun contentOriginToContainerOrigin(
         dstSize = containerSize.toSize()
     )
     val contentOriginOffset = Offset(
-        x = contentSize.width * contentOrigin.x,
-        y = contentSize.height * contentOrigin.y,
+        x = contentSize.width * contentOrigin.pivotFractionX,
+        y = contentSize.height * contentOrigin.pivotFractionY,
     ).let {
         Offset(
             x = it.x - contentInContainerVisibleRect.left,
@@ -376,33 +376,33 @@ internal fun contentOriginToContainerOrigin(
         )
     }
     return Origin(
-        x = containerOriginOffset.x / containerSize.width,
-        y = containerOriginOffset.y / containerSize.height
+        pivotFractionX = containerOriginOffset.x / containerSize.width,
+        pivotFractionY = containerOriginOffset.y / containerSize.height
     )
 }
 
 
 /* ******************************************* Other ***************************************** */
 
-internal fun computeOffsetBounds(
+internal fun computeUserOffsetBounds(
     containerSize: IntSize,
     contentSize: IntSize,
     contentScale: ContentScale,
     alignment: Alignment,
-    scale: Float
+    userScale: Float
 ): Rect {
     // based on the top left zoom
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return Rect.Zero
     }
-    val scaledContainerSize = containerSize.toSize().times(scale)
+    val scaledContainerSize = containerSize.toSize().times(userScale)
     val contentInContainerInnerRect = computeContentInContainerInnerRect(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment
     )
-    val scaledContentInContainerInnerRect = contentInContainerInnerRect.scale(scale)
+    val scaledContentInContainerInnerRect = contentInContainerInnerRect.scale(userScale)
 
     val horizontalBounds =
         if (scaledContentInContainerInnerRect.width.roundToInt() >= containerSize.width) {

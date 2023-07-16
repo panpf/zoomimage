@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.IntOffset
@@ -14,6 +15,7 @@ import com.github.panpf.zoomimage.core.IntOffsetCompat
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
+import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.RectCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
@@ -153,6 +155,15 @@ fun IntSize.toOffset(): Offset = Offset(x = width.toFloat(), y = height.toFloat(
 fun Size.toOffset(): Offset = Offset(x = width, y = height)
 
 
+fun TransformOrigin.toCompatOrigin(): Origin {
+    return Origin(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
+}
+
+fun Origin.toTransformOrigin(): TransformOrigin {
+    return TransformOrigin(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
+}
+
+
 fun ScaleFactor.toCompatScaleFactor(): ScaleFactorCompat {
     return ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY)
 }
@@ -167,6 +178,7 @@ fun Transform.toCompatTransform(): TransformCompat {
         scale = scale.toCompatScaleFactor(),
         offset = offset.toCompatOffset(),
         rotation = rotation,
+        origin = origin.toCompatOrigin(),
     )
 }
 
@@ -175,5 +187,6 @@ fun TransformCompat.toTransform(): Transform {
         scale = scale.toScaleFactor(),
         offset = offset.toOffset(),
         rotation = rotation,
+        origin = origin.toTransformOrigin(),
     )
 }
