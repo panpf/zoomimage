@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.MainThread
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,7 +73,7 @@ fun BindZoomableStateAndSubsamplingState(
     }
 }
 
-class SubsamplingState {
+class SubsamplingState : RememberObserver {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var initJob: Job? = null
@@ -233,7 +234,7 @@ class SubsamplingState {
 
     @MainThread
     fun clean(caller: String) {
-        if (imageInfo == null) return
+        if (imageInfo == null || imageSource == null) return
         log { "clean. $caller. '${imageSource?.key}'" }
         initJob?.cancel("destroy")
         tileManager?.destroy()
@@ -246,5 +247,16 @@ class SubsamplingState {
         if (debugMode) {
             Log.d("SubsamplingState", message())
         }
+    }
+
+    override fun onRemembered() {
+    }
+
+    override fun onForgotten() {
+        clean("onForgotten")
+    }
+
+    override fun onAbandoned() {
+        clean("onAbandoned")
     }
 }
