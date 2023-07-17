@@ -89,10 +89,9 @@ fun ZoomImageSample(sketchImageUri: String) {
                 crossfade()
             }.execute().drawable
             drawablePainter = drawable?.let { DrawablePainter(it) }
-        }
 
-        val imageSource = remember(sketchImageUri) {
-            SketchImageSource(context, context.sketch, sketchImageUri)
+            val imageSource = SketchImageSource(context, context.sketch, sketchImageUri)
+            subsamplingState.setImageSource(imageSource)
         }
 
         val drawablePainter1 = drawablePainter
@@ -105,7 +104,6 @@ fun ZoomImageSample(sketchImageUri: String) {
                 modifier = Modifier.fillMaxSize(),
                 zoomableState = zoomableState,
                 subsamplingState = subsamplingState,
-                subsamplingImageSource = imageSource,
                 scrollBar = if (scrollBarEnabled) ScrollBar.Default else null,
                 onLongPress = {
                     infoDialogState.showing = true

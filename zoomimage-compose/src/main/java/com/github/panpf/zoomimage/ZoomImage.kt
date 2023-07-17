@@ -14,7 +14,6 @@ import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.compose.internal.roundToIntSize
 import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
-import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.subsampling.subsampling
@@ -30,7 +29,6 @@ fun ZoomImage(
     colorFilter: ColorFilter? = null,
     zoomableState: ZoomableState = rememberZoomableState(),
     subsamplingState: SubsamplingState = rememberSubsamplingState(),
-    subsamplingImageSource: ImageSource? = null,// TODO 干掉这个参数
     scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -47,7 +45,6 @@ fun ZoomImage(
     }
 
     BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
-    subsamplingState.setImageSource(subsamplingImageSource)
 
     val modifier1 = modifier
         .clipToBounds()
