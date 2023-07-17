@@ -3,8 +3,12 @@ package com.github.panpf.zoomimage.subsampling
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.compose.internal.isEmpty
@@ -12,7 +16,6 @@ import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.toShortString
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.roundToInt
 
 fun Modifier.subsampling(
     zoomableState: ZoomableState,
@@ -50,7 +53,7 @@ fun Modifier.subsampling(
             if (tile.srcRect.overlaps(subsamplingState.imageLoadRect)) {
                 val tileBitmap = tile.bitmap
                 val tileSrcRect = tile.srcRect
-                val tileDrawRect0 = IntRect(
+                val tileDrawRect = IntRect(
                     left = floor(tileSrcRect.left / widthScale).toInt(),
                     top = floor(tileSrcRect.top / heightScale).toInt(),
                     right = floor(tileSrcRect.right / widthScale).toInt(),
@@ -62,9 +65,32 @@ fun Modifier.subsampling(
                         image = tileBitmap.asImageBitmap(),
                         srcOffset = srcRect.topLeft,
                         srcSize = srcRect.size,
-                        dstOffset = tileDrawRect0.topLeft,
-                        dstSize = tileDrawRect0.size,
+                        dstOffset = tileDrawRect.topLeft,
+                        dstSize = tileDrawRect.size,
 //                        alpha = 0.5f,
+                    )
+                }
+
+                if (subsamplingState.showTileBounds) {
+                    val boundsColor = when {
+                        tileBitmap != null -> Color.Green
+                        tile.loadJob?.isActive == true -> Color.Yellow
+                        else -> Color.Red
+                    }
+                    val boundsStrokeWidth = 1.dp.toPx()
+                    val boundsStrokeHalfWidth = boundsStrokeWidth / 2
+                    val tileBoundsRect = Rect(
+                        left = floor(tileDrawRect.left + boundsStrokeHalfWidth),
+                        top = floor(tileDrawRect.top + boundsStrokeHalfWidth),
+                        right = ceil(tileDrawRect.right - boundsStrokeHalfWidth),
+                        bottom = ceil(tileDrawRect.bottom - boundsStrokeHalfWidth)
+                    )
+                    drawRect(
+                        color = boundsColor,
+                        topLeft = tileBoundsRect.topLeft,
+                        size = tileBoundsRect.size,
+                        style = Stroke(width = boundsStrokeWidth),
+                        alpha = 0.5f,
                     )
                 }
             }

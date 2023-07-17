@@ -32,10 +32,27 @@ import kotlinx.coroutines.launch
 fun rememberSubsamplingState(
     tileMemoryCache: TileMemoryCache? = null,
     tileBitmapPool: TileBitmapPool? = null,
+    ignoreExifOrientation: Boolean = false,
+    disallowReuseBitmap: Boolean = false,
+    disableMemoryCache: Boolean = false,
+    showTileBounds: Boolean = false,
 ): SubsamplingState {
     val subsamplingState = remember { SubsamplingState() }
     subsamplingState.tileMemoryCache = tileMemoryCache
     subsamplingState.tileBitmapPool = tileBitmapPool
+    subsamplingState.ignoreExifOrientation = ignoreExifOrientation
+    subsamplingState.disallowReuseBitmap = disallowReuseBitmap
+    subsamplingState.disableMemoryCache = disableMemoryCache
+    subsamplingState.showTileBounds = showTileBounds
+    LaunchedEffect(
+        subsamplingState.tileMemoryCache,   // todo 这么让变化生效代价似乎有些大
+        subsamplingState.tileBitmapPool,   // todo 这么让变化生效代价似乎有些大
+        subsamplingState.ignoreExifOrientation,
+        subsamplingState.disallowReuseBitmap,   // todo 这么让变化生效代价似乎有些大
+        subsamplingState.disableMemoryCache,   // todo 这么让变化生效代价似乎有些大
+    ) {
+        subsamplingState.reset("ignoreExifOrientation:changed")
+    }
     return subsamplingState
 }
 
@@ -88,6 +105,7 @@ class SubsamplingState : RememberObserver {
     var ignoreExifOrientation: Boolean = false
     var disallowReuseBitmap: Boolean = false
     var disableMemoryCache: Boolean = false
+    var showTileBounds: Boolean by mutableStateOf(false)
     var tileBitmapPool: TileBitmapPool? = null
     var tileMemoryCache: TileMemoryCache? = null
 

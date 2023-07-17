@@ -48,6 +48,8 @@ fun ZoomImageSample(sketchImageUri: String) {
     val scrollBarEnabled by prefsService.scrollBarEnabled.stateFlow.collectAsState()
     val animateScale by prefsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
+    val showTileBounds by prefsService.showTileBounds.stateFlow.collectAsState()
+    val ignoreExifOrientation by prefsService.ignoreExifOrientation.stateFlow.collectAsState()
     val zoomAnimationSpec = remember(animateScale, slowerScaleAnimation) {
         val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
         mutableStateOf(ZoomAnimationSpec.Default.copy(durationMillis = durationMillis))
@@ -72,7 +74,10 @@ fun ZoomImageSample(sketchImageUri: String) {
         debugMode = BuildConfig.DEBUG
     )
     val infoDialogState = rememberZoomImageInfoDialogState()
-    val subsamplingState = rememberSubsamplingState()
+    val subsamplingState = rememberSubsamplingState(
+        showTileBounds = showTileBounds,
+        ignoreExifOrientation = ignoreExifOrientation
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()

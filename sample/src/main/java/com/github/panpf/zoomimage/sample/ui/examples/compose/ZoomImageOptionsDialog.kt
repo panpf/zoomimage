@@ -50,6 +50,8 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
     val scrollBarEnabled by prefsService.scrollBarEnabled.stateFlow.collectAsState()
     val animateScale by prefsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
+    val showTileBounds by prefsService.showTileBounds.stateFlow.collectAsState()
+    val ignoreExifOrientation by prefsService.ignoreExifOrientation.stateFlow.collectAsState()
     var contentScaleMenuExpanded by remember { mutableStateOf(false) }
     val contentScales = remember {
         listOf(
@@ -294,6 +296,42 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                     Text(text = "Slower Scale Animation", modifier = Modifier.weight(1f))
                     Switch(
                         checked = slowerScaleAnimation,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            prefsService.showTileBounds.value = !showTileBounds
+                            onDismissRequest()
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Show Tile Bounds", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = showTileBounds,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            prefsService.ignoreExifOrientation.value = !ignoreExifOrientation
+                            onDismissRequest()
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Ignore Exif Orientation", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = ignoreExifOrientation,
                         onCheckedChange = null
                     )
                 }
