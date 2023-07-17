@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.test.view
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
@@ -9,30 +10,47 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
-import com.github.panpf.zoomimage.sample.ui.examples.view.SketchZoomImageViewFragment
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewFragment
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 
-class ExifOrientationTestFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
+class ViewExifOrientationTestFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
 
-    private val viewModel by viewModels<ExifOrientationTestViewModel>()
+    private val exifOrientationTestContentViewModel by viewModels<ExifOrientationTestContentViewModel>()
 
     override fun onViewCreated(
         toolbar: Toolbar, binding: TabPagerFragmentBinding, savedInstanceState: Bundle?
     ) {
-        toolbar.title = "ExifOrientation Test"
+        toolbar.title = "ExifOrientation Test（View）"
+
+        toolbar.menu.add("Options").apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            setOnMenuItemClickListener {
+                ZoomImageViewOptionsDialogFragment().apply {
+                    arguments = ZoomImageViewOptionsDialogFragmentArgs(
+                        zoomViewType = ZoomViewType.ZoomImageView.name,
+                    ).toBundle()
+                }.show(childFragmentManager, null)
+                true
+            }
+            setIcon(R.drawable.ic_settings)
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.showContentState.collect { sampleImages ->
+                exifOrientationTestContentViewModel.showContentState.collect { sampleImages ->
                     binding.tabPagerPager.apply {
                         offscreenPageLimit = 1
                         orientation = ViewPager2.ORIENTATION_HORIZONTAL
                         adapter = AssemblyFragmentStateAdapter(
-                            fragment = this@ExifOrientationTestFragment,
-                            itemFactoryList = listOf(SketchZoomImageViewFragment.ItemFactory()),
+                            fragment = this@ViewExifOrientationTestFragment,
+                            itemFactoryList = listOf(ZoomImageViewFragment.ItemFactory()),
                             initDataList = sampleImages.map { it.second.toUri().toString() }
                         )
                     }

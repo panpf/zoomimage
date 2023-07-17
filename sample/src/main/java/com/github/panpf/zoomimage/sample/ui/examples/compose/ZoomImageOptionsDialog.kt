@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,33 +26,93 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.prefsService
-import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
-import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
+import com.github.panpf.zoomimage.sample.util.BaseMmkvData
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
-    val context = LocalContext.current
-    val prefsService = remember { context.prefsService }
-    val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
-    val alignmentName by prefsService.alignment.stateFlow.collectAsState()
-    val contentScale = remember(contentScaleName) { contentScale(contentScaleName) }
-    val alignment = remember(alignmentName) { alignment(alignmentName) }
-    val threeStepScale by prefsService.threeStepScale.stateFlow.collectAsState()
-    val rubberBandScale by prefsService.rubberBandScale.stateFlow.collectAsState()
-    val readModeEnabled by prefsService.readModeEnabled.stateFlow.collectAsState()
-    val readModeDirectionBoth by prefsService.readModeDirectionBoth.stateFlow.collectAsState()
-    val scrollBarEnabled by prefsService.scrollBarEnabled.stateFlow.collectAsState()
-    val animateScale by prefsService.animateScale.stateFlow.collectAsState()
-    val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
-    val showTileBounds by prefsService.showTileBounds.stateFlow.collectAsState()
-    val ignoreExifOrientation by prefsService.ignoreExifOrientation.stateFlow.collectAsState()
+fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
+    val state = remember { ZoomImageOptionsState() }
+
+    if (!LocalInspectionMode.current) {
+        val prefsService = LocalContext.current.prefsService
+        BindStateAndFlow(state.contentScaleName, prefsService.contentScale)
+        BindStateAndFlow(state.alignmentName, prefsService.alignment)
+
+        BindStateAndFlow(state.animateScale, prefsService.animateScale)
+        BindStateAndFlow(state.rubberBandScale, prefsService.rubberBandScale)
+        BindStateAndFlow(state.threeStepScale, prefsService.threeStepScale)
+        BindStateAndFlow(state.slowerScaleAnimation, prefsService.slowerScaleAnimation)
+
+        BindStateAndFlow(state.readModeEnabled, prefsService.readModeEnabled)
+        BindStateAndFlow(state.readModeDirectionBoth, prefsService.readModeDirectionBoth)
+
+        BindStateAndFlow(state.showTileBounds, prefsService.showTileBounds)
+        BindStateAndFlow(state.ignoreExifOrientation, prefsService.ignoreExifOrientation)
+
+        BindStateAndFlow(state.scrollBarEnabled, prefsService.scrollBarEnabled)
+    }
+
+    return state
+}
+
+@Composable
+private fun <T> BindStateAndFlow(state: MutableStateFlow<T>, mmkvData: BaseMmkvData<T>) {
+    LaunchedEffect(state) {
+        state.value = mmkvData.value
+        state.collect {
+            mmkvData.value = it
+        }
+    }
+}
+
+class ZoomImageOptionsState {
+    val contentScaleName = MutableStateFlow(ContentScale.Fit.name)
+    val alignmentName = MutableStateFlow(Alignment.Center.name)
+
+    val animateScale = MutableStateFlow(true)
+    val rubberBandScale = MutableStateFlow(true)
+    val threeStepScale = MutableStateFlow(false)
+    val slowerScaleAnimation = MutableStateFlow(false)
+
+    val readModeEnabled = MutableStateFlow(true)
+    val readModeDirectionBoth = MutableStateFlow(true)
+
+    val showTileBounds = MutableStateFlow(false)
+    val ignoreExifOrientation = MutableStateFlow(false)
+
+    val scrollBarEnabled = MutableStateFlow(true)
+}
+
+@Composable
+fun ZoomImageOptionsDialog(
+    my: Boolean,
+    state: ZoomImageOptionsState = rememberZoomImageOptionsState(),
+    onDismissRequest: () -> Unit
+) {
+    val contentScaleName by state.contentScaleName.collectAsState()
+    val alignmentName by state.alignmentName.collectAsState()
+
+    val animateScale by state.animateScale.collectAsState()
+    val rubberBandScale by state.rubberBandScale.collectAsState()
+    val threeStepScale by state.threeStepScale.collectAsState()
+    val slowerScaleAnimation by state.slowerScaleAnimation.collectAsState()
+
+    val readModeEnabled by state.readModeEnabled.collectAsState()
+    val readModeDirectionBoth by state.readModeDirectionBoth.collectAsState()
+
+    val showTileBounds by state.showTileBounds.collectAsState()
+    val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
+
+    val scrollBarEnabled by state.scrollBarEnabled.collectAsState()
+
     var contentScaleMenuExpanded by remember { mutableStateOf(false) }
     val contentScales = remember {
         listOf(
@@ -83,12 +144,11 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
             Modifier
                 .fillMaxWidth()
                 .background(Color.White, shape = RoundedCornerShape(20.dp))
-                .padding(vertical = 10.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(45.dp)
                     .clickable {
                         contentScaleMenuExpanded = !contentScaleMenuExpanded
                     }
@@ -96,7 +156,7 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "ContentScale", modifier = Modifier.weight(1f))
-                Text(text = contentScale.name)
+                Text(text = contentScaleName)
                 Icon(
                     painter = painterResource(id = R.drawable.ic_expand_more),
                     contentDescription = "more"
@@ -120,7 +180,7 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                                 Text(text = contentScale.name)
                             },
                             onClick = {
-                                prefsService.contentScale.value = contentScale.name
+                                state.contentScaleName.value = contentScale.name
                                 contentScaleMenuExpanded = !contentScaleMenuExpanded
                                 onDismissRequest()
                             }
@@ -132,7 +192,7 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(45.dp)
                     .clickable {
                         alignmentMenuExpanded = !alignmentMenuExpanded
                     }
@@ -140,7 +200,7 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "Alignment", modifier = Modifier.weight(1f))
-                Text(text = alignment.name)
+                Text(text = alignmentName)
                 Icon(
                     painter = painterResource(id = R.drawable.ic_expand_more),
                     contentDescription = "more"
@@ -164,7 +224,7 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                                 Text(text = alignment.name)
                             },
                             onClick = {
-                                prefsService.alignment.value = alignment.name
+                                state.alignmentName.value = alignment.name
                                 alignmentMenuExpanded = !alignmentMenuExpanded
                                 onDismissRequest()
                             }
@@ -174,66 +234,14 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
             }
 
             if (my) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            prefsService.scrollBarEnabled.value = !scrollBarEnabled
-                            onDismissRequest()
-                        }
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Scroll Bar", modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = scrollBarEnabled,
-                        onCheckedChange = null
-                    )
-                }
+                Divider(Modifier.padding(horizontal = 20.dp))
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(45.dp)
                         .clickable {
-                            prefsService.readModeEnabled.value = !readModeEnabled
-                            onDismissRequest()
-                        }
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Read Mode", modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = readModeEnabled,
-                        onCheckedChange = null
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            prefsService.readModeDirectionBoth.value = !readModeDirectionBoth
-                            onDismissRequest()
-                        }
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Read Mode Direction Both", modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = readModeDirectionBoth,
-                        onCheckedChange = null
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            prefsService.animateScale.value = !animateScale
+                            state.animateScale.value = !state.animateScale.value
                             onDismissRequest()
                         }
                         .padding(horizontal = 20.dp),
@@ -249,27 +257,9 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(45.dp)
                         .clickable {
-                            prefsService.threeStepScale.value = !threeStepScale
-                            onDismissRequest()
-                        }
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Three Step Scale", modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = threeStepScale,
-                        onCheckedChange = null
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .clickable {
-                            prefsService.rubberBandScale.value = !rubberBandScale
+                            state.rubberBandScale.value = !state.rubberBandScale.value
                             onDismissRequest()
                         }
                         .padding(horizontal = 20.dp),
@@ -285,9 +275,27 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(45.dp)
                         .clickable {
-                            prefsService.slowerScaleAnimation.value = !slowerScaleAnimation
+                            state.threeStepScale.value = !state.threeStepScale.value
+                            onDismissRequest()
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Three Step Scale", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = threeStepScale,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .clickable {
+                            state.slowerScaleAnimation.value = !state.slowerScaleAnimation.value
                             onDismissRequest()
                         }
                         .padding(horizontal = 20.dp),
@@ -300,12 +308,52 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                     )
                 }
 
+                Divider(Modifier.padding(horizontal = 20.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(45.dp)
                         .clickable {
-                            prefsService.showTileBounds.value = !showTileBounds
+                            state.readModeEnabled.value = !state.readModeEnabled.value
+                            onDismissRequest()
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Read Mode", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = readModeEnabled,
+                        onCheckedChange = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .clickable {
+                            state.readModeDirectionBoth.value = !state.readModeDirectionBoth.value
+                            onDismissRequest()
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Read Mode Direction Both", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = readModeDirectionBoth,
+                        onCheckedChange = null
+                    )
+                }
+
+                Divider(Modifier.padding(horizontal = 20.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .clickable {
+                            state.showTileBounds.value = !state.showTileBounds.value
                             onDismissRequest()
                         }
                         .padding(horizontal = 20.dp),
@@ -321,9 +369,9 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(45.dp)
                         .clickable {
-                            prefsService.ignoreExifOrientation.value = !ignoreExifOrientation
+                            state.ignoreExifOrientation.value = !state.ignoreExifOrientation.value
                             onDismissRequest()
                         }
                         .padding(horizontal = 20.dp),
@@ -332,6 +380,26 @@ fun ZoomImageOptionsDialog(my: Boolean, onDismissRequest: () -> Unit) {
                     Text(text = "Ignore Exif Orientation", modifier = Modifier.weight(1f))
                     Switch(
                         checked = ignoreExifOrientation,
+                        onCheckedChange = null
+                    )
+                }
+
+                Divider(Modifier.padding(horizontal = 20.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .clickable {
+                            state.scrollBarEnabled.value = !state.scrollBarEnabled.value
+                            onDismissRequest()
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Scroll Bar", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = scrollBarEnabled,
                         onCheckedChange = null
                     )
                 }

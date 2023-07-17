@@ -34,7 +34,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-class ExifOrientationTestViewModel(private val application: Application) :
+class ExifOrientationTestContentViewModel(private val application: Application) :
     AndroidViewModel(application) {
 
     private val _showContentState = MutableStateFlow<List<Pair<String, File>>>(emptyList())

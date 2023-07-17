@@ -113,12 +113,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             ListSeparator("Test"),
             Link(
-                title = "ZoomImage Scale Alignment Test",
-                navDirections = NavMainDirections.actionGlobalScaleAlignmentTestFragment(),
+                title = "ZoomImage Exif Orientation Test",
+                navDirections = NavMainDirections.actionGlobalComposeExifOrientationTestFragment(),
             ),
             Link(
                 title = "ZoomImageView Exif Orientation Test",
-                navDirections = NavMainDirections.actionGlobalExifOrientationTestFragment(),
+                navDirections = NavMainDirections.actionGlobalViewExifOrientationTestFragment(),
             ),
         )
     }

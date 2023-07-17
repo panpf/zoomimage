@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 data class PagerItem<T>(
     val data: T,
-    val titleFactory: (T) -> String,
+    val titleFactory: (data: T) -> String,
     val contentFactory: @Composable (data: T, index: Int) -> Unit
 )
 
@@ -30,7 +30,7 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     Column(modifier = Modifier.fillMaxSize()) {
-        TabRow(
+        ScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -52,7 +52,7 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
                 ) {
                     Text(
                         text = item.titleFactory(item.data),
-                        modifier = Modifier.padding(vertical = 10.dp)
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp)
                     )
                 }
             }

@@ -25,6 +25,8 @@ import com.github.panpf.zoomimage.sample.databinding.RecyclerFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDivider
+import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDividerItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiSelectMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiSelectMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
@@ -43,6 +45,7 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     SwitchMenuItemFactory(),
                     MultiSelectMenuItemFactory(requireActivity()),
                     ListSeparatorItemFactory(),
+                    MenuDividerItemFactory(),
                 ),
                 buildList {
                     add(
@@ -58,12 +61,35 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     )
 
                     if (zoomViewType.my) {
+                        add(MenuDivider())
+
                         add(
                             SwitchMenuFlow(
-                                title = "Scroll Bar",
-                                data = prefsService.scrollBarEnabled,
+                                title = "Animate Scale",
+                                data = prefsService.animateScale,
                             )
                         )
+                        add(
+                            SwitchMenuFlow(
+                                title = "Rubber Band Scale",
+                                data = prefsService.rubberBandScale,
+                            )
+                        )
+                        add(
+                            SwitchMenuFlow(
+                                title = "Three Step Scale",
+                                data = prefsService.threeStepScale,
+                            )
+                        )
+                        add(
+                            SwitchMenuFlow(
+                                title = "Slower Scale Animation",
+                                data = prefsService.slowerScaleAnimation,
+                            )
+                        )
+
+                        add(MenuDivider())
+
                         add(
                             SwitchMenuFlow(
                                 title = "Read Mode",
@@ -76,30 +102,8 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                                 data = prefsService.readModeDirectionBoth,
                             )
                         )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Animate Scale",
-                                data = prefsService.animateScale,
-                            )
-                        )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Three Step Scale",
-                                data = prefsService.threeStepScale,
-                            )
-                        )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Rubber Band Scale",
-                                data = prefsService.rubberBandScale,
-                            )
-                        )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Slower Scale Animation",
-                                data = prefsService.slowerScaleAnimation,
-                            )
-                        )
+
+                        add(MenuDivider())
 
                         add(
                             SwitchMenuFlow(
@@ -112,6 +116,15 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                                 title = "Ignore Exif Orientation",
                                 data = prefsService.ignoreExifOrientation,
                                 disabled = !zoomViewType.supportIgnoreExifOrientation,
+                            )
+                        )
+
+                        add(MenuDivider())
+
+                        add(
+                            SwitchMenuFlow(
+                                title = "Scroll Bar",
+                                data = prefsService.scrollBarEnabled,
                             )
                         )
                     }

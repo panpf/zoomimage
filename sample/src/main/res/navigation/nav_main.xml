@@ -122,17 +122,6 @@
 
 
     <fragment
-        android:id="@+id/exifOrientationTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.view.ExifOrientationTestFragment" />
-    <action
-        android:id="@+id/action_global_exifOrientationTestFragment"
-        app:destination="@id/exifOrientationTestFragment"
-        app:enterAnim="@anim/nav_enter"
-        app:exitAnim="@anim/nav_exit"
-        app:popEnterAnim="@anim/nav_pop_enter"
-        app:popExitAnim="@anim/nav_pop_exit" />
-
-    <fragment
         android:id="@+id/zoomImageViewOptionsDialogFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment">
         <argument
@@ -211,11 +200,22 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/scaleAlignmentTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.compose.ScaleAlignmentTestFragment"/>
+        android:id="@+id/viewExifOrientationTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.view.ViewExifOrientationTestFragment" />
     <action
-        android:id="@+id/action_global_scaleAlignmentTestFragment"
-        app:destination="@id/scaleAlignmentTestFragment"
+        android:id="@+id/action_global_viewExifOrientationTestFragment"
+        app:destination="@id/viewExifOrientationTestFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/composeExifOrientationTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.compose.ComposeExifOrientationTestFragment"/>
+    <action
+        android:id="@+id/action_global_composeExifOrientationTestFragment"
+        app:destination="@id/composeExifOrientationTestFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
