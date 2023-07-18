@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.content.Context
 import android.view.animation.AccelerateDecelerateInterpolator

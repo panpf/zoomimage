@@ -143,12 +143,16 @@ suspend fun ImageSource.readExifOrientation(): Result<Int> {
     }
 }
 
-suspend fun ImageSource.readImageInfo(): ImageInfo? {
+suspend fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): ImageInfo? {
     val options = readImageBounds().getOrNull() ?: return null
-    val exifOrientation = readExifOrientation().getOrNull() ?: return null
+    val exifOrientation = if (ignoreExifOrientation) {
+        ExifInterface.ORIENTATION_UNDEFINED
+    } else {
+        readExifOrientation().getOrNull() ?: return null
+    }
     return ImageInfo(
         size = IntSizeCompat(options.outWidth, options.outHeight),
         mimeType = options.outMimeType,
         exifOrientation = exifOrientation,
-    )
+    ).applyExifOrientation()
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.content.Context
 import android.graphics.Canvas
@@ -23,7 +23,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Scroller
 import androidx.core.view.ViewCompat
 import com.github.panpf.zoomimage.core.isEmpty
-import com.github.panpf.zoomimage.view.ScrollBar
+import com.github.panpf.zoomimage.view.zoom.ScrollBar
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

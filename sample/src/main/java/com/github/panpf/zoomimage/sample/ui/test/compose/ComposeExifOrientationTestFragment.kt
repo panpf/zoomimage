@@ -21,7 +21,9 @@ import com.github.panpf.zoomimage.sample.ui.test.view.ExifOrientationTestContent
 
 class ComposeExifOrientationTestFragment : AppBarFragment() {
 
-    override fun getTitle(): String = "ExifOrientation Test（Compose）"
+    override fun getTitle(): String = "ExifOrientation Test"
+
+    override fun getSubtitle(): String = "Compose"
 
     private val exifOrientationTestContentViewModel by viewModels<ExifOrientationTestContentViewModel>()
     private val optionDialogShowViewModel by viewModels<OptionsDialogShowViewModel>()

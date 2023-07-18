@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.view
+package com.github.panpf.zoomimage.view.zoom
 
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator

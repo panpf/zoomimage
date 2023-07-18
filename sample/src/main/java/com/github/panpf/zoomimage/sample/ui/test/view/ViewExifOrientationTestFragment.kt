@@ -27,7 +27,8 @@ class ViewExifOrientationTestFragment : ToolbarBindingFragment<TabPagerFragmentB
     override fun onViewCreated(
         toolbar: Toolbar, binding: TabPagerFragmentBinding, savedInstanceState: Bundle?
     ) {
-        toolbar.title = "ExifOrientation Test（View）"
+        toolbar.title = "ExifOrientation Test"
+        toolbar.subtitle = "View"
 
         toolbar.menu.add("Options").apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -46,7 +47,7 @@ class ViewExifOrientationTestFragment : ToolbarBindingFragment<TabPagerFragmentB
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 exifOrientationTestContentViewModel.showContentState.collect { sampleImages ->
                     binding.tabPagerPager.apply {
-                        offscreenPageLimit = 1
+                        offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
                         orientation = ViewPager2.ORIENTATION_HORIZONTAL
                         adapter = AssemblyFragmentStateAdapter(
                             fragment = this@ViewExifOrientationTestFragment,

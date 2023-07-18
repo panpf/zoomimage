@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.view.zoom
 
-fun interface OnRotateChangeListener {
-    fun onRotateChanged(rotateDegrees: Int)
+// todo 删除
+fun interface OnViewDragListener {
+    fun onDrag(dx: Float, dy: Float)
 }

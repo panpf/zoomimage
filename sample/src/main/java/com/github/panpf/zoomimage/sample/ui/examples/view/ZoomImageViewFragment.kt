@@ -16,6 +16,7 @@
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.net.Uri
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -27,12 +28,14 @@ import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
+import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -52,6 +55,19 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
         return binding.zoomImageViewImage
     }
 
+    override fun onViewCreated(
+        binding: ZoomImageViewFragmentBinding,
+        savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(binding, savedInstanceState)
+
+        listOf(
+            prefsService.ignoreExifOrientation.sharedFlow,
+        ).merge().collectWithLifecycle(viewLifecycleOwner) {
+            loadData(binding, binding.common, sketchImageUri)
+        }
+    }
+
     override fun loadImage(
         binding: ZoomImageViewFragmentBinding,
         onCallStart: () -> Unit,
@@ -69,6 +85,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
+                    subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
                     subsamplingAbility.setImageSource(newImageSource(binding, sketchImageUri))
                     onCallSuccess()
                 } else {
@@ -115,7 +132,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                 if (resId != null) {
                     ImageSource.fromResource(requireContext().resources, resId)
                 } else {
-                    binding.zoomImageViewImage.zoomAbility.logger.w {
+                    binding.zoomImageViewImage.logger.w {
                         "ZoomImageViewFragment. Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
                     }
                     null
@@ -135,7 +152,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
             }
 
             else -> {
-                binding.zoomImageViewImage.zoomAbility.logger.w {
+                binding.zoomImageViewImage.logger.w {
                     "ZoomImageViewFragment. Can't use Subsampling, unsupported uri: '$sketchImageUri'"
                 }
                 null

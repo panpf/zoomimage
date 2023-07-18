@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.view.zoom
 
-fun interface OnTileChangedListener {
-    fun onTileChanged()
+fun interface OnRotateChangeListener {
+    fun onRotateChanged(rotateDegrees: Int)
 }

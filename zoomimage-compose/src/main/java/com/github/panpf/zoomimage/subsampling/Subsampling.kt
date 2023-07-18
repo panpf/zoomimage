@@ -26,7 +26,7 @@ fun Modifier.subsampling(
 
         @Suppress("UNUSED_VARIABLE") val changeCount =
             subsamplingState.tilesChanged  // Trigger a refresh
-        val tileList = subsamplingState.rowTileList
+        val tileList = subsamplingState.tileList
         val imageInfo = subsamplingState.imageInfo
         val drawableSize = subsamplingState.contentSize
         if (tileList.isEmpty() || imageInfo == null || drawableSize.isEmpty()) {

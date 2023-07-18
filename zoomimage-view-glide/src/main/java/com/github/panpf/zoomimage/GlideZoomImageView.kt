@@ -64,15 +64,15 @@ open class GlideZoomImageView @JvmOverloads constructor(
             }
             val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)
             if (request == null) {
-                _zoomAbility?.logger?.d{ "GlideZoomImageView. Can't use Subsampling, request is null" }
+                logger.d{ "GlideZoomImageView. Can't use Subsampling, request is null" }
                 return@post
             }
             if (request !is SingleRequest<*>) {
-                _zoomAbility?.logger?.d{ "GlideZoomImageView. Can't use Subsampling, request is not SingleRequest" }
+                logger.d{ "GlideZoomImageView. Can't use Subsampling, request is not SingleRequest" }
                 return@post
             }
             if (!request.isComplete) {
-                _zoomAbility?.logger?.d{ "GlideZoomImageView. Can't use Subsampling, request is not complete" }
+                logger.d{ "GlideZoomImageView. Can't use Subsampling, request is not complete" }
                 return@post
             }
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(request)
@@ -111,7 +111,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
             }
 
             else -> {
-                _zoomAbility?.logger?.w{ "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
+                logger.w{ "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
                 null
             }
         }

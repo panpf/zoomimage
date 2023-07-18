@@ -25,13 +25,18 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
-import com.github.panpf.zoomimage.view.internal.ImageViewBridge
+import com.github.panpf.zoomimage.view.subsampling.SubsamplingAbility
+import com.github.panpf.zoomimage.view.subsampling.bindZoomAndSubsampling
+import com.github.panpf.zoomimage.view.zoom.ZoomAbility
+import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 
 open class ZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
+
+    val logger = Logger(tag = "ZoomImageView")
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
     @Suppress("PropertyName", "MemberVisibilityCanBePrivate")
@@ -46,12 +51,23 @@ open class ZoomImageView @JvmOverloads constructor(
         get() = _subsamplingAbility
             ?: throw IllegalStateException("subsamplingAbility not initialized")
 
+    private val displayMatrix: Matrix = Matrix()
+
     init {
         @Suppress("LeakingThis")
-        val zoomAbility = ZoomAbility(this, this)
+        val zoomAbility = ZoomAbility(view = this, imageViewBridge = this, logger = logger)
         _zoomAbility = zoomAbility
+
         @Suppress("LeakingThis")
-        _subsamplingAbility = SubsamplingAbility(this, zoomAbility)
+        val subsamplingAbility = SubsamplingAbility(view = this, logger = logger)
+        _subsamplingAbility = subsamplingAbility
+
+        @Suppress("LeakingThis")
+        bindZoomAndSubsampling(
+            view = this,
+            zoomEngine = zoomAbility.engine,
+            subsamplingEngine = subsamplingAbility.engine
+        )
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
@@ -73,7 +89,6 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     open fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        _subsamplingAbility?.onDrawableChanged(oldDrawable, newDrawable)
         _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
     }
 
@@ -106,12 +121,12 @@ open class ZoomImageView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         _zoomAbility?.onSizeChanged(w, h, oldw, oldh)
-        _subsamplingAbility?.onSizeChanged(w, h, oldw, oldh)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        _subsamplingAbility?.onDraw(canvas)
+        _zoomAbility?.getDisplayMatrix(displayMatrix)
+        _subsamplingAbility?.onDraw(canvas, displayMatrix)
         _zoomAbility?.onDraw(canvas)
     }
 

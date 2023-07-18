@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.view.zoom
 
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -25,31 +25,32 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
+import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.ReadMode
+import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.view.ScrollBar
-import com.github.panpf.zoomimage.view.ZoomAnimationSpec
-import com.github.panpf.zoomimage.view.internal.ImageViewBridge
-import com.github.panpf.zoomimage.view.internal.ZoomEngine
-import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
+import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
+import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
+import com.github.panpf.zoomimage.view.zoom.internal.isAttachedToWindowCompat
 
-class ZoomAbility(
+class ZoomAbility constructor(
     private val view: View,
     private val imageViewBridge: ImageViewBridge,
+    logger: Logger,
 ) {
     // todo 参考 ZoomImage 将 ZoomEngine 拆分成 State 和 手势处理两部分
     // todo 不支持 center 等 ScaleType
     internal val engine: ZoomEngine
     private val imageMatrix = Matrix()
-    val logger: Logger = Logger(tag = "ZoomImageView", module = "ZoomAbility")
 
     init {
         val initScaleType = imageViewBridge.superGetScaleType()
         require(initScaleType != ScaleType.MATRIX) { "ScaleType cannot be MATRIX" }
         imageViewBridge.superSetScaleType(ScaleType.MATRIX)
 
-        engine = ZoomEngine(view.context, logger, view).apply {
+        engine = ZoomEngine(logger = logger, view = view).apply {
             this.scaleType = initScaleType
         }
         resetDrawableSize()

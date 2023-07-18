@@ -126,7 +126,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             }
 
             else -> {
-                _zoomAbility?.logger?.w{ "PicassoZoomImageView. Can't use Subsampling, unsupported uri: '$uri'" }
+                logger.w{ "PicassoZoomImageView. Can't use Subsampling, unsupported uri: '$uri'" }
                 null
             }
         }

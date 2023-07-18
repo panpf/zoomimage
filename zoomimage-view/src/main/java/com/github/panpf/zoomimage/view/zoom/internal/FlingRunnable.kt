@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.content.Context
 import android.widget.OverScroller
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.toShortString
 import kotlin.math.roundToInt
 
 internal class FlingRunnable(
     context: Context,
+    private val logger: Logger,
     private val engine: ZoomEngine,
     private val scaleDragHelper: ScaleDragHelper,
     private val velocityX: Int,
@@ -51,7 +53,7 @@ internal class FlingRunnable(
         val maxX: Int = bounds.right
         val minY: Int = bounds.top
         val maxY: Int = bounds.bottom
-        engine.logger.d {
+        logger.d {
             "fling. start. " +
                     "velocity=($velocityX, $velocityY), " +
                     "start=($startX,$startY), " +
@@ -81,7 +83,7 @@ internal class FlingRunnable(
                 x = offset.x - start.x,
                 y = offset.y - start.y
             )
-            engine.logger.d {
+            logger.d {
                 "fling. running. " +
                         "velocity=($velocityX, $velocityY), " +
                         "start=${start.toShortString()}, " +

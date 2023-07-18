@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.view.zoom.internal
 
-import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Point
@@ -26,13 +25,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.OnDragFlingListener
-import com.github.panpf.zoomimage.OnMatrixChangeListener
-import com.github.panpf.zoomimage.OnRotateChangeListener
-import com.github.panpf.zoomimage.OnScaleChangeListener
-import com.github.panpf.zoomimage.OnViewDragListener
-import com.github.panpf.zoomimage.OnViewLongPressListener
-import com.github.panpf.zoomimage.OnViewTapListener
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.core.IntSizeCompat
@@ -45,22 +37,27 @@ import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.rotate
-import com.github.panpf.zoomimage.view.ScrollBar
-import com.github.panpf.zoomimage.view.ZoomAnimationSpec
+import com.github.panpf.zoomimage.view.zoom.OnDragFlingListener
+import com.github.panpf.zoomimage.view.zoom.OnDrawableSizeChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnMatrixChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnRotateChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnScaleChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnViewDragListener
+import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
+import com.github.panpf.zoomimage.view.zoom.OnViewSizeChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
+import com.github.panpf.zoomimage.view.zoom.ScrollBar
+import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 
 /**
  * Based https://github.com/Baseflow/PhotoView git 565505d5 20210120
  */
-internal class ZoomEngine constructor(
-    val context: Context,
-    logger: Logger,
-    val view: View,
-) {
+class ZoomEngine constructor(logger: Logger, val view: View) {
 
-    val logger: Logger = logger.newLogger(module = "Zoom-Engine")
-    private val tapHelper = TapHelper(context, this)
+    private val logger: Logger = logger.newLogger(module = "ZoomEngine")
+    private val tapHelper = TapHelper(view.context, this)
     private val scaleDragHelper = ScaleDragHelper(
-        context = context,
+        context = view.context,
         logger = logger,
         engine = this,
         onUpdateMatrix = {
@@ -93,6 +90,8 @@ internal class ZoomEngine constructor(
     private var onDragFlingListenerList: MutableSet<OnDragFlingListener>? = null
     private var onViewDragListenerList: MutableSet<OnViewDragListener>? = null
     private var onScaleChangeListenerList: MutableSet<OnScaleChangeListener>? = null
+    private var onViewSizeChangeListenerList: MutableSet<OnViewSizeChangeListener>? = null
+    private var onDrawableSizeChangeListenerList: MutableSet<OnDrawableSizeChangeListener>? = null
 
     /** Allows the parent ViewGroup to intercept events while sliding to an edge */
     var allowParentInterceptOnEdge: Boolean = true
@@ -103,6 +102,9 @@ internal class ZoomEngine constructor(
             if (field != value) {
                 field = value
                 reset()
+                onViewSizeChangeListenerList?.forEach {
+                    it.onSizeChanged()
+                }
             }
         }
 
@@ -121,6 +123,9 @@ internal class ZoomEngine constructor(
             if (field != value) {
                 field = value
                 reset()
+                onDrawableSizeChangeListenerList?.forEach {
+                    it.onSizeChanged()
+                }
             }
         }
     var scaleType: ScaleType = ScaleType.FIT_CENTER
@@ -176,6 +181,9 @@ internal class ZoomEngine constructor(
      * Initial scale and translate for support matrix
      */
     var supportInitialTransform: TransformCompat = TransformCompat.Origin
+        private set
+
+    var displayTransform: TransformCompat = TransformCompat.Origin
         private set
 
 
@@ -249,7 +257,7 @@ internal class ZoomEngine constructor(
         scrollBarHelper = null
         val scrollBar = scrollBar
         if (scrollBar != null) {
-            scrollBarHelper = ScrollBarHelper(context, this@ZoomEngine, scrollBar)
+            scrollBarHelper = ScrollBarHelper(view.context, this@ZoomEngine, scrollBar)
         }
     }
 
@@ -445,5 +453,27 @@ internal class ZoomEngine constructor(
 
     fun removeOnScaleChangeListener(listener: OnScaleChangeListener): Boolean {
         return onScaleChangeListenerList?.remove(listener) == true
+    }
+
+    fun addOnViewSizeChangeListener(listener: OnViewSizeChangeListener) {
+        this.onViewSizeChangeListenerList =
+            (onViewSizeChangeListenerList ?: LinkedHashSet()).apply {
+                add(listener)
+            }
+    }
+
+    fun removeOnViewSizeChangeListener(listener: OnViewSizeChangeListener): Boolean {
+        return onViewSizeChangeListenerList?.remove(listener) == true
+    }
+
+    fun addOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener) {
+        this.onDrawableSizeChangeListenerList =
+            (onDrawableSizeChangeListenerList ?: LinkedHashSet()).apply {
+                add(listener)
+            }
+    }
+
+    fun removeOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener): Boolean {
+        return onDrawableSizeChangeListenerList?.remove(listener) == true
     }
 }

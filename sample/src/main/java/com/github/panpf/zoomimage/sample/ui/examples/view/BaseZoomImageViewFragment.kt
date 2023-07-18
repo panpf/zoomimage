@@ -23,7 +23,6 @@ import androidx.viewbinding.ViewBinding
 import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.OnViewLongPressListener
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.core.toShortString
@@ -37,8 +36,9 @@ import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.toShortString
-import com.github.panpf.zoomimage.view.ScrollBar
-import com.github.panpf.zoomimage.view.ZoomAnimationSpec
+import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
+import com.github.panpf.zoomimage.view.zoom.ScrollBar
+import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {
@@ -53,11 +53,11 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
         zoomImageView.apply {
+            logger.level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO
             prefsService.scaleType.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 scaleType = ScaleType.valueOf(it)
             }
             zoomAbility.apply {
-                logger.level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO
                 prefsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScale = it
                 }
@@ -231,12 +231,12 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val tileList = subsamplingAbility.tileList ?: emptyList()
         val tilesByteCount = tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()
         val exifOrientationName =
-            subsamplingAbility.imageExifOrientation?.let { exifOrientationName(it) }
+            subsamplingAbility.imageInfo?.exifOrientation?.let { exifOrientationName(it) }
         return ZoomImageViewInfoDialogFragmentArgs(
             imageUri = sketchImageUri,
             imageInfo = """
-                size=${subsamplingAbility.imageSize?.toShortString()}
-                mimeType=${subsamplingAbility.imageMimeType}
+                size=${subsamplingAbility.imageInfo?.size?.toShortString()}
+                mimeType=${subsamplingAbility.imageInfo?.mimeType}
                 exifOrientation=$exifOrientationName
             """.trimIndent(),
             sizeInfo = """

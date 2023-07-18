@@ -51,12 +51,10 @@ class SketchZoomImageViewFragment :
     ) {
         super.onViewCreated(binding, savedInstanceState)
 
-        binding.sketchZoomImageViewImage.apply {
-            listOf(
-                prefsService.ignoreExifOrientation.sharedFlow,
-            ).merge().collectWithLifecycle(viewLifecycleOwner) {
-                loadData(binding, binding.common, sketchImageUri)
-            }
+        listOf(
+            prefsService.ignoreExifOrientation.sharedFlow,
+        ).merge().collectWithLifecycle(viewLifecycleOwner) {
+            loadData(binding, binding.common, sketchImageUri)
         }
     }
 

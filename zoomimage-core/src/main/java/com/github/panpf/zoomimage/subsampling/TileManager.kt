@@ -19,6 +19,8 @@ import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.core.internal.format
 import com.github.panpf.zoomimage.core.internal.requiredMainThread
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.subsampling.internal.freeBitmap
@@ -26,7 +28,6 @@ import com.github.panpf.zoomimage.subsampling.internal.logString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.isActive
@@ -36,60 +37,48 @@ import kotlin.math.floor
 
 class TileManager constructor(
     logger: Logger,
+    private val tileDecoder: TileDecoder,
     private val tileBitmapPool: TileBitmapPool?,
     private val tileMemoryCache: TileMemoryCache?,
     private val imageSource: ImageSource,
-    val imageInfo: ImageInfo,
+    private val imageInfo: ImageInfo,
     viewSize: IntSizeCompat,
     private val onTileChanged: () -> Unit,
 ) {
-    private val decoder: TileDecoder = TileDecoder(
-        imageSource = imageSource,
-        tileBitmapPool = tileBitmapPool,
-        logger = logger,
-        imageInfo = imageInfo,
-    )
-    private val logger: Logger = logger.newLogger(module = "Subsampling-TileManager")
-
-    private val tileMaxSize = viewSize.let {
-        IntSizeCompat(it.width / 2, it.height / 2)
-    }
-    private val tileMap: Map<Int, List<Tile>> = initializeTileMap(imageInfo.size, tileMaxSize)
-    private val scope: CoroutineScope = CoroutineScope(
-        SupervisorJob() + Dispatchers.Main.immediate
-    )
-
-    @OptIn(ExperimentalCoroutinesApi::class)
+    private val logger: Logger = logger.newLogger(module = "SubsamplingTileManager")
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(4)
     private var lastTileList: List<Tile>? = null
     private var lastSampleSize: Int? = null
+
+    val tileMaxSize: IntSizeCompat
+    val tileMap: Map<Int, List<Tile>>
+
     var imageVisibleRect = IntRectCompat.Zero
         private set
     var imageLoadRect = IntRectCompat.Zero
         private set
-
-    val rowTileList: List<Tile>?
-        get() = lastTileList
     val tileList: List<Tile>?
-        get() = lastTileList?.toList()
-
-    val sampleSize: Int?
-        get() = lastSampleSize
+        get() = lastTileList
 
     init {
-        logger.d {
-            val tileMapInfoList = tileMap.keys.sortedDescending().map {
-                "${it}:${tileMap[it]?.size}"
-            }
-            "tileMap. $tileMapInfoList. '${imageSource.key}'"
-        }
+        tileMaxSize = IntSizeCompat(viewSize.width / 2, viewSize.height / 2)
+        tileMap = initializeTileMap(imageInfo.size, tileMaxSize)
     }
 
     @MainThread
-    fun refreshTiles(drawableSize: IntSizeCompat, drawableVisibleRect: IntRectCompat, displayScale: Float) {
+    fun refreshTiles(
+        drawableSize: IntSizeCompat,
+        drawableVisibleRect: IntRectCompat,
+        scale: ScaleFactorCompat
+    ) {
         requiredMainThread()
 
-        val zoomScale = displayScale
+        if (scale.scaleX.format(2) != scale.scaleY.format(2)) {
+            return
+        }
+
+        val zoomScale = scale.scaleX
         val sampleSize = findSampleSize(
             imageWidth = imageInfo.width,
             imageHeight = imageInfo.height,
@@ -146,7 +135,7 @@ class TileManager constructor(
     fun destroy() {
         requiredMainThread()
         clean()
-        decoder.destroy()
+        tileDecoder.destroy()
     }
 
     @MainThread
@@ -183,7 +172,7 @@ class TileManager constructor(
         }
 
         tile.loadJob = scope.async(decodeDispatcher) {
-            val bitmap = decoder.decode(tile)
+            val bitmap = tileDecoder.decode(tile)
             when {
                 bitmap == null -> {
                     logger.e("loadTile. null. $tile. '${imageSource.key}'")
@@ -246,7 +235,10 @@ class TileManager constructor(
         }
     }
 
-    private fun resetVisibleAndLoadRect(drawableSize: IntSizeCompat, drawableVisibleRect: IntRectCompat) {
+    private fun resetVisibleAndLoadRect(
+        drawableSize: IntSizeCompat,
+        drawableVisibleRect: IntRectCompat
+    ) {
         val drawableScaled = imageInfo.width / drawableSize.width.toFloat()
         imageVisibleRect = IntRectCompat(
             left = floor(drawableVisibleRect.left * drawableScaled).toInt(),

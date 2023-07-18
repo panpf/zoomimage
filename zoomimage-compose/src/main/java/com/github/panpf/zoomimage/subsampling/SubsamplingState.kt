@@ -17,9 +17,9 @@ import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.internal.toCompatIntSize
+import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.subsampling.internal.applyExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,18 +38,18 @@ fun rememberSubsamplingState(
     showTileBounds: Boolean = false,
 ): SubsamplingState {
     val subsamplingState = remember { SubsamplingState() }
+    subsamplingState.ignoreExifOrientation = ignoreExifOrientation
     subsamplingState.tileMemoryCache = tileMemoryCache
     subsamplingState.tileBitmapPool = tileBitmapPool
-    subsamplingState.ignoreExifOrientation = ignoreExifOrientation
     subsamplingState.disallowReuseBitmap = disallowReuseBitmap
     subsamplingState.disableMemoryCache = disableMemoryCache
     subsamplingState.showTileBounds = showTileBounds
     LaunchedEffect(
-        subsamplingState.tileMemoryCache,   // todo 这么让变化生效代价似乎有些大
-        subsamplingState.tileBitmapPool,   // todo 这么让变化生效代价似乎有些大
         subsamplingState.ignoreExifOrientation,
-        subsamplingState.disallowReuseBitmap,   // todo 这么让变化生效代价似乎有些大
-        subsamplingState.disableMemoryCache,   // todo 这么让变化生效代价似乎有些大
+        subsamplingState.tileMemoryCache,   // todo 代价太大了
+        subsamplingState.tileBitmapPool,   // todo 代价太大了
+        subsamplingState.disallowReuseBitmap,   // todo 代价太大了
+        subsamplingState.disableMemoryCache,   // todo 代价太大了
     ) {
         subsamplingState.reset("ignoreExifOrientation:changed")
     }
@@ -95,6 +95,7 @@ class SubsamplingState : RememberObserver {
     private var initJob: Job? = null
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
+    private var tileDecoder: TileDecoder? = null
 
     var logger: Logger = Logger(tag = "ZoomImage", module = "SubsamplingState")
         private set
@@ -112,8 +113,6 @@ class SubsamplingState : RememberObserver {
     var tilesChanged by mutableStateOf(0)
         private set
 
-    val rowTileList: List<Tile>
-        get() = tileManager?.rowTileList ?: emptyList()
     val tileList: List<Tile>
         get() = tileManager?.tileList ?: emptyList()
     val imageLoadRect: IntRectCompat
@@ -142,6 +141,7 @@ class SubsamplingState : RememberObserver {
         }
     }
 
+    // todo 拆分成 resetTileDecoder, resetTileManager
     fun reset(caller: String) {
         initJob?.cancel("reset:$caller")
         initJob = null
@@ -152,8 +152,7 @@ class SubsamplingState : RememberObserver {
         val drawableSize = contentSize.takeIf { it.isNotEmpty() } ?: return
 
         initJob = scope.launch(Dispatchers.Main) {
-            val imageInfo = imageSource.readImageInfo()
-                ?.let { if (!ignoreExifOrientation) it.applyExifOrientation() else it }
+            val imageInfo = imageSource.readImageInfo(ignoreExifOrientation)
             val result =
                 imageInfo?.let { canUseSubsampling(it, drawableSize.toCompatIntSize()) } ?: -10
             if (imageInfo != null && result >= 0) {
@@ -161,11 +160,19 @@ class SubsamplingState : RememberObserver {
                     "setImageSource success. $caller. " +
                             "viewSize=$viewSize, " +
                             "drawableSize: ${drawableSize.toShortString()}, " +
+                            "ignoreExifOrientation: ${ignoreExifOrientation}. " +
                             "imageInfo: ${imageInfo.toShortString()}. " +
                             "'${imageSource.key}'"
                 }
+                tileDecoder = TileDecoder(
+                    logger = logger,
+                    imageSource = imageSource,
+                    tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
+                    imageInfo = imageInfo,
+                )
                 tileManager = TileManager(
                     logger = logger,
+                    tileDecoder = tileDecoder!!,
                     imageSource = imageSource,
                     viewSize = viewSize.toCompatIntSize(),
                     tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
@@ -175,6 +182,7 @@ class SubsamplingState : RememberObserver {
                         notifyTileChanged()
                     }
                 )
+                // todo 提供 ready 监听，让 zoomablestate 自行更新
                 this@SubsamplingState.imageInfo = imageInfo
             } else {
                 val cause = when (result) {
@@ -251,7 +259,7 @@ class SubsamplingState : RememberObserver {
         tileManager?.refreshTiles(
             drawableSize.toCompatIntSize(),
             contentVisibleRect.toCompatIntRect(),
-            displayTransform.scaleX.format(2)
+            displayTransform.scale.toCompatScaleFactor()
         )
     }
 

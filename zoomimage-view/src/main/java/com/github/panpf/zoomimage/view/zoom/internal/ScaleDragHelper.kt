@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.content.Context
 import android.graphics.Matrix
@@ -33,8 +33,8 @@ import com.github.panpf.zoomimage.core.internal.canScroll
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.toShortString
-import com.github.panpf.zoomimage.view.internal.ScaleDragGestureDetector.OnActionListener
-import com.github.panpf.zoomimage.view.internal.ScaleDragGestureDetector.OnGestureListener
+import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnActionListener
+import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnGestureListener
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -448,6 +448,7 @@ internal class ScaleDragHelper constructor(
 
         flingRunnable?.cancel()
         flingRunnable = FlingRunnable(
+            logger = logger,
             context = context,
             engine = engine,
             scaleDragHelper = this@ScaleDragHelper,

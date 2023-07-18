@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+// todo rename to ScrollBarSpec
 data class ScrollBar(
     val color: Color = Color.Gray.copy(alpha = 0.7f),
     val size: Dp = 3.dp,

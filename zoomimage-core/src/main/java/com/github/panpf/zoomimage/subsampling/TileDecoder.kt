@@ -40,26 +40,23 @@ import java.util.LinkedList
 class TileDecoder constructor(
     logger: Logger,
     private val imageSource: ImageSource,
-    val tileBitmapPool: TileBitmapPool?,
-    val imageInfo: ImageInfo,
+    private val tileBitmapPool: TileBitmapPool?,
+    private val imageInfo: ImageInfo,
 ) {
-    private val logger: Logger = logger.newLogger(module = "Subsampling-TileDecoder")
+    private val logger: Logger = logger.newLogger(module = "SubsamplingTileDecoder")
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
     private val exifOrientationHelper: ExifOrientationHelper =
         ExifOrientationHelper(imageInfo.exifOrientation)
-    private var _destroyed: Boolean = false
+    var destroyed: Boolean = false
+        private set
     private val addedImageSize: IntSizeCompat by lazy {
         exifOrientationHelper.addToSize(imageInfo.size)
     }
 
-    val destroyed: Boolean
-        get() = _destroyed
-
     @WorkerThread
     fun decode(tile: Tile): Bitmap? {
         requiredWorkThread()
-
-        if (_destroyed) return null
+        if (destroyed) return null
         return useDecoder { decoder ->
             decodeRegion(decoder, tile.srcRect, tile.inSampleSize)?.let {
                 applyExifOrientation(it)
@@ -171,7 +168,7 @@ class TileDecoder constructor(
         requiredMainThread()
 
         synchronized(decoderPool) {
-            _destroyed = true
+            destroyed = true
             decoderPool.forEach {
                 it.recycle()
             }

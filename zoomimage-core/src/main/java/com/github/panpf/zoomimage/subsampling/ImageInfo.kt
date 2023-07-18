@@ -32,5 +32,5 @@ data class ImageInfo constructor(
     }
 
     fun toShortString(): String =
-        "${width}x$height,'$mimeType',${exifOrientationName(exifOrientation)}"
+        "(${width}x$height,'$mimeType',${exifOrientationName(exifOrientation)})"
 }
