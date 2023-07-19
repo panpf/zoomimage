@@ -89,9 +89,9 @@ internal class ScaleDragHelper constructor(
     val baseOffset: OffsetCompat
         get() = baseMatrix.getTranslation()
 
-    val displayScale: ScaleFactorCompat
+    val scale: ScaleFactorCompat
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getScale()
-    val displayOffset: OffsetCompat
+    val offset: OffsetCompat
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getTranslation()
 
     init {
@@ -258,10 +258,10 @@ internal class ScaleDragHelper constructor(
         }
         val newX = pointF.x
         val newY = pointF.y
-        val nowUserScale = userScale
-        if (nowUserScale.format(2) == engine.minUserScale.format(2)) {
+        val nowScale = scale.scaleX
+        if (nowScale.format(2) == engine.minScale.format(2)) {
             scale(
-                newUserScale = engine.getNextStepScale(),
+                newScale = engine.getNextStepScale(),
                 focalX = engine.viewSize.width / 2f,
                 focalY = engine.viewSize.height / 2f,
                 animate = false
@@ -269,7 +269,7 @@ internal class ScaleDragHelper constructor(
         }
 
         val displayRectF = getDisplayRect()
-        val currentScale = displayScale
+        val currentScale = scale
         val scaleLocationX = (newX * currentScale.scaleX).toInt()
         val scaleLocationY = (newY * currentScale.scaleY).toInt()
         val scaledLocationX =
@@ -302,9 +302,10 @@ internal class ScaleDragHelper constructor(
         }
     }
 
-    fun scale(newUserScale: Float, focalX: Float, focalY: Float, animate: Boolean) {
+    fun scale(newScale: Float, focalX: Float, focalY: Float, animate: Boolean) {
         cancelFling()
         animatedScaleRunnable?.cancel()
+        val newUserScale = newScale / baseScale.scaleX
         val currentUserScale = userScale
         if (animate) {
             animatedScaleRunnable = AnimatedScaleRunnable(
@@ -317,7 +318,7 @@ internal class ScaleDragHelper constructor(
             )
             animatedScaleRunnable?.start()
         } else {
-            scaleBy(addScale = newUserScale / currentUserScale, focalX = focalX, focalY = focalY)
+            scaleBy(addUserScale = newUserScale / currentUserScale, focalX = focalX, focalY = focalY)
         }
     }
 
@@ -383,7 +384,7 @@ internal class ScaleDragHelper constructor(
             return null
         }
 
-        val zoomScale = displayScale
+        val zoomScale = scale
         val drawableX =
             ((touchPoint.x - displayRect.left) / zoomScale.scaleX).roundToInt()
                 .coerceIn(0, drawableSize.width)
@@ -470,8 +471,8 @@ internal class ScaleDragHelper constructor(
         return true
     }
 
-    private fun scaleBy(addScale: Float, focalX: Float, focalY: Float) {
-        userMatrix.postScale(addScale, addScale, focalX, focalY)
+    private fun scaleBy(addUserScale: Float, focalX: Float, focalY: Float) {
+        userMatrix.postScale(addUserScale, addUserScale, focalX, focalY)
         checkAndApplyMatrix()
     }
 
@@ -486,15 +487,17 @@ internal class ScaleDragHelper constructor(
         lastScaleFocusY = focusY
         val currentUserScale = userScale
         val newUserScale = currentUserScale * newUserScaleFactor
+        val minUserScale = engine.minScale / baseScale.scaleX
+        val maxUserScale = engine.maxScale / baseScale.scaleX
         val limitedNewUserScale = if (engine.rubberBandScale) {
             limitScaleWithRubberBand(
                 currentScale = currentUserScale,
                 targetScale = newUserScale,
-                minScale = engine.minUserScale,
-                maxScale = engine.maxUserScale
+                minScale = minUserScale,
+                maxScale = maxUserScale,
             )
         } else {
-            newUserScale.coerceIn(minimumValue = engine.minUserScale, maximumValue = engine.maxUserScale)
+            newUserScale.coerceIn(minimumValue = minUserScale, maximumValue = maxUserScale)
         }
         newUserScaleFactor = limitedNewUserScale / currentUserScale
 
@@ -527,19 +530,19 @@ internal class ScaleDragHelper constructor(
 
     private fun actionUp() {
         /* Roll back to minimum or maximum scaling */
-        val currentUserScale = userScale.format(2)
-        val minUserScale = engine.minUserScale.format(2)
-        val maxUserScale = engine.maxUserScale.format(2)
-        if (currentUserScale < minUserScale) {
+        val currentScale = scale.scaleX.format(2)
+        val minScale = engine.minScale.format(2)
+        val maxScale = engine.maxScale.format(2)
+        if (currentScale < minScale) {
             val displayRectF = displayRectF.apply { getDisplayRect(this) }
             if (!displayRectF.isEmpty) {
-                scale(minUserScale, displayRectF.centerX(), displayRectF.centerY(), true)
+                scale(minScale, displayRectF.centerX(), displayRectF.centerY(), true)
             }
-        } else if (currentUserScale > maxUserScale) {
+        } else if (currentScale > maxScale) {
             val lastScaleFocusX = lastScaleFocusX
             val lastScaleFocusY = lastScaleFocusY
             if (lastScaleFocusX != 0f && lastScaleFocusY != 0f) {
-                scale(maxUserScale, lastScaleFocusX, lastScaleFocusY, true)
+                scale(maxScale, lastScaleFocusX, lastScaleFocusY, true)
             }
         }
     }

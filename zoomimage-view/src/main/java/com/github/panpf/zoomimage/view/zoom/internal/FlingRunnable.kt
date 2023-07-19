@@ -43,16 +43,16 @@ internal class FlingRunnable(
         val offset = engine.userOffset
         val startX = offset.x.roundToInt()
         val startY = offset.y.roundToInt()
-        val bounds = computeOffsetBounds(
+        val userOffsetBounds = computeUserOffsetBounds(
             containerSize = engine.viewSize,
             contentSize = engine.drawableSize,
             scaleType = engine.scaleType,
-            scale = engine.userScale
+            userScale = engine.userScale
         )
-        val minX: Int = bounds.left
-        val maxX: Int = bounds.right
-        val minY: Int = bounds.top
-        val maxY: Int = bounds.bottom
+        val minX: Int = userOffsetBounds.left
+        val maxX: Int = userOffsetBounds.right
+        val minY: Int = userOffsetBounds.top
+        val maxY: Int = userOffsetBounds.bottom
         logger.d {
             "fling. start. " +
                     "velocity=($velocityX, $velocityY), " +

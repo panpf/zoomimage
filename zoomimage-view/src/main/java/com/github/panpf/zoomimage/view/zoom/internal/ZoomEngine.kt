@@ -162,13 +162,13 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     var rubberBandScale: Boolean = true
         internal set
 
-    var minUserScale: Float = 1.0f
+    var minScale: Float = 1.0f
         private set
 
-    var mediumUserScale: Float = 1.0f
+    var mediumScale: Float = 1.0f
         private set
 
-    var maxUserScale: Float = 1.0f
+    var maxScale: Float = 1.0f
         private set
 
     /**
@@ -199,9 +199,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val imageSize = imageSize
         val viewSize = viewSize
         if (drawableSize.isEmpty() || viewSize.isEmpty()) {
-            minUserScale = 1.0f
-            mediumUserScale = 1.0f
-            maxUserScale = 1.0f
+            minScale = 1.0f
+            mediumScale = 1.0f
+            maxScale = 1.0f
             baseInitialTransform = TransformCompat.Origin
             userInitialTransform = TransformCompat.Origin
         } else {
@@ -218,11 +218,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 ),
                 defaultMediumScaleMultiple = defaultMediumScaleMultiple
             )
-            minUserScale = userStepScales[0]
-            mediumUserScale = userStepScales[1]
-            maxUserScale = userStepScales[2]
             baseInitialTransform = scaleType
                 .computeTransform(srcSize = rotatedDrawableSize, dstSize = viewSize)
+            minScale = userStepScales[0] * baseInitialTransform.scaleX
+            mediumScale = userStepScales[1] * baseInitialTransform.scaleX
+            maxScale = userStepScales[2] * baseInitialTransform.scaleX
             val readMode = scaleType.supportReadMode()
                     && readMode?.should(srcSize = rotatedDrawableSize, dstSize = viewSize) == true
             userInitialTransform = if (readMode) {
@@ -244,9 +244,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     "rotateDegrees=$rotateDegrees, " +
                     "scaleType=$scaleType, " +
                     "readMode=$readMode, " +
-                    "minUserScale=$minUserScale, " +
-                    "mediumUserScale=$mediumUserScale, " +
-                    "maxUserScale=$maxUserScale, " +
+                    "minUserScale=$minScale, " +
+                    "mediumUserScale=$mediumScale, " +
+                    "maxUserScale=$maxScale, " +
                     "baseInitialTransform=$baseInitialTransform, " +
                     "userInitialTransform=$userInitialTransform"
         }
@@ -296,22 +296,18 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      * @param focalY  Scale the y coordinate of the center point on the view
      */
     fun scale(newScale: Float, focalX: Float, focalY: Float, animate: Boolean) {
-        val currentScale = userScale
-        if (newScale > currentScale) {
-            scaleDragHelper.scale(
-                newUserScale = newScale.coerceIn(minUserScale, maxUserScale),
-                focalX = focalX,
-                focalY = focalY,
-                animate = animate
-            )
+        val currentScale = scale.scaleX
+        val focal = if (newScale > currentScale) {
+            OffsetCompat(focalX, focalY)
         } else {
-            scaleDragHelper.scale(
-                newUserScale = newScale.coerceIn(minUserScale, maxUserScale),
-                focalX = (view.right / 2).toFloat(),
-                focalY = (view.bottom / 2).toFloat(),
-                animate = animate
-            )
+            OffsetCompat((view.right / 2).toFloat(), (view.bottom / 2).toFloat())
         }
+        scaleDragHelper.scale(
+            newScale = newScale.coerceIn(minScale, maxScale),
+            focalX = focal.x,
+            focalY = focal.y,
+            animate = animate
+        )
     }
 
     /**
@@ -352,11 +348,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
     fun getNextStepScale(): Float {
         val stepScales = if (threeStepScale) {
-            floatArrayOf(minUserScale, mediumUserScale, maxUserScale)
+            floatArrayOf(minScale, mediumScale, maxScale)
         } else {
-            floatArrayOf(minUserScale, mediumUserScale)
+            floatArrayOf(minScale, mediumScale)
         }
-        return calculateNextStepScale(stepScales, userScale)
+        return calculateNextStepScale(stepScales, scale.scaleX)
     }
 
 
@@ -384,10 +380,10 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     val baseOffset: OffsetCompat
         get() = scaleDragHelper.baseOffset
 
-    val displayScale: ScaleFactorCompat
-        get() = scaleDragHelper.displayScale
-    val displayOffset: OffsetCompat
-        get() = scaleDragHelper.displayOffset
+    val scale: ScaleFactorCompat
+        get() = scaleDragHelper.scale
+    val offset: OffsetCompat
+        get() = scaleDragHelper.offset
 
     fun getDisplayMatrix(matrix: Matrix) = scaleDragHelper.getDisplayMatrix(matrix)
 

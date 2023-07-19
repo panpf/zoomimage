@@ -193,17 +193,17 @@ class ZoomAbility constructor(
     val baseOffset: OffsetCompat
         get() = engine.baseOffset
 
-    val displayScale: ScaleFactorCompat
-        get() = engine.displayScale
-    val displayOffset: OffsetCompat
-        get() = engine.displayOffset
+    val scale: ScaleFactorCompat
+        get() = engine.scale
+    val offset: OffsetCompat
+        get() = engine.offset
 
-    val minUserScale: Float
-        get() = engine.minUserScale
-    val mediumUserScale: Float
-        get() = engine.mediumUserScale
-    val maxUserScale: Float
-        get() = engine.maxUserScale
+    val minScale: Float
+        get() = engine.minScale
+    val mediumScale: Float
+        get() = engine.mediumScale
+    val maxScale: Float
+        get() = engine.maxScale
 
     val viewSize: IntSizeCompat
         get() = engine.viewSize

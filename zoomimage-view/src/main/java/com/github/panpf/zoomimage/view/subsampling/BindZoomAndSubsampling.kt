@@ -31,8 +31,8 @@ fun bindZoomAndSubsampling(
         if (!zoomEngine.isScaling && zoomEngine.rotateDegrees % 90 == 0) {
             zoomEngine.getVisibleRect(contentVisibleRect)
             subsamplingEngine.refreshTiles(
-                displayScale = zoomEngine.displayScale.scaleX,
-                displayMinScale = zoomEngine.minUserScale * zoomEngine.baseScale.scaleX,
+                displayScale = zoomEngine.scale.scaleX,
+                displayMinScale = zoomEngine.minScale,
                 contentVisibleRect = contentVisibleRect,
                 caller = "matrixChanged"
             )

@@ -130,7 +130,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 zoomImageView.zoomAbility.scale(nextStepScale, true)
             }
             val resetIcon = {
-                val currentScale = zoomImageView.zoomAbility.userScale
+                val currentScale = zoomImageView.zoomAbility.scale.scaleX
                 val nextStepScale = zoomImageView.zoomAbility.getNextStepScale()
                 if (currentScale == nextStepScale || nextStepScale > currentScale) {
                     setImageResource(R.drawable.ic_zoom_in)
@@ -212,11 +212,11 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 visible: 
             """.trimIndent()
         common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
-            val scales = floatArrayOf(minUserScale, mediumUserScale, maxUserScale)
+            val scales = floatArrayOf(minScale, mediumScale, maxScale)
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             """
-                ${userScale.format(2)}(${displayScale.scaleX.format(2)}/${baseScale.scaleX.format(2)}) in $scales
-                ${userOffset.toShortString()}; edge=${scrollEdge.toShortString()}
+                ${scale.scaleX.format(2)}(${baseScale.scaleX.format(2)}*${userScale.format(2)}) in $scales
+                ${offset.toShortString()}; edge=${scrollEdge.toShortString()}
                 ${getVisibleRect().toVeryShortString()}
             """.trimIndent()
         }
