@@ -43,9 +43,9 @@ internal class AnimatedScaleRunnable(
 
     override fun run() {
         val t = interpolate()
-        val newScale = startScale + t * (endScale - startScale)
-        val currentScale = scaleDragHelper.scale
-        val deltaScale = newScale / currentScale
+        val newUserScale = startScale + t * (endScale - startScale)
+        val currentUserScale = scaleDragHelper.userScale
+        val deltaScale = newUserScale / currentUserScale
         isRunning = t < 1f
         scaleDragHelper.doScale(deltaScale, scaleFocalX, scaleFocalY, 0f, 0f)
         // We haven't hit our target scale yet, so post ourselves again

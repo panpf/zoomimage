@@ -183,10 +183,10 @@ class ZoomAbility constructor(
     val isScaling: Boolean
         get() = engine.isScaling
 
-    val scale: Float
-        get() = engine.scale
-    val offset: OffsetCompat
-        get() = engine.offset
+    val userScale: Float
+        get() = engine.userScale
+    val userOffset: OffsetCompat
+        get() = engine.userOffset
 
     val baseScale: ScaleFactorCompat
         get() = engine.baseScale
@@ -198,12 +198,12 @@ class ZoomAbility constructor(
     val displayOffset: OffsetCompat
         get() = engine.displayOffset
 
-    val minScale: Float
-        get() = engine.minScale
-    val mediumScale: Float
-        get() = engine.mediumScale
-    val maxScale: Float
-        get() = engine.maxScale
+    val minUserScale: Float
+        get() = engine.minUserScale
+    val mediumUserScale: Float
+        get() = engine.mediumUserScale
+    val maxUserScale: Float
+        get() = engine.maxUserScale
 
     val viewSize: IntSizeCompat
         get() = engine.viewSize

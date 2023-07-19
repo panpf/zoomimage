@@ -40,14 +40,14 @@ internal class FlingRunnable(
     fun start() {
         cancel()
 
-        val offset = engine.offset
+        val offset = engine.userOffset
         val startX = offset.x.roundToInt()
         val startY = offset.y.roundToInt()
         val bounds = computeOffsetBounds(
             containerSize = engine.viewSize,
             contentSize = engine.drawableSize,
             scaleType = engine.scaleType,
-            scale = engine.scale
+            scale = engine.userScale
         )
         val minX: Int = bounds.left
         val maxX: Int = bounds.right
@@ -78,7 +78,7 @@ internal class FlingRunnable(
         if (scroller.computeScrollOffset()) {
             val start = OffsetCompat(scroller.startX.toFloat(), scroller.startY.toFloat())
             scaleDragHelper.offsetTo(scroller.currX.toFloat(), scroller.currY.toFloat())
-            val offset = engine.offset
+            val offset = engine.userOffset
             val distance = OffsetCompat(
                 x = offset.x - start.x,
                 y = offset.y - start.y

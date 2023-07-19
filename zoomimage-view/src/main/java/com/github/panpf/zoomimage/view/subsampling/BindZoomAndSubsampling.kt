@@ -32,7 +32,7 @@ fun bindZoomAndSubsampling(
             zoomEngine.getVisibleRect(contentVisibleRect)
             subsamplingEngine.refreshTiles(
                 displayScale = zoomEngine.displayScale.scaleX,
-                displayMinScale = zoomEngine.minScale * zoomEngine.baseScale.scaleX,
+                displayMinScale = zoomEngine.minUserScale * zoomEngine.baseScale.scaleX,
                 contentVisibleRect = contentVisibleRect,
                 caller = "matrixChanged"
             )
