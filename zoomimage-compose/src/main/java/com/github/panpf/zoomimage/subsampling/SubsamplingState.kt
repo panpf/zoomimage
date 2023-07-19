@@ -33,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -89,6 +90,11 @@ fun BindZoomableStateAndSubsamplingState(
     }
 
     LaunchedEffect(zoomableState.containerSize) {
+        // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
+        // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
+        if (subsamplingState.containerSize.isNotEmpty()) {
+            delay(60)
+        }
         subsamplingState.containerSize = zoomableState.containerSize
         subsamplingState.resetTileManager("containerSizeChanged")
     }
