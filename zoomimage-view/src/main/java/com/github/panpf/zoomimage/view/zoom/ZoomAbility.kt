@@ -132,10 +132,10 @@ class ZoomAbility constructor(
             engine.rubberBandScale = value
         }
 
-    var scrollBar: ScrollBar?
-        get() = engine.scrollBar
+    var scrollBarSpec: ScrollBarSpec?
+        get() = engine.scrollBarSpec
         set(value) {
-            engine.scrollBar = value
+            engine.scrollBarSpec = value
         }
 
     var readMode: ReadMode?

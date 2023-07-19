@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import com.github.panpf.zoomimage.compose.ScrollBar
+import com.github.panpf.zoomimage.compose.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.internal.roundToIntSize
 import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.subsampling.SubsamplingState
@@ -31,7 +31,7 @@ fun ZoomImage(
     logger: Logger = rememberLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
-    scrollBar: ScrollBar? = ScrollBar.Default,
+    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
@@ -50,7 +50,7 @@ fun ZoomImage(
 
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBar != null) it.zoomScrollBar(zoomableState, scrollBar) else it }
+        .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             val transform = zoomableState.userTransform

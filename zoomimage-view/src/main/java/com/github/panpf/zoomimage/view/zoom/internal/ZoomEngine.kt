@@ -46,7 +46,7 @@ import com.github.panpf.zoomimage.view.zoom.OnViewDragListener
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
-import com.github.panpf.zoomimage.view.zoom.ScrollBar
+import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 
 /**
@@ -149,7 +149,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset()
             }
         }
-    var scrollBar: ScrollBar? = ScrollBar.Default
+    var scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
         internal set(value) {
             if (field != value) {
                 field = value
@@ -255,7 +255,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private fun resetScrollBarHelper() {
         scrollBarHelper?.cancel()
         scrollBarHelper = null
-        val scrollBar = scrollBar
+        val scrollBar = scrollBarSpec
         if (scrollBar != null) {
             scrollBarHelper = ScrollBarHelper(view.context, this@ZoomEngine, scrollBar)
         }

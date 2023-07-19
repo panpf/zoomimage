@@ -37,7 +37,7 @@ import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.toShortString
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
-import com.github.panpf.zoomimage.view.zoom.ScrollBar
+import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
@@ -65,7 +65,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     rubberBandScale = it
                 }
                 prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    scrollBar = if (it) ScrollBar.Default else null
+                    scrollBarSpec = if (it) ScrollBarSpec.Default else null
                 }
                 prefsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     val direction = if (prefsService.readModeDirectionBoth.value) {

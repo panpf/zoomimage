@@ -23,7 +23,7 @@ import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ZoomableState
-import com.github.panpf.zoomimage.compose.ScrollBar
+import com.github.panpf.zoomimage.compose.ScrollBarSpec
 import com.github.panpf.zoomimage.rememberLogger
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
@@ -55,7 +55,7 @@ fun ZoomAsyncImage(
     logger: Logger = rememberLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
-    scrollBar: ScrollBar? = ScrollBar.Default,
+    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
@@ -72,7 +72,7 @@ fun ZoomAsyncImage(
     logger = logger,
     zoomableState = zoomableState,
     subsamplingState = subsamplingState,
-    scrollBar = scrollBar,
+    scrollBarSpec = scrollBarSpec,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -97,7 +97,7 @@ fun ZoomAsyncImage(
     logger: Logger = rememberLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
-    scrollBar: ScrollBar? = ScrollBar.Default,
+    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
@@ -114,7 +114,7 @@ fun ZoomAsyncImage(
     logger = logger,
     zoomableState = zoomableState,
     subsamplingState = subsamplingState,
-    scrollBar = scrollBar,
+    scrollBarSpec = scrollBarSpec,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -135,7 +135,7 @@ fun ZoomAsyncImage(
     logger: Logger = rememberLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
-    scrollBar: ScrollBar? = ScrollBar.Default,
+    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = ZoomAsyncImage(
@@ -152,7 +152,7 @@ fun ZoomAsyncImage(
     logger = logger,
     zoomableState = zoomableState,
     subsamplingState = subsamplingState,
-    scrollBar = scrollBar,
+    scrollBarSpec = scrollBarSpec,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -172,7 +172,7 @@ fun ZoomAsyncImage(
     logger: Logger = rememberLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
-    scrollBar: ScrollBar? = ScrollBar.Default,
+    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
@@ -191,7 +191,7 @@ fun ZoomAsyncImage(
 
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBar != null) it.zoomScrollBar(zoomableState, scrollBar) else it }
+        .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             val transform1 = zoomableState.userTransform
