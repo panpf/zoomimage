@@ -107,9 +107,7 @@ internal fun calculateSampledBitmapSizeForRegion(
     return IntSizeCompat(width, height)
 }
 
-// todo chang to toShortString
-internal val Bitmap.logString: String
-    get() = "Bitmap(${width}x${height},$config,@${toHexString()})"
+internal fun Bitmap.toHexString(): String = "Bitmap(${width}x${height},$config,@${toHexString()})"
 
 internal val Bitmap.safeConfig: Bitmap.Config
     get() = config ?: Bitmap.Config.ARGB_8888

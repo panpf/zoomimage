@@ -67,7 +67,7 @@ private fun TileBitmapPool.realSetInBitmapForRegion(
         "setInBitmapForRegion. successful. " +
                 "newCreate $newCreate. " +
                 "regionSize=$regionSize, inSampleSize=$inSampleSize, imageSize=$imageSize. " +
-                "inBitmap=${inBitmap.logString}. " +
+                "inBitmap=${inBitmap.toHexString()}. " +
                 "$caller"
     }
 
@@ -115,7 +115,7 @@ private fun TileBitmapPool.realGetOrCreate(
     return get(width, height, config) ?: Bitmap.createBitmap(width, height, config)
         .apply {
             logger?.d {
-                "getOrCreate. new . ${this.logString}. $caller"
+                "getOrCreate. new. ${this.toHexString()}. $caller"
             }
         }
 }
@@ -148,12 +148,12 @@ private fun TileBitmapPool.realFreeBitmap(
     val success = put(bitmap)
     if (success) {
         logger?.d {
-            "freeBitmap. successful. $caller. ${bitmap.logString}"
+            "freeBitmap. successful. $caller. ${bitmap.toHexString()}"
         }
     } else {
         bitmap.recycle()
         logger?.d {
-            "freeBitmap. failed. execute recycle. $caller. ${bitmap.logString}"
+            "freeBitmap. failed. execute recycle. $caller. ${bitmap.toHexString()}"
         }
     }
 }
@@ -166,7 +166,7 @@ fun TileBitmapPool.freeBitmap(
 ) {
     if (bitmap == null || bitmap.isRecycled) {
         logger?.w {
-            "freeBitmap. error. bitmap null or recycled. $caller. ${bitmap?.logString}"
+            "freeBitmap. error. bitmap null or recycled. $caller. ${bitmap?.toHexString()}"
         }
         return
     }

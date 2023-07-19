@@ -34,7 +34,6 @@ import com.github.panpf.zoomimage.zoomScrollBar
 import com.github.panpf.zoomimage.zoomable
 import kotlin.math.roundToInt
 
-// todo rename to AsyncZoomImage
 @Composable
 @NonRestartableComposable
 fun ZoomAsyncImage(

@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.core.internal
 
-import android.os.Looper
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.pow

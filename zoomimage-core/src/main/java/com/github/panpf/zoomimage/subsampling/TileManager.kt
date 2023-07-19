@@ -22,7 +22,7 @@ import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.requiredMainThread
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.subsampling.internal.freeBitmap
-import com.github.panpf.zoomimage.subsampling.internal.logString
+import com.github.panpf.zoomimage.subsampling.internal.toHexString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -244,7 +244,7 @@ class TileManager constructor(
                         bitmap.recycle()
                     }
                     logger.d {
-                        "loadTile. freeBitmap. tile job canceled. bitmap=${bitmap.logString}. '${imageSource.key}'"
+                        "loadTile. freeBitmap. tile job canceled. bitmap=${bitmap.toHexString()}. '${imageSource.key}'"
                     }
                 }
             }
