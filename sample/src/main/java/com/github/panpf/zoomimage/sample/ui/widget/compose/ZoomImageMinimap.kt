@@ -90,7 +90,8 @@ fun ZoomImageMinimap(
                     .drawWithContent {
                         drawContent()
 
-                        @Suppress("UNUSED_VARIABLE") val changeCount = subsamplingState.tilesChanged  // Trigger a refresh
+                        @Suppress("UNUSED_VARIABLE") val changeCount =
+                            subsamplingState.tilesChanged  // Trigger a refresh
                         val imageSize by derivedStateOf {
                             subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
                         }
@@ -127,9 +128,8 @@ fun ZoomImageMinimap(
                                                 pivotFractionX = it.x / imageNodeSize.width,
                                                 pivotFractionY = it.y / imageNodeSize.height
                                             ),
-                                            targetUserScale = zoomableState.userTransform.scaleX.coerceAtLeast(
-                                                zoomableState.mediumUserScale
-                                            ),
+                                            targetScale = zoomableState.transform.scaleX
+                                                .coerceAtLeast(zoomableState.mediumScale),
                                             animated = true,
                                         )
                                     }

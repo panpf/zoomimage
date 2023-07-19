@@ -79,10 +79,10 @@ fun BindZoomableStateAndSubsamplingState(
     subsamplingState: SubsamplingState
 ) {
     val refreshTiles: (caller: String) -> Unit = { caller ->
-        if (!zoomableState.scaling && zoomableState.displayTransform.rotation.roundToInt() % 90 == 0) {
+        if (!zoomableState.scaling && zoomableState.transform.rotation.roundToInt() % 90 == 0) {
             subsamplingState.refreshTiles(
-                displayScale = zoomableState.displayTransform.scaleX,
-                displayMinScale = zoomableState.minUserScale * zoomableState.baseTransform.scaleX,
+                displayScale = zoomableState.transform.scaleX,
+                displayMinScale = zoomableState.minScale,
                 contentVisibleRect = zoomableState.contentVisibleRect,
                 caller = caller
             )
@@ -111,8 +111,8 @@ fun BindZoomableStateAndSubsamplingState(
         }
         refreshTiles("imageInfoChanged")
     }
-    LaunchedEffect(zoomableState.displayTransform) {
-        refreshTiles("displayTransformChanged")
+    LaunchedEffect(zoomableState.transform) {
+        refreshTiles("transformChanged")
     }
     LaunchedEffect(zoomableState.scaling) {
         refreshTiles("scalingChanged")

@@ -95,6 +95,7 @@ fun rememberZoomableState(
     return zoomableState
 }
 
+// todo support rotation
 class ZoomableState(logger: Logger) {
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
@@ -112,20 +113,17 @@ class ZoomableState(logger: Logger) {
     var readMode: ReadMode? = null
     var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
 
-    var minUserScale: Float by mutableStateOf(1f)
+    var minScale: Float by mutableStateOf(1f)
         private set
-    var mediumUserScale: Float by mutableStateOf(1f)
+    var mediumScale: Float by mutableStateOf(1f)
         private set
-    var maxUserScale: Float by mutableStateOf(1f)
-        private set
-
-    // todo support rotation
-    // todo transform 和 displayTransform 表达的意思要换一下
-    var userTransform: Transform by mutableStateOf(Transform.Origin)
+    var maxScale: Float by mutableStateOf(1f)
         private set
     var baseTransform: Transform by mutableStateOf(Transform.Origin)
         private set
-    val displayTransform: Transform by derivedStateOf {
+    var userTransform: Transform by mutableStateOf(Transform.Origin)
+        private set
+    val transform: Transform by derivedStateOf {
         baseTransform.concat(userTransform)
     }
     var scaling: Boolean by mutableStateOf(false)
@@ -191,9 +189,9 @@ class ZoomableState(logger: Logger) {
         val contentAlignment = contentAlignment
         val initialUserTransform: Transform
         if (containerSize.isEmpty() || contentSize.isEmpty()) {
-            minUserScale = 1.0f
-            mediumUserScale = 1.0f
-            maxUserScale = 1.0f
+            minScale = 1.0f
+            mediumScale = 1.0f
+            maxScale = 1.0f
             baseTransform = Transform.Origin
             initialUserTransform = Transform.Origin
         } else {
@@ -211,16 +209,16 @@ class ZoomableState(logger: Logger) {
                 ).toCompatScaleFactor(),
                 defaultMediumScaleMultiple = defaultMediumScaleMultiple,
             )
-            minUserScale = userScales[0]
-            // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
-            mediumUserScale = userScales[1]
-            maxUserScale = userScales[2]
             baseTransform = computeTransform(
                 contentSize = rotatedContentSize,
                 containerSize = containerSize,
                 contentScale = contentScale,
                 alignment = contentAlignment,
             )
+            minScale = userScales[0] * baseTransform.scaleX
+            // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
+            mediumScale = userScales[1] * baseTransform.scaleX
+            maxScale = userScales[2] * baseTransform.scaleX
             val readModeResult = contentScale.supportReadMode() &&
                     readMode?.should(
                         srcSize = rotatedContentSize.toCompatIntSize(),
@@ -246,9 +244,9 @@ class ZoomableState(logger: Logger) {
                     "contentScale=${contentScale.name}, " +
                     "contentAlignment=${contentAlignment.name}, " +
                     "readMode=${readMode}, " +
-                    "minScale=${minUserScale.format(4)}, " +
-                    "mediumScale=${mediumUserScale.format(4)}, " +
-                    "maxScale=${maxUserScale.format(4)}, " +
+                    "minScale=${minScale.format(4)}, " +
+                    "mediumScale=${mediumScale.format(4)}, " +
+                    "maxScale=${maxScale.format(4)}, " +
                     "baseTransform=${baseTransform.toShortString()}, " +
                     "initialUserTransform=${initialUserTransform.toShortString()}, " +
                     "limitedInitialUserTransform=${limitedInitialUserTransform.toShortString()}"
@@ -263,13 +261,14 @@ class ZoomableState(logger: Logger) {
 
 
     suspend fun scale(
-        targetUserScale: Float,
+        targetScale: Float,
         centroid: Offset = Offset(x = containerSize.width / 2f, y = containerSize.height / 2f),
         animated: Boolean = false,
         rubberBandScale: Boolean = false,
     ) {
         stopAllAnimation("scale")
 
+        val targetUserScale = targetScale / baseTransform.scaleX
         val limitedTargetUserScale = if (rubberBandScale && this@ZoomableState.rubberBandScale) {
             limitUserScaleWithRubberBand(targetUserScale)
         } else {
@@ -296,7 +295,8 @@ class ZoomableState(logger: Logger) {
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "scale. " +
-                    "targetScale=${targetUserScale.format(4)}, " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "targetUserScale=${targetUserScale.format(4)}, " +
                     "centroid=${centroid.toShortString()}, " +
                     "animated=${animated}, " +
                     "addUserScale=${targetAddUserScale.format(4)} -> ${limitedAddUserScale.format(4)}, " +
@@ -339,11 +339,12 @@ class ZoomableState(logger: Logger) {
 
     suspend fun location(
         contentOrigin: Origin,
-        targetUserScale: Float = userTransform.scaleX,
+        targetScale: Float = transform.scaleX,
         animated: Boolean = false,
     ) {
         stopAllAnimation("location")
 
+        val targetUserScale = targetScale / baseTransform.scaleX
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
         val contentScale = contentScale
@@ -377,7 +378,8 @@ class ZoomableState(logger: Logger) {
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
             "location. " +
                     "contentOrigin=${contentOrigin.toShortString()}, " +
-                    "targetScale=${targetUserScale.format(4)}, " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "targetUserScale=${targetUserScale.format(4)}, " +
                     "animated=${animated}, " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -434,31 +436,31 @@ class ZoomableState(logger: Logger) {
         }
     }
 
-    suspend fun switchUserScale(
+    suspend fun switchScale(
         contentOrigin: Origin = Origin(0.5f, 0.5f),
         animated: Boolean = true
     ): Float {
-        val nextUserScale = getNextStepUserScale()
+        val nextScale = getNextStepScale()
         location(
             contentOrigin = contentOrigin,
-            targetUserScale = nextUserScale,
+            targetScale = nextScale,
             animated = animated
         )
-        return nextUserScale
+        return nextScale
     }
 
     suspend fun reboundUserScale(centroid: Offset) {
-        val minUserScale = minUserScale
-        val maxUserScale = maxUserScale
-        val currentUserScale = userTransform.scaleX
-        val targetUserScale = when {
-            currentUserScale.format(2) > maxUserScale.format(2) -> maxUserScale
-            currentUserScale.format(2) < minUserScale.format(2) -> minUserScale
+        val minScale = minScale
+        val maxScale = maxScale
+        val currentScale = transform.scaleX
+        val targetScale = when {
+            currentScale.format(2) > maxScale.format(2) -> maxScale
+            currentScale.format(2) < minScale.format(2) -> minScale
             else -> null
         }
-        if (targetUserScale != null) {
+        if (targetScale != null) {
             scale(
-                targetUserScale = targetUserScale,
+                targetScale = targetScale,
                 centroid = centroid,
                 animated = true,
                 rubberBandScale = false
@@ -466,13 +468,13 @@ class ZoomableState(logger: Logger) {
         }
     }
 
-    fun getNextStepUserScale(): Float {
+    fun getNextStepScale(): Float {
         val stepScales = if (threeStepScale) {
-            floatArrayOf(minUserScale, mediumUserScale, maxUserScale)
+            floatArrayOf(minScale, mediumScale, maxScale)
         } else {
-            floatArrayOf(minUserScale, mediumUserScale)
+            floatArrayOf(minScale, mediumScale)
         }
-        return calculateNextStepScale(stepScales, userTransform.scaleX)
+        return calculateNextStepScale(stepScales, transform.scaleX)
     }
 
     suspend fun stopAllAnimation(caller: String) {
@@ -513,10 +515,14 @@ class ZoomableState(logger: Logger) {
     }
 
     private fun limitUserScale(targetUserScale: Float): Float {
+        val minUserScale = minScale / baseTransform.scaleX
+        val maxUserScale = maxScale / baseTransform.scaleX
         return targetUserScale.coerceIn(minimumValue = minUserScale, maximumValue = maxUserScale)
     }
 
     private fun limitUserScaleWithRubberBand(targetUserScale: Float): Float {
+        val minUserScale = minScale / baseTransform.scaleX
+        val maxUserScale = maxScale / baseTransform.scaleX
         return limitScaleWithRubberBand(
             currentScale = userTransform.scaleX,
             targetScale = targetUserScale,
@@ -616,9 +622,9 @@ class ZoomableState(logger: Logger) {
                 "contentOriginSize=${contentOriginSize.toShortString()}, " +
                 "contentScale=${contentScale.name}, " +
                 "contentAlignment=${contentAlignment.name}, " +
-                "minScale=${minUserScale.format(4)}, " +
-                "mediumScale=${mediumUserScale.format(4)}, " +
-                "maxScale=${maxUserScale.format(4)}, " +
+                "minScale=${minScale.format(4)}, " +
+                "mediumScale=${mediumScale.format(4)}, " +
+                "maxScale=${maxScale.format(4)}, " +
                 "userTransform=${userTransform.toShortString()}" +
                 ")"
 }

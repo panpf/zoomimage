@@ -42,30 +42,30 @@ fun ZoomImageTool(
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
     val zoomIn = remember {
-        derivedStateOf { zoomableState.getNextStepUserScale() > zoomableState.minUserScale }
+        derivedStateOf { zoomableState.getNextStepScale() > zoomableState.minScale }
     }
     val info = remember(
-        zoomableState.minUserScale,
-        zoomableState.mediumUserScale,
-        zoomableState.maxUserScale,
+        zoomableState.minScale,
+        zoomableState.mediumScale,
+        zoomableState.maxScale,
         zoomableState.userTransform,
-        zoomableState.displayTransform,
+        zoomableState.transform,
         zoomableState.baseTransform,
         zoomableState.contentVisibleRect
     ) {
         val scales = floatArrayOf(
-            zoomableState.minUserScale,
-            zoomableState.mediumUserScale,
-            zoomableState.maxUserScale
+            zoomableState.minScale,
+            zoomableState.mediumScale,
+            zoomableState.maxScale
         ).joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
-        val transform = zoomableState.userTransform
-        val displayTransform = zoomableState.displayTransform
+        val transform = zoomableState.transform
+        val userTransform = zoomableState.userTransform
         val baseTransform = zoomableState.baseTransform
+        val userScaleFormatted = userTransform.scaleX.format(2)
         val scaleFormatted = transform.scaleX.format(2)
-        val displayScaleFormatted = displayTransform.scaleX.format(2)
         val baseScaleFormatted = baseTransform.scaleX.format(2)
         """
-            scale: $scaleFormatted($displayScaleFormatted/${baseScaleFormatted}) in $scales
+            scale: $scaleFormatted(${baseScaleFormatted}*${userScaleFormatted}) in $scales
             offset: ${transform.offset.toShortString()}; edge=${zoomableState.scrollEdge.toShortString()}
             visible: ${zoomableState.contentVisibleRect.toShortString()}
         """.trimIndent()
@@ -92,7 +92,7 @@ fun ZoomImageTool(
                 .background(colors.tertiary.copy(alpha = 0.7f), RoundedCornerShape(50)),
             horizontalArrangement = Arrangement.End
         ) {
-            IconButton(onClick = { coroutineScope.launch { zoomableState.switchUserScale(animated = true) } }) {
+            IconButton(onClick = { coroutineScope.launch { zoomableState.switchScale(animated = true) } }) {
                 val icon = if (zoomIn.value)
                     R.drawable.ic_zoom_in to "zoom in" else R.drawable.ic_zoom_out to "zoom out"
                 Icon(
