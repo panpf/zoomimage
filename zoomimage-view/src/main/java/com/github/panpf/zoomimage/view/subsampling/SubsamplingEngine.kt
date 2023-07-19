@@ -58,7 +58,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     private var lastResetTileDecoderJob: Job? = null
     private var lastDisplayScale: Float? = null
     private var lastDisplayMinScale: Float? = null
-    private var lastDrawableVisibleRect: Rect? = null
+    private var lastContentVisibleRect: Rect? = null
     private var onTileChangeListenerList: MutableSet<OnTileChangeListener>? = null
     private var onReadyChangeListenerList: MutableSet<OnReadyChangeListener>? = null
     private var imageSource: ImageSource? = null
@@ -241,7 +241,8 @@ class SubsamplingEngine constructor(logger: Logger) {
         caller: String,
     ) {
         this.lastDisplayScale = displayScale
-        this.lastDrawableVisibleRect = contentVisibleRect
+        this.lastDisplayMinScale = displayMinScale
+        this.lastContentVisibleRect = contentVisibleRect
         val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
         val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
@@ -419,12 +420,12 @@ class SubsamplingEngine constructor(logger: Logger) {
     private fun refreshTiles(@Suppress("SameParameterValue") caller: String) {
         val displayScale = lastDisplayScale
         val lastDisplayMinScale = lastDisplayMinScale
-        val drawableVisibleRect = lastDrawableVisibleRect
-        if (displayScale != null && lastDisplayMinScale != null && drawableVisibleRect != null) {
+        val contentVisibleRect = lastContentVisibleRect
+        if (displayScale != null && lastDisplayMinScale != null && contentVisibleRect != null) {
             refreshTiles(
                 displayScale = displayScale,
                 displayMinScale = lastDisplayMinScale,
-                contentVisibleRect = drawableVisibleRect,
+                contentVisibleRect = contentVisibleRect,
                 caller = caller
             )
         }

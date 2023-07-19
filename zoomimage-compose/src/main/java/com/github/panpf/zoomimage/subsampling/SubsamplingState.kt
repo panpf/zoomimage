@@ -80,9 +80,8 @@ fun BindZoomableStateAndSubsamplingState(
     val refreshTiles: (caller: String) -> Unit = { caller ->
         if (!zoomableState.scaling && zoomableState.displayTransform.rotation.roundToInt() % 90 == 0) {
             subsamplingState.refreshTiles(
-                transform = zoomableState.userTransform,
-                displayTransform = zoomableState.displayTransform,
-                minScale = zoomableState.minUserScale,
+                displayScale = zoomableState.displayTransform.scaleX,
+                displayMinScale = zoomableState.minUserScale * zoomableState.baseTransform.scaleX,
                 contentVisibleRect = zoomableState.contentVisibleRect,
                 caller = caller
             )
@@ -122,6 +121,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
+    private var lastDisplayScale: Float? = null
+    private var lastDisplayMinScale: Float? = null
+    private var lastContentVisibleRect: IntRect? = null
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -132,6 +134,21 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var showTileBounds: Boolean by mutableStateOf(false)
     var tileBitmapPool: TileBitmapPool? = null
     var tileMemoryCache: TileMemoryCache? = null
+    var paused = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (ready) {
+                    if (value) {
+                        imageSource?.run { logger.d { "pause. '$key'" } }
+                        tileManager?.clean("paused")
+                    } else {
+                        imageSource?.run { logger.d { "resume. '$key'" } }
+                        refreshTiles("resume")
+                    }
+                }
+            }
+        }
 
     var ready by mutableStateOf(false)
         private set
@@ -273,20 +290,21 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     }
 
     fun refreshTiles(
-        transform: Transform,
-        displayTransform: Transform,
-        minScale: Float,
+        displayScale: Float,
+        displayMinScale: Float,
         contentVisibleRect: IntRect,
         caller: String,
     ) {
+        this.lastDisplayScale = displayScale
+        this.lastDisplayMinScale = displayMinScale
+        this.lastContentVisibleRect = contentVisibleRect
         val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
-        // todo 支持 paused
-//        if (paused) {
-//            logger.d { "refreshTiles. interrupted. paused. '${imageSource.key}'" }
-//            return
-//        }
+        if (paused) {
+            logger.d { "refreshTiles. $caller. interrupted. paused. '${imageSource.key}'" }
+            return
+        }
         if (contentVisibleRect.isEmpty) {
             logger.d {
                 "refreshTiles. $caller. interrupted. contentVisibleRect is empty. " +
@@ -295,7 +313,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             tileManager.clean("refreshTiles:contentVisibleRectEmpty")
             return
         }
-        if (transform.scaleX.format(2) <= minScale.format(2)) {
+        if (displayScale.format(2) <= displayMinScale.format(2)) {
             logger.d { "refreshTiles. $caller. interrupted. Reach minScale. '${imageSource.key}'" }
             tileManager.clean("refreshTiles:reachMinScale")
             return
@@ -303,7 +321,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         tileManager.refreshTiles(
             contentSize = contentSize.toCompatIntSize(),
             contentVisibleRect = contentVisibleRect.toCompatIntRect(),
-            scale = displayTransform.scaleX,
+            scale = displayScale,
             caller = caller
         )
     }
@@ -392,5 +410,19 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private fun destroy(caller: String) {
         cleanTileManager("destroy:$caller")
         cleanTileDecoder("destroy:$caller")
+    }
+
+    private fun refreshTiles(@Suppress("SameParameterValue") caller: String) {
+        val displayScale = lastDisplayScale
+        val lastDisplayMinScale = lastDisplayMinScale
+        val drawableVisibleRect = lastContentVisibleRect
+        if (displayScale != null && lastDisplayMinScale != null && drawableVisibleRect != null) {
+            refreshTiles(
+                displayScale = displayScale,
+                displayMinScale = lastDisplayMinScale,
+                contentVisibleRect = drawableVisibleRect,
+                caller = caller
+            )
+        }
     }
 }
