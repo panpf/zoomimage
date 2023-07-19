@@ -43,15 +43,12 @@ class TileDecoder constructor(
     private val tileBitmapPool: TileBitmapPool?,
     private val imageInfo: ImageInfo,
 ) {
-    private val logger: Logger = logger.newLogger(module = "SubsamplingTileDecoder")
+
+    private val logger = logger.newLogger(module = "SubsamplingTileDecoder")
+    private var destroyed = false
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
-    private val exifOrientationHelper: ExifOrientationHelper =
-        ExifOrientationHelper(imageInfo.exifOrientation)
-    var destroyed: Boolean = false
-        private set
-    private val addedImageSize: IntSizeCompat by lazy {
-        exifOrientationHelper.addToSize(imageInfo.size)
-    }
+    private val exifOrientationHelper = ExifOrientationHelper(imageInfo.exifOrientation)
+    private val addedImageSize = exifOrientationHelper.addToSize(imageInfo.size)
 
     @WorkerThread
     fun decode(tile: Tile): Bitmap? {

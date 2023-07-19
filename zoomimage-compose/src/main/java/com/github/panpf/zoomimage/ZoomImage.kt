@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -27,8 +28,9 @@ fun ZoomImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    zoomableState: ZoomableState = rememberZoomableState(),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(),
+    logger: Logger = rememberLogger(),
+    zoomableState: ZoomableState = rememberZoomableState(logger),
+    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -71,3 +73,9 @@ fun ZoomImage(
         colorFilter = colorFilter
     )
 }
+
+@Composable
+fun rememberLogger(tag: String = "ZoomImage", level: Int = Logger.INFO): Logger =
+    remember {
+        Logger(tag = tag).apply { this.level = level }
+    }

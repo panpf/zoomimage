@@ -14,9 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.compose.ScrollBar
 import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
+import com.github.panpf.zoomimage.rememberLogger
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
@@ -58,15 +60,16 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
     }
     val readMode =
         if (readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
+    val logger = rememberLogger(level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO)
     val zoomableState = rememberZoomableState(
+        logger = logger,
         threeStepScale = threeStepScale,
         rubberBandScale = rubberBandScale,
         animationSpec = zoomAnimationSpec.value,
         readMode = readMode,
-        debugMode = BuildConfig.DEBUG
     )
     val infoDialogState = rememberZoomImageInfoDialogState()
-    val subsamplingState = rememberSubsamplingState()
+    val subsamplingState = rememberSubsamplingState(logger)
     Box(
         modifier = Modifier
             .fillMaxSize()

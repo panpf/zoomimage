@@ -40,8 +40,9 @@ fun bindZoomAndSubsampling(
     }
 
     subsamplingEngine.addOnReadyChangeListener {
-        zoomEngine.imageSize = if (subsamplingEngine.ready) {
-            subsamplingEngine.imageInfo?.size ?: IntSizeCompat.Zero
+        val imageInfo = subsamplingEngine.imageInfo
+        zoomEngine.imageSize = if (subsamplingEngine.ready && imageInfo != null) {
+            imageInfo.size
         } else {
             IntSizeCompat.Zero
         }

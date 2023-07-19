@@ -36,7 +36,7 @@ open class ZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
-    val logger = Logger(tag = "ZoomImageView")
+    open val logger = Logger(tag = "ZoomImageView")
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
     @Suppress("PropertyName", "MemberVisibilityCanBePrivate")

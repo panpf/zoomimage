@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage
 
-import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector
 import androidx.compose.animation.core.VectorConverter
@@ -11,14 +10,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.mapSaver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
@@ -68,22 +64,19 @@ import kotlin.math.roundToInt
 
 @Composable
 fun rememberZoomableState(
+    logger: Logger,
     defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE,
     threeStepScale: Boolean = false,
     rubberBandScale: Boolean = true,
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
     readMode: ReadMode? = null,
-    debugMode: Boolean = false,
 ): ZoomableState {
-    val zoomableState = rememberSaveable(saver = ZoomableState.Saver) {
-        ZoomableState()
-    }
+    val zoomableState = remember { ZoomableState(logger) }
     zoomableState.defaultMediumScaleMultiple = defaultMediumScaleMultiple
     zoomableState.threeStepScale = threeStepScale
     zoomableState.rubberBandScale = rubberBandScale
     zoomableState.animationSpec = animationSpec
     zoomableState.readMode = readMode
-    zoomableState.debugMode = debugMode
     LaunchedEffect(
         zoomableState.containerSize,
         zoomableState.contentSize,
@@ -101,15 +94,10 @@ fun rememberZoomableState(
     return zoomableState
 }
 
-class ZoomableState(
-    @FloatRange(from = 0.0) initialScale: Float = 1f,
-    @FloatRange(from = 0.0) initialTranslateX: Float = 0f,
-    @FloatRange(from = 0.0) initialTranslateY: Float = 0f,
-    @FloatRange(from = 0.0) initialRotation: Float = 0f,
-) {
+class ZoomableState(logger: Logger) {
     private var lastAnimatable: Animatable<*, *>? = null
 
-    val logger: Logger = Logger(tag = "ZoomImage", module = "ZoomableState")
+    private val logger: Logger = logger.newLogger(module = "ZoomableState")
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -120,12 +108,6 @@ class ZoomableState(
     var rubberBandScale: Boolean = true
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
     var readMode: ReadMode? = null
-    var debugMode: Boolean = false
-        set(value) {
-            if (field == value) return
-            field = value
-            logger.level = if (value) Logger.DEBUG else Logger.INFO
-        }
     var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
 
     var minUserScale: Float by mutableStateOf(1f)
@@ -135,14 +117,9 @@ class ZoomableState(
     var maxUserScale: Float by mutableStateOf(1f)
         private set
 
+    // todo support rotation
     // todo transform 和 displayTransform 表达的意思要换一下
-    var userTransform: Transform by mutableStateOf(   // todo support rotation
-        Transform(
-            scale = ScaleFactor(scaleX = initialScale, scaleY = initialScale),
-            offset = Offset(x = initialTranslateX, y = initialTranslateY),
-            rotation = initialRotation,
-        )
-    )
+    var userTransform: Transform by mutableStateOf(Transform.Origin)
         private set
     var baseTransform: Transform by mutableStateOf(Transform.Origin)
         private set
@@ -199,10 +176,6 @@ class ZoomableState(
             contentInContainerVisibleRect = contentInContainerVisibleRect.toCompatIntRect(),
             contentVisibleRect = contentVisibleRect.toCompatIntRect(),
         )
-    }
-
-    init {
-        logger.level = if (debugMode) Logger.DEBUG else Logger.INFO
     }
 
     internal suspend fun reset() {
@@ -626,29 +599,4 @@ class ZoomableState(
                 "maxScale=${maxUserScale.format(4)}, " +
                 "userTransform=${userTransform.toShortString()}" +
                 ")"
-
-    companion object {
-
-        /**
-         * The default [Saver] implementation for [ZoomableState].
-         */
-        val Saver: Saver<ZoomableState, *> = mapSaver(
-            save = {
-                mapOf(
-                    "userScale" to it.userTransform.scaleX,
-                    "userOffsetX" to it.userTransform.offset.x,
-                    "userOffsetY" to it.userTransform.offset.y,
-                    "rotation" to it.userTransform.rotation,
-                )
-            },
-            restore = {
-                ZoomableState(
-                    initialScale = it["userScale"] as Float,
-                    initialTranslateX = it["userOffsetX"] as Float,
-                    initialTranslateY = it["userOffsetY"] as Float,
-                    initialRotation = it["rotation"] as Float,
-                )
-            }
-        )
-    }
 }

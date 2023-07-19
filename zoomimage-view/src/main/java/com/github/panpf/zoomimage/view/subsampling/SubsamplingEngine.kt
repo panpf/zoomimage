@@ -80,15 +80,8 @@ class SubsamplingEngine constructor(logger: Logger) {
             }
         }
 
-    var ignoreExifOrientation: Boolean =
-        false  // ignoreExifOrientation 的改变的同时 drawableSize 也会改变，所以这里不必重置
-
-    //        set(value) {
-//            if (field != value) {
-//                field = value
-//                resetTileDecoder("ignoreExifOrientationChanged")
-//            }
-//        }
+    // When ignoreExifOrientation changes, usually contentSize also changes, so no processing is done here
+    var ignoreExifOrientation: Boolean = false
     var tileMemoryCache: TileMemoryCache? = null
         set(value) {
             if (field != value) {
@@ -165,17 +158,17 @@ class SubsamplingEngine constructor(logger: Logger) {
         cleanTileDecoder("$caller:resetTileDecoder")
 
         val imageSource = imageSource ?: return
-        val drawableSize = contentSize.takeIf { !it.isEmpty() } ?: return
+        val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
 
         lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
             val imageInfo = imageSource.readImageInfo(ignoreExifOrientation)
             this@SubsamplingEngine.imageInfo = imageInfo
             val result =
-                imageInfo?.let { canUseSubsampling(it, drawableSize) } ?: -10
+                imageInfo?.let { canUseSubsampling(it, contentSize) } ?: -10
             if (imageInfo != null && result >= 0) {
                 logger.d {
                     "resetTileDecoder success. $caller. " +
-                            "drawableSize=${drawableSize.toShortString()}, " +
+                            "contentSize=${contentSize.toShortString()}, " +
                             "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo=${imageInfo.toShortString()}. " +
                             "'${imageSource.key}'"
@@ -189,15 +182,15 @@ class SubsamplingEngine constructor(logger: Logger) {
                 resetTileManager(caller)
             } else {
                 val cause = when (result) {
-                    -1 -> "The Drawable size is greater than or equal to the original image"
-                    -2 -> "The drawable aspect ratio is inconsistent with the original image"
+                    -1 -> "The content size is greater than or equal to the original image"
+                    -2 -> "The content aspect ratio is different with the original image"
                     -3 -> "Image type not support subsampling"
                     -10 -> "Can't decode image bounds or exif orientation"
                     else -> "Unknown"
                 }
                 logger.d {
                     "resetTileDecoder failed. $caller. $cause. " +
-                            "drawableSize: ${drawableSize.toShortString()}, " +
+                            "contentSize: ${contentSize.toShortString()}, " +
                             "imageInfo: ${imageInfo?.toShortString()}. " +
                             "'${imageSource.key}'"
                 }
@@ -212,13 +205,13 @@ class SubsamplingEngine constructor(logger: Logger) {
         val imageSource = imageSource ?: return
         val tileDecoder = tileDecoder ?: return
         val imageInfo = imageInfo ?: return
-        val viewSize = containerSize.takeIf { !it.isEmpty() } ?: return
+        val containerSize = containerSize.takeIf { !it.isEmpty() } ?: return
 
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
             imageSource = imageSource,
-            viewSize = viewSize,
+            containerSize = containerSize,
             tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
             tileMemoryCache = if (disableMemoryCache) null else tileMemoryCache,
             imageInfo = imageInfo,
@@ -230,7 +223,7 @@ class SubsamplingEngine constructor(logger: Logger) {
             val tileMapInfoList = tileMap.keys.sortedDescending()
                 .map { "${it}:${tileMap[it]?.size}" }
             "resetTileManager success. $caller. " +
-                    "viewSize=${viewSize.toShortString()}, " +
+                    "containerSize=${containerSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "tileMaxSize=${tileMaxSize.toShortString()}, " +
                     "tileMap=$tileMapInfoList, " +
@@ -251,7 +244,7 @@ class SubsamplingEngine constructor(logger: Logger) {
         this.lastDrawableVisibleRect = contentVisibleRect
         val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
-        val drawableSize = contentSize.takeIf { !it.isEmpty() } ?: return
+        val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
         if (paused) {
             logger.d { "refreshTiles. $caller. interrupted. paused. '${imageSource.key}'" }
             return
@@ -266,11 +259,11 @@ class SubsamplingEngine constructor(logger: Logger) {
         }
         if (displayScale.format(2) <= displayMinScale.format(2)) {
             logger.d { "refreshTiles. $caller. interrupted. Reach minScale. '${imageSource.key}'" }
-            tileManager.clean("refreshTiles:minScale")
+            tileManager.clean("refreshTiles:reachMinScale")
             return
         }
         tileManager.refreshTiles(
-            contentSize = drawableSize,
+            contentSize = contentSize,
             contentVisibleRect = contentVisibleRect.toIntRectCompat(),
             scale = displayScale,
             caller = caller
@@ -279,19 +272,19 @@ class SubsamplingEngine constructor(logger: Logger) {
 
     fun drawTiles(canvas: Canvas, displayMatrix: Matrix) {
         val imageSource = imageSource ?: return
-        val tileManager = tileManager ?: return
-        val drawableSize = contentSize.takeIf { !it.isEmpty() } ?: return
         val imageInfo = imageInfo ?: return
-        val tileList = tileManager.tileList?.takeIf { it.isNotEmpty() } ?: return
-        val widthScale = imageInfo.width / drawableSize.width.toFloat()
-        val heightScale = imageInfo.height / drawableSize.height.toFloat()
+        val tileList = tileList?.takeIf { it.isNotEmpty() } ?: return
+        val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
+        val imageLoadRect = imageLoadRect.takeIf { !it.isEmpty } ?: return
+        val widthScale = imageInfo.width / contentSize.width.toFloat()
+        val heightScale = imageInfo.height / contentSize.height.toFloat()
         var insideLoadCount = 0
         var outsideLoadCount = 0
         var realDrawCount = 0
         canvas.withSave {
             canvas.concat(displayMatrix)
             tileList.forEach { tile ->
-                if (tile.srcRect.overlaps(tileManager.imageLoadRect)) {
+                if (tile.srcRect.overlaps(imageLoadRect)) {
                     insideLoadCount++
                     val tileBitmap = tile.bitmap
                     val tileDrawDstRect = reuseRect1.apply {
@@ -323,16 +316,17 @@ class SubsamplingEngine constructor(logger: Logger) {
                         }
                         val tileBoundsPaint = getTileBoundsPaint()
                         tileBoundsPaint.color = ColorUtils.setAlphaComponent(boundsColor, 100)
-                        val strokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
+                        val boundsStrokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
                         val tileBoundsRect = reuseRect2.apply {
                             set(
-                                /* left = */ floor(tileDrawDstRect.left + strokeHalfWidth).toInt(),
+                                /* left = */
+                                floor(tileDrawDstRect.left + boundsStrokeHalfWidth).toInt(),
                                 /* top = */
-                                floor(tileDrawDstRect.top + strokeHalfWidth).toInt(),
+                                floor(tileDrawDstRect.top + boundsStrokeHalfWidth).toInt(),
                                 /* right = */
-                                ceil(tileDrawDstRect.right - strokeHalfWidth).toInt(),
+                                ceil(tileDrawDstRect.right - boundsStrokeHalfWidth).toInt(),
                                 /* bottom = */
-                                ceil(tileDrawDstRect.bottom - strokeHalfWidth).toInt()
+                                ceil(tileDrawDstRect.bottom - boundsStrokeHalfWidth).toInt()
                             )
                         }
                         canvas.drawRect(/* r = */ tileBoundsRect, /* paint = */ tileBoundsPaint)

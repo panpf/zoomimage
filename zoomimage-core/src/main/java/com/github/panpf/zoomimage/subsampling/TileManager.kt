@@ -40,7 +40,7 @@ class TileManager constructor(
     private val tileMemoryCache: TileMemoryCache?,
     private val imageSource: ImageSource,
     private val imageInfo: ImageInfo,
-    viewSize: IntSizeCompat,
+    containerSize: IntSizeCompat,
     private val onTileChanged: () -> Unit,
 ) {
     private val logger: Logger = logger.newLogger(module = "SubsamplingTileManager")
@@ -62,7 +62,7 @@ class TileManager constructor(
         get() = lastTileList
 
     init {
-        tileMaxSize = IntSizeCompat(viewSize.width / 2, viewSize.height / 2)
+        tileMaxSize = IntSizeCompat(containerSize.width / 2, containerSize.height / 2)
         tileMap = initializeTileMap(imageInfo.size, tileMaxSize)
     }
 
@@ -201,7 +201,7 @@ class TileManager constructor(
             logger.d {
                 "loadTile. successful. fromMemory. $tile. '${imageSource.key}'"
             }
-            onTileChanged()
+            notifyTileChanged()
             return true
         }
 
@@ -225,7 +225,7 @@ class TileManager constructor(
                         logger.d {
                             "loadTile. successful. $tile. '${imageSource.key}'"
                         }
-                        onTileChanged()
+                        notifyTileChanged()
                     }
                 }
 
@@ -270,7 +270,7 @@ class TileManager constructor(
             }
             tile.countBitmap = null
             if (notifyTileChanged) {
-                onTileChanged()
+                notifyTileChanged()
             }
         }
         return recyclable
@@ -308,8 +308,12 @@ class TileManager constructor(
             }
         }
         if (freeCount > 0) {
-            onTileChanged()
+            notifyTileChanged()
         }
         return freeCount
+    }
+
+    private fun notifyTileChanged() {
+        onTileChanged()
     }
 }

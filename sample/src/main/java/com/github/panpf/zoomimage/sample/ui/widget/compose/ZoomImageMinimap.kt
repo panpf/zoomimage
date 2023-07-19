@@ -57,6 +57,7 @@ fun ZoomImageMinimap(
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState,
     alignment: Alignment = Alignment.BottomStart,
+    ignoreExifOrientation: Boolean = false,
 ) {
     val contentSize = zoomableState.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
     val coroutineScope = rememberCoroutineScope()
@@ -72,6 +73,7 @@ fun ZoomImageMinimap(
             AsyncImage(
                 request = DisplayRequest(LocalContext.current, sketchImageUri) {
                     crossfade()
+                    ignoreExifOrientation(ignoreExifOrientation)
                 },
                 contentDescription = contentDescription ?: "Visible Rect",
                 modifier = Modifier

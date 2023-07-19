@@ -61,7 +61,7 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
             pageCount = pagerItems.size,
             state = pagerState,
             userScrollEnabled = true,
-            beyondBoundsPageCount = 1,
+            beyondBoundsPageCount = 0,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)

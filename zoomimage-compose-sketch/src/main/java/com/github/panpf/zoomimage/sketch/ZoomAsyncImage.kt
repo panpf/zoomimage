@@ -21,8 +21,10 @@ import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.compose.ScrollBar
+import com.github.panpf.zoomimage.rememberLogger
 import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.subsampling.SubsamplingState
@@ -32,6 +34,7 @@ import com.github.panpf.zoomimage.zoomScrollBar
 import com.github.panpf.zoomimage.zoomable
 import kotlin.math.roundToInt
 
+// todo rename to AsyncZoomImage
 @Composable
 @NonRestartableComposable
 fun ZoomAsyncImage(
@@ -49,8 +52,9 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomableState: ZoomableState = rememberZoomableState(),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(),
+    logger: Logger = rememberLogger(),
+    zoomableState: ZoomableState = rememberZoomableState(logger),
+    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -65,6 +69,7 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    logger = logger,
     zoomableState = zoomableState,
     subsamplingState = subsamplingState,
     scrollBar = scrollBar,
@@ -89,8 +94,9 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomableState: ZoomableState = rememberZoomableState(),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(),
+    logger: Logger = rememberLogger(),
+    zoomableState: ZoomableState = rememberZoomableState(logger),
+    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -105,6 +111,7 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    logger = logger,
     zoomableState = zoomableState,
     subsamplingState = subsamplingState,
     scrollBar = scrollBar,
@@ -125,8 +132,9 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomableState: ZoomableState = rememberZoomableState(),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(),
+    logger: Logger = rememberLogger(),
+    zoomableState: ZoomableState = rememberZoomableState(logger),
+    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -141,6 +149,7 @@ fun ZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
+    logger = logger,
     zoomableState = zoomableState,
     subsamplingState = subsamplingState,
     scrollBar = scrollBar,
@@ -160,8 +169,9 @@ fun ZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomableState: ZoomableState = rememberZoomableState(),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(),
+    logger: Logger = rememberLogger(),
+    zoomableState: ZoomableState = rememberZoomableState(logger),
+    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBar: ScrollBar? = ScrollBar.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
