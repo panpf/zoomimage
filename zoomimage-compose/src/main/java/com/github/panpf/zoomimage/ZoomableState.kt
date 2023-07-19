@@ -58,6 +58,7 @@ import com.github.panpf.zoomimage.core.internal.computeScrollEdge
 import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.toShortString
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -95,7 +96,8 @@ fun rememberZoomableState(
 }
 
 class ZoomableState(logger: Logger) {
-    private var lastAnimatable: Animatable<*, *>? = null
+    private var lastScaleAnimatable: Animatable<*, *>? = null
+    private var lastFlingAnimatable: Animatable<*, *>? = null
 
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
 
@@ -126,6 +128,7 @@ class ZoomableState(logger: Logger) {
     val displayTransform: Transform by derivedStateOf {
         baseTransform.concat(userTransform)
     }
+    var scaling: Boolean by mutableStateOf(false)
 
     val userOffsetBounds: IntRect by derivedStateOf {
         computeUserOffsetBounds(
@@ -179,7 +182,7 @@ class ZoomableState(logger: Logger) {
     }
 
     internal suspend fun reset() {
-        stopAnimation("reset")
+        stopAllAnimation("reset")
 
         val contentSize = contentSize
         val contentOriginSize = contentOriginSize
@@ -265,7 +268,7 @@ class ZoomableState(logger: Logger) {
         animated: Boolean = false,
         rubberBandScale: Boolean = false,
     ) {
-        stopAnimation("scale")
+        stopAllAnimation("scale")
 
         val limitedTargetUserScale = if (rubberBandScale && this@ZoomableState.rubberBandScale) {
             limitUserScaleWithRubberBand(targetUserScale)
@@ -309,7 +312,7 @@ class ZoomableState(logger: Logger) {
     }
 
     suspend fun offset(targetUserOffset: Offset, animated: Boolean = false) {
-        stopAnimation("offset")
+        stopAllAnimation("offset")
 
         val currentUserTransform = userTransform
         val currentUserScale = currentUserTransform.scaleX
@@ -339,7 +342,7 @@ class ZoomableState(logger: Logger) {
         targetUserScale: Float = userTransform.scaleX,
         animated: Boolean = false,
     ) {
-        stopAnimation("location")
+        stopAllAnimation("location")
 
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
@@ -396,7 +399,7 @@ class ZoomableState(logger: Logger) {
     }
 
     suspend fun fling(velocity: Velocity, density: Density) {
-        stopAnimation("fling")
+        stopAllAnimation("fling")
 
         val currentUserTransform = userTransform
         val startUserOffset = currentUserTransform.offset
@@ -404,7 +407,7 @@ class ZoomableState(logger: Logger) {
             initialValue = startUserOffset,
             typeConverter = Offset.VectorConverter,
         )
-        this.lastAnimatable = flingAnimatable
+        this.lastFlingAnimatable = flingAnimatable
         coroutineScope {
             launch {
                 val initialVelocity = Offset.VectorConverter
@@ -472,11 +475,18 @@ class ZoomableState(logger: Logger) {
         return calculateNextStepScale(stepScales, userTransform.scaleX)
     }
 
-    suspend fun stopAnimation(caller: String) {
-        val lastAnimatable = lastAnimatable
-        if (lastAnimatable?.isRunning == true) {
-            lastAnimatable.stop()
-            logger.d { "stopAnimation:$caller" }
+    suspend fun stopAllAnimation(caller: String) {
+        val lastScaleAnimatable = lastScaleAnimatable
+        if (lastScaleAnimatable?.isRunning == true) {
+            lastScaleAnimatable.stop()
+            scaling = false
+            logger.d { "stopScaleAnimation:$caller" }
+        }
+
+        val lastFlingAnimatable = lastFlingAnimatable
+        if (lastFlingAnimatable?.isRunning == true) {
+            lastFlingAnimatable.stop()
+            logger.d { "stopFlingAnimation:$caller" }
         }
     }
 
@@ -554,31 +564,43 @@ class ZoomableState(logger: Logger) {
         animated: Boolean,
         caller: String
     ) {
-        stopAnimation(caller)
+        stopAllAnimation(caller)
 
         if (animated) {
-            val currentTransform = userTransform
+            val currentUserTransform = userTransform
+            val scaleChange = currentUserTransform.scale != targetUserTransform.scale
             val updateAnimatable = Animatable(0f)
-            this.lastAnimatable = updateAnimatable
+            this.lastScaleAnimatable = updateAnimatable
             coroutineScope {
                 launch {
-                    updateAnimatable.animateTo(
-                        targetValue = 1f,
-                        animationSpec = tween(
-                            durationMillis = animationSpec.durationMillis,
-                            easing = animationSpec.easing
-                        ),
-                        initialVelocity = animationSpec.initialVelocity,
-                    ) {
-                        val userTransform = com.github.panpf.zoomimage.compose.lerp(
-                            start = currentTransform,
-                            stop = targetUserTransform,
-                            fraction = value
-                        )
-                        logger.d {
-                            "$caller. animated running. transform=${userTransform.toShortString()}"
+                    if (scaleChange) {
+                        scaling = true
+                    }
+                    try {
+                        updateAnimatable.animateTo(
+                            targetValue = 1f,
+                            animationSpec = tween(
+                                durationMillis = animationSpec.durationMillis,
+                                easing = animationSpec.easing
+                            ),
+                            initialVelocity = animationSpec.initialVelocity,
+                        ) {
+                            val userTransform = com.github.panpf.zoomimage.compose.lerp(
+                                start = currentUserTransform,
+                                stop = targetUserTransform,
+                                fraction = value
+                            )
+                            logger.d {
+                                "$caller. animated running. transform=${userTransform.toShortString()}"
+                            }
+                            this@ZoomableState.userTransform = userTransform
                         }
-                        this@ZoomableState.userTransform = userTransform
+                    } catch (e: CancellationException) {
+                        throw e
+                    } finally {
+                        if (scaleChange) {
+                            scaling = false
+                        }
                     }
                 }
             }

@@ -30,7 +30,7 @@ fun Modifier.zoomable(
         .pointerInput(Unit) {
             detectTapGestures(
                 onPress = {
-                    state.stopAnimation("onPress")
+                    state.stopAllAnimation("onPress")
                 },
                 onDoubleTap = { offset ->
                     coroutineScope.launch {
@@ -72,6 +72,7 @@ fun Modifier.zoomable(
             detectZoomGestures(
                 panZoomLock = true,
                 onGesture = { centroid: Offset, zoomChange: Float, _ ->
+                    state.scaling = true
                     coroutineScope.launch {
                         state.scale(
                             targetUserScale = state.userTransform.scaleX * zoomChange,
@@ -82,6 +83,7 @@ fun Modifier.zoomable(
                     }
                 },
                 onEnd = { centroid ->
+                    state.scaling = false
                     coroutineScope.launch {
                         state.reboundUserScale(centroid = centroid)
                     }

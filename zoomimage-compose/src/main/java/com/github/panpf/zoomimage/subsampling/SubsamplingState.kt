@@ -36,6 +36,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 @Composable
 fun rememberSubsamplingState(
@@ -76,21 +77,18 @@ fun BindZoomableStateAndSubsamplingState(
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState
 ) {
-    LaunchedEffect(subsamplingState.ready) {
-        val imageInfo = subsamplingState.imageInfo
-        zoomableState.contentOriginSize = if (subsamplingState.ready && imageInfo != null) {
-            IntSize(imageInfo.width, imageInfo.height)
-        } else {
-            IntSize.Zero
+    val refreshTiles: (caller: String) -> Unit = { caller ->
+        if (!zoomableState.scaling && zoomableState.displayTransform.rotation.roundToInt() % 90 == 0) {
+            subsamplingState.refreshTiles(
+                transform = zoomableState.userTransform,
+                displayTransform = zoomableState.displayTransform,
+                minScale = zoomableState.minUserScale,
+                contentVisibleRect = zoomableState.contentVisibleRect,
+                caller = caller
+            )
         }
-        subsamplingState.refreshTiles(
-            transform = zoomableState.userTransform,
-            displayTransform = zoomableState.displayTransform,
-            minScale = zoomableState.minUserScale,
-            contentVisibleRect = zoomableState.contentVisibleRect,
-            caller = "imageInfoChanged"
-        )
     }
+
     LaunchedEffect(zoomableState.containerSize) {
         subsamplingState.containerSize = zoomableState.containerSize
         subsamplingState.resetTileManager("containerSizeChanged")
@@ -99,22 +97,20 @@ fun BindZoomableStateAndSubsamplingState(
         subsamplingState.contentSize = zoomableState.contentSize
         subsamplingState.resetTileDecoder("contentSizeChanged")
     }
+    LaunchedEffect(subsamplingState.ready) {
+        val imageInfo = subsamplingState.imageInfo
+        zoomableState.contentOriginSize = if (subsamplingState.ready && imageInfo != null) {
+            IntSize(imageInfo.width, imageInfo.height)
+        } else {
+            IntSize.Zero
+        }
+        refreshTiles("imageInfoChanged")
+    }
     LaunchedEffect(zoomableState.displayTransform) {
-        // todo 支持 scaling
-//        val scaling = zoomEngine.isScaling
-//        if (scaling) {
-//            logger.d {
-//                "refreshTiles. interrupted. scaling. '${imageSource.key}'"
-//            }
-//            return
-//        }
-        subsamplingState.refreshTiles(
-            transform = zoomableState.userTransform,
-            displayTransform = zoomableState.displayTransform,
-            minScale = zoomableState.minUserScale,
-            contentVisibleRect = zoomableState.contentVisibleRect,
-            caller = "displayTransformChanged"
-        )
+        refreshTiles("displayTransformChanged")
+    }
+    LaunchedEffect(zoomableState.scaling) {
+        refreshTiles("scalingChanged")
     }
 }
 
