@@ -28,7 +28,7 @@ internal fun Offset.toShortString(): String =
     if (isSpecified) "${x.format(2)}x${y.format(2)}" else "Unspecified"
 
 internal fun Rect.toShortString(): String =
-    "${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}"
+    "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 
 internal fun ScaleFactor.toShortString(): String = "${scaleX.format(2)}x${scaleY.format(2)}"
 
@@ -36,7 +36,7 @@ internal fun IntSize.toShortString(): String = "${width}x${height}"
 
 internal fun IntOffset.toShortString(): String = "${x}x${y}"
 
-internal fun IntRect.toShortString(): String = "${left}x${top},${right}x${bottom}"
+internal fun IntRect.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
 
 internal fun Size.isAvailable(): Boolean = isSpecified && !isEmpty()

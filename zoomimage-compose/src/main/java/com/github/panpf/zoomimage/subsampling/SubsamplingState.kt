@@ -17,7 +17,6 @@ import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.internal.toCompatIntSize
-import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
@@ -68,7 +67,8 @@ fun BindZoomableStateAndSubsamplingState(
             transform = zoomableState.userTransform,
             displayTransform = zoomableState.displayTransform,
             minScale = zoomableState.minUserScale,
-            contentVisibleRect = zoomableState.contentVisibleRect
+            contentVisibleRect = zoomableState.contentVisibleRect,
+            caller = "imageInfoChanged"
         )
     }
     LaunchedEffect(zoomableState.containerSize, zoomableState.contentSize) {
@@ -81,7 +81,8 @@ fun BindZoomableStateAndSubsamplingState(
             transform = zoomableState.userTransform,
             displayTransform = zoomableState.displayTransform,
             minScale = zoomableState.minUserScale,
-            contentVisibleRect = zoomableState.contentVisibleRect
+            contentVisibleRect = zoomableState.contentVisibleRect,
+            caller = "displayTransformChanged"
         )
     }
     LaunchedEffect(key1 = zoomableState.logger) {
@@ -143,9 +144,9 @@ class SubsamplingState : RememberObserver {
 
     // todo 拆分成 resetTileDecoder, resetTileManager
     fun reset(caller: String) {
-        initJob?.cancel("reset:$caller")
+        initJob?.cancel("$caller:reset")
         initJob = null
-        tileManager?.destroy()
+        tileManager?.clean("$caller:reset")
         tileManager = null
         val imageSource = this.imageSource ?: return
         val viewSize = containerSize.takeIf { it.isNotEmpty() } ?: return
@@ -208,7 +209,8 @@ class SubsamplingState : RememberObserver {
         transform: Transform,
         displayTransform: Transform,
         minScale: Float,
-        contentVisibleRect: IntRect
+        contentVisibleRect: IntRect,
+        caller: String,
     ) {
         val imageSource = imageSource ?: return
         val manager = tileManager ?: return
@@ -244,22 +246,23 @@ class SubsamplingState : RememberObserver {
                 "refreshTiles. interrupted. drawableVisibleRect is empty. " +
                         "contentVisibleRect=${contentVisibleRect.toShortString()}. '${imageSource.key}'"
             }
-            tileManager?.clean()
+            tileManager?.clean("contentVisibleRectEmpty")
             notifyTileChanged()
             return
         }
 
         if (transform.scaleX.format(2) <= minScale.format(2)) {
             logger.d { "refreshTiles. interrupted. minScale. '${imageSource.key}'" }
-            tileManager?.clean()
+            tileManager?.clean("minScale")
             notifyTileChanged()
             return
         }
 
         tileManager?.refreshTiles(
-            drawableSize.toCompatIntSize(),
-            contentVisibleRect.toCompatIntRect(),
-            displayTransform.scale.toCompatScaleFactor()
+            contentSize = drawableSize.toCompatIntSize(),
+            contentVisibleRect = contentVisibleRect.toCompatIntRect(),
+            scale = displayTransform.scaleX,
+            caller = caller
         )
     }
 
@@ -267,8 +270,8 @@ class SubsamplingState : RememberObserver {
     fun clean(caller: String) {
         if (imageInfo == null || imageSource == null) return
         logger.d { "clean. $caller. '${imageSource?.key}'" }
-        initJob?.cancel("destroy")
-        tileManager?.destroy()
+        initJob?.cancel("$caller:clean")
+        tileManager?.clean("$caller:clean")
         tileManager = null
         imageSource = null
         imageInfo = null

@@ -16,25 +16,27 @@ fun bindZoomAndSubsampling(
     zoomEngine: ZoomEngine,
     subsamplingEngine: SubsamplingEngine
 ) {
-    subsamplingEngine.viewSize = zoomEngine.viewSize
+    subsamplingEngine.containerSize = zoomEngine.viewSize
     zoomEngine.addOnViewSizeChangeListener(
         OnViewSizeChangeListenerImpl(zoomEngine, subsamplingEngine)
     )
 
-    subsamplingEngine.drawableSize = zoomEngine.drawableSize
-    zoomEngine.addOnDrawableSizeChangeListener() {
-        subsamplingEngine.drawableSize = zoomEngine.drawableSize
+    subsamplingEngine.contentSize = zoomEngine.drawableSize
+    zoomEngine.addOnDrawableSizeChangeListener {
+        subsamplingEngine.contentSize = zoomEngine.drawableSize
     }
 
     val drawableVisibleRect = Rect()
     zoomEngine.addOnMatrixChangeListener {
-        zoomEngine.getVisibleRect(drawableVisibleRect)
-        subsamplingEngine.refreshTiles(
-            displayScale = zoomEngine.displayScale,
-            rotation = zoomEngine.rotateDegrees,
-            scaling = zoomEngine.isScaling,
-            drawableVisibleRect = drawableVisibleRect
-        )
+        if (!zoomEngine.isScaling && zoomEngine.rotateDegrees % 90 == 0) {
+            zoomEngine.getVisibleRect(drawableVisibleRect)
+            subsamplingEngine.refreshTiles(
+                displayScale = zoomEngine.displayScale.scaleX,
+                displayMinScale = zoomEngine.minScale * zoomEngine.baseScale.scaleX,
+                contentVisibleRect = drawableVisibleRect,
+                caller = "matrixChanged"
+            )
+        }
     }
 
     subsamplingEngine.addOnReadyChangeListener {
@@ -45,7 +47,7 @@ fun bindZoomAndSubsampling(
         }
     }
 
-    subsamplingEngine.addOnTileChangedListener() {
+    subsamplingEngine.addOnTileChangedListener {
         view.invalidate()
     }
 }
@@ -65,7 +67,7 @@ private class OnViewSizeChangeListenerImpl(
         lastDelayJob = scope.launch(Dispatchers.Main) {
             delay(60)
             lastDelayJob = null
-            subsamplingEngine.viewSize = zoomEngine.viewSize
+            subsamplingEngine.containerSize = zoomEngine.viewSize
         }
     }
 }

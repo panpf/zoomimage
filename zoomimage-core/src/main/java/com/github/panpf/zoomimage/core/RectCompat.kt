@@ -298,4 +298,4 @@ fun lerp(start: RectCompat, stop: RectCompat, fraction: Float): RectCompat {
 
 
 fun RectCompat.toShortString(): String =
-    "${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}"
+    "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"

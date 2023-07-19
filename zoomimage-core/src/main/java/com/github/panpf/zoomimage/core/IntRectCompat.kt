@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.core
 
-import android.graphics.Rect
 import com.github.panpf.zoomimage.core.internal.lerp
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -279,7 +278,7 @@ fun lerp(start: IntRectCompat, stop: IntRectCompat, fraction: Float): IntRectCom
 }
 
 
-fun IntRectCompat.toShortString(): String = "${left}x${top},${right}x${bottom}"
+fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
 /**
  * Converts an [IntRectCompat] to a [RectCompat]

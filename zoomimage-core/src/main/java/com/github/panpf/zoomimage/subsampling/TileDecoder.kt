@@ -28,11 +28,11 @@ import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.requiredMainThread
 import com.github.panpf.zoomimage.core.internal.requiredWorkThread
+import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
 import com.github.panpf.zoomimage.subsampling.internal.freeBitmap
 import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
 import com.github.panpf.zoomimage.subsampling.internal.isSrcRectError
-import com.github.panpf.zoomimage.subsampling.internal.logString
 import com.github.panpf.zoomimage.subsampling.internal.setInBitmapForRegion
 import kotlinx.coroutines.runBlocking
 import java.util.LinkedList
@@ -58,9 +58,8 @@ class TileDecoder constructor(
         requiredWorkThread()
         if (destroyed) return null
         return useDecoder { decoder ->
-            decodeRegion(decoder, tile.srcRect, tile.inSampleSize)?.let {
-                applyExifOrientation(it)
-            }
+            decodeRegion(decoder, tile.srcRect, tile.inSampleSize)
+                ?.let { applyExifOrientation(it) }
         }
     }
 
@@ -86,9 +85,6 @@ class TileDecoder constructor(
             imageSize = addedImageSize,
             caller = "tile:decodeRegion"
         )
-        logger.d {
-            "decodeRegion. inBitmap=${decodeOptions.inBitmap?.logString}. '${imageSource.key}'"
-        }
 
         return try {
             regionDecoder.decodeRegion(newSrcRect.toAndroidRect(), decodeOptions)
@@ -109,9 +105,6 @@ class TileDecoder constructor(
                 } else {
                     inBitmap.recycle()
                 }
-                logger.d {
-                    "decodeRegion. freeBitmap. inBitmap error. bitmap=${inBitmap.logString}. '${imageSource.key}'"
-                }
 
                 decodeOptions.inBitmap = null
                 try {
@@ -125,7 +118,11 @@ class TileDecoder constructor(
                 }
             } else if (isSrcRectError(throwable)) {
                 logger.e(throwable) {
-                    "decodeRegion. Bitmap region decode srcRect error. imageSize=$imageSize, srcRect=$newSrcRect, inSampleSize=${decodeOptions.inSampleSize}. '${imageSource.key}'"
+                    "decodeRegion. Bitmap region decode srcRect error. " +
+                            "imageSize=${imageSize.toShortString()}, " +
+                            "srcRect=${newSrcRect.toShortString()}, " +
+                            "inSampleSize=${decodeOptions.inSampleSize}. " +
+                            "'${imageSource.key}'"
                 }
                 null
             } else {
@@ -154,9 +151,6 @@ class TileDecoder constructor(
             } else {
                 bitmap.recycle()
             }
-            logger.d {
-                "applyExifOrientation. freeBitmap. bitmap=${bitmap.logString}. '${imageSource.key}'"
-            }
             newBitmap
         } else {
             bitmap
@@ -164,11 +158,12 @@ class TileDecoder constructor(
     }
 
     @MainThread
-    fun destroy() {
+    fun destroy(caller: String) {
         requiredMainThread()
-
+        if (destroyed) return
+        destroyed = true
+        logger.d { "destroy. $caller. '${imageSource.key}'" }
         synchronized(decoderPool) {
-            destroyed = true
             decoderPool.forEach {
                 it.recycle()
             }

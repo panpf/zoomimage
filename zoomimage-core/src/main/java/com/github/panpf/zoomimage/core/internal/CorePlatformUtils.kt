@@ -18,6 +18,4 @@ internal fun requiredWorkThread() {
 
 internal fun isMainThread() = Looper.myLooper() == Looper.getMainLooper()
 
-fun Bitmap.toShortString(): String {
-    return "${width}x${height},$config)"
-}
+fun Bitmap.toShortString(): String = "(${width}x${height},$config)"
