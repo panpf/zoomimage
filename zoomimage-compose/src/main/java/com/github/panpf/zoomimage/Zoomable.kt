@@ -56,7 +56,7 @@ fun Modifier.zoomable(
                 onDrag = { _, dragAmount ->
                     coroutineScope.launch {
                         state.offset(
-                            targetUserOffset = state.userTransform.offset + dragAmount,
+                            targetOffset = state.transform.offset + dragAmount,
                             animated = false
                         )
                     }

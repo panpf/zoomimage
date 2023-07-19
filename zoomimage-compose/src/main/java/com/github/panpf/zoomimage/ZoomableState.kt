@@ -311,9 +311,10 @@ class ZoomableState(logger: Logger) {
         )
     }
 
-    suspend fun offset(targetUserOffset: Offset, animated: Boolean = false) {
+    suspend fun offset(targetOffset: Offset, animated: Boolean = false) {
         stopAllAnimation("offset")
 
+        val targetUserOffset = targetOffset - baseTransform.offset
         val currentUserTransform = userTransform
         val currentUserScale = currentUserTransform.scaleX
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, currentUserScale)
@@ -323,7 +324,8 @@ class ZoomableState(logger: Logger) {
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
             "offset. " +
-                    "targetOffset=${targetUserOffset.toShortString()}, " +
+                    "targetOffset=${targetOffset.toShortString()}, " +
+                    "targetUserOffset=${targetUserOffset.toShortString()}, " +
                     "animated=${animated}, " +
                     "currentUserScale=${currentUserScale.format(4)}, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddUserOffset}, " +
