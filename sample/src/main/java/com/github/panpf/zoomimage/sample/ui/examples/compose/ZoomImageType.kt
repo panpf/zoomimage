@@ -7,12 +7,14 @@ import com.github.panpf.zoomimage.sample.ui.photoalbum.compose.SketchListImage
 
 enum class ZoomImageType(
     val title: String,
+    val subtitle: String?,
     val drawListContent: @Composable (sketchImageUri: String, modifier: Modifier) -> Unit,
     val drawContent: @Composable (sketchImageUri: String) -> Unit,
     val my: Boolean,
 ) {
     MyZoomImage(
         title = "ZoomImage",
+        subtitle = null,
         drawListContent = { sketchImageUri, modifier ->
             SketchListImage(sketchImageUri, modifier)
         },
@@ -24,6 +26,7 @@ enum class ZoomImageType(
 
     SketchZoomAsyncImage(
         title = "SketchZoomAsyncImage",
+        subtitle = null,
         drawListContent = { sketchImageUri, modifier ->
             SketchListImage(sketchImageUri, modifier)
         },
@@ -33,8 +36,21 @@ enum class ZoomImageType(
         my = true,
     ),
 
+    CoilZoomAsyncImage(
+        title = "CoilZoomAsyncImage",
+        subtitle = null,
+        drawListContent = { sketchImageUri, modifier ->
+            CoilListImage(sketchImageUri, modifier)
+        },
+        drawContent = { sketchImageUri ->
+            CoilZoomAsyncImageSample(sketchImageUri)
+        },
+        my = true,
+    ),
+
     TelephotoZoomableAsyncImage(
         title = "ZoomableAsyncImage",
+        subtitle = "Telephoto",
         drawListContent = { sketchImageUri, modifier ->
             CoilListImage(sketchImageUri, modifier)
         },

@@ -51,7 +51,6 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingAbility?.disableMemoryCache = false
         if (ViewCompat.isAttachedToWindow(this)) {
             resetImageSource()
         }
@@ -75,6 +74,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 logger.d{ "GlideZoomImageView. Can't use Subsampling, request is not complete" }
                 return@post
             }
+            // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache
+            _subsamplingAbility?.setImageSource(null)
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(request)
             _subsamplingAbility?.setImageSource(newImageSource(request))
         }

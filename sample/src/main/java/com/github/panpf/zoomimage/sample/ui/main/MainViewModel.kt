@@ -65,6 +65,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
             Link(
+                title = "CoilZoomAsyncImage（My）",
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
+                    ZoomImageType.CoilZoomAsyncImage.name
+                ),
+                minSdk = 21,
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            ),
+            Link(
                 title = "ZoomableAsyncImage（Telephoto）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
                     ZoomImageType.TelephotoZoomableAsyncImage.name

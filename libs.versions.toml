@@ -94,6 +94,7 @@ mmkv = { module = "com.tencent:mmkv", version.ref = "mmkv" }
 subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 

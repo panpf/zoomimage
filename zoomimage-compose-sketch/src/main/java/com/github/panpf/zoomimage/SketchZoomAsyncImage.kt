@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sketch
+package com.github.panpf.zoomimage
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,12 +24,8 @@ import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
 import com.github.panpf.sketch.sketch
-import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.compose.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
-import com.github.panpf.zoomimage.rememberLogger
-import com.github.panpf.zoomimage.rememberZoomableState
 import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
 import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
 import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
@@ -37,13 +33,11 @@ import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingSta
 import com.github.panpf.zoomimage.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.subsampling.subsampling
-import com.github.panpf.zoomimage.zoomScrollBar
-import com.github.panpf.zoomimage.zoomable
 import kotlin.math.roundToInt
 
 @Composable
 @NonRestartableComposable
-fun ZoomAsyncImage(
+fun SketchZoomAsyncImage(
     imageUri: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
@@ -64,7 +58,7 @@ fun ZoomAsyncImage(
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) = ZoomAsyncImage(
+) = SketchZoomAsyncImage(
     request = DisplayRequest(LocalContext.current, imageUri),
     contentDescription = contentDescription,
     modifier = modifier,
@@ -85,7 +79,7 @@ fun ZoomAsyncImage(
 
 @Composable
 @NonRestartableComposable
-fun ZoomAsyncImage(
+fun SketchZoomAsyncImage(
     request: DisplayRequest,
     contentDescription: String?,
     modifier: Modifier = Modifier,
@@ -106,7 +100,7 @@ fun ZoomAsyncImage(
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) = ZoomAsyncImage(
+) = SketchZoomAsyncImage(
     request = request,
     contentDescription = contentDescription,
     modifier = modifier,
@@ -127,7 +121,7 @@ fun ZoomAsyncImage(
 
 @Composable
 @NonRestartableComposable
-fun ZoomAsyncImage(
+fun SketchZoomAsyncImage(
     imageUri: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
@@ -144,7 +138,7 @@ fun ZoomAsyncImage(
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) = ZoomAsyncImage(
+) = SketchZoomAsyncImage(
     request = DisplayRequest(LocalContext.current, imageUri),
     contentDescription = contentDescription,
     modifier = modifier,
@@ -164,7 +158,7 @@ fun ZoomAsyncImage(
 )
 
 @Composable
-fun ZoomAsyncImage(
+fun SketchZoomAsyncImage(
     request: DisplayRequest,
     contentDescription: String?,
     modifier: Modifier = Modifier,

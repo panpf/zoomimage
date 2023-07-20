@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoomimage.view.coil"
+    namespace = "com.github.panpf.zoomimage.core.coil"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
@@ -39,8 +39,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-core-coil"))
-    api(project(":zoomimage-view"))
+    api(project(":zoomimage-core"))
+    api(libs.coil)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import coil.request.ImageRequest
 import com.github.panpf.sketch.fetch.newResourceUri
-import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.compose.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
 import com.github.panpf.zoomimage.rememberLogger
@@ -27,10 +27,11 @@ import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
 import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
+import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
 
 @Composable
-fun SketchZoomAsyncImageSample(sketchImageUri: String) {
+fun CoilZoomAsyncImageSample(sketchImageUri: String) {
     val context = LocalContext.current
     val prefsService = remember { context.prefsService }
     val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
@@ -70,15 +71,18 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
     )
     val infoDialogState = rememberZoomImageInfoDialogState()
     val subsamplingState = rememberSubsamplingState(logger)
+    val coilData =
+        remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        SketchZoomAsyncImage(
-            request = DisplayRequest(LocalContext.current, sketchImageUri) {
-                crossfade()
-            },
+        CoilZoomAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current).apply {
+                data(coilData)
+                crossfade(true)
+            }.build(),
             contentDescription = "",
             contentScale = contentScale,
             alignment = alignment,
@@ -107,6 +111,6 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
 
 @Preview
 @Composable
-private fun SketchZoomAsyncImageSamplePreview() {
-    SketchZoomAsyncImageSample(newResourceUri(R.drawable.im_placeholder))
+private fun CoilZoomAsyncImageSamplePreview() {
+    CoilZoomAsyncImageSample(newResourceUri(R.drawable.im_placeholder))
 }

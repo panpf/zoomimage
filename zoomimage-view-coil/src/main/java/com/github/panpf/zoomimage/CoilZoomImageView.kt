@@ -25,9 +25,9 @@ import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.SuccessResult
 import coil.util.CoilUtils
+import com.github.panpf.zoomimage.coil.internal.CoilImageSource
+import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.view.coil.internal.CoilImageSource
-import com.github.panpf.zoomimage.view.coil.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.view.coil.internal.getLastChildDrawable
 import com.github.panpf.zoomimage.view.coil.internal.getLifecycle
 import com.github.panpf.zoomimage.view.coil.internal.isCoilGlobalLifecycle
@@ -51,8 +51,6 @@ open class CoilZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingAbility?.disableMemoryCache = false
-        _subsamplingAbility?.setLifecycle(context.getLifecycle())
         if (ViewCompat.isAttachedToWindow(this)) {
             resetImageSource()
         }
@@ -72,6 +70,8 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 logger.d{ "CoilZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
+            // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache
+            _subsamplingAbility?.setImageSource(null)
             _subsamplingAbility?.disableMemoryCache = isDisallowMemoryCache(result)
             _subsamplingAbility?.setLifecycle(result.request.lifecycle
                 .takeIf { !it.isCoilGlobalLifecycle() }

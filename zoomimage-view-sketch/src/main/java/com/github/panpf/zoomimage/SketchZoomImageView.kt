@@ -59,10 +59,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingAbility?.disableMemoryCache = false
-        _subsamplingAbility?.disallowReuseBitmap = false
-        _subsamplingAbility?.ignoreExifOrientation = false
-        _subsamplingAbility?.setLifecycle(context.getLifecycle())
         if (ViewCompat.isAttachedToWindow(this)) {
             resetImageSource()
         }

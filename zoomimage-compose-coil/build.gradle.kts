@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoomimage.view.coil"
+    namespace = "com.github.panpf.zoomimage.compose.coil"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
@@ -17,7 +17,11 @@ android {
     }
     @Suppress("UnstableApiUsage")
     buildFeatures {
+        compose = true
         buildConfig = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
     buildTypes {
         release {
@@ -39,8 +43,12 @@ android {
 }
 
 dependencies {
+    api(project(":zoomimage-compose"))
     api(project(":zoomimage-core-coil"))
-    api(project(":zoomimage-view"))
+    api(libs.coil.compose)
+
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

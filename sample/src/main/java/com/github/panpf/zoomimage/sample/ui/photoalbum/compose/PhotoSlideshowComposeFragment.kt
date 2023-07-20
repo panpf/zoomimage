@@ -45,6 +45,10 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
         return zoomImageType.title
     }
 
+    override fun getSubtitle(): String? {
+        return zoomImageType.subtitle
+    }
+
     @Composable
     override fun RowScope.DrawActions() {
         val context = LocalContext.current

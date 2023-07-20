@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.coil.internal
+package com.github.panpf.zoomimage.coil.internal
 
 import android.graphics.Bitmap
 import coil.ImageLoader
 import coil.memory.MemoryCache
-import com.github.panpf.zoomimage.subsampling.TileBitmap
-import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 
 class CoilTileMemoryCache(private val imageLoader: ImageLoader) : TileMemoryCache {
 

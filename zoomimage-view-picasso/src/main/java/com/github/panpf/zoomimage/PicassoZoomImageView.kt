@@ -82,6 +82,8 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     private fun loadImage(uri: Uri?, callback: Callback?, creator: RequestCreator) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
+                // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache
+                _subsamplingAbility?.setImageSource(null)
                 _subsamplingAbility?.disableMemoryCache =
                     isDisableMemoryCache(creator.memoryPolicy)
                 _subsamplingAbility?.setImageSource(newImageSource(uri))
