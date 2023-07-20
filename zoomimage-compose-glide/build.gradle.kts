@@ -4,21 +4,24 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoomimage.view.glide"
+    namespace = "com.github.panpf.zoomimage.compose.glide"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
-        minSdk = property("minSdk").toString().toInt()
+        minSdk = property("minSdk21").toString().toInt()
 
         buildConfigField("String", "VERSION_NAME", "\"${property("versionName").toString()}\"")
         buildConfigField("int", "VERSION_CODE", property("versionCode").toString())
-        consumerProguardFiles("proguard-rules.pro")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     @Suppress("UnstableApiUsage")
     buildFeatures {
+        compose = true
         buildConfig = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
     buildTypes {
         release {
@@ -40,8 +43,12 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-view"))
+    api(project(":zoomimage-compose"))
     api(project(":zoomimage-core-glide"))
+    api(libs.glide.compose)
+
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

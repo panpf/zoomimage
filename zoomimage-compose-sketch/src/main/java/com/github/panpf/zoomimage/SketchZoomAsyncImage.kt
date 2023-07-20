@@ -1,9 +1,11 @@
 package com.github.panpf.zoomimage
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -18,6 +20,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
@@ -36,6 +39,12 @@ import com.github.panpf.zoomimage.subsampling.subsampling
 import kotlin.math.roundToInt
 
 @Composable
+fun rememberSketchZoomAsyncImageLogger(tag: String = "SketchZoomAsyncImage", level: Int = Logger.INFO): Logger =
+    remember {
+        Logger(tag = tag).apply { this.level = level }
+    }
+
+@Composable
 @NonRestartableComposable
 fun SketchZoomAsyncImage(
     imageUri: String?,
@@ -52,7 +61,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    logger: Logger = rememberLogger(),
+    logger: Logger = rememberSketchZoomAsyncImageLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
@@ -94,7 +103,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    logger: Logger = rememberLogger(),
+    logger: Logger = rememberSketchZoomAsyncImageLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
@@ -132,7 +141,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    logger: Logger = rememberLogger(),
+    logger: Logger = rememberSketchZoomAsyncImageLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
@@ -169,7 +178,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    logger: Logger = rememberLogger(),
+    logger: Logger = rememberSketchZoomAsyncImageLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
@@ -212,36 +221,9 @@ fun SketchZoomAsyncImage(
         contentDescription = contentDescription,
         modifier = modifier1,
         transform = transform,
-        onState = {
-            val painterSize = it.painter?.intrinsicSize?.roundToIntSize()
-            val containerSize = zoomableState.containerSize
-            val newContentSize = when {
-                painterSize != null -> painterSize
-                containerSize.isNotEmpty() -> containerSize
-                else -> IntSize.Zero
-            }
-            if (zoomableState.contentSize != newContentSize) {
-                zoomableState.contentSize = newContentSize
-            }
-
-            when (it) {
-                is AsyncImagePainter.State.Success -> {
-                    // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache or disallowReuseBitmap
-                    subsamplingState.setImageSource(null)
-                    subsamplingState.ignoreExifOrientation = request.ignoreExifOrientation
-                    subsamplingState.disableMemoryCache =
-                        request.memoryCachePolicy != CachePolicy.ENABLED
-                    subsamplingState.disallowReuseBitmap = request.disallowReuseBitmap
-                    val imageSource = SketchImageSource(context, sketch, request.uriString)
-                    subsamplingState.setImageSource(imageSource)
-                }
-
-                else -> {
-                    subsamplingState.setImageSource(null)
-                }
-            }
-
-            onState?.invoke(it)
+        onState = { state ->
+            onState(logger, context, sketch, state, zoomableState, subsamplingState, request)
+            onState?.invoke(state)
         },
         alignment = alignment,
         contentScale = contentScale,
@@ -250,6 +232,51 @@ fun SketchZoomAsyncImage(
         filterQuality = filterQuality
     )
 }
+
+private fun onState(
+    logger: Logger,
+    context: Context,
+    sketch: Sketch,
+    state: AsyncImagePainter.State,
+    zoomableState: ZoomableState,
+    subsamplingState: SubsamplingState,
+    request: DisplayRequest
+) {
+    logger.d("onState. state=${state.name}. uri: ${request.uriString}")
+    val painterSize = state.painter?.intrinsicSize?.roundToIntSize()
+    val containerSize = zoomableState.containerSize
+    val newContentSize = when {
+        painterSize != null -> painterSize
+        containerSize.isNotEmpty() -> containerSize
+        else -> IntSize.Zero
+    }
+    if (zoomableState.contentSize != newContentSize) {
+        zoomableState.contentSize = newContentSize
+    }
+
+    when (state) {
+        is AsyncImagePainter.State.Success -> {
+            subsamplingState.ignoreExifOrientation = request.ignoreExifOrientation
+            subsamplingState.disableMemoryCache =
+                request.memoryCachePolicy != CachePolicy.ENABLED
+            subsamplingState.disallowReuseBitmap = request.disallowReuseBitmap
+            val imageSource = SketchImageSource(context, sketch, request.uriString)
+            subsamplingState.setImageSource(imageSource)
+        }
+
+        else -> {
+            subsamplingState.setImageSource(null)
+        }
+    }
+}
+
+val AsyncImagePainter.State.name: String
+    get() = when (this) {
+        is AsyncImagePainter.State.Loading -> "Loading"
+        is AsyncImagePainter.State.Success -> "Success"
+        is AsyncImagePainter.State.Error -> "Error"
+        is AsyncImagePainter.State.Empty -> "Empty"
+    }
 
 @Stable
 private fun transformOf(
@@ -263,7 +290,7 @@ private fun transformOf(
                 is AsyncImagePainter.State.Loading -> {
                     if (placeholder != null) state.copy(painter = placeholder) else state
                 }
-//                is State.Error -> if (state.result.throwable is NullRequestDataException) {
+
                 is AsyncImagePainter.State.Error -> if (state.result.throwable is UriInvalidException) {
                     if (uriEmpty != null) state.copy(painter = uriEmpty) else state
                 } else {

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoomimage.view.glide"
+    namespace = "com.github.panpf.zoomimage.core.glide"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
@@ -40,8 +40,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-view"))
-    api(project(":zoomimage-core-glide"))
+    api(project(":zoomimage-core"))
+    api(libs.glide)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

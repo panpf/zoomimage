@@ -78,8 +78,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 logger.d{ "SketchZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
-            // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache or disallowReuseBitmap
-            _subsamplingAbility?.setImageSource(null)
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(result.drawable)
             _subsamplingAbility?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
             _subsamplingAbility?.ignoreExifOrientation = isIgnoreExifOrientation(result.drawable)

@@ -17,18 +17,15 @@ package com.github.panpf.zoomimage
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getModel
 import com.bumptech.glide.load.engine.requestOptionsCompat
 import com.bumptech.glide.request.SingleRequest
-import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.view.glide.internal.GlideHttpImageSource
-import com.github.panpf.zoomimage.view.glide.internal.GlideTileBitmapPool
-import com.github.panpf.zoomimage.view.glide.internal.GlideTileMemoryCache
-import java.io.File
+import com.github.panpf.zoomimage.glide.internal.GlideTileBitmapPool
+import com.github.panpf.zoomimage.glide.internal.GlideTileMemoryCache
+import com.github.panpf.zoomimage.glide.internal.newGlideImageSource
 
 open class GlideZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -63,21 +60,24 @@ open class GlideZoomImageView @JvmOverloads constructor(
             }
             val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)
             if (request == null) {
-                logger.d{ "GlideZoomImageView. Can't use Subsampling, request is null" }
+                logger.d { "GlideZoomImageView. Can't use Subsampling, request is null" }
                 return@post
             }
             if (request !is SingleRequest<*>) {
-                logger.d{ "GlideZoomImageView. Can't use Subsampling, request is not SingleRequest" }
+                logger.d { "GlideZoomImageView. Can't use Subsampling, request is not SingleRequest" }
                 return@post
             }
             if (!request.isComplete) {
-                logger.d{ "GlideZoomImageView. Can't use Subsampling, request is not complete" }
+                logger.d { "GlideZoomImageView. Can't use Subsampling, request is not complete" }
                 return@post
             }
-            // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache
-            _subsamplingAbility?.setImageSource(null)
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(request)
-            _subsamplingAbility?.setImageSource(newImageSource(request))
+            val model = request.getModel()
+            val imageSource = newGlideImageSource(context, model)
+            if (imageSource == null) {
+                logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
+            }
+            _subsamplingAbility?.setImageSource(imageSource)
         }
     }
 
@@ -85,36 +85,5 @@ open class GlideZoomImageView @JvmOverloads constructor(
     private fun isDisableMemoryCache(request: SingleRequest<*>): Boolean {
         val requestOptions = request.requestOptionsCompat
         return !requestOptions.isMemoryCacheable()
-    }
-
-    private fun newImageSource(request: SingleRequest<*>): ImageSource? {
-        val model = request.getModel()
-        return when {
-            model is String && (model.startsWith("http://") || model.startsWith("https://")) -> {
-                GlideHttpImageSource(Glide.get(context), model)
-            }
-
-            model is String && model.startsWith("content://") -> {
-                ImageSource.fromContent(context, Uri.parse(model))
-            }
-
-            model is String && model.startsWith("file:///android_asset/") -> {
-                val assetFileName = model.replace("file:///android_asset/", "")
-                ImageSource.fromAsset(context, assetFileName)
-            }
-
-            model is String && model.startsWith("file://") -> {
-                ImageSource.fromFile(File(model.replace("file://", "")))
-            }
-
-            model is Int -> {
-                ImageSource.fromResource(context, model)
-            }
-
-            else -> {
-                logger.w{ "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
-                null
-            }
-        }
     }
 }

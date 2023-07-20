@@ -28,7 +28,7 @@ fun ZoomImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    logger: Logger = rememberLogger(),
+    logger: Logger = rememberLogger(tag = "ZoomImage"),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,

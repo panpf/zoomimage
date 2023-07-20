@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.glide.internal
+package com.github.panpf.zoomimage.glide.internal
 
 import android.graphics.Bitmap
 import com.bumptech.glide.Glide
@@ -21,11 +21,10 @@ import com.bumptech.glide.load.engine.EngineResourceWrapper
 import com.bumptech.glide.load.engine.GlideEngine
 import com.bumptech.glide.load.engine.createGlideEngine
 import com.bumptech.glide.load.engine.newEngineKey
-import com.github.panpf.zoomimage.subsampling.TileBitmap
-import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 
 class GlideTileMemoryCache(private val glide: Glide) : TileMemoryCache {
 

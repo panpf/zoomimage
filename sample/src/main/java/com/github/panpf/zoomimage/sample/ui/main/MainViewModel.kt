@@ -73,6 +73,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
             Link(
+                title = "GlideZoomAsyncImage（My）",
+                navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
+                    ZoomImageType.GlideZoomAsyncImage.name
+                ),
+                minSdk = 21,
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            ),
+            Link(
                 title = "ZoomableAsyncImage（Telephoto）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
                     ZoomImageType.TelephotoZoomableAsyncImage.name

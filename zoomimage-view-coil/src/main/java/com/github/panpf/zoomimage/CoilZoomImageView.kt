@@ -70,8 +70,6 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 logger.d{ "CoilZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
-            // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache
-            _subsamplingAbility?.setImageSource(null)
             _subsamplingAbility?.disableMemoryCache = isDisallowMemoryCache(result)
             _subsamplingAbility?.setLifecycle(result.request.lifecycle
                 .takeIf { !it.isCoilGlobalLifecycle() }

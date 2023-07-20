@@ -40,6 +40,7 @@ subsamplingscaleimageview = "3.10.0"
 photoview = "2.3.0"
 coil = "2.4.0"
 glide="4.15.1"
+glide-compose="1.0.0-alpha.3"
 picasso="2.8"
 
 [libraries]
@@ -96,6 +97,7 @@ photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photovi
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 
 [plugins]

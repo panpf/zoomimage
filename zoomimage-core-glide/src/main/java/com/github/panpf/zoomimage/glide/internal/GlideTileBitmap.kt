@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.glide.internal
+package com.github.panpf.zoomimage.glide.internal
 
 import android.graphics.Bitmap
-import android.graphics.Bitmap.Config
-import com.bumptech.glide.Glide
-import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.bumptech.glide.load.engine.EngineResourceWrapper
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 
-class GlideTileBitmapPool(private val glide: Glide) : TileBitmapPool {
+internal class GlideTileBitmap(
+    override val key: String,
+    private val resource: EngineResourceWrapper
+) : TileBitmap {
 
-    override fun put(bitmap: Bitmap): Boolean {
-        glide.bitmapPool.put(bitmap)
-        return true
-    }
+    override val bitmap: Bitmap
+        get() = resource.bitmap
 
-    override fun get(width: Int, height: Int, config: Config): Bitmap? {
-        return glide.bitmapPool.get(width, height, config)
+    override fun setIsDisplayed(displayed: Boolean) {
+        resource.setIsDisplayed(displayed)
     }
 }
