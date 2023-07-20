@@ -42,33 +42,9 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberSubsamplingState(
     logger: Logger,
-    tileMemoryCache: TileMemoryCache? = null,
-    tileBitmapPool: TileBitmapPool? = null,
-    ignoreExifOrientation: Boolean = false,
-    disallowReuseBitmap: Boolean = false,
-    disableMemoryCache: Boolean = false,
     showTileBounds: Boolean = false,
 ): SubsamplingState {
     val subsamplingState = remember { SubsamplingState(logger) }
-
-    // When ignoreExifOrientation changes, usually contentSize also changes, so no processing is done here
-    subsamplingState.ignoreExifOrientation = ignoreExifOrientation
-    LaunchedEffect(tileMemoryCache) {  // todo 代价太大了
-        subsamplingState.tileMemoryCache = tileMemoryCache
-        subsamplingState.resetTileManager("tileMemoryCacheChanged")
-    }
-    LaunchedEffect(disableMemoryCache) {   // todo 代价太大了
-        subsamplingState.disableMemoryCache = disableMemoryCache
-        subsamplingState.resetTileManager("disableMemoryCacheChanged")
-    }
-    LaunchedEffect(tileBitmapPool) {   // todo 代价太大了
-        subsamplingState.tileBitmapPool = tileBitmapPool
-        subsamplingState.resetTileDecoder("tileBitmapPoolChanged")
-    }
-    LaunchedEffect(disallowReuseBitmap) {  // todo 代价太大了
-        subsamplingState.disallowReuseBitmap = disallowReuseBitmap
-        subsamplingState.resetTileDecoder("disallowReuseBitmapChanged")
-    }
     subsamplingState.showTileBounds = showTileBounds
     return subsamplingState
 }
@@ -134,12 +110,38 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var imageInfo: ImageInfo? by mutableStateOf(null)
-    var ignoreExifOrientation: Boolean = false
-    var disallowReuseBitmap: Boolean = false
-    var disableMemoryCache: Boolean = false
     var showTileBounds: Boolean by mutableStateOf(false)
+
+    // When ignoreExifOrientation changes, usually contentSize also changes, so no processing is done here
+    var ignoreExifOrientation: Boolean = false
     var tileBitmapPool: TileBitmapPool? = null
+        set(value) {
+            if (field != value) {
+                field = value
+                resetTileDecoder("tileBitmapPoolChanged")  // todo 代价太大了
+            }
+        }
+    var disallowReuseBitmap: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                resetTileDecoder("disallowReuseBitmapChanged")  // todo 代价太大了
+            }
+        }
     var tileMemoryCache: TileMemoryCache? = null
+        set(value) {
+            if (field != value) {
+                field = value
+                resetTileManager("tileMemoryCacheChanged")  // todo 代价太大了
+            }
+        }
+    var disableMemoryCache: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                resetTileManager("disableMemoryCacheChanged")  // todo 代价太大了
+            }
+        }
     var paused = false
         set(value) {
             if (field != value) {

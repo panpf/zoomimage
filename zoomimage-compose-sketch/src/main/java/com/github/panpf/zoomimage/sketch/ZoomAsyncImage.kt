@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.sketch
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
@@ -17,15 +18,21 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
+import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.compose.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.rememberLogger
 import com.github.panpf.zoomimage.rememberZoomableState
+import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
+import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
+import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
@@ -182,11 +189,14 @@ fun ZoomAsyncImage(
         zoomableState.contentScale = contentScale
     }
 
-    request.listener
-
     BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
-//     todo subsamplingImageSource
-//    subsamplingState.setImageSource(subsamplingImageSource)
+
+    val context = LocalContext.current
+    val sketch = context.sketch
+    LaunchedEffect(Unit) {
+        subsamplingState.tileBitmapPool = SketchTileBitmapPool(sketch)
+        subsamplingState.tileMemoryCache = SketchTileMemoryCache(sketch)
+    }
 
     val modifier1 = modifier
         .clipToBounds()
@@ -210,9 +220,33 @@ fun ZoomAsyncImage(
         transform = transform,
         onState = {
             val painterSize = it.painter?.intrinsicSize?.roundToIntSize()
-            if (painterSize != null && zoomableState.contentSize != painterSize) {
-                zoomableState.contentSize = painterSize
+            val containerSize = zoomableState.containerSize
+            val newContentSize = when {
+                painterSize != null -> painterSize
+                containerSize.isNotEmpty() -> containerSize
+                else -> IntSize.Zero
             }
+            if (zoomableState.contentSize != newContentSize) {
+                zoomableState.contentSize = newContentSize
+            }
+
+            when (it) {
+                is AsyncImagePainter.State.Success -> {
+                    // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache or disallowReuseBitmap
+                    subsamplingState.setImageSource(null)
+                    subsamplingState.ignoreExifOrientation = request.ignoreExifOrientation
+                    subsamplingState.disableMemoryCache =
+                        request.memoryCachePolicy != CachePolicy.ENABLED
+                    subsamplingState.disallowReuseBitmap = request.disallowReuseBitmap
+                    val imageSource = SketchImageSource(context, sketch, request.uriString)
+                    subsamplingState.setImageSource(imageSource)
+                }
+
+                else -> {
+                    subsamplingState.setImageSource(null)
+                }
+            }
+
             onState?.invoke(it)
         },
         alignment = alignment,

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoomimage.compose.sketch"
+    namespace = "com.github.panpf.zoomimage.core.sketch"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
-        minSdk = property("minSdk21").toString().toInt()
+        minSdk = property("minSdk").toString().toInt()
 
         buildConfigField("String", "VERSION_NAME", "\"${property("versionName").toString()}\"")
         buildConfigField("int", "VERSION_CODE", property("versionCode").toString())
@@ -17,11 +17,7 @@ android {
     }
     @Suppress("UnstableApiUsage")
     buildFeatures {
-        compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
     buildTypes {
         release {
@@ -43,12 +39,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-compose"))
-    api(project(":zoomimage-core-sketch"))
-    api(libs.panpf.sketch3.compose)
-
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    api(project(":zoomimage-core"))
+    api(libs.panpf.sketch3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

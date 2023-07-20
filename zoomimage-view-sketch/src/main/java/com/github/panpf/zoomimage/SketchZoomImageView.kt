@@ -31,10 +31,10 @@ import com.github.panpf.sketch.stateimage.internal.SketchStateDrawable
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLastSketchDrawable
 import com.github.panpf.sketch.util.getLastChildDrawable
+import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
+import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
+import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.view.sketch.internal.SketchImageSource
-import com.github.panpf.zoomimage.view.sketch.internal.SketchTileBitmapPool
-import com.github.panpf.zoomimage.view.sketch.internal.SketchTileMemoryCache
 import com.github.panpf.zoomimage.view.sketch.internal.getLifecycle
 
 open class SketchZoomImageView @JvmOverloads constructor(
@@ -82,6 +82,8 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 logger.d{ "SketchZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
+            // Clear the previous image first to avoid triggering unnecessary initialization when setting disableMemoryCache or disallowReuseBitmap
+            _subsamplingAbility?.setImageSource(null)
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(result.drawable)
             _subsamplingAbility?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
             _subsamplingAbility?.ignoreExifOrientation = isIgnoreExifOrientation(result.drawable)

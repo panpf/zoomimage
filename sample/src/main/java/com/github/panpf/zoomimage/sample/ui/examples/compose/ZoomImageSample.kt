@@ -31,8 +31,10 @@ import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
 import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
+import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
+import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
+import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
-import com.github.panpf.zoomimage.view.sketch.internal.SketchImageSource
 import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable
@@ -80,8 +82,14 @@ fun ZoomImageSample(sketchImageUri: String) {
     val subsamplingState = rememberSubsamplingState(
         logger = logger,
         showTileBounds = showTileBounds,
-        ignoreExifOrientation = ignoreExifOrientation
     )
+    LaunchedEffect(Unit) {
+        subsamplingState.tileBitmapPool = SketchTileBitmapPool(context.sketch)
+        subsamplingState.tileMemoryCache = SketchTileMemoryCache(context.sketch)
+    }
+    LaunchedEffect(ignoreExifOrientation) {
+        subsamplingState.ignoreExifOrientation = ignoreExifOrientation
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()

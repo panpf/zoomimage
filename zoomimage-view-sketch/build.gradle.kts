@@ -40,7 +40,7 @@ android {
 
 dependencies {
     api(project(":zoomimage-view"))
-    api(libs.panpf.sketch3)
+    api(project(":zoomimage-core-sketch"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
