@@ -40,7 +40,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     fun setImageSource(imageSource: ImageSource?) {
         if (this.imageSource == imageSource) return
         this.imageSource = imageSource
-        if (imageSource != null && view.isAttachedToWindowCompat) {
+        if (view.isAttachedToWindowCompat) {
             engine.setImageSource(imageSource)
         }
     }

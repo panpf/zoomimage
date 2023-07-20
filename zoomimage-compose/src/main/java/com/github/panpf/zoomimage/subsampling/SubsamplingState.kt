@@ -169,12 +169,14 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     val imageVisibleRect: IntRectCompat
         get() = tileManager?.imageVisibleRect ?: IntRectCompat.Zero
 
-    fun setImageSource(imageSource: ImageSource?) {
-        if (this.imageSource == imageSource) return
+    fun setImageSource(imageSource: ImageSource?): Boolean {
+        if (this.imageSource == imageSource) return false
+        logger.d { "setImageSource. '${imageSource?.key}'" }
         cleanTileManager("setImageSource")
         cleanTileDecoder("setImageSource")
         this.imageSource = imageSource
         resetTileDecoder("setImageSource")
+        return true
     }
 
     private fun notifyTileChange() {
