@@ -194,7 +194,7 @@ class TileManager constructor(
         }
 
         val memoryCacheKey =
-            "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.inSampleSize}"
+            "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${imageInfo.exifOrientation}_${tile.inSampleSize}"
         val cachedValue = tileMemoryCache?.get(memoryCacheKey)
         if (cachedValue != null) {
             tile.tileBitmap = cachedValue

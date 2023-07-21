@@ -123,8 +123,13 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var imageInfo: ImageInfo? by mutableStateOf(null)
     var showTileBounds: Boolean by mutableStateOf(false)
 
-    // When ignoreExifOrientation changes, usually contentSize also changes, so no processing is done here
     var ignoreExifOrientation: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                resetTileDecoder("ignoreExifOrientationChanged")
+            }
+        }
     var tileBitmapPool: TileBitmapPool? = null
         set(value) {
             if (field != value) {

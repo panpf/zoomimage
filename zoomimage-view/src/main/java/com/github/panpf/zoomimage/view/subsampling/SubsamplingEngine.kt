@@ -80,8 +80,13 @@ class SubsamplingEngine constructor(logger: Logger) {
             }
         }
 
-    // When ignoreExifOrientation changes, usually contentSize also changes, so no processing is done here
     var ignoreExifOrientation: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                resetTileManager("ignoreExifOrientationChanged")
+            }
+        }
     var tileMemoryCache: TileMemoryCache? = null
         set(value) {
             if (field != value) {
