@@ -21,7 +21,8 @@ import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.requiredMainThread
 import com.github.panpf.zoomimage.core.toShortString
-import com.github.panpf.zoomimage.subsampling.internal.freeBitmap
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.toHexString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -36,8 +37,8 @@ import kotlin.math.floor
 class TileManager constructor(
     logger: Logger,
     private val tileDecoder: TileDecoder,
-    private val tileBitmapPool: TileBitmapPool?,
-    private val tileMemoryCache: TileMemoryCache?,
+    private val tileMemoryCacheHelper: TileMemoryCacheHelper,
+    private val tileBitmapPoolHelper: TileBitmapPoolHelper,
     private val imageSource: ImageSource,
     private val imageInfo: ImageInfo,
     containerSize: IntSizeCompat,
@@ -195,7 +196,7 @@ class TileManager constructor(
 
         val memoryCacheKey =
             "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${imageInfo.exifOrientation}_${tile.inSampleSize}"
-        val cachedValue = tileMemoryCache?.get(memoryCacheKey)
+        val cachedValue = tileMemoryCacheHelper.get(memoryCacheKey)
         if (cachedValue != null) {
             tile.tileBitmap = cachedValue
             logger.d {
@@ -209,18 +210,18 @@ class TileManager constructor(
             val bitmap = tileDecoder.decode(tile)
             when {
                 bitmap == null -> {
-                     logger.e("loadTile. failed. bitmap null. $tile. '${imageSource.key}'")
+                    logger.e("loadTile. failed. bitmap null. $tile. '${imageSource.key}'")
                 }
 
                 isActive -> {
                     withContext(Dispatchers.Main) {
-                        val newCountBitmap = tileMemoryCache?.put(
+                        val newCountBitmap = tileMemoryCacheHelper.put(
                             key = memoryCacheKey,
                             bitmap = bitmap,
                             imageKey = imageSource.key,
                             imageInfo = imageInfo,
-                            tileBitmapPool = tileBitmapPool,
-                        ) ?: DefaultTileBitmap(memoryCacheKey, bitmap)
+                            tileBitmapPoolHelper = tileBitmapPoolHelper,
+                        )
                         tile.tileBitmap = newCountBitmap
                         logger.d {
                             "loadTile. successful. $tile. '${imageSource.key}'"
@@ -233,16 +234,10 @@ class TileManager constructor(
                     logger.d {
                         "loadTile. canceled. bitmap=${bitmap.toHexString()}, $tile. '${imageSource.key}'"
                     }
-                    val bitmapPool = tileBitmapPool
-                    if (bitmapPool != null) {
-                        bitmapPool.freeBitmap(
-                            logger = logger,
-                            bitmap = bitmap,
-                            caller = "tile:jobCanceled"
-                        )
-                    } else {
-                        bitmap.recycle()
-                    }
+                    tileBitmapPoolHelper.freeBitmap(
+                        bitmap = bitmap,
+                        caller = "tile:jobCanceled"
+                    )
                 }
             }
         }

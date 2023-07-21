@@ -28,6 +28,8 @@ import com.github.panpf.zoomimage.compose.internal.toCompatIntSize
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -110,10 +112,12 @@ class SubsamplingState(logger: Logger) : RememberObserver {
 
     private var logger: Logger = logger.newLogger(module = "SubsamplingState")
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    private var lastResetTileDecoderJob: Job? = null
+    private var tileMemoryCacheHelper = TileMemoryCacheHelper(logger)
+    private var tileBitmapPoolHelper = TileBitmapPoolHelper(logger)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
+    private var lastResetTileDecoderJob: Job? = null
     private var lastDisplayScale: Float? = null
     private var lastDisplayMinScale: Float? = null
     private var lastContentVisibleRect: IntRect? = null
@@ -130,33 +134,25 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 resetTileDecoder("ignoreExifOrientationChanged")
             }
         }
-    var tileBitmapPool: TileBitmapPool? = null
+    var tileMemoryCache: TileMemoryCache?
+        get() = tileMemoryCacheHelper.tileMemoryCache
         set(value) {
-            if (field != value) {
-                field = value
-                resetTileDecoder("tileBitmapPoolChanged")  // todo 代价太大了
-            }
+            tileMemoryCacheHelper.tileMemoryCache = value
         }
-    var disallowReuseBitmap: Boolean = false
+    var disableMemoryCache: Boolean
+        get() = tileMemoryCacheHelper.disableMemoryCache
         set(value) {
-            if (field != value) {
-                field = value
-                resetTileDecoder("disallowReuseBitmapChanged")  // todo 代价太大了
-            }
+            tileMemoryCacheHelper.disableMemoryCache = value
         }
-    var tileMemoryCache: TileMemoryCache? = null
+    var tileBitmapPool: TileBitmapPool?
+        get() = tileBitmapPoolHelper.tileBitmapPool
         set(value) {
-            if (field != value) {
-                field = value
-                resetTileManager("tileMemoryCacheChanged")  // todo 代价太大了
-            }
+            tileBitmapPoolHelper.tileBitmapPool = value
         }
-    var disableMemoryCache: Boolean = false
+    var disallowReuseBitmap: Boolean
+        get() = tileBitmapPoolHelper.disallowReuseBitmap
         set(value) {
-            if (field != value) {
-                field = value
-                resetTileManager("disableMemoryCacheChanged")  // todo 代价太大了
-            }
+            tileBitmapPoolHelper.disallowReuseBitmap = value
         }
     var paused = false
         set(value) {
@@ -257,7 +253,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 this@SubsamplingState.tileDecoder = TileDecoder(
                     logger = logger,
                     imageSource = imageSource,
-                    tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
+                    tileBitmapPoolHelper = tileBitmapPoolHelper,
                     imageInfo = imageInfo,
                 )
                 resetTileManager(caller)
@@ -293,8 +289,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             tileDecoder = tileDecoder,
             imageSource = imageSource,
             containerSize = containerSize.toCompatIntSize(),
-            tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
-            tileMemoryCache = if (disableMemoryCache) null else tileMemoryCache,
+            tileMemoryCacheHelper = tileMemoryCacheHelper,
+            tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
             onTileChanged = { notifyTileChange() }
         )

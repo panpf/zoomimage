@@ -12,7 +12,7 @@ fun Modifier.subsampling(
     this.drawWithContent {
         drawContent()
 
-        // Trigger a refresh
+        // Trigger a refresh todo Verify that tilesChanged works
         @Suppress("UNUSED_VARIABLE") val changeCount = subsamplingState.tilesChanged
 
         subsamplingState.drawTiles(this, zoomableState.baseTransform)

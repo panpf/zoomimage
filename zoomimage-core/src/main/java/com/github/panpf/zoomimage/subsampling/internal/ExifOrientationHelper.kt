@@ -7,36 +7,18 @@ import android.graphics.Paint
 import android.graphics.RectF
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import kotlin.math.abs
-
-fun exifOrientationName(exifOrientation: Int): String =
-    when (exifOrientation) {
-        ExifInterface.ORIENTATION_ROTATE_90 -> "ROTATE_90"
-        ExifInterface.ORIENTATION_TRANSPOSE -> "TRANSPOSE"
-        ExifInterface.ORIENTATION_ROTATE_180 -> "ROTATE_180"
-        ExifInterface.ORIENTATION_FLIP_VERTICAL -> "FLIP_VERTICAL"
-        ExifInterface.ORIENTATION_ROTATE_270 -> "ROTATE_270"
-        ExifInterface.ORIENTATION_TRANSVERSE -> "TRANSVERSE"
-        ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> "FLIP_HORIZONTAL"
-        ExifInterface.ORIENTATION_UNDEFINED -> "UNDEFINED"
-        ExifInterface.ORIENTATION_NORMAL -> "NORMAL"
-        else -> exifOrientation.toString()
-    }
-
-fun ImageInfo.applyExifOrientation(): ImageInfo {
-    val applyImageSize = ExifOrientationHelper(exifOrientation).applyToSize(size)
-    return this.copy(size = applyImageSize)
-}
 
 /**
  * Rotate and flip the image according to the 'orientation' attribute of Exif so that the image is presented to the user at a normal angle
  */
-class ExifOrientationHelper constructor(val exifOrientation: Int) {
+class ExifOrientationHelper constructor(
+    val exifOrientation: Int,
+    private val tileBitmapPoolHelper: TileBitmapPoolHelper? = null,
+) {
 
     /**
      * Returns if the current image orientation is flipped.
@@ -92,17 +74,11 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
 //        }
 
     @WorkerThread
-    fun applyToBitmap(
-        logger: Logger?,
-        inBitmap: Bitmap,
-        bitmapPool: TileBitmapPool?,
-    ): Bitmap? {
+    fun applyToBitmap(inBitmap: Bitmap): Bitmap? {
         return applyFlipAndRotation(
-            logger = logger,
             inBitmap = inBitmap,
             isFlipped = isFlipped,
             rotationDegrees = rotationDegrees,
-            bitmapPool = bitmapPool,
             apply = true
         )
     }
@@ -235,12 +211,10 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
 
     @WorkerThread
     private fun applyFlipAndRotation(
-        logger: Logger?,
         inBitmap: Bitmap,
         isFlipped: Boolean,
         rotationDegrees: Int,
-        bitmapPool: TileBitmapPool?,
-        apply: Boolean,
+        @Suppress("SameParameterValue") apply: Boolean,
     ): Bitmap? {
         val isRotated = abs(rotationDegrees % 360) != 0
         if (!isFlipped && !isRotated) {
@@ -257,50 +231,32 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
         val config = inBitmap.safeConfig
         val newWidth = newRect.width().toInt()
         val newHeight = newRect.height().toInt()
-        val outBitmap = bitmapPool?.getOrCreate(
-            logger = logger,
-            width = newWidth,
-            height = newHeight,
-            config = config,
-            caller = "applyFlipAndRotation"
-        ) ?: Bitmap.createBitmap(newWidth, newHeight, config)
+        val outBitmap = tileBitmapPoolHelper
+            ?.getOrCreate(newWidth, newHeight, config, "applyFlipAndRotation")
+            ?: Bitmap.createBitmap(newWidth, newHeight, config)
 
         val canvas = Canvas(outBitmap)
         val paint = Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG)
         canvas.drawBitmap(inBitmap, matrix, paint)
         return outBitmap
     }
+}
 
-//    fun addToScale(scale: Scale, imageSize: Size): Scale =
-//        if (imageSize.width > imageSize.height) {
-//            if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90
-//                || exifOrientation == ExifInterface.ORIENTATION_TRANSVERSE
-//                || exifOrientation == ExifInterface.ORIENTATION_ROTATE_180
-//                || exifOrientation == ExifInterface.ORIENTATION_FLIP_HORIZONTAL
-//            ) {
-//                when (scale) {
-//                    Scale.START_CROP -> Scale.END_CROP
-//                    Scale.CENTER_CROP -> Scale.CENTER_CROP
-//                    Scale.END_CROP -> Scale.START_CROP
-//                    Scale.FILL -> Scale.FILL
-//                }
-//            } else {
-//                scale
-//            }
-//        } else {
-//            if (exifOrientation == ExifInterface.ORIENTATION_TRANSVERSE
-//                || exifOrientation == ExifInterface.ORIENTATION_ROTATE_180
-//                || exifOrientation == ExifInterface.ORIENTATION_FLIP_VERTICAL
-//                || exifOrientation == ExifInterface.ORIENTATION_ROTATE_270
-//            ) {
-//                when (scale) {
-//                    Scale.START_CROP -> Scale.END_CROP
-//                    Scale.CENTER_CROP -> Scale.CENTER_CROP
-//                    Scale.END_CROP -> Scale.START_CROP
-//                    Scale.FILL -> Scale.FILL
-//                }
-//            } else {
-//                scale
-//            }
-//        }
+fun exifOrientationName(exifOrientation: Int): String =
+    when (exifOrientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> "ROTATE_90"
+        ExifInterface.ORIENTATION_TRANSPOSE -> "TRANSPOSE"
+        ExifInterface.ORIENTATION_ROTATE_180 -> "ROTATE_180"
+        ExifInterface.ORIENTATION_FLIP_VERTICAL -> "FLIP_VERTICAL"
+        ExifInterface.ORIENTATION_ROTATE_270 -> "ROTATE_270"
+        ExifInterface.ORIENTATION_TRANSVERSE -> "TRANSVERSE"
+        ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> "FLIP_HORIZONTAL"
+        ExifInterface.ORIENTATION_UNDEFINED -> "UNDEFINED"
+        ExifInterface.ORIENTATION_NORMAL -> "NORMAL"
+        else -> exifOrientation.toString()
+    }
+
+fun ImageInfo.applyExifOrientation(): ImageInfo {
+    val applyImageSize = ExifOrientationHelper(exifOrientation).applyToSize(size)
+    return this.copy(size = applyImageSize)
 }

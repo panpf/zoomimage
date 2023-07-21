@@ -37,6 +37,8 @@ import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.subsampling.canUseSubsampling
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import com.github.panpf.zoomimage.view.zoom.internal.format
 import com.github.panpf.zoomimage.view.zoom.internal.toIntRectCompat
@@ -52,18 +54,20 @@ class SubsamplingEngine constructor(logger: Logger) {
 
     private val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
-    private val reuseRect1 = Rect()
-    private val reuseRect2 = Rect()
-    private var tileBoundsPaint: Paint? = null
+    private var tileMemoryCacheHelper = TileMemoryCacheHelper(logger)
+    private var tileBitmapPoolHelper = TileBitmapPoolHelper(logger)
+    private var imageSource: ImageSource? = null
+    private var tileManager: TileManager? = null
+    private var tileDecoder: TileDecoder? = null
+    private var onTileChangeListenerList: MutableSet<OnTileChangeListener>? = null
+    private var onReadyChangeListenerList: MutableSet<OnReadyChangeListener>? = null
+    private val cacheRect1 = Rect()
+    private val cacheRect2 = Rect()
+    private var cacheTileBoundsPaint: Paint? = null
     private var lastResetTileDecoderJob: Job? = null
     private var lastDisplayScale: Float? = null
     private var lastDisplayMinScale: Float? = null
     private var lastContentVisibleRect: Rect? = null
-    private var onTileChangeListenerList: MutableSet<OnTileChangeListener>? = null
-    private var onReadyChangeListenerList: MutableSet<OnReadyChangeListener>? = null
-    private var imageSource: ImageSource? = null
-    private var tileManager: TileManager? = null
-    private var tileDecoder: TileDecoder? = null
 
     var containerSize: IntSizeCompat = IntSizeCompat.Zero
         set(value) {
@@ -79,7 +83,6 @@ class SubsamplingEngine constructor(logger: Logger) {
                 resetTileDecoder("contentSizeChanged")
             }
         }
-
     var ignoreExifOrientation: Boolean = false
         set(value) {
             if (field != value) {
@@ -87,33 +90,25 @@ class SubsamplingEngine constructor(logger: Logger) {
                 resetTileManager("ignoreExifOrientationChanged")
             }
         }
-    var tileMemoryCache: TileMemoryCache? = null
+    var tileMemoryCache: TileMemoryCache?
+        get() = tileMemoryCacheHelper.tileMemoryCache
         set(value) {
-            if (field != value) {
-                field = value
-                resetTileManager("tileMemoryCacheChanged")   // todo 代价太大了
-            }
+            tileMemoryCacheHelper.tileMemoryCache = value
         }
-    var disableMemoryCache: Boolean = false
+    var disableMemoryCache: Boolean
+        get() = tileMemoryCacheHelper.disableMemoryCache
         set(value) {
-            if (field != value) {
-                field = value
-                resetTileManager("disableMemoryCacheChanged")   // todo 代价太大了
-            }
+            tileMemoryCacheHelper.disableMemoryCache = value
         }
-    var tileBitmapPool: TileBitmapPool? = null
+    var tileBitmapPool: TileBitmapPool?
+        get() = tileBitmapPoolHelper.tileBitmapPool
         set(value) {
-            if (field != value) {
-                field = value
-                resetTileDecoder("tileBitmapPoolChanged")   // todo 代价太大了
-            }
+            tileBitmapPoolHelper.tileBitmapPool = value
         }
-    var disallowReuseBitmap: Boolean = false
+    var disallowReuseBitmap: Boolean
+        get() = tileBitmapPoolHelper.disallowReuseBitmap
         set(value) {
-            if (field != value) {
-                field = value
-                resetTileDecoder("disallowReuseBitmapChanged")   // todo 代价太大了
-            }
+            tileBitmapPoolHelper.disallowReuseBitmap = value
         }
     var showTileBounds = false
         set(value) {
@@ -183,7 +178,7 @@ class SubsamplingEngine constructor(logger: Logger) {
                 this@SubsamplingEngine.tileDecoder = TileDecoder(
                     logger = logger,
                     imageSource = imageSource,
-                    tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
+                    tileBitmapPoolHelper = tileBitmapPoolHelper,
                     imageInfo = imageInfo,
                 )
                 resetTileManager(caller)
@@ -219,8 +214,8 @@ class SubsamplingEngine constructor(logger: Logger) {
             tileDecoder = tileDecoder,
             imageSource = imageSource,
             containerSize = containerSize,
-            tileBitmapPool = if (disallowReuseBitmap) null else tileBitmapPool,
-            tileMemoryCache = if (disableMemoryCache) null else tileMemoryCache,
+            tileMemoryCacheHelper = tileMemoryCacheHelper,
+            tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
             onTileChanged = { notifyTileChange() }
         )
@@ -295,7 +290,7 @@ class SubsamplingEngine constructor(logger: Logger) {
                 if (tile.srcRect.overlaps(imageLoadRect)) {
                     insideLoadCount++
                     val tileBitmap = tile.bitmap
-                    val tileDrawDstRect = reuseRect1.apply {
+                    val tileDrawDstRect = cacheRect1.apply {
                         set(
                             /* left = */ floor(tile.srcRect.left / widthScale).toInt(),
                             /* top = */ floor(tile.srcRect.top / heightScale).toInt(),
@@ -305,7 +300,7 @@ class SubsamplingEngine constructor(logger: Logger) {
                     }
                     if (tileBitmap != null) {
                         realDrawCount++
-                        val tileDrawSrcRect = reuseRect2.apply {
+                        val tileDrawSrcRect = cacheRect2.apply {
                             set(0, 0, tileBitmap.width, tileBitmap.height)
                         }
                         canvas.drawBitmap(
@@ -325,7 +320,7 @@ class SubsamplingEngine constructor(logger: Logger) {
                         val tileBoundsPaint = getTileBoundsPaint()
                         tileBoundsPaint.color = ColorUtils.setAlphaComponent(boundsColor, 100)
                         val boundsStrokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
-                        val tileBoundsRect = reuseRect2.apply {
+                        val tileBoundsRect = cacheRect2.apply {
                             set(
                                 /* left = */
                                 floor(tileDrawDstRect.left + boundsStrokeHalfWidth).toInt(),
@@ -401,13 +396,13 @@ class SubsamplingEngine constructor(logger: Logger) {
     }
 
     private fun getTileBoundsPaint(): Paint {
-        return tileBoundsPaint ?: Paint()
+        return cacheTileBoundsPaint ?: Paint()
             .apply {
                 style = STROKE
                 strokeWidth = 1f * Resources.getSystem().displayMetrics.density
             }
             .apply {
-                this@SubsamplingEngine.tileBoundsPaint = this
+                this@SubsamplingEngine.cacheTileBoundsPaint = this
             }
     }
 

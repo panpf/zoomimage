@@ -88,9 +88,10 @@ fun ZoomImageMinimap(
                     .drawWithContent {
                         drawContent()
 
-                        @Suppress("UNUSED_VARIABLE") val changeCount =
-                            subsamplingState.tilesChanged  // Trigger a refresh
-                        val imageSize = subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
+                        // Trigger a refresh todo Verify that tilesChanged works
+                        @Suppress("UNUSED_VARIABLE") val changeCount = subsamplingState.tilesChanged
+                        val imageSize =
+                            subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
                         val tileList = subsamplingState.tileList
                         val imageLoadRect = subsamplingState.imageLoadRect
                         if (contentSize.isNotEmpty() && imageSize.isNotEmpty()) {

@@ -20,8 +20,8 @@ import coil.ImageLoader
 import coil.memory.MemoryCache
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
-import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 
 class CoilTileMemoryCache(private val imageLoader: ImageLoader) : TileMemoryCache {
 
@@ -36,7 +36,7 @@ class CoilTileMemoryCache(private val imageLoader: ImageLoader) : TileMemoryCach
         bitmap: Bitmap,
         imageKey: String,
         imageInfo: ImageInfo,
-        tileBitmapPool: TileBitmapPool?
+        tileBitmapPoolHelper: TileBitmapPoolHelper
     ): TileBitmap {
         val newCacheValue = MemoryCache.Value(bitmap)
         imageLoader.memoryCache?.set(MemoryCache.Key(key), newCacheValue)

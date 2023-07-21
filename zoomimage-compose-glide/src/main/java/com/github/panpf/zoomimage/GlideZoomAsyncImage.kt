@@ -58,11 +58,11 @@ fun GlideZoomAsyncImage(
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-    // TODO(judds): Consider using separate GlideImage* methods instead of sealed classes.
+    // from glide: TODO(judds): Consider using separate GlideImage* methods instead of sealed classes.
     // See http://shortn/_x79pjkMZIH for an internal discussion.
     loading: Placeholder? = null,
     failure: Placeholder? = null,
-    // TODO(judds): Consider defaulting to load the model here instead of always doing so below.
+    // from glide: TODO(judds): Consider defaulting to load the model here instead of always doing so below.
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it },
 ) {
     if (zoomableState.contentAlignment != alignment) {

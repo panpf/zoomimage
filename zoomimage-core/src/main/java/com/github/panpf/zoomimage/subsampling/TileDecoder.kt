@@ -30,24 +30,24 @@ import com.github.panpf.zoomimage.core.internal.requiredMainThread
 import com.github.panpf.zoomimage.core.internal.requiredWorkThread
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
-import com.github.panpf.zoomimage.subsampling.internal.freeBitmap
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
 import com.github.panpf.zoomimage.subsampling.internal.isSrcRectError
-import com.github.panpf.zoomimage.subsampling.internal.setInBitmapForRegion
 import kotlinx.coroutines.runBlocking
 import java.util.LinkedList
 
 class TileDecoder constructor(
     logger: Logger,
     private val imageSource: ImageSource,
-    private val tileBitmapPool: TileBitmapPool?,
+    private val tileBitmapPoolHelper: TileBitmapPoolHelper,
     private val imageInfo: ImageInfo,
 ) {
 
     private val logger = logger.newLogger(module = "SubsamplingTileDecoder")
     private var destroyed = false
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
-    private val exifOrientationHelper = ExifOrientationHelper(imageInfo.exifOrientation)
+    private val exifOrientationHelper =
+        ExifOrientationHelper(imageInfo.exifOrientation, tileBitmapPoolHelper)
     private val addedImageSize = exifOrientationHelper.addToSize(imageInfo.size)
 
     @WorkerThread
@@ -73,9 +73,7 @@ class TileDecoder constructor(
         val decodeOptions = BitmapFactory.Options().apply {
             this.inSampleSize = inSampleSize
         }
-        val bitmapPool = tileBitmapPool
-        bitmapPool?.setInBitmapForRegion(
-            logger = logger,
+        tileBitmapPoolHelper.setInBitmapForRegion(
             options = decodeOptions,
             regionSize = IntSizeCompat(newSrcRect.width, newSrcRect.height),
             imageMimeType = imageInfo.mimeType,
@@ -89,19 +87,9 @@ class TileDecoder constructor(
             throwable.printStackTrace()
             val inBitmap = decodeOptions.inBitmap
             if (inBitmap != null && isInBitmapError(throwable)) {
-                logger.e {
-                    "decodeRegion. Bitmap region decode inBitmap error. '${imageSource.key}'"
-                }
+                logger.e("decodeRegion. Bitmap region decode inBitmap error. '${imageSource.key}'")
 
-                if (bitmapPool != null) {
-                    bitmapPool.freeBitmap(
-                        logger = logger,
-                        bitmap = inBitmap,
-                        caller = "tile:decodeRegion:error"
-                    )
-                } else {
-                    inBitmap.recycle()
-                }
+                tileBitmapPoolHelper.freeBitmap(inBitmap, "tile:decodeRegion:error")
 
                 decodeOptions.inBitmap = null
                 try {
@@ -132,22 +120,9 @@ class TileDecoder constructor(
     private fun applyExifOrientation(bitmap: Bitmap): Bitmap {
         requiredWorkThread()
 
-        val newBitmap = exifOrientationHelper.applyToBitmap(
-            logger = logger,
-            inBitmap = bitmap,
-            bitmapPool = tileBitmapPool,
-        )
+        val newBitmap = exifOrientationHelper.applyToBitmap(bitmap)
         return if (newBitmap != null && newBitmap != bitmap) {
-            val bitmapPool = tileBitmapPool
-            if (bitmapPool != null) {
-                bitmapPool.freeBitmap(
-                    logger = logger,
-                    bitmap = bitmap,
-                    caller = "tile:applyExifOrientation"
-                )
-            } else {
-                bitmap.recycle()
-            }
+            tileBitmapPoolHelper.freeBitmap(bitmap, "tile:applyExifOrientation")
             newBitmap
         } else {
             bitmap

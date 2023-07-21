@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 
 interface TileMemoryCache {
     /**
@@ -14,7 +14,7 @@ interface TileMemoryCache {
         bitmap: Bitmap,
         imageKey: String,
         imageInfo: ImageInfo,
-        tileBitmapPool: TileBitmapPool?
+        tileBitmapPoolHelper: TileBitmapPoolHelper
     ): TileBitmap?
 }
 
