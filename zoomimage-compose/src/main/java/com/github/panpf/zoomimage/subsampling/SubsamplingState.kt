@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -65,33 +66,43 @@ fun BindZoomableStateAndSubsamplingState(
         }
     }
 
-    LaunchedEffect(zoomableState.containerSize) {
-        // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
-        // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
-        if (subsamplingState.containerSize.isNotEmpty()) {
-            delay(60)
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.containerSize }.collect {
+            // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
+            // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
+            if (it.isNotEmpty()) {
+                delay(60)
+            }
+            subsamplingState.containerSize = it
+            subsamplingState.resetTileManager("containerSizeChanged")
         }
-        subsamplingState.containerSize = zoomableState.containerSize
-        subsamplingState.resetTileManager("containerSizeChanged")
     }
-    LaunchedEffect(zoomableState.contentSize) {
-        subsamplingState.contentSize = zoomableState.contentSize
-        subsamplingState.resetTileDecoder("contentSizeChanged")
-    }
-    LaunchedEffect(subsamplingState.ready) {
-        val imageInfo = subsamplingState.imageInfo
-        zoomableState.contentOriginSize = if (subsamplingState.ready && imageInfo != null) {
-            IntSize(imageInfo.width, imageInfo.height)
-        } else {
-            IntSize.Zero
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.contentSize }.collect {
+            subsamplingState.contentSize = it
+            subsamplingState.resetTileDecoder("contentSizeChanged")
         }
-        refreshTiles("imageInfoChanged")
     }
-    LaunchedEffect(zoomableState.transform) {
-        refreshTiles("transformChanged")
+    LaunchedEffect(Unit) {
+        snapshotFlow { subsamplingState.ready }.collect {
+            val imageInfo = subsamplingState.imageInfo
+            zoomableState.contentOriginSize = if (it && imageInfo != null) {
+                IntSize(imageInfo.width, imageInfo.height)
+            } else {
+                IntSize.Zero
+            }
+            refreshTiles("ready")
+        }
     }
-    LaunchedEffect(zoomableState.scaling) {
-        refreshTiles("scalingChanged")
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.transform }.collect {
+            refreshTiles("transformChanged")
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.scaling }.collect {
+            refreshTiles("scalingChanged")
+        }
     }
 }
 

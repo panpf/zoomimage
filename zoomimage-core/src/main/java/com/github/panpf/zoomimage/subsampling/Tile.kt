@@ -23,7 +23,7 @@ import kotlinx.coroutines.Job
 
 class Tile constructor(val srcRect: IntRectCompat, val inSampleSize: Int) {
 
-    internal var countBitmap: TileBitmap? = null
+    internal var tileBitmap: TileBitmap? = null
         set(value) {
             field?.setIsDisplayed(false)
             field = value
@@ -31,7 +31,7 @@ class Tile constructor(val srcRect: IntRectCompat, val inSampleSize: Int) {
         }
 
     val bitmap: Bitmap?
-        get() = countBitmap?.bitmap
+        get() = tileBitmap?.bitmap
     var loadJob: Job? = null
 
     override fun equals(other: Any?): Boolean {

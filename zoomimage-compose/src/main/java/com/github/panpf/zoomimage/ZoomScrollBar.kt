@@ -4,8 +4,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -38,11 +36,11 @@ fun Modifier.zoomScrollBar(
             animationSpec = TweenSpec(300, easing = LinearOutSlowInEasing)
         )
     }
-    val alpha by remember { derivedStateOf { alphaAnimatable.value } }
     if (contentSize.isNotEmpty() && !contentVisibleRect.isEmpty) {
         this.drawWithContent {
             drawContent()
 
+            val alpha = alphaAnimatable.value
             @Suppress("UnnecessaryVariable")
             val scrollBarSize = sizePx
             val drawSize = this.size

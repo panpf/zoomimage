@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
@@ -59,6 +60,9 @@ import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.toShortString
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -78,19 +82,23 @@ fun rememberZoomableState(
     zoomableState.rubberBandScale = rubberBandScale
     zoomableState.animationSpec = animationSpec
     zoomableState.readMode = readMode
-    LaunchedEffect(
-        zoomableState.containerSize,
-        zoomableState.contentSize,
-        zoomableState.contentOriginSize,
-        zoomableState.contentScale,
-        zoomableState.contentAlignment,
-        readMode,
-        defaultMediumScaleMultiple,
-    ) {
-        if (!zoomableState.contentSize.isEmpty() && zoomableState.containerSize.isEmpty()) {
-            zoomableState.contentSize = zoomableState.containerSize
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.containerSize }.collect {
+            if (!it.isEmpty() && zoomableState.contentSize.isEmpty()) {
+                zoomableState.contentSize = it
+            }
+            zoomableState.reset("containerSizeChanged")
         }
-        zoomableState.reset()
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.contentSize }.collect {
+            zoomableState.reset("contentSizeChanged")
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.contentOriginSize }.collect {
+            zoomableState.reset("contentOriginSizeChanged")
+        }
     }
     return zoomableState
 }
@@ -101,17 +109,42 @@ class ZoomableState(logger: Logger) {
     private var lastFlingAnimatable: Animatable<*, *>? = null
 
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
-    var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
-    var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
+    var contentScale: ContentScale = ContentScale.Fit
+        set(value) {
+            if (field != value) {
+                field = value
+                coroutineScope.launch { reset("contentScaleChanged") }
+            }
+        }
+    var contentAlignment: Alignment = Alignment.Center
+        set(value) {
+            if (field != value) {
+                field = value
+                coroutineScope.launch { reset("contentAlignmentChanged") }
+            }
+        }
+    var readMode: ReadMode? = null
+        set(value) {
+            if (field != value) {
+                field = value
+                coroutineScope.launch { reset("readModeChanged") }
+            }
+        }
+    var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
+        set(value) {
+            if (field != value) {
+                field = value
+                coroutineScope.launch { reset("defaultMediumScaleMultipleChanged") }
+            }
+        }
     var threeStepScale: Boolean = false
     var rubberBandScale: Boolean = true
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
-    var readMode: ReadMode? = null
-    var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
 
     var minScale: Float by mutableStateOf(1f)
         private set
@@ -179,8 +212,8 @@ class ZoomableState(logger: Logger) {
         )
     }
 
-    internal suspend fun reset() {
-        stopAllAnimation("reset")
+    internal suspend fun reset(caller: String) {
+        stopAllAnimation("reset:$caller")
 
         val contentSize = contentSize
         val contentOriginSize = contentOriginSize
@@ -238,7 +271,7 @@ class ZoomableState(logger: Logger) {
         }
         val limitedInitialUserTransform = limitUserTransform(initialUserTransform)
         logger.d {
-            "reset. containerSize=${containerSize.toShortString()}, " +
+            "reset:$caller. containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +

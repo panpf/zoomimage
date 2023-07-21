@@ -356,9 +356,9 @@ class SubsamplingEngine constructor(logger: Logger) {
         }
         val tileDecoder = this@SubsamplingEngine.tileDecoder
         if (tileDecoder != null) {
+            logger.d { "cleanTileDecoder. $caller. '${imageSource?.key}'" }
             tileDecoder.destroy("$caller:cleanTileDecoder")
             this@SubsamplingEngine.tileDecoder = null
-            logger.d { "cleanTileDecoder. $caller. '${imageSource?.key}'" }
             notifyReadyChange()
         }
         imageInfo = null
@@ -367,9 +367,9 @@ class SubsamplingEngine constructor(logger: Logger) {
     private fun cleanTileManager(caller: String) {
         val tileManager = this@SubsamplingEngine.tileManager
         if (tileManager != null) {
+            logger.d { "cleanTileManager. $caller. '${imageSource?.key}'" }
             tileManager.clean("$caller:cleanTileManager")
             this@SubsamplingEngine.tileManager = null
-            logger.d { "cleanTileManager. $caller. '${imageSource?.key}'" }
             notifyReadyChange()
             notifyTileChange()
         }

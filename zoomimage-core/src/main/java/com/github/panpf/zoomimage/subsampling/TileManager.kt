@@ -184,7 +184,7 @@ class TileManager constructor(
     private fun loadTile(tile: Tile): Boolean {
         requiredMainThread()
 
-        if (tile.countBitmap != null) {
+        if (tile.tileBitmap != null) {
             return false
         }
 
@@ -197,7 +197,7 @@ class TileManager constructor(
             "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.inSampleSize}"
         val cachedValue = tileMemoryCache?.get(memoryCacheKey)
         if (cachedValue != null) {
-            tile.countBitmap = cachedValue
+            tile.tileBitmap = cachedValue
             logger.d {
                 "loadTile. successful. fromMemory. $tile. '${imageSource.key}'"
             }
@@ -209,7 +209,7 @@ class TileManager constructor(
             val bitmap = tileDecoder.decode(tile)
             when {
                 bitmap == null -> {
-                    logger.e("loadTile. null. $tile. '${imageSource.key}'")
+                     logger.e("loadTile. failed. bitmap null. $tile. '${imageSource.key}'")
                 }
 
                 isActive -> {
@@ -221,7 +221,7 @@ class TileManager constructor(
                             imageInfo = imageInfo,
                             tileBitmapPool = tileBitmapPool,
                         ) ?: DefaultTileBitmap(memoryCacheKey, bitmap)
-                        tile.countBitmap = newCountBitmap
+                        tile.tileBitmap = newCountBitmap
                         logger.d {
                             "loadTile. successful. $tile. '${imageSource.key}'"
                         }
@@ -231,7 +231,7 @@ class TileManager constructor(
 
                 else -> {
                     logger.d {
-                        "loadTile. canceled. $tile. '${imageSource.key}'"
+                        "loadTile. canceled. bitmap=${bitmap.toHexString()}, $tile. '${imageSource.key}'"
                     }
                     val bitmapPool = tileBitmapPool
                     if (bitmapPool != null) {
@@ -242,9 +242,6 @@ class TileManager constructor(
                         )
                     } else {
                         bitmap.recycle()
-                    }
-                    logger.d {
-                        "loadTile. freeBitmap. tile job canceled. bitmap=${bitmap.toHexString()}. '${imageSource.key}'"
                     }
                 }
             }
@@ -262,13 +259,13 @@ class TileManager constructor(
             tile.loadJob = null
         }
 
-        val bitmap = tile.countBitmap
+        val bitmap = tile.tileBitmap
         val recyclable = bitmap != null
         if (recyclable) {
             logger.d {
                 "freeTile. $tile. '${imageSource.key}'"
             }
-            tile.countBitmap = null
+            tile.tileBitmap = null
             if (notifyTileChanged) {
                 notifyTileChanged()
             }

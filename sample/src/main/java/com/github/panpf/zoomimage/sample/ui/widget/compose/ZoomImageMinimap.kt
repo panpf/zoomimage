@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -92,11 +90,9 @@ fun ZoomImageMinimap(
 
                         @Suppress("UNUSED_VARIABLE") val changeCount =
                             subsamplingState.tilesChanged  // Trigger a refresh
-                        val imageSize by derivedStateOf {
-                            subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
-                        }
+                        val imageSize = subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
                         val tileList = subsamplingState.tileList
-                        val imageLoadRect by derivedStateOf { subsamplingState.imageLoadRect }
+                        val imageLoadRect = subsamplingState.imageLoadRect
                         if (contentSize.isNotEmpty() && imageSize.isNotEmpty()) {
                             drawTilesBounds(
                                 tileList = tileList,
