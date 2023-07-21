@@ -110,7 +110,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                 ceil(drawableVisibleRect.bottom / heightScaled).toInt()
             )
         }
-        tileBoundsPaint.color = Color.parseColor("#FF00FF")
+        tileBoundsPaint.color = Color.MAGENTA
         canvas.drawRect(mapVisibleRect, tileBoundsPaint)
     }
 

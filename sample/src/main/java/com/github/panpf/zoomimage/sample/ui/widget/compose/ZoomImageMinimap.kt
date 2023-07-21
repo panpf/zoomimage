@@ -23,12 +23,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomableState
 import com.github.panpf.zoomimage.compose.internal.isEmpty
@@ -59,6 +59,7 @@ fun ZoomImageMinimap(
 ) {
     val contentSize = zoomableState.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
     val coroutineScope = rememberCoroutineScope()
+    val strokeWidth = remember { 1f.dp2pxF }
     BoxWithConstraints(modifier = modifier.then(Modifier.fillMaxSize())) {
         val density = LocalDensity.current
         val viewSize = remember(contentSize) {
@@ -100,6 +101,7 @@ fun ZoomImageMinimap(
                                 imageSize = imageSize,
                                 viewSize = viewSize,
                                 imageLoadRect = imageLoadRect,
+                                strokeWidth = strokeWidth,
                             )
                         }
 
@@ -107,7 +109,8 @@ fun ZoomImageMinimap(
                             drawVisibleRect(
                                 contentVisibleRect = zoomableState.contentVisibleRect,
                                 contentSize = contentSize,
-                                viewSize = viewSize
+                                viewSize = viewSize,
+                                strokeWidth = strokeWidth,
                             )
                         }
                     }
@@ -162,11 +165,11 @@ private fun ContentDrawScope.drawTilesBounds(
     tileList: List<Tile>,
     imageSize: IntSize,
     viewSize: IntSize,
-    imageLoadRect: IntRectCompat
+    imageLoadRect: IntRectCompat,
+    strokeWidth: Float,
 ) {
     val widthTargetScale = imageSize.width.toFloat() / viewSize.width
     val heightTargetScale = imageSize.height.toFloat() / viewSize.height
-    val strokeWidth = 1.dp.toPx()
     val strokeHalfWidth = strokeWidth / 2
     tileList.forEach { tile ->
         val load = tile.srcRect.overlaps(imageLoadRect)
@@ -188,7 +191,7 @@ private fun ContentDrawScope.drawTilesBounds(
             color = Color(boundsColor),
             topLeft = tileDrawRect.topLeft.toOffset(),
             size = tileDrawRect.size.toSize(),
-            style = Stroke(width = 2.dp.toPx())
+            style = Stroke(width = strokeWidth),
         )
     }
 }
@@ -197,6 +200,7 @@ private fun ContentDrawScope.drawVisibleRect(
     contentVisibleRect: IntRect,
     contentSize: IntSize,
     viewSize: IntSize,
+    strokeWidth: Float,
 ) {
     val drawScaleWithContent = ScaleFactor(
         scaleX = viewSize.width / contentSize.width.toFloat(),
@@ -204,9 +208,9 @@ private fun ContentDrawScope.drawVisibleRect(
     )
     val drawVisibleRect = contentVisibleRect.scale(drawScaleWithContent).toRect()
     drawRect(
-        color = Color.Red,
+        color = Color.Magenta,
         topLeft = drawVisibleRect.topLeft,
         size = drawVisibleRect.size,
-        style = Stroke(width = 2.dp.toPx())
+        style = Stroke(width = strokeWidth)
     )
 }
