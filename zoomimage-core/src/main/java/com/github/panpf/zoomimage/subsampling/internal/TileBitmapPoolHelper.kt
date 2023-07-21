@@ -123,7 +123,7 @@ class TileBitmapPoolHelper(logger: Logger) {
 
         val from = if (newCreate) "newCreate" else "fromPool"
         logger.d {
-            "getOrCreate$caller. $from. width=$width, height=$height, config=$config. bitmap=${this.toHexString()}"
+            "getOrCreate:$caller. $from. width=$width, height=$height, config=$config. bitmap=${this.toHexString()}"
         }
         return bitmap
     }

@@ -271,7 +271,8 @@ class ZoomableState(logger: Logger) {
         }
         val limitedInitialUserTransform = limitUserTransform(initialUserTransform)
         logger.d {
-            "reset:$caller. containerSize=${containerSize.toShortString()}, " +
+            "reset:$caller. " +
+                    "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
@@ -419,11 +420,7 @@ class ZoomableState(logger: Logger) {
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "addUserScale=${targetAddUserScale.format(4)} -> ${
-                        limitedTargetAddUserScale.format(
-                            4
-                        )
-                    }, " +
+                    "addUserScale=${targetAddUserScale.format(4)} -> ${limitedTargetAddUserScale.format(4)}, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddUserOffset.toShortString()}, " +
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
         }

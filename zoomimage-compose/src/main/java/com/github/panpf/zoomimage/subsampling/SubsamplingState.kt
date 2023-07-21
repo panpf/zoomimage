@@ -206,14 +206,14 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private fun cleanTileDecoder(caller: String) {
         val lastResetTileDecoderJob = this@SubsamplingState.lastResetTileDecoderJob
         if (lastResetTileDecoderJob != null) {
-            lastResetTileDecoderJob.cancel("$caller:cleanTileDecoder")
+            lastResetTileDecoderJob.cancel("cleanTileDecoder:$caller")
             this@SubsamplingState.lastResetTileDecoderJob = null
         }
         val tileDecoder = this@SubsamplingState.tileDecoder
         if (tileDecoder != null) {
-            tileDecoder.destroy("$caller:cleanTileDecoder")
+            tileDecoder.destroy("cleanTileDecoder:$caller")
             this@SubsamplingState.tileDecoder = null
-            logger.d { "cleanTileDecoder. $caller. '${imageSource?.key}'" }
+            logger.d { "cleanTileDecoder:$caller. '${imageSource?.key}'" }
             notifyReadyChange()
         }
         imageInfo = null
@@ -222,17 +222,17 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private fun cleanTileManager(caller: String) {
         val tileManager = this@SubsamplingState.tileManager
         if (tileManager != null) {
-            tileManager.clean("$caller:cleanTileManager")
+            tileManager.clean("cleanTileManager:$caller")
             this@SubsamplingState.tileManager = null
-            logger.d { "cleanTileManager. $caller. '${imageSource?.key}'" }
+            logger.d { "cleanTileManager:$caller. '${imageSource?.key}'" }
             notifyReadyChange()
             notifyTileChange()
         }
     }
 
     fun resetTileDecoder(caller: String) {
-        cleanTileManager("$caller:resetTileDecoder")
-        cleanTileDecoder("$caller:resetTileDecoder")
+        cleanTileManager("resetTileDecoder:$caller")
+        cleanTileDecoder("resetTileDecoder:$caller")
 
         val imageSource = imageSource ?: return
         val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
@@ -244,7 +244,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 imageInfo?.let { canUseSubsampling(it, contentSize.toCompatIntSize()) } ?: -10
             if (imageInfo != null && result >= 0) {
                 logger.d {
-                    "resetTileDecoder success. $caller. " +
+                    "resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
                             "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo=${imageInfo.toShortString()}. " +
@@ -266,7 +266,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                     else -> "Unknown"
                 }
                 logger.d {
-                    "resetTileDecoder failed. $caller. $cause. " +
+                    "resetTileDecoder:$caller. failed, $cause. " +
                             "contentSize: ${contentSize.toShortString()}, " +
                             "imageInfo: ${imageInfo?.toShortString()}. " +
                             "'${imageSource.key}'"
@@ -277,7 +277,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     }
 
     fun resetTileManager(caller: String) {
-        cleanTileManager(caller)
+        cleanTileManager("resetTileManager:$caller")
 
         val imageSource = imageSource ?: return
         val tileDecoder = tileDecoder ?: return
@@ -299,7 +299,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             val tileMap = tileManager.tileMap
             val tileMapInfoList = tileMap.keys.sortedDescending()
                 .map { "${it}:${tileMap[it]?.size}" }
-            "resetTileManager success. $caller. " +
+            "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "tileMaxSize=${tileMaxSize.toShortString()}, " +
@@ -324,19 +324,19 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         val tileManager = tileManager ?: return
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
         if (paused) {
-            logger.d { "refreshTiles. $caller. interrupted. paused. '${imageSource.key}'" }
+            logger.d { "refreshTiles:$caller. interrupted, paused. '${imageSource.key}'" }
             return
         }
         if (contentVisibleRect.isEmpty) {
             logger.d {
-                "refreshTiles. $caller. interrupted. contentVisibleRect is empty. " +
+                "refreshTiles:$caller. interrupted, contentVisibleRect is empty. " +
                         "contentVisibleRect=${contentVisibleRect}. '${imageSource.key}'"
             }
             tileManager.clean("refreshTiles:contentVisibleRectEmpty")
             return
         }
         if (displayScale.format(2) <= displayMinScale.format(2)) {
-            logger.d { "refreshTiles. $caller. interrupted. Reach minScale. '${imageSource.key}'" }
+            logger.d { "refreshTiles:$caller. interrupted, reach minScale. '${imageSource.key}'" }
             tileManager.clean("refreshTiles:reachMinScale")
             return
         }

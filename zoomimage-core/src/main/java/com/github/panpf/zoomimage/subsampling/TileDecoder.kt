@@ -78,7 +78,7 @@ class TileDecoder constructor(
             regionSize = IntSizeCompat(newSrcRect.width, newSrcRect.height),
             imageMimeType = imageInfo.mimeType,
             imageSize = addedImageSize,
-            caller = "tile:decodeRegion"
+            caller = "decodeRegion"
         )
 
         return try {
@@ -89,7 +89,7 @@ class TileDecoder constructor(
             if (inBitmap != null && isInBitmapError(throwable)) {
                 logger.e("decodeRegion. Bitmap region decode inBitmap error. '${imageSource.key}'")
 
-                tileBitmapPoolHelper.freeBitmap(inBitmap, "tile:decodeRegion:error")
+                tileBitmapPoolHelper.freeBitmap(inBitmap, "decodeRegion:error")
 
                 decodeOptions.inBitmap = null
                 try {
@@ -122,7 +122,7 @@ class TileDecoder constructor(
 
         val newBitmap = exifOrientationHelper.applyToBitmap(bitmap)
         return if (newBitmap != null && newBitmap != bitmap) {
-            tileBitmapPoolHelper.freeBitmap(bitmap, "tile:applyExifOrientation")
+            tileBitmapPoolHelper.freeBitmap(bitmap, "applyExifOrientation")
             newBitmap
         } else {
             bitmap
@@ -134,7 +134,7 @@ class TileDecoder constructor(
         requiredMainThread()
         if (destroyed) return
         destroyed = true
-        logger.d { "destroy. $caller. '${imageSource.key}'" }
+        logger.d { "destroy:$caller. '${imageSource.key}'" }
         synchronized(decoderPool) {
             decoderPool.forEach {
                 it.recycle()

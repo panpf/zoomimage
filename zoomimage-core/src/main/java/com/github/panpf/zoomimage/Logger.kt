@@ -268,7 +268,7 @@ class Logger(
     }
 
     override fun toString(): String {
-        return "Logger2(tag='$tag', module=$pipeline=$pipeline, level=$level)"
+        return "Logger(tag='$tag', module=$pipeline=$pipeline, level=$level)"
     }
 
     companion object {

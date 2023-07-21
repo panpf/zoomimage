@@ -84,7 +84,7 @@ class TileManager constructor(
             )
         ) {
             logger.d {
-                "refreshTiles. $caller, interrupted. The aspect ratio is different. " +
+                "refreshTiles:$caller, interrupted, the aspect ratio is different. " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
                         "scale=$scale, " +
@@ -97,7 +97,7 @@ class TileManager constructor(
         val tileList = findTiles(scale, contentSize)
         if (tileList.isNullOrEmpty()) {
             logger.d {
-                "refreshTiles. $caller, interrupted. tiles size is ${tileList?.size ?: 0}. " +
+                "refreshTiles:$caller, interrupted, tiles size is ${tileList?.size ?: 0}. " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
                         "scale=$scale, " +
@@ -129,7 +129,8 @@ class TileManager constructor(
         }
 
         logger.d {
-            "refreshTiles. $caller, tiles=${tileList.size}, " +
+            "refreshTiles:$caller. " +
+                    "tiles=${tileList.size}, " +
                     "loadCount=${realLoadCount}/${loadCount}, " +
                     "freeCount=${realFreeCount}/${freeCount}. " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -175,7 +176,7 @@ class TileManager constructor(
         val lastTileList = lastTileList
         if (lastTileList != null) {
             val freeCount = freeAllTile()
-            logger.d { "clean. $caller. freeCount=$freeCount. '${imageSource.key}" }
+            logger.d { "clean:$caller. freeCount=$freeCount. '${imageSource.key}" }
             this@TileManager.lastSampleSize = null
             this@TileManager.lastTileList = null
         }
@@ -200,7 +201,7 @@ class TileManager constructor(
         if (cachedValue != null) {
             tile.tileBitmap = cachedValue
             logger.d {
-                "loadTile. successful. fromMemory. $tile. '${imageSource.key}'"
+                "loadTile. successful, fromMemory. $tile. '${imageSource.key}'"
             }
             notifyTileChanged()
             return true
@@ -210,7 +211,7 @@ class TileManager constructor(
             val bitmap = tileDecoder.decode(tile)
             when {
                 bitmap == null -> {
-                    logger.e("loadTile. failed. bitmap null. $tile. '${imageSource.key}'")
+                    logger.e("loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
                 }
 
                 isActive -> {
@@ -223,9 +224,7 @@ class TileManager constructor(
                             tileBitmapPoolHelper = tileBitmapPoolHelper,
                         )
                         tile.tileBitmap = newCountBitmap
-                        logger.d {
-                            "loadTile. successful. $tile. '${imageSource.key}'"
-                        }
+                        logger.d { "loadTile. successful. $tile. '${imageSource.key}'" }
                         notifyTileChanged()
                     }
                 }
@@ -236,7 +235,7 @@ class TileManager constructor(
                     }
                     tileBitmapPoolHelper.freeBitmap(
                         bitmap = bitmap,
-                        caller = "tile:jobCanceled"
+                        caller = "loadTile:jobCanceled"
                     )
                 }
             }

@@ -156,8 +156,8 @@ class SubsamplingEngine constructor(logger: Logger) {
     }
 
     private fun resetTileDecoder(caller: String) {
-        cleanTileManager("$caller:resetTileDecoder")
-        cleanTileDecoder("$caller:resetTileDecoder")
+        cleanTileManager("resetTileDecoder:$caller")
+        cleanTileDecoder("resetTileDecoder:$caller")
 
         val imageSource = imageSource ?: return
         val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
@@ -169,7 +169,7 @@ class SubsamplingEngine constructor(logger: Logger) {
                 imageInfo?.let { canUseSubsampling(it, contentSize) } ?: -10
             if (imageInfo != null && result >= 0) {
                 logger.d {
-                    "resetTileDecoder success. $caller. " +
+                    "resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
                             "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo=${imageInfo.toShortString()}. " +
@@ -191,7 +191,7 @@ class SubsamplingEngine constructor(logger: Logger) {
                     else -> "Unknown"
                 }
                 logger.d {
-                    "resetTileDecoder failed. $caller. $cause. " +
+                    "resetTileDecoder:$caller. failed, $cause. " +
                             "contentSize: ${contentSize.toShortString()}, " +
                             "imageInfo: ${imageInfo?.toShortString()}. " +
                             "'${imageSource.key}'"
@@ -224,7 +224,7 @@ class SubsamplingEngine constructor(logger: Logger) {
             val tileMap = tileManager.tileMap
             val tileMapInfoList = tileMap.keys.sortedDescending()
                 .map { "${it}:${tileMap[it]?.size}" }
-            "resetTileManager success. $caller. " +
+            "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "tileMaxSize=${tileMaxSize.toShortString()}, " +
@@ -249,19 +249,19 @@ class SubsamplingEngine constructor(logger: Logger) {
         val tileManager = tileManager ?: return
         val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
         if (paused) {
-            logger.d { "refreshTiles. $caller. interrupted. paused. '${imageSource.key}'" }
+            logger.d { "refreshTiles:$caller. interrupted, paused. '${imageSource.key}'" }
             return
         }
         if (contentVisibleRect.isEmpty) {
             logger.d {
-                "refreshTiles. $caller. interrupted. contentVisibleRect is empty. " +
+                "refreshTiles:$caller. interrupted, contentVisibleRect is empty. " +
                         "contentVisibleRect=${contentVisibleRect}. '${imageSource.key}'"
             }
             tileManager.clean("refreshTiles:contentVisibleRectEmpty")
             return
         }
         if (displayScale.format(2) <= displayMinScale.format(2)) {
-            logger.d { "refreshTiles. $caller. interrupted. Reach minScale. '${imageSource.key}'" }
+            logger.d { "refreshTiles:$caller. interrupted, reach minScale. '${imageSource.key}'" }
             tileManager.clean("refreshTiles:reachMinScale")
             return
         }
@@ -351,13 +351,13 @@ class SubsamplingEngine constructor(logger: Logger) {
     private fun cleanTileDecoder(caller: String) {
         val lastResetTileDecoderJob = this@SubsamplingEngine.lastResetTileDecoderJob
         if (lastResetTileDecoderJob != null) {
-            lastResetTileDecoderJob.cancel("$caller:cleanTileDecoder")
+            lastResetTileDecoderJob.cancel("cleanTileDecoder:$caller")
             this@SubsamplingEngine.lastResetTileDecoderJob = null
         }
         val tileDecoder = this@SubsamplingEngine.tileDecoder
         if (tileDecoder != null) {
-            logger.d { "cleanTileDecoder. $caller. '${imageSource?.key}'" }
-            tileDecoder.destroy("$caller:cleanTileDecoder")
+            logger.d { "cleanTileDecoder:$caller. '${imageSource?.key}'" }
+            tileDecoder.destroy("cleanTileDecoder:$caller")
             this@SubsamplingEngine.tileDecoder = null
             notifyReadyChange()
         }
@@ -367,8 +367,8 @@ class SubsamplingEngine constructor(logger: Logger) {
     private fun cleanTileManager(caller: String) {
         val tileManager = this@SubsamplingEngine.tileManager
         if (tileManager != null) {
-            logger.d { "cleanTileManager. $caller. '${imageSource?.key}'" }
-            tileManager.clean("$caller:cleanTileManager")
+            logger.d { "cleanTileManager:$caller. '${imageSource?.key}'" }
+            tileManager.clean("cleanTileManager:$caller")
             this@SubsamplingEngine.tileManager = null
             notifyReadyChange()
             notifyTileChange()

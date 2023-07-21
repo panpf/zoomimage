@@ -156,7 +156,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
         val paused = !viewVisible || !lifecycleStarted
         logger.d {
-            "resetPaused. $paused. $caller. " +
+            "resetPaused:$caller. $paused. " +
                     "viewVisible=$viewVisible, " +
                     "lifecycleStarted=$lifecycleStarted. " +
                     "'${imageSource?.key}'"
