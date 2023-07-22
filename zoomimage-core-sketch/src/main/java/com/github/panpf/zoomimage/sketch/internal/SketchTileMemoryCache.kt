@@ -9,11 +9,14 @@ import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 
-class SketchTileMemoryCache(private val sketch: Sketch) : TileMemoryCache {
+class SketchTileMemoryCache constructor(
+    private val sketch: Sketch,
+    private val caller: String
+) : TileMemoryCache {
 
     override fun get(key: String): TileBitmap? {
         return sketch.memoryCache[key]?.let {
-            SketchTileBitmap(key, it)
+            SketchTileBitmap(key = key, cacheValue = it, caller = caller)
         }
     }
 
@@ -45,6 +48,6 @@ class SketchTileMemoryCache(private val sketch: Sketch) : TileMemoryCache {
             extras = null,
         )
         sketch.memoryCache.put(key, newCacheValue)
-        return SketchTileBitmap(key, newCacheValue)
+        return SketchTileBitmap(key, newCacheValue, caller)
     }
 }

@@ -84,8 +84,10 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     val scrollEdge: ScrollEdge
         get() = _scrollEdge
 
-    val isScaling: Boolean
+    val scaling: Boolean
         get() = scaleAnimatable?.running == true || manualScaling
+    val fling: Boolean
+        get() = flingAnimatable?.running == true
 
     val userScale: Float
         get() = userMatrix.getScale().scaleX
@@ -182,7 +184,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 //        private set
 
     private var _rotateDegrees = 0
-    val rotateDegrees: Int
+    val rotation: Int
         get() = _rotateDegrees
 
 
@@ -209,8 +211,8 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             baseInitialTransform = TransformCompat.Origin
             userInitialTransform = TransformCompat.Origin
         } else {
-            val rotatedDrawableSize = drawableSize.rotate(rotateDegrees)
-            val rotatedImageSize = imageSize.rotate(rotateDegrees)
+            val rotatedDrawableSize = drawableSize.rotate(rotation)
+            val rotatedImageSize = imageSize.rotate(rotation)
             val userStepScales = computeUserScales(
                 contentSize = rotatedDrawableSize,
                 contentOriginSize = rotatedImageSize,
@@ -244,7 +246,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             "reset. viewSize=$viewSize, " +
                     "imageSize=$imageSize, " +
                     "drawableSize=$drawableSize, " +
-                    "rotateDegrees=$rotateDegrees, " +
+                    "rotateDegrees=$rotation, " +
                     "scaleType=$scaleType, " +
                     "readMode=$readMode, " +
                     "minUserScale=$minScale, " +
@@ -351,7 +353,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             x = abs(displayRectF.left.toInt()),
             y = abs(displayRectF.top.toInt())
         )
-        val rotatedOffsetOfContent = offsetOfContent.rotateInContainer(drawableSize, rotateDegrees)
+        val rotatedOffsetOfContent = offsetOfContent.rotateInContainer(drawableSize, rotation)
         val centerLocation =
             computeLocationOffset(rotatedOffsetOfContent, viewSize, displayRectF, scale)
         logger.d {
@@ -479,7 +481,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val viewSize = viewSize.takeIf { !it.isEmpty() } ?: return
         val drawableSize = drawableSize.takeIf { !it.isEmpty() } ?: return
         val (drawableWidth, drawableHeight) = drawableSize.let {
-            if (rotateDegrees % 180 == 0) it else IntSizeCompat(it.height, it.width)
+            if (rotation % 180 == 0) it else IntSizeCompat(it.height, it.width)
         }
         val displayWidth = displayRectF.width()
         val displayHeight = displayRectF.height()
@@ -498,7 +500,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         top /= heightScale
         bottom /= heightScale
         rect.set(left.roundToInt(), top.roundToInt(), right.roundToInt(), bottom.roundToInt())
-        reverseRotateRect(rect, rotateDegrees, drawableSize)
+        reverseRotateRect(rect, rotation, drawableSize)
     }
 
     /**
@@ -731,7 +733,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             val transform = baseInitialTransform
             postScale(transform.scale.scaleX, transform.scale.scaleY)
             postTranslate(transform.offset.x, transform.offset.y)
-            postRotate(rotateDegrees.toFloat())
+            postRotate(rotation.toFloat())
         }
     }
 

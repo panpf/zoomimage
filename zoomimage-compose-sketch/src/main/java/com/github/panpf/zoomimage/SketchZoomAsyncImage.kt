@@ -201,8 +201,8 @@ fun SketchZoomAsyncImage(
     val context = LocalContext.current
     val sketch = context.sketch
     LaunchedEffect(Unit) {
-        subsamplingState.tileBitmapPool = SketchTileBitmapPool(sketch)
-        subsamplingState.tileMemoryCache = SketchTileMemoryCache(sketch)
+        subsamplingState.tileBitmapPool = SketchTileBitmapPool(sketch, "SketchZoomAsyncImage")
+        subsamplingState.tileMemoryCache = SketchTileMemoryCache(sketch, "SketchZoomAsyncImage")
     }
 
     val modifier1 = modifier

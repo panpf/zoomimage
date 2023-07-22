@@ -45,6 +45,7 @@ class TileManager constructor(
     private val imageSource: ImageSource,
     private val imageInfo: ImageInfo,
     containerSize: IntSizeCompat,
+    private val contentSize: IntSizeCompat,
     private val onTileChanged: () -> Unit,
 ) {
     private val logger: Logger = logger.newLogger(module = "SubsamplingTileManager")
@@ -70,9 +71,27 @@ class TileManager constructor(
         tileMap = initializeTileMap(imageInfo.size, tileMaxSize)
     }
 
+    fun resetVisibleAndLoadRect(contentVisibleRect: IntRectCompat) {
+        val drawableScaled = imageInfo.width / contentSize.width.toFloat()
+        imageVisibleRect = IntRectCompat(
+            left = floor(contentVisibleRect.left * drawableScaled).toInt(),
+            top = floor(contentVisibleRect.top * drawableScaled).toInt(),
+            right = ceil(contentVisibleRect.right * drawableScaled).toInt(),
+            bottom = ceil(contentVisibleRect.bottom * drawableScaled).toInt()
+        )
+        // Increase the visible area as the loading area,
+        // this preloads tiles around the visible area,
+        // the user will no longer feel the loading process while sliding slowly
+        imageLoadRect = IntRectCompat(
+            left = imageVisibleRect.left - tileMaxSize.width / 2,
+            top = imageVisibleRect.top - tileMaxSize.height / 2,
+            right = imageVisibleRect.right + tileMaxSize.width / 2,
+            bottom = imageVisibleRect.bottom + tileMaxSize.height / 2
+        )
+    }
+
     @MainThread
     fun refreshTiles(
-        contentSize: IntSizeCompat,
         contentVisibleRect: IntRectCompat,
         scale: Float,
         caller: String,
@@ -97,7 +116,7 @@ class TileManager constructor(
             return
         }
 
-        val tileList = findTiles(scale, contentSize)
+        val tileList = findTiles(scale)
         if (tileList.isNullOrEmpty()) {
             logger.d {
                 "refreshTiles:$caller, interrupted, tiles size is ${tileList?.size ?: 0}. " +
@@ -111,7 +130,7 @@ class TileManager constructor(
             return
         }
 
-        resetVisibleAndLoadRect(contentSize, contentVisibleRect)
+        resetVisibleAndLoadRect(contentVisibleRect)
 
         var loadCount = 0
         var freeCount = 0
@@ -147,7 +166,7 @@ class TileManager constructor(
         }
     }
 
-    private fun findTiles(scale: Float, contentSize: IntSizeCompat): List<Tile>? {
+    private fun findTiles(scale: Float): List<Tile>? {
         val lastScale = lastScale
         val lastSampleSize = lastSampleSize
         val lastTileList = lastTileList
@@ -268,28 +287,6 @@ class TileManager constructor(
             }
         }
         return recyclable
-    }
-
-    private fun resetVisibleAndLoadRect(
-        drawableSize: IntSizeCompat,
-        drawableVisibleRect: IntRectCompat
-    ) {
-        val drawableScaled = imageInfo.width / drawableSize.width.toFloat()
-        imageVisibleRect = IntRectCompat(
-            left = floor(drawableVisibleRect.left * drawableScaled).toInt(),
-            top = floor(drawableVisibleRect.top * drawableScaled).toInt(),
-            right = ceil(drawableVisibleRect.right * drawableScaled).toInt(),
-            bottom = ceil(drawableVisibleRect.bottom * drawableScaled).toInt()
-        )
-        // Increase the visible area as the loading area,
-        // this preloads tiles around the visible area,
-        // the user will no longer feel the loading process while sliding slowly
-        imageLoadRect = IntRectCompat(
-            left = imageVisibleRect.left - tileMaxSize.width / 2,
-            top = imageVisibleRect.top - tileMaxSize.height / 2,
-            right = imageVisibleRect.right + tileMaxSize.width / 2,
-            bottom = imageVisibleRect.bottom + tileMaxSize.height / 2
-        )
     }
 
     @MainThread

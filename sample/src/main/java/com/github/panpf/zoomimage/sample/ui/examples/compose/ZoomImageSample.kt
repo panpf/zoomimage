@@ -31,8 +31,8 @@ fun ZoomImageSample(sketchImageUri: String) {
     ) { contentScale, alignment, zoomableState, subsamplingState, ignoreExifOrientation, scrollBarSpec, onLongPress ->
         val context = LocalContext.current
         LaunchedEffect(Unit) {
-            subsamplingState.tileBitmapPool = SketchTileBitmapPool(context.sketch)
-            subsamplingState.tileMemoryCache = SketchTileMemoryCache(context.sketch)
+            subsamplingState.tileBitmapPool = SketchTileBitmapPool(context.sketch, "ZoomImage")
+            subsamplingState.tileMemoryCache = SketchTileMemoryCache(context.sketch, "ZoomImage")
         }
         LaunchedEffect(ignoreExifOrientation) {
             subsamplingState.ignoreExifOrientation = ignoreExifOrientation

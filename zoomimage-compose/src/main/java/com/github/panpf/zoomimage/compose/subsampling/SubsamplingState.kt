@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.toShortString
+import com.github.panpf.zoomimage.compose.zoom.Transform
+import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
-import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -35,9 +35,9 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.internal.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
+import com.github.panpf.zoomimage.subsampling.internal.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,17 +65,6 @@ fun BindZoomableStateAndSubsamplingState(
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState
 ) {
-    val refreshTiles: (caller: String) -> Unit = { caller ->
-        if (!zoomableState.scaling && zoomableState.transform.rotation.roundToInt() % 90 == 0) {
-            subsamplingState.refreshTiles(
-                displayScale = zoomableState.transform.scaleX,
-                displayMinScale = zoomableState.minScale,
-                contentVisibleRect = zoomableState.contentVisibleRect,
-                caller = caller
-            )
-        }
-    }
-
     LaunchedEffect(Unit) {
         snapshotFlow { zoomableState.containerSize }.collect {
             // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
@@ -91,6 +80,22 @@ fun BindZoomableStateAndSubsamplingState(
         snapshotFlow { zoomableState.contentSize }.collect {
             subsamplingState.contentSize = it
             subsamplingState.resetTileDecoder("contentSizeChanged")
+        }
+    }
+
+    val refreshTiles: (caller: String) -> Unit = { caller ->
+        if (!zoomableState.scaling && !zoomableState.fling && zoomableState.transform.rotation.roundToInt() % 90 == 0) {
+            subsamplingState.refreshTiles(
+                displayScale = zoomableState.transform.scaleX,
+                displayMinScale = zoomableState.minScale,
+                contentVisibleRect = zoomableState.contentVisibleRect,
+                caller = caller
+            )
+        } else {
+            subsamplingState.resetVisibleAndLoadRect(
+                contentVisibleRect = zoomableState.contentVisibleRect,
+                caller = caller
+            )
         }
     }
     LaunchedEffect(Unit) {
@@ -112,6 +117,11 @@ fun BindZoomableStateAndSubsamplingState(
     LaunchedEffect(Unit) {
         snapshotFlow { zoomableState.scaling }.collect {
             refreshTiles("scalingChanged")
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.fling }.collect {
+            refreshTiles("flingChanged")
         }
     }
 }
@@ -291,12 +301,14 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         val tileDecoder = tileDecoder ?: return
         val imageInfo = imageInfo ?: return
         val containerSize = containerSize.takeIf { !it.isEmpty() } ?: return
+        val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
 
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
             imageSource = imageSource,
             containerSize = containerSize.toCompatIntSize(),
+            contentSize = contentSize.toCompatIntSize(),
             tileMemoryCacheHelper = tileMemoryCacheHelper,
             tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
@@ -319,6 +331,21 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         notifyTileChange()
     }
 
+    fun resetVisibleAndLoadRect(contentVisibleRect: IntRect, caller: String) {
+        val imageSource = imageSource ?: return
+        val tileManager = tileManager ?: return
+        tileManager.resetVisibleAndLoadRect(contentVisibleRect.toCompatIntRect())
+        val imageVisibleRect = tileManager.imageVisibleRect
+        val imageLoadRect = tileManager.imageLoadRect
+        logger.d {
+            "resetVisibleAndLoadRect:$caller. " +
+                    "contentVisibleRect=${contentVisibleRect.toShortString()}. " +
+                    "imageVisibleRect=${imageVisibleRect.toShortString()}, " +
+                    "imageLoadRect=${imageLoadRect.toShortString()}. " +
+                    "'${imageSource.key}'"
+        }
+    }
+
     fun refreshTiles(
         displayScale: Float,
         displayMinScale: Float,
@@ -330,7 +357,6 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         this.lastContentVisibleRect = contentVisibleRect
         val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
         if (paused) {
             logger.d { "refreshTiles:$caller. interrupted, paused. '${imageSource.key}'" }
             return
@@ -349,7 +375,6 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             return
         }
         tileManager.refreshTiles(
-            contentSize = contentSize.toCompatIntSize(),
             contentVisibleRect = contentVisibleRect.toCompatIntRect(),
             scale = displayScale,
             caller = caller

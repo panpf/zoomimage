@@ -4,10 +4,13 @@ import android.graphics.Bitmap
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 
-class SketchTileBitmapPool(private val sketch: Sketch) : TileBitmapPool {
+class SketchTileBitmapPool constructor(
+    private val sketch: Sketch,
+    private val caller: String
+) : TileBitmapPool {
 
     override fun put(bitmap: Bitmap): Boolean {
-        return sketch.bitmapPool.put(bitmap, "SubsamplingImageView")
+        return sketch.bitmapPool.put(bitmap, caller)
     }
 
     override fun get(width: Int, height: Int, config: Bitmap.Config): Bitmap? {

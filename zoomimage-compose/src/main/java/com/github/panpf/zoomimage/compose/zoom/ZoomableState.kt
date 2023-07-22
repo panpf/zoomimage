@@ -26,6 +26,12 @@ import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.compose.internal.ScaleFactor
+import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.compose.internal.isEmpty
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.name
+import com.github.panpf.zoomimage.compose.internal.rotate
+import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerOriginByTouchPosition
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
@@ -38,17 +44,11 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeTransform
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
 import com.github.panpf.zoomimage.compose.zoom.internal.containerOriginToContentOrigin
 import com.github.panpf.zoomimage.compose.zoom.internal.contentOriginToContainerOrigin
-import com.github.panpf.zoomimage.compose.internal.format
-import com.github.panpf.zoomimage.compose.internal.isEmpty
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
-import com.github.panpf.zoomimage.compose.internal.name
-import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.zoom.internal.supportReadMode
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.zoom.internal.toScaleMode
-import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
@@ -60,7 +60,9 @@ import com.github.panpf.zoomimage.core.toShortString
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -103,11 +105,11 @@ fun rememberZoomableState(
 
 // todo support rotation
 class ZoomableState(logger: Logger) {
-    private var lastScaleAnimatable: Animatable<*, *>? = null
-    private var lastFlingAnimatable: Animatable<*, *>? = null
 
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var lastScaleAnimatable: Animatable<*, *>? = null
+    private var lastFlingAnimatable: Animatable<*, *>? = null
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -158,6 +160,7 @@ class ZoomableState(logger: Logger) {
         baseTransform.concat(userTransform)
     }
     var scaling: Boolean by mutableStateOf(false)
+    var fling: Boolean by mutableStateOf(false)
 
     val userOffsetBounds: IntRect by derivedStateOf {
         computeUserOffsetBounds(
@@ -411,6 +414,7 @@ class ZoomableState(logger: Logger) {
             val limitedTargetAddUserScale = limitedTargetUserScale - currentUserScale
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
+            val limitedTargetAddUserScaleFormatted = limitedTargetAddUserScale.format(4)
             "location. " +
                     "contentOrigin=${contentOrigin.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
@@ -419,7 +423,7 @@ class ZoomableState(logger: Logger) {
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "containerOrigin=${containerOrigin.toShortString()}, " +
-                    "addUserScale=${targetAddUserScale.format(4)} -> ${limitedTargetAddUserScale.format(4)}, " +
+                    "addUserScale=${targetAddUserScale.format(4)} -> $limitedTargetAddUserScaleFormatted, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddUserOffset.toShortString()}, " +
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
         }
@@ -442,26 +446,42 @@ class ZoomableState(logger: Logger) {
         )
         this.lastFlingAnimatable = flingAnimatable
         coroutineScope {
-            launch {
-                val initialVelocity = Offset.VectorConverter
-                    .convertFromVector(AnimationVector(velocity.x, velocity.y))
-                flingAnimatable.animateDecay(
-                    initialVelocity = initialVelocity,
-                    animationSpec = splineBasedDecay(density)
-                ) {
-                    val currentUserTransform2 = userTransform
-                    val targetUserOffset = this.value
-                    val limitedTargetUserOffset =
-                        limitUserOffset(targetUserOffset, currentUserTransform2.scaleX)
-                    val distance = limitedTargetUserOffset - startUserOffset
-                    logger.d {
-                        "fling. running. " +
-                                "velocity=$velocity, " +
-                                "startUserOffset=${startUserOffset.toShortString()}, " +
-                                "currentUserOffset=${limitedTargetUserOffset.toShortString()}, " +
-                                "distance=$distance"
+            var job: Job? = null
+            job = launch {
+                fling = true
+                try {
+                    val initialVelocity = Offset.VectorConverter
+                        .convertFromVector(AnimationVector(velocity.x, velocity.y))
+                    flingAnimatable.animateDecay(
+                        initialVelocity = initialVelocity,
+                        animationSpec = splineBasedDecay(density)
+                    ) {
+                        val currentUserTransform2 = userTransform
+                        val targetUserOffset = this.value
+                        val limitedTargetUserOffset =
+                            limitUserOffset(targetUserOffset, currentUserTransform2.scaleX)
+                        if (limitedTargetUserOffset != currentUserTransform2.offset) {
+                            val distance = limitedTargetUserOffset - startUserOffset
+                            logger.d {
+                                "fling. running. " +
+                                        "velocity=$velocity, " +
+                                        "startUserOffset=${startUserOffset.toShortString()}, " +
+                                        "currentUserOffset=${limitedTargetUserOffset.toShortString()}, " +
+                                        "distance=$distance"
+                            }
+                            userTransform =
+                                currentUserTransform2.copy(offset = limitedTargetUserOffset)
+                        } else {
+                            // SubsamplingState(line 87) relies on the fling state to refresh tiles,
+                            // so you need to end the fling animation as soon as possible
+                            job?.cancel("reachBounds")
+                            fling = false
+                        }
                     }
-                    userTransform = currentUserTransform2.copy(offset = limitedTargetUserOffset)
+                } catch (e: CancellationException) {
+                    throw e
+                } finally {
+                    fling = false
                 }
             }
         }
@@ -519,6 +539,7 @@ class ZoomableState(logger: Logger) {
         val lastFlingAnimatable = lastFlingAnimatable
         if (lastFlingAnimatable?.isRunning == true) {
             lastFlingAnimatable.stop()
+            fling = false
             logger.d { "stopFlingAnimation:$caller" }
         }
     }

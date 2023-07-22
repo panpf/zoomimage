@@ -210,12 +210,14 @@ class SubsamplingEngine constructor(logger: Logger) {
         val tileDecoder = tileDecoder ?: return
         val imageInfo = imageInfo ?: return
         val containerSize = containerSize.takeIf { !it.isEmpty() } ?: return
+        val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
 
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
             imageSource = imageSource,
             containerSize = containerSize,
+            contentSize = contentSize,
             tileMemoryCacheHelper = tileMemoryCacheHelper,
             tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
@@ -238,6 +240,21 @@ class SubsamplingEngine constructor(logger: Logger) {
         notifyTileChange()
     }
 
+    fun resetVisibleAndLoadRect(contentVisibleRect: Rect, caller: String){
+        val imageSource = imageSource ?: return
+        val tileManager = tileManager ?: return
+        tileManager.resetVisibleAndLoadRect(contentVisibleRect.toIntRectCompat())
+        val imageVisibleRect = tileManager.imageVisibleRect
+        val imageLoadRect = tileManager.imageLoadRect
+        logger.d {
+            "resetVisibleAndLoadRect:$caller. " +
+                    "contentVisibleRect=${contentVisibleRect.toShortString()}. " +
+                    "imageVisibleRect=${imageVisibleRect.toShortString()}, " +
+                    "imageLoadRect=${imageLoadRect.toShortString()}. " +
+                    "'${imageSource.key}'"
+        }
+    }
+
     fun refreshTiles(
         displayScale: Float,
         displayMinScale: Float,
@@ -249,7 +266,6 @@ class SubsamplingEngine constructor(logger: Logger) {
         this.lastContentVisibleRect = contentVisibleRect
         val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
-        val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
         if (paused) {
             logger.d { "refreshTiles:$caller. interrupted, paused. '${imageSource.key}'" }
             return
@@ -268,7 +284,6 @@ class SubsamplingEngine constructor(logger: Logger) {
             return
         }
         tileManager.refreshTiles(
-            contentSize = contentSize,
             contentVisibleRect = contentVisibleRect.toIntRectCompat(),
             scale = displayScale,
             caller = caller

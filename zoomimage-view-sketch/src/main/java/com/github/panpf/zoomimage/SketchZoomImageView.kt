@@ -46,8 +46,8 @@ open class SketchZoomImageView @JvmOverloads constructor(
     override var displayImageOptions: ImageOptions? = null
 
     init {
-        _subsamplingAbility?.tileBitmapPool = SketchTileBitmapPool(context.sketch)
-        _subsamplingAbility?.tileMemoryCache = SketchTileMemoryCache(context.sketch)
+        _subsamplingAbility?.tileBitmapPool = SketchTileBitmapPool(context.sketch, "SketchZoomImageView")
+        _subsamplingAbility?.tileMemoryCache = SketchTileMemoryCache(context.sketch, "SketchZoomImageView")
     }
 
     override fun onAttachedToWindow() {

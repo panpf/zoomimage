@@ -28,14 +28,16 @@ fun bindZoomAndSubsampling(
 
     val contentVisibleRect = Rect()
     zoomEngine.addOnMatrixChangeListener {
-        if (!zoomEngine.isScaling && zoomEngine.rotateDegrees % 90 == 0) {
-            zoomEngine.getVisibleRect(contentVisibleRect)
+        zoomEngine.getVisibleRect(contentVisibleRect)
+        if (!zoomEngine.scaling && !zoomEngine.fling && zoomEngine.rotation % 90 == 0) {
             subsamplingEngine.refreshTiles(
                 displayScale = zoomEngine.scale.scaleX,
                 displayMinScale = zoomEngine.minScale,
                 contentVisibleRect = contentVisibleRect,
                 caller = "matrixChanged"
             )
+        } else {
+            subsamplingEngine.resetVisibleAndLoadRect(contentVisibleRect, "matrixChanged")
         }
     }
 

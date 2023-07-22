@@ -60,6 +60,20 @@ class TileDecoder constructor(
         }
     }
 
+    @MainThread
+    fun destroy(caller: String) {
+        requiredMainThread()
+        if (destroyed) return
+        destroyed = true
+        logger.d { "destroy:$caller. '${imageSource.key}'" }
+        synchronized(decoderPool) {
+            decoderPool.forEach {
+                it.recycle()
+            }
+            decoderPool.clear()
+        }
+    }
+
     @WorkerThread
     private fun decodeRegion(
         regionDecoder: BitmapRegionDecoder,
@@ -117,33 +131,6 @@ class TileDecoder constructor(
     }
 
     @WorkerThread
-    private fun applyExifOrientation(bitmap: Bitmap): Bitmap {
-        requiredWorkThread()
-
-        val newBitmap = exifOrientationHelper.applyToBitmap(bitmap)
-        return if (newBitmap != null && newBitmap != bitmap) {
-            tileBitmapPoolHelper.freeBitmap(bitmap, "applyExifOrientation")
-            newBitmap
-        } else {
-            bitmap
-        }
-    }
-
-    @MainThread
-    fun destroy(caller: String) {
-        requiredMainThread()
-        if (destroyed) return
-        destroyed = true
-        logger.d { "destroy:$caller. '${imageSource.key}'" }
-        synchronized(decoderPool) {
-            decoderPool.forEach {
-                it.recycle()
-            }
-            decoderPool.clear()
-        }
-    }
-
-    @WorkerThread
     private fun useDecoder(block: (decoder: BitmapRegionDecoder) -> Bitmap?): Bitmap? {
         requiredWorkThread()
 
@@ -183,6 +170,19 @@ class TileDecoder constructor(
         }
 
         return bitmap
+    }
+
+    @WorkerThread
+    private fun applyExifOrientation(bitmap: Bitmap): Bitmap {
+        requiredWorkThread()
+
+        val newBitmap = exifOrientationHelper.applyToBitmap(bitmap)
+        return if (newBitmap != null && newBitmap != bitmap) {
+            tileBitmapPoolHelper.freeBitmap(bitmap, "applyExifOrientation")
+            newBitmap
+        } else {
+            bitmap
+        }
     }
 
     private fun IntRectCompat.toAndroidRect(): Rect {

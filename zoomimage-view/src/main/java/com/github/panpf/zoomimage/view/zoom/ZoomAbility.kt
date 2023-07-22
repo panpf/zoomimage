@@ -234,13 +234,15 @@ class ZoomAbility constructor(
         zoomEngine.canScroll(horizontal, direction)
 
     val rotateDegrees: Int
-        get() = zoomEngine.rotateDegrees
+        get() = zoomEngine.rotation
 
     val scrollEdge: ScrollEdge
         get() = zoomEngine.scrollEdge
 
-    val isScaling: Boolean
-        get() = zoomEngine.isScaling
+    val scaling: Boolean
+        get() = zoomEngine.scaling
+    val fling: Boolean
+        get() = zoomEngine.fling
 
     val userScale: Float
         get() = zoomEngine.userScale
