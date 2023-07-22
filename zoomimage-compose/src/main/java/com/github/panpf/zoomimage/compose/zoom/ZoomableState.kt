@@ -372,11 +372,12 @@ class ZoomableState(logger: Logger) {
     }
 
     suspend fun location(
-        contentOrigin: Origin,
+        contentOrigin: Origin,  // todo change to offsetOfContent
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
     ) {
         stopAllAnimation("location")
+//        val rotatedOffsetOfContent = offsetOfContent.rotateInContainer(drawableSize, rotateDegrees)
 
         val targetUserScale = targetScale / baseTransform.scaleX
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
@@ -467,7 +468,7 @@ class ZoomableState(logger: Logger) {
     }
 
     suspend fun switchScale(
-        contentOrigin: Origin = Origin(0.5f, 0.5f),
+        contentOrigin: Origin = Origin(0.5f, 0.5f), // todo change to offsetOfContent
         animated: Boolean = true
     ): Float {
         val nextScale = getNextStepScale()

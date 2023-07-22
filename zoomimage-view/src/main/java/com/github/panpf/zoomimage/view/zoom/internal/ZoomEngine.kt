@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.core.IntOffsetCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
@@ -38,6 +39,7 @@ import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.rotate
 import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.view.internal.computeScaleFactor
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.zoom.OnDrawableSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnMatrixChangeListener
@@ -72,8 +74,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private var lastScaleFocusY: Float = 0f
 
     private var flingRunnable: FlingRunnable? = null
-    private var locationRunnable: LocationRunnable? = null
-    private var animatedScaleRunnable: AnimatedScaleRunnable? = null
+    private var scaleAnimatable: FloatAnimatable? = null
     private var _scrollEdge: ScrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
     private var blockParentIntercept: Boolean = false
     private var dragging = false
@@ -83,7 +84,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         get() = _scrollEdge
 
     val isScaling: Boolean
-        get() = animatedScaleRunnable?.isRunning == true || manualScaling
+        get() = scaleAnimatable?.running == true || manualScaling
 
     val userScale: Float
         get() = userMatrix.getScale().scaleX
@@ -266,6 +267,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      * @param focalY  Scale the y coordinate of the center point on the view
      */
     fun scale(newScale: Float, focalX: Float, focalY: Float, animate: Boolean) {
+        stopAllAnimation()
         val currentScale = scale.scaleX
         val focal = if (newScale > currentScale) {
             OffsetCompat(focalX, focalY)
@@ -275,22 +277,27 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val limitedNewScale = newScale.coerceIn(minScale, maxScale)
         val finalFocalX = focal.x
         val finalFocalY = focal.y
-        cancelFling()
-        animatedScaleRunnable?.cancel()
-        val newUserScale = limitedNewScale / baseScale.scaleX
-        val currentUserScale = userScale
+        val startUserScale = userScale
+        val endUserScale = limitedNewScale / baseScale.scaleX
         if (animate) {
-            animatedScaleRunnable = AnimatedScaleRunnable(
-                engine = this@ZoomEngine,
-                startScale = currentUserScale,
-                endScale = newUserScale,
-                scaleFocalX = finalFocalX,
-                scaleFocalY = finalFocalY
+            scaleAnimatable = FloatAnimatable(
+                view = view,
+                startValue = 0f,
+                endValue = 1f,
+                durationMillis = animationSpec.durationMillis,
+                interpolator = animationSpec.interpolator,
+                onUpdateValue = { value ->
+                    val currentUserScale = userScale
+                    val progressUserScale = startUserScale + value * (endUserScale - startUserScale)
+                    val deltaScale = progressUserScale / currentUserScale
+                    doScale(deltaScale, finalFocalX, finalFocalY, 0f, 0f)
+                },
+                onEnd = { notifyUpdateMatrix() }
             )
-            animatedScaleRunnable?.start()
+            scaleAnimatable?.start()
         } else {
             scaleBy(
-                addUserScale = newUserScale / currentUserScale,
+                addUserScale = endUserScale / startUserScale,
                 focalX = finalFocalX,
                 focalY = finalFocalY
             )
@@ -302,6 +309,84 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      */
     fun scale(scale: Float, animate: Boolean = false) {
         scale(scale, (view.right / 2).toFloat(), (view.bottom / 2).toFloat(), animate)
+    }
+
+    fun offsetBy(dx: Float, dy: Float) {
+        userMatrix.postTranslate(dx, dy)
+        checkAndApplyMatrix()
+    }
+
+    fun offsetTo(dx: Float, dy: Float) {
+        val offset = userOffset
+        userMatrix.postTranslate(dx - offset.x, dy - offset.y)
+        checkAndApplyMatrix()
+    }
+
+    private fun limitScale(targetScale: Float): Float {
+        return targetScale.coerceIn(minimumValue = this.minScale, maximumValue = this.maxScale)
+    }
+
+    fun location(
+        offsetOfContent: IntOffsetCompat,
+        targetScale: Float = scale.scaleX,
+        animated: Boolean = false
+    ) {
+        val viewSize = viewSize.takeIf { !it.isEmpty() } ?: return
+
+        stopAllAnimation()
+
+        val nowScale = scale.scaleX
+        if (nowScale.format(2) != targetScale.format(2)) {
+            scale(
+                newScale = targetScale,
+                focalX = viewSize.width / 2f,
+                focalY = viewSize.height / 2f,
+                animate = false
+            )
+        }
+
+        val displayRectF = getDisplayRect()
+        val start = IntOffsetCompat(
+            x = abs(displayRectF.left.toInt()),
+            y = abs(displayRectF.top.toInt())
+        )
+        val rotatedOffsetOfContent = offsetOfContent.rotateInContainer(drawableSize, rotateDegrees)
+        val centerLocation =
+            computeLocationOffset(rotatedOffsetOfContent, viewSize, displayRectF, scale)
+        logger.d {
+            "location. " +
+                    "offsetOfContent=${offsetOfContent.toShortString()}, " +
+                    "start=${start.toShortString()}, " +
+                    "end=${centerLocation.toShortString()}"
+        }
+        if (animated) {
+            var lastX = start.x
+            var lastY = start.y
+            scaleAnimatable = FloatAnimatable(
+                view = view,
+                startValue = 0f,
+                endValue = 1f,
+                durationMillis = animationSpec.durationMillis,
+                interpolator = animationSpec.interpolator,
+                onUpdateValue = { value ->
+                    val mDeltaX = centerLocation.x - start.x
+                    val mDeltaY = centerLocation.y - start.y
+                    val newX = start.x + (value * mDeltaX).roundToInt()
+                    val newY = start.y + (value * mDeltaY).roundToInt()
+                    val dx = (lastX - newX).toFloat()
+                    val dy = (lastY - newY).toFloat()
+                    offsetBy(dx, dy)
+                    lastX = newX
+                    lastY = newY
+                },
+                onEnd = { notifyUpdateMatrix() }
+            )
+            scaleAnimatable?.start()
+        } else {
+            val dx = -(centerLocation.x - start.x).toFloat()
+            val dy = -(centerLocation.y - start.y).toFloat()
+            offsetBy(dx, dy)
+        }
     }
 
     /**
@@ -355,222 +440,16 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
     }
 
-    fun addOnMatrixChangeListener(listener: OnMatrixChangeListener) {
-        this.onMatrixChangeListenerList = (onMatrixChangeListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-    }
-
-    fun removeOnMatrixChangeListener(listener: OnMatrixChangeListener): Boolean {
-        return onMatrixChangeListenerList?.remove(listener) == true
-    }
-
-    fun addOnRotateChangeListener(listener: OnRotateChangeListener) {
-        this.onRotateChangeListenerList = (onRotateChangeListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-    }
-
-    fun removeOnRotateChangeListener(listener: OnRotateChangeListener): Boolean {
-        return onRotateChangeListenerList?.remove(listener) == true
-    }
-
-    fun addOnViewSizeChangeListener(listener: OnViewSizeChangeListener) {
-        this.onViewSizeChangeListenerList =
-            (onViewSizeChangeListenerList ?: LinkedHashSet()).apply {
-                add(listener)
-            }
-    }
-
-    fun removeOnViewSizeChangeListener(listener: OnViewSizeChangeListener): Boolean {
-        return onViewSizeChangeListenerList?.remove(listener) == true
-    }
-
-    fun addOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener) {
-        this.onDrawableSizeChangeListenerList =
-            (onDrawableSizeChangeListenerList ?: LinkedHashSet())
-                .apply { add(listener) }
-    }
-
-    fun removeOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener): Boolean {
-        return onDrawableSizeChangeListenerList?.remove(listener) == true
-    }
-
     fun clean() {
-        animatedScaleRunnable?.cancel()
-        animatedScaleRunnable = null
-        locationRunnable?.cancel()
-        locationRunnable = null
+        scaleAnimatable?.stop()
+        scaleAnimatable = null
         flingRunnable?.cancel()
         flingRunnable = null
     }
 
-    fun isLocationRunning(): Boolean {
-        return this.locationRunnable?.isRunning == true
-    }
-
-    private fun resetBaseMatrix() {
-        baseMatrix.apply {
-            reset()
-            val transform = baseInitialTransform
-            postScale(transform.scale.scaleX, transform.scale.scaleY)
-            postTranslate(transform.offset.x, transform.offset.y)
-            postRotate(rotateDegrees.toFloat())
-        }
-    }
-
-    private fun resetUserMatrix() {
-        userMatrix.apply {
-            reset()
-            val userTransform = userInitialTransform
-            postScale(userTransform.scale.scaleX, userTransform.scale.scaleY)
-            postTranslate(userTransform.offset.x, userTransform.offset.y)
-        }
-    }
-
-    private fun checkAndApplyMatrix() {
-        if (checkMatrixBounds()) {
-            notifyUpdateMatrix()
-        }
-    }
-
-    private fun checkMatrixBounds(): Boolean {
-        val displayRectF = displayRectF.apply { getDisplayRect(this) }
-        if (displayRectF.isEmpty) {
-            _scrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
-            return false
-        }
-
-        var deltaX = 0f
-        val viewWidth = viewSize.width
-        val displayWidth = displayRectF.width()
-        when {
-            displayWidth.toInt() <= viewWidth -> {
-                deltaX = when (scaleType) {
-                    ScaleType.FIT_START -> -displayRectF.left
-                    ScaleType.FIT_END -> viewWidth - displayWidth - displayRectF.left
-                    else -> (viewWidth - displayWidth) / 2 - displayRectF.left
-                }
-            }
-
-            displayRectF.left.toInt() > 0 -> {
-                deltaX = -displayRectF.left
-            }
-
-            displayRectF.right.toInt() < viewWidth -> {
-                deltaX = viewWidth - displayRectF.right
-            }
-        }
-
-        var deltaY = 0f
-        val viewHeight = viewSize.height
-        val displayHeight = displayRectF.height()
-        when {
-            displayHeight.toInt() <= viewHeight -> {
-                deltaY = when (scaleType) {
-                    ScaleType.FIT_START -> -displayRectF.top
-                    ScaleType.FIT_END -> viewHeight - displayHeight - displayRectF.top
-                    else -> (viewHeight - displayHeight) / 2 - displayRectF.top
-                }
-            }
-
-            displayRectF.top.toInt() > 0 -> {
-                deltaY = -displayRectF.top
-            }
-
-            displayRectF.bottom.toInt() < viewHeight -> {
-                deltaY = viewHeight - displayRectF.bottom
-            }
-        }
-
-        // Finally actually translate the matrix
-        userMatrix.postTranslate(deltaX, deltaY)
-
-        _scrollEdge = ScrollEdge(
-            horizontal = when {
-                displayWidth.toInt() <= viewWidth -> Edge.BOTH
-                displayRectF.left.toInt() >= 0 -> Edge.START
-                displayRectF.right.toInt() <= viewWidth -> Edge.END
-                else -> Edge.NONE
-            },
-            vertical = when {
-                displayHeight.toInt() <= viewHeight -> Edge.BOTH
-                displayRectF.top.toInt() >= 0 -> Edge.START
-                displayRectF.bottom.toInt() <= viewHeight -> Edge.END
-                else -> Edge.NONE
-            },
-        )
-        return true
-    }
-
-    fun offsetBy(dx: Float, dy: Float) {
-        userMatrix.postTranslate(dx, dy)
-        checkAndApplyMatrix()
-    }
-
-    fun offsetTo(dx: Float, dy: Float) {
-        val offset = userOffset
-        userMatrix.postTranslate(dx - offset.x, dy - offset.y)
-        checkAndApplyMatrix()
-    }
-
-    /**
-     * Locate to the location specified on the drawable image. You don't have to worry about scaling and rotation
-     *
-     * @param xInDrawable Drawable the x coordinate on the diagram
-     * @param yInDrawable Drawable the y-coordinate on the diagram
-     */
-    fun location(xInDrawable: Float, yInDrawable: Float, animate: Boolean) {
-        locationRunnable?.cancel()
-        cancelFling()
-
-        val (viewWidth, viewHeight) = viewSize.takeIf { !it.isEmpty() } ?: return
-        val pointF = PointF(xInDrawable, yInDrawable).apply {
-            rotatePoint(this, rotateDegrees, drawableSize)
-        }
-        val newX = pointF.x
-        val newY = pointF.y
-        val nowScale = scale.scaleX
-        if (nowScale.format(2) == minScale.format(2)) {
-            scale(
-                newScale = getNextStepScale(),
-                focalX = viewSize.width / 2f,
-                focalY = viewSize.height / 2f,
-                animate = false
-            )
-        }
-
-        val displayRectF = getDisplayRect()
-        val currentScale = scale
-        val scaleLocationX = (newX * currentScale.scaleX).toInt()
-        val scaleLocationY = (newY * currentScale.scaleY).toInt()
-        val scaledLocationX =
-            scaleLocationX.coerceIn(0, displayRectF.width().toInt())
-        val scaledLocationY =
-            scaleLocationY.coerceIn(0, displayRectF.height().toInt())
-        val centerLocationX = (scaledLocationX - viewWidth / 2).coerceAtLeast(0)
-        val centerLocationY = (scaledLocationY - viewHeight / 2).coerceAtLeast(0)
-        val startX = abs(displayRectF.left.toInt())
-        val startY = abs(displayRectF.top.toInt())
-        logger.d {
-            "location. inDrawable=${xInDrawable}x${yInDrawable}, start=${startX}x${startY}, end=${centerLocationX}x${centerLocationY}"
-        }
-        if (animate) {
-            locationRunnable?.cancel()
-            locationRunnable = LocationRunnable(
-                context = view.context,
-                engine = this@ZoomEngine,
-                startX = startX,
-                startY = startY,
-                endX = centerLocationX,
-                endY = centerLocationY
-            )
-            locationRunnable?.start()
-        } else {
-            val dx = -(centerLocationX - startX).toFloat()
-            val dy = -(centerLocationY - startY).toFloat()
-            offsetBy(dx, dy)
-        }
+    fun stopAllAnimation() {
+        scaleAnimatable?.stop()
+        flingRunnable?.cancel()
     }
 
     fun getDisplayMatrix(matrix: Matrix) {
@@ -756,14 +635,12 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         logger.d {
             "onActionDown. disallow parent intercept touch event"
         }
-
+        stopAllAnimation()
         lastScaleFocusX = 0f
         lastScaleFocusY = 0f
         dragging = false
 
         requestDisallowInterceptTouchEvent(true)
-
-        cancelFling()
     }
 
     fun actionUp() {
@@ -783,6 +660,141 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 scale(maxScale, lastScaleFocusX, lastScaleFocusY, true)
             }
         }
+    }
+
+    fun addOnMatrixChangeListener(listener: OnMatrixChangeListener) {
+        this.onMatrixChangeListenerList = (onMatrixChangeListenerList ?: LinkedHashSet()).apply {
+            add(listener)
+        }
+    }
+
+    fun removeOnMatrixChangeListener(listener: OnMatrixChangeListener): Boolean {
+        return onMatrixChangeListenerList?.remove(listener) == true
+    }
+
+    fun addOnRotateChangeListener(listener: OnRotateChangeListener) {
+        this.onRotateChangeListenerList = (onRotateChangeListenerList ?: LinkedHashSet()).apply {
+            add(listener)
+        }
+    }
+
+    fun removeOnRotateChangeListener(listener: OnRotateChangeListener): Boolean {
+        return onRotateChangeListenerList?.remove(listener) == true
+    }
+
+    fun addOnViewSizeChangeListener(listener: OnViewSizeChangeListener) {
+        this.onViewSizeChangeListenerList =
+            (onViewSizeChangeListenerList ?: LinkedHashSet()).apply {
+                add(listener)
+            }
+    }
+
+    fun removeOnViewSizeChangeListener(listener: OnViewSizeChangeListener): Boolean {
+        return onViewSizeChangeListenerList?.remove(listener) == true
+    }
+
+    fun addOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener) {
+        this.onDrawableSizeChangeListenerList =
+            (onDrawableSizeChangeListenerList ?: LinkedHashSet())
+                .apply { add(listener) }
+    }
+
+    fun removeOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener): Boolean {
+        return onDrawableSizeChangeListenerList?.remove(listener) == true
+    }
+
+    private fun resetBaseMatrix() {
+        baseMatrix.apply {
+            reset()
+            val transform = baseInitialTransform
+            postScale(transform.scale.scaleX, transform.scale.scaleY)
+            postTranslate(transform.offset.x, transform.offset.y)
+            postRotate(rotateDegrees.toFloat())
+        }
+    }
+
+    private fun resetUserMatrix() {
+        userMatrix.apply {
+            reset()
+            val userTransform = userInitialTransform
+            postScale(userTransform.scale.scaleX, userTransform.scale.scaleY)
+            postTranslate(userTransform.offset.x, userTransform.offset.y)
+        }
+    }
+
+    private fun checkAndApplyMatrix() {
+        if (checkMatrixBounds()) {
+            notifyUpdateMatrix()
+        }
+    }
+
+    private fun checkMatrixBounds(): Boolean {
+        val displayRectF = displayRectF.apply { getDisplayRect(this) }
+        if (displayRectF.isEmpty) {
+            _scrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
+            return false
+        }
+
+        var deltaX = 0f
+        val viewWidth = viewSize.width
+        val displayWidth = displayRectF.width()
+        when {
+            displayWidth.toInt() <= viewWidth -> {
+                deltaX = when (scaleType) {
+                    ScaleType.FIT_START -> -displayRectF.left
+                    ScaleType.FIT_END -> viewWidth - displayWidth - displayRectF.left
+                    else -> (viewWidth - displayWidth) / 2 - displayRectF.left
+                }
+            }
+
+            displayRectF.left.toInt() > 0 -> {
+                deltaX = -displayRectF.left
+            }
+
+            displayRectF.right.toInt() < viewWidth -> {
+                deltaX = viewWidth - displayRectF.right
+            }
+        }
+
+        var deltaY = 0f
+        val viewHeight = viewSize.height
+        val displayHeight = displayRectF.height()
+        when {
+            displayHeight.toInt() <= viewHeight -> {
+                deltaY = when (scaleType) {
+                    ScaleType.FIT_START -> -displayRectF.top
+                    ScaleType.FIT_END -> viewHeight - displayHeight - displayRectF.top
+                    else -> (viewHeight - displayHeight) / 2 - displayRectF.top
+                }
+            }
+
+            displayRectF.top.toInt() > 0 -> {
+                deltaY = -displayRectF.top
+            }
+
+            displayRectF.bottom.toInt() < viewHeight -> {
+                deltaY = viewHeight - displayRectF.bottom
+            }
+        }
+
+        // Finally actually translate the matrix
+        userMatrix.postTranslate(deltaX, deltaY)
+
+        _scrollEdge = ScrollEdge(
+            horizontal = when {
+                displayWidth.toInt() <= viewWidth -> Edge.BOTH
+                displayRectF.left.toInt() >= 0 -> Edge.START
+                displayRectF.right.toInt() <= viewWidth -> Edge.END
+                else -> Edge.NONE
+            },
+            vertical = when {
+                displayHeight.toInt() <= viewHeight -> Edge.BOTH
+                displayRectF.top.toInt() >= 0 -> Edge.START
+                displayRectF.bottom.toInt() <= viewHeight -> Edge.END
+                else -> Edge.NONE
+            },
+        )
+        return true
     }
 
     private fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {

@@ -34,6 +34,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.core.IntOffsetCompat
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.isNotEmpty
 import kotlin.math.ceil
@@ -197,9 +198,14 @@ class ZoomImageMinimapView @JvmOverloads constructor(
 
         val widthScale = drawable.intrinsicWidth.toFloat() / viewWidth
         val heightScale = drawable.intrinsicHeight.toFloat() / viewHeight
-        val realX = x * widthScale
-        val realY = y * heightScale
+        val realX = (x * widthScale).roundToInt()
+        val realY = (y * heightScale).roundToInt()
 
-        zoomView.zoomAbility.location(realX, realY, animate = true)
+        zoomView.zoomAbility.location(
+            offsetOfContent = IntOffsetCompat(x = realX, y = realY),
+            targetScale = zoomView.zoomAbility.scale.scaleX
+                .coerceAtLeast(zoomView.zoomAbility.mediumScale),
+            animated = true
+        )
     }
 }

@@ -28,6 +28,7 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.core.IntOffsetCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
@@ -184,8 +185,12 @@ class ZoomAbility constructor(
      * @param x Drawable the x coordinate on the diagram
      * @param y Drawable the y-coordinate on the diagram
      */
-    fun location(x: Float, y: Float, animate: Boolean = false) {
-        zoomEngine.location(x, y, animate)
+    fun location(
+        offsetOfContent: IntOffsetCompat,
+        targetScale: Float = scale.scaleX,
+        animated: Boolean = false
+    ) {
+        zoomEngine.location(offsetOfContent, targetScale, animated)
     }
 
     /**
@@ -348,12 +353,6 @@ class ZoomAbility constructor(
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
-        /* Location operations cannot be interrupted */
-        if (zoomEngine.isLocationRunning()) {
-            logger.d { "onTouchEvent. requestDisallowInterceptTouchEvent true. locating" }
-            view.parent?.requestDisallowInterceptTouchEvent(true)
-            return true
-        }
         return gestureDetector.onTouchEvent(event)
     }
 

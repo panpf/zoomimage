@@ -16,9 +16,10 @@
 package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.graphics.Matrix
-import android.graphics.PointF
 import android.graphics.Rect
+import android.graphics.RectF
 import android.widget.ImageView.ScaleType
+import com.github.panpf.zoomimage.core.IntOffsetCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
@@ -28,12 +29,15 @@ import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.times
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.ZeroRect
+import com.github.panpf.zoomimage.view.internal.computeScaleFactor
+import com.github.panpf.zoomimage.view.internal.isHorizontalCenter
+import com.github.panpf.zoomimage.view.internal.isStart
+import com.github.panpf.zoomimage.view.internal.isTop
+import com.github.panpf.zoomimage.view.internal.isVerticalCenter
 import com.github.panpf.zoomimage.view.internal.scale
 import com.github.panpf.zoomimage.view.internal.times
 import kotlin.math.abs
 import kotlin.math.atan2
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 private val matrixValuesLocal = ThreadLocal<FloatArray>()
@@ -113,67 +117,44 @@ internal fun reverseRotateRect(rect: Rect, rotateDegrees: Int, drawableSize: Int
     }
 }
 
-internal fun rotatePoint(point: PointF, rotateDegrees: Int, drawableSize: IntSizeCompat) {
-    require(rotateDegrees % 90 == 0) {
-        "rotateDegrees must be an integer multiple of 90"
-    }
-    when (rotateDegrees) {
+internal fun IntOffsetCompat.rotateInContainer(
+    containerSize: IntSizeCompat,
+    rotate: Int,
+): IntOffsetCompat {
+    require(rotate % 90 == 0) { "rotate must be an integer multiple of 90" }
+    return when (rotate) {
         90 -> {
-            point.x = drawableSize.height - point.y
-            point.y = point.x
+            IntOffsetCompat(
+                x = containerSize.height - y,
+                y = x
+            )
         }
 
         180 -> {
-            point.x = drawableSize.width - point.x
-            point.y = drawableSize.height - point.y
+            IntOffsetCompat(
+                x = containerSize.width - x,
+                y = containerSize.height - y
+            )
         }
 
         270 -> {
-            point.x = point.y
-            point.y = drawableSize.width - point.x
+            IntOffsetCompat(
+                x = y,
+                y = containerSize.width - x
+            )
         }
+
+        else -> this
     }
 }
 
-internal fun ScaleType.computeTransform(srcSize: IntSizeCompat, dstSize: IntSizeCompat): TransformCompat {
+internal fun ScaleType.computeTransform(
+    srcSize: IntSizeCompat,
+    dstSize: IntSizeCompat
+): TransformCompat {
     val scaleFactor = this.computeScaleFactor(srcSize, dstSize)
     val offset = computeContentScaleOffset(srcSize, dstSize, this)
     return TransformCompat(scale = scaleFactor, offset = offset)
-}
-
-internal fun ScaleType.computeScaleFactor(srcSize: IntSizeCompat, dstSize: IntSizeCompat): ScaleFactorCompat {
-    val widthScale = dstSize.width / srcSize.width.toFloat()
-    val heightScale = dstSize.height / srcSize.height.toFloat()
-    val fillMaxDimension = max(widthScale, heightScale)
-    val fillMinDimension = min(widthScale, heightScale)
-    return when (this) {
-        ScaleType.CENTER -> ScaleFactorCompat(scaleX = 1.0f, scaleY = 1.0f)
-
-        ScaleType.CENTER_CROP -> {
-            ScaleFactorCompat(scaleX = fillMaxDimension, scaleY = fillMaxDimension)
-        }
-
-        ScaleType.CENTER_INSIDE -> {
-            if (srcSize.width <= dstSize.width && srcSize.height <= dstSize.height) {
-                ScaleFactorCompat(scaleX = 1.0f, scaleY = 1.0f)
-            } else {
-                ScaleFactorCompat(scaleX = fillMinDimension, scaleY = fillMinDimension)
-            }
-        }
-
-        ScaleType.FIT_START,
-        ScaleType.FIT_CENTER,
-        ScaleType.FIT_END -> {
-            ScaleFactorCompat(scaleX = fillMinDimension, scaleY = fillMinDimension)
-        }
-
-        ScaleType.FIT_XY -> {
-            ScaleFactorCompat(scaleX = widthScale, scaleY = heightScale)
-        }
-
-        ScaleType.MATRIX -> ScaleFactorCompat(1.0f, 1.0f)
-        else -> ScaleFactorCompat(scaleX = 1.0f, scaleY = 1.0f)
-    }
 }
 
 internal fun computeContentScaleOffset(
@@ -332,56 +313,22 @@ internal fun computeUserOffsetBounds(
     )
 }
 
-
-internal fun ScaleType.isStart(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
-    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
-    return this == ScaleType.MATRIX
-            || this == ScaleType.FIT_XY
-            || (this == ScaleType.FIT_START && scaledSrcSize.width < dstSize.width)
-}
-
-internal fun ScaleType.isHorizontalCenter(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
-    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
-    return this == ScaleType.CENTER
-            || this == ScaleType.CENTER_CROP
-            || this == ScaleType.CENTER_INSIDE
-            || this == ScaleType.FIT_CENTER
-            || (this == ScaleType.FIT_START && scaledSrcSize.width >= dstSize.width)
-            || (this == ScaleType.FIT_END && scaledSrcSize.width >= dstSize.width)
-}
-
-internal fun ScaleType.isCenter(
-    @Suppress("UNUSED_PARAMETER") srcSize: IntSizeCompat,
-    @Suppress("UNUSED_PARAMETER") dstSize: IntSizeCompat
-): Boolean =
-    this == ScaleType.CENTER
-            || this == ScaleType.CENTER_CROP
-            || this == ScaleType.CENTER_INSIDE
-            || this == ScaleType.FIT_CENTER
-
-internal fun ScaleType.isEnd(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
-    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
-    return this == ScaleType.FIT_END && scaledSrcSize.width < dstSize.width
-}
-
-internal fun ScaleType.isTop(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
-    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
-    return this == ScaleType.MATRIX
-            || this == ScaleType.FIT_XY
-            || (this == ScaleType.FIT_START && scaledSrcSize.height < dstSize.height)
-}
-
-internal fun ScaleType.isVerticalCenter(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
-    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
-    return this == ScaleType.CENTER
-            || this == ScaleType.CENTER_CROP
-            || this == ScaleType.CENTER_INSIDE
-            || this == ScaleType.FIT_CENTER
-            || (this == ScaleType.FIT_START && scaledSrcSize.height >= dstSize.height)
-            || (this == ScaleType.FIT_END && scaledSrcSize.height >= dstSize.height)
-}
-
-internal fun ScaleType.isBottom(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
-    val scaledSrcSize = srcSize.times(computeScaleFactor(srcSize = srcSize, dstSize = dstSize))
-    return this == ScaleType.FIT_END && scaledSrcSize.height < dstSize.height
+internal fun computeLocationOffset(
+    rotatedOffsetOfContent: IntOffsetCompat,
+    viewSize: IntSizeCompat,
+    displayRectF: RectF,
+    currentScale: ScaleFactorCompat
+): IntOffsetCompat {
+    val newX = rotatedOffsetOfContent.x
+    val newY = rotatedOffsetOfContent.y
+    val scaleLocationX = (newX * currentScale.scaleX).toInt()
+    val scaleLocationY = (newY * currentScale.scaleY).toInt()
+    val scaledLocationX =
+        scaleLocationX.coerceIn(0, displayRectF.width().toInt())
+    val scaledLocationY =
+        scaleLocationY.coerceIn(0, displayRectF.height().toInt())
+    return IntOffsetCompat(
+        x = (scaledLocationX - viewSize.width / 2).coerceAtLeast(0),
+        y = (scaledLocationY - viewSize.height / 2).coerceAtLeast(0)
+    )
 }
