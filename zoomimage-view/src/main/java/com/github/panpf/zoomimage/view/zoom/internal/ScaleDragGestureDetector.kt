@@ -135,7 +135,7 @@ internal class ScaleDragGestureDetector(
                 if (isDragging) {
                     // Disable multi-finger drag, which can prevent the ViewPager from accidentally triggering left and right swipe when the minimum zoom ratio is zoomed in
                     if (ev.pointerCount == 1) {
-                        onGestureListener.onDrag(dx, dy)
+                        onGestureListener.onDrag(dx, dy, isScaling)
                     }
                     lastTouchX = x
                     lastTouchY = y
@@ -202,7 +202,7 @@ internal class ScaleDragGestureDetector(
     }
 
     interface OnGestureListener {
-        fun onDrag(dx: Float, dy: Float)
+        fun onDrag(dx: Float, dy: Float, scaling: Boolean)
         fun onFling(velocityX: Float, velocityY: Float)
         fun onScale(scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float)
         fun onScaleBegin(): Boolean

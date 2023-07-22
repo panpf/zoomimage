@@ -21,7 +21,6 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
-import android.view.MotionEvent
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
@@ -33,8 +32,6 @@ import com.github.panpf.zoomimage.core.internal.canScroll
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.toShortString
-import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnActionListener
-import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnGestureListener
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -43,9 +40,6 @@ internal class ScaleDragHelper constructor(
     private val logger: Logger,
     private val engine: ZoomEngine,
     val onUpdateMatrix: () -> Unit,
-    val onViewDrag: (dx: Float, dy: Float) -> Unit,
-    val onDragFling: (velocityX: Float, velocityY: Float) -> Unit,
-    val onScaleChanged: (scaleFactor: Float, focusX: Float, focusY: Float) -> Unit,
 ) {
 
     private val view = engine.view
@@ -67,7 +61,6 @@ internal class ScaleDragHelper constructor(
     private var flingRunnable: FlingRunnable? = null
     private var locationRunnable: LocationRunnable? = null
     private var animatedScaleRunnable: AnimatedScaleRunnable? = null
-    private val scaleDragGestureDetector: ScaleDragGestureDetector
     private var _scrollEdge: ScrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
     private var blockParentIntercept: Boolean = false
     private var dragging = false
@@ -94,28 +87,6 @@ internal class ScaleDragHelper constructor(
     val offset: OffsetCompat
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getTranslation()
 
-    init {
-        scaleDragGestureDetector = ScaleDragGestureDetector(context, object : OnGestureListener {
-            override fun onDrag(dx: Float, dy: Float) = doDrag(dx, dy)
-
-            override fun onFling(velocityX: Float, velocityY: Float) = doFling(velocityX, velocityY)
-
-            override fun onScaleBegin(): Boolean = doScaleBegin()
-
-            override fun onScale(
-                scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float
-            ) = doScale(scaleFactor, focusX, focusY, dx, dy)
-
-            override fun onScaleEnd() = doScaleEnd()
-        }).apply {
-            onActionListener = object : OnActionListener {
-                override fun onActionDown(ev: MotionEvent) = actionDown()
-                override fun onActionUp(ev: MotionEvent) = actionUp()
-                override fun onActionCancel(ev: MotionEvent) = actionUp()
-            }
-        }
-    }
-
     fun reset() {
         resetBaseMatrix()
         resetUserMatrix()
@@ -131,16 +102,8 @@ internal class ScaleDragHelper constructor(
         flingRunnable = null
     }
 
-    fun onTouchEvent(event: MotionEvent): Boolean {
-        /* Location operations cannot be interrupted */
-        if (this.locationRunnable?.isRunning == true) {
-            logger.d {
-                "onTouchEvent. requestDisallowInterceptTouchEvent true. locating"
-            }
-            requestDisallowInterceptTouchEvent(true)
-            return true
-        }
-        return scaleDragGestureDetector.onTouchEvent(event)
+    fun isLocationRunning(): Boolean {
+        return this.locationRunnable?.isRunning == true
     }
 
     private fun resetBaseMatrix() {
@@ -318,7 +281,11 @@ internal class ScaleDragHelper constructor(
             )
             animatedScaleRunnable?.start()
         } else {
-            scaleBy(addUserScale = newUserScale / currentUserScale, focalX = focalX, focalY = focalY)
+            scaleBy(
+                addUserScale = newUserScale / currentUserScale,
+                focalX = focalX,
+                focalY = focalY
+            )
         }
     }
 
@@ -403,25 +370,17 @@ internal class ScaleDragHelper constructor(
         return canScroll(horizontal, direction, scrollEdge)
     }
 
-    private fun doDrag(dx: Float, dy: Float) {
+    fun doDrag(dx: Float, dy: Float) {
         logger.d { "onDrag. dx: $dx, dy: $dy" }
-
-        if (scaleDragGestureDetector.isScaling) {
-            logger.d { "onDrag. isScaling" }
-            return
-        }
 
         userMatrix.postTranslate(dx, dy)
         checkAndApplyMatrix()
 
-        onViewDrag(dx, dy)
-
-        val scaling = scaleDragGestureDetector.isScaling
         val disallowParentInterceptOnEdge = !engine.allowParentInterceptOnEdge
         val blockParent = blockParentIntercept
-        val disallow = if (dragging || scaling || blockParent || disallowParentInterceptOnEdge) {
+        val disallow = if (dragging || blockParent || disallowParentInterceptOnEdge) {
             logger.d {
-                "onDrag. DisallowParentIntercept. dragging=$dragging, scaling=$scaling, blockParent=$blockParent, disallowParentInterceptOnEdge=$disallowParentInterceptOnEdge"
+                "onDrag. DisallowParentIntercept. dragging=$dragging, blockParent=$blockParent, disallowParentInterceptOnEdge=$disallowParentInterceptOnEdge"
             }
             true
         } else {
@@ -442,7 +401,7 @@ internal class ScaleDragHelper constructor(
         requestDisallowInterceptTouchEvent(disallow)
     }
 
-    private fun doFling(velocityX: Float, velocityY: Float) {
+    fun doFling(velocityX: Float, velocityY: Float) {
         logger.d {
             "fling. velocity=($velocityX, $velocityY), offset=${userOffset.toShortString()}"
         }
@@ -457,15 +416,13 @@ internal class ScaleDragHelper constructor(
             velocityY = velocityY.toInt()
         )
         flingRunnable?.start()
-
-        onDragFling(velocityX, velocityY)
     }
 
     private fun cancelFling() {
         flingRunnable?.cancel()
     }
 
-    private fun doScaleBegin(): Boolean {
+    fun doScaleBegin(): Boolean {
         logger.d { "onScaleBegin" }
         manualScaling = true
         return true
@@ -476,7 +433,13 @@ internal class ScaleDragHelper constructor(
         checkAndApplyMatrix()
     }
 
-    internal fun doScale(userScaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float) {
+    fun doScale(
+        userScaleFactor: Float,
+        focusX: Float,
+        focusY: Float,
+        dx: Float,
+        dy: Float
+    ) {
         logger.d {
             "onScale. scaleFactor: $userScaleFactor, focusX: $focusX, focusY: $focusY, dx: $dx, dy: $dy"
         }
@@ -504,17 +467,15 @@ internal class ScaleDragHelper constructor(
         userMatrix.postScale(newUserScaleFactor, newUserScaleFactor, focusX, focusY)
         userMatrix.postTranslate(dx, dy)
         checkAndApplyMatrix()
-
-        onScaleChanged(newUserScaleFactor, focusX, focusY)
     }
 
-    private fun doScaleEnd() {
+    fun doScaleEnd() {
         logger.d { "onScaleEnd" }
         manualScaling = false
         onUpdateMatrix()
     }
 
-    private fun actionDown() {
+    fun actionDown() {
         logger.d {
             "onActionDown. disallow parent intercept touch event"
         }
@@ -528,7 +489,7 @@ internal class ScaleDragHelper constructor(
         cancelFling()
     }
 
-    private fun actionUp() {
+    fun actionUp() {
         /* Roll back to minimum or maximum scaling */
         val currentScale = scale.scaleX.format(2)
         val minScale = engine.minScale.format(2)

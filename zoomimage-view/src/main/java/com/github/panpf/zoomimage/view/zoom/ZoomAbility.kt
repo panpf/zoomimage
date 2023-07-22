@@ -32,6 +32,7 @@ import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
+import com.github.panpf.zoomimage.view.zoom.internal.UnifiedGestureDetector
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
 import com.github.panpf.zoomimage.view.zoom.internal.isAttachedToWindowCompat
 
@@ -40,10 +41,14 @@ class ZoomAbility constructor(
     private val imageViewBridge: ImageViewBridge,
     logger: Logger,
 ) {
-    // todo 参考 ZoomImage 将 ZoomEngine 拆分成 State 和 手势处理两部分
     // todo 不支持 center 等 ScaleType
     internal val engine: ZoomEngine
     private val imageMatrix = Matrix()
+    private val unifiedGestureDetector: UnifiedGestureDetector
+    private val logger = logger.newLogger(module = "ZoomAbility")
+
+    private var onViewTapListenerList: MutableSet<OnViewTapListener>? = null
+    private var onViewLongPressListenerList: MutableSet<OnViewLongPressListener>? = null
 
     init {
         val initScaleType = imageViewBridge.superGetScaleType()
@@ -58,6 +63,45 @@ class ZoomAbility constructor(
             val matrix = imageMatrix.apply { engine.getDisplayMatrix(this) }
             imageViewBridge.superSetImageMatrix(matrix)
         }
+
+        unifiedGestureDetector = UnifiedGestureDetector(
+            context = view.context,
+            onDownCallback = { true },
+            onSingleTapConfirmedCallback = { e: MotionEvent ->
+                val onViewTapListenerList = onViewTapListenerList
+                onViewTapListenerList?.forEach {
+                    it.onViewTap(view, e.x, e.y)
+                }
+                onViewTapListenerList?.isNotEmpty() == true || view.performClick()
+            },
+            onLongPressCallback = { e: MotionEvent ->
+                val onViewLongPressListenerList = onViewLongPressListenerList
+                onViewLongPressListenerList?.forEach {
+                    it.onViewLongPress(view, e.x, e.y)
+                }
+                onViewLongPressListenerList?.isNotEmpty() == true || view.performLongClick()
+            },
+            onDoubleTapCallback = { e: MotionEvent ->
+                engine.doubleTap(e.x, e.y)
+                true
+            },
+            onDragCallback = { dx: Float, dy: Float, scaling: Boolean ->
+                if (!scaling) {
+                    engine.doDrag(dx, dy)
+                }
+            },
+            onFlingCallback = { velocityX: Float, velocityY: Float ->
+                engine.doFling(velocityX, velocityY)
+            },
+            onScaleCallback = { scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float ->
+                engine.doScale(scaleFactor, focusX, focusY, dx, dy)
+            },
+            onScaleBeginCallback = { engine.doScaleBegin() },
+            onScaleEndCallback = { engine.doScaleEnd() },
+            onActionDownCallback = { engine.actionDown() },
+            onActionUpCallback = { engine.actionUp() },
+            onActionCancelCallback = { engine.actionUp() },
+        )
     }
 
 
@@ -162,18 +206,6 @@ class ZoomAbility constructor(
             engine.allowParentInterceptOnEdge = value
         }
 
-    var onViewLongPressListener: OnViewLongPressListener?
-        get() = engine.onViewLongPressListener
-        set(value) {
-            engine.onViewLongPressListener = value
-        }
-
-    var onViewTapListener: OnViewTapListener?
-        get() = engine.onViewTapListener
-        set(value) {
-            engine.onViewTapListener = value
-        }
-
     val rotateDegrees: Int
         get() = engine.rotateDegrees
 
@@ -244,28 +276,24 @@ class ZoomAbility constructor(
         return engine.removeOnRotateChangeListener(listener)
     }
 
-    fun addOnDragFlingListener(listener: OnDragFlingListener) {
-        engine.addOnDragFlingListener(listener)
+    fun addOnViewTapListener(listener: OnViewTapListener) {
+        this.onViewTapListenerList = (onViewTapListenerList ?: LinkedHashSet()).apply {
+            add(listener)
+        }
     }
 
-    fun removeOnDragFlingListener(listener: OnDragFlingListener): Boolean {
-        return engine.removeOnDragFlingListener(listener)
+    fun removeOnViewTapListener(listener: OnViewTapListener): Boolean {
+        return onViewTapListenerList?.remove(listener) == true
     }
 
-    fun addOnScaleChangeListener(listener: OnScaleChangeListener) {
-        engine.addOnScaleChangeListener(listener)
+    fun addOnViewLongPressListener(listener: OnViewLongPressListener) {
+        this.onViewLongPressListenerList = (onViewLongPressListenerList ?: LinkedHashSet()).apply {
+            add(listener)
+        }
     }
 
-    fun removeOnScaleChangeListener(listener: OnScaleChangeListener): Boolean {
-        return engine.removeOnScaleChangeListener(listener)
-    }
-
-    fun addOnViewDragListener(listener: OnViewDragListener) {
-        engine.addOnViewDragListener(listener)
-    }
-
-    fun removeOnViewDragListener(listener: OnViewDragListener): Boolean {
-        return engine.removeOnViewDragListener(listener)
+    fun removeOnViewLongPressListener(listener: OnViewLongPressListener): Boolean {
+        return onViewLongPressListenerList?.remove(listener) == true
     }
 
 
@@ -298,8 +326,17 @@ class ZoomAbility constructor(
         engine.onDraw(canvas)
     }
 
-    fun onTouchEvent(event: MotionEvent): Boolean =
-        engine.onTouchEvent(event)
+    fun onTouchEvent(event: MotionEvent): Boolean {
+        /* Location operations cannot be interrupted */
+        if (engine.isLocationRunning()) {
+            logger.d {
+                "onTouchEvent. requestDisallowInterceptTouchEvent true. locating"
+            }
+            view.parent?.requestDisallowInterceptTouchEvent(true)
+            return true
+        }
+        return unifiedGestureDetector.onTouchEvent(event)
+    }
 
     fun setScaleType(scaleType: ScaleType): Boolean {
         engine.scaleType = scaleType
@@ -314,7 +351,8 @@ class ZoomAbility constructor(
     private fun resetDrawableSize() {
         val drawable = imageViewBridge.getDrawable()
         engine.drawableSize =
-            drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) } ?: IntSizeCompat.Zero
+            drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) }
+                ?: IntSizeCompat.Zero
     }
 
     private fun destroy() {

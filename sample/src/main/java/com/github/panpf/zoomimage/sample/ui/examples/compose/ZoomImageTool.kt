@@ -42,6 +42,7 @@ fun ZoomImageTool(
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
     val zoomIn = remember {
+        // todo 这里应该用 transform.scaleX 来判断
         derivedStateOf { zoomableState.getNextStepScale() > zoomableState.minScale }
     }
     val info = remember(

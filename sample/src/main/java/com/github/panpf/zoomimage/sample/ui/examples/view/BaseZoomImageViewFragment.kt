@@ -36,7 +36,6 @@ import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.toShortString
-import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 
@@ -138,7 +137,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     setImageResource(R.drawable.ic_zoom_out)
                 }
             }
-            zoomImageView.zoomAbility.addOnScaleChangeListener { _, _, _ ->
+            zoomImageView.zoomAbility.addOnMatrixChangeListener {
                 resetIcon()
             }
             resetIcon()
@@ -149,16 +148,13 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
             }.show(childFragmentManager, null)
         }
-        zoomImageView.zoomAbility.onViewLongPressListener = OnViewLongPressListener { _, _, _ ->
+        zoomImageView.zoomAbility.addOnViewLongPressListener { _, _, _ ->
             ZoomImageViewInfoDialogFragment().apply {
                 arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
             }.show(childFragmentManager, null)
         }
 
         zoomImageView.zoomAbility.addOnMatrixChangeListener {
-            updateInfo(zoomImageView, common)
-        }
-        zoomImageView.zoomAbility.addOnScaleChangeListener { _, _, _ ->
             updateInfo(zoomImageView, common)
         }
         updateInfo(zoomImageView, common)
