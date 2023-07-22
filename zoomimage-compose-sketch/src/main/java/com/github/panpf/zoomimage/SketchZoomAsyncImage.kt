@@ -29,7 +29,7 @@ import com.github.panpf.sketch.request.UriInvalidException
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable

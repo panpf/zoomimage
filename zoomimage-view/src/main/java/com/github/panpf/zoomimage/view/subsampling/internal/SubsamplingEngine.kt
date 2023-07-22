@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.view.subsampling
+package com.github.panpf.zoomimage.view.subsampling.internal
 
 import android.content.res.Resources
 import android.graphics.Canvas
@@ -40,8 +40,10 @@ import com.github.panpf.zoomimage.subsampling.internal.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
-import com.github.panpf.zoomimage.view.zoom.internal.format
-import com.github.panpf.zoomimage.view.zoom.internal.toIntRectCompat
+import com.github.panpf.zoomimage.view.subsampling.OnReadyChangeListener
+import com.github.panpf.zoomimage.view.subsampling.OnTileChangeListener
+import com.github.panpf.zoomimage.view.internal.format
+import com.github.panpf.zoomimage.view.internal.toIntRectCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

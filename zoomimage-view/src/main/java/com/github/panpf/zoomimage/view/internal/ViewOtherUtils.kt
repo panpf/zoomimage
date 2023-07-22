@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose.zoom.internal
+package com.github.panpf.zoomimage.view.internal
 
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -10,3 +10,5 @@ internal fun Float.format(newScale: Int): Float {
         BigDecimal(toDouble()).setScale(newScale, RoundingMode.HALF_UP).toFloat()
     }
 }
+
+internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())

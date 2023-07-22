@@ -11,6 +11,17 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.zoomimage.compose.internal.isEmpty
+import com.github.panpf.zoomimage.compose.internal.isHorizontalCenter
+import com.github.panpf.zoomimage.compose.internal.isStart
+import com.github.panpf.zoomimage.compose.internal.isTop
+import com.github.panpf.zoomimage.compose.internal.isVerticalCenter
+import com.github.panpf.zoomimage.compose.internal.limitTo
+import com.github.panpf.zoomimage.compose.internal.restoreScale
+import com.github.panpf.zoomimage.compose.internal.rotateBy
+import com.github.panpf.zoomimage.compose.internal.roundToIntSize
+import com.github.panpf.zoomimage.compose.internal.scale
+import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.core.Origin
 import kotlin.math.roundToInt

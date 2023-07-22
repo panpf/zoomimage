@@ -30,8 +30,8 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContaine
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
-import com.github.panpf.zoomimage.compose.zoom.internal.name
-import com.github.panpf.zoomimage.compose.zoom.internal.toShortString
+import com.github.panpf.zoomimage.compose.internal.name
+import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.toShortString
 import org.junit.Assert

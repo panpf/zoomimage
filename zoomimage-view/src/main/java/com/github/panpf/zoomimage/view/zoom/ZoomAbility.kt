@@ -34,7 +34,7 @@ import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 import com.github.panpf.zoomimage.view.zoom.internal.UnifiedGestureDetector
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
-import com.github.panpf.zoomimage.view.zoom.internal.isAttachedToWindowCompat
+import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 
 class ZoomAbility constructor(
     private val view: View,

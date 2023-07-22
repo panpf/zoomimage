@@ -21,6 +21,7 @@ import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.OnScaleGestureListener
 import android.view.VelocityTracker
 import android.view.ViewConfiguration
+import com.github.panpf.zoomimage.view.internal.getPointerIndex
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
 import kotlin.math.abs

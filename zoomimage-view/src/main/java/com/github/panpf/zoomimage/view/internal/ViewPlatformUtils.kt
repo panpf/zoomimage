@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.view.zoom.internal
+package com.github.panpf.zoomimage.view.internal
 
 import android.graphics.Rect
 import android.os.Looper

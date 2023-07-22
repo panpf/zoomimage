@@ -13,8 +13,9 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.view.zoom.internal.getLifecycle
-import com.github.panpf.zoomimage.view.zoom.internal.isAttachedToWindowCompat
+import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
+import com.github.panpf.zoomimage.view.internal.getLifecycle
+import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 
 class SubsamplingAbility(private val view: View, logger: Logger) {
 

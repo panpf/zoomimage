@@ -20,12 +20,12 @@ import androidx.compose.ui.unit.round
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.Transform
-import com.github.panpf.zoomimage.compose.zoom.internal.format
-import com.github.panpf.zoomimage.compose.zoom.internal.isEmpty
-import com.github.panpf.zoomimage.compose.zoom.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.compose.internal.isEmpty
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
-import com.github.panpf.zoomimage.compose.zoom.internal.toShortString
+import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.subsampling.ImageInfo

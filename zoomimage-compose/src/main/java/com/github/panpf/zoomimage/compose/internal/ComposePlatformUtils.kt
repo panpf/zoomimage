@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose.zoom.internal
+package com.github.panpf.zoomimage.compose.internal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

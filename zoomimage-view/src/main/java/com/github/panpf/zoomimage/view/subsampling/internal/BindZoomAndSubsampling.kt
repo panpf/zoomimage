@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.view.subsampling
+package com.github.panpf.zoomimage.view.subsampling.internal
 
 import android.graphics.Rect
 import android.view.View

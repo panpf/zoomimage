@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.internal.roundToIntSize
+import com.github.panpf.zoomimage.compose.internal.roundToIntSize
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable

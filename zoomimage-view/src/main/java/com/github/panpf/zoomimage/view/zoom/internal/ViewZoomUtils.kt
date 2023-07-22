@@ -26,6 +26,10 @@ import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.ScaleMode
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.times
+import com.github.panpf.zoomimage.view.internal.Rect
+import com.github.panpf.zoomimage.view.internal.ZeroRect
+import com.github.panpf.zoomimage.view.internal.scale
+import com.github.panpf.zoomimage.view.internal.times
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.max

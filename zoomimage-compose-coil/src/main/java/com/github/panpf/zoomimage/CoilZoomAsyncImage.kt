@@ -31,7 +31,7 @@ import com.github.panpf.zoomimage.coil.internal.CoilImageSource
 import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable

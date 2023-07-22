@@ -4,10 +4,10 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ScaleFactor
-import com.github.panpf.zoomimage.compose.zoom.internal.TopStart
-import com.github.panpf.zoomimage.compose.zoom.internal.format
-import com.github.panpf.zoomimage.compose.zoom.internal.times
-import com.github.panpf.zoomimage.compose.zoom.internal.toShortString
+import com.github.panpf.zoomimage.compose.internal.TopStart
+import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.compose.internal.times
+import com.github.panpf.zoomimage.compose.internal.toShortString
 
 data class Transform(
     val scale: ScaleFactor,

@@ -31,8 +31,8 @@ import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.internal.isEmpty
-import com.github.panpf.zoomimage.compose.zoom.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.isEmpty
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
 import com.github.panpf.zoomimage.compose.zoom.internal.toIntSize
 import com.github.panpf.zoomimage.core.IntRectCompat
