@@ -18,17 +18,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.ZoomableState
-import com.github.panpf.zoomimage.compose.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
-import com.github.panpf.zoomimage.rememberZoomableState
+import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
 import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
-import com.github.panpf.zoomimage.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 
 @Composable
 fun BaseZoomImageSample(

@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose.internal
+package com.github.panpf.zoomimage.compose.zoom.internal
 
 import java.math.BigDecimal
 import java.math.RoundingMode

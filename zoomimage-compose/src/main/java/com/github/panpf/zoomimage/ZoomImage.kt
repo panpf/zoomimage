@@ -12,12 +12,16 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import com.github.panpf.zoomimage.compose.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.internal.roundToIntSize
-import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
-import com.github.panpf.zoomimage.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
-import com.github.panpf.zoomimage.subsampling.subsampling
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.compose.zoom.internal.roundToIntSize
+import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zoomable
+import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.subsampling
 
 @Composable
 fun ZoomImage(

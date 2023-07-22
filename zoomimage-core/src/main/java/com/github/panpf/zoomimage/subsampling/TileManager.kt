@@ -23,6 +23,9 @@ import com.github.panpf.zoomimage.core.internal.requiredMainThread
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
+import com.github.panpf.zoomimage.subsampling.internal.canUseSubsamplingByAspectRatio
+import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
+import com.github.panpf.zoomimage.subsampling.internal.initializeTileMap
 import com.github.panpf.zoomimage.subsampling.internal.toHexString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

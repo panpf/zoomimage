@@ -1,6 +1,6 @@
 @file:Suppress("UnnecessaryVariable")
 
-package com.github.panpf.zoomimage.compose.internal
+package com.github.panpf.zoomimage.compose.zoom.internal
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toSize
-import com.github.panpf.zoomimage.compose.Transform
+import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.core.Origin
 import kotlin.math.roundToInt
 

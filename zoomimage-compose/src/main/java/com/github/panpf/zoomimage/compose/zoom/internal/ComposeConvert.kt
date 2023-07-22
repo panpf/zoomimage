@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose.internal
+package com.github.panpf.zoomimage.compose.zoom.internal
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -10,7 +10,7 @@ import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
-import com.github.panpf.zoomimage.compose.Transform
+import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.core.IntOffsetCompat
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat

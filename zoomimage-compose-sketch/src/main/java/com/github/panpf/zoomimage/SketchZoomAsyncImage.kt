@@ -27,15 +27,19 @@ import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
 import com.github.panpf.sketch.sketch
-import com.github.panpf.zoomimage.compose.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.compose.zoom.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zoomable
 import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
 import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
 import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
-import com.github.panpf.zoomimage.subsampling.BindZoomableStateAndSubsamplingState
-import com.github.panpf.zoomimage.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.subsampling.rememberSubsamplingState
-import com.github.panpf.zoomimage.subsampling.subsampling
+import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import kotlin.math.roundToInt
 
 @Composable

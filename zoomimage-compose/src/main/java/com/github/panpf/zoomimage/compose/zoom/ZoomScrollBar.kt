@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -13,8 +13,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
-import com.github.panpf.zoomimage.compose.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.zoom.internal.isNotEmpty
 import kotlinx.coroutines.delay
 
 fun Modifier.zoomScrollBar(

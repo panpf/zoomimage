@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose
+package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp

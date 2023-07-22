@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.format
-import com.github.panpf.zoomimage.subsampling.internal.isSupportBitmapRegionDecoder
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.Tile
 import kotlin.math.abs
 import kotlin.math.ceil
 

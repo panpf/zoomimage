@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.rememberCoroutineScope
@@ -8,8 +8,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import com.github.panpf.zoomimage.compose.internal.detectCanDragGestures
-import com.github.panpf.zoomimage.compose.internal.detectZoomGestures
+import com.github.panpf.zoomimage.compose.zoom.internal.detectCanDragGestures
+import com.github.panpf.zoomimage.compose.zoom.internal.detectZoomGestures
 import kotlinx.coroutines.launch
 
 fun Modifier.zoomable(

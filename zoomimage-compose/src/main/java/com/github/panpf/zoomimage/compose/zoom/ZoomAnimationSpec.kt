@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose
+package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing

@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector
@@ -22,35 +22,33 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.unit.toSize
-import com.github.panpf.zoomimage.compose.Transform
-import com.github.panpf.zoomimage.compose.ZoomAnimationSpec
-import com.github.panpf.zoomimage.compose.concat
-import com.github.panpf.zoomimage.compose.div
-import com.github.panpf.zoomimage.compose.internal.ScaleFactor
-import com.github.panpf.zoomimage.compose.internal.computeContainerOriginByTouchPosition
-import com.github.panpf.zoomimage.compose.internal.computeContainerVisibleRect
-import com.github.panpf.zoomimage.compose.internal.computeContentInContainerRect
-import com.github.panpf.zoomimage.compose.internal.computeContentInContainerVisibleRect
-import com.github.panpf.zoomimage.compose.internal.computeContentVisibleRect
-import com.github.panpf.zoomimage.compose.internal.computeLocationUserOffset
-import com.github.panpf.zoomimage.compose.internal.computeReadModeTransform
-import com.github.panpf.zoomimage.compose.internal.computeScaleOffsetByCentroid
-import com.github.panpf.zoomimage.compose.internal.computeTransform
-import com.github.panpf.zoomimage.compose.internal.computeUserOffsetBounds
-import com.github.panpf.zoomimage.compose.internal.containerOriginToContentOrigin
-import com.github.panpf.zoomimage.compose.internal.contentOriginToContainerOrigin
-import com.github.panpf.zoomimage.compose.internal.format
-import com.github.panpf.zoomimage.compose.internal.isEmpty
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
-import com.github.panpf.zoomimage.compose.internal.name
-import com.github.panpf.zoomimage.compose.internal.rotate
-import com.github.panpf.zoomimage.compose.internal.supportReadMode
-import com.github.panpf.zoomimage.compose.internal.toCompatIntRect
-import com.github.panpf.zoomimage.compose.internal.toCompatIntSize
-import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
-import com.github.panpf.zoomimage.compose.internal.toScaleMode
-import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.toShortString
+import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.ReadMode
+import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.compose.zoom.internal.ScaleFactor
+import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerOriginByTouchPosition
+import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
+import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
+import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerVisibleRect
+import com.github.panpf.zoomimage.compose.zoom.internal.computeContentVisibleRect
+import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
+import com.github.panpf.zoomimage.compose.zoom.internal.computeReadModeTransform
+import com.github.panpf.zoomimage.compose.zoom.internal.computeScaleOffsetByCentroid
+import com.github.panpf.zoomimage.compose.zoom.internal.computeTransform
+import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
+import com.github.panpf.zoomimage.compose.zoom.internal.containerOriginToContentOrigin
+import com.github.panpf.zoomimage.compose.zoom.internal.contentOriginToContainerOrigin
+import com.github.panpf.zoomimage.compose.zoom.internal.format
+import com.github.panpf.zoomimage.compose.zoom.internal.isEmpty
+import com.github.panpf.zoomimage.compose.zoom.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.zoom.internal.name
+import com.github.panpf.zoomimage.compose.zoom.internal.rotate
+import com.github.panpf.zoomimage.compose.zoom.internal.supportReadMode
+import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
+import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
+import com.github.panpf.zoomimage.compose.zoom.internal.toCompatScaleFactor
+import com.github.panpf.zoomimage.compose.zoom.internal.toScaleMode
+import com.github.panpf.zoomimage.compose.zoom.internal.toShortString
 import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
@@ -623,7 +621,7 @@ class ZoomableState(logger: Logger) {
                             ),
                             initialVelocity = animationSpec.initialVelocity,
                         ) {
-                            val userTransform = com.github.panpf.zoomimage.compose.lerp(
+                            val userTransform = lerp(
                                 start = currentUserTransform,
                                 stop = targetUserTransform,
                                 fraction = value

@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose.internal
+package com.github.panpf.zoomimage.compose.zoom.internal
 
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
