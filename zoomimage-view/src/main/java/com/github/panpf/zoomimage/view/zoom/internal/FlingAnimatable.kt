@@ -1,12 +1,12 @@
 /*
  * Copyright (C) 2022 panpf <panpfpanpf@outlook.com>
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,61 +15,57 @@
  */
 package com.github.panpf.zoomimage.view.zoom.internal
 
+import android.graphics.Rect
 import android.view.View
-import android.view.animation.Interpolator
+import android.widget.OverScroller
 import androidx.core.view.ViewCompat
+import com.github.panpf.zoomimage.core.IntOffsetCompat
 
-internal class FloatAnimatable(
+internal class FlingAnimatable(
     private val view: View,
-    private val startValue: Float,
-    private val endValue: Float,
-    private val durationMillis: Int,
-    private val interpolator: Interpolator,
-    private val onUpdateValue: (value: Float) -> Unit,
+    private val start: IntOffsetCompat,
+    private val bounds: Rect?,
+    private val velocity: IntOffsetCompat,
+    private val onUpdateValue: (value: IntOffsetCompat) -> Unit,
     private val onEnd: () -> Unit = {}
 ) {
 
+    private val scroller: OverScroller = OverScroller(view.context)
     private val runnable = Runnable { frame() }
-    private var startTime = 0L
-    var value = startValue
-        private set
 
-    var running = false
-        private set
+    val running: Boolean
+        get() = !scroller.isFinished
 
     fun start() {
         if (running) return
-        value = startValue
-        startTime = System.currentTimeMillis()
-        running = true
+        scroller.fling(
+            /* startX = */ start.x,
+            /* startY = */ start.y,
+            /* velocityX = */ velocity.x,
+            /* velocityY = */ velocity.y,
+            /* minX = */ bounds?.left ?: 0,
+            /* maxX = */ bounds?.right ?: 0,
+            /* minY = */ bounds?.top ?: 0,
+            /* maxY = */ bounds?.bottom ?: 0,
+            /* overX = */ 0,
+            /* overY = */ 0
+        )
         view.post(runnable)
     }
 
     fun stop() {
         if (!running) return
-        running = false
         view.removeCallbacks(runnable)
+        scroller.forceFinished(true)
         onEnd()
     }
 
     private fun frame() {
-        val progress = computeProgress()
-        val currentValue = startValue + (progress * (endValue - startValue))
-        value = currentValue
-        onUpdateValue(currentValue)
-        running = progress < 1f
-        if (running) {
+        if (scroller.computeScrollOffset()) {
+            onUpdateValue(IntOffsetCompat(scroller.currX, scroller.currY))
             ViewCompat.postOnAnimation(view, runnable)
         } else {
             onEnd()
         }
-    }
-
-    @Suppress("UnnecessaryVariable")
-    private fun computeProgress(): Float {
-        val elapsedTime = System.currentTimeMillis() - startTime
-        val progress = (elapsedTime.toFloat() / durationMillis).coerceAtMost(1f)
-        val changedProgress = interpolator.getInterpolation(progress)
-        return changedProgress
     }
 }

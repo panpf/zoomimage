@@ -38,6 +38,7 @@ import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.rotate
+import com.github.panpf.zoomimage.core.roundToCompatIntOffset
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.view.internal.computeScaleFactor
 import com.github.panpf.zoomimage.view.internal.format
@@ -73,8 +74,8 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private var lastScaleFocusX: Float = 0f
     private var lastScaleFocusY: Float = 0f
 
-    private var flingRunnable: FlingRunnable? = null
     private var scaleAnimatable: FloatAnimatable? = null
+    private var flingAnimatable: FlingAnimatable? = null
     private var _scrollEdge: ScrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
     private var blockParentIntercept: Boolean = false
     private var dragging = false
@@ -443,13 +444,13 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     fun clean() {
         scaleAnimatable?.stop()
         scaleAnimatable = null
-        flingRunnable?.cancel()
-        flingRunnable = null
+        flingAnimatable?.stop()
+        flingAnimatable = null
     }
 
     fun stopAllAnimation() {
         scaleAnimatable?.stop()
-        flingRunnable?.cancel()
+        flingAnimatable?.stop()
     }
 
     fun getDisplayMatrix(matrix: Matrix) {
@@ -565,23 +566,44 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     fun doFling(velocityX: Float, velocityY: Float) {
-        logger.d {
-            "fling. velocity=($velocityX, $velocityY), offset=${userOffset.toShortString()}"
-        }
-
-        flingRunnable?.cancel()
-        flingRunnable = FlingRunnable(
-            logger = logger,
-            context = view.context,
-            engine = this@ZoomEngine,
-            velocityX = velocityX.toInt(),
-            velocityY = velocityY.toInt()
+        stopAllAnimation()
+        val startUserOffset = userOffset.roundToCompatIntOffset()
+        val bounds = computeUserOffsetBounds(
+            containerSize = viewSize,
+            contentSize = drawableSize,
+            scaleType = scaleType,
+            userScale = userScale
         )
-        flingRunnable?.start()
-    }
-
-    private fun cancelFling() {
-        flingRunnable?.cancel()
+        val velocity = IntOffsetCompat(velocityX.roundToInt(), velocityY.roundToInt())
+        logger.d {
+            "fling. start. " +
+                    "start=${startUserOffset.toShortString()}, " +
+                    "bounds=${bounds.toShortString()}, " +
+                    "velocity=${velocity.toShortString()}"
+        }
+        flingAnimatable = FlingAnimatable(
+            view = view,
+            start = startUserOffset,
+            bounds = bounds,
+            velocity = velocity,
+            onUpdateValue = { value ->
+                offsetTo(value.x.toFloat(), value.y.toFloat())
+                val currentUserOffset = userOffset
+                val distance = OffsetCompat(
+                    x = currentUserOffset.x - startUserOffset.x,
+                    y = currentUserOffset.y - startUserOffset.y
+                )
+                logger.d {
+                    "fling. running. " +
+                            "velocity=($velocityX, $velocityY), " +
+                            "startUserOffset=${startUserOffset.toShortString()}, " +
+                            "currentUserOffset=${currentUserOffset.toShortString()}, " +
+                            "distance=${distance.toShortString()}"
+                }
+            },
+            onEnd = { notifyUpdateMatrix() }
+        )
+        flingAnimatable?.start()
     }
 
     fun doScaleBegin(): Boolean {
