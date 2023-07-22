@@ -27,10 +27,10 @@ import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-// todo 挪到 ZoomAbility 中
-internal class ScrollBarHelper(
+// todo 重构
+class ScrollBarEngine(
     context: Context,
-    private val engine: ZoomEngine,
+    private val zoomEngine: ZoomEngine,
     private val scrollBarSpec: ScrollBarSpec,
 ) {
     private val scrollBarRadius: Int = (scrollBarSpec.size / 2).roundToInt()
@@ -39,7 +39,7 @@ internal class ScrollBarHelper(
         color = scrollBarSpec.color
         alpha = scrollBarAlpha
     }
-    private val view = engine.view
+    private val view = zoomEngine.view
     private val displayRectF = RectF()
     private val scrollBarRectF = RectF()
     private val fadeRunnable: FadeRunnable = FadeRunnable(context, this)
@@ -47,10 +47,10 @@ internal class ScrollBarHelper(
 
     fun onDraw(canvas: Canvas) {
         val displayRectF = displayRectF
-            .apply { engine.getDisplayRect(this) }
+            .apply { zoomEngine.getDisplayRect(this) }
             .takeIf { !it.isEmpty }
             ?: return
-        val (viewWidth, viewHeight) = engine.viewSize.takeIf { !it.isEmpty() } ?: return
+        val (viewWidth, viewHeight) = zoomEngine.viewSize.takeIf { !it.isEmpty() } ?: return
         val drawWidth = displayRectF.width()
         val drawHeight = displayRectF.height()
         val margin = scrollBarSpec.margin + scrollBarSpec.size + scrollBarSpec.margin
@@ -115,8 +115,9 @@ internal class ScrollBarHelper(
         fadeRunnable.cancel()
     }
 
+    // todo 不再依赖 scrollBarEngine
     private class DelayFadeRunnable(
-        val scrollBarHelper: ScrollBarHelper,
+        val scrollBarEngine: ScrollBarEngine,
         val fadeRunnable: FadeRunnable
     ) : Runnable {
 
@@ -126,15 +127,16 @@ internal class ScrollBarHelper(
 
         fun start() {
             cancel()
-            scrollBarHelper.view.postDelayed(this, 800)
+            scrollBarEngine.view.postDelayed(this, 800)
         }
 
         fun cancel() {
-            scrollBarHelper.view.removeCallbacks(this)
+            scrollBarEngine.view.removeCallbacks(this)
         }
     }
 
-    private class FadeRunnable(context: Context, val scrollBarHelper: ScrollBarHelper) : Runnable {
+    // todo 不再依赖 scrollBarEngine
+    private class FadeRunnable(context: Context, val scrollBarEngine: ScrollBarEngine) : Runnable {
 
         private val scroller: Scroller = Scroller(context, DecelerateInterpolator())
 
@@ -144,22 +146,22 @@ internal class ScrollBarHelper(
         fun start() {
             cancel()
 
-            val startX = scrollBarHelper.scrollBarAlpha
+            val startX = scrollBarEngine.scrollBarAlpha
             val dx = -startX
             scroller.startScroll(startX, 0, dx, 0, 300)
-            scrollBarHelper.view.post(this)
+            scrollBarEngine.view.post(this)
         }
 
         fun cancel() {
-            scrollBarHelper.view.removeCallbacks(this)
+            scrollBarEngine.view.removeCallbacks(this)
             scroller.forceFinished(true)
         }
 
         override fun run() {
             if (!scroller.isFinished && scroller.computeScrollOffset()) {
-                scrollBarHelper.scrollBarPaint.alpha = scroller.currX
-                scrollBarHelper.view.invalidate()
-                ViewCompat.postOnAnimation(scrollBarHelper.view, this)
+                scrollBarEngine.scrollBarPaint.alpha = scroller.currX
+                scrollBarEngine.view.invalidate()
+                ViewCompat.postOnAnimation(scrollBarEngine.view, this)
             }
         }
     }

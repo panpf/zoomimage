@@ -15,7 +15,6 @@
  */
 package com.github.panpf.zoomimage.view.zoom.internal
 
-import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Point
 import android.graphics.PointF
@@ -44,7 +43,6 @@ import com.github.panpf.zoomimage.view.zoom.OnDrawableSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnMatrixChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnRotateChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnViewSizeChangeListener
-import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -53,8 +51,6 @@ import kotlin.math.roundToInt
 class ZoomEngine constructor(logger: Logger, val view: View) {
 
     private val logger: Logger = logger.newLogger(module = "ZoomEngine")
-    private var scrollBarHelper: ScrollBarHelper? = null
-    private var _rotateDegrees = 0
 
     private var onMatrixChangeListenerList: MutableSet<OnMatrixChangeListener>? = null
     private var onRotateChangeListenerList: MutableSet<OnRotateChangeListener>? = null
@@ -103,7 +99,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getScale()
     val offset: OffsetCompat
         get() = displayMatrix.apply { getDisplayMatrix(this) }.getTranslation()
-    
+
     /** Allows the parent ViewGroup to intercept events while sliding to an edge */
     var allowParentInterceptOnEdge: Boolean = true
     var viewSize = IntSizeCompat.Zero
@@ -158,25 +154,15 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset()
             }
         }
-    var scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
-        internal set(value) {
-            if (field != value) {
-                field = value
-                resetScrollBarHelper()
-            }
-        }
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
     var threeStepScale: Boolean = false
         internal set
     var rubberBandScale: Boolean = true
         internal set
-
     var minScale: Float = 1.0f
         private set
-
     var mediumScale: Float = 1.0f
         private set
-
     var maxScale: Float = 1.0f
         private set
 
@@ -193,16 +179,18 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 //    var displayTransform: TransformCompat = TransformCompat.Origin
 //        private set
 
+    private var _rotateDegrees = 0
+    val rotateDegrees: Int
+        get() = _rotateDegrees
+
 
     /**************************************** Internal ********************************************/
 
     init {
         reset()
-        resetScrollBarHelper()
     }
 
-    fun onUpdateMatrix() {
-        scrollBarHelper?.onMatrixChanged()
+    private fun notifyUpdateMatrix() {
         onMatrixChangeListenerList?.forEach { listener ->
             listener.onMatrixChanged()
         }
@@ -266,19 +254,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         resetBaseMatrix()
         resetUserMatrix()
         checkAndApplyMatrix()
-    }
-
-    private fun resetScrollBarHelper() {
-        scrollBarHelper?.cancel()
-        scrollBarHelper = null
-        val scrollBar = scrollBarSpec
-        if (scrollBar != null) {
-            scrollBarHelper = ScrollBarHelper(view.context, this@ZoomEngine, scrollBar)
-        }
-    }
-
-    internal fun onDraw(canvas: Canvas) {
-        scrollBarHelper?.onDraw(canvas)
     }
 
 
@@ -380,12 +355,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
     }
 
-
-    /***************************************** Information ****************************************/
-
-    val rotateDegrees: Int
-        get() = _rotateDegrees
-    
     fun addOnMatrixChangeListener(listener: OnMatrixChangeListener) {
         this.onMatrixChangeListenerList = (onMatrixChangeListenerList ?: LinkedHashSet()).apply {
             add(listener)
@@ -419,15 +388,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
     fun addOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener) {
         this.onDrawableSizeChangeListenerList =
-            (onDrawableSizeChangeListenerList ?: LinkedHashSet()).apply {
-                add(listener)
-            }
+            (onDrawableSizeChangeListenerList ?: LinkedHashSet())
+                .apply { add(listener) }
     }
 
     fun removeOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener): Boolean {
         return onDrawableSizeChangeListenerList?.remove(listener) == true
     }
-    
+
     fun clean() {
         animatedScaleRunnable?.cancel()
         animatedScaleRunnable = null
@@ -462,7 +430,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
     private fun checkAndApplyMatrix() {
         if (checkMatrixBounds()) {
-            onUpdateMatrix()
+            notifyUpdateMatrix()
         }
     }
 
@@ -748,13 +716,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         checkAndApplyMatrix()
     }
 
-    fun doScale(
-        userScaleFactor: Float,
-        focusX: Float,
-        focusY: Float,
-        dx: Float,
-        dy: Float
-    ) {
+    fun doScale(userScaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float) {
         logger.d {
             "onScale. scaleFactor: $userScaleFactor, focusX: $focusX, focusY: $focusY, dx: $dx, dy: $dy"
         }
@@ -787,7 +749,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     fun doScaleEnd() {
         logger.d { "onScaleEnd" }
         manualScaling = false
-        onUpdateMatrix()
+        notifyUpdateMatrix()
     }
 
     fun actionDown() {

@@ -29,7 +29,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
             resetPaused("LifecycleStateChanged:ON_STOP")
         }
     }
-    internal val engine: SubsamplingEngine = SubsamplingEngine(logger)
+    internal val engine: SubsamplingEngine = SubsamplingEngine(this.logger)
 
     init {
         setLifecycle(view.context.getLifecycle())

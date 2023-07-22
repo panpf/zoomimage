@@ -36,6 +36,8 @@ open class ZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
+    private val cacheDisplayMatrix: Matrix = Matrix()
+
     open val logger = Logger(tag = "ZoomImageView")
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
@@ -51,8 +53,6 @@ open class ZoomImageView @JvmOverloads constructor(
         get() = _subsamplingAbility
             ?: throw IllegalStateException("subsamplingAbility not initialized")
 
-    private val displayMatrix: Matrix = Matrix()
-
     init {
         @Suppress("LeakingThis")
         val zoomAbility = ZoomAbility(view = this, imageViewBridge = this, logger = logger)
@@ -63,11 +63,11 @@ open class ZoomImageView @JvmOverloads constructor(
         _subsamplingAbility = subsamplingAbility
 
         @Suppress("LeakingThis")
-        (bindZoomAndSubsampling(
-        view = this,
-        zoomEngine = zoomAbility.engine,
-        subsamplingEngine = subsamplingAbility.engine
-    ))
+        bindZoomAndSubsampling(
+            view = this,
+            zoomEngine = zoomAbility.zoomEngine,
+            subsamplingEngine = subsamplingAbility.engine
+        )
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
@@ -125,8 +125,10 @@ open class ZoomImageView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        _zoomAbility?.getDisplayMatrix(displayMatrix)
-        _subsamplingAbility?.onDraw(canvas, displayMatrix)
+        _subsamplingAbility?.onDraw(
+            canvas = canvas,
+            displayMatrix = cacheDisplayMatrix.apply { _zoomAbility?.getDisplayMatrix(this) }
+        )
         _zoomAbility?.onDraw(canvas)
     }
 
