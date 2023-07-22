@@ -17,9 +17,9 @@ package com.github.panpf.zoomimage.view.zoom.internal
 
 import androidx.core.view.ViewCompat
 
+// todo 不再依赖 ZoomEngine
 internal class AnimatedScaleRunnable(
     private val engine: ZoomEngine,
-    private val scaleDragHelper: ScaleDragHelper,
     private val startScale: Float,
     private val endScale: Float,
     private val scaleFocalX: Float,
@@ -44,10 +44,10 @@ internal class AnimatedScaleRunnable(
     override fun run() {
         val t = interpolate()
         val newUserScale = startScale + t * (endScale - startScale)
-        val currentUserScale = scaleDragHelper.userScale
+        val currentUserScale = engine.userScale
         val deltaScale = newUserScale / currentUserScale
         isRunning = t < 1f
-        scaleDragHelper.doScale(deltaScale, scaleFocalX, scaleFocalY, 0f, 0f)
+        engine.doScale(deltaScale, scaleFocalX, scaleFocalY, 0f, 0f)
         // We haven't hit our target scale yet, so post ourselves again
         if (isRunning) {
             ViewCompat.postOnAnimation(engine.view, this)

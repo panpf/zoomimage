@@ -20,10 +20,10 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Scroller
 import androidx.core.view.ViewCompat
 
+// todo 不再依赖 ZoomEngine
 internal class LocationRunnable(
     context: Context,
     private val engine: ZoomEngine,
-    private val scaleDragHelper: ScaleDragHelper,
     private val startX: Int,
     private val startY: Int,
     private val endX: Int,
@@ -67,7 +67,7 @@ internal class LocationRunnable(
             val newY = scroller.currY
             val dx = (currentX - newX).toFloat()
             val dy = (currentY - newY).toFloat()
-            scaleDragHelper.offsetBy(dx, dy)
+            engine.offsetBy(dx, dy)
             currentX = newX
             currentY = newY
             ViewCompat.postOnAnimation(engine.view, this)

@@ -22,11 +22,11 @@ import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.toShortString
 import kotlin.math.roundToInt
 
+// todo 不再依赖 ZoomEngine
 internal class FlingRunnable(
     context: Context,
     private val logger: Logger,
     private val engine: ZoomEngine,
-    private val scaleDragHelper: ScaleDragHelper,
     private val velocityX: Int,
     private val velocityY: Int,
 ) : Runnable {
@@ -77,7 +77,7 @@ internal class FlingRunnable(
 
         if (scroller.computeScrollOffset()) {
             val start = OffsetCompat(scroller.startX.toFloat(), scroller.startY.toFloat())
-            scaleDragHelper.offsetTo(scroller.currX.toFloat(), scroller.currY.toFloat())
+            engine.offsetTo(scroller.currX.toFloat(), scroller.currY.toFloat())
             val offset = engine.userOffset
             val distance = OffsetCompat(
                 x = offset.x - start.x,

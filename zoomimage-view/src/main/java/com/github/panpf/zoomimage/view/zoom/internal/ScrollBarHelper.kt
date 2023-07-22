@@ -27,6 +27,7 @@ import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
+// todo 挪到 ZoomAbility 中
 internal class ScrollBarHelper(
     context: Context,
     private val engine: ZoomEngine,
