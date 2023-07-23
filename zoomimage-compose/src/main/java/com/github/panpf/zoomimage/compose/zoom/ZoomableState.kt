@@ -378,7 +378,7 @@ class ZoomableState(logger: Logger) {
     }
 
     suspend fun location(
-        offsetOfContent: IntOffset,
+        pointOfContent: IntOffset,
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
     ) {
@@ -390,13 +390,13 @@ class ZoomableState(logger: Logger) {
         val contentAlignment = contentAlignment
         val currentUserTransform = userTransform
 
-        val rotatedOffsetOfContent =
-            offsetOfContent.rotateInContainer(contentSize, transform.rotation.roundToInt())
+        val rotatedPointOfContent =
+            pointOfContent.rotateInContainer(contentSize, transform.rotation.roundToInt())
         val targetUserScale = targetScale / baseTransform.scaleX
         val contentOrigin = Origin(
-            pivotFractionX = (rotatedOffsetOfContent.x.toFloat() / contentSize.width)
+            pivotFractionX = (rotatedPointOfContent.x.toFloat() / contentSize.width)
                 .coerceAtMost(1f),
-            pivotFractionY = (rotatedOffsetOfContent.y.toFloat() / contentSize.height)
+            pivotFractionY = (rotatedPointOfContent.y.toFloat() / contentSize.height)
                 .coerceAtMost(1f),
         )
         val containerOrigin = contentOriginToContainerOrigin(
@@ -504,9 +504,10 @@ class ZoomableState(logger: Logger) {
     ): Float {
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return transform.scaleX
         val nextScale = getNextStepScale()
-        val offsetOfContent = centroidOfContent ?: contentSize.center
+        // todo scale 应该不移动中心点
+        val pointOfContent = centroidOfContent ?: contentSize.center
         location(
-            offsetOfContent = offsetOfContent,
+            pointOfContent = pointOfContent,
             targetScale = nextScale,
             animated = animated
         )
@@ -560,7 +561,7 @@ class ZoomableState(logger: Logger) {
     fun canDrag(horizontal: Boolean, direction: Int): Boolean =
         canScroll(horizontal, direction * -1, scrollEdge)
 
-    fun containerOffsetToContentOffset(touch: Offset): IntOffset {
+    fun containerPointToContentPoint(pointOfContainer: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val currentUserTransform = userTransform
@@ -568,7 +569,7 @@ class ZoomableState(logger: Logger) {
             containerSize = containerSize,
             userScale = currentUserTransform.scaleX,
             userOffset = currentUserTransform.offset,
-            touch = touch
+            touch = pointOfContainer
         )
         val contentOrigin = containerOriginToContentOrigin(
             containerSize = containerSize,
