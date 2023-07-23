@@ -512,3 +512,34 @@ internal fun computeScaleOffsetByCentroid(
         (contentOffset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale)
     return contentOffset * newScale * -1f
 }
+
+internal fun IntOffset.rotateInContainer(
+    containerSize: IntSize,
+    rotate: Int,
+): IntOffset {
+    require(rotate % 90 == 0) { "rotate must be an integer multiple of 90" }
+    return when (rotate) {
+        90 -> {
+            IntOffset(
+                x = containerSize.height - y,
+                y = x
+            )
+        }
+
+        180 -> {
+            IntOffset(
+                x = containerSize.width - x,
+                y = containerSize.height - y
+            )
+        }
+
+        270 -> {
+            IntOffset(
+                x = y,
+                y = containerSize.width - x
+            )
+        }
+
+        else -> this
+    }
+}

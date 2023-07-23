@@ -35,7 +35,7 @@ fun Modifier.zoomable(
                 onDoubleTap = { offset ->
                     coroutineScope.launch {
                         state.switchScale(
-                            contentOrigin = state.touchOffsetToContentOrigin(offset),
+                            centroidOfContent = state.containerOffsetToContentOffset(offset),
                             animated = true
                         )
                     }

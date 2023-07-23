@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toOffset
@@ -36,7 +37,6 @@ import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
 import com.github.panpf.zoomimage.compose.zoom.internal.toIntSize
 import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -124,9 +124,9 @@ fun ZoomImageMinimap(
                                 if (!imageNodeSize.isEmpty()) {
                                     coroutineScope.launch {
                                         zoomableState.location(
-                                            contentOrigin = Origin(
-                                                pivotFractionX = it.x / imageNodeSize.width,
-                                                pivotFractionY = it.y / imageNodeSize.height
+                                            offsetOfContent = IntOffset(
+                                                x = ((it.x / imageNodeSize.width) * contentSize.width).roundToInt(),
+                                                y = ((it.y / imageNodeSize.height) * contentSize.height).roundToInt(),
                                             ),
                                             targetScale = zoomableState.transform.scaleX
                                                 .coerceAtLeast(zoomableState.mediumScale),

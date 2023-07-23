@@ -4,6 +4,7 @@ import com.github.panpf.zoomimage.core.internal.format
 import com.github.panpf.zoomimage.core.internal.lerp
 import kotlin.math.roundToInt
 
+// todo 不再使用 Origin
 data class Origin(val pivotFractionX: Float, val pivotFractionY: Float) {
 
     /**
