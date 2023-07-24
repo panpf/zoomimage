@@ -129,9 +129,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 zoomImageView.zoomAbility.scale(nextStepScale, true)
             }
             val resetIcon = {
-                val currentScale = zoomImageView.zoomAbility.scale.scaleX
-                val nextStepScale = zoomImageView.zoomAbility.getNextStepScale()
-                if (currentScale == nextStepScale || nextStepScale > currentScale) {
+                val zoomIn =
+                    zoomImageView.zoomAbility.getNextStepScale() > zoomImageView.zoomAbility.minScale
+                if (zoomIn) {
                     setImageResource(R.drawable.ic_zoom_in)
                 } else {
                     setImageResource(R.drawable.ic_zoom_out)

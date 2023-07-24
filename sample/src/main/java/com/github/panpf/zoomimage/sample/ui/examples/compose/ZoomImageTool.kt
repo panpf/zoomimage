@@ -41,10 +41,6 @@ fun ZoomImageTool(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
-    val zoomIn = remember {
-        // todo 这里应该用 transform.scaleX 来判断
-        derivedStateOf { zoomableState.getNextStepScale() > zoomableState.minScale }
-    }
     val info = remember(
         zoomableState.minScale,
         zoomableState.mediumScale,
@@ -94,6 +90,12 @@ fun ZoomImageTool(
             horizontalArrangement = Arrangement.End
         ) {
             IconButton(onClick = { coroutineScope.launch { zoomableState.switchScale(animated = true) } }) {
+                val zoomIn = remember {
+                    derivedStateOf {
+                        val scale = zoomableState.transform.scaleX  // trigger refresh
+                        scale >= 0 && zoomableState.getNextStepScale() > zoomableState.minScale
+                    }
+                }
                 val icon = if (zoomIn.value)
                     R.drawable.ic_zoom_in to "zoom in" else R.drawable.ic_zoom_out to "zoom out"
                 Icon(
