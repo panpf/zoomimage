@@ -1,18 +1,18 @@
 pluginManagement {
     repositories {
 //        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }
-        google()
-        mavenCentral()
         gradlePluginPortal()
+        mavenCentral()
+        google()
     }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
 //        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }
-        google()
         mavenCentral()
         maven { setUrl("https://www.jitpack.io") }
+        google()
     }
     versionCatalogs {
         create("libs") {
