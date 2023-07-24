@@ -37,6 +37,7 @@ import com.github.panpf.zoomimage.core.toShortString
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.math.roundToInt
 
 @RunWith(AndroidJUnit4::class)
 class ComposeZoomUtilsTest {
@@ -351,10 +352,14 @@ class ComposeZoomUtilsTest {
             Origin(0.25f, 0.75f) to Offset(0f, -500f),
             Origin(0.75f, 0.75f) to Offset(-250f, -500f),
         ).forEach { (containerOrigin, expected) ->
+            val containerPoint = IntOffset(
+                x = (containerOrigin.pivotFractionX * containerSize.width).roundToInt(),
+                y = (containerOrigin.pivotFractionY * containerSize.height).roundToInt(),
+            )
             Assert.assertEquals(
                 /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
                 /* expected = */ expected,
-                /* actual = */ computeLocationUserOffset(containerSize, containerOrigin, scale)
+                /* actual = */ computeLocationUserOffset(containerSize, containerPoint, scale)
             )
         }
 
@@ -366,10 +371,14 @@ class ComposeZoomUtilsTest {
             Origin(0.25f, 0.75f) to Offset(-0f, -2000f),
             Origin(0.75f, 0.75f) to Offset(-1000f, -2000f),
         ).forEach { (containerOrigin, expected) ->
+            val containerPoint = IntOffset(
+                x = (containerOrigin.pivotFractionX * containerSize.width).roundToInt(),
+                y = (containerOrigin.pivotFractionY * containerSize.height).roundToInt(),
+            )
             Assert.assertEquals(
                 /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
                 /* expected = */ expected,
-                /* actual = */ computeLocationUserOffset(containerSize, containerOrigin, scale)
+                /* actual = */ computeLocationUserOffset(containerSize, containerPoint, scale)
             )
         }
     }

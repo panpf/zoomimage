@@ -34,7 +34,7 @@ import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerOriginByTouchPosition
+import com.github.panpf.zoomimage.compose.zoom.internal.touchPointToContainerPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerVisibleRect
@@ -44,22 +44,20 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeReadModeTransform
 import com.github.panpf.zoomimage.compose.zoom.internal.computeScaleOffsetByCentroid
 import com.github.panpf.zoomimage.compose.zoom.internal.computeTransform
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
-import com.github.panpf.zoomimage.compose.zoom.internal.containerOriginToContentOrigin
-import com.github.panpf.zoomimage.compose.zoom.internal.contentOriginToContainerOrigin
+import com.github.panpf.zoomimage.compose.zoom.internal.containerPointToContentPoint
+import com.github.panpf.zoomimage.compose.zoom.internal.contentPointToContainerPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.rotateInContainer
 import com.github.panpf.zoomimage.compose.zoom.internal.supportReadMode
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.zoom.internal.toScaleMode
-import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.canScroll
 import com.github.panpf.zoomimage.core.internal.computeScrollEdge
 import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
-import com.github.panpf.zoomimage.core.toShortString
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -378,7 +376,7 @@ class ZoomableState(logger: Logger) {
     }
 
     suspend fun location(
-        pointOfContent: IntOffset,
+        contentPoint: IntOffset,
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
     ) {
@@ -390,27 +388,23 @@ class ZoomableState(logger: Logger) {
         val contentAlignment = contentAlignment
         val currentUserTransform = userTransform
 
-        val rotatedPointOfContent =
-            pointOfContent.rotateInContainer(contentSize, transform.rotation.roundToInt())
-        val targetUserScale = targetScale / baseTransform.scaleX
-        val contentOrigin = Origin(
-            pivotFractionX = (rotatedPointOfContent.x.toFloat() / contentSize.width)
-                .coerceAtMost(1f),
-            pivotFractionY = (rotatedPointOfContent.y.toFloat() / contentSize.height)
-                .coerceAtMost(1f),
-        )
-        val containerOrigin = contentOriginToContainerOrigin(
+        val rotatedContentPoint =
+            contentPoint.rotateInContainer(contentSize, transform.rotation.roundToInt())
+        val containerPoint = contentPointToContainerPoint(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            contentOrigin = contentOrigin
+            contentPoint = rotatedContentPoint
         )
+
+        val targetUserScale = targetScale / baseTransform.scaleX
         val limitedTargetUserScale = limitUserScale(targetUserScale)
+
         // todo targetUserOffset 位置貌似不太准，目标是让其位于屏幕正中间，必要时可在屏幕时绘制触摸点来检验效果
         val targetUserOffset = computeLocationUserOffset(
             containerSize = containerSize,
-            containerOrigin = containerOrigin,
+            containerPoint = containerPoint,
             userScale = limitedTargetUserScale,
         )
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
@@ -427,13 +421,12 @@ class ZoomableState(logger: Logger) {
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
             val limitedTargetAddUserScaleFormatted = limitedTargetAddUserScale.format(4)
             "location. " +
-                    "contentOrigin=${contentOrigin.toShortString()}, " +
+                    "contentPoint=${contentPoint.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "targetUserScale=${targetUserScale.format(4)}, " +
-                    "animated=${animated}, " +
+                    "animated=${animated}. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
-                    "containerOrigin=${containerOrigin.toShortString()}, " +
+                    "containerPoint=${containerPoint.toShortString()}, " +
                     "addUserScale=${targetAddUserScale.format(4)} -> $limitedTargetAddUserScaleFormatted, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddUserOffset.toShortString()}, " +
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
@@ -499,15 +492,15 @@ class ZoomableState(logger: Logger) {
     }
 
     suspend fun switchScale(
-        centroidOfContent: IntOffset? = null,
+        contentCentroid: IntOffset? = null,
         animated: Boolean = true
     ): Float {
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return transform.scaleX
         val nextScale = getNextStepScale()
         // todo scale 应该不移动中心点
-        val pointOfContent = centroidOfContent ?: contentSize.center
+        val contentPoint = contentCentroid ?: contentSize.center
         location(
-            pointOfContent = pointOfContent,
+            contentPoint = contentPoint,
             targetScale = nextScale,
             animated = animated
         )
@@ -561,27 +554,25 @@ class ZoomableState(logger: Logger) {
     fun canDrag(horizontal: Boolean, direction: Int): Boolean =
         canScroll(horizontal, direction * -1, scrollEdge)
 
-    fun containerPointToContentPoint(pointOfContainer: Offset): IntOffset {
+    @Suppress("UnnecessaryVariable")
+    fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val currentUserTransform = userTransform
-        val containerOrigin = computeContainerOriginByTouchPosition(
+        val containerPoint = touchPointToContainerPoint(
             containerSize = containerSize,
             userScale = currentUserTransform.scaleX,
             userOffset = currentUserTransform.offset,
-            touch = pointOfContainer
+            touchPoint = touchPoint
         )
-        val contentOrigin = containerOriginToContentOrigin(
+        val contentPoint = containerPointToContentPoint(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            containerOrigin = containerOrigin
+            containerPoint = containerPoint
         )
-        return IntOffset(
-            x = (contentOrigin.pivotFractionX * contentSize.width).roundToInt(),
-            y = (contentOrigin.pivotFractionY * contentSize.height).roundToInt()
-        )
+        return contentPoint
     }
 
     private fun limitUserScale(targetUserScale: Float): Float {
