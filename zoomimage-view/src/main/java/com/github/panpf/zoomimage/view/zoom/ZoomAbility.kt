@@ -48,6 +48,7 @@ class ZoomAbility constructor(
     private var scrollBarEngine: ScrollBarEngine? = null
     private val gestureDetector: UnifiedGestureDetector
     private val cacheImageMatrix = Matrix()
+    private val cacheVisibleRect = Rect()
     private var onViewTapListenerList: MutableSet<OnViewTapListener>? = null
     private var onViewLongPressListenerList: MutableSet<OnViewLongPressListener>? = null
     internal val zoomEngine = ZoomEngine(logger = this.logger, view = view)
@@ -161,7 +162,7 @@ class ZoomAbility constructor(
         scrollBarEngine = null
         val scrollBarSpec = this@ZoomAbility.scrollBarSpec
         if (scrollBarSpec != null) {
-            scrollBarEngine = ScrollBarEngine(view.context, zoomEngine, scrollBarSpec)
+            scrollBarEngine = ScrollBarEngine(view, scrollBarSpec)
         }
     }
 
@@ -181,9 +182,6 @@ class ZoomAbility constructor(
 
     /**
      * Locate to the location specified on the drawable image. You don't have to worry about scaling and rotation
-     *
-     * @param x Drawable the x coordinate on the diagram
-     * @param y Drawable the y-coordinate on the diagram
      */
     fun location(
         offsetOfContent: IntOffsetCompat,
@@ -351,7 +349,12 @@ class ZoomAbility constructor(
     }
 
     fun onDraw(canvas: Canvas) {
-        scrollBarEngine?.onDraw(canvas)
+        scrollBarEngine?.onDraw(
+            canvas = canvas,
+            viewSize = zoomEngine.viewSize,
+            contentSize = zoomEngine.drawableSize,
+            contentVisibleRect = cacheVisibleRect.apply { zoomEngine.getVisibleRect(this) }
+        )
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {

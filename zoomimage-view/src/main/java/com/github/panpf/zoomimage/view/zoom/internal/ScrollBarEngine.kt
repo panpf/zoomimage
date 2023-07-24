@@ -15,154 +15,107 @@
  */
 package com.github.panpf.zoomimage.view.zoom.internal
 
-import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
+import android.view.View
 import android.view.animation.DecelerateInterpolator
-import android.widget.Scroller
-import androidx.core.view.ViewCompat
+import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
-// todo 重构
 class ScrollBarEngine(
-    context: Context,
-    private val zoomEngine: ZoomEngine,
+    private val view: View,
     private val scrollBarSpec: ScrollBarSpec,
 ) {
-    private val scrollBarRadius: Int = (scrollBarSpec.size / 2).roundToInt()
-    private val scrollBarAlpha: Int = 255
-    private val scrollBarPaint: Paint = Paint().apply {
-        color = scrollBarSpec.color
-        alpha = scrollBarAlpha
-    }
-    private val view = zoomEngine.view
-    private val displayRectF = RectF()
-    private val scrollBarRectF = RectF()
-    private val fadeRunnable: FadeRunnable = FadeRunnable(context, this)
-    private val delayFadeRunnable: DelayFadeRunnable = DelayFadeRunnable(this, fadeRunnable)
 
-    fun onDraw(canvas: Canvas) {
-        val displayRectF = displayRectF
-            .apply { zoomEngine.getDisplayRect(this) }
-            .takeIf { !it.isEmpty }
-            ?: return
-        val (viewWidth, viewHeight) = zoomEngine.viewSize.takeIf { !it.isEmpty() } ?: return
-        val drawWidth = displayRectF.width()
-        val drawHeight = displayRectF.height()
-        val margin = scrollBarSpec.margin + scrollBarSpec.size + scrollBarSpec.margin
-        val viewAvailableWidth = viewWidth - (margin * 2) - view.paddingLeft - view.paddingRight
-        val viewAvailableHeight = viewHeight - (margin * 2) - view.paddingTop - view.paddingBottom
+    private val startAlpha: Int = 255
+    private val roundCornersRadius: Int = (scrollBarSpec.size / 2).roundToInt()
 
-        // draw hor scroll bar
-        if (drawWidth.toInt() > viewWidth) {
-            val widthScale = viewWidth.toFloat() / drawWidth
-            val horScrollBarWidth =
-                (viewAvailableWidth * widthScale).coerceAtLeast(scrollBarSpec.size).toInt()
-            val horScrollBarRectF = scrollBarRectF.apply {
-                val mapLeft = if (displayRectF.left < 0) {
-                    (abs(displayRectF.left) / displayRectF.width() * viewAvailableWidth).toInt()
-                } else 0
-                left = (view.paddingLeft + margin + mapLeft)
-                right = left + horScrollBarWidth
-                top = (view.paddingTop + margin + viewAvailableHeight + scrollBarSpec.margin)
-                bottom = top + scrollBarSpec.size
-            }
-            canvas.drawRoundRect(
-                horScrollBarRectF,
-                scrollBarRadius.toFloat(),
-                scrollBarRadius.toFloat(),
-                scrollBarPaint
-            )
+    @Suppress("JoinDeclarationAndAssignment")
+    private val cachePaint: Paint
+    private val cacheRectF = RectF()
+    private val fadeAnimatable: FloatAnimatable
+
+    init {
+        cachePaint = Paint().apply {
+            color = scrollBarSpec.color
+            alpha = startAlpha
         }
 
-        // draw ver scroll bar
-        if (drawHeight.toInt() > viewHeight) {
-            val heightScale = viewHeight.toFloat() / drawHeight
-            val verScrollBarHeight =
-                (viewAvailableHeight * heightScale).coerceAtLeast(scrollBarSpec.size).toInt()
-            val verScrollBarRectF = scrollBarRectF.apply {
-                val mapTop = if (displayRectF.top < 0) {
-                    (abs(displayRectF.top) / displayRectF.height() * viewAvailableHeight).toInt()
-                } else 0
-                left = (view.paddingLeft + margin + viewAvailableWidth + scrollBarSpec.margin)
-                right = left + scrollBarSpec.size
-                top = (view.paddingTop + margin + mapTop)
-                bottom = top + verScrollBarHeight
+        val startValue = startAlpha.toFloat()
+        val endValue = 0f
+        fadeAnimatable = FloatAnimatable(
+            view = view,
+            startValue = startValue,
+            endValue = endValue,
+            durationMillis = 300,
+            interpolator = DecelerateInterpolator(),
+            onUpdateValue = { value ->
+                cachePaint.alpha = value.roundToInt()
+                view.invalidate()
+            },
+            onEnd = {}
+        )
+    }
+
+    fun onDraw(
+        canvas: Canvas,
+        viewSize: IntSizeCompat,
+        contentSize: IntSizeCompat,
+        contentVisibleRect: Rect
+    ) {
+        if (viewSize.isEmpty()) return
+        if (contentSize.isEmpty()) return
+
+        if (contentVisibleRect.width() < contentSize.width) {
+            val widthScale = (viewSize.width - scrollBarSpec.margin * 4) / contentSize.width
+            val left = (scrollBarSpec.margin * 2) + (contentVisibleRect.left * widthScale)
+            val top = viewSize.height - scrollBarSpec.margin - scrollBarSpec.size
+            val horScrollBarRectF = cacheRectF.apply {
+                set(
+                    /* left = */ left,
+                    /* top = */ top,
+                    /* right = */ left + contentVisibleRect.width() * widthScale,
+                    /* bottom = */ top + scrollBarSpec.size
+                )
             }
             canvas.drawRoundRect(
-                verScrollBarRectF,
-                scrollBarRadius.toFloat(),
-                scrollBarRadius.toFloat(),
-                scrollBarPaint
+                /* rect = */ horScrollBarRectF,
+                /* rx = */ roundCornersRadius.toFloat(),
+                /* ry = */ roundCornersRadius.toFloat(),
+                /* paint = */ cachePaint
+            )
+        }
+        if (contentVisibleRect.height() < contentSize.height) {
+            val heightScale = (viewSize.height - scrollBarSpec.margin * 4) / contentSize.height
+            val verScrollBarRectF = cacheRectF.apply {
+                val left = viewSize.width - scrollBarSpec.margin - scrollBarSpec.size
+                val top = (scrollBarSpec.margin * 2) + (contentVisibleRect.top * heightScale)
+                set(
+                    /* left = */ left,
+                    /* top = */ top,
+                    /* right = */ left + scrollBarSpec.size,
+                    /* bottom = */ top + contentVisibleRect.height() * heightScale
+                )
+            }
+            canvas.drawRoundRect(
+                /* rect = */ verScrollBarRectF,
+                /* rx = */ roundCornersRadius.toFloat(),
+                /* ry = */ roundCornersRadius.toFloat(),
+                /* paint = */ cachePaint
             )
         }
     }
 
     fun onMatrixChanged() {
-        scrollBarPaint.alpha = scrollBarAlpha
-        if (fadeRunnable.isRunning) {
-            fadeRunnable.cancel()
-        }
-        delayFadeRunnable.start()
+        cachePaint.alpha = startAlpha
+        fadeAnimatable.restart(800)
     }
 
     fun cancel() {
-        delayFadeRunnable.cancel()
-        fadeRunnable.cancel()
-    }
-
-    // todo 不再依赖 scrollBarEngine
-    private class DelayFadeRunnable(
-        val scrollBarEngine: ScrollBarEngine,
-        val fadeRunnable: FadeRunnable
-    ) : Runnable {
-
-        override fun run() {
-            fadeRunnable.start()
-        }
-
-        fun start() {
-            cancel()
-            scrollBarEngine.view.postDelayed(this, 800)
-        }
-
-        fun cancel() {
-            scrollBarEngine.view.removeCallbacks(this)
-        }
-    }
-
-    // todo 不再依赖 scrollBarEngine
-    private class FadeRunnable(context: Context, val scrollBarEngine: ScrollBarEngine) : Runnable {
-
-        private val scroller: Scroller = Scroller(context, DecelerateInterpolator())
-
-        val isRunning: Boolean
-            get() = !scroller.isFinished
-
-        fun start() {
-            cancel()
-
-            val startX = scrollBarEngine.scrollBarAlpha
-            val dx = -startX
-            scroller.startScroll(startX, 0, dx, 0, 300)
-            scrollBarEngine.view.post(this)
-        }
-
-        fun cancel() {
-            scrollBarEngine.view.removeCallbacks(this)
-            scroller.forceFinished(true)
-        }
-
-        override fun run() {
-            if (!scroller.isFinished && scroller.computeScrollOffset()) {
-                scrollBarEngine.scrollBarPaint.alpha = scroller.currX
-                scrollBarEngine.view.invalidate()
-                ViewCompat.postOnAnimation(scrollBarEngine.view, this)
-            }
-        }
+        fadeAnimatable.stop()
     }
 }

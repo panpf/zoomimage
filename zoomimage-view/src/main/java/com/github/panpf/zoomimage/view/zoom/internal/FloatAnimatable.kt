@@ -37,12 +37,17 @@ internal class FloatAnimatable(
     var running = false
         private set
 
-    fun start() {
+    fun start(delay: Int = 0) {
         if (running) return
         value = startValue
-        startTime = System.currentTimeMillis()
+        startTime = System.currentTimeMillis() + delay
         running = true
-        view.post(runnable)
+        view.postDelayed(runnable, delay.toLong())
+    }
+
+    fun restart(delay: Int = 0) {
+        stop()
+        start(delay)
     }
 
     fun stop() {
