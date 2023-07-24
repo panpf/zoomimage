@@ -31,15 +31,15 @@ import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
 import com.github.panpf.zoomimage.compose.zoom.internal.toIntSize
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
-import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.subsampling.Tile
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
@@ -69,6 +69,10 @@ fun ZoomImageMinimap(
         }
         if (viewSize.isNotEmpty()) {
             val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
+            subsamplingState.tilesChanged * 1   // Trigger a refresh
+            val imageSize =
+                subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
+            val contentVisibleRect = zoomableState.contentVisibleRect
             AsyncImage(
                 request = DisplayRequest(LocalContext.current, sketchImageUri) {
                     crossfade()
@@ -88,11 +92,6 @@ fun ZoomImageMinimap(
                     .clipToBounds()
                     .drawWithContent {
                         drawContent()
-
-                        // Trigger a refresh todo Verify that tilesChanged works
-                        @Suppress("UNUSED_VARIABLE") val changeCount = subsamplingState.tilesChanged
-                        val imageSize =
-                            subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
                         val tileList = subsamplingState.tileList
                         val imageLoadRect = subsamplingState.imageLoadRect
                         if (contentSize.isNotEmpty() && imageSize.isNotEmpty()) {
@@ -107,7 +106,7 @@ fun ZoomImageMinimap(
 
                         if (contentSize.isNotEmpty() && viewSize.isNotEmpty()) {
                             drawVisibleRect(
-                                contentVisibleRect = zoomableState.contentVisibleRect,
+                                contentVisibleRect = contentVisibleRect,
                                 contentSize = contentSize,
                                 viewSize = viewSize,
                                 strokeWidth = strokeWidth,

@@ -401,7 +401,6 @@ class ZoomableState(logger: Logger) {
         val targetUserScale = targetScale / baseTransform.scaleX
         val limitedTargetUserScale = limitUserScale(targetUserScale)
 
-        // todo targetUserOffset 位置貌似不太准，目标是让其位于屏幕正中间，必要时可在屏幕时绘制触摸点来检验效果
         val targetUserOffset = computeLocationUserOffset(
             containerSize = containerSize,
             containerPoint = containerPoint,

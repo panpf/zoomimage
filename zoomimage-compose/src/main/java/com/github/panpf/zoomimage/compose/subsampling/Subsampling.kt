@@ -9,12 +9,10 @@ fun Modifier.subsampling(
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState,
 ): Modifier = composed {
+    subsamplingState.tilesChanged * 1 // Trigger a refresh
+    val baseTransform = zoomableState.baseTransform
     this.drawWithContent {
         drawContent()
-
-        // Trigger a refresh todo Verify that tilesChanged works
-        @Suppress("UNUSED_VARIABLE") val changeCount = subsamplingState.tilesChanged
-
-        subsamplingState.drawTiles(this, zoomableState.baseTransform)
+        subsamplingState.drawTiles(this, baseTransform)
     }
 }
