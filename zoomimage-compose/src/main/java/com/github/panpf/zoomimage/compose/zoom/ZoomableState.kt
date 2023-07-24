@@ -34,7 +34,6 @@ import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.zoom.internal.touchPointToContainerPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerVisibleRect
@@ -52,6 +51,7 @@ import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.zoom.internal.toScaleMode
+import com.github.panpf.zoomimage.compose.zoom.internal.touchPointToContainerPoint
 import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.canScroll
@@ -495,10 +495,11 @@ class ZoomableState(logger: Logger) {
         contentCentroid: IntOffset? = null,
         animated: Boolean = true
     ): Float {
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return transform.scaleX
+        val contentPoint = contentCentroid
+            ?: contentVisibleRect.takeIf { !it.isEmpty }?.center
+            ?: contentSize.takeIf { it.isNotEmpty() }?.center
+            ?: return transform.scaleX
         val nextScale = getNextStepScale()
-        // todo scale 应该不移动中心点
-        val contentPoint = contentCentroid ?: contentSize.center
         location(
             contentPoint = contentPoint,
             targetScale = nextScale,
