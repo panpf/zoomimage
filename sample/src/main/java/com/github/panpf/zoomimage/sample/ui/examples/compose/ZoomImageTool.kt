@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.sample.R
@@ -63,7 +64,7 @@ fun ZoomImageTool(
         val baseScaleFormatted = baseTransform.scaleX.format(2)
         """
             scale: $scaleFormatted(${baseScaleFormatted}*${userScaleFormatted}) in $scales
-            offset: ${transform.offset.toShortString()}; edge=${zoomableState.scrollEdge.toShortString()}
+            offset: ${transform.offset.round().toShortString()}; edge=${zoomableState.scrollEdge.toShortString()}
             visible: ${zoomableState.contentVisibleRect.toShortString()}
         """.trimIndent()
     }
