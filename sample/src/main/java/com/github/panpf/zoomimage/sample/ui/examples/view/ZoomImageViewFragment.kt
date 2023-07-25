@@ -85,7 +85,8 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
-                    subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
+                    subsamplingAbility.ignoreExifOrientation =
+                        prefsService.ignoreExifOrientation.value
                     subsamplingAbility.setImageSource(newImageSource(binding, sketchImageUri))
                     onCallSuccess()
                 } else {

@@ -124,6 +124,7 @@ internal class ScaleDragGestureDetector(
                 isDragging = false
                 onActionListener?.onActionDown(ev)
             }
+
             MotionEvent.ACTION_MOVE -> {
                 val x = getActiveX(ev)
                 val y = getActiveY(ev)
@@ -143,6 +144,7 @@ internal class ScaleDragGestureDetector(
                     velocityTracker?.addMovement(ev)
                 }
             }
+
             MotionEvent.ACTION_CANCEL -> {
                 activePointerId = INVALID_POINTER_ID
                 // Recycle Velocity Tracker
@@ -150,6 +152,7 @@ internal class ScaleDragGestureDetector(
                 velocityTracker = null
                 onActionListener?.onActionCancel(ev)
             }
+
             MotionEvent.ACTION_UP -> {
                 activePointerId = INVALID_POINTER_ID
                 if (isDragging) {
@@ -175,6 +178,7 @@ internal class ScaleDragGestureDetector(
                 velocityTracker = null
                 onActionListener?.onActionUp(ev)
             }
+
             MotionEvent.ACTION_POINTER_UP -> {
                 // Ignore deprecation, ACTION_POINTER_ID_MASK and
                 // ACTION_POINTER_ID_SHIFT has same value and are deprecated

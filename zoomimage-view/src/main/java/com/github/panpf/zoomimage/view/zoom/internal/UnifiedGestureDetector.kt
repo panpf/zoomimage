@@ -44,7 +44,8 @@ class UnifiedGestureDetector(
 
     private val scaleDragGestureDetector =
         ScaleDragGestureDetector(context, object : OnGestureListener {
-            override fun onDrag(dx: Float, dy: Float, scaling: Boolean) = onDragCallback(dx, dy, scaling)
+            override fun onDrag(dx: Float, dy: Float, scaling: Boolean) =
+                onDragCallback(dx, dy, scaling)
 
             override fun onFling(velocityX: Float, velocityY: Float) =
                 onFlingCallback(velocityX, velocityY)

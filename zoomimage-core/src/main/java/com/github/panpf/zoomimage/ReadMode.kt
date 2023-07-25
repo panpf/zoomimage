@@ -15,8 +15,8 @@
  */
 package com.github.panpf.zoomimage
 
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.internal.format
 import com.github.panpf.zoomimage.core.internal.isSameDirection
 import com.github.panpf.zoomimage.core.times

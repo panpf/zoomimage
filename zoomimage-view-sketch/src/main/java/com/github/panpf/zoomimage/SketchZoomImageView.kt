@@ -46,8 +46,10 @@ open class SketchZoomImageView @JvmOverloads constructor(
     override var displayImageOptions: ImageOptions? = null
 
     init {
-        _subsamplingAbility?.tileBitmapPool = SketchTileBitmapPool(context.sketch, "SketchZoomImageView")
-        _subsamplingAbility?.tileMemoryCache = SketchTileMemoryCache(context.sketch, "SketchZoomImageView")
+        _subsamplingAbility?.tileBitmapPool =
+            SketchTileBitmapPool(context.sketch, "SketchZoomImageView")
+        _subsamplingAbility?.tileMemoryCache =
+            SketchTileMemoryCache(context.sketch, "SketchZoomImageView")
     }
 
     override fun onAttachedToWindow() {
@@ -71,11 +73,11 @@ open class SketchZoomImageView @JvmOverloads constructor(
             }
             val result = displayResult
             if (result == null) {
-                logger.d{ "SketchZoomImageView. Can't use Subsampling, result is null" }
+                logger.d { "SketchZoomImageView. Can't use Subsampling, result is null" }
                 return@post
             }
             if (result !is DisplayResult.Success) {
-                logger.d{ "SketchZoomImageView. Can't use Subsampling, result is not Success" }
+                logger.d { "SketchZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(result.drawable)
@@ -121,16 +123,16 @@ open class SketchZoomImageView @JvmOverloads constructor(
     private fun newImageSource(drawable: Drawable?): ImageSource? {
         drawable ?: return null
         if (drawable.getLastChildDrawable() is SketchStateDrawable) {
-            logger.d{ "SketchZoomImageView. Can't use Subsampling, drawable is SketchStateDrawable" }
+            logger.d { "SketchZoomImageView. Can't use Subsampling, drawable is SketchStateDrawable" }
             return null
         }
         val sketchDrawable = drawable.findLastSketchDrawable()
         if (sketchDrawable == null) {
-            logger.d{ "SketchZoomImageView. Can't use Subsampling, drawable is not SketchDrawable" }
+            logger.d { "SketchZoomImageView. Can't use Subsampling, drawable is not SketchDrawable" }
             return null
         }
         if (sketchDrawable is Animatable) {
-            logger.d{ "SketchZoomImageView. Can't use Subsampling, drawable is Animatable" }
+            logger.d { "SketchZoomImageView. Can't use Subsampling, drawable is Animatable" }
             return null
         }
         return SketchImageSource(

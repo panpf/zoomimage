@@ -40,6 +40,7 @@ fun Modifier.zoomScrollBar(
             drawContent()
 
             val alpha = alphaAnimatable.value
+
             @Suppress("UnnecessaryVariable")
             val scrollBarSize = sizePx
             val drawSize = this.size

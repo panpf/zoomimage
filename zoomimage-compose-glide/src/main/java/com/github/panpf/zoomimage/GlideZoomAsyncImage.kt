@@ -25,26 +25,28 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
 import com.github.panpf.zoomimage.glide.internal.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.internal.GlideTileMemoryCache
 import com.github.panpf.zoomimage.glide.internal.newGlideImageSource
-import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.subsampling
 
 
 @Composable
-fun rememberGlideZoomAsyncImageLogger(tag: String = "GlideZoomAsyncImage", level: Int = Logger.INFO): Logger =
-    remember {
-        Logger(tag = tag).apply { this.level = level }
-    }
+fun rememberGlideZoomAsyncImageLogger(
+    tag: String = "GlideZoomAsyncImage",
+    level: Int = Logger.INFO
+): Logger = remember {
+    Logger(tag = tag).apply { this.level = level }
+}
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable

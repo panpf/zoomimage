@@ -62,10 +62,13 @@ fun ZoomImageTool(
         val userScaleFormatted = userTransform.scaleX.format(2)
         val scaleFormatted = transform.scaleX.format(2)
         val baseScaleFormatted = baseTransform.scaleX.format(2)
+        val offset = transform.offset.round()
+        val contentVisibleRect = zoomableState.contentVisibleRect
+        val scrollEdge = zoomableState.scrollEdge
         """
             scale: $scaleFormatted(${baseScaleFormatted}*${userScaleFormatted}) in $scales
-            offset: ${transform.offset.round().toShortString()}; edge=${zoomableState.scrollEdge.toShortString()}
-            visible: ${zoomableState.contentVisibleRect.toShortString()}
+            offset: ${offset.toShortString()}; edge=${scrollEdge.toShortString()}
+            visible: ${contentVisibleRect.toShortString()}
         """.trimIndent()
     }
     Box(modifier = Modifier.fillMaxSize()) {

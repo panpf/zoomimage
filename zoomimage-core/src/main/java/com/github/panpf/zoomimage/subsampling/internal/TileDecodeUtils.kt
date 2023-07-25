@@ -3,7 +3,8 @@ package com.github.panpf.zoomimage.subsampling.internal
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Build
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.internal.toHexString
@@ -15,7 +16,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 internal fun Bitmap.Config.isAndSupportHardware(): Boolean =
-    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this == Bitmap.Config.HARDWARE
+    VERSION.SDK_INT >= VERSION_CODES.O && this == Bitmap.Config.HARDWARE
 
 /**
  * If true, indicates that the given mimeType and sampleSize combination can be using 'inBitmap' in BitmapFactory
@@ -26,20 +27,20 @@ internal fun Bitmap.Config.isAndSupportHardware(): Boolean =
 internal fun isSupportInBitmap(mimeType: String?, sampleSize: Int): Boolean =
     when {
         "image/jpeg".equals(mimeType, true) ->
-            if (sampleSize == 1) Build.VERSION.SDK_INT >= 16 else Build.VERSION.SDK_INT >= 19
+            if (sampleSize == 1) VERSION.SDK_INT >= 16 else VERSION.SDK_INT >= 19
 
         "image/png".equals(mimeType, true) ->
-            if (sampleSize == 1) Build.VERSION.SDK_INT >= 16 else Build.VERSION.SDK_INT >= 19
+            if (sampleSize == 1) VERSION.SDK_INT >= 16 else VERSION.SDK_INT >= 19
 
         "image/gif".equals(mimeType, true) ->
-            if (sampleSize == 1) Build.VERSION.SDK_INT >= 19 else Build.VERSION.SDK_INT >= 21
+            if (sampleSize == 1) VERSION.SDK_INT >= 19 else VERSION.SDK_INT >= 21
 
-        "image/webp".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 19
+        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 19
 //        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 26 animated
-        "image/bmp".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 19
+        "image/bmp".equals(mimeType, true) -> VERSION.SDK_INT >= 19
         "image/heic".equals(mimeType, true) -> false
-        "image/heif".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 28
-        else -> Build.VERSION.SDK_INT >= 32   // Compatible with new image types supported in the future
+        "image/heif".equals(mimeType, true) -> VERSION.SDK_INT >= 28
+        else -> VERSION.SDK_INT >= 32   // Compatible with new image types supported in the future
     }
 
 /**
@@ -50,15 +51,15 @@ internal fun isSupportInBitmap(mimeType: String?, sampleSize: Int): Boolean =
 @SuppressLint("ObsoleteSdkInt")
 internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
     when {
-        "image/jpeg".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 16
-        "image/png".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 16
+        "image/jpeg".equals(mimeType, true) -> VERSION.SDK_INT >= 16
+        "image/png".equals(mimeType, true) -> VERSION.SDK_INT >= 16
         "image/gif".equals(mimeType, true) -> false
-        "image/webp".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 16
+        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 16
 //        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 26 animated
         "image/bmp".equals(mimeType, true) -> false
-        "image/heic".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 28
-        "image/heif".equals(mimeType, true) -> Build.VERSION.SDK_INT >= 28
-        else -> Build.VERSION.SDK_INT >= 32   // Compatible with new image types supported in the future
+        "image/heic".equals(mimeType, true) -> VERSION.SDK_INT >= 28
+        "image/heif".equals(mimeType, true) -> VERSION.SDK_INT >= 28
+        else -> VERSION.SDK_INT >= 32   // Compatible with new image types supported in the future
     }
 
 /**
@@ -97,7 +98,7 @@ internal fun calculateSampledBitmapSizeForRegion(
     val width: Int
     val height: Int
     val isPNGFormat = "image/png".equals(mimeType, true)
-    if (!isPNGFormat && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && regionSize == imageSize) {
+    if (!isPNGFormat && VERSION.SDK_INT >= VERSION_CODES.N && regionSize == imageSize) {
         width = ceil(widthValue).toInt()
         height = ceil(heightValue).toInt()
     } else {
@@ -176,5 +177,5 @@ internal fun isSupportBitmapRegionDecoder(mimeType: String): Boolean =
     "image/jpeg".equals(mimeType, true)
             || "image/png".equals(mimeType, true)
             || "image/webp".equals(mimeType, true)
-            || ("image/heic".equals(mimeType, true) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-            || ("image/heif".equals(mimeType, true) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+            || ("image/heic".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
+            || ("image/heif".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)

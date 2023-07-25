@@ -36,14 +36,14 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.internal.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
+import com.github.panpf.zoomimage.subsampling.internal.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
-import com.github.panpf.zoomimage.view.subsampling.OnReadyChangeListener
-import com.github.panpf.zoomimage.view.subsampling.OnTileChangeListener
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.toIntRectCompat
+import com.github.panpf.zoomimage.view.subsampling.OnReadyChangeListener
+import com.github.panpf.zoomimage.view.subsampling.OnTileChangeListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -240,7 +240,7 @@ class SubsamplingEngine constructor(logger: Logger) {
         notifyTileChange()
     }
 
-    fun resetVisibleAndLoadRect(contentVisibleRect: Rect, caller: String){
+    fun resetVisibleAndLoadRect(contentVisibleRect: Rect, caller: String) {
         val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
         tileManager.resetVisibleAndLoadRect(contentVisibleRect.toIntRectCompat())

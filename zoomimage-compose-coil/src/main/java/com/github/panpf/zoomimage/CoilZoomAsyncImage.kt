@@ -29,24 +29,26 @@ import coil.request.ImageRequest
 import coil.request.NullRequestDataException
 import com.github.panpf.zoomimage.coil.internal.CoilImageSource
 import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
-import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
-import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
-import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.compose.zoom.zoomable
 import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zoomable
 import kotlin.math.roundToInt
 
 
 @Composable
-fun rememberCoilZoomAsyncImageLogger(tag: String = "CoilZoomAsyncImage", level: Int = Logger.INFO): Logger =
-    remember {
-        Logger(tag = tag).apply { this.level = level }
-    }
+fun rememberCoilZoomAsyncImageLogger(
+    tag: String = "CoilZoomAsyncImage",
+    level: Int = Logger.INFO
+): Logger = remember {
+    Logger(tag = tag).apply { this.level = level }
+}
 
 @Composable
 @NonRestartableComposable

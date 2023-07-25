@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.view.zoom
 
 import android.content.res.Resources
-import android.graphics.Color
 
 data class ScrollBarSpec(
     val color: Int = 0xB2888888.toInt(),

@@ -39,9 +39,9 @@ mmkv = "1.2.13"
 subsamplingscaleimageview = "3.10.0"
 photoview = "2.3.0"
 coil = "2.4.0"
-glide="4.15.1"
-glide-compose="1.0.0-alpha.3"
-picasso="2.8"
+glide = "4.15.1"
+glide-compose = "1.0.0-alpha.3"
+picasso = "2.8"
 
 [libraries]
 

@@ -24,14 +24,14 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.roundToIntRect
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.panpf.zoomimage.compose.internal.name
+import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.computeAlignmentIntOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerInnerRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
-import com.github.panpf.zoomimage.compose.internal.name
-import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.core.Origin
 import com.github.panpf.zoomimage.core.toShortString
 import org.junit.Assert
@@ -1483,9 +1483,21 @@ class ComposeZoomUtilsTest {
             Item7(IntSize(7500, 232), FillWidth, CenterEnd, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(7500, 232), FillWidth, CenterEnd, 2.0f, IntRect(-1080, -828, 0, -828)),
             Item7(IntSize(7500, 232), FillWidth, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
-            Item7(IntSize(7500, 232), FillWidth, BottomStart, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(
+                IntSize(7500, 232),
+                FillWidth,
+                BottomStart,
+                2.0f,
+                IntRect(-1080, -1656, 0, -1656)
+            ),
             Item7(IntSize(7500, 232), FillWidth, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
-            Item7(IntSize(7500, 232), FillWidth, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(
+                IntSize(7500, 232),
+                FillWidth,
+                BottomCenter,
+                2.0f,
+                IntRect(-1080, -1656, 0, -1656)
+            ),
             Item7(IntSize(7500, 232), FillWidth, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(7500, 232), FillWidth, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, -1656)),
             Item7(IntSize(7500, 232), FillHeight, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
@@ -1629,7 +1641,13 @@ class ComposeZoomUtilsTest {
             Item7(IntSize(173, 3044), FillHeight, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(173, 3044), FillHeight, BottomStart, 2.0f, IntRect(0, -1656, 0, 0)),
             Item7(IntSize(173, 3044), FillHeight, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
-            Item7(IntSize(173, 3044), FillHeight, BottomCenter, 2.0f, IntRect(-540, -1656, -540, 0)),
+            Item7(
+                IntSize(173, 3044),
+                FillHeight,
+                BottomCenter,
+                2.0f,
+                IntRect(-540, -1656, -540, 0)
+            ),
             Item7(IntSize(173, 3044), FillHeight, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(173, 3044), FillHeight, BottomEnd, 2.0f, IntRect(-1080, -1656, -1080, 0)),
             Item7(IntSize(173, 3044), FillBounds, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
@@ -1737,7 +1755,13 @@ class ComposeZoomUtilsTest {
             Item7(IntSize(575, 427), FillWidth, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(575, 427), FillWidth, BottomStart, 2.0f, IntRect(-1080, -1656, 0, -1656)),
             Item7(IntSize(575, 427), FillWidth, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
-            Item7(IntSize(575, 427), FillWidth, BottomCenter, 2.0f, IntRect(-1080, -1656, 0, -1656)),
+            Item7(
+                IntSize(575, 427),
+                FillWidth,
+                BottomCenter,
+                2.0f,
+                IntRect(-1080, -1656, 0, -1656)
+            ),
             Item7(IntSize(575, 427), FillWidth, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(575, 427), FillWidth, BottomEnd, 2.0f, IntRect(-1080, -1656, 0, -1656)),
             Item7(IntSize(575, 427), FillHeight, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
@@ -1827,7 +1851,13 @@ class ComposeZoomUtilsTest {
             Item7(IntSize(551, 1038), Inside, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(551, 1038), Inside, BottomStart, 2.0f, IntRect(-22, -1656, 0, -1236)),
             Item7(IntSize(551, 1038), Inside, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
-            Item7(IntSize(551, 1038), Inside, BottomCenter, 2.0f, IntRect(-552, -1656, -530, -1236)),
+            Item7(
+                IntSize(551, 1038),
+                Inside,
+                BottomCenter,
+                2.0f,
+                IntRect(-552, -1656, -530, -1236)
+            ),
             Item7(IntSize(551, 1038), Inside, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(551, 1038), Inside, BottomEnd, 2.0f, IntRect(-1080, -1656, -1058, -1236)),
             Item7(IntSize(551, 1038), Fit, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
@@ -1881,7 +1911,13 @@ class ComposeZoomUtilsTest {
             Item7(IntSize(551, 1038), FillHeight, BottomStart, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(551, 1038), FillHeight, BottomStart, 2.0f, IntRect(-678, -1656, 0, 0)),
             Item7(IntSize(551, 1038), FillHeight, BottomCenter, 1.0f, IntRect(0, 0, 0, 0)),
-            Item7(IntSize(551, 1038), FillHeight, BottomCenter, 2.0f, IntRect(-880, -1656, -202, 0)),
+            Item7(
+                IntSize(551, 1038),
+                FillHeight,
+                BottomCenter,
+                2.0f,
+                IntRect(-880, -1656, -202, 0)
+            ),
             Item7(IntSize(551, 1038), FillHeight, BottomEnd, 1.0f, IntRect(0, 0, 0, 0)),
             Item7(IntSize(551, 1038), FillHeight, BottomEnd, 2.0f, IntRect(-1080, -1656, -402, 0)),
             Item7(IntSize(551, 1038), FillBounds, TopStart, 1.0f, IntRect(0, 0, 0, 0)),
