@@ -117,3 +117,7 @@ val OffsetCompat.isFinite: Boolean get() = x.isFinite() && y.isFinite()
 
 
 fun OffsetCompat.toShortString(): String = "${x.format(2)}x${y.format(2)}"
+
+operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat {
+    return OffsetCompat(x = x * scaleFactor.scaleX, y = y * scaleFactor.scaleY)
+}

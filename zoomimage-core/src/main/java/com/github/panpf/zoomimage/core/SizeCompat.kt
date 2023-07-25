@@ -100,3 +100,7 @@ fun SizeCompat.rotate(rotateDegrees: Int): SizeCompat {
 }
 
 fun SizeCompat.toShortString(): String = "${width.format(2)}x${height.format(2)}"
+
+operator fun SizeCompat.times(scaleFactor: ScaleFactorCompat): SizeCompat {
+    return SizeCompat(width = width * scaleFactor.scaleX, height = height * scaleFactor.scaleY)
+}

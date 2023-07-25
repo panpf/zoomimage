@@ -73,18 +73,6 @@ operator fun ScaleFactorCompat.div(scaleFactor: ScaleFactorCompat) =
     ScaleFactorCompat(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
 
 /**
- * Multiplication operator with [IntSizeCompat].
- *
- * Return a new [IntSizeCompat] with the width and height multiplied by the [ScaleFactorCompat.scaleX] and
- * [ScaleFactorCompat.scaleY] respectively
- */
-operator fun IntSizeCompat.times(scaleFactor: ScaleFactorCompat): IntSizeCompat =
-    IntSizeCompat(
-        (this.width * scaleFactor.scaleX).roundToInt(),
-        (this.height * scaleFactor.scaleY).roundToInt()
-    )
-
-/**
  * Multiplication operator with [IntSizeCompat] with reverse parameter types to maintain
  * commutative properties of multiplication
  *

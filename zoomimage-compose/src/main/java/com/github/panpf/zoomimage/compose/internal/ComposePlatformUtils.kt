@@ -38,6 +38,9 @@ internal fun IntOffset.toShortString(): String = "${x}x${y}"
 
 internal fun IntRect.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
+internal fun TransformOrigin.toShortString(): String =
+    "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"
+
 
 internal fun Size.isAvailable(): Boolean = isSpecified && !isEmpty()
 
@@ -252,6 +255,17 @@ operator fun IntSize.times(scale: Float): IntSize =
         width = (this.width * scale).roundToInt(),
         height = (this.height * scale).roundToInt()
     )
+
+operator fun Offset.times(scaleFactor: ScaleFactor): Offset {
+    return Offset(x * scaleFactor.scaleX, y * scaleFactor.scaleY)
+}
+
+operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset {
+    return IntOffset(
+        x = (x * scaleFactor.scaleX).roundToInt(),
+        y = (y * scaleFactor.scaleY).roundToInt()
+    )
+}
 
 @Stable
 fun IntSize.isEmpty(): Boolean = width == 0 || height == 0

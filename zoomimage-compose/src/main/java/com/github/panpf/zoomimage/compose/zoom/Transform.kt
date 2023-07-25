@@ -122,11 +122,11 @@ fun Transform.div(scaleFactor: ScaleFactor): Transform {
 
 fun Transform.concat(other: Transform): Transform {
     require(this.origin == other.origin) {
-        "Transform origin must be the same: this.origin=${this.origin}, other.origin=${other.origin}"
+        "Transform origin must be the same: this.origin=${this.origin.toShortString()}, other.origin=${other.origin}"
     }
     return this.copy(
         scale = scale.times(other.scale),
-        offset = offset + other.offset,
+        offset = (offset * other.scale) + other.offset,
         rotation = rotation + other.rotation,
     )
 }

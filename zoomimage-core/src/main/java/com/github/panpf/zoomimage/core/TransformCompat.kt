@@ -119,7 +119,7 @@ fun TransformCompat.concat(other: TransformCompat): TransformCompat {
     }
     return this.copy(
         scale = scale.times(other.scale),
-        offset = offset + other.offset,
+        offset = (offset * other.scale) + other.offset,
         rotation = rotation + other.rotation,
     )
 }

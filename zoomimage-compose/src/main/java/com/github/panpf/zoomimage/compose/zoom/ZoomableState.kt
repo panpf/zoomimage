@@ -33,6 +33,7 @@ import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.rotate
+import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
@@ -350,7 +351,7 @@ class ZoomableState(logger: Logger) {
     suspend fun offset(targetOffset: Offset, animated: Boolean = false) {
         stopAllAnimation("offset")
 
-        val targetUserOffset = targetOffset - baseTransform.offset
+        val targetUserOffset = targetOffset - (baseTransform.offset.times(userTransform.scale))
         val currentUserTransform = userTransform
         val currentUserScale = currentUserTransform.scaleX
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, currentUserScale)

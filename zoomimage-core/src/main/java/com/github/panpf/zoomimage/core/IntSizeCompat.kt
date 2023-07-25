@@ -75,3 +75,10 @@ fun IntSizeCompat.toCompatSize(): SizeCompat = SizeCompat(width.toFloat(), heigh
 
 fun SizeCompat.roundToCompatIntSize(): IntSizeCompat =
     IntSizeCompat(width.roundToInt(), height.roundToInt())
+
+operator fun IntSizeCompat.times(scaleFactor: ScaleFactorCompat): IntSizeCompat {
+    return IntSizeCompat(
+        width = (width * scaleFactor.scaleX).roundToInt(),
+        height = (height * scaleFactor.scaleY).roundToInt()
+    )
+}

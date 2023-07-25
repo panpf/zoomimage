@@ -112,3 +112,10 @@ inline fun OffsetCompat.roundToCompatIntOffset(): IntOffsetCompat =
 
 
 fun IntOffsetCompat.toShortString(): String = "${x}x${y}"
+
+operator fun IntOffsetCompat.times(scaleFactor: ScaleFactorCompat): IntOffsetCompat {
+    return IntOffsetCompat(
+        x = (x * scaleFactor.scaleX).roundToInt(),
+        y = (y * scaleFactor.scaleY).roundToInt(),
+    )
+}
