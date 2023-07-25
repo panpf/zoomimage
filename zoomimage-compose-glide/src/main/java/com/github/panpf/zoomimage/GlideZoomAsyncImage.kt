@@ -85,18 +85,18 @@ fun GlideZoomAsyncImage(
         subsamplingState.tileMemoryCache = GlideTileMemoryCache(glide)
     }
 
+    val userTransform = zoomableState.userTransform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            val transform1 = zoomableState.userTransform
-            scaleX = transform1.scaleX
-            scaleY = transform1.scaleY
-            rotationZ = transform1.rotation
-            translationX = transform1.offsetX
-            translationY = transform1.offsetY
-            transformOrigin = transform1.origin
+            scaleX = userTransform.scaleX
+            scaleY = userTransform.scaleY
+            rotationZ = userTransform.rotation
+            translationX = userTransform.offsetX
+            translationY = userTransform.offsetY
+            transformOrigin = userTransform.origin
         }
         .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
 

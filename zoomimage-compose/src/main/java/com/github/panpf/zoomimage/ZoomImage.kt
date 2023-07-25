@@ -52,18 +52,18 @@ fun ZoomImage(
 
     BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
 
+    val userTransform = zoomableState.userTransform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            val transform = zoomableState.userTransform
-            scaleX = transform.scaleX
-            scaleY = transform.scaleY
-            rotationZ = transform.rotation
-            translationX = transform.offsetX
-            translationY = transform.offsetY
-            transformOrigin = transform.origin
+            scaleX = userTransform.scaleX
+            scaleY = userTransform.scaleY
+            rotationZ = userTransform.rotation
+            translationX = userTransform.offsetX
+            translationY = userTransform.offsetY
+            transformOrigin = userTransform.origin
         }
         .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
 
