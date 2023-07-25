@@ -12,3 +12,7 @@ internal fun Float.format(newScale: Int): Float {
 }
 
 internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
+
+internal fun Float.isSafe(): Boolean {
+    return !isNaN() && !isInfinite()
+}

@@ -42,6 +42,9 @@ import com.github.panpf.zoomimage.core.roundToCompatIntOffset
 import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.view.internal.computeScaleFactor
 import com.github.panpf.zoomimage.view.internal.format
+import com.github.panpf.zoomimage.view.internal.getScale
+import com.github.panpf.zoomimage.view.internal.getTranslation
+import com.github.panpf.zoomimage.view.internal.isSafe
 import com.github.panpf.zoomimage.view.zoom.OnDrawableSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnMatrixChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnRotateChangeListener
@@ -183,9 +186,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 //    var displayTransform: TransformCompat = TransformCompat.Origin
 //        private set
 
-    private var _rotateDegrees = 0
+    private var _rotation = 0
     val rotation: Int
-        get() = _rotateDegrees
+        get() = _rotation
 
 
     /**************************************** Internal ********************************************/
@@ -315,13 +318,17 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     fun offsetBy(dx: Float, dy: Float) {
+        require(dx.isSafe() && dy.isSafe()) { "offsetBy dx=$dx, dy=$dy is invalid" }
         userMatrix.postTranslate(dx, dy)
         checkAndApplyMatrix()
     }
 
     fun offsetTo(dx: Float, dy: Float) {
         val offset = userOffset
-        userMatrix.postTranslate(dx - offset.x, dy - offset.y)
+        val fl = dx - offset.x
+        val fy = dy - offset.y
+        require(dx.isSafe() && dy.isSafe() && fl.isSafe() && fy.isSafe()) { "offsetTo dx=$dx, dy=$dy, fl=${fl}, fy=${fy} is invalid" }
+        userMatrix.postTranslate(fl, fy)
         checkAndApplyMatrix()
     }
 
@@ -395,17 +402,17 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     /**
      * Rotate the image to the specified degrees
      *
-     * @param degrees Rotation degrees, can only be 90°, 180°, 270°, 360°
+     * @param rotation Rotation degrees, can only be 90°, 180°, 270°, 360°
      */
-    fun rotateTo(degrees: Int) {
-        require(degrees % 90 == 0) { "degrees must be in multiples of 90: $degrees" }
-        if (_rotateDegrees == degrees) return
+    fun rotateTo(rotation: Int) {
+        require(rotation % 90 == 0) { "rotation must be in multiples of 90: $rotation" }
+        if (_rotation == rotation) return
 
-        var newDegrees = degrees % 360
+        var newDegrees = rotation % 360
         if (newDegrees <= 0) {
             newDegrees = 360 - newDegrees
         }
-        _rotateDegrees = newDegrees
+        _rotation = newDegrees
         reset()
         onRotateChangeListenerList?.forEach {
             it.onRotateChanged(newDegrees)
@@ -418,7 +425,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      * @param addDegrees Rotation degrees, can only be 90°, 180°, 270°, 360°
      */
     fun rotateBy(addDegrees: Int) {
-        return rotateTo(_rotateDegrees + addDegrees)
+        return rotateTo(_rotation + addDegrees)
     }
 
     fun getNextStepScale(): Float {
@@ -539,6 +546,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     fun doDrag(dx: Float, dy: Float) {
         logger.d { "onDrag. dx: $dx, dy: $dy" }
 
+        require(dx.isSafe() && dy.isSafe()) { "doDrag dx=$dx, dy=$dy is invalid" }
         userMatrix.postTranslate(dx, dy)
         checkAndApplyMatrix()
 
@@ -615,6 +623,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     private fun scaleBy(addUserScale: Float, focalX: Float, focalY: Float) {
+        require(addUserScale.isSafe()) { "scaleBy addUserScale=$addUserScale is invalid" }
         userMatrix.postScale(addUserScale, addUserScale, focalX, focalY)
         checkAndApplyMatrix()
     }
@@ -633,7 +642,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val minUserScale = minScale / baseScale.scaleX
         val maxUserScale = maxScale / baseScale.scaleX
         val limitedNewUserScale = if (rubberBandScale) {
-            limitScaleWithRubberBand(
+            limitScaleWithRubberBand(   // todo 不能用这个，没有考虑 rotation
                 currentScale = currentUserScale,
                 targetScale = newUserScale,
                 minScale = minUserScale,
@@ -644,6 +653,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
         newUserScaleFactor = limitedNewUserScale / currentUserScale
 
+        require(dx.isSafe() && dy.isSafe() && newUserScaleFactor.isSafe()) { "doScale dx=$dx, dy=$dy, newUserScaleFactor=$newUserScaleFactor is invalid" }
         userMatrix.postScale(newUserScaleFactor, newUserScaleFactor, focusX, focusY)
         userMatrix.postTranslate(dx, dy)
         checkAndApplyMatrix()
@@ -731,6 +741,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         baseMatrix.apply {
             reset()
             val transform = baseInitialTransform
+            require(transform.scale.scaleX > 0f && transform.scale.scaleY > 0f) { "resetBaseMatrix transform scale=$transform is invalid" }
             postScale(transform.scale.scaleX, transform.scale.scaleY)
             postTranslate(transform.offset.x, transform.offset.y)
             postRotate(rotation.toFloat())
@@ -802,6 +813,8 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
 
         // Finally actually translate the matrix
+
+        require(deltaX.isSafe() && deltaY.isSafe()) { "checkMatrixBounds deltaX=${deltaX}, deltaY=${deltaY} is invalid" }
         userMatrix.postTranslate(deltaX, deltaY)
 
         _scrollEdge = ScrollEdge(

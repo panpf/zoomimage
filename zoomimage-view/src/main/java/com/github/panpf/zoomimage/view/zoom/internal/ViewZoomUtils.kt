@@ -15,7 +15,6 @@
  */
 package com.github.panpf.zoomimage.view.zoom.internal
 
-import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.RectF
 import android.widget.ImageView.ScaleType
@@ -36,46 +35,7 @@ import com.github.panpf.zoomimage.view.internal.isTop
 import com.github.panpf.zoomimage.view.internal.isVerticalCenter
 import com.github.panpf.zoomimage.view.internal.scale
 import com.github.panpf.zoomimage.view.internal.times
-import kotlin.math.abs
-import kotlin.math.atan2
 import kotlin.math.roundToInt
-
-private val matrixValuesLocal = ThreadLocal<FloatArray>()
-private val Matrix.localValues: FloatArray
-    get() {
-        val values = matrixValuesLocal.get()
-            ?: FloatArray(9).apply { matrixValuesLocal.set(this) }
-        getValues(values)
-        return values
-    }
-
-internal fun Matrix.getScale(): ScaleFactorCompat {
-    val values = localValues
-    return ScaleFactorCompat(
-        scaleX = values[Matrix.MSCALE_X],
-        scaleY = values[Matrix.MSCALE_Y]
-    )
-}
-
-internal fun Matrix.getTranslation(): OffsetCompat {
-    val values = localValues
-    return OffsetCompat(
-        x = values[Matrix.MTRANS_X],
-        y = values[Matrix.MTRANS_Y]
-    )
-}
-
-internal fun Matrix.getRotateDegrees(): Int {
-    val values = localValues
-    val skewX: Float = values[Matrix.MSKEW_X]
-    val scaleX: Float = values[Matrix.MSCALE_X]
-    val degrees = (atan2(skewX.toDouble(), scaleX.toDouble()) * (180 / Math.PI)).roundToInt()
-    return when {
-        degrees < 0 -> abs(degrees)
-        degrees > 0 -> 360 - degrees
-        else -> 0
-    }
-}
 
 internal fun reverseRotateRect(rect: Rect, rotateDegrees: Int, drawableSize: IntSizeCompat) {
     require(rotateDegrees % 90 == 0) {

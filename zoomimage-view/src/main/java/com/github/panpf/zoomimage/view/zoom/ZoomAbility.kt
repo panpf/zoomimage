@@ -231,7 +231,7 @@ class ZoomAbility constructor(
     fun canScroll(horizontal: Boolean, direction: Int): Boolean =
         zoomEngine.canScroll(horizontal, direction)
 
-    val rotateDegrees: Int
+    val rotation: Int
         get() = zoomEngine.rotation
 
     val scrollEdge: ScrollEdge
