@@ -33,6 +33,7 @@ import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.toShortString
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
 fun ZoomImageTool(
@@ -93,6 +94,17 @@ fun ZoomImageTool(
                 .background(colors.tertiary.copy(alpha = 0.7f), RoundedCornerShape(50)),
             horizontalArrangement = Arrangement.End
         ) {
+            IconButton(onClick = {
+                coroutineScope.launch {
+                    zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
+                }
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_rotate_right),
+                    contentDescription = "Rotate",
+                    tint = colors.onTertiary
+                )
+            }
             IconButton(onClick = { coroutineScope.launch { zoomableState.switchScale(animated = true) } }) {
                 val zoomIn = remember {
                     derivedStateOf {

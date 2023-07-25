@@ -20,7 +20,7 @@ fun Modifier.zoomScrollBar(
     zoomableState: ZoomableState,
     scrollBarSpec: ScrollBarSpec = ScrollBarSpec.Default
 ): Modifier = composed {
-    val contentSize = zoomableState.contentSize
+    val contentSize = zoomableState.contentSize // todo 适配 rotation
     val contentVisibleRect = zoomableState.contentVisibleRect
     val density = LocalDensity.current
     val sizePx = remember(scrollBarSpec.size) { with(density) { scrollBarSpec.size.toPx() } }

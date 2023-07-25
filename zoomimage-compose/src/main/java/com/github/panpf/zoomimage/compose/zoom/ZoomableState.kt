@@ -167,7 +167,7 @@ class ZoomableState(logger: Logger) {
     val userOffsetBounds: IntRect by derivedStateOf {
         computeUserOffsetBounds(
             containerSize = containerSize,
-            contentSize = contentSize,
+            contentSize = contentSize, // todo 适配 rotation
             contentScale = contentScale,
             alignment = contentAlignment,
             userScale = userTransform.scaleX,
@@ -177,7 +177,7 @@ class ZoomableState(logger: Logger) {
     val contentInContainerRect: IntRect by derivedStateOf {
         computeContentInContainerRect(
             containerSize = containerSize,
-            contentSize = contentSize,
+            contentSize = contentSize, // todo 适配 rotation
             contentScale = contentScale,
             alignment = contentAlignment,
         ).roundToIntRect()
@@ -185,7 +185,7 @@ class ZoomableState(logger: Logger) {
     val contentInContainerVisibleRect: IntRect by derivedStateOf {
         computeContentInContainerVisibleRect(
             containerSize = containerSize,
-            contentSize = contentSize,
+            contentSize = contentSize, // todo 适配 rotation
             contentScale = contentScale,
             alignment = contentAlignment,
         ).roundToIntRect()
@@ -201,7 +201,7 @@ class ZoomableState(logger: Logger) {
     val contentVisibleRect: IntRect by derivedStateOf {
         computeContentVisibleRect(
             containerSize = containerSize,
-            contentSize = contentSize,
+            contentSize = contentSize, // todo 适配 rotation
             contentScale = contentScale,
             alignment = contentAlignment,
             userScale = userTransform.scaleX,
@@ -224,16 +224,16 @@ class ZoomableState(logger: Logger) {
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val initialUserTransform: Transform
+        val rotation = baseTransform.rotation
         if (containerSize.isEmpty() || contentSize.isEmpty()) {
             minScale = 1.0f
             mediumScale = 1.0f
             maxScale = 1.0f
-            baseTransform = Transform.Origin
+            baseTransform = Transform.Origin.copy(rotation = rotation)
             initialUserTransform = Transform.Origin
         } else {
-            val rotatedContentSize = contentSize.rotate(userTransform.rotation.roundToInt())
-            val rotatedContentOriginSize =
-                contentOriginSize.rotate(userTransform.rotation.roundToInt())
+            val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
+            val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
             val userScales = computeUserScales(
                 contentSize = rotatedContentSize.toCompatIntSize(),
                 contentOriginSize = rotatedContentOriginSize.toCompatIntSize(),
@@ -250,7 +250,7 @@ class ZoomableState(logger: Logger) {
                 containerSize = containerSize,
                 contentScale = contentScale,
                 alignment = contentAlignment,
-            )
+            ).copy(rotation = rotation)
             minScale = userScales[0] * baseTransform.scaleX
             // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
             mediumScale = userScales[1] * baseTransform.scaleX
@@ -384,13 +384,13 @@ class ZoomableState(logger: Logger) {
         stopAllAnimation("location")
 
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return // todo 适配 rotation
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentUserTransform = userTransform
 
         val rotatedContentPoint =
-            contentPoint.rotateInContainer(contentSize, transform.rotation.roundToInt())
+            contentPoint.rotateInContainer(contentSize, baseTransform.rotation.roundToInt())
         val containerPoint = contentPointToContainerPoint(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -437,6 +437,19 @@ class ZoomableState(logger: Logger) {
             animated = animated,
             caller = "location"
         )
+    }
+
+    suspend fun rotate(rotation: Int) {
+        stopAllAnimation("rotate")
+
+        require(rotation % 90 == 0) { "rotation must be in multiples of 90: $rotation" }
+        val limitedRotation = rotation % 360
+        val currentRotation = baseTransform.rotation
+        if (currentRotation.roundToInt() == limitedRotation) return
+
+//        baseTransform = baseTransform.copy(rotation = limitedRotation.toFloat())
+//        reset("rotate")
+        // todo 适配 rotation
     }
 
     suspend fun fling(velocity: Velocity, density: Density) {
@@ -497,7 +510,7 @@ class ZoomableState(logger: Logger) {
     ): Float {
         val contentPoint = contentCentroid
             ?: contentVisibleRect.takeIf { !it.isEmpty }?.center
-            ?: contentSize.takeIf { it.isNotEmpty() }?.center
+            ?: contentSize.takeIf { it.isNotEmpty() }?.center // todo 适配 rotation
             ?: return transform.scaleX
         val nextScale = getNextStepScale()
         location(
@@ -558,7 +571,7 @@ class ZoomableState(logger: Logger) {
     @Suppress("UnnecessaryVariable")
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero // todo 适配 rotation
         val currentUserTransform = userTransform
         val containerPoint = touchPointToContainerPoint(
             containerSize = containerSize,
@@ -594,24 +607,24 @@ class ZoomableState(logger: Logger) {
     }
 
     private fun limitUserOffset(userOffset: Offset, userScale: Float): Offset {
-        val userOffsetBounds = computeUserOffsetBounds(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = contentAlignment,
-            userScale = userScale
-        )
-        if (userOffset.x >= userOffsetBounds.left
-            && userOffset.x <= userOffsetBounds.right
-            && userOffset.y >= userOffsetBounds.top
-            && userOffset.y <= userOffsetBounds.bottom
-        ) {
+//        val userOffsetBounds = computeUserOffsetBounds(
+//            containerSize = containerSize,
+//            contentSize = contentSize,
+//            contentScale = contentScale,
+//            alignment = contentAlignment,
+//            userScale = userScale
+//        )
+//        if (userOffset.x >= userOffsetBounds.left
+//            && userOffset.x <= userOffsetBounds.right
+//            && userOffset.y >= userOffsetBounds.top
+//            && userOffset.y <= userOffsetBounds.bottom
+//        ) {
             return userOffset
-        }
-        return Offset(
-            x = userOffset.x.coerceIn(userOffsetBounds.left, userOffsetBounds.right),
-            y = userOffset.y.coerceIn(userOffsetBounds.top, userOffsetBounds.bottom),
-        )
+//        }
+//        return Offset(
+//            x = userOffset.x.coerceIn(userOffsetBounds.left, userOffsetBounds.right),
+//            y = userOffset.y.coerceIn(userOffsetBounds.top, userOffsetBounds.bottom),
+//        )
     }
 
     private fun limitUserTransform(userTransform: Transform): Transform {
@@ -687,6 +700,6 @@ class ZoomableState(logger: Logger) {
                 "minScale=${minScale.format(4)}, " +
                 "mediumScale=${mediumScale.format(4)}, " +
                 "maxScale=${maxScale.format(4)}, " +
-                "userTransform=${userTransform.toShortString()}" +
+                "transform=${transform.toShortString()}" +
                 ")"
 }
