@@ -14,6 +14,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -207,15 +208,19 @@ fun SketchZoomAsyncImage(
         subsamplingState.tileMemoryCache = SketchTileMemoryCache(sketch, "SketchZoomAsyncImage")
     }
 
+    val baseTransform = zoomableState.baseTransform
     val userTransform = zoomableState.userTransform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
+            rotationZ = baseTransform.rotation
+            transformOrigin = TransformOrigin.Center
+        }
+        .graphicsLayer {
             scaleX = userTransform.scaleX
             scaleY = userTransform.scaleY
-            rotationZ = userTransform.rotation
             translationX = userTransform.offsetX
             translationY = userTransform.offsetY
             transformOrigin = userTransform.origin

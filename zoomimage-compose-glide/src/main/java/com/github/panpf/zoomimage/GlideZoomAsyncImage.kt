@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -87,15 +88,19 @@ fun GlideZoomAsyncImage(
         subsamplingState.tileMemoryCache = GlideTileMemoryCache(glide)
     }
 
+    val baseTransform = zoomableState.baseTransform
     val userTransform = zoomableState.userTransform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
+            rotationZ = baseTransform.rotation
+            transformOrigin = TransformOrigin.Center
+        }
+        .graphicsLayer {
             scaleX = userTransform.scaleX
             scaleY = userTransform.scaleY
-            rotationZ = userTransform.rotation
             translationX = userTransform.offsetX
             translationY = userTransform.offsetY
             transformOrigin = userTransform.origin
