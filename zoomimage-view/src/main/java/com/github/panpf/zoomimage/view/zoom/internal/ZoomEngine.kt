@@ -577,39 +577,61 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
     fun doFling(velocityX: Float, velocityY: Float) {
         stopAllAnimation()
-        val startUserOffset = userOffset.roundToCompatIntOffset()
-        val bounds = computeUserOffsetBounds(
-            containerSize = viewSize,
-            contentSize = drawableSize,
-            scaleType = scaleType,
-            userScale = userScale
+        val drawRectF = RectF()
+            .apply { getDisplayRect(this) }
+            .takeIf { !it.isEmpty }
+            ?: return
+        val (viewWidth, viewHeight) = viewSize
+        val minX: Int
+        val maxX: Int
+        val startX = (-drawRectF.left).roundToInt()
+        if (viewWidth < drawRectF.width()) {
+            minX = 0
+            maxX = (drawRectF.width() - viewWidth).roundToInt()
+        } else {
+            maxX = startX
+            minX = maxX
+        }
+
+        val minY: Int
+        val maxY: Int
+        val startY = (-drawRectF.top).roundToInt()
+        if (viewHeight < drawRectF.height()) {
+            minY = 0
+            maxY = (drawRectF.height() - viewHeight).roundToInt()
+        } else {
+            maxY = startY
+            minY = maxY
+        }
+        val bounds = Rect(
+            /* left = */ minX,
+            /* top = */ minY,
+            /* right = */ maxX,
+            /* bottom = */ maxY,
         )
-        val velocity = IntOffsetCompat(velocityX.roundToInt(), velocityY.roundToInt())
+        val startUserOffset = IntOffsetCompat(x = startX, y = startY)
+        val velocity = IntOffsetCompat(-velocityX.roundToInt(), -velocityY.roundToInt())
         logger.d {
             "fling. start. " +
                     "start=${startUserOffset.toShortString()}, " +
                     "bounds=${bounds.toShortString()}, " +
                     "velocity=${velocity.toShortString()}"
         }
+        var currentX = startUserOffset.x
+        var currentY = startUserOffset.y
         flingAnimatable = FlingAnimatable(
             view = view,
             start = startUserOffset,
             bounds = bounds,
             velocity = velocity,
             onUpdateValue = { value ->
-                offsetTo(value.x.toFloat(), value.y.toFloat())
-                val currentUserOffset = userOffset
-                val distance = OffsetCompat(
-                    x = currentUserOffset.x - startUserOffset.x,
-                    y = currentUserOffset.y - startUserOffset.y
-                )
-                logger.d {
-                    "fling. running. " +
-                            "velocity=($velocityX, $velocityY), " +
-                            "startUserOffset=${startUserOffset.toShortString()}, " +
-                            "currentUserOffset=${currentUserOffset.toShortString()}, " +
-                            "distance=${distance.toShortString()}"
-                }
+                val newX = value.x
+                val newY = value.y
+                val dx = (currentX - newX).toFloat()
+                val dy = (currentY - newY).toFloat()
+                offsetBy(dx, dy)
+                currentX = newX
+                currentY = newY
             },
             onEnd = { notifyUpdateMatrix() }
         )
@@ -642,7 +664,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val minUserScale = minScale / baseScale.scaleX
         val maxUserScale = maxScale / baseScale.scaleX
         val limitedNewUserScale = if (rubberBandScale) {
-            limitScaleWithRubberBand(   // todo 不能用这个，没有考虑 rotation
+            limitScaleWithRubberBand(
                 currentScale = currentUserScale,
                 targetScale = newUserScale,
                 minScale = minUserScale,
@@ -815,6 +837,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         // Finally actually translate the matrix
 
         require(deltaX.isSafe() && deltaY.isSafe()) { "checkMatrixBounds deltaX=${deltaX}, deltaY=${deltaY} is invalid" }
+        logger.d {
+            "checkMatrixBounds. deltaX=${deltaX}, deltaY=${deltaY}, displayRectF=$displayRectF, viewSize=$viewSize"
+        }
         userMatrix.postTranslate(deltaX, deltaY)
 
         _scrollEdge = ScrollEdge(
