@@ -13,6 +13,8 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { setUrl("https://www.jitpack.io") }
         google()
+        maven { setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots") } // todo sketch 3.2.5 正式发版后移除
+        mavenLocal() // todo sketch 3.2.5 正式发版后移除
     }
     versionCatalogs {
         create("libs") {

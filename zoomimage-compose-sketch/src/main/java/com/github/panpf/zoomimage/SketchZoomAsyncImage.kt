@@ -23,11 +23,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
-import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
+import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.request.UriInvalidException
 import com.github.panpf.sketch.sketch
+import com.github.panpf.zoomimage.compose.internal.NoClipImage
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -208,40 +209,42 @@ fun SketchZoomAsyncImage(
         subsamplingState.tileMemoryCache = SketchTileMemoryCache(sketch, "SketchZoomAsyncImage")
     }
 
-    val baseTransform = zoomableState.baseTransform
-    val userTransform = zoomableState.userTransform
+    val transform1 = zoomableState.transform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            scaleX = userTransform.scaleX
-            scaleY = userTransform.scaleY
-            translationX = userTransform.offsetX
-            translationY = userTransform.offsetY
-            transformOrigin = userTransform.origin
+            scaleX = transform1.scaleX
+            scaleY = transform1.scaleY
+            translationX = transform1.offsetX
+            translationY = transform1.offsetY
+            transformOrigin = transform1.origin
         }
         .graphicsLayer {
-            rotationZ = baseTransform.rotation
+            rotationZ = transform1.rotation
             transformOrigin = TransformOrigin.Center
         }
-        .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
+        .subsampling(subsamplingState = subsamplingState, zoomableState = null)
 
-    // todo change to NoClipImage
-    AsyncImage(
+    val painter = rememberAsyncImagePainter(
         request = request,
-        contentDescription = contentDescription,
-        modifier = modifier1,
         transform = transform,
         onState = { state ->
             onState(logger, context, sketch, state, zoomableState, subsamplingState, request)
             onState?.invoke(state)
         },
-        alignment = alignment,
         contentScale = contentScale,
+        filterQuality = filterQuality
+    )
+    NoClipImage(
+        painter = painter,
+        contentDescription = contentDescription,
+        modifier = modifier1,
+        alignment = Alignment.TopStart,
+        contentScale = ContentScale.None,
         alpha = alpha,
         colorFilter = colorFilter,
-        filterQuality = filterQuality
     )
 }
 
