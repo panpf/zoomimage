@@ -1,5 +1,9 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
@@ -38,10 +41,9 @@ fun ZoomImageSample(sketchImageUri: String) {
             subsamplingState.ignoreExifOrientation = ignoreExifOrientation
         }
 
-        var drawablePainter: Painter? by remember { mutableStateOf(null) }
+        var drawablePainter: DrawablePainter? by remember { mutableStateOf(null) }
         LaunchedEffect(sketchImageUri, ignoreExifOrientation) {
             val drawable = DisplayRequest(context, sketchImageUri) {
-                crossfade()
                 ignoreExifOrientation(ignoreExifOrientation)
             }.execute().drawable
             drawablePainter = drawable?.let { DrawablePainter(it) }
@@ -52,17 +54,27 @@ fun ZoomImageSample(sketchImageUri: String) {
 
         val drawablePainter1 = drawablePainter
         if (drawablePainter1 != null) {
-            ZoomImage(
-                painter = drawablePainter1,
-                contentDescription = "ZoomImage",
-                contentScale = contentScale,
-                alignment = alignment,
-                modifier = Modifier.fillMaxSize(),
-                zoomableState = zoomableState,
-                subsamplingState = subsamplingState,
-                scrollBarSpec = scrollBarSpec,
-                onLongPress = onLongPress,
-            )
+            var visible by remember { mutableStateOf(false) }
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween()),
+                exit = fadeOut(tween())
+            ) {
+                ZoomImage(
+                    painter = drawablePainter1,
+                    contentDescription = "ZoomImage",
+                    contentScale = contentScale,
+                    alignment = alignment,
+                    modifier = Modifier.fillMaxSize(),
+                    zoomableState = zoomableState,
+                    subsamplingState = subsamplingState,
+                    scrollBarSpec = scrollBarSpec,
+                    onLongPress = onLongPress,
+                )
+            }
+            LaunchedEffect(Unit) {
+                visible = true
+            }
         }
     }
 }

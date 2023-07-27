@@ -7,10 +7,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -63,10 +65,10 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.roundToInt
 
 @Composable
@@ -78,7 +80,8 @@ fun rememberZoomableState(
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
     readMode: ReadMode? = null,
 ): ZoomableState {
-    val zoomableState = remember { ZoomableState(logger) }
+    val coroutineScope = rememberCoroutineScope()
+    val zoomableState = remember { ZoomableState(logger, coroutineScope) }
     zoomableState.defaultMediumScaleMultiple = defaultMediumScaleMultiple
     zoomableState.threeStepScale = threeStepScale
     zoomableState.rubberBandScale = rubberBandScale
@@ -105,11 +108,13 @@ fun rememberZoomableState(
     return zoomableState
 }
 
-// todo support rotation
-class ZoomableState(logger: Logger) {
+class ZoomableState(
+    logger: Logger,
+    private val coroutineScope: CoroutineScope
+) : RememberObserver {
 
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
 
@@ -120,28 +125,28 @@ class ZoomableState(logger: Logger) {
         set(value) {
             if (field != value) {
                 field = value
-                coroutineScope.launch { reset("contentScaleChanged") }
+                reset("contentScaleChanged")
             }
         }
     var contentAlignment: Alignment = Alignment.Center
         set(value) {
             if (field != value) {
                 field = value
-                coroutineScope.launch { reset("contentAlignmentChanged") }
+                reset("contentAlignmentChanged")
             }
         }
     var readMode: ReadMode? = null
         set(value) {
             if (field != value) {
                 field = value
-                coroutineScope.launch { reset("readModeChanged") }
+                reset("readModeChanged")
             }
         }
     var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
         set(value) {
             if (field != value) {
                 field = value
-                coroutineScope.launch { reset("defaultMediumScaleMultipleChanged") }
+                reset("defaultMediumScaleMultipleChanged")
             }
         }
     var threeStepScale: Boolean = false
@@ -215,95 +220,96 @@ class ZoomableState(logger: Logger) {
         )
     }
 
-    internal suspend fun reset(caller: String) {
-        stopAllAnimation("reset:$caller")
+    fun reset(caller: String, immediate: Boolean = false) =
+        coroutineScope.launch(if (immediate) Dispatchers.Main.immediate else EmptyCoroutineContext) {
+            stopAllAnimationInternal("reset:$caller")
 
-        val contentSize = contentSize
-        val contentOriginSize = contentOriginSize
-        val containerSize = containerSize
-        val contentScale = contentScale
-        val contentAlignment = contentAlignment
-        val initialUserTransform: Transform
-        val rotation = baseTransform.rotation
-        if (containerSize.isEmpty() || contentSize.isEmpty()) {
-            minScale = 1.0f
-            mediumScale = 1.0f
-            maxScale = 1.0f
-            baseTransform = Transform.Origin.copy(rotation = rotation)
-            initialUserTransform = Transform.Origin
-        } else {
-            val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
-            val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
-            val userScales = computeUserScales(
-                contentSize = rotatedContentSize.toCompatIntSize(),
-                contentOriginSize = rotatedContentOriginSize.toCompatIntSize(),
-                containerSize = containerSize.toCompatIntSize(),
-                scaleMode = contentScale.toScaleMode(),
-                baseScale = contentScale.computeScaleFactor(
-                    srcSize = rotatedContentSize.toSize(),
-                    dstSize = containerSize.toSize()
-                ).toCompatScaleFactor(),
-                defaultMediumScaleMultiple = defaultMediumScaleMultiple,
-            )
-            baseTransform = computeTransform(
-                contentSize = rotatedContentSize,
-                containerSize = containerSize,
-                contentScale = contentScale,
-                alignment = contentAlignment,
-            ).copy(rotation = rotation)
-            minScale = userScales[0] * baseTransform.scaleX
-            // todo 清明上河图图片示例，垂直方向上，没有充满屏幕，貌似是基础 Image 的缩放比例跟预想的不一样，导致计算出来的 mediumScale 应用后图片显示没有充满屏幕
-            mediumScale = userScales[1] * baseTransform.scaleX
-            maxScale = userScales[2] * baseTransform.scaleX
-            val readModeResult = contentScale.supportReadMode() &&
-                    readMode?.should(
-                        srcSize = rotatedContentSize.toCompatIntSize(),
-                        dstSize = containerSize.toCompatIntSize()
-                    ) == true
-            initialUserTransform = if (readModeResult) {
-                val readModeTransform = computeReadModeTransform(
+            val contentSize = contentSize
+            val contentOriginSize = contentOriginSize
+            val containerSize = containerSize
+            val contentScale = contentScale
+            val contentAlignment = contentAlignment
+            val initialUserTransform: Transform
+            val rotation = baseTransform.rotation
+            if (containerSize.isEmpty() || contentSize.isEmpty()) {
+                minScale = 1.0f
+                mediumScale = 1.0f
+                maxScale = 1.0f
+                baseTransform = Transform.Origin.copy(rotation = rotation)
+                initialUserTransform = Transform.Origin
+            } else {
+                val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
+                val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
+                val userScales = computeUserScales(
+                    contentSize = rotatedContentSize.toCompatIntSize(),
+                    contentOriginSize = rotatedContentOriginSize.toCompatIntSize(),
+                    containerSize = containerSize.toCompatIntSize(),
+                    scaleMode = contentScale.toScaleMode(),
+                    baseScale = contentScale.computeScaleFactor(
+                        srcSize = rotatedContentSize.toSize(),
+                        dstSize = containerSize.toSize()
+                    ).toCompatScaleFactor(),
+                    defaultMediumScaleMultiple = defaultMediumScaleMultiple,
+                )
+                baseTransform = computeTransform(
                     contentSize = rotatedContentSize,
                     containerSize = containerSize,
                     contentScale = contentScale,
                     alignment = contentAlignment,
-                )
-                readModeTransform.div(baseTransform.scale)
-            } else {
-                Transform.Origin
+                ).copy(rotation = rotation)
+                minScale = userScales[0] * baseTransform.scaleX
+                mediumScale = userScales[1] * baseTransform.scaleX
+                maxScale = userScales[2] * baseTransform.scaleX
+                val readModePassed = readMode?.should(
+                    srcSize = rotatedContentSize.toCompatIntSize(),
+                    dstSize = containerSize.toCompatIntSize()
+                ) == true
+                initialUserTransform = if (readModePassed && contentScale.supportReadMode()) {
+                    val readModeTransform = computeReadModeTransform(
+                        contentSize = rotatedContentSize,
+                        containerSize = containerSize,
+                        contentScale = contentScale,
+                        alignment = contentAlignment,
+                    )
+                    readModeTransform.div(baseTransform.scale)
+                } else {
+                    Transform.Origin
+                }
             }
+            val limitedInitialUserTransform = limitUserTransform(initialUserTransform)
+            logger.d {
+                "reset:$caller. " +
+                        "containerSize=${containerSize.toShortString()}, " +
+                        "contentSize=${contentSize.toShortString()}, " +
+                        "contentOriginSize=${contentOriginSize.toShortString()}, " +
+                        "contentScale=${contentScale.name}, " +
+                        "contentAlignment=${contentAlignment.name}, " +
+                        "readMode=${readMode}, " +
+                        "minScale=${minScale.format(4)}, " +
+                        "mediumScale=${mediumScale.format(4)}, " +
+                        "maxScale=${maxScale.format(4)}, " +
+                        "baseTransform=${baseTransform.toShortString()}, " +
+                        "initialUserTransform=${initialUserTransform.toShortString()}, " +
+                        "limitedInitialUserTransform=${limitedInitialUserTransform.toShortString()}"
+            }
+
+            updateUserTransform(
+                targetUserTransform = limitedInitialUserTransform,
+                animated = false,
+                caller = "reset"
+            )
         }
-        val limitedInitialUserTransform = limitUserTransform(initialUserTransform)
-        logger.d {
-            "reset:$caller. " +
-                    "containerSize=${containerSize.toShortString()}, " +
-                    "contentSize=${contentSize.toShortString()}, " +
-                    "contentOriginSize=${contentOriginSize.toShortString()}, " +
-                    "contentScale=${contentScale.name}, " +
-                    "contentAlignment=${contentAlignment.name}, " +
-                    "readMode=${readMode}, " +
-                    "minScale=${minScale.format(4)}, " +
-                    "mediumScale=${mediumScale.format(4)}, " +
-                    "maxScale=${maxScale.format(4)}, " +
-                    "baseTransform=${baseTransform.toShortString()}, " +
-                    "initialUserTransform=${initialUserTransform.toShortString()}, " +
-                    "limitedInitialUserTransform=${limitedInitialUserTransform.toShortString()}"
-        }
 
-        updateUserTransform(
-            targetUserTransform = limitedInitialUserTransform,
-            animated = false,
-            caller = "reset"
-        )
-    }
-
-
-    suspend fun scale(
+    fun scale(
         targetScale: Float,
         centroid: Offset = Offset(x = containerSize.width / 2f, y = containerSize.height / 2f),
         animated: Boolean = false,
         rubberBandScale: Boolean = false,
-    ) {
-        stopAllAnimation("scale")
+    ) = coroutineScope.launch {
+        containerSize.takeIf { it.isNotEmpty() } ?: return@launch
+        contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+
+        stopAllAnimationInternal("scale")
 
         val targetUserScale = targetScale / baseTransform.scaleX
         val limitedTargetUserScale = if (rubberBandScale && this@ZoomableState.rubberBandScale) {
@@ -348,8 +354,11 @@ class ZoomableState(logger: Logger) {
         )
     }
 
-    suspend fun offset(targetOffset: Offset, animated: Boolean = false) {
-        stopAllAnimation("offset")
+    fun offset(targetOffset: Offset, animated: Boolean = false) = coroutineScope.launch {
+        containerSize.takeIf { it.isNotEmpty() } ?: return@launch
+        contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+
+        stopAllAnimationInternal("offset")
 
         val targetUserOffset = targetOffset - (baseTransform.offset.times(userTransform.scale))
         val currentUserTransform = userTransform
@@ -376,18 +385,19 @@ class ZoomableState(logger: Logger) {
         )
     }
 
-    suspend fun location(
+    fun location(
         contentPoint: IntOffset,
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
-    ) {
-        stopAllAnimation("location")
-
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return // todo 适配 rotation
+    ) = coroutineScope.launch {
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@launch
+        val contentSize =
+            contentSize.takeIf { it.isNotEmpty() } ?: return@launch // todo 适配 rotation
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentUserTransform = userTransform
+
+        stopAllAnimationInternal("location")
 
         val rotatedContentPoint =
             contentPoint.rotateInContainer(contentSize, baseTransform.rotation.roundToInt())
@@ -439,21 +449,21 @@ class ZoomableState(logger: Logger) {
         )
     }
 
-    suspend fun rotate(rotation: Int) {
-        stopAllAnimation("rotate")
-
+    fun rotate(rotation: Int) = coroutineScope.launch {
         require(rotation % 90 == 0) { "rotation must be in multiples of 90: $rotation" }
         val limitedRotation = rotation % 360
         val currentRotation = baseTransform.rotation
-        if (currentRotation.roundToInt() == limitedRotation) return
+        if (currentRotation.roundToInt() == limitedRotation) return@launch
+
+        stopAllAnimationInternal("rotate")
 
 //        baseTransform = baseTransform.copy(rotation = limitedRotation.toFloat())
 //        reset("rotate")
         // todo 适配 rotation
     }
 
-    suspend fun fling(velocity: Velocity, density: Density) {
-        stopAllAnimation("fling")
+    fun fling(velocity: Velocity, density: Density) = coroutineScope.launch {
+        stopAllAnimationInternal("fling")
 
         val currentUserTransform = userTransform
         val startUserOffset = currentUserTransform.offset
@@ -461,10 +471,10 @@ class ZoomableState(logger: Logger) {
             initialValue = startUserOffset,
             typeConverter = Offset.VectorConverter,
         )
-        this.lastFlingAnimatable = flingAnimatable
-        coroutineScope {
-            var job: Job? = null
-            job = launch {
+        this@ZoomableState.lastFlingAnimatable = flingAnimatable
+        var job: Job? = null
+        job = coroutineScope {
+            launch {
                 fling = true
                 try {
                     val initialVelocity = Offset.VectorConverter
@@ -504,7 +514,7 @@ class ZoomableState(logger: Logger) {
         }
     }
 
-    suspend fun switchScale(
+    fun switchScale(
         contentCentroid: IntOffset? = null,
         animated: Boolean = true
     ): Float {
@@ -521,7 +531,7 @@ class ZoomableState(logger: Logger) {
         return nextScale
     }
 
-    suspend fun reboundUserScale(centroid: Offset) {
+    fun reboundUserScale(centroid: Offset) {
         val minScale = minScale
         val maxScale = maxScale
         val currentScale = transform.scaleX
@@ -549,20 +559,8 @@ class ZoomableState(logger: Logger) {
         return calculateNextStepScale(stepScales, transform.scaleX)
     }
 
-    suspend fun stopAllAnimation(caller: String) {
-        val lastScaleAnimatable = lastScaleAnimatable
-        if (lastScaleAnimatable?.isRunning == true) {
-            lastScaleAnimatable.stop()
-            scaling = false
-            logger.d { "stopScaleAnimation:$caller" }
-        }
-
-        val lastFlingAnimatable = lastFlingAnimatable
-        if (lastFlingAnimatable?.isRunning == true) {
-            lastFlingAnimatable.stop()
-            fling = false
-            logger.d { "stopFlingAnimation:$caller" }
-        }
+    fun stopAllAnimation(caller: String) = coroutineScope.launch {
+        stopAllAnimationInternal(caller)
     }
 
     fun canDrag(horizontal: Boolean, direction: Int): Boolean =
@@ -571,7 +569,8 @@ class ZoomableState(logger: Logger) {
     @Suppress("UnnecessaryVariable")
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero // todo 适配 rotation
+        val contentSize =
+            contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero // todo 适配 rotation
         val currentUserTransform = userTransform
         val containerPoint = touchPointToContainerPoint(
             containerSize = containerSize,
@@ -607,24 +606,24 @@ class ZoomableState(logger: Logger) {
     }
 
     private fun limitUserOffset(userOffset: Offset, userScale: Float): Offset {
-//        val userOffsetBounds = computeUserOffsetBounds(
-//            containerSize = containerSize,
-//            contentSize = contentSize,
-//            contentScale = contentScale,
-//            alignment = contentAlignment,
-//            userScale = userScale
-//        )
-//        if (userOffset.x >= userOffsetBounds.left
-//            && userOffset.x <= userOffsetBounds.right
-//            && userOffset.y >= userOffsetBounds.top
-//            && userOffset.y <= userOffsetBounds.bottom
-//        ) {
+        val userOffsetBounds = computeUserOffsetBounds(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = contentAlignment,
+            userScale = userScale
+        )
+        if (userOffset.x >= userOffsetBounds.left
+            && userOffset.x <= userOffsetBounds.right
+            && userOffset.y >= userOffsetBounds.top
+            && userOffset.y <= userOffsetBounds.bottom
+        ) {
             return userOffset
-//        }
-//        return Offset(
-//            x = userOffset.x.coerceIn(userOffsetBounds.left, userOffsetBounds.right),
-//            y = userOffset.y.coerceIn(userOffsetBounds.top, userOffsetBounds.bottom),
-//        )
+        }
+        return Offset(
+            x = userOffset.x.coerceIn(userOffsetBounds.left, userOffsetBounds.right),
+            y = userOffset.y.coerceIn(userOffsetBounds.top, userOffsetBounds.bottom),
+        )
     }
 
     private fun limitUserTransform(userTransform: Transform): Transform {
@@ -640,54 +639,78 @@ class ZoomableState(logger: Logger) {
         }
     }
 
+    private suspend fun stopAllAnimationInternal(caller: String) {
+        val lastScaleAnimatable = lastScaleAnimatable
+        if (lastScaleAnimatable?.isRunning == true) {
+            lastScaleAnimatable.stop()
+            scaling = false
+            logger.d { "stopScaleAnimation:$caller" }
+        }
+
+        val lastFlingAnimatable = lastFlingAnimatable
+        if (lastFlingAnimatable?.isRunning == true) {
+            lastFlingAnimatable.stop()
+            fling = false
+            logger.d { "stopFlingAnimation:$caller" }
+        }
+    }
+
     private suspend fun updateUserTransform(
         targetUserTransform: Transform,
         animated: Boolean,
         caller: String
     ) {
-        stopAllAnimation(caller)
+        stopAllAnimationInternal(caller)
 
         if (animated) {
             val currentUserTransform = userTransform
             val scaleChange = currentUserTransform.scale != targetUserTransform.scale
             val updateAnimatable = Animatable(0f)
             this.lastScaleAnimatable = updateAnimatable
-            coroutineScope {
-                launch {
-                    if (scaleChange) {
-                        scaling = true
+            if (scaleChange) {
+                scaling = true
+            }
+            try {
+                updateAnimatable.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = animationSpec.durationMillis,
+                        easing = animationSpec.easing
+                    ),
+                    initialVelocity = animationSpec.initialVelocity,
+                ) {
+                    val userTransform = lerp(
+                        start = currentUserTransform,
+                        stop = targetUserTransform,
+                        fraction = value
+                    )
+                    logger.d {
+                        "$caller. animated running. transform=${userTransform.toShortString()}"
                     }
-                    try {
-                        updateAnimatable.animateTo(
-                            targetValue = 1f,
-                            animationSpec = tween(
-                                durationMillis = animationSpec.durationMillis,
-                                easing = animationSpec.easing
-                            ),
-                            initialVelocity = animationSpec.initialVelocity,
-                        ) {
-                            val userTransform = lerp(
-                                start = currentUserTransform,
-                                stop = targetUserTransform,
-                                fraction = value
-                            )
-                            logger.d {
-                                "$caller. animated running. transform=${userTransform.toShortString()}"
-                            }
-                            this@ZoomableState.userTransform = userTransform
-                        }
-                    } catch (e: CancellationException) {
-                        throw e
-                    } finally {
-                        if (scaleChange) {
-                            scaling = false
-                        }
-                    }
+                    this@ZoomableState.userTransform = userTransform
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } finally {
+                if (scaleChange) {
+                    scaling = false
                 }
             }
         } else {
             this.userTransform = targetUserTransform
         }
+    }
+
+    override fun onRemembered() {
+
+    }
+
+    override fun onAbandoned() {
+        coroutineScope.cancel("onAbandoned")
+    }
+
+    override fun onForgotten() {
+        coroutineScope.cancel("onForgotten")
     }
 
     override fun toString(): String =

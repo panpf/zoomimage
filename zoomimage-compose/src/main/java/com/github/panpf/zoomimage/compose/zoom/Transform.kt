@@ -11,8 +11,8 @@ import com.github.panpf.zoomimage.compose.internal.toShortString
 
 data class Transform(
     val scale: ScaleFactor,
-    val offset: Offset,
-    val rotation: Float = 0f,
+    val offset: Offset, // todo IntOffset
+    val rotation: Float = 0f,   // todo Int
     val origin: TransformOrigin = TransformOrigin.TopStart,
 ) {
 

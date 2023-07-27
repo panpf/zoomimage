@@ -381,14 +381,21 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         )
     }
 
-    fun drawTiles(drawScope: DrawScope, baseTransform: Transform) {
+    fun drawTiles(drawScope: DrawScope, baseTransform: Transform?) {
         val imageSource = imageSource ?: return
         val imageInfo = imageInfo ?: return
         val tileList = tileList.takeIf { it.isNotEmpty() } ?: return
         val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
         val imageLoadRect = imageLoadRect.takeIf { !it.isEmpty } ?: return
-        val widthScale = imageInfo.width / (contentSize.width * baseTransform.scaleX)
-        val heightScale = imageInfo.height / (contentSize.height * baseTransform.scaleY)
+        val widthScale: Float
+        val heightScale: Float
+        if (baseTransform != null) {
+            widthScale = imageInfo.width / (contentSize.width * baseTransform.scaleX)
+            heightScale = imageInfo.height / (contentSize.height * baseTransform.scaleY)
+        } else {
+            widthScale = imageInfo.width / (contentSize.width.toFloat())
+            heightScale = imageInfo.height / (contentSize.height.toFloat())
+        }
         var insideLoadCount = 0
         var outsideLoadCount = 0
         var realDrawCount = 0
@@ -402,7 +409,13 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                     top = floor(tileSrcRect.top / heightScale).toInt(),
                     right = floor(tileSrcRect.right / widthScale).toInt(),
                     bottom = floor(tileSrcRect.bottom / heightScale).toInt()
-                ).translate(baseTransform.offset.round())
+                ).let {
+                    if (baseTransform != null) {
+                        it.translate(baseTransform.offset.round())
+                    } else {
+                        it
+                    }
+                }
                 if (tileBitmap != null) {
                     realDrawCount++
                     val srcRect = IntRect(0, 0, tileBitmap.width, tileBitmap.height)

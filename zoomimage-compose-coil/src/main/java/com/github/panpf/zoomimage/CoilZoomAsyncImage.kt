@@ -22,14 +22,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import coil.ImageLoader
-import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.LocalImageLoader
+import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.request.NullRequestDataException
 import com.github.panpf.zoomimage.coil.internal.CoilImageSource
 import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
+import com.github.panpf.zoomimage.compose.internal.NoClipImage
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -128,41 +129,44 @@ fun CoilZoomAsyncImage(
         subsamplingState.tileMemoryCache = CoilTileMemoryCache(imageLoader)
     }
 
-    val baseTransform = zoomableState.baseTransform
-    val userTransform = zoomableState.userTransform
+    val transform1 = zoomableState.transform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            rotationZ = baseTransform.rotation
-            transformOrigin = TransformOrigin.Center
+            scaleX = transform1.scaleX
+            scaleY = transform1.scaleY
+            translationX = transform1.offsetX
+            translationY = transform1.offsetY
+            transformOrigin = transform1.origin
         }
         .graphicsLayer {
-            scaleX = userTransform.scaleX
-            scaleY = userTransform.scaleY
-            translationX = userTransform.offsetX
-            translationY = userTransform.offsetY
-            transformOrigin = userTransform.origin
+            rotationZ = transform1.rotation
+            transformOrigin = TransformOrigin.Center
         }
-        .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
+        .subsampling(subsamplingState = subsamplingState, zoomableState = null)
 
     val request = requestOf(model)
-    AsyncImage(
+    val painter = rememberAsyncImagePainter(
         model = request,
         imageLoader = imageLoader,
-        contentDescription = contentDescription,
-        modifier = modifier1,
         transform = transform,
         onState = { state ->
             onState(logger, state, imageLoader, zoomableState, subsamplingState, request)
             onState?.invoke(state)
         },
-        alignment = alignment,
         contentScale = contentScale,
+        filterQuality = filterQuality
+    )
+    NoClipImage(
+        painter = painter,
+        contentDescription = contentDescription,
+        modifier = modifier1,
+        alignment = Alignment.TopStart,
+        contentScale = ContentScale.None,
         alpha = alpha,
         colorFilter = colorFilter,
-        filterQuality = filterQuality
     )
 }
 

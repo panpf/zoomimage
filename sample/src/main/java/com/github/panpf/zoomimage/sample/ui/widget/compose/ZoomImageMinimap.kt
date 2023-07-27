@@ -69,7 +69,6 @@ fun ZoomImageMinimap(
         }
         if (viewSize.isNotEmpty()) {
             val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
-            subsamplingState.tilesChanged * 1   // Trigger a refresh
             val imageSize =
                 subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
             val contentVisibleRect = zoomableState.contentVisibleRect
@@ -92,6 +91,7 @@ fun ZoomImageMinimap(
                     .clipToBounds()
                     .drawWithContent {
                         drawContent()
+                        subsamplingState.tilesChanged * 1   // Trigger a refresh
                         val tileList = subsamplingState.tileList
                         val imageLoadRect = subsamplingState.imageLoadRect
                         if (contentSize.isNotEmpty() && imageSize.isNotEmpty()) {
@@ -121,17 +121,15 @@ fun ZoomImageMinimap(
                             onTap = {
                                 val imageNodeSize = imageNodeSizeState.value
                                 if (!imageNodeSize.isEmpty()) {
-                                    coroutineScope.launch {
-                                        zoomableState.location(
-                                            contentPoint = IntOffset(
-                                                x = ((it.x / imageNodeSize.width) * contentSize.width).roundToInt(),
-                                                y = ((it.y / imageNodeSize.height) * contentSize.height).roundToInt(),
-                                            ),
-                                            targetScale = zoomableState.transform.scaleX
-                                                .coerceAtLeast(zoomableState.mediumScale),
-                                            animated = true,
-                                        )
-                                    }
+                                    zoomableState.location(
+                                        contentPoint = IntOffset(
+                                            x = ((it.x / imageNodeSize.width) * contentSize.width).roundToInt(),
+                                            y = ((it.y / imageNodeSize.height) * contentSize.height).roundToInt(),
+                                        ),
+                                        targetScale = zoomableState.transform.scaleX
+                                            .coerceAtLeast(zoomableState.mediumScale),
+                                        animated = true,
+                                    )
                                 }
                             }
                         )

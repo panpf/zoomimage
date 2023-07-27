@@ -215,18 +215,19 @@ fun SketchZoomAsyncImage(
         .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            rotationZ = baseTransform.rotation
-            transformOrigin = TransformOrigin.Center
-        }
-        .graphicsLayer {
             scaleX = userTransform.scaleX
             scaleY = userTransform.scaleY
             translationX = userTransform.offsetX
             translationY = userTransform.offsetY
             transformOrigin = userTransform.origin
         }
+        .graphicsLayer {
+            rotationZ = baseTransform.rotation
+            transformOrigin = TransformOrigin.Center
+        }
         .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
 
+    // todo change to NoClipImage
     AsyncImage(
         request = request,
         contentDescription = contentDescription,
