@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -41,7 +40,6 @@ import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.subsampling.Tile
-import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
@@ -58,7 +56,6 @@ fun ZoomImageMinimap(
     ignoreExifOrientation: Boolean = false,
 ) {
     val contentSize = zoomableState.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
-    val coroutineScope = rememberCoroutineScope()
     val strokeWidth = remember { 1f.dp2pxF }
     BoxWithConstraints(modifier = modifier.then(Modifier.fillMaxSize())) {
         val density = LocalDensity.current
