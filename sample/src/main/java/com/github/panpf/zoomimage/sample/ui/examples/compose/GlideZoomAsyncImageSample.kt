@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.zoomimage.GlideZoomAsyncImage
+import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.rememberGlideZoomAsyncImageLogger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel

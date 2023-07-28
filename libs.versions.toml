@@ -77,6 +77,7 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
 
 # google
+google-drawablepainer = { module = "com.google.accompanist:accompanist-drawablepainter", version.ref = "google-accompanist" }
 google-material = { module = "com.google.android.material:material", version.ref = "google-material" }
 
 # panpf
@@ -98,6 +99,7 @@ coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
+glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-compose" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 
 [plugins]

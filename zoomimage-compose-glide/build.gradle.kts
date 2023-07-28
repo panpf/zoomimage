@@ -45,7 +45,8 @@ android {
 dependencies {
     api(project(":zoomimage-compose"))
     api(project(":zoomimage-core-glide"))
-    api(libs.glide.compose)
+    api(libs.glide.ktx)
+    api(libs.google.drawablepainer)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

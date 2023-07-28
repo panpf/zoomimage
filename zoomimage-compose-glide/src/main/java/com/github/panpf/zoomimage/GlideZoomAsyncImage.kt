@@ -18,10 +18,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.Placeholder
-import com.bumptech.glide.integration.compose.RequestBuilderTransform
+import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
+import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
+import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
+import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -88,34 +88,33 @@ fun GlideZoomAsyncImage(
         subsamplingState.tileMemoryCache = GlideTileMemoryCache(glide)
     }
 
-    val baseTransform = zoomableState.baseTransform
-    val userTransform = zoomableState.userTransform
+    val transform = zoomableState.transform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
         .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
-            scaleX = userTransform.scaleX
-            scaleY = userTransform.scaleY
-            translationX = userTransform.offsetX
-            translationY = userTransform.offsetY
-            transformOrigin = userTransform.origin
+            scaleX = transform.scaleX
+            scaleY = transform.scaleY
+            translationX = transform.offsetX
+            translationY = transform.offsetY
+            transformOrigin = transform.origin
         }
         .graphicsLayer {
-            rotationZ = baseTransform.rotation
+            rotationZ = transform.rotation
             transformOrigin = TransformOrigin.Center
         }
-        .subsampling(zoomableState = zoomableState, subsamplingState = subsamplingState)
+        .subsampling(subsamplingState = subsamplingState, zoomableState = null)
 
-    // todo NoClip
     GlideImage(
         model = model,
         contentDescription = contentDescription,
         modifier = modifier1,
-        alignment = alignment,
-        contentScale = contentScale,
+        alignment = Alignment.TopStart,
+        contentScale = ContentScale.None,
         alpha = alpha,
         colorFilter = colorFilter,
+        clipToBounds = false,
         loading = loading,
         failure = failure,
         requestBuilderTransform = { requestBuilder ->
