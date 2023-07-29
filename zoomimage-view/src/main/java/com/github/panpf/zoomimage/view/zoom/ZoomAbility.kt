@@ -122,7 +122,7 @@ class ZoomAbility constructor(
                 onViewLongPressListenerList?.isNotEmpty() == true || view.performLongClick()
             },
             onDoubleTapCallback = { e: MotionEvent ->
-                zoomEngine.doubleTap(e.x, e.y)
+                zoomEngine.switchScale(e.x, e.y)
                 true
             },
             onDragCallback = { dx: Float, dy: Float, scaling: Boolean ->
@@ -131,16 +131,19 @@ class ZoomAbility constructor(
                 }
             },
             onFlingCallback = { velocityX: Float, velocityY: Float ->
-                zoomEngine.doFling(velocityX, velocityY)
+                zoomEngine.fling(velocityX, velocityY)
             },
             onScaleCallback = { scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float ->
                 zoomEngine.doScale(scaleFactor, focusX, focusY, dx, dy)
             },
-            onScaleBeginCallback = { zoomEngine.doScaleBegin() },
-            onScaleEndCallback = { zoomEngine.doScaleEnd() },
+            onScaleBeginCallback = {
+                zoomEngine.manualScaling = true
+                true
+            },
+            onScaleEndCallback = { zoomEngine.manualScaling = false },
             onActionDownCallback = { zoomEngine.actionDown() },
-            onActionUpCallback = { zoomEngine.actionUp() },
-            onActionCancelCallback = { zoomEngine.actionUp() },
+            onActionUpCallback = { zoomEngine.rollbackScale() },
+            onActionCancelCallback = { zoomEngine.rollbackScale() },
         )
 
         resetDrawableSize()
@@ -193,37 +196,26 @@ class ZoomAbility constructor(
 
     /**
      * Scale to the specified scale. You don't have to worry about rotation degrees
-     *
-     * @param focalX  Scale the x coordinate of the center point on the drawable image
-     * @param focalY  Scale the y coordinate of the center point on the drawable image
      */
-    fun scale(scale: Float, focalX: Float, focalY: Float, animate: Boolean) {
-        zoomEngine.scale(scale, focalX, focalY, animate)
+    fun scale(
+        scale: Float,
+        centroid: OffsetCompat = OffsetCompat(viewSize.width / 2f, viewSize.height / 2f),
+        animate: Boolean = false
+    ) {
+        zoomEngine.scale(scale, centroid, animate)
     }
 
-    /**
-     * Scale to the specified scale. You don't have to worry about rotation degrees
-     */
-    fun scale(scale: Float, animate: Boolean = false) {
-        zoomEngine.scale(scale, animate)
+    fun offset(offset: IntOffsetCompat, animate: Boolean = false) {
+        zoomEngine.offset(offset, animate)
     }
 
     /**
      * Rotate the image to the specified degrees
      *
-     * @param degrees Rotation degrees, can only be 90°, 180°, 270°, 360°
+     * @param rotation Rotation degrees, can only be 90°, 180°, 270°, 360°
      */
-    fun rotateTo(degrees: Int) {
-        zoomEngine.rotateTo(degrees)
-    }
-
-    /**
-     * Rotate an degrees based on the current rotation degrees
-     *
-     * @param addDegrees Rotation degrees, can only be 90°, 180°, 270°, 360°
-     */
-    fun rotateBy(addDegrees: Int) {
-        zoomEngine.rotateBy(addDegrees)
+    fun rotation(rotation: Int) {
+        zoomEngine.rotation(rotation)
     }
 
     fun getNextStepScale(): Float = zoomEngine.getNextStepScale()

@@ -121,13 +121,14 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewTileMap.setZoomImageView(zoomImageView)
 
         common.zoomImageViewRotate.setOnClickListener {
-            zoomImageView.zoomAbility.rotateBy(90)
+            zoomImageView.zoomAbility.rotation(zoomImageView.zoomAbility.rotation + 90)
         }
 
         common.zoomImageViewZoom.apply {
             setOnClickListener {
+                // todo 这里应该用 stitchScale，参考 ZoomableState
                 val nextStepScale = zoomImageView.zoomAbility.getNextStepScale()
-                zoomImageView.zoomAbility.scale(nextStepScale, true)
+                zoomImageView.zoomAbility.scale(nextStepScale, animate = true)
             }
             val resetIcon = {
                 val zoomIn =
