@@ -31,7 +31,7 @@ fun Modifier.zoomable(
                 },
                 onDoubleTap = { touchPoint ->
                     state.switchScale(
-                        contentCentroid = state.touchPointToContentPoint(touchPoint),
+                        contentPoint = state.touchPointToContentPoint(touchPoint),
                         animated = true
                     )
                 },
@@ -62,18 +62,20 @@ fun Modifier.zoomable(
         .pointerInput(Unit) {
             detectZoomGestures(
                 panZoomLock = true,
-                onGesture = { centroid: Offset, zoomChange: Float, _ ->
+                onGesture = { centroid: Offset, pan: Offset, zoomChange: Float, _ ->
                     state.scaling = true
                     state.scale(
                         targetScale = state.transform.scaleX * zoomChange,
                         centroid = centroid,
+                        pan = pan,
                         animated = false,
                         rubberBandScale = true,
                     )
+                    // todo 参考 Telephoto，实现拖动、fling、双指缩放在一个手势中完成，这样双指拖动就可以有 fling 了
                 },
                 onEnd = { centroid ->
                     state.scaling = false
-                    state.reboundUserScale(centroid = centroid)
+                    state.rollbackScale(centroid = centroid)
                 }
             )
         }

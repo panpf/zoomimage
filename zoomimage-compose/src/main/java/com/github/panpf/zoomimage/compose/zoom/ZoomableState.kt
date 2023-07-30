@@ -43,7 +43,7 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContaine
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeReadModeTransform
-import com.github.panpf.zoomimage.compose.zoom.internal.computeScaleOffsetByCentroid
+import com.github.panpf.zoomimage.compose.zoom.internal.computeZoomOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeTransform
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
 import com.github.panpf.zoomimage.compose.zoom.internal.containerPointToContentPoint
@@ -303,6 +303,7 @@ class ZoomableState(
     fun scale(
         targetScale: Float,
         centroid: Offset = Offset(x = containerSize.width / 2f, y = containerSize.height / 2f),
+        pan: Offset = Offset.Zero,
         animated: Boolean = false,
         rubberBandScale: Boolean = false,
     ) = coroutineScope.launch {
@@ -320,11 +321,12 @@ class ZoomableState(
         val currentUserTransform = userTransform
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
-        val targetUserOffset = computeScaleOffsetByCentroid(
+        val targetUserOffset = computeZoomOffset(
             currentScale = currentUserScale,
             currentOffset = currentUserOffset,
             targetScale = limitedTargetUserScale,
             centroid = centroid,
+            pan = pan,
             gestureRotate = 0f,
         )
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
@@ -450,6 +452,7 @@ class ZoomableState(
     }
 
     fun rotate(rotation: Int) = coroutineScope.launch {
+        require(rotation >= 0) { "rotation must be greater than or equal to 0: $rotation" }
         require(rotation % 90 == 0) { "rotation must be in multiples of 90: $rotation" }
         val limitedRotation = rotation % 360
         val currentRotation = baseTransform.rotation
@@ -462,76 +465,24 @@ class ZoomableState(
         // todo 适配 rotation
     }
 
-    fun fling(velocity: Velocity, density: Density) = coroutineScope.launch {
-        stopAllAnimationInternal("fling")
-
-        val currentUserTransform = userTransform
-        val startUserOffset = currentUserTransform.offset
-        val flingAnimatable = Animatable(
-            initialValue = startUserOffset,
-            typeConverter = Offset.VectorConverter,
-        )
-        this@ZoomableState.lastFlingAnimatable = flingAnimatable
-        var job: Job? = null
-        job = coroutineScope {
-            launch {
-                fling = true
-                try {
-                    val initialVelocity = Offset.VectorConverter
-                        .convertFromVector(AnimationVector(velocity.x, velocity.y))
-                    flingAnimatable.animateDecay(
-                        initialVelocity = initialVelocity,
-                        animationSpec = splineBasedDecay(density)
-                    ) {
-                        val currentUserTransform2 = userTransform
-                        val targetUserOffset = this.value
-                        val limitedTargetUserOffset =
-                            limitUserOffset(targetUserOffset, currentUserTransform2.scaleX)
-                        if (limitedTargetUserOffset != currentUserTransform2.offset) {
-                            val distance = limitedTargetUserOffset - startUserOffset
-                            logger.d {
-                                "fling. running. " +
-                                        "velocity=$velocity, " +
-                                        "startUserOffset=${startUserOffset.toShortString()}, " +
-                                        "currentUserOffset=${limitedTargetUserOffset.toShortString()}, " +
-                                        "distance=$distance"
-                            }
-                            userTransform =
-                                currentUserTransform2.copy(offset = limitedTargetUserOffset)
-                        } else {
-                            // SubsamplingState(line 87) relies on the fling state to refresh tiles,
-                            // so you need to end the fling animation as soon as possible
-                            job?.cancel("reachBounds")
-                            fling = false
-                        }
-                    }
-                } catch (e: CancellationException) {
-                    throw e
-                } finally {
-                    fling = false
-                }
-            }
-        }
-    }
-
     fun switchScale(
-        contentCentroid: IntOffset? = null,
+        contentPoint: IntOffset? = null,
         animated: Boolean = true
     ): Float {
-        val contentPoint = contentCentroid
+        val finalContentPoint = contentPoint
             ?: contentVisibleRect.takeIf { !it.isEmpty }?.center
             ?: contentSize.takeIf { it.isNotEmpty() }?.center // todo 适配 rotation
             ?: return transform.scaleX
         val nextScale = getNextStepScale()
         location(
-            contentPoint = contentPoint,
+            contentPoint = finalContentPoint,
             targetScale = nextScale,
             animated = animated
         )
         return nextScale
     }
 
-    fun reboundUserScale(centroid: Offset) {
+    fun rollbackScale(centroid: Offset) {
         val minScale = minScale
         val maxScale = maxScale
         val currentScale = transform.scaleX
@@ -586,6 +537,58 @@ class ZoomableState(
             containerPoint = containerPoint
         )
         return contentPoint
+    }
+
+    fun fling(velocity: Velocity, density: Density) = coroutineScope.launch {
+        stopAllAnimationInternal("fling")
+
+        val currentUserTransform = userTransform
+        val startUserOffset = currentUserTransform.offset
+        val flingAnimatable = Animatable(
+            initialValue = startUserOffset,
+            typeConverter = Offset.VectorConverter,
+        )
+        this@ZoomableState.lastFlingAnimatable = flingAnimatable
+        var job: Job? = null
+        job = coroutineScope {
+            launch {
+                fling = true
+                try {
+                    val initialVelocity = Offset.VectorConverter
+                        .convertFromVector(AnimationVector(velocity.x, velocity.y))
+                    flingAnimatable.animateDecay(
+                        initialVelocity = initialVelocity,
+                        animationSpec = splineBasedDecay(density)
+                    ) {
+                        val currentUserTransform2 = userTransform
+                        val targetUserOffset = this.value
+                        val limitedTargetUserOffset =
+                            limitUserOffset(targetUserOffset, currentUserTransform2.scaleX)
+                        if (limitedTargetUserOffset != currentUserTransform2.offset) {
+                            val distance = limitedTargetUserOffset - startUserOffset
+                            logger.d {
+                                "fling. running. " +
+                                        "velocity=$velocity, " +
+                                        "startUserOffset=${startUserOffset.toShortString()}, " +
+                                        "currentUserOffset=${limitedTargetUserOffset.toShortString()}, " +
+                                        "distance=$distance"
+                            }
+                            userTransform =
+                                currentUserTransform2.copy(offset = limitedTargetUserOffset)
+                        } else {
+                            // SubsamplingState(line 87) relies on the fling state to refresh tiles,
+                            // so you need to end the fling animation as soon as possible
+                            job?.cancel("reachBounds")
+                            fling = false
+                        }
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } finally {
+                    fling = false
+                }
+            }
+        }
     }
 
     private fun limitUserScale(targetUserScale: Float): Float {

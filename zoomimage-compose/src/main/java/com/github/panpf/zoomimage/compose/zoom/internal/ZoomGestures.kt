@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.compose.zoom.internal
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.foundation.gestures.calculateCentroidSize
+import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateRotation
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.ui.geometry.Offset
@@ -38,12 +39,13 @@ import kotlin.math.abs
  */
 internal suspend fun PointerInputScope.detectZoomGestures(
     panZoomLock: Boolean = false,
-    onGesture: (centroid: Offset, zoomChange: Float, rotationChange: Float) -> Unit,
+    onGesture: (centroid: Offset, pan: Offset, zoomChange: Float, rotationChange: Float) -> Unit,
     onEnd: (centroid: Offset) -> Unit = {},
 ) {
     awaitEachGesture {
         var rotation = 0f
         var zoom = 1f
+        var pan = Offset.Zero
         var pastTouchSlop = false
         val touchSlop = viewConfiguration.touchSlop
         var lockedToPanZoom = false
@@ -56,16 +58,19 @@ internal suspend fun PointerInputScope.detectZoomGestures(
             if (!canceled) {
                 val zoomChange = event.calculateZoom()
                 val rotationChange = event.calculateRotation()
+                val panChange = event.calculatePan()
 
                 if (!pastTouchSlop) {
                     zoom *= zoomChange
                     rotation += rotationChange
+                    pan += panChange
 
                     val centroidSize = event.calculateCentroidSize(useCurrent = false)
                     val zoomMotion = abs(1 - zoom) * centroidSize
                     val rotationMotion = abs(rotation * PI.toFloat() * centroidSize / 180f)
+                    val panMotion = pan.getDistance()
 
-                    if (zoomMotion > touchSlop || rotationMotion > touchSlop) {
+                    if (zoomMotion > touchSlop || rotationMotion > touchSlop || panMotion > touchSlop) {
                         pastTouchSlop = true
                         lockedToPanZoom = panZoomLock && rotationMotion < touchSlop
                     }
@@ -74,9 +79,9 @@ internal suspend fun PointerInputScope.detectZoomGestures(
                 if (pastTouchSlop) {
                     val centroid = event.calculateCentroid(useCurrent = false)
                     val effectiveRotation = if (lockedToPanZoom) 0f else rotationChange
-                    if (effectiveRotation != 0f || zoomChange != 1f) {
+                    if (effectiveRotation != 0f || zoomChange != 1f || panChange != Offset.Zero) {
                         lastCentroid = centroid
-                        onGesture(centroid, zoomChange, effectiveRotation)
+                        onGesture(centroid, panChange, zoomChange, effectiveRotation)
                     }
                     event.changes.fastForEach {
                         if (it.positionChanged()) {

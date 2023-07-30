@@ -18,7 +18,7 @@ import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImage
-import com.github.panpf.zoomimage.rememberLogger
+import com.github.panpf.zoomimage.rememberZoomImageLogger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
 import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
@@ -28,7 +28,7 @@ import com.google.accompanist.drawablepainter.DrawablePainter
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
-        logger = rememberLogger(),
+        logger = rememberZoomImageLogger(),
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = true
     ) { contentScale, alignment, zoomableState, subsamplingState, ignoreExifOrientation, scrollBarSpec, onLongPress ->

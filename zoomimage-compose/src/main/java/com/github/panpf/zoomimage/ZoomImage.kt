@@ -38,7 +38,7 @@ fun ZoomImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    logger: Logger = rememberLogger(tag = "ZoomImage"),
+    logger: Logger = rememberZoomImageLogger(),
     zoomableState: ZoomableState = rememberZoomableState(logger),
     subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
@@ -102,7 +102,7 @@ fun ZoomImage(
 }
 
 @Composable
-fun rememberLogger(tag: String = "ZoomImage", level: Int = Logger.INFO): Logger =
+fun rememberZoomImageLogger(tag: String = "ZoomImage", level: Int = Logger.INFO): Logger =
     remember {
         Logger(tag = tag).apply { this.level = level }
     }

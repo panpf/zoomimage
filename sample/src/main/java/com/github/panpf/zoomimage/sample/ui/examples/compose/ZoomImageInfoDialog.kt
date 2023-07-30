@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
-import com.github.panpf.zoomimage.rememberLogger
+import com.github.panpf.zoomimage.rememberZoomImageLogger
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 
 @Composable
@@ -90,7 +90,7 @@ fun ZoomImageInfoDialogPreview() {
     ZoomImageInfoDialog(
         state = rememberZoomImageInfoDialogState(showing = true),
         imageUri = "https://www.github.com/panpf/zoomimage",
-        zoomableState = rememberZoomableState(rememberLogger())
+        zoomableState = rememberZoomableState(rememberZoomImageLogger())
     )
 }
 

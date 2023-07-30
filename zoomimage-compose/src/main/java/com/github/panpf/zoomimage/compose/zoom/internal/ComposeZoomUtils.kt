@@ -462,26 +462,28 @@ internal fun computeReadModeTransform(
 
 internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds
 
-internal fun computeScaleOffsetByCentroid(
+internal fun computeZoomOffset(
     currentScale: Float,
     currentOffset: Offset,
     targetScale: Float,
     centroid: Offset,
+    pan: Offset,
     gestureRotate: Float,
 ): Offset {
     // copied https://github.com/androidx/androidx/blob/643b1cfdd7dfbc5ccce1ad951b6999df049678b3/compose/foundation/foundation/samples/src/main/java/androidx/compose/foundation/samples/TransformGestureSamples.kt
     @Suppress("UnnecessaryVariable") val oldScale = currentScale
     @Suppress("UnnecessaryVariable") val newScale = targetScale
-    var contentOffset = currentOffset / currentScale * -1f
+    val restoreScaleCurrentOffset = currentOffset / currentScale * -1f
     // For natural zooming and rotating, the centroid of the gesture should
     // be the fixed point where zooming and rotating occurs.
     // We compute where the centroid was (in the pre-transformed coordinate
     // space), and then compute where it will be after this delta.
     // We then compute what the new offset should be to keep the centroid
     // visually stationary for rotating and zooming, and also apply the pan.
-    contentOffset =
-        (contentOffset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale)
-    return contentOffset * newScale * -1f
+    val targetRestoreScaleCurrentOffset =
+        (restoreScaleCurrentOffset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
+    val targetOffset = targetRestoreScaleCurrentOffset * newScale * -1f
+    return targetOffset
 }
 
 internal fun IntOffset.rotateInContainer(
