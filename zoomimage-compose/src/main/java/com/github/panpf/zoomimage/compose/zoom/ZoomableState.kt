@@ -43,8 +43,8 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContaine
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeReadModeTransform
-import com.github.panpf.zoomimage.compose.zoom.internal.computeZoomOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeTransform
+import com.github.panpf.zoomimage.compose.zoom.internal.computeTransformOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
 import com.github.panpf.zoomimage.compose.zoom.internal.containerPointToContentPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.contentPointToContainerPoint
@@ -300,10 +300,10 @@ class ZoomableState(
             )
         }
 
+    // todo centroid change to contentPoint 或者不要它
     fun scale(
         targetScale: Float,
         centroid: Offset = Offset(x = containerSize.width / 2f, y = containerSize.height / 2f),
-        pan: Offset = Offset.Zero,
         animated: Boolean = false,
         rubberBandScale: Boolean = false,
     ) = coroutineScope.launch {
@@ -321,12 +321,12 @@ class ZoomableState(
         val currentUserTransform = userTransform
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
-        val targetUserOffset = computeZoomOffset(
+        val targetUserOffset = computeTransformOffset(
             currentScale = currentUserScale,
             currentOffset = currentUserOffset,
             targetScale = limitedTargetUserScale,
             centroid = centroid,
-            pan = pan,
+            pan = Offset.Zero,
             gestureRotate = 0f,
         )
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
@@ -465,78 +465,57 @@ class ZoomableState(
         // todo 适配 rotation
     }
 
-    fun switchScale(
-        contentPoint: IntOffset? = null,
-        animated: Boolean = true
-    ): Float {
-        val finalContentPoint = contentPoint
-            ?: contentVisibleRect.takeIf { !it.isEmpty }?.center
-            ?: contentSize.takeIf { it.isNotEmpty() }?.center // todo 适配 rotation
-            ?: return transform.scaleX
-        val nextScale = getNextStepScale()
-        location(
-            contentPoint = finalContentPoint,
-            targetScale = nextScale,
-            animated = animated
-        )
-        return nextScale
-    }
+    fun transform(
+        centroid: Offset, pan: Offset, zoom: Float, rotation: Float
+    ) = coroutineScope.launch {
+        containerSize.takeIf { it.isNotEmpty() } ?: return@launch
+        contentSize.takeIf { it.isNotEmpty() } ?: return@launch
 
-    fun rollbackScale(centroid: Offset) {
-        val minScale = minScale
-        val maxScale = maxScale
-        val currentScale = transform.scaleX
-        val targetScale = when {
-            currentScale.format(2) > maxScale.format(2) -> maxScale
-            currentScale.format(2) < minScale.format(2) -> minScale
-            else -> null
-        }
-        if (targetScale != null) {
-            scale(
-                targetScale = targetScale,
-                centroid = centroid,
-                animated = true,
-                rubberBandScale = false
-            )
-        }
-    }
-
-    fun getNextStepScale(): Float {
-        val stepScales = if (threeStepScale) {
-            floatArrayOf(minScale, mediumScale, maxScale)
+        val targetScale = transform.scaleX * zoom
+        val targetUserScale = targetScale / baseTransform.scaleX
+        val limitedTargetUserScale = if (rubberBandScale && this@ZoomableState.rubberBandScale) {
+            limitUserScaleWithRubberBand(targetUserScale)
         } else {
-            floatArrayOf(minScale, mediumScale)
+            limitUserScale(targetUserScale)
         }
-        return calculateNextStepScale(stepScales, transform.scaleX)
-    }
-
-    fun stopAllAnimation(caller: String) = coroutineScope.launch {
-        stopAllAnimationInternal(caller)
-    }
-
-    fun canDrag(horizontal: Boolean, direction: Int): Boolean =
-        canScroll(horizontal, direction * -1, scrollEdge)
-
-    @Suppress("UnnecessaryVariable")
-    fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
-        val contentSize =
-            contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero // todo 适配 rotation
         val currentUserTransform = userTransform
-        val containerPoint = touchPointToContainerPoint(
-            containerSize = containerSize,
-            userScale = currentUserTransform.scaleX,
-            userOffset = currentUserTransform.offset,
-            touchPoint = touchPoint
+        val currentUserScale = currentUserTransform.scaleX
+        val currentUserOffset = currentUserTransform.offset
+        val targetUserOffset = computeTransformOffset(
+            currentScale = currentUserScale,
+            currentOffset = currentUserOffset,
+            targetScale = limitedTargetUserScale,
+            centroid = centroid,
+            pan = pan,
+            gestureRotate = 0f,
         )
-        val contentPoint = containerPointToContentPoint(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
-            containerPoint = containerPoint
+        val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
+        val limitedTargetUserTransform = currentUserTransform.copy(
+            scale = ScaleFactor(limitedTargetUserScale),
+            offset = limitedTargetUserOffset
         )
-        return contentPoint
+        logger.d {
+            val targetAddUserScale = targetUserScale - currentUserScale
+            val limitedAddUserScale = limitedTargetUserScale - currentUserScale
+            val targetAddUserOffset = targetUserOffset - currentUserOffset
+            val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
+            "transform. " +
+                    "centroid=${centroid.toShortString()}, " +
+                    "pan=${pan.toShortString()}, " +
+                    "zoom=${zoom.format(4)}, " +
+                    "rotation=${rotation.format(4)}. " +
+                    "targetScale=${targetScale.format(4)}, " +
+                    "targetUserScale=${targetUserScale.format(4)}, " +
+                    "addUserScale=${targetAddUserScale.format(4)} -> ${limitedAddUserScale.format(4)}, " +
+                    "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
+                    "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
+        }
+
+        updateUserTransform(
+            targetUserTransform = limitedTargetUserTransform,
+            animated = false,
+            caller = "transform"
+        )
     }
 
     fun fling(velocity: Velocity, density: Density) = coroutineScope.launch {
@@ -589,6 +568,116 @@ class ZoomableState(
                 }
             }
         }
+    }
+
+    fun rollbackScale(centroid: Offset): Boolean {
+        val minScale = minScale
+        val maxScale = maxScale
+        val currentScale = transform.scaleX
+        val targetScale = when {
+            currentScale.format(2) > maxScale.format(2) -> maxScale
+            currentScale.format(2) < minScale.format(2) -> minScale
+            else -> null
+        }
+        if (targetScale != null) {
+            @Suppress("UnnecessaryVariable") val startScale = currentScale
+            @Suppress("UnnecessaryVariable") val endScale = targetScale
+            logger.d {
+                "rollbackScale. " +
+                        "centroid=${centroid.toShortString()}. " +
+                        "startScale=${startScale.format(4)}, " +
+                        "endScale=${endScale.format(4)}"
+            }
+            coroutineScope.launch {
+                val updateAnimatable = Animatable(0f)
+                this@ZoomableState.lastScaleAnimatable = updateAnimatable
+                scaling = true
+                try {
+                    updateAnimatable.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(
+                            durationMillis = animationSpec.durationMillis,
+                            easing = animationSpec.easing
+                        ),
+                        initialVelocity = animationSpec.initialVelocity,
+                    ) {
+                        val frameScale = androidx.compose.ui.util.lerp(
+                            start = startScale,
+                            stop = endScale,
+                            fraction = value
+                        )
+                        val nowScale = transform.scaleX
+                        val addScale = frameScale / nowScale
+                        transform(
+                            centroid = centroid,
+                            pan = Offset.Zero,
+                            zoom = addScale,
+                            rotation = 0f
+                        )
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } finally {
+                    scaling = false
+                }
+            }
+        }
+        return targetScale != null
+    }
+
+    fun switchScale(
+        contentPoint: IntOffset? = null,
+        animated: Boolean = true
+    ): Float {
+        val finalContentPoint = contentPoint
+            ?: contentVisibleRect.takeIf { !it.isEmpty }?.center
+            ?: contentSize.takeIf { it.isNotEmpty() }?.center // todo 适配 rotation
+            ?: return transform.scaleX
+        val nextScale = getNextStepScale()
+        location(
+            contentPoint = finalContentPoint,
+            targetScale = nextScale,
+            animated = animated
+        )
+        return nextScale
+    }
+
+    fun getNextStepScale(): Float {
+        val stepScales = if (threeStepScale) {
+            floatArrayOf(minScale, mediumScale, maxScale)
+        } else {
+            floatArrayOf(minScale, mediumScale)
+        }
+        return calculateNextStepScale(stepScales, transform.scaleX)
+    }
+
+    fun stopAllAnimation(caller: String) = coroutineScope.launch {
+        stopAllAnimationInternal(caller)
+    }
+
+    fun canDrag(horizontal: Boolean, direction: Int): Boolean =
+        canScroll(horizontal, direction * -1, scrollEdge)
+
+    @Suppress("UnnecessaryVariable")
+    fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
+        val contentSize =
+            contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero // todo 适配 rotation
+        val currentUserTransform = userTransform
+        val containerPoint = touchPointToContainerPoint(
+            containerSize = containerSize,
+            userScale = currentUserTransform.scaleX,
+            userOffset = currentUserTransform.offset,
+            touchPoint = touchPoint
+        )
+        val contentPoint = containerPointToContentPoint(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            contentAlignment = contentAlignment,
+            containerPoint = containerPoint
+        )
+        return contentPoint
     }
 
     private fun limitUserScale(targetUserScale: Float): Float {
@@ -663,8 +752,6 @@ class ZoomableState(
         animated: Boolean,
         caller: String
     ) {
-        stopAllAnimationInternal(caller)
-
         if (animated) {
             val currentUserTransform = userTransform
             val scaleChange = currentUserTransform.scale != targetUserTransform.scale

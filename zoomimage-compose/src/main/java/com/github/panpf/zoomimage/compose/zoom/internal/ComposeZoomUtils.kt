@@ -462,7 +462,7 @@ internal fun computeReadModeTransform(
 
 internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds
 
-internal fun computeZoomOffset(
+internal fun computeTransformOffset(
     currentScale: Float,
     currentOffset: Offset,
     targetScale: Float,

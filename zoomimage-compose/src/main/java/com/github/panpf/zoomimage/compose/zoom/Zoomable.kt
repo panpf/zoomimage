@@ -7,8 +7,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import com.github.panpf.zoomimage.compose.zoom.internal.detectCanDragGestures
-import com.github.panpf.zoomimage.compose.zoom.internal.detectZoomGestures
+import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 
 fun Modifier.zoomable(
     state: ZoomableState,
@@ -44,38 +43,25 @@ fun Modifier.zoomable(
             )
         }
         .pointerInput(Unit) {
-            detectCanDragGestures(
+            detectPowerfulTransformGestures(
+                panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
                     state.canDrag(horizontal = horizontal, direction = direction)
                 },
-                onDrag = { _, dragAmount ->
-                    state.offset(
-                        targetOffset = state.transform.offset + dragAmount,
-                        animated = false
-                    )
-                },
-                onDragEnd = {
-                    state.fling(it, density)
-                },
-            )
-        }
-        .pointerInput(Unit) {
-            detectZoomGestures(
-                panZoomLock = true,
-                onGesture = { centroid: Offset, pan: Offset, zoomChange: Float, _ ->
+                onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float ->
                     state.scaling = true
-                    state.scale(
-                        targetScale = state.transform.scaleX * zoomChange,
+                    state.transform(
                         centroid = centroid,
                         pan = pan,
-                        animated = false,
-                        rubberBandScale = true,
+                        zoom = zoom,
+                        rotation = rotation
                     )
-                    // todo 参考 Telephoto，实现拖动、fling、双指缩放在一个手势中完成，这样双指拖动就可以有 fling 了
                 },
-                onEnd = { centroid ->
+                onEnd = { centroid, velocity ->
                     state.scaling = false
-                    state.rollbackScale(centroid = centroid)
+                    if (!state.rollbackScale(centroid = centroid)) {
+                        state.fling(velocity, density)
+                    }
                 }
             )
         }
