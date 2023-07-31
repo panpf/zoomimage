@@ -13,7 +13,7 @@ data class Transform(
     val scale: ScaleFactor,
     val offset: Offset, // todo IntOffset
     val rotation: Float = 0f,   // todo Int
-    val origin: TransformOrigin = TransformOrigin.TopStart,
+    val origin: TransformOrigin = TransformOrigin.TopStart, // todo added rotationOrigin
 ) {
 
     constructor(

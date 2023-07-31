@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isHorizontalCenter
 import com.github.panpf.zoomimage.compose.internal.isStart
@@ -19,11 +20,14 @@ import com.github.panpf.zoomimage.compose.internal.isTop
 import com.github.panpf.zoomimage.compose.internal.isVerticalCenter
 import com.github.panpf.zoomimage.compose.internal.limitTo
 import com.github.panpf.zoomimage.compose.internal.restoreScale
+import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.rotateBy
 import com.github.panpf.zoomimage.compose.internal.roundToIntSize
 import com.github.panpf.zoomimage.compose.internal.scale
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.zoom.Transform
+import com.github.panpf.zoomimage.compose.zoom.div
+import com.github.panpf.zoomimage.core.internal.computeUserScales
 import kotlin.math.roundToInt
 
 
@@ -516,3 +520,81 @@ internal fun IntOffset.rotateInContainer(
         else -> this
     }
 }
+
+internal fun computeZoomInitialConfig(
+    containerSize: IntSize,
+    contentSize: IntSize,
+    contentOriginSize: IntSize,
+    contentScale: ContentScale,
+    contentAlignment: Alignment,
+    rotation: Float,
+    readMode: ReadMode?,
+    defaultMediumScaleMultiple: Float,
+): InitialConfig {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return InitialConfig(
+            minScale = 1.0f,
+            mediumScale = 1.0f,
+            maxScale = 1.0f,
+            baseTransform = Transform.Origin.copy(rotation = rotation),   // todo rotation move to userTransform
+            userTransform = Transform.Origin
+        )
+    }
+
+    val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
+    val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
+
+    val baseTransform = computeTransform(
+        contentSize = rotatedContentSize,
+        containerSize = containerSize,
+        contentScale = contentScale,
+        alignment = contentAlignment,
+    ).copy(rotation = rotation)    // todo rotation move to userTransform
+
+    val userScales = computeUserScales(
+        contentSize = rotatedContentSize.toCompatIntSize(),
+        contentOriginSize = rotatedContentOriginSize.toCompatIntSize(),
+        containerSize = containerSize.toCompatIntSize(),
+        scaleMode = contentScale.toScaleMode(),
+        baseScale = contentScale.computeScaleFactor(
+            srcSize = rotatedContentSize.toSize(),
+            dstSize = containerSize.toSize()
+        ).toCompatScaleFactor(),
+        defaultMediumScaleMultiple = defaultMediumScaleMultiple,
+    )
+    val minScale = userScales[0] * baseTransform.scaleX
+    val mediumScale = userScales[1] * baseTransform.scaleX
+    val maxScale = userScales[2] * baseTransform.scaleX
+
+    val readModePassed = readMode?.should(
+        srcSize = rotatedContentSize.toCompatIntSize(),
+        dstSize = containerSize.toCompatIntSize()
+    ) == true
+    val userTransform = if (readModePassed && contentScale.supportReadMode()) {
+        val readModeTransform = computeReadModeTransform(
+            contentSize = rotatedContentSize,
+            containerSize = containerSize,
+            contentScale = contentScale,
+            alignment = contentAlignment,
+        )
+        readModeTransform.div(baseTransform.scale)
+        // todo 直接计算出不需要纠正的 userTransform，省得外面再计算再纠正
+    } else {
+        Transform.Origin
+    }
+    return InitialConfig(
+        minScale = minScale,
+        mediumScale = mediumScale,
+        maxScale = maxScale,
+        baseTransform = baseTransform,
+        userTransform = userTransform
+    )
+}
+
+class InitialConfig(
+    val minScale: Float,
+    val mediumScale: Float,
+    val maxScale: Float,
+    val baseTransform: Transform,
+    val userTransform: Transform,
+)

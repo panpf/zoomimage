@@ -32,7 +32,7 @@ import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.div
-import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
+import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMultiple
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
@@ -157,7 +157,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset()
             }
         }
-    var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
+    var defaultMediumScaleMultiple: Float = DefaultMediumScaleMultiple
         internal set(value) {
             if (field != value) {
                 field = value

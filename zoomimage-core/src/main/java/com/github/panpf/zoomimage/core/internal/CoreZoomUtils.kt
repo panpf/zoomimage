@@ -23,7 +23,7 @@ fun calculateNextStepScale(
         ?: stepScales.first()
 }
 
-const val DEFAULT_MEDIUM_SCALE_MULTIPLE: Float = 3f
+const val DefaultMediumScaleMultiple: Float = 3f
 
 fun computeUserScales(
     contentSize: IntSizeCompat,

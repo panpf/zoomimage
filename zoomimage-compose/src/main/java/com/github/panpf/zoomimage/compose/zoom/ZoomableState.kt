@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.roundToIntRect
-import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
@@ -34,7 +33,6 @@ import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.name
-import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
@@ -42,24 +40,18 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContaine
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
-import com.github.panpf.zoomimage.compose.zoom.internal.computeReadModeTransform
-import com.github.panpf.zoomimage.compose.zoom.internal.computeTransform
 import com.github.panpf.zoomimage.compose.zoom.internal.computeTransformOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
+import com.github.panpf.zoomimage.compose.zoom.internal.computeZoomInitialConfig
 import com.github.panpf.zoomimage.compose.zoom.internal.containerPointToContentPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.contentPointToContainerPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.rotateInContainer
-import com.github.panpf.zoomimage.compose.zoom.internal.supportReadMode
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
-import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
-import com.github.panpf.zoomimage.compose.zoom.internal.toCompatScaleFactor
-import com.github.panpf.zoomimage.compose.zoom.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.zoom.internal.touchPointToContainerPoint
-import com.github.panpf.zoomimage.core.internal.DEFAULT_MEDIUM_SCALE_MULTIPLE
+import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMultiple
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.canScroll
 import com.github.panpf.zoomimage.core.internal.computeScrollEdge
-import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -74,7 +66,7 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberZoomableState(
     logger: Logger,
-    defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE,
+    defaultMediumScaleMultiple: Float = DefaultMediumScaleMultiple,
     threeStepScale: Boolean = false,
     rubberBandScale: Boolean = true,
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
@@ -142,7 +134,7 @@ class ZoomableState(
                 reset("readModeChanged")
             }
         }
-    var defaultMediumScaleMultiple: Float = DEFAULT_MEDIUM_SCALE_MULTIPLE
+    var defaultMediumScaleMultiple: Float = DefaultMediumScaleMultiple
         set(value) {
             if (field != value) {
                 field = value
@@ -220,85 +212,55 @@ class ZoomableState(
         )
     }
 
-    fun reset(caller: String, immediate: Boolean = false) =
-        coroutineScope.launch(if (immediate) Dispatchers.Main.immediate else EmptyCoroutineContext) {
-            stopAllAnimationInternal("reset:$caller")
+    fun reset(
+        caller: String, immediate: Boolean = false
+    ) = coroutineScope.launch(
+        if (immediate) Dispatchers.Main.immediate else EmptyCoroutineContext
+    ) {
+        stopAllAnimationInternal("reset:$caller")
 
-            val contentSize = contentSize
-            val contentOriginSize = contentOriginSize
-            val containerSize = containerSize
-            val contentScale = contentScale
-            val contentAlignment = contentAlignment
-            val initialUserTransform: Transform
-            val rotation = baseTransform.rotation
-            if (containerSize.isEmpty() || contentSize.isEmpty()) {
-                minScale = 1.0f
-                mediumScale = 1.0f
-                maxScale = 1.0f
-                baseTransform = Transform.Origin.copy(rotation = rotation)
-                initialUserTransform = Transform.Origin
-            } else {
-                val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
-                val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
-                val userScales = computeUserScales(
-                    contentSize = rotatedContentSize.toCompatIntSize(),
-                    contentOriginSize = rotatedContentOriginSize.toCompatIntSize(),
-                    containerSize = containerSize.toCompatIntSize(),
-                    scaleMode = contentScale.toScaleMode(),
-                    baseScale = contentScale.computeScaleFactor(
-                        srcSize = rotatedContentSize.toSize(),
-                        dstSize = containerSize.toSize()
-                    ).toCompatScaleFactor(),
-                    defaultMediumScaleMultiple = defaultMediumScaleMultiple,
-                )
-                baseTransform = computeTransform(
-                    contentSize = rotatedContentSize,
-                    containerSize = containerSize,
-                    contentScale = contentScale,
-                    alignment = contentAlignment,
-                ).copy(rotation = rotation)
-                minScale = userScales[0] * baseTransform.scaleX
-                mediumScale = userScales[1] * baseTransform.scaleX
-                maxScale = userScales[2] * baseTransform.scaleX
-                val readModePassed = readMode?.should(
-                    srcSize = rotatedContentSize.toCompatIntSize(),
-                    dstSize = containerSize.toCompatIntSize()
-                ) == true
-                initialUserTransform = if (readModePassed && contentScale.supportReadMode()) {
-                    val readModeTransform = computeReadModeTransform(
-                        contentSize = rotatedContentSize,
-                        containerSize = containerSize,
-                        contentScale = contentScale,
-                        alignment = contentAlignment,
-                    )
-                    readModeTransform.div(baseTransform.scale)
-                } else {
-                    Transform.Origin
-                }
-            }
-            val limitedInitialUserTransform = limitUserTransform(initialUserTransform)
-            logger.d {
-                "reset:$caller. " +
-                        "containerSize=${containerSize.toShortString()}, " +
-                        "contentSize=${contentSize.toShortString()}, " +
-                        "contentOriginSize=${contentOriginSize.toShortString()}, " +
-                        "contentScale=${contentScale.name}, " +
-                        "contentAlignment=${contentAlignment.name}, " +
-                        "readMode=${readMode}, " +
-                        "minScale=${minScale.format(4)}, " +
-                        "mediumScale=${mediumScale.format(4)}, " +
-                        "maxScale=${maxScale.format(4)}, " +
-                        "baseTransform=${baseTransform.toShortString()}, " +
-                        "initialUserTransform=${initialUserTransform.toShortString()}, " +
-                        "limitedInitialUserTransform=${limitedInitialUserTransform.toShortString()}"
-            }
+        val containerSize = containerSize
+        val contentSize = contentSize
+        val contentOriginSize = contentOriginSize
+        val contentScale = contentScale
+        val contentAlignment = contentAlignment
+        val rotation = baseTransform.rotation
+        val readMode = readMode
 
-            updateUserTransform(
-                targetUserTransform = limitedInitialUserTransform,
-                animated = false,
-                caller = "reset"
-            )
+        val initialConfig = computeZoomInitialConfig(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            contentScale = contentScale,
+            contentAlignment = contentAlignment,
+            readMode = readMode,
+            rotation = rotation,
+            defaultMediumScaleMultiple = defaultMediumScaleMultiple
+        )
+        minScale = initialConfig.minScale
+        mediumScale = initialConfig.mediumScale
+        maxScale = initialConfig.maxScale
+        baseTransform = initialConfig.baseTransform
+        val limitedInitialUserTransform = limitUserTransform(initialConfig.userTransform)
+        logger.d {
+            val transform = initialConfig.baseTransform.concat(limitedInitialUserTransform)
+            "reset:$caller. " +
+                    "containerSize=${containerSize.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "contentOriginSize=${contentOriginSize.toShortString()}, " +
+                    "contentScale=${contentScale.name}, " +
+                    "contentAlignment=${contentAlignment.name}, " +
+                    "rotation=${rotation.format(4)}, " +
+                    "readMode=${readMode}. " +
+                    "minScale=${initialConfig.minScale.format(4)}, " +
+                    "mediumScale=${initialConfig.mediumScale.format(4)}, " +
+                    "maxScale=${initialConfig.maxScale.format(4)}, " +
+                    "baseTransform=${initialConfig.baseTransform.toShortString()}, " +
+                    "userTransform=${initialConfig.userTransform.toShortString()} -> ${limitedInitialUserTransform.toShortString()}, " +
+                    "transform=${transform.toShortString()}"
         }
+        userTransform = limitedInitialUserTransform
+    }
 
     // todo centroid change to contentPoint 或者不要它
     fun scale(
