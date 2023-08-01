@@ -224,8 +224,9 @@ class ZoomableState(
         val contentOriginSize = contentOriginSize
         val contentScale = contentScale
         val contentAlignment = contentAlignment
-        val rotation = baseTransform.rotation
         val readMode = readMode
+        val rotation = baseTransform.rotation
+        val defaultMediumScaleMultiple = defaultMediumScaleMultiple
 
         val initialConfig = computeZoomInitialConfig(
             containerSize = containerSize,
@@ -233,18 +234,12 @@ class ZoomableState(
             contentOriginSize = contentOriginSize,
             contentScale = contentScale,
             contentAlignment = contentAlignment,
-            readMode = readMode,
             rotation = rotation,
+            readMode = readMode,
             defaultMediumScaleMultiple = defaultMediumScaleMultiple
         )
-        minScale = initialConfig.minScale
-        mediumScale = initialConfig.mediumScale
-        maxScale = initialConfig.maxScale
-        baseTransform = initialConfig.baseTransform
-        val limitedInitialUserTransform = limitUserTransform(initialConfig.userTransform)
-//        val limitedInitialUserTransform = initialConfig.userTransform
         logger.d {
-            val transform = initialConfig.baseTransform.concat(limitedInitialUserTransform)
+            val transform = initialConfig.baseTransform.concat(initialConfig.userTransform)
             "reset:$caller. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -257,10 +252,15 @@ class ZoomableState(
                     "mediumScale=${initialConfig.mediumScale.format(4)}, " +
                     "maxScale=${initialConfig.maxScale.format(4)}, " +
                     "baseTransform=${initialConfig.baseTransform.toShortString()}, " +
-                    "userTransform=${initialConfig.userTransform.toShortString()} -> ${limitedInitialUserTransform.toShortString()}, " +
+                    "userTransform=${initialConfig.userTransform.toShortString()}, " +
                     "transform=${transform.toShortString()}"
         }
-        userTransform = limitedInitialUserTransform
+
+        minScale = initialConfig.minScale
+        mediumScale = initialConfig.mediumScale
+        maxScale = initialConfig.maxScale
+        baseTransform = initialConfig.baseTransform
+        userTransform = initialConfig.userTransform
     }
 
     // todo centroid change to contentPoint 或者不要它

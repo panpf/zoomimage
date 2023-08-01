@@ -29,7 +29,7 @@ data class ReadMode(
     val decider: Decider = Decider.Default
 ) {
 
-    fun should(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
+    fun accept(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
         val directionMatched = when (direction) {
             Direction.OnlyHorizontal -> srcSize.width > srcSize.height
             Direction.OnlyVertical -> srcSize.width < srcSize.height
@@ -50,9 +50,9 @@ data class ReadMode(
         val scaleX = baseTransform.scaleX * addScale
         val scaleY = baseTransform.scaleY * addScale
         val translateX = if (baseTransform.offset.x < 0)
-            baseTransform.offset.x * -1 * addScale else 0f
+            baseTransform.offset.x * addScale else 0f
         val translateY = if (baseTransform.offset.y < 0)
-            baseTransform.offset.y * -1 * addScale else 0f
+            baseTransform.offset.y * addScale else 0f
         return TransformCompat(
             scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
             offset = OffsetCompat(x = translateX, y = translateY)

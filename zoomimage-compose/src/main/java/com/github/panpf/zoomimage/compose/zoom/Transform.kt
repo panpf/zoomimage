@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.TopStart
+import com.github.panpf.zoomimage.compose.internal.div
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
 
@@ -30,7 +31,10 @@ data class Transform(
         scale = ScaleFactor(scaleX = scaleX, scaleY = scaleY),
         offset = Offset(x = offsetX, y = offsetY),
         rotation = rotation,
-        scaleOrigin = TransformOrigin(pivotFractionX = scaleOriginX, pivotFractionY = scaleOriginY),
+        scaleOrigin = TransformOrigin(
+            pivotFractionX = scaleOriginX,
+            pivotFractionY = scaleOriginY
+        ),
         rotationOrigin = TransformOrigin(
             pivotFractionX = rotationOriginX,
             pivotFractionY = rotationOriginY
@@ -143,9 +147,26 @@ fun Transform.concat(other: Transform): Transform {
                 "this.rotationOrigin=${this.rotationOrigin}, " +
                 "other.rotationOrigin=${other.rotationOrigin}"
     }
+    val addScale = other.scale
     return this.copy(
-        scale = scale.times(other.scale),
-        offset = (offset * other.scale) + other.offset,
+        scale = scale.times(addScale),
+        offset = (offset * addScale) + other.offset,
         rotation = rotation + other.rotation,
+    )
+}
+
+fun Transform.split(other: Transform): Transform {
+    require(this.scaleOrigin == other.scaleOrigin && this.rotationOrigin == other.rotationOrigin) {
+        "Transform scaleOrigin and rotationOrigin must be the same: " +
+                "this.scaleOrigin=${this.scaleOrigin}, " +
+                "other.scaleOrigin=${other.scaleOrigin}, " +
+                "this.rotationOrigin=${this.rotationOrigin}, " +
+                "other.rotationOrigin=${other.rotationOrigin}"
+    }
+    val minusScale = scale.div(other.scale)
+    return this.copy(
+        scale = minusScale,
+        offset = offset - (other.offset * minusScale),
+        rotation = rotation - other.rotation,
     )
 }

@@ -31,16 +31,12 @@ import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.TransformCompat
-import com.github.panpf.zoomimage.core.div
 import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMultiple
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
-import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.isEmpty
-import com.github.panpf.zoomimage.core.rotate
 import com.github.panpf.zoomimage.core.roundToCompatIntOffset
 import com.github.panpf.zoomimage.core.toShortString
-import com.github.panpf.zoomimage.view.internal.computeScaleFactor
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.getScale
 import com.github.panpf.zoomimage.view.internal.getTranslation
@@ -191,44 +187,19 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val imageSize = imageSize
         val viewSize = viewSize
         val readMode = readMode
-        if (drawableSize.isEmpty() || viewSize.isEmpty()) {
-            minScale = 1.0f
-            mediumScale = 1.0f
-            maxScale = 1.0f
-            baseInitialTransform = TransformCompat.Origin
-            userInitialTransform = TransformCompat.Origin
-        } else {
-            val rotatedDrawableSize = drawableSize.rotate(rotation)
-            val rotatedImageSize = imageSize.rotate(rotation)
-            val userStepScales = computeUserScales(
-                contentSize = rotatedDrawableSize,
-                contentOriginSize = rotatedImageSize,
-                containerSize = viewSize,
-                scaleMode = scaleType.toScaleMode(),
-                baseScale = scaleType.computeScaleFactor(
-                    srcSize = rotatedDrawableSize,
-                    dstSize = viewSize
-                ),
-                defaultMediumScaleMultiple = defaultMediumScaleMultiple
-            )
-            baseInitialTransform = scaleType
-                .computeTransform(srcSize = rotatedDrawableSize, dstSize = viewSize)
-            minScale = userStepScales[0] * baseInitialTransform.scaleX
-            mediumScale = userStepScales[1] * baseInitialTransform.scaleX
-            maxScale = userStepScales[2] * baseInitialTransform.scaleX
-            val readModeResult = scaleType.supportReadMode()
-                    && readMode?.should(srcSize = rotatedDrawableSize, dstSize = viewSize) == true
-            userInitialTransform = if (readMode != null && readModeResult) {
-                val readModeTransform = readMode.computeTransform(
-                    containerSize = viewSize,
-                    contentSize = rotatedDrawableSize,
-                    baseTransform = baseInitialTransform,
-                )
-                readModeTransform.div(baseInitialTransform.scale)
-            } else {
-                TransformCompat.Origin
-            }
-        }
+        val rotation = rotation
+        val scaleType = scaleType
+        val defaultMediumScaleMultiple = defaultMediumScaleMultiple
+
+        val initialConfig = computeZoomInitialConfig(
+            containerSize = viewSize,
+            contentSize = drawableSize,
+            contentOriginSize = imageSize,
+            scaleType = scaleType,
+            rotation = rotation,
+            readMode = readMode,
+            defaultMediumScaleMultiple = defaultMediumScaleMultiple,
+        )
         logger.d {
             "reset. viewSize=$viewSize, " +
                     "imageSize=$imageSize, " +
@@ -236,12 +207,18 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     "rotateDegrees=$rotation, " +
                     "scaleType=$scaleType, " +
                     "readMode=$readMode, " +
-                    "minUserScale=$minScale, " +
-                    "mediumUserScale=$mediumScale, " +
-                    "maxUserScale=$maxScale, " +
-                    "baseInitialTransform=$baseInitialTransform, " +
-                    "userInitialTransform=$userInitialTransform"
+                    "minUserScale=${initialConfig.minScale}, " +
+                    "mediumUserScale=${initialConfig.mediumScale}, " +
+                    "maxUserScale=${initialConfig.maxScale}, " +
+                    "baseInitialTransform=${initialConfig.baseTransform}, " +
+                    "userInitialTransform=${initialConfig.userTransform}"
         }
+
+        minScale = initialConfig.minScale
+        mediumScale = initialConfig.mediumScale
+        maxScale = initialConfig.maxScale
+        baseInitialTransform = initialConfig.baseTransform
+        userInitialTransform = initialConfig.userTransform
         resetBaseMatrix()
         resetUserMatrix()
         checkAndApplyMatrix()

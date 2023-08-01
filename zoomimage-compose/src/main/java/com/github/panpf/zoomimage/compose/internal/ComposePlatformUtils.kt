@@ -260,10 +260,21 @@ operator fun Offset.times(scaleFactor: ScaleFactor): Offset {
     return Offset(x * scaleFactor.scaleX, y * scaleFactor.scaleY)
 }
 
+operator fun Offset.div(scaleFactor: ScaleFactor): Offset {
+    return Offset(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
+}
+
 operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset {
     return IntOffset(
         x = (x * scaleFactor.scaleX).roundToInt(),
         y = (y * scaleFactor.scaleY).roundToInt()
+    )
+}
+
+operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset {
+    return IntOffset(
+        x = (x / scaleFactor.scaleX).roundToInt(),
+        y = (y / scaleFactor.scaleY).roundToInt()
     )
 }
 

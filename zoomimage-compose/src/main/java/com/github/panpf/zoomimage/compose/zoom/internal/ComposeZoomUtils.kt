@@ -26,7 +26,7 @@ import com.github.panpf.zoomimage.compose.internal.roundToIntSize
 import com.github.panpf.zoomimage.compose.internal.scale
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.zoom.Transform
-import com.github.panpf.zoomimage.compose.zoom.div
+import com.github.panpf.zoomimage.compose.zoom.split
 import com.github.panpf.zoomimage.core.internal.computeUserScales
 import kotlin.math.roundToInt
 
@@ -532,7 +532,7 @@ internal fun computeZoomInitialConfig(
         alignment = contentAlignment,
     ).copy(rotation = rotation)    // todo rotation move to userTransform
 
-    val userScales = computeUserScales(
+    val userStepScales = computeUserScales(
         contentSize = rotatedContentSize.toCompatIntSize(),
         contentOriginSize = rotatedContentOriginSize.toCompatIntSize(),
         containerSize = containerSize.toCompatIntSize(),
@@ -543,32 +543,30 @@ internal fun computeZoomInitialConfig(
         ).toCompatScaleFactor(),
         defaultMediumScaleMultiple = defaultMediumScaleMultiple,
     )
-    val minScale = userScales[0] * baseTransform.scaleX
-    val mediumScale = userScales[1] * baseTransform.scaleX
-    val maxScale = userScales[2] * baseTransform.scaleX
+    val minScale = userStepScales[0] * baseTransform.scaleX
+    val mediumScale = userStepScales[1] * baseTransform.scaleX
+    val maxScale = userStepScales[2] * baseTransform.scaleX
 
-    val readModePassed = readMode?.should(
-        srcSize = rotatedContentSize.toCompatIntSize(),
-        dstSize = containerSize.toCompatIntSize()
-    ) == true
-    val userTransform = if (readMode != null && readModePassed && contentScale.supportReadMode()) {
-        val readModeTransform = readMode.computeTransform(
+    val readModeTransform = readMode
+        ?.takeIf { contentScale.supportReadMode() }
+        ?.takeIf {
+            it.accept(
+                srcSize = rotatedContentSize.toCompatIntSize(),
+                dstSize = containerSize.toCompatIntSize()
+            )
+        }?.computeTransform(
             containerSize = containerSize.toCompatIntSize(),
             contentSize = rotatedContentSize.toCompatIntSize(),
             baseTransform = baseTransform.toCompatTransform()
-        ).toTransform()
-        readModeTransform.div(baseTransform.scale)
-//        readModeTransform.split(baseTransform)
-        // todo 直接计算出不需要纠正的 userTransform，省得外面再计算再纠正
-    } else {
-        Transform.Origin
-    }
+        )?.toTransform()
+    val userTransform = readModeTransform?.split(baseTransform)
+
     return InitialConfig(
         minScale = minScale,
         mediumScale = mediumScale,
         maxScale = maxScale,
         baseTransform = baseTransform,
-        userTransform = userTransform
+        userTransform = userTransform ?: Transform.Origin
     )
 }
 

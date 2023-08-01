@@ -22,8 +22,14 @@ data class TransformCompat(
         scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
         offset = OffsetCompat(x = offsetX, y = offsetY),
         rotation = rotation,
-        scaleOrigin = TransformOriginCompat(pivotFractionX = scaleOriginX, pivotFractionY = scaleOriginY),
-        rotationOrigin = TransformOriginCompat(pivotFractionX = rotationOriginX, pivotFractionY = rotationOriginY),
+        scaleOrigin = TransformOriginCompat(
+            pivotFractionX = scaleOriginX,
+            pivotFractionY = scaleOriginY
+        ),
+        rotationOrigin = TransformOriginCompat(
+            pivotFractionX = rotationOriginX,
+            pivotFractionY = rotationOriginY
+        ),
     )
 
     val scaleX: Float
@@ -132,9 +138,26 @@ fun TransformCompat.concat(other: TransformCompat): TransformCompat {
                 "this.rotationOrigin=${this.rotationOrigin}, " +
                 "other.rotationOrigin=${other.rotationOrigin}"
     }
+    val addScale = other.scale
     return this.copy(
-        scale = scale.times(other.scale),
-        offset = (offset * other.scale) + other.offset,
+        scale = scale.times(addScale),
+        offset = (offset * addScale) + other.offset,
         rotation = rotation + other.rotation,
+    )
+}
+
+fun TransformCompat.split(other: TransformCompat): TransformCompat {
+    require(this.scaleOrigin == other.scaleOrigin && this.rotationOrigin == other.rotationOrigin) {
+        "Transform scaleOrigin and rotationOrigin must be the same: " +
+                "this.scaleOrigin=${this.scaleOrigin}, " +
+                "other.scaleOrigin=${other.scaleOrigin}, " +
+                "this.rotationOrigin=${this.rotationOrigin}, " +
+                "other.rotationOrigin=${other.rotationOrigin}"
+    }
+    val minusScale = scale.div(other.scale)
+    return this.copy(
+        scale = minusScale,
+        offset = offset - (other.offset * minusScale),
+        rotation = rotation - other.rotation,
     )
 }

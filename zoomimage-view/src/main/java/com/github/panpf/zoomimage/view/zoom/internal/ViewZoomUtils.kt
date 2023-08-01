@@ -18,14 +18,18 @@ package com.github.panpf.zoomimage.view.zoom.internal
 import android.graphics.Rect
 import android.graphics.RectF
 import android.widget.ImageView.ScaleType
+import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.core.IntOffsetCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.ScaleMode
+import com.github.panpf.zoomimage.core.internal.computeUserScales
 import com.github.panpf.zoomimage.core.isEmpty
+import com.github.panpf.zoomimage.core.rotate
+import com.github.panpf.zoomimage.core.split
 import com.github.panpf.zoomimage.core.times
+import com.github.panpf.zoomimage.core.toCompatOffset
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.ZeroRect
 import com.github.panpf.zoomimage.view.internal.computeScaleFactor
@@ -114,60 +118,34 @@ internal fun ScaleType.computeTransform(
 ): TransformCompat {
     val scaleFactor = this.computeScaleFactor(srcSize, dstSize)
     val offset = computeContentScaleOffset(srcSize, dstSize, this)
-    return TransformCompat(scale = scaleFactor, offset = offset)
+    return TransformCompat(scale = scaleFactor, offset = offset.toCompatOffset())
 }
 
 internal fun computeContentScaleOffset(
     srcSize: IntSizeCompat,
     dstSize: IntSizeCompat,
     scaleType: ScaleType
-): OffsetCompat {
+): IntOffsetCompat {
     val scaleFactor = scaleType.computeScaleFactor(srcSize = srcSize, dstSize = dstSize)
     val scaledSrcSize = srcSize.times(scaleFactor)
+    val horSpace = ((dstSize.width - scaledSrcSize.width) / 2.0f).roundToInt()
+    val verSpace = ((dstSize.height - scaledSrcSize.height) / 2.0f).roundToInt()
     return when (scaleType) {
-        ScaleType.CENTER -> OffsetCompat(
-            x = (dstSize.width - scaledSrcSize.width) / 2.0f,
-            y = (dstSize.height - scaledSrcSize.height) / 2.0f
+        ScaleType.CENTER -> IntOffsetCompat(x = horSpace, y = verSpace)
+        ScaleType.CENTER_CROP -> IntOffsetCompat(x = horSpace, y = verSpace)
+        ScaleType.CENTER_INSIDE -> IntOffsetCompat(x = horSpace, y = verSpace)
+        ScaleType.FIT_START -> IntOffsetCompat(x = 0, y = 0)
+        ScaleType.FIT_CENTER -> IntOffsetCompat(x = horSpace, y = verSpace)
+        ScaleType.FIT_END -> IntOffsetCompat(
+            x = dstSize.width - scaledSrcSize.width,
+            y = dstSize.height - scaledSrcSize.height
         )
 
-        ScaleType.CENTER_CROP -> OffsetCompat(
-            x = (dstSize.width - scaledSrcSize.width) / 2.0f,
-            y = (dstSize.height - scaledSrcSize.height) / 2.0f
-        )
-
-        ScaleType.CENTER_INSIDE -> OffsetCompat(
-            x = (dstSize.width - scaledSrcSize.width) / 2.0f,
-            y = (dstSize.height - scaledSrcSize.height) / 2.0f
-        )
-
-        ScaleType.FIT_START -> OffsetCompat(
-            x = 0.0f,
-            y = 0.0f
-        )
-
-        ScaleType.FIT_CENTER -> OffsetCompat(
-            x = (dstSize.width - scaledSrcSize.width) / 2.0f,
-            y = (dstSize.height - scaledSrcSize.height) / 2.0f
-        )
-
-        ScaleType.FIT_END -> OffsetCompat(
-            x = dstSize.width - scaledSrcSize.width.toFloat(),
-            y = dstSize.height - scaledSrcSize.height.toFloat()
-        )
-
-        ScaleType.FIT_XY -> OffsetCompat(
-            x = 0.0f,
-            y = 0.0f
-        )
-
-        ScaleType.MATRIX -> OffsetCompat(
-            x = 0.0f,
-            y = 0.0f
-        )
-
-        else -> OffsetCompat(
-            x = 0.0f,
-            y = 0.0f
+        ScaleType.FIT_XY -> IntOffsetCompat(x = 0, y = 0)
+        ScaleType.MATRIX -> IntOffsetCompat(x = 0, y = 0)
+        else -> IntOffsetCompat(
+            x = 0,
+            y = 0
         )
     }
 }
@@ -202,11 +180,11 @@ internal fun computeContentInContainerInnerRect(
         scaleType = scaleType,
     )
     return Rect(
-        left = offset.x.coerceAtLeast(0f).roundToInt(),
-        top = offset.y.coerceAtLeast(0f).roundToInt(),
-        right = (offset.x + contentScaledContentSize.width).roundToInt()
+        left = offset.x.coerceAtLeast(0),
+        top = offset.y.coerceAtLeast(0),
+        right = (offset.x + contentScaledContentSize.width)
             .coerceAtMost(containerSize.width),
-        bottom = (offset.y + contentScaledContentSize.height).roundToInt()
+        bottom = (offset.y + contentScaledContentSize.height)
             .coerceAtMost(containerSize.height),
     )
 }
@@ -280,3 +258,70 @@ internal fun computeLocationOffset(
         y = (scaledLocationY - viewSize.height / 2).coerceAtLeast(0)
     )
 }
+
+internal fun computeZoomInitialConfig(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentOriginSize: IntSizeCompat,
+    scaleType: ScaleType,
+    rotation: Int,
+    readMode: ReadMode?,
+    defaultMediumScaleMultiple: Float,
+): InitialConfig {
+    if (contentSize.isEmpty() || containerSize.isEmpty()) {
+        return InitialConfig(
+            minScale = 1.0f,
+            mediumScale = 1.0f,
+            maxScale = 1.0f,
+            baseTransform = TransformCompat.Origin,
+            userTransform = TransformCompat.Origin
+        )
+    }
+
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val rotatedContentOriginSize = contentOriginSize.rotate(rotation)
+
+    val baseTransform = scaleType
+        .computeTransform(srcSize = rotatedContentSize, dstSize = containerSize)
+
+    val userStepScales = computeUserScales(
+        contentSize = rotatedContentSize,
+        contentOriginSize = rotatedContentOriginSize,
+        containerSize = containerSize,
+        scaleMode = scaleType.toScaleMode(),
+        baseScale = scaleType.computeScaleFactor(
+            srcSize = rotatedContentSize,
+            dstSize = containerSize
+        ),
+        defaultMediumScaleMultiple = defaultMediumScaleMultiple
+    )
+    val minScale = userStepScales[0] * baseTransform.scaleX
+    val mediumScale = userStepScales[1] * baseTransform.scaleX
+    val maxScale = userStepScales[2] * baseTransform.scaleX
+
+    val readModeTransform = readMode
+        ?.takeIf { scaleType.supportReadMode() }
+        ?.takeIf { it.accept(srcSize = rotatedContentSize, dstSize = containerSize) }
+        ?.computeTransform(
+            containerSize = containerSize,
+            contentSize = rotatedContentSize,
+            baseTransform = baseTransform,
+        )
+    val userTransform = readModeTransform?.split(baseTransform)
+
+    return InitialConfig(
+        minScale = minScale,
+        mediumScale = mediumScale,
+        maxScale = maxScale,
+        baseTransform = baseTransform,
+        userTransform = userTransform ?: TransformCompat.Origin
+    )
+}
+
+class InitialConfig(
+    val minScale: Float,
+    val mediumScale: Float,
+    val maxScale: Float,
+    val baseTransform: TransformCompat,
+    val userTransform: TransformCompat,
+)
