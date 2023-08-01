@@ -98,11 +98,11 @@ fun GlideZoomAsyncImage(
             scaleY = transform.scaleY
             translationX = transform.offsetX
             translationY = transform.offsetY
-            transformOrigin = transform.origin
+            transformOrigin = transform.scaleOrigin
         }
         .graphicsLayer {
             rotationZ = transform.rotation
-            transformOrigin = TransformOrigin.Center
+            transformOrigin = transform.rotationOrigin
         }
         .subsampling(subsamplingState = subsamplingState, zoomableState = null)
 

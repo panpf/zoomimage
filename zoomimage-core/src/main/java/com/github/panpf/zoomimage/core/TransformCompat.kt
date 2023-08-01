@@ -1,12 +1,11 @@
 package com.github.panpf.zoomimage.core
 
-import com.github.panpf.zoomimage.core.internal.format
-
 data class TransformCompat(
     val scale: ScaleFactorCompat,
     val offset: OffsetCompat,
     val rotation: Float = 0f,
-    val origin: Origin = com.github.panpf.zoomimage.core.Origin.TopStart,
+    val scaleOrigin: TransformOriginCompat = TransformOriginCompat.TopStart,
+    val rotationOrigin: TransformOriginCompat = TransformOriginCompat.Center,
 ) {
 
     constructor(
@@ -15,13 +14,16 @@ data class TransformCompat(
         offsetX: Float,
         offsetY: Float,
         rotation: Float = 0f,
-        originX: Float = 0f,
-        originY: Float = 0f,
+        scaleOriginX: Float = 0f,
+        scaleOriginY: Float = 0f,
+        rotationOriginX: Float = 0.5f,
+        rotationOriginY: Float = 0.5f,
     ) : this(
         scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
         offset = OffsetCompat(x = offsetX, y = offsetY),
         rotation = rotation,
-        origin = Origin(pivotFractionX = originX, pivotFractionY = originY)
+        scaleOrigin = TransformOriginCompat(pivotFractionX = scaleOriginX, pivotFractionY = scaleOriginY),
+        rotationOrigin = TransformOriginCompat(pivotFractionX = rotationOriginX, pivotFractionY = rotationOriginY),
     )
 
     val scaleX: Float
@@ -32,17 +34,22 @@ data class TransformCompat(
         get() = offset.x
     val offsetY: Float
         get() = offset.y
-    val originX: Float
-        get() = origin.pivotFractionX
-    val originY: Float
-        get() = origin.pivotFractionY
+    val scaleOriginX: Float
+        get() = scaleOrigin.pivotFractionX
+    val scaleOriginY: Float
+        get() = scaleOrigin.pivotFractionY
+    val rotationOriginX: Float
+        get() = rotationOrigin.pivotFractionX
+    val rotationOriginY: Float
+        get() = rotationOrigin.pivotFractionY
 
     companion object {
         val Origin = TransformCompat(
             scale = ScaleFactorCompat(1f, 1f),
             offset = OffsetCompat.Zero,
             rotation = 0f,
-            origin = com.github.panpf.zoomimage.core.Origin.TopStart,
+            scaleOrigin = TransformOriginCompat.TopStart,
+            rotationOrigin = TransformOriginCompat.Center,
         )
     }
 
@@ -51,7 +58,8 @@ data class TransformCompat(
                 "scale=${scale.toShortString()}, " +
                 "offset=${offset.toShortString()}, " +
                 "rotation=$rotation, " +
-                "origin=${originX.format(2)}x${originY.format(2)}" +
+                "scaleOrigin=${scaleOrigin.toShortString()}, " +
+                "rotationOrigin=${rotationOrigin.toShortString()}" +
                 ")"
     }
 }
@@ -72,8 +80,12 @@ data class TransformCompat(
  * an `AnimationController`.
  */
 fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): TransformCompat {
-    require(start.origin == stop.origin) {
-        "Transform origin must be the same: start.origin=${start.origin}, stop.origin=${stop.origin}"
+    require(start.scaleOrigin == stop.scaleOrigin && start.rotationOrigin == stop.rotationOrigin) {
+        "Transform scaleOrigin and rotationOrigin must be the same: " +
+                "start.scaleOrigin=${start.scaleOrigin}, " +
+                "stop.scaleOrigin=${stop.scaleOrigin}, " +
+                "start.rotationOrigin=${start.rotationOrigin}, " +
+                "stop.rotationOrigin=${stop.rotationOrigin}"
     }
     return start.copy(
         scale = lerp(start.scale, stop.scale, fraction),
@@ -84,8 +96,7 @@ fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): Transf
 }
 
 fun TransformCompat.toShortString(): String =
-    "(${scale.toShortString()},${offset.toShortString()}," +
-            "$rotation,${originX.format(2)}x${originY.format(2)})"
+    "(${scale.toShortString()},${offset.toShortString()},$rotation,${scaleOrigin.toShortString()},${rotationOrigin.toShortString()})"
 
 fun TransformCompat.times(scaleFactor: ScaleFactorCompat): TransformCompat {
     return this.copy(
@@ -114,8 +125,12 @@ fun TransformCompat.div(scaleFactor: ScaleFactorCompat): TransformCompat {
 }
 
 fun TransformCompat.concat(other: TransformCompat): TransformCompat {
-    require(this.origin == other.origin) {
-        "Transform origin must be the same: this.origin=${this.origin}, other.origin=${other.origin}"
+    require(this.scaleOrigin == other.scaleOrigin && this.rotationOrigin == other.rotationOrigin) {
+        "Transform scaleOrigin and rotationOrigin must be the same: " +
+                "this.scaleOrigin=${this.scaleOrigin}, " +
+                "other.scaleOrigin=${other.scaleOrigin}, " +
+                "this.rotationOrigin=${this.rotationOrigin}, " +
+                "other.rotationOrigin=${other.rotationOrigin}"
     }
     return this.copy(
         scale = scale.times(other.scale),

@@ -32,7 +32,7 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContaine
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
-import com.github.panpf.zoomimage.core.Origin
+import com.github.panpf.zoomimage.core.TransformOriginCompat
 import com.github.panpf.zoomimage.core.toShortString
 import org.junit.Assert
 import org.junit.Test
@@ -346,11 +346,11 @@ class ComposeZoomUtilsTest {
 
         var scale = 1f
         listOf(
-            Origin(0.25f, 0.25f) to Offset(0f, 0f),
-            Origin(0.75f, 0.25f) to Offset(-250f, 0f),
-            Origin(0.5f, 0.5f) to Offset(-0f, -0f),
-            Origin(0.25f, 0.75f) to Offset(0f, -500f),
-            Origin(0.75f, 0.75f) to Offset(-250f, -500f),
+            TransformOriginCompat(0.25f, 0.25f) to Offset(0f, 0f),
+            TransformOriginCompat(0.75f, 0.25f) to Offset(-250f, 0f),
+            TransformOriginCompat(0.5f, 0.5f) to Offset(-0f, -0f),
+            TransformOriginCompat(0.25f, 0.75f) to Offset(0f, -500f),
+            TransformOriginCompat(0.75f, 0.75f) to Offset(-250f, -500f),
         ).forEach { (containerOrigin, expected) ->
             val containerPoint = IntOffset(
                 x = (containerOrigin.pivotFractionX * containerSize.width).roundToInt(),
@@ -365,11 +365,11 @@ class ComposeZoomUtilsTest {
 
         scale = 2f
         listOf(
-            Origin(0.25f, 0.25f) to Offset(-0f, -0f),
-            Origin(0.75f, 0.25f) to Offset(-1000f, -0f),
-            Origin(0.5f, 0.5f) to Offset(-500f, -1000f),
-            Origin(0.25f, 0.75f) to Offset(-0f, -2000f),
-            Origin(0.75f, 0.75f) to Offset(-1000f, -2000f),
+            TransformOriginCompat(0.25f, 0.25f) to Offset(-0f, -0f),
+            TransformOriginCompat(0.75f, 0.25f) to Offset(-1000f, -0f),
+            TransformOriginCompat(0.5f, 0.5f) to Offset(-500f, -1000f),
+            TransformOriginCompat(0.25f, 0.75f) to Offset(-0f, -2000f),
+            TransformOriginCompat(0.75f, 0.75f) to Offset(-1000f, -2000f),
         ).forEach { (containerOrigin, expected) ->
             val containerPoint = IntOffset(
                 x = (containerOrigin.pivotFractionX * containerSize.width).roundToInt(),
@@ -3427,12 +3427,12 @@ class ComposeZoomUtilsTest {
     data class Item2(
         val contentScale: ContentScale,
         val alignment: Alignment,
-        val expected: Origin
+        val expected: TransformOriginCompat
     ) {
         fun getMessage(
             containerSize: IntSize,
             contentSize: IntSize,
-            containerOrigin: Origin
+            containerOrigin: TransformOriginCompat
         ): String {
             return "Item2(" +
                     "containerSize=${containerSize.toShortString()}, " +
@@ -3444,7 +3444,7 @@ class ComposeZoomUtilsTest {
         }
     }
 
-    private fun List<Item2>.printlnExpectedMessage2(computeExpected: (Item2) -> Origin): List<Item2> {
+    private fun List<Item2>.printlnExpectedMessage2(computeExpected: (Item2) -> TransformOriginCompat): List<Item2> {
         this.map {
             val expected = computeExpected(it)
             "Item2(" +

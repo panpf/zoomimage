@@ -5,7 +5,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.TopStart
-import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
 
@@ -13,7 +12,8 @@ data class Transform(
     val scale: ScaleFactor,
     val offset: Offset, // todo IntOffset
     val rotation: Float = 0f,   // todo Int
-    val origin: TransformOrigin = TransformOrigin.TopStart, // todo added rotationOrigin
+    val scaleOrigin: TransformOrigin = TransformOrigin.TopStart,
+    val rotationOrigin: TransformOrigin = TransformOrigin.Center,
 ) {
 
     constructor(
@@ -22,13 +22,19 @@ data class Transform(
         offsetX: Float,
         offsetY: Float,
         rotation: Float = 0f,
-        originX: Float = 0f,
-        originY: Float = 0f,
+        scaleOriginX: Float = 0f,
+        scaleOriginY: Float = 0f,
+        rotationOriginX: Float = 0.5f,
+        rotationOriginY: Float = 0.5f,
     ) : this(
         scale = ScaleFactor(scaleX = scaleX, scaleY = scaleY),
         offset = Offset(x = offsetX, y = offsetY),
         rotation = rotation,
-        origin = TransformOrigin(pivotFractionX = originX, pivotFractionY = originY)
+        scaleOrigin = TransformOrigin(pivotFractionX = scaleOriginX, pivotFractionY = scaleOriginY),
+        rotationOrigin = TransformOrigin(
+            pivotFractionX = rotationOriginX,
+            pivotFractionY = rotationOriginY
+        ),
     )
 
     val scaleX: Float
@@ -39,17 +45,22 @@ data class Transform(
         get() = offset.x
     val offsetY: Float
         get() = offset.y
-    val originX: Float
-        get() = origin.pivotFractionX
-    val originY: Float
-        get() = origin.pivotFractionY
+    val scaleOriginX: Float
+        get() = scaleOrigin.pivotFractionX
+    val scaleOriginY: Float
+        get() = scaleOrigin.pivotFractionY
+    val rotationOriginX: Float
+        get() = rotationOrigin.pivotFractionX
+    val rotationOriginY: Float
+        get() = rotationOrigin.pivotFractionY
 
     companion object {
         val Origin = Transform(
             scale = ScaleFactor(1f, 1f),
             offset = Offset.Zero,
             rotation = 0f,
-            origin = TransformOrigin.TopStart,
+            scaleOrigin = TransformOrigin.TopStart,
+            rotationOrigin = TransformOrigin.Center,
         )
     }
 
@@ -58,7 +69,8 @@ data class Transform(
                 "scale=${scale.toShortString()}, " +
                 "offset=${offset.toShortString()}, " +
                 "rotation=$rotation, " +
-                "origin=${originX.format(2)}x${originY.format(2)}" +
+                "scaleOrigin=${scaleOrigin.toShortString()}, " +
+                "rotationOrigin=${rotationOrigin.toShortString()}" +
                 ")"
     }
 }
@@ -80,8 +92,12 @@ data class Transform(
  */
 @Stable
 fun lerp(start: Transform, stop: Transform, fraction: Float): Transform {
-    require(start.origin == stop.origin) {
-        "Transform origin must be the same: start.origin=${start.origin}, stop.origin=${stop.origin}"
+    require(start.scaleOrigin == stop.scaleOrigin && start.rotationOrigin == stop.rotationOrigin) {
+        "Transform scaleOrigin and rotationOrigin must be the same: " +
+                "start.scaleOrigin=${start.scaleOrigin}, " +
+                "stop.scaleOrigin=${stop.scaleOrigin}, " +
+                "start.rotationOrigin=${start.rotationOrigin}, " +
+                "stop.rotationOrigin=${stop.rotationOrigin}"
     }
     return start.copy(
         scale = androidx.compose.ui.layout.lerp(start.scale, stop.scale, fraction),
@@ -91,8 +107,7 @@ fun lerp(start: Transform, stop: Transform, fraction: Float): Transform {
 }
 
 fun Transform.toShortString(): String =
-    "(${scale.toShortString()},${offset.toShortString()}," +
-            "$rotation,${originX.format(2)}x${originY.format(2)})"
+    "(${scale.toShortString()},${offset.toShortString()},$rotation,${scaleOrigin.toShortString()},${rotationOrigin.toShortString()})"
 
 fun Transform.times(scaleFactor: ScaleFactor): Transform {
     return this.copy(
@@ -121,8 +136,12 @@ fun Transform.div(scaleFactor: ScaleFactor): Transform {
 }
 
 fun Transform.concat(other: Transform): Transform {
-    require(this.origin == other.origin) {
-        "Transform origin must be the same: this.origin=${this.origin.toShortString()}, other.origin=${other.origin}"
+    require(this.scaleOrigin == other.scaleOrigin && this.rotationOrigin == other.rotationOrigin) {
+        "Transform scaleOrigin and rotationOrigin must be the same: " +
+                "this.scaleOrigin=${this.scaleOrigin}, " +
+                "other.scaleOrigin=${other.scaleOrigin}, " +
+                "this.rotationOrigin=${this.rotationOrigin}, " +
+                "other.rotationOrigin=${other.rotationOrigin}"
     }
     return this.copy(
         scale = scale.times(other.scale),

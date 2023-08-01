@@ -4,37 +4,37 @@ import com.github.panpf.zoomimage.core.internal.format
 import com.github.panpf.zoomimage.core.internal.lerp
 import kotlin.math.roundToInt
 
-data class Origin(val pivotFractionX: Float, val pivotFractionY: Float) {
+data class TransformOriginCompat(val pivotFractionX: Float, val pivotFractionY: Float) {
 
     /**
      * Multiplication operator.
      *
      * Returns a [TopStart] with scale x and y values multiplied by the operand
      */
-    operator fun times(operand: Float) = Origin(pivotFractionX * operand, pivotFractionY * operand)
+    operator fun times(operand: Float) = TransformOriginCompat(pivotFractionX * operand, pivotFractionY * operand)
 
     /**
      * Division operator.
      *
      * Returns a [TopStart] with scale x and y values divided by the operand
      */
-    operator fun div(operand: Float) = Origin(pivotFractionX / operand, pivotFractionY / operand)
+    operator fun div(operand: Float) = TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
 
-    override fun toString() = "Origin(${pivotFractionX.format(2)}, ${pivotFractionY.format(2)}))"
+    override fun toString() = "TransformOriginCompat(${pivotFractionX.format(2)}, ${pivotFractionY.format(2)}))"
 
     companion object {
-        val TopStart = Origin(pivotFractionX = 0f, pivotFractionY = 0f)
-        val Center = Origin(pivotFractionX = 0.5f, pivotFractionY = 0.5f)
+        val TopStart = TransformOriginCompat(pivotFractionX = 0f, pivotFractionY = 0f)
+        val Center = TransformOriginCompat(pivotFractionX = 0.5f, pivotFractionY = 0.5f)
     }
 }
 
 /**
  * Multiplication operator with [IntSizeCompat].
  *
- * Return a new [IntSizeCompat] with the width and height multiplied by the [Origin.pivotFractionX] and
- * [Origin.pivotFractionY] respectively
+ * Return a new [IntSizeCompat] with the width and height multiplied by the [TransformOriginCompat.pivotFractionX] and
+ * [TransformOriginCompat.pivotFractionY] respectively
  */
-operator fun IntSizeCompat.times(origin: Origin): IntSizeCompat =
+operator fun IntSizeCompat.times(origin: TransformOriginCompat): IntSizeCompat =
     IntSizeCompat(
         width = (this.width * origin.pivotFractionX).roundToInt(),
         height = (this.height * origin.pivotFractionY).roundToInt()
@@ -44,25 +44,25 @@ operator fun IntSizeCompat.times(origin: Origin): IntSizeCompat =
  * Multiplication operator with [IntSizeCompat] with reverse parameter types to maintain
  * commutative properties of multiplication
  *
- * Return a new [IntSizeCompat] with the width and height multiplied by the [Origin.pivotFractionX] and
- * [Origin.pivotFractionY] respectively
+ * Return a new [IntSizeCompat] with the width and height multiplied by the [TransformOriginCompat.pivotFractionX] and
+ * [TransformOriginCompat.pivotFractionY] respectively
  */
-operator fun Origin.times(size: IntSizeCompat): IntSizeCompat = size * this
+operator fun TransformOriginCompat.times(size: IntSizeCompat): IntSizeCompat = size * this
 
 /**
  * Division operator with [IntSizeCompat]
  *
- * Return a new [IntSizeCompat] with the width and height divided by [Origin.pivotFractionX] and
- * [Origin.pivotFractionY] respectively
+ * Return a new [IntSizeCompat] with the width and height divided by [TransformOriginCompat.pivotFractionX] and
+ * [TransformOriginCompat.pivotFractionY] respectively
  */
-operator fun IntSizeCompat.div(origin: Origin): IntSizeCompat =
+operator fun IntSizeCompat.div(origin: TransformOriginCompat): IntSizeCompat =
     IntSizeCompat(
         width = (width / origin.pivotFractionX).roundToInt(),
         height = (height / origin.pivotFractionY).roundToInt()
     )
 
 /**
- * Linearly interpolate between two [Origin] parameters
+ * Linearly interpolate between two [TransformOriginCompat] parameters
  *
  * The [fraction] argument represents position on the timeline, with 0.0 meaning
  * that the interpolation has not started, returning [start] (or something
@@ -76,12 +76,12 @@ operator fun IntSizeCompat.div(origin: Origin): IntSizeCompat =
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
-fun lerp(start: Origin, stop: Origin, fraction: Float): Origin {
-    return Origin(
+fun lerp(start: TransformOriginCompat, stop: TransformOriginCompat, fraction: Float): TransformOriginCompat {
+    return TransformOriginCompat(
         pivotFractionX = lerp(start.pivotFractionX, stop.pivotFractionX, fraction),
         pivotFractionY = lerp(start.pivotFractionY, stop.pivotFractionY, fraction)
     )
 }
 
 
-fun Origin.toShortString(): String = "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"
+fun TransformOriginCompat.toShortString(): String = "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"

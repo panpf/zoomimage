@@ -219,11 +219,11 @@ fun SketchZoomAsyncImage(
             scaleY = transform1.scaleY
             translationX = transform1.offsetX
             translationY = transform1.offsetY
-            transformOrigin = transform1.origin
+            transformOrigin = transform1.scaleOrigin
         }
         .graphicsLayer {
             rotationZ = transform1.rotation
-            transformOrigin = TransformOrigin.Center
+            transformOrigin = transform1.rotationOrigin
         }
         .subsampling(subsamplingState = subsamplingState, zoomableState = null)
 

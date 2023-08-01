@@ -15,7 +15,7 @@ import com.github.panpf.zoomimage.core.IntOffsetCompat
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.Origin
+import com.github.panpf.zoomimage.core.TransformOriginCompat
 import com.github.panpf.zoomimage.core.RectCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.SizeCompat
@@ -155,11 +155,11 @@ fun IntSize.toOffset(): Offset = Offset(x = width.toFloat(), y = height.toFloat(
 fun Size.toOffset(): Offset = Offset(x = width, y = height)
 
 
-fun TransformOrigin.toCompatOrigin(): Origin {
-    return Origin(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
+fun TransformOrigin.toCompatOrigin(): TransformOriginCompat {
+    return TransformOriginCompat(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
 }
 
-fun Origin.toTransformOrigin(): TransformOrigin {
+fun TransformOriginCompat.toTransformOrigin(): TransformOrigin {
     return TransformOrigin(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
 }
 
@@ -178,7 +178,8 @@ fun Transform.toCompatTransform(): TransformCompat {
         scale = scale.toCompatScaleFactor(),
         offset = offset.toCompatOffset(),
         rotation = rotation,
-        origin = origin.toCompatOrigin(),
+        scaleOrigin = scaleOrigin.toCompatOrigin(),
+        rotationOrigin = rotationOrigin.toCompatOrigin(),
     )
 }
 
@@ -187,6 +188,7 @@ fun TransformCompat.toTransform(): Transform {
         scale = scale.toScaleFactor(),
         offset = offset.toOffset(),
         rotation = rotation,
-        origin = origin.toTransformOrigin(),
+        scaleOrigin = scaleOrigin.toTransformOrigin(),
+        rotationOrigin = rotationOrigin.toTransformOrigin(),
     )
 }
