@@ -4,9 +4,7 @@ import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.core.IntRectCompat
 import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.isEmpty
 import com.github.panpf.zoomimage.core.isNotEmpty
 import kotlin.math.max
@@ -23,7 +21,7 @@ fun calculateNextStepScale(
         ?: stepScales.first()
 }
 
-const val DefaultMediumScaleMultiple: Float = 3f
+const val DefaultMediumScaleMinMultiple: Float = 3f
 
 fun computeUserScales(
     contentSize: IntSizeCompat,
@@ -31,7 +29,7 @@ fun computeUserScales(
     containerSize: IntSizeCompat,
     scaleMode: ScaleMode,
     baseScale: ScaleFactorCompat,
-    defaultMediumScaleMultiple: Float
+    mediumScaleMinMultiple: Float
 ): FloatArray {
     if (contentSize.isEmpty() || containerSize.isEmpty()) {
         return floatArrayOf(1.0f, 1.0f, 1.0f)
@@ -39,7 +37,7 @@ fun computeUserScales(
         || baseScale.scaleX.format(2) != baseScale.scaleY.format(2)
     ) {
         val minScale = 1.0f
-        val mediumScale = minScale * defaultMediumScaleMultiple
+        val mediumScale = minScale * mediumScaleMinMultiple
         return floatArrayOf(minScale, mediumScale, mediumScale * 2f)
     } else {
         // The width and height of content fill the container at the same time
@@ -59,7 +57,7 @@ fun computeUserScales(
         val mediumScale = floatArrayOf(
             contentOriginScale,
             fillContainerScale,
-            minScale * defaultMediumScaleMultiple
+            minScale * mediumScaleMinMultiple
         ).maxOrNull()!!
         val maxScale = mediumScale * 2f
         return floatArrayOf(minScale, mediumScale, maxScale)

@@ -266,7 +266,7 @@ internal fun computeZoomInitialConfig(
     scaleType: ScaleType,
     rotation: Int,
     readMode: ReadMode?,
-    defaultMediumScaleMultiple: Float,
+    mediumScaleMinMultiple: Float,
 ): InitialConfig {
     if (contentSize.isEmpty() || containerSize.isEmpty()) {
         return InitialConfig(
@@ -293,7 +293,7 @@ internal fun computeZoomInitialConfig(
             srcSize = rotatedContentSize,
             dstSize = containerSize
         ),
-        defaultMediumScaleMultiple = defaultMediumScaleMultiple
+        mediumScaleMinMultiple = mediumScaleMinMultiple
     )
     val minScale = userStepScales[0] * baseTransform.scaleX
     val mediumScale = userStepScales[1] * baseTransform.scaleX

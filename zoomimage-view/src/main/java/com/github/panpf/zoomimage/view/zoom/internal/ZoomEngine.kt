@@ -31,7 +31,7 @@ import com.github.panpf.zoomimage.core.IntSizeCompat
 import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
 import com.github.panpf.zoomimage.core.TransformCompat
-import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMultiple
+import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMinMultiple
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.core.isEmpty
@@ -153,7 +153,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset()
             }
         }
-    var defaultMediumScaleMultiple: Float = DefaultMediumScaleMultiple
+    var mediumScaleMinMultiple: Float = DefaultMediumScaleMinMultiple
         internal set(value) {
             if (field != value) {
                 field = value
@@ -189,7 +189,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val readMode = readMode
         val rotation = rotation
         val scaleType = scaleType
-        val defaultMediumScaleMultiple = defaultMediumScaleMultiple
+        val mediumScaleMinMultiple = mediumScaleMinMultiple
 
         val initialConfig = computeZoomInitialConfig(
             containerSize = viewSize,
@@ -198,7 +198,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             scaleType = scaleType,
             rotation = rotation,
             readMode = readMode,
-            defaultMediumScaleMultiple = defaultMediumScaleMultiple,
+            mediumScaleMinMultiple = mediumScaleMinMultiple,
         )
         logger.d {
             "reset. viewSize=$viewSize, " +
@@ -206,6 +206,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     "drawableSize=$drawableSize, " +
                     "rotateDegrees=$rotation, " +
                     "scaleType=$scaleType, " +
+                    "mediumScaleMinMultiple=$mediumScaleMinMultiple, " +
                     "readMode=$readMode, " +
                     "minUserScale=${initialConfig.minScale}, " +
                     "mediumUserScale=${initialConfig.mediumScale}, " +

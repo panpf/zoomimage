@@ -48,7 +48,7 @@ import com.github.panpf.zoomimage.compose.zoom.internal.contentPointToContainerP
 import com.github.panpf.zoomimage.compose.zoom.internal.rotateInContainer
 import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
 import com.github.panpf.zoomimage.compose.zoom.internal.touchPointToContainerPoint
-import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMultiple
+import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMinMultiple
 import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
 import com.github.panpf.zoomimage.core.internal.canScroll
 import com.github.panpf.zoomimage.core.internal.computeScrollEdge
@@ -66,7 +66,7 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberZoomableState(
     logger: Logger,
-    defaultMediumScaleMultiple: Float = DefaultMediumScaleMultiple,
+    mediumScaleMinMultiple: Float = DefaultMediumScaleMinMultiple,
     threeStepScale: Boolean = false,
     rubberBandScale: Boolean = true,
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
@@ -74,7 +74,7 @@ fun rememberZoomableState(
 ): ZoomableState {
     val coroutineScope = rememberCoroutineScope()
     val zoomableState = remember { ZoomableState(logger, coroutineScope) }
-    zoomableState.defaultMediumScaleMultiple = defaultMediumScaleMultiple
+    zoomableState.mediumScaleMinMultiple = mediumScaleMinMultiple
     zoomableState.threeStepScale = threeStepScale
     zoomableState.rubberBandScale = rubberBandScale
     zoomableState.animationSpec = animationSpec
@@ -134,11 +134,11 @@ class ZoomableState(
                 reset("readModeChanged")
             }
         }
-    var defaultMediumScaleMultiple: Float = DefaultMediumScaleMultiple
+    var mediumScaleMinMultiple: Float = DefaultMediumScaleMinMultiple
         set(value) {
             if (field != value) {
                 field = value
-                reset("defaultMediumScaleMultipleChanged")
+                reset("mediumScaleMinMultipleChanged")
             }
         }
     var threeStepScale: Boolean = false
@@ -226,7 +226,7 @@ class ZoomableState(
         val contentAlignment = contentAlignment
         val readMode = readMode
         val rotation = baseTransform.rotation
-        val defaultMediumScaleMultiple = defaultMediumScaleMultiple
+        val mediumScaleMinMultiple = mediumScaleMinMultiple
 
         val initialConfig = computeZoomInitialConfig(
             containerSize = containerSize,
@@ -236,7 +236,7 @@ class ZoomableState(
             contentAlignment = contentAlignment,
             rotation = rotation,
             readMode = readMode,
-            defaultMediumScaleMultiple = defaultMediumScaleMultiple
+            mediumScaleMinMultiple = mediumScaleMinMultiple
         )
         logger.d {
             val transform = initialConfig.baseTransform.concat(initialConfig.userTransform)
@@ -247,6 +247,7 @@ class ZoomableState(
                     "contentScale=${contentScale.name}, " +
                     "contentAlignment=${contentAlignment.name}, " +
                     "rotation=${rotation.format(4)}, " +
+                    "mediumScaleMinMultiple=${mediumScaleMinMultiple.format(4)}, " +
                     "readMode=${readMode}. " +
                     "minScale=${initialConfig.minScale.format(4)}, " +
                     "mediumScale=${initialConfig.mediumScale.format(4)}, " +
