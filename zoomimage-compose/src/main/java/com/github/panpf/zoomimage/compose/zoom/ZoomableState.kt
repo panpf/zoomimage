@@ -242,6 +242,7 @@ class ZoomableState(
         maxScale = initialConfig.maxScale
         baseTransform = initialConfig.baseTransform
         val limitedInitialUserTransform = limitUserTransform(initialConfig.userTransform)
+//        val limitedInitialUserTransform = initialConfig.userTransform
         logger.d {
             val transform = initialConfig.baseTransform.concat(limitedInitialUserTransform)
             "reset:$caller. " +

@@ -425,7 +425,7 @@ internal fun computeUserOffsetBounds(
     return offsetBounds
 }
 
-internal fun computeTransform(
+internal fun computeBaseTransform(
     containerSize: IntSize,
     contentSize: IntSize,
     contentScale: ContentScale,
@@ -443,25 +443,6 @@ internal fun computeTransform(
         layoutDirection = LayoutDirection.Ltr
     )
     return Transform(scale = scaleFactor, offset = alignmentOffset.toOffset())
-}
-
-internal fun computeReadModeTransform(
-    containerSize: IntSize,
-    contentSize: IntSize,
-    contentScale: ContentScale,
-    alignment: Alignment,
-): Transform {
-    val baseTransform = computeTransform(
-        containerSize = containerSize,
-        contentSize = contentSize,
-        contentScale = contentScale,
-        alignment = alignment
-    )
-    return com.github.panpf.zoomimage.core.internal.computeReadModeTransform(
-        srcSize = contentSize.toCompatIntSize(),
-        dstSize = containerSize.toCompatIntSize(),
-        baseTransform = baseTransform.toCompatTransform()
-    ).toTransform()
 }
 
 internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds
@@ -544,7 +525,7 @@ internal fun computeZoomInitialConfig(
     val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
     val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
 
-    val baseTransform = computeTransform(
+    val baseTransform = computeBaseTransform(
         contentSize = rotatedContentSize,
         containerSize = containerSize,
         contentScale = contentScale,
@@ -570,14 +551,14 @@ internal fun computeZoomInitialConfig(
         srcSize = rotatedContentSize.toCompatIntSize(),
         dstSize = containerSize.toCompatIntSize()
     ) == true
-    val userTransform = if (readModePassed && contentScale.supportReadMode()) {
-        val readModeTransform = computeReadModeTransform(
-            contentSize = rotatedContentSize,
-            containerSize = containerSize,
-            contentScale = contentScale,
-            alignment = contentAlignment,
-        )
+    val userTransform = if (readMode != null && readModePassed && contentScale.supportReadMode()) {
+        val readModeTransform = readMode.computeTransform(
+            containerSize = containerSize.toCompatIntSize(),
+            contentSize = rotatedContentSize.toCompatIntSize(),
+            baseTransform = baseTransform.toCompatTransform()
+        ).toTransform()
         readModeTransform.div(baseTransform.scale)
+//        readModeTransform.split(baseTransform)
         // todo 直接计算出不需要纠正的 userTransform，省得外面再计算再纠正
     } else {
         Transform.Origin

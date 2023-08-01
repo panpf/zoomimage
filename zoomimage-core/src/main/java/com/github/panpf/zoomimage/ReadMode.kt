@@ -16,7 +16,9 @@
 package com.github.panpf.zoomimage
 
 import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.core.OffsetCompat
 import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.core.TransformCompat
 import com.github.panpf.zoomimage.core.internal.format
 import com.github.panpf.zoomimage.core.internal.isSameDirection
 import com.github.panpf.zoomimage.core.times
@@ -34,6 +36,27 @@ data class ReadMode(
             else -> true
         }
         return if (directionMatched) decider.should(srcSize = srcSize, dstSize = dstSize) else false
+    }
+
+    fun computeTransform(
+        containerSize: IntSizeCompat,
+        contentSize: IntSizeCompat,
+        baseTransform: TransformCompat,
+    ): TransformCompat {
+        val widthScale = containerSize.width / contentSize.width.toFloat()
+        val heightScale = containerSize.height / contentSize.height.toFloat()
+        val fillScale = max(widthScale, heightScale)
+        val addScale = fillScale / baseTransform.scaleX
+        val scaleX = baseTransform.scaleX * addScale
+        val scaleY = baseTransform.scaleY * addScale
+        val translateX = if (baseTransform.offset.x < 0)
+            baseTransform.offset.x * -1 * addScale else 0f
+        val translateY = if (baseTransform.offset.y < 0)
+            baseTransform.offset.y * -1 * addScale else 0f
+        return TransformCompat(
+            scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
+            offset = OffsetCompat(x = translateX, y = translateY)
+        )
     }
 
     companion object {

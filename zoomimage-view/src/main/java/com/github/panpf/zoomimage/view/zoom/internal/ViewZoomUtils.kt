@@ -174,18 +174,6 @@ internal fun computeContentScaleOffset(
 
 internal fun ScaleType.supportReadMode(): Boolean = this != ScaleType.FIT_XY
 
-internal fun computeReadModeTransform(
-    srcSize: IntSizeCompat,
-    dstSize: IntSizeCompat,
-    scaleType: ScaleType,
-): TransformCompat {
-    return com.github.panpf.zoomimage.core.internal.computeReadModeTransform(
-        srcSize = srcSize,
-        dstSize = dstSize,
-        baseTransform = scaleType.computeTransform(srcSize = srcSize, dstSize = dstSize)
-    )
-}
-
 
 fun ScaleType.toScaleMode(): ScaleMode = when (this) {
     ScaleType.CENTER -> ScaleMode.NONE

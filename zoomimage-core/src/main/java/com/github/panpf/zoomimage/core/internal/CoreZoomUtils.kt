@@ -68,26 +68,6 @@ fun computeUserScales(
     }
 }
 
-fun computeReadModeTransform(
-    srcSize: IntSizeCompat,
-    dstSize: IntSizeCompat,
-    baseTransform: TransformCompat,
-): TransformCompat {
-    val widthScale = dstSize.width / srcSize.width.toFloat()
-    val heightScale = dstSize.height / srcSize.height.toFloat()
-    val fillMaxDimension = max(widthScale, heightScale)
-    @Suppress("UnnecessaryVariable") val scaleX = fillMaxDimension
-    @Suppress("UnnecessaryVariable") val scaleY = fillMaxDimension
-    val translateX =
-        if (baseTransform.offset.x < 0) baseTransform.offset.x * -1 * scaleX else 0.0f
-    val translateY =
-        if (baseTransform.offset.y < 0) baseTransform.offset.y * -1 * scaleY else 0.0f
-    return TransformCompat(
-        scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
-        offset = OffsetCompat(x = translateX, y = translateY)
-    )
-}
-
 //fun computeCanDrag(
 //    contentSize: SizeCompat,
 //    contentVisibleRect: RectFCompat,

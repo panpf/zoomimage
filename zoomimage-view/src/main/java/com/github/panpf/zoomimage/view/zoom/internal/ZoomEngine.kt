@@ -190,6 +190,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val drawableSize = drawableSize
         val imageSize = imageSize
         val viewSize = viewSize
+        val readMode = readMode
         if (drawableSize.isEmpty() || viewSize.isEmpty()) {
             minScale = 1.0f
             mediumScale = 1.0f
@@ -215,13 +216,13 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             minScale = userStepScales[0] * baseInitialTransform.scaleX
             mediumScale = userStepScales[1] * baseInitialTransform.scaleX
             maxScale = userStepScales[2] * baseInitialTransform.scaleX
-            val readMode = scaleType.supportReadMode()
+            val readModeResult = scaleType.supportReadMode()
                     && readMode?.should(srcSize = rotatedDrawableSize, dstSize = viewSize) == true
-            userInitialTransform = if (readMode) {
-                val readModeTransform = computeReadModeTransform(
-                    srcSize = rotatedDrawableSize,
-                    dstSize = viewSize,
-                    scaleType = scaleType,
+            userInitialTransform = if (readMode != null && readModeResult) {
+                val readModeTransform = readMode.computeTransform(
+                    containerSize = viewSize,
+                    contentSize = rotatedDrawableSize,
+                    baseTransform = baseInitialTransform,
                 )
                 readModeTransform.div(baseInitialTransform.scale)
             } else {
