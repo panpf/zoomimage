@@ -7,11 +7,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
 import androidx.core.view.ViewCompat
-import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.times
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.times
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.max

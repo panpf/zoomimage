@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.core.internal
+package com.github.panpf.zoomimage.util.internal
 
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -16,7 +16,6 @@ internal fun Float.format(newScale: Int): Float {
         BigDecimal(toDouble()).setScale(newScale, RoundingMode.HALF_UP).toFloat()
     }
 }
-
 
 // File of internal utility methods used for the geometry library
 internal fun Float.toStringAsFixed(digits: Int): String {

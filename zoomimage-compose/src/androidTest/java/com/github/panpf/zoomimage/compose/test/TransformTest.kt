@@ -10,9 +10,9 @@ import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.concat
 import com.github.panpf.zoomimage.compose.zoom.internal.computeBaseTransform
-import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
-import com.github.panpf.zoomimage.compose.zoom.internal.toCompatTransform
-import com.github.panpf.zoomimage.compose.zoom.internal.toTransform
+import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toCompatTransform
+import com.github.panpf.zoomimage.compose.internal.toTransform
 import com.github.panpf.zoomimage.compose.zoom.split
 import org.junit.Assert
 import org.junit.Test
@@ -40,8 +40,8 @@ class TransformTest {
         }
 
         val readModeTransform = readMode.computeTransform(
-            containerSize = containerSize.toCompatIntSize(),
-            contentSize = contentSize.toCompatIntSize(),
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
             baseTransform = baseTransform.toCompatTransform()
         ).toTransform().also {
             val expected = Transform(ScaleFactor(7.137931f), Offset(0f, 0f))
@@ -79,8 +79,8 @@ class TransformTest {
         }
 
         val readModeTransform = readMode.computeTransform(
-            containerSize = containerSize.toCompatIntSize(),
-            contentSize = contentSize.toCompatIntSize(),
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
             baseTransform = baseTransform.toCompatTransform()
         ).toTransform().also {
             val expected = Transform(ScaleFactor(7.137931f), Offset(-22912.758f, 0f))

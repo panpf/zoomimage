@@ -26,17 +26,17 @@ import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.core.IntOffsetCompat
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.TransformCompat
-import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMinMultiple
-import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
-import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
-import com.github.panpf.zoomimage.core.isEmpty
-import com.github.panpf.zoomimage.core.roundToCompatIntOffset
-import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
+import com.github.panpf.zoomimage.util.calculateNextStepScale
+import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
+import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.round
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.getScale
 import com.github.panpf.zoomimage.view.internal.getTranslation
@@ -393,7 +393,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     val dy = (lastY - newY).toFloat()
 //                    offsetBy(dx, dy)
                     val add = IntOffsetCompat(dx.roundToInt(), dy.roundToInt())
-                    offset(offset.roundToCompatIntOffset() + add)
+                    offset(offset.round() + add)
                     lastX = newX
                     lastY = newY
                 },
@@ -404,7 +404,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             val dx = -(centerLocation.x - start.x).toFloat()
             val dy = -(centerLocation.y - start.y).toFloat()
             val add = IntOffsetCompat(dx.roundToInt(), dy.roundToInt())
-            offset(offset.roundToCompatIntOffset() + add)
+            offset(offset.round() + add)
         }
     }
 
@@ -478,7 +478,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 val dx = (currentX - newX).toFloat()
                 val dy = (currentY - newY).toFloat()
                 val add = IntOffsetCompat(dx.roundToInt(), dy.roundToInt())
-                offset(offset.roundToCompatIntOffset() + add)
+                offset(offset.round() + add)
                 currentX = newX
                 currentY = newY
             },
@@ -618,7 +618,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      * @param direction Negative to check scrolling left, positive to check scrolling right.
      */
     fun canScroll(horizontal: Boolean, direction: Int): Boolean {
-        return com.github.panpf.zoomimage.core.internal.canScroll(horizontal, direction, scrollEdge)
+        return com.github.panpf.zoomimage.util.canScroll(horizontal, direction, scrollEdge)
     }
 
     fun actionDown() {

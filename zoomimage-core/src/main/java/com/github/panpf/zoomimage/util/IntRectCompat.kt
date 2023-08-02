@@ -1,52 +1,50 @@
-package com.github.panpf.zoomimage.core
+package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.core.internal.format
-import com.github.panpf.zoomimage.core.internal.lerp
-import com.github.panpf.zoomimage.core.internal.toStringAsFixed
+import com.github.panpf.zoomimage.util.internal.lerp
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * An immutable, 2D, axis-aligned, floating-point rectangle whose coordinates
  * are relative to a given origin.
  */
-data class RectCompat(
+data class IntRectCompat(
     /**
      * The offset of the left edge of this rectangle from the x axis.
      */
-    val left: Float,
+    val left: Int,
 
     /**
      * The offset of the top edge of this rectangle from the y axis.
      */
-    val top: Float,
+    val top: Int,
 
     /**
      * The offset of the right edge of this rectangle from the x axis.
      */
-    val right: Float,
+    val right: Int,
 
     /**
      * The offset of the bottom edge of this rectangle from the y axis.
      */
-    val bottom: Float
+    val bottom: Int
 ) {
-
     companion object {
 
         /** A rectangle with left, top, right, and bottom edges all at zero. */
-        val Zero: RectCompat = RectCompat(0.0f, 0.0f, 0.0f, 0.0f)
+        val Zero: IntRectCompat = IntRectCompat(0, 0, 0, 0)
     }
 
     /** The distance between the left and right edges of this rectangle. */
-    val width: Float
+    val width: Int
         get() {
             return right - left
         }
 
     /** The distance between the top and bottom edges of this rectangle. */
-    val height: Float
+    val height: Int
         get() {
             return bottom - top
         }
@@ -55,23 +53,8 @@ data class RectCompat(
      * The distance between the upper-left corner and the lower-right corner of
      * this rectangle.
      */
-    val size: SizeCompat
-        get() = SizeCompat(width, height)
-
-    /** Whether any of the coordinates of this rectangle are equal to positive infinity. */
-    // included for consistency with Offset and Size
-    val isInfinite: Boolean
-        get() = left >= Float.POSITIVE_INFINITY ||
-                top >= Float.POSITIVE_INFINITY ||
-                right >= Float.POSITIVE_INFINITY ||
-                bottom >= Float.POSITIVE_INFINITY
-
-    /** Whether all coordinates of this rectangle are finite. */
-    val isFinite: Boolean
-        get() = left.isFinite() &&
-                top.isFinite() &&
-                right.isFinite() &&
-                bottom.isFinite()
+    val size: IntSizeCompat
+        get() = IntSizeCompat(width, height)
 
     /**
      * Whether this rectangle encloses a non-zero area. Negative areas are
@@ -86,16 +69,16 @@ data class RectCompat(
      * To translate a rectangle by separate x and y components rather than by an
      * [OffsetCompat], consider [translate].
      */
-    fun translate(offset: OffsetCompat): RectCompat {
-        return RectCompat(left + offset.x, top + offset.y, right + offset.x, bottom + offset.y)
+    fun translate(offset: IntOffsetCompat): IntRectCompat {
+        return IntRectCompat(left + offset.x, top + offset.y, right + offset.x, bottom + offset.y)
     }
 
     /**
      * Returns a new rectangle with translateX added to the x components and
      * translateY added to the y components.
      */
-    fun translate(translateX: Float, translateY: Float): RectCompat {
-        return RectCompat(
+    fun translate(translateX: Int, translateY: Int): IntRectCompat {
+        return IntRectCompat(
             left + translateX,
             top + translateY,
             right + translateX,
@@ -104,21 +87,21 @@ data class RectCompat(
     }
 
     /** Returns a new rectangle with edges moved outwards by the given delta. */
-    fun inflate(delta: Float): RectCompat {
-        return RectCompat(left - delta, top - delta, right + delta, bottom + delta)
+    fun inflate(delta: Int): IntRectCompat {
+        return IntRectCompat(left - delta, top - delta, right + delta, bottom + delta)
     }
 
     /** Returns a new rectangle with edges moved inwards by the given delta. */
-    fun deflate(delta: Float): RectCompat = inflate(-delta)
+    fun deflate(delta: Int): IntRectCompat = inflate(-delta)
 
     /**
      * Returns a new rectangle that is the intersection of the given
      * rectangle and this rectangle. The two rectangles must overlap
      * for this to be meaningful. If the two rectangles do not overlap,
-     * then the resulting Rect will have a negative width or height.
+     * then the resulting IntRectCompat will have a negative width or height.
      */
-    fun intersect(other: RectCompat): RectCompat {
-        return RectCompat(
+    fun intersect(other: IntRectCompat): IntRectCompat {
+        return IntRectCompat(
             max(left, other.left),
             max(top, other.top),
             min(right, other.right),
@@ -127,7 +110,7 @@ data class RectCompat(
     }
 
     /** Whether `other` has a nonzero area of overlap with this rectangle. */
-    fun overlaps(other: RectCompat): Boolean {
+    fun overlaps(other: IntRectCompat): Boolean {
         if (right <= other.left || other.right <= left)
             return false
         if (bottom <= other.top || other.bottom <= top)
@@ -139,75 +122,75 @@ data class RectCompat(
      * The lesser of the magnitudes of the [width] and the [height] of this
      * rectangle.
      */
-    val minDimension: Float
-        get() = min(width.absoluteValue, height.absoluteValue)
+    val minDimension: Int
+        get() = kotlin.math.min(width.absoluteValue, height.absoluteValue)
 
     /**
      * The greater of the magnitudes of the [width] and the [height] of this
      * rectangle.
      */
-    val maxDimension: Float
-        get() = max(width.absoluteValue, height.absoluteValue)
+    val maxDimension: Int
+        get() = kotlin.math.max(width.absoluteValue, height.absoluteValue)
 
     /**
      * The offset to the intersection of the top and left edges of this rectangle.
      */
-    val topLeft: OffsetCompat
-        get() = OffsetCompat(left, top)
+    val topLeft: IntOffsetCompat
+        get() = IntOffsetCompat(left, top)
 
     /**
      * The offset to the center of the top edge of this rectangle.
      */
-    val topCenter: OffsetCompat
-        get() = OffsetCompat(left + width / 2.0f, top)
+    val topCenter: IntOffsetCompat
+        get() = IntOffsetCompat(left + width / 2, top)
 
     /**
      * The offset to the intersection of the top and right edges of this rectangle.
      */
-    val topRight: OffsetCompat
-        get() = OffsetCompat(right, top)
+    val topRight: IntOffsetCompat
+        get() = IntOffsetCompat(right, top)
 
     /**
      * The offset to the center of the left edge of this rectangle.
      */
-    val centerLeft: OffsetCompat
-        get() = OffsetCompat(left, top + height / 2.0f)
+    val centerLeft: IntOffsetCompat
+        get() = IntOffsetCompat(left, top + height / 2)
 
     /**
      * The offset to the point halfway between the left and right and the top and
      * bottom edges of this rectangle.
      *
-     * See also [SizeCompat.center].
+     * See also [IntSizeCompat.center].
      */
-    val center: OffsetCompat
-        get() = OffsetCompat(left + width / 2.0f, top + height / 2.0f)
+    val center: IntOffsetCompat
+        get() = IntOffsetCompat(left + width / 2, top + height / 2)
 
     /**
      * The offset to the center of the right edge of this rectangle.
      */
-    val centerRight: OffsetCompat
-        get() = OffsetCompat(right, top + height / 2.0f)
+    val centerRight: IntOffsetCompat
+        get() = IntOffsetCompat(right, top + height / 2)
 
     /**
      * The offset to the intersection of the bottom and left edges of this rectangle.
      */
-    val bottomLeft: OffsetCompat
-        get() = OffsetCompat(left, bottom)
+    val bottomLeft: IntOffsetCompat
+        get() = IntOffsetCompat(left, bottom)
 
     /**
      * The offset to the center of the bottom edge of this rectangle.
      */
-    val bottomCenter: OffsetCompat
+    val bottomCenter: IntOffsetCompat
         get() {
-            return OffsetCompat(left + width / 2.0f, bottom)
+            return IntOffsetCompat(left + width / 2, bottom)
         }
 
     /**
      * The offset to the intersection of the bottom and right edges of this rectangle.
      */
-    val bottomRight: OffsetCompat
+    val bottomRight: IntOffsetCompat
         get() {
-            return OffsetCompat(right, bottom)
+            return IntOffsetCompat(right, bottom)
         }
 
     /**
@@ -218,32 +201,34 @@ data class RectCompat(
      * Rectangles include their top and left edges but exclude their bottom and
      * right edges.
      */
-    operator fun contains(offset: OffsetCompat): Boolean {
+    fun contains(offset: IntOffsetCompat): Boolean {
         return offset.x >= left && offset.x < right && offset.y >= top && offset.y < bottom
     }
 
-    override fun toString() = "Rect.fromLTRB(" +
-            "${left.toStringAsFixed(1)}, " +
-            "${top.toStringAsFixed(1)}, " +
-            "${right.toStringAsFixed(1)}, " +
-            "${bottom.toStringAsFixed(1)})"
+    override fun toString() = "IntRectCompat.fromLTRB(" +
+            "$left, " +
+            "$top, " +
+            "$right, " +
+            "$bottom)"
 }
 
 /**
  * Construct a rectangle from its left and top edges as well as its width and height.
- * @param offset OffsetCompat to represent the top and left parameters of the Rect
- * @param size Size to determine the width and height of this [RectCompat].
- * @return Rect with [RectCompat.left] and [RectCompat.top] configured to [OffsetCompat.x] and [OffsetCompat.y] as
- * [RectCompat.right] and [RectCompat.bottom] to [OffsetCompat.x] + [SizeCompat.width] and [OffsetCompat.y] + [SizeCompat.height]
- * respectively
+ * @param offset OffsetCompat to represent the top and left parameters of the RectCompat
+ * @param size Size to determine the width and height of this [IntRectCompat].
+ * @return RectCompat with [IntRectCompat.left] and [IntRectCompat.top] configured to [IntOffsetCompat.x] and
+ * [IntOffsetCompat.y] as [IntRectCompat.right] and [IntRectCompat.bottom] to [IntOffsetCompat.x] + [IntSizeCompat.width] and
+ * [IntOffsetCompat.y] + [IntSizeCompat.height] respectively
  */
-fun RectCompat(offset: OffsetCompat, size: SizeCompat): RectCompat =
-    RectCompat(
-        offset.x,
-        offset.y,
-        offset.x + size.width,
-        offset.y + size.height
-    )
+fun IntRectCompat(
+    offset: IntOffsetCompat,
+    size: IntSizeCompat
+) = IntRectCompat(
+    left = offset.x,
+    top = offset.y,
+    right = offset.x + size.width,
+    bottom = offset.y + size.height
+)
 
 /**
  * Construct the smallest rectangle that encloses the given offsets, treating
@@ -251,26 +236,30 @@ fun RectCompat(offset: OffsetCompat, size: SizeCompat): RectCompat =
  * @param topLeft OffsetCompat representing the left and top edges of the rectangle
  * @param bottomRight OffsetCompat representing the bottom and right edges of the rectangle
  */
-fun RectCompat(topLeft: OffsetCompat, bottomRight: OffsetCompat): RectCompat =
-    RectCompat(
-        topLeft.x,
-        topLeft.y,
-        bottomRight.x,
-        bottomRight.y
-    )
+fun IntRectCompat(
+    topLeft: IntOffsetCompat,
+    bottomRight: IntOffsetCompat
+): IntRectCompat = IntRectCompat(
+    left = topLeft.x,
+    top = topLeft.y,
+    right = bottomRight.x,
+    bottom = bottomRight.y
+)
 
 /**
  * Construct a rectangle that bounds the given circle
  * @param center OffsetCompat that represents the center of the circle
  * @param radius Radius of the circle to enclose
  */
-fun RectCompat(center: OffsetCompat, radius: Float): RectCompat =
-    RectCompat(
-        center.x - radius,
-        center.y - radius,
-        center.x + radius,
-        center.y + radius
-    )
+fun IntRectCompat(
+    center: IntOffsetCompat,
+    radius: Int
+): IntRectCompat = IntRectCompat(
+    left = center.x - radius,
+    top = center.y - radius,
+    right = center.x + radius,
+    bottom = center.y + radius
+)
 
 /**
  * Linearly interpolate between two rectangles.
@@ -287,8 +276,8 @@ fun RectCompat(center: OffsetCompat, radius: Float): RectCompat =
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
-fun lerp(start: RectCompat, stop: RectCompat, fraction: Float): RectCompat {
-    return RectCompat(
+fun lerp(start: IntRectCompat, stop: IntRectCompat, fraction: Float): IntRectCompat {
+    return IntRectCompat(
         lerp(start.left, stop.left, fraction),
         lerp(start.top, stop.top, fraction),
         lerp(start.right, stop.right, fraction),
@@ -297,5 +286,24 @@ fun lerp(start: RectCompat, stop: RectCompat, fraction: Float): RectCompat {
 }
 
 
-fun RectCompat.toShortString(): String =
-    "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
+fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
+
+/**
+ * Converts an [IntRectCompat] to a [RectCompat]
+ */
+fun IntRectCompat.toRect(): RectCompat = RectCompat(
+    left = left.toFloat(),
+    top = top.toFloat(),
+    right = right.toFloat(),
+    bottom = bottom.toFloat()
+)
+
+/**
+ * Rounds a [RectCompat] to an [IntRectCompat]
+ */
+fun RectCompat.round(): IntRectCompat = IntRectCompat(
+    left = left.roundToInt(),
+    top = top.roundToInt(),
+    right = right.roundToInt(),
+    bottom = bottom.roundToInt()
+)

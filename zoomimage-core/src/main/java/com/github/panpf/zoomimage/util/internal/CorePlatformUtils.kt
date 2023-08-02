@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.core.internal
+package com.github.panpf.zoomimage.util.internal
 
 import android.graphics.Bitmap
 import android.os.Looper
@@ -18,4 +18,9 @@ internal fun requiredWorkThread() {
 
 internal fun isMainThread() = Looper.myLooper() == Looper.getMainLooper()
 
-fun Bitmap.toShortString(): String = "(${width}x${height},$config)"
+internal fun Bitmap.toShortString(): String = "(${width}x${height},$config)"
+
+internal fun Bitmap.toHexString(): String = "Bitmap(${width}x${height},$config,@${(this as Any).toHexString()})"
+
+internal val Bitmap.safeConfig: Bitmap.Config
+    get() = config ?: Bitmap.Config.ARGB_8888

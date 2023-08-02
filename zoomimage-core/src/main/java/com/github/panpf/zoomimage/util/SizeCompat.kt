@@ -1,6 +1,6 @@
-package com.github.panpf.zoomimage.core
+package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.core.internal.format
+import com.github.panpf.zoomimage.util.internal.format
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -45,7 +45,7 @@ data class SizeCompat(val width: Float, val height: Float) {
         get() = max(width.absoluteValue, height.absoluteValue)
 
     override fun toString(): String =
-        "Size(${width.format(2)}x${height.format(2)})"
+        "SizeCompat(${width.format(2)}x${height.format(2)})"
 }
 
 /**
@@ -63,7 +63,7 @@ inline operator fun Double.times(size: SizeCompat) = size * this.toFloat()
 /**
  * Convert a [SizeCompat] to a [RectCompat].
  */
-fun SizeCompat.toCompatRect(): RectCompat {
+fun SizeCompat.toRect(): RectCompat {
     return RectCompat(OffsetCompat.Zero, this)
 }
 
@@ -78,6 +78,9 @@ inline operator fun Float.times(size: SizeCompat) = size * this
  * with this [SizeCompat].
  */
 val SizeCompat.center: OffsetCompat get() = OffsetCompat(x = width / 2f, y = height / 2f)
+
+
+fun SizeCompat.toShortString(): String = "${width.format(2)}x${height.format(2)}"
 
 
 val SizeCompat.isNotEmpty: Boolean
@@ -95,12 +98,14 @@ fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean 
     return false
 }
 
-fun SizeCompat.rotate(rotateDegrees: Int): SizeCompat {
-    return if (rotateDegrees % 180 == 0) this else SizeCompat(width = height, height = width)
+fun SizeCompat.rotate(rotation: Int): SizeCompat {
+    return if (rotation % 180 == 0) this else SizeCompat(width = height, height = width)
 }
-
-fun SizeCompat.toShortString(): String = "${width.format(2)}x${height.format(2)}"
 
 operator fun SizeCompat.times(scaleFactor: ScaleFactorCompat): SizeCompat {
     return SizeCompat(width = width * scaleFactor.scaleX, height = height * scaleFactor.scaleY)
+}
+
+operator fun SizeCompat.div(scaleFactor: ScaleFactorCompat): SizeCompat {
+    return SizeCompat(width = width / scaleFactor.scaleX, height = height / scaleFactor.scaleY)
 }

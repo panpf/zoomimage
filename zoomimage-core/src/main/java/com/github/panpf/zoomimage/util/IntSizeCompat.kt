@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.core
+package com.github.panpf.zoomimage.util
 
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -17,7 +17,7 @@ data class IntSizeCompat(val width: Int, val height: Int) {
     operator fun div(other: Int): IntSizeCompat =
         IntSizeCompat(width = width / other, height = height / other)
 
-    override fun toString(): String = "IntSize(${width}x$height)"
+    override fun toString(): String = "IntSizeCompat(${width}x$height)"
 
     companion object {
         val Zero = IntSizeCompat(width = 0, height = 0)
@@ -33,7 +33,7 @@ operator fun Int.times(size: IntSizeCompat) = size * this
 /**
  * Convert a [IntSizeCompat] to a [IntRectCompat].
  */
-fun IntSizeCompat.toCompatIntRect(): IntRectCompat {
+fun IntSizeCompat.toIntRect(): IntRectCompat {
     return IntRectCompat(IntOffsetCompat.Zero, this)
 }
 
@@ -71,14 +71,21 @@ fun IntSizeCompat.rotate(rotateDegrees: Int): IntSizeCompat {
     return if (rotateDegrees % 180 == 0) this else IntSizeCompat(width = height, height = width)
 }
 
-fun IntSizeCompat.toCompatSize(): SizeCompat = SizeCompat(width.toFloat(), height.toFloat())
+fun IntSizeCompat.toSize(): SizeCompat = SizeCompat(width.toFloat(), height.toFloat())
 
-fun SizeCompat.roundToCompatIntSize(): IntSizeCompat =
+fun SizeCompat.round(): IntSizeCompat =
     IntSizeCompat(width.roundToInt(), height.roundToInt())
 
 operator fun IntSizeCompat.times(scaleFactor: ScaleFactorCompat): IntSizeCompat {
     return IntSizeCompat(
         width = (width * scaleFactor.scaleX).roundToInt(),
         height = (height * scaleFactor.scaleY).roundToInt()
+    )
+}
+
+operator fun IntSizeCompat.div(scaleFactor: ScaleFactorCompat): IntSizeCompat {
+    return IntSizeCompat(
+        width = (width / scaleFactor.scaleX).roundToInt(),
+        height = (height / scaleFactor.scaleY).roundToInt()
     )
 }

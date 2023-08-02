@@ -16,9 +16,9 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.core.internal.toShortString
-import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.internal.toShortString
+import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.Job
 
 class Tile constructor(val srcRect: IntRectCompat, val inSampleSize: Int) {

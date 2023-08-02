@@ -7,7 +7,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.core.IntRectCompat
+import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.Tile

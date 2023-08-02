@@ -4,10 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.annotation.WorkerThread
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.internal.requiredWorkThread
-import com.github.panpf.zoomimage.core.internal.toHexString
-import com.github.panpf.zoomimage.core.isEmpty
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.internal.requiredWorkThread
+import com.github.panpf.zoomimage.util.internal.toHexString
+import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -25,8 +25,8 @@ class TileBitmapPoolHelper(logger: Logger) {
 
     private val logger = logger.newLogger(module = "SubsamplingTileBitmapPoolHelper")
     private val coroutineScope =
-        CoroutineScope(SupervisorJob() + Dispatchers.Main + CoroutineExceptionHandler { coroutineContext, throwable ->
-            logger.e(throwable) { "TileBitmapPoolHelper error. ${throwable.message}" }
+        CoroutineScope(SupervisorJob() + Dispatchers.Main + CoroutineExceptionHandler { _, throwable ->
+            logger.e(throwable) { "TileBitmapPoolHelper. CoroutineExceptionHandler: ${throwable.message}" }
         })
     var disallowReuseBitmap = false
     var tileBitmapPool: TileBitmapPool? = null

@@ -21,6 +21,18 @@ import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
+
+@Composable
+internal fun Dp.toPx(): Float {
+    return with(LocalDensity.current) { this@toPx.toPx() }
+}
+
+@Composable
+internal fun Float.toDp(): Dp {
+    return with(LocalDensity.current) { this@toDp.toDp() }
+}
+
+
 internal fun Size.toShortString(): String =
     if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
 
@@ -42,21 +54,107 @@ internal fun TransformOrigin.toShortString(): String =
     "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"
 
 
+internal fun IntSize.toOffset(): Offset = Offset(x = width.toFloat(), y = height.toFloat())
+
+internal fun IntSize.toIntOffset(): IntOffset = IntOffset(x = width, y = height)
+
+internal fun Size.toOffset(): Offset = Offset(x = width, y = height)
+
+internal fun Size.roundToOffset(): IntOffset = IntOffset(x = width.roundToInt(), y = height.roundToInt())
+
+internal fun IntOffset.toSize(): Size = Size(width = x.toFloat(), height = y.toFloat())
+
+internal fun IntOffset.toIntSize(): IntSize = IntSize(width = x, height = y)
+
+internal fun Offset.toSize(): Size = Size(width = x, height = y)
+
+internal fun Offset.roundToSize(): IntSize = IntSize(width = x.roundToInt(), height = y.roundToInt())
+
+
 internal fun Size.isAvailable(): Boolean = isSpecified && !isEmpty()
 
 internal fun Size.isNotAvailable(): Boolean = isUnspecified || isEmpty()
 
-internal fun Size.rotate(rotateDegrees: Int): Size {
-    return if (rotateDegrees % 180 == 0) this else Size(height, width)
-}
 
-internal fun Size.roundToIntSize(): IntSize {
-    return IntSize(width.roundToInt(), height.roundToInt())
-}
+internal fun Size.rotate(rotateDegrees: Int): Size =
+    if (rotateDegrees % 180 == 0) this else Size(height, width)
 
-private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
-val TransformOrigin.Companion.TopStart: TransformOrigin
-    get() = transformOriginTopStart
+
+internal fun Size.round(): IntSize =
+    IntSize(width.roundToInt(), height.roundToInt())
+
+
+@Stable
+operator fun Size.times(scaleFactor: ScaleFactor): Size =
+    Size(
+        width = this.width * scaleFactor.scaleX,
+        height = this.height * scaleFactor.scaleY,
+    )
+
+@Stable
+operator fun Size.div(scaleFactor: ScaleFactor): Size =
+    Size(
+        width = this.width / scaleFactor.scaleX,
+        height = this.height / scaleFactor.scaleY,
+    )
+
+@Stable
+operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
+    IntSize(
+        width = (this.width * scaleFactor.scaleX).roundToInt(),
+        height = (this.height * scaleFactor.scaleY).roundToInt()
+    )
+
+@Stable
+operator fun IntSize.div(scaleFactor: ScaleFactor): IntSize =
+    IntSize(
+        width = (this.width / scaleFactor.scaleX).roundToInt(),
+        height = (this.height / scaleFactor.scaleY).roundToInt()
+    )
+
+@Stable
+operator fun IntSize.times(scale: Float): IntSize =
+    IntSize(
+        width = (this.width * scale).roundToInt(),
+        height = (this.height * scale).roundToInt()
+    )
+
+@Stable
+operator fun IntSize.div(scale: Float): IntSize =
+    IntSize(
+        width = (this.width / scale).roundToInt(),
+        height = (this.height / scale).roundToInt()
+    )
+
+operator fun Offset.times(scaleFactor: ScaleFactor): Offset =
+    Offset(x * scaleFactor.scaleX, y * scaleFactor.scaleY)
+
+operator fun Offset.div(scaleFactor: ScaleFactor): Offset =
+    Offset(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
+
+operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset =
+    IntOffset(
+        x = (x * scaleFactor.scaleX).roundToInt(),
+        y = (y * scaleFactor.scaleY).roundToInt()
+    )
+
+operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
+    IntOffset(
+        x = (x / scaleFactor.scaleX).roundToInt(),
+        y = (y / scaleFactor.scaleY).roundToInt()
+    )
+
+
+@Stable
+fun IntSize.isEmpty(): Boolean = width == 0 || height == 0
+
+@Stable
+fun IntSize.isNotEmpty(): Boolean = !isEmpty()
+
+
+internal fun IntSize.rotate(rotation: Int): IntSize {
+    return if (rotation % 180 == 0) this else IntSize(height, width)
+}
 
 /**
  * Rotates the given offset around the origin by the given angle in degrees.
@@ -74,6 +172,11 @@ fun Offset.rotateBy(angle: Float): Offset {
     )
 }
 
+
+private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
+val TransformOrigin.Companion.TopStart: TransformOrigin
+    get() = transformOriginTopStart
+
 @Stable
 internal operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
     ScaleFactor(scaleX * scaleFactor.scaleX, scaleY * scaleFactor.scaleY)
@@ -85,86 +188,77 @@ internal operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
 internal fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
 
 
-internal fun Rect.scale(scale: Float): Rect {
-    return Rect(
+internal fun Rect.scale(scale: Float): Rect =
+    Rect(
         left = (left * scale),
         top = (top * scale),
         right = (right * scale),
         bottom = (bottom * scale),
     )
-}
 
-internal fun IntRect.scale(scale: Float): IntRect {
-    return IntRect(
+internal fun IntRect.scale(scale: Float): IntRect =
+    IntRect(
         left = (left * scale).roundToInt(),
         top = (top * scale).roundToInt(),
         right = (right * scale).roundToInt(),
         bottom = (bottom * scale).roundToInt(),
     )
-}
 
-internal fun IntRect.scale(scale: ScaleFactor): IntRect {
-    return IntRect(
+internal fun IntRect.scale(scale: ScaleFactor): IntRect =
+    IntRect(
         left = (left * scale.scaleX).roundToInt(),
         top = (top * scale.scaleY).roundToInt(),
         right = (right * scale.scaleX).roundToInt(),
         bottom = (bottom * scale.scaleY).roundToInt(),
     )
-}
 
-internal fun Rect.restoreScale(scale: Float): Rect {
-    return Rect(
+internal fun Rect.restoreScale(scale: Float): Rect =
+    Rect(
         left = (left / scale),
         top = (top / scale),
         right = (right / scale),
         bottom = (bottom / scale),
     )
-}
 
-internal fun Rect.restoreScale(scaleFactor: ScaleFactor): Rect {
-    return Rect(
+internal fun Rect.restoreScale(scaleFactor: ScaleFactor): Rect =
+    Rect(
         left = (left / scaleFactor.scaleX),
         top = (top / scaleFactor.scaleY),
         right = (right / scaleFactor.scaleX),
         bottom = (bottom / scaleFactor.scaleY),
     )
-}
 
-internal fun IntRect.restoreScale(scale: Float): IntRect {
-    return IntRect(
+internal fun IntRect.restoreScale(scale: Float): IntRect =
+    IntRect(
         left = (left / scale).roundToInt(),
         top = (top / scale).roundToInt(),
         right = (right / scale).roundToInt(),
         bottom = (bottom / scale).roundToInt(),
     )
-}
 
-internal fun IntRect.restoreScale(scaleFactor: ScaleFactor): IntRect {
-    return IntRect(
+internal fun IntRect.restoreScale(scaleFactor: ScaleFactor): IntRect =
+    IntRect(
         left = (left / scaleFactor.scaleX).roundToInt(),
         top = (top / scaleFactor.scaleY).roundToInt(),
         right = (right / scaleFactor.scaleX).roundToInt(),
         bottom = (bottom / scaleFactor.scaleY).roundToInt(),
     )
-}
 
-internal fun IntRect.limitTo(rect: IntRect): IntRect {
-    return IntRect(
+internal fun IntRect.limitTo(rect: IntRect): IntRect =
+    IntRect(
         left = left.coerceAtLeast(rect.left),
         top = top.coerceAtLeast(rect.top),
         right = right.coerceIn(rect.left, rect.right),
         bottom = bottom.coerceIn(rect.top, rect.bottom),
     )
-}
 
-internal fun Rect.limitTo(rect: Rect): Rect {
-    return Rect(
+internal fun Rect.limitTo(rect: Rect): Rect =
+    Rect(
         left = left.coerceAtLeast(rect.left),
         top = top.coerceAtLeast(rect.top),
         right = right.coerceIn(rect.left, rect.right),
         bottom = bottom.coerceIn(rect.top, rect.bottom),
     )
-}
 
 internal val ContentScale.name: String
     get() = when (this) {
@@ -206,84 +300,3 @@ internal val Alignment.isVerticalCenter: Boolean
     get() = this == Alignment.CenterStart || this == Alignment.Center || this == Alignment.CenterEnd
 internal val Alignment.isBottom: Boolean
     get() = this == Alignment.BottomStart || this == Alignment.BottomCenter || this == Alignment.BottomEnd
-
-@Composable
-internal fun Dp.toPx(): Float {
-    return with(LocalDensity.current) { this@toPx.toPx() }
-}
-
-@Composable
-internal fun Float.toDp(): Dp {
-    return with(LocalDensity.current) { this@toDp.toDp() }
-}
-
-/**
- * Multiplication operator with [Size].
- *
- * Return a new [Size] with the width and height multiplied by the [ScaleFactor.scaleX] and
- * [ScaleFactor.scaleY] respectively
- */
-@Stable
-operator fun Size.times(scaleFactor: ScaleFactor): Size =
-    Size(
-        width = this.width * scaleFactor.scaleX,
-        height = this.height * scaleFactor.scaleY,
-    )
-
-/**
- * Multiplication operator with [Size].
- *
- * Return a new [Size] with the width and height multiplied by the [ScaleFactor.scaleX] and
- * [ScaleFactor.scaleY] respectively
- */
-@Stable
-operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
-    IntSize(
-        width = (this.width * scaleFactor.scaleX).roundToInt(),
-        height = (this.height * scaleFactor.scaleY).roundToInt()
-    )
-
-/**
- * Multiplication operator with [Size].
- *
- * Return a new [Size] with the width and height multiplied by the [ScaleFactor.scaleX] and
- * [ScaleFactor.scaleY] respectively
- */
-@Stable
-operator fun IntSize.times(scale: Float): IntSize =
-    IntSize(
-        width = (this.width * scale).roundToInt(),
-        height = (this.height * scale).roundToInt()
-    )
-
-operator fun Offset.times(scaleFactor: ScaleFactor): Offset {
-    return Offset(x * scaleFactor.scaleX, y * scaleFactor.scaleY)
-}
-
-operator fun Offset.div(scaleFactor: ScaleFactor): Offset {
-    return Offset(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
-}
-
-operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset {
-    return IntOffset(
-        x = (x * scaleFactor.scaleX).roundToInt(),
-        y = (y * scaleFactor.scaleY).roundToInt()
-    )
-}
-
-operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset {
-    return IntOffset(
-        x = (x / scaleFactor.scaleX).roundToInt(),
-        y = (y / scaleFactor.scaleY).roundToInt()
-    )
-}
-
-@Stable
-fun IntSize.isEmpty(): Boolean = width == 0 || height == 0
-
-@Stable
-fun IntSize.isNotEmpty(): Boolean = !isEmpty()
-
-internal fun IntSize.rotate(rotateDegrees: Int): IntSize {
-    return if (rotateDegrees % 180 == 0) this else IntSize(height, width)
-}

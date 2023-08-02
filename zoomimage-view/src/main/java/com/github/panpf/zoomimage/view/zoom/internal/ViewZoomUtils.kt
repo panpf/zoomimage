@@ -19,17 +19,17 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.core.IntOffsetCompat
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.TransformCompat
-import com.github.panpf.zoomimage.core.internal.ScaleMode
-import com.github.panpf.zoomimage.core.internal.computeUserScales
-import com.github.panpf.zoomimage.core.isEmpty
-import com.github.panpf.zoomimage.core.rotate
-import com.github.panpf.zoomimage.core.split
-import com.github.panpf.zoomimage.core.times
-import com.github.panpf.zoomimage.core.toCompatOffset
+import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.util.ScaleMode
+import com.github.panpf.zoomimage.util.computeUserScales
+import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.rotate
+import com.github.panpf.zoomimage.util.split
+import com.github.panpf.zoomimage.util.times
+import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.ZeroRect
 import com.github.panpf.zoomimage.view.internal.computeScaleFactor
@@ -118,7 +118,7 @@ internal fun ScaleType.computeTransform(
 ): TransformCompat {
     val scaleFactor = this.computeScaleFactor(srcSize, dstSize)
     val offset = computeContentScaleOffset(srcSize, dstSize, this)
-    return TransformCompat(scale = scaleFactor, offset = offset.toCompatOffset())
+    return TransformCompat(scale = scaleFactor, offset = offset.toOffset())
 }
 
 internal fun computeContentScaleOffset(

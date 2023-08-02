@@ -10,13 +10,12 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.internal.NoClipImage
-import com.github.panpf.zoomimage.compose.internal.roundToIntSize
+import com.github.panpf.zoomimage.compose.internal.round
 import com.github.panpf.zoomimage.compose.internal.toPx
 import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -51,7 +50,7 @@ fun ZoomImage(
     if (zoomableState.contentScale != contentScale) {
         zoomableState.contentScale = contentScale
     }
-    val painterSize = painter.intrinsicSize.roundToIntSize()
+    val painterSize = painter.intrinsicSize.round()
     if (zoomableState.contentSize != painterSize) {
         zoomableState.contentSize = painterSize
     }

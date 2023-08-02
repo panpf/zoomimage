@@ -1,14 +1,14 @@
-package com.github.panpf.zoomimage.core.test
+package com.github.panpf.zoomimage.core.test.util
 
 import android.widget.ImageView.ScaleType
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.TransformCompat
-import com.github.panpf.zoomimage.core.concat
-import com.github.panpf.zoomimage.core.split
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.util.concat
+import com.github.panpf.zoomimage.util.split
 import com.github.panpf.zoomimage.core.test.internal.computeTransform
 import org.junit.Assert
 import org.junit.Test

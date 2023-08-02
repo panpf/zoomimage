@@ -24,10 +24,9 @@ import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
-import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
-import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.Tile
@@ -259,7 +258,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             val imageInfo = imageSource.readImageInfo(ignoreExifOrientation)
             this@SubsamplingState.imageInfo = imageInfo
             val result =
-                imageInfo?.let { canUseSubsampling(it, contentSize.toCompatIntSize()) } ?: -10
+                imageInfo?.let { canUseSubsampling(it, contentSize.toCompat()) } ?: -10
             if (imageInfo != null && result >= 0) {
                 logger.d {
                     "resetTileDecoder:$caller. success. " +
@@ -307,8 +306,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             logger = logger,
             tileDecoder = tileDecoder,
             imageSource = imageSource,
-            containerSize = containerSize.toCompatIntSize(),
-            contentSize = contentSize.toCompatIntSize(),
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
             tileMemoryCacheHelper = tileMemoryCacheHelper,
             tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
@@ -334,7 +333,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     fun resetVisibleAndLoadRect(contentVisibleRect: IntRect, caller: String) {
         val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
-        tileManager.resetVisibleAndLoadRect(contentVisibleRect.toCompatIntRect())
+        tileManager.resetVisibleAndLoadRect(contentVisibleRect.toCompat())
         val imageVisibleRect = tileManager.imageVisibleRect
         val imageLoadRect = tileManager.imageLoadRect
         logger.d {
@@ -375,7 +374,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             return
         }
         tileManager.refreshTiles(
-            contentVisibleRect = contentVisibleRect.toCompatIntRect(),
+            contentVisibleRect = contentVisibleRect.toCompat(),
             scale = displayScale,
             caller = caller
         )

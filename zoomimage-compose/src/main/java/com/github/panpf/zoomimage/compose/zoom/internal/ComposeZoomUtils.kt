@@ -22,12 +22,17 @@ import com.github.panpf.zoomimage.compose.internal.limitTo
 import com.github.panpf.zoomimage.compose.internal.restoreScale
 import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.rotateBy
-import com.github.panpf.zoomimage.compose.internal.roundToIntSize
+import com.github.panpf.zoomimage.compose.internal.round
 import com.github.panpf.zoomimage.compose.internal.scale
 import com.github.panpf.zoomimage.compose.internal.times
+import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
+import com.github.panpf.zoomimage.compose.internal.toCompatTransform
+import com.github.panpf.zoomimage.compose.internal.toScaleMode
+import com.github.panpf.zoomimage.compose.internal.toTransform
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.split
-import com.github.panpf.zoomimage.core.internal.computeUserScales
+import com.github.panpf.zoomimage.util.computeUserScales
 import kotlin.math.roundToInt
 
 
@@ -48,7 +53,7 @@ internal fun computeAlignmentIntOffset(
     )
     val scaledContentSize = contentSize.toSize().times(contentScaleFactor)
     val alignmentOffset = alignment.align(
-        size = scaledContentSize.roundToIntSize(),
+        size = scaledContentSize.round(),
         space = containerSize,
         layoutDirection = LayoutDirection.Ltr
     )
@@ -92,7 +97,7 @@ internal fun computeContentInContainerRect(
     )
     val scaledContentSize = contentSize.toSize().times(contentScaleFactor)
     val alignmentOffset = alignment.align(
-        size = scaledContentSize.roundToIntSize(),
+        size = scaledContentSize.round(),
         space = containerSize,
         layoutDirection = LayoutDirection.Ltr
     )
@@ -533,9 +538,9 @@ internal fun computeZoomInitialConfig(
     ).copy(rotation = rotation)    // todo rotation move to userTransform
 
     val userStepScales = computeUserScales(
-        contentSize = rotatedContentSize.toCompatIntSize(),
-        contentOriginSize = rotatedContentOriginSize.toCompatIntSize(),
-        containerSize = containerSize.toCompatIntSize(),
+        contentSize = rotatedContentSize.toCompat(),
+        contentOriginSize = rotatedContentOriginSize.toCompat(),
+        containerSize = containerSize.toCompat(),
         scaleMode = contentScale.toScaleMode(),
         baseScale = contentScale.computeScaleFactor(
             srcSize = rotatedContentSize.toSize(),
@@ -551,12 +556,12 @@ internal fun computeZoomInitialConfig(
         ?.takeIf { contentScale.supportReadMode() }
         ?.takeIf {
             it.accept(
-                srcSize = rotatedContentSize.toCompatIntSize(),
-                dstSize = containerSize.toCompatIntSize()
+                srcSize = rotatedContentSize.toCompat(),
+                dstSize = containerSize.toCompat()
             )
         }?.computeTransform(
-            containerSize = containerSize.toCompatIntSize(),
-            contentSize = rotatedContentSize.toCompatIntSize(),
+            containerSize = containerSize.toCompat(),
+            contentSize = rotatedContentSize.toCompat(),
             baseTransform = baseTransform.toCompatTransform()
         )?.toTransform()
     val userTransform = readModeTransform?.split(baseTransform)

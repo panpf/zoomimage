@@ -1,11 +1,11 @@
 package com.github.panpf.zoomimage.core.test.internal
 
 import android.widget.ImageView
-import com.github.panpf.zoomimage.core.IntOffsetCompat
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.TransformCompat
-import com.github.panpf.zoomimage.core.times
-import com.github.panpf.zoomimage.core.toCompatOffset
+import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.util.times
+import com.github.panpf.zoomimage.util.toOffset
 import kotlin.math.roundToInt
 
 
@@ -15,7 +15,7 @@ internal fun ImageView.ScaleType.computeTransform(
 ): TransformCompat {
     val scaleFactor = this.computeScaleFactor(srcSize, dstSize)
     val offset = computeContentScaleOffset(srcSize, dstSize, this)
-    return TransformCompat(scale = scaleFactor, offset = offset.toCompatOffset())
+    return TransformCompat(scale = scaleFactor, offset = offset.toOffset())
 }
 
 internal fun computeContentScaleOffset(

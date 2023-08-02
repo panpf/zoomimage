@@ -1,8 +1,8 @@
 package com.github.panpf.zoomimage.core.test.internal
 
 import android.widget.ImageView
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import kotlin.math.max
 import kotlin.math.min
 

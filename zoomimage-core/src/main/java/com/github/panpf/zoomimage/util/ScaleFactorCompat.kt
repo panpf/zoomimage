@@ -1,7 +1,7 @@
-package com.github.panpf.zoomimage.core
+package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.core.internal.format
-import com.github.panpf.zoomimage.core.internal.lerp
+import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.internal.lerp
 import kotlin.math.roundToInt
 
 /**
@@ -32,7 +32,7 @@ data class ScaleFactorCompat(
      */
     operator fun div(operand: Float) = ScaleFactorCompat(scaleX / operand, scaleY / operand)
 
-    override fun toString() = "ScaleFactor(${scaleX.format(2)}, ${scaleY.format(2)})"
+    override fun toString() = "ScaleFactorCompat(${scaleX.format(2)}, ${scaleY.format(2)})"
 
     companion object {
 
@@ -80,18 +80,6 @@ operator fun ScaleFactorCompat.div(scaleFactor: ScaleFactorCompat) =
  * [ScaleFactorCompat.scaleY] respectively
  */
 operator fun ScaleFactorCompat.times(size: IntSizeCompat): IntSizeCompat = size * this
-
-/**
- * Division operator with [IntSizeCompat]
- *
- * Return a new [IntSizeCompat] with the width and height divided by [ScaleFactorCompat.scaleX] and
- * [ScaleFactorCompat.scaleY] respectively
- */
-operator fun IntSizeCompat.div(scaleFactor: ScaleFactorCompat): IntSizeCompat =
-    IntSizeCompat(
-        (width / scaleFactor.scaleX).roundToInt(),
-        (height / scaleFactor.scaleY).roundToInt()
-    )
 
 /**
  * Linearly interpolate between two [ScaleFactorCompat] parameters

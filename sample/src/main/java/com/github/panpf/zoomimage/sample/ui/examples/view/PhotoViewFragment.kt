@@ -25,8 +25,8 @@ import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
-import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment

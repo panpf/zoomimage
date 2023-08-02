@@ -32,8 +32,8 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContaine
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
 import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
-import com.github.panpf.zoomimage.core.TransformOriginCompat
-import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.util.TransformOriginCompat
+import com.github.panpf.zoomimage.util.toShortString
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -46,13 +46,13 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeZoomInitialConfig
 import com.github.panpf.zoomimage.compose.zoom.internal.containerPointToContentPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.contentPointToContainerPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.rotateInContainer
-import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntRect
+import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.zoom.internal.touchPointToContainerPoint
-import com.github.panpf.zoomimage.core.internal.DefaultMediumScaleMinMultiple
-import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
-import com.github.panpf.zoomimage.core.internal.canScroll
-import com.github.panpf.zoomimage.core.internal.computeScrollEdge
-import com.github.panpf.zoomimage.core.internal.limitScaleWithRubberBand
+import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
+import com.github.panpf.zoomimage.util.calculateNextStepScale
+import com.github.panpf.zoomimage.util.canScroll
+import com.github.panpf.zoomimage.util.computeScrollEdge
+import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -207,8 +207,8 @@ class ZoomableState(
     }
     val scrollEdge: ScrollEdge by derivedStateOf {
         computeScrollEdge(
-            contentInContainerVisibleRect = contentInContainerVisibleRect.toCompatIntRect(),
-            contentVisibleRect = contentVisibleRect.toCompatIntRect(),
+            contentInContainerVisibleRect = contentInContainerVisibleRect.toCompat(),
+            contentVisibleRect = contentVisibleRect.toCompat(),
         )
     }
 

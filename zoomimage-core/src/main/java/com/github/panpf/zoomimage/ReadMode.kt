@@ -15,13 +15,13 @@
  */
 package com.github.panpf.zoomimage
 
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.TransformCompat
-import com.github.panpf.zoomimage.core.internal.format
-import com.github.panpf.zoomimage.core.internal.isSameDirection
-import com.github.panpf.zoomimage.core.times
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.isSameDirection
+import com.github.panpf.zoomimage.util.times
 import kotlin.math.max
 
 data class ReadMode(

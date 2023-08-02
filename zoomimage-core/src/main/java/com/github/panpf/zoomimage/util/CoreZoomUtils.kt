@@ -1,12 +1,8 @@
-package com.github.panpf.zoomimage.core.internal
+package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
-import com.github.panpf.zoomimage.core.isEmpty
-import com.github.panpf.zoomimage.core.isNotEmpty
+import com.github.panpf.zoomimage.util.internal.format
 import kotlin.math.max
 
 fun calculateNextStepScale(
@@ -65,22 +61,6 @@ fun computeUserScales(
             .toFloatArray()
     }
 }
-
-//fun computeCanDrag(
-//    contentSize: SizeCompat,
-//    contentVisibleRect: RectFCompat,
-//    horizontal: Boolean,
-//    direction: Int
-//): Boolean {
-//    if (contentSize.isEmpty || contentVisibleRect.isEmpty) return false
-//    return if (horizontal) {
-//        (direction > 0 && contentVisibleRect.left.roundToInt() > 0)
-//                || (direction < 0 && contentVisibleRect.right.roundToInt() < contentSize.width)
-//    } else {
-//        (direction > 0 && contentVisibleRect.top.roundToInt() > 0)
-//                || (direction < 0 && contentVisibleRect.bottom.roundToInt() < contentSize.height)
-//    }
-//}
 
 fun isSameDirection(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
     val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
@@ -166,4 +146,13 @@ fun limitScaleWithRubberBand(
 
         else -> targetScale
     }
+}
+
+enum class ScaleMode {
+    CROP,
+    FIT,
+    FILL_UNILATERAL,
+    FILL_BOUNDS,
+    INSIDE,
+    NONE,
 }

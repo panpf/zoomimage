@@ -1,7 +1,7 @@
-package com.github.panpf.zoomimage.core
+package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.core.internal.format
-import com.github.panpf.zoomimage.core.internal.lerp
+import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.internal.lerp
 import kotlin.math.sqrt
 
 data class OffsetCompat(
@@ -85,7 +85,7 @@ data class OffsetCompat(
      */
     operator fun rem(operand: Float) = OffsetCompat(x % operand, y % operand)
 
-    override fun toString() = "Offset(${x.format(2)}x${y.format(2)})"
+    override fun toString() = "OffsetCompat(${x.format(2)}x${y.format(2)})"
 }
 
 /**
@@ -120,4 +120,8 @@ fun OffsetCompat.toShortString(): String = "${x.format(2)}x${y.format(2)}"
 
 operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat {
     return OffsetCompat(x = x * scaleFactor.scaleX, y = y * scaleFactor.scaleY)
+}
+
+operator fun OffsetCompat.div(scaleFactor: ScaleFactorCompat): OffsetCompat {
+    return OffsetCompat(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
 }

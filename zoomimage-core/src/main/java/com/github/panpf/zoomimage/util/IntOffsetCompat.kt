@@ -1,8 +1,8 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
-package com.github.panpf.zoomimage.core
+package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.core.internal.lerp
+import com.github.panpf.zoomimage.util.internal.lerp
 import kotlin.math.roundToInt
 
 data class IntOffsetCompat(val x: Int, val y: Int) {
@@ -58,7 +58,7 @@ data class IntOffsetCompat(val x: Int, val y: Int) {
      */
     operator fun rem(operand: Int) = IntOffsetCompat(x % operand, y % operand)
 
-    override fun toString() = "OffsetCompat(${x}x${y})"
+    override fun toString() = "IntOffsetCompat(${x}x${y})"
 
     companion object {
         val Zero = IntOffsetCompat(x = 0, y = 0)
@@ -102,13 +102,12 @@ operator fun IntOffsetCompat.minus(offset: OffsetCompat): OffsetCompat =
 /**
  * Converts the [IntOffsetCompat] to an [OffsetCompat].
  */
-inline fun IntOffsetCompat.toCompatOffset() = OffsetCompat(x.toFloat(), y.toFloat())
+inline fun IntOffsetCompat.toOffset() = OffsetCompat(x.toFloat(), y.toFloat())
 
 /**
  * Round a [OffsetCompat] down to the nearest [Int] coordinates.
  */
-inline fun OffsetCompat.roundToCompatIntOffset(): IntOffsetCompat =
-    IntOffsetCompat(x.roundToInt(), y.roundToInt())
+inline fun OffsetCompat.round(): IntOffsetCompat = IntOffsetCompat(x.roundToInt(), y.roundToInt())
 
 
 fun IntOffsetCompat.toShortString(): String = "${x}x${y}"
@@ -117,5 +116,12 @@ operator fun IntOffsetCompat.times(scaleFactor: ScaleFactorCompat): IntOffsetCom
     return IntOffsetCompat(
         x = (x * scaleFactor.scaleX).roundToInt(),
         y = (y * scaleFactor.scaleY).roundToInt(),
+    )
+}
+
+operator fun IntOffsetCompat.div(scaleFactor: ScaleFactorCompat): IntOffsetCompat {
+    return IntOffsetCompat(
+        x = (x / scaleFactor.scaleX).roundToInt(),
+        y = (y / scaleFactor.scaleY).roundToInt(),
     )
 }

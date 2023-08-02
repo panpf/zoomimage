@@ -25,10 +25,10 @@ import android.graphics.Rect
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.isEmpty
-import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.Tile

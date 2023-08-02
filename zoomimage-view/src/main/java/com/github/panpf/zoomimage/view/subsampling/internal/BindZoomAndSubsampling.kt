@@ -2,7 +2,7 @@ package com.github.panpf.zoomimage.view.subsampling.internal
 
 import android.graphics.Rect
 import android.view.View
-import com.github.panpf.zoomimage.core.IntSizeCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.view.zoom.OnViewSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
 import kotlinx.coroutines.CoroutineScope

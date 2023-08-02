@@ -17,16 +17,16 @@ package com.github.panpf.zoomimage.subsampling
 
 import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.core.IntRectCompat
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.internal.requiredMainThread
-import com.github.panpf.zoomimage.core.toShortString
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.canUseSubsamplingByAspectRatio
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.subsampling.internal.initializeTileMap
-import com.github.panpf.zoomimage.subsampling.internal.toHexString
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.internal.requiredMainThread
+import com.github.panpf.zoomimage.util.internal.toHexString
+import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

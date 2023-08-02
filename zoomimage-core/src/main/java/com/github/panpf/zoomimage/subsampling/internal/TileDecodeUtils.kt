@@ -6,10 +6,9 @@ import android.graphics.BitmapFactory
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.internal.toHexString
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.ceil
@@ -18,30 +17,30 @@ import kotlin.math.floor
 internal fun Bitmap.Config.isAndSupportHardware(): Boolean =
     VERSION.SDK_INT >= VERSION_CODES.O && this == Bitmap.Config.HARDWARE
 
-/**
- * If true, indicates that the given mimeType and sampleSize combination can be using 'inBitmap' in BitmapFactory
- *
- * Test results based on the BitmapFactoryTest.testInBitmapAndInSampleSize() method
- */
-@SuppressLint("ObsoleteSdkInt")
-internal fun isSupportInBitmap(mimeType: String?, sampleSize: Int): Boolean =
-    when {
-        "image/jpeg".equals(mimeType, true) ->
-            if (sampleSize == 1) VERSION.SDK_INT >= 16 else VERSION.SDK_INT >= 19
-
-        "image/png".equals(mimeType, true) ->
-            if (sampleSize == 1) VERSION.SDK_INT >= 16 else VERSION.SDK_INT >= 19
-
-        "image/gif".equals(mimeType, true) ->
-            if (sampleSize == 1) VERSION.SDK_INT >= 19 else VERSION.SDK_INT >= 21
-
-        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 19
-//        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 26 animated
-        "image/bmp".equals(mimeType, true) -> VERSION.SDK_INT >= 19
-        "image/heic".equals(mimeType, true) -> false
-        "image/heif".equals(mimeType, true) -> VERSION.SDK_INT >= 28
-        else -> VERSION.SDK_INT >= 32   // Compatible with new image types supported in the future
-    }
+///**
+// * If true, indicates that the given mimeType and sampleSize combination can be using 'inBitmap' in BitmapFactory
+// *
+// * Test results based on the BitmapFactoryTest.testInBitmapAndInSampleSize() method
+// */
+//@SuppressLint("ObsoleteSdkInt")
+//internal fun isSupportInBitmap(mimeType: String?, sampleSize: Int): Boolean =
+//    when {
+//        "image/jpeg".equals(mimeType, true) ->
+//            if (sampleSize == 1) VERSION.SDK_INT >= 16 else VERSION.SDK_INT >= 19
+//
+//        "image/png".equals(mimeType, true) ->
+//            if (sampleSize == 1) VERSION.SDK_INT >= 16 else VERSION.SDK_INT >= 19
+//
+//        "image/gif".equals(mimeType, true) ->
+//            if (sampleSize == 1) VERSION.SDK_INT >= 19 else VERSION.SDK_INT >= 21
+//
+//        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 19
+////        "image/webp".equals(mimeType, true) -> VERSION.SDK_INT >= 26 animated
+//        "image/bmp".equals(mimeType, true) -> VERSION.SDK_INT >= 19
+//        "image/heic".equals(mimeType, true) -> false
+//        "image/heif".equals(mimeType, true) -> VERSION.SDK_INT >= 28
+//        else -> VERSION.SDK_INT >= 32   // Compatible with new image types supported in the future
+//    }
 
 /**
  * If true, indicates that the given mimeType can be using 'inBitmap' in BitmapRegionDecoder
@@ -62,26 +61,26 @@ internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
         else -> VERSION.SDK_INT >= 32   // Compatible with new image types supported in the future
     }
 
-/**
- * Calculate the size of the sampled Bitmap, support for BitmapFactory or ImageDecoder
- */
-internal fun calculateSampledBitmapSize(
-    imageSize: IntSizeCompat, sampleSize: Int, mimeType: String? = null
-): IntSizeCompat {
-    val widthValue = imageSize.width / sampleSize.toDouble()
-    val heightValue = imageSize.height / sampleSize.toDouble()
-    val isPNGFormat = "image/png".equals(mimeType, true)
-    val width: Int
-    val height: Int
-    if (isPNGFormat) {
-        width = floor(widthValue).toInt()
-        height = floor(heightValue).toInt()
-    } else {
-        width = ceil(widthValue).toInt()
-        height = ceil(heightValue).toInt()
-    }
-    return IntSizeCompat(width, height)
-}
+///**
+// * Calculate the size of the sampled Bitmap, support for BitmapFactory or ImageDecoder
+// */
+//internal fun calculateSampledBitmapSize(
+//    imageSize: IntSizeCompat, sampleSize: Int, mimeType: String? = null
+//): IntSizeCompat {
+//    val widthValue = imageSize.width / sampleSize.toDouble()
+//    val heightValue = imageSize.height / sampleSize.toDouble()
+//    val isPNGFormat = "image/png".equals(mimeType, true)
+//    val width: Int
+//    val height: Int
+//    if (isPNGFormat) {
+//        width = floor(widthValue).toInt()
+//        height = floor(heightValue).toInt()
+//    } else {
+//        width = ceil(widthValue).toInt()
+//        height = ceil(heightValue).toInt()
+//    }
+//    return IntSizeCompat(width, height)
+//}
 
 
 /**
@@ -107,11 +106,6 @@ internal fun calculateSampledBitmapSizeForRegion(
     }
     return IntSizeCompat(width, height)
 }
-
-internal fun Bitmap.toHexString(): String = "Bitmap(${width}x${height},$config,@${toHexString()})"
-
-internal val Bitmap.safeConfig: Bitmap.Config
-    get() = config ?: Bitmap.Config.ARGB_8888
 
 suspend fun ImageSource.readImageBounds(): Result<BitmapFactory.Options?> {
     return withContext(Dispatchers.IO) {

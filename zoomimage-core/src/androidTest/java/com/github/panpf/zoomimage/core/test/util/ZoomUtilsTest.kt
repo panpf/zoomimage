@@ -1,6 +1,6 @@
-package com.github.panpf.zoomimage.core.test
+package com.github.panpf.zoomimage.core.test.util
 
-import com.github.panpf.zoomimage.core.internal.calculateNextStepScale
+import com.github.panpf.zoomimage.util.calculateNextStepScale
 import org.junit.Assert
 import org.junit.Test
 

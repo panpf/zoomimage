@@ -1,7 +1,7 @@
-package com.github.panpf.zoomimage.core
+package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.core.internal.format
-import com.github.panpf.zoomimage.core.internal.lerp
+import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.internal.lerp
 import kotlin.math.roundToInt
 
 data class TransformOriginCompat(val pivotFractionX: Float, val pivotFractionY: Float) {

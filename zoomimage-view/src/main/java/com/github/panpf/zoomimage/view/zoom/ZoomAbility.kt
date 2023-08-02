@@ -28,10 +28,10 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.core.IntOffsetCompat
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.OffsetCompat
-import com.github.panpf.zoomimage.core.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarEngine

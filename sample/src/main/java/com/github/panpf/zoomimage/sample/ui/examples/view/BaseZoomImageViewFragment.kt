@@ -25,8 +25,8 @@ import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.core.roundToCompatIntOffset
-import com.github.panpf.zoomimage.core.toShortString
+import com.github.panpf.zoomimage.util.round
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
@@ -212,7 +212,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
             val scales = floatArrayOf(minScale, mediumScale, maxScale)
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
-            val offsetCompat = offset.roundToCompatIntOffset()
+            val offsetCompat = offset.round()
             """
                 ${scale.scaleX.format(2)}(${baseScale.scaleX.format(2)}*${userScale.format(2)}) in $scales
                 ${offsetCompat.toShortString()}; edge=${scrollEdge.toShortString()}

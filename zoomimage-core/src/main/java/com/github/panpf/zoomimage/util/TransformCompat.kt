@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.core
+package com.github.panpf.zoomimage.util
 
 data class TransformCompat(
     val scale: ScaleFactorCompat,
@@ -96,8 +96,11 @@ fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): Transf
     return start.copy(
         scale = lerp(start.scale, stop.scale, fraction),
         offset = lerp(start.offset, stop.offset, fraction),
-        rotation = com.github.panpf.zoomimage.core.internal
-            .lerp(start.rotation, stop.rotation, fraction),
+        rotation = com.github.panpf.zoomimage.util.internal.lerp(
+            start.rotation,
+            stop.rotation,
+            fraction
+        ),
     )
 }
 

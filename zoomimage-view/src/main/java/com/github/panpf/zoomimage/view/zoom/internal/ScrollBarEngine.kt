@@ -21,8 +21,8 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import com.github.panpf.zoomimage.core.IntSizeCompat
-import com.github.panpf.zoomimage.core.isEmpty
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import kotlin.math.roundToInt
 

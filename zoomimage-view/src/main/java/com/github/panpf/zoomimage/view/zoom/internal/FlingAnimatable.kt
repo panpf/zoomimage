@@ -19,7 +19,7 @@ import android.graphics.Rect
 import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
-import com.github.panpf.zoomimage.core.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntOffsetCompat
 
 internal class FlingAnimatable(
     private val view: View,

@@ -34,9 +34,9 @@ import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.internal.toCompatIntSize
-import com.github.panpf.zoomimage.compose.zoom.internal.toIntSize
-import com.github.panpf.zoomimage.core.IntRectCompat
+import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toPlatform
+import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.subsampling.Tile
@@ -67,7 +67,7 @@ fun ZoomImageMinimap(
         if (viewSize.isNotEmpty()) {
             val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
             val imageSize =
-                subsamplingState.imageInfo?.size?.toIntSize() ?: IntSize.Zero
+                subsamplingState.imageInfo?.size?.toPlatform() ?: IntSize.Zero
             val contentVisibleRect = zoomableState.contentVisibleRect
             AsyncImage(
                 request = DisplayRequest(LocalContext.current, sketchImageUri) {
@@ -147,7 +147,7 @@ private fun computeViewSize(contentSize: IntSize, containerSize: IntSize): IntSi
         (contentWidth >= contentHeight && containerWidth >= containerHeight) ||
                 (contentWidth < contentHeight && containerWidth < containerHeight)
     val isLongImage = ReadMode.LongImageDecider()
-        .should(srcSize = contentSize.toCompatIntSize(), dstSize = containerSize.toCompatIntSize())
+        .should(srcSize = contentSize.toCompat(), dstSize = containerSize.toCompat())
     val maxPercentage = if (isLongImage) 0.6f else if (sameDirection) 0.3f else 0.4f
     val maxWidth = containerWidth * maxPercentage
     val maxHeight = containerHeight * maxPercentage
