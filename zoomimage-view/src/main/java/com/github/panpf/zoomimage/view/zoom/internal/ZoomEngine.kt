@@ -50,6 +50,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 // todo 参照 ZoomableState 重构
+// todo 不支持 center 等 ScaleType
 class ZoomEngine constructor(logger: Logger, val view: View) {
 
     private val logger: Logger = logger.newLogger(module = "ZoomEngine")

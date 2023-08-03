@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -103,16 +102,22 @@ fun ZoomImageTool(
                 .padding(12.dp)
                 .background(colors.tertiary.copy(alpha = 0.7f), RoundedCornerShape(50)),
         ) {
-            IconButton(onClick = {
-                zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
-            }) {
+            IconButton(
+                onClick = {
+                    zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
+                },
+                modifier = Modifier.size(40.dp)
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_rotate_right),
                     contentDescription = "Rotate",
                     tint = colors.onTertiary
                 )
             }
-            IconButton(onClick = { zoomableState.switchScale(animated = true) }) {
+            IconButton(
+                onClick = { zoomableState.switchScale(animated = true) },
+                modifier = Modifier.size(40.dp)
+            ) {
                 val zoomIn = remember {
                     derivedStateOf {
                         val scale = zoomableState.transform.scaleX  // trigger refresh
@@ -127,16 +132,22 @@ fun ZoomImageTool(
                     tint = colors.onTertiary
                 )
             }
-            IconButton(onClick = {
-                linearScaleDialogState.showing = !linearScaleDialogState.showing
-            }) {
+            IconButton(
+                onClick = {
+                    linearScaleDialogState.showing = !linearScaleDialogState.showing
+                },
+                modifier = Modifier.size(40.dp)
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_linear_scale),
                     contentDescription = "LinearScale",
                     tint = colors.onTertiary
                 )
             }
-            IconButton(onClick = { infoDialogState.showing = !infoDialogState.showing }) {
+            IconButton(
+                onClick = { infoDialogState.showing = !infoDialogState.showing },
+                modifier = Modifier.size(40.dp)
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_info),
                     contentDescription = "Options",

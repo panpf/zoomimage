@@ -11,6 +11,9 @@
     <color name="colorTertiary">#F8AE6B</color>
     <color name="colorTertiaryTransparent">#BFF8AE6B</color>
     <color name="colorTertiaryVariant">#8A613B</color>
+    <!--<color name="colorTertiary">#D10037</color>
+    <color name="colorTertiaryTransparent">#BFD10037</color>
+    <color name="colorTertiaryVariant">#6E0823</color>-->
     <color name="colorOnTertiary">@color/white</color>
     <color name="windowBackground">@color/white</color>
     <color name="windowBackgroundDark">#171717</color>

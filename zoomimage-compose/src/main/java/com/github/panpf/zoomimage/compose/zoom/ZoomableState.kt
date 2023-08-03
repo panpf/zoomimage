@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.roundToIntRect
+import androidx.compose.ui.unit.toOffset
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
@@ -266,7 +267,7 @@ class ZoomableState(
 
     fun scale(
         targetScale: Float,
-        centroid: Offset = Offset(x = containerSize.width / 2f, y = containerSize.height / 2f),
+        centroid: Offset = containerSize.center.toOffset(),
         animated: Boolean = false
     ) = coroutineScope.launch {
         containerSize.takeIf { it.isNotEmpty() } ?: return@launch
@@ -299,9 +300,9 @@ class ZoomableState(
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "scale. " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "targetUserScale=${targetUserScale.format(4)}, " +
                     "centroid=${centroid.toShortString()}, " +
-                    "animated=${animated}, " +
+                    "animated=${animated}. " +
+                    "targetUserScale=${targetUserScale.format(4)}, " +
                     "addUserScale=${targetAddUserScale.format(4)} -> ${limitedAddUserScale.format(4)}, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
@@ -331,8 +332,8 @@ class ZoomableState(
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
             "offset. " +
                     "targetOffset=${targetOffset.toShortString()}, " +
+                    "animated=${animated}. " +
                     "targetUserOffset=${targetUserOffset.toShortString()}, " +
-                    "animated=${animated}, " +
                     "currentUserScale=${currentUserScale.format(4)}, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddUserOffset}, " +
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
@@ -505,7 +506,7 @@ class ZoomableState(
                             val distance = limitedTargetUserOffset - startUserOffset
                             logger.d {
                                 "fling. running. " +
-                                        "velocity=$velocity, " +
+                                        "velocity=$velocity. " +
                                         "startUserOffset=${startUserOffset.toShortString()}, " +
                                         "currentUserOffset=${limitedTargetUserOffset.toShortString()}, " +
                                         "distance=$distance"
@@ -676,18 +677,18 @@ class ZoomableState(
         )
     }
 
-    private fun limitUserTransform(userTransform: Transform): Transform {
-        val limitedUserScale = limitUserScale(userTransform.scaleX)
-        val limitedUserOffset = limitUserOffset(userTransform.offset, limitedUserScale)
-        return if (limitedUserScale != userTransform.scaleX || limitedUserOffset != userTransform.offset) {
-            userTransform.copy(
-                scale = ScaleFactor(limitedUserScale),
-                offset = limitedUserOffset,
-            )
-        } else {
-            userTransform
-        }
-    }
+//    private fun limitUserTransform(userTransform: Transform): Transform {
+//        val limitedUserScale = limitUserScale(userTransform.scaleX)
+//        val limitedUserOffset = limitUserOffset(userTransform.offset, limitedUserScale)
+//        return if (limitedUserScale != userTransform.scaleX || limitedUserOffset != userTransform.offset) {
+//            userTransform.copy(
+//                scale = ScaleFactor(limitedUserScale),
+//                offset = limitedUserOffset,
+//            )
+//        } else {
+//            userTransform
+//        }
+//    }
 
     private suspend fun stopAllAnimationInternal(caller: String) {
         val lastScaleAnimatable = lastScaleAnimatable

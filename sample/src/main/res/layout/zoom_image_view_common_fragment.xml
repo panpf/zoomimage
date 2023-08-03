@@ -94,33 +94,33 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/zoomImageViewRotate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
             app:srcCompat="@drawable/ic_rotate_right"
             app:tint="@android:color/white" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/zoomImageViewZoom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
             app:srcCompat="@drawable/ic_zoom_in"
             app:tint="@android:color/white" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/zoomImageViewLinearScale"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
             app:srcCompat="@drawable/ic_linear_scale"
             app:tint="@android:color/white" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/zoomImageViewInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
             app:srcCompat="@drawable/ic_info"
             app:tint="@android:color/white" />
     </LinearLayout>

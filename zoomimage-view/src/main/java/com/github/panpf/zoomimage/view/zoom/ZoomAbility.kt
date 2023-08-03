@@ -38,7 +38,6 @@ import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarEngine
 import com.github.panpf.zoomimage.view.zoom.internal.UnifiedGestureDetector
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
 
-// todo 不支持 center 等 ScaleType
 class ZoomAbility constructor(
     private val view: View,
     private val imageViewBridge: ImageViewBridge,

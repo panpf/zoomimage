@@ -253,6 +253,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
 
         val imageSource = imageSource ?: return
         val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
+        val ignoreExifOrientation = ignoreExifOrientation
 
         lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
             val imageInfo = imageSource.readImageInfo(ignoreExifOrientation)
@@ -285,6 +286,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 logger.d {
                     "resetTileDecoder:$caller. failed, $cause. " +
                             "contentSize: ${contentSize.toShortString()}, " +
+                            "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo: ${imageInfo?.toShortString()}. " +
                             "'${imageSource.key}'"
                 }
@@ -320,6 +322,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 .map { "${it}:${tileMap[it]?.size}" }
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "tileMaxSize=${tileMaxSize.toShortString()}, " +
                     "tileMap=$tileMapInfoList, " +
