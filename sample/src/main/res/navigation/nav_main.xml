@@ -231,4 +231,21 @@
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/zoomImageViewLinearScaleDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewLinearScaleDialogFragment">
+        <argument
+            android:name="valueFrom"
+            app:argType="float"
+            app:nullable="false" />
+        <argument
+            android:name="valueTo"
+            app:argType="float"
+            app:nullable="false" />
+        <argument
+            android:name="value"
+            app:argType="float"
+            app:nullable="false" />
+    </fragment>
 </navigation>

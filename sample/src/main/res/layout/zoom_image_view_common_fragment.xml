@@ -109,6 +109,14 @@
             app:tint="@android:color/white" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/zoomImageViewLinearScale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:srcCompat="@drawable/ic_linear_scale"
+            app:tint="@android:color/white" />
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/zoomImageViewInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

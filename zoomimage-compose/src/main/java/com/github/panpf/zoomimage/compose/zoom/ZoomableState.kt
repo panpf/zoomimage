@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.times
+import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
 import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
@@ -46,7 +47,6 @@ import com.github.panpf.zoomimage.compose.zoom.internal.computeZoomInitialConfig
 import com.github.panpf.zoomimage.compose.zoom.internal.containerPointToContentPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.contentPointToContainerPoint
 import com.github.panpf.zoomimage.compose.zoom.internal.rotateInContainer
-import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.zoom.internal.touchPointToContainerPoint
 import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import com.github.panpf.zoomimage.util.calculateNextStepScale
@@ -264,12 +264,10 @@ class ZoomableState(
         userTransform = initialConfig.userTransform
     }
 
-    // todo centroid change to contentPoint 或者不要它
     fun scale(
         targetScale: Float,
         centroid: Offset = Offset(x = containerSize.width / 2f, y = containerSize.height / 2f),
-        animated: Boolean = false,
-        rubberBandScale: Boolean = false,
+        animated: Boolean = false
     ) = coroutineScope.launch {
         containerSize.takeIf { it.isNotEmpty() } ?: return@launch
         contentSize.takeIf { it.isNotEmpty() } ?: return@launch
@@ -277,11 +275,7 @@ class ZoomableState(
         stopAllAnimationInternal("scale")
 
         val targetUserScale = targetScale / baseTransform.scaleX
-        val limitedTargetUserScale = if (rubberBandScale && this@ZoomableState.rubberBandScale) {
-            limitUserScaleWithRubberBand(targetUserScale)
-        } else {
-            limitUserScale(targetUserScale)
-        }
+        val limitedTargetUserScale = limitUserScale(targetUserScale)
         val currentUserTransform = userTransform
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
@@ -437,7 +431,7 @@ class ZoomableState(
 
         val targetScale = transform.scaleX * zoom
         val targetUserScale = targetScale / baseTransform.scaleX
-        val limitedTargetUserScale = if (rubberBandScale && this@ZoomableState.rubberBandScale) {
+        val limitedTargetUserScale = if (rubberBandScale) {
             limitUserScaleWithRubberBand(targetUserScale)
         } else {
             limitUserScale(targetUserScale)

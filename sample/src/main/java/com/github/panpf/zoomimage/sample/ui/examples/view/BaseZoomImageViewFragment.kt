@@ -19,14 +19,14 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.util.round
-import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
@@ -37,13 +37,19 @@ import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.toShortString
+import com.github.panpf.zoomimage.util.round
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {
 
     abstract val sketchImageUri: String
+
+    private val linearScaleViewModel by viewModels<LinearScaleViewModel>()
 
     abstract fun getZoomImageView(binding: VIEW_BINDING): ZoomImageView
 
@@ -154,6 +160,23 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             ZoomImageViewInfoDialogFragment().apply {
                 arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
             }.show(childFragmentManager, null)
+        }
+
+        common.zoomImageViewLinearScale.apply {
+            setOnClickListener {
+                ZoomImageViewLinearScaleDialogFragment().apply {
+                    arguments = ZoomImageViewLinearScaleDialogFragmentArgs(
+                        valueFrom = zoomImageView.zoomAbility.minScale,
+                        valueTo = zoomImageView.zoomAbility.maxScale,
+                        value = zoomImageView.zoomAbility.scale.scaleX,
+                    ).toBundle()
+                }.show(childFragmentManager, null)
+            }
+            viewLifecycleOwner.lifecycleScope.launch {
+                linearScaleViewModel.changeFlow.collectLatest {
+                    zoomImageView.zoomAbility.scale(it, animate = true)
+                }
+            }
         }
 
         zoomImageView.zoomAbility.addOnMatrixChangeListener {
