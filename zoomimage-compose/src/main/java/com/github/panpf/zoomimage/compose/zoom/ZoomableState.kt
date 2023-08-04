@@ -110,6 +110,7 @@ class ZoomableState(
 
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
+    private var lastTransformCentroid: Offset? = null
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -429,6 +430,7 @@ class ZoomableState(
     ) = coroutineScope.launch {
         containerSize.takeIf { it.isNotEmpty() } ?: return@launch
         contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+        this@ZoomableState.lastTransformCentroid = centroid
 
         val targetScale = transform.scaleX * zoom
         val targetUserScale = targetScale / baseTransform.scaleX
@@ -529,7 +531,8 @@ class ZoomableState(
         }
     }
 
-    fun rollbackScale(centroid: Offset): Boolean {
+    fun rollbackScale(): Boolean {
+        val lastTransformCentroid = lastTransformCentroid ?: return false
         val minScale = minScale
         val maxScale = maxScale
         val currentScale = transform.scaleX
@@ -543,7 +546,7 @@ class ZoomableState(
             @Suppress("UnnecessaryVariable") val endScale = targetScale
             logger.d {
                 "rollbackScale. " +
-                        "centroid=${centroid.toShortString()}. " +
+                        "lastTransformCentroid=${lastTransformCentroid.toShortString()}. " +
                         "startScale=${startScale.format(4)}, " +
                         "endScale=${endScale.format(4)}"
             }
@@ -568,7 +571,7 @@ class ZoomableState(
                         val nowScale = transform.scaleX
                         val addScale = frameScale / nowScale
                         transform(
-                            centroid = centroid,
+                            centroid = lastTransformCentroid,
                             pan = Offset.Zero,
                             zoom = addScale,
                             rotation = 0f
