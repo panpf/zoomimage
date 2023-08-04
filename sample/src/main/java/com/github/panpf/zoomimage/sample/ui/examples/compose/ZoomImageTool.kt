@@ -1,10 +1,14 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,18 +32,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.rememberZoomImageLogger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.SampleImages
+import com.github.panpf.zoomimage.sample.ui.common.compose.MoveKeyboard
+import com.github.panpf.zoomimage.sample.ui.common.compose.MyDialog
+import com.github.panpf.zoomimage.sample.ui.common.compose.MyDialogState
+import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMoveKeyboardState
+import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.toShortString
@@ -47,7 +57,7 @@ import kotlin.math.roundToInt
 @Composable
 fun ZoomImageTool(
     zoomableState: ZoomableState,
-    infoDialogState: ZoomImageInfoDialogState,
+    infoDialogState: MyDialogState,
     imageUri: String,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -80,7 +90,6 @@ fun ZoomImageTool(
             visible: ${contentVisibleRect.toShortString()}
         """.trimIndent()
     }
-    val linearScaleDialogState = rememberLinearScaleDialogState()
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             Text(
@@ -96,141 +105,167 @@ fun ZoomImageTool(
             )
         }
 
-        Row(
+        val inspectionMode = LocalInspectionMode.current
+        var show by remember { mutableStateOf(inspectionMode) }
+        var content by remember { mutableStateOf(0) }
+        Column(
             Modifier
                 .align(Alignment.BottomEnd)
-                .padding(12.dp)
-                .background(colors.tertiary.copy(alpha = 0.7f), RoundedCornerShape(50)),
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconButton(
-                onClick = {
-                    zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
-                },
-                modifier = Modifier.size(40.dp)
+            AnimatedVisibility(
+                visible = show,
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_rotate_right),
-                    contentDescription = "Rotate",
-                    tint = colors.onTertiary
-                )
-            }
-            IconButton(
-                onClick = { zoomableState.switchScale(animated = true) },
-                modifier = Modifier.size(40.dp)
-            ) {
-                val zoomIn = remember {
-                    derivedStateOf {
-                        val scale = zoomableState.transform.scaleX  // trigger refresh
-                        scale >= 0 && zoomableState.getNextStepScale() > zoomableState.minScale
+                Crossfade(targetState = content, label = "") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .aspectRatio(1f),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        if (it == 1) {
+                            var value by remember { mutableStateOf(zoomableState.transform.scaleX) }
+                            Slider(
+                                modifier = Modifier.fillMaxWidth(),
+                                value = value,
+                                valueRange = zoomableState.minScale..zoomableState.maxScale,
+                                onValueChange = {
+                                    value = it
+                                    zoomableState.scale(it, animated = true)
+                                },
+                                steps = 8,
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier.padding(14.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val maxStep by remember {
+                                    derivedStateOf {
+                                        (zoomableState.containerSize / 20)
+                                            .let { Offset(it.width.toFloat(), it.height.toFloat()) }
+                                    }
+                                }
+                                val moveKeyboardState = rememberMoveKeyboardState(maxStep = maxStep, stepInterval = 8)
+                                LaunchedEffect(Unit) {
+                                    moveKeyboardState.moveFlow.collect {
+                                        zoomableState.offset(zoomableState.transform.offset + it * -1f)
+                                    }
+                                }
+                                MoveKeyboard(moveKeyboardState)
+                            }
+                        }
                     }
                 }
-                val icon = if (zoomIn.value)
-                    R.drawable.ic_zoom_in to "zoom in" else R.drawable.ic_zoom_out to "zoom out"
-                Icon(
-                    painter = painterResource(id = icon.first),
-                    contentDescription = icon.second,
-                    tint = colors.onTertiary
-                )
             }
-            IconButton(
-                onClick = {
-                    linearScaleDialogState.showing = !linearScaleDialogState.showing
-                },
-                modifier = Modifier.size(40.dp)
+
+            Row(
+                Modifier.background(colors.tertiary.copy(alpha = 0.7f), RoundedCornerShape(50)),
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_linear_scale),
-                    contentDescription = "LinearScale",
-                    tint = colors.onTertiary
-                )
-            }
-            IconButton(
-                onClick = { infoDialogState.showing = !infoDialogState.showing },
-                modifier = Modifier.size(40.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_info),
-                    contentDescription = "Options",
-                    tint = colors.onTertiary
-                )
+                IconButton(
+                    onClick = {
+                        zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
+                    },
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_rotate_right),
+                        contentDescription = "Rotate",
+                        tint = colors.onTertiary
+                    )
+                }
+
+                IconButton(
+                    onClick = { zoomableState.switchScale(animated = true) },
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    val zoomIn = remember {
+                        derivedStateOf {
+                            val scale = zoomableState.transform.scaleX  // trigger refresh
+                            scale >= 0 && zoomableState.getNextStepScale() > zoomableState.minScale
+                        }
+                    }
+                    val icon = if (zoomIn.value)
+                        R.drawable.ic_zoom_in to "zoom in" else R.drawable.ic_zoom_out to "zoom out"
+                    Icon(
+                        painter = painterResource(id = icon.first),
+                        contentDescription = icon.second,
+                        tint = colors.onTertiary
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        if (show) {
+                            if (content == 1) {
+                                show = false
+                            } else {
+                                content = 1
+                            }
+                        } else {
+                            show = true
+                            content = 1
+                        }
+                    },
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_linear_scale),
+                        contentDescription = "LinearScale",
+                        tint = colors.onTertiary
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        if (show) {
+                            if (content == 0) {
+                                show = false
+                            } else {
+                                content = 0
+                            }
+                        } else {
+                            show = true
+                            content = 0
+                        }
+                    },
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_gamepad),
+                        contentDescription = "GamePad",
+                        tint = colors.onTertiary
+                    )
+                }
+
+                IconButton(
+                    onClick = { infoDialogState.showing = !infoDialogState.showing },
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_info),
+                        contentDescription = "Options",
+                        tint = colors.onTertiary
+                    )
+                }
             }
         }
 
-        ZoomImageInfoDialog(
-            state = infoDialogState,
-            imageUri = imageUri,
-            zoomableState = zoomableState
-        )
-
-        LinearScaleDialog(
-            zoomableState = zoomableState,
-            linearScaleDialogState = linearScaleDialogState
-        )
+        MyDialog(state = infoDialogState) {
+            ZoomImageInfo(imageUri = imageUri, zoomableState = zoomableState)
+        }
     }
 }
 
 @Preview
 @Composable
 fun ZoomImageToolPreview() {
-    val sketchImageUri = SampleImages.Asset.DOG.uri
     ZoomImageTool(
         zoomableState = rememberZoomableState(rememberZoomImageLogger()),
-        infoDialogState = rememberZoomImageInfoDialogState(),
-        imageUri = sketchImageUri
-    )
-}
-
-@Composable
-fun rememberLinearScaleDialogState(showing: Boolean = false): LinearScaleDialogState =
-    remember { LinearScaleDialogState(showing) }
-
-class LinearScaleDialogState(showing: Boolean = false) {
-    var showing by mutableStateOf(showing)
-}
-
-@Composable
-fun LinearScaleDialog(
-    zoomableState: ZoomableState,
-    linearScaleDialogState: LinearScaleDialogState
-) {
-    if (linearScaleDialogState.showing) {
-        var value by remember { mutableStateOf(zoomableState.transform.scaleX) }
-        val valueRange by remember { derivedStateOf { zoomableState.minScale..zoomableState.maxScale } }
-        Dialog(onDismissRequest = { linearScaleDialogState.showing = false }) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .background(Color.White, shape = RoundedCornerShape(20.dp))
-                    .padding(20.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "${zoomableState.minScale.format(1)}")
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(text = "${zoomableState.maxScale.format(1)}")
-                }
-
-                Spacer(modifier = Modifier.size(4.dp))
-
-                Slider(
-                    value = value,
-                    valueRange = valueRange,
-                    onValueChange = {
-                        value = it
-                        zoomableState.scale(it, animated = true)
-                    },
-                    steps = 8,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun LinearScaleDialogPreview() {
-    LinearScaleDialog(
-        zoomableState = rememberZoomableState(logger = rememberZoomImageLogger()),
-        linearScaleDialogState = rememberLinearScaleDialogState()
+        infoDialogState = rememberMyDialogState(),
+        imageUri = SampleImages.Asset.DOG.uri
     )
 }

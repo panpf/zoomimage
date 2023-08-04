@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_main"
     app:startDestination="@id/homeFragment">
+<!--    app:startDestination="@id/zoomImageTestFragment">-->
 
     <fragment
         android:id="@+id/homeFragment"

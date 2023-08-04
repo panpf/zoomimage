@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
 import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
@@ -82,7 +83,7 @@ fun BaseZoomImageSample(
         animationSpec = zoomAnimationSpec.value,
         readMode = readMode,
     )
-    val infoDialogState = rememberZoomImageInfoDialogState()
+    val infoDialogState = rememberMyDialogState()
     val subsamplingState = rememberSubsamplingState(logger)
     LaunchedEffect(ignoreExifOrientation) {
         subsamplingState.ignoreExifOrientation = ignoreExifOrientation

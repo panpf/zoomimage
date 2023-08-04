@@ -1,42 +1,25 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.rememberZoomImageLogger
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 
 @Composable
-fun rememberZoomImageInfoDialogState(showing: Boolean = false): ZoomImageInfoDialogState =
-    remember { ZoomImageInfoDialogState(showing) }
-
-class ZoomImageInfoDialogState(showing: Boolean = false) {
-    var showing by mutableStateOf(showing)
-}
-
-@Composable
-fun ZoomImageInfoDialog(
-    state: ZoomImageInfoDialogState = rememberZoomImageInfoDialogState(),
+fun ZoomImageInfo(
     imageUri: String,
     zoomableState: ZoomableState,
 ) {
@@ -64,31 +47,22 @@ fun ZoomImageInfoDialog(
             contentInContainerVisible: ${zoomableState.contentInContainerVisibleRect.toShortString()}
         """.trimIndent()
     }
-    if (state.showing) {
-        Dialog(onDismissRequest = { state.showing = false }) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .background(Color.White, shape = RoundedCornerShape(20.dp))
-                    .padding(20.dp)
-            ) {
-                InfoItem("URI：", imageUri)
 
-                Spacer(modifier = Modifier.size(12.dp))
-                InfoItem("Size：", sizeInfo)
+    Column(Modifier.fillMaxWidth()) {
+        InfoItem("URI：", imageUri)
 
-                Spacer(modifier = Modifier.size(12.dp))
-                InfoItem("Other：", otherInfo)
-            }
-        }
+        Spacer(modifier = Modifier.size(12.dp))
+        InfoItem("Size：", sizeInfo)
+
+        Spacer(modifier = Modifier.size(12.dp))
+        InfoItem("Other：", otherInfo)
     }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
-fun ZoomImageInfoDialogPreview() {
-    ZoomImageInfoDialog(
-        state = rememberZoomImageInfoDialogState(showing = true),
+fun ZoomImageInfoPreview() {
+    ZoomImageInfo(
         imageUri = "https://www.github.com/panpf/zoomimage",
         zoomableState = rememberZoomableState(rememberZoomImageLogger())
     )
