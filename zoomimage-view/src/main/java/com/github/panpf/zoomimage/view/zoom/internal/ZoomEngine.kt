@@ -26,15 +26,15 @@ import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
-import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import com.github.panpf.zoomimage.util.calculateNextStepScale
-import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.internal.format
@@ -58,8 +58,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private val userMatrix = Matrix()
     private val displayMatrix = Matrix()
     private val cacheDisplayRectF = RectF()
-    private var lastScaleFocusX: Float = 0f
-    private var lastScaleFocusY: Float = 0f
+    private var lastTransformFocus: OffsetCompat? = null
     private var scaleAnimatable: FloatAnimatable? = null
     private var flingAnimatable: FlingAnimatable? = null
     private var _scrollEdge: ScrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
@@ -233,21 +232,19 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      * Scale to the specified scale. You don't have to worry about rotation degrees
      */
     fun scale(
-        newScale: Float,
-        centroid: OffsetCompat = OffsetCompat(viewSize.width / 2f, viewSize.height / 2f),
+        targetScale: Float,
+        focus: OffsetCompat = OffsetCompat(viewSize.width / 2f, viewSize.height / 2f),
         animate: Boolean = false
     ) {
         stopAllAnimation()
         val currentScale = scale.scaleX
         // todo 参照 ZoomableState#scale 就用当前的 centroid
-        val focal = if (newScale > currentScale) {
-            centroid
+        val finalFocus = if (targetScale > currentScale) {
+            focus
         } else {
             OffsetCompat(viewSize.width / 2f, viewSize.height / 2f)
         }
-        val limitedNewScale = newScale.coerceIn(minScale, maxScale)
-        val finalFocalX = focal.x
-        val finalFocalY = focal.y
+        val limitedNewScale = targetScale.coerceIn(minScale, maxScale)
         val startUserScale = userScale
         val endUserScale = limitedNewScale / baseScale.scaleX
         if (animate) {
@@ -261,7 +258,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     val currentUserScale = userScale
                     val progressUserScale = startUserScale + value * (endUserScale - startUserScale)
                     val deltaScale = progressUserScale / currentUserScale
-                    doScale(deltaScale, finalFocalX, finalFocalY, 0f, 0f)
+                    transform(focus = finalFocus, pan = OffsetCompat.Zero, scaleFactor = deltaScale)
                 },
                 onEnd = { notifyMatrixChanged() }
             )
@@ -269,21 +266,104 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         } else {
             val addUserScale = endUserScale / startUserScale
             require(addUserScale.isSafe()) { "scaleBy addUserScale=$addUserScale is invalid" }
-            userMatrix.postScale(addUserScale, addUserScale, finalFocalX, finalFocalY)
+            userMatrix.postScale(addUserScale, addUserScale, finalFocus.x, finalFocus.y)
             checkAndApplyMatrix()
         }
     }
 
-    // todo 和 scale 合并
-    fun doScale(userScaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float) {
+    fun offset(targetOffset: IntOffsetCompat, animate: Boolean = false) {
+        val currentOffset = this.offset
+        val fl = targetOffset.x - currentOffset.x
+        val fy = targetOffset.y - currentOffset.y
+        // todo 实现 animate
+        userMatrix.postTranslate(fl, fy)
+        checkAndApplyMatrix()
+    }
+
+    fun location(
+        contentPoint: IntOffsetCompat,
+        targetScale: Float = scale.scaleX,
+        animated: Boolean = false
+    ) {
+        val viewSize = viewSize.takeIf { !it.isEmpty() } ?: return
+
+        stopAllAnimation()
+
+        val nowScale = scale.scaleX
+        if (nowScale.format(2) != targetScale.format(2)) {
+            scale(targetScale = targetScale, animate = false)
+        }
+
+        val displayRectF = cacheDisplayRectF.apply { getDisplayRect(this) }
+        val start = IntOffsetCompat(
+            x = abs(displayRectF.left.toInt()),
+            y = abs(displayRectF.top.toInt())
+        )
+        val rotatedOffsetOfContent = contentPoint.rotateInContainer(drawableSize, rotation)
+        val centerLocation =
+            computeLocationOffset(rotatedOffsetOfContent, viewSize, displayRectF, scale)
         logger.d {
-            "onScale. scaleFactor: $userScaleFactor, focusX: $focusX, focusY: $focusY, dx: $dx, dy: $dy"
+            "location. " +
+                    "offsetOfContent=${contentPoint.toShortString()}, " +
+                    "start=${start.toShortString()}, " +
+                    "end=${centerLocation.toShortString()}"
+        }
+        if (animated) {
+            var lastX = start.x
+            var lastY = start.y
+            scaleAnimatable = FloatAnimatable(
+                view = view,
+                startValue = 0f,
+                endValue = 1f,
+                durationMillis = animationSpec.durationMillis,
+                interpolator = animationSpec.interpolator,
+                onUpdateValue = { value ->
+                    val mDeltaX = centerLocation.x - start.x
+                    val mDeltaY = centerLocation.y - start.y
+                    val newX = start.x + (value * mDeltaX).roundToInt()
+                    val newY = start.y + (value * mDeltaY).roundToInt()
+                    val dx = (lastX - newX).toFloat()
+                    val dy = (lastY - newY).toFloat()
+                    val add = IntOffsetCompat(dx.roundToInt(), dy.roundToInt())
+                    offset(offset.round() + add)
+                    lastX = newX
+                    lastY = newY
+                },
+                onEnd = { notifyMatrixChanged() }
+            )
+            scaleAnimatable?.start()
+        } else {
+            val dx = -(centerLocation.x - start.x).toFloat()
+            val dy = -(centerLocation.y - start.y).toFloat()
+            val add = IntOffsetCompat(dx.roundToInt(), dy.roundToInt())
+            offset(offset.round() + add)
+        }
+    }
+
+    /**
+     * Rotate the image to the specified degrees
+     *
+     * @param targetRotation Rotation degrees, can only be 90°, 180°, 270°, 360°
+     */
+    fun rotate(targetRotation: Int) {
+        require(targetRotation >= 0) { "rotation must be greater than or equal to 0: $targetRotation" }
+        require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
+        val limitedTargetRotation = targetRotation % 360
+        val currentRotation = this@ZoomEngine.rotation
+        if (currentRotation == limitedTargetRotation) return
+        this@ZoomEngine.rotation = limitedTargetRotation
+        reset()
+        notifyRotationChanged()
+    }
+
+    fun transform(focus: OffsetCompat, pan: OffsetCompat, scaleFactor: Float) {
+        logger.d {
+            "onScale. scaleFactor: $scaleFactor, focus: ${focus.toShortString()}, pan: ${pan.toShortString()}"
         }
 
         /* Simulate a rubber band effect when zoomed to max or min */
-        var newUserScaleFactor = userScaleFactor
-        lastScaleFocusX = focusX
-        lastScaleFocusY = focusY
+        var newUserScaleFactor = scaleFactor
+        lastTransformFocus = focus
         val currentUserScale = userScale
         val newUserScale = currentUserScale * newUserScaleFactor
         val minUserScale = minScale / baseScale.scaleX
@@ -300,22 +380,12 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
         newUserScaleFactor = limitedNewUserScale / currentUserScale
 
-        require(dx.isSafe() && dy.isSafe() && newUserScaleFactor.isSafe()) { "doScale dx=$dx, dy=$dy, newUserScaleFactor=$newUserScaleFactor is invalid" }
-        userMatrix.postScale(newUserScaleFactor, newUserScaleFactor, focusX, focusY)
-        userMatrix.postTranslate(dx, dy)
+        userMatrix.postScale(newUserScaleFactor, newUserScaleFactor, focus.x, focus.y)
+        userMatrix.postTranslate(pan.x, pan.y)
         checkAndApplyMatrix()
     }
-
-    fun offset(offset: IntOffsetCompat, animate: Boolean = false) {
-        val currentOffset = this.offset
-        val fl = offset.x - currentOffset.x
-        val fy = offset.y - currentOffset.y
-        // todo 实现 animate
-        userMatrix.postTranslate(fl, fy)
-        checkAndApplyMatrix()
-    }
-
-    // todo 和 offset 合并
+    
+    // todo 和 transform 合并
     fun doDrag(dx: Float, dy: Float) {
         logger.d { "onDrag. dx: $dx, dy: $dy" }
 
@@ -346,82 +416,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             result
         }
         requestDisallowInterceptTouchEvent(disallow)
-    }
-
-    fun location(
-        offsetOfContent: IntOffsetCompat,
-        targetScale: Float = scale.scaleX,
-        animated: Boolean = false
-    ) {
-        val viewSize = viewSize.takeIf { !it.isEmpty() } ?: return
-
-        stopAllAnimation()
-
-        val nowScale = scale.scaleX
-        if (nowScale.format(2) != targetScale.format(2)) {
-            scale(newScale = targetScale, animate = false)
-        }
-
-        val displayRectF = cacheDisplayRectF.apply { getDisplayRect(this) }
-        val start = IntOffsetCompat(
-            x = abs(displayRectF.left.toInt()),
-            y = abs(displayRectF.top.toInt())
-        )
-        val rotatedOffsetOfContent = offsetOfContent.rotateInContainer(drawableSize, rotation)
-        val centerLocation =
-            computeLocationOffset(rotatedOffsetOfContent, viewSize, displayRectF, scale)
-        logger.d {
-            "location. " +
-                    "offsetOfContent=${offsetOfContent.toShortString()}, " +
-                    "start=${start.toShortString()}, " +
-                    "end=${centerLocation.toShortString()}"
-        }
-        if (animated) {
-            var lastX = start.x
-            var lastY = start.y
-            scaleAnimatable = FloatAnimatable(
-                view = view,
-                startValue = 0f,
-                endValue = 1f,
-                durationMillis = animationSpec.durationMillis,
-                interpolator = animationSpec.interpolator,
-                onUpdateValue = { value ->
-                    val mDeltaX = centerLocation.x - start.x
-                    val mDeltaY = centerLocation.y - start.y
-                    val newX = start.x + (value * mDeltaX).roundToInt()
-                    val newY = start.y + (value * mDeltaY).roundToInt()
-                    val dx = (lastX - newX).toFloat()
-                    val dy = (lastY - newY).toFloat()
-//                    offsetBy(dx, dy)
-                    val add = IntOffsetCompat(dx.roundToInt(), dy.roundToInt())
-                    offset(offset.round() + add)
-                    lastX = newX
-                    lastY = newY
-                },
-                onEnd = { notifyMatrixChanged() }
-            )
-            scaleAnimatable?.start()
-        } else {
-            val dx = -(centerLocation.x - start.x).toFloat()
-            val dy = -(centerLocation.y - start.y).toFloat()
-            val add = IntOffsetCompat(dx.roundToInt(), dy.roundToInt())
-            offset(offset.round() + add)
-        }
-    }
-
-    /**
-     * Rotate the image to the specified degrees
-     *
-     * @param rotation Rotation degrees, can only be 90°, 180°, 270°, 360°
-     */
-    fun rotation(rotation: Int) {
-        require(rotation >= 0) { "rotation must be greater than or equal to 0: $rotation" }
-        require(rotation % 90 == 0) { "rotation must be in multiples of 90: $rotation" }
-        val limitedRotation = rotation % 360
-        if (this@ZoomEngine.rotation == limitedRotation) return
-        this@ZoomEngine.rotation = limitedRotation
-        reset()
-        notifyRotationChanged()
     }
 
     fun fling(velocityX: Float, velocityY: Float) {
@@ -500,12 +494,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             currentScale.format(2) > maxScale.format(2) -> maxScale
             else -> null
         }
-        val lastScaleFocusX = lastScaleFocusX
-        val lastScaleFocusY = lastScaleFocusY
-        if (targetScale != null && lastScaleFocusX != 0f && lastScaleFocusY != 0f) {
+        val lastTransformFocus = lastTransformFocus
+        if (targetScale != null && lastTransformFocus != null) {
             scale(
-                newScale = targetScale,
-                centroid = OffsetCompat(x = lastScaleFocusX, y = lastScaleFocusY),
+                targetScale = targetScale,
+                focus = lastTransformFocus,
                 animate = true
             )
         }
@@ -514,8 +507,8 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     fun switchScale(fx: Float, fy: Float) {
         // todo 参考 ZoomableState#switchScale 用 location 实现
         scale(
-            newScale = getNextStepScale(),
-            centroid = OffsetCompat(x = fx, y = fy),
+            targetScale = getNextStepScale(),
+            focus = OffsetCompat(x = fx, y = fy),
             animate = true
         )
     }
@@ -628,8 +621,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             "onActionDown. disallow parent intercept touch event"
         }
         stopAllAnimation()
-        lastScaleFocusX = 0f
-        lastScaleFocusY = 0f
+        lastTransformFocus = null
         dragging = false
 
         requestDisallowInterceptTouchEvent(true)

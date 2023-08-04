@@ -127,7 +127,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewTileMap.setZoomImageView(zoomImageView)
 
         common.zoomImageViewRotate.setOnClickListener {
-            zoomImageView.zoomAbility.rotation(zoomImageView.zoomAbility.rotation + 90)
+            zoomImageView.zoomAbility.rotate(zoomImageView.zoomAbility.rotation + 90)
         }
 
         common.zoomImageViewZoom.apply {

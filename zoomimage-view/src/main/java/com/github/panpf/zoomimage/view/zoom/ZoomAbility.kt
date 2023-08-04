@@ -133,7 +133,11 @@ class ZoomAbility constructor(
                 zoomEngine.fling(velocityX, velocityY)
             },
             onScaleCallback = { scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float ->
-                zoomEngine.doScale(scaleFactor, focusX, focusY, dx, dy)
+                zoomEngine.transform(
+                    focus = OffsetCompat(x = focusX, y = focusY),
+                    pan = OffsetCompat(x = dx, y = dy),
+                    scaleFactor = scaleFactor,
+                )
             },
             onScaleBeginCallback = {
                 zoomEngine.manualScaling = true
@@ -213,8 +217,8 @@ class ZoomAbility constructor(
      *
      * @param rotation Rotation degrees, can only be 90°, 180°, 270°, 360°
      */
-    fun rotation(rotation: Int) {
-        zoomEngine.rotation(rotation)
+    fun rotate(rotation: Int) {
+        zoomEngine.rotate(rotation)
     }
 
     fun getNextStepScale(): Float = zoomEngine.getNextStepScale()
