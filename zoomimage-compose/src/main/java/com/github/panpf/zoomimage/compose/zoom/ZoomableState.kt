@@ -411,12 +411,12 @@ class ZoomableState(
         )
     }
 
-    fun rotate(rotation: Int) = coroutineScope.launch {
-        require(rotation >= 0) { "rotation must be greater than or equal to 0: $rotation" }
-        require(rotation % 90 == 0) { "rotation must be in multiples of 90: $rotation" }
-        val limitedRotation = rotation % 360
+    fun rotate(targetRotation: Int) = coroutineScope.launch {
+        require(targetRotation >= 0) { "rotation must be greater than or equal to 0: $targetRotation" }
+        require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
+        val limitedTargetRotation = targetRotation % 360
         val currentRotation = baseTransform.rotation
-        if (currentRotation.roundToInt() == limitedRotation) return@launch
+        if (currentRotation.roundToInt() == limitedTargetRotation) return@launch
 
         stopAllAnimationInternal("rotate")
 

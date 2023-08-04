@@ -182,7 +182,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         reset()
     }
 
-    fun reset() {
+    private fun reset() {
         val drawableSize = drawableSize
         val imageSize = imageSize
         val viewSize = viewSize
@@ -207,7 +207,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     "rotateDegrees=$rotation, " +
                     "scaleType=$scaleType, " +
                     "mediumScaleMinMultiple=$mediumScaleMinMultiple, " +
-                    "readMode=$readMode, " +
+                    "readMode=$readMode. " +
                     "minUserScale=${initialConfig.minScale}, " +
                     "mediumUserScale=${initialConfig.mediumScale}, " +
                     "maxUserScale=${initialConfig.maxScale}, " +
@@ -291,7 +291,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
         val nowScale = scale.scaleX
         if (nowScale.format(2) != targetScale.format(2)) {
-            scale(targetScale = targetScale, animate = false)
+            scale(targetScale = targetScale, animate = false)   // todo 参考 ZoomableState#location
         }
 
         val displayRectF = cacheDisplayRectF.apply { getDisplayRect(this) }
