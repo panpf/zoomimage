@@ -23,6 +23,7 @@ import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.util.getSuperGenericParam
 
 fun BindingActivity<*>.createViewBinding(
     inflater: LayoutInflater,

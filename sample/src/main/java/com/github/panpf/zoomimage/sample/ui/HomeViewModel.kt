@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.main
+package com.github.panpf.zoomimage.sample.ui
 
 import android.Manifest
 import android.app.Application
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _data = MutableStateFlow<List<Any>>(emptyList())
     val data: StateFlow<List<Any>> = _data

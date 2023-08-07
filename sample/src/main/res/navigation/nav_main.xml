@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.main.MainFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.HomeFragment" />
 
 
     <fragment

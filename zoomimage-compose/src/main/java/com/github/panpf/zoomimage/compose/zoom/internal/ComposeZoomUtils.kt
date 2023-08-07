@@ -522,7 +522,7 @@ internal fun computeZoomInitialConfig(
             minScale = 1.0f,
             mediumScale = 1.0f,
             maxScale = 1.0f,
-            baseTransform = Transform.Origin.copy(rotation = rotation),   // todo rotation move to userTransform
+            baseTransform = Transform.Origin.copy(rotation = rotation),
             userTransform = Transform.Origin
         )
     }
@@ -535,7 +535,7 @@ internal fun computeZoomInitialConfig(
         containerSize = containerSize,
         contentScale = contentScale,
         alignment = contentAlignment,
-    ).copy(rotation = rotation)    // todo rotation move to userTransform
+    ).copy(rotation = rotation)
 
     val userStepScales = computeUserScales(
         contentSize = rotatedContentSize.toCompat(),

@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.main
+package com.github.panpf.zoomimage.sample.ui
 
 import android.os.Build
 import android.os.Bundle
@@ -12,7 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
-import com.github.panpf.zoomimage.sample.databinding.MainFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.HomeFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.LinkItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
@@ -20,23 +20,23 @@ import com.github.panpf.zoomimage.sample.ui.model.Link
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MainFragment : ToolbarBindingFragment<MainFragmentBinding>() {
+class HomeFragment : ToolbarBindingFragment<HomeFragmentBinding>() {
 
     private var pendingStartLink: Link? = null
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grantedMap ->
             val pendingStartLink = pendingStartLink ?: return@registerForActivityResult
-            this@MainFragment.pendingStartLink = null
+            this@HomeFragment.pendingStartLink = null
             requestLinkPermissionsResult(grantedMap, pendingStartLink)
         }
-    private val viewModel by viewModels<MainViewModel>()
+    private val viewModel by viewModels<HomeViewModel>()
 
     override fun onViewCreated(
         toolbar: Toolbar,
-        binding: MainFragmentBinding,
+        binding: HomeFragmentBinding,
         savedInstanceState: Bundle?
     ) {
-        binding.mainRecycler.apply {
+        binding.homeRecycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = AssemblyRecyclerAdapter<Any>(
                 listOf(
