@@ -107,16 +107,19 @@ internal fun calculateSampledBitmapSizeForRegion(
     return IntSizeCompat(width, height)
 }
 
-suspend fun ImageSource.readImageBounds(): Result<BitmapFactory.Options?> {
+suspend fun ImageSource.readImageBounds(): Result<BitmapFactory.Options> {
     return withContext(Dispatchers.IO) {
         openInputStream()
             .let { it.getOrNull() ?: return@withContext Result.failure(it.exceptionOrNull()!!) }
             .use { inputStream ->
                 kotlin.runCatching {
-                    BitmapFactory.Options().apply {
-                        inJustDecodeBounds = true
-                        BitmapFactory.decodeStream(inputStream, null, this)
-                    }.takeIf { it.outWidth > 0 && it.outHeight > 0 }
+                    val options = BitmapFactory.Options()
+                    options.inJustDecodeBounds = true
+                    BitmapFactory.decodeStream(inputStream, null, options)
+                    require(options.outWidth > 0 && options.outHeight > 0) {
+                        "image width or height is error: ${options.outWidth}x${options.outHeight}"
+                    }
+                    options
                 }
             }
     }
@@ -136,18 +139,21 @@ suspend fun ImageSource.readExifOrientation(): Result<Int> {
     }
 }
 
-suspend fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): ImageInfo? {
-    val options = readImageBounds().getOrNull() ?: return null
+suspend fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): Result<ImageInfo> {
+    val options = readImageBounds()
+        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
     val exifOrientation = if (ignoreExifOrientation) {
         ExifInterface.ORIENTATION_UNDEFINED
     } else {
-        readExifOrientation().getOrNull() ?: return null
+        readExifOrientation()
+            .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
     }
-    return ImageInfo(
+    val imageInfo = ImageInfo(
         size = IntSizeCompat(options.outWidth, options.outHeight),
         mimeType = options.outMimeType,
         exifOrientation = exifOrientation,
     ).applyExifOrientation()
+    return Result.success(imageInfo)
 }
 
 internal fun isInBitmapError(throwable: Throwable): Boolean =

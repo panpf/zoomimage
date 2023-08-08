@@ -95,7 +95,7 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
                 if (resId != null) {
                     ImageSource.resource(resId)
                 } else {
-                    Log.w(
+                    Log.e(
                         "ZoomImageViewFragment",
                         "newImageSource failed, invalid resource uri: '$sketchImageUri'"
                     )
@@ -120,7 +120,7 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
                     } else {
                         binding.subsamplingViewProgress.isVisible = false
                         binding.subsamplingViewErrorLayout.isVisible = true
-                        Log.w(
+                        Log.e(
                             "ZoomImageViewFragment",
                             "newImageSource failed, data is byte array. uri: '$sketchImageUri'"
                         )
@@ -130,7 +130,7 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
                     binding.subsamplingViewProgress.isVisible = false
                     binding.subsamplingViewErrorLayout.isVisible = true
                     val errorMessage = (result as DownloadResult.Error).throwable.toString()
-                    Log.w(
+                    Log.e(
                         "ZoomImageViewFragment",
                         "newImageSource failed, image download failed: $errorMessage. uri: '$sketchImageUri'"
                     )

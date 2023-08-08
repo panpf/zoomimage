@@ -21,12 +21,10 @@ import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.Tile
@@ -38,6 +36,8 @@ import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -256,11 +256,12 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         val ignoreExifOrientation = ignoreExifOrientation
 
         lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
-            val imageInfo = imageSource.readImageInfo(ignoreExifOrientation)
+            val imageInfoResult = imageSource.readImageInfo(ignoreExifOrientation)
+            val imageInfo = imageInfoResult.getOrNull()
             this@SubsamplingState.imageInfo = imageInfo
-            val result =
-                imageInfo?.let { canUseSubsampling(it, contentSize.toCompat()) } ?: -10
-            if (imageInfo != null && result >= 0) {
+            val canUseSubsamplingResult =
+                imageInfo?.let { canUseSubsampling(it, contentSize.toCompat()) }
+            if (imageInfo != null && canUseSubsamplingResult == 0) {
                 logger.d {
                     "resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
@@ -276,15 +277,17 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 )
                 resetTileManager(caller)
             } else {
-                val cause = when (result) {
-                    -1 -> "The content size is greater than or equal to the original image"
-                    -2 -> "The content aspect ratio is different with the original image"
-                    -3 -> "Image type not support subsampling"
-                    -10 -> "Can't decode image bounds or exif orientation"
-                    else -> "Unknown"
+                val cause = when {
+                    imageInfo == null -> imageInfoResult.exceptionOrNull()!!.message
+                    canUseSubsamplingResult == -1 -> "The content size is greater than or equal to the original image"
+                    canUseSubsamplingResult == -2 -> "The content aspect ratio is different with the original image"
+                    canUseSubsamplingResult == -3 -> "Image type not support subsampling"
+                    else -> "Unknown canUseSubsamplingResult: $canUseSubsamplingResult"
                 }
-                logger.d {
-                    "resetTileDecoder:$caller. failed, $cause. " +
+                val level = if (canUseSubsamplingResult == -1) Logger.DEBUG else Logger.ERROR
+                val type = if (canUseSubsamplingResult == -1) "skipped" else "failed"
+                logger.log(level) {
+                    "resetTileDecoder:$caller. $type, $cause. " +
                             "contentSize: ${contentSize.toShortString()}, " +
                             "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo: ${imageInfo?.toShortString()}. " +

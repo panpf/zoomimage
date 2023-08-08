@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage
 
 import android.util.Log
+import androidx.annotation.IntDef
 
 class Logger(
     val tag: String,
@@ -205,6 +206,35 @@ class Logger(
     }
 
 
+    fun log(@Level level: Int, msg: String) {
+        val logger = rootLogger ?: this
+        if (logger.level >= level) {
+            logger.pipeline.log(level, tag, assembleMessage(msg), null)
+        }
+    }
+
+    fun log(@Level level: Int, lazyMessage: () -> String) {
+        val logger = rootLogger ?: this
+        if (logger.level >= level) {
+            logger.pipeline.log(level, tag, assembleMessage(lazyMessage()), null)
+        }
+    }
+
+    fun log(@Level level: Int, throwable: Throwable?, msg: String) {
+        val logger = rootLogger ?: this
+        if (logger.level >= level) {
+            logger.pipeline.log(level, tag, assembleMessage(msg), throwable)
+        }
+    }
+
+    fun log(@Level level: Int, throwable: Throwable?, lazyMessage: () -> String) {
+        val logger = rootLogger ?: this
+        if (logger.level >= level) {
+            logger.pipeline.log(level, tag, assembleMessage(lazyMessage()), throwable)
+        }
+    }
+
+
     fun flush() {
         val logger = rootLogger ?: this
         logger.pipeline.flush()
@@ -270,6 +300,11 @@ class Logger(
     override fun toString(): String {
         return "Logger(tag='$tag', module=$pipeline=$pipeline, level=$level)"
     }
+
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(VERBOSE, DEBUG, INFO, WARN, ERROR, ASSERT)
+    @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD)
+    annotation class Level
 
     companion object {
         /**
