@@ -14,7 +14,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -31,7 +30,6 @@ import coil.request.NullRequestDataException
 import com.github.panpf.zoomimage.coil.internal.CoilImageSource
 import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.compose.internal.NoClipImage
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
@@ -273,3 +271,6 @@ private fun onStateOf(
 private fun Size.roundToIntSize(): IntSize {
     return IntSize(width.roundToInt(), height.roundToInt())
 }
+
+@Stable
+private fun IntSize.isNotEmpty(): Boolean = width != 0 && height != 0

@@ -58,9 +58,11 @@ internal fun IntSize.toOffset(): Offset = Offset(x = width.toFloat(), y = height
 
 internal fun IntSize.toIntOffset(): IntOffset = IntOffset(x = width, y = height)
 
-internal fun Size.toOffset(): Offset = Offset(x = width, y = height)
+internal fun Size.toOffset(): Offset =
+    if (isSpecified) Offset(x = width, y = height) else Offset.Unspecified
 
-internal fun Size.roundToOffset(): IntOffset = IntOffset(x = width.roundToInt(), y = height.roundToInt())
+internal fun Size.roundToOffset(): IntOffset =
+    if (isSpecified) IntOffset(x = width.roundToInt(), y = height.roundToInt()) else IntOffset.Zero
 
 internal fun IntOffset.toSize(): Size = Size(width = x.toFloat(), height = y.toFloat())
 
@@ -68,7 +70,8 @@ internal fun IntOffset.toIntSize(): IntSize = IntSize(width = x, height = y)
 
 internal fun Offset.toSize(): Size = Size(width = x, height = y)
 
-internal fun Offset.roundToSize(): IntSize = IntSize(width = x.roundToInt(), height = y.roundToInt())
+internal fun Offset.roundToSize(): IntSize =
+    IntSize(width = x.roundToInt(), height = y.roundToInt())
 
 
 internal fun Size.isAvailable(): Boolean = isSpecified && !isEmpty()
@@ -77,68 +80,76 @@ internal fun Size.isNotAvailable(): Boolean = isUnspecified || isEmpty()
 
 
 internal fun Size.rotate(rotateDegrees: Int): Size =
-    if (rotateDegrees % 180 == 0) this else Size(height, width)
+    if (isUnspecified || rotateDegrees % 180 == 0) this else Size(height, width)
 
 
 internal fun Size.round(): IntSize =
-    IntSize(width.roundToInt(), height.roundToInt())
+    if (isSpecified) IntSize(width.roundToInt(), height.roundToInt()) else IntSize.Zero
 
 
 @Stable
-operator fun Size.times(scaleFactor: ScaleFactor): Size =
-    Size(
-        width = this.width * scaleFactor.scaleX,
-        height = this.height * scaleFactor.scaleY,
-    )
+internal operator fun Size.times(scaleFactor: ScaleFactor): Size =
+    if (isSpecified) {
+        Size(
+            width = this.width * scaleFactor.scaleX,
+            height = this.height * scaleFactor.scaleY,
+        )
+    } else {
+        Size.Unspecified
+    }
 
 @Stable
-operator fun Size.div(scaleFactor: ScaleFactor): Size =
-    Size(
-        width = this.width / scaleFactor.scaleX,
-        height = this.height / scaleFactor.scaleY,
-    )
+internal operator fun Size.div(scaleFactor: ScaleFactor): Size =
+    if (isSpecified) {
+        Size(
+            width = this.width / scaleFactor.scaleX,
+            height = this.height / scaleFactor.scaleY,
+        )
+    } else {
+        Size.Unspecified
+    }
 
 @Stable
-operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
+internal operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
     IntSize(
         width = (this.width * scaleFactor.scaleX).roundToInt(),
         height = (this.height * scaleFactor.scaleY).roundToInt()
     )
 
 @Stable
-operator fun IntSize.div(scaleFactor: ScaleFactor): IntSize =
+internal operator fun IntSize.div(scaleFactor: ScaleFactor): IntSize =
     IntSize(
         width = (this.width / scaleFactor.scaleX).roundToInt(),
         height = (this.height / scaleFactor.scaleY).roundToInt()
     )
 
 @Stable
-operator fun IntSize.times(scale: Float): IntSize =
+internal operator fun IntSize.times(scale: Float): IntSize =
     IntSize(
         width = (this.width * scale).roundToInt(),
         height = (this.height * scale).roundToInt()
     )
 
 @Stable
-operator fun IntSize.div(scale: Float): IntSize =
+internal operator fun IntSize.div(scale: Float): IntSize =
     IntSize(
         width = (this.width / scale).roundToInt(),
         height = (this.height / scale).roundToInt()
     )
 
-operator fun Offset.times(scaleFactor: ScaleFactor): Offset =
+internal operator fun Offset.times(scaleFactor: ScaleFactor): Offset =
     Offset(x * scaleFactor.scaleX, y * scaleFactor.scaleY)
 
-operator fun Offset.div(scaleFactor: ScaleFactor): Offset =
+internal operator fun Offset.div(scaleFactor: ScaleFactor): Offset =
     Offset(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
 
-operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset =
+internal operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset =
     IntOffset(
         x = (x * scaleFactor.scaleX).roundToInt(),
         y = (y * scaleFactor.scaleY).roundToInt()
     )
 
-operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
+internal operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
     IntOffset(
         x = (x / scaleFactor.scaleX).roundToInt(),
         y = (y / scaleFactor.scaleY).roundToInt()
@@ -146,10 +157,10 @@ operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
 
 
 @Stable
-fun IntSize.isEmpty(): Boolean = width == 0 || height == 0
+internal fun IntSize.isEmpty(): Boolean = width == 0 || height == 0
 
 @Stable
-fun IntSize.isNotEmpty(): Boolean = !isEmpty()
+internal fun IntSize.isNotEmpty(): Boolean = width != 0 && height != 0
 
 
 internal fun IntSize.rotate(rotation: Int): IntSize {
@@ -164,7 +175,7 @@ internal fun IntSize.rotate(rotation: Int): IntSize {
  *
  * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
  */
-fun Offset.rotateBy(angle: Float): Offset {
+internal fun Offset.rotateBy(angle: Float): Offset {
     val angleInRadians = angle * PI / 180
     return Offset(
         (x * cos(angleInRadians) - y * sin(angleInRadians)).toFloat(),
@@ -174,7 +185,7 @@ fun Offset.rotateBy(angle: Float): Offset {
 
 
 private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
-val TransformOrigin.Companion.TopStart: TransformOrigin
+internal val TransformOrigin.Companion.TopStart: TransformOrigin
     get() = transformOriginTopStart
 
 @Stable
@@ -194,6 +205,14 @@ internal fun Rect.scale(scale: Float): Rect =
         top = (top * scale),
         right = (right * scale),
         bottom = (bottom * scale),
+    )
+
+internal fun Rect.scale(scale: ScaleFactor): Rect =
+    Rect(
+        left = (left * scale.scaleX),
+        top = (top * scale.scaleY),
+        right = (right * scale.scaleX),
+        bottom = (bottom * scale.scaleY),
     )
 
 internal fun IntRect.scale(scale: Float): IntRect =
@@ -260,6 +279,16 @@ internal fun Rect.limitTo(rect: Rect): Rect =
         bottom = bottom.coerceIn(rect.top, rect.bottom),
     )
 
+internal fun Rect.rotate(rotation: Int): Rect {
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+    return when (rotation) {
+        90 -> Rect(left = -bottom, top = left, right = -top, bottom = right)
+        180 -> Rect(left = -right, top = -bottom, right = -left, bottom = -top)
+        270 -> Rect(left = top, top = -right, right = bottom, bottom = -left)
+        else -> this // 0 or 360
+    }
+}
+
 internal val ContentScale.name: String
     get() = when (this) {
         ContentScale.FillWidth -> "FillWidth"
@@ -271,6 +300,19 @@ internal val ContentScale.name: String
         ContentScale.None -> "None"
         else -> "Unknown"
     }
+
+internal fun contentScale(name: String): ContentScale {
+    return when (name) {
+        "FillWidth" -> ContentScale.FillWidth
+        "FillHeight" -> ContentScale.FillHeight
+        "FillBounds" -> ContentScale.FillBounds
+        "Fit" -> ContentScale.Fit
+        "Crop" -> ContentScale.Crop
+        "Inside" -> ContentScale.Inside
+        "None" -> ContentScale.None
+        else -> throw IllegalArgumentException("Unknown ContentScale name: $name")
+    }
+}
 
 internal val Alignment.name: String
     get() = when (this) {
@@ -285,6 +327,21 @@ internal val Alignment.name: String
         Alignment.BottomEnd -> "BottomEnd"
         else -> "Unknown"
     }
+
+internal fun alignment(name: String): Alignment {
+    return when (name) {
+        "TopStart" -> Alignment.TopStart
+        "TopCenter" -> Alignment.TopCenter
+        "TopEnd" -> Alignment.TopEnd
+        "CenterStart" -> Alignment.CenterStart
+        "Center" -> Alignment.Center
+        "CenterEnd" -> Alignment.CenterEnd
+        "BottomStart" -> Alignment.BottomStart
+        "BottomCenter" -> Alignment.BottomCenter
+        "BottomEnd" -> Alignment.BottomEnd
+        else -> throw IllegalArgumentException("Unknown alignment name: $name")
+    }
+}
 
 internal val Alignment.isStart: Boolean
     get() = this == Alignment.TopStart || this == Alignment.CenterStart || this == Alignment.BottomStart
