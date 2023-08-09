@@ -14,7 +14,7 @@ data class Transform(
     val offset: Offset,
     val rotation: Float = 0f,
     val scaleOrigin: TransformOrigin = TransformOrigin.TopStart,
-    val rotationOrigin: TransformOrigin = TransformOrigin.Center,
+    val rotationOrigin: TransformOrigin = TransformOrigin.TopStart,
 ) {
 
     constructor(
@@ -64,7 +64,7 @@ data class Transform(
             offset = Offset.Zero,
             rotation = 0f,
             scaleOrigin = TransformOrigin.TopStart,
-            rotationOrigin = TransformOrigin.Center,
+            rotationOrigin = TransformOrigin.TopStart,
         )
     }
 

@@ -5,7 +5,7 @@ data class TransformCompat(
     val offset: OffsetCompat,
     val rotation: Float = 0f,
     val scaleOrigin: TransformOriginCompat = TransformOriginCompat.TopStart,
-    val rotationOrigin: TransformOriginCompat = TransformOriginCompat.Center,
+    val rotationOrigin: TransformOriginCompat = TransformOriginCompat.TopStart,
 ) {
 
     constructor(
@@ -55,7 +55,7 @@ data class TransformCompat(
             offset = OffsetCompat.Zero,
             rotation = 0f,
             scaleOrigin = TransformOriginCompat.TopStart,
-            rotationOrigin = TransformOriginCompat.Center,
+            rotationOrigin = TransformOriginCompat.TopStart,
         )
     }
 
