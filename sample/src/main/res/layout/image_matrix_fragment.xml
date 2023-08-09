@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipChildren="false">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageMatrixFragment_imageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="6"
+            android:background="@drawable/bg_image_matrix"
+            android:scaleType="matrix"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.6"
+            app:layout_constraintWidth_percent="0.6"
+            tools:srcCompat="@drawable/ic_launcher_background" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/imageMatrixFragment_transformValueText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="缩放：100f；位移：100x99；旋转：90" />
+
+        <TextView
+            android:id="@+id/imageMatrixFragment_displayValueText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="display：[0x0,1080,1920]" />
+
+        <View
+            android:layout_width="12dp"
+            android:layout_height="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:orientation="horizontal">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <View
+                    android:id="@+id/imageMatrixFragment_offsetCenter"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageMatrixFragment_offsetUpButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_arrow"
+                    android:padding="10dp"
+                    app:layout_constraintCircle="@id/imageMatrixFragment_offsetCenter"
+                    app:layout_constraintCircleAngle="0"
+                    app:layout_constraintCircleRadius="40dp"
+                    app:srcCompat="@drawable/ic_arrow_up"
+                    app:tint="@color/white"
+                    tools:ignore="MissingConstraints" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageMatrixFragment_offsetDownButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_arrow"
+                    android:padding="10dp"
+                    app:layout_constraintCircle="@id/imageMatrixFragment_offsetCenter"
+                    app:layout_constraintCircleAngle="180"
+                    app:layout_constraintCircleRadius="40dp"
+                    app:srcCompat="@drawable/ic_arrow_down"
+                    app:tint="@color/white"
+                    tools:ignore="MissingConstraints" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageMatrixFragment_offsetLeftButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_arrow"
+                    android:padding="10dp"
+                    app:layout_constraintCircle="@id/imageMatrixFragment_offsetCenter"
+                    app:layout_constraintCircleAngle="270"
+                    app:layout_constraintCircleRadius="40dp"
+                    app:srcCompat="@drawable/ic_arrow_left"
+                    app:tint="@color/white"
+                    tools:ignore="MissingConstraints" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageMatrixFragment_offsetRightButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_arrow"
+                    android:padding="10dp"
+                    app:layout_constraintCircle="@id/imageMatrixFragment_offsetCenter"
+                    app:layout_constraintCircleAngle="90"
+                    app:layout_constraintCircleRadius="40dp"
+                    app:srcCompat="@drawable/ic_arrow_right"
+                    app:tint="@color/white"
+                    tools:ignore="MissingConstraints" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageMatrixFragment_scaleMinusButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_arrow"
+                        android:padding="10dp"
+                        app:srcCompat="@drawable/ic_zoom_out"
+                        app:tint="@color/white" />
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="20dp" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageMatrixFragment_scalePlusButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_arrow"
+                        android:padding="10dp"
+                        app:srcCompat="@drawable/ic_zoom_in"
+                        app:tint="@color/white" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="12dp"
+                    android:layout_height="12dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageMatrixFragment_rotateMinusButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_arrow"
+                        android:padding="10dp"
+                        app:srcCompat="@drawable/ic_rotate_left"
+                        app:tint="@color/white" />
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="20dp" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageMatrixFragment_rotatePlusButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_arrow"
+                        android:padding="10dp"
+                        app:srcCompat="@drawable/ic_rotate_right"
+                        app:tint="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="12dp"
+            android:layout_height="12dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/imageMatrixFragment_horizontalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="横图" />
+
+            <View
+                android:layout_width="12dp"
+                android:layout_height="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/imageMatrixFragment_verticalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="竖图" />
+
+            <View
+                android:layout_width="12dp"
+                android:layout_height="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/imageMatrixFragment_resetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="重置" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

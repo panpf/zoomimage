@@ -142,6 +142,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 title = "ZoomImageView Exif Orientation Test",
                 navDirections = NavMainDirections.actionGlobalViewExifOrientationTestFragment(),
             ),
+            Link(
+                title = "ImageMatrix Test",
+                navDirections = NavMainDirections.actionGlobalImageMatrixFragment(),
+            ),
+            Link(
+                title = "Compose graphicsLayer Test",
+                navDirections = NavMainDirections.actionGlobalGraphicsLayerFragment(),
+                minSdk = 21,
+            ),
         )
     }
 }

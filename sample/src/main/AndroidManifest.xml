@@ -41,6 +41,7 @@
         com.github.panpf.zoomimage.compose.coil,
         com.github.panpf.zoomimage.compose.sketch,
         com.github.panpf.zoomimage.compose.glide,
+        androidx.constraintlayout.compose,
     " />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />

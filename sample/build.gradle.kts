@@ -96,6 +96,7 @@ dependencies {
     implementation(libs.mmkv)
     implementation(libs.subsamplingscaleimageview)
     implementation(libs.photoview)
+    implementation(libs.androidx.constraintlayout.compose)
 
     /* compose */
     implementation(platform(libs.androidx.compose.bom))

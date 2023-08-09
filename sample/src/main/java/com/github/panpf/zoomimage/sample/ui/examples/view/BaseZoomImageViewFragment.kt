@@ -231,6 +231,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 scale: 
                 offset: 
                 visible: 
+                display: 
             """.trimIndent()
         common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
             val scales = floatArrayOf(minScale, mediumScale, maxScale)
@@ -240,6 +241,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 ${scale.scaleX.format(2)}(${baseScale.scaleX.format(2)}*${userScale.format(2)}) in $scales
                 ${offsetCompat.toShortString()}; edge=${scrollEdge.toShortString()}
                 ${getVisibleRect().toVeryShortString()}
+                ${getDisplayRect().toVeryShortString()}
             """.trimIndent()
         }
     }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_main"
     app:startDestination="@id/homeFragment">
-<!--    app:startDestination="@id/zoomImageTestFragment">-->
+    <!--    app:startDestination="@id/zoomImageTestFragment">-->
 
     <fragment
         android:id="@+id/homeFragment"
@@ -249,4 +249,26 @@
             app:argType="float"
             app:nullable="false" />
     </fragment>
+
+    <fragment
+        android:id="@+id/imageMatrixFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.view.ImageMatrixFragment" />
+    <action
+        android:id="@+id/action_global_imageMatrixFragment"
+        app:destination="@id/imageMatrixFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/graphicsLayerFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.compose.GraphicsLayerFragment" />
+    <action
+        android:id="@+id/action_global_graphicsLayerFragment"
+        app:destination="@id/graphicsLayerFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
 </navigation>
