@@ -5,6 +5,7 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
@@ -30,9 +31,10 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
     private val baseMatrix = Matrix()
     private val userMatrix = Matrix()
     private val displayMatrix = Matrix()
-    private val scaleType = ScaleType.FIT_CENTER
+    private var scaleType = ScaleType.FIT_CENTER
     private var viewSize = IntSizeCompat.Zero
     private var rotation = 0
+    private var horImage = true
 
     override fun onViewCreated(
         toolbar: Toolbar,
@@ -45,13 +47,33 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         binding.imageMatrixFragmentImageView.apply {
         }
 
-        // todo 横图竖图合成一个按钮，在增加 ScaleType 选项
-        binding.imageMatrixFragmentHorizontalButton.setOnClickListener {
-            setImage(binding, true)
+        binding.imageMatrixFragmentHorizontalButton.apply {
+            val setName = {
+                text = if (horImage) "竖图" else "横图"
+            }
+            setOnClickListener {
+                horImage = !horImage
+                setName()
+                updateImage(binding)
+            }
+            setName()
         }
 
-        binding.imageMatrixFragmentVerticalButton.setOnClickListener {
-            setImage(binding, false)
+        binding.imageMatrixFragmentScaleTypeButton.apply {
+            val setName = {
+                text = scaleType.name
+            }
+            setOnClickListener {
+                AlertDialog.Builder(requireActivity()).apply {
+                    val scaleTypes = ScaleType.values().filter { it != ScaleType.MATRIX }
+                    setItems(scaleTypes.map { it.name }.toTypedArray()) { _, which ->
+                        scaleType = scaleTypes[which]
+                        setName()
+                        updateMatrix(binding)
+                    }
+                }.show()
+            }
+            setName()
         }
 
         binding.imageMatrixFragmentResetButton.setOnClickListener {
@@ -112,8 +134,7 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
             }
         }
 
-        updateMatrix(binding)
-        setImage(binding, true)
+        updateImage(binding)
     }
 
     @SuppressLint("SetTextI18n")
@@ -123,6 +144,8 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
             ?: IntSizeCompat.Zero
 
         val rotation = rotation
+        val scaleType = scaleType
+        val viewSize = viewSize
         val initialConfig = computeZoomInitialConfig(
             containerSize = viewSize,
             contentSize = drawableSize,
@@ -175,8 +198,8 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun setImage(binding: ImageMatrixFragmentBinding, hor: Boolean) {
-        val imageUri = if (hor) {
+    private fun updateImage(binding: ImageMatrixFragmentBinding) {
+        val imageUri = if (horImage) {
             newAssetUri("sample_elephant.jpg")
         } else {
             newAssetUri("sample_cat.jpg")

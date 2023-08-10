@@ -212,10 +212,10 @@
                 android:layout_height="12dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/imageMatrixFragment_verticalButton"
+                android:id="@+id/imageMatrixFragment_scaleTypeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="竖图" />
+                android:text="FIT_CENTER" />
 
             <View
                 android:layout_width="12dp"

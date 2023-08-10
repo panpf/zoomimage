@@ -8,7 +8,18 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.zoomimage.ReadMode
+import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
+import com.github.panpf.zoomimage.compose.internal.toCompatTransform
+import com.github.panpf.zoomimage.compose.internal.toScaleMode
+import com.github.panpf.zoomimage.compose.internal.toTransform
+import com.github.panpf.zoomimage.compose.zoom.Transform
+import com.github.panpf.zoomimage.compose.zoom.split
+import com.github.panpf.zoomimage.util.computeUserScales
+import kotlin.math.roundToInt
 
 
 internal fun computeContentInContainerRect(
@@ -475,27 +486,27 @@ internal fun computeContentInContainerRect(
 //    return offsetBounds
 //}
 //
-//internal fun computeBaseTransform(
-//    containerSize: IntSize,
-//    contentSize: IntSize,
-//    contentScale: ContentScale,
-//    alignment: Alignment,
-//): Transform {
-//    val scaleFactor = contentScale.computeScaleFactor(contentSize.toSize(), containerSize.toSize())
-//    val contentScaleFactor = contentScale.computeScaleFactor(
-//        srcSize = contentSize.toSize(),
-//        dstSize = containerSize.toSize()
-//    )
-//    val scaledContentSize = contentSize.times(contentScaleFactor)
-//    val alignmentOffset = alignment.align(
-//        size = scaledContentSize,
-//        space = containerSize,
-//        layoutDirection = LayoutDirection.Ltr
-//    )
-//    return Transform(scale = scaleFactor, offset = alignmentOffset.toOffset())
-//}
+internal fun computeBaseTransform(
+    containerSize: IntSize,
+    contentSize: IntSize,
+    contentScale: ContentScale,
+    alignment: Alignment,
+): Transform {
+    val scaleFactor = contentScale.computeScaleFactor(contentSize.toSize(), containerSize.toSize())
+    val contentScaleFactor = contentScale.computeScaleFactor(
+        srcSize = contentSize.toSize(),
+        dstSize = containerSize.toSize()
+    )
+    val scaledContentSize = contentSize.times(contentScaleFactor)
+    val alignmentOffset = alignment.align(
+        size = scaledContentSize,
+        space = containerSize,
+        layoutDirection = LayoutDirection.Ltr
+    )
+    return Transform(scale = scaleFactor, offset = alignmentOffset.toOffset())
+}
 //
-//internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds
+internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds
 //
 //internal fun computeTransformOffset(
 //    currentScale: Float,
@@ -552,78 +563,78 @@ internal fun computeContentInContainerRect(
 //    }
 //}
 //
-//internal fun computeZoomInitialConfig(
-//    containerSize: IntSize,
-//    contentSize: IntSize,
-//    contentOriginSize: IntSize,
-//    contentScale: ContentScale,
-//    contentAlignment: Alignment,
-//    rotation: Float,
-//    readMode: ReadMode?,
-//    mediumScaleMinMultiple: Float,
-//): InitialConfig {
-//    if (containerSize.isEmpty() || contentSize.isEmpty()) {
-//        return InitialConfig(
-//            minScale = 1.0f,
-//            mediumScale = 1.0f,
-//            maxScale = 1.0f,
-//            baseTransform = Transform.Origin.copy(rotation = rotation),
-//            userTransform = Transform.Origin
-//        )
-//    }
-//
-//    val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
-//    val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
-//
-//    val baseTransform = computeBaseTransform(
-//        contentSize = rotatedContentSize,
-//        containerSize = containerSize,
-//        contentScale = contentScale,
-//        alignment = contentAlignment,
-//    ).copy(rotation = rotation)
-//
-//    val userStepScales = computeUserScales(
-//        contentSize = rotatedContentSize.toCompat(),
-//        contentOriginSize = rotatedContentOriginSize.toCompat(),
-//        containerSize = containerSize.toCompat(),
-//        scaleMode = contentScale.toScaleMode(),
-//        baseScale = contentScale.computeScaleFactor(
-//            srcSize = rotatedContentSize.toSize(),
-//            dstSize = containerSize.toSize()
-//        ).toCompatScaleFactor(),
-//        mediumScaleMinMultiple = mediumScaleMinMultiple,
-//    )
-//    val minScale = userStepScales[0] * baseTransform.scaleX
-//    val mediumScale = userStepScales[1] * baseTransform.scaleX
-//    val maxScale = userStepScales[2] * baseTransform.scaleX
-//
-//    val readModeTransform = readMode
-//        ?.takeIf { contentScale.supportReadMode() }
-//        ?.takeIf {
-//            it.accept(
-//                srcSize = rotatedContentSize.toCompat(),
-//                dstSize = containerSize.toCompat()
-//            )
-//        }?.computeTransform(
-//            containerSize = containerSize.toCompat(),
-//            contentSize = rotatedContentSize.toCompat(),
-//            baseTransform = baseTransform.toCompatTransform()
-//        )?.toTransform()
-//    val userTransform = readModeTransform?.split(baseTransform)
-//
-//    return InitialConfig(
-//        minScale = minScale,
-//        mediumScale = mediumScale,
-//        maxScale = maxScale,
-//        baseTransform = baseTransform,
-//        userTransform = userTransform ?: Transform.Origin
-//    )
-//}
-//
-//class InitialConfig(
-//    val minScale: Float,
-//    val mediumScale: Float,
-//    val maxScale: Float,
-//    val baseTransform: Transform,
-//    val userTransform: Transform,
-//)
+internal fun computeZoomInitialConfig(
+    containerSize: IntSize,
+    contentSize: IntSize,
+    contentOriginSize: IntSize,
+    contentScale: ContentScale,
+    contentAlignment: Alignment,
+    rotation: Float,
+    readMode: ReadMode?,
+    mediumScaleMinMultiple: Float,
+): InitialConfig {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return InitialConfig(
+            minScale = 1.0f,
+            mediumScale = 1.0f,
+            maxScale = 1.0f,
+            baseTransform = Transform.Origin.copy(rotation = rotation),
+            userTransform = Transform.Origin
+        )
+    }
+
+    val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
+    val rotatedContentOriginSize = contentOriginSize.rotate(rotation.roundToInt())
+
+    val baseTransform = computeBaseTransform(
+        contentSize = rotatedContentSize,
+        containerSize = containerSize,
+        contentScale = contentScale,
+        alignment = contentAlignment,
+    ).copy(rotation = rotation)
+
+    val userStepScales = computeUserScales(
+        contentSize = rotatedContentSize.toCompat(),
+        contentOriginSize = rotatedContentOriginSize.toCompat(),
+        containerSize = containerSize.toCompat(),
+        scaleMode = contentScale.toScaleMode(),
+        baseScale = contentScale.computeScaleFactor(
+            srcSize = rotatedContentSize.toSize(),
+            dstSize = containerSize.toSize()
+        ).toCompatScaleFactor(),
+        mediumScaleMinMultiple = mediumScaleMinMultiple,
+    )
+    val minScale = userStepScales[0] * baseTransform.scaleX
+    val mediumScale = userStepScales[1] * baseTransform.scaleX
+    val maxScale = userStepScales[2] * baseTransform.scaleX
+
+    val readModeTransform = readMode
+        ?.takeIf { contentScale.supportReadMode() }
+        ?.takeIf {
+            it.accept(
+                srcSize = rotatedContentSize.toCompat(),
+                dstSize = containerSize.toCompat()
+            )
+        }?.computeTransform(
+            containerSize = containerSize.toCompat(),
+            contentSize = rotatedContentSize.toCompat(),
+            baseTransform = baseTransform.toCompatTransform()
+        )?.toTransform()
+    val userTransform = readModeTransform?.split(baseTransform)
+
+    return InitialConfig(
+        minScale = minScale,
+        mediumScale = mediumScale,
+        maxScale = maxScale,
+        baseTransform = baseTransform,
+        userTransform = userTransform ?: Transform.Origin
+    )
+}
+
+class InitialConfig(
+    val minScale: Float,
+    val mediumScale: Float,
+    val maxScale: Float,
+    val baseTransform: Transform,
+    val userTransform: Transform,
+)

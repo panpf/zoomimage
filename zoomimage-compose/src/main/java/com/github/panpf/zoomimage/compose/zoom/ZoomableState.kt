@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.toOffset
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.compose.BuildConfig
 import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
@@ -420,8 +421,10 @@ class ZoomableState(
 
         stopAllAnimationInternal("rotate")
 
-//        baseTransform = baseTransform.copy(rotation = limitedRotation.toFloat())
-//        reset("rotate")
+        if (BuildConfig.DEBUG) {
+            baseTransform = baseTransform.copy(rotation = limitedTargetRotation.toFloat())
+            reset("rotate")
+        }
         // todo 适配 rotation
     }
 
@@ -660,6 +663,7 @@ class ZoomableState(
     }
 
     private fun limitUserOffset(userOffset: Offset, userScale: Float): Offset {
+        if (BuildConfig.DEBUG) return userOffset
         val userOffsetBounds = computeUserOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,

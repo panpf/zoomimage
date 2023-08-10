@@ -5,14 +5,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -27,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -40,10 +44,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.zoomimage.sample.ui.util.compose.round
+import com.github.panpf.zoomimage.compose.zoom.Transform
+import com.github.panpf.zoomimage.compose.zoom.concat
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
+import com.github.panpf.zoomimage.sample.ui.common.compose.AutoSizeText
+import com.github.panpf.zoomimage.sample.ui.util.compose.ScaleFactor
 import com.github.panpf.zoomimage.sample.ui.util.compose.computeContentInContainerRect
+import com.github.panpf.zoomimage.sample.ui.util.compose.computeZoomInitialConfig
+import com.github.panpf.zoomimage.sample.ui.util.compose.name
+import com.github.panpf.zoomimage.sample.ui.util.compose.round
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
@@ -64,6 +74,8 @@ class GraphicsLayerFragment : AppBarFragment() {
 
 @Composable
 private fun GraphicsLayerSample() {
+    val context = LocalContext.current
+
     var horImage by remember { mutableStateOf(true) }
     val imageUri = remember(horImage) {
         if (horImage) {
@@ -72,44 +84,83 @@ private fun GraphicsLayerSample() {
             newAssetUri("sample_cat.jpg")
         }
     }
-    val context = LocalContext.current
+
     val painter = rememberAsyncImagePainter(request = DisplayRequest(context, imageUri) {
         val resources = context.resources
         val maxSize =
             min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) / 4
         addTransformations(BitmapScaleTransformation(maxSize))
     })
-    var scale by remember { mutableStateOf(1f) }
-    var offset by remember { mutableStateOf(Offset.Zero) }
+    var containerSize by remember { mutableStateOf(IntSize.Zero) }
+
+    var contentScale by remember { mutableStateOf(ContentScale.Fit) }
+    var alignment by remember { mutableStateOf(Alignment.Center) }
     var rotation by remember { mutableStateOf(0) }
+
+    val baseTransform by remember {
+        derivedStateOf {
+            computeZoomInitialConfig(
+                containerSize = containerSize,
+                contentSize = painter.intrinsicSize.round(),
+                contentOriginSize = IntSize.Zero,
+                contentScale = contentScale,
+                contentAlignment = alignment,
+                rotation = rotation.toFloat(),
+                readMode = null,
+                mediumScaleMinMultiple = 2f
+            ).baseTransform
+        }
+    }
+    var userTransform by remember { mutableStateOf(Transform.Origin) }
+    val displayTransform by remember { derivedStateOf { baseTransform.concat(userTransform) } }
+
+    var contentScaleMenuExpanded by remember { mutableStateOf(false) }
+    val contentScales = remember {
+        listOf(
+            ContentScale.Fit,
+            ContentScale.Crop,
+            ContentScale.Inside,
+            ContentScale.FillWidth,
+            ContentScale.FillHeight,
+            ContentScale.FillBounds,
+            ContentScale.None,
+        )
+    }
+    var alignmentMenuExpanded by remember { mutableStateOf(false) }
+    val alignments = remember {
+        listOf(
+            Alignment.TopStart,
+            Alignment.TopCenter,
+            Alignment.TopEnd,
+            Alignment.CenterStart,
+            Alignment.Center,
+            Alignment.CenterEnd,
+            Alignment.BottomStart,
+            Alignment.BottomCenter,
+            Alignment.BottomEnd,
+        )
+    }
 
     val transformValue by remember {
         derivedStateOf {
-            "缩放：${scale.format(2)}；位移：${offset.toShortString()}；旋转：${rotation}"
+            "缩放：${displayTransform.scaleX.format(2)}；位移：${displayTransform.offset.toShortString()}；旋转：${rotation}"
         }
     }
-    var containerSize by remember { mutableStateOf(IntSize.Zero) }
     val displayValue by remember {
         derivedStateOf {
-//            val rect = computeContentInContainerRect(
-//                contentSize = painter.intrinsicSize.takeIf { it.isSpecified }?.round() ?: IntSize.Zero,
-//                containerSize = containerSize,
-//                contentScale = ContentScale.None,
-//                alignment = Alignment.TopStart,
-//                rotation = rotation
-//            )
             val rect = computeContentInContainerRect(
                 contentSize = painter.intrinsicSize.round(),
                 containerSize = containerSize,
-                contentScale = ContentScale.None,
-                alignment = Alignment.TopStart,
-                scale = scale,
-                offset = offset,
+                contentScale = contentScale,
+                alignment = alignment,
+                scale = displayTransform.scaleX,
+                offset = displayTransform.offset,
                 rotation = rotation
             )
             "display: ${rect.toShortString()}"
         }
     }
+
     val scaleStep = 0.2f
     val offsetStep = 50
     val rotateStep = 90
@@ -135,15 +186,15 @@ private fun GraphicsLayerSample() {
                     .align(Alignment.BottomEnd)
                     .background(brush)
                     .graphicsLayer {
-                        rotationZ = rotation.toFloat()
-                        transformOrigin = TransformOrigin(0f, 0f)
+                        rotationZ = displayTransform.rotation
+                        transformOrigin = displayTransform.rotationOrigin
                     }
                     .graphicsLayer {
-                        scaleX = scale
-                        scaleY = scale
-                        translationX = offset.x
-                        translationY = offset.y
-                        transformOrigin = TransformOrigin(0f, 0f)
+                        scaleX = displayTransform.scaleX
+                        scaleY = displayTransform.scaleY
+                        translationX = displayTransform.offsetX
+                        translationY = displayTransform.offsetY
+                        transformOrigin = displayTransform.scaleOrigin
                     }
             )
         }
@@ -185,7 +236,11 @@ private fun GraphicsLayerSample() {
                     )
 
                     FilledIconButton(
-                        onClick = { offset = Offset(offset.x - offsetStep, offset.y) },
+                        onClick = {
+                            val offset = userTransform.offset
+                            userTransform =
+                                userTransform.copy(offset = Offset(offset.x - offsetStep, offset.y))
+                        },
                         modifier = Modifier
                             .size(40.dp)
                             .constrainAs(left) {
@@ -199,7 +254,11 @@ private fun GraphicsLayerSample() {
                     }
 
                     FilledIconButton(
-                        onClick = { offset = Offset(offset.x, offset.y - offsetStep) },
+                        onClick = {
+                            val offset = userTransform.offset
+                            userTransform =
+                                userTransform.copy(offset = Offset(offset.x, offset.y - offsetStep))
+                        },
                         modifier = Modifier
                             .size(40.dp)
                             .constrainAs(up) {
@@ -213,7 +272,11 @@ private fun GraphicsLayerSample() {
                     }
 
                     FilledIconButton(
-                        onClick = { offset = Offset(offset.x + offsetStep, offset.y) },
+                        onClick = {
+                            val offset = userTransform.offset
+                            userTransform =
+                                userTransform.copy(offset = Offset(offset.x + offsetStep, offset.y))
+                        },
                         modifier = Modifier
                             .size(40.dp)
                             .constrainAs(right) {
@@ -227,7 +290,11 @@ private fun GraphicsLayerSample() {
                     }
 
                     FilledIconButton(
-                        onClick = { offset = Offset(offset.x, offset.y + offsetStep) },
+                        onClick = {
+                            val offset = userTransform.offset
+                            userTransform =
+                                userTransform.copy(offset = Offset(offset.x, offset.y + offsetStep))
+                        },
                         modifier = Modifier
                             .size(40.dp)
                             .constrainAs(down) {
@@ -252,7 +319,11 @@ private fun GraphicsLayerSample() {
                 ) {
                     Row {
                         FilledIconButton(
-                            onClick = { scale -= scaleStep },
+                            onClick = {
+                                val scale = userTransform.scale.scaleX
+                                userTransform =
+                                    userTransform.copy(scale = ScaleFactor(scale - scaleStep))
+                            },
                             modifier = Modifier.size(40.dp)
                         ) {
                             Icon(
@@ -264,7 +335,11 @@ private fun GraphicsLayerSample() {
                         Spacer(Modifier.size(20.dp))
 
                         FilledIconButton(
-                            onClick = { scale += scaleStep },
+                            onClick = {
+                                val scale = userTransform.scale.scaleX
+                                userTransform =
+                                    userTransform.copy(scale = ScaleFactor(scale + scaleStep))
+                            },
                             modifier = Modifier.size(40.dp)
                         ) {
                             Icon(
@@ -313,25 +388,104 @@ private fun GraphicsLayerSample() {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                Button(onClick = { horImage = true }) {
-                    Text(text = "横图")
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Button(
+                    onClick = { horImage = !horImage },
+                    contentPadding = PaddingValues(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    AutoSizeText(text = if (horImage) "竖图" else "横图", maxLines = 1)
                 }
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                Button(onClick = { horImage = false }) {
-                    Text(text = "竖图")
+                Box(Modifier.weight(1f)) {
+                    Button(
+                        onClick = { contentScaleMenuExpanded = true },
+                        contentPadding = PaddingValues(8.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        AutoSizeText(text = contentScale.name, maxLines = 1)
+                    }
+
+                    DropdownMenu(
+                        expanded = contentScaleMenuExpanded,
+                        onDismissRequest = {
+                            contentScaleMenuExpanded = false
+                        },
+                    ) {
+                        contentScales.forEachIndexed { index, newContentScale ->
+                            if (index > 0) {
+                                Divider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 14.dp)
+                                )
+                            }
+                            DropdownMenuItem(onClick = {
+                                contentScale = newContentScale
+                                contentScaleMenuExpanded = false
+                            }) {
+                                Text(text = newContentScale.name)
+                            }
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                Button(onClick = {
-                    scale = 1f
-                    offset = Offset.Zero
-                    rotation = 0
-                }) {
-                    Text(text = "重置")
+                Box(Modifier.weight(1f)) {
+                    Button(
+                        onClick = { alignmentMenuExpanded = true },
+                        contentPadding = PaddingValues(8.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        AutoSizeText(text = alignment.name, maxLines = 1)
+                    }
+
+                    DropdownMenu(
+                        expanded = alignmentMenuExpanded,
+                        onDismissRequest = {
+                            alignmentMenuExpanded = false
+                        },
+                    ) {
+                        alignments.forEachIndexed { index, newAlignment ->
+                            if (index > 0) {
+                                Divider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 14.dp)
+                                )
+                            }
+                            DropdownMenuItem(onClick = {
+                                alignment = newAlignment
+                                alignmentMenuExpanded = false
+                            }) {
+                                Text(text = newAlignment.name)
+                            }
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Button(
+                    onClick = {
+                        userTransform = Transform.Origin
+                        rotation = 0
+                    },
+                    contentPadding = PaddingValues(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    AutoSizeText(text = "重置", maxLines = 1)
+                }
+
+                Spacer(modifier = Modifier.size(12.dp))
             }
         }
     }

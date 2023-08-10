@@ -7,6 +7,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import com.github.panpf.zoomimage.compose.BuildConfig
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 
 fun Modifier.zoomable(
@@ -46,7 +47,7 @@ fun Modifier.zoomable(
             detectPowerfulTransformGestures(
                 panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
-                    state.canDrag(horizontal = horizontal, direction = direction)
+                    BuildConfig.DEBUG || state.canDrag(horizontal = horizontal, direction = direction)
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float ->
                     state.scaling = true
