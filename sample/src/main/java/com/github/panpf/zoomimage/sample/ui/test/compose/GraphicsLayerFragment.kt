@@ -317,7 +317,7 @@ private fun GraphicsLayerSample() {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Row {
+                    Row(Modifier.padding(end = 20.dp)) {
                         FilledIconButton(
                             onClick = {
                                 val scale = userTransform.scale.scaleX
@@ -347,15 +347,11 @@ private fun GraphicsLayerSample() {
                                 contentDescription = "zoom in"
                             )
                         }
-
-                        Spacer(Modifier.size(10.dp))
                     }
 
                     Spacer(Modifier.size(12.dp))
 
-                    Row {
-                        Spacer(Modifier.size(10.dp))
-
+                    Row(Modifier.padding(start = 20.dp)) {
                         FilledIconButton(
                             onClick = { rotation = (rotation - rotateStep) % 360 },
                             modifier = Modifier.size(40.dp)
