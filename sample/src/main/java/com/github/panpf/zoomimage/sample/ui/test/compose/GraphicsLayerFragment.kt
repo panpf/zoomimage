@@ -194,7 +194,7 @@ private fun GraphicsLayerSample() {
                 contentScale = ContentScale.None,
                 alignment = Alignment.TopStart,
                 modifier = Modifier
-                    .fillMaxSize(0.6f)
+                    .fillMaxSize(0.7f)
                     .onSizeChanged { containerSize = it }
                     .align(Alignment.BottomEnd)
                     .background(brush)

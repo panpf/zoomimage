@@ -21,13 +21,12 @@
             android:id="@+id/imageMatrixFragment_imageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="6"
             android:background="@drawable/bg_image_matrix"
             android:scaleType="matrix"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.6"
-            app:layout_constraintWidth_percent="0.6"
+            app:layout_constraintHeight_percent="0.7"
+            app:layout_constraintWidth_percent="0.7"
             tools:srcCompat="@drawable/ic_launcher_background" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
