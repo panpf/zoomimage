@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,10 +8,14 @@
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/imageMatrixFragment_imageLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipChildren="false">
+        android:clipChildren="false"
+        app:layout_constraintDimensionRatio="10:7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageMatrixFragment_imageView"
@@ -30,21 +34,30 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/imageMatrixFragment_transformValueText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="缩放：100f；位移：100x99；旋转：90" />
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageMatrixFragment_imageLayout">
 
         <TextView
             android:id="@+id/imageMatrixFragment_displayValueText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="display：[0x0,1080,1920]" />
+            android:text="display: [0x0,1080x1920]" />
+
+        <TextView
+            android:id="@+id/imageMatrixFragment_transformValueText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="scale: 100f, offset: 100x99, roattion: 90" />
+
+        <TextView
+            android:id="@+id/imageMatrixFragment_sizeValueText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="container: 1080x1920}, content: 300x500" />
 
         <View
             android:layout_width="12dp"
@@ -205,7 +218,7 @@
                 android:id="@+id/imageMatrixFragment_horizontalButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="横图" />
+                android:text="Hor" />
 
             <View
                 android:layout_width="12dp"
@@ -225,7 +238,7 @@
                 android:id="@+id/imageMatrixFragment_resetButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="重置" />
+                android:text="Reset" />
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

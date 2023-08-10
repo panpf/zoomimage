@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.fetch.newAssetUri
@@ -53,7 +55,6 @@ import com.github.panpf.zoomimage.sample.ui.util.compose.ScaleFactor
 import com.github.panpf.zoomimage.sample.ui.util.compose.computeContentInContainerRect
 import com.github.panpf.zoomimage.sample.ui.util.compose.computeZoomInitialConfig
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
-import com.github.panpf.zoomimage.sample.ui.util.compose.round
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
@@ -85,13 +86,17 @@ private fun GraphicsLayerSample() {
         }
     }
 
+    var containerSize by remember { mutableStateOf(IntSize.Zero) }
+    var contentSize by remember { mutableStateOf(IntSize.Zero) }
     val painter = rememberAsyncImagePainter(request = DisplayRequest(context, imageUri) {
         val resources = context.resources
         val maxSize =
             min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) / 4
         addTransformations(BitmapScaleTransformation(maxSize))
+        listener(onSuccess = { _, result ->
+            contentSize = IntSize(result.drawable.intrinsicWidth, result.drawable.intrinsicHeight)
+        })
     })
-    var containerSize by remember { mutableStateOf(IntSize.Zero) }
 
     var contentScale by remember { mutableStateOf(ContentScale.Fit) }
     var alignment by remember { mutableStateOf(Alignment.Center) }
@@ -101,7 +106,7 @@ private fun GraphicsLayerSample() {
         derivedStateOf {
             computeZoomInitialConfig(
                 containerSize = containerSize,
-                contentSize = painter.intrinsicSize.round(),
+                contentSize = contentSize,
                 contentOriginSize = IntSize.Zero,
                 contentScale = contentScale,
                 contentAlignment = alignment,
@@ -143,21 +148,29 @@ private fun GraphicsLayerSample() {
 
     val transformValue by remember {
         derivedStateOf {
-            "缩放：${displayTransform.scaleX.format(2)}；位移：${displayTransform.offset.toShortString()}；旋转：${rotation}"
+            val scaleString = displayTransform.scaleX.format(2).toString()
+            val translationString = displayTransform.offset.toShortString()
+            val rotationString = rotation.toString()
+            "scale: ${scaleString}, offset: ${translationString}, rotation: $rotationString"
         }
     }
     val displayValue by remember {
         derivedStateOf {
             val rect = computeContentInContainerRect(
-                contentSize = painter.intrinsicSize.round(),
+                contentSize = contentSize,
                 containerSize = containerSize,
                 contentScale = contentScale,
                 alignment = alignment,
-                scale = displayTransform.scaleX,
-                offset = displayTransform.offset,
+                scale = userTransform.scaleX,
+                offset = userTransform.offset,
                 rotation = rotation
             )
             "display: ${rect.toShortString()}"
+        }
+    }
+    val sizeValue by remember {
+        derivedStateOf {
+            "container: ${containerSize.toShortString()}, content: ${contentSize.toShortString()}"
         }
     }
 
@@ -168,7 +181,7 @@ private fun GraphicsLayerSample() {
         Box(
             Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .aspectRatio(1.4286f)
         ) {
             val brush = remember {
                 Brush.linearGradient(
@@ -206,12 +219,19 @@ private fun GraphicsLayerSample() {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = transformValue,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                text = displayValue,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                fontSize = 14.sp,
             )
             Text(
-                text = displayValue,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                text = transformValue,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                fontSize = 14.sp,
+            )
+            Text(
+                text = sizeValue,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                fontSize = 14.sp,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -393,7 +413,7 @@ private fun GraphicsLayerSample() {
                         .fillMaxWidth()
                         .weight(1f),
                 ) {
-                    AutoSizeText(text = if (horImage) "竖图" else "横图", maxLines = 1)
+                    AutoSizeText(text = if (horImage) "Ver" else "Hor", maxLines = 1)
                 }
 
                 Spacer(modifier = Modifier.size(12.dp))
@@ -478,7 +498,7 @@ private fun GraphicsLayerSample() {
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    AutoSizeText(text = "重置", maxLines = 1)
+                    AutoSizeText(text = "Reset", maxLines = 1)
                 }
 
                 Spacer(modifier = Modifier.size(12.dp))

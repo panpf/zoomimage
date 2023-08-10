@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView.ScaleType
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
+import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.databinding.ImageMatrixFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.view.computeZoomInitialConfig
@@ -17,6 +20,7 @@ import com.github.panpf.zoomimage.sample.ui.util.view.getScale
 import com.github.panpf.zoomimage.sample.ui.util.view.getTranslation
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.min
@@ -44,12 +48,15 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         super.onViewCreated(toolbar, binding, savedInstanceState)
         toolbar.title = "Image Matrix"
 
+        binding.root.parent.asOrThrow<ViewGroup>().clipChildren = false
+        binding.root.parent.asOrThrow<ViewGroup>().parent.asOrThrow<ViewGroup>().clipChildren = false
+
         binding.imageMatrixFragmentImageView.apply {
         }
 
         binding.imageMatrixFragmentHorizontalButton.apply {
             val setName = {
-                text = if (horImage) "竖图" else "横图"
+                text = if (horImage) "Ver" else "Hor"
             }
             setOnClickListener {
                 horImage = !horImage
@@ -159,7 +166,9 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         val baseMatrix = baseMatrix.apply {
             reset()
             val transform = initialConfig.baseTransform
-            require(transform.scale.scaleX > 0f && transform.scale.scaleY > 0f) { "resetBaseMatrix transform scale=$transform is invalid" }
+            require(transform.scale.scaleX > 0f && transform.scale.scaleY > 0f) {
+                "resetBaseMatrix transform scale=$transform is invalid"
+            }
             postScale(transform.scale.scaleX, transform.scale.scaleY)
             postTranslate(transform.offset.x, transform.offset.y)
             postRotate(rotation.toFloat())
@@ -182,7 +191,7 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         val translationString = matrix.getTranslation().toShortString()
         val rotationString = matrix.getRotation().toString()
         binding.imageMatrixFragmentTransformValueText.text =
-            "缩放：${scaleString}；位移：${translationString}；旋转：$rotationString"
+            "scale: ${scaleString}, offset: ${translationString}, rotation: $rotationString"
 
         val displayRect = RectF()
         val drawable = binding.imageMatrixFragmentImageView.drawable
@@ -195,7 +204,13 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
             )
         }
         matrix.mapRect(displayRect)
-        binding.imageMatrixFragmentDisplayValueText.text = "display：${displayRect.toShortString()}"
+        binding.imageMatrixFragmentDisplayValueText.text =
+            "display: ${displayRect.toVeryShortString()}"
+        val contentSize = drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) }
+            ?: IntSizeCompat.Zero
+        val containerSize = viewSize
+        binding.imageMatrixFragmentSizeValueText.text =
+            "container: ${containerSize.toShortString()}, content: ${contentSize.toShortString()}"
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
