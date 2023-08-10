@@ -77,6 +77,7 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         }
 
         binding.imageMatrixFragmentResetButton.setOnClickListener {
+            rotation = 0
             userMatrix.reset()
             updateMatrix(binding)
         }
