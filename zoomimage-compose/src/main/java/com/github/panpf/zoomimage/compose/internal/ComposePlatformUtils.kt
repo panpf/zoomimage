@@ -298,7 +298,7 @@ internal val ContentScale.name: String
         ContentScale.Crop -> "Crop"
         ContentScale.Inside -> "Inside"
         ContentScale.None -> "None"
-        else -> "Unknown"
+        else -> "Unknown ContentScale: $this"
     }
 
 internal fun contentScale(name: String): ContentScale {
@@ -325,7 +325,7 @@ internal val Alignment.name: String
         Alignment.BottomStart -> "BottomStart"
         Alignment.BottomCenter -> "BottomCenter"
         Alignment.BottomEnd -> "BottomEnd"
-        else -> "Unknown"
+        else -> "Unknown Alignment: $this"
     }
 
 internal fun alignment(name: String): Alignment {

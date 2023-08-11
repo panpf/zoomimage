@@ -307,3 +307,53 @@ fun RectCompat.round(): IntRectCompat = IntRectCompat(
     right = right.roundToInt(),
     bottom = bottom.roundToInt()
 )
+
+fun IntRectCompat.rotate(rotation: Int): IntRectCompat {
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+    return when (rotation) {
+        90 -> IntRectCompat(left = -bottom, top = left, right = -top, bottom = right)
+        180 -> IntRectCompat(left = -right, top = -bottom, right = -left, bottom = -top)
+        270 -> IntRectCompat(left = top, top = -right, right = bottom, bottom = -left)
+        else -> this // 0 or 360
+    }
+}
+
+internal fun IntRectCompat.scale(scale: Float): IntRectCompat =
+    IntRectCompat(
+        left = (left * scale).roundToInt(),
+        top = (top * scale).roundToInt(),
+        right = (right * scale).roundToInt(),
+        bottom = (bottom * scale).roundToInt(),
+    )
+
+internal fun IntRectCompat.scale(scale: ScaleFactorCompat): IntRectCompat =
+    IntRectCompat(
+        left = (left * scale.scaleX).roundToInt(),
+        top = (top * scale.scaleY).roundToInt(),
+        right = (right * scale.scaleX).roundToInt(),
+        bottom = (bottom * scale.scaleY).roundToInt(),
+    )
+
+internal fun IntRectCompat.restoreScale(scale: Float): IntRectCompat =
+    IntRectCompat(
+        left = (left / scale).roundToInt(),
+        top = (top / scale).roundToInt(),
+        right = (right / scale).roundToInt(),
+        bottom = (bottom / scale).roundToInt(),
+    )
+
+internal fun IntRectCompat.restoreScale(scaleFactor: ScaleFactorCompat): IntRectCompat =
+    IntRectCompat(
+        left = (left / scaleFactor.scaleX).roundToInt(),
+        top = (top / scaleFactor.scaleY).roundToInt(),
+        right = (right / scaleFactor.scaleX).roundToInt(),
+        bottom = (bottom / scaleFactor.scaleY).roundToInt(),
+    )
+
+internal fun IntRectCompat.limitTo(rect: IntRectCompat): IntRectCompat =
+    IntRectCompat(
+        left = left.coerceAtLeast(rect.left),
+        top = top.coerceAtLeast(rect.top),
+        right = right.coerceIn(rect.left, rect.right),
+        bottom = bottom.coerceIn(rect.top, rect.bottom),
+    )

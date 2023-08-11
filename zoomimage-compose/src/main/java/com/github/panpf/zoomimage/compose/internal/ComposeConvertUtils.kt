@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.compose.internal
 
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -11,6 +12,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.zoom.Transform
+import com.github.panpf.zoomimage.util.AlignmentCompat
+import com.github.panpf.zoomimage.util.ContentScaleCompat
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -33,6 +36,54 @@ fun ContentScale.toScaleMode(): ScaleMode = when (this) {
     ContentScale.Inside -> ScaleMode.INSIDE
     ContentScale.None -> ScaleMode.NONE
     else -> ScaleMode.NONE
+}
+
+fun ContentScale.toCompat(): ContentScaleCompat = when (this) {
+    ContentScale.Fit -> ContentScaleCompat.Fit
+    ContentScale.FillBounds -> ContentScaleCompat.FillBounds
+    ContentScale.FillWidth -> ContentScaleCompat.FillWidth
+    ContentScale.FillHeight -> ContentScaleCompat.FillHeight
+    ContentScale.Crop -> ContentScaleCompat.Crop
+    ContentScale.Inside -> ContentScaleCompat.Inside
+    ContentScale.None -> ContentScaleCompat.None
+    else -> throw IllegalArgumentException("Unsupported ContentScale: $this")
+}
+
+fun ContentScaleCompat.toPlatform(): ContentScale = when (this) {
+    ContentScaleCompat.Fit -> ContentScale.Fit
+    ContentScaleCompat.FillBounds -> ContentScale.FillBounds
+    ContentScaleCompat.FillWidth -> ContentScale.FillWidth
+    ContentScaleCompat.FillHeight -> ContentScale.FillHeight
+    ContentScaleCompat.Crop -> ContentScale.Crop
+    ContentScaleCompat.Inside -> ContentScale.Inside
+    ContentScaleCompat.None -> ContentScale.None
+    else -> throw IllegalArgumentException("Unsupported ContentScale: $this")
+}
+
+fun Alignment.toCompat(): AlignmentCompat = when (this) {
+    Alignment.TopStart -> AlignmentCompat.TopStart
+    Alignment.TopCenter -> AlignmentCompat.TopCenter
+    Alignment.TopEnd -> AlignmentCompat.TopEnd
+    Alignment.CenterStart -> AlignmentCompat.CenterStart
+    Alignment.Center -> AlignmentCompat.Center
+    Alignment.CenterEnd -> AlignmentCompat.CenterEnd
+    Alignment.BottomStart -> AlignmentCompat.BottomStart
+    Alignment.BottomCenter -> AlignmentCompat.BottomCenter
+    Alignment.BottomEnd -> AlignmentCompat.BottomEnd
+    else -> throw IllegalArgumentException("Unsupported Alignment: $this")
+}
+
+fun AlignmentCompat.toPlatform(): Alignment = when (this) {
+    AlignmentCompat.TopStart -> Alignment.TopStart
+    AlignmentCompat.TopCenter -> Alignment.TopCenter
+    AlignmentCompat.TopEnd -> Alignment.TopEnd
+    AlignmentCompat.CenterStart -> Alignment.CenterStart
+    AlignmentCompat.Center -> Alignment.Center
+    AlignmentCompat.CenterEnd -> Alignment.CenterEnd
+    AlignmentCompat.BottomStart -> Alignment.BottomStart
+    AlignmentCompat.BottomCenter -> Alignment.BottomCenter
+    AlignmentCompat.BottomEnd -> Alignment.BottomEnd
+    else -> throw IllegalArgumentException("Unsupported Alignment: $this")
 }
 
 

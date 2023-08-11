@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -40,26 +41,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toTransform
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.concat
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.common.compose.AutoSizeText
 import com.github.panpf.zoomimage.sample.ui.util.compose.ScaleFactor
-import com.github.panpf.zoomimage.sample.ui.util.compose.computeContentInContainerRect
-import com.github.panpf.zoomimage.sample.ui.util.compose.computeZoomInitialConfig
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.util.computeBaseTransform
+import com.github.panpf.zoomimage.util.computeContentInContainerRect
+import com.github.panpf.zoomimage.util.round
+import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.min
 
 class GraphicsLayerFragment : AppBarFragment() {
@@ -90,6 +95,16 @@ private fun GraphicsLayerSample() {
 
     var containerSize by remember { mutableStateOf(IntSize.Zero) }
     var contentSize by remember { mutableStateOf(IntSize.Zero) }
+    val rotationOrigin by remember {
+        derivedStateOf {
+            contentSize.center.let {
+                TransformOrigin(
+                    it.x.toFloat() / containerSize.width,
+                    it.y.toFloat() / containerSize.height
+                )
+            }
+        }
+    }
     val painter = rememberAsyncImagePainter(request = DisplayRequest(context, imageUri) {
         val resources = context.resources
         val maxSize =
@@ -106,16 +121,13 @@ private fun GraphicsLayerSample() {
 
     val baseTransform by remember {
         derivedStateOf {
-            computeZoomInitialConfig(
-                containerSize = containerSize,
-                contentSize = contentSize,
-                contentOriginSize = IntSize.Zero,
-                contentScale = contentScale,
-                contentAlignment = alignment,
-                rotation = rotation.toFloat(),
-                readMode = null,
-                mediumScaleMinMultiple = 2f
-            ).baseTransform
+            computeBaseTransform(
+                containerSize = containerSize.toCompat(),
+                contentSize = contentSize.toCompat(),
+                contentScale = contentScale.toCompat(),
+                alignment = alignment.toCompat(),
+                rotation = rotation,
+            ).toTransform().copy(rotation = rotation.toFloat())
         }
     }
     var userTransform by remember { mutableStateOf(Transform.Origin) }
@@ -159,14 +171,14 @@ private fun GraphicsLayerSample() {
     val displayValue by remember {
         derivedStateOf {
             val rect = computeContentInContainerRect(
-                contentSize = contentSize,
-                containerSize = containerSize,
-                contentScale = contentScale,
-                alignment = alignment,
+                contentSize = contentSize.toCompat(),
+                containerSize = containerSize.toCompat(),
+                contentScale = contentScale.toCompat(),
+                alignment = alignment.toCompat(),
                 scale = userTransform.scaleX,
-                offset = userTransform.offset,
+                offset = userTransform.offset.toCompat(),
                 rotation = rotation
-            ).roundToIntRect()
+            ).round()
             "display: ${rect.toShortString()}"
         }
     }
@@ -201,15 +213,15 @@ private fun GraphicsLayerSample() {
                     .align(Alignment.BottomEnd)
                     .background(brush)
                     .graphicsLayer {
-                        rotationZ = displayTransform.rotation
-                        transformOrigin = displayTransform.rotationOrigin
-                    }
-                    .graphicsLayer {
                         scaleX = displayTransform.scaleX
                         scaleY = displayTransform.scaleY
                         translationX = displayTransform.offsetX
                         translationY = displayTransform.offsetY
                         transformOrigin = displayTransform.scaleOrigin
+                    }
+                    .graphicsLayer {
+                        rotationZ = displayTransform.rotation
+                        transformOrigin = rotationOrigin
                     }
             )
         }

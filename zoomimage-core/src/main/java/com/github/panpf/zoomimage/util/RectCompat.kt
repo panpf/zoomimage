@@ -115,7 +115,7 @@ data class RectCompat(
      * Returns a new rectangle that is the intersection of the given
      * rectangle and this rectangle. The two rectangles must overlap
      * for this to be meaningful. If the two rectangles do not overlap,
-     * then the resulting Rect will have a negative width or height.
+     * then the resulting RectCompat will have a negative width or height.
      */
     fun intersect(other: RectCompat): RectCompat {
         return RectCompat(
@@ -231,9 +231,9 @@ data class RectCompat(
 
 /**
  * Construct a rectangle from its left and top edges as well as its width and height.
- * @param offset OffsetCompat to represent the top and left parameters of the Rect
+ * @param offset OffsetCompat to represent the top and left parameters of the RectCompat
  * @param size Size to determine the width and height of this [RectCompat].
- * @return Rect with [RectCompat.left] and [RectCompat.top] configured to [OffsetCompat.x] and [OffsetCompat.y] as
+ * @return RectCompat with [RectCompat.left] and [RectCompat.top] configured to [OffsetCompat.x] and [OffsetCompat.y] as
  * [RectCompat.right] and [RectCompat.bottom] to [OffsetCompat.x] + [SizeCompat.width] and [OffsetCompat.y] + [SizeCompat.height]
  * respectively
  */
@@ -299,3 +299,55 @@ fun lerp(start: RectCompat, stop: RectCompat, fraction: Float): RectCompat {
 
 fun RectCompat.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
+
+
+fun RectCompat.rotate(rotation: Int): RectCompat {
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+    return when (rotation) {
+        90 -> RectCompat(left = -bottom, top = left, right = -top, bottom = right)
+        180 -> RectCompat(left = -right, top = -bottom, right = -left, bottom = -top)
+        270 -> RectCompat(left = top, top = -right, right = bottom, bottom = -left)
+        else -> this // 0 or 360
+    }
+}
+
+
+internal fun RectCompat.scale(scale: Float): RectCompat =
+    RectCompat(
+        left = (left * scale),
+        top = (top * scale),
+        right = (right * scale),
+        bottom = (bottom * scale),
+    )
+
+internal fun RectCompat.scale(scale: ScaleFactorCompat): RectCompat =
+    RectCompat(
+        left = (left * scale.scaleX),
+        top = (top * scale.scaleY),
+        right = (right * scale.scaleX),
+        bottom = (bottom * scale.scaleY),
+    )
+
+internal fun RectCompat.restoreScale(scale: Float): RectCompat =
+    RectCompat(
+        left = (left / scale),
+        top = (top / scale),
+        right = (right / scale),
+        bottom = (bottom / scale),
+    )
+
+internal fun RectCompat.restoreScale(scaleFactor: ScaleFactorCompat): RectCompat =
+    RectCompat(
+        left = (left / scaleFactor.scaleX),
+        top = (top / scaleFactor.scaleY),
+        right = (right / scaleFactor.scaleX),
+        bottom = (bottom / scaleFactor.scaleY),
+    )
+
+internal fun RectCompat.limitTo(rect: RectCompat): RectCompat =
+    RectCompat(
+        left = left.coerceAtLeast(rect.left),
+        top = top.coerceAtLeast(rect.top),
+        right = right.coerceIn(rect.left, rect.right),
+        bottom = bottom.coerceIn(rect.top, rect.bottom),
+    )

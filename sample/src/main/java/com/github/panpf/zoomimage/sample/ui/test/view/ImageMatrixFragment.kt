@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView.ScaleType
 import androidx.appcompat.app.AlertDialog
@@ -15,7 +14,6 @@ import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.databinding.ImageMatrixFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
-import com.github.panpf.zoomimage.sample.ui.util.view.computeZoomInitialConfig
 import com.github.panpf.zoomimage.sample.ui.util.view.getRotation
 import com.github.panpf.zoomimage.sample.ui.util.view.getScale
 import com.github.panpf.zoomimage.sample.ui.util.view.getTranslation
@@ -23,8 +21,11 @@ import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.computeBaseTransform
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.view.internal.toAlignment
+import com.github.panpf.zoomimage.view.internal.toContentScale
 import kotlin.math.min
 
 class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>() {
@@ -51,7 +52,8 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         toolbar.title = "Image Matrix"
 
         binding.root.parent.asOrThrow<ViewGroup>().clipChildren = false
-        binding.root.parent.asOrThrow<ViewGroup>().parent.asOrThrow<ViewGroup>().clipChildren = false
+        binding.root.parent.asOrThrow<ViewGroup>().parent.asOrThrow<ViewGroup>().clipChildren =
+            false
 
         binding.imageMatrixFragmentImageView.apply {
         }
@@ -156,24 +158,21 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         val rotation = rotation
         val scaleType = scaleType
         val viewSize = viewSize
-        val initialConfig = computeZoomInitialConfig(
-            containerSize = viewSize,
-            contentSize = drawableSize,
-            contentOriginSize = IntSizeCompat.Zero,
-            scaleType = scaleType,
-            rotation = rotation,
-            readMode = null,
-            mediumScaleMinMultiple = 2f,
-        )
         val baseMatrix = baseMatrix.apply {
             reset()
-            val transform = initialConfig.baseTransform
+            val transform = computeBaseTransform(
+                containerSize = viewSize,
+                contentSize = drawableSize,
+                contentScale = scaleType.toContentScale(),
+                alignment = scaleType.toAlignment(),
+                rotation = rotation,
+            )
             require(transform.scale.scaleX > 0f && transform.scale.scaleY > 0f) {
                 "resetBaseMatrix transform scale=$transform is invalid"
             }
+            postRotate(rotation.toFloat(), drawableSize.width / 2f, drawableSize.height / 2f)
             postScale(transform.scale.scaleX, transform.scale.scaleY)
             postTranslate(transform.offset.x, transform.offset.y)
-            postRotate(rotation.toFloat())
         }
 
         val userMatrix = userMatrix

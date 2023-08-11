@@ -436,18 +436,20 @@ internal fun computeBaseTransform(
     contentScale: ContentScale,
     alignment: Alignment,
 ): Transform {
-    val scaleFactor = contentScale.computeScaleFactor(contentSize.toSize(), containerSize.toSize())
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return Transform.Origin
+    }
     val contentScaleFactor = contentScale.computeScaleFactor(
         srcSize = contentSize.toSize(),
         dstSize = containerSize.toSize()
     )
     val scaledContentSize = contentSize.times(contentScaleFactor)
-    val alignmentOffset = alignment.align(
+    val scaledContentAlignmentOffset = alignment.align(
         size = scaledContentSize,
         space = containerSize,
         layoutDirection = LayoutDirection.Ltr
     )
-    return Transform(scale = scaleFactor, offset = alignmentOffset.toOffset())
+    return Transform(scale = contentScaleFactor, offset = scaledContentAlignmentOffset.toOffset())
 }
 
 internal fun ContentScale.supportReadMode(): Boolean = this != ContentScale.FillBounds

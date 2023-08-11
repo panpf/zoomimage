@@ -23,7 +23,7 @@ fun computeUserScales(
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
     containerSize: IntSizeCompat,
-    scaleMode: ScaleMode,
+    scaleMode: ScaleMode,   // todo 用 ContentScaleCompat 和 AlignmentCompat 替代
     baseScale: ScaleFactorCompat,
     mediumScaleMinMultiple: Float
 ): FloatArray {
@@ -155,4 +155,104 @@ enum class ScaleMode {
     FILL_BOUNDS,
     INSIDE,
     NONE,
+}
+
+
+/**
+ * base rotation center is content center
+ */
+fun computeContentInContainerRect(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    rotation: Int,
+): RectCompat {
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    if (rotation % 180 == 0) {
+        return RectCompat(
+            left = 0f,
+            top = 0f,
+            right = containerSize.width.toFloat(),
+            bottom = containerSize.height.toFloat(),
+        )
+    } else {
+        val contentCenter = contentSize.center
+        val left = contentCenter.x - (contentSize.height / 2f)
+        val top = contentCenter.y - (contentSize.width / 2f)
+        return RectCompat(
+            left = left,
+            top = top,
+            right = left + contentSize.height,
+            bottom = top + contentSize.width,
+        )
+    }
+}
+
+// todo crop 时效果不对
+fun computeBaseTransform(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+): TransformCompat {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return TransformCompat.Origin
+    }
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val rotatedContentScaleFactor = contentScale.computeScaleFactor(
+        srcSize = rotatedContentSize.toSize(),
+        dstSize = containerSize.toSize()
+    )
+    val scaledRotatedContentSize = rotatedContentSize.times(rotatedContentScaleFactor)
+    val scaledRotatedContentAlignmentOffset = alignment.align(
+        size = scaledRotatedContentSize,
+        space = containerSize,
+        ltrLayout = true,
+    )
+    val rotatedContentInContainerRect = computeContentInContainerRect(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        rotation = rotation,
+    )
+    val rotateRectifyOffset = OffsetCompat.Zero - rotatedContentInContainerRect.topLeft
+    val scaledRotateRectifyOffset = rotateRectifyOffset * rotatedContentScaleFactor
+    val finalOffset = scaledRotatedContentAlignmentOffset.toOffset() + scaledRotateRectifyOffset
+    return TransformCompat(scale = rotatedContentScaleFactor, offset = finalOffset)
+}
+
+fun computeContentInContainerRect(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    scale: Float,
+    offset: OffsetCompat,
+    rotation: Int,
+): RectCompat {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return RectCompat.Zero
+    }
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+    val contentScaleFactor = contentScale.computeScaleFactor(
+        srcSize = contentSize.toSize(),
+        dstSize = containerSize.toSize()
+    )
+    val scaledContentSize = contentSize.toSize().times(contentScaleFactor)
+    val alignmentOffset = alignment.align(
+        size = scaledContentSize.round(),
+        space = containerSize,
+        ltrLayout = true,
+    )
+    val contentInContainerRect = RectCompat(
+        left = alignmentOffset.x.toFloat(),
+        top = alignmentOffset.y.toFloat(),
+        right = alignmentOffset.x + scaledContentSize.width,
+        bottom = alignmentOffset.y + scaledContentSize.height,
+    )
+
+    val rotatedContentInContainerRect = contentInContainerRect.rotate(rotation)
+    val offsetContentInContainerRect = rotatedContentInContainerRect.translate(offset)
+    @Suppress("UnnecessaryVariable") val scaledContentInContainerRect =
+        offsetContentInContainerRect.scale(scale)
+    return scaledContentInContainerRect
 }

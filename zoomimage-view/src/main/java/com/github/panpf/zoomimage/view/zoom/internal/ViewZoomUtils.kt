@@ -21,9 +21,12 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.ScaleMode
+import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.computeUserScales
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.rotate
@@ -316,6 +319,66 @@ internal fun computeZoomInitialConfig(
         baseTransform = baseTransform,
         userTransform = userTransform ?: TransformCompat.Origin
     )
+}
+
+internal fun computeBaseTransform(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    scaleType: ScaleType,
+    rotation: Int,
+): TransformCompat {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return TransformCompat.Origin
+    }
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val rotatedContentScaleFactor = scaleType.computeScaleFactor(
+        srcSize = rotatedContentSize,
+        dstSize = containerSize
+    )
+    val scaledRotatedContentSize = rotatedContentSize.times(rotatedContentScaleFactor)
+    val scaledRotatedContentAlignmentOffset = computeContentScaleOffset(
+        srcSize = scaledRotatedContentSize,
+        dstSize = containerSize,
+        scaleType = scaleType
+    )
+    val rotatedContentInContainerRect = computeContentInContainerRect(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        rotation = rotation,
+    )
+    val rotateRectifyOffset = OffsetCompat.Zero - rotatedContentInContainerRect.topLeft
+    val scaledRotateRectifyOffset = rotateRectifyOffset * rotatedContentScaleFactor
+    val finalOffset = scaledRotatedContentAlignmentOffset.toOffset() + scaledRotateRectifyOffset
+    return TransformCompat(scale = rotatedContentScaleFactor, offset = finalOffset)
+}
+
+/**
+ * base rotation center is content center
+ */
+internal fun computeContentInContainerRect(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    rotation: Int,
+): RectCompat {
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    if (rotation % 180 == 0) {
+        return RectCompat(
+            left = 0f,
+            top = 0f,
+            right = containerSize.width.toFloat(),
+            bottom = containerSize.height.toFloat(),
+        )
+    } else {
+        val contentCenter = contentSize.center
+        val left = contentCenter.x - (contentSize.height / 2f)
+        val top = contentCenter.y - (contentSize.width / 2f)
+        return RectCompat(
+            left = left,
+            top = top,
+            right = left + contentSize.height,
+            bottom = top + contentSize.width,
+        )
+    }
 }
 
 class InitialConfig(
