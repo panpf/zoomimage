@@ -4,6 +4,7 @@ import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.util.internal.format
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 fun calculateNextStepScale(
     stepScales: FloatArray,
@@ -165,20 +166,21 @@ fun computeContentInContainerRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     rotation: Int,
-): RectCompat {
+): IntRectCompat {
     require(rotation % 90 == 0) { "rotation must be multiple of 90" }
     if (rotation % 180 == 0) {
-        return RectCompat(
-            left = 0f,
-            top = 0f,
-            right = containerSize.width.toFloat(),
-            bottom = containerSize.height.toFloat(),
+        return IntRectCompat(
+            left = 0,
+            top = 0,
+            right = containerSize.width,
+            bottom = containerSize.height,
         )
     } else {
         val contentCenter = contentSize.center
-        val left = contentCenter.x - (contentSize.height / 2f)
-        val top = contentCenter.y - (contentSize.width / 2f)
-        return RectCompat(
+        //  - 1 is subtracting the center point
+        val left = contentCenter.x - (contentSize.height / 2f).roundToInt() - 1
+        val top = contentCenter.y - (contentSize.width / 2f).roundToInt() - 1
+        return IntRectCompat(
             left = left,
             top = top,
             right = left + contentSize.height,
@@ -214,10 +216,10 @@ fun computeBaseTransform(
         contentSize = contentSize,
         rotation = rotation,
     )
-    val rotateRectifyOffset = OffsetCompat.Zero - rotatedContentInContainerRect.topLeft
+    val rotateRectifyOffset = IntOffsetCompat.Zero - rotatedContentInContainerRect.topLeft
     val scaledRotateRectifyOffset = rotateRectifyOffset * rotatedContentScaleFactor
-    val finalOffset = scaledRotatedContentAlignmentOffset.toOffset() + scaledRotateRectifyOffset
-    return TransformCompat(scale = rotatedContentScaleFactor, offset = finalOffset)
+    val finalOffset = scaledRotatedContentAlignmentOffset + scaledRotateRectifyOffset
+    return TransformCompat(scale = rotatedContentScaleFactor, offset = finalOffset.toOffset())
 }
 
 fun computeContentInContainerRect(
