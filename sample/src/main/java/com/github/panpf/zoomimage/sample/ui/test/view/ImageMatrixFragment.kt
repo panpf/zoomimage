@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView.ScaleType
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.toRect
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.tools4k.lang.asOrThrow
@@ -22,6 +23,7 @@ import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.min
 
@@ -72,7 +74,7 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
             }
             setOnClickListener {
                 AlertDialog.Builder(requireActivity()).apply {
-                    val scaleTypes = ScaleType.values().filter { it != ScaleType.MATRIX }
+                    val scaleTypes = ScaleType.values()
                     setItems(scaleTypes.map { it.name }.toTypedArray()) { _, which ->
                         scaleType = scaleTypes[which]
                         setName()
@@ -188,7 +190,7 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
     private fun updateValues(binding: ImageMatrixFragmentBinding) {
         val matrix = binding.imageMatrixFragmentImageView.imageMatrix
         val scaleString = matrix.getScale().scaleX.format(2)
-        val translationString = matrix.getTranslation().toShortString()
+        val translationString = matrix.getTranslation().round().toShortString()
         val rotationString = matrix.getRotation().toString()
         binding.imageMatrixFragmentTransformValueText.text =
             "scale: ${scaleString}, offset: ${translationString}, rotation: $rotationString"
@@ -205,7 +207,7 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         }
         matrix.mapRect(displayRect)
         binding.imageMatrixFragmentDisplayValueText.text =
-            "display: ${displayRect.toVeryShortString()}"
+            "display: ${displayRect.toRect().toVeryShortString()}"
         val contentSize = drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) }
             ?: IntSizeCompat.Zero
         val containerSize = viewSize

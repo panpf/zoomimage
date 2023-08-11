@@ -41,6 +41,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
+import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.github.panpf.sketch.compose.rememberAsyncImagePainter
@@ -149,7 +151,7 @@ private fun GraphicsLayerSample() {
     val transformValue by remember {
         derivedStateOf {
             val scaleString = displayTransform.scaleX.format(2).toString()
-            val translationString = displayTransform.offset.toShortString()
+            val translationString = displayTransform.offset.round().toShortString()
             val rotationString = rotation.toString()
             "scale: ${scaleString}, offset: ${translationString}, rotation: $rotationString"
         }
@@ -164,7 +166,7 @@ private fun GraphicsLayerSample() {
                 scale = userTransform.scaleX,
                 offset = userTransform.offset,
                 rotation = rotation
-            )
+            ).roundToIntRect()
             "display: ${rect.toShortString()}"
         }
     }
