@@ -232,7 +232,7 @@ private fun GraphicsLayerSample() {
             )
             Box(
                 modifier = Modifier
-                    .fillMaxSize(0.7f)
+                    .size(size)
                     .align(Alignment.BottomEnd)
                     .border(0.5f.dp, Color.Red)
             )
