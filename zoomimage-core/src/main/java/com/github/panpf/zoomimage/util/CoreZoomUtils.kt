@@ -23,13 +23,13 @@ fun computeUserScales(
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
     containerSize: IntSizeCompat,
-    scaleMode: ScaleMode,   // todo 用 ContentScaleCompat 和 AlignmentCompat 替代
+    contentScale: ContentScaleCompat,
     baseScale: ScaleFactorCompat,
     mediumScaleMinMultiple: Float
 ): FloatArray {
     if (contentSize.isEmpty() || containerSize.isEmpty()) {
         return floatArrayOf(1.0f, 1.0f, 1.0f)
-    } else if (scaleMode == ScaleMode.FILL_BOUNDS
+    } else if (contentScale == ContentScaleCompat.FillBounds
         || baseScale.scaleX.format(2) != baseScale.scaleY.format(2)
     ) {
         val minScale = 1.0f
@@ -146,15 +146,6 @@ fun limitScaleWithRubberBand(
 
         else -> targetScale
     }
-}
-
-enum class ScaleMode {
-    CROP,
-    FIT,
-    FILL_UNILATERAL,
-    FILL_BOUNDS,
-    INSIDE,
-    NONE,
 }
 
 /**

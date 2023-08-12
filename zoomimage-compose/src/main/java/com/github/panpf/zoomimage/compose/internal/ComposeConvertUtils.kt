@@ -20,23 +20,11 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.ScaleMode
 import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import kotlin.math.roundToInt
 
-
-fun ContentScale.toScaleMode(): ScaleMode = when (this) {
-    ContentScale.Fit -> ScaleMode.FIT
-    ContentScale.FillBounds -> ScaleMode.FILL_BOUNDS
-    ContentScale.FillWidth -> ScaleMode.FILL_UNILATERAL
-    ContentScale.FillHeight -> ScaleMode.FILL_UNILATERAL
-    ContentScale.Crop -> ScaleMode.CROP
-    ContentScale.Inside -> ScaleMode.INSIDE
-    ContentScale.None -> ScaleMode.NONE
-    else -> ScaleMode.NONE
-}
 
 fun ContentScale.toCompat(): ContentScaleCompat = when (this) {
     ContentScale.Fit -> ContentScaleCompat.Fit

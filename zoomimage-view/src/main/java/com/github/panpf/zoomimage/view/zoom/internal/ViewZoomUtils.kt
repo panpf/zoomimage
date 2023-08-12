@@ -25,7 +25,6 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
-import com.github.panpf.zoomimage.util.ScaleMode
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.computeUserScales
 import com.github.panpf.zoomimage.util.isEmpty
@@ -42,6 +41,7 @@ import com.github.panpf.zoomimage.view.internal.isTop
 import com.github.panpf.zoomimage.view.internal.isVerticalCenter
 import com.github.panpf.zoomimage.view.internal.scale
 import com.github.panpf.zoomimage.view.internal.times
+import com.github.panpf.zoomimage.view.internal.toContentScale
 import kotlin.math.roundToInt
 
 internal fun reverseRotateRect(rect: Rect, rotateDegrees: Int, drawableSize: IntSizeCompat) {
@@ -155,18 +155,6 @@ internal fun computeContentScaleOffset(
 
 internal fun ScaleType.supportReadMode(): Boolean = this != ScaleType.FIT_XY
 
-
-fun ScaleType.toScaleMode(): ScaleMode = when (this) {
-    ScaleType.CENTER -> ScaleMode.NONE
-    ScaleType.CENTER_CROP -> ScaleMode.CROP
-    ScaleType.CENTER_INSIDE -> ScaleMode.INSIDE
-    ScaleType.FIT_START -> ScaleMode.FIT
-    ScaleType.FIT_CENTER -> ScaleMode.FIT
-    ScaleType.FIT_END -> ScaleMode.FIT
-    ScaleType.FIT_XY -> ScaleMode.FILL_BOUNDS
-    ScaleType.MATRIX -> ScaleMode.NONE
-    else -> ScaleMode.NONE
-}
 
 internal fun computeContentInContainerInnerRect(
     containerSize: IntSizeCompat,
@@ -291,7 +279,7 @@ internal fun computeZoomInitialConfig(
         contentSize = rotatedContentSize,
         contentOriginSize = rotatedContentOriginSize,
         containerSize = containerSize,
-        scaleMode = scaleType.toScaleMode(),
+        contentScale = scaleType.toContentScale(),
         baseScale = scaleType.computeScaleFactor(
             srcSize = rotatedContentSize,
             dstSize = containerSize

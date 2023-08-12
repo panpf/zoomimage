@@ -28,7 +28,6 @@ import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toCompatScaleFactor
 import com.github.panpf.zoomimage.compose.internal.toCompatTransform
-import com.github.panpf.zoomimage.compose.internal.toScaleMode
 import com.github.panpf.zoomimage.compose.internal.toTransform
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.split
@@ -543,7 +542,7 @@ internal fun computeZoomInitialConfig(
         contentSize = rotatedContentSize.toCompat(),
         contentOriginSize = rotatedContentOriginSize.toCompat(),
         containerSize = containerSize.toCompat(),
-        scaleMode = contentScale.toScaleMode(),
+        contentScale = contentScale.toCompat(),
         baseScale = contentScale.computeScaleFactor(
             srcSize = rotatedContentSize.toSize(),
             dstSize = containerSize.toSize()
