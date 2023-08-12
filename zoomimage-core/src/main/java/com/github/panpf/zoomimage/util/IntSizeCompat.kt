@@ -42,10 +42,7 @@ fun IntSizeCompat.toIntRect(): IntRectCompat {
  * with this [IntSizeCompat].
  */
 val IntSizeCompat.center: IntOffsetCompat
-    get() = IntOffsetCompat(
-        x = (width / 2f).roundToInt(),
-        y = (height / 2f).roundToInt()
-    )
+    get() = IntOffsetCompat(x = width / 2, y = height / 2)
 
 
 fun IntSizeCompat.toShortString(): String = "${width}x$height"

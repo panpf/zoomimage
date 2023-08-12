@@ -3,9 +3,7 @@
     <size
         android:width="500dp"
         android:height="500dp" />
-    <gradient
-        android:angle="315"
-        android:centerColor="#8800FF00"
-        android:endColor="#880000FF"
-        android:startColor="#88FF0000" />
+    <stroke
+        android:width="0.5dp"
+        android:color="#FF0000" />
 </shape>

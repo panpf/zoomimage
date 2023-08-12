@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.test.compose
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -41,10 +41,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.fetch.newAssetUri
@@ -97,10 +97,10 @@ private fun GraphicsLayerSample() {
     var contentSize by remember { mutableStateOf(IntSize.Zero) }
     val rotationOrigin by remember {
         derivedStateOf {
-            contentSize.center.let {
+            contentSize.toSize().center.let {
                 TransformOrigin(
-                    it.x.toFloat() / containerSize.width,
-                    it.y.toFloat() / containerSize.height
+                    it.x / containerSize.width,
+                    it.y / containerSize.height
                 )
             }
         }
@@ -197,21 +197,16 @@ private fun GraphicsLayerSample() {
                 .fillMaxWidth()
                 .aspectRatio(1.4286f)
         ) {
-            val brush = remember {
-                Brush.linearGradient(
-                    listOf(Color(0x88FF0000), Color(0x8800FF00), Color(0x880000FF)),
-                )
-            }
             Image(
                 painter = painter,
                 contentDescription = "dog",
                 contentScale = ContentScale.None,
                 alignment = Alignment.TopStart,
                 modifier = Modifier
+                    .padding(end = 20.dp)
                     .fillMaxSize(0.7f)
                     .onSizeChanged { containerSize = it }
                     .align(Alignment.BottomEnd)
-                    .background(brush)
                     .graphicsLayer {
                         scaleX = displayTransform.scaleX
                         scaleY = displayTransform.scaleY
@@ -223,6 +218,13 @@ private fun GraphicsLayerSample() {
                         rotationZ = displayTransform.rotation
                         transformOrigin = rotationOrigin
                     }
+            )
+            Box(
+                modifier = Modifier
+                    .padding(end = 20.dp)
+                    .fillMaxSize(0.7f)
+                    .align(Alignment.BottomEnd)
+                    .border(0.5f.dp, Color.Red)
             )
         }
 

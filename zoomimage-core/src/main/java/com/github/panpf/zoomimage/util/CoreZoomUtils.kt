@@ -4,7 +4,6 @@ import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.util.internal.format
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 fun calculateNextStepScale(
     stepScales: FloatArray,
@@ -158,7 +157,6 @@ enum class ScaleMode {
     NONE,
 }
 
-
 /**
  * base rotation center is content center
  */
@@ -166,21 +164,20 @@ fun computeContentInContainerRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     rotation: Int,
-): IntRectCompat {
+): RectCompat {
     require(rotation % 90 == 0) { "rotation must be multiple of 90" }
     if (rotation % 180 == 0) {
-        return IntRectCompat(
-            left = 0,
-            top = 0,
-            right = containerSize.width,
-            bottom = containerSize.height,
+        return RectCompat(
+            left = 0f,
+            top = 0f,
+            right = containerSize.width.toFloat(),
+            bottom = containerSize.height.toFloat(),
         )
     } else {
-        val contentCenter = contentSize.center
-        //  - 1 is subtracting the center point
-        val left = contentCenter.x - (contentSize.height / 2f).roundToInt() - 1
-        val top = contentCenter.y - (contentSize.width / 2f).roundToInt() - 1
-        return IntRectCompat(
+        val contentCenter = contentSize.toSize().center
+        val left = contentCenter.x - contentCenter.y
+        val top = contentCenter.y - contentCenter.x
+        return RectCompat(
             left = left,
             top = top,
             right = left + contentSize.height,
@@ -189,7 +186,6 @@ fun computeContentInContainerRect(
     }
 }
 
-// todo crop 时效果不对
 fun computeBaseTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -197,6 +193,14 @@ fun computeBaseTransform(
     alignment: AlignmentCompat,
     rotation: Int,
 ): TransformCompat {
+    /*
+    * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The zoom center point is top left
+     * 3. The rotation center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return TransformCompat.Origin
     }
@@ -205,21 +209,27 @@ fun computeBaseTransform(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
+
+    /* Calculates the offset that moves the rotated content back to top left */
+    val rotatedContentInContainerRect = computeContentInContainerRect(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        rotation = rotation,
+    )
+    val moveRotatedContentToTopLeftOffset =
+        IntOffsetCompat.Zero - rotatedContentInContainerRect.topLeft
+    val scaledMoveRotatedContentToTopLeftOffset =
+        moveRotatedContentToTopLeftOffset * rotatedContentScaleFactor
+
     val scaledRotatedContentSize = rotatedContentSize.times(rotatedContentScaleFactor)
     val scaledRotatedContentAlignmentOffset = alignment.align(
         size = scaledRotatedContentSize,
         space = containerSize,
         ltrLayout = true,
     )
-    val rotatedContentInContainerRect = computeContentInContainerRect(
-        containerSize = containerSize,
-        contentSize = contentSize,
-        rotation = rotation,
-    )
-    val rotateRectifyOffset = IntOffsetCompat.Zero - rotatedContentInContainerRect.topLeft
-    val scaledRotateRectifyOffset = rotateRectifyOffset * rotatedContentScaleFactor
-    val finalOffset = scaledRotatedContentAlignmentOffset + scaledRotateRectifyOffset
-    return TransformCompat(scale = rotatedContentScaleFactor, offset = finalOffset.toOffset())
+
+    val finalOffset = scaledMoveRotatedContentToTopLeftOffset + scaledRotatedContentAlignmentOffset
+    return TransformCompat(scale = rotatedContentScaleFactor, offset = finalOffset)
 }
 
 fun computeContentInContainerRect(
