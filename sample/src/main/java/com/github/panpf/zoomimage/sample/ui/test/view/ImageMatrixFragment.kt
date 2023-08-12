@@ -9,11 +9,13 @@ import android.widget.ImageView.ScaleType
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.toRect
+import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.databinding.ImageMatrixFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.ui.util.view.getRotation
 import com.github.panpf.zoomimage.sample.ui.util.view.getScale
 import com.github.panpf.zoomimage.sample.ui.util.view.getTranslation
@@ -139,14 +141,22 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentImageView.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-            if (viewSize.width != v.width || viewSize.height != v.height) {
-                viewSize = IntSizeCompat(v.width, v.height)
-                updateMatrix(binding)
+        binding.imageMatrixFragmentImageView.apply {
+            addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+                if (viewSize.width != v.width || viewSize.height != v.height) {
+                    viewSize = IntSizeCompat(v.width, v.height)
+                    updateMatrix(binding)
+                }
+            }
+            updateLayoutParams {
+                val viewSize = computeImageViewSize(context)
+                width = viewSize.width
+                height = viewSize.height
             }
         }
 
         updateImage(binding)
+        updateMatrix(binding)
     }
 
     @SuppressLint("SetTextI18n")

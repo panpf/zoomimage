@@ -38,8 +38,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
@@ -59,6 +61,7 @@ import com.github.panpf.zoomimage.sample.ui.common.compose.AutoSizeText
 import com.github.panpf.zoomimage.sample.ui.util.compose.ScaleFactor
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
+import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.util.computeBaseTransform
@@ -175,9 +178,9 @@ private fun GraphicsLayerSample() {
                 containerSize = containerSize.toCompat(),
                 contentScale = contentScale.toCompat(),
                 alignment = alignment.toCompat(),
-                scale = userTransform.scaleX,
-                offset = userTransform.offset.toCompat(),
-                rotation = rotation
+                rotation = rotation,
+                userScale = userTransform.scaleX,
+                userOffset = userTransform.offset.toCompat(),
             ).round()
             "display: ${rect.toShortString()}"
         }
@@ -196,15 +199,23 @@ private fun GraphicsLayerSample() {
             Modifier
                 .fillMaxWidth()
                 .aspectRatio(1.4286f)
+                .padding(end = 20.dp)
         ) {
+            val density = LocalDensity.current
+            val size = remember {
+                computeImageViewSize(context).let {
+                    with(density) {
+                        DpSize(it.width.toFloat().toDp(), it.height.toFloat().toDp())
+                    }
+                }
+            }
             Image(
                 painter = painter,
                 contentDescription = "dog",
                 contentScale = ContentScale.None,
                 alignment = Alignment.TopStart,
                 modifier = Modifier
-                    .padding(end = 20.dp)
-                    .fillMaxSize(0.7f)
+                    .size(size)
                     .onSizeChanged { containerSize = it }
                     .align(Alignment.BottomEnd)
                     .graphicsLayer {
@@ -221,7 +232,6 @@ private fun GraphicsLayerSample() {
             )
             Box(
                 modifier = Modifier
-                    .padding(end = 20.dp)
                     .fillMaxSize(0.7f)
                     .align(Alignment.BottomEnd)
                     .border(0.5f.dp, Color.Red)

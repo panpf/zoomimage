@@ -15,6 +15,8 @@
         app:layout_constraintDimensionRatio="10:7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:paddingEnd="20dp"
+        android:paddingRight="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -22,8 +24,6 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="matrix"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.7"
