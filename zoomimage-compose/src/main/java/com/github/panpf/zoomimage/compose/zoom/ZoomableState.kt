@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.center
-import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.unit.toOffset
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
@@ -35,26 +34,31 @@ import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.name
+import com.github.panpf.zoomimage.compose.internal.roundToPlatform
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.zoom.internal.computeContainerVisibleRect
-import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerRect
-import com.github.panpf.zoomimage.compose.zoom.internal.computeContentInContainerVisibleRect
-import com.github.panpf.zoomimage.compose.zoom.internal.computeContentVisibleRect
-import com.github.panpf.zoomimage.compose.zoom.internal.computeLocationUserOffset
-import com.github.panpf.zoomimage.compose.zoom.internal.computeTransformOffset
-import com.github.panpf.zoomimage.compose.zoom.internal.computeUserOffsetBounds
-import com.github.panpf.zoomimage.compose.zoom.internal.computeZoomInitialConfig
-import com.github.panpf.zoomimage.compose.zoom.internal.containerPointToContentPoint
-import com.github.panpf.zoomimage.compose.zoom.internal.contentPointToContainerPoint
-import com.github.panpf.zoomimage.compose.zoom.internal.rotateInContainer
-import com.github.panpf.zoomimage.compose.zoom.internal.touchPointToContainerPoint
 import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
+import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
 import com.github.panpf.zoomimage.util.canScroll
+import com.github.panpf.zoomimage.util.computeContainerVisibleRect
+import com.github.panpf.zoomimage.util.computeContentInContainerRect
+import com.github.panpf.zoomimage.util.computeContentInContainerVisibleRect
+import com.github.panpf.zoomimage.util.computeContentVisibleRect
+import com.github.panpf.zoomimage.util.computeLocationUserOffset
 import com.github.panpf.zoomimage.util.computeScrollEdge
+import com.github.panpf.zoomimage.util.computeTransformOffset
+import com.github.panpf.zoomimage.util.computeUserOffsetBounds
+import com.github.panpf.zoomimage.util.computeZoomInitialConfig
+import com.github.panpf.zoomimage.util.concat
+import com.github.panpf.zoomimage.util.containerPointToContentPoint
+import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
+import com.github.panpf.zoomimage.util.rotateInContainer
+import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.util.touchPointToContainerPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +67,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.math.roundToInt
 
 @Composable
 fun rememberZoomableState(
@@ -112,6 +115,7 @@ class ZoomableState(
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var lastTransformCentroid: Offset? = null
+    private var rotation = 0
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -160,54 +164,58 @@ class ZoomableState(
         private set
     val transform: Transform by derivedStateOf {
         baseTransform.concat(userTransform)
-        // todo 将旋转和 origin 都在这里设置
     }
     var scaling: Boolean by mutableStateOf(false)
     var fling: Boolean by mutableStateOf(false)
 
     val userOffsetBounds: IntRect by derivedStateOf {
         computeUserOffsetBounds(
-            containerSize = containerSize,
-            contentSize = contentSize, // todo 适配 rotation
-            contentScale = contentScale,
-            alignment = contentAlignment,
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = contentAlignment.toCompat(),
             userScale = userTransform.scaleX,
-        ).roundToIntRect()
+            rotation = rotation,
+        ).roundToPlatform()
     }
 
     val contentInContainerRect: IntRect by derivedStateOf {
         computeContentInContainerRect(
-            containerSize = containerSize,
-            contentSize = contentSize, // todo 适配 rotation
-            contentScale = contentScale,
-            alignment = contentAlignment,
-        ).roundToIntRect()
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = contentAlignment.toCompat(),
+            rotation = rotation,
+            userScale = 0f,
+            userOffset = OffsetCompat.Zero,
+        ).roundToPlatform()
     }
     val contentInContainerVisibleRect: IntRect by derivedStateOf {
         computeContentInContainerVisibleRect(
-            containerSize = containerSize,
-            contentSize = contentSize, // todo 适配 rotation
-            contentScale = contentScale,
-            alignment = contentAlignment,
-        ).roundToIntRect()
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(), // todo 适配 rotation
+            contentScale = contentScale.toCompat(),
+            alignment = contentAlignment.toCompat(),
+        ).roundToPlatform()
     }
 
     val containerVisibleRect: IntRect by derivedStateOf {
         computeContainerVisibleRect(
-            containerSize = containerSize,
+            containerSize = containerSize.toCompat(),
             userScale = userTransform.scaleX,
-            userOffset = userTransform.offset
-        ).roundToIntRect()
+            userOffset = userTransform.offset.toCompat()
+        ).roundToPlatform()
     }
     val contentVisibleRect: IntRect by derivedStateOf {
         computeContentVisibleRect(
-            containerSize = containerSize,
-            contentSize = contentSize, // todo 适配 rotation
-            contentScale = contentScale,
-            alignment = contentAlignment,
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = contentAlignment.toCompat(),
+            rotation = rotation,
             userScale = userTransform.scaleX,
-            userOffset = userTransform.offset,
-        ).roundToIntRect()
+            userOffset = userTransform.offset.toCompat(),
+        ).roundToPlatform()
     }
     val scrollEdge: ScrollEdge by derivedStateOf {
         computeScrollEdge(
@@ -229,15 +237,15 @@ class ZoomableState(
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val readMode = readMode
-        val rotation = baseTransform.rotation
+        val rotation = rotation
         val mediumScaleMinMultiple = mediumScaleMinMultiple
 
         val initialConfig = computeZoomInitialConfig(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentOriginSize = contentOriginSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentOriginSize = contentOriginSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            contentAlignment = contentAlignment.toCompat(),
             rotation = rotation,
             readMode = readMode,
             mediumScaleMinMultiple = mediumScaleMinMultiple
@@ -250,7 +258,7 @@ class ZoomableState(
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
                     "contentAlignment=${contentAlignment.name}, " +
-                    "rotation=${rotation.format(4)}, " +
+                    "rotation=${rotation}, " +
                     "mediumScaleMinMultiple=${mediumScaleMinMultiple.format(4)}, " +
                     "readMode=${readMode}. " +
                     "minScale=${initialConfig.minScale.format(4)}, " +
@@ -264,8 +272,8 @@ class ZoomableState(
         minScale = initialConfig.minScale
         mediumScale = initialConfig.mediumScale
         maxScale = initialConfig.maxScale
-        baseTransform = initialConfig.baseTransform
-        userTransform = initialConfig.userTransform
+        baseTransform = initialConfig.baseTransform.toPlatform()
+        userTransform = initialConfig.userTransform.toPlatform()
     }
 
     fun scale(
@@ -285,12 +293,12 @@ class ZoomableState(
         val currentUserOffset = currentUserTransform.offset
         val targetUserOffset = computeTransformOffset(
             currentScale = currentUserScale,
-            currentOffset = currentUserOffset,
+            currentOffset = currentUserOffset.toCompat(),
             targetScale = limitedTargetUserScale,
-            centroid = centroid,
-            pan = Offset.Zero,
+            centroid = centroid.toCompat(),
+            pan = OffsetCompat.Zero,
             gestureRotate = 0f,
-        )
+        ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactor(limitedTargetUserScale),
@@ -364,12 +372,12 @@ class ZoomableState(
         stopAllAnimationInternal("location")
 
         val rotatedContentPoint =
-            contentPoint.rotateInContainer(contentSize, baseTransform.rotation.roundToInt())
+            contentPoint.toCompat().rotateInContainer(contentSize.toCompat(), rotation)
         val containerPoint = contentPointToContainerPoint(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            contentAlignment = contentAlignment.toCompat(),
             contentPoint = rotatedContentPoint
         )
 
@@ -377,10 +385,10 @@ class ZoomableState(
         val limitedTargetUserScale = limitUserScale(targetUserScale)
 
         val targetUserOffset = computeLocationUserOffset(
-            containerSize = containerSize,
+            containerSize = containerSize.toCompat(),
             containerPoint = containerPoint,
             userScale = limitedTargetUserScale,
-        )
+        ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactor(limitedTargetUserScale),
@@ -417,16 +425,15 @@ class ZoomableState(
         require(targetRotation >= 0) { "rotation must be greater than or equal to 0: $targetRotation" }
         require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
         val limitedTargetRotation = targetRotation % 360
-        val currentRotation = baseTransform.rotation
-        if (currentRotation.roundToInt() == limitedTargetRotation) return@launch
+        val currentRotation = rotation
+        if (currentRotation == limitedTargetRotation) return@launch
 
         stopAllAnimationInternal("rotate")
 
         if (BuildConfig.DEBUG) {
-            baseTransform = baseTransform.copy(rotation = limitedTargetRotation.toFloat())
+            rotation = limitedTargetRotation
             reset("rotate")
         }
-        // todo 适配 rotation
     }
 
     fun transform(
@@ -448,12 +455,12 @@ class ZoomableState(
         val currentUserOffset = currentUserTransform.offset
         val targetUserOffset = computeTransformOffset(
             currentScale = currentUserScale,
-            currentOffset = currentUserOffset,
+            currentOffset = currentUserOffset.toCompat(),
             targetScale = limitedTargetUserScale,
-            centroid = centroid,
-            pan = pan,
+            centroid = centroid.toCompat(),
+            pan = pan.toCompat(),
             gestureRotate = 0f,
-        )
+        ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
             scale = ScaleFactor(limitedTargetUserScale),
@@ -631,18 +638,18 @@ class ZoomableState(
             contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero // todo 适配 rotation
         val currentUserTransform = userTransform
         val containerPoint = touchPointToContainerPoint(
-            containerSize = containerSize,
+            containerSize = containerSize.toCompat(),
             userScale = currentUserTransform.scaleX,
-            userOffset = currentUserTransform.offset,
-            touchPoint = touchPoint
+            userOffset = currentUserTransform.offset.toCompat(),
+            touchPoint = touchPoint.toCompat()
         )
         val contentPoint = containerPointToContentPoint(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            contentAlignment = contentAlignment.toCompat(),
             containerPoint = containerPoint
-        )
+        ).toPlatform()
         return contentPoint
     }
 
@@ -664,13 +671,13 @@ class ZoomableState(
     }
 
     private fun limitUserOffset(userOffset: Offset, userScale: Float): Offset {
-        if (BuildConfig.DEBUG) return userOffset
         val userOffsetBounds = computeUserOffsetBounds(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = contentAlignment,
-            userScale = userScale
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = contentAlignment.toCompat(),
+            rotation = rotation,
+            userScale = userScale,
         )
         if (userOffset.x >= userOffsetBounds.left
             && userOffset.x <= userOffsetBounds.right

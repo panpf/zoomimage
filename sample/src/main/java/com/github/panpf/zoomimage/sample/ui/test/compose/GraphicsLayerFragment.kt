@@ -52,7 +52,7 @@ import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.compose.internal.toTransform
+import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.concat
 import com.github.panpf.zoomimage.sample.R
@@ -130,7 +130,7 @@ private fun GraphicsLayerSample() {
                 contentScale = contentScale.toCompat(),
                 alignment = alignment.toCompat(),
                 rotation = rotation,
-            ).toTransform().copy(rotation = rotation.toFloat())
+            ).toPlatform()
         }
     }
     var userTransform by remember { mutableStateOf(Transform.Origin) }
@@ -183,7 +183,7 @@ private fun GraphicsLayerSample() {
                 rotation = rotation,
                 userScale = userTransform.scaleX,
                 userOffset = userTransform.offset.toCompat(),
-            )
+            ).round()
             "display: ${rect.toShortString()}"
         }
     }

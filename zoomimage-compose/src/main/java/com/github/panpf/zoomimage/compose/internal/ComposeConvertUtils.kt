@@ -183,40 +183,40 @@ fun IntOffsetCompat.toPlatform(): IntOffset = IntOffset(x = x, y = y)
 fun IntOffsetCompat.toPlatformOffset(): Offset = Offset(x = x.toFloat(), y = y.toFloat())
 
 
-fun TransformOrigin.toCompatOrigin(): TransformOriginCompat {
+fun TransformOrigin.toCompat(): TransformOriginCompat {
     return TransformOriginCompat(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
 }
 
-fun TransformOriginCompat.toTransformOrigin(): TransformOrigin {
+fun TransformOriginCompat.toPlatform(): TransformOrigin {
     return TransformOrigin(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
 }
 
 
-fun ScaleFactor.toCompatScaleFactor(): ScaleFactorCompat {
+fun ScaleFactor.toCompat(): ScaleFactorCompat {
     return ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY)
 }
 
-fun ScaleFactorCompat.toScaleFactor(): ScaleFactor {
+fun ScaleFactorCompat.toPlatform(): ScaleFactor {
     return ScaleFactor(scaleX = scaleX, scaleY = scaleY)
 }
 
 
-fun Transform.toCompatTransform(): TransformCompat {
+fun Transform.toCompat(): TransformCompat {
     return TransformCompat(
-        scale = scale.toCompatScaleFactor(),
+        scale = scale.toCompat(),
         offset = offset.toCompat(),
         rotation = rotation,
-        scaleOrigin = scaleOrigin.toCompatOrigin(),
-        rotationOrigin = rotationOrigin.toCompatOrigin(),
+        scaleOrigin = scaleOrigin.toCompat(),
+        rotationOrigin = rotationOrigin.toCompat(),
     )
 }
 
-fun TransformCompat.toTransform(): Transform {
+fun TransformCompat.toPlatform(): Transform {
     return Transform(
-        scale = scale.toScaleFactor(),
+        scale = scale.toPlatform(),
         offset = offset.toPlatform(),
         rotation = rotation,
-        scaleOrigin = scaleOrigin.toTransformOrigin(),
-        rotationOrigin = rotationOrigin.toTransformOrigin(),
+        scaleOrigin = scaleOrigin.toPlatform(),
+        rotationOrigin = rotationOrigin.toPlatform(),
     )
 }

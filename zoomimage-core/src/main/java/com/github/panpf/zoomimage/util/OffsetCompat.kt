@@ -2,6 +2,8 @@ package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.lerp
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 data class OffsetCompat(
@@ -124,4 +126,20 @@ operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat {
 
 operator fun OffsetCompat.div(scaleFactor: ScaleFactorCompat): OffsetCompat {
     return OffsetCompat(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
+}
+
+/**
+ * Rotates the given offset around the origin by the given angle in degrees.
+ *
+ * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
+ * coordinate system.
+ *
+ * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
+ */
+fun OffsetCompat.rotateBy(angle: Float): OffsetCompat {
+    val angleInRadians = angle * kotlin.math.PI / 180
+    return OffsetCompat(
+        x = (x * cos(angleInRadians) - y * sin(angleInRadians)).toFloat(),
+        y = (x * sin(angleInRadians) + y * cos(angleInRadians)).toFloat()
+    )
 }

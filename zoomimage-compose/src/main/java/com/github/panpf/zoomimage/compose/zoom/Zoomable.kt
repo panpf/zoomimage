@@ -47,7 +47,7 @@ fun Modifier.zoomable(
             detectPowerfulTransformGestures(
                 panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
-                    BuildConfig.DEBUG || state.canDrag(horizontal = horizontal, direction = direction)
+                    state.canDrag(horizontal = horizontal, direction = direction)
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float ->
                     state.scaling = true

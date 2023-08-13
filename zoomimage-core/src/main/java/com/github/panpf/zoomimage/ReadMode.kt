@@ -20,7 +20,6 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.internal.format
-import com.github.panpf.zoomimage.util.isSameDirection
 import com.github.panpf.zoomimage.util.times
 import kotlin.math.max
 
@@ -112,6 +111,14 @@ data class ReadMode(
             var result = sameDirectionMultiple.hashCode()
             result = 31 * result + notSameDirectionMultiple.hashCode()
             return result
+        }
+
+        private fun isSameDirection(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
+            val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
+            val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
+            return (srcAspectRatio == 1.0f || dstAspectRatio == 1.0f)
+                    || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
+                    || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
         }
     }
 }

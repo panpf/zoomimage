@@ -12,7 +12,7 @@ import com.github.panpf.zoomimage.compose.zoom.concat
 import com.github.panpf.zoomimage.compose.zoom.internal.computeBaseTransform
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toCompatTransform
-import com.github.panpf.zoomimage.compose.internal.toTransform
+import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.split
 import org.junit.Assert
 import org.junit.Test
@@ -44,7 +44,7 @@ class TransformTest {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             baseTransform = baseTransform.toCompatTransform()
-        ).toTransform().also {
+        ).toPlatform().also {
             val expected = Transform(ScaleFactor(7.137931f), Offset(0f, 0f))
             Assert.assertEquals(/* expected = */ expected,/* actual = */ it)
         }
@@ -84,7 +84,7 @@ class TransformTest {
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             baseTransform = baseTransform.toCompatTransform()
-        ).toTransform().also {
+        ).toPlatform().also {
             val expected = Transform(ScaleFactor(7.137931f), Offset(-22912.758f, 0f))
             Assert.assertEquals(/* expected = */ expected,/* actual = */ it)
         }

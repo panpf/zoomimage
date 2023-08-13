@@ -183,6 +183,22 @@ internal fun Offset.rotateBy(angle: Float): Offset {
     )
 }
 
+/**
+ * Rotates the given offset around the origin by the given angle in degrees.
+ *
+ * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
+ * coordinate system.
+ *
+ * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
+ */
+fun IntOffset.rotateBy(angle: Float): IntOffset {
+    val angleInRadians = angle * PI / 180
+    return IntOffset(
+        x = (x * cos(angleInRadians) - y * sin(angleInRadians)).roundToInt(),
+        y = (x * sin(angleInRadians) + y * cos(angleInRadians)).roundToInt()
+    )
+}
+
 
 private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
 internal val TransformOrigin.Companion.TopStart: TransformOrigin
