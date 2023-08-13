@@ -134,7 +134,9 @@ private fun GraphicsLayerSample() {
         }
     }
     var userTransform by remember { mutableStateOf(Transform.Origin) }
-    val displayTransform by remember { derivedStateOf { baseTransform.concat(userTransform) } }
+    val displayTransform by remember {
+        derivedStateOf { baseTransform.concat(userTransform) }
+    }
 
     var contentScaleMenuExpanded by remember { mutableStateOf(false) }
     val contentScales = remember {
@@ -181,7 +183,7 @@ private fun GraphicsLayerSample() {
                 rotation = rotation,
                 userScale = userTransform.scaleX,
                 userOffset = userTransform.offset.toCompat(),
-            ).round()
+            )
             "display: ${rect.toShortString()}"
         }
     }

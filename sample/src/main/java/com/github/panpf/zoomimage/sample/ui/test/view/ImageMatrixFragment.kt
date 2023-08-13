@@ -23,6 +23,9 @@ import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.computeBaseTransform
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
@@ -37,13 +40,14 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
     private val offsetStep = 50
     private val rotateStep = 90
 
-    private val baseMatrix = Matrix()
-    private val userMatrix = Matrix()
-    private val displayMatrix = Matrix()
+    private val cacheBaseMatrix = Matrix()
+    private val cacheUserMatrix = Matrix()
+    private val cacheDisplayMatrix = Matrix()
     private var scaleType = ScaleType.FIT_CENTER
     private var viewSize = IntSizeCompat.Zero
     private var rotation = 0
     private var horImage = true
+    private var userTransform = TransformCompat.Origin
 
     override fun onViewCreated(
         toolbar: Toolbar,
@@ -91,43 +95,45 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
 
         binding.imageMatrixFragmentResetButton.setOnClickListener {
             rotation = 0
-            userMatrix.reset()
+            userTransform = TransformCompat.Origin
             updateMatrix(binding)
         }
 
         binding.imageMatrixFragmentScalePlusButton.setOnClickListener {
-            val currentScale = userMatrix.getScale().scaleX
+            val currentScale = userTransform.scaleX
             val targetScale = currentScale + scaleStep
-            val deltaScale = targetScale / currentScale
-            userMatrix.postScale(deltaScale, deltaScale)
+            userTransform = userTransform.copy(scale = ScaleFactorCompat(targetScale))
             updateMatrix(binding)
         }
 
         binding.imageMatrixFragmentScaleMinusButton.setOnClickListener {
-            val currentScale = userMatrix.getScale().scaleX
+            val currentScale = userTransform.scaleX
             val targetScale = currentScale - scaleStep
-            val deltaScale = targetScale / currentScale
-            userMatrix.postScale(deltaScale, deltaScale)
+            userTransform = userTransform.copy(scale = ScaleFactorCompat(targetScale))
             updateMatrix(binding)
         }
 
         binding.imageMatrixFragmentOffsetUpButton.setOnClickListener {
-            userMatrix.postTranslate(0f, -offsetStep.toFloat())
+            val addOffset = OffsetCompat(0f, -offsetStep.toFloat())
+            userTransform = userTransform.copy(offset = userTransform.offset + addOffset)
             updateMatrix(binding)
         }
 
         binding.imageMatrixFragmentOffsetDownButton.setOnClickListener {
-            userMatrix.postTranslate(0f, offsetStep.toFloat())
+            val addOffset = OffsetCompat(0f, offsetStep.toFloat())
+            userTransform = userTransform.copy(offset = userTransform.offset + addOffset)
             updateMatrix(binding)
         }
 
         binding.imageMatrixFragmentOffsetRightButton.setOnClickListener {
-            userMatrix.postTranslate(offsetStep.toFloat(), 0f)
+            val addOffset = OffsetCompat(offsetStep.toFloat(), 0f)
+            userTransform = userTransform.copy(offset = userTransform.offset + addOffset)
             updateMatrix(binding)
         }
 
         binding.imageMatrixFragmentOffsetLeftButton.setOnClickListener {
-            userMatrix.postTranslate(-offsetStep.toFloat(), 0f)
+            val addOffset = OffsetCompat(-offsetStep.toFloat(), 0f)
+            userTransform = userTransform.copy(offset = userTransform.offset + addOffset)
             updateMatrix(binding)
         }
 
@@ -168,7 +174,7 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         val rotation = rotation
         val scaleType = scaleType
         val viewSize = viewSize
-        val baseMatrix = baseMatrix.apply {
+        val baseMatrix = cacheBaseMatrix.apply {
             reset()
             val transform = computeBaseTransform(
                 containerSize = viewSize,
@@ -185,8 +191,12 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
             postTranslate(transform.offset.x, transform.offset.y)
         }
 
-        val userMatrix = userMatrix
-        val displayMatrix = displayMatrix.apply {
+        val userMatrix = cacheUserMatrix.apply {
+            reset()
+            postScale(userTransform.scaleX, userTransform.scaleY)
+            postTranslate(userTransform.offset.x, userTransform.offset.y)
+        }
+        val displayMatrix = cacheDisplayMatrix.apply {
             set(baseMatrix)
             postConcat(userMatrix)
         }

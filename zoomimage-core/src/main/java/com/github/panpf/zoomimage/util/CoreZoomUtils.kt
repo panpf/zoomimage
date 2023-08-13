@@ -156,7 +156,19 @@ fun computeContentInContainerRect(
     contentSize: IntSizeCompat,
     rotation: Int,
 ): RectCompat {
+    /*
+    * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return RectCompat.Zero
+    }
     require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+
     if (rotation % 180 == 0) {
         return RectCompat(
             left = 0f,
@@ -187,14 +199,16 @@ fun computeBaseTransform(
     /*
     * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
-     * 2. The zoom center point is top left
-     * 3. The rotation center point is the content center
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
      * 4. Apply rotation before scaling and offset
      */
 
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return TransformCompat.Origin
     }
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+
     val rotatedContentSize = contentSize.rotate(rotation)
     val rotatedContentScaleFactor = contentScale.computeScaleFactor(
         srcSize = rotatedContentSize.toSize(),
@@ -228,34 +242,39 @@ fun computeContentInContainerRect(
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
-    scale: Float,
-    offset: OffsetCompat,
     rotation: Int,
-): RectCompat {
+    userScale: Float,
+    userOffset: OffsetCompat,
+): IntRectCompat {
+    /*
+    * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
+        return IntRectCompat.Zero
     }
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    val contentScaleFactor = contentScale.computeScaleFactor(
-        srcSize = contentSize.toSize(),
+
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val rotatedContentScaleFactor = contentScale.computeScaleFactor(
+        srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-    val scaledContentSize = contentSize.toSize().times(contentScaleFactor)
-    val alignmentOffset = alignment.align(
-        size = scaledContentSize.round(),
+
+    val scaledRotatedContentSize = rotatedContentSize.times(rotatedContentScaleFactor)
+    val scaledRotatedContentAlignmentOffset = alignment.align(
+        size = scaledRotatedContentSize,
         space = containerSize,
         ltrLayout = true,
     )
-    val contentInContainerRect = RectCompat(
-        left = alignmentOffset.x.toFloat(),
-        top = alignmentOffset.y.toFloat(),
-        right = alignmentOffset.x + scaledContentSize.width,
-        bottom = alignmentOffset.y + scaledContentSize.height,
-    )
 
-    val rotatedContentInContainerRect = contentInContainerRect.rotate(rotation)
-    val offsetContentInContainerRect = rotatedContentInContainerRect.translate(offset)
-    @Suppress("UnnecessaryVariable") val scaledContentInContainerRect =
-        offsetContentInContainerRect.scale(scale)
-    return scaledContentInContainerRect
+    val baseRect = IntRectCompat(scaledRotatedContentAlignmentOffset, scaledRotatedContentSize)
+    val scaledBaseRect = baseRect.scale(userScale)
+    @Suppress("UnnecessaryVariable") val offsetScaledRect =
+        scaledBaseRect.translate(userOffset.round())
+    return offsetScaledRect
 }

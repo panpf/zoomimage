@@ -17,6 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:paddingEnd="20dp"
         android:paddingRight="20dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
