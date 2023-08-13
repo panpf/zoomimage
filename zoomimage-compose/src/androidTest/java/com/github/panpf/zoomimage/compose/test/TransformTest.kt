@@ -23,6 +23,7 @@ class TransformTest {
 
     @Test
     fun testConcatAndSplit() {
+        // todo 修复这个测试
         val containerSize = IntSize(1080, 1656)
         val contentSize = IntSize(7500, 232)
         val contentScale = ContentScale.Fit
@@ -62,6 +63,7 @@ class TransformTest {
 
     @Test
     fun testConcatAndSplit2() {
+        // todo 修复这个测试
         val containerSize = IntSize(1080, 1656)
         val contentSize = IntSize(7500, 232)
         val contentScale = ContentScale.None

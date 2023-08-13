@@ -1,5 +1,7 @@
 package com.github.panpf.zoomimage.util
 
+import com.github.panpf.zoomimage.util.internal.lerp
+
 data class TransformCompat(
     val scale: ScaleFactorCompat,
     val offset: OffsetCompat,
@@ -86,21 +88,39 @@ data class TransformCompat(
  * an `AnimationController`.
  */
 fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): TransformCompat {
-    require(start.scaleOrigin == stop.scaleOrigin && start.rotationOrigin == stop.rotationOrigin) {
-        "Transform scaleOrigin and rotationOrigin must be the same: " +
+    require(start.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
+            || stop.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
+            || start.scaleOrigin == stop.scaleOrigin
+    ) {
+        "When both start and stop Transform's scale are not empty, their scaleOrigin must be the same: " +
                 "start.scaleOrigin=${start.scaleOrigin}, " +
-                "stop.scaleOrigin=${stop.scaleOrigin}, " +
+                "stop.scaleOrigin=${stop.scaleOrigin}"
+    }
+    require(start.rotation == 0f || stop.rotation == 0f || start.rotationOrigin == stop.rotationOrigin) {
+        "When both start and stop Transform's rotation are not zero, their rotationOrigin must be the same: " +
                 "start.rotationOrigin=${start.rotationOrigin}, " +
                 "stop.rotationOrigin=${stop.rotationOrigin}"
     }
+    val scaleOrigin = if (start.scale.let { it.isSpecified && it != ScaleFactorCompat.Origin }) {
+        start.scaleOrigin
+    } else if (stop.scale.let { it.isSpecified && it != ScaleFactorCompat.Origin }) {
+        stop.scaleOrigin
+    } else {
+        TransformOriginCompat.TopStart
+    }
+    val rotationOrigin = if (start.rotation != 0f) {
+        start.rotationOrigin
+    } else if (stop.rotation != 0f) {
+        stop.rotationOrigin
+    } else {
+        TransformOriginCompat.TopStart
+    }
     return start.copy(
-        scale = lerp(start.scale, stop.scale, fraction),
-        offset = lerp(start.offset, stop.offset, fraction),
-        rotation = com.github.panpf.zoomimage.util.internal.lerp(
-            start.rotation,
-            stop.rotation,
-            fraction
-        ),
+        scale = lerp(start = start.scale, stop = stop.scale, fraction = fraction),
+        offset = lerp(start = start.offset, stop = stop.offset, fraction = fraction),
+        rotation = lerp(start = start.rotation, stop = stop.rotation, fraction = fraction),
+        scaleOrigin = scaleOrigin,
+        rotationOrigin = rotationOrigin,
     )
 }
 
@@ -134,33 +154,77 @@ fun TransformCompat.div(scaleFactor: ScaleFactorCompat): TransformCompat {
 }
 
 fun TransformCompat.concat(other: TransformCompat): TransformCompat {
-    require(this.scaleOrigin == other.scaleOrigin && this.rotationOrigin == other.rotationOrigin) {
-        "Transform scaleOrigin and rotationOrigin must be the same: " +
+    require(this.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
+            || other.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
+            || this.scaleOrigin == other.scaleOrigin
+    ) {
+        "When both this and other Transform's scale are not empty, their scaleOrigin must be the same: " +
                 "this.scaleOrigin=${this.scaleOrigin}, " +
-                "other.scaleOrigin=${other.scaleOrigin}, " +
+                "other.scaleOrigin=${other.scaleOrigin}"
+    }
+    require(this.rotation == 0f || other.rotation == 0f || this.rotationOrigin == other.rotationOrigin) {
+        "When both this and other Transform's rotation are not zero, their rotationOrigin must be the same: " +
                 "this.rotationOrigin=${this.rotationOrigin}, " +
                 "other.rotationOrigin=${other.rotationOrigin}"
+    }
+    val scaleOrigin = if (this.scale.let { it.isSpecified && it != ScaleFactorCompat.Origin }) {
+        this.scaleOrigin
+    } else if (other.scale.let { it.isSpecified && it != ScaleFactorCompat.Origin }) {
+        other.scaleOrigin
+    } else {
+        TransformOriginCompat.TopStart
+    }
+    val rotationOrigin = if (this.rotation != 0f) {
+        this.rotationOrigin
+    } else if (other.rotation != 0f) {
+        other.rotationOrigin
+    } else {
+        TransformOriginCompat.TopStart
     }
     val addScale = other.scale
     return this.copy(
         scale = scale.times(addScale),
         offset = (offset * addScale) + other.offset,
         rotation = rotation + other.rotation,
+        scaleOrigin = scaleOrigin,
+        rotationOrigin = rotationOrigin,
     )
 }
 
 fun TransformCompat.split(other: TransformCompat): TransformCompat {
-    require(this.scaleOrigin == other.scaleOrigin && this.rotationOrigin == other.rotationOrigin) {
-        "Transform scaleOrigin and rotationOrigin must be the same: " +
+    require(this.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
+            || other.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
+            || this.scaleOrigin == other.scaleOrigin
+    ) {
+        "When both this and other Transform's scale are not empty, their scaleOrigin must be the same: " +
                 "this.scaleOrigin=${this.scaleOrigin}, " +
-                "other.scaleOrigin=${other.scaleOrigin}, " +
+                "other.scaleOrigin=${other.scaleOrigin}"
+    }
+    require(this.rotation == 0f || other.rotation == 0f || this.rotationOrigin == other.rotationOrigin) {
+        "When both this and other Transform's rotation are not zero, their rotationOrigin must be the same: " +
                 "this.rotationOrigin=${this.rotationOrigin}, " +
                 "other.rotationOrigin=${other.rotationOrigin}"
+    }
+    val scaleOrigin = if (this.scale.let { it.isSpecified && it != ScaleFactorCompat.Origin }) {
+        this.scaleOrigin
+    } else if (other.scale.let { it.isSpecified && it != ScaleFactorCompat.Origin }) {
+        other.scaleOrigin
+    } else {
+        TransformOriginCompat.TopStart
+    }
+    val rotationOrigin = if (this.rotation != 0f) {
+        this.rotationOrigin
+    } else if (other.rotation != 0f) {
+        other.rotationOrigin
+    } else {
+        TransformOriginCompat.TopStart
     }
     val minusScale = scale.div(other.scale)
     return this.copy(
         scale = minusScale,
         offset = offset - (other.offset * minusScale),
         rotation = rotation - other.rotation,
+        scaleOrigin = scaleOrigin,
+        rotationOrigin = rotationOrigin,
     )
 }

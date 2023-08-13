@@ -19,6 +19,7 @@ class TransformCompatTest {
 
     @Test
     fun testConcatAndSplit() {
+        // todo 修复这个测试
         val containerSize = IntSizeCompat(1080, 1656)
         val contentSize = IntSizeCompat(7500, 232)
         val contentScale = ScaleType.FIT_CENTER
@@ -55,6 +56,7 @@ class TransformCompatTest {
 
     @Test
     fun testConcatAndSplit2() {
+        // todo 修复这个测试
         val containerSize = IntSizeCompat(1080, 1656)
         val contentSize = IntSizeCompat(7500, 232)
         val contentScale = ScaleType.CENTER

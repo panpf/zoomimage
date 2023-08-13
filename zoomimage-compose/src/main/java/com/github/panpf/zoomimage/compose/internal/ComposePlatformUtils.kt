@@ -188,6 +188,10 @@ private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
 internal val TransformOrigin.Companion.TopStart: TransformOrigin
     get() = transformOriginTopStart
 
+private val scaleFactorOrigin by lazy { ScaleFactor(scaleX = 1f, scaleY = 1f) }
+internal val ScaleFactor.Companion.Origin: ScaleFactor
+    get() = scaleFactorOrigin
+
 @Stable
 internal operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
     ScaleFactor(scaleX * scaleFactor.scaleX, scaleY * scaleFactor.scaleY)
