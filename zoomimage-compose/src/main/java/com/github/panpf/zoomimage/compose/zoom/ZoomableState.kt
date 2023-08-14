@@ -44,7 +44,7 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
 import com.github.panpf.zoomimage.util.canScroll
 import com.github.panpf.zoomimage.util.computeContainerVisibleRect
-import com.github.panpf.zoomimage.util.computeContentInContainerRect
+import com.github.panpf.zoomimage.util.computeContentDisplayRect
 import com.github.panpf.zoomimage.util.computeContentInContainerVisibleRect
 import com.github.panpf.zoomimage.util.computeContentVisibleRect
 import com.github.panpf.zoomimage.util.computeLocationUserOffset
@@ -56,7 +56,6 @@ import com.github.panpf.zoomimage.util.concat
 import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
-import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.touchPointToContainerPoint
 import kotlinx.coroutines.CancellationException
@@ -179,15 +178,15 @@ class ZoomableState(
         ).roundToPlatform()
     }
 
-    val contentInContainerRect: IntRect by derivedStateOf {
-        computeContentInContainerRect(
+    val contentDisplayRect: IntRect by derivedStateOf {
+        computeContentDisplayRect(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
             alignment = contentAlignment.toCompat(),
             rotation = rotation,
-            userScale = 0f,
-            userOffset = OffsetCompat.Zero,
+            userScale = userTransform.scaleX,
+            userOffset = userTransform.offset.toCompat(),
         ).roundToPlatform()
     }
     val contentInContainerVisibleRect: IntRect by derivedStateOf {

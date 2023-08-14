@@ -65,7 +65,7 @@ import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.util.computeBaseTransform
-import com.github.panpf.zoomimage.util.computeContentInContainerRect
+import com.github.panpf.zoomimage.util.computeContentDisplayRect
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.min
@@ -175,7 +175,7 @@ private fun GraphicsLayerSample() {
     }
     val displayValue by remember {
         derivedStateOf {
-            val rect = computeContentInContainerRect(
+            val rect = computeContentDisplayRect(
                 contentSize = contentSize.toCompat(),
                 containerSize = containerSize.toCompat(),
                 contentScale = contentScale.toCompat(),

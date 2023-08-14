@@ -19,7 +19,7 @@ fun computeContentInContainerRect(
     rotation: Int,
 ): RectCompat {
     /*
-    * Calculations are based on the following rules:
+     * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
      * 2. The scale center point is top left
      * 3. The rotate center point is the content center
@@ -79,6 +79,7 @@ fun computeContentInContainerRect(
     return contentInContainerRect
 }
 
+// todo 考虑这个函数的作用
 fun computeContentInContainerInnerRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -93,80 +94,6 @@ fun computeContentInContainerInnerRect(
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
-    )
-    val boundsRect = RectCompat(
-        left = 0f,
-        top = 0f,
-        right = containerSize.width.toFloat(),
-        bottom = containerSize.height.toFloat(),
-    )
-    val contentInContainerInnerRect =
-        contentInContainerRect.limitTo(boundsRect)
-    return contentInContainerInnerRect
-}
-
-fun computeContentInContainerRect(
-    containerSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
-    contentScale: ContentScaleCompat,
-    alignment: AlignmentCompat,
-    rotation: Int = 0,
-    userScale: Float = 1f,
-    userOffset: OffsetCompat = OffsetCompat.Zero
-): RectCompat {
-    /*
-    * Calculations are based on the following rules:
-     * 1. Content is located in the top left corner of the container
-     * 2. The scale center point is top left
-     * 3. The rotate center point is the content center
-     * 4. Apply rotation before scaling and offset
-     */
-
-    if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
-    }
-    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-
-    val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedContentScaleFactor = contentScale.computeScaleFactor(
-        srcSize = rotatedContentSize.toSize(),
-        dstSize = containerSize.toSize()
-    )
-
-    val scaledRotatedContentSize = rotatedContentSize.times(rotatedContentScaleFactor)
-    val scaledRotatedContentAlignmentOffset = alignment.align(
-        size = scaledRotatedContentSize,
-        space = containerSize,
-        ltrLayout = true,
-    )
-
-    val baseRect = IntRectCompat(scaledRotatedContentAlignmentOffset, scaledRotatedContentSize)
-    val scaledBaseRect = baseRect.toRect().scale(userScale)
-    val offsetScaledRect =
-        scaledBaseRect.translate(userOffset)
-    return offsetScaledRect
-}
-
-fun computeContentInContainerInnerRect(
-    containerSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
-    contentScale: ContentScaleCompat,
-    alignment: AlignmentCompat,
-    rotation: Int = 0,
-    userScale: Float = 1f,
-    userOffset: OffsetCompat = OffsetCompat.Zero,
-): RectCompat {
-    if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
-    }
-    val contentInContainerRect = computeContentInContainerRect(
-        containerSize = containerSize,
-        contentSize = contentSize,
-        contentScale = contentScale,
-        alignment = alignment,
-        rotation = rotation,
-        userScale = userScale,
-        userOffset = userOffset,
     )
     val boundsRect = RectCompat(
         left = 0f,
@@ -422,6 +349,7 @@ fun computeContainerVisibleRect(
     return containerVisibleRect
 }
 
+// todo 考虑这个函数的作用
 fun computeContentInContainerVisibleRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -486,6 +414,47 @@ fun computeContentInContainerVisibleRect(
     return reverseRotateContentInContainerVisibleRect
 }
 
+fun computeContentDisplayRect(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+    userScale: Float,
+    userOffset: OffsetCompat
+): RectCompat {
+    /*
+    * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return RectCompat.Zero
+    }
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val rotatedContentScaleFactor = contentScale.computeScaleFactor(
+        srcSize = rotatedContentSize.toSize(),
+        dstSize = containerSize.toSize()
+    )
+
+    val scaledRotatedContentSize = rotatedContentSize.times(rotatedContentScaleFactor)
+    val scaledRotatedContentAlignmentOffset = alignment.align(
+        size = scaledRotatedContentSize,
+        space = containerSize,
+        ltrLayout = true,
+    )
+
+    val baseRect = IntRectCompat(scaledRotatedContentAlignmentOffset, scaledRotatedContentSize)
+    val scaledBaseRect = baseRect.toRect().scale(userScale)
+    val contentDisplayRect = scaledBaseRect.translate(userOffset)
+    return contentDisplayRect
+}
+
 fun computeContentVisibleRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -503,10 +472,9 @@ fun computeContentVisibleRect(
     val containerVisibleRect = computeContainerVisibleRect(containerSize, userScale, userOffset)
     val contentInContainerInnerRect = computeContentInContainerInnerRect(
         containerSize = containerSize,
-        contentSize = contentSize,
+        contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
-        rotation = rotation,
     )
     if (!containerVisibleRect.overlaps(contentInContainerInnerRect)) {
         return RectCompat.Zero
@@ -800,7 +768,6 @@ fun containerPointToContentPoint(
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = contentAlignment,
-        rotation = 0,
     )
     val contentInContainerVisibleRect = computeContentInContainerVisibleRect(
         containerSize = containerSize,
@@ -825,7 +792,8 @@ fun containerPointToContentPoint(
         x = contentPoint.x.coerceIn(0, rotatedContentSize.width),
         y = contentPoint.y.coerceIn(0, rotatedContentSize.height)
     )
-    val reversedRotatedContentPoint = limitedContentPoint.reverseRotateInSpace(contentSize, rotation)
+    val reversedRotatedContentPoint =
+        limitedContentPoint.reverseRotateInSpace(contentSize, rotation)
     return reversedRotatedContentPoint
 }
 

@@ -46,12 +46,14 @@ fun ZoomImageInfo(
     val otherInfo = remember(
         zoomableState.userOffsetBounds,
         zoomableState.containerVisibleRect,
-        zoomableState.contentInContainerRect,
+        zoomableState.contentDisplayRect,
+        zoomableState.contentVisibleRect,
         zoomableState.contentInContainerVisibleRect,
     ) {
         """
             containerVisible: ${zoomableState.containerVisibleRect.toShortString()}
-            contentInContainer: ${zoomableState.contentInContainerRect.toShortString()}
+            contentDisplay: ${zoomableState.contentDisplayRect.toShortString()}
+            contentVisible: ${zoomableState.contentVisibleRect.toShortString()}
             contentInContainerVisible: ${zoomableState.contentInContainerVisibleRect.toShortString()}
         """.trimIndent()
     }
