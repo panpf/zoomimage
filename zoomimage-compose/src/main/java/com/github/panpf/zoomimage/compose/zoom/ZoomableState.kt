@@ -174,8 +174,8 @@ class ZoomableState(
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
             alignment = contentAlignment.toCompat(),
-            userScale = userTransform.scaleX,
             rotation = rotation,
+            userScale = userTransform.scaleX,
         ).roundToPlatform()
     }
 
@@ -193,9 +193,10 @@ class ZoomableState(
     val contentInContainerVisibleRect: IntRect by derivedStateOf {
         computeContentInContainerVisibleRect(
             containerSize = containerSize.toCompat(),
-            contentSize = contentSize.toCompat(), // todo 适配 rotation
+            contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
             alignment = contentAlignment.toCompat(),
+            rotation = rotation,
         ).roundToPlatform()
     }
 
@@ -218,9 +219,17 @@ class ZoomableState(
         ).roundToPlatform()
     }
     val scrollEdge: ScrollEdge by derivedStateOf {
+        val userOffsetBounds = computeUserOffsetBounds(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = contentAlignment.toCompat(),
+            rotation = rotation,
+            userScale = userTransform.scaleX,
+        )
         computeScrollEdge(
-            contentInContainerVisibleRect = contentInContainerVisibleRect.toCompat(),
-            contentVisibleRect = contentVisibleRect.toCompat(),
+            userOffsetBounds = userOffsetBounds,
+            userOffset = userTransform.offset.toCompat(),
         )
     }
 
@@ -364,21 +373,21 @@ class ZoomableState(
     ) = coroutineScope.launch {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@launch
         val contentSize =
-            contentSize.takeIf { it.isNotEmpty() } ?: return@launch // todo 适配 rotation
+            contentSize.takeIf { it.isNotEmpty() } ?: return@launch
         val contentScale = contentScale
         val contentAlignment = contentAlignment
         val currentUserTransform = userTransform
+        val rotation = rotation
 
         stopAllAnimationInternal("location")
 
-        val rotatedContentPoint =
-            contentPoint.toCompat().rotateInSpace(contentSize.toCompat(), rotation)
         val containerPoint = contentPointToContainerPoint(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
             contentAlignment = contentAlignment.toCompat(),
-            contentPoint = rotatedContentPoint
+            rotation = rotation,
+            contentPoint = contentPoint.toCompat(),
         )
 
         val targetUserScale = targetScale / baseTransform.scaleX
@@ -604,7 +613,7 @@ class ZoomableState(
     ): Float {
         val finalContentPoint = contentPoint
             ?: contentVisibleRect.takeIf { !it.isEmpty }?.center
-            ?: contentSize.takeIf { it.isNotEmpty() }?.center // todo 适配 rotation
+            ?: contentSize.takeIf { it.isNotEmpty() }?.center
             ?: return transform.scaleX
         val nextScale = getNextStepScale()
         location(
@@ -635,8 +644,11 @@ class ZoomableState(
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val contentSize =
-            contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero // todo 适配 rotation
+            contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val currentUserTransform = userTransform
+        val contentScale = contentScale
+        val contentAlignment = contentAlignment
+        val rotation = rotation
         val containerPoint = touchPointToContainerPoint(
             containerSize = containerSize.toCompat(),
             userScale = currentUserTransform.scaleX,
@@ -648,6 +660,7 @@ class ZoomableState(
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
             contentAlignment = contentAlignment.toCompat(),
+            rotation = rotation,
             containerPoint = containerPoint
         ).toPlatform()
         return contentPoint

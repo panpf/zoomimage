@@ -34,6 +34,15 @@ fun ZoomImageInfo(
             contentOriginSize: ${zoomableState.contentOriginSize.let { "${it.width}x${it.height}" }}
         """.trimIndent()
     }
+    val offsetInfo = remember(
+        zoomableState.transform,
+    ) {
+        """
+            baseOffset: ${zoomableState.baseTransform.offset.toShortString()}
+            userOffset: ${zoomableState.userTransform.offset.toShortString()}
+            userOffsetBounds: ${zoomableState.userOffsetBounds.toShortString()}
+        """.trimIndent()
+    }
     val otherInfo = remember(
         zoomableState.userOffsetBounds,
         zoomableState.containerVisibleRect,
@@ -41,7 +50,6 @@ fun ZoomImageInfo(
         zoomableState.contentInContainerVisibleRect,
     ) {
         """
-            offsetBounds: ${zoomableState.userOffsetBounds.toShortString()}
             containerVisible: ${zoomableState.containerVisibleRect.toShortString()}
             contentInContainer: ${zoomableState.contentInContainerRect.toShortString()}
             contentInContainerVisible: ${zoomableState.contentInContainerVisibleRect.toShortString()}
@@ -53,6 +61,9 @@ fun ZoomImageInfo(
 
         Spacer(modifier = Modifier.size(12.dp))
         InfoItem("Size：", sizeInfo)
+
+        Spacer(modifier = Modifier.size(12.dp))
+        InfoItem("Offset：", offsetInfo)
 
         Spacer(modifier = Modifier.size(12.dp))
         InfoItem("Other：", otherInfo)

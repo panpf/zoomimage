@@ -14,14 +14,19 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.util.rotate
+import com.github.panpf.zoomimage.util.rotateInSpace
 import kotlinx.coroutines.delay
+import kotlin.math.roundToInt
 
 fun Modifier.zoomScrollBar(
     zoomableState: ZoomableState,
     scrollBarSpec: ScrollBarSpec = ScrollBarSpec.Default
 ): Modifier = composed {
-    val contentSize = zoomableState.contentSize // todo 适配 rotation
+    val contentSize = zoomableState.contentSize
     val contentVisibleRect = zoomableState.contentVisibleRect
+    val rotation = zoomableState.transform.rotation
     val density = LocalDensity.current
     val sizePx = remember(scrollBarSpec.size) { with(density) { scrollBarSpec.size.toPx() } }
     val marginPx = remember(scrollBarSpec.margin) { with(density) { scrollBarSpec.margin.toPx() } }
@@ -40,20 +45,22 @@ fun Modifier.zoomScrollBar(
             drawContent()
 
             val alpha = alphaAnimatable.value
+            val rotatedContentVisibleRect = contentVisibleRect.toCompat().rotateInSpace(contentSize.toCompat(), rotation.roundToInt())
+            val rotatedContentSize = contentSize.toCompat().rotate(rotation.roundToInt())
 
             @Suppress("UnnecessaryVariable")
             val scrollBarSize = sizePx
             val drawSize = this.size
-            if (contentVisibleRect.width < contentSize.width) {
-                val widthScale = (drawSize.width - marginPx * 4) / contentSize.width
+            if (rotatedContentVisibleRect.width < rotatedContentSize.width) {
+                val widthScale = (drawSize.width - marginPx * 4) / rotatedContentSize.width
                 drawRoundRect(
                     color = scrollBarSpec.color,
                     topLeft = Offset(
-                        x = (marginPx * 2) + (contentVisibleRect.left * widthScale),
+                        x = (marginPx * 2) + (rotatedContentVisibleRect.left * widthScale),
                         y = drawSize.height - marginPx - scrollBarSize
                     ),
                     size = Size(
-                        width = contentVisibleRect.width * widthScale,
+                        width = rotatedContentVisibleRect.width * widthScale,
                         height = scrollBarSize
                     ),
                     cornerRadius = cornerRadius,
@@ -61,17 +68,17 @@ fun Modifier.zoomScrollBar(
                     alpha = alpha
                 )
             }
-            if (contentVisibleRect.height < contentSize.height) {
-                val heightScale = (drawSize.height - marginPx * 4) / contentSize.height
+            if (rotatedContentVisibleRect.height < rotatedContentSize.height) {
+                val heightScale = (drawSize.height - marginPx * 4) / rotatedContentSize.height
                 drawRoundRect(
                     color = scrollBarSpec.color,
                     topLeft = Offset(
                         x = drawSize.width - marginPx - scrollBarSize,
-                        y = (marginPx * 2) + (contentVisibleRect.top * heightScale)
+                        y = (marginPx * 2) + (rotatedContentVisibleRect.top * heightScale)
                     ),
                     size = Size(
                         width = scrollBarSize,
-                        height = contentVisibleRect.height * heightScale
+                        height = rotatedContentVisibleRect.height * heightScale
                     ),
                     cornerRadius = cornerRadius,
                     style = Fill,
