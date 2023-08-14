@@ -56,7 +56,7 @@ import com.github.panpf.zoomimage.util.concat
 import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
-import com.github.panpf.zoomimage.util.rotateInContainer
+import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.touchPointToContainerPoint
 import kotlinx.coroutines.CancellationException
@@ -372,7 +372,7 @@ class ZoomableState(
         stopAllAnimationInternal("location")
 
         val rotatedContentPoint =
-            contentPoint.toCompat().rotateInContainer(contentSize.toCompat(), rotation)
+            contentPoint.toCompat().rotateInSpace(contentSize.toCompat(), rotation)
         val containerPoint = contentPointToContainerPoint(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),

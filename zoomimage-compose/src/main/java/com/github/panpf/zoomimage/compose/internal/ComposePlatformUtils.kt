@@ -79,8 +79,8 @@ internal fun Size.isAvailable(): Boolean = isSpecified && !isEmpty()
 internal fun Size.isNotAvailable(): Boolean = isUnspecified || isEmpty()
 
 
-internal fun Size.rotate(rotateDegrees: Int): Size =
-    if (isUnspecified || rotateDegrees % 180 == 0) this else Size(height, width)
+internal fun Size.rotate(rotation: Int): Size =
+    if (isUnspecified || rotation % 180 == 0) this else Size(height, width)
 
 
 internal fun Size.round(): IntSize =
@@ -165,38 +165,6 @@ internal fun IntSize.isNotEmpty(): Boolean = width != 0 && height != 0
 
 internal fun IntSize.rotate(rotation: Int): IntSize {
     return if (rotation % 180 == 0) this else IntSize(height, width)
-}
-
-/**
- * Rotates the given offset around the origin by the given angle in degrees.
- *
- * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
- * coordinate system.
- *
- * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
- */
-internal fun Offset.rotateBy(angle: Float): Offset {
-    val angleInRadians = angle * PI / 180
-    return Offset(
-        (x * cos(angleInRadians) - y * sin(angleInRadians)).toFloat(),
-        (x * sin(angleInRadians) + y * cos(angleInRadians)).toFloat()
-    )
-}
-
-/**
- * Rotates the given offset around the origin by the given angle in degrees.
- *
- * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
- * coordinate system.
- *
- * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
- */
-fun IntOffset.rotateBy(angle: Float): IntOffset {
-    val angleInRadians = angle * PI / 180
-    return IntOffset(
-        x = (x * cos(angleInRadians) - y * sin(angleInRadians)).roundToInt(),
-        y = (x * sin(angleInRadians) + y * cos(angleInRadians)).roundToInt()
-    )
 }
 
 
@@ -299,15 +267,21 @@ internal fun Rect.limitTo(rect: Rect): Rect =
         bottom = bottom.coerceIn(rect.top, rect.bottom),
     )
 
-internal fun Rect.rotate(rotation: Int): Rect {
-    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when (rotation) {
-        90 -> Rect(left = -bottom, top = left, right = -top, bottom = right)
-        180 -> Rect(left = -right, top = -bottom, right = -left, bottom = -top)
-        270 -> Rect(left = top, top = -right, right = bottom, bottom = -left)
-        else -> this // 0 or 360
-    }
-}
+fun Rect.limitTo(size: Size): Rect =
+    Rect(
+        left = left.coerceAtLeast(0f),
+        top = top.coerceAtLeast(0f),
+        right = right.coerceIn(0f, size.width),
+        bottom = bottom.coerceIn(0f, size.height),
+    )
+
+fun IntRect.limitTo(size: IntSize): IntRect =
+    IntRect(
+        left = left.coerceAtLeast(0),
+        top = top.coerceAtLeast(0),
+        right = right.coerceIn(0, size.width),
+        bottom = bottom.coerceIn(0, size.height),
+    )
 
 internal val ContentScale.name: String
     get() = when (this) {

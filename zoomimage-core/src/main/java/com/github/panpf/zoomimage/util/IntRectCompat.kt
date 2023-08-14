@@ -288,6 +288,7 @@ fun lerp(start: IntRectCompat, stop: IntRectCompat, fraction: Float): IntRectCom
 
 fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
+
 /**
  * Converts an [IntRectCompat] to a [RectCompat]
  */
@@ -308,17 +309,8 @@ fun RectCompat.round(): IntRectCompat = IntRectCompat(
     bottom = bottom.roundToInt()
 )
 
-fun IntRectCompat.rotate(rotation: Int): IntRectCompat {
-    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when (rotation) {
-        90 -> IntRectCompat(left = -bottom, top = left, right = -top, bottom = right)
-        180 -> IntRectCompat(left = -right, top = -bottom, right = -left, bottom = -top)
-        270 -> IntRectCompat(left = top, top = -right, right = bottom, bottom = -left)
-        else -> this // 0 or 360
-    }
-}
 
-internal fun IntRectCompat.scale(scale: Float): IntRectCompat =
+fun IntRectCompat.scale(scale: Float): IntRectCompat =
     IntRectCompat(
         left = (left * scale).roundToInt(),
         top = (top * scale).roundToInt(),
@@ -326,7 +318,7 @@ internal fun IntRectCompat.scale(scale: Float): IntRectCompat =
         bottom = (bottom * scale).roundToInt(),
     )
 
-internal fun IntRectCompat.scale(scale: ScaleFactorCompat): IntRectCompat =
+fun IntRectCompat.scale(scale: ScaleFactorCompat): IntRectCompat =
     IntRectCompat(
         left = (left * scale.scaleX).roundToInt(),
         top = (top * scale.scaleY).roundToInt(),
@@ -334,7 +326,7 @@ internal fun IntRectCompat.scale(scale: ScaleFactorCompat): IntRectCompat =
         bottom = (bottom * scale.scaleY).roundToInt(),
     )
 
-internal fun IntRectCompat.restoreScale(scale: Float): IntRectCompat =
+fun IntRectCompat.restoreScale(scale: Float): IntRectCompat =
     IntRectCompat(
         left = (left / scale).roundToInt(),
         top = (top / scale).roundToInt(),
@@ -342,7 +334,7 @@ internal fun IntRectCompat.restoreScale(scale: Float): IntRectCompat =
         bottom = (bottom / scale).roundToInt(),
     )
 
-internal fun IntRectCompat.restoreScale(scaleFactor: ScaleFactorCompat): IntRectCompat =
+fun IntRectCompat.restoreScale(scaleFactor: ScaleFactorCompat): IntRectCompat =
     IntRectCompat(
         left = (left / scaleFactor.scaleX).roundToInt(),
         top = (top / scaleFactor.scaleY).roundToInt(),
@@ -350,10 +342,60 @@ internal fun IntRectCompat.restoreScale(scaleFactor: ScaleFactorCompat): IntRect
         bottom = (bottom / scaleFactor.scaleY).roundToInt(),
     )
 
-internal fun IntRectCompat.limitTo(rect: IntRectCompat): IntRectCompat =
+
+fun IntRectCompat.limitTo(rect: IntRectCompat): IntRectCompat =
     IntRectCompat(
         left = left.coerceAtLeast(rect.left),
         top = top.coerceAtLeast(rect.top),
         right = right.coerceIn(rect.left, rect.right),
         bottom = bottom.coerceIn(rect.top, rect.bottom),
     )
+
+fun IntRectCompat.limitTo(size: IntSizeCompat): IntRectCompat =
+    IntRectCompat(
+        left = left.coerceAtLeast(0),
+        top = top.coerceAtLeast(0),
+        right = right.coerceIn(0, size.width),
+        bottom = bottom.coerceIn(0, size.height),
+    )
+
+
+fun IntRectCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+    return when (rotation % 360) {
+        90 -> {
+            IntRectCompat(
+                left = spaceSize.height - this.bottom,
+                top = this.left,
+                right = spaceSize.height - this.top,
+                bottom = this.right
+            )
+        }
+
+        180 -> {
+            IntRectCompat(
+                left = spaceSize.width - this.right,
+                top = spaceSize.height - this.bottom,
+                right = spaceSize.width - this.left,
+                bottom = spaceSize.height - this.top,
+            )
+        }
+
+        270 -> {
+            IntRectCompat(
+                left = this.top,
+                top = spaceSize.width - this.right,
+                right = this.bottom,
+                bottom = spaceSize.width - this.left,
+            )
+        }
+
+        else -> this
+    }
+}
+
+fun IntRectCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
+    val rotatedSpaceSize = spaceSize.rotate(rotation)
+    val reverseRotation = 360 - rotation % 360
+    return rotateInSpace(rotatedSpaceSize, reverseRotation)
+}

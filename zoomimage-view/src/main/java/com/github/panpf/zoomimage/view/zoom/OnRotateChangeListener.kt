@@ -16,5 +16,5 @@
 package com.github.panpf.zoomimage.view.zoom
 
 fun interface OnRotateChangeListener {
-    fun onRotateChanged(rotateDegrees: Int)
+    fun onRotateChanged(rotation: Int)
 }

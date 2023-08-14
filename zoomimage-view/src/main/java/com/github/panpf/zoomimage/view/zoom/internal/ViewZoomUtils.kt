@@ -44,11 +44,11 @@ import com.github.panpf.zoomimage.view.internal.times
 import com.github.panpf.zoomimage.view.internal.toContentScale
 import kotlin.math.roundToInt
 
-internal fun reverseRotateRect(rect: Rect, rotateDegrees: Int, drawableSize: IntSizeCompat) {
-    require(rotateDegrees % 90 == 0) {
-        "rotateDegrees must be an integer multiple of 90"
+internal fun reverseRotateRect(rect: Rect, rotation: Int, drawableSize: IntSizeCompat) {
+    require(rotation % 90 == 0) {
+        "rotation must be an integer multiple of 90"
     }
-    when (rotateDegrees) {
+    when (rotation % 360) {
         90 -> {
             val bottom = rect.bottom
             rect.bottom = rect.left

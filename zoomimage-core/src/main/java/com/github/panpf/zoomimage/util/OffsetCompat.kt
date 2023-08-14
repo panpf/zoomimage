@@ -120,6 +120,7 @@ val OffsetCompat.isFinite: Boolean get() = x.isFinite() && y.isFinite()
 
 fun OffsetCompat.toShortString(): String = "${x.format(2)}x${y.format(2)}"
 
+
 operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat {
     return OffsetCompat(x = x * scaleFactor.scaleX, y = y * scaleFactor.scaleY)
 }
@@ -128,18 +129,19 @@ operator fun OffsetCompat.div(scaleFactor: ScaleFactorCompat): OffsetCompat {
     return OffsetCompat(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
 }
 
-/**
- * Rotates the given offset around the origin by the given angle in degrees.
- *
- * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
- * coordinate system.
- *
- * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
- */
-fun OffsetCompat.rotateBy(angle: Float): OffsetCompat {
-    val angleInRadians = angle * kotlin.math.PI / 180
-    return OffsetCompat(
-        x = (x * cos(angleInRadians) - y * sin(angleInRadians)).toFloat(),
-        y = (x * sin(angleInRadians) + y * cos(angleInRadians)).toFloat()
-    )
+
+fun OffsetCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetCompat {
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+    return when (rotation % 360) {
+        90 -> OffsetCompat(x = spaceSize.height - y, y = x)
+        180 -> OffsetCompat(x = spaceSize.width - x, y = spaceSize.height - y)
+        270 -> OffsetCompat(x = y, y = spaceSize.width - x)
+        else -> this
+    }
+}
+
+fun OffsetCompat.reverseRotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetCompat {
+    val rotatedSpaceSize = spaceSize.rotate(rotation)
+    val reverseRotation = 360 - rotation % 360
+    return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }

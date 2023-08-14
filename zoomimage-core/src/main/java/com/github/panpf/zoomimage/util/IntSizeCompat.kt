@@ -64,8 +64,8 @@ fun IntSizeCompat.isSameAspectRatio(other: IntSizeCompat, delta: Float = 0f): Bo
     return false
 }
 
-fun IntSizeCompat.rotate(rotateDegrees: Int): IntSizeCompat {
-    return if (rotateDegrees % 180 == 0) this else IntSizeCompat(width = height, height = width)
+fun IntSizeCompat.rotate(rotation: Int): IntSizeCompat {
+    return if (rotation % 180 == 0) this else IntSizeCompat(width = height, height = width)
 }
 
 fun IntSizeCompat.toSize(): SizeCompat = SizeCompat(width.toFloat(), height.toFloat())

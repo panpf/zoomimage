@@ -204,7 +204,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             "reset. viewSize=$viewSize, " +
                     "imageSize=$imageSize, " +
                     "drawableSize=$drawableSize, " +
-                    "rotateDegrees=$rotation, " +
+                    "rotation=$rotation, " +
                     "scaleType=$scaleType, " +
                     "mediumScaleMinMultiple=$mediumScaleMinMultiple, " +
                     "readMode=$readMode. " +

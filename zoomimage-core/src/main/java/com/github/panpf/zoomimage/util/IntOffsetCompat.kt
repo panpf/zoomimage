@@ -67,6 +67,7 @@ data class IntOffsetCompat(val x: Int, val y: Int) {
     }
 }
 
+
 /**
  * Linearly interpolate between two [IntOffsetCompat] parameters
  *
@@ -89,6 +90,7 @@ fun lerp(start: IntOffsetCompat, stop: IntOffsetCompat, fraction: Float): IntOff
     )
 }
 
+
 operator fun OffsetCompat.plus(offset: IntOffsetCompat): OffsetCompat =
     OffsetCompat(x + offset.x, y + offset.y)
 
@@ -100,6 +102,7 @@ operator fun IntOffsetCompat.plus(offset: OffsetCompat): OffsetCompat =
 
 operator fun IntOffsetCompat.minus(offset: OffsetCompat): OffsetCompat =
     OffsetCompat(x - offset.x, y - offset.y)
+
 
 /**
  * Converts the [IntOffsetCompat] to an [OffsetCompat].
@@ -113,6 +116,7 @@ inline fun OffsetCompat.round(): IntOffsetCompat = IntOffsetCompat(x.roundToInt(
 
 
 fun IntOffsetCompat.toShortString(): String = "${x}x${y}"
+
 
 operator fun IntOffsetCompat.times(scaleFactor: ScaleFactorCompat): IntOffsetCompat {
     return IntOffsetCompat(
@@ -128,18 +132,19 @@ operator fun IntOffsetCompat.div(scaleFactor: ScaleFactorCompat): IntOffsetCompa
     )
 }
 
-/**
- * Rotates the given offset around the origin by the given angle in degrees.
- *
- * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
- * coordinate system.
- *
- * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
- */
-fun IntOffsetCompat.rotateBy(angle: Float): IntOffsetCompat {
-    val angleInRadians = angle * kotlin.math.PI / 180
-    return IntOffsetCompat(
-        x = (x * cos(angleInRadians) - y * sin(angleInRadians)).roundToInt(),
-        y = (x * sin(angleInRadians) + y * cos(angleInRadians)).roundToInt()
-    )
+
+fun IntOffsetCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+    return when (rotation % 360) {
+        90 -> IntOffsetCompat(x = spaceSize.height - y, y = x)
+        180 -> IntOffsetCompat(x = spaceSize.width - x, y = spaceSize.height - y)
+        270 -> IntOffsetCompat(x = y, y = spaceSize.width - x)
+        else -> this
+    }
+}
+
+fun IntOffsetCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {
+    val rotatedSpaceSize = spaceSize.rotate(rotation)
+    val reverseRotation = 360 - rotation % 360
+    return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }

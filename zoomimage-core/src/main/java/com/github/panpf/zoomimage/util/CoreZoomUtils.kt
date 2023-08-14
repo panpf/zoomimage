@@ -798,37 +798,3 @@ fun contentPointToContainerPoint(
     )
     return limitedContainerPoint
 }
-
-
-/* ******************************************* Other ***************************************** */
-
-fun IntOffsetCompat.rotateInContainer(
-    containerSize: IntSizeCompat,
-    rotate: Int,
-): IntOffsetCompat {
-    require(rotate % 90 == 0) { "rotate must be an integer multiple of 90" }
-    return when (rotate) {
-        90 -> {
-            IntOffsetCompat(
-                x = containerSize.height - y,
-                y = x
-            )
-        }
-
-        180 -> {
-            IntOffsetCompat(
-                x = containerSize.width - x,
-                y = containerSize.height - y
-            )
-        }
-
-        270 -> {
-            IntOffsetCompat(
-                x = y,
-                y = containerSize.width - x
-            )
-        }
-
-        else -> this
-    }
-}

@@ -301,18 +301,7 @@ fun RectCompat.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 
 
-fun RectCompat.rotate(rotation: Int): RectCompat {
-    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when (rotation) {
-        90 -> RectCompat(left = -bottom, top = left, right = -top, bottom = right)
-        180 -> RectCompat(left = -right, top = -bottom, right = -left, bottom = -top)
-        270 -> RectCompat(left = top, top = -right, right = bottom, bottom = -left)
-        else -> this // 0 or 360
-    }
-}
-
-
-internal fun RectCompat.scale(scale: Float): RectCompat =
+fun RectCompat.scale(scale: Float): RectCompat =
     RectCompat(
         left = (left * scale),
         top = (top * scale),
@@ -320,7 +309,7 @@ internal fun RectCompat.scale(scale: Float): RectCompat =
         bottom = (bottom * scale),
     )
 
-internal fun RectCompat.scale(scale: ScaleFactorCompat): RectCompat =
+fun RectCompat.scale(scale: ScaleFactorCompat): RectCompat =
     RectCompat(
         left = (left * scale.scaleX),
         top = (top * scale.scaleY),
@@ -328,7 +317,7 @@ internal fun RectCompat.scale(scale: ScaleFactorCompat): RectCompat =
         bottom = (bottom * scale.scaleY),
     )
 
-internal fun RectCompat.restoreScale(scale: Float): RectCompat =
+fun RectCompat.restoreScale(scale: Float): RectCompat =
     RectCompat(
         left = (left / scale),
         top = (top / scale),
@@ -336,7 +325,7 @@ internal fun RectCompat.restoreScale(scale: Float): RectCompat =
         bottom = (bottom / scale),
     )
 
-internal fun RectCompat.restoreScale(scaleFactor: ScaleFactorCompat): RectCompat =
+fun RectCompat.restoreScale(scaleFactor: ScaleFactorCompat): RectCompat =
     RectCompat(
         left = (left / scaleFactor.scaleX),
         top = (top / scaleFactor.scaleY),
@@ -344,10 +333,60 @@ internal fun RectCompat.restoreScale(scaleFactor: ScaleFactorCompat): RectCompat
         bottom = (bottom / scaleFactor.scaleY),
     )
 
-internal fun RectCompat.limitTo(rect: RectCompat): RectCompat =
+
+fun RectCompat.limitTo(rect: RectCompat): RectCompat =
     RectCompat(
         left = left.coerceAtLeast(rect.left),
         top = top.coerceAtLeast(rect.top),
         right = right.coerceIn(rect.left, rect.right),
         bottom = bottom.coerceIn(rect.top, rect.bottom),
     )
+
+fun RectCompat.limitTo(size: SizeCompat): RectCompat =
+    RectCompat(
+        left = left.coerceAtLeast(0f),
+        top = top.coerceAtLeast(0f),
+        right = right.coerceIn(0f, size.width),
+        bottom = bottom.coerceIn(0f, size.height),
+    )
+
+
+fun RectCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): RectCompat {
+    require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
+    return when (rotation % 360) {
+        90 -> {
+            RectCompat(
+                left = spaceSize.height - this.bottom,
+                top = this.left,
+                right = spaceSize.height - this.top,
+                bottom = this.right
+            )
+        }
+
+        180 -> {
+            RectCompat(
+                left = spaceSize.width - this.right,
+                top = spaceSize.height - this.bottom,
+                right = spaceSize.width - this.left,
+                bottom = spaceSize.height - this.top,
+            )
+        }
+
+        270 -> {
+            RectCompat(
+                left = this.top,
+                top = spaceSize.width - this.right,
+                right = this.bottom,
+                bottom = spaceSize.width - this.left,
+            )
+        }
+
+        else -> this
+    }
+}
+
+fun RectCompat.reverseRotateInSpace(spaceSize: SizeCompat, rotation: Int): RectCompat {
+    val rotatedSpaceSize = spaceSize.rotate(rotation)
+    val reverseRotation = 360 - rotation % 360
+    return rotateInSpace(rotatedSpaceSize, reverseRotation)
+}
