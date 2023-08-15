@@ -7,6 +7,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
@@ -14,6 +15,7 @@ import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.rotate
+import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toSize
@@ -35,13 +37,16 @@ internal class BaseTransformHelper(
      */
 
     val rotatedContentSize: IntSizeCompat by lazy { contentSize.rotate(rotation) }
-    val scaledRotatedContentSize: IntSizeCompat by lazy { rotatedContentSize.times(scaleFactor) }
 
     val scaleFactor: ScaleFactorCompat by lazy {
         contentScale.computeScaleFactor(
             srcSize = rotatedContentSize.toSize(),
             dstSize = containerSize.toSize()
         )
+    }
+
+    val scaledRotatedContentSize: SizeCompat by lazy {
+        rotatedContentSize.toSize().times(scaleFactor)
     }
 
     val rotateOffset: OffsetCompat by lazy {
@@ -52,13 +57,15 @@ internal class BaseTransformHelper(
         )
         rotatedContentMoveToTopLeftOffset * scaleFactor
     }
+
     val alignmentOffset: OffsetCompat by lazy {
         alignment.align(
-            size = scaledRotatedContentSize,
+            size = scaledRotatedContentSize.round(),
             space = containerSize,
             ltrLayout = ltrLayout
         ).toOffset()
     }
+
     val offset: OffsetCompat by lazy { rotateOffset + alignmentOffset }
 
     val rotationOrigin by lazy { computeContentRotateOrigin(contentSize, rotation) }

@@ -175,7 +175,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat()
-        ).toPlatform()
+        ).roundToPlatform()
     }
     val contentBaseDisplayRect: IntRect by derivedStateOf {
         computeContentBaseDisplayRect(
@@ -184,7 +184,7 @@ class ZoomableState(
             contentScale = contentScale.toCompat(),
             alignment = contentAlignment.toCompat(),
             rotation = rotation,
-        ).toPlatform()
+        ).roundToPlatform()
     }
     val contentBaseVisibleRect: IntRect by derivedStateOf {
         computeContentBaseVisibleRect(
@@ -193,7 +193,7 @@ class ZoomableState(
             contentScale = contentScale.toCompat(),
             alignment = contentAlignment.toCompat(),
             rotation = rotation,
-        ).toPlatform()
+        ).roundToPlatform()
     }
     val contentDisplayRect: IntRect by derivedStateOf {
         computeContentDisplayRect(
@@ -204,7 +204,7 @@ class ZoomableState(
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat(),
-        ).toPlatform()
+        ).roundToPlatform()
     }
     val contentVisibleRect: IntRect by derivedStateOf {
         computeContentVisibleRect(
@@ -215,7 +215,7 @@ class ZoomableState(
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat(),
-        ).toPlatform()
+        ).roundToPlatform()
     }
 
     val scrollEdge: ScrollEdge by derivedStateOf {

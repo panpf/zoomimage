@@ -6,24 +6,26 @@ import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.BottomEnd
 import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.BottomStart
+import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.Center
 import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.CenterEnd
 import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.CenterStart
 import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.TopCenter
 import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.TopEnd
 import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.TopStart
-import com.github.panpf.zoomimage.util.AlignmentCompat.Companion.Center
+import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.Crop
+import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.FillBounds
+import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.FillHeight
 import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.FillWidth
 import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.Fit
 import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.Inside
 import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.None
-import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.Crop
-import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.FillBounds
-import com.github.panpf.zoomimage.util.ContentScaleCompat.Companion.FillHeight
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat.Companion
 import com.github.panpf.zoomimage.util.calculateNextStepScale
 import com.github.panpf.zoomimage.util.computeContentBaseDisplayRect
 import com.github.panpf.zoomimage.util.computeContentBaseInsideDisplayRect
+import com.github.panpf.zoomimage.util.computeContentVisibleRect
 import com.github.panpf.zoomimage.util.round
 import org.junit.Assert
 import org.junit.Test
@@ -384,7 +386,10 @@ class CoreZoomUtilsTest {
         if (printBatchBuildExpression) {
             printlnBatchBuildExpression(
                 p1s = listOf(
-                    IntSizeCompat(7500, 232), IntSizeCompat(173, 3044), IntSizeCompat(575, 427), IntSizeCompat(551, 1038),
+                    IntSizeCompat(7500, 232),
+                    IntSizeCompat(173, 3044),
+                    IntSizeCompat(575, 427),
+                    IntSizeCompat(551, 1038),
                 ),
                 p2s = listOf(None, Inside, Fit, FillWidth, FillHeight, FillBounds, Crop),
                 p3s = listOf(
@@ -415,16 +420,36 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(7500, 232), None, Center, IntRectCompat(-3210, 712, 4290, 944)),
             Item5(IntSizeCompat(7500, 232), None, CenterEnd, IntRectCompat(-6420, 712, 1080, 944)),
             Item5(IntSizeCompat(7500, 232), None, BottomStart, IntRectCompat(0, 1424, 7500, 1656)),
-            Item5(IntSizeCompat(7500, 232), None, BottomCenter, IntRectCompat(-3210, 1424, 4290, 1656)),
-            Item5(IntSizeCompat(7500, 232), None, BottomEnd, IntRectCompat(-6420, 1424, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                None,
+                BottomCenter,
+                IntRectCompat(-3210, 1424, 4290, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                None,
+                BottomEnd,
+                IntRectCompat(-6420, 1424, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), Inside, TopStart, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), Inside, TopCenter, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), Inside, TopEnd, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), Inside, CenterStart, IntRectCompat(0, 812, 1080, 845)),
             Item5(IntSizeCompat(7500, 232), Inside, Center, IntRectCompat(0, 812, 1080, 845)),
             Item5(IntSizeCompat(7500, 232), Inside, CenterEnd, IntRectCompat(0, 812, 1080, 845)),
-            Item5(IntSizeCompat(7500, 232), Inside, BottomStart, IntRectCompat(0, 1623, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), Inside, BottomCenter, IntRectCompat(0, 1623, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                Inside,
+                BottomStart,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                Inside,
+                BottomCenter,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), Inside, BottomEnd, IntRectCompat(0, 1623, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), Fit, TopStart, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), Fit, TopCenter, IntRectCompat(0, 0, 1080, 33)),
@@ -438,29 +463,104 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(7500, 232), FillWidth, TopStart, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), FillWidth, TopCenter, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), FillWidth, TopEnd, IntRectCompat(0, 0, 1080, 33)),
-            Item5(IntSizeCompat(7500, 232), FillWidth, CenterStart, IntRectCompat(0, 812, 1080, 845)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillWidth,
+                CenterStart,
+                IntRectCompat(0, 812, 1080, 845)
+            ),
             Item5(IntSizeCompat(7500, 232), FillWidth, Center, IntRectCompat(0, 812, 1080, 845)),
             Item5(IntSizeCompat(7500, 232), FillWidth, CenterEnd, IntRectCompat(0, 812, 1080, 845)),
-            Item5(IntSizeCompat(7500, 232), FillWidth, BottomStart, IntRectCompat(0, 1623, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillWidth, BottomCenter, IntRectCompat(0, 1623, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillWidth, BottomEnd, IntRectCompat(0, 1623, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillWidth,
+                BottomStart,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillWidth,
+                BottomCenter,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillWidth,
+                BottomEnd,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillHeight, TopStart, IntRectCompat(0, 0, 53534, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, TopCenter, IntRectCompat(-26227, 0, 27307, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, TopEnd, IntRectCompat(-52454, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, CenterStart, IntRectCompat(0, 0, 53534, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, Center, IntRectCompat(-26227, 0, 27307, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, CenterEnd, IntRectCompat(-52454, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, BottomStart, IntRectCompat(0, 0, 53534, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, BottomCenter, IntRectCompat(-26227, 0, 27307, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, BottomEnd, IntRectCompat(-52454, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                TopCenter,
+                IntRectCompat(-26227, 0, 27307, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                TopEnd,
+                IntRectCompat(-52454, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                CenterStart,
+                IntRectCompat(0, 0, 53534, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                Center,
+                IntRectCompat(-26227, 0, 27307, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                CenterEnd,
+                IntRectCompat(-52454, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                BottomStart,
+                IntRectCompat(0, 0, 53534, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                BottomCenter,
+                IntRectCompat(-26227, 0, 27307, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                BottomEnd,
+                IntRectCompat(-52454, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillBounds, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillBounds, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillBounds, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillBounds, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillBounds,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillBounds, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillBounds, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillBounds, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillBounds, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillBounds,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillBounds,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillBounds, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), Crop, TopStart, IntRectCompat(0, 0, 53534, 1656)),
             Item5(IntSizeCompat(7500, 232), Crop, TopCenter, IntRectCompat(-26227, 0, 27307, 1656)),
@@ -469,7 +569,12 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(7500, 232), Crop, Center, IntRectCompat(-26227, 0, 27307, 1656)),
             Item5(IntSizeCompat(7500, 232), Crop, CenterEnd, IntRectCompat(-52454, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), Crop, BottomStart, IntRectCompat(0, 0, 53534, 1656)),
-            Item5(IntSizeCompat(7500, 232), Crop, BottomCenter, IntRectCompat(-26227, 0, 27307, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                Crop,
+                BottomCenter,
+                IntRectCompat(-26227, 0, 27307, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), Crop, BottomEnd, IntRectCompat(-52454, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), None, TopStart, IntRectCompat(0, 0, 173, 3044)),
             Item5(IntSizeCompat(173, 3044), None, TopCenter, IntRectCompat(454, 0, 627, 3044)),
@@ -478,7 +583,12 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(173, 3044), None, Center, IntRectCompat(454, -694, 627, 2350)),
             Item5(IntSizeCompat(173, 3044), None, CenterEnd, IntRectCompat(907, -694, 1080, 2350)),
             Item5(IntSizeCompat(173, 3044), None, BottomStart, IntRectCompat(0, -1388, 173, 1656)),
-            Item5(IntSizeCompat(173, 3044), None, BottomCenter, IntRectCompat(454, -1388, 627, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                None,
+                BottomCenter,
+                IntRectCompat(454, -1388, 627, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), None, BottomEnd, IntRectCompat(907, -1388, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), Inside, TopStart, IntRectCompat(0, 0, 94, 1656)),
             Item5(IntSizeCompat(173, 3044), Inside, TopCenter, IntRectCompat(493, 0, 587, 1656)),
@@ -501,38 +611,118 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(173, 3044), FillWidth, TopStart, IntRectCompat(0, 0, 1080, 19003)),
             Item5(IntSizeCompat(173, 3044), FillWidth, TopCenter, IntRectCompat(0, 0, 1080, 19003)),
             Item5(IntSizeCompat(173, 3044), FillWidth, TopEnd, IntRectCompat(0, 0, 1080, 19003)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, CenterStart, IntRectCompat(0, -8673, 1080, 10330)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, Center, IntRectCompat(0, -8673, 1080, 10330)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, CenterEnd, IntRectCompat(0, -8673, 1080, 10330)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, BottomStart, IntRectCompat(0, -17347, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, BottomCenter, IntRectCompat(0, -17347, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, BottomEnd, IntRectCompat(0, -17347, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                CenterStart,
+                IntRectCompat(0, -8673, 1080, 10330)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                Center,
+                IntRectCompat(0, -8673, 1080, 10330)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                CenterEnd,
+                IntRectCompat(0, -8673, 1080, 10330)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                BottomStart,
+                IntRectCompat(0, -17347, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                BottomCenter,
+                IntRectCompat(0, -17347, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                BottomEnd,
+                IntRectCompat(0, -17347, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillHeight, TopStart, IntRectCompat(0, 0, 94, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillHeight, TopCenter, IntRectCompat(493, 0, 587, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillHeight,
+                TopCenter,
+                IntRectCompat(493, 0, 587, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillHeight, TopEnd, IntRectCompat(986, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillHeight, CenterStart, IntRectCompat(0, 0, 94, 1656)),
             Item5(IntSizeCompat(173, 3044), FillHeight, Center, IntRectCompat(493, 0, 587, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillHeight, CenterEnd, IntRectCompat(986, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillHeight,
+                CenterEnd,
+                IntRectCompat(986, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillHeight, BottomStart, IntRectCompat(0, 0, 94, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillHeight, BottomCenter, IntRectCompat(493, 0, 587, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillHeight, BottomEnd, IntRectCompat(986, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillHeight,
+                BottomCenter,
+                IntRectCompat(493, 0, 587, 1656)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillHeight,
+                BottomEnd,
+                IntRectCompat(986, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillBounds, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillBounds, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillBounds, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillBounds, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillBounds,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillBounds, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillBounds, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillBounds, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillBounds, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillBounds,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillBounds,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillBounds, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), Crop, TopStart, IntRectCompat(0, 0, 1080, 19003)),
             Item5(IntSizeCompat(173, 3044), Crop, TopCenter, IntRectCompat(0, 0, 1080, 19003)),
             Item5(IntSizeCompat(173, 3044), Crop, TopEnd, IntRectCompat(0, 0, 1080, 19003)),
-            Item5(IntSizeCompat(173, 3044), Crop, CenterStart, IntRectCompat(0, -8673, 1080, 10330)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                Crop,
+                CenterStart,
+                IntRectCompat(0, -8673, 1080, 10330)
+            ),
             Item5(IntSizeCompat(173, 3044), Crop, Center, IntRectCompat(0, -8673, 1080, 10330)),
             Item5(IntSizeCompat(173, 3044), Crop, CenterEnd, IntRectCompat(0, -8673, 1080, 10330)),
-            Item5(IntSizeCompat(173, 3044), Crop, BottomStart, IntRectCompat(0, -17347, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), Crop, BottomCenter, IntRectCompat(0, -17347, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                Crop,
+                BottomStart,
+                IntRectCompat(0, -17347, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                Crop,
+                BottomCenter,
+                IntRectCompat(0, -17347, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), Crop, BottomEnd, IntRectCompat(0, -17347, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), None, TopStart, IntRectCompat(0, 0, 575, 427)),
             Item5(IntSizeCompat(575, 427), None, TopCenter, IntRectCompat(253, 0, 828, 427)),
@@ -550,7 +740,12 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(575, 427), Inside, Center, IntRectCompat(253, 615, 828, 1042)),
             Item5(IntSizeCompat(575, 427), Inside, CenterEnd, IntRectCompat(505, 615, 1080, 1042)),
             Item5(IntSizeCompat(575, 427), Inside, BottomStart, IntRectCompat(0, 1229, 575, 1656)),
-            Item5(IntSizeCompat(575, 427), Inside, BottomCenter, IntRectCompat(253, 1229, 828, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                Inside,
+                BottomCenter,
+                IntRectCompat(253, 1229, 828, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), Inside, BottomEnd, IntRectCompat(505, 1229, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), Fit, TopStart, IntRectCompat(0, 0, 1080, 802)),
             Item5(IntSizeCompat(575, 427), Fit, TopCenter, IntRectCompat(0, 0, 1080, 802)),
@@ -564,29 +759,89 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(575, 427), FillWidth, TopStart, IntRectCompat(0, 0, 1080, 802)),
             Item5(IntSizeCompat(575, 427), FillWidth, TopCenter, IntRectCompat(0, 0, 1080, 802)),
             Item5(IntSizeCompat(575, 427), FillWidth, TopEnd, IntRectCompat(0, 0, 1080, 802)),
-            Item5(IntSizeCompat(575, 427), FillWidth, CenterStart, IntRectCompat(0, 427, 1080, 1229)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillWidth,
+                CenterStart,
+                IntRectCompat(0, 427, 1080, 1229)
+            ),
             Item5(IntSizeCompat(575, 427), FillWidth, Center, IntRectCompat(0, 427, 1080, 1229)),
             Item5(IntSizeCompat(575, 427), FillWidth, CenterEnd, IntRectCompat(0, 427, 1080, 1229)),
-            Item5(IntSizeCompat(575, 427), FillWidth, BottomStart, IntRectCompat(0, 854, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillWidth, BottomCenter, IntRectCompat(0, 854, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillWidth,
+                BottomStart,
+                IntRectCompat(0, 854, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillWidth,
+                BottomCenter,
+                IntRectCompat(0, 854, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillWidth, BottomEnd, IntRectCompat(0, 854, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillHeight, TopStart, IntRectCompat(0, 0, 2230, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, TopCenter, IntRectCompat(-575, 0, 1655, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                TopCenter,
+                IntRectCompat(-575, 0, 1655, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillHeight, TopEnd, IntRectCompat(-1150, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, CenterStart, IntRectCompat(0, 0, 2230, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                CenterStart,
+                IntRectCompat(0, 0, 2230, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillHeight, Center, IntRectCompat(-575, 0, 1655, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, CenterEnd, IntRectCompat(-1150, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, BottomStart, IntRectCompat(0, 0, 2230, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, BottomCenter, IntRectCompat(-575, 0, 1655, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, BottomEnd, IntRectCompat(-1150, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                CenterEnd,
+                IntRectCompat(-1150, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                BottomStart,
+                IntRectCompat(0, 0, 2230, 1656)
+            ),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                BottomCenter,
+                IntRectCompat(-575, 0, 1655, 1656)
+            ),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                BottomEnd,
+                IntRectCompat(-1150, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillBounds, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillBounds, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillBounds, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillBounds, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillBounds,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillBounds, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillBounds, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillBounds, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillBounds, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillBounds,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillBounds,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillBounds, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), Crop, TopStart, IntRectCompat(0, 0, 2230, 1656)),
             Item5(IntSizeCompat(575, 427), Crop, TopCenter, IntRectCompat(-575, 0, 1655, 1656)),
@@ -613,7 +868,12 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(551, 1038), Inside, Center, IntRectCompat(265, 309, 816, 1347)),
             Item5(IntSizeCompat(551, 1038), Inside, CenterEnd, IntRectCompat(529, 309, 1080, 1347)),
             Item5(IntSizeCompat(551, 1038), Inside, BottomStart, IntRectCompat(0, 618, 551, 1656)),
-            Item5(IntSizeCompat(551, 1038), Inside, BottomCenter, IntRectCompat(265, 618, 816, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                Inside,
+                BottomCenter,
+                IntRectCompat(265, 618, 816, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), Inside, BottomEnd, IntRectCompat(529, 618, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), Fit, TopStart, IntRectCompat(0, 0, 879, 1656)),
             Item5(IntSizeCompat(551, 1038), Fit, TopCenter, IntRectCompat(101, 0, 980, 1656)),
@@ -627,29 +887,99 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(551, 1038), FillWidth, TopStart, IntRectCompat(0, 0, 1080, 2035)),
             Item5(IntSizeCompat(551, 1038), FillWidth, TopCenter, IntRectCompat(0, 0, 1080, 2035)),
             Item5(IntSizeCompat(551, 1038), FillWidth, TopEnd, IntRectCompat(0, 0, 1080, 2035)),
-            Item5(IntSizeCompat(551, 1038), FillWidth, CenterStart, IntRectCompat(0, -189, 1080, 1846)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillWidth,
+                CenterStart,
+                IntRectCompat(0, -189, 1080, 1846)
+            ),
             Item5(IntSizeCompat(551, 1038), FillWidth, Center, IntRectCompat(0, -189, 1080, 1846)),
-            Item5(IntSizeCompat(551, 1038), FillWidth, CenterEnd, IntRectCompat(0, -189, 1080, 1846)),
-            Item5(IntSizeCompat(551, 1038), FillWidth, BottomStart, IntRectCompat(0, -379, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillWidth, BottomCenter, IntRectCompat(0, -379, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillWidth, BottomEnd, IntRectCompat(0, -379, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillWidth,
+                CenterEnd,
+                IntRectCompat(0, -189, 1080, 1846)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillWidth,
+                BottomStart,
+                IntRectCompat(0, -379, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillWidth,
+                BottomCenter,
+                IntRectCompat(0, -379, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillWidth,
+                BottomEnd,
+                IntRectCompat(0, -379, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillHeight, TopStart, IntRectCompat(0, 0, 879, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, TopCenter, IntRectCompat(101, 0, 980, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                TopCenter,
+                IntRectCompat(101, 0, 980, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillHeight, TopEnd, IntRectCompat(201, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, CenterStart, IntRectCompat(0, 0, 879, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                CenterStart,
+                IntRectCompat(0, 0, 879, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillHeight, Center, IntRectCompat(101, 0, 980, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, CenterEnd, IntRectCompat(201, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, BottomStart, IntRectCompat(0, 0, 879, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, BottomCenter, IntRectCompat(101, 0, 980, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, BottomEnd, IntRectCompat(201, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                CenterEnd,
+                IntRectCompat(201, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                BottomStart,
+                IntRectCompat(0, 0, 879, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                BottomCenter,
+                IntRectCompat(101, 0, 980, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                BottomEnd,
+                IntRectCompat(201, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillBounds, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillBounds, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillBounds, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillBounds, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillBounds,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillBounds, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillBounds, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillBounds, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillBounds, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillBounds,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillBounds,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillBounds, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), Crop, TopStart, IntRectCompat(0, 0, 1080, 2035)),
             Item5(IntSizeCompat(551, 1038), Crop, TopCenter, IntRectCompat(0, 0, 1080, 2035)),
@@ -685,7 +1015,10 @@ class CoreZoomUtilsTest {
         if (printBatchBuildExpression) {
             printlnBatchBuildExpression(
                 p1s = listOf(
-                    IntSizeCompat(7500, 232), IntSizeCompat(173, 3044), IntSizeCompat(575, 427), IntSizeCompat(551, 1038),
+                    IntSizeCompat(7500, 232),
+                    IntSizeCompat(173, 3044),
+                    IntSizeCompat(575, 427),
+                    IntSizeCompat(551, 1038),
                 ),
                 p2s = listOf(None, Inside, Fit, FillWidth, FillHeight, FillBounds, Crop),
                 p3s = listOf(
@@ -724,8 +1057,18 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(7500, 232), Inside, CenterStart, IntRectCompat(0, 812, 1080, 845)),
             Item5(IntSizeCompat(7500, 232), Inside, Center, IntRectCompat(0, 812, 1080, 845)),
             Item5(IntSizeCompat(7500, 232), Inside, CenterEnd, IntRectCompat(0, 812, 1080, 845)),
-            Item5(IntSizeCompat(7500, 232), Inside, BottomStart, IntRectCompat(0, 1623, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), Inside, BottomCenter, IntRectCompat(0, 1623, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                Inside,
+                BottomStart,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                Inside,
+                BottomCenter,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), Inside, BottomEnd, IntRectCompat(0, 1623, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), Fit, TopStart, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), Fit, TopCenter, IntRectCompat(0, 0, 1080, 33)),
@@ -739,29 +1082,79 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(7500, 232), FillWidth, TopStart, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), FillWidth, TopCenter, IntRectCompat(0, 0, 1080, 33)),
             Item5(IntSizeCompat(7500, 232), FillWidth, TopEnd, IntRectCompat(0, 0, 1080, 33)),
-            Item5(IntSizeCompat(7500, 232), FillWidth, CenterStart, IntRectCompat(0, 812, 1080, 845)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillWidth,
+                CenterStart,
+                IntRectCompat(0, 812, 1080, 845)
+            ),
             Item5(IntSizeCompat(7500, 232), FillWidth, Center, IntRectCompat(0, 812, 1080, 845)),
             Item5(IntSizeCompat(7500, 232), FillWidth, CenterEnd, IntRectCompat(0, 812, 1080, 845)),
-            Item5(IntSizeCompat(7500, 232), FillWidth, BottomStart, IntRectCompat(0, 1623, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillWidth, BottomCenter, IntRectCompat(0, 1623, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillWidth, BottomEnd, IntRectCompat(0, 1623, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillWidth,
+                BottomStart,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillWidth,
+                BottomCenter,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillWidth,
+                BottomEnd,
+                IntRectCompat(0, 1623, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillHeight, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillHeight, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillHeight, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillHeight, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillHeight, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillHeight, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillHeight,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillHeight, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillBounds, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillBounds, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillBounds, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillBounds, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillBounds,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillBounds, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), FillBounds, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillBounds, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(7500, 232), FillBounds, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillBounds,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(7500, 232),
+                FillBounds,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(7500, 232), FillBounds, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), Crop, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(7500, 232), Crop, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
@@ -802,29 +1195,79 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(173, 3044), FillWidth, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillWidth, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillWidth, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillWidth, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillWidth, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillWidth, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillWidth,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillWidth, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillHeight, TopStart, IntRectCompat(0, 0, 94, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillHeight, TopCenter, IntRectCompat(493, 0, 587, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillHeight,
+                TopCenter,
+                IntRectCompat(493, 0, 587, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillHeight, TopEnd, IntRectCompat(986, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillHeight, CenterStart, IntRectCompat(0, 0, 94, 1656)),
             Item5(IntSizeCompat(173, 3044), FillHeight, Center, IntRectCompat(493, 0, 587, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillHeight, CenterEnd, IntRectCompat(986, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillHeight,
+                CenterEnd,
+                IntRectCompat(986, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillHeight, BottomStart, IntRectCompat(0, 0, 94, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillHeight, BottomCenter, IntRectCompat(493, 0, 587, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillHeight, BottomEnd, IntRectCompat(986, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillHeight,
+                BottomCenter,
+                IntRectCompat(493, 0, 587, 1656)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillHeight,
+                BottomEnd,
+                IntRectCompat(986, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillBounds, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillBounds, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillBounds, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillBounds, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillBounds,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillBounds, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), FillBounds, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillBounds, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(173, 3044), FillBounds, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillBounds,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(173, 3044),
+                FillBounds,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(173, 3044), FillBounds, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), Crop, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(173, 3044), Crop, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
@@ -851,7 +1294,12 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(575, 427), Inside, Center, IntRectCompat(253, 615, 828, 1042)),
             Item5(IntSizeCompat(575, 427), Inside, CenterEnd, IntRectCompat(505, 615, 1080, 1042)),
             Item5(IntSizeCompat(575, 427), Inside, BottomStart, IntRectCompat(0, 1229, 575, 1656)),
-            Item5(IntSizeCompat(575, 427), Inside, BottomCenter, IntRectCompat(253, 1229, 828, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                Inside,
+                BottomCenter,
+                IntRectCompat(253, 1229, 828, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), Inside, BottomEnd, IntRectCompat(505, 1229, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), Fit, TopStart, IntRectCompat(0, 0, 1080, 802)),
             Item5(IntSizeCompat(575, 427), Fit, TopCenter, IntRectCompat(0, 0, 1080, 802)),
@@ -865,29 +1313,74 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(575, 427), FillWidth, TopStart, IntRectCompat(0, 0, 1080, 802)),
             Item5(IntSizeCompat(575, 427), FillWidth, TopCenter, IntRectCompat(0, 0, 1080, 802)),
             Item5(IntSizeCompat(575, 427), FillWidth, TopEnd, IntRectCompat(0, 0, 1080, 802)),
-            Item5(IntSizeCompat(575, 427), FillWidth, CenterStart, IntRectCompat(0, 427, 1080, 1229)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillWidth,
+                CenterStart,
+                IntRectCompat(0, 427, 1080, 1229)
+            ),
             Item5(IntSizeCompat(575, 427), FillWidth, Center, IntRectCompat(0, 427, 1080, 1229)),
             Item5(IntSizeCompat(575, 427), FillWidth, CenterEnd, IntRectCompat(0, 427, 1080, 1229)),
-            Item5(IntSizeCompat(575, 427), FillWidth, BottomStart, IntRectCompat(0, 854, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillWidth, BottomCenter, IntRectCompat(0, 854, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillWidth,
+                BottomStart,
+                IntRectCompat(0, 854, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillWidth,
+                BottomCenter,
+                IntRectCompat(0, 854, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillWidth, BottomEnd, IntRectCompat(0, 854, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillHeight, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillHeight, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillHeight, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillHeight, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillHeight, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillHeight, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillHeight,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillHeight, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillBounds, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillBounds, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillBounds, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillBounds, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillBounds,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillBounds, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), FillBounds, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillBounds, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(575, 427), FillBounds, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillBounds,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(575, 427),
+                FillBounds,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(575, 427), FillBounds, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), Crop, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(575, 427), Crop, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
@@ -914,7 +1407,12 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(551, 1038), Inside, Center, IntRectCompat(265, 309, 816, 1347)),
             Item5(IntSizeCompat(551, 1038), Inside, CenterEnd, IntRectCompat(529, 309, 1080, 1347)),
             Item5(IntSizeCompat(551, 1038), Inside, BottomStart, IntRectCompat(0, 618, 551, 1656)),
-            Item5(IntSizeCompat(551, 1038), Inside, BottomCenter, IntRectCompat(265, 618, 816, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                Inside,
+                BottomCenter,
+                IntRectCompat(265, 618, 816, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), Inside, BottomEnd, IntRectCompat(529, 618, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), Fit, TopStart, IntRectCompat(0, 0, 879, 1656)),
             Item5(IntSizeCompat(551, 1038), Fit, TopCenter, IntRectCompat(101, 0, 980, 1656)),
@@ -928,29 +1426,89 @@ class CoreZoomUtilsTest {
             Item5(IntSizeCompat(551, 1038), FillWidth, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillWidth, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillWidth, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillWidth, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillWidth,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillWidth, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillWidth, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillWidth, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillWidth, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillWidth,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillWidth,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillWidth, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillHeight, TopStart, IntRectCompat(0, 0, 879, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, TopCenter, IntRectCompat(101, 0, 980, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                TopCenter,
+                IntRectCompat(101, 0, 980, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillHeight, TopEnd, IntRectCompat(201, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, CenterStart, IntRectCompat(0, 0, 879, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                CenterStart,
+                IntRectCompat(0, 0, 879, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillHeight, Center, IntRectCompat(101, 0, 980, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, CenterEnd, IntRectCompat(201, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, BottomStart, IntRectCompat(0, 0, 879, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, BottomCenter, IntRectCompat(101, 0, 980, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillHeight, BottomEnd, IntRectCompat(201, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                CenterEnd,
+                IntRectCompat(201, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                BottomStart,
+                IntRectCompat(0, 0, 879, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                BottomCenter,
+                IntRectCompat(101, 0, 980, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillHeight,
+                BottomEnd,
+                IntRectCompat(201, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillBounds, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillBounds, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillBounds, TopEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillBounds, CenterStart, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillBounds,
+                CenterStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillBounds, Center, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), FillBounds, CenterEnd, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillBounds, BottomStart, IntRectCompat(0, 0, 1080, 1656)),
-            Item5(IntSizeCompat(551, 1038), FillBounds, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillBounds,
+                BottomStart,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
+            Item5(
+                IntSizeCompat(551, 1038),
+                FillBounds,
+                BottomCenter,
+                IntRectCompat(0, 0, 1080, 1656)
+            ),
             Item5(IntSizeCompat(551, 1038), FillBounds, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), Crop, TopStart, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSizeCompat(551, 1038), Crop, TopCenter, IntRectCompat(0, 0, 1080, 1656)),
@@ -1966,355 +2524,25 @@ class CoreZoomUtilsTest {
 //            )
 //        }
 //    }
-//
-//    @Test
-//    fun testComputeContentVisibleRect() {
-//        var containerSize = IntSizeCompat(1000, 2000)
-//        var contentSize = IntSizeCompat(800, 1200)
-//        var contentScale = ContentScaleCompat.Fit
-//        var alignment = AlignmentCompat.Center
-//        var scale = 1f
-//        listOf(
-//            Item3(IntOffsetCompat(0, 0), IntRectCompat(0, 0, 800, 1200)),
-//            Item3(IntOffsetCompat(250, 500), IntRectCompat(0, 0, 600, 1000)),
-//            Item3(IntOffsetCompat(750, 500), IntRectCompat(0, 0, 200, 1000)),
-//            Item3(IntOffsetCompat(250, 1500), IntRectCompat(0, 0, 600, 200)),
-//            Item3(IntOffsetCompat(750, 1500), IntRectCompat(0, 0, 200, 200)),
-//            Item3(IntOffsetCompat(1000, 2000), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(-250, -500), IntRectCompat(200, 200, 800, 1200)),
-//            Item3(IntOffsetCompat(-750, -500), IntRectCompat(600, 200, 800, 1200)),
-//            Item3(IntOffsetCompat(-250, -1500), IntRectCompat(200, 1000, 800, 1200)),
-//            Item3(IntOffsetCompat(-750, -1500), IntRectCompat(600, 1000, 800, 1200)),
-//            Item3(IntOffsetCompat(-1000, -2000), IntRectCompat(0, 0, 0, 0)),
-////        ).printlnExpectedMessage3(
-////            computeExpected = {
-////                computeContentVisibleRect(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = contentScale,
-////                    alignment = alignment,
-////                    scale = scale,
-////                    offset = it.offset
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, contentScale, alignment, scale),
-//                it.expected,
-//                computeContentVisibleRect(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = contentScale,
-//                    alignment = alignment,
-//                    scale = scale,
-//                    offset = it.offset
-//                )
-//            )
-//        }
-//
-//        containerSize = IntSizeCompat(1000, 2000)
-//        contentSize = IntSizeCompat(800, 1200)
-//        contentScale = ContentScaleCompat.Fit
-//        alignment = AlignmentCompat.Center
-//        scale = 2f
-//        listOf(
-//            Item3(IntOffsetCompat(0, 0), IntRectCompat(0, 0, 400, 600)),
-//            Item3(IntOffsetCompat(250, 500), IntRectCompat(0, 0, 300, 400)),
-//            Item3(IntOffsetCompat(750, 500), IntRectCompat(0, 0, 100, 400)),
-//            Item3(IntOffsetCompat(250, 1500), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(750, 1500), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(1000, 2000), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(-250, -500), IntRectCompat(100, 0, 500, 800)),
-//            Item3(IntOffsetCompat(-750, -500), IntRectCompat(300, 0, 700, 800)),
-//            Item3(IntOffsetCompat(-250, -1500), IntRectCompat(100, 400, 500, 1200)),
-//            Item3(IntOffsetCompat(-750, -1500), IntRectCompat(300, 400, 700, 1200)),
-//            Item3(IntOffsetCompat(-1000, -2000), IntRectCompat(400, 600, 800, 1200)),
-////        ).printlnExpectedMessage3(
-////            computeExpected = {
-////                computeContentVisibleRect(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = contentScale,
-////                    alignment = alignment,
-////                    scale = scale,
-////                    offset = it.offset
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, contentScale, alignment, scale),
-//                it.expected,
-//                computeContentVisibleRect(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = contentScale,
-//                    alignment = alignment,
-//                    scale = scale,
-//                    offset = it.offset
-//                )
-//            )
-//        }
-//
-//        containerSize = IntSizeCompat(1000, 2000)
-//        contentSize = IntSizeCompat(800, 1200)
-//        contentScale = ContentScaleCompat.Inside
-//        alignment = AlignmentCompat.Center
-//        scale = 1f
-//        listOf(
-//            Item3(IntOffsetCompat(0, 0), IntRectCompat(0, 0, 800, 1200)),
-//            Item3(IntOffsetCompat(250, 500), IntRectCompat(0, 0, 650, 1100)),
-//            Item3(IntOffsetCompat(750, 500), IntRectCompat(0, 0, 150, 1100)),
-//            Item3(IntOffsetCompat(250, 1500), IntRectCompat(0, 0, 650, 100)),
-//            Item3(IntOffsetCompat(750, 1500), IntRectCompat(0, 0, 150, 100)),
-//            Item3(IntOffsetCompat(1000, 2000), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(-250, -500), IntRectCompat(150, 100, 800, 1200)),
-//            Item3(IntOffsetCompat(-750, -500), IntRectCompat(650, 100, 800, 1200)),
-//            Item3(IntOffsetCompat(-250, -1500), IntRectCompat(150, 1100, 800, 1200)),
-//            Item3(IntOffsetCompat(-750, -1500), IntRectCompat(650, 1100, 800, 1200)),
-//            Item3(IntOffsetCompat(-1000, -2000), IntRectCompat(0, 0, 0, 0)),
-////        ).printlnExpectedMessage3(
-////            computeExpected = {
-////                computeContentVisibleRect(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = contentScale,
-////                    alignment = alignment,
-////                    scale = scale,
-////                    offset = it.offset
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, contentScale, alignment, scale),
-//                it.expected,
-//                computeContentVisibleRect(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = contentScale,
-//                    alignment = alignment,
-//                    scale = scale,
-//                    offset = it.offset
-//                )
-//            )
-//        }
-//
-//        containerSize = IntSizeCompat(1000, 2000)
-//        contentSize = IntSizeCompat(800, 1200)
-//        contentScale = ContentScaleCompat.Inside
-//        alignment = AlignmentCompat.Center
-//        scale = 2f
-//        listOf(
-//            Item3(IntOffsetCompat(0, 0), IntRectCompat(0, 0, 400, 600)),
-//            Item3(IntOffsetCompat(250, 500), IntRectCompat(0, 0, 275, 350)),
-//            Item3(IntOffsetCompat(750, 500), IntRectCompat(0, 0, 25, 350)),
-//            Item3(IntOffsetCompat(250, 1500), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(750, 1500), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(1000, 2000), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(-250, -500), IntRectCompat(25, 0, 525, 850)),
-//            Item3(IntOffsetCompat(-750, -500), IntRectCompat(275, 0, 775, 850)),
-//            Item3(IntOffsetCompat(-250, -1500), IntRectCompat(25, 350, 525, 1200)),
-//            Item3(IntOffsetCompat(-750, -1500), IntRectCompat(275, 350, 775, 1200)),
-//            Item3(IntOffsetCompat(-1000, -2000), IntRectCompat(400, 600, 800, 1200)),
-////        ).printlnExpectedMessage3(
-////            computeExpected = {
-////                computeContentVisibleRect(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = contentScale,
-////                    alignment = alignment,
-////                    scale = scale,
-////                    offset = it.offset
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, contentScale, alignment, scale),
-//                it.expected,
-//                computeContentVisibleRect(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = contentScale,
-//                    alignment = alignment,
-//                    scale = scale,
-//                    offset = it.offset
-//                )
-//            )
-//        }
-//
-//        containerSize = IntSizeCompat(1000, 2000)
-//        contentSize = IntSizeCompat(800, 1200)
-//        contentScale = ContentScaleCompat.Crop
-//        alignment = AlignmentCompat.Center
-//        scale = 1f
-//        listOf(
-//            Item3(IntOffsetCompat(0, 0), IntRectCompat(998, 0, 700, 1200)),
-//            Item3(IntOffsetCompat(250, 500), IntRectCompat(998, 0, 550, 900)),
-//            Item3(IntOffsetCompat(750, 500), IntRectCompat(998, 0, 2497, 900)),
-//            Item3(IntOffsetCompat(250, 1500), IntRectCompat(998, 0, 550, 300)),
-//            Item3(IntOffsetCompat(750, 1500), IntRectCompat(998, 0, 2497, 300)),
-//            Item3(IntOffsetCompat(1000, 2000), IntRectCompat(0, 0, 0, 0)),
-//            Item3(IntOffsetCompat(-250, -500), IntRectCompat(2497, 300, 700, 1200)),
-//            Item3(IntOffsetCompat(-750, -500), IntRectCompat(550, 300, 700, 1200)),
-//            Item3(IntOffsetCompat(-250, -1500), IntRectCompat(2497, 900, 700, 1200)),
-//            Item3(IntOffsetCompat(-750, -1500), IntRectCompat(550, 900, 700, 1200)),
-//            Item3(IntOffsetCompat(-1000, -2000), IntRectCompat(0, 0, 0, 0)),
-////        ).printlnExpectedMessage3(
-////            computeExpected = {
-////                computeContentVisibleRect(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = contentScale,
-////                    alignment = alignment,
-////                    scale = scale,
-////                    offset = it.offset
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, contentScale, alignment, scale),
-//                it.expected,
-//                computeContentVisibleRect(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = contentScale,
-//                    alignment = alignment,
-//                    scale = scale,
-//                    offset = it.offset
-//                )
-//            )
-//        }
-//
-//        containerSize = IntSizeCompat(1000, 2000)
-//        contentSize = IntSizeCompat(800, 1200)
-//        contentScale = ContentScaleCompat.Crop
-//        alignment = AlignmentCompat.Center
-//        scale = 2f
-//        listOf(
-//            Item3(IntOffsetCompat(0.0, 0.0), IntRectCompat(998, 0.0, 3997, 600.0)),
-//            Item3(IntOffsetCompat(250.0, 500.0), IntRectCompat(998, 0.0, 3247, 450.0)),
-//            Item3(IntOffsetCompat(750.0, 500.0), IntRectCompat(998, 0.0, 1747, 450.0)),
-//            Item3(IntOffsetCompat(250.0, 1500.0), IntRectCompat(998, 0.0, 3247, 150.0)),
-//            Item3(IntOffsetCompat(750.0, 1500.0), IntRectCompat(998, 0.0, 1747, 150.0)),
-//            Item3(IntOffsetCompat(1000.0, 2000.0), IntRectCompat(0.0, 0.0, 0.0, 0.0)),
-//            Item3(IntOffsetCompat(-250.0, -500.0), IntRectCompat(1747, 150.0, 4747, 750.0)),
-//            Item3(IntOffsetCompat(-750.0, -500.0), IntRectCompat(3247, 150.0, 625.0, 750.0)),
-//            Item3(IntOffsetCompat(-250.0, -1500.0), IntRectCompat(1747, 450.0, 4747, 1050.0)),
-//            Item3(IntOffsetCompat(-750.0, -1500.0), IntRectCompat(3247, 450.0, 625.0, 1050.0)),
-//            Item3(IntOffsetCompat(-1000.0, -2000.0), IntRectCompat(3997, 600.0, 700.0, 1200.0)),
-////        ).printlnExpectedMessage3(
-////            computeExpected = {
-////                computeContentVisibleRect(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = contentScale,
-////                    alignment = alignment,
-////                    scale = scale,
-////                    offset = it.offset
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, contentScale, alignment, scale),
-//                it.expected,
-//                computeContentVisibleRect(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = contentScale,
-//                    alignment = alignment,
-//                    scale = scale,
-//                    offset = it.offset
-//                )
-//            )
-//        }
-//
-//        containerSize = IntSizeCompat(1000, 2000)
-//        contentSize = IntSizeCompat(containerSize.width * 1.5, containerSize.height * 1.3)
-//        contentScale = ContentScaleCompat.None
-//        alignment = AlignmentCompat.Center
-//        scale = 1f
-//        listOf(
-//            Item3(IntOffsetCompat(0.0, 0.0), IntRectCompat(250.0, 300.0, 1250.0, 2300.0)),
-//            Item3(IntOffsetCompat(250.0, 500.0), IntRectCompat(250.0, 300.0, 1000.0, 1800.0)),
-//            Item3(IntOffsetCompat(750.0, 500.0), IntRectCompat(250.0, 300.0, 500.0, 1800.0)),
-//            Item3(IntOffsetCompat(250.0, 1500.0), IntRectCompat(250.0, 300.0, 1000.0, 800.0)),
-//            Item3(IntOffsetCompat(750.0, 1500.0), IntRectCompat(250.0, 300.0, 500.0, 800.0)),
-//            Item3(IntOffsetCompat(1000.0, 2000.0), IntRectCompat(0.0, 0.0, 0.0, 0.0)),
-//            Item3(IntOffsetCompat(-250.0, -500.0), IntRectCompat(500.0, 800.0, 1250.0, 2300.0)),
-//            Item3(IntOffsetCompat(-750.0, -500.0), IntRectCompat(1000.0, 800.0, 1250.0, 2300.0)),
-//            Item3(IntOffsetCompat(-250.0, -1500.0), IntRectCompat(500.0, 1800.0, 1250.0, 2300.0)),
-//            Item3(IntOffsetCompat(-750.0, -1500.0), IntRectCompat(1000.0, 1800.0, 1250.0, 2300.0)),
-//            Item3(IntOffsetCompat(-1000.0, -2000.0), IntRectCompat(0.0, 0.0, 0.0, 0.0)),
-////        ).printlnExpectedMessage3(
-////            computeExpected = {
-////                computeContentVisibleRect(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = contentScale,
-////                    alignment = alignment,
-////                    scale = scale,
-////                    offset = it.offset
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, contentScale, alignment, scale),
-//                it.expected,
-//                computeContentVisibleRect(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = contentScale,
-//                    alignment = alignment,
-//                    scale = scale,
-//                    offset = it.offset
-//                )
-//            )
-//        }
-//
-//        containerSize = IntSizeCompat(1000, 2000)
-//        contentSize = IntSizeCompat(containerSize.width * 1.5, containerSize.height * 1.3)
-//        contentScale = ContentScaleCompat.None
-//        alignment = AlignmentCompat.Center
-//        scale = 2f
-//        listOf(
-//            Item3(IntOffsetCompat(0.0, 0.0), IntRectCompat(250.0, 300.0, 750.0, 1300.0)),
-//            Item3(IntOffsetCompat(250.0, 500.0), IntRectCompat(250.0, 300.0, 625.0, 1050.0)),
-//            Item3(IntOffsetCompat(750.0, 500.0), IntRectCompat(250.0, 300.0, 375.0, 1050.0)),
-//            Item3(IntOffsetCompat(250.0, 1500.0), IntRectCompat(250.0, 300.0, 625.0, 550.0)),
-//            Item3(IntOffsetCompat(750.0, 1500.0), IntRectCompat(250.0, 300.0, 375.0, 550.0)),
-//            Item3(IntOffsetCompat(1000.0, 2000.0), IntRectCompat(0.0, 0.0, 0.0, 0.0)),
-//            Item3(IntOffsetCompat(-250.0, -500.0), IntRectCompat(375.0, 550.0, 875.0, 1550.0)),
-//            Item3(IntOffsetCompat(-750.0, -500.0), IntRectCompat(625.0, 550.0, 1125.0, 1550.0)),
-//            Item3(IntOffsetCompat(-250.0, -1500.0), IntRectCompat(375.0, 1050.0, 875.0, 2050.0)),
-//            Item3(IntOffsetCompat(-750.0, -1500.0), IntRectCompat(625.0, 1050.0, 1125.0, 2050.0)),
-//            Item3(IntOffsetCompat(-1000.0, -2000.0), IntRectCompat(750.0, 1300.0, 1250.0, 2300.0)),
-////        ).printlnExpectedMessage3(
-////            computeExpected = {
-////                computeContentVisibleRect(
-////                    containerSize = containerSize,
-////                    contentSize = contentSize,
-////                    contentScale = contentScale,
-////                    alignment = alignment,
-////                    scale = scale,
-////                    offset = it.offset
-////                )
-////            }
-//        ).forEach {
-//            Assert.assertEquals(
-//                it.getMessage(containerSize, contentSize, contentScale, alignment, scale),
-//                it.expected,
-//                computeContentVisibleRect(
-//                    containerSize = containerSize,
-//                    contentSize = contentSize,
-//                    contentScale = contentScale,
-//                    alignment = alignment,
-//                    scale = scale,
-//                    offset = it.offset
-//                )
-//            )
-//        }
-//    }
-//
-//
+
+    @Test
+    fun testComputeContentVisibleRect() {
+        // todo 补充测试用例
+        Assert.assertEquals(
+            IntRectCompat(0, 0, 345, 6088),
+            computeContentVisibleRect(
+                containerSize = IntSizeCompat(1080, 2068),
+                contentSize = IntSizeCompat(345, 6088),
+                contentScale = Fit,
+                alignment = Center,
+                rotation = 0,
+                userScale = 1f,
+                userOffset = Companion.Zero
+            ).round()
+        )
+    }
+
+
 //    @Test
 //    fun testComputeContainerOriginByTouchPosition() {
 //        var containerSize = IntSizeCompat(1080, 1920)
