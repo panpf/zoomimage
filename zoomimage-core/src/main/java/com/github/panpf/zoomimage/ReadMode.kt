@@ -16,9 +16,7 @@
 package com.github.panpf.zoomimage
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.times
 import kotlin.math.max
@@ -35,27 +33,6 @@ data class ReadMode(
             else -> true
         }
         return if (directionMatched) decider.should(srcSize = srcSize, dstSize = dstSize) else false
-    }
-
-    fun computeTransform(
-        containerSize: IntSizeCompat,
-        contentSize: IntSizeCompat,
-        baseTransform: TransformCompat,
-    ): TransformCompat {
-        val widthScale = containerSize.width / contentSize.width.toFloat()
-        val heightScale = containerSize.height / contentSize.height.toFloat()
-        val fillScale = max(widthScale, heightScale)
-        val addScale = fillScale / baseTransform.scaleX
-        val scaleX = baseTransform.scaleX * addScale
-        val scaleY = baseTransform.scaleY * addScale
-        val translateX = if (baseTransform.offset.x < 0)
-            baseTransform.offset.x * addScale else 0f
-        val translateY = if (baseTransform.offset.y < 0)
-            baseTransform.offset.y * addScale else 0f
-        return TransformCompat(
-            scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
-            offset = OffsetCompat(x = translateX, y = translateY)
-        )
     }
 
     companion object {

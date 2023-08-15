@@ -17,58 +17,80 @@ import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.rememberZoomImageLogger
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
+import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.toShortString
 
 @Composable
 fun ZoomImageInfo(
     imageUri: String,
     zoomableState: ZoomableState,
 ) {
-    val sizeInfo = remember(
+    val baseInfo = remember(
         zoomableState.containerSize,
         zoomableState.contentSize,
         zoomableState.contentOriginSize
     ) {
         """
+            imageUri: $imageUri
             containerSize: ${zoomableState.containerSize.let { "${it.width}x${it.height}" }}
             contentSize: ${zoomableState.contentSize.let { "${it.width}x${it.height}" }}
             contentOriginSize: ${zoomableState.contentOriginSize.let { "${it.width}x${it.height}" }}
+        """.trimIndent()
+    }
+    val scaleInfo = remember(
+        zoomableState.transform,
+    ) {
+        val transform = zoomableState.transform
+        val userTransform = zoomableState.userTransform
+        val baseTransform = zoomableState.baseTransform
+        val userScaleFormatted = userTransform.scale.toShortString()
+        val scaleFormatted = transform.scale.toShortString()
+        val baseScaleFormatted = baseTransform.scale.toShortString()
+        val scales = floatArrayOf(
+            zoomableState.minScale,
+            zoomableState.mediumScale,
+            zoomableState.maxScale
+        ).joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
+        """
+            scale: $scaleFormatted
+            baseScale: $baseScaleFormatted
+            userScale: $userScaleFormatted
+            stepScales: $scales
         """.trimIndent()
     }
     val offsetInfo = remember(
         zoomableState.transform,
     ) {
         """
+            offset: ${zoomableState.transform.offset.toShortString()}
             baseOffset: ${zoomableState.baseTransform.offset.toShortString()}
             userOffset: ${zoomableState.userTransform.offset.toShortString()}
             userOffsetBounds: ${zoomableState.userOffsetBounds.toShortString()}
+            edge: ${zoomableState.scrollEdge.toShortString()}
         """.trimIndent()
     }
-    val otherInfo = remember(
-        zoomableState.userOffsetBounds,
-        zoomableState.containerVisibleRect,
-        zoomableState.contentDisplayRect,
-        zoomableState.contentVisibleRect,
-        zoomableState.contentInContainerVisibleRect,
-    ) {
+    val otherInfo = remember(zoomableState.transform) {
         """
             containerVisible: ${zoomableState.containerVisibleRect.toShortString()}
+            contentBaseDisplay: ${zoomableState.contentBaseDisplayRect.toShortString()}
+            contentBaseVisible: ${zoomableState.contentBaseVisibleRect.toShortString()}
             contentDisplay: ${zoomableState.contentDisplayRect.toShortString()}
             contentVisible: ${zoomableState.contentVisibleRect.toShortString()}
-            contentInContainerVisible: ${zoomableState.contentInContainerVisibleRect.toShortString()}
         """.trimIndent()
     }
 
     Column(Modifier.fillMaxWidth()) {
-        InfoItem("URI：", imageUri)
+        Spacer(modifier = Modifier.size(12.dp))
+        InfoItem("Base", baseInfo)
 
         Spacer(modifier = Modifier.size(12.dp))
-        InfoItem("Size：", sizeInfo)
+        InfoItem("Scale：", scaleInfo)
 
         Spacer(modifier = Modifier.size(12.dp))
         InfoItem("Offset：", offsetInfo)
 
         Spacer(modifier = Modifier.size(12.dp))
-        InfoItem("Other：", otherInfo)
+        InfoItem("Rect：", otherInfo)
     }
 }
 

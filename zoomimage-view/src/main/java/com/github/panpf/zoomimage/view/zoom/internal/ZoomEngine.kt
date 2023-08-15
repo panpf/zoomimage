@@ -191,7 +191,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val scaleType = scaleType
         val mediumScaleMinMultiple = mediumScaleMinMultiple
 
-        val initialConfig = computeZoomInitialConfig(
+        val initialZoom = computeInitialZoom(
             containerSize = viewSize,
             contentSize = drawableSize,
             contentOriginSize = imageSize,
@@ -208,18 +208,18 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     "scaleType=$scaleType, " +
                     "mediumScaleMinMultiple=$mediumScaleMinMultiple, " +
                     "readMode=$readMode. " +
-                    "minUserScale=${initialConfig.minScale}, " +
-                    "mediumUserScale=${initialConfig.mediumScale}, " +
-                    "maxUserScale=${initialConfig.maxScale}, " +
-                    "baseInitialTransform=${initialConfig.baseTransform}, " +
-                    "userInitialTransform=${initialConfig.userTransform}"
+                    "minUserScale=${initialZoom.minScale}, " +
+                    "mediumUserScale=${initialZoom.mediumScale}, " +
+                    "maxUserScale=${initialZoom.maxScale}, " +
+                    "baseInitialTransform=${initialZoom.baseTransform}, " +
+                    "userInitialTransform=${initialZoom.userTransform}"
         }
 
-        minScale = initialConfig.minScale
-        mediumScale = initialConfig.mediumScale
-        maxScale = initialConfig.maxScale
-        baseInitialTransform = initialConfig.baseTransform
-        userInitialTransform = initialConfig.userTransform
+        minScale = initialZoom.minScale
+        mediumScale = initialZoom.mediumScale
+        maxScale = initialZoom.maxScale
+        baseInitialTransform = initialZoom.baseTransform
+        userInitialTransform = initialZoom.userTransform
         resetBaseMatrix()
         resetUserMatrix()
         checkAndApplyMatrix()

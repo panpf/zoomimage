@@ -19,14 +19,14 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.ReadMode
+import com.github.panpf.zoomimage.util.ContentScaleCompat
+import com.github.panpf.zoomimage.util.InitialZoom
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
-import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
-import com.github.panpf.zoomimage.util.center
-import com.github.panpf.zoomimage.util.computeUserScales
+import com.github.panpf.zoomimage.util.computeStepScales
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.split
@@ -42,6 +42,7 @@ import com.github.panpf.zoomimage.view.internal.isVerticalCenter
 import com.github.panpf.zoomimage.view.internal.scale
 import com.github.panpf.zoomimage.view.internal.times
 import com.github.panpf.zoomimage.view.internal.toContentScale
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 internal fun reverseRotateRect(rect: Rect, rotation: Int, drawableSize: IntSizeCompat) {
@@ -250,7 +251,40 @@ internal fun computeLocationOffset(
     )
 }
 
-internal fun computeZoomInitialConfig(
+private fun computeInitialUserTransform(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    rotation: Int,
+    baseTransform: TransformCompat,
+    readMode: ReadMode?,
+): TransformCompat? {
+    if (readMode == null) return null
+    if (contentScale == ContentScaleCompat.FillBounds) return null
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val accept = readMode.accept(
+        srcSize = rotatedContentSize,
+        dstSize = containerSize
+    )
+    if (!accept) return null
+    val widthScale = containerSize.width / contentSize.width.toFloat()
+    val heightScale = containerSize.height / contentSize.height.toFloat()
+    val fillScale = max(widthScale, heightScale)
+    val addScale = fillScale / baseTransform.scaleX
+    val scaleX = baseTransform.scaleX * addScale
+    val scaleY = baseTransform.scaleY * addScale
+    val translateX = if (baseTransform.offset.x < 0)
+        baseTransform.offset.x * addScale else 0f
+    val translateY = if (baseTransform.offset.y < 0)
+        baseTransform.offset.y * addScale else 0f
+    val readModeTransform = TransformCompat(
+        scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
+        offset = OffsetCompat(x = translateX, y = translateY)
+    )
+    return readModeTransform.split(baseTransform)
+}
+
+internal fun computeInitialZoom(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
@@ -258,61 +292,38 @@ internal fun computeZoomInitialConfig(
     rotation: Int,
     readMode: ReadMode?,
     mediumScaleMinMultiple: Float,
-): InitialConfig {
+): InitialZoom {
     if (contentSize.isEmpty() || containerSize.isEmpty()) {
-        return InitialConfig(
-            minScale = 1.0f,
-            mediumScale = 1.0f,
-            maxScale = 1.0f,
-            baseTransform = TransformCompat.Origin,
-            userTransform = TransformCompat.Origin
-        )
+        return InitialZoom.Origin
     }
-
     val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedContentOriginSize = contentOriginSize.rotate(rotation)
+
+    val stepScales = computeStepScales(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentOriginSize = contentOriginSize,
+        contentScale = scaleType.toContentScale(),
+        rotation = rotation,
+        mediumScaleMinMultiple = mediumScaleMinMultiple,
+    )
 
     val baseTransform = scaleType
         .computeTransform(srcSize = rotatedContentSize, dstSize = containerSize)
 
-    val userStepScales = computeUserScales(
-        contentSize = rotatedContentSize,
-        contentOriginSize = rotatedContentOriginSize,
+    val userTransform = computeInitialUserTransform(
         containerSize = containerSize,
+        contentSize = contentSize,
         contentScale = scaleType.toContentScale(),
-        baseScale = scaleType.computeScaleFactor(
-            srcSize = rotatedContentSize,
-            dstSize = containerSize
-        ),
-        mediumScaleMinMultiple = mediumScaleMinMultiple
+        rotation = rotation,
+        readMode = readMode,
+        baseTransform = baseTransform,
     )
-    val minScale = userStepScales[0] * baseTransform.scaleX
-    val mediumScale = userStepScales[1] * baseTransform.scaleX
-    val maxScale = userStepScales[2] * baseTransform.scaleX
 
-    val readModeTransform = readMode
-        ?.takeIf { scaleType.supportReadMode() }
-        ?.takeIf { it.accept(srcSize = rotatedContentSize, dstSize = containerSize) }
-        ?.computeTransform(
-            containerSize = containerSize,
-            contentSize = rotatedContentSize,
-            baseTransform = baseTransform,
-        )
-    val userTransform = readModeTransform?.split(baseTransform)
-
-    return InitialConfig(
-        minScale = minScale,
-        mediumScale = mediumScale,
-        maxScale = maxScale,
+    return InitialZoom(
+        minScale = stepScales[0],
+        mediumScale = stepScales[1],
+        maxScale = stepScales[2],
         baseTransform = baseTransform,
         userTransform = userTransform ?: TransformCompat.Origin
     )
 }
-
-class InitialConfig(
-    val minScale: Float,
-    val mediumScale: Float,
-    val maxScale: Float,
-    val baseTransform: TransformCompat,
-    val userTransform: TransformCompat,
-)

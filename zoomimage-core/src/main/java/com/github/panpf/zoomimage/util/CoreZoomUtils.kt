@@ -5,174 +5,18 @@ package com.github.panpf.zoomimage.util
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.util.internal.BaseTransformHelper
 import com.github.panpf.zoomimage.util.internal.format
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-/* ******************************************* ContentInContainer ***************************************** */
 
-fun computeContentInContainerRect(
-    containerSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
-    rotation: Int,
-): RectCompat {
-    /*
-     * Calculations are based on the following rules:
-     * 1. Content is located in the top left corner of the container
-     * 2. The scale center point is top left
-     * 3. The rotate center point is the content center
-     * 4. Apply rotation before scaling and offset
-     */
-
-    if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
-    }
-    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
-
-    if (rotation % 180 == 0) {
-        return RectCompat(
-            left = 0f,
-            top = 0f,
-            right = containerSize.width.toFloat(),
-            bottom = containerSize.height.toFloat(),
-        )
-    } else {
-        val contentCenter = contentSize.toSize().center
-        val left = contentCenter.x - contentCenter.y
-        val top = contentCenter.y - contentCenter.x
-        return RectCompat(
-            left = left,
-            top = top,
-            right = left + contentSize.height,
-            bottom = top + contentSize.width,
-        )
-    }
-}
-
-fun computeContentInContainerRect(
-    containerSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
-    contentScale: ContentScaleCompat,
-    alignment: AlignmentCompat,
-): RectCompat {
-    if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
-    }
-    val contentScaleFactor = contentScale.computeScaleFactor(
-        srcSize = contentSize.toSize(),
-        dstSize = containerSize.toSize()
-    )
-    val scaledContentSize = contentSize.toSize().times(contentScaleFactor)
-    val alignmentOffset = alignment.align(
-        size = scaledContentSize.round(),
-        space = containerSize,
-        ltrLayout = true,
-    )
-    val contentInContainerRect = RectCompat(
-        left = alignmentOffset.x.toFloat(),
-        top = alignmentOffset.y.toFloat(),
-        right = alignmentOffset.x + scaledContentSize.width,
-        bottom = alignmentOffset.y + scaledContentSize.height,
-    )
-    return contentInContainerRect
-}
-
-// todo 考虑这个函数的作用
-fun computeContentInContainerInnerRect(
-    containerSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
-    contentScale: ContentScaleCompat,
-    alignment: AlignmentCompat,
-): RectCompat {
-    if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
-    }
-    val contentInContainerRect = computeContentInContainerRect(
-        containerSize = containerSize,
-        contentSize = contentSize,
-        contentScale = contentScale,
-        alignment = alignment,
-    )
-    val boundsRect = RectCompat(
-        left = 0f,
-        top = 0f,
-        right = containerSize.width.toFloat(),
-        bottom = containerSize.height.toFloat(),
-    )
-    val contentInContainerInnerRect =
-        contentInContainerRect.limitTo(boundsRect)
-    return contentInContainerInnerRect
-}
+const val DefaultMediumScaleMinMultiple: Float = 3f
 
 
 /* ******************************************* initial ***************************************** */
-
-@Suppress("MemberVisibilityCanBePrivate")
-class BaseTransformInfo(
-    val containerSize: IntSizeCompat,
-    val contentSize: IntSizeCompat,
-    val contentScale: ContentScaleCompat,
-    val alignment: AlignmentCompat,
-    val rotation: Int,
-    val ltrLayout: Boolean = true,
-) {
-
-    val rotatedContentSize: IntSizeCompat by lazy {
-        contentSize.rotate(rotation)
-    }
-
-    val rotatedContentScaleFactor: ScaleFactorCompat by lazy {
-        contentScale.computeScaleFactor(
-            srcSize = rotatedContentSize.toSize(),
-            dstSize = containerSize.toSize()
-        )
-    }
-
-    val scaledRotatedContentSize: IntSizeCompat by lazy {
-        rotatedContentSize.times(rotatedContentScaleFactor)
-    }
-
-    val alignmentOffset: IntOffsetCompat by lazy {
-        alignment.align(
-            size = scaledRotatedContentSize,
-            space = containerSize,
-            ltrLayout = ltrLayout,
-        )
-    }
-
-    val rotateOffset: OffsetCompat by lazy {
-        val rotatedContentInContainerRect = computeContentInContainerRect(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            rotation = rotation,
-        )
-        val moveRotatedContentToTopLeftOffset =
-            IntOffsetCompat.Zero - rotatedContentInContainerRect.topLeft
-        moveRotatedContentToTopLeftOffset * rotatedContentScaleFactor
-    }
-
-    val baseTransform: TransformCompat by lazy {
-        val offset = rotateOffset + alignmentOffset
-        val rotationOrigin = if (rotation != 0) {
-            val center = contentSize.toSize().center
-            TransformOriginCompat(
-                pivotFractionX = center.x / containerSize.width,
-                pivotFractionY = center.y / containerSize.height
-            )
-        } else {
-            TransformOriginCompat.TopStart
-        }
-        TransformCompat(
-            scale = rotatedContentScaleFactor,
-            scaleOrigin = TransformOriginCompat.TopStart,
-            offset = offset,
-            rotation = rotation.toFloat(),
-            rotationOrigin = rotationOrigin,
-        )
-    }
-}
 
 fun computeBaseTransform(
     containerSize: IntSizeCompat,
@@ -182,7 +26,7 @@ fun computeBaseTransform(
     rotation: Int,
 ): TransformCompat {
     /*
-    * Calculations are based on the following rules:
+     * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
      * 2. The scale center point is top left
      * 3. The rotate center point is the content center
@@ -194,63 +38,104 @@ fun computeBaseTransform(
     }
     require(rotation % 90 == 0) { "rotation must be multiple of 90" }
 
-    val baseTransformInfo = BaseTransformInfo(
+    val baseTransformHelper = BaseTransformHelper(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
         rotation = rotation,
     )
-    return baseTransformInfo.baseTransform
+    return baseTransformHelper.transform
 }
 
-const val DefaultMediumScaleMinMultiple: Float = 3f
+fun computeInitialUserTransform(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+    readMode: ReadMode?,
+    baseTransform: TransformCompat,
+): TransformCompat? {
+    if (readMode == null) return null
+    if (contentScale == ContentScaleCompat.FillBounds) return null
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val accept = readMode.accept(
+        srcSize = rotatedContentSize,
+        dstSize = containerSize
+    )
+    if (!accept) return null
+    val widthScale = containerSize.width / rotatedContentSize.width.toFloat()
+    val heightScale = containerSize.height / rotatedContentSize.height.toFloat()
+    val fillScale = max(widthScale, heightScale)
+    val baseTransformHelper = BaseTransformHelper(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+    )
+    val baseScaleFactor = baseTransformHelper.scaleFactor
+    val alignmentOffset = baseTransformHelper.alignmentOffset
+    val addScale = fillScale / baseScaleFactor.scaleX
+    val scaleX = baseScaleFactor.scaleX * addScale
+    val scaleY = baseScaleFactor.scaleY * addScale
+    val translateX = if (alignmentOffset.x < 0)
+        alignmentOffset.x * addScale else 0f
+    val translateY = if (alignmentOffset.y < 0)
+        alignmentOffset.y * addScale else 0f
+// todo 这里有错误，需要修复
+    val readModeTransform = TransformCompat(
+        scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
+        offset = OffsetCompat(x = translateX, y = translateY)
+    )
+    return readModeTransform.split(baseTransform)
+}
 
-fun computeUserScales(
+fun computeStepScales(
+    containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
-    containerSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
-    baseScale: ScaleFactorCompat,
-    mediumScaleMinMultiple: Float
+    rotation: Int,
+    mediumScaleMinMultiple: Float,
 ): FloatArray {
-    if (contentSize.isEmpty() || containerSize.isEmpty()) {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return floatArrayOf(1.0f, 1.0f, 1.0f)
-    } else if (contentScale == ContentScaleCompat.FillBounds
-        || baseScale.scaleX.format(2) != baseScale.scaleY.format(2)
-    ) {
-        val minScale = 1.0f
-        val mediumScale = minScale * mediumScaleMinMultiple
-        return floatArrayOf(minScale, mediumScale, mediumScale * 2f)
-    } else {
+    }
+
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val baseScaleFactor = contentScale.computeScaleFactor(
+        srcSize = rotatedContentSize.toSize(),
+        dstSize = containerSize.toSize()
+    )
+
+    val minScale = baseScaleFactor.scaleX
+    val minMediumScale = minScale * mediumScaleMinMultiple
+    val mediumScale = if (contentScale != ContentScaleCompat.FillBounds) {
         // The width and height of content fill the container at the same time
         val fillContainerScale = max(
-            containerSize.width / contentSize.width.toFloat(),
-            containerSize.height / contentSize.height.toFloat()
+            containerSize.width / rotatedContentSize.width.toFloat(),
+            containerSize.height / rotatedContentSize.height.toFloat()
         )
         // Enlarge content to the same size as its original
         val contentOriginScale = if (contentOriginSize.isNotEmpty) {
-            val widthScale = contentOriginSize.width / contentSize.width.toFloat()
-            val heightScale = contentOriginSize.height / contentSize.height.toFloat()
+            val rotatedContentOriginSize = contentOriginSize.rotate(rotation)
+            val widthScale = rotatedContentOriginSize.width / rotatedContentSize.width.toFloat()
+            val heightScale = rotatedContentOriginSize.height / rotatedContentSize.height.toFloat()
             max(widthScale, heightScale)
         } else {
             1.0f
         }
-        val minScale = baseScale.scaleX
-        val mediumScale = floatArrayOf(
-            contentOriginScale,
-            fillContainerScale,
-            minScale * mediumScaleMinMultiple
-        ).maxOrNull()!!
-        val maxScale = mediumScale * 2f
-        return floatArrayOf(minScale, mediumScale, maxScale)
-            .map { it / baseScale.scaleX }
-            .toFloatArray()
+        floatArrayOf(minMediumScale, fillContainerScale, contentOriginScale).maxOrNull()!!
+    } else {
+        minMediumScale
     }
+    val maxScale = mediumScale * 2f
+    return floatArrayOf(minScale, mediumScale, maxScale)
 }
 
-// todo 拆分三个方法
-fun computeZoomInitialConfig(
+fun computeInitialZoom(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
@@ -259,84 +144,53 @@ fun computeZoomInitialConfig(
     rotation: Int,
     readMode: ReadMode?,
     mediumScaleMinMultiple: Float,
-): InitialConfig {
+): InitialZoom {
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return InitialConfig(
-            minScale = 1.0f,
-            mediumScale = 1.0f,
-            maxScale = 1.0f,
-            baseTransform = TransformCompat.Origin,
-            userTransform = TransformCompat.Origin
-        )
+        return InitialZoom.Origin
     }
-
-    val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedContentOriginSize = contentOriginSize.rotate(rotation)
-
-    val baseTransform = computeBaseTransform(
-        contentSize = contentSize,
+    val stepScales = computeStepScales(
         containerSize = containerSize,
+        contentSize = contentSize,
+        contentOriginSize = contentOriginSize,
+        contentScale = contentScale,
+        rotation = rotation,
+        mediumScaleMinMultiple = mediumScaleMinMultiple,
+    )
+    val baseTransform = computeBaseTransform(
+        containerSize = containerSize,
+        contentSize = contentSize,
         contentScale = contentScale,
         alignment = contentAlignment,
         rotation = rotation,
     )
-
-    val userStepScales = computeUserScales(
-        contentSize = rotatedContentSize,
-        contentOriginSize = rotatedContentOriginSize,
+    val userTransform = computeInitialUserTransform(
         containerSize = containerSize,
+        contentSize = contentSize,
         contentScale = contentScale,
-        baseScale = contentScale.computeScaleFactor(
-            srcSize = rotatedContentSize.toSize(),
-            dstSize = containerSize.toSize()
-        ),
-        mediumScaleMinMultiple = mediumScaleMinMultiple,
+        alignment = contentAlignment,
+        rotation = rotation,
+        readMode = readMode,
+        baseTransform = baseTransform,
     )
-    val minScale = userStepScales[0] * baseTransform.scaleX
-    val mediumScale = userStepScales[1] * baseTransform.scaleX
-    val maxScale = userStepScales[2] * baseTransform.scaleX
-
-    val readModeTransform = readMode
-        ?.takeIf { contentScale != ContentScaleCompat.FillBounds }
-        ?.takeIf {
-            it.accept(
-                srcSize = rotatedContentSize,
-                dstSize = containerSize
-            )
-        }?.computeTransform(
-            containerSize = containerSize,
-            contentSize = rotatedContentSize,
-            baseTransform = baseTransform
-        )
-    val userTransform = readModeTransform?.split(baseTransform)
-
-    return InitialConfig(
-        minScale = minScale,
-        mediumScale = mediumScale,
-        maxScale = maxScale,
+    return InitialZoom(
+        minScale = stepScales[0],
+        mediumScale = stepScales[1],
+        maxScale = stepScales[2],
         baseTransform = baseTransform,
         userTransform = userTransform ?: TransformCompat.Origin
     )
 }
 
-class InitialConfig(
-    val minScale: Float,
-    val mediumScale: Float,
-    val maxScale: Float,
-    val baseTransform: TransformCompat,
-    val userTransform: TransformCompat,
-)
 
-
-/* ******************************************* VisibleRect ***************************************** */
+/* ******************************************* Rect ***************************************** */
 
 fun computeContainerVisibleRect(
     containerSize: IntSizeCompat,
     userScale: Float,
     userOffset: OffsetCompat
-): RectCompat {
+): IntRectCompat {
     if (containerSize.isEmpty()) {
-        return RectCompat.Zero
+        return IntRectCompat.Zero
     }
     val scaledContainerSize = containerSize.toSize().times(userScale)
     val topLeft = OffsetCompat(x = userOffset.x * -1, y = userOffset.y * -1)
@@ -346,28 +200,49 @@ fun computeContainerVisibleRect(
     val filteredEmptyRect =
         limitedScaledContainerVisibleRect.takeIf { !it.isEmpty } ?: RectCompat.Zero
     val containerVisibleRect = filteredEmptyRect.restoreScale(userScale)
-    return containerVisibleRect
+    val limitedContainerVisibleRect = containerVisibleRect.round().limitTo(containerSize)
+    return limitedContainerVisibleRect
 }
 
-// todo 考虑这个函数的作用
-fun computeContentInContainerVisibleRect(
+fun computeContentBaseDisplayRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
     rotation: Int,
-): RectCompat {
+): IntRectCompat {
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
+        return IntRectCompat.Zero
     }
-    val baseTransformInfo = BaseTransformInfo(
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    val baseTransformHelper = BaseTransformHelper(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+    )
+    return baseTransformHelper.displayRect.round()
+}
+
+fun computeContentBaseVisibleRect(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+): IntRectCompat {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return IntRectCompat.Zero
+    }
+    val baseTransformHelper = BaseTransformHelper(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
         rotation = rotation
     )
-    val scaledContentSize = baseTransformInfo.scaledRotatedContentSize
+    val scaledContentSize = baseTransformHelper.scaledRotatedContentSize
 
     val left: Float
     val right: Float
@@ -406,12 +281,35 @@ fun computeContentInContainerVisibleRect(
     val scaledContentInContainerVisibleRect =
         RectCompat(left = left, top = top, right = right, bottom = bottom)
     val contentInContainerVisibleRect =
-        scaledContentInContainerVisibleRect.restoreScale(baseTransformInfo.rotatedContentScaleFactor)
-            .limitTo(baseTransformInfo.rotatedContentSize.toSize())
+        scaledContentInContainerVisibleRect.restoreScale(baseTransformHelper.scaleFactor)
+            .limitTo(baseTransformHelper.rotatedContentSize.toSize())
     val reverseRotateContentInContainerVisibleRect =
         contentInContainerVisibleRect.reverseRotateInSpace(contentSize.toSize(), rotation)
             .limitTo(contentSize.toSize())
-    return reverseRotateContentInContainerVisibleRect
+    val limitedContentBaseVisibleRect =
+        reverseRotateContentInContainerVisibleRect.round().limitTo(contentSize)
+    return limitedContentBaseVisibleRect
+}
+
+fun computeContentBaseInsideDisplayRect(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+): IntRectCompat {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return IntRectCompat.Zero
+    }
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+    val baseTransformHelper = BaseTransformHelper(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+    )
+    return baseTransformHelper.insideDisplayRect.round()
 }
 
 fun computeContentDisplayRect(
@@ -422,9 +320,9 @@ fun computeContentDisplayRect(
     rotation: Int,
     userScale: Float,
     userOffset: OffsetCompat
-): RectCompat {
+): IntRectCompat {
     /*
-    * Calculations are based on the following rules:
+     * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
      * 2. The scale center point is top left
      * 3. The rotate center point is the content center
@@ -432,7 +330,7 @@ fun computeContentDisplayRect(
      */
 
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
+        return IntRectCompat.Zero
     }
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
 
@@ -452,7 +350,7 @@ fun computeContentDisplayRect(
     val baseRect = IntRectCompat(scaledRotatedContentAlignmentOffset, scaledRotatedContentSize)
     val scaledBaseRect = baseRect.toRect().scale(userScale)
     val contentDisplayRect = scaledBaseRect.translate(userOffset)
-    return contentDisplayRect
+    return contentDisplayRect.round()
 }
 
 fun computeContentVisibleRect(
@@ -463,34 +361,36 @@ fun computeContentVisibleRect(
     rotation: Int,
     userScale: Float,
     userOffset: OffsetCompat,
-): RectCompat {
+): IntRectCompat {
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
+        return IntRectCompat.Zero
     }
 
     val rotatedContentSize = contentSize.rotate(rotation)
-    val containerVisibleRect = computeContainerVisibleRect(containerSize, userScale, userOffset)
-    val contentInContainerInnerRect = computeContentInContainerInnerRect(
+    val containerVisibleRect =
+        computeContainerVisibleRect(containerSize, userScale, userOffset)
+    val contentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
+        rotation = 0,
     )
-    if (!containerVisibleRect.overlaps(contentInContainerInnerRect)) {
-        return RectCompat.Zero
+    if (!containerVisibleRect.overlaps(contentBaseInsideDisplayRect)) {
+        return IntRectCompat.Zero
     }
 
-    val contentRect = RectCompat(
-        left = (containerVisibleRect.left - contentInContainerInnerRect.left),
-        top = (containerVisibleRect.top - contentInContainerInnerRect.top),
-        right = (containerVisibleRect.right - contentInContainerInnerRect.left),
-        bottom = (containerVisibleRect.bottom - contentInContainerInnerRect.top)
+    val contentRect = IntRectCompat(
+        left = (containerVisibleRect.left - contentBaseInsideDisplayRect.left),
+        top = (containerVisibleRect.top - contentBaseInsideDisplayRect.top),
+        right = (containerVisibleRect.right - contentBaseInsideDisplayRect.left),
+        bottom = (containerVisibleRect.bottom - contentBaseInsideDisplayRect.top)
     )
-    val visibleBoundsRect = RectCompat(
-        left = 0f,
-        top = 0f,
-        right = contentInContainerInnerRect.width,
-        bottom = contentInContainerInnerRect.height
+    val visibleBoundsRect = IntRectCompat(
+        left = 0,
+        top = 0,
+        right = contentBaseInsideDisplayRect.width,
+        bottom = contentBaseInsideDisplayRect.height
     )
     val limitedVisibleRect = contentRect.limitTo(visibleBoundsRect)
     val contentScaleFactor = contentScale.computeScaleFactor(
@@ -498,24 +398,82 @@ fun computeContentVisibleRect(
         dstSize = containerSize.toSize()
     )
     val scaledLimitedVisibleRect = limitedVisibleRect.restoreScale(contentScaleFactor)
-    val contentInContainerVisibleRect = computeContentInContainerVisibleRect(
+    val contentBaseVisibleRect = computeContentBaseVisibleRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
         rotation = 0,
     )
-    val contentVisibleRect = scaledLimitedVisibleRect.translate(
-        translateX = contentInContainerVisibleRect.left,
-        translateY = contentInContainerVisibleRect.top
-    )
+    val contentVisibleRect =
+        scaledLimitedVisibleRect.translate(contentBaseVisibleRect.topLeft)
     val reversedRotateContentVisibleRect =
-        contentVisibleRect.reverseRotateInSpace(contentSize.toSize(), rotation)
-    return reversedRotateContentVisibleRect
+        contentVisibleRect.reverseRotateInSpace(contentSize, rotation)
+    val limitedContentVisibleRect = reversedRotateContentVisibleRect.limitTo(contentSize)
+    return limitedContentVisibleRect
 }
 
 
-/* ******************************************* Function ***************************************** */
+/* ******************************************* Offset ***************************************** */
+
+fun computeUserOffsetBounds(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+    userScale: Float,
+): RectCompat {
+    // todo 清明上河图双击放大后边缘没有对齐，影视这里出错了
+    // based on the top left zoom
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return RectCompat.Zero
+    }
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val scaledContainerSize = containerSize.toSize().times(userScale)
+    val contentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
+        containerSize = containerSize,
+        contentSize = rotatedContentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = 0,
+    )
+    val scaledContentInContainerInnerRect = contentBaseInsideDisplayRect.scale(userScale)
+
+    val horizontalBounds =
+        if (scaledContentInContainerInnerRect.width >= containerSize.width) {
+            ((scaledContentInContainerInnerRect.right - containerSize.width) * -1)..(scaledContentInContainerInnerRect.left * -1)
+        } else if (alignment.isStart) {
+            0f..0f
+        } else if (alignment.isHorizontalCenter) {
+            val horizontalSpace = (scaledContainerSize.width - containerSize.width) / 2f * -1
+            horizontalSpace..horizontalSpace
+        } else {   // contentAlignment.isEnd
+            val horizontalSpace = (scaledContainerSize.width - containerSize.width) * -1
+            horizontalSpace..horizontalSpace
+        }
+
+    val verticalBounds =
+        if (scaledContentInContainerInnerRect.height >= containerSize.height) {
+            ((scaledContentInContainerInnerRect.bottom - containerSize.height) * -1)..(scaledContentInContainerInnerRect.top * -1)
+        } else if (alignment.isTop) {
+            0f..0f
+        } else if (alignment.isVerticalCenter) {
+            val verticalSpace = (scaledContainerSize.height - containerSize.height) / 2f * -1
+            verticalSpace..verticalSpace
+        } else {   // contentAlignment.isBottom
+            val verticalSpace = (scaledContainerSize.height - containerSize.height) * -1
+            verticalSpace..verticalSpace
+        }
+
+    val offsetBounds = RectCompat(
+        left = horizontalBounds.start.toFloat(),
+        top = verticalBounds.start.toFloat(),
+        right = horizontalBounds.endInclusive.toFloat(),
+        bottom = verticalBounds.endInclusive.toFloat()
+    )
+    return offsetBounds
+}
 
 fun computeLocationUserOffset(
     containerSize: IntSizeCompat,
@@ -535,7 +493,6 @@ fun computeLocationUserOffset(
     )
     return locationOffset
 }
-
 
 fun computeTransformOffset(
     currentScale: Float,
@@ -575,75 +532,6 @@ fun computeTransformOffset(
         (restoreScaleCurrentOffset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
     val targetOffset = targetRestoreScaleCurrentOffset * newScale * -1f
     return targetOffset
-}
-
-fun computeUserOffsetBounds(
-    containerSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
-    contentScale: ContentScaleCompat,
-    alignment: AlignmentCompat,
-    rotation: Int,
-    userScale: Float,
-): RectCompat {
-    // based on the top left zoom
-    if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return RectCompat.Zero
-    }
-    val rotatedContentSize = contentSize.rotate(rotation)
-    val scaledContainerSize = containerSize.toSize().times(userScale)
-    val contentInContainerInnerRect = computeContentInContainerInnerRect(
-        containerSize = containerSize,
-        contentSize = rotatedContentSize,
-        contentScale = contentScale,
-        alignment = alignment,
-    )
-    val scaledContentInContainerInnerRect = contentInContainerInnerRect.scale(userScale)
-
-    val horizontalBounds =
-        if (scaledContentInContainerInnerRect.width.roundToInt() >= containerSize.width) {
-            ((scaledContentInContainerInnerRect.right - containerSize.width) * -1)..(scaledContentInContainerInnerRect.left * -1)
-        } else if (alignment.isStart) {
-            0f..0f
-        } else if (alignment.isHorizontalCenter) {
-            val horizontalSpace = (scaledContainerSize.width - containerSize.width) / 2f * -1
-            horizontalSpace..horizontalSpace
-        } else {   // contentAlignment.isEnd
-            val horizontalSpace = (scaledContainerSize.width - containerSize.width) * -1
-            horizontalSpace..horizontalSpace
-        }
-
-    val verticalBounds =
-        if (scaledContentInContainerInnerRect.height.roundToInt() >= containerSize.height) {
-            ((scaledContentInContainerInnerRect.bottom - containerSize.height) * -1)..(scaledContentInContainerInnerRect.top * -1)
-        } else if (alignment.isTop) {
-            0f..0f
-        } else if (alignment.isVerticalCenter) {
-            val verticalSpace = (scaledContainerSize.height - containerSize.height) / 2f * -1
-            verticalSpace..verticalSpace
-        } else {   // contentAlignment.isBottom
-            val verticalSpace = (scaledContainerSize.height - containerSize.height) * -1
-            verticalSpace..verticalSpace
-        }
-
-    val offsetBounds = RectCompat(
-        left = horizontalBounds.start.roundToInt().toFloat(),
-        top = verticalBounds.start.roundToInt().toFloat(),
-        right = horizontalBounds.endInclusive.roundToInt().toFloat(),
-        bottom = verticalBounds.endInclusive.roundToInt().toFloat()
-    )
-    return offsetBounds
-}
-
-fun calculateNextStepScale(
-    stepScales: FloatArray,
-    currentScale: Float,
-    rangeOfError: Float = 0.1f
-): Float {
-    if (stepScales.isEmpty()) return currentScale
-    val formattedCurrentScale = currentScale.format(1)
-    return stepScales
-        .find { it.format(1) > formattedCurrentScale + rangeOfError }
-        ?: stepScales.first()
 }
 
 fun computeScrollEdge(
@@ -693,6 +581,9 @@ fun canScroll(horizontal: Boolean, direction: Int, scrollEdge: ScrollEdge): Bool
     }
 }
 
+
+/* ******************************************* Scale ***************************************** */
+
 fun limitScaleWithRubberBand(
     currentScale: Float,
     targetScale: Float,
@@ -725,6 +616,18 @@ fun limitScaleWithRubberBand(
 
         else -> targetScale
     }
+}
+
+fun calculateNextStepScale(
+    stepScales: FloatArray,
+    currentScale: Float,
+    rangeOfError: Float = 0.1f
+): Float {
+    if (stepScales.isEmpty()) return currentScale
+    val formattedCurrentScale = currentScale.format(1)
+    return stepScales
+        .find { it.format(1) > formattedCurrentScale + rangeOfError }
+        ?: stepScales.first()
 }
 
 
@@ -763,13 +666,14 @@ fun containerPointToContentPoint(
         return IntOffsetCompat.Zero
     }
     val rotatedContentSize = contentSize.rotate(rotation)
-    val contentInContainerInnerRect = computeContentInContainerInnerRect(
+    val contentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = contentAlignment,
+        rotation = 0,
     )
-    val contentInContainerVisibleRect = computeContentInContainerVisibleRect(
+    val contentBaseVisibleRect = computeContentBaseVisibleRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
@@ -780,13 +684,13 @@ fun containerPointToContentPoint(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-    val scaledContentPointOffset = OffsetCompat(
-        x = containerPoint.x - contentInContainerInnerRect.left,
-        y = containerPoint.y - contentInContainerInnerRect.top,
+    val scaledContentPointOffset = IntOffsetCompat(
+        x = containerPoint.x - contentBaseInsideDisplayRect.left,
+        y = containerPoint.y - contentBaseInsideDisplayRect.top,
     )
     val contentPoint = IntOffsetCompat(
-        x = (scaledContentPointOffset.x / contentScaleFactor.scaleX + contentInContainerVisibleRect.left).roundToInt(),
-        y = (scaledContentPointOffset.y / contentScaleFactor.scaleY + contentInContainerVisibleRect.top).roundToInt(),
+        x = (scaledContentPointOffset.x / contentScaleFactor.scaleX + contentBaseVisibleRect.left).roundToInt(),
+        y = (scaledContentPointOffset.y / contentScaleFactor.scaleY + contentBaseVisibleRect.top).roundToInt(),
     )
     val limitedContentPoint = IntOffsetCompat(
         x = contentPoint.x.coerceIn(0, rotatedContentSize.width),
@@ -812,13 +716,14 @@ fun contentPointToContainerPoint(
     val rotatedContentSize = contentSize.rotate(rotation)
     val rotatedContentPoint =
         contentPoint.rotateInSpace(contentSize, rotation)
-    val contentInContainerInnerRect = computeContentInContainerInnerRect(
+    val contentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
-        alignment = contentAlignment
+        alignment = contentAlignment,
+        rotation = 0,
     )
-    val contentInContainerVisibleRect = computeContentInContainerVisibleRect(
+    val contentBaseVisibleRect = computeContentBaseVisibleRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
@@ -829,17 +734,17 @@ fun contentPointToContainerPoint(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-    val contentPointOffset = OffsetCompat(
-        x = rotatedContentPoint.x - contentInContainerVisibleRect.left,
-        y = rotatedContentPoint.y - contentInContainerVisibleRect.top,
+    val contentPointOffset = IntOffsetCompat(
+        x = rotatedContentPoint.x - contentBaseVisibleRect.left,
+        y = rotatedContentPoint.y - contentBaseVisibleRect.top,
     )
     val scaledContentPointOffset = OffsetCompat(
         x = contentPointOffset.x * contentScaleFactor.scaleX,
         y = contentPointOffset.y * contentScaleFactor.scaleY,
     )
     val containerPoint = IntOffsetCompat(
-        x = (contentInContainerInnerRect.left + scaledContentPointOffset.x).roundToInt(),
-        y = (contentInContainerInnerRect.top + scaledContentPointOffset.y).roundToInt(),
+        x = (contentBaseInsideDisplayRect.left + scaledContentPointOffset.x).roundToInt(),
+        y = (contentBaseInsideDisplayRect.top + scaledContentPointOffset.y).roundToInt(),
     )
     val limitedContainerPoint = IntOffsetCompat(
         x = containerPoint.x.coerceIn(0, containerSize.width),

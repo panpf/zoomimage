@@ -51,7 +51,6 @@ import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMoveKeyboardS
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.format
-import com.github.panpf.zoomimage.toShortString
 import kotlin.math.roundToInt
 
 @Composable
@@ -61,33 +60,12 @@ fun ZoomImageTool(
     imageUri: String,
 ) {
     val colors = MaterialTheme.colorScheme
-    val info = remember(
-        zoomableState.minScale,
-        zoomableState.mediumScale,
-        zoomableState.maxScale,
-        zoomableState.userTransform,
-        zoomableState.transform,
-        zoomableState.baseTransform,
-        zoomableState.contentVisibleRect
-    ) {
-        val scales = floatArrayOf(
-            zoomableState.minScale,
-            zoomableState.mediumScale,
-            zoomableState.maxScale
-        ).joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
+    val info = remember(zoomableState.transform) {
         val transform = zoomableState.transform
-        val userTransform = zoomableState.userTransform
-        val baseTransform = zoomableState.baseTransform
-        val userScaleFormatted = userTransform.scaleX.format(2)
-        val scaleFormatted = transform.scaleX.format(2)
-        val baseScaleFormatted = baseTransform.scaleX.format(2)
-        val offset = transform.offset.round()
-        val contentVisibleRect = zoomableState.contentVisibleRect
-        val scrollEdge = zoomableState.scrollEdge
         """
-            scale: $scaleFormatted(${baseScaleFormatted}*${userScaleFormatted}) in $scales
-            offset: ${offset.toShortString()}; edge=${scrollEdge.toShortString()}
-            visible: ${contentVisibleRect.toShortString()}
+            scale: ${transform.scale.toShortString()}
+            offset: ${transform.offset.round().toShortString()}
+            rotation: ${transform.rotation.roundToInt()}
         """.trimIndent()
     }
     Box(modifier = Modifier.fillMaxSize()) {

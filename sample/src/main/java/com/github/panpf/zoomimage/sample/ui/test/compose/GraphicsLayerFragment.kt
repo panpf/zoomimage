@@ -183,7 +183,7 @@ private fun GraphicsLayerSample() {
                 rotation = rotation,
                 userScale = userTransform.scaleX,
                 userOffset = userTransform.offset.toCompat(),
-            ).round()
+            )
             "display: ${rect.toShortString()}"
         }
     }

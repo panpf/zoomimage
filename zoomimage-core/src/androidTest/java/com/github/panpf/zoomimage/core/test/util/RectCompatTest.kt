@@ -8,6 +8,7 @@ import org.junit.Assert
 import org.junit.Test
 
 class RectCompatTest {
+    // todo Implementation tests
 
     @Test
     fun testRotateInSpaceAndReverseRotateInSpace() {

@@ -1,3 +1,5 @@
+@file:Suppress("UnnecessaryVariable")
+
 package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.animation.core.Animatable
@@ -44,14 +46,15 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
 import com.github.panpf.zoomimage.util.canScroll
 import com.github.panpf.zoomimage.util.computeContainerVisibleRect
+import com.github.panpf.zoomimage.util.computeContentBaseDisplayRect
 import com.github.panpf.zoomimage.util.computeContentDisplayRect
-import com.github.panpf.zoomimage.util.computeContentInContainerVisibleRect
+import com.github.panpf.zoomimage.util.computeContentBaseVisibleRect
 import com.github.panpf.zoomimage.util.computeContentVisibleRect
 import com.github.panpf.zoomimage.util.computeLocationUserOffset
 import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
 import com.github.panpf.zoomimage.util.computeUserOffsetBounds
-import com.github.panpf.zoomimage.util.computeZoomInitialConfig
+import com.github.panpf.zoomimage.util.computeInitialZoom
 import com.github.panpf.zoomimage.util.concat
 import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
@@ -167,17 +170,31 @@ class ZoomableState(
     var scaling: Boolean by mutableStateOf(false)
     var fling: Boolean by mutableStateOf(false)
 
-    val userOffsetBounds: IntRect by derivedStateOf {
-        computeUserOffsetBounds(
+    val containerVisibleRect: IntRect by derivedStateOf {
+        computeContainerVisibleRect(
+            containerSize = containerSize.toCompat(),
+            userScale = userTransform.scaleX,
+            userOffset = userTransform.offset.toCompat()
+        ).toPlatform()
+    }
+    val contentBaseDisplayRect: IntRect by derivedStateOf {
+        computeContentBaseDisplayRect(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
             alignment = contentAlignment.toCompat(),
             rotation = rotation,
-            userScale = userTransform.scaleX,
-        ).roundToPlatform()
+        ).toPlatform()
     }
-
+    val contentBaseVisibleRect: IntRect by derivedStateOf {
+        computeContentBaseVisibleRect(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = contentAlignment.toCompat(),
+            rotation = rotation,
+        ).toPlatform()
+    }
     val contentDisplayRect: IntRect by derivedStateOf {
         computeContentDisplayRect(
             containerSize = containerSize.toCompat(),
@@ -187,24 +204,7 @@ class ZoomableState(
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat(),
-        ).roundToPlatform()
-    }
-    val contentInContainerVisibleRect: IntRect by derivedStateOf {
-        computeContentInContainerVisibleRect(
-            containerSize = containerSize.toCompat(),
-            contentSize = contentSize.toCompat(),
-            contentScale = contentScale.toCompat(),
-            alignment = contentAlignment.toCompat(),
-            rotation = rotation,
-        ).roundToPlatform()
-    }
-
-    val containerVisibleRect: IntRect by derivedStateOf {
-        computeContainerVisibleRect(
-            containerSize = containerSize.toCompat(),
-            userScale = userTransform.scaleX,
-            userOffset = userTransform.offset.toCompat()
-        ).roundToPlatform()
+        ).toPlatform()
     }
     val contentVisibleRect: IntRect by derivedStateOf {
         computeContentVisibleRect(
@@ -215,8 +215,9 @@ class ZoomableState(
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat(),
-        ).roundToPlatform()
+        ).toPlatform()
     }
+
     val scrollEdge: ScrollEdge by derivedStateOf {
         val userOffsetBounds = computeUserOffsetBounds(
             containerSize = containerSize.toCompat(),
@@ -230,6 +231,16 @@ class ZoomableState(
             userOffsetBounds = userOffsetBounds,
             userOffset = userTransform.offset.toCompat(),
         )
+    }
+    val userOffsetBounds: IntRect by derivedStateOf {
+        computeUserOffsetBounds(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = contentAlignment.toCompat(),
+            rotation = rotation,
+            userScale = userTransform.scaleX,
+        ).roundToPlatform()
     }
 
     fun reset(
@@ -248,7 +259,7 @@ class ZoomableState(
         val rotation = rotation
         val mediumScaleMinMultiple = mediumScaleMinMultiple
 
-        val initialConfig = computeZoomInitialConfig(
+        val initialZoom = computeInitialZoom(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentOriginSize = contentOriginSize.toCompat(),
@@ -259,7 +270,7 @@ class ZoomableState(
             mediumScaleMinMultiple = mediumScaleMinMultiple
         )
         logger.d {
-            val transform = initialConfig.baseTransform.concat(initialConfig.userTransform)
+            val transform = initialZoom.baseTransform.concat(initialZoom.userTransform)
             "reset:$caller. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -269,19 +280,19 @@ class ZoomableState(
                     "rotation=${rotation}, " +
                     "mediumScaleMinMultiple=${mediumScaleMinMultiple.format(4)}, " +
                     "readMode=${readMode}. " +
-                    "minScale=${initialConfig.minScale.format(4)}, " +
-                    "mediumScale=${initialConfig.mediumScale.format(4)}, " +
-                    "maxScale=${initialConfig.maxScale.format(4)}, " +
-                    "baseTransform=${initialConfig.baseTransform.toShortString()}, " +
-                    "userTransform=${initialConfig.userTransform.toShortString()}, " +
+                    "minScale=${initialZoom.minScale.format(4)}, " +
+                    "mediumScale=${initialZoom.mediumScale.format(4)}, " +
+                    "maxScale=${initialZoom.maxScale.format(4)}, " +
+                    "baseTransform=${initialZoom.baseTransform.toShortString()}, " +
+                    "userTransform=${initialZoom.userTransform.toShortString()}, " +
                     "transform=${transform.toShortString()}"
         }
 
-        minScale = initialConfig.minScale
-        mediumScale = initialConfig.mediumScale
-        maxScale = initialConfig.maxScale
-        baseTransform = initialConfig.baseTransform.toPlatform()
-        userTransform = initialConfig.userTransform.toPlatform()
+        minScale = initialZoom.minScale
+        mediumScale = initialZoom.mediumScale
+        maxScale = initialZoom.maxScale
+        baseTransform = initialZoom.baseTransform.toPlatform()
+        userTransform = initialZoom.userTransform.toPlatform()
     }
 
     fun scale(
@@ -561,8 +572,8 @@ class ZoomableState(
             else -> null
         }
         if (targetScale != null) {
-            @Suppress("UnnecessaryVariable") val startScale = currentScale
-            @Suppress("UnnecessaryVariable") val endScale = targetScale
+            val startScale = currentScale
+            val endScale = targetScale
             logger.d {
                 "rollbackScale. " +
                         "lastTransformCentroid=${lastTransformCentroid.toShortString()}. " +
@@ -639,7 +650,6 @@ class ZoomableState(
     fun canDrag(horizontal: Boolean, direction: Int): Boolean =
         canScroll(horizontal, direction * -1, scrollEdge)
 
-    @Suppress("UnnecessaryVariable")
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val contentSize =
