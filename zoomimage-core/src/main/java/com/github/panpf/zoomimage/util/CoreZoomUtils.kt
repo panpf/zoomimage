@@ -80,9 +80,9 @@ fun computeInitialUserTransform(
     val addScale = fillScale / baseScaleFactor.scaleX
     val scaleX = baseScaleFactor.scaleX * addScale
     val scaleY = baseScaleFactor.scaleY * addScale
-    val translateX = if (alignmentOffset.x < 0)
+    val translateX = if (alignmentOffset.x < 0f)
         alignmentOffset.x * addScale else 0f
-    val translateY = if (alignmentOffset.y < 0)
+    val translateY = if (alignmentOffset.y < 0f)
         alignmentOffset.y * addScale else 0f
 // todo 这里有错误，需要修复
     val readModeTransform = TransformCompat(
@@ -247,9 +247,9 @@ fun computeContentBaseVisibleRect(
     val left: Float
     val right: Float
     val horizontalSpace = (scaledContentSize.width - containerSize.width) / 2f
-    if (scaledContentSize.width <= containerSize.width) {
+    if (scaledContentSize.width.roundToInt() <= containerSize.width) {
         left = 0f
-        right = scaledContentSize.width.toFloat()
+        right = scaledContentSize.width
     } else if (alignment.isStart) {
         left = 0f
         right = containerSize.width.toFloat()
@@ -257,16 +257,16 @@ fun computeContentBaseVisibleRect(
         left = horizontalSpace
         right = horizontalSpace + containerSize.width
     } else {   // contentAlignment.isEnd
-        left = (scaledContentSize.width - containerSize.width).toFloat()
-        right = scaledContentSize.width.toFloat()
+        left = scaledContentSize.width - containerSize.width
+        right = scaledContentSize.width
     }
 
     val top: Float
     val bottom: Float
     val verticalSpace = (scaledContentSize.height - containerSize.height) / 2f
-    if (scaledContentSize.height <= containerSize.height) {
+    if (scaledContentSize.height.roundToInt() <= containerSize.height) {
         top = 0f
-        bottom = scaledContentSize.height.toFloat()
+        bottom = scaledContentSize.height
     } else if (alignment.isTop) {
         top = 0f
         bottom = containerSize.height.toFloat()
@@ -274,8 +274,8 @@ fun computeContentBaseVisibleRect(
         top = verticalSpace
         bottom = verticalSpace + containerSize.height
     } else {   // contentAlignment.isBottom
-        top = (scaledContentSize.height - containerSize.height).toFloat()
-        bottom = scaledContentSize.height.toFloat()
+        top = scaledContentSize.height - containerSize.height
+        bottom = scaledContentSize.height
     }
 
     val scaledContentInContainerVisibleRect =
@@ -424,8 +424,6 @@ fun computeUserOffsetBounds(
     rotation: Int,
     userScale: Float,
 ): RectCompat {
-    // todo 清明上河图双击放大后边缘没有对齐，影视这里出错了
-    // based on the top left zoom
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
     }
@@ -441,7 +439,7 @@ fun computeUserOffsetBounds(
     val scaledContentInContainerInnerRect = contentBaseInsideDisplayRect.scale(userScale)
 
     val horizontalBounds =
-        if (scaledContentInContainerInnerRect.width >= containerSize.width) {
+        if (scaledContentInContainerInnerRect.width.roundToInt() >= containerSize.width) {
             ((scaledContentInContainerInnerRect.right - containerSize.width) * -1)..(scaledContentInContainerInnerRect.left * -1)
         } else if (alignment.isStart) {
             0f..0f
@@ -454,7 +452,7 @@ fun computeUserOffsetBounds(
         }
 
     val verticalBounds =
-        if (scaledContentInContainerInnerRect.height >= containerSize.height) {
+        if (scaledContentInContainerInnerRect.height.roundToInt() >= containerSize.height) {
             ((scaledContentInContainerInnerRect.bottom - containerSize.height) * -1)..(scaledContentInContainerInnerRect.top * -1)
         } else if (alignment.isTop) {
             0f..0f
@@ -467,10 +465,10 @@ fun computeUserOffsetBounds(
         }
 
     val offsetBounds = RectCompat(
-        left = horizontalBounds.start.toFloat(),
-        top = verticalBounds.start.toFloat(),
-        right = horizontalBounds.endInclusive.toFloat(),
-        bottom = verticalBounds.endInclusive.toFloat()
+        left = horizontalBounds.start,
+        top = verticalBounds.start,
+        right = horizontalBounds.endInclusive,
+        bottom = verticalBounds.endInclusive
     )
     return offsetBounds
 }

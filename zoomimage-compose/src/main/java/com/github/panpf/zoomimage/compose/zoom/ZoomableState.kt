@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.toOffset
+import androidx.compose.ui.unit.toRect
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
@@ -47,14 +48,14 @@ import com.github.panpf.zoomimage.util.calculateNextStepScale
 import com.github.panpf.zoomimage.util.canScroll
 import com.github.panpf.zoomimage.util.computeContainerVisibleRect
 import com.github.panpf.zoomimage.util.computeContentBaseDisplayRect
-import com.github.panpf.zoomimage.util.computeContentDisplayRect
 import com.github.panpf.zoomimage.util.computeContentBaseVisibleRect
+import com.github.panpf.zoomimage.util.computeContentDisplayRect
 import com.github.panpf.zoomimage.util.computeContentVisibleRect
+import com.github.panpf.zoomimage.util.computeInitialZoom
 import com.github.panpf.zoomimage.util.computeLocationUserOffset
 import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
 import com.github.panpf.zoomimage.util.computeUserOffsetBounds
-import com.github.panpf.zoomimage.util.computeInitialZoom
 import com.github.panpf.zoomimage.util.concat
 import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
@@ -700,7 +701,7 @@ class ZoomableState(
             alignment = contentAlignment.toCompat(),
             rotation = rotation,
             userScale = userScale,
-        )
+        ).roundToPlatform().toRect()
         if (userOffset.x >= userOffsetBounds.left
             && userOffset.x <= userOffsetBounds.right
             && userOffset.y >= userOffsetBounds.top
@@ -713,19 +714,6 @@ class ZoomableState(
             y = userOffset.y.coerceIn(userOffsetBounds.top, userOffsetBounds.bottom),
         )
     }
-
-//    private fun limitUserTransform(userTransform: Transform): Transform {
-//        val limitedUserScale = limitUserScale(userTransform.scaleX)
-//        val limitedUserOffset = limitUserOffset(userTransform.offset, limitedUserScale)
-//        return if (limitedUserScale != userTransform.scaleX || limitedUserOffset != userTransform.offset) {
-//            userTransform.copy(
-//                scale = ScaleFactor(limitedUserScale),
-//                offset = limitedUserOffset,
-//            )
-//        } else {
-//            userTransform
-//        }
-//    }
 
     private suspend fun stopAllAnimationInternal(caller: String) {
         val lastScaleAnimatable = lastScaleAnimatable
