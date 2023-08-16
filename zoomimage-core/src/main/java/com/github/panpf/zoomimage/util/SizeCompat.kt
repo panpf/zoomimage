@@ -6,6 +6,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 
+// todo Unit tests
 data class SizeCompat(val width: Float, val height: Float) {
 
     companion object {

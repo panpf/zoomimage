@@ -7,9 +7,11 @@ import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 
+// todo Unit tests
 internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
 
 internal fun Float.format(newScale: Int): Float {
+    // todo Unit tests
     return if (this.isNaN()) {
         this
     } else {
@@ -19,6 +21,7 @@ internal fun Float.format(newScale: Int): Float {
 
 // File of internal utility methods used for the geometry library
 internal fun Float.toStringAsFixed(digits: Int): String {
+    // todo Unit tests
     val clampedDigits: Int = kotlin.math.max(digits, 0) // Accept positive numbers and 0 only
     val pow = 10f.pow(clampedDigits)
     val shifted = this * pow // shift the given value by the corresponding power of 10
@@ -46,6 +49,7 @@ internal fun Float.toStringAsFixed(digits: Int): String {
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
  */
 internal fun lerp(start: Float, stop: Float, fraction: Float): Float {
+    // todo Unit tests
     return (1 - fraction) * start + fraction * stop
 }
 
@@ -53,6 +57,7 @@ internal fun lerp(start: Float, stop: Float, fraction: Float): Float {
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
  */
 internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
+    // todo Unit tests
     return start + ((stop - start) * fraction.toDouble()).roundToInt()
 }
 
@@ -60,5 +65,6 @@ internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
  */
 internal fun lerp(start: Long, stop: Long, fraction: Float): Long {
+    // todo Unit tests
     return start + ((stop - start) * fraction.toDouble()).roundToLong()
 }

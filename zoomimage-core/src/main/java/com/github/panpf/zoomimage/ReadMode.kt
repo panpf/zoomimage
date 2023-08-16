@@ -21,6 +21,7 @@ import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.times
 import kotlin.math.max
 
+// todo Unit tests
 data class ReadMode(
     val direction: Direction = Direction.Both,
     val decider: Decider = Decider.Default

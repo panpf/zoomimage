@@ -7,6 +7,7 @@ import kotlin.math.roundToInt
 /**
  * Holds 2 dimensional scaling factors for horizontal and vertical axes
  */
+// todo Unit tests
 data class ScaleFactorCompat(
     /**
      * Returns the scale factor to apply along the horizontal axis

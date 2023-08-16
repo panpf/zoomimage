@@ -23,6 +23,14 @@ fun computeContentRotateOrigin(
     contentSize: IntSizeCompat,
     rotation: Int
 ): TransformOriginCompat {
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     return if (rotation != 0) {
         val center = contentSize.toSize().center
         TransformOriginCompat(
@@ -41,6 +49,7 @@ fun computeBaseTransform(
     alignment: AlignmentCompat,
     rotation: Int,
 ): TransformCompat {
+    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -72,6 +81,15 @@ fun computeInitialUserTransform(
     rotation: Int,
     readMode: ReadMode?,
 ): TransformCompat? {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (readMode == null) return null
     if (contentScale == ContentScaleCompat.FillBounds) return null
 
@@ -120,6 +138,15 @@ fun computeStepScales(
     rotation: Int,
     mediumScaleMinMultiple: Float,
 ): FloatArray {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return floatArrayOf(1.0f, 1.0f, 1.0f)
     }
@@ -165,6 +192,15 @@ fun computeInitialZoom(
     readMode: ReadMode?,
     mediumScaleMinMultiple: Float,
 ): InitialZoom {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return InitialZoom.Origin
     }
@@ -208,6 +244,15 @@ fun computeContainerVisibleRect(
     userScale: Float,
     userOffset: OffsetCompat
 ): RectCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty()) {
         return RectCompat.Zero
     }
@@ -230,6 +275,15 @@ fun computeContentBaseDisplayRect(
     alignment: AlignmentCompat,
     rotation: Int,
 ): RectCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
     }
@@ -251,6 +305,15 @@ fun computeContentBaseVisibleRect(
     alignment: AlignmentCompat,
     rotation: Int,
 ): RectCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
     }
@@ -317,6 +380,15 @@ fun computeContentBaseInsideDisplayRect(
     alignment: AlignmentCompat,
     rotation: Int,
 ): RectCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
     }
@@ -340,6 +412,7 @@ fun computeContentDisplayRect(
     userScale: Float,
     userOffset: OffsetCompat
 ): RectCompat {
+    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -381,6 +454,15 @@ fun computeContentVisibleRect(
     userScale: Float,
     userOffset: OffsetCompat,
 ): RectCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
     }
@@ -443,6 +525,15 @@ fun computeUserOffsetBounds(
     rotation: Int,
     userScale: Float,
 ): RectCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
     }
@@ -498,6 +589,15 @@ fun computeLocationUserOffset(
     containerPoint: IntOffsetCompat,
     userScale: Float,
 ): OffsetCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty()) {
         return OffsetCompat.Zero
     }
@@ -520,6 +620,7 @@ fun computeTransformOffset(
     pan: OffsetCompat,
     gestureRotate: Float,
 ): OffsetCompat {
+    // todo Unit tests
     /**
      * Rotates the given offset around the origin by the given angle in degrees.
      *
@@ -556,6 +657,7 @@ fun computeScrollEdge(
     userOffsetBounds: RectCompat,
     userOffset: OffsetCompat,
 ): ScrollEdge {
+    // todo Unit tests
     val leftFormatted = userOffsetBounds.left.roundToInt()
     val rightFormatted = userOffsetBounds.right.roundToInt()
     val xFormatted = userOffset.x.roundToInt()
@@ -584,6 +686,7 @@ fun computeScrollEdge(
  * @param direction Negative to check scrolling left, positive to check scrolling right.
  */
 fun canScroll(horizontal: Boolean, direction: Int, scrollEdge: ScrollEdge): Boolean {
+    // todo Unit tests
     return if (horizontal) {
         if (direction < 0) {
             scrollEdge.horizontal != Edge.START && scrollEdge.horizontal != Edge.BOTH
@@ -608,32 +711,31 @@ fun limitScaleWithRubberBand(
     minScale: Float,
     maxScale: Float,
     rubberBandRatio: Float = 2f
-): Float {
-    return when {
-        targetScale > maxScale -> {
-            val addScale = targetScale - currentScale
-            val rubberBandMaxScale = maxScale * rubberBandRatio
-            val overScale = targetScale - maxScale
-            val overMaxScale = rubberBandMaxScale - maxScale
-            val progress = overScale / overMaxScale
-            // Multiplying by 0.5f is to be a little slower
-            val limitedAddScale = addScale * (1 - progress) * 0.5f
-            currentScale + limitedAddScale
-        }
-
-        targetScale < minScale -> {
-            val addScale = targetScale - currentScale
-            val rubberBandMinScale = minScale / rubberBandRatio
-            val overScale = targetScale - minScale
-            val overMinScale = rubberBandMinScale - minScale
-            val progress = overScale / overMinScale
-            // Multiplying by 0.5f is to be a little slower
-            val limitedAddScale = addScale * (1 - progress) * 0.5f
-            currentScale + limitedAddScale
-        }
-
-        else -> targetScale
+): Float = when {
+    // todo Unit tests
+    targetScale > maxScale -> {
+        val addScale = targetScale - currentScale
+        val rubberBandMaxScale = maxScale * rubberBandRatio
+        val overScale = targetScale - maxScale
+        val overMaxScale = rubberBandMaxScale - maxScale
+        val progress = overScale / overMaxScale
+        // Multiplying by 0.5f is to be a little slower
+        val limitedAddScale = addScale * (1 - progress) * 0.5f
+        currentScale + limitedAddScale
     }
+
+    targetScale < minScale -> {
+        val addScale = targetScale - currentScale
+        val rubberBandMinScale = minScale / rubberBandRatio
+        val overScale = targetScale - minScale
+        val overMinScale = rubberBandMinScale - minScale
+        val progress = overScale / overMinScale
+        // Multiplying by 0.5f is to be a little slower
+        val limitedAddScale = addScale * (1 - progress) * 0.5f
+        currentScale + limitedAddScale
+    }
+
+    else -> targetScale
 }
 
 fun calculateNextStepScale(
@@ -657,6 +759,15 @@ fun touchPointToContainerPoint(
     userOffset: OffsetCompat,
     touchPoint: OffsetCompat
 ): IntOffsetCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty()) {
         return IntOffsetCompat.Zero
     }
@@ -680,6 +791,15 @@ fun containerPointToContentPoint(
     rotation: Int,
     containerPoint: IntOffsetCompat
 ): IntOffsetCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return IntOffsetCompat.Zero
     }
@@ -727,6 +847,15 @@ fun contentPointToContainerPoint(
     rotation: Int,
     contentPoint: IntOffsetCompat
 ): IntOffsetCompat {
+    // todo Unit tests
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return IntOffsetCompat.Zero
     }

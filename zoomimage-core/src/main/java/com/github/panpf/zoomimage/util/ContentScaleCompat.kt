@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.util
 import kotlin.math.max
 import kotlin.math.min
 
+// todo Unit tests
 interface ContentScaleCompat {
 
     /**

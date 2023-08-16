@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage.util
 
 import kotlin.math.roundToInt
 
+// todo Unit tests
 fun interface AlignmentCompat {
     /**
      * Calculates the position of a box of size [size] relative to the top left corner of an area

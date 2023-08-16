@@ -54,7 +54,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     ZoomImageType.MyZoomImage.name
                 ),
                 minSdk = 21,
-                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE) // todo api 33 上直接拒绝
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE) // todo adaptation api 33
             ),
             Link(
                 title = "SketchZoomAsyncImage（My）",
