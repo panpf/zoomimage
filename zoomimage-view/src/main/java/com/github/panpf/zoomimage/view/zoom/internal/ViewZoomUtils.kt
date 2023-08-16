@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("UnnecessaryVariable")
+
 package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.graphics.Rect
@@ -262,13 +264,10 @@ private fun computeInitialUserTransform(
     if (readMode == null) return null
     if (contentScale == ContentScaleCompat.FillBounds) return null
     val rotatedContentSize = contentSize.rotate(rotation)
-    val accept = readMode.accept(
-        srcSize = rotatedContentSize,
-        dstSize = containerSize
-    )
-    if (!accept) return null
-    val widthScale = containerSize.width / contentSize.width.toFloat()
-    val heightScale = containerSize.height / contentSize.height.toFloat()
+    if (!readMode.accept(srcSize = rotatedContentSize, dstSize = containerSize)) return null
+
+    val widthScale = containerSize.width / rotatedContentSize.width.toFloat()
+    val heightScale = containerSize.height / rotatedContentSize.height.toFloat()
     val fillScale = max(widthScale, heightScale)
     val addScale = fillScale / baseTransform.scaleX
     val scaleX = baseTransform.scaleX * addScale
@@ -281,7 +280,8 @@ private fun computeInitialUserTransform(
         scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
         offset = OffsetCompat(x = translateX, y = translateY)
     )
-    return readModeTransform.split(baseTransform)
+    val initialUserTransform = readModeTransform.split(baseTransform)
+    return initialUserTransform
 }
 
 internal fun computeInitialZoom(

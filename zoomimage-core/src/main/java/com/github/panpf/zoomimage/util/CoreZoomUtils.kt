@@ -18,6 +18,22 @@ const val DefaultMediumScaleMinMultiple: Float = 3f
 
 /* ******************************************* initial ***************************************** */
 
+fun computeContentRotateOrigin(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    rotation: Int
+): TransformOriginCompat {
+    return if (rotation != 0) {
+        val center = contentSize.toSize().center
+        TransformOriginCompat(
+            pivotFractionX = center.x / containerSize.width,
+            pivotFractionY = center.y / containerSize.height
+        )
+    } else {
+        TransformOriginCompat.TopStart
+    }
+}
+
 fun computeBaseTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -55,19 +71,10 @@ fun computeInitialUserTransform(
     alignment: AlignmentCompat,
     rotation: Int,
     readMode: ReadMode?,
-    baseTransform: TransformCompat,
 ): TransformCompat? {
     if (readMode == null) return null
     if (contentScale == ContentScaleCompat.FillBounds) return null
-    val rotatedContentSize = contentSize.rotate(rotation)
-    val accept = readMode.accept(
-        srcSize = rotatedContentSize,
-        dstSize = containerSize
-    )
-    if (!accept) return null
-    val widthScale = containerSize.width / rotatedContentSize.width.toFloat()
-    val heightScale = containerSize.height / rotatedContentSize.height.toFloat()
-    val fillScale = max(widthScale, heightScale)
+
     val baseTransformHelper = BaseTransformHelper(
         containerSize = containerSize,
         contentSize = contentSize,
@@ -75,21 +82,34 @@ fun computeInitialUserTransform(
         alignment = alignment,
         rotation = rotation,
     )
-    val baseScaleFactor = baseTransformHelper.scaleFactor
-    val alignmentOffset = baseTransformHelper.alignmentOffset
-    val addScale = fillScale / baseScaleFactor.scaleX
-    val scaleX = baseScaleFactor.scaleX * addScale
-    val scaleY = baseScaleFactor.scaleY * addScale
-    val translateX = if (alignmentOffset.x < 0f)
-        alignmentOffset.x * addScale else 0f
-    val translateY = if (alignmentOffset.y < 0f)
-        alignmentOffset.y * addScale else 0f
-// todo 这里有错误，需要修复
-    val readModeTransform = TransformCompat(
-        scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
-        offset = OffsetCompat(x = translateX, y = translateY)
+    val rotatedContentSize = baseTransformHelper.rotatedContentSize
+    if (!readMode.accept(srcSize = rotatedContentSize, dstSize = containerSize)) return null
+
+    val widthScale = containerSize.width / rotatedContentSize.width.toFloat()
+    val heightScale = containerSize.height / rotatedContentSize.height.toFloat()
+    val fillScale = max(widthScale, heightScale)
+    val readModeScale = ScaleFactorCompat(fillScale)
+
+    val baseTransform = baseTransformHelper.transform
+    val addScale = fillScale / baseTransform.scaleX
+    val alignmentMoveToStartOffset = baseTransformHelper.alignmentOffset.let {
+        OffsetCompat(it.x.coerceAtMost(0f), it.y.coerceAtMost(0f))
+    }
+    val readModeOffset = (alignmentMoveToStartOffset + baseTransformHelper.rotateOffset) * addScale
+
+    val rotationOrigin = computeContentRotateOrigin(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        rotation = rotation
     )
-    return readModeTransform.split(baseTransform)
+    val readModeTransform = TransformCompat(
+        scale = readModeScale,
+        offset = readModeOffset,
+        rotation = rotation.toFloat(),
+        rotationOrigin = rotationOrigin,
+    )
+    val initialUserTransform = readModeTransform.split(baseTransformHelper.transform)
+    return initialUserTransform
 }
 
 fun computeStepScales(
@@ -170,7 +190,6 @@ fun computeInitialZoom(
         alignment = contentAlignment,
         rotation = rotation,
         readMode = readMode,
-        baseTransform = baseTransform,
     )
     return InitialZoom(
         minScale = stepScales[0],
@@ -429,18 +448,19 @@ fun computeUserOffsetBounds(
     }
     val rotatedContentSize = contentSize.rotate(rotation)
     val scaledContainerSize = containerSize.toSize().times(userScale)
-    val contentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
+    val rotatedContentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
         rotation = 0,
     )
-    val scaledContentInContainerInnerRect = contentBaseInsideDisplayRect.scale(userScale)
+    val scaledRotatedContentBaseInsideDisplayRect =
+        rotatedContentBaseInsideDisplayRect.scale(userScale)
 
     val horizontalBounds =
-        if (scaledContentInContainerInnerRect.width.roundToInt() >= containerSize.width) {
-            ((scaledContentInContainerInnerRect.right - containerSize.width) * -1)..(scaledContentInContainerInnerRect.left * -1)
+        if (scaledRotatedContentBaseInsideDisplayRect.width.roundToInt() >= containerSize.width) {
+            ((scaledRotatedContentBaseInsideDisplayRect.right - containerSize.width) * -1)..(scaledRotatedContentBaseInsideDisplayRect.left * -1)
         } else if (alignment.isStart) {
             0f..0f
         } else if (alignment.isHorizontalCenter) {
@@ -452,8 +472,8 @@ fun computeUserOffsetBounds(
         }
 
     val verticalBounds =
-        if (scaledContentInContainerInnerRect.height.roundToInt() >= containerSize.height) {
-            ((scaledContentInContainerInnerRect.bottom - containerSize.height) * -1)..(scaledContentInContainerInnerRect.top * -1)
+        if (scaledRotatedContentBaseInsideDisplayRect.height.roundToInt() >= containerSize.height) {
+            ((scaledRotatedContentBaseInsideDisplayRect.bottom - containerSize.height) * -1)..(scaledRotatedContentBaseInsideDisplayRect.top * -1)
         } else if (alignment.isTop) {
             0f..0f
         } else if (alignment.isVerticalCenter) {

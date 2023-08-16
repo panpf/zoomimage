@@ -11,6 +11,7 @@ import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
+import com.github.panpf.zoomimage.util.computeContentRotateOrigin
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
@@ -68,7 +69,13 @@ internal class BaseTransformHelper(
 
     val offset: OffsetCompat by lazy { rotateOffset + alignmentOffset }
 
-    val rotationOrigin by lazy { computeContentRotateOrigin(contentSize, rotation) }
+    val rotationOrigin by lazy {
+        computeContentRotateOrigin(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            rotation = rotation
+        )
+    }
 
     val displayRect: RectCompat by lazy {
         RectCompat(
@@ -134,20 +141,5 @@ internal class BaseTransformHelper(
             rotation = rotation,
         )
         return IntOffsetCompat.Zero - rotatedContentRect.topLeft
-    }
-
-    private fun computeContentRotateOrigin(
-        contentSize: IntSizeCompat,
-        rotation: Int
-    ): TransformOriginCompat {
-        return if (rotation != 0) {
-            val center = contentSize.toSize().center
-            TransformOriginCompat(
-                pivotFractionX = center.x / containerSize.width,
-                pivotFractionY = center.y / containerSize.height
-            )
-        } else {
-            TransformOriginCompat.TopStart
-        }
     }
 }
