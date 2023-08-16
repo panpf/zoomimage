@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.center
-import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toRect
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
@@ -40,6 +39,7 @@ import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.roundToPlatform
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toCompatOffset
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
@@ -245,10 +245,9 @@ class ZoomableState(
     }
 
     fun reset(
-        caller: String, immediate: Boolean = false
-    ) = coroutineScope.launch(
-        if (immediate) Dispatchers.Main.immediate else EmptyCoroutineContext
-    ) {
+        caller: String,
+        immediate: Boolean = false
+    ) = coroutineScope.launch(getCoroutineContext (immediate)) {
         stopAllAnimationInternal("reset:$caller")
 
         val containerSize = containerSize
@@ -298,11 +297,11 @@ class ZoomableState(
 
     fun scale(
         targetScale: Float,
-        centroid: Offset = containerSize.center.toOffset(),
+        contentPoint: IntOffset? = null,
         animated: Boolean = false
     ) = coroutineScope.launch {
-        containerSize.takeIf { it.isNotEmpty() } ?: return@launch
-        contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@launch
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return@launch
 
         stopAllAnimationInternal("scale")
 
@@ -311,11 +310,25 @@ class ZoomableState(
         val currentUserTransform = userTransform
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
+
+        val containerPoint = if (contentPoint != null) {
+            contentPointToContainerPoint(
+                containerSize = containerSize.toCompat(),
+                contentSize = contentSize.toCompat(),
+                contentScale = contentScale.toCompat(),
+                contentAlignment = contentAlignment.toCompat(),
+                rotation = rotation,
+                contentPoint = contentPoint.toCompat(),
+            ).toPlatform()
+        } else {
+            containerSize.center
+        }
+
         val targetUserOffset = computeTransformOffset(
             currentScale = currentUserScale,
             currentOffset = currentUserOffset.toCompat(),
             targetScale = limitedTargetUserScale,
-            centroid = centroid.toCompat(),
+            centroid = containerPoint.toCompatOffset(),
             pan = OffsetCompat.Zero,
             gestureRotate = 0f,
         ).toPlatform()
@@ -331,8 +344,9 @@ class ZoomableState(
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "scale. " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "centroid=${centroid.toShortString()}, " +
+                    "contentPoint=${contentPoint?.toShortString()}, " +
                     "animated=${animated}. " +
+                    "containerPoint=${containerPoint.toShortString()}, " +
                     "targetUserScale=${targetUserScale.format(4)}, " +
                     "addUserScale=${targetAddUserScale.format(4)} -> ${limitedAddUserScale.format(4)}, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
@@ -346,7 +360,10 @@ class ZoomableState(
         )
     }
 
-    fun offset(targetOffset: Offset, animated: Boolean = false) = coroutineScope.launch {
+    fun offset(
+        targetOffset: Offset,
+        animated: Boolean = false
+    ) = coroutineScope.launch {
         containerSize.takeIf { it.isNotEmpty() } ?: return@launch
         contentSize.takeIf { it.isNotEmpty() } ?: return@launch
 
@@ -457,13 +474,16 @@ class ZoomableState(
     }
 
     fun transform(
-        centroid: Offset, pan: Offset, zoom: Float, rotation: Float
+        centroid: Offset,
+        panChange: Offset,
+        zoomChange: Float,
+        rotationChange: Float
     ) = coroutineScope.launch {
         containerSize.takeIf { it.isNotEmpty() } ?: return@launch
         contentSize.takeIf { it.isNotEmpty() } ?: return@launch
         this@ZoomableState.lastTransformCentroid = centroid
 
-        val targetScale = transform.scaleX * zoom
+        val targetScale = transform.scaleX * zoomChange
         val targetUserScale = targetScale / baseTransform.scaleX
         val limitedTargetUserScale = if (rubberBandScale) {
             limitUserScaleWithRubberBand(targetUserScale)
@@ -478,7 +498,7 @@ class ZoomableState(
             currentOffset = currentUserOffset.toCompat(),
             targetScale = limitedTargetUserScale,
             centroid = centroid.toCompat(),
-            pan = pan.toCompat(),
+            pan = panChange.toCompat(),
             gestureRotate = 0f,
         ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
@@ -493,9 +513,9 @@ class ZoomableState(
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "transform. " +
                     "centroid=${centroid.toShortString()}, " +
-                    "pan=${pan.toShortString()}, " +
-                    "zoom=${zoom.format(4)}, " +
-                    "rotation=${rotation.format(4)}. " +
+                    "panChange=${panChange.toShortString()}, " +
+                    "zoomChange=${zoomChange.format(4)}, " +
+                    "rotationChange=${rotationChange.format(4)}. " +
                     "targetScale=${targetScale.format(4)}, " +
                     "targetUserScale=${targetUserScale.format(4)}, " +
                     "addUserScale=${targetAddUserScale.format(4)} -> ${limitedAddUserScale.format(4)}, " +
@@ -603,9 +623,9 @@ class ZoomableState(
                         val addScale = frameScale / nowScale
                         transform(
                             centroid = lastTransformCentroid,
-                            pan = Offset.Zero,
-                            zoom = addScale,
-                            rotation = 0f
+                            panChange = Offset.Zero,
+                            zoomChange = addScale,
+                            rotationChange = 0f
                         )
                     }
                 } catch (e: CancellationException) {
@@ -774,6 +794,9 @@ class ZoomableState(
             this.userTransform = targetUserTransform
         }
     }
+
+    private fun getCoroutineContext(immediate: Boolean) =
+        if (immediate) Dispatchers.Main.immediate else EmptyCoroutineContext
 
     override fun onRemembered() {
 

@@ -7,7 +7,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import com.github.panpf.zoomimage.compose.BuildConfig
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 
 fun Modifier.zoomable(
@@ -53,9 +52,9 @@ fun Modifier.zoomable(
                     state.scaling = true
                     state.transform(
                         centroid = centroid,
-                        pan = pan,
-                        zoom = zoom,
-                        rotation = rotation
+                        panChange = pan,
+                        zoomChange = zoom,
+                        rotationChange = rotation
                     )
                 },
                 onEnd = { _, velocity ->

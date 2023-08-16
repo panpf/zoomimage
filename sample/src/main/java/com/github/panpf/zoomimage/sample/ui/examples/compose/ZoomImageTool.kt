@@ -50,7 +50,6 @@ import com.github.panpf.zoomimage.sample.ui.common.compose.MyDialogState
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMoveKeyboardState
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
-import com.github.panpf.zoomimage.sample.util.format
 import kotlin.math.roundToInt
 
 @Composable
@@ -112,7 +111,7 @@ fun ZoomImageTool(
                                 valueRange = zoomableState.minScale..zoomableState.maxScale,
                                 onValueChange = {
                                     value = it
-                                    zoomableState.scale(it, animated = true)
+                                    zoomableState.scale(targetScale = it, animated = true)
                                 },
                                 steps = 8,
                             )
