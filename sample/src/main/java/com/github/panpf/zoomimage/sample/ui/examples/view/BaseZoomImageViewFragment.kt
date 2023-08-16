@@ -253,25 +253,28 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val zoomAbility = zoomImageView.zoomAbility
         val subsamplingAbility = zoomImageView.subsamplingAbility
         val tileList = subsamplingAbility.tileList ?: emptyList()
-        val tilesByteCount = tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()
+        val loadedTileBytes = tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()
         val exifOrientationName =
             subsamplingAbility.imageInfo?.exifOrientation?.let { exifOrientationName(it) }
-        return ZoomImageViewInfoDialogFragmentArgs(
-            imageUri = sketchImageUri,
-            imageInfo = """
+        val loadedTileCount = tileList.count { it.bitmap != null }
+        val imageInfo = """
                 size=${subsamplingAbility.imageInfo?.size?.toShortString()}
                 mimeType=${subsamplingAbility.imageInfo?.mimeType}
                 exifOrientation=$exifOrientationName
-            """.trimIndent(),
-            sizeInfo = """
+            """.trimIndent()
+        val sizeInfo = """
                 view=${zoomAbility.viewSize.toShortString()}
                 drawable=${zoomAbility.drawableSize.toShortString()}
-            """.trimIndent(),
-            tilesInfo = """
-                tileCount=${tileList.size}
-                tilesBytes=${tilesByteCount}
-                loadedTileCount=${tileList.count { it.bitmap != null }}
             """.trimIndent()
+        val tilesInfo = """
+                tiles=${tileList.size}
+                loadedTiles=$loadedTileCount, $loadedTileBytes
+            """.trimIndent()
+        return ZoomImageViewInfoDialogFragmentArgs(
+            imageUri = sketchImageUri,
+            imageInfo = imageInfo,
+            sizeInfo = sizeInfo,
+            tilesInfo = tilesInfo
         )
     }
 }

@@ -39,6 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
+import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.rememberZoomImageLogger
@@ -55,6 +57,7 @@ import kotlin.math.roundToInt
 @Composable
 fun ZoomImageTool(
     zoomableState: ZoomableState,
+    subsamplingState: SubsamplingState,
     infoDialogState: MyDialogState,
     imageUri: String,
 ) {
@@ -126,7 +129,8 @@ fun ZoomImageTool(
                                             .let { Offset(it.width.toFloat(), it.height.toFloat()) }
                                     }
                                 }
-                                val moveKeyboardState = rememberMoveKeyboardState(maxStep = maxStep, stepInterval = 8)
+                                val moveKeyboardState =
+                                    rememberMoveKeyboardState(maxStep = maxStep, stepInterval = 8)
                                 LaunchedEffect(Unit) {
                                     moveKeyboardState.moveFlow.collect {
                                         zoomableState.offset(zoomableState.transform.offset + it * -1f)
@@ -232,7 +236,11 @@ fun ZoomImageTool(
         }
 
         MyDialog(state = infoDialogState) {
-            ZoomImageInfo(imageUri = imageUri, zoomableState = zoomableState)
+            ZoomImageInfo(
+                imageUri = imageUri,
+                zoomableState = zoomableState,
+                subsamplingState = subsamplingState
+            )
         }
     }
 }
@@ -240,8 +248,10 @@ fun ZoomImageTool(
 @Preview
 @Composable
 fun ZoomImageToolPreview() {
+    val logger = rememberZoomImageLogger()
     ZoomImageTool(
-        zoomableState = rememberZoomableState(rememberZoomImageLogger()),
+        zoomableState = rememberZoomableState(logger),
+        subsamplingState = rememberSubsamplingState(logger),
         infoDialogState = rememberMyDialogState(),
         imageUri = SampleImages.Asset.DOG.uri
     )

@@ -113,6 +113,7 @@ fun BaseZoomImageSample(
 
         ZoomImageTool(
             zoomableState = zoomableState,
+            subsamplingState = subsamplingState,
             infoDialogState = infoDialogState,
             imageUri = sketchImageUri,
         )

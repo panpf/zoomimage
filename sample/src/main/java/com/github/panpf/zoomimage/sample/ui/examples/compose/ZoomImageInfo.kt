@@ -13,6 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.panpf.tools4j.io.ktx.formatCompactFileSize
+import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.rememberZoomImageLogger
@@ -24,22 +27,17 @@ import com.github.panpf.zoomimage.toShortString
 fun ZoomImageInfo(
     imageUri: String,
     zoomableState: ZoomableState,
+    subsamplingState: SubsamplingState,
 ) {
-    val baseInfo = remember(
-        zoomableState.containerSize,
-        zoomableState.contentSize,
-        zoomableState.contentOriginSize
-    ) {
+    val baseInfo = remember(zoomableState.transform) {
         """
-            imageUri: $imageUri
             containerSize: ${zoomableState.containerSize.let { "${it.width}x${it.height}" }}
             contentSize: ${zoomableState.contentSize.let { "${it.width}x${it.height}" }}
             contentOriginSize: ${zoomableState.contentOriginSize.let { "${it.width}x${it.height}" }}
+            rotation: ${zoomableState.transform.rotation}
         """.trimIndent()
     }
-    val scaleInfo = remember(
-        zoomableState.transform,
-    ) {
+    val scaleInfo = remember(zoomableState.transform) {
         val transform = zoomableState.transform
         val userTransform = zoomableState.userTransform
         val baseTransform = zoomableState.baseTransform
@@ -58,9 +56,7 @@ fun ZoomImageInfo(
             stepScales: $scales
         """.trimIndent()
     }
-    val offsetInfo = remember(
-        zoomableState.transform,
-    ) {
+    val offsetInfo = remember(zoomableState.transform) {
         """
             offset: ${zoomableState.transform.offset.toShortString()}
             baseOffset: ${zoomableState.baseTransform.offset.toShortString()}
@@ -69,7 +65,7 @@ fun ZoomImageInfo(
             edge: ${zoomableState.scrollEdge.toShortString()}
         """.trimIndent()
     }
-    val otherInfo = remember(zoomableState.transform) {
+    val rectInfo = remember(zoomableState.transform) {
         """
             containerVisible: ${zoomableState.containerVisibleRect.toShortString()}
             contentBaseDisplay: ${zoomableState.contentBaseDisplayRect.toShortString()}
@@ -78,38 +74,57 @@ fun ZoomImageInfo(
             contentVisible: ${zoomableState.contentVisibleRect.toShortString()}
         """.trimIndent()
     }
+    val tileInfo = remember(zoomableState.transform) {
+        val tileList = subsamplingState.tileList
+        val loadedTileCount = tileList.count { it.bitmap != null }
+        val loadedTileBytes =
+            tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+        """
+            tiles=${tileList.size}
+            loadedTiles=$loadedTileCount, $loadedTileBytes
+        """.trimIndent()
+    }
 
     Column(Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.size(12.dp))
+        InfoItem(null, imageUri)
+
+        Spacer(modifier = Modifier.size(8.dp))
         InfoItem("Base", baseInfo)
 
-        Spacer(modifier = Modifier.size(12.dp))
+        Spacer(modifier = Modifier.size(8.dp))
         InfoItem("Scale：", scaleInfo)
 
-        Spacer(modifier = Modifier.size(12.dp))
+        Spacer(modifier = Modifier.size(8.dp))
         InfoItem("Offset：", offsetInfo)
 
-        Spacer(modifier = Modifier.size(12.dp))
-        InfoItem("Rect：", otherInfo)
+        Spacer(modifier = Modifier.size(8.dp))
+        InfoItem("Display&Visible：", rectInfo)
+
+        Spacer(modifier = Modifier.size(8.dp))
+        InfoItem("Tile：", tileInfo)
     }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun ZoomImageInfoPreview() {
+    val logger = rememberZoomImageLogger()
     ZoomImageInfo(
-        imageUri = "https://www.github.com/panpf/zoomimage",
-        zoomableState = rememberZoomableState(rememberZoomImageLogger())
+        imageUri = "https://www.sample.com/sample.jpg",
+        zoomableState = rememberZoomableState(logger),
+        subsamplingState = rememberSubsamplingState(logger)
     )
 }
 
 @Composable
-fun ColumnScope.InfoItem(title: String, content: String) {
-    Text(
-        text = title,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold
-    )
+fun ColumnScope.InfoItem(title: String?, content: String) {
+    if (title != null) {
+        Text(
+            text = title,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
     Text(
         text = content,
         modifier = Modifier.fillMaxWidth(),
