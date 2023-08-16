@@ -4,7 +4,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -147,7 +149,7 @@ class MoveKeyboardState(
 }
 
 @Composable
-fun MoveKeyboard(state: MoveKeyboardState) {
+fun MoveKeyboard(state: MoveKeyboardState, modifier: Modifier = Modifier.fillMaxWidth()) {
     val brush = remember {
         Brush.radialGradient(
             listOf(
@@ -159,8 +161,8 @@ fun MoveKeyboard(state: MoveKeyboardState) {
         )
     }
     Box(
-        Modifier
-            .size(80.dp)
+        modifier
+            .aspectRatio(1f)
             .background(brush, CircleShape)
             .onSizeChanged { state.containerSize = it }
     ) {
@@ -183,7 +185,7 @@ fun MoveKeyboard(state: MoveKeyboardState) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_gamepad),
                 contentDescription = "GamePad",
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center).fillMaxSize(0.7f)
             )
         }
     }

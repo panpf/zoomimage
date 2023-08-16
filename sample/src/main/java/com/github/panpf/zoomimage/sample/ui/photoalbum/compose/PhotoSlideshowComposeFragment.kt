@@ -123,7 +123,7 @@ private fun PageNumber(modifier: Modifier = Modifier, number: Int, total: Int) {
         color = colors.onTertiary,
         style = TextStyle(lineHeight = 12.sp),
         modifier = Modifier
-            .padding(12.dp) // margin
+            .padding(20.dp) // margin
             .background(
                 color = colors.tertiary.copy(alpha = 0.7f),
                 shape = RoundedCornerShape(50)
