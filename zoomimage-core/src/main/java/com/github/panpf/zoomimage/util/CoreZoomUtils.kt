@@ -166,7 +166,7 @@ fun computeStepScales(
             containerSize.height / rotatedContentSize.height.toFloat()
         )
         // Enlarge content to the same size as its original
-        val contentOriginScale = if (contentOriginSize.isNotEmpty) {
+        val contentOriginScale = if (contentOriginSize.isNotEmpty()) {
             val rotatedContentOriginSize = contentOriginSize.rotate(rotation)
             val widthScale = rotatedContentOriginSize.width / rotatedContentSize.width.toFloat()
             val heightScale = rotatedContentOriginSize.height / rotatedContentSize.height.toFloat()

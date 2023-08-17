@@ -157,10 +157,13 @@ internal operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
 
 
 @Stable
-internal fun IntSize.isEmpty(): Boolean = width == 0 || height == 0
+internal fun IntSize.isEmpty(): Boolean = width <= 0 || height <= 0
 
 @Stable
-internal fun IntSize.isNotEmpty(): Boolean = width != 0 && height != 0
+internal fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0
+
+@Stable
+internal fun Size.isNotEmpty(): Boolean = width > 0f && height > 0f
 
 
 internal fun IntSize.rotate(rotation: Int): IntSize {

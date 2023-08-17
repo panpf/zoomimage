@@ -71,7 +71,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val drawableSize = zoomView.zoomAbility.drawableSize.takeIf { !it.isEmpty() } ?: return
 
         val imageSize = zoomView.zoomAbility.imageSize
-        if (imageSize.isNotEmpty) {
+        if (imageSize.isNotEmpty()) {
             val widthTargetScale = imageSize.width.toFloat() / viewWidth
             val heightTargetScale = imageSize.height.toFloat() / viewHeight
             val imageLoadRect = zoomView.subsamplingAbility.imageLoadRect

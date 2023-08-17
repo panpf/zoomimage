@@ -13,7 +13,7 @@ data class SizeCompat(val width: Float, val height: Float) {
         val Zero = SizeCompat(width = 0f, height = 0f)
     }
 
-    fun isEmpty(): Boolean = width == 0f || height == 0f
+    fun isEmpty(): Boolean = width <= 0.0f || height <= 0.0f
 
     /**
      * Multiplication operator.
@@ -84,8 +84,7 @@ val SizeCompat.center: OffsetCompat get() = OffsetCompat(x = width / 2f, y = hei
 fun SizeCompat.toShortString(): String = "${width.format(2)}x${height.format(2)}"
 
 
-val SizeCompat.isNotEmpty: Boolean
-    get() = !isEmpty()
+fun SizeCompat.isNotEmpty(): Boolean = width > 0f && height > 0f
 
 fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height

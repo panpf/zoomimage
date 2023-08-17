@@ -48,10 +48,9 @@ val IntSizeCompat.center: IntOffsetCompat
 
 fun IntSizeCompat.toShortString(): String = "${width}x$height"
 
-fun IntSizeCompat.isEmpty(): Boolean = width == 0 || height == 0
+fun IntSizeCompat.isEmpty(): Boolean = width <= 0 || height <= 0
 
-val IntSizeCompat.isNotEmpty: Boolean
-    get() = !isEmpty()
+fun IntSizeCompat.isNotEmpty(): Boolean = width > 0 && height > 0
 
 fun IntSizeCompat.isSameAspectRatio(other: IntSizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height.toFloat()
