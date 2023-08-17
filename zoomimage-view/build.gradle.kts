@@ -15,14 +15,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    @Suppress("UnstableApiUsage")
     buildFeatures {
         buildConfig = true
     }
     buildTypes {
         release {
             isMinifyEnabled = false
-            @Suppress("UnstableApiUsage")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -44,8 +42,7 @@ dependencies {
     api(libs.kotlinx.coroutines.android)
     api(libs.androidx.annotation)
     api(libs.androidx.appcompat)
-//    api(libs.androidx.core.ktx)
-//    api(libs.androidx.appcompat)
+    api(libs.androidx.core.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

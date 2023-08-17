@@ -15,7 +15,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    @Suppress("UnstableApiUsage")
     buildFeatures {
         compose = true
         buildConfig = true
@@ -26,7 +25,6 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            @Suppress("UnstableApiUsage")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

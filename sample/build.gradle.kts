@@ -21,7 +21,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    @Suppress("UnstableApiUsage")
     buildFeatures {
         compose = true
         viewBinding = true
@@ -52,7 +51,6 @@ android {
             multiDexEnabled = true
             isMinifyEnabled = true
 //            isShrinkResources = true
-            @Suppress("UnstableApiUsage")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
