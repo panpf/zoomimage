@@ -40,6 +40,7 @@ import com.github.panpf.zoomimage.util.computeContentBaseVisibleRect
 import com.github.panpf.zoomimage.util.computeContentDisplayRect
 import com.github.panpf.zoomimage.util.computeContentVisibleRect
 import com.github.panpf.zoomimage.util.computeLocationUserOffset
+import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
 import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
@@ -84,7 +85,19 @@ class ZoomEngine2 constructor(logger: Logger, val view: View) {
     var transform = TransformCompat.Origin
         private set
     var scaling = false
+        set(value) {
+            if (field != value) {
+                field = value
+                notifyMatrixChanged()
+            }
+        }
     var fling = false
+        set(value) {
+            if (field != value) {
+                field = value
+                notifyMatrixChanged()
+            }
+        }
 
     var scrollEdge: ScrollEdge = ScrollEdge.Default
         private set
@@ -353,6 +366,19 @@ class ZoomEngine2 constructor(logger: Logger, val view: View) {
             userOffset = userTransform.offset,
         ).round()
 
+        val userOffsetBounds = com.github.panpf.zoomimage.util.computeUserOffsetBounds(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = contentAlignment,
+            rotation = rotation,
+            userScale = userTransform.scaleX,
+        )
+        scrollEdge = computeScrollEdge(
+            userOffsetBounds = userOffsetBounds,
+            userOffset = userTransform.offset,
+        )
+
         notifyMatrixChanged()
     }
 
@@ -611,32 +637,29 @@ class ZoomEngine2 constructor(logger: Logger, val view: View) {
                 it.bottom.roundToInt()
             )
         }
-        val velocity = IntOffsetCompat(-velocityX.roundToInt(), -velocityY.roundToInt())
+        val velocity = IntOffsetCompat(velocityX.roundToInt(), velocityY.roundToInt())
         logger.d {
             "fling. start. " +
                     "start=${startUserOffset.toShortString()}, " +
                     "bounds=${userOffsetBounds.toShortString()}, " +
                     "velocity=${velocity.toShortString()}"
         }
-        var currentX = startUserOffset.x
-        var currentY = startUserOffset.y
         lastFlingAnimatable = FlingAnimatable(
             view = view,
             start = startUserOffset.round(),
             bounds = userOffsetBounds,
             velocity = velocity,
             onUpdateValue = { value ->
-                val newX = value.x
-                val newY = value.y
-                val dx = (currentX - newX)
-                val dy = (currentY - newY)
-                val add = IntOffsetCompat(dx.roundToInt(), dy.roundToInt())
-                offset(transform.offset + add)
-                currentX = newX.toFloat()
-                currentY = newY.toFloat()
+                val targetUserOffset =
+                    this@ZoomEngine2.userTransform.copy(offset = value.toOffset())
+                updateUserTransform(targetUserOffset, false, "fling")
             },
-            onEnd = { notifyMatrixChanged() }
+            onEnd = {
+                fling = false
+                notifyMatrixChanged()
+            }
         )
+        fling = true
         lastFlingAnimatable?.start()
     }
 

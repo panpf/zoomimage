@@ -43,6 +43,7 @@ import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {
@@ -127,14 +128,13 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewTileMap.setZoomImageView(zoomImageView)
 
         common.zoomImageViewRotate.setOnClickListener {
-            zoomImageView.zoomAbility.rotate(zoomImageView.zoomAbility.rotation + 90)
+            zoomImageView.zoomAbility.rotate(zoomImageView.zoomAbility.transform.rotation.roundToInt() + 90)
         }
 
         common.zoomImageViewZoom.apply {
             setOnClickListener {
-                // todo 这里应该用 stitchScale，参考 ZoomableState
                 val nextStepScale = zoomImageView.zoomAbility.getNextStepScale()
-                zoomImageView.zoomAbility.scale(nextStepScale, animate = true)
+                zoomImageView.zoomAbility.scale(nextStepScale, animated = true)
             }
             val resetIcon = {
                 val zoomIn =
@@ -168,13 +168,13 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     arguments = ZoomImageViewLinearScaleDialogFragmentArgs(
                         valueFrom = zoomImageView.zoomAbility.minScale,
                         valueTo = zoomImageView.zoomAbility.maxScale,
-                        value = zoomImageView.zoomAbility.scale.scaleX,
+                        value = zoomImageView.zoomAbility.transform.scaleX,
                     ).toBundle()
                 }.show(childFragmentManager, null)
             }
             viewLifecycleOwner.lifecycleScope.launch {
                 linearScaleViewModel.changeFlow.collectLatest {
-                    zoomImageView.zoomAbility.scale(it, animate = true)
+                    zoomImageView.zoomAbility.scale(it, animated = true)
                 }
             }
         }
@@ -236,12 +236,12 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
             val scales = floatArrayOf(minScale, mediumScale, maxScale)
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
-            val offsetCompat = offset.round()
+            val offsetCompat = transform.offset.round()
             """
-                ${scale.scaleX.format(2)}(${baseScale.scaleX.format(2)}*${userScale.format(2)}) in $scales
+                ${transform.scaleX.format(2)}(${baseTransform.scaleX.format(2)}*${userTransform.scaleX.format(2)}) in $scales
                 ${offsetCompat.toShortString()}; edge=${scrollEdge.toShortString()}
-                ${getVisibleRect().toVeryShortString()}
-                ${getDisplayRect().toVeryShortString()}
+                ${containerVisibleRect.toShortString()}
+                ${contentDisplayRect.toShortString()}
             """.trimIndent()
         }
     }
@@ -263,8 +263,8 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 exifOrientation=$exifOrientationName
             """.trimIndent()
         val sizeInfo = """
-                view=${zoomAbility.viewSize.toShortString()}
-                drawable=${zoomAbility.drawableSize.toShortString()}
+                view=${zoomAbility.containerSize.toShortString()}
+                drawable=${zoomAbility.contentSize.toShortString()}
             """.trimIndent()
         val tilesInfo = """
                 tiles=${tileList.size}

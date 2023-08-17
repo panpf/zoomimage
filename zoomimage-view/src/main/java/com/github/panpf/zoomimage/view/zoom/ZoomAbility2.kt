@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.toSize
+import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarEngine
@@ -143,13 +144,7 @@ class ZoomAbility2 constructor(
 
         zoomEngine.scaleType = initScaleType
         zoomEngine.addOnMatrixChangeListener {
-            val transform = zoomEngine.transform
-            val matrix = cacheImageMatrix.apply {
-                reset()
-                postRotate(transform.rotation, transform.rotationOriginX, transform.rotationOriginY)
-                postScale(transform.scale.scaleX, transform.scale.scaleY)
-                postTranslate(transform.offset.x, transform.offset.y)
-            }
+            val matrix = cacheImageMatrix.applyTransform(zoomEngine.transform)
             imageViewBridge.superSetImageMatrix(matrix)
             scrollBarEngine?.onMatrixChanged()
         }
@@ -200,11 +195,11 @@ class ZoomAbility2 constructor(
                 )
             },
             onScaleBeginCallback = {
-//                zoomEngine.manualScaling = true
+                zoomEngine.scaling = true
                 true
             },
             onScaleEndCallback = {
-//                zoomEngine.manualScaling = false
+                zoomEngine.scaling = false   // todo 这里可能跟 fling 冲突了
             },
             onActionDownCallback = {
                 zoomEngine.stopAllAnimation("onActionDown")

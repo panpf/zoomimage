@@ -68,9 +68,9 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val viewWidth = width.takeIf { it > 0 } ?: return
         val viewHeight = height.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
-        val drawableSize = zoomView.zoomAbility.drawableSize.takeIf { !it.isEmpty() } ?: return
+        val drawableSize = zoomView.zoomAbility.contentSize.takeIf { !it.isEmpty() } ?: return
 
-        val imageSize = zoomView.zoomAbility.imageSize
+        val imageSize = zoomView.zoomAbility.contentOriginSize
         if (imageSize.isNotEmpty()) {
             val widthTargetScale = imageSize.width.toFloat() / viewWidth
             val heightTargetScale = imageSize.height.toFloat() / viewHeight
@@ -99,7 +99,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         }
 
         val drawableVisibleRect = drawableVisibleRect
-            .apply { zoomView.zoomAbility.getVisibleRect(this) }
+            .apply { zoomView.zoomAbility.containerVisibleRect }
             .takeIf { !it.isEmpty } ?: return
         val mapVisibleRect = mapVisibleRect.apply {
             val widthScaled = drawableSize.width / viewWidth.toFloat()
@@ -202,8 +202,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val realY = (y * heightScale).roundToInt()
 
         zoomView.zoomAbility.location(
-            offsetOfContent = IntOffsetCompat(x = realX, y = realY),
-            targetScale = zoomView.zoomAbility.scale.scaleX
+            contentPoint = IntOffsetCompat(x = realX, y = realY),
+            targetScale = zoomView.zoomAbility.transform.scaleX
                 .coerceAtLeast(zoomView.zoomAbility.mediumScale),
             animated = true
         )

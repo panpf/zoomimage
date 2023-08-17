@@ -1,8 +1,10 @@
 package com.github.panpf.zoomimage.view.internal
 
+import android.graphics.Matrix
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.util.AlignmentCompat
 import com.github.panpf.zoomimage.util.ContentScaleCompat
+import com.github.panpf.zoomimage.util.TransformCompat
 
 fun ScaleType.toContentScale(): ContentScaleCompat {
     return when (this) {
@@ -28,4 +30,12 @@ fun ScaleType.toAlignment(): AlignmentCompat {
         ScaleType.CENTER_CROP -> AlignmentCompat.Center
         ScaleType.CENTER_INSIDE -> AlignmentCompat.Center
     }
+}
+
+fun Matrix.applyTransform(transform: TransformCompat): Matrix {
+    reset()
+    postRotate(transform.rotation, transform.rotationOriginX, transform.rotationOriginY)
+    postScale(transform.scale.scaleX, transform.scale.scaleY)
+    postTranslate(transform.offset.x, transform.offset.y)
+    return this
 }
