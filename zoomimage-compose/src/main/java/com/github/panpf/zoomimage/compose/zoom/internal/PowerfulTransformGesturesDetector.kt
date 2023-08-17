@@ -71,9 +71,9 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
                     val panMotion = pan.getDistance()
 
                     val canDragged = if (abs(panChange.x) > abs(panChange.y)) {
-                        panChange.x != 0f && canDrag(true, if (panChange.x > 0f) 1 else -1)
+                        panChange.x != 0f && canDrag(true, if (panChange.x > 0f) -1 else 1)
                     } else {
-                        panChange.y != 0f && canDrag(false, if (panChange.y > 0f) 1 else -1)
+                        panChange.y != 0f && canDrag(false, if (panChange.y > 0f) -1 else 1)
                     }
                     if (zoomMotion > touchSlop ||
                         rotationMotion > touchSlop ||

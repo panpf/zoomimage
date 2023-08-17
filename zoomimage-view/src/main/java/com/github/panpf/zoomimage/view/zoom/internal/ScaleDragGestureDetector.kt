@@ -139,9 +139,9 @@ internal class ScaleDragGestureDetector(
                     isDragging = sqrt((dx * dx) + (dy * dy).toDouble()) >= touchSlop
                     if (isDragging) {
                         canDragged = if (abs(dx) > abs(dy)) {
-                            dx != 0f && canDrag(true, if (dx > 0f) 1 else -1)
+                            dx != 0f && canDrag(true, if (dx > 0f) -1 else 1)
                         } else {
-                            dy != 0f && canDrag(false, if (dy > 0f) 1 else -1)
+                            dy != 0f && canDrag(false, if (dy > 0f) -1 else 1)
                         }
                         if (!canDragged) {
                             view.parent.requestDisallowInterceptTouchEvent(false)

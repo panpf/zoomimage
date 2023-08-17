@@ -33,7 +33,7 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
-import com.github.panpf.zoomimage.util.canScroll
+import com.github.panpf.zoomimage.util.canScrollByEdge
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.util.round
@@ -384,7 +384,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         userMatrix.postTranslate(pan.x, pan.y)
         checkAndApplyMatrix()
     }
-    
+
     // todo 和 transform 合并
     fun doDrag(dx: Float, dy: Float) {
         logger.d { "onDrag. dx: $dx, dy: $dy" }
@@ -588,7 +588,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      * @param direction Negative to check scrolling left, positive to check scrolling right.
      */
     fun canScroll(horizontal: Boolean, direction: Int): Boolean {
-        return canScroll(horizontal, direction * -1, scrollEdge)
+        return canScrollByEdge(scrollEdge, horizontal, direction)
     }
 
     fun actionDown() {

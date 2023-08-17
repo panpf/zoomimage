@@ -683,21 +683,21 @@ fun computeScrollEdge(
 /**
  * Whether you can scroll horizontally or vertical in the specified direction
  *
- * @param direction Negative to check scrolling left, positive to check scrolling right.
+ * @param direction Negative to check scrolling left or up, positive to check scrolling right or down.
  */
-fun canScroll(horizontal: Boolean, direction: Int, scrollEdge: ScrollEdge): Boolean {
+fun canScrollByEdge(scrollEdge: ScrollEdge, horizontal: Boolean, direction: Int): Boolean {
     // todo Unit tests
     return if (horizontal) {
-        if (direction < 0) {
-            scrollEdge.horizontal != Edge.START && scrollEdge.horizontal != Edge.BOTH
-        } else {
+        if (direction > 0) {
             scrollEdge.horizontal != Edge.END && scrollEdge.horizontal != Edge.BOTH
+        } else {
+            scrollEdge.horizontal != Edge.START && scrollEdge.horizontal != Edge.BOTH
         }
     } else {
-        if (direction < 0) {
-            scrollEdge.vertical != Edge.START && scrollEdge.vertical != Edge.BOTH
-        } else {
+        if (direction > 0) {
             scrollEdge.vertical != Edge.END && scrollEdge.vertical != Edge.BOTH
+        } else {
+            scrollEdge.vertical != Edge.START && scrollEdge.vertical != Edge.BOTH
         }
     }
 }

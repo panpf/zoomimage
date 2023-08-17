@@ -45,7 +45,7 @@ import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
-import com.github.panpf.zoomimage.util.canScroll
+import com.github.panpf.zoomimage.util.canScrollByEdge
 import com.github.panpf.zoomimage.util.computeContainerVisibleRect
 import com.github.panpf.zoomimage.util.computeContentBaseDisplayRect
 import com.github.panpf.zoomimage.util.computeContentBaseVisibleRect
@@ -247,7 +247,7 @@ class ZoomableState(
     fun reset(
         caller: String,
         immediate: Boolean = false
-    ) = coroutineScope.launch(getCoroutineContext (immediate)) {
+    ) = coroutineScope.launch(getCoroutineContext(immediate)) {
         stopAllAnimationInternal("reset:$caller")
 
         val containerSize = containerSize
@@ -668,8 +668,8 @@ class ZoomableState(
         stopAllAnimationInternal(caller)
     }
 
-    fun canDrag(horizontal: Boolean, direction: Int): Boolean =
-        canScroll(horizontal, direction * -1, scrollEdge)
+    fun canScroll(horizontal: Boolean, direction: Int): Boolean =
+        canScrollByEdge(scrollEdge, horizontal, direction)
 
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
