@@ -282,9 +282,9 @@ class SubsamplingEngine constructor(logger: Logger) {
             tileManager.clean("refreshTiles:contentVisibleRectEmpty")
             return
         }
-        if (displayScale.format(2) <= displayMinScale.format(2)) {
-            logger.d { "refreshTiles:$caller. interrupted, reach minScale. '${imageSource.key}'" }
-            tileManager.clean("refreshTiles:reachMinScale")
+        if (displayScale.format(2) <= 1.0f) {
+            logger.d { "refreshTiles:$caller. interrupted, zoom is less than or equal to 1f. '${imageSource.key}'" }
+            tileManager.clean("refreshTiles:scale1f")
             return
         }
         tileManager.refreshTiles(
