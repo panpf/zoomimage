@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.toRect
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.compose.BuildConfig
 import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
@@ -467,10 +466,8 @@ class ZoomableState(
 
         stopAllAnimationInternal("rotate")
 
-        if (BuildConfig.DEBUG) {
-            rotation = limitedTargetRotation
-            reset("rotate")
-        }
+        rotation = limitedTargetRotation
+        reset("rotate")
     }
 
     fun transform(
@@ -673,8 +670,7 @@ class ZoomableState(
 
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
-        val contentSize =
-            contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val currentUserTransform = userTransform
         val contentScale = contentScale
         val contentAlignment = contentAlignment
