@@ -126,7 +126,7 @@ fun computeInitialUserTransform(
         rotation = rotation.toFloat(),
         rotationOrigin = rotationOrigin,
     )
-    val initialUserTransform = readModeTransform.split(baseTransformHelper.transform)
+    val initialUserTransform = readModeTransform - baseTransformHelper.transform
     return initialUserTransform
 }
 

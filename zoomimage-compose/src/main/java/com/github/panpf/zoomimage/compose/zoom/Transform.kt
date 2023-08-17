@@ -138,7 +138,7 @@ fun lerp(start: Transform, stop: Transform, fraction: Float): Transform {
 fun Transform.toShortString(): String =
     "(${scale.toShortString()},${offset.toShortString()},$rotation,${scaleOrigin.toShortString()},${rotationOrigin.toShortString()})"
 
-fun Transform.times(scaleFactor: ScaleFactor): Transform {
+operator fun Transform.times(scaleFactor: ScaleFactor): Transform {
     return this.copy(
         scale = ScaleFactor(
             scaleX = scale.scaleX * scaleFactor.scaleX,
@@ -151,7 +151,7 @@ fun Transform.times(scaleFactor: ScaleFactor): Transform {
     )
 }
 
-fun Transform.div(scaleFactor: ScaleFactor): Transform {
+operator fun Transform.div(scaleFactor: ScaleFactor): Transform {
     return this.copy(
         scale = ScaleFactor(
             scaleX = scale.scaleX / scaleFactor.scaleX,
@@ -164,7 +164,7 @@ fun Transform.div(scaleFactor: ScaleFactor): Transform {
     )
 }
 
-fun Transform.concat(other: Transform): Transform {
+operator fun Transform.plus(other: Transform): Transform {
     require(this.scale.let { it.isUnspecified || it == ScaleFactor.Origin }
             || other.scale.let { it.isUnspecified || it == ScaleFactor.Origin }
             || this.scaleOrigin == other.scaleOrigin
@@ -202,7 +202,7 @@ fun Transform.concat(other: Transform): Transform {
     )
 }
 
-fun Transform.split(other: Transform): Transform {
+operator fun Transform.minus(other: Transform): Transform {
     require(this.scale.let { it.isUnspecified || it == ScaleFactor.Origin }
             || other.scale.let { it.isUnspecified || it == ScaleFactor.Origin }
             || this.scaleOrigin == other.scaleOrigin

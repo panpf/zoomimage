@@ -56,10 +56,10 @@ import com.github.panpf.zoomimage.util.computeLocationUserOffset
 import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
 import com.github.panpf.zoomimage.util.computeUserOffsetBounds
-import com.github.panpf.zoomimage.util.concat
 import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
+import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.touchPointToContainerPoint
 import kotlinx.coroutines.CancellationException
@@ -166,7 +166,7 @@ class ZoomableState(
     var userTransform: Transform by mutableStateOf(Transform.Origin)
         private set
     val transform: Transform by derivedStateOf {
-        baseTransform.concat(userTransform)
+        baseTransform + userTransform
     }
     var scaling: Boolean by mutableStateOf(false)
     var fling: Boolean by mutableStateOf(false)
@@ -270,7 +270,7 @@ class ZoomableState(
             mediumScaleMinMultiple = mediumScaleMinMultiple
         )
         logger.d {
-            val transform = initialZoom.baseTransform.concat(initialZoom.userTransform)
+            val transform = initialZoom.baseTransform + initialZoom.userTransform
             "reset:$caller. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -284,7 +284,7 @@ class ZoomableState(
                     "mediumScale=${initialZoom.mediumScale.format(4)}, " +
                     "maxScale=${initialZoom.maxScale.format(4)}, " +
                     "baseTransform=${initialZoom.baseTransform.toShortString()}, " +
-                    "userTransform=${initialZoom.userTransform.toShortString()}, " +
+                    "initialUserTransform=${initialZoom.userTransform.toShortString()}, " +
                     "transform=${transform.toShortString()}"
         }
 

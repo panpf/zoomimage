@@ -128,7 +128,7 @@ fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): Transf
 fun TransformCompat.toShortString(): String =
     "(${scale.toShortString()},${offset.toShortString()},$rotation,${scaleOrigin.toShortString()},${rotationOrigin.toShortString()})"
 
-fun TransformCompat.times(scaleFactor: ScaleFactorCompat): TransformCompat {
+operator fun TransformCompat.times(scaleFactor: ScaleFactorCompat): TransformCompat {
     return this.copy(
         scale = ScaleFactorCompat(
             scaleX = scale.scaleX * scaleFactor.scaleX,
@@ -141,7 +141,7 @@ fun TransformCompat.times(scaleFactor: ScaleFactorCompat): TransformCompat {
     )
 }
 
-fun TransformCompat.div(scaleFactor: ScaleFactorCompat): TransformCompat {
+operator fun TransformCompat.div(scaleFactor: ScaleFactorCompat): TransformCompat {
     return this.copy(
         scale = ScaleFactorCompat(
             scaleX = scale.scaleX / scaleFactor.scaleX,
@@ -154,7 +154,7 @@ fun TransformCompat.div(scaleFactor: ScaleFactorCompat): TransformCompat {
     )
 }
 
-fun TransformCompat.concat(other: TransformCompat): TransformCompat {
+operator fun TransformCompat.plus(other: TransformCompat): TransformCompat {
     require(this.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
             || other.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
             || this.scaleOrigin == other.scaleOrigin
@@ -192,7 +192,7 @@ fun TransformCompat.concat(other: TransformCompat): TransformCompat {
     )
 }
 
-fun TransformCompat.split(other: TransformCompat): TransformCompat {
+operator fun TransformCompat.minus(other: TransformCompat): TransformCompat {
     require(this.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
             || other.scale.let { it.isUnspecified || it == ScaleFactorCompat.Origin }
             || this.scaleOrigin == other.scaleOrigin

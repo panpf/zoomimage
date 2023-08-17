@@ -54,7 +54,7 @@ import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.Transform
-import com.github.panpf.zoomimage.compose.zoom.concat
+import com.github.panpf.zoomimage.compose.zoom.plus
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.common.compose.AutoSizeText
@@ -66,7 +66,6 @@ import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.util.computeBaseTransform
 import com.github.panpf.zoomimage.util.computeContentDisplayRect
-import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.min
 
@@ -135,7 +134,7 @@ private fun GraphicsLayerSample() {
     }
     var userTransform by remember { mutableStateOf(Transform.Origin) }
     val displayTransform by remember {
-        derivedStateOf { baseTransform.concat(userTransform) }
+        derivedStateOf { baseTransform + userTransform }
     }
 
     var contentScaleMenuExpanded by remember { mutableStateOf(false) }

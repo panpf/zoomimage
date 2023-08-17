@@ -30,8 +30,8 @@ import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.computeStepScales
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.rotate
-import com.github.panpf.zoomimage.util.split
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.view.internal.Rect
@@ -280,7 +280,7 @@ private fun computeInitialUserTransform(
         scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
         offset = OffsetCompat(x = translateX, y = translateY)
     )
-    val initialUserTransform = readModeTransform.split(baseTransform)
+    val initialUserTransform = readModeTransform - baseTransform
     return initialUserTransform
 }
 

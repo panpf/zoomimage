@@ -1,17 +1,6 @@
 package com.github.panpf.zoomimage.core.test.util
 
-import android.widget.ImageView.ScaleType
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.OffsetCompat
-import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.TransformCompat
-import com.github.panpf.zoomimage.util.concat
-import com.github.panpf.zoomimage.util.split
-import com.github.panpf.zoomimage.core.test.internal.computeTransform
-import org.junit.Assert
-import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -47,10 +36,10 @@ class TransformCompatTest {
 //            scale = ScaleFactorCompat(readModeTransform.scaleX / baseTransform.scaleX),
 //            offset = OffsetCompat(0f, -40250f)
 //        )
-//        val userTransform = readModeTransform.split(baseTransform).also {
+//        val userTransform = (readModeTransform - baseTransform).also {
 //            Assert.assertEquals(/* expected = */ targetUserTransform,/* actual = */ it)
 //        }
-//        baseTransform.concat(userTransform).also {
+//        (baseTransform + userTransform).also {
 //            Assert.assertEquals(/* expected = */ readModeTransform,/* actual = */ it)
 //        }
 //    }
@@ -85,10 +74,10 @@ class TransformCompatTest {
 //            scale = ScaleFactorCompat(readModeTransform.scaleX / baseTransform.scaleX),
 //            offset = OffsetCompat(0f, -5082.2065f)
 //        )
-//        val userTransform = readModeTransform.split(baseTransform).also {
+//        val userTransform = (readModeTransform - baseTransform).also {
 //            Assert.assertEquals(/* expected = */ targetUserTransform,/* actual = */ it)
 //        }
-//        baseTransform.concat(userTransform).also {
+//        (baseTransform + userTransform).also {
 //            Assert.assertEquals(/* expected = */ readModeTransform,/* actual = */ it)
 //        }
 //    }
