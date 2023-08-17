@@ -104,7 +104,7 @@ class ZoomAbility constructor(
         }
 
         gestureDetector = UnifiedGestureDetector(
-            context = view.context,
+            view = view,
             onDownCallback = { true },
             onSingleTapConfirmedCallback = { e: MotionEvent ->
                 val onViewTapListenerList = onViewTapListenerList
@@ -147,6 +147,9 @@ class ZoomAbility constructor(
             onActionDownCallback = { zoomEngine.actionDown() },
             onActionUpCallback = { zoomEngine.rollbackScale() },
             onActionCancelCallback = { zoomEngine.rollbackScale() },
+            canDrag = { horizontal: Boolean, direction: Int ->
+                zoomEngine.canScroll(horizontal, direction)
+            }
         )
 
         resetDrawableSize()

@@ -1,14 +1,14 @@
 package com.github.panpf.zoomimage.view.zoom.internal
 
-import android.content.Context
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
+import android.view.View
 import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnGestureListener
 
 class UnifiedGestureDetector(
-    context: Context,
+    view: View,
     onDownCallback: (e: MotionEvent) -> Boolean,
     onSingleTapConfirmedCallback: (e: MotionEvent) -> Boolean,
     onLongPressCallback: (e: MotionEvent) -> Unit,
@@ -21,9 +21,10 @@ class UnifiedGestureDetector(
     onActionDownCallback: (ev: MotionEvent) -> Unit,
     onActionUpCallback: (ev: MotionEvent) -> Unit,
     onActionCancelCallback: (ev: MotionEvent) -> Unit,
+    canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
 ) {
 
-    private val tapGestureDetector = GestureDetector(context, object : SimpleOnGestureListener() {
+    private val tapGestureDetector = GestureDetector(view.context, object : SimpleOnGestureListener() {
 
         override fun onDown(e: MotionEvent): Boolean {
             return onDownCallback(e)
@@ -43,7 +44,7 @@ class UnifiedGestureDetector(
     })
 
     private val scaleDragGestureDetector =
-        ScaleDragGestureDetector(context, object : OnGestureListener {
+        ScaleDragGestureDetector(view, canDrag, object : OnGestureListener {
             override fun onDrag(dx: Float, dy: Float, scaling: Boolean) =
                 onDragCallback(dx, dy, scaling)
 

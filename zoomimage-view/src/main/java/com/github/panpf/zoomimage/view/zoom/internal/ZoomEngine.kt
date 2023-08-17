@@ -33,6 +33,7 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
+import com.github.panpf.zoomimage.util.canScroll
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.util.round
@@ -62,7 +63,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private var scaleAnimatable: FloatAnimatable? = null
     private var flingAnimatable: FlingAnimatable? = null
     private var _scrollEdge: ScrollEdge = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH)
-    private var blockParentIntercept: Boolean = false
     private var dragging = false
     var manualScaling = false
         internal set(value) {
@@ -392,30 +392,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         require(dx.isSafe() && dy.isSafe()) { "doDrag dx=$dx, dy=$dy is invalid" }
         userMatrix.postTranslate(dx, dy)
         checkAndApplyMatrix()
-
-        val disallowParentInterceptOnEdge = !allowParentInterceptOnEdge
-        val blockParent = blockParentIntercept
-        val disallow = if (dragging || blockParent || disallowParentInterceptOnEdge) {
-            logger.d {
-                "onDrag. DisallowParentIntercept. dragging=$dragging, blockParent=$blockParent, disallowParentInterceptOnEdge=$disallowParentInterceptOnEdge"
-            }
-            true
-        } else {
-            val slop = view.resources.displayMetrics.density * 3
-            val result = (scrollEdge.horizontal == Edge.NONE && (dx >= slop || dx <= -slop))
-                    || (scrollEdge.horizontal == Edge.START && dx <= -slop)
-                    || (scrollEdge.horizontal == Edge.END && dx >= slop)
-                    || (scrollEdge.vertical == Edge.NONE && (dy >= slop || dy <= -slop))
-                    || (scrollEdge.vertical == Edge.START && dy <= -slop)
-                    || (scrollEdge.vertical == Edge.END && dy >= slop)
-            val type = if (result) "DisallowParentIntercept" else "AllowParentIntercept"
-            logger.d {
-                "onDrag. $type. scrollEdge=${scrollEdge.horizontal}-${scrollEdge.vertical}, d=${dx}x${dy}"
-            }
-            dragging = result
-            result
-        }
-        requestDisallowInterceptTouchEvent(disallow)
     }
 
     fun fling(velocityX: Float, velocityY: Float) {
@@ -612,7 +588,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      * @param direction Negative to check scrolling left, positive to check scrolling right.
      */
     fun canScroll(horizontal: Boolean, direction: Int): Boolean {
-        return com.github.panpf.zoomimage.util.canScroll(horizontal, direction, scrollEdge)
+        return canScroll(horizontal, direction * -1, scrollEdge)
     }
 
     fun actionDown() {
@@ -623,8 +599,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         stopAllAnimation()
         lastTransformFocus = null
         dragging = false
-
-        requestDisallowInterceptTouchEvent(true)
     }
 
     fun addOnMatrixChangeListener(listener: OnMatrixChangeListener) {
@@ -761,14 +735,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             },
         )
         return true
-    }
-
-    private fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-        view.parent?.requestDisallowInterceptTouchEvent(disallowIntercept)
-    }
-
-    private fun limitScale(targetScale: Float): Float {
-        return targetScale.coerceIn(minimumValue = this.minScale, maximumValue = this.maxScale)
     }
 
     private fun notifyMatrixChanged() {

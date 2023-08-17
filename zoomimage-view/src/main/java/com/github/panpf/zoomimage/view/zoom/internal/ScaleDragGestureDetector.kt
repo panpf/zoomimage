@@ -15,11 +15,11 @@
  */
 package com.github.panpf.zoomimage.view.zoom.internal
 
-import android.content.Context
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.OnScaleGestureListener
 import android.view.VelocityTracker
+import android.view.View
 import android.view.ViewConfiguration
 import com.github.panpf.zoomimage.view.internal.getPointerIndex
 import java.lang.Float.isInfinite
@@ -29,7 +29,8 @@ import kotlin.math.max
 import kotlin.math.sqrt
 
 internal class ScaleDragGestureDetector(
-    context: Context,
+    val view: View,
+    val canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
     val onGestureListener: OnGestureListener
 ) {
 
@@ -47,18 +48,19 @@ internal class ScaleDragGestureDetector(
     private var activePointerId: Int = INVALID_POINTER_ID
     private var activePointerIndex: Int = 0
 
-    @Suppress("MemberVisibilityCanBePrivate")
     var isDragging = false
+        private set
+    var canDragged = true
         private set
     val isScaling: Boolean
         get() = scaleDetector.isInProgress
     var onActionListener: OnActionListener? = null
 
     init {
-        val configuration = ViewConfiguration.get(context)
+        val configuration = ViewConfiguration.get(view.context)
         minimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
         touchSlop = configuration.scaledTouchSlop.toFloat()
-        scaleDetector = ScaleGestureDetector(context, object : OnScaleGestureListener {
+        scaleDetector = ScaleGestureDetector(view.context, object : OnScaleGestureListener {
             private var lastFocusX = 0f
             private var lastFocusY = 0f
             override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -116,12 +118,14 @@ internal class ScaleDragGestureDetector(
     private fun processTouchEvent(ev: MotionEvent) {
         when (ev.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
+                view.parent.requestDisallowInterceptTouchEvent(true)
+                canDragged = true
+                isDragging = false
                 activePointerId = ev.getPointerId(0)
                 velocityTracker = VelocityTracker.obtain()
                 velocityTracker?.addMovement(ev)
                 lastTouchX = getActiveX(ev)
                 lastTouchY = getActiveY(ev)
-                isDragging = false
                 onActionListener?.onActionDown(ev)
             }
 
@@ -133,8 +137,19 @@ internal class ScaleDragGestureDetector(
                 if (!isDragging) {
                     // Use Pythagoras to see if drag length is larger than touch slop
                     isDragging = sqrt((dx * dx) + (dy * dy).toDouble()) >= touchSlop
+                    if (isDragging) {
+                        canDragged = if (abs(dx) > abs(dy)) {
+                            dx != 0f && canDrag(true, if (dx > 0f) 1 else -1)
+                        } else {
+                            dy != 0f && canDrag(false, if (dy > 0f) 1 else -1)
+                        }
+                        if (!canDragged) {
+                            view.parent.requestDisallowInterceptTouchEvent(false)
+                            isDragging = false
+                        }
+                    }
                 }
-                if (isDragging) {
+                if (isDragging && canDragged) {
                     // Disable multi-finger drag, which can prevent the ViewPager from accidentally triggering left and right swipe when the minimum zoom ratio is zoomed in
                     if (ev.pointerCount == 1) {
                         onGestureListener.onDrag(dx, dy, isScaling)
@@ -145,7 +160,24 @@ internal class ScaleDragGestureDetector(
                 }
             }
 
+            MotionEvent.ACTION_POINTER_UP -> {
+                // Ignore deprecation, ACTION_POINTER_ID_MASK and
+                // ACTION_POINTER_ID_SHIFT has same value and are deprecated
+                // You can have either deprecation or lint target api warning
+                val pointerIndex = getPointerIndex(ev.action)
+                val pointerId = ev.getPointerId(pointerIndex)
+                if (pointerId == activePointerId) {
+                    // This was our active pointer going up. Choose a new
+                    // active pointer and adjust accordingly.
+                    val newPointerIndex = if (pointerIndex == 0) 1 else 0
+                    activePointerId = ev.getPointerId(newPointerIndex)
+                    lastTouchX = ev.getX(newPointerIndex)
+                    lastTouchY = ev.getY(newPointerIndex)
+                }
+            }
+
             MotionEvent.ACTION_CANCEL -> {
+                view.parent.requestDisallowInterceptTouchEvent(false)
                 activePointerId = INVALID_POINTER_ID
                 // Recycle Velocity Tracker
                 velocityTracker?.recycle()
@@ -154,6 +186,7 @@ internal class ScaleDragGestureDetector(
             }
 
             MotionEvent.ACTION_UP -> {
+                view.parent.requestDisallowInterceptTouchEvent(false)
                 activePointerId = INVALID_POINTER_ID
                 if (isDragging) {
                     velocityTracker?.let { velocityTracker ->
@@ -177,22 +210,6 @@ internal class ScaleDragGestureDetector(
                 velocityTracker?.recycle()
                 velocityTracker = null
                 onActionListener?.onActionUp(ev)
-            }
-
-            MotionEvent.ACTION_POINTER_UP -> {
-                // Ignore deprecation, ACTION_POINTER_ID_MASK and
-                // ACTION_POINTER_ID_SHIFT has same value and are deprecated
-                // You can have either deprecation or lint target api warning
-                val pointerIndex = getPointerIndex(ev.action)
-                val pointerId = ev.getPointerId(pointerIndex)
-                if (pointerId == activePointerId) {
-                    // This was our active pointer going up. Choose a new
-                    // active pointer and adjust accordingly.
-                    val newPointerIndex = if (pointerIndex == 0) 1 else 0
-                    activePointerId = ev.getPointerId(newPointerIndex)
-                    lastTouchX = ev.getX(newPointerIndex)
-                    lastTouchY = ev.getY(newPointerIndex)
-                }
             }
         }
 
