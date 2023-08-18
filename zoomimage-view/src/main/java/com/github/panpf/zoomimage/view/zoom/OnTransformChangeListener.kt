@@ -15,6 +15,8 @@
  */
 package com.github.panpf.zoomimage.view.zoom
 
-fun interface OnScaleChangeListener {
-    fun onScaleChanged(scaleFactor: Float, focusX: Float, focusY: Float)
+import com.github.panpf.zoomimage.util.TransformCompat
+
+fun interface OnTransformChangeListener {
+    fun onTransformChanged(transform: TransformCompat)
 }

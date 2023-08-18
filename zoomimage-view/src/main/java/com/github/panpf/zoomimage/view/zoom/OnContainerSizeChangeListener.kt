@@ -15,6 +15,8 @@
  */
 package com.github.panpf.zoomimage.view.zoom
 
-fun interface OnRotateChangeListener {
-    fun onRotateChanged(rotation: Int)
+import com.github.panpf.zoomimage.util.IntSizeCompat
+
+fun interface OnContainerSizeChangeListener {
+    fun onContainerSizeChanged(containerSize: IntSizeCompat)
 }

@@ -143,7 +143,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     setImageResource(R.drawable.ic_zoom_out)
                 }
             }
-            zoomImageView.zoomAbility.addOnMatrixChangeListener {
+            zoomImageView.zoomAbility.registerOnTransformChangeListener {
                 resetIcon()
             }
             resetIcon()
@@ -155,7 +155,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     .toBundle()
             }.show(childFragmentManager, null)
         }
-        zoomImageView.zoomAbility.addOnViewLongPressListener { _, _, _ ->
+        zoomImageView.zoomAbility.registerOnViewLongPressListener { _, _, _ ->
             ZoomImageViewInfoDialogFragment().apply {
                 arguments = ZoomImageViewInfoDialogFragment.buildArgs(zoomImageView, sketchImageUri)
                     .toBundle()
@@ -179,7 +179,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }
         }
 
-        zoomImageView.zoomAbility.addOnMatrixChangeListener {
+        zoomImageView.zoomAbility.registerOnTransformChangeListener {
             updateInfo(zoomImageView, common)
         }
         updateInfo(zoomImageView, common)

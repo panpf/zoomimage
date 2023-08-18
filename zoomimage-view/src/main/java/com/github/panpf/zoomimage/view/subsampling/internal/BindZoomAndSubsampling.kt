@@ -2,7 +2,7 @@ package com.github.panpf.zoomimage.view.subsampling.internal
 
 import android.view.View
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.view.zoom.OnViewSizeChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,16 +17,16 @@ fun bindZoomAndSubsampling(
     subsamplingEngine: SubsamplingEngine
 ) {
     subsamplingEngine.containerSize = zoomEngine.containerSize
-    zoomEngine.addOnViewSizeChangeListener(
-        OnViewSizeChangeListenerImpl(zoomEngine, subsamplingEngine)
+    zoomEngine.registerOnContainerSizeChangeListener(
+        OnContainerSizeChangeListenerImpl(subsamplingEngine)
     )
 
     subsamplingEngine.contentSize = zoomEngine.contentSize
-    zoomEngine.addOnDrawableSizeChangeListener {
+    zoomEngine.registerOnContentSizeChangeListener {
         subsamplingEngine.contentSize = zoomEngine.contentSize
     }
 
-    zoomEngine.addOnMatrixChangeListener {
+    zoomEngine.registerOnTransformChangeListener {
         val contentVisibleRect = zoomEngine.contentVisibleRect
         if (!zoomEngine.scaling && !zoomEngine.fling && zoomEngine.transform.rotation.roundToInt() % 90 == 0) {
             subsamplingEngine.refreshTiles(
@@ -54,22 +54,21 @@ fun bindZoomAndSubsampling(
     }
 }
 
-private class OnViewSizeChangeListenerImpl(
-    private val zoomEngine: ZoomEngine,
+private class OnContainerSizeChangeListenerImpl(
     private val subsamplingEngine: SubsamplingEngine
-) : OnViewSizeChangeListener {
+) : OnContainerSizeChangeListener {
 
     private var lastDelayJob: Job? = null
     private val scope = CoroutineScope(Dispatchers.Main.immediate)
 
-    override fun onSizeChanged() {
+    override fun onContainerSizeChanged(containerSize: IntSizeCompat) {
         // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
         // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
         lastDelayJob?.cancel()
         lastDelayJob = scope.launch(Dispatchers.Main) {
             delay(60)
             lastDelayJob = null
-            subsamplingEngine.containerSize = zoomEngine.containerSize
+            subsamplingEngine.containerSize = containerSize
         }
     }
 }

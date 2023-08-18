@@ -59,9 +59,9 @@ import com.github.panpf.zoomimage.util.touchPointToContainerPoint
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
-import com.github.panpf.zoomimage.view.zoom.OnDrawableSizeChangeListener
-import com.github.panpf.zoomimage.view.zoom.OnMatrixChangeListener
-import com.github.panpf.zoomimage.view.zoom.OnViewSizeChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnContentSizeChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnTransformChangeListener
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import kotlin.math.roundToInt
 
@@ -72,9 +72,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var rotation: Int = 0
 
-    private var onMatrixChangeListeners: MutableSet<OnMatrixChangeListener>? = null
-    private var onViewSizeChangeListeners: MutableSet<OnViewSizeChangeListener>? = null
-    private var onDrawableSizeChangeListeners: MutableSet<OnDrawableSizeChangeListener>? = null
+    private var onTransformChangeListeners: MutableSet<OnTransformChangeListener>? = null
+    private var onContainerSizeChangeListeners: MutableSet<OnContainerSizeChangeListener>? = null
+    private var onContentSizeChangeListeners: MutableSet<OnContentSizeChangeListener>? = null
 
     var baseTransform = TransformCompat.Origin
         private set
@@ -92,14 +92,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         set(value) {
             if (field != value) {
                 field = value
-                notifyMatrixChanged()
+                notifyMatrixChanged(transform)
             }
         }
     var fling = false
         set(value) {
             if (field != value) {
                 field = value
-                notifyMatrixChanged()
+                notifyMatrixChanged(transform)
             }
         }
 
@@ -108,7 +108,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             if (field != value) {
                 field = value
                 reset("containerSizeChanged")
-                notifyViewSizeChanged()
+                notifyContainerSizeChanged(value)
             }
         }
     var contentSize = IntSizeCompat.Zero
@@ -116,7 +116,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             if (field != value) {
                 field = value
                 reset("contentSizeChanged")
-                notifyDrawableSizeChanged()
+                notifyContentSizeChanged(value)
             }
         }
     var contentOriginSize = IntSizeCompat.Zero
@@ -475,7 +475,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         stopAllAnimation("fling")
         val userTransform = userTransform
         val startUserOffset = userTransform.offset
-        val userOffsetBounds = com.github.panpf.zoomimage.util.computeUserOffsetBounds(
+        val userOffsetBounds = computeUserOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
@@ -509,7 +509,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             },
             onEnd = {
                 fling = false
-                notifyMatrixChanged()
+                notifyMatrixChanged(transform)
             }
         )
         fling = true
@@ -564,7 +564,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 },
                 onEnd = {
                     scaling = false
-                    notifyMatrixChanged()
+                    notifyMatrixChanged(transform)
                 }
             )
 
@@ -656,31 +656,31 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         return canScrollByEdge(scrollEdge, horizontal, direction)
     }
 
-    fun addOnMatrixChangeListener(listener: OnMatrixChangeListener) {
-        this.onMatrixChangeListeners = (onMatrixChangeListeners ?: LinkedHashSet())
+    fun registerOnTransformChangeListener(listener: OnTransformChangeListener) {
+        this.onTransformChangeListeners = (onTransformChangeListeners ?: LinkedHashSet())
             .apply { add(listener) }
     }
 
-    fun removeOnMatrixChangeListener(listener: OnMatrixChangeListener): Boolean {
-        return onMatrixChangeListeners?.remove(listener) == true
+    fun unregisterOnTransformChangeListener(listener: OnTransformChangeListener): Boolean {
+        return onTransformChangeListeners?.remove(listener) == true
     }
 
-    fun addOnViewSizeChangeListener(listener: OnViewSizeChangeListener) {
-        this.onViewSizeChangeListeners = (onViewSizeChangeListeners ?: LinkedHashSet())
+    fun registerOnContainerSizeChangeListener(listener: OnContainerSizeChangeListener) {
+        this.onContainerSizeChangeListeners = (onContainerSizeChangeListeners ?: LinkedHashSet())
             .apply { add(listener) }
     }
 
-    fun removeOnViewSizeChangeListener(listener: OnViewSizeChangeListener): Boolean {
-        return onViewSizeChangeListeners?.remove(listener) == true
+    fun unregisterOnContainerSizeChangeListener(listener: OnContainerSizeChangeListener): Boolean {
+        return onContainerSizeChangeListeners?.remove(listener) == true
     }
 
-    fun addOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener) {
-        this.onDrawableSizeChangeListeners = (onDrawableSizeChangeListeners ?: LinkedHashSet())
+    fun registerOnContentSizeChangeListener(listener: OnContentSizeChangeListener) {
+        this.onContentSizeChangeListeners = (onContentSizeChangeListeners ?: LinkedHashSet())
             .apply { add(listener) }
     }
 
-    fun removeOnDrawableSizeChangeListener(listener: OnDrawableSizeChangeListener): Boolean {
-        return onDrawableSizeChangeListeners?.remove(listener) == true
+    fun unregisterOnContentSizeChangeListener(listener: OnContentSizeChangeListener): Boolean {
+        return onContentSizeChangeListeners?.remove(listener) == true
     }
 
     private fun limitUserScale(targetUserScale: Float): Float {
@@ -701,7 +701,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     private fun limitUserOffset(userOffset: OffsetCompat, userScale: Float): OffsetCompat {
-        val userOffsetBounds = com.github.panpf.zoomimage.util.computeUserOffsetBounds(
+        val userOffsetBounds = computeUserOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
@@ -752,7 +752,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     if (scaleChange) {
                         scaling = false
                     }
-                    notifyMatrixChanged()
+                    notifyMatrixChanged(transform)
                 }
             )
             if (scaleChange) {
@@ -821,24 +821,24 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             userOffset = userTransform.offset,
         )
 
-        notifyMatrixChanged()
+        notifyMatrixChanged(transform)
     }
 
-    private fun notifyMatrixChanged() {
-        onMatrixChangeListeners?.forEach { listener ->
-            listener.onMatrixChanged()
+    private fun notifyMatrixChanged(transform: TransformCompat) {
+        onTransformChangeListeners?.forEach { listener ->
+            listener.onTransformChanged(transform)
         }
     }
 
-    private fun notifyViewSizeChanged() {
-        onViewSizeChangeListeners?.forEach {
-            it.onSizeChanged()
+    private fun notifyContainerSizeChanged(containerSize: IntSizeCompat) {
+        onContainerSizeChangeListeners?.forEach {
+            it.onContainerSizeChanged(containerSize)
         }
     }
 
-    private fun notifyDrawableSizeChanged() {
-        onDrawableSizeChangeListeners?.forEach {
-            it.onSizeChanged()
+    private fun notifyContentSizeChanged(contentSize: IntSizeCompat) {
+        onContentSizeChangeListeners?.forEach {
+            it.onContentSizeChanged(contentSize)
         }
     }
 }

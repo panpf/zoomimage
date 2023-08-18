@@ -153,7 +153,7 @@ class ZoomAbility constructor(
         imageViewBridge.superSetScaleType(ScaleType.MATRIX)
 
         scaleType = initScaleType
-        zoomEngine.addOnMatrixChangeListener {
+        zoomEngine.registerOnTransformChangeListener {
             val matrix =
                 cacheImageMatrix.applyTransform(zoomEngine.transform, zoomEngine.containerSize)
             imageViewBridge.superSetImageMatrix(matrix)
@@ -269,31 +269,45 @@ class ZoomAbility constructor(
         return zoomEngine.touchPointToContentPoint(touchPoint)
     }
 
-    fun addOnMatrixChangeListener(listener: OnMatrixChangeListener) {
-        zoomEngine.addOnMatrixChangeListener(listener)
+    fun registerOnTransformChangeListener(listener: OnTransformChangeListener) {
+        zoomEngine.registerOnTransformChangeListener(listener)
     }
 
-    fun removeOnMatrixChangeListener(listener: OnMatrixChangeListener): Boolean {
-        return zoomEngine.removeOnMatrixChangeListener(listener)
+    fun unregisterOnTransformChangeListener(listener: OnTransformChangeListener): Boolean {
+        return zoomEngine.unregisterOnTransformChangeListener(listener)
     }
 
-    fun addOnViewTapListener(listener: OnViewTapListener) {
-        this.onViewTapListenerList = (onViewTapListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
+    fun registerOnContainerSizeChangeListener(listener: OnContainerSizeChangeListener) {
+        zoomEngine.registerOnContainerSizeChangeListener(listener)
     }
 
-    fun removeOnViewTapListener(listener: OnViewTapListener): Boolean {
+    fun unregisterOnContainerSizeChangeListener(listener: OnContainerSizeChangeListener): Boolean {
+        return zoomEngine.unregisterOnContainerSizeChangeListener(listener)
+    }
+
+    fun registerOnContentSizeChangeListener(listener: OnContentSizeChangeListener) {
+        zoomEngine.registerOnContentSizeChangeListener(listener)
+    }
+
+    fun unregisterOnContentSizeChangeListener(listener: OnContentSizeChangeListener): Boolean {
+        return zoomEngine.unregisterOnContentSizeChangeListener(listener)
+    }
+
+    fun registerOnViewTapListener(listener: OnViewTapListener) {
+        this.onViewTapListenerList = (onViewTapListenerList ?: LinkedHashSet())
+            .apply { add(listener) }
+    }
+
+    fun unregisterOnViewTapListener(listener: OnViewTapListener): Boolean {
         return onViewTapListenerList?.remove(listener) == true
     }
 
-    fun addOnViewLongPressListener(listener: OnViewLongPressListener) {
-        this.onViewLongPressListenerList = (onViewLongPressListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
+    fun registerOnViewLongPressListener(listener: OnViewLongPressListener) {
+        this.onViewLongPressListenerList = (onViewLongPressListenerList ?: LinkedHashSet())
+            .apply { add(listener) }
     }
 
-    fun removeOnViewLongPressListener(listener: OnViewLongPressListener): Boolean {
+    fun unregisterOnViewLongPressListener(listener: OnViewLongPressListener): Boolean {
         return onViewLongPressListenerList?.remove(listener) == true
     }
 

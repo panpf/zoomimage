@@ -15,6 +15,8 @@
  */
 package com.github.panpf.zoomimage.view.zoom
 
-fun interface OnMatrixChangeListener {
-    fun onMatrixChanged()
+import com.github.panpf.zoomimage.util.IntSizeCompat
+
+fun interface OnContentSizeChangeListener {
+    fun onContentSizeChanged(contentSize: IntSizeCompat)
 }
