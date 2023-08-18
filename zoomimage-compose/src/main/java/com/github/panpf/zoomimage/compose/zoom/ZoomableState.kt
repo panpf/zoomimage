@@ -134,7 +134,9 @@ class ZoomableState(
     var maxScale: Float by mutableStateOf(1f)
         private set
     var scaling: Boolean by mutableStateOf(false)
+        internal set
     var fling: Boolean by mutableStateOf(false)
+        private set
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)

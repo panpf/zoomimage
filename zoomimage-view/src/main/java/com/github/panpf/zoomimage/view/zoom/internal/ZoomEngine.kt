@@ -89,14 +89,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     var maxScale: Float = 1.0f
         private set
     var scaling = false
-        set(value) {
+        internal set(value) {
             if (field != value) {
                 field = value
                 notifyMatrixChanged(transform)
             }
         }
     var fling = false
-        set(value) {
+        private set(value) {
             if (field != value) {
                 field = value
                 notifyMatrixChanged(transform)

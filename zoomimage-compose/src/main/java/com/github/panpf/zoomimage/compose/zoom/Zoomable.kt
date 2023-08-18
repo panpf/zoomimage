@@ -49,7 +49,7 @@ fun Modifier.zoomable(
                     state.canScroll(horizontal = horizontal, direction = direction)
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float ->
-                    state.scaling = true
+                    state.scaling = zoom != 1.0f
                     state.transform(
                         centroid = centroid,
                         panChange = pan,
