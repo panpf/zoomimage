@@ -17,12 +17,14 @@ package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.RectF
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.rotate
+import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import kotlin.math.roundToInt
 
@@ -63,22 +65,25 @@ class ScrollBarEngine(
 
     fun onDraw(
         canvas: Canvas,
-        viewSize: IntSizeCompat,
+        containerSize: IntSizeCompat,
         contentSize: IntSizeCompat,
-        contentVisibleRect: Rect
+        contentVisibleRect: IntRectCompat,
+        rotation: Int,
     ) {
-        if (viewSize.isEmpty()) return
+        if (containerSize.isEmpty()) return
         if (contentSize.isEmpty()) return
 
-        if (contentVisibleRect.width() < contentSize.width) {
-            val widthScale = (viewSize.width - scrollBarSpec.margin * 4) / contentSize.width
-            val left = (scrollBarSpec.margin * 2) + (contentVisibleRect.left * widthScale)
-            val top = viewSize.height - scrollBarSpec.margin - scrollBarSpec.size
+        val rotatedContentVisibleRect = contentVisibleRect.rotateInSpace(contentSize, rotation)
+        val rotatedContentSize = contentSize.rotate(rotation)
+        if (rotatedContentVisibleRect.width < rotatedContentSize.width) {
+            val widthScale = (containerSize.width - scrollBarSpec.margin * 4) / rotatedContentSize.width
+            val left = (scrollBarSpec.margin * 2) + (rotatedContentVisibleRect.left * widthScale)
+            val top = containerSize.height - scrollBarSpec.margin - scrollBarSpec.size
             val horScrollBarRectF = cacheRectF.apply {
                 set(
                     /* left = */ left,
                     /* top = */ top,
-                    /* right = */ left + contentVisibleRect.width() * widthScale,
+                    /* right = */ left + rotatedContentVisibleRect.width * widthScale,
                     /* bottom = */ top + scrollBarSpec.size
                 )
             }
@@ -89,16 +94,17 @@ class ScrollBarEngine(
                 /* paint = */ cachePaint
             )
         }
-        if (contentVisibleRect.height() < contentSize.height) {
-            val heightScale = (viewSize.height - scrollBarSpec.margin * 4) / contentSize.height
+        if (rotatedContentVisibleRect.height < rotatedContentSize.height) {
+            val heightScale =
+                (containerSize.height - scrollBarSpec.margin * 4) / rotatedContentSize.height
             val verScrollBarRectF = cacheRectF.apply {
-                val left = viewSize.width - scrollBarSpec.margin - scrollBarSpec.size
-                val top = (scrollBarSpec.margin * 2) + (contentVisibleRect.top * heightScale)
+                val left = containerSize.width - scrollBarSpec.margin - scrollBarSpec.size
+                val top = (scrollBarSpec.margin * 2) + (rotatedContentVisibleRect.top * heightScale)
                 set(
                     /* left = */ left,
                     /* top = */ top,
                     /* right = */ left + scrollBarSpec.size,
-                    /* bottom = */ top + contentVisibleRect.height() * heightScale
+                    /* bottom = */ top + rotatedContentVisibleRect.height * heightScale
                 )
             }
             canvas.drawRoundRect(

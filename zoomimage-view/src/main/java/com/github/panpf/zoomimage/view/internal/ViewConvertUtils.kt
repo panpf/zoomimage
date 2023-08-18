@@ -4,6 +4,7 @@ import android.graphics.Matrix
 import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.util.AlignmentCompat
 import com.github.panpf.zoomimage.util.ContentScaleCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 
 fun ScaleType.toContentScale(): ContentScaleCompat {
@@ -32,9 +33,13 @@ fun ScaleType.toAlignment(): AlignmentCompat {
     }
 }
 
-fun Matrix.applyTransform(transform: TransformCompat): Matrix {
+fun Matrix.applyTransform(transform: TransformCompat, containerSize: IntSizeCompat): Matrix {
     reset()
-    postRotate(transform.rotation, transform.rotationOriginX, transform.rotationOriginY)
+    postRotate(
+        /* degrees = */ transform.rotation,
+        /* px = */ transform.rotationOriginX * containerSize.width,
+        /* py = */ transform.rotationOriginY * containerSize.height
+    )
     postScale(transform.scale.scaleX, transform.scale.scaleY)
     postTranslate(transform.offset.x, transform.offset.y)
     return this

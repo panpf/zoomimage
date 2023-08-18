@@ -38,10 +38,11 @@ import com.github.panpf.zoomimage.subsampling.internal.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.format
-import com.github.panpf.zoomimage.view.internal.toIntRectCompat
 import com.github.panpf.zoomimage.view.subsampling.OnReadyChangeListener
 import com.github.panpf.zoomimage.view.subsampling.OnTileChangeListener
 import kotlinx.coroutines.CoroutineScope
@@ -69,7 +70,8 @@ class SubsamplingEngine constructor(logger: Logger) {
     private var lastResetTileDecoderJob: Job? = null
     private var lastDisplayScale: Float? = null
     private var lastDisplayMinScale: Float? = null
-    private var lastContentVisibleRect: Rect? = null
+    private var lastContentVisibleRect: IntRectCompat? = null
+    private val cacheDisplayMatrix: Matrix = Matrix()
 
     var containerSize: IntSizeCompat = IntSizeCompat.Zero
         set(value) {
@@ -244,10 +246,10 @@ class SubsamplingEngine constructor(logger: Logger) {
         notifyTileChange()
     }
 
-    fun resetVisibleAndLoadRect(contentVisibleRect: Rect, caller: String) {
+    fun resetVisibleAndLoadRect(contentVisibleRect: IntRectCompat, caller: String) {
         val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
-        tileManager.resetVisibleAndLoadRect(contentVisibleRect.toIntRectCompat())
+        tileManager.resetVisibleAndLoadRect(contentVisibleRect)
         val imageVisibleRect = tileManager.imageVisibleRect
         val imageLoadRect = tileManager.imageLoadRect
         logger.d {
@@ -262,7 +264,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     fun refreshTiles(
         displayScale: Float,
         displayMinScale: Float,
-        contentVisibleRect: Rect,
+        contentVisibleRect: IntRectCompat,
         caller: String,
     ) {
         this.lastDisplayScale = displayScale
@@ -288,13 +290,13 @@ class SubsamplingEngine constructor(logger: Logger) {
             return
         }
         tileManager.refreshTiles(
-            contentVisibleRect = contentVisibleRect.toIntRectCompat(),
+            contentVisibleRect = contentVisibleRect,
             scale = displayScale,
             caller = caller
         )
     }
 
-    fun drawTiles(canvas: Canvas, displayMatrix: Matrix) {
+    fun drawTiles(canvas: Canvas, transform: TransformCompat, containerSize: IntSizeCompat) {
         val imageSource = imageSource ?: return
         val imageInfo = imageInfo ?: return
         val tileList = tileList?.takeIf { it.isNotEmpty() } ?: return
@@ -306,7 +308,8 @@ class SubsamplingEngine constructor(logger: Logger) {
         var outsideLoadCount = 0
         var realDrawCount = 0
         canvas.withSave {
-            canvas.concat(displayMatrix)
+            canvas.concat(cacheDisplayMatrix.applyTransform(transform, containerSize))
+
             tileList.forEach { tile ->
                 if (tile.srcRect.overlaps(imageLoadRect)) {
                     insideLoadCount++

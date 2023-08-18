@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("MemberVisibilityCanBePrivate", "PropertyName", "LeakingThis")
+
 package com.github.panpf.zoomimage
 
 import android.annotation.SuppressLint
@@ -25,10 +27,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
-import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingAbility
-import com.github.panpf.zoomimage.view.subsampling.internal.bindZoomAndSubsampling2
-import com.github.panpf.zoomimage.view.zoom.ZoomAbility2
+import com.github.panpf.zoomimage.view.subsampling.internal.bindZoomAndSubsampling
+import com.github.panpf.zoomimage.view.zoom.ZoomAbility
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 
 open class ZoomImageView @JvmOverloads constructor(
@@ -37,34 +38,27 @@ open class ZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
-    private val cacheDisplayMatrix: Matrix = Matrix()
-
     open val logger = Logger(tag = "ZoomImageView")
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    @Suppress("PropertyName", "MemberVisibilityCanBePrivate")
-    protected var _zoomAbility: ZoomAbility2? = null
-    val zoomAbility: ZoomAbility2
+    protected var _zoomAbility: ZoomAbility? = null
+    val zoomAbility: ZoomAbility
         get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    @Suppress("PropertyName")
     protected val _subsamplingAbility: SubsamplingAbility?
     val subsamplingAbility: SubsamplingAbility
         get() = _subsamplingAbility
             ?: throw IllegalStateException("subsamplingAbility not initialized")
 
     init {
-        @Suppress("LeakingThis")
-        val zoomAbility = ZoomAbility2(view = this, imageViewBridge = this, logger = logger)
+        val zoomAbility = ZoomAbility(view = this, imageViewBridge = this, logger = logger)
         _zoomAbility = zoomAbility
 
-        @Suppress("LeakingThis")
         val subsamplingAbility = SubsamplingAbility(view = this, logger = logger)
         _subsamplingAbility = subsamplingAbility
 
-        @Suppress("LeakingThis")
-        bindZoomAndSubsampling2(
+        bindZoomAndSubsampling(
             view = this,
             zoomEngine = zoomAbility.zoomEngine,
             subsamplingEngine = subsamplingAbility.engine
@@ -126,11 +120,10 @@ open class ZoomImageView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        _subsamplingAbility?.onDraw(
-            canvas = canvas,
-            displayMatrix = cacheDisplayMatrix.applyTransform(zoomAbility.transform)
-        )
-        _zoomAbility?.onDraw(canvas)
+        val zoomAbility = _zoomAbility ?: return
+        val subsamplingAbility = _subsamplingAbility ?: return
+        subsamplingAbility.onDraw(canvas, zoomAbility.transform, zoomAbility.containerSize)
+        zoomAbility.onDraw(canvas)
     }
 
     @SuppressLint("ClickableViewAccessibility")

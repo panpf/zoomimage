@@ -1,18 +1,19 @@
 package com.github.panpf.zoomimage.view.subsampling
 
 import android.graphics.Canvas
-import android.graphics.Matrix
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.view.internal.getLifecycle
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
@@ -132,8 +133,8 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         unregisterLifecycleObserver()
     }
 
-    internal fun onDraw(canvas: Canvas, displayMatrix: Matrix) {
-        engine.drawTiles(canvas, displayMatrix)
+    internal fun onDraw(canvas: Canvas, transform: TransformCompat, containerSize: IntSizeCompat) {
+        engine.drawTiles(canvas, transform, containerSize)
     }
 
     internal fun onVisibilityChanged(

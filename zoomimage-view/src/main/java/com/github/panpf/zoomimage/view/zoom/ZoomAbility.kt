@@ -17,10 +17,6 @@ package com.github.panpf.zoomimage.view.zoom
 
 import android.graphics.Canvas
 import android.graphics.Matrix
-import android.graphics.Point
-import android.graphics.PointF
-import android.graphics.Rect
-import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
@@ -28,15 +24,24 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.util.AlignmentCompat
+import com.github.panpf.zoomimage.util.ContentScaleCompat
 import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
-import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.util.center
+import com.github.panpf.zoomimage.util.toSize
+import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
+import com.github.panpf.zoomimage.view.internal.toAlignment
+import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarEngine
 import com.github.panpf.zoomimage.view.zoom.internal.UnifiedGestureDetector
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
+import kotlin.math.roundToInt
 
 class ZoomAbility constructor(
     private val view: View,
@@ -47,10 +52,17 @@ class ZoomAbility constructor(
     private var scrollBarEngine: ScrollBarEngine? = null
     private val gestureDetector: UnifiedGestureDetector
     private val cacheImageMatrix = Matrix()
-    private val cacheVisibleRect = Rect()
     private var onViewTapListenerList: MutableSet<OnViewTapListener>? = null
     private var onViewLongPressListenerList: MutableSet<OnViewLongPressListener>? = null
     internal val zoomEngine = ZoomEngine(logger = this.logger, view = view)
+    private var scaleType: ScaleType = ScaleType.FIT_CENTER
+        set(value) {
+            if (field != value) {
+                field = value
+                zoomEngine.contentScale = value.toContentScale()
+                zoomEngine.contentAlignment = value.toAlignment()
+            }
+        }
 
     var scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
         set(value) {
@@ -84,22 +96,67 @@ class ZoomAbility constructor(
         set(value) {
             zoomEngine.animationSpec = value
         }
-    var allowParentInterceptOnEdge: Boolean
-        get() = zoomEngine.allowParentInterceptOnEdge
+
+    val scrollEdge: ScrollEdge
+        get() = zoomEngine.scrollEdge
+
+    val scaling: Boolean
+        get() = zoomEngine.scaling
+    val fling: Boolean
+        get() = zoomEngine.fling
+
+    val minScale: Float
+        get() = zoomEngine.minScale
+    val mediumScale: Float
+        get() = zoomEngine.mediumScale
+    val maxScale: Float
+        get() = zoomEngine.maxScale
+
+    val containerSize: IntSizeCompat
+        get() = zoomEngine.containerSize
+    val contentSize: IntSizeCompat
+        get() = zoomEngine.contentSize
+    val contentOriginSize: IntSizeCompat
+        get() = zoomEngine.contentOriginSize
+    var contentScale: ContentScaleCompat
+        get() = zoomEngine.contentScale
         set(value) {
-            zoomEngine.allowParentInterceptOnEdge = value
+            zoomEngine.contentScale = value
         }
+    var contentAlignment: AlignmentCompat
+        get() = zoomEngine.contentAlignment
+        set(value) {
+            zoomEngine.contentAlignment = value
+        }
+
+    val containerVisibleRect: IntRectCompat
+        get() = zoomEngine.containerVisibleRect
+    val contentBaseDisplayRect: IntRectCompat
+        get() = zoomEngine.contentBaseDisplayRect
+    val contentBaseVisibleRect: IntRectCompat
+        get() = zoomEngine.contentBaseVisibleRect
+    val contentDisplayRect: IntRectCompat
+        get() = zoomEngine.contentDisplayRect
+    val contentVisibleRect: IntRectCompat
+        get() = zoomEngine.contentVisibleRect
+
+    val baseTransform: TransformCompat
+        get() = zoomEngine.baseTransform
+    val userTransform: TransformCompat
+        get() = zoomEngine.userTransform
+    val transform: TransformCompat
+        get() = zoomEngine.transform
 
     init {
         val initScaleType = imageViewBridge.superGetScaleType()
         require(initScaleType != ScaleType.MATRIX) { "ScaleType cannot be MATRIX" }
         imageViewBridge.superSetScaleType(ScaleType.MATRIX)
 
-        zoomEngine.scaleType = initScaleType
+        scaleType = initScaleType
         zoomEngine.addOnMatrixChangeListener {
-            imageViewBridge.superSetImageMatrix(
-                cacheImageMatrix.apply { zoomEngine.getDisplayMatrix(this) }
-            )
+            val matrix =
+                cacheImageMatrix.applyTransform(zoomEngine.transform, zoomEngine.containerSize)
+            imageViewBridge.superSetImageMatrix(matrix)
             scrollBarEngine?.onMatrixChanged()
         }
 
@@ -121,32 +178,44 @@ class ZoomAbility constructor(
                 onViewLongPressListenerList?.isNotEmpty() == true || view.performLongClick()
             },
             onDoubleTapCallback = { e: MotionEvent ->
-                zoomEngine.switchScale(e.x, e.y)
+                zoomEngine.switchScale(
+                    contentPoint = zoomEngine.touchPointToContentPoint(OffsetCompat(e.x, e.y)),
+                    animated = true
+                )
                 true
             },
-            onDragCallback = { dx: Float, dy: Float, scaling: Boolean ->
-                if (!scaling) {
-                    zoomEngine.doDrag(dx, dy)
-                }
+            onDragCallback = { dx: Float, dy: Float ->
+                zoomEngine.transform(
+                    centroid = zoomEngine.containerSize.toSize().center,
+                    panChange = OffsetCompat(dx, dy),
+                    zoomChange = 1f,
+                    rotationChange = 0f,
+                )
             },
             onFlingCallback = { velocityX: Float, velocityY: Float ->
                 zoomEngine.fling(velocityX, velocityY)
             },
             onScaleCallback = { scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float ->
                 zoomEngine.transform(
-                    focus = OffsetCompat(x = focusX, y = focusY),
-                    pan = OffsetCompat(x = dx, y = dy),
-                    scaleFactor = scaleFactor,
+                    centroid = OffsetCompat(x = focusX, y = focusY),
+                    panChange = OffsetCompat(x = dx, y = dy),
+                    zoomChange = scaleFactor,
+                    rotationChange = 0f,
                 )
             },
             onScaleBeginCallback = {
-                zoomEngine.manualScaling = true
+                zoomEngine.scaling = true
                 true
             },
-            onScaleEndCallback = { zoomEngine.manualScaling = false },
-            onActionDownCallback = { zoomEngine.actionDown() },
-            onActionUpCallback = { zoomEngine.rollbackScale() },
-            onActionCancelCallback = { zoomEngine.rollbackScale() },
+            onScaleEndCallback = {
+                zoomEngine.scaling = false
+                zoomEngine.rollbackScale(it)
+            },
+            onActionDownCallback = {
+                zoomEngine.stopAllAnimation("onActionDown")
+            },
+            onActionUpCallback = { },
+            onActionCancelCallback = { },
             canDrag = { horizontal: Boolean, direction: Int ->
                 zoomEngine.canScroll(horizontal, direction)
             }
@@ -161,7 +230,7 @@ class ZoomAbility constructor(
 
     private fun resetDrawableSize() {
         val drawable = imageViewBridge.getDrawable()
-        zoomEngine.drawableSize =
+        zoomEngine.contentSize =
             drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) }
                 ?: IntSizeCompat.Zero
     }
@@ -186,103 +255,48 @@ class ZoomAbility constructor(
      * Sets the dimensions of the original image, which is used to calculate the scale of double-click scaling
      */
     fun setImageSize(size: IntSizeCompat?) {
-        zoomEngine.imageSize = size ?: IntSizeCompat.Zero
+        zoomEngine.contentOriginSize = size ?: IntSizeCompat.Zero
     }
 
-    /**
-     * Locate to the location specified on the drawable image. You don't have to worry about scaling and rotation
-     */
-    fun location(
-        offsetOfContent: IntOffsetCompat,
-        targetScale: Float = scale.scaleX,
+    fun scale(
+        targetScale: Float,
+        contentPoint: IntOffsetCompat? = null,
         animated: Boolean = false
     ) {
-        zoomEngine.location(offsetOfContent, targetScale, animated)
+        zoomEngine.scale(targetScale, contentPoint, animated)
     }
 
-    /**
-     * Scale to the specified scale. You don't have to worry about rotation degrees
-     */
-    fun scale(
-        scale: Float,
-        centroid: OffsetCompat = OffsetCompat(viewSize.width / 2f, viewSize.height / 2f),
-        animate: Boolean = false
+    fun offset(
+        targetOffset: OffsetCompat,
+        animated: Boolean = false
     ) {
-        zoomEngine.scale(scale, centroid, animate)
+        zoomEngine.offset(targetOffset, animated)
     }
 
-    fun offset(offset: IntOffsetCompat, animate: Boolean = false) {
-        zoomEngine.offset(offset, animate)
+    fun location(
+        contentPoint: IntOffsetCompat,
+        targetScale: Float = zoomEngine.transform.scaleX,
+        animated: Boolean = false,
+    ) {
+        zoomEngine.location(contentPoint, targetScale, animated)
     }
 
-    /**
-     * Rotate the image to the specified degrees
-     *
-     * @param rotation Rotation degrees, can only be 90°, 180°, 270°, 360°
-     */
-    fun rotate(rotation: Int) {
-        zoomEngine.rotate(rotation)
+    fun rotate(targetRotation: Int) {
+        zoomEngine.rotate(targetRotation)
     }
 
     fun getNextStepScale(): Float = zoomEngine.getNextStepScale()
 
+    /**
+     * Whether you can scroll horizontally or vertical in the specified direction
+     *
+     * @param direction Negative to check scrolling left or up, positive to check scrolling right or down.
+     */
     fun canScroll(horizontal: Boolean, direction: Int): Boolean =
         zoomEngine.canScroll(horizontal, direction)
 
-    val rotation: Int
-        get() = zoomEngine.rotation
-
-    val scrollEdge: ScrollEdge
-        get() = zoomEngine.scrollEdge
-
-    val scaling: Boolean
-        get() = zoomEngine.scaling
-    val fling: Boolean
-        get() = zoomEngine.fling
-
-    val userScale: Float
-        get() = zoomEngine.userScale
-    val userOffset: OffsetCompat
-        get() = zoomEngine.userOffset
-
-    val baseScale: ScaleFactorCompat
-        get() = zoomEngine.baseScale
-    val baseOffset: OffsetCompat
-        get() = zoomEngine.baseOffset
-
-    val scale: ScaleFactorCompat
-        get() = zoomEngine.scale
-    val offset: OffsetCompat
-        get() = zoomEngine.offset
-
-    val minScale: Float
-        get() = zoomEngine.minScale
-    val mediumScale: Float
-        get() = zoomEngine.mediumScale
-    val maxScale: Float
-        get() = zoomEngine.maxScale
-
-    val viewSize: IntSizeCompat
-        get() = zoomEngine.viewSize
-    val imageSize: IntSizeCompat
-        get() = zoomEngine.imageSize
-    val drawableSize: IntSizeCompat
-        get() = zoomEngine.drawableSize
-
-    fun getDisplayMatrix(matrix: Matrix) = zoomEngine.getDisplayMatrix(matrix)
-
-    fun getDisplayRect(rectF: RectF) = zoomEngine.getDisplayRect(rectF)
-
-    fun getDisplayRect(): RectF = zoomEngine.getDisplayRect()
-
-    /** Gets the area that the user can see on the drawable (not affected by rotation) */
-    fun getVisibleRect(rect: Rect) = zoomEngine.getVisibleRect(rect)
-
-    /** Gets the area that the user can see on the drawable (not affected by rotation) */
-    fun getVisibleRect(): Rect = zoomEngine.getVisibleRect()
-
-    fun touchPointToDrawablePoint(touchPoint: PointF): Point? {
-        return zoomEngine.touchPointToDrawablePoint(touchPoint)
+    fun touchPointToContentPoint(touchPoint: OffsetCompat): IntOffsetCompat {
+        return zoomEngine.touchPointToContentPoint(touchPoint)
     }
 
     fun addOnMatrixChangeListener(listener: OnMatrixChangeListener) {
@@ -291,14 +305,6 @@ class ZoomAbility constructor(
 
     fun removeOnMatrixChangeListener(listener: OnMatrixChangeListener): Boolean {
         return zoomEngine.removeOnMatrixChangeListener(listener)
-    }
-
-    fun addOnRotateChangeListener(listener: OnRotateChangeListener) {
-        zoomEngine.addOnRotateChangeListener(listener)
-    }
-
-    fun removeOnRotateChangeListener(listener: OnRotateChangeListener): Boolean {
-        return zoomEngine.removeOnRotateChangeListener(listener)
     }
 
     fun addOnViewTapListener(listener: OnViewTapListener) {
@@ -343,15 +349,16 @@ class ZoomAbility constructor(
     fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
         val viewWidth = view.width - view.paddingLeft - view.paddingRight
         val viewHeight = view.height - view.paddingTop - view.paddingBottom
-        zoomEngine.viewSize = IntSizeCompat(viewWidth, viewHeight)
+        zoomEngine.containerSize = IntSizeCompat(viewWidth, viewHeight)
     }
 
     fun onDraw(canvas: Canvas) {
         scrollBarEngine?.onDraw(
             canvas = canvas,
-            viewSize = zoomEngine.viewSize,
-            contentSize = zoomEngine.drawableSize,
-            contentVisibleRect = cacheVisibleRect.apply { zoomEngine.getVisibleRect(this) }
+            containerSize = zoomEngine.containerSize,
+            contentSize = zoomEngine.contentSize,
+            contentVisibleRect = zoomEngine.contentVisibleRect,
+            rotation = zoomEngine.transform.rotation.roundToInt(),
         )
     }
 
@@ -360,9 +367,9 @@ class ZoomAbility constructor(
     }
 
     fun setScaleType(scaleType: ScaleType): Boolean {
-        zoomEngine.scaleType = scaleType
+        this@ZoomAbility.scaleType = scaleType
         return true
     }
 
-    fun getScaleType(): ScaleType = zoomEngine.scaleType
+    fun getScaleType(): ScaleType = this@ZoomAbility.scaleType
 }

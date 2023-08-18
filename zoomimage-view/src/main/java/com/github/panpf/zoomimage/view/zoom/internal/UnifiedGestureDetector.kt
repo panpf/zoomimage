@@ -4,6 +4,7 @@ import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
+import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnGestureListener
 
@@ -13,11 +14,11 @@ class UnifiedGestureDetector(
     onSingleTapConfirmedCallback: (e: MotionEvent) -> Boolean,
     onLongPressCallback: (e: MotionEvent) -> Unit,
     onDoubleTapCallback: (e: MotionEvent) -> Boolean,
-    onDragCallback: (dx: Float, dy: Float, scaling: Boolean) -> Unit,
+    onDragCallback: (dx: Float, dy: Float) -> Unit,
     onFlingCallback: (velocityX: Float, velocityY: Float) -> Unit,
     onScaleBeginCallback: () -> Boolean,
     onScaleCallback: (scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float) -> Unit,
-    onScaleEndCallback: () -> Unit,
+    onScaleEndCallback: (lastFocus: OffsetCompat?) -> Unit,
     onActionDownCallback: (ev: MotionEvent) -> Unit,
     onActionUpCallback: (ev: MotionEvent) -> Unit,
     onActionCancelCallback: (ev: MotionEvent) -> Unit,
@@ -45,8 +46,8 @@ class UnifiedGestureDetector(
 
     private val scaleDragGestureDetector =
         ScaleDragGestureDetector(view, canDrag, object : OnGestureListener {
-            override fun onDrag(dx: Float, dy: Float, scaling: Boolean) =
-                onDragCallback(dx, dy, scaling)
+            override fun onDrag(dx: Float, dy: Float) =
+                onDragCallback(dx, dy)
 
             override fun onFling(velocityX: Float, velocityY: Float) =
                 onFlingCallback(velocityX, velocityY)
@@ -57,7 +58,7 @@ class UnifiedGestureDetector(
                 scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float
             ) = onScaleCallback(scaleFactor, focusX, focusY, dx, dy)
 
-            override fun onScaleEnd() = onScaleEndCallback()
+            override fun onScaleEnd(lastFocus: OffsetCompat?) = onScaleEndCallback(lastFocus)
         }).apply {
             onActionListener = object : OnActionListener {
                 override fun onActionDown(ev: MotionEvent) = onActionDownCallback(ev)

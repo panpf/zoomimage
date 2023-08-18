@@ -21,6 +21,7 @@ import android.view.ScaleGestureDetector.OnScaleGestureListener
 import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
+import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.view.internal.getPointerIndex
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
@@ -33,7 +34,7 @@ internal class ScaleDragGestureDetector(
     val canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
     val onGestureListener: OnGestureListener
 ) {
-
+    // todo Refer to detectPowerfulTransformGestures to implement a unified drag-and-zoom gesture detector
     companion object {
         private const val INVALID_POINTER_ID = -1
     }
@@ -48,12 +49,9 @@ internal class ScaleDragGestureDetector(
     private var activePointerId: Int = INVALID_POINTER_ID
     private var activePointerIndex: Int = 0
 
-    var isDragging = false
-        private set
-    var canDragged = true
-        private set
-    val isScaling: Boolean
-        get() = scaleDetector.isInProgress
+    private var isDragging = false
+    private var canDragged = true
+
     var onActionListener: OnActionListener? = null
 
     init {
@@ -61,34 +59,34 @@ internal class ScaleDragGestureDetector(
         minimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
         touchSlop = configuration.scaledTouchSlop.toFloat()
         scaleDetector = ScaleGestureDetector(view.context, object : OnScaleGestureListener {
-            private var lastFocusX = 0f
-            private var lastFocusY = 0f
+            private var lastFocus: OffsetCompat? = null
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 val scaleFactor =
                     detector.scaleFactor.takeIf { !isNaN(it) && !isInfinite(it) } ?: return false
                 if (scaleFactor >= 0) {
+                    val lastFocus = this.lastFocus ?: OffsetCompat(detector.focusX, detector.focusY)
                     onGestureListener.onScale(
                         scaleFactor = scaleFactor,
                         focusX = detector.focusX,
                         focusY = detector.focusY,
-                        dx = detector.focusX - lastFocusX,
-                        dy = detector.focusY - lastFocusY
+                        dx = detector.focusX - lastFocus.x,
+                        dy = detector.focusY - lastFocus.y
                     )
-                    lastFocusX = detector.focusX
-                    lastFocusY = detector.focusY
+                    this.lastFocus = OffsetCompat(detector.focusX, detector.focusY)
                 }
                 return true
             }
 
             override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-                lastFocusX = detector.focusX
-                lastFocusY = detector.focusY
+                view.parent.requestDisallowInterceptTouchEvent(true)
+                lastFocus = OffsetCompat(detector.focusX, detector.focusY)
                 onGestureListener.onScaleBegin()
                 return true
             }
 
             override fun onScaleEnd(detector: ScaleGestureDetector) {
-                onGestureListener.onScaleEnd()
+                onGestureListener.onScaleEnd(lastFocus)
+                lastFocus = null
             }
         })
     }
@@ -130,33 +128,33 @@ internal class ScaleDragGestureDetector(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                val x = getActiveX(ev)
-                val y = getActiveY(ev)
-                val dx = x - lastTouchX
-                val dy = y - lastTouchY
-                if (!isDragging) {
-                    // Use Pythagoras to see if drag length is larger than touch slop
-                    isDragging = sqrt((dx * dx) + (dy * dy).toDouble()) >= touchSlop
-                    if (isDragging) {
-                        canDragged = if (abs(dx) > abs(dy)) {
-                            dx != 0f && canDrag(true, if (dx > 0f) -1 else 1)
-                        } else {
-                            dy != 0f && canDrag(false, if (dy > 0f) -1 else 1)
-                        }
-                        if (!canDragged) {
-                            view.parent.requestDisallowInterceptTouchEvent(false)
-                            isDragging = false
+                // Disable multi-finger drag, which can prevent the ViewPager from accidentally triggering left and right swipe when the minimum zoom ratio is zoomed in
+                if (ev.pointerCount == 1) {
+                    val x = getActiveX(ev)
+                    val y = getActiveY(ev)
+                    val dx = x - lastTouchX
+                    val dy = y - lastTouchY
+                    if (!isDragging) {
+                        // Use Pythagoras to see if drag length is larger than touch slop
+                        isDragging = sqrt((dx * dx) + (dy * dy).toDouble()) >= touchSlop
+                        if (isDragging) {
+                            canDragged = if (abs(dx) > abs(dy)) {
+                                dx != 0f && canDrag(true, if (dx > 0f) -1 else 1)
+                            } else {
+                                dy != 0f && canDrag(false, if (dy > 0f) -1 else 1)
+                            }
+                            if (!canDragged) {
+                                view.parent.requestDisallowInterceptTouchEvent(false)
+                                isDragging = false
+                            }
                         }
                     }
-                }
-                if (isDragging && canDragged) {
-                    // Disable multi-finger drag, which can prevent the ViewPager from accidentally triggering left and right swipe when the minimum zoom ratio is zoomed in
-                    if (ev.pointerCount == 1) {
-                        onGestureListener.onDrag(dx, dy, isScaling)
+                    if (isDragging && canDragged) {
+                        onGestureListener.onDrag(dx, dy)
+                        lastTouchX = x
+                        lastTouchY = y
+                        velocityTracker?.addMovement(ev)
                     }
-                    lastTouchX = x
-                    lastTouchY = y
-                    velocityTracker?.addMovement(ev)
                 }
             }
 
@@ -177,7 +175,6 @@ internal class ScaleDragGestureDetector(
             }
 
             MotionEvent.ACTION_CANCEL -> {
-                view.parent.requestDisallowInterceptTouchEvent(false)
                 activePointerId = INVALID_POINTER_ID
                 // Recycle Velocity Tracker
                 velocityTracker?.recycle()
@@ -186,7 +183,6 @@ internal class ScaleDragGestureDetector(
             }
 
             MotionEvent.ACTION_UP -> {
-                view.parent.requestDisallowInterceptTouchEvent(false)
                 activePointerId = INVALID_POINTER_ID
                 if (isDragging) {
                     velocityTracker?.let { velocityTracker ->
@@ -224,10 +220,10 @@ internal class ScaleDragGestureDetector(
     }
 
     interface OnGestureListener {
-        fun onDrag(dx: Float, dy: Float, scaling: Boolean)
+        fun onDrag(dx: Float, dy: Float)
         fun onFling(velocityX: Float, velocityY: Float)
         fun onScale(scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float)
         fun onScaleBegin(): Boolean
-        fun onScaleEnd()
+        fun onScaleEnd(lastFocus: OffsetCompat?)
     }
 }
