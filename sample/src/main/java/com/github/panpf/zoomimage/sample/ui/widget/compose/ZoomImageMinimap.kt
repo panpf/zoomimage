@@ -68,7 +68,6 @@ fun ZoomImageMinimap(
             val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
             val imageSize =
                 subsamplingState.imageInfo?.size?.toPlatform() ?: IntSize.Zero
-            val contentVisibleRect = zoomableState.contentVisibleRect
             AsyncImage(
                 request = DisplayRequest(LocalContext.current, sketchImageUri) {
                     crossfade()
@@ -102,6 +101,7 @@ fun ZoomImageMinimap(
                         }
 
                         if (contentSize.isNotEmpty() && viewSize.isNotEmpty()) {
+                            val contentVisibleRect = zoomableState.contentVisibleRect
                             drawVisibleRect(
                                 contentVisibleRect = contentVisibleRect,
                                 contentSize = contentSize,

@@ -139,6 +139,7 @@ class ZoomableState(
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
+    // todo contentScale、contentAlignment 等不是 state 的，所有依赖于他的 derivedStateOf 就不会自动刷新，例如 contentVisibleRect
     var contentScale: ContentScale = ContentScale.Fit
         set(value) {
             if (field != value) {
