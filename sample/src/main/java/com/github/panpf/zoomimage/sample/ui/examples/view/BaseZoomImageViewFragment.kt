@@ -22,8 +22,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
-import com.github.panpf.sketch.decode.internal.exifOrientationName
-import com.github.panpf.tools4j.io.ktx.formatFileSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
@@ -34,10 +32,6 @@ import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
-import com.github.panpf.zoomimage.sample.util.format
-import com.github.panpf.zoomimage.sample.util.toVeryShortString
-import com.github.panpf.zoomimage.toShortString
-import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
@@ -153,12 +147,14 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
         common.zoomImageViewInfo.setOnClickListener {
             ZoomImageViewInfoDialogFragment().apply {
-                arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
+                arguments = ZoomImageViewInfoDialogFragment.buildArgs(zoomImageView, sketchImageUri)
+                    .toBundle()
             }.show(childFragmentManager, null)
         }
         zoomImageView.zoomAbility.addOnViewLongPressListener { _, _, _ ->
             ZoomImageViewInfoDialogFragment().apply {
-                arguments = buildOtherInfo(zoomImageView, sketchImageUri).toBundle()
+                arguments = ZoomImageViewInfoDialogFragment.buildArgs(zoomImageView, sketchImageUri)
+                    .toBundle()
             }.show(childFragmentManager, null)
         }
 
@@ -230,52 +226,14 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewInfoHeaderText.text = """
                 scale: 
                 offset: 
-                visible: 
-                display: 
+                rotation: 
             """.trimIndent()
         common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
-            val scales = floatArrayOf(minScale, mediumScale, maxScale)
-                .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
-            val offsetCompat = transform.offset.round()
             """
-                ${transform.scaleX.format(2)}(${baseTransform.scaleX.format(2)}*${userTransform.scaleX.format(2)}) in $scales
-                ${offsetCompat.toShortString()}; edge=${scrollEdge.toShortString()}
-                ${containerVisibleRect.toShortString()}
-                ${contentDisplayRect.toShortString()}
+                ${transform.scale.toShortString()}
+                ${transform.offset.toShortString()}
+                ${transform.rotation.roundToInt()}
             """.trimIndent()
         }
     }
-
-    private fun buildOtherInfo(
-        zoomImageView: ZoomImageView,
-        sketchImageUri: String
-    ): ZoomImageViewInfoDialogFragmentArgs {
-        val zoomAbility = zoomImageView.zoomAbility
-        val subsamplingAbility = zoomImageView.subsamplingAbility
-        val tileList = subsamplingAbility.tileList ?: emptyList()
-        val loadedTileBytes = tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()
-        val exifOrientationName =
-            subsamplingAbility.imageInfo?.exifOrientation?.let { exifOrientationName(it) }
-        val loadedTileCount = tileList.count { it.bitmap != null }
-        val imageInfo = """
-                size=${subsamplingAbility.imageInfo?.size?.toShortString()}
-                mimeType=${subsamplingAbility.imageInfo?.mimeType}
-                exifOrientation=$exifOrientationName
-            """.trimIndent()
-        val sizeInfo = """
-                view=${zoomAbility.containerSize.toShortString()}
-                drawable=${zoomAbility.contentSize.toShortString()}
-            """.trimIndent()
-        val tilesInfo = """
-                tiles=${tileList.size}
-                loadedTiles=$loadedTileCount, $loadedTileBytes
-            """.trimIndent()
-        return ZoomImageViewInfoDialogFragmentArgs(
-            imageUri = sketchImageUri,
-            imageInfo = imageInfo,
-            sizeInfo = sizeInfo,
-            tilesInfo = tilesInfo
-        )
-    }
 }
-

@@ -11,65 +11,98 @@
         android:padding="20dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="URI："
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/imageInfoUriContent"
+            android:id="@+id/imageInfoUriText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:textSize="12sp"
             tools:text="http://sample.com/sample.jpeg" />
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Image："
-            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:text="Base："
+            android:textSize="13sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/imageInfoImageContent"
+            android:id="@+id/imageInfoBaseInfoText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
             tools:text="http://sample.com/sample.jpeg" />
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:gravity="right"
-            android:text="Size："
-            android:textSize="14sp"
+            android:text="Scale："
+            android:textSize="13sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/imageInfoSizeContent"
+            android:id="@+id/imageInfoScaleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
             tools:text="http://sample.com/sample.jpeg" />
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:gravity="right"
-            android:text="Tiles："
-            android:textSize="14sp"
+            android:text="Offset："
+            android:textSize="13sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/imageInfoTilesContent"
+            android:id="@+id/imageInfoOffsetText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="http://sample.com/sample.jpeg" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="right"
+            android:text="Display&amp;Visible："
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/imageInfoDisplayAndVisibleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="http://sample.com/sample.jpeg" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="right"
+            android:text="Tile："
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/imageInfoTileText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"

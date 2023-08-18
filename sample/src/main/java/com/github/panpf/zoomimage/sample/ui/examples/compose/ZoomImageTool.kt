@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.sample.ui.examples.compose
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,25 +58,43 @@ fun ZoomImageTool(
     imageUri: String,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        val transformInfo = remember(zoomableState.transform) {
-            val transform = zoomableState.transform
-            """
-                scale: ${transform.scale.toShortString()}
-                offset: ${transform.offset.round().toShortString()}
-                rotation: ${transform.rotation.roundToInt()}
-            """.trimIndent()
+        Row(Modifier.padding(20.dp)) {
+            val headerInfo = remember {
+                """
+                    scale: 
+                    offset: 
+                    rotation: 
+                """.trimIndent()
+            }
+            Text(
+                text = headerInfo,
+                color = Color.White,
+                fontSize = 13.sp,
+                lineHeight = 16.sp,
+                style = LocalTextStyle.current.copy(
+                    shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                ),
+                overflow = TextOverflow.Ellipsis,
+            )
+            val transformInfo = remember(zoomableState.transform) {
+                val transform = zoomableState.transform
+                """
+                    ${transform.scale.toShortString()}
+                    ${transform.offset.round().toShortString()}
+                    ${transform.rotation.roundToInt()}
+                """.trimIndent()
+            }
+            Text(
+                text = transformInfo,
+                color = Color.White,
+                fontSize = 13.sp,
+                lineHeight = 16.sp,
+                style = LocalTextStyle.current.copy(
+                    shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
+                ),
+                overflow = TextOverflow.Ellipsis,
+            )
         }
-        Text(
-            text = transformInfo,
-            color = Color.White,
-            fontSize = 13.sp,
-            lineHeight = 16.sp,
-            style = LocalTextStyle.current.copy(
-                shadow = Shadow(offset = Offset(1f, 1f), blurRadius = 4f),
-            ),
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(20.dp)
-        )
 
         var content by remember { mutableStateOf(ToolContent.BUTTON) }
         Crossfade(
@@ -133,7 +152,7 @@ fun ZoomImageTool(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ZoomImageToolPreview() {
     val logger = rememberZoomImageLogger()

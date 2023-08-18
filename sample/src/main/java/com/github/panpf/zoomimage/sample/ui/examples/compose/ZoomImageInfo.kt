@@ -10,9 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
+import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.tools4j.io.ktx.formatCompactFileSize
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
@@ -22,6 +25,7 @@ import com.github.panpf.zoomimage.rememberZoomImageLogger
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.toShortString
+import kotlin.math.roundToInt
 
 @Composable
 fun ZoomImageInfo(
@@ -30,20 +34,20 @@ fun ZoomImageInfo(
     subsamplingState: SubsamplingState,
 ) {
     val baseInfo = remember(zoomableState.transform) {
+        val exifOrientationName = subsamplingState.imageInfo
+            ?.exifOrientation?.let { exifOrientationName(it) }
         """
             containerSize: ${zoomableState.containerSize.let { "${it.width}x${it.height}" }}
             contentSize: ${zoomableState.contentSize.let { "${it.width}x${it.height}" }}
             contentOriginSize: ${zoomableState.contentOriginSize.let { "${it.width}x${it.height}" }}
-            rotation: ${zoomableState.transform.rotation}
+            exifOrientation: $exifOrientationName
+            rotation: ${zoomableState.transform.rotation.roundToInt()}
         """.trimIndent()
     }
     val scaleInfo = remember(zoomableState.transform) {
-        val transform = zoomableState.transform
-        val userTransform = zoomableState.userTransform
-        val baseTransform = zoomableState.baseTransform
-        val userScaleFormatted = userTransform.scale.toShortString()
-        val scaleFormatted = transform.scale.toShortString()
-        val baseScaleFormatted = baseTransform.scale.toShortString()
+        val scaleFormatted = zoomableState.transform.scale.toShortString()
+        val baseScaleFormatted = zoomableState.baseTransform.scale.toShortString()
+        val userScaleFormatted = zoomableState.userTransform.scale.toShortString()
         val scales = floatArrayOf(
             zoomableState.minScale,
             zoomableState.mediumScale,
@@ -58,14 +62,14 @@ fun ZoomImageInfo(
     }
     val offsetInfo = remember(zoomableState.transform) {
         """
-            offset: ${zoomableState.transform.offset.toShortString()}
-            baseOffset: ${zoomableState.baseTransform.offset.toShortString()}
-            userOffset: ${zoomableState.userTransform.offset.toShortString()}
+            offset: ${zoomableState.transform.offset.round().toShortString()}
+            baseOffset: ${zoomableState.baseTransform.offset.round().toShortString()}
+            userOffset: ${zoomableState.userTransform.offset.round().toShortString()}
             userOffsetBounds: ${zoomableState.userOffsetBounds.toShortString()}
             edge: ${zoomableState.scrollEdge.toShortString()}
         """.trimIndent()
     }
-    val rectInfo = remember(zoomableState.transform) {
+    val displayAndVisibleInfo = remember(zoomableState.transform) {
         """
             containerVisible: ${zoomableState.containerVisibleRect.toShortString()}
             contentBaseDisplay: ${zoomableState.contentBaseDisplayRect.toShortString()}
@@ -98,7 +102,7 @@ fun ZoomImageInfo(
         InfoItem("Offset：", offsetInfo)
 
         Spacer(modifier = Modifier.size(8.dp))
-        InfoItem("Display&Visible：", rectInfo)
+        InfoItem("Display&Visible：", displayAndVisibleInfo)
 
         Spacer(modifier = Modifier.size(8.dp))
         InfoItem("Tile：", tileInfo)
@@ -117,7 +121,7 @@ fun ZoomImageInfoPreview() {
 }
 
 @Composable
-fun ColumnScope.InfoItem(title: String?, content: String) {
+fun ColumnScope.InfoItem(title: String?, content: String, contentMaxLines: Int? = null) {
     if (title != null) {
         Text(
             text = title,
@@ -128,6 +132,8 @@ fun ColumnScope.InfoItem(title: String?, content: String) {
     Text(
         text = content,
         modifier = Modifier.fillMaxWidth(),
+        maxLines = contentMaxLines ?: Int.MAX_VALUE,
+        overflow = if (contentMaxLines != null) TextOverflow.Ellipsis else TextOverflow.Clip,
         fontSize = 12.sp,
         lineHeight = 16.sp
     )

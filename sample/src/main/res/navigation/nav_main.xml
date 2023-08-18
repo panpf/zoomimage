@@ -139,15 +139,23 @@
             app:argType="string"
             app:nullable="false" />
         <argument
-            android:name="imageInfo"
+            android:name="baseInfo"
             app:argType="string"
             app:nullable="false" />
         <argument
-            android:name="sizeInfo"
+            android:name="scaleInfo"
             app:argType="string"
             app:nullable="false" />
         <argument
-            android:name="tilesInfo"
+            android:name="offsetInfo"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="displayAndVisibleInfo"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="tileInfo"
             app:argType="string"
             app:nullable="false" />
     </fragment>

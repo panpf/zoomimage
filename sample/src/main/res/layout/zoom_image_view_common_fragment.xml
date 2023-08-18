@@ -17,9 +17,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:shadowColor="@android:color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="4"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="10"
             android:textColor="@android:color/white"
             tools:text="draw：\nvisible: \nstepScales: " />
 
@@ -30,9 +30,9 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:shadowColor="@android:color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="4"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="10"
             android:textColor="@android:color/white"
             tools:text="draw：\nvisible: \nstepScales: " />
     </LinearLayout>

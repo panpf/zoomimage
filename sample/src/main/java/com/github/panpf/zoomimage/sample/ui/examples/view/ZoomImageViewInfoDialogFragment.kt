@@ -17,8 +17,16 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.os.Bundle
 import androidx.navigation.fragment.navArgs
+import com.github.panpf.sketch.decode.internal.exifOrientationName
+import com.github.panpf.tools4j.io.ktx.formatFileSize
+import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewInfoDialogBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
+import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.toShortString
+import com.github.panpf.zoomimage.util.round
+import com.github.panpf.zoomimage.util.toShortString
+import kotlin.math.roundToInt
 
 class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoDialogBinding>() {
 
@@ -28,9 +36,81 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
         binding: ZoomImageViewInfoDialogBinding,
         savedInstanceState: Bundle?
     ) {
-        binding.imageInfoUriContent.text = args.imageUri
-        binding.imageInfoImageContent.text = args.imageInfo
-        binding.imageInfoSizeContent.text = args.sizeInfo
-        binding.imageInfoTilesContent.text = args.tilesInfo
+        binding.imageInfoUriText.text = args.imageUri
+        binding.imageInfoBaseInfoText.text = args.baseInfo
+        binding.imageInfoScaleText.text = args.scaleInfo
+        binding.imageInfoOffsetText.text = args.offsetInfo
+        binding.imageInfoDisplayAndVisibleText.text = args.displayAndVisibleInfo
+        binding.imageInfoTileText.text = args.tileInfo
+    }
+
+    companion object {
+
+        fun buildArgs(
+            zoomImageView: ZoomImageView,
+            sketchImageUri: String
+        ): ZoomImageViewInfoDialogFragmentArgs {
+            val zoomAbility = zoomImageView.zoomAbility
+            val subsamplingAbility = zoomImageView.subsamplingAbility
+
+            val exifOrientationName = subsamplingAbility.imageInfo
+                ?.exifOrientation?.let { exifOrientationName(it) }
+            val baseInfo = """
+                containerSize: ${zoomAbility.containerSize.let { "${it.width}x${it.height}" }}
+                contentSize: ${zoomAbility.contentSize.let { "${it.width}x${it.height}" }}
+                contentOriginSize: ${zoomAbility.contentOriginSize.let { "${it.width}x${it.height}" }}
+                exifOrientation: $exifOrientationName
+                rotation: ${zoomAbility.transform.rotation.roundToInt()}
+            """.trimIndent()
+
+            val scaleFormatted = zoomAbility.transform.scale.toShortString()
+            val baseScaleFormatted = zoomAbility.baseTransform.scale.toShortString()
+            val userScaleFormatted = zoomAbility.userTransform.scale.toShortString()
+            val scales = floatArrayOf(
+                zoomAbility.minScale,
+                zoomAbility.mediumScale,
+                zoomAbility.maxScale
+            ).joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
+
+            val scaleInfo = """
+                scale: $scaleFormatted
+                baseScale: $baseScaleFormatted
+                userScale: $userScaleFormatted
+                stepScales: $scales
+            """.trimIndent()
+
+            val offsetInfo = """
+                offset: ${zoomAbility.transform.offset.round().toShortString()}
+                baseOffset: ${zoomAbility.baseTransform.offset.round().toShortString()}
+                userOffset: ${zoomAbility.userTransform.offset.round().toShortString()}
+                userOffsetBounds: ${zoomAbility.userOffsetBounds.toShortString()}
+                edge: ${zoomAbility.scrollEdge.toShortString()}
+            """.trimIndent()
+
+            val displayAndVisibleInfo = """
+                containerVisible: ${zoomAbility.containerVisibleRect.toShortString()}
+                contentBaseDisplay: ${zoomAbility.contentBaseDisplayRect.toShortString()}
+                contentBaseVisible: ${zoomAbility.contentBaseVisibleRect.toShortString()}
+                contentDisplay: ${zoomAbility.contentDisplayRect.toShortString()}
+                contentVisible: ${zoomAbility.contentVisibleRect.toShortString()}
+            """.trimIndent()
+
+            val tileList = subsamplingAbility.tileList ?: emptyList()
+            val loadedTileCount = tileList.count { it.bitmap != null }
+            val loadedTileBytes =
+                tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()
+            val tilesInfo = """
+                tiles=${tileList.size}
+                loadedTiles=$loadedTileCount, $loadedTileBytes
+            """.trimIndent()
+            return ZoomImageViewInfoDialogFragmentArgs(
+                imageUri = sketchImageUri,
+                baseInfo = baseInfo,
+                scaleInfo = scaleInfo,
+                offsetInfo = offsetInfo,
+                displayAndVisibleInfo = displayAndVisibleInfo,
+                tileInfo = tilesInfo
+            )
+        }
     }
 }
