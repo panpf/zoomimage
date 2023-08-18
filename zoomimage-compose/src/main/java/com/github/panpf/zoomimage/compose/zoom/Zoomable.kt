@@ -57,9 +57,9 @@ fun Modifier.zoomable(
                         rotationChange = rotation
                     )
                 },
-                onEnd = { _, velocity ->
+                onEnd = { centroid, velocity ->
                     state.scaling = false
-                    if (!state.rollbackScale()) {
+                    if (!state.rollbackScale(centroid)) {
                         state.fling(velocity, density)
                     }
                 }

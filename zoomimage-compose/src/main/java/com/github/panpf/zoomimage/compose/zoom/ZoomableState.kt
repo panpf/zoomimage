@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.toRect
+import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
@@ -116,7 +118,6 @@ class ZoomableState(
 
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
-    private var lastTransformCentroid: Offset? = null
     private var rotation = 0
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -478,7 +479,6 @@ class ZoomableState(
     ) = coroutineScope.launch {
         containerSize.takeIf { it.isNotEmpty() } ?: return@launch
         contentSize.takeIf { it.isNotEmpty() } ?: return@launch
-        this@ZoomableState.lastTransformCentroid = centroid
 
         val targetScale = transform.scaleX * zoomChange
         val targetUserScale = targetScale / baseTransform.scaleX
@@ -579,8 +579,10 @@ class ZoomableState(
         }
     }
 
-    fun rollbackScale(): Boolean {
-        val lastTransformCentroid = lastTransformCentroid ?: return false
+    fun rollbackScale(centroid: Offset? = null): Boolean {
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return false
+        contentSize.takeIf { it.isNotEmpty() } ?: return false
+
         val minScale = minScale
         val maxScale = maxScale
         val currentScale = transform.scaleX
@@ -594,10 +596,11 @@ class ZoomableState(
             val endScale = targetScale
             logger.d {
                 "rollbackScale. " +
-                        "lastTransformCentroid=${lastTransformCentroid.toShortString()}. " +
+                        "centroid=${centroid?.toShortString()}. " +
                         "startScale=${startScale.format(4)}, " +
                         "endScale=${endScale.format(4)}"
             }
+            val finalCentroid = centroid ?: containerSize.toSize().center
             coroutineScope.launch {
                 val updateAnimatable = Animatable(0f)
                 this@ZoomableState.lastScaleAnimatable = updateAnimatable
@@ -619,7 +622,7 @@ class ZoomableState(
                         val nowScale = transform.scaleX
                         val addScale = frameScale / nowScale
                         transform(
-                            centroid = lastTransformCentroid,
+                            centroid = finalCentroid,
                             panChange = Offset.Zero,
                             zoomChange = addScale,
                             rotationChange = 0f
