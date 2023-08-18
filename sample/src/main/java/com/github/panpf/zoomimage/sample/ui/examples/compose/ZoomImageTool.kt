@@ -1,19 +1,23 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.FilledIconButton
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,13 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -96,49 +100,59 @@ fun ZoomImageTool(
             )
         }
 
-        var content by remember { mutableStateOf(ToolContent.BUTTON) }
-        Crossfade(
-            targetState = content,
+        Column(
             modifier = Modifier
+                .padding(20.dp)
                 .align(Alignment.BottomEnd)
-                .fillMaxWidth(0.5f)
-                .aspectRatio(1f), label = ""
+                .wrapContentHeight()
+                .width(164.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            when (it) {
-                ToolContent.SCALE -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        contentAlignment = Alignment.BottomEnd
-                    ) {
-                        ScalePad(zoomableState) { content = ToolContent.BUTTON }
-                    }
-                }
-
-                ToolContent.MOVE -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        contentAlignment = Alignment.BottomEnd
-                    ) {
-                        MovePad(zoomableState) { content = ToolContent.BUTTON }
-                    }
-                }
-
-                ToolContent.BUTTON -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        contentAlignment = Alignment.BottomEnd
-                    ) {
-                        ButtonPad(infoDialogState, zoomableState) { newContent ->
-                            content = newContent
+            val inspectionMode = LocalInspectionMode.current
+            var moreShow by remember { mutableStateOf(inspectionMode) }
+            AnimatedVisibility(
+                visible = moreShow,
+                enter = slideInHorizontally(initialOffsetX = { it * 2 }),
+                exit = slideOutHorizontally(targetOffsetX = { it * 2 }),
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val maxStep by remember {
+                        derivedStateOf {
+                            (zoomableState.containerSize / 20)
+                                .let { Offset(it.width.toFloat(), it.height.toFloat()) }
                         }
                     }
+                    val moveKeyboardState =
+                        rememberMoveKeyboardState(maxStep = maxStep, stepInterval = 8)
+                    LaunchedEffect(Unit) {
+                        moveKeyboardState.moveFlow.collect {
+                            zoomableState.offset(zoomableState.transform.offset + it * -1f)
+                        }
+                    }
+                    MoveKeyboard(
+                        state = moveKeyboardState,
+                        modifier = Modifier.size(100.dp)
+                    )
+
+                    Spacer(modifier = Modifier.size(6.dp))
+
+                    var value by remember { mutableStateOf(zoomableState.transform.scaleX) }
+                    Slider(
+                        value = value,
+                        valueRange = zoomableState.minScale..zoomableState.maxScale,
+                        onValueChange = {
+                            value = it
+                            zoomableState.scale(targetScale = it, animated = true)
+                        },
+                        steps = 8,
+                    )
+
+                    Spacer(modifier = Modifier.size(6.dp))
                 }
+            }
+
+            ButtonPad(infoDialogState, zoomableState) {
+                moreShow = !moreShow
             }
         }
 
@@ -164,60 +178,30 @@ fun ZoomImageToolPreview() {
     )
 }
 
-enum class ToolContent {
-    SCALE, MOVE, BUTTON
-}
-
 @Composable
 private fun ButtonPad(
     infoDialogState: MyDialogState,
     zoomableState: ZoomableState,
-    onSetToolContent: (ToolContent) -> Unit
+    onClickMore: () -> Unit
 ) {
-    ConstraintLayout(Modifier.wrapContentSize()) {
-        val (button1, button2, button3, button4, button5) = createRefs()
-
-        FilledIconButton(
-            onClick = {
-                onSetToolContent(ToolContent.MOVE)
-            },
-            modifier = Modifier
-                .size(34.dp)
-                .constrainAs(button1) {
-                    centerTo(parent)
-                }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_gamepad),
-                contentDescription = "GamePad",
-                modifier = Modifier.fillMaxSize(0.6f)
-            )
-        }
-
-        FilledIconButton(
+    val colorScheme = MaterialTheme.colorScheme
+    Row(Modifier.background(colorScheme.tertiary.copy(alpha = 0.8f), RoundedCornerShape(50))) {
+        IconButton(
             onClick = {
                 zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
             },
-            modifier = Modifier
-                .size(34.dp)
-                .constrainAs(button2) {
-                    circular(button1, 315f, 44.dp)
-                }
+            modifier = Modifier.size(40.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_rotate_right),
                 contentDescription = "Rotate",
-                modifier = Modifier.fillMaxSize(0.6f)
+                tint = colorScheme.onTertiary
             )
         }
 
-        FilledIconButton(
+        IconButton(
             onClick = { zoomableState.switchScale(animated = true) },
-            modifier = Modifier
-                .size(34.dp)
-                .constrainAs(button3) {
-                    circular(button1, 45f, 44.dp)
-                }
+            modifier = Modifier.size(40.dp)
         ) {
             val zoomIn = remember {
                 derivedStateOf {
@@ -230,39 +214,29 @@ private fun ButtonPad(
             Icon(
                 painter = painterResource(id = icon.first),
                 contentDescription = icon.second,
-                modifier = Modifier.fillMaxSize(0.6f)
+                tint = colorScheme.onTertiary
             )
         }
 
-        FilledIconButton(
-            onClick = {
-                onSetToolContent(ToolContent.SCALE)
-            },
-            modifier = Modifier
-                .size(34.dp)
-                .constrainAs(button4) {
-                    circular(button1, 135f, 44.dp)
-                }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_linear_scale),
-                contentDescription = "LinearScale",
-                modifier = Modifier.fillMaxSize(0.6f)
-            )
-        }
-
-        FilledIconButton(
+        IconButton(
             onClick = { infoDialogState.showing = !infoDialogState.showing },
-            modifier = Modifier
-                .size(34.dp)
-                .constrainAs(button5) {
-                    circular(button1, 225f, 44.dp)
-                }
+            modifier = Modifier.size(40.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_info),
-                contentDescription = "Options",
-                modifier = Modifier.fillMaxSize(0.6f)
+                contentDescription = "Info",
+                tint = colorScheme.onTertiary
+            )
+        }
+
+        IconButton(
+            onClick = { onClickMore() },
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_more_vert),
+                contentDescription = "More",
+                tint = colorScheme.onTertiary
             )
         }
     }
@@ -274,89 +248,6 @@ private fun ButtonPadPreview() {
     ButtonPad(
         infoDialogState = rememberMyDialogState(),
         zoomableState = rememberZoomableState(logger = rememberZoomImageLogger()),
-        onSetToolContent = {}
+        onClickMore = {}
     )
-}
-
-@Composable
-private fun MovePad(zoomableState: ZoomableState, onClosed: () -> Unit = {}) {
-    val maxStep by remember {
-        derivedStateOf {
-            (zoomableState.containerSize / 20)
-                .let { Offset(it.width.toFloat(), it.height.toFloat()) }
-        }
-    }
-    val moveKeyboardState =
-        rememberMoveKeyboardState(maxStep = maxStep, stepInterval = 8)
-    LaunchedEffect(Unit) {
-        moveKeyboardState.moveFlow.collect {
-            zoomableState.offset(zoomableState.transform.offset + it * -1f)
-        }
-    }
-
-    Column {
-        FilledIconButton(
-            onClick = { onClosed() },
-            modifier = Modifier
-                .size(34.dp)
-                .align(Alignment.End)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_close),
-                contentDescription = "GamePad",
-                modifier = Modifier.fillMaxSize(0.6f)
-            )
-        }
-
-        Spacer(modifier = Modifier.size(20.dp))
-
-        MoveKeyboard(
-            state = moveKeyboardState,
-            modifier = Modifier.size(100.dp)
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun MovePadPreview() {
-    MovePad(zoomableState = rememberZoomableState(logger = rememberZoomImageLogger()))
-}
-
-@Composable
-private fun ScalePad(zoomableState: ZoomableState, onClosed: () -> Unit = {}) {
-    var value by remember { mutableStateOf(zoomableState.transform.scaleX) }
-    Column(Modifier.fillMaxWidth()) {
-        FilledIconButton(
-            onClick = { onClosed() },
-            modifier = Modifier
-                .size(34.dp)
-                .align(Alignment.End)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_close),
-                contentDescription = "GamePad",
-                modifier = Modifier.fillMaxSize(0.6f)
-            )
-        }
-
-        Spacer(modifier = Modifier.size(20.dp))
-
-        Slider(
-            modifier = Modifier.fillMaxWidth(),
-            value = value,
-            valueRange = zoomableState.minScale..zoomableState.maxScale,
-            onValueChange = {
-                value = it
-                zoomableState.scale(targetScale = it, animated = true)
-            },
-            steps = 8,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun ScalePadPreview() {
-    ScalePad(zoomableState = rememberZoomableState(logger = rememberZoomImageLogger()))
 }
