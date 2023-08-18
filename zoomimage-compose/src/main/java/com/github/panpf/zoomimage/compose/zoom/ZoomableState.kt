@@ -112,7 +112,7 @@ fun rememberZoomableState(
         }
     }
     LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.contentAlignment }.collect {
+        snapshotFlow { zoomableState.alignment }.collect {
             zoomableState.reset("alignmentChanged")
         }
     }
@@ -161,7 +161,7 @@ class ZoomableState(
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
-    var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
+    var alignment: Alignment by mutableStateOf(Alignment.Center)
     var readMode: ReadMode? by mutableStateOf(null)
     var mediumScaleMinMultiple: Float by mutableStateOf(DefaultMediumScaleMinMultiple)
     var threeStepScale: Boolean = false
@@ -180,7 +180,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
         ).roundToPlatform()
     }
@@ -189,7 +189,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
         ).roundToPlatform()
     }
@@ -198,7 +198,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat(),
@@ -209,7 +209,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset.toCompat(),
@@ -221,7 +221,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
             userScale = userTransform.scaleX,
         )
@@ -235,7 +235,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
             userScale = userTransform.scaleX,
         ).roundToPlatform()
@@ -251,7 +251,7 @@ class ZoomableState(
         val contentSize = contentSize
         val contentOriginSize = contentOriginSize
         val contentScale = contentScale
-        val contentAlignment = contentAlignment
+        val alignment = alignment
         val readMode = readMode
         val rotation = rotation
         val mediumScaleMinMultiple = mediumScaleMinMultiple
@@ -261,7 +261,7 @@ class ZoomableState(
             contentSize = contentSize.toCompat(),
             contentOriginSize = contentOriginSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            contentAlignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
             readMode = readMode,
             mediumScaleMinMultiple = mediumScaleMinMultiple
@@ -273,7 +273,7 @@ class ZoomableState(
                     "contentSize=${contentSize.toShortString()}, " +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
-                    "contentAlignment=${contentAlignment.name}, " +
+                    "alignment=${alignment.name}, " +
                     "rotation=${rotation}, " +
                     "mediumScaleMinMultiple=${mediumScaleMinMultiple.format(4)}, " +
                     "readMode=${readMode}. " +
@@ -313,7 +313,7 @@ class ZoomableState(
                 containerSize = containerSize.toCompat(),
                 contentSize = contentSize.toCompat(),
                 contentScale = contentScale.toCompat(),
-                contentAlignment = contentAlignment.toCompat(),
+                alignment = alignment.toCompat(),
                 rotation = rotation,
                 contentPoint = contentPoint.toCompat(),
             ).toPlatform()
@@ -400,7 +400,7 @@ class ZoomableState(
         val contentSize =
             contentSize.takeIf { it.isNotEmpty() } ?: return@launch
         val contentScale = contentScale
-        val contentAlignment = contentAlignment
+        val alignment = alignment
         val currentUserTransform = userTransform
         val rotation = rotation
 
@@ -410,7 +410,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            contentAlignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
             contentPoint = contentPoint.toCompat(),
         )
@@ -673,7 +673,7 @@ class ZoomableState(
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val currentUserTransform = userTransform
         val contentScale = contentScale
-        val contentAlignment = contentAlignment
+        val alignment = alignment
         val rotation = rotation
         val containerPoint = touchPointToContainerPoint(
             containerSize = containerSize.toCompat(),
@@ -685,7 +685,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            contentAlignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
             containerPoint = containerPoint
         ).toPlatform()
@@ -714,7 +714,7 @@ class ZoomableState(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
-            alignment = contentAlignment.toCompat(),
+            alignment = alignment.toCompat(),
             rotation = rotation,
             userScale = userScale,
         ).roundToPlatform().toRect()
@@ -812,7 +812,7 @@ class ZoomableState(
                 "contentSize=${contentSize.toShortString()}, " +
                 "contentOriginSize=${contentOriginSize.toShortString()}, " +
                 "contentScale=${contentScale.name}, " +
-                "contentAlignment=${contentAlignment.name}, " +
+                "alignment=${alignment.name}, " +
                 "minScale=${minScale.format(4)}, " +
                 "mediumScale=${mediumScale.format(4)}, " +
                 "maxScale=${maxScale.format(4)}, " +

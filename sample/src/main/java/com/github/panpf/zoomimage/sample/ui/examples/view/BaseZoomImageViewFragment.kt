@@ -61,7 +61,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     contentScale = contentScaleCompat(it)
                 }
                 prefsService.alignment.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    contentAlignment = alignmentCompat(it)
+                    alignment = alignmentCompat(it)
                 }
                 prefsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScale = it

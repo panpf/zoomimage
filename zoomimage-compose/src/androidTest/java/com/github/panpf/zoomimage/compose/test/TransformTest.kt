@@ -27,14 +27,14 @@
 //        val containerSize = IntSize(1080, 1656)
 //        val contentSize = IntSize(7500, 232)
 //        val contentScale = ContentScale.Fit
-//        val contentAlignment = Alignment.Center
+//        val alignment = Alignment.Center
 //        val readMode = ReadMode.Default
 //
 //        val baseTransform = computeBaseTransform(
 //            containerSize = containerSize.toCompat(),
 //            contentSize = contentSize.toCompat(),
 //            contentScale = contentScale.toCompat(),
-//            alignment = contentAlignment.toCompat(),
+//            alignment = alignment.toCompat(),
 //            rotation = 0,
 //        ).toPlatform().also {
 //            val expected = Transform(ScaleFactor(0.144f), Offset(0f, 812f))
@@ -68,14 +68,14 @@
 //        val containerSize = IntSize(1080, 1656)
 //        val contentSize = IntSize(7500, 232)
 //        val contentScale = ContentScale.None
-//        val contentAlignment = Alignment.Center
+//        val alignment = Alignment.Center
 //        val readMode = ReadMode.Default
 //
 //        val baseTransform = computeBaseTransform(
 //            containerSize = containerSize,
 //            contentSize = contentSize,
 //            contentScale = contentScale,
-//            alignment = contentAlignment
+//            alignment = alignment
 //        ).also {
 //            val expected = Transform(ScaleFactor(1f), Offset(-3210f, 712f))
 //            Assert.assertEquals(/* expected = */ expected,/* actual = */ it)

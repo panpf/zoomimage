@@ -60,7 +60,7 @@ class ZoomAbility constructor(
             if (field != value) {
                 field = value
                 zoomEngine.contentScale = value.toContentScale()
-                zoomEngine.contentAlignment = value.toAlignment()
+                zoomEngine.alignment = value.toAlignment()
             }
         }
 
@@ -93,10 +93,10 @@ class ZoomAbility constructor(
         set(value) {
             zoomEngine.contentScale = value
         }
-    var contentAlignment: AlignmentCompat
-        get() = zoomEngine.contentAlignment
+    var alignment: AlignmentCompat
+        get() = zoomEngine.alignment
         set(value) {
-            zoomEngine.contentAlignment = value
+            zoomEngine.alignment = value
         }
     var scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
         set(value) {

@@ -72,8 +72,8 @@ fun GlideZoomAsyncImage(
     // from glide: TODO(judds): Consider defaulting to load the model here instead of always doing so below.
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it },
 ) {
-    if (zoomableState.contentAlignment != alignment) {
-        zoomableState.contentAlignment = alignment
+    if (zoomableState.alignment != alignment) {
+        zoomableState.alignment = alignment
     }
     if (zoomableState.contentScale != contentScale) {
         zoomableState.contentScale = contentScale

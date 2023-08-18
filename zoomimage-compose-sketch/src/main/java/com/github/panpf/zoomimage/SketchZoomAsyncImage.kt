@@ -191,8 +191,8 @@ fun SketchZoomAsyncImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    if (zoomableState.contentAlignment != alignment) {
-        zoomableState.contentAlignment = alignment
+    if (zoomableState.alignment != alignment) {
+        zoomableState.alignment = alignment
     }
     if (zoomableState.contentScale != contentScale) {
         zoomableState.contentScale = contentScale

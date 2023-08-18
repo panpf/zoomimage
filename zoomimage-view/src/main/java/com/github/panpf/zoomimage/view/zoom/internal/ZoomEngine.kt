@@ -133,11 +133,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset("contentScaleChanged")
             }
         }
-    var contentAlignment: AlignmentCompat = AlignmentCompat.Center
+    var alignment: AlignmentCompat = AlignmentCompat.Center
         set(value) {
             if (field != value) {
                 field = value
-                reset("contentAlignmentChanged")
+                reset("alignmentChanged")
             }
         }
     var readMode: ReadMode? = null
@@ -191,7 +191,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val readMode = readMode
         val rotation = rotation
         val contentScale = contentScale
-        val contentAlignment = contentAlignment
+        val alignment = alignment
         val mediumScaleMinMultiple = mediumScaleMinMultiple
 
         val initialZoom = com.github.panpf.zoomimage.util.computeInitialZoom(
@@ -199,7 +199,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             contentSize = contentSize,
             contentOriginSize = contentOriginSize,
             contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
             readMode = readMode,
             mediumScaleMinMultiple = mediumScaleMinMultiple,
@@ -210,7 +210,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     "contentSize=$contentSize, " +
                     "contentOriginSize=$contentOriginSize, " +
                     "contentScale=${contentScale.name}, " +
-                    "contentAlignment=${contentAlignment.name}, " +
+                    "alignment=${alignment.name}, " +
                     "rotation=$rotation, " +
                     "mediumScaleMinMultiple=$mediumScaleMinMultiple, " +
                     "readMode=$readMode. " +
@@ -257,7 +257,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 containerSize = containerSize,
                 contentSize = contentSize,
                 contentScale = contentScale,
-                contentAlignment = contentAlignment,
+                alignment = alignment,
                 rotation = rotation,
                 contentPoint = contentPoint,
             )
@@ -344,7 +344,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val contentSize =
             contentSize.takeIf { it.isNotEmpty() } ?: return
         val contentScale = contentScale
-        val contentAlignment = contentAlignment
+        val alignment = alignment
         val currentUserTransform = userTransform
         val rotation = rotation
 
@@ -354,7 +354,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
             contentPoint = contentPoint,
         )
@@ -479,7 +479,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
             userScale = userTransform.scaleX,
         ).let {
@@ -628,7 +628,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
         val currentUserTransform = userTransform
         val contentScale = contentScale
-        val contentAlignment = contentAlignment
+        val alignment = alignment
         val rotation = rotation
         val containerPoint = touchPointToContainerPoint(
             containerSize = containerSize,
@@ -640,7 +640,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            contentAlignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
             containerPoint = containerPoint
         )
@@ -705,7 +705,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
             userScale = userScale,
         ).round().toRect()
@@ -777,21 +777,21 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
         ).round()
         contentBaseVisibleRect = computeContentBaseVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
         ).round()
         contentDisplayRect = computeContentDisplayRect(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
@@ -800,7 +800,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
@@ -810,7 +810,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
-            alignment = contentAlignment,
+            alignment = alignment,
             rotation = rotation,
             userScale = userTransform.scaleX,
         )

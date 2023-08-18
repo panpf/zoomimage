@@ -187,7 +187,7 @@ fun computeInitialZoom(
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
-    contentAlignment: AlignmentCompat,
+    alignment: AlignmentCompat,
     rotation: Int,
     readMode: ReadMode?,
     mediumScaleMinMultiple: Float,
@@ -216,14 +216,14 @@ fun computeInitialZoom(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
-        alignment = contentAlignment,
+        alignment = alignment,
         rotation = rotation,
     )
     val userTransform = computeInitialUserTransform(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
-        alignment = contentAlignment,
+        alignment = alignment,
         rotation = rotation,
         readMode = readMode,
     )
@@ -338,7 +338,7 @@ fun computeContentBaseVisibleRect(
     } else if (alignment.isHorizontalCenter) {
         left = horizontalSpace
         right = horizontalSpace + containerSize.width
-    } else {   // contentAlignment.isEnd
+    } else {   // alignment.isEnd
         left = scaledContentSize.width - containerSize.width
         right = scaledContentSize.width
     }
@@ -355,7 +355,7 @@ fun computeContentBaseVisibleRect(
     } else if (alignment.isVerticalCenter) {
         top = verticalSpace
         bottom = verticalSpace + containerSize.height
-    } else {   // contentAlignment.isBottom
+    } else {   // alignment.isBottom
         top = scaledContentSize.height - containerSize.height
         bottom = scaledContentSize.height
     }
@@ -557,7 +557,7 @@ fun computeUserOffsetBounds(
         } else if (alignment.isHorizontalCenter) {
             val horizontalSpace = (scaledContainerSize.width - containerSize.width) / 2f * -1
             horizontalSpace..horizontalSpace
-        } else {   // contentAlignment.isEnd
+        } else {   // alignment.isEnd
             val horizontalSpace = (scaledContainerSize.width - containerSize.width) * -1
             horizontalSpace..horizontalSpace
         }
@@ -570,7 +570,7 @@ fun computeUserOffsetBounds(
         } else if (alignment.isVerticalCenter) {
             val verticalSpace = (scaledContainerSize.height - containerSize.height) / 2f * -1
             verticalSpace..verticalSpace
-        } else {   // contentAlignment.isBottom
+        } else {   // alignment.isBottom
             val verticalSpace = (scaledContainerSize.height - containerSize.height) * -1
             verticalSpace..verticalSpace
         }
@@ -787,7 +787,7 @@ fun containerPointToContentPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
-    contentAlignment: AlignmentCompat,
+    alignment: AlignmentCompat,
     rotation: Int,
     containerPoint: IntOffsetCompat
 ): IntOffsetCompat {
@@ -808,14 +808,14 @@ fun containerPointToContentPoint(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
-        alignment = contentAlignment,
+        alignment = alignment,
         rotation = 0,
     )
     val contentBaseVisibleRect = computeContentBaseVisibleRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
-        alignment = contentAlignment,
+        alignment = alignment,
         rotation = 0,
     )
     val contentScaleFactor = contentScale.computeScaleFactor(
@@ -843,7 +843,7 @@ fun contentPointToContainerPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
-    contentAlignment: AlignmentCompat,
+    alignment: AlignmentCompat,
     rotation: Int,
     contentPoint: IntOffsetCompat
 ): IntOffsetCompat {
@@ -867,14 +867,14 @@ fun contentPointToContainerPoint(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
-        alignment = contentAlignment,
+        alignment = alignment,
         rotation = 0,
     )
     val contentBaseVisibleRect = computeContentBaseVisibleRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
-        alignment = contentAlignment,
+        alignment = alignment,
         rotation = 0,
     )
     val contentScaleFactor = contentScale.computeScaleFactor(
