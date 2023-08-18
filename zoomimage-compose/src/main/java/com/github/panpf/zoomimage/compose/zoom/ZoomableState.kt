@@ -106,6 +106,26 @@ fun rememberZoomableState(
             zoomableState.reset("contentOriginSizeChanged")
         }
     }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.contentScale }.collect {
+            zoomableState.reset("contentScaleChanged")
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.contentAlignment }.collect {
+            zoomableState.reset("alignmentChanged")
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.readMode }.collect {
+            zoomableState.reset("readModeChanged")
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.mediumScaleMinMultiple }.collect {
+            zoomableState.reset("mediumScaleMinMultipleChanged")
+        }
+    }
     return zoomableState
 }
 
@@ -115,10 +135,9 @@ class ZoomableState(
 ) : RememberObserver {
 
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
-
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
-    private var rotation = 0
+    private var rotation: Int by mutableStateOf(0)
 
     var baseTransform: Transform by mutableStateOf(Transform.Origin)
         private set
@@ -141,35 +160,10 @@ class ZoomableState(
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
-    // todo contentScale、contentAlignment 等不是 state 的，所有依赖于他的 derivedStateOf 就不会自动刷新，例如 contentVisibleRect
-    var contentScale: ContentScale = ContentScale.Fit
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("contentScaleChanged")
-            }
-        }
-    var contentAlignment: Alignment = Alignment.Center
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("contentAlignmentChanged")
-            }
-        }
-    var readMode: ReadMode? = null
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("readModeChanged")
-            }
-        }
-    var mediumScaleMinMultiple: Float = DefaultMediumScaleMinMultiple
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("mediumScaleMinMultipleChanged")
-            }
-        }
+    var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
+    var contentAlignment: Alignment by mutableStateOf(Alignment.Center)
+    var readMode: ReadMode? by mutableStateOf(null)
+    var mediumScaleMinMultiple: Float by mutableStateOf(DefaultMediumScaleMinMultiple)
     var threeStepScale: Boolean = false
     var rubberBandScale: Boolean = true
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
