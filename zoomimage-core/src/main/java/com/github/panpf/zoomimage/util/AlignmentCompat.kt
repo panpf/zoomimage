@@ -2,6 +2,10 @@ package com.github.panpf.zoomimage.util
 
 import kotlin.math.roundToInt
 
+/**
+ * An interface to calculate the position of a sized box inside an available space. [Alignment] is
+ * often used to define the alignment of a layout inside a parent layout.
+ */
 // todo Unit tests
 fun interface AlignmentCompat {
     /**
@@ -66,17 +70,17 @@ val AlignmentCompat.name: String
         else -> "Unknown AlignmentCompat: $this"
     }
 
-fun alignmentCompat(name: String): AlignmentCompat {
+fun AlignmentCompat.Companion.valueOf(name: String): AlignmentCompat {
     return when (name) {
-        "TopStart" -> AlignmentCompat.TopStart
-        "TopCenter" -> AlignmentCompat.TopCenter
-        "TopEnd" -> AlignmentCompat.TopEnd
-        "CenterStart" -> AlignmentCompat.CenterStart
-        "Center" -> AlignmentCompat.Center
-        "CenterEnd" -> AlignmentCompat.CenterEnd
-        "BottomStart" -> AlignmentCompat.BottomStart
-        "BottomCenter" -> AlignmentCompat.BottomCenter
-        "BottomEnd" -> AlignmentCompat.BottomEnd
+        "TopStart" -> TopStart
+        "TopCenter" -> TopCenter
+        "TopEnd" -> TopEnd
+        "CenterStart" -> CenterStart
+        "Center" -> Center
+        "CenterEnd" -> CenterEnd
+        "BottomStart" -> BottomStart
+        "BottomCenter" -> BottomCenter
+        "BottomEnd" -> BottomEnd
         else -> throw IllegalArgumentException("Unknown alignment name: $name")
     }
 }

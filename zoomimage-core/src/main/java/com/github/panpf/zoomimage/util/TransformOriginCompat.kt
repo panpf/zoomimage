@@ -5,29 +5,31 @@ import com.github.panpf.zoomimage.util.internal.lerp
 import kotlin.math.roundToInt
 
 // todo Unit tests
+// todo change to value class and support unspecified
 data class TransformOriginCompat(val pivotFractionX: Float, val pivotFractionY: Float) {
 
-    /**
-     * Multiplication operator.
-     *
-     * Returns a [TopStart] with scale x and y values multiplied by the operand
-     */
-    operator fun times(operand: Float) = TransformOriginCompat(pivotFractionX * operand, pivotFractionY * operand)
-
-    /**
-     * Division operator.
-     *
-     * Returns a [TopStart] with scale x and y values divided by the operand
-     */
-    operator fun div(operand: Float) = TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
-
-    override fun toString() = "TransformOriginCompat(${pivotFractionX.format(2)}, ${pivotFractionY.format(2)}))"
+    override fun toString() =
+        "TransformOriginCompat(${pivotFractionX.format(2)}, ${pivotFractionY.format(2)}))"
 
     companion object {
-        val TopStart = TransformOriginCompat(pivotFractionX = 0f, pivotFractionY = 0f)
         val Center = TransformOriginCompat(pivotFractionX = 0.5f, pivotFractionY = 0.5f)
     }
 }
+
+
+fun TransformOriginCompat.toShortString(): String =
+    "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"
+
+private val transformOriginCompatTopStart =
+    TransformOriginCompat(pivotFractionX = 0f, pivotFractionY = 0f)
+val TransformOriginCompat.Companion.TopStart
+    get() = transformOriginCompatTopStart
+
+operator fun TransformOriginCompat.times(operand: Float) =
+    TransformOriginCompat(pivotFractionX * operand, pivotFractionY * operand)
+
+operator fun TransformOriginCompat.div(operand: Float) =
+    TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
 
 /**
  * Multiplication operator with [IntSizeCompat].
@@ -77,12 +79,13 @@ operator fun IntSizeCompat.div(origin: TransformOriginCompat): IntSizeCompat =
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
-fun lerp(start: TransformOriginCompat, stop: TransformOriginCompat, fraction: Float): TransformOriginCompat {
+fun lerp(
+    start: TransformOriginCompat,
+    stop: TransformOriginCompat,
+    fraction: Float
+): TransformOriginCompat {
     return TransformOriginCompat(
         pivotFractionX = lerp(start.pivotFractionX, stop.pivotFractionX, fraction),
         pivotFractionY = lerp(start.pivotFractionY, stop.pivotFractionY, fraction)
     )
 }
-
-
-fun TransformOriginCompat.toShortString(): String = "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"

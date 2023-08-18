@@ -31,9 +31,10 @@ import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
-import com.github.panpf.zoomimage.util.alignmentCompat
-import com.github.panpf.zoomimage.util.contentScaleCompat
+import com.github.panpf.zoomimage.util.AlignmentCompat
+import com.github.panpf.zoomimage.util.ContentScaleCompat
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.util.valueOf
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import kotlinx.coroutines.flow.collectLatest
@@ -58,10 +59,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             logger.level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO
             zoomAbility.apply {
                 prefsService.contentScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    contentScale = contentScaleCompat(it)
+                    contentScale = ContentScaleCompat.valueOf(it)
                 }
                 prefsService.alignment.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    alignment = alignmentCompat(it)
+                    alignment = AlignmentCompat.valueOf(it)
                 }
                 prefsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScale = it

@@ -3,13 +3,11 @@
 package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.lerp
-import kotlin.math.cos
 import kotlin.math.roundToInt
-import kotlin.math.sin
 
 // todo Unit tests
+// todo change to value class
 data class IntOffsetCompat(val x: Int, val y: Int) {
-
 
     /**
      * Subtract a [IntOffsetCompat] from another one.
@@ -61,7 +59,7 @@ data class IntOffsetCompat(val x: Int, val y: Int) {
      */
     operator fun rem(operand: Int) = IntOffsetCompat(x % operand, y % operand)
 
-    override fun toString() = "IntOffsetCompat(${x}x${y})"
+    override fun toString() = "(${x}, ${y})"
 
     companion object {
         val Zero = IntOffsetCompat(x = 0, y = 0)
@@ -91,7 +89,6 @@ fun lerp(start: IntOffsetCompat, stop: IntOffsetCompat, fraction: Float): IntOff
     )
 }
 
-
 operator fun OffsetCompat.plus(offset: IntOffsetCompat): OffsetCompat =
     OffsetCompat(x + offset.x, y + offset.y)
 
@@ -103,7 +100,6 @@ operator fun IntOffsetCompat.plus(offset: OffsetCompat): OffsetCompat =
 
 operator fun IntOffsetCompat.minus(offset: OffsetCompat): OffsetCompat =
     OffsetCompat(x - offset.x, y - offset.y)
-
 
 /**
  * Converts the [IntOffsetCompat] to an [OffsetCompat].
@@ -117,7 +113,6 @@ inline fun OffsetCompat.round(): IntOffsetCompat = IntOffsetCompat(x.roundToInt(
 
 
 fun IntOffsetCompat.toShortString(): String = "${x}x${y}"
-
 
 operator fun IntOffsetCompat.times(scaleFactor: ScaleFactorCompat): IntOffsetCompat {
     return IntOffsetCompat(
@@ -133,6 +128,9 @@ operator fun IntOffsetCompat.div(scaleFactor: ScaleFactorCompat): IntOffsetCompa
     )
 }
 
+fun IntOffsetCompat.toSize(): SizeCompat = SizeCompat(width = x.toFloat(), height = y.toFloat())
+
+fun IntOffsetCompat.toIntSize(): IntSizeCompat = IntSizeCompat(width = x, height = y)
 
 fun IntOffsetCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }

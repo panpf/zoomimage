@@ -300,7 +300,6 @@ fun lerp(start: RectCompat, stop: RectCompat, fraction: Float): RectCompat {
 fun RectCompat.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 
-
 fun RectCompat.scale(scale: Float): RectCompat =
     RectCompat(
         left = (left * scale),
@@ -333,7 +332,6 @@ fun RectCompat.restoreScale(scaleFactor: ScaleFactorCompat): RectCompat =
         bottom = (bottom / scaleFactor.scaleY),
     )
 
-
 fun RectCompat.limitTo(rect: RectCompat): RectCompat =
     RectCompat(
         left = left.coerceAtLeast(rect.left),
@@ -349,7 +347,6 @@ fun RectCompat.limitTo(size: SizeCompat): RectCompat =
         right = right.coerceIn(0f, size.width),
         bottom = bottom.coerceIn(0f, size.height),
     )
-
 
 fun RectCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): RectCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }

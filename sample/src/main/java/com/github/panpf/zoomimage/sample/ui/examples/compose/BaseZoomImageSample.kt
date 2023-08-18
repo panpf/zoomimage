@@ -27,8 +27,7 @@ import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
-import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
-import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
+import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 
 @Composable
@@ -50,8 +49,8 @@ fun BaseZoomImageSample(
     val prefsService = remember { context.prefsService }
     val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
     val alignmentName by prefsService.alignment.stateFlow.collectAsState()
-    val contentScale = remember(contentScaleName) { contentScale(contentScaleName) }
-    val alignment = remember(alignmentName) { alignment(alignmentName) }
+    val contentScale = remember(contentScaleName) { ContentScale.valueOf(contentScaleName) }
+    val alignment = remember(alignmentName) { Alignment.valueOf(alignmentName) }
     val threeStepScale by prefsService.threeStepScale.stateFlow.collectAsState()
     val rubberBandScale by prefsService.rubberBandScale.stateFlow.collectAsState()
     val readModeEnabled by prefsService.readModeEnabled.stateFlow.collectAsState()

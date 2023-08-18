@@ -2,11 +2,12 @@ package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.lerp
-import kotlin.math.cos
-import kotlin.math.sin
+import com.github.panpf.zoomimage.util.internal.toStringAsFixed
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 // todo Unit tests
+// todo change to value class and support unspecified
 data class OffsetCompat(
     val x: Float,
     val y: Float
@@ -88,7 +89,7 @@ data class OffsetCompat(
      */
     operator fun rem(operand: Float) = OffsetCompat(x % operand, y % operand)
 
-    override fun toString() = "OffsetCompat(${x.format(2)}x${y.format(2)})"
+    override fun toString() = "OffsetCompat(${x.toStringAsFixed(1)}, ${y.toStringAsFixed(1)})"
 }
 
 /**
@@ -121,7 +122,6 @@ val OffsetCompat.isFinite: Boolean get() = x.isFinite() && y.isFinite()
 
 fun OffsetCompat.toShortString(): String = "${x.format(2)}x${y.format(2)}"
 
-
 operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat {
     return OffsetCompat(x = x * scaleFactor.scaleX, y = y * scaleFactor.scaleY)
 }
@@ -130,6 +130,10 @@ operator fun OffsetCompat.div(scaleFactor: ScaleFactorCompat): OffsetCompat {
     return OffsetCompat(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
 }
 
+fun OffsetCompat.toSize(): SizeCompat = SizeCompat(width = x, height = y)
+
+fun OffsetCompat.roundToSize(): IntSizeCompat =
+    IntSizeCompat(width = x.roundToInt(), height = y.roundToInt())
 
 fun OffsetCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }

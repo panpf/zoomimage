@@ -2,12 +2,12 @@ package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.lerp
-import kotlin.math.roundToInt
 
 /**
  * Holds 2 dimensional scaling factors for horizontal and vertical axes
  */
 // todo Unit tests
+// todo change to value class and support unspecified
 data class ScaleFactorCompat(
     /**
      * Returns the scale factor to apply along the horizontal axis

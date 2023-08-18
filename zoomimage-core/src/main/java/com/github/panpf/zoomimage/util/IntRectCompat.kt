@@ -285,10 +285,6 @@ fun lerp(start: IntRectCompat, stop: IntRectCompat, fraction: Float): IntRectCom
     )
 }
 
-
-fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
-
-
 /**
  * Converts an [IntRectCompat] to a [RectCompat]
  */
@@ -302,13 +298,25 @@ fun IntRectCompat.toRect(): RectCompat = RectCompat(
 /**
  * Rounds a [RectCompat] to an [IntRectCompat]
  */
-fun RectCompat.round(): IntRectCompat = IntRectCompat(
+fun RectCompat.roundToIntRect(): IntRectCompat = IntRectCompat(
     left = left.roundToInt(),
     top = top.roundToInt(),
     right = right.roundToInt(),
     bottom = bottom.roundToInt()
 )
 
+
+fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
+
+/**
+ * Rounds a [RectCompat] to an [IntRectCompat]
+ */
+fun RectCompat.round(): IntRectCompat = IntRectCompat(
+    left = left.roundToInt(),
+    top = top.roundToInt(),
+    right = right.roundToInt(),
+    bottom = bottom.roundToInt()
+)
 
 fun IntRectCompat.scale(scale: Float): IntRectCompat =
     IntRectCompat(
@@ -342,7 +350,6 @@ fun IntRectCompat.restoreScale(scaleFactor: ScaleFactorCompat): IntRectCompat =
         bottom = (bottom / scaleFactor.scaleY).roundToInt(),
     )
 
-
 fun IntRectCompat.limitTo(rect: IntRectCompat): IntRectCompat =
     IntRectCompat(
         left = left.coerceAtLeast(rect.left),
@@ -358,7 +365,6 @@ fun IntRectCompat.limitTo(size: IntSizeCompat): IntRectCompat =
         right = right.coerceIn(0, size.width),
         bottom = bottom.coerceIn(0, size.height),
     )
-
 
 fun IntRectCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }

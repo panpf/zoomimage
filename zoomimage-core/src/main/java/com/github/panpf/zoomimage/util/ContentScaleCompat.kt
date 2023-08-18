@@ -3,6 +3,9 @@ package com.github.panpf.zoomimage.util
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Represents a rule to apply to scale a source rectangle to be inscribed into a destination
+ */
 // todo Unit tests
 interface ContentScaleCompat {
 
@@ -171,15 +174,15 @@ val ContentScaleCompat.name: String
         else -> "Unknown ContentScaleCompat: $this"
     }
 
-fun contentScaleCompat(name: String): ContentScaleCompat {
+fun ContentScaleCompat.Companion.valueOf(name: String): ContentScaleCompat {
     return when (name) {
-        "FillWidth" -> ContentScaleCompat.FillWidth
-        "FillHeight" -> ContentScaleCompat.FillHeight
-        "FillBounds" -> ContentScaleCompat.FillBounds
-        "Fit" -> ContentScaleCompat.Fit
-        "Crop" -> ContentScaleCompat.Crop
-        "Inside" -> ContentScaleCompat.Inside
-        "None" -> ContentScaleCompat.None
+        "FillWidth" -> FillWidth
+        "FillHeight" -> FillHeight
+        "FillBounds" -> FillBounds
+        "Fit" -> Fit
+        "Crop" -> Crop
+        "Inside" -> Inside
+        "None" -> None
         else -> throw IllegalArgumentException("Unknown ContentScaleCompat name: $name")
     }
 }

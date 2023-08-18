@@ -10,19 +10,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.request.ImageRequest
 import com.github.panpf.zoomimage.sample.prefsService
-import com.github.panpf.zoomimage.sample.ui.util.compose.alignment
-import com.github.panpf.zoomimage.sample.ui.util.compose.contentScale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
+import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import me.saket.telephoto.zoomable.ZoomSpec
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
@@ -35,8 +36,8 @@ fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
     val prefsService = remember { context.prefsService }
     val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
     val alignmentName by prefsService.alignment.stateFlow.collectAsState()
-    val contentScale = remember(contentScaleName) { contentScale(contentScaleName) }
-    val alignment = remember(alignmentName) { alignment(alignmentName) }
+    val contentScale = remember(contentScaleName) { ContentScale.valueOf(contentScaleName) }
+    val alignment = remember(alignmentName) { Alignment.valueOf(alignmentName) }
     val coilData =
         remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
     val zoomableState = rememberZoomableState(
