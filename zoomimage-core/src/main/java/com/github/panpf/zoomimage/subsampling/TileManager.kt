@@ -116,10 +116,10 @@ class TileManager constructor(
             return
         }
 
-        val tileList = findTiles(scale)
-        if (tileList.isNullOrEmpty()) {
+        val tiles = resetTiles(scale)
+        if (tiles.isNullOrEmpty()) {
             logger.d {
-                "refreshTiles:$caller, interrupted, tiles size is ${tileList?.size ?: 0}. " +
+                "refreshTiles:$caller, interrupted, tiles size is ${tiles?.size ?: 0}. " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
                         "scale=$scale, " +
@@ -136,7 +136,7 @@ class TileManager constructor(
         var freeCount = 0
         var realLoadCount = 0
         var realFreeCount = 0
-        tileList.forEach { tile ->
+        tiles.forEach { tile ->
             if (tile.srcRect.overlaps(imageLoadRect)) {
                 loadCount++
                 if (loadTile(tile)) {
@@ -144,7 +144,7 @@ class TileManager constructor(
                 }
             } else {
                 freeCount++
-                if (freeTile(tile, notifyTileChanged = true)) {
+                if (freeTile(tile, nowNotifyTileChanged = true)) {
                     realFreeCount++
                 }
             }
@@ -152,7 +152,7 @@ class TileManager constructor(
 
         logger.d {
             "refreshTiles:$caller. " +
-                    "tiles=${tileList.size}, " +
+                    "tiles=${tiles.size}, " +
                     "loadCount=${realLoadCount}/${loadCount}, " +
                     "freeCount=${realFreeCount}/${freeCount}. " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -166,7 +166,7 @@ class TileManager constructor(
         }
     }
 
-    private fun findTiles(scale: Float): List<Tile>? {
+    private fun resetTiles(scale: Float): List<Tile>? {
         val lastScale = lastScale
         val lastSampleSize = lastSampleSize
         val lastTileList = lastTileList
@@ -184,6 +184,12 @@ class TileManager constructor(
         if (sampleSize == lastSampleSize && contentSize == lastContentSize && lastTileList != null) {
             return lastTileList
         }
+
+        lastTileList?.forEach { tile ->
+            freeTile(tile, nowNotifyTileChanged = false)
+        }
+        notifyTileChanged()
+
         val tiles = tileMap[sampleSize]
         this.lastScale = scale
         this.lastContentSize = contentSize
@@ -209,11 +215,17 @@ class TileManager constructor(
         requiredMainThread()
 
         if (tile.tileBitmap != null) {
+            logger.d {
+                "loadTile. skipped, loaded. $tile. '${imageSource.key}'"
+            }
             return false
         }
 
         val job = tile.loadJob
         if (job?.isActive == true) {
+            logger.d {
+                "loadTile. skipped, loading. $tile. '${imageSource.key}'"
+            }
             return false
         }
 
@@ -267,7 +279,7 @@ class TileManager constructor(
     }
 
     @MainThread
-    private fun freeTile(tile: Tile, notifyTileChanged: Boolean): Boolean {
+    private fun freeTile(tile: Tile, nowNotifyTileChanged: Boolean): Boolean {
         tile.loadJob?.run {
             if (isActive) {
                 cancel()
@@ -282,7 +294,7 @@ class TileManager constructor(
                 "freeTile. $tile. '${imageSource.key}'"
             }
             tile.tileBitmap = null
-            if (notifyTileChanged) {
+            if (nowNotifyTileChanged) {
                 notifyTileChanged()
             }
         }
@@ -294,7 +306,7 @@ class TileManager constructor(
         var freeCount = 0
         tileMap.values.forEach { tileList ->
             tileList.forEach { tile ->
-                freeTile(tile, notifyTileChanged = false)
+                freeTile(tile, nowNotifyTileChanged = false)
                 freeCount++
             }
         }
