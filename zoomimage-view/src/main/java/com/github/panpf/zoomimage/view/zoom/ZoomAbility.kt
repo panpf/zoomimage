@@ -64,6 +64,40 @@ class ZoomAbility constructor(
             }
         }
 
+    val baseTransform: TransformCompat
+        get() = zoomEngine.baseTransform
+    val userTransform: TransformCompat
+        get() = zoomEngine.userTransform
+    val transform: TransformCompat
+        get() = zoomEngine.transform
+    val minScale: Float
+        get() = zoomEngine.minScale
+    val mediumScale: Float
+        get() = zoomEngine.mediumScale
+    val maxScale: Float
+        get() = zoomEngine.maxScale
+    val scaling: Boolean
+        get() = zoomEngine.scaling
+    val fling: Boolean
+        get() = zoomEngine.fling
+
+
+    val containerSize: IntSizeCompat
+        get() = zoomEngine.containerSize
+    val contentSize: IntSizeCompat
+        get() = zoomEngine.contentSize
+    val contentOriginSize: IntSizeCompat
+        get() = zoomEngine.contentOriginSize
+    var contentScale: ContentScaleCompat
+        get() = zoomEngine.contentScale
+        set(value) {
+            zoomEngine.contentScale = value
+        }
+    var contentAlignment: AlignmentCompat
+        get() = zoomEngine.contentAlignment
+        set(value) {
+            zoomEngine.contentAlignment = value
+        }
     var scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
         set(value) {
             if (field != value) {
@@ -97,38 +131,6 @@ class ZoomAbility constructor(
             zoomEngine.animationSpec = value
         }
 
-    val scrollEdge: ScrollEdge
-        get() = zoomEngine.scrollEdge
-
-    val scaling: Boolean
-        get() = zoomEngine.scaling
-    val fling: Boolean
-        get() = zoomEngine.fling
-
-    val minScale: Float
-        get() = zoomEngine.minScale
-    val mediumScale: Float
-        get() = zoomEngine.mediumScale
-    val maxScale: Float
-        get() = zoomEngine.maxScale
-
-    val containerSize: IntSizeCompat
-        get() = zoomEngine.containerSize
-    val contentSize: IntSizeCompat
-        get() = zoomEngine.contentSize
-    val contentOriginSize: IntSizeCompat
-        get() = zoomEngine.contentOriginSize
-    var contentScale: ContentScaleCompat
-        get() = zoomEngine.contentScale
-        set(value) {
-            zoomEngine.contentScale = value
-        }
-    var contentAlignment: AlignmentCompat
-        get() = zoomEngine.contentAlignment
-        set(value) {
-            zoomEngine.contentAlignment = value
-        }
-
     val containerVisibleRect: IntRectCompat
         get() = zoomEngine.containerVisibleRect
     val contentBaseDisplayRect: IntRectCompat
@@ -140,12 +142,10 @@ class ZoomAbility constructor(
     val contentVisibleRect: IntRectCompat
         get() = zoomEngine.contentVisibleRect
 
-    val baseTransform: TransformCompat
-        get() = zoomEngine.baseTransform
-    val userTransform: TransformCompat
-        get() = zoomEngine.userTransform
-    val transform: TransformCompat
-        get() = zoomEngine.transform
+    val scrollEdge: ScrollEdge
+        get() = zoomEngine.scrollEdge
+    val userOffsetBounds: IntRectCompat
+        get() = zoomEngine.userOffsetBounds
 
     init {
         val initScaleType = imageViewBridge.superGetScaleType()
@@ -226,37 +226,7 @@ class ZoomAbility constructor(
     }
 
 
-    /**************************************** Internal ********************************************/
-
-    private fun resetDrawableSize() {
-        val drawable = imageViewBridge.getDrawable()
-        zoomEngine.contentSize =
-            drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) }
-                ?: IntSizeCompat.Zero
-    }
-
-    private fun resetScrollBarHelper() {
-        scrollBarEngine?.cancel()
-        scrollBarEngine = null
-        val scrollBarSpec = this@ZoomAbility.scrollBarSpec
-        if (scrollBarSpec != null) {
-            scrollBarEngine = ScrollBarEngine(view, scrollBarSpec)
-        }
-    }
-
-    private fun destroy() {
-        zoomEngine.clean()
-    }
-
-
     /*************************************** Interaction with consumers ******************************************/
-
-    /**
-     * Sets the dimensions of the original image, which is used to calculate the scale of double-click scaling
-     */
-    fun setImageSize(size: IntSizeCompat?) {
-        zoomEngine.contentOriginSize = size ?: IntSizeCompat.Zero
-    }
 
     fun scale(
         targetScale: Float,
@@ -332,7 +302,7 @@ class ZoomAbility constructor(
 
     @Suppress("UNUSED_PARAMETER")
     fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        destroy()
+        clean()
         if (view.isAttachedToWindowCompat) {
             resetDrawableSize()
         }
@@ -342,7 +312,7 @@ class ZoomAbility constructor(
     }
 
     fun onDetachedFromWindow() {
-        destroy()
+        clean()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -372,4 +342,27 @@ class ZoomAbility constructor(
     }
 
     fun getScaleType(): ScaleType = this@ZoomAbility.scaleType
+
+
+    /**************************************** Internal ********************************************/
+
+    private fun resetDrawableSize() {
+        val drawable = imageViewBridge.getDrawable()
+        zoomEngine.contentSize =
+            drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) }
+                ?: IntSizeCompat.Zero
+    }
+
+    private fun resetScrollBarHelper() {
+        scrollBarEngine?.cancel()
+        scrollBarEngine = null
+        val scrollBarSpec = this@ZoomAbility.scrollBarSpec
+        if (scrollBarSpec != null) {
+            scrollBarEngine = ScrollBarEngine(view, scrollBarSpec)
+        }
+    }
+
+    private fun clean() {
+        zoomEngine.clean()
+    }
 }

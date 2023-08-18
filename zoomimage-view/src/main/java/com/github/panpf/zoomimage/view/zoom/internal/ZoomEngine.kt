@@ -18,7 +18,6 @@
 package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.view.View
-import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
@@ -42,6 +41,7 @@ import com.github.panpf.zoomimage.util.computeContentVisibleRect
 import com.github.panpf.zoomimage.util.computeLocationUserOffset
 import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
+import com.github.panpf.zoomimage.util.computeUserOffsetBounds
 import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.isNotEmpty
@@ -59,8 +59,6 @@ import com.github.panpf.zoomimage.util.touchPointToContainerPoint
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
-import com.github.panpf.zoomimage.view.internal.toAlignment
-import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.view.zoom.OnDrawableSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnMatrixChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnViewSizeChangeListener
@@ -84,6 +82,12 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         private set
     var transform = TransformCompat.Origin
         private set
+    var minScale: Float = 1.0f
+        private set
+    var mediumScale: Float = 1.0f
+        private set
+    var maxScale: Float = 1.0f
+        private set
     var scaling = false
         set(value) {
             if (field != value) {
@@ -99,11 +103,8 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             }
         }
 
-    var scrollEdge: ScrollEdge = ScrollEdge.Default
-        private set
-
     var containerSize = IntSizeCompat.Zero
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
                 reset("containerSizeChanged")
@@ -111,7 +112,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             }
         }
     var contentSize = IntSizeCompat.Zero
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
                 reset("contentSizeChanged")
@@ -119,52 +120,44 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             }
         }
     var contentOriginSize = IntSizeCompat.Zero
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
                 reset("contentOriginSizeChanged")
             }
         }
     var contentScale: ContentScaleCompat = ContentScaleCompat.Fit
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
                 reset("contentScaleChanged")
             }
         }
     var contentAlignment: AlignmentCompat = AlignmentCompat.Center
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
                 reset("contentAlignmentChanged")
             }
         }
     var readMode: ReadMode? = null
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
                 reset("readModeChanged")
             }
         }
     var mediumScaleMinMultiple: Float = DefaultMediumScaleMinMultiple
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
                 reset("mediumScaleMinMultipleChanged")
             }
         }
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
-
     var threeStepScale: Boolean = false
-        internal set
     var rubberBandScale: Boolean = true
-        internal set
-    var minScale: Float = 1.0f
-        private set
-    var mediumScale: Float = 1.0f
-        private set
-    var maxScale: Float = 1.0f
-        private set
+
     var containerVisibleRect: IntRectCompat = IntRectCompat.Zero
         private set
     var contentBaseDisplayRect: IntRectCompat = IntRectCompat.Zero
@@ -174,6 +167,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     var contentDisplayRect: IntRectCompat = IntRectCompat.Zero
         private set
     var contentVisibleRect: IntRectCompat = IntRectCompat.Zero
+        private set
+
+    var scrollEdge: ScrollEdge = ScrollEdge.Default
+        private set
+    var userOffsetBounds: IntRectCompat = IntRectCompat.Zero
         private set
 
 
@@ -808,7 +806,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             userOffset = userTransform.offset,
         ).round()
 
-        val userOffsetBounds = com.github.panpf.zoomimage.util.computeUserOffsetBounds(
+        val userOffsetBounds = computeUserOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
@@ -816,6 +814,8 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             rotation = rotation,
             userScale = userTransform.scaleX,
         )
+        this.userOffsetBounds = userOffsetBounds.round()
+
         scrollEdge = computeScrollEdge(
             userOffsetBounds = userOffsetBounds,
             userOffset = userTransform.offset,

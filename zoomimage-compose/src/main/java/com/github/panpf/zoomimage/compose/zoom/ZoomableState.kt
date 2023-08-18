@@ -120,6 +120,22 @@ class ZoomableState(
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var rotation = 0
 
+    var baseTransform: Transform by mutableStateOf(Transform.Origin)
+        private set
+    var userTransform: Transform by mutableStateOf(Transform.Origin)
+        private set
+    val transform: Transform by derivedStateOf {
+        baseTransform + userTransform
+    }
+    var minScale: Float by mutableStateOf(1f)
+        private set
+    var mediumScale: Float by mutableStateOf(1f)
+        private set
+    var maxScale: Float by mutableStateOf(1f)
+        private set
+    var scaling: Boolean by mutableStateOf(false)
+    var fling: Boolean by mutableStateOf(false)
+
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -154,22 +170,6 @@ class ZoomableState(
     var threeStepScale: Boolean = false
     var rubberBandScale: Boolean = true
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
-
-    var minScale: Float by mutableStateOf(1f)
-        private set
-    var mediumScale: Float by mutableStateOf(1f)
-        private set
-    var maxScale: Float by mutableStateOf(1f)
-        private set
-    var baseTransform: Transform by mutableStateOf(Transform.Origin)
-        private set
-    var userTransform: Transform by mutableStateOf(Transform.Origin)
-        private set
-    val transform: Transform by derivedStateOf {
-        baseTransform + userTransform
-    }
-    var scaling: Boolean by mutableStateOf(false)
-    var fling: Boolean by mutableStateOf(false)
 
     val containerVisibleRect: IntRect by derivedStateOf {
         computeContainerVisibleRect(
