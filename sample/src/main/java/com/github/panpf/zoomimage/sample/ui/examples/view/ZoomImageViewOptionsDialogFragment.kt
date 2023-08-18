@@ -31,6 +31,9 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiSelectMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiSelectMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
+import com.github.panpf.zoomimage.util.AlignmentCompat
+import com.github.panpf.zoomimage.util.ContentScaleCompat
+import com.github.panpf.zoomimage.util.name
 
 class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
 
@@ -48,19 +51,49 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     MenuDividerItemFactory(),
                 ),
                 buildList {
-                    add(
-                        MultiSelectMenu(
-                            title = "Scale Type",
-                            values = ScaleType.values()
-                                .filter { it != MATRIX }.map { it.name },
-                            getValue = { prefsService.scaleType.value },
-                            onSelect = { _, value ->
-                                prefsService.scaleType.value = value
-                            }
-                        )
-                    )
-
                     if (zoomViewType.my) {
+                        val contentScales = listOf(
+                            ContentScaleCompat.Fit,
+                            ContentScaleCompat.Crop,
+                            ContentScaleCompat.Inside,
+                            ContentScaleCompat.FillWidth,
+                            ContentScaleCompat.FillHeight,
+                            ContentScaleCompat.FillBounds,
+                            ContentScaleCompat.None,
+                        )
+                        add(
+                            MultiSelectMenu(
+                                title = "Content Scale",
+                                values = contentScales.map { it.name },
+                                getValue = { prefsService.contentScale.value },
+                                onSelect = { _, value ->
+                                    prefsService.contentScale.value = value
+                                }
+                            )
+                        )
+
+                        val alignments = listOf(
+                            AlignmentCompat.TopStart,
+                            AlignmentCompat.TopCenter,
+                            AlignmentCompat.TopEnd,
+                            AlignmentCompat.CenterStart,
+                            AlignmentCompat.Center,
+                            AlignmentCompat.CenterEnd,
+                            AlignmentCompat.BottomStart,
+                            AlignmentCompat.BottomCenter,
+                            AlignmentCompat.BottomEnd,
+                        )
+                        add(
+                            MultiSelectMenu(
+                                title = "Alignment",
+                                values = alignments.map { it.name },
+                                getValue = { prefsService.alignment.value },
+                                onSelect = { _, value ->
+                                    prefsService.alignment.value = value
+                                }
+                            )
+                        )
+
                         add(MenuDivider())
 
                         add(
@@ -125,6 +158,18 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                             SwitchMenuFlow(
                                 title = "Scroll Bar",
                                 data = prefsService.scrollBarEnabled,
+                            )
+                        )
+                    } else {
+                        add(
+                            MultiSelectMenu(
+                                title = "Scale Type",
+                                values = ScaleType.values()
+                                    .filter { it != MATRIX }.map { it.name },
+                                getValue = { prefsService.scaleType.value },
+                                onSelect = { _, value ->
+                                    prefsService.scaleType.value = value
+                                }
                             )
                         )
                     }

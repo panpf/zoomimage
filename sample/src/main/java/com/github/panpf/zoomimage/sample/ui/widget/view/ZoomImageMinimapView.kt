@@ -51,7 +51,6 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         strokeWidth = 1f.dp2pxF
     }
     private val strokeHalfWidth = tileBoundsPaint.strokeWidth / 2
-    private val drawableVisibleRect = Rect()
     private val mapVisibleRect = Rect()
     private val tileDrawRect = Rect()
     private var zoomView: ZoomImageView? = null
@@ -68,12 +67,12 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val viewWidth = width.takeIf { it > 0 } ?: return
         val viewHeight = height.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
-        val drawableSize = zoomView.zoomAbility.contentSize.takeIf { !it.isEmpty() } ?: return
+        val contentSize = zoomView.zoomAbility.contentSize.takeIf { !it.isEmpty() } ?: return
 
-        val imageSize = zoomView.zoomAbility.contentOriginSize
-        if (imageSize.isNotEmpty()) {
-            val widthTargetScale = imageSize.width.toFloat() / viewWidth
-            val heightTargetScale = imageSize.height.toFloat() / viewHeight
+        val contentOriginSize = zoomView.zoomAbility.contentOriginSize
+        if (contentOriginSize.isNotEmpty()) {
+            val widthTargetScale = contentOriginSize.width.toFloat() / viewWidth
+            val heightTargetScale = contentOriginSize.height.toFloat() / viewHeight
             val imageLoadRect = zoomView.subsamplingAbility.imageLoadRect
             zoomView.subsamplingAbility.tileList?.forEach { tile ->
                 val load = tile.srcRect.overlaps(imageLoadRect)
@@ -98,17 +97,15 @@ class ZoomImageMinimapView @JvmOverloads constructor(
             }
         }
 
-        val drawableVisibleRect = drawableVisibleRect
-            .apply { zoomView.zoomAbility.containerVisibleRect }
-            .takeIf { !it.isEmpty } ?: return
+        val contentVisibleRect = zoomView.zoomAbility.contentVisibleRect.takeIf { !it.isEmpty } ?: return
         val mapVisibleRect = mapVisibleRect.apply {
-            val widthScaled = drawableSize.width / viewWidth.toFloat()
-            val heightScaled = drawableSize.height / viewHeight.toFloat()
+            val widthScaled = contentSize.width / viewWidth.toFloat()
+            val heightScaled = contentSize.height / viewHeight.toFloat()
             set(
-                floor(drawableVisibleRect.left / widthScaled).toInt(),
-                floor(drawableVisibleRect.top / heightScaled).toInt(),
-                ceil(drawableVisibleRect.right / widthScaled).toInt(),
-                ceil(drawableVisibleRect.bottom / heightScaled).toInt()
+                floor(contentVisibleRect.left / widthScaled).toInt(),
+                floor(contentVisibleRect.top / heightScaled).toInt(),
+                ceil(contentVisibleRect.right / widthScaled).toInt(),
+                ceil(contentVisibleRect.bottom / heightScaled).toInt()
             )
         }
         tileBoundsPaint.color = Color.MAGENTA
