@@ -32,8 +32,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private suspend fun exportAssetImages(context: Context) {
         withContext(Dispatchers.IO) {
+            val assetsDir = File((context.getExternalFilesDir(null) ?: context.filesDir), "assets")
+            if (!assetsDir.exists()) {
+                assetsDir.mkdirs()
+            }
             Asset.ALL.forEach {
-                val file = File(context.getExternalFilesDir("assets"), it.fileName)
+                val file = File(assetsDir, it.fileName)
                 if (!file.exists()) {
                     context.assets.open(it.fileName).use { inputStream ->
                         file.outputStream().use { outputStream ->
@@ -114,7 +118,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             Link(
                 title = "PicassoZoomImageView（My）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.PicassoZoomImageView.name),
-                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                minSdk = 21
             ),
             Link(
                 title = "PhotoView",
@@ -137,6 +142,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 title = "ZoomImage Exif Orientation Test",
                 navDirections = NavMainDirections.actionGlobalComposeExifOrientationTestFragment(),
                 minSdk = 21
+            ),
+            Link(
+                title = "ZoomImageView Test",
+                navDirections = NavMainDirections.actionGlobalZoomImageViewTestFragment(),
             ),
             Link(
                 title = "ZoomImageView Exif Orientation Test",

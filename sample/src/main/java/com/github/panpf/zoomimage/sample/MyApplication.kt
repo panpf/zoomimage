@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.sample
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import coil.ImageLoader
@@ -37,10 +38,12 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
 
         handleSSLHandshake()
 
-        Picasso.setSingletonInstance(Picasso.Builder(this).apply {
-            loggingEnabled(true)
-            memoryCache(LruCache(getMemoryCacheMaxSize().toInt()))
-        }.build())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Picasso.setSingletonInstance(Picasso.Builder(this).apply {
+                loggingEnabled(true)
+                memoryCache(LruCache(getMemoryCacheMaxSize().toInt()))
+            }.build())
+        }
 
         Glide.init(
             this,
