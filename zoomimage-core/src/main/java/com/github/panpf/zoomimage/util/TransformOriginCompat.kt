@@ -2,11 +2,57 @@ package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.lerp
+import com.github.panpf.zoomimage.util.internal.packFloats
+import com.github.panpf.zoomimage.util.internal.unpackFloat1
+import com.github.panpf.zoomimage.util.internal.unpackFloat2
 import kotlin.math.roundToInt
 
+/**
+ * Constructs a [TransformOriginCompat] from the given fractional values from the Layer's
+ * width and height
+ */
+fun TransformOriginCompat(pivotFractionX: Float, pivotFractionY: Float): TransformOriginCompat =
+    TransformOriginCompat(packFloats(pivotFractionX, pivotFractionY))
+
+/**
+ * A two-dimensional position represented as a fraction of the Layer's width and height
+ */
 // todo Unit tests
-// todo change to value class and support unspecified
-data class TransformOriginCompat(val pivotFractionX: Float, val pivotFractionY: Float) {
+@JvmInline
+value class TransformOriginCompat internal constructor(@PublishedApi internal val packedValue: Long) {
+
+    /**
+     * Return the position along the x-axis that should be used as the
+     * origin for rotation and scale transformations. This is represented as a fraction
+     * of the width of the content. A value of 0.5f represents the midpoint between the left
+     * and right bounds of the content
+     */
+    val pivotFractionX: Float
+        get() = unpackFloat1(packedValue)
+
+    /**
+     * Return the position along the y-axis that should be used as the
+     * origin for rotation and scale transformations. This is represented as a fraction
+     * of the height of the content. A value of 0.5f represents the midpoint between the top
+     * and bottom bounds of the content
+     */
+    val pivotFractionY: Float
+        get() = unpackFloat2(packedValue)
+
+    @Suppress("NOTHING_TO_INLINE")
+    inline operator fun component1(): Float = pivotFractionX
+
+    @Suppress("NOTHING_TO_INLINE")
+    inline operator fun component2(): Float = pivotFractionY
+
+    /**
+     * Returns a copy of this TransformOriginCompat instance optionally overriding the
+     * pivotFractionX or pivotFractionY parameter
+     */
+    fun copy(
+        pivotFractionX: Float = this.pivotFractionX,
+        pivotFractionY: Float = this.pivotFractionY
+    ) = TransformOriginCompat(pivotFractionX, pivotFractionY)
 
     override fun toString() =
         "TransformOriginCompat(${pivotFractionX.format(2)}, ${pivotFractionY.format(2)}))"

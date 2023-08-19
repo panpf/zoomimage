@@ -3,11 +3,44 @@
 package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.lerp
+import com.github.panpf.zoomimage.util.internal.packInts
+import com.github.panpf.zoomimage.util.internal.unpackInt1
+import com.github.panpf.zoomimage.util.internal.unpackInt2
 import kotlin.math.roundToInt
 
+/**
+ * Constructs a [IntOffsetCompat] from [x] and [y] position [Int] values.
+ */
+fun IntOffsetCompat(x: Int, y: Int): IntOffsetCompat = IntOffsetCompat(packInts(x, y))
+
+/**
+ * A two-dimensional position using [Int] pixels for units
+ */
 // todo Unit tests
-// todo change to value class
-data class IntOffsetCompat(val x: Int, val y: Int) {
+@JvmInline
+value class IntOffsetCompat internal constructor(@PublishedApi internal val packedValue: Long) {
+
+    /**
+     * The horizontal aspect of the position in [Int] pixels.
+     */
+    val x: Int
+        get() = unpackInt1(packedValue)
+
+    /**
+     * The vertical aspect of the position in [Int] pixels.
+     */
+    val y: Int
+        get() = unpackInt2(packedValue)
+
+    operator fun component1(): Int = x
+
+    operator fun component2(): Int = y
+
+    /**
+     * Returns a copy of this IntOffsetCompat instance optionally overriding the
+     * x or y parameter
+     */
+    fun copy(x: Int = this.x, y: Int = this.y) = IntOffsetCompat(x, y)
 
     /**
      * Subtract a [IntOffsetCompat] from another one.
@@ -59,10 +92,10 @@ data class IntOffsetCompat(val x: Int, val y: Int) {
      */
     operator fun rem(operand: Int) = IntOffsetCompat(x % operand, y % operand)
 
-    override fun toString() = "(${x}, ${y})"
+    override fun toString() = "($x, $y)"
 
     companion object {
-        val Zero = IntOffsetCompat(x = 0, y = 0)
+        val Zero = IntOffsetCompat(0, 0)
     }
 }
 

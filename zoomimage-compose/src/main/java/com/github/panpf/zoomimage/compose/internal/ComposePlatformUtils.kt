@@ -38,35 +38,13 @@ internal fun Size.toShortString(): String =
     if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
 
 @Stable
-internal fun Size.isAvailable(): Boolean = isSpecified && !isEmpty()
-
-@Stable
-internal fun Size.isNotAvailable(): Boolean = isUnspecified || isEmpty()
-
-@Stable
 internal fun Size.isNotEmpty(): Boolean = width > 0f && height > 0f
 
 @Stable
-internal operator fun Size.times(scaleFactor: ScaleFactor): Size =
-    if (isSpecified) {
-        Size(
-            width = this.width * scaleFactor.scaleX,
-            height = this.height * scaleFactor.scaleY,
-        )
-    } else {
-        Size.Unspecified
-    }
+internal fun Size.isSpecifiedAndNotEmpty(): Boolean = isSpecified && isNotEmpty()
 
 @Stable
-internal operator fun Size.div(scaleFactor: ScaleFactor): Size =
-    if (isSpecified) {
-        Size(
-            width = this.width / scaleFactor.scaleX,
-            height = this.height / scaleFactor.scaleY,
-        )
-    } else {
-        Size.Unspecified
-    }
+internal fun Size.isUnspecifiedOrEmpty(): Boolean = isUnspecified || isEmpty()
 
 @Stable
 internal fun Size.round(): IntSize =
@@ -82,7 +60,7 @@ internal fun Size.roundToOffset(): IntOffset =
 
 @Stable
 internal fun Size.rotate(rotation: Int): Size =
-    if (isUnspecified || rotation % 180 == 0) this else Size(height, width)
+    if (rotation % 180 == 0) this else Size(height, width)
 
 @Stable
 internal fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
@@ -173,11 +151,18 @@ internal fun IntSize.isSameAspectRatio(other: IntSize, delta: Float = 0f): Boole
  * 1.0, so negative values and values greater than 1.0 are valid.
  */
 @Stable
-fun lerp(start: IntSize, stop: IntSize, fraction: Float): IntSize =
+internal fun lerp(start: IntSize, stop: IntSize, fraction: Float): IntSize =
     IntSize(
         androidx.compose.ui.util.lerp(start.width, stop.width, fraction),
         androidx.compose.ui.util.lerp(start.height, stop.height, fraction)
     )
+
+/**
+ * Returns a copy of this IntOffset instance optionally overriding the
+ * x or y parameter
+ */
+internal fun IntSize.copy(width: Int = this.width, height: Int = this.height) =
+    IntSize(width = width, height = height)
 
 
 /* ***************************************** Offset ********************************************* */
@@ -195,11 +180,16 @@ internal operator fun Offset.div(scaleFactor: ScaleFactor): Offset =
     Offset(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
 
 @Stable
-internal fun Offset.toSize(): Size = Size(width = x, height = y)
+internal fun Offset.toSize(): Size =
+    if (isSpecified) Size(width = x, height = y) else Size.Unspecified
 
 @Stable
 internal fun Offset.roundToSize(): IntSize =
-    IntSize(width = x.roundToInt(), height = y.roundToInt())
+    if (isSpecified) {
+        IntSize(width = x.roundToInt(), height = y.roundToInt())
+    } else {
+        IntSize.Zero
+    }
 
 @Stable
 internal fun Offset.rotateInSpace(spaceSize: Size, rotation: Int): Offset {
@@ -515,10 +505,10 @@ private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
 internal val TransformOrigin.Companion.TopStart: TransformOrigin
     get() = transformOriginTopStart
 
-operator fun TransformOrigin.times(operand: Float) =
+internal operator fun TransformOrigin.times(operand: Float) =
     TransformOrigin(pivotFractionX * operand, pivotFractionY * operand)
 
-operator fun TransformOrigin.div(operand: Float) =
+internal operator fun TransformOrigin.div(operand: Float) =
     TransformOrigin(pivotFractionX / operand, pivotFractionY / operand)
 
 /**
@@ -527,7 +517,7 @@ operator fun TransformOrigin.div(operand: Float) =
  * Return a new [IntSize] with the width and height multiplied by the [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
  */
-operator fun IntSize.times(origin: TransformOrigin): IntSize =
+internal operator fun IntSize.times(origin: TransformOrigin): IntSize =
     IntSize(
         width = (this.width * origin.pivotFractionX).roundToInt(),
         height = (this.height * origin.pivotFractionY).roundToInt()
@@ -540,7 +530,7 @@ operator fun IntSize.times(origin: TransformOrigin): IntSize =
  * Return a new [IntSize] with the width and height multiplied by the [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
  */
-operator fun TransformOrigin.times(size: IntSize): IntSize = size * this
+internal operator fun TransformOrigin.times(size: IntSize): IntSize = size * this
 
 /**
  * Division operator with [IntSize]
@@ -548,7 +538,7 @@ operator fun TransformOrigin.times(size: IntSize): IntSize = size * this
  * Return a new [IntSize] with the width and height divided by [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
  */
-operator fun IntSize.div(origin: TransformOrigin): IntSize =
+internal operator fun IntSize.div(origin: TransformOrigin): IntSize =
     IntSize(
         width = (width / origin.pivotFractionX).roundToInt(),
         height = (height / origin.pivotFractionY).roundToInt()
@@ -569,7 +559,7 @@ operator fun IntSize.div(origin: TransformOrigin): IntSize =
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
-fun lerp(
+internal fun lerp(
     start: TransformOrigin,
     stop: TransformOrigin,
     fraction: Float

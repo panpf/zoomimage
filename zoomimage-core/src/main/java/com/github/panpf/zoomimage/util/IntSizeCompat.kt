@@ -1,28 +1,60 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.lerp
+import com.github.panpf.zoomimage.util.internal.packInts
+import com.github.panpf.zoomimage.util.internal.unpackInt1
+import com.github.panpf.zoomimage.util.internal.unpackInt2
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
+/**
+ * Constructs an [IntSizeCompat] from width and height [Int] values.
+ */
+fun IntSizeCompat(width: Int, height: Int): IntSizeCompat = IntSizeCompat(packInts(width, height))
+
+/**
+ * A two-dimensional size class used for measuring in [Int] pixels.
+ */
 // todo Unit tests
-// todo change to value class
-data class IntSizeCompat(val width: Int, val height: Int) {
+@JvmInline
+value class IntSizeCompat internal constructor(@PublishedApi internal val packedValue: Long) {
 
     /**
-     * Returns an IntSize scaled by multiplying [width] and [height] by [other]
+     * The horizontal aspect of the size in [Int] pixels.
+     */
+    val width: Int
+        get() = unpackInt1(packedValue)
+
+    /**
+     * The vertical aspect of the size in [Int] pixels.
+     */
+    val height: Int
+        get() = unpackInt2(packedValue)
+
+    inline operator fun component1(): Int = width
+
+    inline operator fun component2(): Int = height
+
+    /**
+     * Returns an IntSizeCompat scaled by multiplying [width] and [height] by [other]
      */
     operator fun times(other: Int): IntSizeCompat =
         IntSizeCompat(width = width * other, height = height * other)
 
     /**
-     * Returns an IntSize scaled by dividing [width] and [height] by [other]
+     * Returns an IntSizeCompat scaled by dividing [width] and [height] by [other]
      */
     operator fun div(other: Int): IntSizeCompat =
         IntSizeCompat(width = width / other, height = height / other)
 
-    override fun toString(): String = "${width} x $height"
+    override fun toString(): String = "$width x $height"
 
     companion object {
+        /**
+         * IntSize with a zero (0) width and height.
+         */
         val Zero = IntSizeCompat(width = 0, height = 0)
     }
 }
@@ -119,3 +151,10 @@ fun lerpCompat(start: IntSizeCompat, stop: IntSizeCompat, fraction: Float): IntS
         lerp(start.width, stop.width, fraction),
         lerp(start.height, stop.height, fraction)
     )
+
+/**
+ * Returns a copy of this IntOffset instance optionally overriding the
+ * x or y parameter
+ */
+fun IntSizeCompat.copy(width: Int = this.width, height: Int = this.height) =
+    IntSizeCompat(width = width, height = height)
