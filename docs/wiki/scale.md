@@ -1,0 +1,7 @@
+
+mediumScaleMinMultiple
+rubberBandScale
+animationSpec
+minScale
+mediumScale
+maxScale
