@@ -1,5 +1,10 @@
 # ![logo_image] ZoomImage
 
+![Platform][platform_image]
+[![API][min_api_image]][min_api_link]
+[![License][license_image]][license_link]
+[![version_icon]][version_link]
+
 Android library for scaling images, supporting double-tap zoom, gesture zoom, single-finger drag,
 inertial swipe, location, rotate, huge image sub-sampling, and more. Both View and Compose
 are supported.
@@ -182,9 +187,19 @@ Please review the [CHANGELOG.md] file
 
 [logo_image]: docs/res/logo_mini.png
 
+[platform_image]: https://img.shields.io/badge/Platform-Android-brightgreen.svg
+
+[license_image]: https://img.shields.io/badge/License-Apache%202-blue.svg
+
+[license_link]: https://www.apache.org/licenses/LICENSE-2.0
+
 [version_icon]: https://img.shields.io/maven-central/v/io.github.panpf.zoomimage/zoomimage-compose
 
 [version_link]: https://repo1.maven.org/maven2/io/github/panpf/zoomimage/
+
+[min_api_image]: https://img.shields.io/badge/API-16%2B-orange.svg
+
+[min_api_link]: https://android-arsenal.com/api?level=16
 
 
 [ZoomImage]: zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
