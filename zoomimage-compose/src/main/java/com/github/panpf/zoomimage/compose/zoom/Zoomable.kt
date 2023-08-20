@@ -1,6 +1,8 @@
 package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
@@ -15,6 +17,8 @@ fun Modifier.zoomable(
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = composed {
     val density = LocalDensity.current
+    val updatedOnTap by rememberUpdatedState(newValue = onTap)
+    val updatedOnLongPress by rememberUpdatedState(newValue = onLongPress)
     this
         .onSizeChanged {
             val newContainerSize = it
@@ -35,10 +39,10 @@ fun Modifier.zoomable(
                     )
                 },
                 onLongPress = {
-                    onLongPress?.invoke(it)
+                    updatedOnLongPress?.invoke(it)
                 },
                 onTap = {
-                    onTap?.invoke(it)
+                    updatedOnTap?.invoke(it)
                 },
             )
         }

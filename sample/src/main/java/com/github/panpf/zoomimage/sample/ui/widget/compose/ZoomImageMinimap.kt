@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -65,7 +67,7 @@ fun ZoomImageMinimap(
             computeViewSize(contentSize, containerSize)
         }
         if (viewSize.isNotEmpty()) {
-            val imageNodeSizeState = remember { mutableStateOf(Size.Zero) }
+            var imageNodeSize by remember { mutableStateOf(Size.Zero) }
             val imageSize =
                 subsamplingState.imageInfo?.size?.toPlatform() ?: IntSize.Zero
             AsyncImage(
@@ -100,8 +102,8 @@ fun ZoomImageMinimap(
                             )
                         }
 
+                        val contentVisibleRect = zoomableState.contentVisibleRect
                         if (contentSize.isNotEmpty() && viewSize.isNotEmpty()) {
-                            val contentVisibleRect = zoomableState.contentVisibleRect
                             drawVisibleRect(
                                 contentVisibleRect = contentVisibleRect,
                                 contentSize = contentSize,
@@ -111,12 +113,11 @@ fun ZoomImageMinimap(
                         }
                     }
                     .onSizeChanged {
-                        imageNodeSizeState.value = it.toSize()
+                        imageNodeSize = it.toSize()
                     }
-                    .pointerInput(Unit) {
+                    .pointerInput(contentSize, imageNodeSize) {
                         detectTapGestures(
                             onTap = {
-                                val imageNodeSize = imageNodeSizeState.value
                                 if (!imageNodeSize.isEmpty()) {
                                     zoomableState.location(
                                         contentPoint = IntOffset(
