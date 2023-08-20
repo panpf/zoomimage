@@ -105,7 +105,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-view-picasso:${LAST_VERSION}
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch:${LAST_VERSION}")
 ```
 
-#### R8 / Proguard
+### R8 / Proguard
 
 ZoomImage's own obfuscation is already included in aar, but you may also need to add obfuscation
 configuration for other libraries that depend indirectly
