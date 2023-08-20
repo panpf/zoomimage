@@ -12,6 +12,8 @@ are supported.
 用于缩放图像的 Android 库，支持双击缩放、手势缩放、单指拖动、惯性滑动、定位、旋转、超大图子采样等功能。支持
 View 和 Compose 两种方式。
 
+https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e155f4ef
+
 ## Features/简介
 
 * `Complete`. Support basic functions such as double-click zoom, gesture zoom, single-finger drag,
