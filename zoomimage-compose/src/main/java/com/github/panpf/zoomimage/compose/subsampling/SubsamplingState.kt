@@ -52,10 +52,10 @@ fun rememberSubsamplingState(
 @Stable
 class SubsamplingState(logger: Logger) : RememberObserver {
 
-    val logger: Logger = logger.newLogger(module = "SubsamplingState")
+    internal val logger: Logger = logger.newLogger(module = "SubsamplingState")
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    private var tileMemoryCacheHelper = TileMemoryCacheHelper(logger)
-    private var tileBitmapPoolHelper = TileBitmapPoolHelper(logger)
+    internal var tileMemoryCacheHelper = TileMemoryCacheHelper(logger)
+    internal var tileBitmapPoolHelper = TileBitmapPoolHelper(logger)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
@@ -66,6 +66,12 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var imageInfo: ImageInfo? by mutableStateOf(null)
     var showTileBounds: Boolean by mutableStateOf(false)    // todo 从这里移出
 
+    var ignoreExifOrientation by mutableStateOf(false)  // todo 挪到 rememberSubsamplingState 中
+    var tileMemoryCache: TileMemoryCache? by mutableStateOf(null)
+    var disableMemoryCache: Boolean by mutableStateOf(false)
+    var tileBitmapPool: TileBitmapPool? by mutableStateOf(null)
+    var disallowReuseBitmap: Boolean by mutableStateOf(false)
+
     var imageKey: String? by mutableStateOf(null)
         private set
     var ready by mutableStateOf(false)
@@ -75,35 +81,6 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var imageLoadRect: IntRect by mutableStateOf(IntRect.Zero)
         private set
     var paused by mutableStateOf(false)
-
-    // todo 这些属性也都要用 mutableStateOf 包装，因为 SubsamplingState 必须标记为 Stable，而它们的变化需要引起刷新
-    var ignoreExifOrientation: Boolean = false  // todo 挪到 rememberSubsamplingState 中
-        set(value) {
-            if (field != value) {
-                field = value
-                resetTileDecoder("ignoreExifOrientationChanged")
-            }
-        }
-    var tileMemoryCache: TileMemoryCache?
-        get() = tileMemoryCacheHelper.tileMemoryCache
-        set(value) {
-            tileMemoryCacheHelper.tileMemoryCache = value
-        }
-    var disableMemoryCache: Boolean
-        get() = tileMemoryCacheHelper.disableMemoryCache
-        set(value) {
-            tileMemoryCacheHelper.disableMemoryCache = value
-        }
-    var tileBitmapPool: TileBitmapPool?
-        get() = tileBitmapPoolHelper.tileBitmapPool
-        set(value) {
-            tileBitmapPoolHelper.tileBitmapPool = value
-        }
-    var disallowReuseBitmap: Boolean
-        get() = tileBitmapPoolHelper.disallowReuseBitmap
-        set(value) {
-            tileBitmapPoolHelper.disallowReuseBitmap = value
-        }
 
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
@@ -342,6 +319,31 @@ fun BindZoomableStateAndSubsamplingState(
     LaunchedEffect(Unit) {
         snapshotFlow { subsamplingState.paused }.collect {
             refreshTiles(if (it) "paused" else "resumed")
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { subsamplingState.ignoreExifOrientation }.collect {
+            subsamplingState.resetTileDecoder("ignoreExifOrientationChanged")
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { subsamplingState.tileMemoryCache }.collect {
+            subsamplingState.tileMemoryCacheHelper.tileMemoryCache = it
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { subsamplingState.disableMemoryCache }.collect {
+            subsamplingState.tileMemoryCacheHelper.disableMemoryCache = it
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { subsamplingState.tileBitmapPool }.collect {
+            subsamplingState.tileBitmapPoolHelper.tileBitmapPool = it
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { subsamplingState.disallowReuseBitmap }.collect {
+            subsamplingState.tileBitmapPoolHelper.disallowReuseBitmap = it
         }
     }
 }
