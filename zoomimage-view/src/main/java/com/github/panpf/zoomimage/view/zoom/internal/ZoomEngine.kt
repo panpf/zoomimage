@@ -88,18 +88,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         private set
     var maxScale: Float = 1.0f
         private set
-    var scaling = false
+    var transforming = false
         internal set(value) {
             if (field != value) {
                 field = value
-                notifyMatrixChanged(transform)
-            }
-        }
-    var fling = false
-        private set(value) {
-            if (field != value) {
-                field = value
-                notifyMatrixChanged(transform)
+                notifyTransformChanged()
             }
         }
 
@@ -508,11 +501,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 updateUserTransform(targetUserOffset, false, "fling")
             },
             onEnd = {
-                fling = false
-                notifyMatrixChanged(transform)
+                transforming = false
+                notifyTransformChanged()
             }
         )
-        fling = true
+        transforming = true
         lastFlingAnimatable?.start()
     }
 
@@ -563,12 +556,12 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     )
                 },
                 onEnd = {
-                    scaling = false
-                    notifyMatrixChanged(transform)
+                    transforming = false
+                    notifyTransformChanged()
                 }
             )
 
-            scaling = true
+            transforming = true
             lastScaleAnimatable?.start()
         }
         return targetScale != null
@@ -611,14 +604,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val lastScaleAnimatable = lastScaleAnimatable
         if (lastScaleAnimatable?.running == true) {
             lastScaleAnimatable.stop()
-            scaling = false
+            transforming = false
             logger.d { "stopScaleAnimation:$caller" }
         }
 
         val lastFlingAnimatable = lastFlingAnimatable
         if (lastFlingAnimatable?.running == true) {
             lastFlingAnimatable.stop()
-            fling = false
+            transforming = false
             logger.d { "stopFlingAnimation:$caller" }
         }
     }
@@ -729,7 +722,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     ) {
         if (animated) {
             val currentUserTransform = userTransform
-            val scaleChange = currentUserTransform.scale != targetUserTransform.scale
             lastScaleAnimatable = FloatAnimatable(
                 view = view,
                 startValue = 0f,
@@ -749,15 +741,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     updateTransform()
                 },
                 onEnd = {
-                    if (scaleChange) {
-                        scaling = false
-                    }
-                    notifyMatrixChanged(transform)
+                    transforming = false
+                    notifyTransformChanged()
                 }
             )
-            if (scaleChange) {
-                scaling = true
-            }
+            transforming = true
             lastScaleAnimatable?.start()
         } else {
             this.userTransform = targetUserTransform
@@ -821,10 +809,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             userOffset = userTransform.offset,
         )
 
-        notifyMatrixChanged(transform)
+        notifyTransformChanged()
     }
 
-    private fun notifyMatrixChanged(transform: TransformCompat) {
+    private fun notifyTransformChanged() {
+        val transform = this@ZoomEngine.transform
         onTransformChangeListeners?.forEach { listener ->
             listener.onTransformChanged(transform)
         }

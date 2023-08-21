@@ -53,7 +53,7 @@ fun Modifier.zoomable(
                     state.canScroll(horizontal = horizontal, direction = direction)
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float ->
-                    state.scaling = zoom != 1.0f
+                    state.transforming = true
                     state.transform(
                         centroid = centroid,
                         panChange = pan,
@@ -62,7 +62,7 @@ fun Modifier.zoomable(
                     )
                 },
                 onEnd = { centroid, velocity ->
-                    state.scaling = false
+                    state.transforming = false
                     if (!state.rollbackScale(centroid)) {
                         state.fling(velocity, density)
                     }

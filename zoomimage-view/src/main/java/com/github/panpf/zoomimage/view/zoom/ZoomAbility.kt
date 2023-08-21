@@ -76,11 +76,8 @@ class ZoomAbility constructor(
         get() = zoomEngine.mediumScale
     val maxScale: Float
         get() = zoomEngine.maxScale
-    val scaling: Boolean
-        get() = zoomEngine.scaling
-    val fling: Boolean
-        get() = zoomEngine.fling
-
+    val transforming: Boolean
+        get() = zoomEngine.transforming
 
     val containerSize: IntSizeCompat
         get() = zoomEngine.containerSize
@@ -204,11 +201,11 @@ class ZoomAbility constructor(
                 )
             },
             onScaleBeginCallback = {
-                zoomEngine.scaling = true
+                zoomEngine.transforming = true
                 true
             },
             onScaleEndCallback = {
-                zoomEngine.scaling = false
+                zoomEngine.transforming = false
                 zoomEngine.rollbackScale(it)
             },
             onActionDownCallback = {

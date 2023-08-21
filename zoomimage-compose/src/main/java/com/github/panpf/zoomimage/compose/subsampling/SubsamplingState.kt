@@ -83,7 +83,7 @@ fun BindZoomableStateAndSubsamplingState(
     }
 
     val refreshTiles: (caller: String) -> Unit = { caller ->
-        if (!zoomableState.scaling && !zoomableState.fling && zoomableState.transform.rotation.roundToInt() % 90 == 0) {
+        if (!zoomableState.transforming && zoomableState.transform.rotation.roundToInt() % 90 == 0) {
             subsamplingState.refreshTiles(
                 displayScale = zoomableState.transform.scaleX,
                 displayMinScale = zoomableState.minScale,
@@ -114,13 +114,8 @@ fun BindZoomableStateAndSubsamplingState(
         }
     }
     LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.scaling }.collect {
-            refreshTiles("scalingChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.fling }.collect {
-            refreshTiles("flingChanged")
+        snapshotFlow { zoomableState.transforming }.collect {
+            refreshTiles("transformingChanged")
         }
     }
 }

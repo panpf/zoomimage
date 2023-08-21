@@ -152,10 +152,8 @@ class ZoomableState(
         private set
     var maxScale: Float by mutableStateOf(1f)
         private set
-    var scaling: Boolean by mutableStateOf(false)
+    var transforming: Boolean by mutableStateOf(false)
         internal set
-    var fling: Boolean by mutableStateOf(false)
-        private set
 
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -537,7 +535,7 @@ class ZoomableState(
         var job: Job? = null
         job = coroutineScope {
             launch {
-                fling = true
+                transforming = true
                 try {
                     val initialVelocity = Offset.VectorConverter
                         .convertFromVector(AnimationVector(velocity.x, velocity.y))
@@ -564,13 +562,13 @@ class ZoomableState(
                             // SubsamplingState(line 87) relies on the fling state to refresh tiles,
                             // so you need to end the fling animation as soon as possible
                             job?.cancel("reachBounds")
-                            fling = false
+                            transforming = false
                         }
                     }
                 } catch (e: CancellationException) {
                     throw e
                 } finally {
-                    fling = false
+                    transforming = false
                 }
             }
         }
@@ -601,7 +599,7 @@ class ZoomableState(
             coroutineScope.launch {
                 val updateAnimatable = Animatable(0f)
                 this@ZoomableState.lastScaleAnimatable = updateAnimatable
-                scaling = true
+                transforming = true
                 try {
                     updateAnimatable.animateTo(
                         targetValue = 1f,
@@ -628,7 +626,7 @@ class ZoomableState(
                 } catch (e: CancellationException) {
                     throw e
                 } finally {
-                    scaling = false
+                    transforming = false
                 }
             }
         }
@@ -735,14 +733,14 @@ class ZoomableState(
         val lastScaleAnimatable = lastScaleAnimatable
         if (lastScaleAnimatable?.isRunning == true) {
             lastScaleAnimatable.stop()
-            scaling = false
+            transforming = false
             logger.d { "stopScaleAnimation:$caller" }
         }
 
         val lastFlingAnimatable = lastFlingAnimatable
         if (lastFlingAnimatable?.isRunning == true) {
             lastFlingAnimatable.stop()
-            fling = false
+            transforming = false
             logger.d { "stopFlingAnimation:$caller" }
         }
     }
@@ -754,12 +752,9 @@ class ZoomableState(
     ) {
         if (animated) {
             val currentUserTransform = userTransform
-            val scaleChange = currentUserTransform.scale != targetUserTransform.scale
             val updateAnimatable = Animatable(0f)
             this.lastScaleAnimatable = updateAnimatable
-            if (scaleChange) {
-                scaling = true
-            }
+            transforming = true
             try {
                 updateAnimatable.animateTo(
                     targetValue = 1f,
@@ -782,9 +777,7 @@ class ZoomableState(
             } catch (e: CancellationException) {
                 throw e
             } finally {
-                if (scaleChange) {
-                    scaling = false
-                }
+                transforming = false
             }
         } else {
             this.userTransform = targetUserTransform

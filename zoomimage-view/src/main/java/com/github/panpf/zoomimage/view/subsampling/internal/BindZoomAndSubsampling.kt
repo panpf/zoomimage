@@ -28,7 +28,7 @@ fun bindZoomAndSubsampling(
 
     zoomEngine.registerOnTransformChangeListener {
         val contentVisibleRect = zoomEngine.contentVisibleRect
-        if (!zoomEngine.scaling && !zoomEngine.fling && zoomEngine.transform.rotation.roundToInt() % 90 == 0) {
+        if (!zoomEngine.transforming && zoomEngine.transform.rotation.roundToInt() % 90 == 0) {
             subsamplingEngine.refreshTiles(
                 displayScale = zoomEngine.transform.scaleX,
                 displayMinScale = zoomEngine.minScale,
