@@ -16,6 +16,7 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
+import androidx.annotation.IntDef
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.internal.toShortString
 import com.github.panpf.zoomimage.util.toShortString
@@ -33,6 +34,9 @@ class Tile constructor(val srcRect: IntRectCompat, val inSampleSize: Int) {
     val bitmap: Bitmap?
         get() = tileBitmap?.bitmap
     var loadJob: Job? = null
+
+    @State
+    var state: Int = STATE_NONE
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -57,4 +61,16 @@ class Tile constructor(val srcRect: IntRectCompat, val inSampleSize: Int) {
                 "inSampleSize=$inSampleSize," +
                 "bitmap=${bitmap?.toShortString().orEmpty()})"
     }
+
+    companion object {
+        const val STATE_NONE = 0
+        const val STATE_LOADING = 1
+        const val STATE_LOADED = 2
+        const val STATE_ERROR = 3
+    }
+
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(STATE_NONE, STATE_LOADING, STATE_LOADED, STATE_ERROR)
+    @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
+    annotation class State
 }

@@ -8,7 +8,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -17,6 +16,7 @@ import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.view.internal.getLifecycle
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
+import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
 
 class SubsamplingAbility(private val view: View, logger: Logger) {
 
@@ -31,6 +31,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         }
     }
     internal val engine: SubsamplingEngine = SubsamplingEngine(this.logger)
+    private val tileDrawHelper = TileDrawHelper(engine)
 
     init {
         setLifecycle(view.context.getLifecycle())
@@ -91,33 +92,46 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         get() = engine.ready
     val imageInfo: ImageInfo?
         get() = engine.imageInfo
-    val tileList: List<Tile>?
+    val tileList: List<TileSnapshot>
         get() = engine.tileList
-    val imageVisibleRect: IntRectCompat
-        get() = engine.imageVisibleRect
     val imageLoadRect: IntRectCompat
         get() = engine.imageLoadRect
-
     var paused: Boolean
         get() = engine.paused
         set(value) {
             engine.paused = value
         }
 
-    fun addOnTileChangedListener(listener: OnTileChangeListener) {
-        engine.addOnTileChangedListener(listener)
+    fun registerOnTileChangedListener(listener: OnTileChangeListener) {
+        engine.registerOnTileChangedListener(listener)
     }
 
-    fun removeOnTileChangedListener(listener: OnTileChangeListener): Boolean {
-        return engine.removeOnTileChangedListener(listener)
+    fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean {
+        return engine.unregisterOnTileChangedListener(listener)
     }
 
-    fun addOnReadyChangeListener(listener: OnReadyChangeListener) {
-        engine.addOnReadyChangeListener(listener)
+    fun registerOnReadyChangeListener(listener: OnReadyChangeListener) {
+        engine.registerOnReadyChangeListener(listener)
     }
 
-    fun removeOnReadyChangeListener(listener: OnReadyChangeListener): Boolean {
-        return engine.removeOnReadyChangeListener(listener)
+    fun unregisterOnReadyChangeListener(listener: OnReadyChangeListener): Boolean {
+        return engine.unregisterOnReadyChangeListener(listener)
+    }
+
+    fun registerOnPauseChangeListener(listener: OnPauseChangeListener) {
+        engine.registerOnPauseChangeListener(listener)
+    }
+
+    fun unregisterOnPauseChangeListener(listener: OnPauseChangeListener): Boolean {
+        return engine.unregisterOnPauseChangeListener(listener)
+    }
+
+    fun registerOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener) {
+        engine.registerOnImageLoadRectChangeListener(listener)
+    }
+
+    fun unregisterOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener): Boolean {
+        return engine.unregisterOnImageLoadRectChangeListener(listener)
     }
 
 
@@ -134,7 +148,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     }
 
     internal fun onDraw(canvas: Canvas, transform: TransformCompat, containerSize: IntSizeCompat) {
-        engine.drawTiles(canvas, transform, containerSize)
+        tileDrawHelper.drawTiles(canvas, transform, containerSize)
     }
 
     internal fun onVisibilityChanged(

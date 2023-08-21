@@ -137,7 +137,7 @@ class ZoomableState(
     private val coroutineScope: CoroutineScope
 ) : RememberObserver {
 
-    private val logger: Logger = logger.newLogger(module = "ZoomableState")
+    val logger: Logger = logger.newLogger(module = "ZoomableState")
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var rotation: Int by mutableStateOf(0)

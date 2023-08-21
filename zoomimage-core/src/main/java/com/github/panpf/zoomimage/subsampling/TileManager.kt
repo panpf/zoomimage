@@ -24,6 +24,7 @@ import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.subsampling.internal.initializeTileMap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.requiredMainThread
 import com.github.panpf.zoomimage.util.internal.toHexString
 import com.github.panpf.zoomimage.util.toShortString
@@ -46,54 +47,38 @@ class TileManager constructor(
     private val imageInfo: ImageInfo,
     containerSize: IntSizeCompat,
     private val contentSize: IntSizeCompat,
-    private val onTileChanged: () -> Unit,
+    private val onTileChanged: (tileManager: TileManager) -> Unit,
+    private val onImageLoadRectChanged: (tileManager: TileManager) -> Unit,
 ) {
     private val logger: Logger = logger.newLogger(module = "SubsamplingTileManager")
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    @Suppress("OPT_IN_USAGE")
     private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(4)
     private var lastTileList: List<Tile>? = null
     private var lastSampleSize: Int? = null
     private var lastScale: Float? = null
     private var lastContentSize: IntSizeCompat? = null
+    private var lastContentVisibleRect: IntRectCompat? = null
 
     val tileMaxSize: IntSizeCompat
     val tileMap: Map<Int, List<Tile>>
-
-    var imageVisibleRect = IntRectCompat.Zero
-        private set
+    val tileList: List<Tile>
+        get() = lastTileList ?: emptyList()
     var imageLoadRect = IntRectCompat.Zero
         private set
-    val tileList: List<Tile>?
-        get() = lastTileList
 
     init {
         tileMaxSize = IntSizeCompat(containerSize.width / 2, containerSize.height / 2)
         tileMap = initializeTileMap(imageInfo.size, tileMaxSize)
     }
 
-    fun resetVisibleAndLoadRect(contentVisibleRect: IntRectCompat) {
-        val drawableScaled = imageInfo.width / contentSize.width.toFloat()
-        imageVisibleRect = IntRectCompat(
-            left = floor(contentVisibleRect.left * drawableScaled).toInt(),
-            top = floor(contentVisibleRect.top * drawableScaled).toInt(),
-            right = ceil(contentVisibleRect.right * drawableScaled).toInt(),
-            bottom = ceil(contentVisibleRect.bottom * drawableScaled).toInt()
-        )
-        // Increase the visible area as the loading area,
-        // this preloads tiles around the visible area,
-        // the user will no longer feel the loading process while sliding slowly
-        imageLoadRect = IntRectCompat(
-            left = imageVisibleRect.left - tileMaxSize.width / 2,
-            top = imageVisibleRect.top - tileMaxSize.height / 2,
-            right = imageVisibleRect.right + tileMaxSize.width / 2,
-            bottom = imageVisibleRect.bottom + tileMaxSize.height / 2
-        )
-    }
-
     @MainThread
     fun refreshTiles(
         contentVisibleRect: IntRectCompat,
         scale: Float,
+        rotation: Int,
+        transforming: Boolean,
         caller: String,
     ) {
         requiredMainThread()
@@ -116,7 +101,34 @@ class TileManager constructor(
             return
         }
 
-        val tiles = resetTiles(scale)
+        resetVisibleAndLoadRect(contentVisibleRect)
+
+        if (contentVisibleRect.isEmpty) {
+            logger.d {
+                "refreshTiles:$caller. interrupted, contentVisibleRect is empty. " +
+                        "contentVisibleRect=${contentVisibleRect}. '${imageSource.key}'"
+            }
+            clean("refreshTiles:contentVisibleRectEmpty")
+            return
+        }
+
+        if (scale.format(2) <= 1.0f) {
+            logger.d { "refreshTiles:$caller. interrupted, zoom is less than or equal to 1f. '${imageSource.key}'" }
+            clean("refreshTiles:scale1f")
+            return
+        }
+
+        if (transforming) {
+            logger.d { "refreshTiles:$caller. interrupted, transforming. '${imageSource.key}'" }
+            return
+        }
+
+        if (rotation % 90 != 0) {
+            logger.d { "refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
+            return
+        }
+
+        val tiles = tryResetTiles(scale)
         if (tiles.isNullOrEmpty()) {
             logger.d {
                 "refreshTiles:$caller, interrupted, tiles size is ${tiles?.size ?: 0}. " +
@@ -129,8 +141,6 @@ class TileManager constructor(
             }
             return
         }
-
-        resetVisibleAndLoadRect(contentVisibleRect)
 
         var loadCount = 0
         var freeCount = 0
@@ -160,13 +170,38 @@ class TileManager constructor(
                     "scale=$scale, " +
                     "imageInfo=${imageInfo.toShortString()}, " +
                     "sampleSize=$lastSampleSize, " +
-                    "imageVisibleRect=${imageVisibleRect.toShortString()}, " +
                     "imageLoadRect=${imageLoadRect.toShortString()}. " +
                     "'${imageSource.key}"
         }
     }
 
-    private fun resetTiles(scale: Float): List<Tile>? {
+    private fun resetVisibleAndLoadRect(contentVisibleRect: IntRectCompat) {
+        if (lastContentVisibleRect == contentVisibleRect) {
+            return
+        }
+        lastContentVisibleRect = contentVisibleRect
+
+        val contentScale = imageInfo.width / contentSize.width.toFloat()
+        val imageVisibleRect = IntRectCompat(
+            left = floor(contentVisibleRect.left * contentScale).toInt(),
+            top = floor(contentVisibleRect.top * contentScale).toInt(),
+            right = ceil(contentVisibleRect.right * contentScale).toInt(),
+            bottom = ceil(contentVisibleRect.bottom * contentScale).toInt()
+        )
+        // Increase the visible area as the loading area,
+        // this preloads tiles around the visible area,
+        // the user will no longer feel the loading process while sliding slowly
+        imageLoadRect = IntRectCompat(
+            left = imageVisibleRect.left - tileMaxSize.width / 2,
+            top = imageVisibleRect.top - tileMaxSize.height / 2,
+            right = imageVisibleRect.right + tileMaxSize.width / 2,
+            bottom = imageVisibleRect.bottom + tileMaxSize.height / 2
+        )
+
+        onImageLoadRectChanged(this)
+    }
+
+    private fun tryResetTiles(scale: Float): List<Tile>? {
         val lastScale = lastScale
         val lastSampleSize = lastSampleSize
         val lastTileList = lastTileList
@@ -188,13 +223,14 @@ class TileManager constructor(
         lastTileList?.forEach { tile ->
             freeTile(tile, nowNotifyTileChanged = false)
         }
-        notifyTileChanged()
 
         val tiles = tileMap[sampleSize]
         this.lastScale = scale
         this.lastContentSize = contentSize
         this.lastSampleSize = sampleSize
         this.lastTileList = tiles
+
+        notifyTileChanged()
         return tiles
     }
 
@@ -203,10 +239,20 @@ class TileManager constructor(
         requiredMainThread()
         val lastTileList = lastTileList
         if (lastTileList != null) {
-            val freeCount = freeAllTile()
-            logger.d { "clean:$caller. freeCount=$freeCount. '${imageSource.key}" }
+            var freeCount = 0
+            tileMap.values.forEach { tileList ->
+                tileList.forEach { tile ->
+                    if (freeTile(tile, nowNotifyTileChanged = false)) {
+                        freeCount++
+                    }
+                }
+            }
             this@TileManager.lastSampleSize = null
             this@TileManager.lastTileList = null
+            logger.d { "clean:$caller. freeCount=$freeCount. '${imageSource.key}" }
+            if (freeCount > 0) {
+                notifyTileChanged()
+            }
         }
     }
 
@@ -234,45 +280,47 @@ class TileManager constructor(
         val cachedValue = tileMemoryCacheHelper.get(memoryCacheKey)
         if (cachedValue != null) {
             tile.tileBitmap = cachedValue
-            logger.d {
-                "loadTile. successful, fromMemory. $tile. '${imageSource.key}'"
-            }
+            tile.state = Tile.STATE_LOADED
+            logger.d { "loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
             notifyTileChanged()
             return true
         }
 
-        tile.loadJob = scope.async(decodeDispatcher) {
-            val bitmap = tileDecoder.decode(tile)
+        tile.loadJob = scope.async {
+            tile.state = Tile.STATE_LOADING
+            notifyTileChanged()
+
+            val bitmap = withContext(decodeDispatcher) {
+                tileDecoder.decode(tile)
+            }
             when {
                 bitmap == null -> {
+                    tile.state = Tile.STATE_ERROR
                     logger.e("loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
                 }
 
                 isActive -> {
-                    withContext(Dispatchers.Main) {
-                        val newCountBitmap = tileMemoryCacheHelper.put(
-                            key = memoryCacheKey,
-                            bitmap = bitmap,
-                            imageKey = imageSource.key,
-                            imageInfo = imageInfo,
-                            tileBitmapPoolHelper = tileBitmapPoolHelper,
-                        )
-                        tile.tileBitmap = newCountBitmap
-                        logger.d { "loadTile. successful. $tile. '${imageSource.key}'" }
-                        notifyTileChanged()
-                    }
+                    val newCountBitmap = tileMemoryCacheHelper.put(
+                        key = memoryCacheKey,
+                        bitmap = bitmap,
+                        imageKey = imageSource.key,
+                        imageInfo = imageInfo,
+                        tileBitmapPoolHelper = tileBitmapPoolHelper,
+                    )
+                    tile.tileBitmap = newCountBitmap
+                    tile.state = Tile.STATE_LOADED
+                    logger.d { "loadTile. successful. $tile. '${imageSource.key}'" }
                 }
 
                 else -> {
                     logger.d {
                         "loadTile. canceled. bitmap=${bitmap.toHexString()}, $tile. '${imageSource.key}'"
                     }
-                    tileBitmapPoolHelper.freeBitmap(
-                        bitmap = bitmap,
-                        caller = "loadTile:jobCanceled"
-                    )
+                    tile.state = Tile.STATE_ERROR
+                    tileBitmapPoolHelper.freeBitmap(bitmap, "loadTile:jobCanceled")
                 }
             }
+            notifyTileChanged()
         }
 
         return true
@@ -280,43 +328,33 @@ class TileManager constructor(
 
     @MainThread
     private fun freeTile(tile: Tile, nowNotifyTileChanged: Boolean): Boolean {
-        tile.loadJob?.run {
-            if (isActive) {
-                cancel()
-            }
+        if (tile.state == Tile.STATE_NONE) {
+            return false
+        }
+
+        tile.state = Tile.STATE_NONE
+
+        val loadJob = tile.loadJob
+        if (loadJob != null && loadJob.isActive) {
+            loadJob.cancel()
             tile.loadJob = null
         }
 
         val bitmap = tile.tileBitmap
-        val recyclable = bitmap != null
-        if (recyclable) {
+        if (bitmap != null) {
             logger.d {
                 "freeTile. $tile. '${imageSource.key}'"
             }
             tile.tileBitmap = null
-            if (nowNotifyTileChanged) {
-                notifyTileChanged()
-            }
         }
-        return recyclable
-    }
 
-    @MainThread
-    private fun freeAllTile(): Int {
-        var freeCount = 0
-        tileMap.values.forEach { tileList ->
-            tileList.forEach { tile ->
-                freeTile(tile, nowNotifyTileChanged = false)
-                freeCount++
-            }
-        }
-        if (freeCount > 0) {
+        if (nowNotifyTileChanged) {
             notifyTileChanged()
         }
-        return freeCount
+        return true
     }
 
     private fun notifyTileChanged() {
-        onTileChanged()
+        onTileChanged(this)
     }
 }

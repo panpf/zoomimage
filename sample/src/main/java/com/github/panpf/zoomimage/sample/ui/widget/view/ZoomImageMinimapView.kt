@@ -34,6 +34,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
@@ -74,9 +75,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
             val widthTargetScale = contentOriginSize.width.toFloat() / viewWidth
             val heightTargetScale = contentOriginSize.height.toFloat() / viewHeight
             val imageLoadRect = zoomView.subsamplingAbility.imageLoadRect
-            zoomView.subsamplingAbility.tileList?.forEach { tile ->
+            zoomView.subsamplingAbility.tileList.forEach { tile ->
                 val load = tile.srcRect.overlaps(imageLoadRect)
-                val tileBitmap = tile.bitmap
                 val tileSrcRect = tile.srcRect
                 val tileDrawRect = tileDrawRect.apply {
                     set(
@@ -88,8 +88,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                 }
                 val boundsColor = when {
                     !load -> Color.parseColor("#00BFFF")
-                    tileBitmap != null -> Color.GREEN
-                    tile.loadJob?.isActive == true -> Color.YELLOW
+                    tile.state == Tile.STATE_LOADED -> Color.GREEN
+                    tile.state == Tile.STATE_LOADING -> Color.YELLOW
                     else -> Color.RED
                 }
                 tileBoundsPaint.color = boundsColor
@@ -97,7 +97,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
             }
         }
 
-        val contentVisibleRect = zoomView.zoomAbility.contentVisibleRect.takeIf { !it.isEmpty } ?: return
+        val contentVisibleRect =
+            zoomView.zoomAbility.contentVisibleRect.takeIf { !it.isEmpty } ?: return
         val mapVisibleRect = mapVisibleRect.apply {
             val widthScaled = contentSize.width / viewWidth.toFloat()
             val heightScaled = contentSize.height / viewHeight.toFloat()
@@ -144,7 +145,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         zoomView.zoomAbility.registerOnTransformChangeListener {
             invalidate()
         }
-        zoomView.subsamplingAbility.addOnTileChangedListener {
+        zoomView.subsamplingAbility.registerOnTileChangedListener {
             invalidate()
         }
     }
