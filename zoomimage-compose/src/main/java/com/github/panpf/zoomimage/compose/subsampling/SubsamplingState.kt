@@ -120,6 +120,7 @@ fun BindZoomableStateAndSubsamplingState(
     }
 }
 
+// todo 标记为 Stable，但是它的属性变化需要引起刷新
 class SubsamplingState(logger: Logger) : RememberObserver {
 
     private var logger: Logger = logger.newLogger(module = "SubsamplingState")
@@ -139,6 +140,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var imageInfo: ImageInfo? by mutableStateOf(null)
     var showTileBounds: Boolean by mutableStateOf(false)
 
+    // todo 这些属性也都要用 mutableStateOf 包装，因为 SubsamplingState 必须标记为 Stable，而它们的变化需要引起刷新
     var ignoreExifOrientation: Boolean = false
         set(value) {
             if (field != value) {

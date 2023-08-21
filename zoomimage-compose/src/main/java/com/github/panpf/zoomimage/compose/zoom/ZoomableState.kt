@@ -10,6 +10,7 @@ import androidx.compose.animation.splineBasedDecay
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.RememberObserver
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -129,6 +130,7 @@ fun rememberZoomableState(
     return zoomableState
 }
 
+@Stable
 class ZoomableState(
     logger: Logger,
     private val coroutineScope: CoroutineScope
@@ -162,9 +164,9 @@ class ZoomableState(
     var alignment: Alignment by mutableStateOf(Alignment.Center)
     var readMode: ReadMode? by mutableStateOf(null)
     var mediumScaleMinMultiple: Float by mutableStateOf(DefaultMediumScaleMinMultiple)
-    var threeStepScale: Boolean = false
-    var rubberBandScale: Boolean = true
-    var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
+    var threeStepScale: Boolean by mutableStateOf(false)
+    var rubberBandScale: Boolean by mutableStateOf(true)
+    var animationSpec: ZoomAnimationSpec by mutableStateOf(ZoomAnimationSpec.Default)
 
     val containerVisibleRect: IntRect by derivedStateOf {
         computeContainerVisibleRect(
