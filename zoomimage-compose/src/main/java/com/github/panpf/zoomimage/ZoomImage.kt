@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -14,16 +13,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.NoClipImage
 import com.github.panpf.zoomimage.compose.internal.round
 import com.github.panpf.zoomimage.compose.internal.toPx
-import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
+import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
 import kotlin.math.roundToInt
@@ -37,13 +33,13 @@ fun ZoomImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    logger: Logger = rememberZoomImageLogger(),
-    zoomableState: ZoomableState = rememberZoomableState(logger),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
+    state: ZoomState = rememberZoomState(),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
+    val zoomableState = state.zoomable
+    val subsamplingState = state.subsampling
     if (zoomableState.alignment != alignment) {
         zoomableState.alignment = alignment
     }
@@ -54,8 +50,6 @@ fun ZoomImage(
     if (zoomableState.contentSize != painterSize) {
         zoomableState.contentSize = painterSize
     }
-
-    BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
 
     BoxWithConstraints(modifier = modifier) {
         // Here use BoxWithConstraints and then actively set containerSize and call reset(),
@@ -99,9 +93,3 @@ fun ZoomImage(
         )
     }
 }
-
-@Composable
-fun rememberZoomImageLogger(tag: String = "ZoomImage", level: Int = Logger.INFO): Logger =
-    remember {
-        Logger(tag = tag).apply { this.level = level }
-    }

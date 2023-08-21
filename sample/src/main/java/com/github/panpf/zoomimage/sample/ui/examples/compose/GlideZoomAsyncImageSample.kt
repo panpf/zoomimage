@@ -8,7 +8,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.zoomimage.GlideZoomAsyncImage
 import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
-import com.github.panpf.zoomimage.rememberGlideZoomAsyncImageLogger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
@@ -16,10 +15,9 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 @Composable
 fun GlideZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
-        logger = rememberGlideZoomAsyncImageLogger(),
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = false
-    ) { contentScale, alignment, zoomableState, subsamplingState, _, scrollBarSpec, onLongPress ->
+    ) { contentScale, alignment, state, _, scrollBarSpec, onLongPress ->
         val glideData =
             remember(key1 = sketchImageUri) { sketchUri2GlideModel(sketchImageUri) }
         GlideZoomAsyncImage(
@@ -28,8 +26,7 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),
-            zoomableState = zoomableState,
-            subsamplingState = subsamplingState,
+            state = state,
             scrollBarSpec = scrollBarSpec,
             onLongPress = onLongPress,
         )

@@ -44,6 +44,7 @@ import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toCompatOffset
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
+import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
@@ -75,12 +76,12 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Composable
 fun rememberZoomableState(
-    logger: Logger,
     mediumScaleMinMultiple: Float = DefaultMediumScaleMinMultiple,
     threeStepScale: Boolean = false,
     rubberBandScale: Boolean = true,
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
     readMode: ReadMode? = null,
+    logger: Logger = rememberZoomImageLogger(),
 ): ZoomableState {
     val coroutineScope = rememberCoroutineScope()
     val zoomableState = remember { ZoomableState(logger, coroutineScope) }

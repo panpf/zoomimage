@@ -5,49 +5,39 @@ import android.graphics.drawable.Drawable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
-import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
-import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
-import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
-import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.github.panpf.zoomimage.compose.ZoomState
+import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
+import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
+import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
+import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
+import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
 import com.github.panpf.zoomimage.glide.internal.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.internal.GlideTileMemoryCache
 import com.github.panpf.zoomimage.glide.internal.newGlideImageSource
 
-
-@Composable
-fun rememberGlideZoomAsyncImageLogger(
-    tag: String = "GlideZoomAsyncImage",
-    level: Int = Logger.INFO
-): Logger = remember {
-    Logger(tag = tag).apply { this.level = level }
-}
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -59,9 +49,7 @@ fun GlideZoomAsyncImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    logger: Logger = rememberGlideZoomAsyncImageLogger(),
-    zoomableState: ZoomableState = rememberZoomableState(logger),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
+    state: ZoomState = rememberZoomState(),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -72,6 +60,8 @@ fun GlideZoomAsyncImage(
     // from glide: TODO(judds): Consider defaulting to load the model here instead of always doing so below.
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it },
 ) {
+    val zoomableState = state.zoomable
+    val subsamplingState = state.subsampling
     if (zoomableState.alignment != alignment) {
         zoomableState.alignment = alignment
     }
@@ -122,7 +112,7 @@ fun GlideZoomAsyncImage(
             requestBuilder.addListener(
                 ResetListener(
                     context = context,
-                    logger = logger,
+                    logger = state.logger,
                     zoomableState = zoomableState,
                     subsamplingState = subsamplingState,
                     requestBuilder = requestBuilder,

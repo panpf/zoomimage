@@ -18,7 +18,6 @@ import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImage
-import com.github.panpf.zoomimage.rememberZoomImageLogger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
 import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
@@ -28,17 +27,16 @@ import com.google.accompanist.drawablepainter.DrawablePainter
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
-        logger = rememberZoomImageLogger(),
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = true
-    ) { contentScale, alignment, zoomableState, subsamplingState, ignoreExifOrientation, scrollBarSpec, onLongPress ->
+    ) { contentScale, alignment, state, ignoreExifOrientation, scrollBarSpec, onLongPress ->
         val context = LocalContext.current
         LaunchedEffect(Unit) {
-            subsamplingState.tileBitmapPool = SketchTileBitmapPool(context.sketch, "ZoomImage")
-            subsamplingState.tileMemoryCache = SketchTileMemoryCache(context.sketch, "ZoomImage")
+            state.subsampling.tileBitmapPool = SketchTileBitmapPool(context.sketch, "ZoomImage")
+            state.subsampling.tileMemoryCache = SketchTileMemoryCache(context.sketch, "ZoomImage")
         }
         LaunchedEffect(ignoreExifOrientation) {
-            subsamplingState.ignoreExifOrientation = ignoreExifOrientation
+            state.subsampling.ignoreExifOrientation = ignoreExifOrientation
         }
 
         var drawablePainter: DrawablePainter? by remember { mutableStateOf(null) }
@@ -49,7 +47,7 @@ fun ZoomImageSample(sketchImageUri: String) {
             drawablePainter = drawable?.let { DrawablePainter(it) }
 
             val imageSource = SketchImageSource(context, context.sketch, sketchImageUri)
-            subsamplingState.setImageSource(imageSource)
+            state.subsampling.setImageSource(imageSource)
         }
 
         val drawablePainter1 = drawablePainter
@@ -66,8 +64,7 @@ fun ZoomImageSample(sketchImageUri: String) {
                     contentScale = contentScale,
                     alignment = alignment,
                     modifier = Modifier.fillMaxSize(),
-                    zoomableState = zoomableState,
-                    subsamplingState = subsamplingState,
+                    state = state,
                     scrollBarSpec = scrollBarSpec,
                     onLongPress = onLongPress,
                 )

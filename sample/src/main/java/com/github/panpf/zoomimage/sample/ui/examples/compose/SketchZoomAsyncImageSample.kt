@@ -8,16 +8,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
-import com.github.panpf.zoomimage.rememberSketchZoomAsyncImageLogger
 import com.github.panpf.zoomimage.sample.R
 
 @Composable
 fun SketchZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
-        logger = rememberSketchZoomAsyncImageLogger(),
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = true
-    ) { contentScale, alignment, zoomableState, subsamplingState, ignoreExifOrientation, scrollBarSpec, onLongPress ->
+    ) { contentScale, alignment, state, ignoreExifOrientation, scrollBarSpec, onLongPress ->
         SketchZoomAsyncImage(
             request = DisplayRequest(LocalContext.current, sketchImageUri) {
                 ignoreExifOrientation(ignoreExifOrientation)
@@ -27,8 +25,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),
-            zoomableState = zoomableState,
-            subsamplingState = subsamplingState,
+            state = state,
             scrollBarSpec = scrollBarSpec,
             onLongPress = onLongPress
         )

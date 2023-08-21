@@ -23,6 +23,7 @@ import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toShortString
+import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -51,8 +52,8 @@ import kotlin.math.roundToInt
 
 @Composable
 fun rememberSubsamplingState(
-    logger: Logger,
     showTileBounds: Boolean = false,
+    logger: Logger = rememberZoomImageLogger(),
 ): SubsamplingState {
     val subsamplingState = remember { SubsamplingState(logger) }
     subsamplingState.showTileBounds = showTileBounds
@@ -141,7 +142,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var showTileBounds: Boolean by mutableStateOf(false)
 
     // todo 这些属性也都要用 mutableStateOf 包装，因为 SubsamplingState 必须标记为 Stable，而它们的变化需要引起刷新
-    var ignoreExifOrientation: Boolean = false
+    var ignoreExifOrientation: Boolean = false  // todo 挪到 rememberSubsamplingState 中
         set(value) {
             if (field != value) {
                 field = value
@@ -383,6 +384,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         )
     }
 
+    // todo 移到 Subsampling.kt 中，并且 showTileBounds 参数也移过去
     fun drawTiles(drawScope: DrawScope, baseTransform: Transform?) {
         val imageSource = imageSource ?: return
         val imageInfo = imageInfo ?: return

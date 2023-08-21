@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -29,26 +28,18 @@ import coil.request.ImageRequest
 import coil.request.NullRequestDataException
 import com.github.panpf.zoomimage.coil.internal.CoilImageSource
 import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
+import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.NoClipImage
+import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
 import kotlin.math.roundToInt
 
-
-@Composable
-fun rememberCoilZoomAsyncImageLogger(
-    tag: String = "CoilZoomAsyncImage",
-    level: Int = Logger.INFO
-): Logger = remember {
-    Logger(tag = tag).apply { this.level = level }
-}
 
 @Composable
 @NonRestartableComposable
@@ -68,9 +59,7 @@ fun CoilZoomAsyncImage(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
     imageLoader: ImageLoader = LocalImageLoader.current,
-    logger: Logger = rememberCoilZoomAsyncImageLogger(),
-    zoomableState: ZoomableState = rememberZoomableState(logger),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
+    state: ZoomState = rememberZoomState(),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -86,9 +75,7 @@ fun CoilZoomAsyncImage(
     colorFilter = colorFilter,
     filterQuality = filterQuality,
     imageLoader = imageLoader,
-    logger = logger,
-    zoomableState = zoomableState,
-    subsamplingState = subsamplingState,
+    state = state,
     scrollBarSpec = scrollBarSpec,
     onLongPress = onLongPress,
     onTap = onTap,
@@ -107,13 +94,13 @@ fun CoilZoomAsyncImage(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
     imageLoader: ImageLoader = LocalImageLoader.current,
-    logger: Logger = rememberCoilZoomAsyncImageLogger(),
-    zoomableState: ZoomableState = rememberZoomableState(logger),
-    subsamplingState: SubsamplingState = rememberSubsamplingState(logger),
+    state: ZoomState = rememberZoomState(),
     scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
+    val zoomableState = state.zoomable
+    val subsamplingState = state.subsampling
     if (zoomableState.alignment != alignment) {
         zoomableState.alignment = alignment
     }
@@ -150,9 +137,9 @@ fun CoilZoomAsyncImage(
         model = request,
         imageLoader = imageLoader,
         transform = transform,
-        onState = { state ->
-            onState(logger, state, imageLoader, zoomableState, subsamplingState, request)
-            onState?.invoke(state)
+        onState = { loadState ->
+            onState(state.logger, loadState, imageLoader, zoomableState, subsamplingState, request)
+            onState?.invoke(loadState)
         },
         contentScale = contentScale,
         filterQuality = filterQuality

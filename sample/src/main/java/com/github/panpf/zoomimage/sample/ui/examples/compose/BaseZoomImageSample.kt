@@ -18,12 +18,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
+import com.github.panpf.zoomimage.compose.ZoomState
+import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
+import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
@@ -32,14 +33,12 @@ import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 
 @Composable
 fun BaseZoomImageSample(
-    logger: Logger,
     sketchImageUri: String,
     supportIgnoreExifOrientation: Boolean,
     content: @Composable BoxScope.(
         contentScale: ContentScale,
         alignment: Alignment,
-        zoomableState: ZoomableState,
-        subsamplingState: SubsamplingState,
+        state: ZoomState,
         ignoreExifOrientation: Boolean,
         scrollBarSpec: ScrollBarSpec?,
         onLongPress: ((Offset) -> Unit),
@@ -59,6 +58,7 @@ fun BaseZoomImageSample(
     val animateScale by prefsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
     val ignoreExifOrientation by prefsService.ignoreExifOrientation.stateFlow.collectAsState()
+    val showTileBounds by prefsService.showTileBounds.stateFlow.collectAsState()
     val zoomAnimationSpec = remember(animateScale, slowerScaleAnimation) {
         val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
         mutableStateOf(ZoomAnimationSpec.Default.copy(durationMillis = durationMillis))
@@ -75,19 +75,20 @@ fun BaseZoomImageSample(
     }
     val readMode =
         if (readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
-    val zoomableState = rememberZoomableState(
-        logger = logger,
+    val zoomState = rememberZoomState(
         threeStepScale = threeStepScale,
         rubberBandScale = rubberBandScale,
         animationSpec = zoomAnimationSpec.value,
         readMode = readMode,
+        showTileBounds = showTileBounds,
+        logger = rememberZoomImageLogger(level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO)
     )
+    val zoomableState = zoomState.zoomable
     val infoDialogState = rememberMyDialogState()
-    val subsamplingState = rememberSubsamplingState(logger)
+    val subsamplingState = zoomState.subsampling
     LaunchedEffect(ignoreExifOrientation) {
         subsamplingState.ignoreExifOrientation = ignoreExifOrientation
     }
-    logger.level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -96,8 +97,7 @@ fun BaseZoomImageSample(
         content(
             contentScale = contentScale,
             alignment = alignment,
-            zoomableState = zoomableState,
-            subsamplingState = subsamplingState,
+            state = zoomState,
             ignoreExifOrientation = supportIgnoreExifOrientation && ignoreExifOrientation,
             scrollBarSpec = if (scrollBarEnabled) ScrollBarSpec.Default else null,
             onLongPress = { infoDialogState.showing = true }

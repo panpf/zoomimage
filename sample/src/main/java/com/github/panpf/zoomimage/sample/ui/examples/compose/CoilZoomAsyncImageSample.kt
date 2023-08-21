@@ -9,17 +9,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.request.ImageRequest
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
-import com.github.panpf.zoomimage.rememberCoilZoomAsyncImageLogger
+import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
 @Composable
 fun CoilZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
-        logger = rememberCoilZoomAsyncImageLogger(),
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = false
-    ) { contentScale, alignment, zoomableState, subsamplingState, _, scrollBarSpec, onLongPress ->
+    ) { contentScale, alignment, state: ZoomState, _, scrollBarSpec, onLongPress ->
         val context = LocalContext.current
         val coilData =
             remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
@@ -32,8 +31,7 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),
-            zoomableState = zoomableState,
-            subsamplingState = subsamplingState,
+            state = state,
             scrollBarSpec = scrollBarSpec,
             onLongPress = onLongPress,
         )

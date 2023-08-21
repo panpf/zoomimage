@@ -39,11 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
+import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
-import com.github.panpf.zoomimage.rememberZoomImageLogger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.SampleImages
 import com.github.panpf.zoomimage.sample.ui.common.compose.MoveKeyboard
@@ -169,10 +169,9 @@ fun ZoomImageTool(
 @Preview(showBackground = true)
 @Composable
 fun ZoomImageToolPreview() {
-    val logger = rememberZoomImageLogger()
     ZoomImageTool(
-        zoomableState = rememberZoomableState(logger),
-        subsamplingState = rememberSubsamplingState(logger),
+        zoomableState = rememberZoomableState(),
+        subsamplingState = rememberSubsamplingState(),
         infoDialogState = rememberMyDialogState(),
         imageUri = SampleImages.Asset.DOG.uri
     )
