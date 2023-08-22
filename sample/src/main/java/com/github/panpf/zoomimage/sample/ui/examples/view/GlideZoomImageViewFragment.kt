@@ -47,22 +47,6 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
         return binding.glideZoomImageViewImage
     }
 
-    override fun onViewCreated(
-        binding: GlideZoomImageViewFragmentBinding,
-        savedInstanceState: Bundle?
-    ) {
-        super.onViewCreated(binding, savedInstanceState)
-
-//        binding.glideZoomImageViewImage.apply {
-//            listOf(
-//                prefsService.ignoreExifOrientation.stateFlow,
-//            ).merge().collectWithLifecycle(viewLifecycleOwner) {
-//                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
-//                loadData(binding, binding.common, sketchImageUri)
-//            }
-//        }
-    }
-
     override fun loadImage(
         binding: GlideZoomImageViewFragmentBinding,
         onCallStart: () -> Unit,

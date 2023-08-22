@@ -60,7 +60,7 @@ fun ZoomImageSample(sketchImageUri: String) {
             ) {
                 ZoomImage(
                     painter = drawablePainter1,
-                    contentDescription = "ZoomImage",
+                    contentDescription = "view image",
                     contentScale = contentScale,
                     alignment = alignment,
                     modifier = Modifier.fillMaxSize(),

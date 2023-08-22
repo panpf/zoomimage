@@ -21,7 +21,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
                 ignoreExifOrientation(ignoreExifOrientation)
                 crossfade()
             },
-            contentDescription = "SketchZoomAsyncImage",
+            contentDescription = "view image",
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),

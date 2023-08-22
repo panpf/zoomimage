@@ -65,7 +65,7 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
         IconButton(onClick = { optionDialogShowViewModel.toggleOptionDialogShow() }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_settings),
-                contentDescription = "Options",
+                contentDescription = "options",
             )
         }
     }

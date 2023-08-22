@@ -16,7 +16,6 @@
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.net.Uri
-import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -44,22 +43,6 @@ class PicassoZoomImageViewFragment :
 
     override fun getZoomImageView(binding: PicassoZoomImageViewFragmentBinding): ZoomImageView {
         return binding.picassoZoomImageViewImage
-    }
-
-    override fun onViewCreated(
-        binding: PicassoZoomImageViewFragmentBinding,
-        savedInstanceState: Bundle?
-    ) {
-        super.onViewCreated(binding, savedInstanceState)
-
-//        binding.picassoZoomImageViewImage.apply {
-//            listOf(
-//                prefsService.ignoreExifOrientation.stateFlow,
-//            ).merge().collect(lifecycleOwner) {
-//                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
-//                loadData(binding, binding.common, sketchImageUri)
-//            }
-//        }
     }
 
     override fun loadImage(

@@ -27,7 +27,7 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
                 data(coilData)
                 crossfade(true)
             }.build(),
-            contentDescription = "CoilZoomAsyncImage",
+            contentDescription = "view image",
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),

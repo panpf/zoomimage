@@ -22,7 +22,7 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
             remember(key1 = sketchImageUri) { sketchUri2GlideModel(sketchImageUri) }
         GlideZoomAsyncImage(
             model = glideData,
-            contentDescription = "GlideZoomAsyncImage",
+            contentDescription = "view image",
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),

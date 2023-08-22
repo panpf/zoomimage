@@ -15,7 +15,6 @@
  */
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import coil.load
@@ -40,22 +39,6 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
 
     override fun getZoomImageView(binding: CoilZoomImageViewFragmentBinding): ZoomImageView {
         return binding.coilZoomImageViewImage
-    }
-
-    override fun onViewCreated(
-        binding: CoilZoomImageViewFragmentBinding,
-        savedInstanceState: Bundle?
-    ) {
-        super.onViewCreated(binding, savedInstanceState)
-
-//        binding.coilZoomImageViewImage.apply {
-//            listOf(
-//                prefsService.ignoreExifOrientation.stateFlow,
-//            ).merge().collect(lifecycleOwner) {
-//                subsamplingAbility.ignoreExifOrientation = prefsService.ignoreExifOrientation.value
-//                loadData(binding, binding.common, sketchImageUri)
-//            }
-//        }
     }
 
     override fun loadImage(
