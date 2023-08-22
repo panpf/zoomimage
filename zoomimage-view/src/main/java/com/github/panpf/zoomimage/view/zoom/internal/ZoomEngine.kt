@@ -67,37 +67,17 @@ import kotlin.math.roundToInt
 
 class ZoomEngine constructor(logger: Logger, val view: View) {
 
-    private val logger: Logger = logger.newLogger(module = "ZoomEngine")
+    val logger: Logger = logger.newLogger(module = "ZoomEngine")
+
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var rotation: Int = 0
-
     private var onTransformChangeListeners: MutableSet<OnTransformChangeListener>? = null
     private var onContainerSizeChangeListeners: MutableSet<OnContainerSizeChangeListener>? = null
     private var onContentSizeChangeListeners: MutableSet<OnContentSizeChangeListener>? = null
 
-    var baseTransform = TransformCompat.Origin
-        private set
-    var userTransform = TransformCompat.Origin
-        private set
-    var transform = TransformCompat.Origin
-        private set
-    var minScale: Float = 1.0f
-        private set
-    var mediumScale: Float = 1.0f
-        private set
-    var maxScale: Float = 1.0f
-        private set
-    var transforming = false
-        internal set(value) {
-            if (field != value) {
-                field = value
-                notifyTransformChanged()
-            }
-        }
-
     var containerSize = IntSizeCompat.Zero
-        set(value) {
+        internal set(value) {
             if (field != value) {
                 field = value
                 reset("containerSizeChanged")
@@ -105,7 +85,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             }
         }
     var contentSize = IntSizeCompat.Zero
-        set(value) {
+        internal set(value) {
             if (field != value) {
                 field = value
                 reset("contentSizeChanged")
@@ -113,12 +93,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             }
         }
     var contentOriginSize = IntSizeCompat.Zero
-        set(value) {
+        internal set(value) {
             if (field != value) {
                 field = value
                 reset("contentOriginSizeChanged")
             }
         }
+
+    /* Configurable properties */
     var contentScale: ContentScaleCompat = ContentScaleCompat.Fit
         set(value) {
             if (field != value) {
@@ -151,6 +133,26 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     var threeStepScale: Boolean = false
     var rubberBandScale: Boolean = true
 
+    /* Information properties */
+    var baseTransform = TransformCompat.Origin
+        private set
+    var userTransform = TransformCompat.Origin
+        private set
+    var transform = TransformCompat.Origin
+        private set
+    var minScale: Float = 1.0f
+        private set
+    var mediumScale: Float = 1.0f
+        private set
+    var maxScale: Float = 1.0f
+        private set
+    var transforming = false
+        internal set(value) {
+            if (field != value) {
+                field = value
+                notifyTransformChanged()
+            }
+        }
     var containerVisibleRect: IntRectCompat = IntRectCompat.Zero
         private set
     var contentBaseDisplayRect: IntRectCompat = IntRectCompat.Zero
@@ -161,20 +163,16 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         private set
     var contentVisibleRect: IntRectCompat = IntRectCompat.Zero
         private set
-
     var scrollEdge: ScrollEdge = ScrollEdge.Default
         private set
     var userOffsetBounds: IntRectCompat = IntRectCompat.Zero
         private set
 
-
-    /**************************************** Internal ********************************************/
-
     init {
         reset("init")
     }
 
-    private fun reset(caller: String) {
+    fun reset(caller: String) {
         requiredMainThread()
         stopAllAnimation("reset:$caller")
 
@@ -225,9 +223,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             caller = "reset"
         )
     }
-
-
-    /*************************************** Interaction ******************************************/
 
     fun scale(
         targetScale: Float,

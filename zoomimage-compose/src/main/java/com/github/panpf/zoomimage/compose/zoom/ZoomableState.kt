@@ -125,30 +125,19 @@ class ZoomableState(
     private val coroutineScope: CoroutineScope
 ) : RememberObserver {
 
-    internal val logger: Logger = logger.newLogger(module = "ZoomableState")
+    val logger: Logger = logger.newLogger(module = "ZoomableState")
+
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var rotation: Int by mutableStateOf(0)
 
-    var baseTransform: Transform by mutableStateOf(Transform.Origin)
-        private set
-    var userTransform: Transform by mutableStateOf(Transform.Origin)
-        private set
-    val transform: Transform by derivedStateOf {
-        baseTransform + userTransform
-    }
-    var minScale: Float by mutableStateOf(1f)
-        private set
-    var mediumScale: Float by mutableStateOf(1f)
-        private set
-    var maxScale: Float by mutableStateOf(1f)
-        private set
-    var transforming: Boolean by mutableStateOf(false)
-        internal set
-
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
+        internal set
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
+        internal set
+
+    /* Configurable properties */
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
     var alignment: Alignment by mutableStateOf(Alignment.Center)
     var readMode: ReadMode? by mutableStateOf(null)
@@ -157,6 +146,20 @@ class ZoomableState(
     var rubberBandScale: Boolean by mutableStateOf(true)
     var animationSpec: ZoomAnimationSpec by mutableStateOf(ZoomAnimationSpec.Default)
 
+    /* Information properties */
+    var baseTransform: Transform by mutableStateOf(Transform.Origin)
+        private set
+    var userTransform: Transform by mutableStateOf(Transform.Origin)
+        private set
+    val transform: Transform by derivedStateOf { baseTransform + userTransform }
+    var minScale: Float by mutableStateOf(1f)
+        private set
+    var mediumScale: Float by mutableStateOf(1f)
+        private set
+    var maxScale: Float by mutableStateOf(1f)
+        private set
+    var transforming: Boolean by mutableStateOf(false)
+        internal set
     val containerVisibleRect: IntRect by derivedStateOf {
         computeContainerVisibleRect(
             containerSize = containerSize.toCompat(),
@@ -204,7 +207,6 @@ class ZoomableState(
             userOffset = userTransform.offset.toCompat(),
         ).roundToPlatform()
     }
-
     val scrollEdge: ScrollEdge by derivedStateOf {
         val userOffsetBounds = computeUserOffsetBounds(
             containerSize = containerSize.toCompat(),
@@ -231,7 +233,7 @@ class ZoomableState(
     }
 
     fun reset(
-        caller: String,
+        caller: String = "consumer",
         immediate: Boolean = false
     ) = coroutineScope.launch(getCoroutineContext(immediate)) {
         stopAllAnimationInternal("reset:$caller")

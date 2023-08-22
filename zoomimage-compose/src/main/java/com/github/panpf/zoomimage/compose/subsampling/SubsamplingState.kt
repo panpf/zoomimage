@@ -41,33 +41,38 @@ import kotlin.math.roundToInt
 
 @Composable
 fun rememberSubsamplingState(
-    logger: Logger = rememberZoomImageLogger(),
+    logger: Logger = rememberZoomImageLogger()
 ): SubsamplingState = remember { SubsamplingState(logger) }
 
 @Stable
 class SubsamplingState(logger: Logger) : RememberObserver {
 
-    internal val logger: Logger = logger.newLogger(module = "SubsamplingState")
+    val logger: Logger = logger.newLogger(module = "SubsamplingState")
+
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    internal var tileMemoryCacheHelper = TileMemoryCacheHelper(logger)
-    internal var tileBitmapPoolHelper = TileBitmapPoolHelper(logger)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
     private var lastResetTileDecoderJob: Job? = null
 
-    var containerSize: IntSize by mutableStateOf(IntSize.Zero)
-    var contentSize: IntSize by mutableStateOf(IntSize.Zero)
-    var imageInfo: ImageInfo? by mutableStateOf(null)
+    internal var tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
+    internal var tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
+    internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
+    internal var contentSize: IntSize by mutableStateOf(IntSize.Zero)
 
+    /* Configurable properties */
     var showTileBounds: Boolean by mutableStateOf(false)
     var ignoreExifOrientation by mutableStateOf(false)
     var tileMemoryCache: TileMemoryCache? by mutableStateOf(null)
     var disableMemoryCache: Boolean by mutableStateOf(false)
     var tileBitmapPool: TileBitmapPool? by mutableStateOf(null)
     var disallowReuseBitmap: Boolean by mutableStateOf(false)
+    var paused by mutableStateOf(false)
 
+    /* Information properties */
     var imageKey: String? by mutableStateOf(null)
+        private set
+    var imageInfo: ImageInfo? by mutableStateOf(null)
         private set
     var ready by mutableStateOf(false)
         private set
@@ -75,7 +80,6 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         private set
     var imageLoadRect: IntRect by mutableStateOf(IntRect.Zero)
         private set
-    var paused by mutableStateOf(false)
 
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
@@ -88,37 +92,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         return true
     }
 
-    private fun refreshReadyState() {
-        ready = imageInfo != null && tileDecoder != null && tileManager != null
-    }
-
-    private fun cleanTileDecoder(caller: String) {
-        val lastResetTileDecoderJob = this@SubsamplingState.lastResetTileDecoderJob
-        if (lastResetTileDecoderJob != null) {
-            lastResetTileDecoderJob.cancel("cleanTileDecoder:$caller")
-            this@SubsamplingState.lastResetTileDecoderJob = null
-        }
-        val tileDecoder = this@SubsamplingState.tileDecoder
-        if (tileDecoder != null) {
-            tileDecoder.destroy("cleanTileDecoder:$caller")
-            this@SubsamplingState.tileDecoder = null
-            logger.d { "cleanTileDecoder:$caller. '${imageKey}'" }
-            refreshReadyState()
-        }
-        imageInfo = null
-    }
-
-    private fun cleanTileManager(caller: String) {
-        val tileManager = this@SubsamplingState.tileManager
-        if (tileManager != null) {
-            tileManager.clean("cleanTileManager:$caller")
-            this@SubsamplingState.tileManager = null
-            logger.d { "cleanTileManager:$caller. '${imageKey}'" }
-            refreshReadyState()
-        }
-    }
-
-    fun resetTileDecoder(caller: String) {
+    internal fun resetTileDecoder(caller: String) {
         cleanTileManager("resetTileDecoder:$caller")
         cleanTileDecoder("resetTileDecoder:$caller")
 
@@ -169,7 +143,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         }
     }
 
-    fun resetTileManager(caller: String) {
+    internal fun resetTileManager(caller: String) {
         cleanTileManager("resetTileManager:$caller")
 
         val imageSource = imageSource ?: return
@@ -218,7 +192,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         refreshReadyState()
     }
 
-    fun refreshTiles(
+    internal fun refreshTiles(
         contentVisibleRect: IntRect,
         scale: Float,
         rotation: Int,
@@ -250,6 +224,36 @@ class SubsamplingState(logger: Logger) : RememberObserver {
 
     override fun onAbandoned() {
         destroy("onAbandoned")
+    }
+
+    private fun refreshReadyState() {
+        ready = imageInfo != null && tileDecoder != null && tileManager != null
+    }
+
+    private fun cleanTileDecoder(caller: String) {
+        val lastResetTileDecoderJob = this@SubsamplingState.lastResetTileDecoderJob
+        if (lastResetTileDecoderJob != null) {
+            lastResetTileDecoderJob.cancel("cleanTileDecoder:$caller")
+            this@SubsamplingState.lastResetTileDecoderJob = null
+        }
+        val tileDecoder = this@SubsamplingState.tileDecoder
+        if (tileDecoder != null) {
+            tileDecoder.destroy("cleanTileDecoder:$caller")
+            this@SubsamplingState.tileDecoder = null
+            logger.d { "cleanTileDecoder:$caller. '${imageKey}'" }
+            refreshReadyState()
+        }
+        imageInfo = null
+    }
+
+    private fun cleanTileManager(caller: String) {
+        val tileManager = this@SubsamplingState.tileManager
+        if (tileManager != null) {
+            tileManager.clean("cleanTileManager:$caller")
+            this@SubsamplingState.tileManager = null
+            logger.d { "cleanTileManager:$caller. '${imageKey}'" }
+            refreshReadyState()
+        }
     }
 
     private fun destroy(caller: String) {

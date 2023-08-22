@@ -48,13 +48,14 @@ class ZoomAbility constructor(
     private val imageViewBridge: ImageViewBridge,
     logger: Logger,
 ) {
-    private val logger = logger.newLogger(module = "ZoomAbility")
+
+    val logger = logger.newLogger(module = "ZoomAbility")
+    internal val zoomEngine = ZoomEngine(logger = this.logger, view = view)
     private var scrollBarEngine: ScrollBarEngine? = null
     private val gestureDetector: UnifiedGestureDetector
     private val cacheImageMatrix = Matrix()
     private var onViewTapListenerList: MutableSet<OnViewTapListener>? = null
     private var onViewLongPressListenerList: MutableSet<OnViewLongPressListener>? = null
-    internal val zoomEngine = ZoomEngine(logger = this.logger, view = view)
     private var scaleType: ScaleType = ScaleType.FIT_CENTER
         set(value) {
             if (field != value) {
@@ -64,27 +65,14 @@ class ZoomAbility constructor(
             }
         }
 
-    val baseTransform: TransformCompat
-        get() = zoomEngine.baseTransform
-    val userTransform: TransformCompat
-        get() = zoomEngine.userTransform
-    val transform: TransformCompat
-        get() = zoomEngine.transform
-    val minScale: Float
-        get() = zoomEngine.minScale
-    val mediumScale: Float
-        get() = zoomEngine.mediumScale
-    val maxScale: Float
-        get() = zoomEngine.maxScale
-    val transforming: Boolean
-        get() = zoomEngine.transforming
-
     val containerSize: IntSizeCompat
         get() = zoomEngine.containerSize
     val contentSize: IntSizeCompat
         get() = zoomEngine.contentSize
     val contentOriginSize: IntSizeCompat
         get() = zoomEngine.contentOriginSize
+
+    /* Configurable properties */
     var contentScale: ContentScaleCompat
         get() = zoomEngine.contentScale
         set(value) {
@@ -128,6 +116,21 @@ class ZoomAbility constructor(
             zoomEngine.animationSpec = value
         }
 
+    /* Information properties */
+    val baseTransform: TransformCompat
+        get() = zoomEngine.baseTransform
+    val userTransform: TransformCompat
+        get() = zoomEngine.userTransform
+    val transform: TransformCompat
+        get() = zoomEngine.transform
+    val minScale: Float
+        get() = zoomEngine.minScale
+    val mediumScale: Float
+        get() = zoomEngine.mediumScale
+    val maxScale: Float
+        get() = zoomEngine.maxScale
+    val transforming: Boolean
+        get() = zoomEngine.transforming
     val containerVisibleRect: IntRectCompat
         get() = zoomEngine.containerVisibleRect
     val contentBaseDisplayRect: IntRectCompat
@@ -138,7 +141,6 @@ class ZoomAbility constructor(
         get() = zoomEngine.contentDisplayRect
     val contentVisibleRect: IntRectCompat
         get() = zoomEngine.contentVisibleRect
-
     val scrollEdge: ScrollEdge
         get() = zoomEngine.scrollEdge
     val userOffsetBounds: IntRectCompat
@@ -224,6 +226,10 @@ class ZoomAbility constructor(
 
 
     /*************************************** Interaction with consumers ******************************************/
+
+    fun reset() {
+        zoomEngine.reset("consumer")
+    }
 
     fun scale(
         targetScale: Float,

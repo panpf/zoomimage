@@ -48,33 +48,36 @@ import kotlin.math.roundToInt
 
 class SubsamplingEngine constructor(logger: Logger) {
 
-    internal val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
+    val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
+
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
-    private var tileMemoryCacheHelper = TileMemoryCacheHelper(logger)
-    private var tileBitmapPoolHelper = TileBitmapPoolHelper(logger)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
+    private var tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
+    private var tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
     private var onTileChangeListenerList: MutableSet<OnTileChangeListener>? = null
     private var onReadyChangeListenerList: MutableSet<OnReadyChangeListener>? = null
     private var onPauseChangeListenerList: MutableSet<OnPauseChangeListener>? = null
     private var onImageLoadRectChangeListenerList: MutableSet<OnImageLoadRectChangeListener>? = null
     private var lastResetTileDecoderJob: Job? = null
 
-    var containerSize: IntSizeCompat = IntSizeCompat.Zero
+    internal var containerSize: IntSizeCompat = IntSizeCompat.Zero
         set(value) {
             if (field != value) {
                 field = value
                 resetTileManager("containerSizeChanged")
             }
         }
-    var contentSize: IntSizeCompat = IntSizeCompat.Zero
+    internal var contentSize: IntSizeCompat = IntSizeCompat.Zero
         set(value) {
             if (field != value) {
                 field = value
                 resetTileDecoder("contentSizeChanged")
             }
         }
+
+    /* Configurable properties */
     var ignoreExifOrientation: Boolean = false
         set(value) {
             if (field != value) {
@@ -102,17 +105,6 @@ class SubsamplingEngine constructor(logger: Logger) {
         set(value) {
             tileBitmapPoolHelper.disallowReuseBitmap = value
         }
-
-    var imageKey: String? = null
-        private set
-    val ready: Boolean
-        get() = imageInfo != null && tileDecoder != null && tileManager != null
-    var imageInfo: ImageInfo? = null
-        private set
-    var tileList: List<TileSnapshot> = emptyList()
-        private set
-    val imageLoadRect: IntRectCompat
-        get() = tileManager?.imageLoadRect ?: IntRectCompat.Zero
     var paused = false
         set(value) {
             if (field != value) {
@@ -120,6 +112,18 @@ class SubsamplingEngine constructor(logger: Logger) {
                 notifyPauseChange()
             }
         }
+
+    /* Information properties */
+    var imageKey: String? = null
+        private set
+    var imageInfo: ImageInfo? = null
+        private set
+    val ready: Boolean
+        get() = imageInfo != null && tileDecoder != null && tileManager != null
+    var tileList: List<TileSnapshot> = emptyList()
+        private set
+    val imageLoadRect: IntRectCompat
+        get() = tileManager?.imageLoadRect ?: IntRectCompat.Zero
 
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
@@ -130,6 +134,69 @@ class SubsamplingEngine constructor(logger: Logger) {
         imageKey = imageSource?.key
         resetTileDecoder("setImageSource")
         return true
+    }
+
+    fun registerOnTileChangedListener(listener: OnTileChangeListener) {
+        this.onTileChangeListenerList = (onTileChangeListenerList ?: LinkedHashSet()).apply {
+            add(listener)
+        }
+    }
+
+    fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean {
+        return onTileChangeListenerList?.remove(listener) == true
+    }
+
+    fun registerOnReadyChangeListener(listener: OnReadyChangeListener) {
+        this.onReadyChangeListenerList = (onReadyChangeListenerList ?: LinkedHashSet()).apply {
+            add(listener)
+        }
+    }
+
+    fun unregisterOnReadyChangeListener(listener: OnReadyChangeListener): Boolean {
+        return onReadyChangeListenerList?.remove(listener) == true
+    }
+
+    fun registerOnPauseChangeListener(listener: OnPauseChangeListener) {
+        this.onPauseChangeListenerList = (onPauseChangeListenerList ?: LinkedHashSet()).apply {
+            add(listener)
+        }
+    }
+
+    fun unregisterOnPauseChangeListener(listener: OnPauseChangeListener): Boolean {
+        return onPauseChangeListenerList?.remove(listener) == true
+    }
+
+    fun registerOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener) {
+        this.onImageLoadRectChangeListenerList =
+            (onImageLoadRectChangeListenerList ?: LinkedHashSet()).apply {
+                add(listener)
+            }
+    }
+
+    fun unregisterOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener): Boolean {
+        return onImageLoadRectChangeListenerList?.remove(listener) == true
+    }
+
+    internal fun refreshTiles(
+        contentVisibleRect: IntRectCompat,
+        scale: Float,
+        rotation: Int,
+        transforming: Boolean,
+        caller: String,
+    ) {
+        val tileManager = tileManager ?: return
+        if (paused) {
+            logger.d { "refreshTiles:$caller. interrupted, paused. '${imageKey}'" }
+            tileManager.clean("refreshTiles:paused")
+            return
+        }
+        tileManager.refreshTiles(
+            contentVisibleRect = contentVisibleRect,
+            scale = scale,
+            rotation = rotation,
+            transforming = transforming,
+            caller = caller
+        )
     }
 
     private fun resetTileDecoder(caller: String) {
@@ -232,28 +299,6 @@ class SubsamplingEngine constructor(logger: Logger) {
         notifyTileChange()
     }
 
-    fun refreshTiles(
-        contentVisibleRect: IntRectCompat,
-        scale: Float,
-        rotation: Int,
-        transforming: Boolean,
-        caller: String,
-    ) {
-        val tileManager = tileManager ?: return
-        if (paused) {
-            logger.d { "refreshTiles:$caller. interrupted, paused. '${imageKey}'" }
-            tileManager.clean("refreshTiles:paused")
-            return
-        }
-        tileManager.refreshTiles(
-            contentVisibleRect = contentVisibleRect,
-            scale = scale,
-            rotation = rotation,
-            transforming = transforming,
-            caller = caller
-        )
-    }
-
     private fun cleanTileDecoder(caller: String) {
         val lastResetTileDecoderJob = this@SubsamplingEngine.lastResetTileDecoderJob
         if (lastResetTileDecoderJob != null) {
@@ -279,47 +324,6 @@ class SubsamplingEngine constructor(logger: Logger) {
             notifyReadyChange()
             notifyTileChange()
         }
-    }
-
-    fun registerOnTileChangedListener(listener: OnTileChangeListener) {
-        this.onTileChangeListenerList = (onTileChangeListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-    }
-
-    fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean {
-        return onTileChangeListenerList?.remove(listener) == true
-    }
-
-    fun registerOnReadyChangeListener(listener: OnReadyChangeListener) {
-        this.onReadyChangeListenerList = (onReadyChangeListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-    }
-
-    fun unregisterOnReadyChangeListener(listener: OnReadyChangeListener): Boolean {
-        return onReadyChangeListenerList?.remove(listener) == true
-    }
-
-    fun registerOnPauseChangeListener(listener: OnPauseChangeListener) {
-        this.onPauseChangeListenerList = (onPauseChangeListenerList ?: LinkedHashSet()).apply {
-            add(listener)
-        }
-    }
-
-    fun unregisterOnPauseChangeListener(listener: OnPauseChangeListener): Boolean {
-        return onPauseChangeListenerList?.remove(listener) == true
-    }
-
-    fun registerOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener) {
-        this.onImageLoadRectChangeListenerList =
-            (onImageLoadRectChangeListenerList ?: LinkedHashSet()).apply {
-                add(listener)
-            }
-    }
-
-    fun unregisterOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener): Boolean {
-        return onImageLoadRectChangeListenerList?.remove(listener) == true
     }
 
     private fun notifyTileChange() {

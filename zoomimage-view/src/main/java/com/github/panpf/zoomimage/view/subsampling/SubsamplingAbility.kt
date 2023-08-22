@@ -20,7 +20,8 @@ import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
 
 class SubsamplingAbility(private val view: View, logger: Logger) {
 
-    private val logger: Logger = logger.newLogger(module = "SubsamplingAbility")
+    val logger: Logger = logger.newLogger(module = "SubsamplingAbility")
+    internal val engine: SubsamplingEngine = SubsamplingEngine(this.logger)
     private var lifecycle: Lifecycle? = null
     private var imageSource: ImageSource? = null
     private val resetPausedLifecycleObserver = LifecycleEventObserver { _, event ->
@@ -30,8 +31,56 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
             resetPaused("LifecycleStateChanged:ON_STOP")
         }
     }
-    internal val engine: SubsamplingEngine = SubsamplingEngine(this.logger)
     private val tileDrawHelper = TileDrawHelper(engine)
+
+    /* Configurable properties */
+    var ignoreExifOrientation: Boolean
+        get() = engine.ignoreExifOrientation
+        set(value) {
+            engine.ignoreExifOrientation = value
+        }
+    var showTileBounds = false
+        set(value) {
+            if (field != value) {
+                field = value
+                view.invalidate()
+            }
+        }
+    var tileMemoryCache: TileMemoryCache?
+        get() = engine.tileMemoryCache
+        set(value) {
+            engine.tileMemoryCache = value
+        }
+    var disableMemoryCache: Boolean
+        get() = engine.disableMemoryCache
+        set(value) {
+            engine.disableMemoryCache = value
+        }
+    var tileBitmapPool: TileBitmapPool?
+        get() = engine.tileBitmapPool
+        set(value) {
+            engine.tileBitmapPool = value
+        }
+    var disallowReuseBitmap: Boolean
+        get() = engine.disallowReuseBitmap
+        set(value) {
+            engine.disallowReuseBitmap = value
+        }
+    var paused: Boolean
+        get() = engine.paused
+        set(value) {
+            engine.paused = value
+        }
+
+    /* Information properties */
+    val imageInfo: ImageInfo?
+        get() = engine.imageInfo
+    val ready: Boolean
+        get() = engine.ready
+    val tileList: List<TileSnapshot>
+        get() = engine.tileList
+    val imageLoadRect: IntRectCompat
+        get() = engine.imageLoadRect
 
     init {
         setLifecycle(view.context.getLifecycle())
@@ -56,53 +105,6 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
             resetPaused("setLifecycle")
         }
     }
-
-    var ignoreExifOrientation: Boolean
-        get() = engine.ignoreExifOrientation
-        set(value) {
-            engine.ignoreExifOrientation = value
-        }
-    var tileMemoryCache: TileMemoryCache?
-        get() = engine.tileMemoryCache
-        set(value) {
-            engine.tileMemoryCache = value
-        }
-    var disableMemoryCache: Boolean
-        get() = engine.disableMemoryCache
-        set(value) {
-            engine.disableMemoryCache = value
-        }
-    var tileBitmapPool: TileBitmapPool?
-        get() = engine.tileBitmapPool
-        set(value) {
-            engine.tileBitmapPool = value
-        }
-    var disallowReuseBitmap: Boolean
-        get() = engine.disallowReuseBitmap
-        set(value) {
-            engine.disallowReuseBitmap = value
-        }
-    var showTileBounds = false
-        set(value) {
-            if (field != value) {
-                field = value
-                view.invalidate()
-            }
-        }
-
-    val ready: Boolean
-        get() = engine.ready
-    val imageInfo: ImageInfo?
-        get() = engine.imageInfo
-    val tileList: List<TileSnapshot>
-        get() = engine.tileList
-    val imageLoadRect: IntRectCompat
-        get() = engine.imageLoadRect
-    var paused: Boolean
-        get() = engine.paused
-        set(value) {
-            engine.paused = value
-        }
 
     fun registerOnTileChangedListener(listener: OnTileChangeListener) {
         engine.registerOnTileChangedListener(listener)
