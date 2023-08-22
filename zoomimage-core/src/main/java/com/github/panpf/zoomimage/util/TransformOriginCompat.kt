@@ -17,7 +17,6 @@ fun TransformOriginCompat(pivotFractionX: Float, pivotFractionY: Float): Transfo
 /**
  * A two-dimensional position represented as a fraction of the Layer's width and height
  */
-// todo Unit tests
 @JvmInline
 value class TransformOriginCompat internal constructor(@PublishedApi internal val packedValue: Long) {
 

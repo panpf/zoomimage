@@ -16,7 +16,6 @@ fun IntOffsetCompat(x: Int, y: Int): IntOffsetCompat = IntOffsetCompat(packInts(
 /**
  * A two-dimensional position using [Int] pixels for units
  */
-// todo Unit tests
 @JvmInline
 value class IntOffsetCompat internal constructor(@PublishedApi internal val packedValue: Long) {
 

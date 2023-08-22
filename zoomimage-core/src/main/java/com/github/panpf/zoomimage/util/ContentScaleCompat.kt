@@ -6,7 +6,6 @@ import kotlin.math.min
 /**
  * Represents a rule to apply to scale a source rectangle to be inscribed into a destination
  */
-// todo Unit tests
 interface ContentScaleCompat {
 
     /**

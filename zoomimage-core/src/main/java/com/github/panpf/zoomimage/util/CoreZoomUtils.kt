@@ -49,7 +49,6 @@ fun computeBaseTransform(
     alignment: AlignmentCompat,
     rotation: Int,
 ): TransformCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -81,7 +80,6 @@ fun computeInitialUserTransform(
     rotation: Int,
     readMode: ReadMode?,
 ): TransformCompat? {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -138,7 +136,6 @@ fun computeStepScales(
     rotation: Int,
     mediumScaleMinMultiple: Float,
 ): FloatArray {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -192,7 +189,6 @@ fun computeInitialZoom(
     readMode: ReadMode?,
     mediumScaleMinMultiple: Float,
 ): InitialZoom {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -244,7 +240,6 @@ fun computeContainerVisibleRect(
     userScale: Float,
     userOffset: OffsetCompat
 ): RectCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -275,7 +270,6 @@ fun computeContentBaseDisplayRect(
     alignment: AlignmentCompat,
     rotation: Int,
 ): RectCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -305,7 +299,6 @@ fun computeContentBaseVisibleRect(
     alignment: AlignmentCompat,
     rotation: Int,
 ): RectCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -380,7 +373,6 @@ fun computeContentBaseInsideDisplayRect(
     alignment: AlignmentCompat,
     rotation: Int,
 ): RectCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -412,7 +404,6 @@ fun computeContentDisplayRect(
     userScale: Float,
     userOffset: OffsetCompat
 ): RectCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -454,7 +445,6 @@ fun computeContentVisibleRect(
     userScale: Float,
     userOffset: OffsetCompat,
 ): RectCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -525,7 +515,6 @@ fun computeUserOffsetBounds(
     rotation: Int,
     userScale: Float,
 ): RectCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -589,7 +578,6 @@ fun computeLocationUserOffset(
     containerPoint: IntOffsetCompat,
     userScale: Float,
 ): OffsetCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -620,7 +608,6 @@ fun computeTransformOffset(
     pan: OffsetCompat,
     gestureRotate: Float,
 ): OffsetCompat {
-    // todo Unit tests
     /**
      * Rotates the given offset around the origin by the given angle in degrees.
      *
@@ -657,7 +644,6 @@ fun computeScrollEdge(
     userOffsetBounds: RectCompat,
     userOffset: OffsetCompat,
 ): ScrollEdge {
-    // todo Unit tests
     val leftFormatted = userOffsetBounds.left.roundToInt()
     val rightFormatted = userOffsetBounds.right.roundToInt()
     val xFormatted = userOffset.x.roundToInt()
@@ -686,7 +672,6 @@ fun computeScrollEdge(
  * @param direction Negative to check scrolling left or up, positive to check scrolling right or down.
  */
 fun canScrollByEdge(scrollEdge: ScrollEdge, horizontal: Boolean, direction: Int): Boolean {
-    // todo Unit tests
     return if (horizontal) {
         if (direction > 0) {
             scrollEdge.horizontal != Edge.END && scrollEdge.horizontal != Edge.BOTH
@@ -712,7 +697,6 @@ fun limitScaleWithRubberBand(
     maxScale: Float,
     rubberBandRatio: Float = 2f
 ): Float = when {
-    // todo Unit tests
     targetScale > maxScale -> {
         val addScale = targetScale - currentScale
         val rubberBandMaxScale = maxScale * rubberBandRatio
@@ -759,7 +743,6 @@ fun touchPointToContainerPoint(
     userOffset: OffsetCompat,
     touchPoint: OffsetCompat
 ): IntOffsetCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -791,7 +774,6 @@ fun containerPointToContentPoint(
     rotation: Int,
     containerPoint: IntOffsetCompat
 ): IntOffsetCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -847,7 +829,6 @@ fun contentPointToContainerPoint(
     rotation: Int,
     contentPoint: IntOffsetCompat
 ): IntOffsetCompat {
-    // todo Unit tests
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container

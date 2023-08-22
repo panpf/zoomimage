@@ -23,7 +23,6 @@ internal fun Float.isSafe(): Boolean {
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
  */
 internal fun lerp(start: Float, stop: Float, fraction: Float): Float {
-    // todo Unit tests
     return (1 - fraction) * start + fraction * stop
 }
 
@@ -31,7 +30,6 @@ internal fun lerp(start: Float, stop: Float, fraction: Float): Float {
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
  */
 internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
-    // todo Unit tests
     return start + ((stop - start) * fraction.toDouble()).roundToInt()
 }
 
@@ -39,6 +37,5 @@ internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
  */
 internal fun lerp(start: Long, stop: Long, fraction: Float): Long {
-    // todo Unit tests
     return start + ((stop - start) * fraction.toDouble()).roundToLong()
 }

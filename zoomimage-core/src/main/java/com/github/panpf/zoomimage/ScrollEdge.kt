@@ -10,5 +10,4 @@ data class ScrollEdge(val horizontal: Edge, val vertical: Edge) {
     }
 }
 
-// todo Unit tests
 fun ScrollEdge.toShortString(): String = "(${horizontal.name},${vertical.name})"

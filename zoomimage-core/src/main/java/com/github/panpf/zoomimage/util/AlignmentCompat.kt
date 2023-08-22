@@ -3,10 +3,9 @@ package com.github.panpf.zoomimage.util
 import kotlin.math.roundToInt
 
 /**
- * An interface to calculate the position of a sized box inside an available space. [Alignment] is
+ * An interface to calculate the position of a sized box inside an available space. [AlignmentCompat] is
  * often used to define the alignment of a layout inside a parent layout.
  */
-// todo Unit tests
 fun interface AlignmentCompat {
     /**
      * Calculates the position of a box of size [size] relative to the top left corner of an area

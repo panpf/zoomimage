@@ -10,7 +10,6 @@ import kotlin.math.min
 /**
  * An immutable, 2D, axis-aligned, floating-point rectangle whose coordinates are relative to a given origin.
  */
-// todo Unit tests
 data class RectCompat(
     /**
      * The offset of the left edge of this rectangle from the x axis.

@@ -29,18 +29,17 @@ fun OffsetCompat(x: Float, y: Float) = OffsetCompat(packFloats(x, y))
  *    screen's origin which it can add to the offsets of its children to find
  *    the [Offset] from the screen's origin to each of the children.
  *
- * Because a particular [Offset] can be interpreted as one sense at one time
+ * Because a particular [OffsetCompat] can be interpreted as one sense at one time
  * then as the other sense at a later time, the same class is used for both
  * senses.
  *
  * See also:
  *
- *  * [Size], which represents a vector describing the size of a rectangle.
+ *  * [SizeCompat], which represents a vector describing the size of a rectangle.
  *
  * Creates an offset. The first argument sets [x], the horizontal component,
  * and the second sets [y], the vertical component.
  */
-// todo Unit tests
 @JvmInline
 value class OffsetCompat internal constructor(internal val packedValue: Long) {
 

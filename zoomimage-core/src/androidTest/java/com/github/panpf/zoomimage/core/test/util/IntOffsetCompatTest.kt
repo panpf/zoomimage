@@ -8,7 +8,8 @@ import org.junit.Assert
 import org.junit.Test
 
 class IntOffsetCompatTest {
-    // todo Implementation tests
+
+    // todo Unit tests
 
     @Test
     fun testRotateInSpaceAndReverseRotateInSpace() {

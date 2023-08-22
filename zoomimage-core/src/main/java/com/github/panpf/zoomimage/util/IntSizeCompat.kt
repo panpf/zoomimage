@@ -17,7 +17,6 @@ fun IntSizeCompat(width: Int, height: Int): IntSizeCompat = IntSizeCompat(packIn
 /**
  * A two-dimensional size class used for measuring in [Int] pixels.
  */
-// todo Unit tests
 @JvmInline
 value class IntSizeCompat internal constructor(@PublishedApi internal val packedValue: Long) {
 

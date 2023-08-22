@@ -8,7 +8,6 @@ data class InitialZoom(
     val userTransform: TransformCompat,
 ) {
     companion object {
-        // todo Unit tests
         val Origin = InitialZoom(
             minScale = 1.0f,
             mediumScale = 1.0f,

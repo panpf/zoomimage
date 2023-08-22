@@ -9,7 +9,6 @@ import kotlin.math.roundToInt
 /**
  * An immutable, 2D, axis-aligned, integer rectangle whose coordinates are relative to a given origin.
  */
-// todo Unit tests
 data class IntRectCompat(
     /**
      * The offset of the left edge of this rectangle from the x axis.
