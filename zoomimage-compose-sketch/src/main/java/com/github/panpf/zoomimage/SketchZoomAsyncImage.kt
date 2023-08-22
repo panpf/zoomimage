@@ -5,6 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -29,7 +32,6 @@ import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.NoClipImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
@@ -167,29 +169,21 @@ fun SketchZoomAsyncImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    val zoomableState = state.zoomable
-    val subsamplingState = state.subsampling
-    if (zoomableState.alignment != alignment) {
-        zoomableState.alignment = alignment
-    }
-    if (zoomableState.contentScale != contentScale) {
-        zoomableState.contentScale = contentScale
-    }
-
-    BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
+    state.zoomable.contentScale = contentScale
+    state.zoomable.alignment = alignment
 
     val context = LocalContext.current
-    val sketch = context.sketch
+    val sketch by remember { mutableStateOf(context.sketch) }
     LaunchedEffect(Unit) {
-        subsamplingState.tileBitmapPool = SketchTileBitmapPool(sketch, "SketchZoomAsyncImage")
-        subsamplingState.tileMemoryCache = SketchTileMemoryCache(sketch, "SketchZoomAsyncImage")
+        state.subsampling.tileBitmapPool = SketchTileBitmapPool(sketch, "SketchZoomAsyncImage")
+        state.subsampling.tileMemoryCache = SketchTileMemoryCache(sketch, "SketchZoomAsyncImage")
     }
 
-    val transform1 = zoomableState.transform
+    val transform1 = state.zoomable.transform
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
-        .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
+        .let { if (scrollBarSpec != null) it.zoomScrollBar(state.zoomable, scrollBarSpec) else it }
+        .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = transform1.scaleX
             scaleY = transform1.scaleY
@@ -201,13 +195,13 @@ fun SketchZoomAsyncImage(
             rotationZ = transform1.rotation
             transformOrigin = transform1.rotationOrigin
         }
-        .subsampling(subsamplingState = subsamplingState, zoomableState = null)
+        .subsampling(state.subsampling)
 
     val painter = rememberAsyncImagePainter(
         request = request,
         transform = transform,
         onState = { loadState ->
-            onState(context, sketch, loadState, state, request)
+            onState(context, sketch, state, request, loadState)
             onState?.invoke(loadState)
         },
         contentScale = contentScale,
@@ -227,9 +221,9 @@ fun SketchZoomAsyncImage(
 private fun onState(
     context: Context,
     sketch: Sketch,
-    loadState: AsyncImagePainter.State,
     state: ZoomState,
-    request: DisplayRequest
+    request: DisplayRequest,
+    loadState: AsyncImagePainter.State,
 ) {
     state.logger.d("onState. state=${loadState.name}. uri: ${request.uriString}")
     val zoomableState = state.zoomable

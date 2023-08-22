@@ -27,11 +27,8 @@ import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
 import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
 import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
 import com.github.panpf.zoomimage.glide.internal.GlideTileBitmapPool
@@ -60,29 +57,21 @@ fun GlideZoomAsyncImage(
     // from glide: TODO(judds): Consider defaulting to load the model here instead of always doing so below.
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it },
 ) {
-    val zoomableState = state.zoomable
-    val subsamplingState = state.subsampling
-    if (zoomableState.alignment != alignment) {
-        zoomableState.alignment = alignment
-    }
-    if (zoomableState.contentScale != contentScale) {
-        zoomableState.contentScale = contentScale
-    }
-
-    BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
+    state.zoomable.contentScale = contentScale
+    state.zoomable.alignment = alignment
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         val glide = Glide.get(context)
-        subsamplingState.tileBitmapPool = GlideTileBitmapPool(glide)
-        subsamplingState.tileMemoryCache = GlideTileMemoryCache(glide)
+        state.subsampling.tileBitmapPool = GlideTileBitmapPool(glide)
+        state.subsampling.tileMemoryCache = GlideTileMemoryCache(glide)
     }
 
-    val transform = zoomableState.transform
+    val transform = state.zoomable.transform
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
-        .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
+        .let { if (scrollBarSpec != null) it.zoomScrollBar(state.zoomable, scrollBarSpec) else it }
+        .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = transform.scaleX
             scaleY = transform.scaleY
@@ -94,7 +83,7 @@ fun GlideZoomAsyncImage(
             rotationZ = transform.rotation
             transformOrigin = transform.rotationOrigin
         }
-        .subsampling(subsamplingState = subsamplingState, zoomableState = null)
+        .subsampling(state.subsampling)
 
     GlideImage(
         model = model,
@@ -112,9 +101,7 @@ fun GlideZoomAsyncImage(
             requestBuilder.addListener(
                 ResetListener(
                     context = context,
-                    logger = state.logger,
-                    zoomableState = zoomableState,
-                    subsamplingState = subsamplingState,
+                    state = state,
                     requestBuilder = requestBuilder,
                     model = model,
                 )
@@ -125,9 +112,7 @@ fun GlideZoomAsyncImage(
 
 private class ResetListener(
     private val context: Context,
-    private val logger: Logger,
-    private val zoomableState: ZoomableState,
-    private val subsamplingState: SubsamplingState,
+    private val state: ZoomState,
     private val requestBuilder: RequestBuilder<Drawable>,
     private val model: Any?,
 ) : RequestListener<Drawable> {
@@ -138,7 +123,7 @@ private class ResetListener(
         target: Target<Drawable>?,
         isFirstResource: Boolean
     ): Boolean {
-        logger.d("ResetListener. onLoadFailed. model: $model")
+        state.logger.d("ResetListener. onLoadFailed. model: $model")
         reset(resource = null)
         return false
     }
@@ -150,7 +135,7 @@ private class ResetListener(
         dataSource: DataSource?,
         isFirstResource: Boolean
     ): Boolean {
-        logger.d("ResetListener. onResourceReady. model: $model, resource: $resource")
+        state.logger.d("ResetListener. onResourceReady. model: $model, resource: $resource")
         reset(resource = resource)
         return false
     }
@@ -161,23 +146,23 @@ private class ResetListener(
         val drawableSize = resource
             ?.let { IntSize(it.intrinsicWidth, it.intrinsicHeight) }
             ?.takeIf { it.isNotEmpty() }
-        val containerSize = zoomableState.containerSize
+        val containerSize = state.zoomable.containerSize
         val newContentSize = when {
             drawableSize != null -> drawableSize
             containerSize.isNotEmpty() -> containerSize
             else -> IntSize.Zero
         }
-        if (zoomableState.contentSize != newContentSize) {
-            zoomableState.contentSize = newContentSize
+        if (state.zoomable.contentSize != newContentSize) {
+            state.zoomable.contentSize = newContentSize
         }
 
         if (resource != null) {
-            subsamplingState.disableMemoryCache = !requestBuilder.isMemoryCacheable
+            state.subsampling.disableMemoryCache = !requestBuilder.isMemoryCacheable
             val imageSource = newGlideImageSource(context, model)
             if (imageSource == null) {
-                logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model: '$model'" }
+                state.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model: '$model'" }
             }
-            subsamplingState.setImageSource(imageSource)
+            state.subsampling.setImageSource(imageSource)
         }
     }
 }

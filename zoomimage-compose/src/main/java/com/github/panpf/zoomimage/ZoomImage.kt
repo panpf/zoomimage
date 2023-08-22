@@ -38,18 +38,9 @@ fun ZoomImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    val zoomableState = state.zoomable
-    val subsamplingState = state.subsampling
-    if (zoomableState.alignment != alignment) {
-        zoomableState.alignment = alignment
-    }
-    if (zoomableState.contentScale != contentScale) {
-        zoomableState.contentScale = contentScale
-    }
-    val painterSize = painter.intrinsicSize.round()
-    if (zoomableState.contentSize != painterSize) {
-        zoomableState.contentSize = painterSize
-    }
+    state.zoomable.contentScale = contentScale
+    state.zoomable.alignment = alignment
+    state.zoomable.contentSize = painter.intrinsicSize.round()
 
     BoxWithConstraints(modifier = modifier) {
         // Here use BoxWithConstraints and then actively set containerSize and call reset(),
@@ -57,19 +48,19 @@ fun ZoomImage(
         // the position change will not be seen by the user
         val maxWidthPx = maxWidth.toPx().roundToInt()
         val maxHeightPx = maxHeight.toPx().roundToInt()
-        val oldContainerSize = zoomableState.containerSize
+        val oldContainerSize = state.zoomable.containerSize
         if (oldContainerSize.width != maxWidthPx || oldContainerSize.height != maxHeightPx) {
-            zoomableState.containerSize = IntSize(maxWidthPx, maxHeightPx)
-            zoomableState.reset("BoxWithConstraints", immediate = true)
+            state.zoomable.containerSize = IntSize(maxWidthPx, maxHeightPx)
+            state.zoomable.reset("BoxWithConstraints", immediate = true)
         }
-        val transform = zoomableState.transform
+        val transform = state.zoomable.transform
         val modifier1 = Modifier
             .fillMaxSize()
             .clipToBounds()
             .let { modifier ->
-                scrollBarSpec?.let { modifier.zoomScrollBar(zoomableState, it) } ?: modifier
+                scrollBarSpec?.let { modifier.zoomScrollBar(state.zoomable, it) } ?: modifier
             }
-            .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
+            .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
             .graphicsLayer {
                 scaleX = transform.scaleX
                 scaleY = transform.scaleY
@@ -81,7 +72,7 @@ fun ZoomImage(
                 rotationZ = transform.rotation
                 transformOrigin = transform.rotationOrigin
             }
-            .subsampling(subsamplingState = subsamplingState, zoomableState = null)
+            .subsampling(state.subsampling)
         NoClipImage(
             painter = painter,
             contentDescription = contentDescription,

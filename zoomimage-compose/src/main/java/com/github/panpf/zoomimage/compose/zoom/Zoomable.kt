@@ -11,7 +11,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 
-// todo Adapt to Modifier Node
 fun Modifier.zoomable(
     state: ZoomableState,
     onLongPress: ((Offset) -> Unit)? = null,

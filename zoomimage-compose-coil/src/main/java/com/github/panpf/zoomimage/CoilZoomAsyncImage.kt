@@ -31,11 +31,8 @@ import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.NoClipImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
 import kotlin.math.roundToInt
@@ -99,26 +96,18 @@ fun CoilZoomAsyncImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    val zoomableState = state.zoomable
-    val subsamplingState = state.subsampling
-    if (zoomableState.alignment != alignment) {
-        zoomableState.alignment = alignment
-    }
-    if (zoomableState.contentScale != contentScale) {
-        zoomableState.contentScale = contentScale
-    }
-
-    BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
+    state.zoomable.contentScale = contentScale
+    state.zoomable.alignment = alignment
 
     LaunchedEffect(Unit) {
-        subsamplingState.tileMemoryCache = CoilTileMemoryCache(imageLoader)
+        state.subsampling.tileMemoryCache = CoilTileMemoryCache(imageLoader)
     }
 
-    val transform1 = zoomableState.transform
+    val transform1 = state.zoomable.transform
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBarSpec != null) it.zoomScrollBar(zoomableState, scrollBarSpec) else it }
-        .zoomable(state = zoomableState, onLongPress = onLongPress, onTap = onTap)
+        .let { if (scrollBarSpec != null) it.zoomScrollBar(state.zoomable, scrollBarSpec) else it }
+        .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = transform1.scaleX
             scaleY = transform1.scaleY
@@ -130,7 +119,7 @@ fun CoilZoomAsyncImage(
             rotationZ = transform1.rotation
             transformOrigin = transform1.rotationOrigin
         }
-        .subsampling(subsamplingState = subsamplingState, zoomableState = null)
+        .subsampling(state.subsampling)
 
     val request = requestOf(model)
     val painter = rememberAsyncImagePainter(
@@ -138,7 +127,7 @@ fun CoilZoomAsyncImage(
         imageLoader = imageLoader,
         transform = transform,
         onState = { loadState ->
-            onState(state.logger, loadState, imageLoader, zoomableState, subsamplingState, request)
+            onState(imageLoader, state, request, loadState)
             onState?.invoke(loadState)
         },
         contentScale = contentScale,
@@ -156,34 +145,32 @@ fun CoilZoomAsyncImage(
 }
 
 private fun onState(
-    logger: Logger,
-    state: AsyncImagePainter.State,
     imageLoader: ImageLoader,
-    zoomableState: ZoomableState,
-    subsamplingState: SubsamplingState,
-    request: ImageRequest
+    state: ZoomState,
+    request: ImageRequest,
+    loadState: AsyncImagePainter.State,
 ) {
-    logger.d("onState. state=${state.name}. data: ${request.data}")
-    val painterSize = state.painter?.intrinsicSize?.roundToIntSize()
-    val containerSize = zoomableState.containerSize
+    state.logger.d("onState. state=${loadState.name}. data: ${request.data}")
+    val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()
+    val containerSize = state.zoomable.containerSize
     val newContentSize = when {
         painterSize != null -> painterSize
         containerSize.isNotEmpty() -> containerSize
         else -> IntSize.Zero
     }
-    if (zoomableState.contentSize != newContentSize) {
-        zoomableState.contentSize = newContentSize
+    if (state.zoomable.contentSize != newContentSize) {
+        state.zoomable.contentSize = newContentSize
     }
 
-    when (state) {
+    when (loadState) {
         is AsyncImagePainter.State.Success -> {
-            subsamplingState.disableMemoryCache =
+            state.subsampling.disableMemoryCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            subsamplingState.setImageSource(CoilImageSource(imageLoader, request))
+            state.subsampling.setImageSource(CoilImageSource(imageLoader, request))
         }
 
         else -> {
-            subsamplingState.setImageSource(null)
+            state.subsampling.setImageSource(null)
         }
     }
 }

@@ -9,15 +9,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntRect
 import com.github.panpf.zoomimage.compose.internal.isEmpty
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.Tile
 import kotlin.math.ceil
 import kotlin.math.floor
 
-// todo Adapt to Modifier Node
 fun Modifier.subsampling(
     subsamplingState: SubsamplingState,
-    zoomableState: ZoomableState?,  // todo 删除 zoomableState
 ): Modifier = this.drawWithContent {
     drawContent()
     val imageInfo = subsamplingState.imageInfo ?: return@drawWithContent
