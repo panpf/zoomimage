@@ -27,7 +27,8 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
     fun drawTiles(
         canvas: Canvas,
         transform: TransformCompat,
-        containerSize: IntSizeCompat
+        containerSize: IntSizeCompat,
+        showTileBounds: Boolean,
     ) {
         val imageInfo = engine.imageInfo ?: return
         val contentSize = engine.contentSize.takeIf { !it.isEmpty() } ?: return
@@ -67,7 +68,7 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
                         )
                     }
 
-                    if (engine.showTileBounds) {
+                    if (showTileBounds) {
                         val boundsColor = when (tile.state) {
                             Tile.STATE_LOADED -> Color.GREEN
                             Tile.STATE_LOADING -> Color.YELLOW

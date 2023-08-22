@@ -21,10 +21,8 @@ import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
@@ -80,7 +78,6 @@ fun BaseZoomImageSample(
         rubberBandScale = rubberBandScale,
         animationSpec = zoomAnimationSpec.value,
         readMode = readMode,
-        showTileBounds = showTileBounds,
         logger = rememberZoomImageLogger(level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO)
     )
     val zoomableState = zoomState.zoomable
@@ -88,6 +85,9 @@ fun BaseZoomImageSample(
     val subsamplingState = zoomState.subsampling
     LaunchedEffect(ignoreExifOrientation) {
         subsamplingState.ignoreExifOrientation = ignoreExifOrientation
+    }
+    LaunchedEffect(showTileBounds) {
+        subsamplingState.showTileBounds = showTileBounds
     }
     Box(
         modifier = Modifier

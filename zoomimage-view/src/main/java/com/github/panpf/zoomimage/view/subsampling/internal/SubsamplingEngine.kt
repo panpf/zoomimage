@@ -102,13 +102,6 @@ class SubsamplingEngine constructor(logger: Logger) {
         set(value) {
             tileBitmapPoolHelper.disallowReuseBitmap = value
         }
-    var showTileBounds = false // todo 从这里移出
-        set(value) {
-            if (field != value) {
-                field = value
-                notifyTileChange()
-            }
-        }
 
     var imageKey: String? = null
         private set

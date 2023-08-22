@@ -20,7 +20,6 @@ fun rememberZoomState(
     rubberBandScale: Boolean = true,
     animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
     readMode: ReadMode? = null,
-    showTileBounds: Boolean = false,
     logger: Logger = rememberZoomImageLogger()
 ): ZoomState {
     val zoomableState = rememberZoomableState(
@@ -32,10 +31,7 @@ fun rememberZoomState(
         readMode = readMode,
     )
 
-    val subsamplingState = rememberSubsamplingState(
-        logger = logger,
-        showTileBounds = showTileBounds
-    )
+    val subsamplingState = rememberSubsamplingState(logger)
 
     BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
 

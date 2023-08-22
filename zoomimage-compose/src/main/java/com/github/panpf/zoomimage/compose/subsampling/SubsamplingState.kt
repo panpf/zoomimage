@@ -41,13 +41,8 @@ import kotlin.math.roundToInt
 
 @Composable
 fun rememberSubsamplingState(
-    showTileBounds: Boolean = false,
     logger: Logger = rememberZoomImageLogger(),
-): SubsamplingState {
-    val subsamplingState = remember { SubsamplingState(logger) }
-    subsamplingState.showTileBounds = showTileBounds
-    return subsamplingState
-}
+): SubsamplingState = remember { SubsamplingState(logger) }
 
 @Stable
 class SubsamplingState(logger: Logger) : RememberObserver {
@@ -64,9 +59,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     var imageInfo: ImageInfo? by mutableStateOf(null)
-    var showTileBounds: Boolean by mutableStateOf(false)    // todo 从这里移出
 
-    var ignoreExifOrientation by mutableStateOf(false)  // todo 挪到 rememberSubsamplingState 中
+    var showTileBounds: Boolean by mutableStateOf(false)
+    var ignoreExifOrientation by mutableStateOf(false)
     var tileMemoryCache: TileMemoryCache? by mutableStateOf(null)
     var disableMemoryCache: Boolean by mutableStateOf(false)
     var tileBitmapPool: TileBitmapPool? by mutableStateOf(null)

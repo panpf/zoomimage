@@ -82,10 +82,12 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         set(value) {
             engine.disallowReuseBitmap = value
         }
-    var showTileBounds: Boolean
-        get() = engine.showTileBounds
+    var showTileBounds = false
         set(value) {
-            engine.showTileBounds = value
+            if (field != value) {
+                field = value
+                view.invalidate()
+            }
         }
 
     val ready: Boolean
@@ -148,7 +150,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     }
 
     internal fun onDraw(canvas: Canvas, transform: TransformCompat, containerSize: IntSizeCompat) {
-        tileDrawHelper.drawTiles(canvas, transform, containerSize)
+        tileDrawHelper.drawTiles(canvas, transform, containerSize, showTileBounds)
     }
 
     internal fun onVisibilityChanged(
