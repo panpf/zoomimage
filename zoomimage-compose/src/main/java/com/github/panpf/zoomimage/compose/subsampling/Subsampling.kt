@@ -14,6 +14,7 @@ import com.github.panpf.zoomimage.subsampling.Tile
 import kotlin.math.ceil
 import kotlin.math.floor
 
+// todo Adapt to Modifier Node
 fun Modifier.subsampling(
     subsamplingState: SubsamplingState,
     zoomableState: ZoomableState?,  // todo 删除 zoomableState

@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.util.rotateInSpace
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
+// todo Adapt to Modifier Node
 fun Modifier.zoomScrollBar(
     zoomableState: ZoomableState,
     scrollBarSpec: ScrollBarSpec = ScrollBarSpec.Default
