@@ -70,6 +70,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 prefsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScale = it
                 }
+                prefsService.mediumScaleMinMultiple.stateFlow
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        mediumScaleMinMultiple = it.toFloat()
+                    }
                 prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     scrollBarSpec = if (it) ScrollBarSpec.Default else null
                 }

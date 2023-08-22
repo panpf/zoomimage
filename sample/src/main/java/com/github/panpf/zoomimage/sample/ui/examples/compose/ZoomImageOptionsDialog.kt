@@ -35,6 +35,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.prefsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.util.BaseMmkvData
+import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -50,6 +51,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.rubberBandScale, prefsService.rubberBandScale)
         BindStateAndFlow(state.threeStepScale, prefsService.threeStepScale)
         BindStateAndFlow(state.slowerScaleAnimation, prefsService.slowerScaleAnimation)
+        BindStateAndFlow(state.mediumScaleMinMultiple, prefsService.mediumScaleMinMultiple)
 
         BindStateAndFlow(state.readModeEnabled, prefsService.readModeEnabled)
         BindStateAndFlow(state.readModeDirectionBoth, prefsService.readModeDirectionBoth)
@@ -81,6 +83,7 @@ class ZoomImageOptionsState {
     val rubberBandScale = MutableStateFlow(true)
     val threeStepScale = MutableStateFlow(false)
     val slowerScaleAnimation = MutableStateFlow(false)
+    val mediumScaleMinMultiple = MutableStateFlow(DefaultMediumScaleMinMultiple.toString())
 
     val readModeEnabled = MutableStateFlow(true)
     val readModeDirectionBoth = MutableStateFlow(true)
@@ -104,6 +107,7 @@ fun ZoomImageOptionsDialog(
     val rubberBandScale by state.rubberBandScale.collectAsState()
     val threeStepScale by state.threeStepScale.collectAsState()
     val slowerScaleAnimation by state.slowerScaleAnimation.collectAsState()
+    val mediumScaleMinMultiple by state.mediumScaleMinMultiple.collectAsState()
 
     val readModeEnabled by state.readModeEnabled.collectAsState()
     val readModeDirectionBoth by state.readModeDirectionBoth.collectAsState()
@@ -137,6 +141,16 @@ fun ZoomImageOptionsDialog(
             Alignment.BottomStart,
             Alignment.BottomCenter,
             Alignment.BottomEnd,
+        )
+    }
+    var mediumScaleMinMultipleExpanded by remember { mutableStateOf(false) }
+    val mediumScaleMinMultiples = remember {
+        listOf(
+            2.0f.toString(),
+            2.5f.toString(),
+            3.0f.toString(),
+            3.5f.toString(),
+            4.0f.toString(),
         )
     }
     Dialog(onDismissRequest) {
@@ -306,6 +320,50 @@ fun ZoomImageOptionsDialog(
                         checked = slowerScaleAnimation,
                         onCheckedChange = null
                     )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .clickable {
+                            mediumScaleMinMultipleExpanded = !mediumScaleMinMultipleExpanded
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Medium Scale Min Multiple", modifier = Modifier.weight(1f))
+                    Text(text = mediumScaleMinMultiple)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_expand_more),
+                        contentDescription = "more"
+                    )
+                    DropdownMenu(
+                        expanded = mediumScaleMinMultipleExpanded,
+                        onDismissRequest = {
+                            mediumScaleMinMultipleExpanded = !mediumScaleMinMultipleExpanded
+                        },
+                    ) {
+                        mediumScaleMinMultiples.forEachIndexed { index, mediumScaleMinMultiple ->
+                            if (index > 0) {
+                                Divider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 14.dp)
+                                )
+                            }
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = mediumScaleMinMultiple)
+                                },
+                                onClick = {
+                                    state.mediumScaleMinMultiple.value = mediumScaleMinMultiple
+                                    alignmentMenuExpanded = !alignmentMenuExpanded
+                                    onDismissRequest()
+                                }
+                            )
+                        }
+                    }
                 }
 
                 Divider(Modifier.padding(horizontal = 20.dp))

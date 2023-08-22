@@ -19,6 +19,7 @@ import android.content.Context
 import android.widget.ImageView.ScaleType.FIT_CENTER
 import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
 import com.github.panpf.zoomimage.sample.util.StringMmkvData
+import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import com.tencent.mmkv.MMKV
 
 class PrefsService(val context: Context) {
@@ -51,6 +52,9 @@ class PrefsService(val context: Context) {
     }
     val slowerScaleAnimation by lazy {
         BooleanMmkvData(mmkv, "slowerScaleAnimation", false)
+    }
+    val mediumScaleMinMultiple by lazy {
+        StringMmkvData(mmkv, "mediumScaleMinMultiple", DefaultMediumScaleMinMultiple.toString())
     }
 
     val readModeEnabled by lazy {

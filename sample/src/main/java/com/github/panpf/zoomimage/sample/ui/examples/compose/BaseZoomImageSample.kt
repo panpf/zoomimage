@@ -54,10 +54,12 @@ fun BaseZoomImageSample(
     val scrollBarEnabled by prefsService.scrollBarEnabled.stateFlow.collectAsState()
     val animateScale by prefsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
+    val mediumScaleMinMultipleString by prefsService.mediumScaleMinMultiple.stateFlow.collectAsState()
     val ignoreExifOrientation by prefsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by prefsService.showTileBounds.stateFlow.collectAsState()
     val horizontalLayout by prefsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
 
+    val mediumScaleMinMultiple by remember { derivedStateOf { mediumScaleMinMultipleString.toFloat() } }
     val contentScale by remember { derivedStateOf { ContentScale.valueOf(contentScaleName) } }
     val alignment by remember { derivedStateOf { Alignment.valueOf(alignmentName) } }
     val zoomAnimationSpec by remember {
@@ -86,6 +88,9 @@ fun BaseZoomImageSample(
         }
         LaunchedEffect(zoomAnimationSpec) {
             zoomable.animationSpec = zoomAnimationSpec
+        }
+        LaunchedEffect(mediumScaleMinMultiple) {
+            zoomable.mediumScaleMinMultiple = mediumScaleMinMultiple
         }
         LaunchedEffect(readMode) {
             zoomable.readMode = readMode

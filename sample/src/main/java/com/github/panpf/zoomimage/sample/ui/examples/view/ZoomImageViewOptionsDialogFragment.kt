@@ -44,136 +44,155 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
         binding.recyclerRecycler.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = AssemblyRecyclerAdapter(
-                listOf(
+                itemFactoryList = listOf(
                     SwitchMenuItemFactory(),
                     MultiSelectMenuItemFactory(requireActivity()),
                     ListSeparatorItemFactory(),
                     MenuDividerItemFactory(),
                 ),
-                buildList {
-                    if (zoomViewType.my) {
-                        val contentScales = listOf(
-                            ContentScaleCompat.Fit,
-                            ContentScaleCompat.Crop,
-                            ContentScaleCompat.Inside,
-                            ContentScaleCompat.FillWidth,
-                            ContentScaleCompat.FillHeight,
-                            ContentScaleCompat.FillBounds,
-                            ContentScaleCompat.None,
-                        )
-                        add(
-                            MultiSelectMenu(
-                                title = "Content Scale",
-                                values = contentScales.map { it.name },
-                                getValue = { prefsService.contentScale.value },
-                                onSelect = { _, value ->
-                                    prefsService.contentScale.value = value
-                                }
-                            )
-                        )
+                initDataList = buildList()
+            )
+        }
+    }
 
-                        val alignments = listOf(
-                            AlignmentCompat.TopStart,
-                            AlignmentCompat.TopCenter,
-                            AlignmentCompat.TopEnd,
-                            AlignmentCompat.CenterStart,
-                            AlignmentCompat.Center,
-                            AlignmentCompat.CenterEnd,
-                            AlignmentCompat.BottomStart,
-                            AlignmentCompat.BottomCenter,
-                            AlignmentCompat.BottomEnd,
-                        )
-                        add(
-                            MultiSelectMenu(
-                                title = "Alignment",
-                                values = alignments.map { it.name },
-                                getValue = { prefsService.alignment.value },
-                                onSelect = { _, value ->
-                                    prefsService.alignment.value = value
-                                }
-                            )
-                        )
-
-                        add(MenuDivider())
-
-                        add(
-                            SwitchMenuFlow(
-                                title = "Animate Scale",
-                                data = prefsService.animateScale,
-                            )
-                        )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Rubber Band Scale",
-                                data = prefsService.rubberBandScale,
-                            )
-                        )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Three Step Scale",
-                                data = prefsService.threeStepScale,
-                            )
-                        )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Slower Scale Animation",
-                                data = prefsService.slowerScaleAnimation,
-                            )
-                        )
-
-                        add(MenuDivider())
-
-                        add(
-                            SwitchMenuFlow(
-                                title = "Read Mode",
-                                data = prefsService.readModeEnabled,
-                            )
-                        )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Read Mode Direction Both",
-                                data = prefsService.readModeDirectionBoth,
-                            )
-                        )
-
-                        add(MenuDivider())
-
-                        add(
-                            SwitchMenuFlow(
-                                title = "Show Tile Bounds",
-                                data = prefsService.showTileBounds,
-                            )
-                        )
-                        add(
-                            SwitchMenuFlow(
-                                title = "Ignore Exif Orientation",
-                                data = prefsService.ignoreExifOrientation,
-                                disabled = !zoomViewType.supportIgnoreExifOrientation,
-                            )
-                        )
-
-                        add(MenuDivider())
-
-                        add(
-                            SwitchMenuFlow(
-                                title = "Scroll Bar",
-                                data = prefsService.scrollBarEnabled,
-                            )
-                        )
-                    } else {
-                        add(
-                            MultiSelectMenu(
-                                title = "Scale Type",
-                                values = ScaleType.values()
-                                    .filter { it != MATRIX }.map { it.name },
-                                getValue = { prefsService.scaleType.value },
-                                onSelect = { _, value ->
-                                    prefsService.scaleType.value = value
-                                }
-                            )
-                        )
+    private fun buildList(): List<Any> = buildList {
+        if (zoomViewType.my) {
+            val contentScales = listOf(
+                ContentScaleCompat.Fit,
+                ContentScaleCompat.Crop,
+                ContentScaleCompat.Inside,
+                ContentScaleCompat.FillWidth,
+                ContentScaleCompat.FillHeight,
+                ContentScaleCompat.FillBounds,
+                ContentScaleCompat.None,
+            )
+            add(
+                MultiSelectMenu(
+                    title = "Content Scale",
+                    values = contentScales.map { it.name },
+                    getValue = { prefsService.contentScale.value },
+                    onSelect = { _, value ->
+                        prefsService.contentScale.value = value
                     }
-                }
+                )
+            )
+
+            val alignments = listOf(
+                AlignmentCompat.TopStart,
+                AlignmentCompat.TopCenter,
+                AlignmentCompat.TopEnd,
+                AlignmentCompat.CenterStart,
+                AlignmentCompat.Center,
+                AlignmentCompat.CenterEnd,
+                AlignmentCompat.BottomStart,
+                AlignmentCompat.BottomCenter,
+                AlignmentCompat.BottomEnd,
+            )
+            add(
+                MultiSelectMenu(
+                    title = "Alignment",
+                    values = alignments.map { it.name },
+                    getValue = { prefsService.alignment.value },
+                    onSelect = { _, value ->
+                        prefsService.alignment.value = value
+                    }
+                )
+            )
+
+            add(MenuDivider())
+
+            add(
+                SwitchMenuFlow(
+                    title = "Animate Scale",
+                    data = prefsService.animateScale,
+                )
+            )
+            add(
+                SwitchMenuFlow(
+                    title = "Rubber Band Scale",
+                    data = prefsService.rubberBandScale,
+                )
+            )
+            add(
+                SwitchMenuFlow(
+                    title = "Three Step Scale",
+                    data = prefsService.threeStepScale,
+                )
+            )
+            add(
+                SwitchMenuFlow(
+                    title = "Slower Scale Animation",
+                    data = prefsService.slowerScaleAnimation,
+                )
+            )
+            val mediumScaleMinMultiples = listOf(
+                2.0f.toString(),
+                2.5f.toString(),
+                3.0f.toString(),
+                3.5f.toString(),
+                4.0f.toString(),
+            )
+            add(
+                MultiSelectMenu(
+                    title = "Medium Scale Min Multiple",
+                    values = mediumScaleMinMultiples,
+                    getValue = { prefsService.mediumScaleMinMultiple.value },
+                    onSelect = { _, value ->
+                        prefsService.mediumScaleMinMultiple.value = value
+                    }
+                )
+            )
+
+            add(MenuDivider())
+
+            add(
+                SwitchMenuFlow(
+                    title = "Read Mode",
+                    data = prefsService.readModeEnabled,
+                )
+            )
+            add(
+                SwitchMenuFlow(
+                    title = "Read Mode Direction Both",
+                    data = prefsService.readModeDirectionBoth,
+                )
+            )
+
+            add(MenuDivider())
+
+            add(
+                SwitchMenuFlow(
+                    title = "Show Tile Bounds",
+                    data = prefsService.showTileBounds,
+                )
+            )
+            add(
+                SwitchMenuFlow(
+                    title = "Ignore Exif Orientation",
+                    data = prefsService.ignoreExifOrientation,
+                    disabled = !zoomViewType.supportIgnoreExifOrientation,
+                )
+            )
+
+            add(MenuDivider())
+
+            add(
+                SwitchMenuFlow(
+                    title = "Scroll Bar",
+                    data = prefsService.scrollBarEnabled,
+                )
+            )
+        } else {
+            add(
+                MultiSelectMenu(
+                    title = "Scale Type",
+                    values = ScaleType.values()
+                        .filter { it != MATRIX }.map { it.name },
+                    getValue = { prefsService.scaleType.value },
+                    onSelect = { _, value ->
+                        prefsService.scaleType.value = value
+                    }
+                )
             )
         }
     }
