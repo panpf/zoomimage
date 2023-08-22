@@ -43,6 +43,7 @@ coil = "2.4.0"
 glide = "4.15.1"
 glide-compose = "1.0.0-alpha.3"
 picasso = "2.8"
+mavenpublish="0.25.3"
 
 [libraries]
 
@@ -110,6 +111,7 @@ com-android-application = { id = "com.android.application", version.ref = "andro
 com-android-library = { id = "com.android.library", version.ref = "android-plugin" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidx-navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "androidx-navigation" }
+mavenpublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenpublish" }
 
 [bundles]
 
