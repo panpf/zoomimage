@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,8 +47,6 @@ fun BaseZoomImageSample(
     val prefsService = remember { context.prefsService }
     val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
     val alignmentName by prefsService.alignment.stateFlow.collectAsState()
-    val contentScale = remember(contentScaleName) { ContentScale.valueOf(contentScaleName) }
-    val alignment = remember(alignmentName) { Alignment.valueOf(alignmentName) }
     val threeStepScale by prefsService.threeStepScale.stateFlow.collectAsState()
     val rubberBandScale by prefsService.rubberBandScale.stateFlow.collectAsState()
     val readModeEnabled by prefsService.readModeEnabled.stateFlow.collectAsState()
@@ -57,38 +56,49 @@ fun BaseZoomImageSample(
     val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
     val ignoreExifOrientation by prefsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by prefsService.showTileBounds.stateFlow.collectAsState()
-    val zoomAnimationSpec = remember(animateScale, slowerScaleAnimation) {
-        val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
-        mutableStateOf(ZoomAnimationSpec.Default.copy(durationMillis = durationMillis))
-    }
     val horizontalLayout by prefsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
-    val readModeDirection = remember(horizontalLayout, readModeDirectionBoth) {
-        if (readModeDirectionBoth) {
-            ReadMode.Direction.Both
-        } else if (horizontalLayout) {
-            ReadMode.Direction.OnlyVertical
-        } else {
-            ReadMode.Direction.OnlyHorizontal
+
+    val contentScale by remember { derivedStateOf { ContentScale.valueOf(contentScaleName) } }
+    val alignment by remember { derivedStateOf { Alignment.valueOf(alignmentName) } }
+    val zoomAnimationSpec by remember {
+        derivedStateOf {
+            val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
+            ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
         }
     }
-    val readMode =
-        if (readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
-    val zoomState = rememberZoomState(
-        threeStepScale = threeStepScale,
-        rubberBandScale = rubberBandScale,
-        animationSpec = zoomAnimationSpec.value,
-        readMode = readMode,
-        logger = rememberZoomImageLogger(level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO)
-    )
-    val zoomableState = zoomState.zoomable
+    val readMode by remember {
+        derivedStateOf {
+            val readModeDirection = when {
+                readModeDirectionBoth -> ReadMode.Direction.Both
+                horizontalLayout -> ReadMode.Direction.OnlyVertical
+                else -> ReadMode.Direction.OnlyHorizontal
+            }
+            if (readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
+        }
+    }
+    val logLevel by remember { mutableStateOf(if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO) }
+    val zoomState = rememberZoomState(rememberZoomImageLogger(level = logLevel)).apply {
+        LaunchedEffect(threeStepScale) {
+            zoomable.threeStepScale = threeStepScale
+        }
+        LaunchedEffect(rubberBandScale) {
+            zoomable.rubberBandScale = rubberBandScale
+        }
+        LaunchedEffect(zoomAnimationSpec) {
+            zoomable.animationSpec = zoomAnimationSpec
+        }
+        LaunchedEffect(readMode) {
+            zoomable.readMode = readMode
+        }
+        LaunchedEffect(ignoreExifOrientation) {
+            subsampling.ignoreExifOrientation = ignoreExifOrientation
+        }
+        LaunchedEffect(showTileBounds) {
+            subsampling.showTileBounds = showTileBounds
+        }
+    }
     val infoDialogState = rememberMyDialogState()
-    val subsamplingState = zoomState.subsampling
-    LaunchedEffect(ignoreExifOrientation) {
-        subsamplingState.ignoreExifOrientation = ignoreExifOrientation
-    }
-    LaunchedEffect(showTileBounds) {
-        subsamplingState.showTileBounds = showTileBounds
-    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -105,14 +115,14 @@ fun BaseZoomImageSample(
 
         ZoomImageMinimap(
             sketchImageUri = sketchImageUri,
-            zoomableState = zoomableState,
-            subsamplingState = subsamplingState,
+            zoomableState = zoomState.zoomable,
+            subsamplingState = zoomState.subsampling,
             ignoreExifOrientation = supportIgnoreExifOrientation && ignoreExifOrientation,
         )
 
         ZoomImageTool(
-            zoomableState = zoomableState,
-            subsamplingState = subsamplingState,
+            zoomableState = zoomState.zoomable,
+            subsamplingState = zoomState.subsampling,
             infoDialogState = infoDialogState,
             imageUri = sketchImageUri,
         )

@@ -75,21 +75,9 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Composable
-fun rememberZoomableState(
-    mediumScaleMinMultiple: Float = DefaultMediumScaleMinMultiple,
-    threeStepScale: Boolean = false,
-    rubberBandScale: Boolean = true,
-    animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default,
-    readMode: ReadMode? = null,
-    logger: Logger = rememberZoomImageLogger(),
-): ZoomableState {
+fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
     val coroutineScope = rememberCoroutineScope()
     val zoomableState = remember { ZoomableState(logger, coroutineScope) }
-    zoomableState.mediumScaleMinMultiple = mediumScaleMinMultiple
-    zoomableState.threeStepScale = threeStepScale
-    zoomableState.rubberBandScale = rubberBandScale
-    zoomableState.animationSpec = animationSpec
-    zoomableState.readMode = readMode
     LaunchedEffect(Unit) {
         snapshotFlow { zoomableState.containerSize }.collect {
             if (!it.isEmpty() && zoomableState.contentSize.isEmpty()) {
