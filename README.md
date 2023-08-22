@@ -14,7 +14,7 @@ View 和 Compose 两种方式。
 
 https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e155f4ef
 
-## Features/简介
+## Features/特点
 
 * `Complete`. Support basic functions such as double-click zoom, gesture zoom, single-finger drag,
   and inertial swipe
@@ -31,7 +31,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
   and the user can immediately start reading the image content, eliminating the need for the user to
   double-click to zoom in
 * `Image Loader`. Provide support for image loaders such as glide, picasso, coil, sketch, etc., and
-  can also customize support for new image loaders
+  can also customize support for more image loaders
 
 <div>-----------------</div>
 
@@ -43,7 +43,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 * `边界阻尼`. 手动缩放超过最大或最小缩放比例后会有带阻尼感的橡皮筋效果
 * `滚动条`. 支持显示水平和垂直滚动条，明确当前滚动位置
 * `阅读模式`. 阅读模式下显示长图时会自动充满屏幕，用户可立即开始阅读图片内容，省去用户双击放大的操作
-* `图片加载器`. 提供对 glide、picasso、coil、sketch 等图片加载器的支持，也可以自定义支持新的图片加载器
+* `图片加载器`. 提供对 glide、picasso、coil、sketch 等图片加载器的支持，也可以自定义支持更多图片加载器
 
 ## Import/导入
 
@@ -56,22 +56,21 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 `Choose one of the following modules · 以下模块任选其一即可`
 
 ```kotlin
-
-// Providing the most basic ZoomImage component, there is still a lot of work to be done to use it
-// 提供最基础的 ZoomImage 组件，使用它还有很多工作需要做
-implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
+// The SketchZoomAsyncImage component is provided with the Coil Image Loader, easy to use (recommended)
+// 提供适配了 Sketch 图片加载器的 SketchZoomAsyncImage 组件，用法简单（推荐使用）
+implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch:${LAST_VERSION}")
 
 // The CoilZoomAsyncImage component is provided with the Coil Image Loader, easy to use
-// 提供适配了 Coil 图片加载器的 CoilZoomAsyncImage 组件，使用起来非常简单
+// 提供适配了 Coil 图片加载器的 CoilZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}")
 
 // The GlideZoomAsyncImage component is provided with the Coil Image Loader, easy to use
-// 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件，使用起来非常简单
+// 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
 
-// The SketchZoomAsyncImage component is provided with the Coil Image Loader, easy to use
-// 提供适配了 Sketch 图片加载器的 SketchZoomAsyncImage 组件，使用起来非常简单
-implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch:${LAST_VERSION}")
+// Providing the most basic ZoomImage component, there is still a lot of work to be done to use it, additional work needs to be done to support network image and subsampling
+// 提供最基础的 ZoomImage 组件，还需要做额外的工作以支持网络图片和子采样
+implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
 ```
 
 Why is there no picasso version of the compose ZoomImage component? Picasso has officially stated
@@ -86,25 +85,25 @@ Support ([sic](https://github.com/square/picasso/issues/2203#issuecomment-826444
 `Choose one of the following modules · 以下模块任选其一即可`
 
 ```kotlin
-// Providing the most basic ZoomImageView component, there is still a lot of work to be done to use it
-// 提供最基础的 ZoomImageView 组件，使用它还有很多工作需要做
-implementation("io.github.panpf.zoomimage:zoomimage-view:${LAST_VERSION}")
+// The SketchZoomImageView component is provided with the Sketch Image Loader, easy to use (recommended)
+// 提供适配了 Sketch 图片加载器的 SketchZoomImageView 组件，用法简单（推荐使用）
+implementation("io.github.panpf.zoomimage:zoomimage-view-sketch:${LAST_VERSION}")
 
 // The SketchZoomImageView component is provided with the Coil Image Loader, easy to use
-// 提供适配了 Coil 图片加载器的 CoilZoomImageView 组件，使用起来非常简单
+// 提供适配了 Coil 图片加载器的 CoilZoomImageView 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil:${LAST_VERSION}")
 
 // The SketchZoomImageView component is provided with the Glide Image Loader, easy to use
-// 提供适配了 Glide 图片加载器的 GlideZoomImageView 组件，使用起来非常简单
+// 提供适配了 Glide 图片加载器的 GlideZoomImageView 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-view-glide:${LAST_VERSION}")
 
 // The SketchZoomImageView component is provided with the Picasso Image Loader, easy to use
-// 提供适配了 Picasso 图片加载器的 PicassoZoomImageView 组件，使用起来非常简单
+// 提供适配了 Picasso 图片加载器的 PicassoZoomImageView 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-view-picasso:${LAST_VERSION}")
 
-// The SketchZoomImageView component is provided with the Sketch Image Loader, easy to use
-// 提供适配了 Sketch 图片加载器的 SketchZoomImageView 组件，使用起来非常简单
-implementation("io.github.panpf.zoomimage:zoomimage-view-sketch:${LAST_VERSION}")
+// Providing the most basic ZoomImageView component, there is still a lot of work to be done to use it, additional work needs to be done to support network image and subsampling
+// 提供最基础的 ZoomImageView 组件，还需要做额外的工作以支持网络图片和子采样
+implementation("io.github.panpf.zoomimage:zoomimage-view:${LAST_VERSION}")
 ```
 
 ### R8 / Proguard
@@ -130,7 +129,7 @@ SketchZoomAsyncImage(
     request = DisplayRequest(LocalContext.current, sketchImageUri) {
         crossfade()
     },
-    contentDescription = "viewImage",
+    contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
 ```

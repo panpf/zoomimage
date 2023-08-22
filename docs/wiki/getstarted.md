@@ -1,13 +1,63 @@
-* [ZoomImage], [ZoomImageSample]
-* [CoilZoomAsyncImage], [CoilZoomAsyncImageSample]
-* [GlideZoomAsyncImage], [GlideZoomAsyncImageSample]
-* [SketchZoomAsyncImage], [SketchZoomAsyncImageSample]
+## 开始使用
 
-* [ZoomImageView], [ZoomImageViewFragment]
-* [CoilZoomImageView], [CoilZoomImageViewFragment]
-* [GlideZoomImageView], [GlideZoomImageViewFragment]
-* [PicassoZoomImageView], [PicassoZoomImageViewFragment]
-* [SketchZoomImageView], [SketchZoomImageViewFragment]
+### Components/组件
+
+zoomimage 库包含了多个组件可供选择，你可以根据自己的需求选择合适的组件。
+
+*不同的组件需要导入不同的依赖，请参考 [README] 导入对应的依赖*
+
+compose：
+
+* [SketchZoomAsyncImage]：集成了 [Sketch] 图片加载库的缩放 Image 组件`（推荐使用）`
+    * 用法和 [Sketch] 的 [AsyncImage][SketchAsyncImage] 组件一样
+    * 已支持网络图片和子采样，无需做任何额外的工作
+    * 参考示例 [SketchZoomAsyncImageSample]
+* [CoilZoomAsyncImage]：集成了 [Coil] 图片加载库的缩放 Image 组件
+    * 用法和 [Coil] 的 [AsyncImage][CoilAsyncImage] 组件一样
+    * 已支持网络图片和子采样，无需做任何额外的工作
+    * 参考示例 [CoilZoomAsyncImageSample]
+* [GlideZoomAsyncImage]：集成了 [Glide] 图片加载库的缩放 Image 组件
+    * 用法和 [Glide] 的 [GlideImage] 组件一样
+    * 已支持网络图片和子采样，无需做任何额外的工作
+    * 参考示例 [GlideZoomAsyncImageSample]
+* [ZoomImage]：最基础的缩放 Image 组件，未集成图片加载库
+    * 还需要做额外的工作以支持网络图片和子采样
+    * 参考示例 [ZoomImageSample]
+
+view：
+
+* [SketchZoomImageView]：集成了 [Sketch] 图片加载库的缩放 ImageView`（推荐使用）`
+    * 已适配 [Sketch] 支持子采样，无需做任何额外的工作
+    * 参考示例 [SketchZoomImageViewFragment]
+* [CoilZoomImageView]：集成了 [Coil] 图片加载库的缩放 ImageView
+    * 已适配 [Coil] 支持子采样，无需做任何额外的工作
+    * 参考示例 [CoilZoomImageViewFragment]
+* [GlideZoomImageView]：集成了 [Glide] 图片加载库的缩放 ImageView
+    * 已适配 [Glide] 支持子采样，无需做任何额外的工作
+    * 参考示例 [GlideZoomImageViewFragment]
+* [PicassoZoomImageView]：集成了 [Picasso] 图片加载库的缩放 ImageView
+    * 已适配 [Picasso] 支持子采样，无需做任何额外的工作
+    * 参考示例 [PicassoZoomImageViewFragment]
+* [ZoomImageView]：最基础的缩放 ImageView，未集成图片加载库
+    * 还需要做额外的工作以支持网络图片和子采样
+    * 参考示例 [ZoomImageViewFragment]
+
+## 使用
+
+### Compose
+
+[//]: # (todo contine)
+
+## Document/文档
+
+* [Scale: scale, double-click scale, duration setting/缩放、双击缩放、时长设置](scale.md)
+* [Offset: Move to the specified position/移动到指定位置](offset.md)
+* [Location: Moves the specified location of the picture to the middle of the screen/将图片的指定位置移动到屏幕中间](location.md)
+* [Rotate: Rotate the image/旋转图片](rotate.md)
+* [Read Mode: Automatically fills the screen for easy reading/自动充满屏幕，方便阅读](readmode.md)
+* [Click: Receive click events/接收点击事件](click.md)
+* [Subsampling: Subsampling the display of huge image to avoid OOM/对超大图进行子采样显示，避免 OOM](subsampling.md)
+* [Scroll Bar: Displays horizontal and vertical scroll bars to clarify the current scroll position/显示水平和垂直滚动条，明确当前滚动位置](scrollbar.md)
 
 [ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
 
@@ -47,3 +97,19 @@
 [PicassoZoomImageViewFragment]: ../../sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/PicassoZoomImageViewFragment.kt
 
 [SketchZoomImageViewFragment]: ../../sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/SketchZoomImageViewFragment.kt
+
+[Sketch]: https://github.com/panpf/sketch
+
+[SketchAsyncImage]: https://github.com/panpf/sketch/blob/main/sketch-compose/src/main/java/com/github/panpf/sketch/compose/AsyncImage.kt
+
+[Coil]: https://github.com/coil-kt/coil
+
+[CoilAsyncImage]: https://github.com/coil-kt/coil/blob/main/coil-compose-singleton/src/main/java/coil/compose/SingletonAsyncImage.kt
+
+[Glide]: https://github.com/bumptech/glide
+
+[GlideImage]: https://github.com/bumptech/glide/blob/master/integration/compose/src/main/java/com/bumptech/glide/integration/compose/GlideImage.kt
+
+[Picasso]: https://github.com/square/picasso
+
+[README]: ../../README.md
