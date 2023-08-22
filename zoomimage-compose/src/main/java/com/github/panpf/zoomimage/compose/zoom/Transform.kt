@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.compose.zoom
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
@@ -12,6 +13,7 @@ import com.github.panpf.zoomimage.compose.internal.div
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
 
+@Immutable
 data class Transform(
     val scale: ScaleFactor,
     val offset: Offset,
