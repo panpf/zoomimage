@@ -179,3 +179,14 @@ fun IntOffsetCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int
     val reverseRotation = 360 - rotation % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
+
+fun IntOffsetCompat.limitTo(size: IntSizeCompat): IntOffsetCompat {
+    return if (x < 0 || x > size.width || y < 0 || y > size.height) {
+        IntOffsetCompat(
+            x = x.coerceIn(0, size.width),
+            y = y.coerceIn(0, size.height),
+        )
+    } else {
+        this
+    }
+}

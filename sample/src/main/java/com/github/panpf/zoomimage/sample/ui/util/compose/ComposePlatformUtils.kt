@@ -210,6 +210,17 @@ internal fun Offset.reverseRotateInSpace(spaceSize: Size, rotation: Int): Offset
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
+fun Offset.limitTo(size: Size): Offset {
+    return if (x < 0f || x > size.width || y < 0f || y > size.height) {
+        Offset(
+            x = x.coerceIn(0f, size.width),
+            y = y.coerceIn(0f, size.height),
+        )
+    } else {
+        this
+    }
+}
+
 
 /* ************************************** IntOffset ********************************************* */
 
@@ -252,6 +263,17 @@ internal fun IntOffset.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): 
     val rotatedSpaceSize = spaceSize.rotate(rotation)
     val reverseRotation = 360 - rotation % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
+}
+
+fun IntOffset.limitTo(size: IntSize): IntOffset {
+    return if (x < 0 || x > size.width || y < 0 || y > size.height) {
+        IntOffset(
+            x = x.coerceIn(0, size.width),
+            y = y.coerceIn(0, size.height),
+        )
+    } else {
+        this
+    }
 }
 
 
@@ -299,21 +321,37 @@ internal fun Rect.restoreScale(scaleFactor: ScaleFactor): Rect =
 
 @Stable
 internal fun Rect.limitTo(rect: Rect): Rect =
-    Rect(
-        left = left.coerceAtLeast(rect.left),
-        top = top.coerceAtLeast(rect.top),
-        right = right.coerceIn(rect.left, rect.right),
-        bottom = bottom.coerceIn(rect.top, rect.bottom),
-    )
+    if (this.left < rect.left
+        || this.top < rect.top
+        || this.right < rect.left || this.right > rect.right
+        || this.bottom < rect.top || this.bottom > rect.bottom
+    ) {
+        Rect(
+            left = left.coerceAtLeast(rect.left),
+            top = top.coerceAtLeast(rect.top),
+            right = right.coerceIn(rect.left, rect.right),
+            bottom = bottom.coerceIn(rect.top, rect.bottom),
+        )
+    } else {
+        this
+    }
 
 @Stable
 internal fun Rect.limitTo(size: Size): Rect =
-    Rect(
-        left = left.coerceAtLeast(0f),
-        top = top.coerceAtLeast(0f),
-        right = right.coerceIn(0f, size.width),
-        bottom = bottom.coerceIn(0f, size.height),
-    )
+    if (this.left < 0f
+        || this.top < 0f
+        || this.right < 0f || this.right > size.width
+        || this.bottom < 0f || this.bottom > size.height
+    ) {
+        Rect(
+            left = left.coerceAtLeast(0f),
+            top = top.coerceAtLeast(0f),
+            right = right.coerceIn(0f, size.width),
+            bottom = bottom.coerceIn(0f, size.height),
+        )
+    } else {
+        this
+    }
 
 @Stable
 internal fun Rect.rotateInSpace(spaceSize: Size, rotation: Int): Rect {
@@ -412,21 +450,37 @@ internal fun IntRect.restoreScale(scaleFactor: ScaleFactor): IntRect =
 
 @Stable
 internal fun IntRect.limitTo(rect: IntRect): IntRect =
-    IntRect(
-        left = left.coerceAtLeast(rect.left),
-        top = top.coerceAtLeast(rect.top),
-        right = right.coerceIn(rect.left, rect.right),
-        bottom = bottom.coerceIn(rect.top, rect.bottom),
-    )
+    if (this.left < rect.left
+        || this.top < rect.top
+        || this.right < rect.left || this.right > rect.right
+        || this.bottom < rect.top || this.bottom > rect.bottom
+    ) {
+        IntRect(
+            left = left.coerceAtLeast(rect.left),
+            top = top.coerceAtLeast(rect.top),
+            right = right.coerceIn(rect.left, rect.right),
+            bottom = bottom.coerceIn(rect.top, rect.bottom),
+        )
+    } else {
+        this
+    }
 
 @Stable
 internal fun IntRect.limitTo(size: IntSize): IntRect =
-    IntRect(
-        left = left.coerceAtLeast(0),
-        top = top.coerceAtLeast(0),
-        right = right.coerceIn(0, size.width),
-        bottom = bottom.coerceIn(0, size.height),
-    )
+    if (this.left < 0
+        || this.top < 0
+        || this.right < 0 || this.right > size.width
+        || this.bottom < 0 || this.bottom > size.height
+    ) {
+        IntRect(
+            left = left.coerceAtLeast(0),
+            top = top.coerceAtLeast(0),
+            right = right.coerceIn(0, size.width),
+            bottom = bottom.coerceIn(0, size.height),
+        )
+    } else {
+        this
+    }
 
 @Stable
 internal fun IntRect.rotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {

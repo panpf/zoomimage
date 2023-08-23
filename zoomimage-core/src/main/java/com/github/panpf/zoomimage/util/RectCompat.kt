@@ -332,20 +332,36 @@ fun RectCompat.restoreScale(scaleFactor: ScaleFactorCompat): RectCompat =
     )
 
 fun RectCompat.limitTo(rect: RectCompat): RectCompat =
-    RectCompat(
-        left = left.coerceAtLeast(rect.left),
-        top = top.coerceAtLeast(rect.top),
-        right = right.coerceIn(rect.left, rect.right),
-        bottom = bottom.coerceIn(rect.top, rect.bottom),
-    )
+    if (this.left < rect.left
+        || this.top < rect.top
+        || this.right < rect.left || this.right > rect.right
+        || this.bottom < rect.top || this.bottom > rect.bottom
+    ) {
+        RectCompat(
+            left = left.coerceAtLeast(rect.left),
+            top = top.coerceAtLeast(rect.top),
+            right = right.coerceIn(rect.left, rect.right),
+            bottom = bottom.coerceIn(rect.top, rect.bottom),
+        )
+    } else {
+        this
+    }
 
 fun RectCompat.limitTo(size: SizeCompat): RectCompat =
-    RectCompat(
-        left = left.coerceAtLeast(0f),
-        top = top.coerceAtLeast(0f),
-        right = right.coerceIn(0f, size.width),
-        bottom = bottom.coerceIn(0f, size.height),
-    )
+    if (this.left < 0
+        || this.top < 0
+        || this.right < 0 || this.right > size.width
+        || this.bottom < 0 || this.bottom > size.height
+    ) {
+        RectCompat(
+            left = left.coerceAtLeast(0f),
+            top = top.coerceAtLeast(0f),
+            right = right.coerceIn(0f, size.width),
+            bottom = bottom.coerceIn(0f, size.height),
+        )
+    } else {
+        this
+    }
 
 fun RectCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): RectCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
