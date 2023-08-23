@@ -782,32 +782,19 @@ fun containerPointToContentPoint(
         return IntOffsetCompat.Zero
     }
     val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedContentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
+    val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
         rotation = 0,
     )
-    val rotatedContentBaseVisibleRect = computeContentBaseVisibleRect(
-        containerSize = containerSize,
-        contentSize = rotatedContentSize,
-        contentScale = contentScale,
-        alignment = alignment,
-        rotation = 0,
-    )
+    val scaledRotatedContentPointOffset = containerPoint - rotatedContentBaseDisplayRect.topLeft
     val rotatedContentScaleFactor = contentScale.computeScaleFactor(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-    val scaledRotatedContentPointOffset = OffsetCompat(
-        x = containerPoint.x - rotatedContentBaseInsideDisplayRect.left,
-        y = containerPoint.y - rotatedContentBaseInsideDisplayRect.top,
-    )
-    val rotatedContentPoint = IntOffsetCompat(
-        x = (scaledRotatedContentPointOffset.x / rotatedContentScaleFactor.scaleX + rotatedContentBaseVisibleRect.left).roundToInt(),
-        y = (scaledRotatedContentPointOffset.y / rotatedContentScaleFactor.scaleY + rotatedContentBaseVisibleRect.top).roundToInt(),
-    )
+    val rotatedContentPoint = scaledRotatedContentPointOffset.div(rotatedContentScaleFactor).round()
     val limitedRotatedContentPoint = rotatedContentPoint.limitTo(rotatedContentSize)
     val contentPoint =
         limitedRotatedContentPoint.reverseRotateInSpace(contentSize, rotation)
@@ -835,38 +822,19 @@ fun contentPointToContainerPoint(
     }
 
     val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedContentPoint =
-        contentPoint.rotateInSpace(contentSize, rotation)
-    val rotatedContentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
-        containerSize = containerSize,
-        contentSize = rotatedContentSize,
-        contentScale = contentScale,
-        alignment = alignment,
-        rotation = 0,
-    )
-    val rotatedContentBaseVisibleRect = computeContentBaseVisibleRect(
-        containerSize = containerSize,
-        contentSize = rotatedContentSize,
-        contentScale = contentScale,
-        alignment = alignment,
-        rotation = 0,
-    )
+    val rotatedContentPoint = contentPoint.rotateInSpace(contentSize, rotation)
     val rotatedContentScaleFactor = contentScale.computeScaleFactor(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-    val rotatedContentPointOffset = OffsetCompat(
-        x = rotatedContentPoint.x - rotatedContentBaseVisibleRect.left,
-        y = rotatedContentPoint.y - rotatedContentBaseVisibleRect.top,
+    val scaledRotatedContentPoint = rotatedContentPoint * rotatedContentScaleFactor
+    val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
+        containerSize = containerSize,
+        contentSize = rotatedContentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = 0,
     )
-    val scaledRotatedContentPointOffset = OffsetCompat(
-        x = rotatedContentPointOffset.x * rotatedContentScaleFactor.scaleX,
-        y = rotatedContentPointOffset.y * rotatedContentScaleFactor.scaleY,
-    )
-    val containerPoint = IntOffsetCompat(
-        x = (rotatedContentBaseInsideDisplayRect.left + scaledRotatedContentPointOffset.x).roundToInt(),
-        y = (rotatedContentBaseInsideDisplayRect.top + scaledRotatedContentPointOffset.y).roundToInt(),
-    )
-    val limitedContainerPoint = containerPoint.limitTo(containerSize)
-    return limitedContainerPoint
+    val containerPoint = scaledRotatedContentPoint + rotatedContentBaseDisplayRect.topLeft.round()
+    return containerPoint
 }
