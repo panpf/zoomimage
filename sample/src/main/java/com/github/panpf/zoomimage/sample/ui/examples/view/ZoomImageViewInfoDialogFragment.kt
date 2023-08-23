@@ -88,14 +88,13 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
             """.trimIndent()
 
             val displayAndVisibleInfo = """
-                containerVisible: ${zoomAbility.containerVisibleRect.toShortString()}
                 contentBaseDisplay: ${zoomAbility.contentBaseDisplayRect.toShortString()}
                 contentBaseVisible: ${zoomAbility.contentBaseVisibleRect.toShortString()}
                 contentDisplay: ${zoomAbility.contentDisplayRect.toShortString()}
                 contentVisible: ${zoomAbility.contentVisibleRect.toShortString()}
             """.trimIndent()
 
-            val tileList = subsamplingAbility.tileList ?: emptyList()
+            val tileList = subsamplingAbility.tileList
             val loadedTileCount = tileList.count { it.bitmap != null }
             val loadedTileBytes =
                 tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()

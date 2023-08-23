@@ -49,7 +49,6 @@ import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
 import com.github.panpf.zoomimage.util.canScrollByEdge
-import com.github.panpf.zoomimage.util.computeContainerVisibleRect
 import com.github.panpf.zoomimage.util.computeContentBaseDisplayRect
 import com.github.panpf.zoomimage.util.computeContentBaseVisibleRect
 import com.github.panpf.zoomimage.util.computeContentDisplayRect
@@ -160,13 +159,6 @@ class ZoomableState(
         private set
     var transforming: Boolean by mutableStateOf(false)
         internal set
-    val containerVisibleRect: IntRect by derivedStateOf {
-        computeContainerVisibleRect(
-            containerSize = containerSize.toCompat(),
-            userScale = userTransform.scaleX,
-            userOffset = userTransform.offset.toCompat()
-        ).roundToPlatform()
-    }
     val contentBaseDisplayRect: IntRect by derivedStateOf {
         computeContentBaseDisplayRect(
             containerSize = containerSize.toCompat(),

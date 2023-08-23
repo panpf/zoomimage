@@ -235,28 +235,6 @@ fun computeInitialZoom(
 
 /* ******************************************* Rect ***************************************** */
 
-fun computeContainerVisibleRect(
-    containerSize: IntSizeCompat,
-    userScale: Float,
-    userOffset: OffsetCompat
-): RectCompat {
-    /*
-     * Calculations are based on the following rules:
-     * 1. Content is located in the top left corner of the container
-     * 2. The scale center point is top left
-     * 3. The rotate center point is the content center
-     * 4. Apply rotation before scaling and offset
-     */
-
-    if (containerSize.isEmpty()) {
-        return RectCompat.Zero
-    }
-    val topLeft = OffsetCompat(x = userOffset.x * -1, y = userOffset.y * -1)
-    val scaledContainerVisibleRect = RectCompat(offset = topLeft, size = containerSize.toSize())
-    val containerVisibleRect = scaledContainerVisibleRect / userScale
-    return containerVisibleRect
-}
-
 fun computeContentBaseDisplayRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -451,49 +429,38 @@ fun computeContentVisibleRect(
         return RectCompat.Zero
     }
 
+    val topLeft = OffsetCompat(x = userOffset.x * -1, y = userOffset.y * -1)
+    val scaledContainerVisibleRect = RectCompat(offset = topLeft, size = containerSize.toSize())
+    val containerDisplayRect = scaledContainerVisibleRect / userScale
+
     val rotatedContentSize = contentSize.rotate(rotation)
-    val containerVisibleRect = computeContainerVisibleRect(containerSize, userScale, userOffset)
-    val rotatedContentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
+    val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
         rotation = 0,
     )
-    if (!containerVisibleRect.overlaps(rotatedContentBaseInsideDisplayRect)) {
+    if (!containerDisplayRect.overlaps(rotatedContentBaseDisplayRect)) {
         return RectCompat.Zero
     }
 
-    val contentRect = RectCompat(
-        left = (containerVisibleRect.left - rotatedContentBaseInsideDisplayRect.left),
-        top = (containerVisibleRect.top - rotatedContentBaseInsideDisplayRect.top),
-        right = (containerVisibleRect.right - rotatedContentBaseInsideDisplayRect.left),
-        bottom = (containerVisibleRect.bottom - rotatedContentBaseInsideDisplayRect.top)
+    val impreciseScaledRotatedContentVisibleRect = RectCompat(
+        left = (containerDisplayRect.left - rotatedContentBaseDisplayRect.left),
+        top = (containerDisplayRect.top - rotatedContentBaseDisplayRect.top),
+        right = (containerDisplayRect.right - rotatedContentBaseDisplayRect.left),
+        bottom = (containerDisplayRect.bottom - rotatedContentBaseDisplayRect.top)
     )
-    val visibleBoundsRect = RectCompat(
-        left = 0f,
-        top = 0f,
-        right = rotatedContentBaseInsideDisplayRect.width,
-        bottom = rotatedContentBaseInsideDisplayRect.height
-    )
-    val limitedVisibleRect = contentRect.limitTo(visibleBoundsRect)
+    val scaledRotatedContentVisibleRect = impreciseScaledRotatedContentVisibleRect
+        .limitTo(rotatedContentBaseDisplayRect.size)
     val rotatedContentScaleFactor = contentScale.computeScaleFactor(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-    val scaledLimitedVisibleRect = limitedVisibleRect / rotatedContentScaleFactor
-    val contentBaseVisibleRect = computeContentBaseVisibleRect(
-        containerSize = containerSize,
-        contentSize = rotatedContentSize,
-        contentScale = contentScale,
-        alignment = alignment,
-        rotation = 0,
-    )
+    val rotatedContentVisibleRect = scaledRotatedContentVisibleRect / rotatedContentScaleFactor
     val contentVisibleRect =
-        scaledLimitedVisibleRect.translate(contentBaseVisibleRect.topLeft)
-    val reversedRotateContentVisibleRect =
-        contentVisibleRect.reverseRotateInSpace(contentSize.toSize(), rotation)
-    val limitedContentVisibleRect = reversedRotateContentVisibleRect.limitTo(contentSize.toSize())
+        rotatedContentVisibleRect.reverseRotateInSpace(contentSize.toSize(), rotation)
+    val limitedContentVisibleRect = contentVisibleRect.limitTo(contentSize.toSize())
     return limitedContentVisibleRect
 }
 

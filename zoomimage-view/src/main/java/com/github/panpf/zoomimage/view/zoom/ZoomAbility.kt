@@ -131,8 +131,6 @@ class ZoomAbility constructor(
         get() = zoomEngine.maxScale
     val transforming: Boolean
         get() = zoomEngine.transforming
-    val containerVisibleRect: IntRectCompat
-        get() = zoomEngine.containerVisibleRect
     val contentBaseDisplayRect: IntRectCompat
         get() = zoomEngine.contentBaseDisplayRect
     val contentBaseVisibleRect: IntRectCompat

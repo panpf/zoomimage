@@ -70,7 +70,6 @@ fun ZoomImageInfo(
     }
     val displayAndVisibleInfo = remember(zoomableState.transform) {
         """
-            containerVisible: ${zoomableState.containerVisibleRect.toShortString()}
             contentBaseDisplay: ${zoomableState.contentBaseDisplayRect.toShortString()}
             contentBaseVisible: ${zoomableState.contentBaseVisibleRect.toShortString()}
             contentDisplay: ${zoomableState.contentDisplayRect.toShortString()}

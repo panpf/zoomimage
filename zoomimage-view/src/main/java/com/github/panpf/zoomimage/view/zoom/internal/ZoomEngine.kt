@@ -33,7 +33,6 @@ import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.calculateNextStepScale
 import com.github.panpf.zoomimage.util.canScrollByEdge
 import com.github.panpf.zoomimage.util.center
-import com.github.panpf.zoomimage.util.computeContainerVisibleRect
 import com.github.panpf.zoomimage.util.computeContentBaseDisplayRect
 import com.github.panpf.zoomimage.util.computeContentBaseVisibleRect
 import com.github.panpf.zoomimage.util.computeContentDisplayRect
@@ -153,8 +152,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 notifyTransformChanged()
             }
         }
-    var containerVisibleRect: IntRectCompat = IntRectCompat.Zero
-        private set
     var contentBaseDisplayRect: IntRectCompat = IntRectCompat.Zero
         private set
     var contentBaseVisibleRect: IntRectCompat = IntRectCompat.Zero
@@ -751,11 +748,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private fun updateTransform() {
         transform = baseTransform + userTransform
 
-        containerVisibleRect = computeContainerVisibleRect(
-            containerSize = containerSize,
-            userScale = userTransform.scaleX,
-            userOffset = userTransform.offset
-        ).round()
         contentBaseDisplayRect = computeContentBaseDisplayRect(
             containerSize = containerSize,
             contentSize = contentSize,
