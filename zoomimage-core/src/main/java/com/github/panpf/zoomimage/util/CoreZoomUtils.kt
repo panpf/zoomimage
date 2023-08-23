@@ -754,12 +754,8 @@ fun touchPointToContainerPoint(
         return IntOffsetCompat.Zero
     }
     val scaledContainerPoint = touchPoint - userOffset
-    val containerPoint = IntOffsetCompat(
-        x = (scaledContainerPoint.x / userScale).roundToInt(),
-        y = (scaledContainerPoint.y / userScale).roundToInt(),
-    )
-    val limitedContainerPoint = containerPoint.limitTo(containerSize)
-    return limitedContainerPoint
+    val containerPoint = (scaledContainerPoint * userScale).round()
+    return containerPoint
 }
 
 fun containerPointToContentPoint(
