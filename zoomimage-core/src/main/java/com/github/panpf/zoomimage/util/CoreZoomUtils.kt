@@ -251,16 +251,10 @@ fun computeContainerVisibleRect(
     if (containerSize.isEmpty()) {
         return RectCompat.Zero
     }
-    val scaledContainerSize = containerSize.toSize() * userScale
     val topLeft = OffsetCompat(x = userOffset.x * -1, y = userOffset.y * -1)
     val scaledContainerVisibleRect = RectCompat(offset = topLeft, size = containerSize.toSize())
-    val boundsRect = RectCompat(offset = OffsetCompat(0f, 0f), size = scaledContainerSize)
-    val limitedScaledContainerVisibleRect = scaledContainerVisibleRect.limitTo(boundsRect)
-    val filteredEmptyRect =
-        limitedScaledContainerVisibleRect.takeIf { !it.isEmpty } ?: RectCompat.Zero
-    val containerVisibleRect = filteredEmptyRect / userScale
-    val limitedContainerVisibleRect = containerVisibleRect.limitTo(containerSize.toSize())
-    return limitedContainerVisibleRect
+    val containerVisibleRect = scaledContainerVisibleRect / userScale
+    return containerVisibleRect
 }
 
 fun computeContentBaseDisplayRect(
