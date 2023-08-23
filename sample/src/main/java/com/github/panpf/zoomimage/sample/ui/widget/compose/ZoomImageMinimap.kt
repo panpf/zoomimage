@@ -38,10 +38,10 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.sample.ui.util.compose.isEmpty
 import com.github.panpf.zoomimage.sample.ui.util.compose.isNotEmpty
-import com.github.panpf.zoomimage.sample.ui.util.compose.scale
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.compose.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.sample.ui.util.compose.times
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
@@ -199,7 +199,7 @@ private fun ContentDrawScope.drawVisibleRect(
         scaleX = viewSize.width / contentSize.width.toFloat(),
         scaleY = viewSize.height / contentSize.height.toFloat()
     )
-    val drawVisibleRect = contentVisibleRect.scale(drawScaleWithContent).toRect()
+    val drawVisibleRect = contentVisibleRect.times(drawScaleWithContent).toRect()
     drawRect(
         color = Color.Magenta,
         topLeft = drawVisibleRect.topLeft,

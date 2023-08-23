@@ -317,7 +317,7 @@ fun RectCompat.round(): IntRectCompat = IntRectCompat(
     bottom = bottom.roundToInt()
 )
 
-fun IntRectCompat.scale(scale: Float): IntRectCompat =
+operator fun IntRectCompat.times(scale: Float): IntRectCompat =
     IntRectCompat(
         left = (left * scale).roundToInt(),
         top = (top * scale).roundToInt(),
@@ -325,7 +325,7 @@ fun IntRectCompat.scale(scale: Float): IntRectCompat =
         bottom = (bottom * scale).roundToInt(),
     )
 
-fun IntRectCompat.scale(scale: ScaleFactorCompat): IntRectCompat =
+operator fun IntRectCompat.times(scale: ScaleFactorCompat): IntRectCompat =
     IntRectCompat(
         left = (left * scale.scaleX).roundToInt(),
         top = (top * scale.scaleY).roundToInt(),
@@ -333,7 +333,7 @@ fun IntRectCompat.scale(scale: ScaleFactorCompat): IntRectCompat =
         bottom = (bottom * scale.scaleY).roundToInt(),
     )
 
-fun IntRectCompat.restoreScale(scale: Float): IntRectCompat =
+operator fun IntRectCompat.div(scale: Float): IntRectCompat =
     IntRectCompat(
         left = (left / scale).roundToInt(),
         top = (top / scale).roundToInt(),
@@ -341,7 +341,7 @@ fun IntRectCompat.restoreScale(scale: Float): IntRectCompat =
         bottom = (bottom / scale).roundToInt(),
     )
 
-fun IntRectCompat.restoreScale(scaleFactor: ScaleFactorCompat): IntRectCompat =
+operator fun IntRectCompat.div(scaleFactor: ScaleFactorCompat): IntRectCompat =
     IntRectCompat(
         left = (left / scaleFactor.scaleX).roundToInt(),
         top = (top / scaleFactor.scaleY).roundToInt(),

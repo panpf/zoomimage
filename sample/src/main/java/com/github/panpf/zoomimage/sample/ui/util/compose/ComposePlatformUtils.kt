@@ -284,7 +284,7 @@ internal fun Rect.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 
 @Stable
-internal fun Rect.scale(scale: Float): Rect =
+internal operator fun Rect.times(scale: Float): Rect =
     Rect(
         left = (left * scale),
         top = (top * scale),
@@ -293,7 +293,7 @@ internal fun Rect.scale(scale: Float): Rect =
     )
 
 @Stable
-internal fun Rect.scale(scale: ScaleFactor): Rect =
+internal operator fun Rect.times(scale: ScaleFactor): Rect =
     Rect(
         left = (left * scale.scaleX),
         top = (top * scale.scaleY),
@@ -302,7 +302,7 @@ internal fun Rect.scale(scale: ScaleFactor): Rect =
     )
 
 @Stable
-internal fun Rect.restoreScale(scale: Float): Rect =
+internal operator fun Rect.div(scale: Float): Rect =
     Rect(
         left = (left / scale),
         top = (top / scale),
@@ -311,7 +311,7 @@ internal fun Rect.restoreScale(scale: Float): Rect =
     )
 
 @Stable
-internal fun Rect.restoreScale(scaleFactor: ScaleFactor): Rect =
+internal operator fun Rect.div(scaleFactor: ScaleFactor): Rect =
     Rect(
         left = (left / scaleFactor.scaleX),
         top = (top / scaleFactor.scaleY),
@@ -413,7 +413,7 @@ internal fun Rect.round(): IntRect = IntRect(
 )
 
 @Stable
-internal fun IntRect.scale(scale: Float): IntRect =
+internal operator fun IntRect.times(scale: Float): IntRect =
     IntRect(
         left = (left * scale).roundToInt(),
         top = (top * scale).roundToInt(),
@@ -422,7 +422,7 @@ internal fun IntRect.scale(scale: Float): IntRect =
     )
 
 @Stable
-internal fun IntRect.scale(scale: ScaleFactor): IntRect =
+internal operator fun IntRect.times(scale: ScaleFactor): IntRect =
     IntRect(
         left = (left * scale.scaleX).roundToInt(),
         top = (top * scale.scaleY).roundToInt(),
@@ -431,7 +431,7 @@ internal fun IntRect.scale(scale: ScaleFactor): IntRect =
     )
 
 @Stable
-internal fun IntRect.restoreScale(scale: Float): IntRect =
+internal operator fun IntRect.div(scale: Float): IntRect =
     IntRect(
         left = (left / scale).roundToInt(),
         top = (top / scale).roundToInt(),
@@ -440,7 +440,7 @@ internal fun IntRect.restoreScale(scale: Float): IntRect =
     )
 
 @Stable
-internal fun IntRect.restoreScale(scaleFactor: ScaleFactor): IntRect =
+internal operator fun IntRect.div(scaleFactor: ScaleFactor): IntRect =
     IntRect(
         left = (left / scaleFactor.scaleX).roundToInt(),
         top = (top / scaleFactor.scaleY).roundToInt(),

@@ -299,7 +299,7 @@ fun lerp(start: RectCompat, stop: RectCompat, fraction: Float): RectCompat {
 fun RectCompat.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 
-fun RectCompat.scale(scale: Float): RectCompat =
+operator fun RectCompat.times(scale: Float): RectCompat =
     RectCompat(
         left = (left * scale),
         top = (top * scale),
@@ -307,7 +307,7 @@ fun RectCompat.scale(scale: Float): RectCompat =
         bottom = (bottom * scale),
     )
 
-fun RectCompat.scale(scale: ScaleFactorCompat): RectCompat =
+operator fun RectCompat.times(scale: ScaleFactorCompat): RectCompat =
     RectCompat(
         left = (left * scale.scaleX),
         top = (top * scale.scaleY),
@@ -315,7 +315,7 @@ fun RectCompat.scale(scale: ScaleFactorCompat): RectCompat =
         bottom = (bottom * scale.scaleY),
     )
 
-fun RectCompat.restoreScale(scale: Float): RectCompat =
+operator fun RectCompat.div(scale: Float): RectCompat =
     RectCompat(
         left = (left / scale),
         top = (top / scale),
@@ -323,7 +323,7 @@ fun RectCompat.restoreScale(scale: Float): RectCompat =
         bottom = (bottom / scale),
     )
 
-fun RectCompat.restoreScale(scaleFactor: ScaleFactorCompat): RectCompat =
+operator fun RectCompat.div(scaleFactor: ScaleFactorCompat): RectCompat =
     RectCompat(
         left = (left / scaleFactor.scaleX),
         top = (top / scaleFactor.scaleY),
