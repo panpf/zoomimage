@@ -549,15 +549,10 @@ fun computeLocationUserOffset(
     if (containerSize.isEmpty()) {
         return OffsetCompat.Zero
     }
-    val scaledContainerSize = containerSize.toSize() * userScale
     val scaledContainerPoint = containerPoint.toOffset() * userScale
     val containerCenter = containerSize.center.toOffset()
-    val originMoveToCenterOffset = scaledContainerPoint - containerCenter
-    val impreciseLocationOffset = originMoveToCenterOffset * -1f
-    val locationOffset = OffsetCompat(
-        x = impreciseLocationOffset.x.coerceIn(-scaledContainerSize.width, 0f),
-        y = impreciseLocationOffset.y.coerceIn(-scaledContainerSize.height, 0f)
-    )
+    val toCenterScaledContainerPoint = scaledContainerPoint - containerCenter
+    val locationOffset = toCenterScaledContainerPoint * -1f
     return locationOffset
 }
 
