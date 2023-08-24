@@ -11,6 +11,6 @@ class ZoomImageTestFragment : AppBarFragment() {
 
     @Composable
     override fun DrawContent() {
-        ZoomImageSample(sketchImageUri = SampleImages.Asset.DOG.uri)
+        ZoomImageSample(sketchImageUri = SampleImages.Asset.QMSHT.uri)
     }
 }

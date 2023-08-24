@@ -202,13 +202,12 @@ private fun ButtonPad(
             onClick = { zoomableState.switchScale(animated = true) },
             modifier = Modifier.size(40.dp)
         ) {
-            val zoomIn = remember {
+            val zoomIn by remember {
                 derivedStateOf {
-                    val scale = zoomableState.transform.scaleX  // trigger refresh
-                    scale >= 0 && zoomableState.getNextStepScale() > zoomableState.minScale
+                    zoomableState.getNextStepScale() > zoomableState.transform.scaleX
                 }
             }
-            val icon = if (zoomIn.value)
+            val icon = if (zoomIn)
                 R.drawable.ic_zoom_in to "zoom in" else R.drawable.ic_zoom_out to "zoom out"
             Icon(
                 painter = painterResource(id = icon.first),
