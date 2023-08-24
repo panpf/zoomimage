@@ -162,6 +162,7 @@ internal fun lerp(start: IntSize, stop: IntSize, fraction: Float): IntSize =
  * Returns a copy of this IntOffset instance optionally overriding the
  * x or y parameter
  */
+@Stable
 internal fun IntSize.copy(width: Int = this.width, height: Int = this.height) =
     IntSize(width = width, height = height)
 
@@ -210,11 +211,24 @@ internal fun Offset.reverseRotateInSpace(spaceSize: Size, rotation: Int): Offset
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
-fun Offset.limitTo(size: Size): Offset {
+@Stable
+internal fun Offset.limitTo(size: Size): Offset {
     return if (x < 0f || x > size.width || y < 0f || y > size.height) {
         Offset(
             x = x.coerceIn(0f, size.width),
             y = y.coerceIn(0f, size.height),
+        )
+    } else {
+        this
+    }
+}
+
+@Stable
+internal fun Offset.limitTo(rect: Rect): Offset {
+    return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+        Offset(
+            x = x.coerceIn(rect.left, rect.right),
+            y = y.coerceIn(rect.top, rect.bottom),
         )
     } else {
         this
@@ -265,11 +279,24 @@ internal fun IntOffset.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): 
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
-fun IntOffset.limitTo(size: IntSize): IntOffset {
+@Stable
+internal fun IntOffset.limitTo(size: IntSize): IntOffset {
     return if (x < 0 || x > size.width || y < 0 || y > size.height) {
         IntOffset(
             x = x.coerceIn(0, size.width),
             y = y.coerceIn(0, size.height),
+        )
+    } else {
+        this
+    }
+}
+
+@Stable
+internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
+    return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+        IntOffset(
+            x = x.coerceIn(rect.left, rect.right),
+            y = y.coerceIn(rect.top, rect.bottom),
         )
     } else {
         this
@@ -560,9 +587,11 @@ private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
 internal val TransformOrigin.Companion.TopStart: TransformOrigin
     get() = transformOriginTopStart
 
+@Stable
 internal operator fun TransformOrigin.times(operand: Float) =
     TransformOrigin(pivotFractionX * operand, pivotFractionY * operand)
 
+@Stable
 internal operator fun TransformOrigin.div(operand: Float) =
     TransformOrigin(pivotFractionX / operand, pivotFractionY / operand)
 
@@ -572,6 +601,7 @@ internal operator fun TransformOrigin.div(operand: Float) =
  * Return a new [IntSize] with the width and height multiplied by the [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
  */
+@Stable
 internal operator fun IntSize.times(origin: TransformOrigin): IntSize =
     IntSize(
         width = (this.width * origin.pivotFractionX).roundToInt(),
@@ -585,6 +615,7 @@ internal operator fun IntSize.times(origin: TransformOrigin): IntSize =
  * Return a new [IntSize] with the width and height multiplied by the [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
  */
+@Stable
 internal operator fun TransformOrigin.times(size: IntSize): IntSize = size * this
 
 /**
@@ -593,6 +624,7 @@ internal operator fun TransformOrigin.times(size: IntSize): IntSize = size * thi
  * Return a new [IntSize] with the width and height divided by [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
  */
+@Stable
 internal operator fun IntSize.div(origin: TransformOrigin): IntSize =
     IntSize(
         width = (width / origin.pivotFractionX).roundToInt(),
@@ -614,6 +646,7 @@ internal operator fun IntSize.div(origin: TransformOrigin): IntSize =
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
+@Stable
 internal fun lerp(
     start: TransformOrigin,
     stop: TransformOrigin,

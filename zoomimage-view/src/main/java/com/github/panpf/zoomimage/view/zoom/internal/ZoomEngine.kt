@@ -46,6 +46,7 @@ import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.lerp
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
+import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.name
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
@@ -267,7 +268,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "scale. " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "contentPoint=${contentPoint?.toShortString()}, " +
+                    "contentPoint=${contentPoint.toShortString()}, " +
                     "animated=${animated}. " +
                     "containerPoint=${containerPoint.toShortString()}, " +
                     "targetUserScale=${targetUserScale.format(4)}, " +
@@ -695,18 +696,8 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             alignment = alignment,
             rotation = rotation,
             userScale = userScale,
-        ).round().toRect()
-        if (userOffset.x >= userOffsetBounds.left
-            && userOffset.x <= userOffsetBounds.right
-            && userOffset.y >= userOffsetBounds.top
-            && userOffset.y <= userOffsetBounds.bottom
-        ) {
-            return userOffset
-        }
-        return OffsetCompat(
-            x = userOffset.x.coerceIn(userOffsetBounds.left, userOffsetBounds.right),
-            y = userOffset.y.coerceIn(userOffsetBounds.top, userOffsetBounds.bottom),
-        )
+        ).round().toRect()      // round() makes sense
+        return userOffset.limitTo(userOffsetBounds)
     }
 
     private fun updateUserTransform(

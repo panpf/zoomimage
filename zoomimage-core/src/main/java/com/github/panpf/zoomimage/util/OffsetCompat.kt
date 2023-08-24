@@ -273,3 +273,14 @@ fun OffsetCompat.limitTo(size: SizeCompat): OffsetCompat {
         this
     }
 }
+
+fun OffsetCompat.limitTo(rect: RectCompat): OffsetCompat {
+    return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+        OffsetCompat(
+            x = x.coerceIn(rect.left, rect.right),
+            y = y.coerceIn(rect.top, rect.bottom),
+        )
+    } else {
+        this
+    }
+}

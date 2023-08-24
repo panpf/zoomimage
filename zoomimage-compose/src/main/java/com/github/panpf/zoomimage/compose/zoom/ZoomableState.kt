@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
-import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
@@ -36,11 +35,13 @@ import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import com.github.panpf.zoomimage.compose.internal.limitTo
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.roundToPlatform
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
+import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
@@ -59,6 +60,7 @@ import com.github.panpf.zoomimage.util.computeUserOffsetBounds
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.util.plus
+import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.touchPointToContentPoint
 import kotlinx.coroutines.CancellationException
@@ -318,7 +320,7 @@ class ZoomableState(
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "scale. " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "contentPoint=${contentPoint?.toShortString()}, " +
+                    "contentPoint=${contentPoint.toShortString()}, " +
                     "animated=${animated}. " +
                     "containerPoint=${containerPoint.toShortString()}, " +
                     "targetUserScale=${targetUserScale.format(4)}, " +
@@ -698,18 +700,8 @@ class ZoomableState(
             alignment = alignment.toCompat(),
             rotation = rotation,
             userScale = userScale,
-        ).roundToPlatform().toRect()
-        if (userOffset.x >= userOffsetBounds.left
-            && userOffset.x <= userOffsetBounds.right
-            && userOffset.y >= userOffsetBounds.top
-            && userOffset.y <= userOffsetBounds.bottom
-        ) {
-            return userOffset
-        }
-        return Offset(
-            x = userOffset.x.coerceIn(userOffsetBounds.left, userOffsetBounds.right),
-            y = userOffset.y.coerceIn(userOffsetBounds.top, userOffsetBounds.bottom),
-        )
+        ).round().toPlatformRect()    // round() makes sense
+        return userOffset.limitTo(userOffsetBounds)
     }
 
     private suspend fun stopAllAnimationInternal(caller: String) {

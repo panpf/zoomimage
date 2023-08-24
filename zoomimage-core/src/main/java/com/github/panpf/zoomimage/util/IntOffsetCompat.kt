@@ -190,3 +190,14 @@ fun IntOffsetCompat.limitTo(size: IntSizeCompat): IntOffsetCompat {
         this
     }
 }
+
+fun IntOffsetCompat.limitTo(rect: IntRectCompat): IntOffsetCompat {
+    return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+        IntOffsetCompat(
+            x = x.coerceIn(rect.left, rect.right),
+            y = y.coerceIn(rect.top, rect.bottom),
+        )
+    } else {
+        this
+    }
+}
