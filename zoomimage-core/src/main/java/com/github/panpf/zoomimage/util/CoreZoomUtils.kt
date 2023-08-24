@@ -571,13 +571,20 @@ fun computeScaleUserOffset(
      * 4. Apply rotation before scaling and offset
      */
 
-    return computeTransformOffset(
-        currentScale = currentUserScale,
-        currentOffset = currentUserOffset,
-        targetScale = targetUserScale,
-        centroid = containerPoint.toOffset(),
-        pan = OffsetCompat.Zero,
-        gestureRotate = 0f,
+//    return computeTransformOffset(
+//        currentScale = currentUserScale,
+//        currentOffset = currentUserOffset,
+//        targetScale = targetUserScale,
+//        centroid = containerPoint.toOffset(),
+//        pan = OffsetCompat.Zero,
+//        gestureRotate = 0f,
+//    )
+
+    // todo 不再将目标点移到屏幕中心
+    return computeLocationUserOffset(
+        containerSize = containerSize,
+        containerPoint = containerPoint,
+        userScale = targetUserScale,
     )
 
 //    if (containerSize.isEmpty()) {

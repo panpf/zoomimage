@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
-import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.Logger
@@ -275,7 +274,7 @@ class ZoomableState(
 
     fun scale(
         targetScale: Float,
-        contentPoint: IntOffset? = null,
+        contentPoint: IntOffset = contentVisibleRect.center,
         animated: Boolean = false
     ) = coroutineScope.launch {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@launch
@@ -292,20 +291,14 @@ class ZoomableState(
         val limitedTargetUserScale = limitUserScale(targetUserScale)
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
-
-        val containerPoint = if (contentPoint != null) {
-            contentPointToContainerPoint(
-                containerSize = containerSize.toCompat(),
-                contentSize = contentSize.toCompat(),
-                contentScale = contentScale.toCompat(),
-                alignment = alignment.toCompat(),
-                rotation = rotation,
-                contentPoint = contentPoint.toCompat(),
-            ).toPlatform()
-        } else {
-            containerSize.center
-        }
-
+        val containerPoint = contentPointToContainerPoint(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = alignment.toCompat(),
+            rotation = rotation,
+            contentPoint = contentPoint.toCompat(),
+        ).toPlatform()
         val targetUserOffset = computeScaleUserOffset(
             containerSize = containerSize.toCompat(),
             currentUserScale = currentUserTransform.scaleX,
@@ -342,24 +335,15 @@ class ZoomableState(
     }
 
     fun switchScale(
-        contentPoint: IntOffset? = null,
+        contentPoint: IntOffset = contentVisibleRect.center,
         animated: Boolean = true
     ): Float {
-        val finalContentPoint = contentPoint
-            ?: contentVisibleRect.takeIf { !it.isEmpty }?.center
-            ?: contentSize.takeIf { it.isNotEmpty() }?.center
-            ?: return transform.scaleX
         val nextScale = getNextStepScale()
-        location(
-            contentPoint = finalContentPoint,
+        scale(
             targetScale = nextScale,
+            contentPoint = contentPoint,
             animated = animated
         )
-//        scale(
-//            targetScale = nextScale,
-//            contentPoint = finalContentPoint,
-//            animated = animated
-//        )
         return nextScale
     }
 

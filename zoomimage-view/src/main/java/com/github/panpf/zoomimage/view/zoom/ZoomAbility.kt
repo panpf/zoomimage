@@ -231,14 +231,14 @@ class ZoomAbility constructor(
 
     fun scale(
         targetScale: Float,
-        contentPoint: IntOffsetCompat? = null,
+        contentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = false
     ) {
         zoomEngine.scale(targetScale, contentPoint, animated)
     }
 
     fun switchScale(
-        contentPoint: IntOffsetCompat? = null,
+        contentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = true
     ): Float = zoomEngine.switchScale(contentPoint, animated)
 

@@ -223,7 +223,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
     fun scale(
         targetScale: Float,
-        contentPoint: IntOffsetCompat? = null,
+        contentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = false
     ) {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
@@ -240,20 +240,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val limitedTargetUserScale = limitUserScale(targetUserScale)
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
-
-        val containerPoint = if (contentPoint != null) {
-            contentPointToContainerPoint(
-                containerSize = containerSize,
-                contentSize = contentSize,
-                contentScale = contentScale,
-                alignment = alignment,
-                rotation = rotation,
-                contentPoint = contentPoint,
-            )
-        } else {
-            containerSize.center
-        }
-
+        val containerPoint = contentPointToContainerPoint(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = rotation,
+            contentPoint = contentPoint,
+        )
         val targetUserOffset = computeScaleUserOffset(
             containerSize = containerSize,
             currentUserScale = currentUserTransform.scaleX,
@@ -290,24 +284,15 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     fun switchScale(
-        contentPoint: IntOffsetCompat? = null,
+        contentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = true
     ): Float {
-        val finalContentPoint = contentPoint
-            ?: contentVisibleRect.takeIf { !it.isEmpty }?.center
-            ?: contentSize.takeIf { it.isNotEmpty() }?.center
-            ?: return transform.scaleX
         val nextScale = getNextStepScale()
-        location(
-            contentPoint = finalContentPoint,
+        scale(
             targetScale = nextScale,
+            contentPoint = contentPoint,
             animated = animated
         )
-//        scale(
-//            targetScale = nextScale,
-//            contentPoint = finalContentPoint,
-//            animated = animated
-//        )
         return nextScale
     }
 
