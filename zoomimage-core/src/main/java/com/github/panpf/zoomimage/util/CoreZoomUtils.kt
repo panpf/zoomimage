@@ -489,6 +489,7 @@ fun computeUserOffsetBounds(
     val rotatedContentSize = contentSize.rotate(rotation)
     val scaledContainerSize = containerSize.toSize() * userScale
     val rotatedContentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
+//    val rotatedContentBaseInsideDisplayRect = computeContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
@@ -558,6 +559,39 @@ fun computeLocationUserOffset(
         y = impreciseLocationOffset.y.coerceIn(-scaledContainerSize.height, 0f)
     )
     return locationOffset
+}
+
+fun computeScaleUserOffset(
+    containerSize: IntSizeCompat,
+    currentUserScale: Float,
+    currentUserOffset: OffsetCompat,
+    targetUserScale: Float,
+    containerPoint: IntOffsetCompat,
+): OffsetCompat {
+    /*
+     * Calculations are based on the following rules:
+     * 1. Content is located in the top left corner of the container
+     * 2. The scale center point is top left
+     * 3. The rotate center point is the content center
+     * 4. Apply rotation before scaling and offset
+     */
+
+    return computeTransformOffset(
+        currentScale = currentUserScale,
+        currentOffset = currentUserOffset,
+        targetScale = targetUserScale,
+        centroid = containerPoint.toOffset(),
+        pan = OffsetCompat.Zero,
+        gestureRotate = 0f,
+    )
+
+//    if (containerSize.isEmpty()) {
+//        return OffsetCompat.Zero
+//    }
+//    val currentScaledContainerPoint = containerPoint * currentUserScale
+//    val targetScaledContainerPoint = containerPoint * targetUserScale
+//    val addOffset = targetScaledContainerPoint - currentScaledContainerPoint
+//    return currentUserOffset + addOffset
 }
 
 fun computeTransformOffset(

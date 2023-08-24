@@ -175,7 +175,7 @@ class ZoomAbility constructor(
                 onViewLongPressListenerList?.isNotEmpty() == true || view.performLongClick()
             },
             onDoubleTapCallback = { e: MotionEvent ->
-                zoomEngine.switchScale(
+                switchScale(
                     contentPoint = zoomEngine.touchPointToContentPoint(OffsetCompat(e.x, e.y)),
                     animated = true
                 )
@@ -236,6 +236,11 @@ class ZoomAbility constructor(
     ) {
         zoomEngine.scale(targetScale, contentPoint, animated)
     }
+
+    fun switchScale(
+        contentPoint: IntOffsetCompat? = null,
+        animated: Boolean = true
+    ): Float = zoomEngine.switchScale(contentPoint, animated)
 
     fun offset(
         targetOffset: OffsetCompat,
