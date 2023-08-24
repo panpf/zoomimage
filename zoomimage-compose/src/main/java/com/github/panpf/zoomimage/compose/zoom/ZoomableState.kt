@@ -57,12 +57,11 @@ import com.github.panpf.zoomimage.util.computeScaleUserOffset
 import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
 import com.github.panpf.zoomimage.util.computeUserOffsetBounds
-import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.util.touchPointToContainerPoint
+import com.github.panpf.zoomimage.util.touchPointToContentPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -506,19 +505,15 @@ class ZoomableState(
         val contentScale = contentScale
         val alignment = alignment
         val rotation = rotation
-        val containerPoint = touchPointToContainerPoint(
-            containerSize = containerSize.toCompat(),
-            userScale = currentUserTransform.scaleX,
-            userOffset = currentUserTransform.offset.toCompat(),
-            touchPoint = touchPoint.toCompat()
-        )
-        val contentPoint = containerPointToContentPoint(
+        val contentPoint = touchPointToContentPoint(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
             alignment = alignment.toCompat(),
             rotation = rotation,
-            containerPoint = containerPoint
+            userScale = currentUserTransform.scaleX,
+            userOffset = currentUserTransform.offset.toCompat(),
+            touchPoint = touchPoint.toCompat()
         ).toPlatform()
         return contentPoint
     }

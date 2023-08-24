@@ -824,3 +824,29 @@ fun contentPointToContainerPoint(
     val containerPoint = scaledRotatedContentPoint + rotatedContentBaseDisplayRect.topLeft.round()
     return containerPoint
 }
+
+fun touchPointToContentPoint(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+    userScale: Float,
+    userOffset: OffsetCompat,
+    touchPoint: OffsetCompat,
+): IntOffsetCompat {
+    val containerPoint = touchPointToContainerPoint(
+        containerSize = containerSize,
+        userScale = userScale,
+        userOffset = userOffset,
+        touchPoint = touchPoint
+    )
+    return containerPointToContentPoint(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+        containerPoint = containerPoint
+    )
+}

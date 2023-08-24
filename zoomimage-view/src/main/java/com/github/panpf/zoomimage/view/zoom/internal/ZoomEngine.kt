@@ -42,7 +42,6 @@ import com.github.panpf.zoomimage.util.computeScaleUserOffset
 import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
 import com.github.panpf.zoomimage.util.computeUserOffsetBounds
-import com.github.panpf.zoomimage.util.containerPointToContentPoint
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.lerp
@@ -55,7 +54,7 @@ import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
-import com.github.panpf.zoomimage.util.touchPointToContainerPoint
+import com.github.panpf.zoomimage.util.touchPointToContentPoint
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
@@ -470,19 +469,15 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val contentScale = contentScale
         val alignment = alignment
         val rotation = rotation
-        val containerPoint = touchPointToContainerPoint(
-            containerSize = containerSize,
-            userScale = currentUserTransform.scaleX,
-            userOffset = currentUserTransform.offset,
-            touchPoint = touchPoint
-        )
-        val contentPoint = containerPointToContentPoint(
+        val contentPoint = touchPointToContentPoint(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             alignment = alignment,
             rotation = rotation,
-            containerPoint = containerPoint
+            userScale = currentUserTransform.scaleX,
+            userOffset = currentUserTransform.offset,
+            touchPoint = touchPoint
         )
         return contentPoint
     }
