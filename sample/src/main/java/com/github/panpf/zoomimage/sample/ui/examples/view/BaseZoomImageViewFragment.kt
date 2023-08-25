@@ -74,6 +74,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     .collectWithLifecycle(viewLifecycleOwner) {
                         mediumScaleMinMultiple = it.toFloat()
                     }
+                prefsService.limitOffsetWithinBaseVisibleRect.stateFlow
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        limitOffsetWithinBaseVisibleRect = it
+                    }
                 prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     scrollBarSpec = if (it) ScrollBarSpec.Default else null
                 }

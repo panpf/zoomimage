@@ -56,6 +56,9 @@ class PrefsService(val context: Context) {
     val mediumScaleMinMultiple by lazy {
         StringMmkvData(mmkv, "mediumScaleMinMultiple", DefaultMediumScaleMinMultiple.toString())
     }
+    val limitOffsetWithinBaseVisibleRect by lazy {
+        BooleanMmkvData(mmkv, "limitOffsetWithinBaseVisibleRect", false)
+    }
 
     val readModeEnabled by lazy {
         BooleanMmkvData(mmkv, "readModeEnabled", true)

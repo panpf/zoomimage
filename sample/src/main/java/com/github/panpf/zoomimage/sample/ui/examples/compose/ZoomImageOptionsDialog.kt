@@ -52,6 +52,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.threeStepScale, prefsService.threeStepScale)
         BindStateAndFlow(state.slowerScaleAnimation, prefsService.slowerScaleAnimation)
         BindStateAndFlow(state.mediumScaleMinMultiple, prefsService.mediumScaleMinMultiple)
+        BindStateAndFlow(state.limitOffsetWithinBaseVisibleRect, prefsService.limitOffsetWithinBaseVisibleRect)
 
         BindStateAndFlow(state.readModeEnabled, prefsService.readModeEnabled)
         BindStateAndFlow(state.readModeDirectionBoth, prefsService.readModeDirectionBoth)
@@ -84,6 +85,7 @@ class ZoomImageOptionsState {
     val threeStepScale = MutableStateFlow(false)
     val slowerScaleAnimation = MutableStateFlow(false)
     val mediumScaleMinMultiple = MutableStateFlow(DefaultMediumScaleMinMultiple.toString())
+    val limitOffsetWithinBaseVisibleRect = MutableStateFlow(false)
 
     val readModeEnabled = MutableStateFlow(true)
     val readModeDirectionBoth = MutableStateFlow(true)
@@ -108,6 +110,7 @@ fun ZoomImageOptionsDialog(
     val threeStepScale by state.threeStepScale.collectAsState()
     val slowerScaleAnimation by state.slowerScaleAnimation.collectAsState()
     val mediumScaleMinMultiple by state.mediumScaleMinMultiple.collectAsState()
+    val limitOffsetWithinBaseVisibleRect by state.limitOffsetWithinBaseVisibleRect.collectAsState()
 
     val readModeEnabled by state.readModeEnabled.collectAsState()
     val readModeDirectionBoth by state.readModeDirectionBoth.collectAsState()
@@ -364,6 +367,24 @@ fun ZoomImageOptionsDialog(
                             )
                         }
                     }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .clickable {
+                            state.limitOffsetWithinBaseVisibleRect.value = !state.limitOffsetWithinBaseVisibleRect.value
+                            onDismissRequest()
+                        }
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Limit Offset Within Base Visible Rect", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = limitOffsetWithinBaseVisibleRect,
+                        onCheckedChange = null
+                    )
                 }
 
                 Divider(Modifier.padding(horizontal = 20.dp))

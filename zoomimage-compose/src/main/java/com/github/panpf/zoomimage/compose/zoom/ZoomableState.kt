@@ -42,6 +42,7 @@ import com.github.panpf.zoomimage.compose.internal.roundToPlatform
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toCompatOffset
+import com.github.panpf.zoomimage.compose.internal.toCompatRect
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
@@ -117,6 +118,11 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
             zoomableState.reset("mediumScaleMinMultipleChanged")
         }
     }
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomableState.limitOffsetWithinBaseVisibleRect }.collect {
+            zoomableState.reset("limitOffsetWithinBaseVisibleRectChanged")
+        }
+    }
     return zoomableState
 }
 
@@ -146,6 +152,7 @@ class ZoomableState(
     var threeStepScale: Boolean by mutableStateOf(false)
     var rubberBandScale: Boolean by mutableStateOf(true)
     var animationSpec: ZoomAnimationSpec by mutableStateOf(ZoomAnimationSpec.Default)
+    var limitOffsetWithinBaseVisibleRect: Boolean by mutableStateOf(false)
 
     /* Information properties */
     var baseTransform: Transform by mutableStateOf(Transform.Origin)
@@ -202,16 +209,8 @@ class ZoomableState(
         ).roundToPlatform()
     }
     val scrollEdge: ScrollEdge by derivedStateOf {
-        val userOffsetBounds = computeUserOffsetBounds(
-            containerSize = containerSize.toCompat(),
-            contentSize = contentSize.toCompat(),
-            contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
-            rotation = rotation,
-            userScale = userTransform.scaleX,
-        )
         computeScrollEdge(
-            userOffsetBounds = userOffsetBounds,
+            userOffsetBounds = userOffsetBounds.toCompatRect(),
             userOffset = userTransform.offset.toCompat(),
         )
     }
@@ -223,6 +222,7 @@ class ZoomableState(
             alignment = alignment.toCompat(),
             rotation = rotation,
             userScale = userTransform.scaleX,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
         ).roundToPlatform()
     }
 
@@ -704,6 +704,7 @@ class ZoomableState(
             alignment = alignment.toCompat(),
             rotation = rotation,
             userScale = userScale,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
         ).round().toPlatformRect()    // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }

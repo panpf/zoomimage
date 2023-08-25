@@ -475,6 +475,7 @@ fun computeUserOffsetBounds(
     alignment: AlignmentCompat,
     rotation: Int,
     userScale: Float,
+    limitBaseVisibleRect: Boolean,
 ): RectCompat {
     /*
      * Calculations are based on the following rules:
@@ -489,13 +490,23 @@ fun computeUserOffsetBounds(
     }
     val rotatedContentSize = contentSize.rotate(rotation)
     val scaledContainerSize = containerSize.toSize() * userScale
-    val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
-        containerSize = containerSize,
-        contentSize = rotatedContentSize,
-        contentScale = contentScale,
-        alignment = alignment,
-        rotation = 0,
-    )
+    val rotatedContentBaseDisplayRect = if (limitBaseVisibleRect) {
+        computeContentBaseInsideDisplayRect(
+            containerSize = containerSize,
+            contentSize = rotatedContentSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = 0,
+        )
+    } else {
+        computeContentBaseDisplayRect(
+            containerSize = containerSize,
+            contentSize = rotatedContentSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = 0,
+        )
+    }
     val scaledRotatedContentBaseDisplayRect = rotatedContentBaseDisplayRect * userScale
 
     val horizontalBounds =

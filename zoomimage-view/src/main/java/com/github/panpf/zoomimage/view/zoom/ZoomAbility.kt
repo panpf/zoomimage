@@ -115,6 +115,11 @@ class ZoomAbility constructor(
         set(value) {
             zoomEngine.animationSpec = value
         }
+    var limitOffsetWithinBaseVisibleRect: Boolean
+        get() = zoomEngine.limitOffsetWithinBaseVisibleRect
+        set(value) {
+            zoomEngine.limitOffsetWithinBaseVisibleRect = value
+        }
 
     /* Information properties */
     val baseTransform: TransformCompat

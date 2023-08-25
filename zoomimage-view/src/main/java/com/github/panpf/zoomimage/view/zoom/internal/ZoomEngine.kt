@@ -133,6 +133,13 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
     var threeStepScale: Boolean = false
     var rubberBandScale: Boolean = true
+    var limitOffsetWithinBaseVisibleRect: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                reset("limitOffsetWithinBaseVisibleRectChanged")
+            }
+        }
 
     /* Information properties */
     var baseTransform = TransformCompat.Origin
@@ -639,6 +646,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             alignment = alignment,
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
         ).let {
             Rect(
                 it.left.roundToInt(),
@@ -698,6 +706,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             alignment = alignment,
             rotation = rotation,
             userScale = userScale,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
         ).round().toRect()      // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }
@@ -783,6 +792,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             alignment = alignment,
             rotation = rotation,
             userScale = userTransform.scaleX,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
         )
         this.userOffsetBounds = userOffsetBounds.round()
 

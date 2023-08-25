@@ -54,6 +54,7 @@ fun BaseZoomImageSample(
     val scrollBarEnabled by prefsService.scrollBarEnabled.stateFlow.collectAsState()
     val animateScale by prefsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
+    val limitOffsetWithinBaseVisibleRect by prefsService.limitOffsetWithinBaseVisibleRect.stateFlow.collectAsState()
     val mediumScaleMinMultipleString by prefsService.mediumScaleMinMultiple.stateFlow.collectAsState()
     val ignoreExifOrientation by prefsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by prefsService.showTileBounds.stateFlow.collectAsState()
@@ -91,6 +92,9 @@ fun BaseZoomImageSample(
         }
         LaunchedEffect(mediumScaleMinMultiple) {
             zoomable.mediumScaleMinMultiple = mediumScaleMinMultiple
+        }
+        LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
+            zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
         }
         LaunchedEffect(readMode) {
             zoomable.readMode = readMode

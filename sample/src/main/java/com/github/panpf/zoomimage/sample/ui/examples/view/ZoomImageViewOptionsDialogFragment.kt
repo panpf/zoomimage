@@ -142,6 +142,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     }
                 )
             )
+            add(
+                SwitchMenuFlow(
+                    title = "Limit Offset Within Base Visible Rect",
+                    data = prefsService.limitOffsetWithinBaseVisibleRect,
+                )
+            )
 
             add(MenuDivider())
 
