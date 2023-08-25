@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.compose.subsampling.BindZoomableStateAndSubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -14,7 +13,7 @@ import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 fun rememberZoomState(logger: Logger = rememberZoomImageLogger()): ZoomState {
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(logger)
-    BindZoomableStateAndSubsamplingState(zoomableState, subsamplingState)
+    subsamplingState.BindZoomableState(zoomableState)
     return remember { ZoomState(logger, zoomableState, subsamplingState) }
 }
 

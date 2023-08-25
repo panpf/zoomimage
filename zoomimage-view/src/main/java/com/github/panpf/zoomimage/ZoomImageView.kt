@@ -28,7 +28,6 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingAbility
-import com.github.panpf.zoomimage.view.subsampling.internal.bindZoomAndSubsampling
 import com.github.panpf.zoomimage.view.zoom.ZoomAbility
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 
@@ -58,11 +57,7 @@ open class ZoomImageView @JvmOverloads constructor(
         val subsamplingAbility = SubsamplingAbility(view = this, logger = logger)
         _subsamplingAbility = subsamplingAbility
 
-        bindZoomAndSubsampling(
-            view = this,
-            zoomEngine = zoomAbility.zoomEngine,
-            subsamplingEngine = subsamplingAbility.engine
-        )
+        subsamplingAbility.engine.bindZoomEngine(this, zoomAbility.zoomEngine)
     }
 
     override fun setImageDrawable(drawable: Drawable?) {

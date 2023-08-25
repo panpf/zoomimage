@@ -177,7 +177,51 @@ class SubsamplingEngine constructor(logger: Logger) {
         return onImageLoadRectChangeListenerList?.remove(listener) == true
     }
 
-    internal fun refreshTiles(
+    internal fun bindZoomEngine(view: View, zoomEngine: ZoomEngine) {
+        containerSize = zoomEngine.containerSize
+        zoomEngine.registerOnContainerSizeChangeListener(
+            OnContainerSizeChangeListenerImpl(this@SubsamplingEngine)
+        )
+
+        contentSize = zoomEngine.contentSize
+        zoomEngine.registerOnContentSizeChangeListener {
+            contentSize = zoomEngine.contentSize
+        }
+
+        val refreshTiles: (caller: String) -> Unit = { caller ->
+            refreshTiles(
+                contentVisibleRect = zoomEngine.contentVisibleRect,
+                scale = zoomEngine.transform.scaleX,
+                rotation = zoomEngine.transform.rotation.roundToInt(),
+                transforming = zoomEngine.transforming,
+                caller = caller
+            )
+        }
+
+        zoomEngine.registerOnTransformChangeListener {
+            refreshTiles("transformChanged")
+        }
+
+        registerOnReadyChangeListener {
+            val imageInfo = imageInfo
+            zoomEngine.contentOriginSize = if (ready && imageInfo != null) {
+                imageInfo.size
+            } else {
+                IntSizeCompat.Zero
+            }
+            refreshTiles("readyChanged")
+        }
+
+        registerOnPauseChangeListener {
+            refreshTiles(if (it) "paused" else "resumed")
+        }
+
+        registerOnTileChangedListener {
+            view.invalidate()
+        }
+    }
+
+    private fun refreshTiles(
         contentVisibleRect: IntRectCompat,
         scale: Float,
         rotation: Int,
@@ -351,62 +395,6 @@ class SubsamplingEngine constructor(logger: Logger) {
         onImageLoadRectChangeListenerList?.forEach {
             it.onImageLoadRectChanged(imageLoadRect)
         }
-    }
-}
-
-fun bindZoomAndSubsampling(
-    view: View,
-    zoomEngine: ZoomEngine,
-    subsamplingEngine: SubsamplingEngine
-) {
-    subsamplingEngine.containerSize = zoomEngine.containerSize
-    zoomEngine.registerOnContainerSizeChangeListener(
-        OnContainerSizeChangeListenerImpl(subsamplingEngine)
-    )
-
-    subsamplingEngine.contentSize = zoomEngine.contentSize
-    zoomEngine.registerOnContentSizeChangeListener {
-        subsamplingEngine.contentSize = zoomEngine.contentSize
-    }
-
-    zoomEngine.registerOnTransformChangeListener {
-        subsamplingEngine.refreshTiles(
-            contentVisibleRect = zoomEngine.contentVisibleRect,
-            scale = zoomEngine.transform.scaleX,
-            rotation = zoomEngine.transform.rotation.roundToInt(),
-            transforming = zoomEngine.transforming,
-            caller = "transformChanged"
-        )
-    }
-
-    subsamplingEngine.registerOnReadyChangeListener {
-        val imageInfo = subsamplingEngine.imageInfo
-        zoomEngine.contentOriginSize = if (subsamplingEngine.ready && imageInfo != null) {
-            imageInfo.size
-        } else {
-            IntSizeCompat.Zero
-        }
-        subsamplingEngine.refreshTiles(
-            contentVisibleRect = zoomEngine.contentVisibleRect,
-            scale = zoomEngine.transform.scaleX,
-            rotation = zoomEngine.transform.rotation.roundToInt(),
-            transforming = zoomEngine.transforming,
-            caller = "readyChanged"
-        )
-    }
-
-    subsamplingEngine.registerOnPauseChangeListener {
-        subsamplingEngine.refreshTiles(
-            contentVisibleRect = zoomEngine.contentVisibleRect,
-            scale = zoomEngine.transform.scaleX,
-            rotation = zoomEngine.transform.rotation.roundToInt(),
-            transforming = zoomEngine.transforming,
-            caller = if (it) "paused" else "resumed"
-        )
-    }
-
-    subsamplingEngine.registerOnTileChangedListener {
-        view.invalidate()
     }
 }
 

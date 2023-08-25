@@ -54,9 +54,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
     private var lastResetTileDecoderJob: Job? = null
+    private val tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
+    private val tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
 
-    internal var tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
-    internal var tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
     internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     internal var contentSize: IntSize by mutableStateOf(IntSize.Zero)
 
@@ -92,7 +92,89 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         return true
     }
 
-    internal fun resetTileDecoder(caller: String) {
+    @Composable
+    internal fun BindZoomableState(zoomableState: ZoomableState) {
+        LaunchedEffect(Unit) {
+            snapshotFlow { zoomableState.containerSize }.collect {
+                // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
+                // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
+                if (it.isNotEmpty()) {
+                    delay(60)
+                }
+                containerSize = it
+                resetTileManager("containerSizeChanged")
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { zoomableState.contentSize }.collect {
+                contentSize = it
+                resetTileDecoder("contentSizeChanged")
+            }
+        }
+
+        val refreshTiles: (caller: String) -> Unit = { caller ->
+            refreshTiles(
+                contentVisibleRect = zoomableState.contentVisibleRect,
+                scale = zoomableState.transform.scaleX,
+                rotation = zoomableState.transform.rotation.roundToInt(),
+                transforming = zoomableState.transforming,
+                caller = caller
+            )
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { ready }.collect {
+                val imageInfo = imageInfo
+                zoomableState.contentOriginSize = if (it && imageInfo != null) {
+                    IntSize(imageInfo.width, imageInfo.height)
+                } else {
+                    IntSize.Zero
+                }
+                refreshTiles("readyChanged")
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { zoomableState.transform }.collect {
+                refreshTiles("transformChanged")
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { zoomableState.transforming }.collect {
+                refreshTiles("transformingChanged")
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { paused }.collect {
+                refreshTiles(if (it) "paused" else "resumed")
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { ignoreExifOrientation }.collect {
+                resetTileDecoder("ignoreExifOrientationChanged")
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { tileMemoryCache }.collect {
+                tileMemoryCacheHelper.tileMemoryCache = it
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { disableMemoryCache }.collect {
+                tileMemoryCacheHelper.disableMemoryCache = it
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { tileBitmapPool }.collect {
+                tileBitmapPoolHelper.tileBitmapPool = it
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { disallowReuseBitmap }.collect {
+                tileBitmapPoolHelper.disallowReuseBitmap = it
+            }
+        }
+    }
+
+    private fun resetTileDecoder(caller: String) {
         cleanTileManager("resetTileDecoder:$caller")
         cleanTileDecoder("resetTileDecoder:$caller")
 
@@ -143,7 +225,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         }
     }
 
-    internal fun resetTileManager(caller: String) {
+    private fun resetTileManager(caller: String) {
         cleanTileManager("resetTileManager:$caller")
 
         val imageSource = imageSource ?: return
@@ -192,7 +274,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         refreshReadyState()
     }
 
-    internal fun refreshTiles(
+    private fun refreshTiles(
         contentVisibleRect: IntRect,
         scale: Float,
         rotation: Int,
@@ -259,90 +341,5 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private fun destroy(caller: String) {
         cleanTileManager("destroy:$caller")
         cleanTileDecoder("destroy:$caller")
-    }
-}
-
-@Composable
-fun BindZoomableStateAndSubsamplingState(
-    zoomableState: ZoomableState,
-    subsamplingState: SubsamplingState
-) {
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.containerSize }.collect {
-            // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
-            // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
-            if (it.isNotEmpty()) {
-                delay(60)
-            }
-            subsamplingState.containerSize = it
-            subsamplingState.resetTileManager("containerSizeChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.contentSize }.collect {
-            subsamplingState.contentSize = it
-            subsamplingState.resetTileDecoder("contentSizeChanged")
-        }
-    }
-
-    val refreshTiles: (caller: String) -> Unit = { caller ->
-        subsamplingState.refreshTiles(
-            contentVisibleRect = zoomableState.contentVisibleRect,
-            scale = zoomableState.transform.scaleX,
-            rotation = zoomableState.transform.rotation.roundToInt(),
-            transforming = zoomableState.transforming,
-            caller = caller
-        )
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { subsamplingState.ready }.collect {
-            val imageInfo = subsamplingState.imageInfo
-            zoomableState.contentOriginSize = if (it && imageInfo != null) {
-                IntSize(imageInfo.width, imageInfo.height)
-            } else {
-                IntSize.Zero
-            }
-            refreshTiles("readyChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.transform }.collect {
-            refreshTiles("transformChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.transforming }.collect {
-            refreshTiles("transformingChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { subsamplingState.paused }.collect {
-            refreshTiles(if (it) "paused" else "resumed")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { subsamplingState.ignoreExifOrientation }.collect {
-            subsamplingState.resetTileDecoder("ignoreExifOrientationChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { subsamplingState.tileMemoryCache }.collect {
-            subsamplingState.tileMemoryCacheHelper.tileMemoryCache = it
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { subsamplingState.disableMemoryCache }.collect {
-            subsamplingState.tileMemoryCacheHelper.disableMemoryCache = it
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { subsamplingState.tileBitmapPool }.collect {
-            subsamplingState.tileBitmapPoolHelper.tileBitmapPool = it
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { subsamplingState.disallowReuseBitmap }.collect {
-            subsamplingState.tileBitmapPoolHelper.disallowReuseBitmap = it
-        }
     }
 }
