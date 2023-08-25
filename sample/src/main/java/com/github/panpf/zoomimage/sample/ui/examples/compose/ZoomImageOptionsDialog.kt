@@ -38,7 +38,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.util.BaseMmkvData
-import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
+import com.github.panpf.zoomimage.util.DefaultStepScaleMinMultiple
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -54,7 +54,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.rubberBandScale, settingsService.rubberBandScale)
         BindStateAndFlow(state.threeStepScale, settingsService.threeStepScale)
         BindStateAndFlow(state.slowerScaleAnimation, settingsService.slowerScaleAnimation)
-        BindStateAndFlow(state.mediumScaleMinMultiple, settingsService.mediumScaleMinMultiple)
+        BindStateAndFlow(state.stepScaleMinMultiple, settingsService.stepScaleMinMultiple)
         BindStateAndFlow(
             state.limitOffsetWithinBaseVisibleRect,
             settingsService.limitOffsetWithinBaseVisibleRect
@@ -90,7 +90,7 @@ class ZoomImageOptionsState {
     val rubberBandScale = MutableStateFlow(true)
     val threeStepScale = MutableStateFlow(false)
     val slowerScaleAnimation = MutableStateFlow(false)
-    val mediumScaleMinMultiple = MutableStateFlow(DefaultMediumScaleMinMultiple.toString())
+    val stepScaleMinMultiple = MutableStateFlow(DefaultStepScaleMinMultiple.toString())
     val limitOffsetWithinBaseVisibleRect = MutableStateFlow(false)
 
     val readModeEnabled = MutableStateFlow(true)
@@ -115,7 +115,7 @@ fun ZoomImageOptionsDialog(
     val rubberBandScale by state.rubberBandScale.collectAsState()
     val threeStepScale by state.threeStepScale.collectAsState()
     val slowerScaleAnimation by state.slowerScaleAnimation.collectAsState()
-    val mediumScaleMinMultiple by state.mediumScaleMinMultiple.collectAsState()
+    val stepScaleMinMultiple by state.stepScaleMinMultiple.collectAsState()
     val limitOffsetWithinBaseVisibleRect by state.limitOffsetWithinBaseVisibleRect.collectAsState()
 
     val readModeEnabled by state.readModeEnabled.collectAsState()
@@ -186,7 +186,7 @@ fun ZoomImageOptionsDialog(
                     onDismissRequest()
                 }
 
-                val mediumScaleMinMultiples = remember {
+                val stepScaleMinMultiples = remember {
                     listOf(
                         2.0f.toString(),
                         2.5f.toString(),
@@ -196,11 +196,11 @@ fun ZoomImageOptionsDialog(
                     )
                 }
                 MyDropdownMenu(
-                    "Medium Scale Min Multiple",
-                    mediumScaleMinMultiple,
-                    mediumScaleMinMultiples
+                    "Step Scale Min Multiple",
+                    stepScaleMinMultiple,
+                    stepScaleMinMultiples
                 ) {
-                    state.mediumScaleMinMultiple.value = it
+                    state.stepScaleMinMultiple.value = it
                     onDismissRequest()
                 }
 

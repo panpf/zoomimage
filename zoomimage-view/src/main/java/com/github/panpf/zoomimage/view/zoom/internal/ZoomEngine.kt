@@ -23,7 +23,7 @@ import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.util.AlignmentCompat
 import com.github.panpf.zoomimage.util.ContentScaleCompat
-import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
+import com.github.panpf.zoomimage.util.DefaultStepScaleMinMultiple
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -123,11 +123,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset("readModeChanged")
             }
         }
-    var mediumScaleMinMultiple: Float = DefaultMediumScaleMinMultiple
+    var stepScaleMinMultiple: Float = DefaultStepScaleMinMultiple
         set(value) {
             if (field != value) {
                 field = value
-                reset("mediumScaleMinMultipleChanged")
+                reset("stepScaleMinMultipleChanged")
             }
         }
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
@@ -189,7 +189,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val rotation = rotation
         val contentScale = contentScale
         val alignment = alignment
-        val mediumScaleMinMultiple = mediumScaleMinMultiple
+        val stepScaleMinMultiple = stepScaleMinMultiple
 
         val initialZoom = com.github.panpf.zoomimage.util.computeInitialZoom(
             containerSize = containerSize,
@@ -199,7 +199,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             alignment = alignment,
             rotation = rotation,
             readMode = readMode,
-            mediumScaleMinMultiple = mediumScaleMinMultiple,
+            stepScaleMinMultiple = stepScaleMinMultiple,
         )
         logger.d {
             val transform = initialZoom.baseTransform + initialZoom.userTransform
@@ -209,7 +209,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}, " +
                     "rotation=$rotation, " +
-                    "mediumScaleMinMultiple=$mediumScaleMinMultiple, " +
+                    "stepScaleMinMultiple=$stepScaleMinMultiple, " +
                     "readMode=$readMode. " +
                     "minScale=${initialZoom.minScale}, " +
                     "mediumScale=${initialZoom.mediumScale}, " +

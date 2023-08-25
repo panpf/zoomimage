@@ -125,7 +125,7 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     data = settingsService.slowerScaleAnimation,
                 )
             )
-            val mediumScaleMinMultiples = listOf(
+            val stepScaleMinMultiples = listOf(
                 2.0f.toString(),
                 2.5f.toString(),
                 3.0f.toString(),
@@ -134,11 +134,11 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             )
             add(
                 DropdownMenu(
-                    title = "Medium Scale Min Multiple",
-                    values = mediumScaleMinMultiples,
-                    getValue = { settingsService.mediumScaleMinMultiple.value },
+                    title = "Step Scale Min Multiple",
+                    values = stepScaleMinMultiples,
+                    getValue = { settingsService.stepScaleMinMultiple.value },
                     onSelected = { _, value ->
-                        settingsService.mediumScaleMinMultiple.value = value
+                        settingsService.stepScaleMinMultiple.value = value
                     }
                 )
             )

@@ -13,7 +13,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
-const val DefaultMediumScaleMinMultiple: Float = 3f
+const val DefaultStepScaleMinMultiple: Float = 3f
 
 
 /* ******************************************* initial ***************************************** */
@@ -134,7 +134,7 @@ fun computeStepScales(
     contentOriginSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     rotation: Int,
-    mediumScaleMinMultiple: Float,
+    stepScaleMinMultiple: Float,
 ): FloatArray {
     /*
      * Calculations are based on the following rules:
@@ -155,7 +155,7 @@ fun computeStepScales(
     )
 
     val minScale = baseScaleFactor.scaleX
-    val minMediumScale = minScale * mediumScaleMinMultiple
+    val minMediumScale = minScale * stepScaleMinMultiple
     val mediumScale = if (contentScale != ContentScaleCompat.FillBounds) {
         // The width and height of content fill the container at the same time
         val fillContainerScale = max(
@@ -175,7 +175,7 @@ fun computeStepScales(
     } else {
         minMediumScale
     }
-    val maxScale = mediumScale * 2f
+    val maxScale = mediumScale * stepScaleMinMultiple
     return floatArrayOf(minScale, mediumScale, maxScale)
 }
 
@@ -187,7 +187,7 @@ fun computeInitialZoom(
     alignment: AlignmentCompat,
     rotation: Int,
     readMode: ReadMode?,
-    mediumScaleMinMultiple: Float,
+    stepScaleMinMultiple: Float,
 ): InitialZoom {
     /*
      * Calculations are based on the following rules:
@@ -206,7 +206,7 @@ fun computeInitialZoom(
         contentOriginSize = contentOriginSize,
         contentScale = contentScale,
         rotation = rotation,
-        mediumScaleMinMultiple = mediumScaleMinMultiple,
+        stepScaleMinMultiple = stepScaleMinMultiple,
     )
     val baseTransform = computeBaseTransform(
         containerSize = containerSize,

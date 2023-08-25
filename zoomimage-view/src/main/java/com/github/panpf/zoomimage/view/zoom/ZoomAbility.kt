@@ -105,10 +105,10 @@ class ZoomAbility constructor(
         set(value) {
             zoomEngine.readMode = value
         }
-    var mediumScaleMinMultiple: Float
-        get() = zoomEngine.mediumScaleMinMultiple
+    var stepScaleMinMultiple: Float
+        get() = zoomEngine.stepScaleMinMultiple
         set(value) {
-            zoomEngine.mediumScaleMinMultiple = value
+            zoomEngine.stepScaleMinMultiple = value
         }
     var animationSpec: ZoomAnimationSpec
         get() = zoomEngine.animationSpec

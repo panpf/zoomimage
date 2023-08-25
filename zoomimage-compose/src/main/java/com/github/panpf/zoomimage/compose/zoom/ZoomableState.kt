@@ -47,7 +47,7 @@ import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
-import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
+import com.github.panpf.zoomimage.util.DefaultStepScaleMinMultiple
 import com.github.panpf.zoomimage.util.calculateNextStepScale
 import com.github.panpf.zoomimage.util.canScrollByEdge
 import com.github.panpf.zoomimage.util.computeContentBaseDisplayRect
@@ -114,8 +114,8 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
         }
     }
     LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.mediumScaleMinMultiple }.collect {
-            zoomableState.reset("mediumScaleMinMultipleChanged")
+        snapshotFlow { zoomableState.stepScaleMinMultiple }.collect {
+            zoomableState.reset("stepScaleMinMultipleChanged")
         }
     }
     LaunchedEffect(Unit) {
@@ -148,7 +148,7 @@ class ZoomableState(
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
     var alignment: Alignment by mutableStateOf(Alignment.Center)
     var readMode: ReadMode? by mutableStateOf(null)
-    var mediumScaleMinMultiple: Float by mutableStateOf(DefaultMediumScaleMinMultiple)
+    var stepScaleMinMultiple: Float by mutableStateOf(DefaultStepScaleMinMultiple)
     var threeStepScale: Boolean by mutableStateOf(false)
     var rubberBandScale: Boolean by mutableStateOf(true)
     var animationSpec: ZoomAnimationSpec by mutableStateOf(ZoomAnimationSpec.Default)
@@ -239,7 +239,7 @@ class ZoomableState(
         val alignment = alignment
         val readMode = readMode
         val rotation = rotation
-        val mediumScaleMinMultiple = mediumScaleMinMultiple
+        val stepScaleMinMultiple = stepScaleMinMultiple
 
         val initialZoom = computeInitialZoom(
             containerSize = containerSize.toCompat(),
@@ -249,7 +249,7 @@ class ZoomableState(
             alignment = alignment.toCompat(),
             rotation = rotation,
             readMode = readMode,
-            mediumScaleMinMultiple = mediumScaleMinMultiple
+            stepScaleMinMultiple = stepScaleMinMultiple
         )
         logger.d {
             val transform = initialZoom.baseTransform + initialZoom.userTransform
@@ -260,7 +260,7 @@ class ZoomableState(
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}, " +
                     "rotation=${rotation}, " +
-                    "mediumScaleMinMultiple=${mediumScaleMinMultiple.format(4)}, " +
+                    "stepScaleMinMultiple=${stepScaleMinMultiple.format(4)}, " +
                     "readMode=${readMode}. " +
                     "minScale=${initialZoom.minScale.format(4)}, " +
                     "mediumScale=${initialZoom.mediumScale.format(4)}, " +

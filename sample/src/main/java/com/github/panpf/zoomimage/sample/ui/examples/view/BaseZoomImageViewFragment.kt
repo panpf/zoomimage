@@ -70,9 +70,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScale = it
                 }
-                settingsService.mediumScaleMinMultiple.stateFlow
+                settingsService.stepScaleMinMultiple.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        mediumScaleMinMultiple = it.toFloat()
+                        stepScaleMinMultiple = it.toFloat()
                     }
                 settingsService.limitOffsetWithinBaseVisibleRect.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {

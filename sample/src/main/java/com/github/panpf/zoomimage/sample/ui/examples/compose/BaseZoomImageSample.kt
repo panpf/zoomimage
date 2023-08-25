@@ -55,12 +55,12 @@ fun BaseZoomImageSample(
     val animateScale by settingsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.stateFlow.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.stateFlow.collectAsState()
-    val mediumScaleMinMultipleString by settingsService.mediumScaleMinMultiple.stateFlow.collectAsState()
+    val stepScaleMinMultipleString by settingsService.stepScaleMinMultiple.stateFlow.collectAsState()
     val ignoreExifOrientation by settingsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by settingsService.showTileBounds.stateFlow.collectAsState()
     val horizontalLayout by settingsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
 
-    val mediumScaleMinMultiple by remember { derivedStateOf { mediumScaleMinMultipleString.toFloat() } }
+    val stepScaleMinMultiple by remember { derivedStateOf { stepScaleMinMultipleString.toFloat() } }
     val contentScale by remember { derivedStateOf { ContentScale.valueOf(contentScaleName) } }
     val alignment by remember { derivedStateOf { Alignment.valueOf(alignmentName) } }
     val zoomAnimationSpec by remember {
@@ -90,8 +90,8 @@ fun BaseZoomImageSample(
         LaunchedEffect(zoomAnimationSpec) {
             zoomable.animationSpec = zoomAnimationSpec
         }
-        LaunchedEffect(mediumScaleMinMultiple) {
-            zoomable.mediumScaleMinMultiple = mediumScaleMinMultiple
+        LaunchedEffect(stepScaleMinMultiple) {
+            zoomable.stepScaleMinMultiple = stepScaleMinMultiple
         }
         LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
             zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
