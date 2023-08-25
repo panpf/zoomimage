@@ -34,7 +34,7 @@ fun Modifier.zoomable(
                 },
                 onDoubleTap = { touchPoint ->
                     state.switchScale(
-                        contentPoint = state.touchPointToContentPoint(touchPoint),
+                        centroidContentPoint = state.touchPointToContentPoint(touchPoint),
                         animated = true
                     )
                 },

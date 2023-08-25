@@ -176,7 +176,7 @@ class ZoomAbility constructor(
             },
             onDoubleTapCallback = { e: MotionEvent ->
                 switchScale(
-                    contentPoint = zoomEngine.touchPointToContentPoint(OffsetCompat(e.x, e.y)),
+                    centroidContentPoint = zoomEngine.touchPointToContentPoint(OffsetCompat(e.x, e.y)),
                     animated = true
                 )
                 true
@@ -231,16 +231,16 @@ class ZoomAbility constructor(
 
     fun scale(
         targetScale: Float,
-        contentPoint: IntOffsetCompat = contentVisibleRect.center,
+        centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = false
     ) {
-        zoomEngine.scale(targetScale, contentPoint, animated)
+        zoomEngine.scale(targetScale, centroidContentPoint, animated)
     }
 
     fun switchScale(
-        contentPoint: IntOffsetCompat = contentVisibleRect.center,
+        centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = true
-    ): Float = zoomEngine.switchScale(contentPoint, animated)
+    ): Float = zoomEngine.switchScale(centroidContentPoint, animated)
 
     fun offset(
         targetOffset: OffsetCompat,
