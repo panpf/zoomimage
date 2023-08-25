@@ -38,7 +38,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.util.BaseMmkvData
-import com.github.panpf.zoomimage.zoom.DefaultStepScaleMinMultiple
+import com.github.panpf.zoomimage.zoom.StepScalesComputer
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -54,7 +54,8 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.rubberBandScale, settingsService.rubberBandScale)
         BindStateAndFlow(state.threeStepScale, settingsService.threeStepScale)
         BindStateAndFlow(state.slowerScaleAnimation, settingsService.slowerScaleAnimation)
-        BindStateAndFlow(state.stepScaleMinMultiple, settingsService.stepScaleMinMultiple)
+        BindStateAndFlow(state.stepScalesComputer, settingsService.stepScalesComputer)
+        BindStateAndFlow(state.stepScaleMultiple, settingsService.stepScaleMultiple)
         BindStateAndFlow(
             state.limitOffsetWithinBaseVisibleRect,
             settingsService.limitOffsetWithinBaseVisibleRect
@@ -90,7 +91,8 @@ class ZoomImageOptionsState {
     val rubberBandScale = MutableStateFlow(true)
     val threeStepScale = MutableStateFlow(false)
     val slowerScaleAnimation = MutableStateFlow(false)
-    val stepScaleMinMultiple = MutableStateFlow(DefaultStepScaleMinMultiple.toString())
+    val stepScalesComputer = MutableStateFlow("Dynamic")
+    val stepScaleMultiple = MutableStateFlow(StepScalesComputer.Multiple.toString())
     val limitOffsetWithinBaseVisibleRect = MutableStateFlow(false)
 
     val readModeEnabled = MutableStateFlow(true)
@@ -115,7 +117,8 @@ fun ZoomImageOptionsDialog(
     val rubberBandScale by state.rubberBandScale.collectAsState()
     val threeStepScale by state.threeStepScale.collectAsState()
     val slowerScaleAnimation by state.slowerScaleAnimation.collectAsState()
-    val stepScaleMinMultiple by state.stepScaleMinMultiple.collectAsState()
+    val stepScalesComputer by state.stepScalesComputer.collectAsState()
+    val stepScaleMultiple by state.stepScaleMultiple.collectAsState()
     val limitOffsetWithinBaseVisibleRect by state.limitOffsetWithinBaseVisibleRect.collectAsState()
 
     val readModeEnabled by state.readModeEnabled.collectAsState()
@@ -186,7 +189,15 @@ fun ZoomImageOptionsDialog(
                     onDismissRequest()
                 }
 
-                val stepScaleMinMultiples = remember {
+                val stepScalesComputers = remember {
+                    listOf("Dynamic", "Fixed")
+                }
+                MyDropdownMenu("Step Scales Computer", stepScalesComputer, stepScalesComputers) {
+                    state.stepScalesComputer.value = it
+                    onDismissRequest()
+                }
+
+                val stepScaleMultiples = remember {
                     listOf(
                         2.0f.toString(),
                         2.5f.toString(),
@@ -195,12 +206,8 @@ fun ZoomImageOptionsDialog(
                         4.0f.toString(),
                     )
                 }
-                MyDropdownMenu(
-                    "Step Scale Min Multiple",
-                    stepScaleMinMultiple,
-                    stepScaleMinMultiples
-                ) {
-                    state.stepScaleMinMultiple.value = it
+                MyDropdownMenu("Step Scale Multiple", stepScaleMultiple, stepScaleMultiples) {
+                    state.stepScaleMultiple.value = it
                     onDismissRequest()
                 }
 

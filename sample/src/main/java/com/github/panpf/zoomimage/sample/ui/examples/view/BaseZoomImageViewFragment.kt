@@ -36,6 +36,7 @@ import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.StepScalesComputer
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -70,9 +71,25 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScale = it
                 }
-                settingsService.stepScaleMinMultiple.stateFlow
+                settingsService.stepScaleMultiple.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        stepScaleMinMultiple = it.toFloat()
+                        val stepScaleMultiple = settingsService.stepScaleMultiple.value.toFloat()
+                        val stepScalesComputerName = settingsService.stepScalesComputer.value
+                        stepScalesComputer = if (stepScalesComputerName == "Dynamic") {
+                            StepScalesComputer.dynamic(stepScaleMultiple)
+                        } else {
+                            StepScalesComputer.fixed(stepScaleMultiple)
+                        }
+                    }
+                settingsService.stepScalesComputer.stateFlow
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        val stepScaleMultiple = settingsService.stepScaleMultiple.value.toFloat()
+                        val stepScalesComputerName = settingsService.stepScalesComputer.value
+                        stepScalesComputer = if (stepScalesComputerName == "Dynamic") {
+                            StepScalesComputer.dynamic(stepScaleMultiple)
+                        } else {
+                            StepScalesComputer.fixed(stepScaleMultiple)
+                        }
                     }
                 settingsService.limitOffsetWithinBaseVisibleRect.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {

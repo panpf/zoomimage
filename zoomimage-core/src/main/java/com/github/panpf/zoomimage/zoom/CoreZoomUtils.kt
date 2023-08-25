@@ -17,7 +17,6 @@ import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isEmpty
-import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
@@ -32,9 +31,6 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sin
-
-
-const val DefaultStepScaleMinMultiple: Float = 3f
 
 
 /* ******************************************* initial ***************************************** */
@@ -155,7 +151,7 @@ fun computeStepScales(
     contentOriginSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     rotation: Int,
-    stepScaleMinMultiple: Float,
+    computer: StepScalesComputer,
 ): FloatArray {
     /*
      * Calculations are based on the following rules:
@@ -170,33 +166,22 @@ fun computeStepScales(
     }
 
     val rotatedContentSize = contentSize.rotate(rotation)
+    val rotatedContentOriginSize = contentOriginSize.rotate(rotation)
     val baseScaleFactor = contentScale.computeScaleFactor(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-
     val minScale = baseScaleFactor.scaleX
-    val minMediumScale = minScale * stepScaleMinMultiple
-    val mediumScale = if (contentScale != ContentScaleCompat.FillBounds) {
-        // The width and height of content fill the container at the same time
-        val fillContainerScale = max(
-            containerSize.width / rotatedContentSize.width.toFloat(),
-            containerSize.height / rotatedContentSize.height.toFloat()
-        )
-        // Enlarge content to the same size as its original
-        val contentOriginScale = if (contentOriginSize.isNotEmpty()) {
-            val rotatedContentOriginSize = contentOriginSize.rotate(rotation)
-            val widthScale = rotatedContentOriginSize.width / rotatedContentSize.width.toFloat()
-            val heightScale = rotatedContentOriginSize.height / rotatedContentSize.height.toFloat()
-            max(widthScale, heightScale)
-        } else {
-            1.0f
-        }
-        floatArrayOf(minMediumScale, fillContainerScale, contentOriginScale).maxOrNull()!!
-    } else {
-        minMediumScale
-    }
-    val maxScale = mediumScale * stepScaleMinMultiple
+    val scales = computer.compute(
+        containerSize = containerSize,
+        contentSize = rotatedContentSize,
+        contentOriginSize = rotatedContentOriginSize,
+        contentScale = contentScale,
+        minScale = minScale,
+    )
+    require(scales.size == 2) { "StepScalesComputer must return 2 scales, only mediumScale and maxScale are included" }
+    val mediumScale = scales[0]
+    val maxScale = scales[1]
     return floatArrayOf(minScale, mediumScale, maxScale)
 }
 
@@ -208,7 +193,7 @@ fun computeInitialZoom(
     alignment: AlignmentCompat,
     rotation: Int,
     readMode: ReadMode?,
-    stepScaleMinMultiple: Float,
+    stepScalesComputer: StepScalesComputer,
 ): InitialZoom {
     /*
      * Calculations are based on the following rules:
@@ -227,7 +212,7 @@ fun computeInitialZoom(
         contentOriginSize = contentOriginSize,
         contentScale = contentScale,
         rotation = rotation,
-        stepScaleMinMultiple = stepScaleMinMultiple,
+        computer = stepScalesComputer,
     )
     val baseTransform = computeBaseTransform(
         containerSize = containerSize,

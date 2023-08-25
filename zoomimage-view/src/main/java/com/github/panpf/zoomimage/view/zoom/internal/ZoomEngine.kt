@@ -47,7 +47,7 @@ import com.github.panpf.zoomimage.view.zoom.OnTransformChangeListener
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
-import com.github.panpf.zoomimage.zoom.DefaultStepScaleMinMultiple
+import com.github.panpf.zoomimage.zoom.StepScalesComputer
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
 import com.github.panpf.zoomimage.zoom.canScrollByEdge
 import com.github.panpf.zoomimage.zoom.computeContentBaseDisplayRect
@@ -124,11 +124,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset("readModeChanged")
             }
         }
-    var stepScaleMinMultiple: Float = DefaultStepScaleMinMultiple
+    var stepScalesComputer: StepScalesComputer = StepScalesComputer.Dynamic
         set(value) {
             if (field != value) {
                 field = value
-                reset("stepScaleMinMultipleChanged")
+                reset("stepScalesComputerChanged")
             }
         }
     var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
@@ -190,7 +190,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val rotation = rotation
         val contentScale = contentScale
         val alignment = alignment
-        val stepScaleMinMultiple = stepScaleMinMultiple
+        val stepScalesComputer = stepScalesComputer
 
         val initialZoom = computeInitialZoom(
             containerSize = containerSize,
@@ -200,7 +200,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             alignment = alignment,
             rotation = rotation,
             readMode = readMode,
-            stepScaleMinMultiple = stepScaleMinMultiple,
+            stepScalesComputer = stepScalesComputer,
         )
         logger.d {
             val transform = initialZoom.baseTransform + initialZoom.userTransform
@@ -210,7 +210,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}, " +
                     "rotation=$rotation, " +
-                    "stepScaleMinMultiple=$stepScaleMinMultiple, " +
+                    "stepScalesComputer=$stepScalesComputer, " +
                     "readMode=$readMode. " +
                     "minScale=${initialZoom.minScale}, " +
                     "mediumScale=${initialZoom.mediumScale}, " +

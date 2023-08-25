@@ -29,6 +29,7 @@ import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
+import com.github.panpf.zoomimage.zoom.StepScalesComputer
 
 @Composable
 fun BaseZoomImageSample(
@@ -55,12 +56,22 @@ fun BaseZoomImageSample(
     val animateScale by settingsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.stateFlow.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.stateFlow.collectAsState()
-    val stepScaleMinMultipleString by settingsService.stepScaleMinMultiple.stateFlow.collectAsState()
+    val stepScalesComputerName by settingsService.stepScalesComputer.stateFlow.collectAsState()
+    val stepScaleMultipleString by settingsService.stepScaleMultiple.stateFlow.collectAsState()
     val ignoreExifOrientation by settingsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by settingsService.showTileBounds.stateFlow.collectAsState()
     val horizontalLayout by settingsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
 
-    val stepScaleMinMultiple by remember { derivedStateOf { stepScaleMinMultipleString.toFloat() } }
+    val stepScalesComputer by remember {
+        derivedStateOf {
+            val stepScaleMultiple = stepScaleMultipleString.toFloat()
+            if (stepScalesComputerName == "Dynamic") {
+                StepScalesComputer.dynamic(stepScaleMultiple)
+            } else {
+                StepScalesComputer.fixed(stepScaleMultiple)
+            }
+        }
+    }
     val contentScale by remember { derivedStateOf { ContentScale.valueOf(contentScaleName) } }
     val alignment by remember { derivedStateOf { Alignment.valueOf(alignmentName) } }
     val zoomAnimationSpec by remember {
@@ -90,8 +101,8 @@ fun BaseZoomImageSample(
         LaunchedEffect(zoomAnimationSpec) {
             zoomable.animationSpec = zoomAnimationSpec
         }
-        LaunchedEffect(stepScaleMinMultiple) {
-            zoomable.stepScaleMinMultiple = stepScaleMinMultiple
+        LaunchedEffect(stepScalesComputer) {
+            zoomable.stepScalesComputer = stepScalesComputer
         }
         LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
             zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
@@ -114,13 +125,12 @@ fun BaseZoomImageSample(
             .background(Color.Black)
     ) {
         content(
-            contentScale = contentScale,
-            alignment = alignment,
-            state = zoomState,
-            ignoreExifOrientation = supportIgnoreExifOrientation && ignoreExifOrientation,
-            scrollBarSpec = if (scrollBarEnabled) ScrollBarSpec.Default else null,
-            onLongPress = { infoDialogState.showing = true }
-        )
+            contentScale,
+            alignment,
+            zoomState,
+            supportIgnoreExifOrientation && ignoreExifOrientation,
+            if (scrollBarEnabled) ScrollBarSpec.Default else null
+        ) { infoDialogState.showing = true }
 
         ZoomImageMinimap(
             sketchImageUri = sketchImageUri,

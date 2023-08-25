@@ -125,7 +125,21 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     data = settingsService.slowerScaleAnimation,
                 )
             )
-            val stepScaleMinMultiples = listOf(
+            val stepScalesComputers = listOf(
+                "Dynamic",
+                "Fixed",
+            )
+            add(
+                DropdownMenu(
+                    title = "Step Scales Computer",
+                    values = stepScalesComputers,
+                    getValue = { settingsService.stepScalesComputer.value },
+                    onSelected = { _, value ->
+                        settingsService.stepScalesComputer.value = value
+                    }
+                )
+            )
+            val stepScaleMultiples = listOf(
                 2.0f.toString(),
                 2.5f.toString(),
                 3.0f.toString(),
@@ -134,14 +148,15 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             )
             add(
                 DropdownMenu(
-                    title = "Step Scale Min Multiple",
-                    values = stepScaleMinMultiples,
-                    getValue = { settingsService.stepScaleMinMultiple.value },
+                    title = "Step Scale Multiple",
+                    values = stepScaleMultiples,
+                    getValue = { settingsService.stepScaleMultiple.value },
                     onSelected = { _, value ->
-                        settingsService.stepScaleMinMultiple.value = value
+                        settingsService.stepScaleMultiple.value = value
                     }
                 )
             )
+
             add(
                 SwitchMenuFlow(
                     title = "Limit Offset Within Base Visible Rect",
