@@ -537,7 +537,7 @@ fun computeUserOffsetBounds(
 
 fun computeLocationUserOffset(
     containerSize: IntSizeCompat,
-    containerPoint: IntOffsetCompat,
+    containerPoint: OffsetCompat,
     userScale: Float,
 ): OffsetCompat {
     /*
@@ -551,7 +551,7 @@ fun computeLocationUserOffset(
     if (containerSize.isEmpty()) {
         return OffsetCompat.Zero
     }
-    val scaledContainerPoint = containerPoint.toOffset() * userScale
+    val scaledContainerPoint = containerPoint * userScale
     val containerCenter = containerSize.center.toOffset()
     val toCenterScaledContainerPoint = scaledContainerPoint - containerCenter
     val locationOffset = toCenterScaledContainerPoint * -1f
@@ -559,11 +559,10 @@ fun computeLocationUserOffset(
 }
 
 fun computeScaleUserOffset(
-    containerSize: IntSizeCompat,
     currentUserScale: Float,
     currentUserOffset: OffsetCompat,
     targetUserScale: Float,
-    containerPoint: IntOffsetCompat,
+    centroid: OffsetCompat,
 ): OffsetCompat {
     /*
      * Calculations are based on the following rules:
@@ -572,18 +571,11 @@ fun computeScaleUserOffset(
      * 3. The rotate center point is the content center
      * 4. Apply rotation before scaling and offset
      */
-
-    val touchPoint = containerPointToTouchPoint(
-        containerSize = containerSize,
-        userScale = currentUserScale,
-        userOffset = currentUserOffset,
-        containerPoint = containerPoint,
-    )
     return computeTransformOffset(
         currentScale = currentUserScale,
         currentOffset = currentUserOffset,
         targetScale = targetUserScale,
-        centroid = touchPoint,
+        centroid = centroid,
         pan = OffsetCompat.Zero,
         gestureRotate = 0f,
     )
@@ -731,7 +723,7 @@ fun touchPointToContainerPoint(
     userScale: Float,
     userOffset: OffsetCompat,
     touchPoint: OffsetCompat
-): IntOffsetCompat {
+): OffsetCompat {
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -741,10 +733,10 @@ fun touchPointToContainerPoint(
      */
 
     if (containerSize.isEmpty()) {
-        return IntOffsetCompat.Zero
+        return OffsetCompat.Zero
     }
     val scaledContainerPoint = touchPoint - userOffset
-    val containerPoint = (scaledContainerPoint / userScale).round()
+    val containerPoint = scaledContainerPoint / userScale
     return containerPoint
 }
 
@@ -752,7 +744,7 @@ fun containerPointToTouchPoint(
     containerSize: IntSizeCompat,
     userScale: Float,
     userOffset: OffsetCompat,
-    containerPoint: IntOffsetCompat
+    containerPoint: OffsetCompat
 ): OffsetCompat {
     if (containerSize.isEmpty()) {
         return OffsetCompat.Zero
@@ -769,8 +761,8 @@ fun containerPointToContentPoint(
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
     rotation: Int,
-    containerPoint: IntOffsetCompat
-): IntOffsetCompat {
+    containerPoint: OffsetCompat
+): OffsetCompat {
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -780,7 +772,7 @@ fun containerPointToContentPoint(
      */
 
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return IntOffsetCompat.Zero
+        return OffsetCompat.Zero
     }
     val rotatedContentSize = contentSize.rotate(rotation)
     val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
@@ -795,10 +787,10 @@ fun containerPointToContentPoint(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
     )
-    val rotatedContentPoint = (scaledRotatedContentPointOffset / rotatedContentScaleFactor).round()
-    val limitedRotatedContentPoint = rotatedContentPoint.limitTo(rotatedContentSize)
+    val rotatedContentPoint = (scaledRotatedContentPointOffset / rotatedContentScaleFactor)
+    val limitedRotatedContentPoint = rotatedContentPoint.limitTo(rotatedContentSize.toSize())
     val contentPoint =
-        limitedRotatedContentPoint.reverseRotateInSpace(contentSize, rotation)
+        limitedRotatedContentPoint.reverseRotateInSpace(contentSize.toSize(), rotation)
     return contentPoint
 }
 
@@ -808,8 +800,8 @@ fun contentPointToContainerPoint(
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
     rotation: Int,
-    contentPoint: IntOffsetCompat
-): IntOffsetCompat {
+    contentPoint: OffsetCompat
+): OffsetCompat {
     /*
      * Calculations are based on the following rules:
      * 1. Content is located in the top left corner of the container
@@ -819,11 +811,11 @@ fun contentPointToContainerPoint(
      */
 
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
-        return IntOffsetCompat.Zero
+        return OffsetCompat.Zero
     }
 
     val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedContentPoint = contentPoint.rotateInSpace(contentSize, rotation)
+    val rotatedContentPoint = contentPoint.rotateInSpace(contentSize.toSize(), rotation)
     val rotatedContentScaleFactor = contentScale.computeScaleFactor(
         srcSize = rotatedContentSize.toSize(),
         dstSize = containerSize.toSize()
@@ -836,7 +828,7 @@ fun contentPointToContainerPoint(
         alignment = alignment,
         rotation = 0,
     )
-    val containerPoint = scaledRotatedContentPoint + rotatedContentBaseDisplayRect.topLeft.round()
+    val containerPoint = scaledRotatedContentPoint + rotatedContentBaseDisplayRect.topLeft
     return containerPoint
 }
 
@@ -849,7 +841,7 @@ fun touchPointToContentPoint(
     userScale: Float,
     userOffset: OffsetCompat,
     touchPoint: OffsetCompat,
-): IntOffsetCompat {
+): OffsetCompat {
     val containerPoint = touchPointToContainerPoint(
         containerSize = containerSize,
         userScale = userScale,
@@ -866,29 +858,29 @@ fun touchPointToContentPoint(
     )
 }
 
-//fun contentPointToTouchPoint(
-//    containerSize: IntSizeCompat,
-//    contentSize: IntSizeCompat,
-//    contentScale: ContentScaleCompat,
-//    alignment: AlignmentCompat,
-//    rotation: Int,
-//    userScale: Float,
-//    userOffset: OffsetCompat,
-//    contentPoint: IntOffsetCompat,
-//): OffsetCompat {
-//    val containerPoint = contentPointToContainerPoint(
-//        containerSize = containerSize,
-//        contentSize = contentSize,
-//        contentScale = contentScale,
-//        alignment = alignment,
-//        rotation = rotation,
-//        contentPoint = contentPoint
-//    )
-//    val touchPoint = containerPointToTouchPoint(
-//        containerSize = containerSize,
-//        userScale = userScale,
-//        userOffset = userOffset,
-//        containerPoint = containerPoint
-//    )
-//    return touchPoint
-//}
+fun contentPointToTouchPoint(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+    userScale: Float,
+    userOffset: OffsetCompat,
+    contentPoint: OffsetCompat,
+): OffsetCompat {
+    val containerPoint = contentPointToContainerPoint(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+        contentPoint = contentPoint
+    )
+    val touchPoint = containerPointToTouchPoint(
+        containerSize = containerSize,
+        userScale = userScale,
+        userOffset = userOffset,
+        containerPoint = containerPoint
+    )
+    return touchPoint
+}

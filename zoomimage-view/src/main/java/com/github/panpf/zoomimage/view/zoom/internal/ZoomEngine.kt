@@ -43,6 +43,7 @@ import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
 import com.github.panpf.zoomimage.util.computeUserOffsetBounds
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
+import com.github.panpf.zoomimage.util.contentPointToTouchPoint
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.lerp
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
@@ -224,7 +225,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
     fun scale(
         targetScale: Float,
-        contentPoint: IntOffsetCompat = contentVisibleRect.center,
+        centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = false
     ) {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
@@ -241,20 +242,21 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val limitedTargetUserScale = limitUserScale(targetUserScale)
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
-        val containerPoint = contentPointToContainerPoint(
+        val touchPoint = contentPointToTouchPoint(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             alignment = alignment,
             rotation = rotation,
-            contentPoint = contentPoint,
+            userScale = currentUserScale,
+            userOffset = currentUserOffset,
+            contentPoint = centroidContentPoint.toOffset(),
         )
         val targetUserOffset = computeScaleUserOffset(
-            containerSize = containerSize,
             currentUserScale = currentUserTransform.scaleX,
-            targetUserScale = limitedTargetUserScale,
-            containerPoint = containerPoint,
             currentUserOffset = currentUserTransform.offset,
+            targetUserScale = limitedTargetUserScale,
+            centroid = touchPoint,
         )
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
@@ -268,9 +270,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "scale. " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "contentPoint=${contentPoint.toShortString()}, " +
+                    "centroidContentPoint=${centroidContentPoint.toShortString()}, " +
                     "animated=${animated}. " +
-                    "containerPoint=${containerPoint.toShortString()}, " +
+                    "touchPoint=${touchPoint.toShortString()}, " +
                     "targetUserScale=${targetUserScale.format(4)}, " +
                     "addUserScale=${targetAddUserScale.format(4)} -> ${limitedAddUserScale.format(4)}, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
@@ -285,13 +287,13 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     fun switchScale(
-        contentPoint: IntOffsetCompat = contentVisibleRect.center,
+        centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = true
     ): Float {
         val nextScale = getNextStepScale()
         scale(
             targetScale = nextScale,
-            contentPoint = contentPoint,
+            centroidContentPoint = centroidContentPoint,
             animated = animated
         )
         return nextScale
@@ -355,7 +357,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             contentScale = contentScale,
             alignment = alignment,
             rotation = rotation,
-            contentPoint = contentPoint,
+            contentPoint = contentPoint.toOffset(),
         )
 
         val targetUserScale = targetScale / currentBaseTransform.scaleX
@@ -465,7 +467,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             userOffset = currentUserTransform.offset,
             touchPoint = touchPoint
         )
-        return contentPoint
+        return contentPoint.round()
     }
 
     /**

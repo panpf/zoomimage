@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
@@ -40,6 +41,7 @@ import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.roundToPlatform
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toCompatOffset
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
@@ -58,6 +60,7 @@ import com.github.panpf.zoomimage.util.computeScrollEdge
 import com.github.panpf.zoomimage.util.computeTransformOffset
 import com.github.panpf.zoomimage.util.computeUserOffsetBounds
 import com.github.panpf.zoomimage.util.contentPointToContainerPoint
+import com.github.panpf.zoomimage.util.contentPointToTouchPoint
 import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
@@ -276,7 +279,7 @@ class ZoomableState(
 
     fun scale(
         targetScale: Float,
-        contentPoint: IntOffset = contentVisibleRect.center,
+        centroidContentPoint: IntOffset = contentVisibleRect.center,
         animated: Boolean = false
     ) = coroutineScope.launch {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@launch
@@ -293,20 +296,21 @@ class ZoomableState(
         val limitedTargetUserScale = limitUserScale(targetUserScale)
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
-        val containerPoint = contentPointToContainerPoint(
+        val touchPoint = contentPointToTouchPoint(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
             alignment = alignment.toCompat(),
             rotation = rotation,
-            contentPoint = contentPoint.toCompat(),
+            userScale = currentUserScale,
+            userOffset = currentUserOffset.toCompat(),
+            contentPoint = centroidContentPoint.toCompatOffset(),
         ).toPlatform()
         val targetUserOffset = computeScaleUserOffset(
-            containerSize = containerSize.toCompat(),
             currentUserScale = currentUserTransform.scaleX,
-            targetUserScale = limitedTargetUserScale,
-            containerPoint = containerPoint.toCompat(),
             currentUserOffset = currentUserTransform.offset.toCompat(),
+            targetUserScale = limitedTargetUserScale,
+            centroid = touchPoint.toCompat(),
         ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
@@ -320,9 +324,9 @@ class ZoomableState(
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
             "scale. " +
                     "targetScale=${targetScale.format(4)}, " +
-                    "contentPoint=${contentPoint.toShortString()}, " +
+                    "centroidContentPoint=${centroidContentPoint.toShortString()}, " +
                     "animated=${animated}. " +
-                    "containerPoint=${containerPoint.toShortString()}, " +
+                    "touchPoint=${touchPoint.toShortString()}, " +
                     "targetUserScale=${targetUserScale.format(4)}, " +
                     "addUserScale=${targetAddUserScale.format(4)} -> ${limitedAddUserScale.format(4)}, " +
                     "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
@@ -337,13 +341,13 @@ class ZoomableState(
     }
 
     fun switchScale(
-        contentPoint: IntOffset = contentVisibleRect.center,
+        centroidContentPoint: IntOffset = contentVisibleRect.center,
         animated: Boolean = true
     ): Float {
         val nextScale = getNextStepScale()
         scale(
             targetScale = nextScale,
-            contentPoint = contentPoint,
+            centroidContentPoint = centroidContentPoint,
             animated = animated
         )
         return nextScale
@@ -407,7 +411,7 @@ class ZoomableState(
             contentScale = contentScale.toCompat(),
             alignment = alignment.toCompat(),
             rotation = rotation,
-            contentPoint = contentPoint.toCompat(),
+            contentPoint = contentPoint.toCompatOffset(),
         )
 
         val targetUserScale = targetScale / currentBaseTransform.scaleX
@@ -501,7 +505,7 @@ class ZoomableState(
             userOffset = currentUserTransform.offset.toCompat(),
             touchPoint = touchPoint.toCompat()
         ).toPlatform()
-        return contentPoint
+        return contentPoint.round()
     }
 
     internal fun rollbackScale(centroid: Offset? = null): Boolean {
