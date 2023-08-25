@@ -15,9 +15,9 @@
  */
 package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
-class MultiSelectMenu(
+class DropdownMenu(
     val title: String,
     val values: List<String>,
     val getValue: () -> String,
-    val onSelect: (which: Int, value: String) -> Unit
+    val onSelected: (which: Int, value: String) -> Unit
 )

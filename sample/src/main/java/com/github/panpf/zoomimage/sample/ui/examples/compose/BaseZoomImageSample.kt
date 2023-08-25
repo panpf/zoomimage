@@ -25,7 +25,7 @@ import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.sample.BuildConfig
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
@@ -44,21 +44,21 @@ fun BaseZoomImageSample(
     ) -> Unit
 ) {
     val context = LocalContext.current
-    val prefsService = remember { context.prefsService }
-    val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
-    val alignmentName by prefsService.alignment.stateFlow.collectAsState()
-    val threeStepScale by prefsService.threeStepScale.stateFlow.collectAsState()
-    val rubberBandScale by prefsService.rubberBandScale.stateFlow.collectAsState()
-    val readModeEnabled by prefsService.readModeEnabled.stateFlow.collectAsState()
-    val readModeDirectionBoth by prefsService.readModeDirectionBoth.stateFlow.collectAsState()
-    val scrollBarEnabled by prefsService.scrollBarEnabled.stateFlow.collectAsState()
-    val animateScale by prefsService.animateScale.stateFlow.collectAsState()
-    val slowerScaleAnimation by prefsService.slowerScaleAnimation.stateFlow.collectAsState()
-    val limitOffsetWithinBaseVisibleRect by prefsService.limitOffsetWithinBaseVisibleRect.stateFlow.collectAsState()
-    val mediumScaleMinMultipleString by prefsService.mediumScaleMinMultiple.stateFlow.collectAsState()
-    val ignoreExifOrientation by prefsService.ignoreExifOrientation.stateFlow.collectAsState()
-    val showTileBounds by prefsService.showTileBounds.stateFlow.collectAsState()
-    val horizontalLayout by prefsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
+    val settingsService = remember { context.settingsService }
+    val contentScaleName by settingsService.contentScale.stateFlow.collectAsState()
+    val alignmentName by settingsService.alignment.stateFlow.collectAsState()
+    val threeStepScale by settingsService.threeStepScale.stateFlow.collectAsState()
+    val rubberBandScale by settingsService.rubberBandScale.stateFlow.collectAsState()
+    val readModeEnabled by settingsService.readModeEnabled.stateFlow.collectAsState()
+    val readModeDirectionBoth by settingsService.readModeDirectionBoth.stateFlow.collectAsState()
+    val scrollBarEnabled by settingsService.scrollBarEnabled.stateFlow.collectAsState()
+    val animateScale by settingsService.animateScale.stateFlow.collectAsState()
+    val slowerScaleAnimation by settingsService.slowerScaleAnimation.stateFlow.collectAsState()
+    val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.stateFlow.collectAsState()
+    val mediumScaleMinMultipleString by settingsService.mediumScaleMinMultiple.stateFlow.collectAsState()
+    val ignoreExifOrientation by settingsService.ignoreExifOrientation.stateFlow.collectAsState()
+    val showTileBounds by settingsService.showTileBounds.stateFlow.collectAsState()
+    val horizontalLayout by settingsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
 
     val mediumScaleMinMultiple by remember { derivedStateOf { mediumScaleMinMultipleString.toFloat() } }
     val contentScale by remember { derivedStateOf { ContentScale.valueOf(contentScaleName) } }

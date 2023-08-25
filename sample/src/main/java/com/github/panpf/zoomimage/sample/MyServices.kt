@@ -22,7 +22,7 @@ import com.github.panpf.zoomimage.sample.util.ParamLazy
 
 object MyServices {
     //    val apiServiceLazy = ParamLazy<Context, ApiServices> { ApiServices(it) }
-    val prefsServiceLazy = ParamLazy<Context, PrefsService> { PrefsService(it) }
+    val settingsServiceLazy = ParamLazy<Context, SettingsService> { SettingsService(it) }
 }
 
 //val Context.apiService: ApiServices
@@ -32,9 +32,9 @@ object MyServices {
 //val View.apiService: ApiServices
 //    get() = MyServices.apiServiceLazy.get(this.context.applicationContext)
 
-val Context.prefsService: PrefsService
-    get() = MyServices.prefsServiceLazy.get(this.applicationContext)
-val Fragment.prefsService: PrefsService
-    get() = MyServices.prefsServiceLazy.get(this.requireContext().applicationContext)
-val View.prefsService: PrefsService
-    get() = MyServices.prefsServiceLazy.get(this.context.applicationContext)
+val Context.settingsService: SettingsService
+    get() = MyServices.settingsServiceLazy.get(this.applicationContext)
+val Fragment.settingsService: SettingsService
+    get() = MyServices.settingsServiceLazy.get(this.requireContext().applicationContext)
+val View.settingsService: SettingsService
+    get() = MyServices.settingsServiceLazy.get(this.context.applicationContext)

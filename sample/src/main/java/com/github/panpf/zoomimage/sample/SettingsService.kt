@@ -22,7 +22,7 @@ import com.github.panpf.zoomimage.sample.util.StringMmkvData
 import com.github.panpf.zoomimage.util.DefaultMediumScaleMinMultiple
 import com.tencent.mmkv.MMKV
 
-class PrefsService(val context: Context) {
+class SettingsService(val context: Context) {
 
     private val mmkv = MMKV.defaultMMKV()
 

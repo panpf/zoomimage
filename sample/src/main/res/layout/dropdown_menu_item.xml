@@ -3,30 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="45dp"
+    android:layout_height="40dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp">
 
     <TextView
-        android:id="@+id/multiSelectMenuItemTitleText"
+        android:id="@+id/dropdownMenuItemTitleText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_weight="1"
-        android:singleLine="true"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/multiSelectMenuItemInfoText"
+        app:layout_constraintEnd_toStartOf="@id/dropdownMenuItemInfoText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="显示按下状态显示按" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/multiSelectMenuItemInfoText"
+        android:id="@+id/dropdownMenuItemInfoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:textSize="14sp"
+        android:textSize="12sp"
         app:drawableEndCompat="@drawable/ic_expand_more"
         app:drawableRightCompat="@drawable/ic_expand_more"
         app:drawableTint="@android:color/secondary_text_light"

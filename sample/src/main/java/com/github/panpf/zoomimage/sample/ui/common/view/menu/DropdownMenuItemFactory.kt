@@ -18,41 +18,41 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
-import com.github.panpf.zoomimage.sample.databinding.MultiSelectMenuItemBinding
+import com.github.panpf.zoomimage.sample.databinding.DropdownMenuItemBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
 
-class MultiSelectMenuItemFactory(private val activity: Activity) :
-    MyBindingItemFactory<MultiSelectMenu, MultiSelectMenuItemBinding>(MultiSelectMenu::class) {
+class DropdownMenuItemFactory(private val activity: Activity) :
+    MyBindingItemFactory<DropdownMenu, DropdownMenuItemBinding>(DropdownMenu::class) {
 
     override fun initItem(
         context: Context,
-        binding: MultiSelectMenuItemBinding,
-        item: BindingItem<MultiSelectMenu, MultiSelectMenuItemBinding>
+        binding: DropdownMenuItemBinding,
+        item: BindingItem<DropdownMenu, DropdownMenuItemBinding>
     ) {
         binding.root.setOnClickListener {
             val data = item.dataOrThrow
             showDialog(data) {
-                binding.multiSelectMenuItemInfoText.text = data.getValue()
+                binding.dropdownMenuItemInfoText.text = data.getValue()
             }
         }
     }
 
     override fun bindItemData(
         context: Context,
-        binding: MultiSelectMenuItemBinding,
-        item: BindingItem<MultiSelectMenu, MultiSelectMenuItemBinding>,
+        binding: DropdownMenuItemBinding,
+        item: BindingItem<DropdownMenu, DropdownMenuItemBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
-        data: MultiSelectMenu
+        data: DropdownMenu
     ) {
-        binding.multiSelectMenuItemTitleText.text = data.title
-        binding.multiSelectMenuItemInfoText.text = data.getValue()
+        binding.dropdownMenuItemTitleText.text = data.title
+        binding.dropdownMenuItemInfoText.text = data.getValue()
     }
 
-    private fun showDialog(data: MultiSelectMenu, after: () -> Unit) {
+    private fun showDialog(data: DropdownMenu, after: () -> Unit) {
         AlertDialog.Builder(activity).apply {
             setItems(data.values.toTypedArray()) { _, which ->
-                data.onSelect(which, data.values[which])
+                data.onSelected(which, data.values[which])
                 after()
             }
         }.show()

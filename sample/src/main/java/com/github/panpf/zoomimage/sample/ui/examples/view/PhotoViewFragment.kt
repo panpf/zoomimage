@@ -28,7 +28,7 @@ import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
@@ -45,7 +45,7 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         savedInstanceState: Bundle?
     ) {
         binding.photoView.apply {
-            prefsService.scaleType.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+            settingsService.scaleType.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 scaleType = ImageView.ScaleType.valueOf(it)
             }
             setOnScaleChangeListener { _, _, _ ->

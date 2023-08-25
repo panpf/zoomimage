@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
@@ -52,10 +52,10 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
     @Composable
     override fun RowScope.DrawActions() {
         val context = LocalContext.current
-        val horizontalLayout by context.prefsService.horizontalPagerLayout.stateFlow
+        val horizontalLayout by context.settingsService.horizontalPagerLayout.stateFlow
             .collectAsState(initial = true)
         IconButton(onClick = {
-            context.prefsService.horizontalPagerLayout.value = !horizontalLayout
+            context.settingsService.horizontalPagerLayout.value = !horizontalLayout
         }) {
             val meuIcon =
                 if (horizontalLayout) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
@@ -74,7 +74,7 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
     @Composable
     override fun DrawContent() {
         val context = LocalContext.current
-        val horizontalLayout by context.prefsService.horizontalPagerLayout.stateFlow
+        val horizontalLayout by context.settingsService.horizontalPagerLayout.stateFlow
             .collectAsState(initial = true)
         val imageUrlList = remember { args.imageUris.split(",") }
         val pagerState = rememberPagerState(initialPage = args.position - args.startPosition)

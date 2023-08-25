@@ -22,13 +22,13 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.zoomimage.sample.databinding.RecyclerFragmentBinding
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenu
+import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDivider
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDividerItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiSelectMenu
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiSelectMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
 import com.github.panpf.zoomimage.util.AlignmentCompat
@@ -46,7 +46,7 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             adapter = AssemblyRecyclerAdapter(
                 itemFactoryList = listOf(
                     SwitchMenuItemFactory(),
-                    MultiSelectMenuItemFactory(requireActivity()),
+                    DropdownMenuItemFactory(requireActivity()),
                     ListSeparatorItemFactory(),
                     MenuDividerItemFactory(),
                 ),
@@ -67,12 +67,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 ContentScaleCompat.None,
             )
             add(
-                MultiSelectMenu(
+                DropdownMenu(
                     title = "Content Scale",
                     values = contentScales.map { it.name },
-                    getValue = { prefsService.contentScale.value },
-                    onSelect = { _, value ->
-                        prefsService.contentScale.value = value
+                    getValue = { settingsService.contentScale.value },
+                    onSelected = { _, value ->
+                        settingsService.contentScale.value = value
                     }
                 )
             )
@@ -89,12 +89,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 AlignmentCompat.BottomEnd,
             )
             add(
-                MultiSelectMenu(
+                DropdownMenu(
                     title = "Alignment",
                     values = alignments.map { it.name },
-                    getValue = { prefsService.alignment.value },
-                    onSelect = { _, value ->
-                        prefsService.alignment.value = value
+                    getValue = { settingsService.alignment.value },
+                    onSelected = { _, value ->
+                        settingsService.alignment.value = value
                     }
                 )
             )
@@ -104,25 +104,25 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             add(
                 SwitchMenuFlow(
                     title = "Animate Scale",
-                    data = prefsService.animateScale,
+                    data = settingsService.animateScale,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Rubber Band Scale",
-                    data = prefsService.rubberBandScale,
+                    data = settingsService.rubberBandScale,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Three Step Scale",
-                    data = prefsService.threeStepScale,
+                    data = settingsService.threeStepScale,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Slower Scale Animation",
-                    data = prefsService.slowerScaleAnimation,
+                    data = settingsService.slowerScaleAnimation,
                 )
             )
             val mediumScaleMinMultiples = listOf(
@@ -133,19 +133,19 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 4.0f.toString(),
             )
             add(
-                MultiSelectMenu(
+                DropdownMenu(
                     title = "Medium Scale Min Multiple",
                     values = mediumScaleMinMultiples,
-                    getValue = { prefsService.mediumScaleMinMultiple.value },
-                    onSelect = { _, value ->
-                        prefsService.mediumScaleMinMultiple.value = value
+                    getValue = { settingsService.mediumScaleMinMultiple.value },
+                    onSelected = { _, value ->
+                        settingsService.mediumScaleMinMultiple.value = value
                     }
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Limit Offset Within Base Visible Rect",
-                    data = prefsService.limitOffsetWithinBaseVisibleRect,
+                    data = settingsService.limitOffsetWithinBaseVisibleRect,
                 )
             )
 
@@ -154,13 +154,13 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             add(
                 SwitchMenuFlow(
                     title = "Read Mode",
-                    data = prefsService.readModeEnabled,
+                    data = settingsService.readModeEnabled,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Read Mode Direction Both",
-                    data = prefsService.readModeDirectionBoth,
+                    data = settingsService.readModeDirectionBoth,
                 )
             )
 
@@ -169,13 +169,13 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             add(
                 SwitchMenuFlow(
                     title = "Show Tile Bounds",
-                    data = prefsService.showTileBounds,
+                    data = settingsService.showTileBounds,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Ignore Exif Orientation",
-                    data = prefsService.ignoreExifOrientation,
+                    data = settingsService.ignoreExifOrientation,
                     disabled = !zoomViewType.supportIgnoreExifOrientation,
                 )
             )
@@ -185,18 +185,18 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             add(
                 SwitchMenuFlow(
                     title = "Scroll Bar",
-                    data = prefsService.scrollBarEnabled,
+                    data = settingsService.scrollBarEnabled,
                 )
             )
         } else {
             add(
-                MultiSelectMenu(
+                DropdownMenu(
                     title = "Scale Type",
                     values = ScaleType.values()
                         .filter { it != MATRIX }.map { it.name },
-                    getValue = { prefsService.scaleType.value },
-                    onSelect = { _, value ->
-                        prefsService.scaleType.value = value
+                    getValue = { settingsService.scaleType.value },
+                    onSelected = { _, value ->
+                        settingsService.scaleType.value = value
                     }
                 )
             )

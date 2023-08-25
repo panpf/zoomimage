@@ -27,7 +27,7 @@ import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
@@ -58,62 +58,62 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         zoomImageView.apply {
             logger.level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO
             zoomAbility.apply {
-                prefsService.contentScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.contentScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     contentScale = ContentScaleCompat.valueOf(it)
                 }
-                prefsService.alignment.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.alignment.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     alignment = AlignmentCompat.valueOf(it)
                 }
-                prefsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScale = it
                 }
-                prefsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScale = it
                 }
-                prefsService.mediumScaleMinMultiple.stateFlow
+                settingsService.mediumScaleMinMultiple.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {
                         mediumScaleMinMultiple = it.toFloat()
                     }
-                prefsService.limitOffsetWithinBaseVisibleRect.stateFlow
+                settingsService.limitOffsetWithinBaseVisibleRect.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {
                         limitOffsetWithinBaseVisibleRect = it
                     }
-                prefsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     scrollBarSpec = if (it) ScrollBarSpec.Default else null
                 }
-                prefsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    val direction = if (prefsService.readModeDirectionBoth.value) {
+                settingsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    val direction = if (settingsService.readModeDirectionBoth.value) {
                         ReadMode.Direction.Both
-                    } else if (prefsService.horizontalPagerLayout.value) {
+                    } else if (settingsService.horizontalPagerLayout.value) {
                         ReadMode.Direction.OnlyVertical
                     } else {
                         ReadMode.Direction.OnlyHorizontal
                     }
                     readMode =
-                        if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
+                        if (settingsService.readModeEnabled.value) ReadMode(direction = direction) else null
                 }
-                prefsService.readModeDirectionBoth.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    val direction = if (prefsService.readModeDirectionBoth.value) {
+                settingsService.readModeDirectionBoth.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    val direction = if (settingsService.readModeDirectionBoth.value) {
                         ReadMode.Direction.Both
-                    } else if (prefsService.horizontalPagerLayout.value) {
+                    } else if (settingsService.horizontalPagerLayout.value) {
                         ReadMode.Direction.OnlyVertical
                     } else {
                         ReadMode.Direction.OnlyHorizontal
                     }
                     readMode =
-                        if (prefsService.readModeEnabled.value) ReadMode(direction = direction) else null
+                        if (settingsService.readModeEnabled.value) ReadMode(direction = direction) else null
                 }
-                prefsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    val durationMillis = if (prefsService.animateScale.value) {
-                        (if (prefsService.slowerScaleAnimation.value) 3000 else 300)
+                settingsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    val durationMillis = if (settingsService.animateScale.value) {
+                        (if (settingsService.slowerScaleAnimation.value) 3000 else 300)
                     } else {
                         0
                     }
                     animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
-                prefsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    val durationMillis = if (prefsService.animateScale.value) {
-                        (if (prefsService.slowerScaleAnimation.value) 3000 else 300)
+                settingsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    val durationMillis = if (settingsService.animateScale.value) {
+                        (if (settingsService.slowerScaleAnimation.value) 3000 else 300)
                     } else {
                         0
                     }
@@ -122,7 +122,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }
             subsamplingAbility.apply {
                 setLifecycle(viewLifecycleOwner.lifecycle)
-                prefsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBounds = it
                 }
             }

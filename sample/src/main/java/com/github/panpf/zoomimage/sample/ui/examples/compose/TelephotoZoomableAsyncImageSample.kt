@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.request.ImageRequest
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
@@ -33,9 +33,9 @@ import me.saket.telephoto.zoomable.rememberZoomableState
 @Composable
 fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
     val context = LocalContext.current
-    val prefsService = remember { context.prefsService }
-    val contentScaleName by prefsService.contentScale.stateFlow.collectAsState()
-    val alignmentName by prefsService.alignment.stateFlow.collectAsState()
+    val settingsService = remember { context.settingsService }
+    val contentScaleName by settingsService.contentScale.stateFlow.collectAsState()
+    val alignmentName by settingsService.alignment.stateFlow.collectAsState()
     val contentScale = remember(contentScaleName) { ContentScale.valueOf(contentScaleName) }
     val alignment = remember(alignmentName) { Alignment.valueOf(alignmentName) }
     val coilData =

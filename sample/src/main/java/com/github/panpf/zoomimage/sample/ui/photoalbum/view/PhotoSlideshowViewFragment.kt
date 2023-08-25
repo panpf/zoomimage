@@ -24,7 +24,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.PhotoSlideshowFragmentBinding
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
@@ -47,10 +47,10 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
         toolbar.menu.add("Layout").apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             setOnMenuItemClickListener {
-                prefsService.horizontalPagerLayout.value = !prefsService.horizontalPagerLayout.value
+                settingsService.horizontalPagerLayout.value = !settingsService.horizontalPagerLayout.value
                 true
             }
-            prefsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+            settingsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 val meuIcon = if (it) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
                 setIcon(meuIcon)
             }
@@ -74,7 +74,7 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
         val imageUrlList = args.imageUris.split(",")
         binding.photoSlideshowPager.apply {
             offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
-            prefsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+            settingsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 orientation =
                     if (it) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL
             }

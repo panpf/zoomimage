@@ -30,7 +30,7 @@ import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -60,7 +60,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
     ) {
         super.onViewCreated(binding, savedInstanceState)
 
-        prefsService.ignoreExifOrientation.sharedFlow.collectWithLifecycle(viewLifecycleOwner) {
+        settingsService.ignoreExifOrientation.sharedFlow.collectWithLifecycle(viewLifecycleOwner) {
             loadData(binding, binding.common, sketchImageUri)
         }
     }
@@ -77,13 +77,13 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                 val request = DisplayRequest(requireContext(), sketchImageUri) {
                     lifecycle(viewLifecycleOwner.lifecycle)
                     downloadCachePolicy(CachePolicy.ENABLED)
-                    ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
+                    ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
                 }
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
                     subsamplingAbility.ignoreExifOrientation =
-                        prefsService.ignoreExifOrientation.value
+                        settingsService.ignoreExifOrientation.value
                     subsamplingAbility.setImageSource(newImageSource(binding, sketchImageUri))
                     onCallSuccess()
                 } else {
@@ -100,7 +100,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
-            ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
+            ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
         }
     }
 

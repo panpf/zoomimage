@@ -24,10 +24,9 @@ import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.SketchZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
-import com.github.panpf.zoomimage.sample.prefsService
+import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
-import kotlinx.coroutines.flow.merge
 
 class SketchZoomImageViewFragment :
     BaseZoomImageViewFragment<SketchZoomImageViewFragmentBinding>() {
@@ -51,7 +50,7 @@ class SketchZoomImageViewFragment :
     ) {
         super.onViewCreated(binding, savedInstanceState)
 
-        prefsService.ignoreExifOrientation.sharedFlow.collectWithLifecycle(viewLifecycleOwner) {
+        settingsService.ignoreExifOrientation.sharedFlow.collectWithLifecycle(viewLifecycleOwner) {
             loadData(binding, binding.common, sketchImageUri)
         }
     }
@@ -65,7 +64,7 @@ class SketchZoomImageViewFragment :
         binding.sketchZoomImageViewImage.displayImage(args.imageUri) {
             lifecycle(viewLifecycleOwner.lifecycle)
             crossfade()
-            ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
+            ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
             listener(
                 onStart = { onCallStart() },
                 onSuccess = { _, _ -> onCallSuccess() },
@@ -80,7 +79,7 @@ class SketchZoomImageViewFragment :
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
-            ignoreExifOrientation(prefsService.ignoreExifOrientation.value)
+            ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
         }
     }
 
