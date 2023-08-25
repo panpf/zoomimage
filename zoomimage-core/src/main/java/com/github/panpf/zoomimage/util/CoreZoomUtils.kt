@@ -467,6 +467,7 @@ fun computeContentVisibleRect(
 
 /* ******************************************* Offset ***************************************** */
 
+// todo 增加限制滚动超过 base 显示范围的参数
 fun computeUserOffsetBounds(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -488,19 +489,19 @@ fun computeUserOffsetBounds(
     }
     val rotatedContentSize = contentSize.rotate(rotation)
     val scaledContainerSize = containerSize.toSize() * userScale
-    val rotatedContentBaseInsideDisplayRect = computeContentBaseInsideDisplayRect(
-//    val rotatedContentBaseInsideDisplayRect = computeContentBaseDisplayRect(
+    val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
         alignment = alignment,
         rotation = 0,
     )
-    val scaledRotatedContentBaseInsideDisplayRect = rotatedContentBaseInsideDisplayRect * userScale
+    val scaledRotatedContentBaseDisplayRect = rotatedContentBaseDisplayRect * userScale
 
     val horizontalBounds =
-        if (scaledRotatedContentBaseInsideDisplayRect.width.roundToInt() >= containerSize.width) {
-            ((scaledRotatedContentBaseInsideDisplayRect.right - containerSize.width) * -1)..(scaledRotatedContentBaseInsideDisplayRect.left * -1)
+        if (scaledRotatedContentBaseDisplayRect.width.roundToInt() >= containerSize.width) {
+            ((scaledRotatedContentBaseDisplayRect.right - containerSize.width) * -1)..
+                    (scaledRotatedContentBaseDisplayRect.left * -1)
         } else if (alignment.isStart) {
             0f..0f
         } else if (alignment.isHorizontalCenter) {
@@ -512,8 +513,9 @@ fun computeUserOffsetBounds(
         }
 
     val verticalBounds =
-        if (scaledRotatedContentBaseInsideDisplayRect.height.roundToInt() >= containerSize.height) {
-            ((scaledRotatedContentBaseInsideDisplayRect.bottom - containerSize.height) * -1)..(scaledRotatedContentBaseInsideDisplayRect.top * -1)
+        if (scaledRotatedContentBaseDisplayRect.height.roundToInt() >= containerSize.height) {
+            ((scaledRotatedContentBaseDisplayRect.bottom - containerSize.height) * -1)..
+                    (scaledRotatedContentBaseDisplayRect.top * -1)
         } else if (alignment.isTop) {
             0f..0f
         } else if (alignment.isVerticalCenter) {
@@ -571,29 +573,20 @@ fun computeScaleUserOffset(
      * 4. Apply rotation before scaling and offset
      */
 
-//    return computeTransformOffset(
-//        currentScale = currentUserScale,
-//        currentOffset = currentUserOffset,
-//        targetScale = targetUserScale,
-//        centroid = containerPoint.toOffset(),
-//        pan = OffsetCompat.Zero,
-//        gestureRotate = 0f,
-//    )
-
-    // todo 不再将目标点移到屏幕中心
-    return computeLocationUserOffset(
+    val touchPoint = containerPointToTouchPoint(
         containerSize = containerSize,
+        userScale = currentUserScale,
+        userOffset = currentUserOffset,
         containerPoint = containerPoint,
-        userScale = targetUserScale,
     )
-
-//    if (containerSize.isEmpty()) {
-//        return OffsetCompat.Zero
-//    }
-//    val currentScaledContainerPoint = containerPoint * currentUserScale
-//    val targetScaledContainerPoint = containerPoint * targetUserScale
-//    val addOffset = targetScaledContainerPoint - currentScaledContainerPoint
-//    return currentUserOffset + addOffset
+    return computeTransformOffset(
+        currentScale = currentUserScale,
+        currentOffset = currentUserOffset,
+        targetScale = targetUserScale,
+        centroid = touchPoint,
+        pan = OffsetCompat.Zero,
+        gestureRotate = 0f,
+    )
 }
 
 fun computeTransformOffset(
@@ -755,6 +748,21 @@ fun touchPointToContainerPoint(
     return containerPoint
 }
 
+fun containerPointToTouchPoint(
+    containerSize: IntSizeCompat,
+    userScale: Float,
+    userOffset: OffsetCompat,
+    containerPoint: IntOffsetCompat
+): OffsetCompat {
+    if (containerSize.isEmpty()) {
+        return OffsetCompat.Zero
+    }
+
+    val scaledContainerPoint = containerPoint * userScale
+    val touchPoint = scaledContainerPoint + userOffset
+    return touchPoint
+}
+
 fun containerPointToContentPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -857,3 +865,30 @@ fun touchPointToContentPoint(
         containerPoint = containerPoint
     )
 }
+
+//fun contentPointToTouchPoint(
+//    containerSize: IntSizeCompat,
+//    contentSize: IntSizeCompat,
+//    contentScale: ContentScaleCompat,
+//    alignment: AlignmentCompat,
+//    rotation: Int,
+//    userScale: Float,
+//    userOffset: OffsetCompat,
+//    contentPoint: IntOffsetCompat,
+//): OffsetCompat {
+//    val containerPoint = contentPointToContainerPoint(
+//        containerSize = containerSize,
+//        contentSize = contentSize,
+//        contentScale = contentScale,
+//        alignment = alignment,
+//        rotation = rotation,
+//        contentPoint = contentPoint
+//    )
+//    val touchPoint = containerPointToTouchPoint(
+//        containerSize = containerSize,
+//        userScale = userScale,
+//        userOffset = userOffset,
+//        containerPoint = containerPoint
+//    )
+//    return touchPoint
+//}
