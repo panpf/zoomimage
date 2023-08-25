@@ -15,7 +15,6 @@
  */
 package com.github.panpf.zoomimage.view.subsampling.internal
 
-import android.view.View
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -177,7 +176,7 @@ class SubsamplingEngine constructor(logger: Logger) {
         return onImageLoadRectChangeListenerList?.remove(listener) == true
     }
 
-    internal fun bindZoomEngine(view: View, zoomEngine: ZoomEngine) {
+    internal fun bindZoomEngine(zoomEngine: ZoomEngine) {
         containerSize = zoomEngine.containerSize
         zoomEngine.registerOnContainerSizeChangeListener(
             OnContainerSizeChangeListenerImpl(this@SubsamplingEngine)
@@ -214,10 +213,6 @@ class SubsamplingEngine constructor(logger: Logger) {
 
         registerOnPauseChangeListener {
             refreshTiles(if (it) "paused" else "resumed")
-        }
-
-        registerOnTileChangedListener {
-            view.invalidate()
         }
     }
 

@@ -84,6 +84,10 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
 
     init {
         setLifecycle(view.context.getLifecycle())
+
+        engine.registerOnTileChangedListener {
+            view.invalidate()
+        }
     }
 
 

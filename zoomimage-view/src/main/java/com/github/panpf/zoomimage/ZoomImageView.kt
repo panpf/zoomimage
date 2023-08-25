@@ -57,7 +57,7 @@ open class ZoomImageView @JvmOverloads constructor(
         val subsamplingAbility = SubsamplingAbility(view = this, logger = logger)
         _subsamplingAbility = subsamplingAbility
 
-        subsamplingAbility.engine.bindZoomEngine(this, zoomAbility.zoomEngine)
+        subsamplingAbility.engine.bindZoomEngine(zoomAbility.zoomEngine)
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
