@@ -31,9 +31,9 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDivider
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDividerItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
-import com.github.panpf.zoomimage.util.AlignmentCompat
-import com.github.panpf.zoomimage.util.ContentScaleCompat
-import com.github.panpf.zoomimage.util.name
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.name
 
 class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
 

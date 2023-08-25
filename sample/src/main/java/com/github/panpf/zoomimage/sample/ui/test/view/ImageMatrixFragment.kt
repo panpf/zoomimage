@@ -26,11 +26,11 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
-import com.github.panpf.zoomimage.util.computeBaseTransform
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
+import com.github.panpf.zoomimage.zoom.computeBaseTransform
 import kotlin.math.min
 
 class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>() {

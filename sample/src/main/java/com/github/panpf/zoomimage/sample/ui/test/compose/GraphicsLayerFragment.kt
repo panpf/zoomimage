@@ -64,9 +64,9 @@ import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
-import com.github.panpf.zoomimage.util.computeBaseTransform
-import com.github.panpf.zoomimage.util.computeContentDisplayRect
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.zoom.computeBaseTransform
+import com.github.panpf.zoomimage.zoom.computeContentDisplayRect
 import kotlin.math.min
 
 class GraphicsLayerFragment : AppBarFragment() {

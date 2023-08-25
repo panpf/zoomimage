@@ -31,12 +31,12 @@ import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
-import com.github.panpf.zoomimage.util.AlignmentCompat
-import com.github.panpf.zoomimage.util.ContentScaleCompat
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.util.valueOf
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -92,7 +92,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     readMode =
                         if (settingsService.readModeEnabled.value) ReadMode(direction = direction) else null
                 }
-                settingsService.readModeDirectionBoth.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.readModeDirectionBoth.stateFlow.collectWithLifecycle(
+                    viewLifecycleOwner
+                ) {
                     val direction = if (settingsService.readModeDirectionBoth.value) {
                         ReadMode.Direction.Both
                     } else if (settingsService.horizontalPagerLayout.value) {
@@ -111,7 +113,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     }
                     animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
-                settingsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(
+                    viewLifecycleOwner
+                ) {
                     val durationMillis = if (settingsService.animateScale.value) {
                         (if (settingsService.slowerScaleAnimation.value) 3000 else 300)
                     } else {

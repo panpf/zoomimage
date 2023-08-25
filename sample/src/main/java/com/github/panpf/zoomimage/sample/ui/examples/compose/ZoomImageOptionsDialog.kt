@@ -38,7 +38,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.util.BaseMmkvData
-import com.github.panpf.zoomimage.util.DefaultStepScaleMinMultiple
+import com.github.panpf.zoomimage.zoom.DefaultStepScaleMinMultiple
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable

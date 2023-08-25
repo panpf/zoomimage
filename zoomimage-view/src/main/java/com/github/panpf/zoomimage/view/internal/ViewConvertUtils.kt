@@ -2,10 +2,10 @@ package com.github.panpf.zoomimage.view.internal
 
 import android.graphics.Matrix
 import android.widget.ImageView.ScaleType
-import com.github.panpf.zoomimage.util.AlignmentCompat
-import com.github.panpf.zoomimage.util.ContentScaleCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 
 fun ScaleType.toContentScale(): ContentScaleCompat {
     return when (this) {

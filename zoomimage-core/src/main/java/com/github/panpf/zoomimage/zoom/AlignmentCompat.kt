@@ -1,5 +1,7 @@
-package com.github.panpf.zoomimage.util
+package com.github.panpf.zoomimage.zoom
 
+import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlin.math.roundToInt
 
 /**

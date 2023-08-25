@@ -24,8 +24,6 @@ import android.widget.ImageView.ScaleType
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.util.AlignmentCompat
-import com.github.panpf.zoomimage.util.ContentScaleCompat
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -41,6 +39,8 @@ import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarEngine
 import com.github.panpf.zoomimage.view.zoom.internal.UnifiedGestureDetector
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import kotlin.math.roundToInt
 
 class ZoomAbility constructor(

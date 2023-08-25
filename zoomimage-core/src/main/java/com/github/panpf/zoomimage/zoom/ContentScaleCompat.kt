@@ -1,5 +1,7 @@
-package com.github.panpf.zoomimage.util
+package com.github.panpf.zoomimage.zoom
 
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.SizeCompat
 import kotlin.math.max
 import kotlin.math.min
 

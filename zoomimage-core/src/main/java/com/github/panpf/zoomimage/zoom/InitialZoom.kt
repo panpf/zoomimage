@@ -1,4 +1,6 @@
-package com.github.panpf.zoomimage.util
+package com.github.panpf.zoomimage.zoom
+
+import com.github.panpf.zoomimage.util.TransformCompat
 
 data class InitialZoom(
     val minScale: Float,

@@ -21,34 +21,16 @@ import android.view.View
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.util.AlignmentCompat
-import com.github.panpf.zoomimage.util.ContentScaleCompat
-import com.github.panpf.zoomimage.util.DefaultStepScaleMinMultiple
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
-import com.github.panpf.zoomimage.util.calculateNextStepScale
-import com.github.panpf.zoomimage.util.canScrollByEdge
 import com.github.panpf.zoomimage.util.center
-import com.github.panpf.zoomimage.util.computeContentBaseDisplayRect
-import com.github.panpf.zoomimage.util.computeContentBaseVisibleRect
-import com.github.panpf.zoomimage.util.computeContentDisplayRect
-import com.github.panpf.zoomimage.util.computeContentVisibleRect
-import com.github.panpf.zoomimage.util.computeLocationUserOffset
-import com.github.panpf.zoomimage.util.computeScaleUserOffset
-import com.github.panpf.zoomimage.util.computeScrollEdge
-import com.github.panpf.zoomimage.util.computeTransformOffset
-import com.github.panpf.zoomimage.util.computeUserOffsetBounds
-import com.github.panpf.zoomimage.util.contentPointToContainerPoint
-import com.github.panpf.zoomimage.util.contentPointToTouchPoint
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.lerp
-import com.github.panpf.zoomimage.util.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.util.limitTo
-import com.github.panpf.zoomimage.util.name
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.times
@@ -56,7 +38,6 @@ import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
-import com.github.panpf.zoomimage.util.touchPointToContentPoint
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
@@ -64,6 +45,26 @@ import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnContentSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnTransformChangeListener
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.DefaultStepScaleMinMultiple
+import com.github.panpf.zoomimage.zoom.calculateNextStepScale
+import com.github.panpf.zoomimage.zoom.canScrollByEdge
+import com.github.panpf.zoomimage.zoom.computeContentBaseDisplayRect
+import com.github.panpf.zoomimage.zoom.computeContentBaseVisibleRect
+import com.github.panpf.zoomimage.zoom.computeContentDisplayRect
+import com.github.panpf.zoomimage.zoom.computeContentVisibleRect
+import com.github.panpf.zoomimage.zoom.computeInitialZoom
+import com.github.panpf.zoomimage.zoom.computeLocationUserOffset
+import com.github.panpf.zoomimage.zoom.computeScaleUserOffset
+import com.github.panpf.zoomimage.zoom.computeScrollEdge
+import com.github.panpf.zoomimage.zoom.computeTransformOffset
+import com.github.panpf.zoomimage.zoom.computeUserOffsetBounds
+import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
+import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
+import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
+import com.github.panpf.zoomimage.zoom.name
+import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
 import kotlin.math.roundToInt
 
 class ZoomEngine constructor(logger: Logger, val view: View) {
@@ -191,7 +192,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val alignment = alignment
         val stepScaleMinMultiple = stepScaleMinMultiple
 
-        val initialZoom = com.github.panpf.zoomimage.util.computeInitialZoom(
+        val initialZoom = computeInitialZoom(
             containerSize = containerSize,
             contentSize = contentSize,
             contentOriginSize = contentOriginSize,

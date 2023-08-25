@@ -1,13 +1,13 @@
 package com.github.panpf.zoomimage.core.test.internal
 
-import com.github.panpf.zoomimage.util.AlignmentCompat
-import com.github.panpf.zoomimage.util.ContentScaleCompat
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
-import com.github.panpf.zoomimage.util.name
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.name
 import org.junit.Assert
 
 data class Item(

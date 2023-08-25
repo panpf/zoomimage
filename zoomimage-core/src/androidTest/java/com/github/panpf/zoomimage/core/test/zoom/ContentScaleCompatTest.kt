@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.core.test.util
+package com.github.panpf.zoomimage.core.test.zoom
 
 class ContentScaleCompatTest {
     // todo Unit tests

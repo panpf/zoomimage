@@ -1,7 +1,5 @@
-package com.github.panpf.zoomimage.util.internal
+package com.github.panpf.zoomimage.zoom.internal
 
-import com.github.panpf.zoomimage.util.AlignmentCompat
-import com.github.panpf.zoomimage.util.ContentScaleCompat
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
@@ -12,7 +10,6 @@ import com.github.panpf.zoomimage.util.TopStart
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
-import com.github.panpf.zoomimage.util.computeContentRotateOrigin
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
@@ -21,6 +18,9 @@ import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toSize
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.computeContentRotateOrigin
 
 internal class BaseTransformHelper(
     val containerSize: IntSizeCompat,

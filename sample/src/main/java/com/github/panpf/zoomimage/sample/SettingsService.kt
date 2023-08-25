@@ -19,7 +19,7 @@ import android.content.Context
 import android.widget.ImageView.ScaleType.FIT_CENTER
 import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
 import com.github.panpf.zoomimage.sample.util.StringMmkvData
-import com.github.panpf.zoomimage.util.DefaultStepScaleMinMultiple
+import com.github.panpf.zoomimage.zoom.DefaultStepScaleMinMultiple
 import com.tencent.mmkv.MMKV
 
 class SettingsService(val context: Context) {

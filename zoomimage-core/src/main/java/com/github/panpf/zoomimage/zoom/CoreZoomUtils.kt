@@ -1,12 +1,33 @@
 @file:Suppress("UnnecessaryVariable")
 
-package com.github.panpf.zoomimage.util
+package com.github.panpf.zoomimage.zoom
 
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.util.internal.BaseTransformHelper
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TopStart
+import com.github.panpf.zoomimage.util.TransformCompat
+import com.github.panpf.zoomimage.util.TransformOriginCompat
+import com.github.panpf.zoomimage.util.center
+import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.isNotEmpty
+import com.github.panpf.zoomimage.util.limitTo
+import com.github.panpf.zoomimage.util.minus
+import com.github.panpf.zoomimage.util.reverseRotateInSpace
+import com.github.panpf.zoomimage.util.rotate
+import com.github.panpf.zoomimage.util.rotateInSpace
+import com.github.panpf.zoomimage.util.times
+import com.github.panpf.zoomimage.util.toOffset
+import com.github.panpf.zoomimage.util.toRect
+import com.github.panpf.zoomimage.util.toSize
+import com.github.panpf.zoomimage.zoom.internal.BaseTransformHelper
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
