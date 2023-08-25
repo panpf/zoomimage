@@ -126,9 +126,7 @@ usage [Get Started](docs/wiki/getstarted.md)
 
 ```kotlin
 SketchZoomAsyncImage(
-    request = DisplayRequest(LocalContext.current, sketchImageUri) {
-        crossfade()
-    },
+    imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -146,10 +144,7 @@ usage [Get Started](docs/wiki/getstarted.md)
 ```kotlin
 val sketchZoomImageView = ...
 
-sketchZoomImageView.displayImage(args.imageUri) {
-    lifecycle(viewLifecycleOwner.lifecycle)
-    crossfade()
-}
+sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 ```
 
 ## Document/文档
