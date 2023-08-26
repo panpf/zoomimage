@@ -296,7 +296,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
     fun switchScale(
         centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
-        animated: Boolean = true
+        animated: Boolean = false
     ): Float {
         val nextScale = getNextStepScale()
         scale(

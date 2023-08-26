@@ -33,10 +33,8 @@ fun Modifier.zoomable(
                     state.stopAllAnimation("onPress")
                 },
                 onDoubleTap = { touchPoint ->
-                    state.switchScale(
-                        centroidContentPoint = state.touchPointToContentPoint(touchPoint),
-                        animated = true
-                    )
+                    val centroidContentPoint = state.touchPointToContentPoint(touchPoint)
+                    state.switchScale(centroidContentPoint, animated = true)
                 },
                 onLongPress = {
                     updatedOnLongPress?.invoke(it)

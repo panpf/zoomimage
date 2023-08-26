@@ -245,7 +245,7 @@ class ZoomAbility constructor(
 
     fun switchScale(
         centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
-        animated: Boolean = true
+        animated: Boolean = false
     ): Float = zoomEngine.switchScale(centroidContentPoint, animated)
 
     fun offset(

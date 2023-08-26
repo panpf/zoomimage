@@ -342,7 +342,7 @@ class ZoomableState(
 
     fun switchScale(
         centroidContentPoint: IntOffset = contentVisibleRect.center,
-        animated: Boolean = true
+        animated: Boolean = false
     ): Float {
         val nextScale = getNextStepScale()
         scale(
