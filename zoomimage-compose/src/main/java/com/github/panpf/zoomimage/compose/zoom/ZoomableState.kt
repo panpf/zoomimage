@@ -51,18 +51,18 @@ import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
+import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
+import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
+import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
+import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
+import com.github.panpf.zoomimage.zoom.calculateInitialZoom
+import com.github.panpf.zoomimage.zoom.calculateLocationUserOffset
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
+import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
+import com.github.panpf.zoomimage.zoom.calculateScrollEdge
+import com.github.panpf.zoomimage.zoom.calculateTransformOffset
+import com.github.panpf.zoomimage.zoom.calculateUserOffsetBounds
 import com.github.panpf.zoomimage.zoom.canScrollByEdge
-import com.github.panpf.zoomimage.zoom.computeContentBaseDisplayRect
-import com.github.panpf.zoomimage.zoom.computeContentBaseVisibleRect
-import com.github.panpf.zoomimage.zoom.computeContentDisplayRect
-import com.github.panpf.zoomimage.zoom.computeContentVisibleRect
-import com.github.panpf.zoomimage.zoom.computeInitialZoom
-import com.github.panpf.zoomimage.zoom.computeLocationUserOffset
-import com.github.panpf.zoomimage.zoom.computeScaleUserOffset
-import com.github.panpf.zoomimage.zoom.computeScrollEdge
-import com.github.panpf.zoomimage.zoom.computeTransformOffset
-import com.github.panpf.zoomimage.zoom.computeUserOffsetBounds
 import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
 import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
@@ -169,7 +169,7 @@ class ZoomableState(
     var transforming: Boolean by mutableStateOf(false)
         internal set
     val contentBaseDisplayRect: IntRect by derivedStateOf {
-        computeContentBaseDisplayRect(
+        calculateContentBaseDisplayRect(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
@@ -178,7 +178,7 @@ class ZoomableState(
         ).roundToPlatform()
     }
     val contentBaseVisibleRect: IntRect by derivedStateOf {
-        computeContentBaseVisibleRect(
+        calculateContentBaseVisibleRect(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
@@ -187,7 +187,7 @@ class ZoomableState(
         ).roundToPlatform()
     }
     val contentDisplayRect: IntRect by derivedStateOf {
-        computeContentDisplayRect(
+        calculateContentDisplayRect(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
@@ -198,7 +198,7 @@ class ZoomableState(
         ).roundToPlatform()
     }
     val contentVisibleRect: IntRect by derivedStateOf {
-        computeContentVisibleRect(
+        calculateContentVisibleRect(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
@@ -209,13 +209,13 @@ class ZoomableState(
         ).roundToPlatform()
     }
     val scrollEdge: ScrollEdge by derivedStateOf {
-        computeScrollEdge(
+        calculateScrollEdge(
             userOffsetBounds = userOffsetBounds.toCompatRect(),
             userOffset = userTransform.offset.toCompat(),
         )
     }
     val userOffsetBounds: IntRect by derivedStateOf {
-        computeUserOffsetBounds(
+        calculateUserOffsetBounds(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),
@@ -241,7 +241,7 @@ class ZoomableState(
         val rotation = rotation
         val scalesCalculator = scalesCalculator
 
-        val initialZoom = computeInitialZoom(
+        val initialZoom = calculateInitialZoom(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentOriginSize = contentOriginSize.toCompat(),
@@ -306,7 +306,7 @@ class ZoomableState(
             userOffset = currentUserOffset.toCompat(),
             contentPoint = centroidContentPoint.toCompatOffset(),
         ).toPlatform()
-        val targetUserOffset = computeScaleUserOffset(
+        val targetUserOffset = calculateScaleUserOffset(
             currentUserScale = currentUserTransform.scaleX,
             currentUserOffset = currentUserTransform.offset.toCompat(),
             targetUserScale = limitedTargetUserScale,
@@ -417,7 +417,7 @@ class ZoomableState(
         val targetUserScale = targetScale / currentBaseTransform.scaleX
         val limitedTargetUserScale = limitUserScale(targetUserScale)
 
-        val targetUserOffset = computeLocationUserOffset(
+        val targetUserOffset = calculateLocationUserOffset(
             containerSize = containerSize.toCompat(),
             containerPoint = containerPoint,
             userScale = limitedTargetUserScale,
@@ -587,7 +587,7 @@ class ZoomableState(
         }
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
-        val targetUserOffset = computeTransformOffset(
+        val targetUserOffset = calculateTransformOffset(
             currentScale = currentUserScale,
             currentOffset = currentUserOffset.toCompat(),
             targetScale = limitedTargetUserScale,
@@ -697,7 +697,7 @@ class ZoomableState(
     }
 
     private fun limitUserOffset(userOffset: Offset, userScale: Float): Offset {
-        val userOffsetBounds = computeUserOffsetBounds(
+        val userOffsetBounds = calculateUserOffsetBounds(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentScale = contentScale.toCompat(),

@@ -65,8 +65,8 @@ import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.zoom.computeBaseTransform
-import com.github.panpf.zoomimage.zoom.computeContentDisplayRect
+import com.github.panpf.zoomimage.zoom.calculateBaseTransform
+import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import kotlin.math.min
 
 class GraphicsLayerFragment : AppBarFragment() {
@@ -123,7 +123,7 @@ private fun GraphicsLayerSample() {
 
     val baseTransform by remember {
         derivedStateOf {
-            computeBaseTransform(
+            calculateBaseTransform(
                 containerSize = containerSize.toCompat(),
                 contentSize = contentSize.toCompat(),
                 contentScale = contentScale.toCompat(),
@@ -174,7 +174,7 @@ private fun GraphicsLayerSample() {
     }
     val displayValue by remember {
         derivedStateOf {
-            val rect = computeContentDisplayRect(
+            val rect = calculateContentDisplayRect(
                 contentSize = contentSize.toCompat(),
                 containerSize = containerSize.toCompat(),
                 contentScale = contentScale.toCompat(),

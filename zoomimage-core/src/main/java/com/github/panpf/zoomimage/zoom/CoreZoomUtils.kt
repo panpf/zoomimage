@@ -35,7 +35,7 @@ import kotlin.math.sin
 
 /* ******************************************* initial ***************************************** */
 
-fun computeContentRotateOrigin(
+fun calculateContentRotateOrigin(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     rotation: Int
@@ -59,7 +59,7 @@ fun computeContentRotateOrigin(
     }
 }
 
-fun computeBaseTransform(
+fun calculateBaseTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -89,7 +89,7 @@ fun computeBaseTransform(
     return baseTransformHelper.transform
 }
 
-fun computeInitialUserTransform(
+fun calculateInitialUserTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -130,7 +130,7 @@ fun computeInitialUserTransform(
     }
     val readModeOffset = (alignmentMoveToStartOffset + baseTransformHelper.rotateOffset) * addScale
 
-    val rotationOrigin = computeContentRotateOrigin(
+    val rotationOrigin = calculateContentRotateOrigin(
         containerSize = containerSize,
         contentSize = contentSize,
         rotation = rotation
@@ -145,8 +145,7 @@ fun computeInitialUserTransform(
     return initialUserTransform
 }
 
-// todo compute to calculate
-fun computeScales(
+fun calculateScales(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
@@ -183,7 +182,7 @@ fun computeScales(
     return floatArrayOf(minScale, result.mediumScale, result.maxScale)
 }
 
-fun computeInitialZoom(
+fun calculateInitialZoom(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
@@ -204,7 +203,7 @@ fun computeInitialZoom(
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return InitialZoom.Origin
     }
-    val scales = computeScales(
+    val scales = calculateScales(
         containerSize = containerSize,
         contentSize = contentSize,
         contentOriginSize = contentOriginSize,
@@ -212,14 +211,14 @@ fun computeInitialZoom(
         rotation = rotation,
         calculator = scalesCalculator,
     )
-    val baseTransform = computeBaseTransform(
+    val baseTransform = calculateBaseTransform(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
         alignment = alignment,
         rotation = rotation,
     )
-    val userTransform = computeInitialUserTransform(
+    val userTransform = calculateInitialUserTransform(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
@@ -239,7 +238,7 @@ fun computeInitialZoom(
 
 /* ******************************************* Rect ***************************************** */
 
-fun computeContentBaseDisplayRect(
+fun calculateContentBaseDisplayRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -268,7 +267,7 @@ fun computeContentBaseDisplayRect(
     return baseTransformHelper.displayRect
 }
 
-fun computeContentBaseVisibleRect(
+fun calculateContentBaseVisibleRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -342,7 +341,7 @@ fun computeContentBaseVisibleRect(
     return limitedContentBaseVisibleRect
 }
 
-fun computeContentBaseInsideDisplayRect(
+fun calculateContentBaseInsideDisplayRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -371,7 +370,7 @@ fun computeContentBaseInsideDisplayRect(
     return baseTransformHelper.insideDisplayRect
 }
 
-fun computeContentDisplayRect(
+fun calculateContentDisplayRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -412,7 +411,7 @@ fun computeContentDisplayRect(
     return contentDisplayRect
 }
 
-fun computeContentVisibleRect(
+fun calculateContentVisibleRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -438,7 +437,7 @@ fun computeContentVisibleRect(
     val containerDisplayRect = scaledContainerVisibleRect / userScale
 
     val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
+    val rotatedContentBaseDisplayRect = calculateContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
@@ -471,7 +470,7 @@ fun computeContentVisibleRect(
 
 /* ******************************************* Offset ***************************************** */
 
-fun computeUserOffsetBounds(
+fun calculateUserOffsetBounds(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -494,7 +493,7 @@ fun computeUserOffsetBounds(
     val rotatedContentSize = contentSize.rotate(rotation)
     val scaledContainerSize = containerSize.toSize() * userScale
     val rotatedContentBaseDisplayRect = if (limitBaseVisibleRect) {
-        computeContentBaseInsideDisplayRect(
+        calculateContentBaseInsideDisplayRect(
             containerSize = containerSize,
             contentSize = rotatedContentSize,
             contentScale = contentScale,
@@ -502,7 +501,7 @@ fun computeUserOffsetBounds(
             rotation = 0,
         )
     } else {
-        computeContentBaseDisplayRect(
+        calculateContentBaseDisplayRect(
             containerSize = containerSize,
             contentSize = rotatedContentSize,
             contentScale = contentScale,
@@ -549,7 +548,7 @@ fun computeUserOffsetBounds(
     return offsetBounds
 }
 
-fun computeLocationUserOffset(
+fun calculateLocationUserOffset(
     containerSize: IntSizeCompat,
     containerPoint: OffsetCompat,
     userScale: Float,
@@ -572,7 +571,7 @@ fun computeLocationUserOffset(
     return locationOffset
 }
 
-fun computeScaleUserOffset(
+fun calculateScaleUserOffset(
     currentUserScale: Float,
     currentUserOffset: OffsetCompat,
     targetUserScale: Float,
@@ -585,7 +584,7 @@ fun computeScaleUserOffset(
      * 3. The rotate center point is the content center
      * 4. Apply rotation before scaling and offset
      */
-    return computeTransformOffset(
+    return calculateTransformOffset(
         currentScale = currentUserScale,
         currentOffset = currentUserOffset,
         targetScale = targetUserScale,
@@ -595,7 +594,7 @@ fun computeScaleUserOffset(
     )
 }
 
-fun computeTransformOffset(
+fun calculateTransformOffset(
     currentScale: Float,
     currentOffset: OffsetCompat,
     targetScale: Float,
@@ -635,7 +634,7 @@ fun computeTransformOffset(
     return targetOffset
 }
 
-fun computeScrollEdge(
+fun calculateScrollEdge(
     userOffsetBounds: RectCompat,
     userOffset: OffsetCompat,
 ): ScrollEdge {
@@ -789,7 +788,7 @@ fun containerPointToContentPoint(
         return OffsetCompat.Zero
     }
     val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
+    val rotatedContentBaseDisplayRect = calculateContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,
@@ -835,7 +834,7 @@ fun contentPointToContainerPoint(
         dstSize = containerSize.toSize()
     )
     val scaledRotatedContentPoint = rotatedContentPoint * rotatedContentScaleFactor
-    val rotatedContentBaseDisplayRect = computeContentBaseDisplayRect(
+    val rotatedContentBaseDisplayRect = calculateContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentScale = contentScale,

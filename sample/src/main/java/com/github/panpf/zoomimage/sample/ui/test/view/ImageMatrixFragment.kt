@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
-import com.github.panpf.zoomimage.zoom.computeBaseTransform
+import com.github.panpf.zoomimage.zoom.calculateBaseTransform
 import kotlin.math.min
 
 class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>() {
@@ -176,7 +176,7 @@ class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>()
         val viewSize = viewSize
         val baseMatrix = cacheBaseMatrix.apply {
             reset()
-            val transform = computeBaseTransform(
+            val transform = calculateBaseTransform(
                 containerSize = viewSize,
                 contentSize = drawableSize,
                 contentScale = scaleType.toContentScale(),

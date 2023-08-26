@@ -48,18 +48,18 @@ import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
+import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
+import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
+import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
+import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
+import com.github.panpf.zoomimage.zoom.calculateInitialZoom
+import com.github.panpf.zoomimage.zoom.calculateLocationUserOffset
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
+import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
+import com.github.panpf.zoomimage.zoom.calculateScrollEdge
+import com.github.panpf.zoomimage.zoom.calculateTransformOffset
+import com.github.panpf.zoomimage.zoom.calculateUserOffsetBounds
 import com.github.panpf.zoomimage.zoom.canScrollByEdge
-import com.github.panpf.zoomimage.zoom.computeContentBaseDisplayRect
-import com.github.panpf.zoomimage.zoom.computeContentBaseVisibleRect
-import com.github.panpf.zoomimage.zoom.computeContentDisplayRect
-import com.github.panpf.zoomimage.zoom.computeContentVisibleRect
-import com.github.panpf.zoomimage.zoom.computeInitialZoom
-import com.github.panpf.zoomimage.zoom.computeLocationUserOffset
-import com.github.panpf.zoomimage.zoom.computeScaleUserOffset
-import com.github.panpf.zoomimage.zoom.computeScrollEdge
-import com.github.panpf.zoomimage.zoom.computeTransformOffset
-import com.github.panpf.zoomimage.zoom.computeUserOffsetBounds
 import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
 import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
@@ -192,7 +192,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val alignment = alignment
         val scalesCalculator = scalesCalculator
 
-        val initialZoom = computeInitialZoom(
+        val initialZoom = calculateInitialZoom(
             containerSize = containerSize,
             contentSize = contentSize,
             contentOriginSize = contentOriginSize,
@@ -260,7 +260,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             userOffset = currentUserOffset,
             contentPoint = centroidContentPoint.toOffset(),
         )
-        val targetUserOffset = computeScaleUserOffset(
+        val targetUserOffset = calculateScaleUserOffset(
             currentUserScale = currentUserTransform.scaleX,
             currentUserOffset = currentUserTransform.offset,
             targetUserScale = limitedTargetUserScale,
@@ -371,7 +371,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val targetUserScale = targetScale / currentBaseTransform.scaleX
         val limitedTargetUserScale = limitUserScale(targetUserScale)
 
-        val targetUserOffset = computeLocationUserOffset(
+        val targetUserOffset = calculateLocationUserOffset(
             containerSize = containerSize,
             containerPoint = containerPoint,
             userScale = limitedTargetUserScale,
@@ -592,7 +592,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
         val currentUserScale = currentUserTransform.scaleX
         val currentUserOffset = currentUserTransform.offset
-        val targetUserOffset = computeTransformOffset(
+        val targetUserOffset = calculateTransformOffset(
             currentScale = currentUserScale,
             currentOffset = currentUserOffset,
             targetScale = limitedTargetUserScale,
@@ -640,7 +640,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         stopAllAnimation("fling")
 
         val startUserOffset = currentUserTransform.offset
-        val userOffsetBounds = computeUserOffsetBounds(
+        val userOffsetBounds = calculateUserOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
@@ -700,7 +700,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     private fun limitUserOffset(userOffset: OffsetCompat, userScale: Float): OffsetCompat {
-        val userOffsetBounds = computeUserOffsetBounds(
+        val userOffsetBounds = calculateUserOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
@@ -753,21 +753,21 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private fun updateTransform() {
         transform = baseTransform + userTransform
 
-        contentBaseDisplayRect = computeContentBaseDisplayRect(
+        contentBaseDisplayRect = calculateContentBaseDisplayRect(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             alignment = alignment,
             rotation = rotation,
         ).round()
-        contentBaseVisibleRect = computeContentBaseVisibleRect(
+        contentBaseVisibleRect = calculateContentBaseVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             alignment = alignment,
             rotation = rotation,
         ).round()
-        contentDisplayRect = computeContentDisplayRect(
+        contentDisplayRect = calculateContentDisplayRect(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
@@ -776,7 +776,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
         ).round()
-        contentVisibleRect = computeContentVisibleRect(
+        contentVisibleRect = calculateContentVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
@@ -786,7 +786,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             userOffset = userTransform.offset,
         ).round()
 
-        val userOffsetBounds = computeUserOffsetBounds(
+        val userOffsetBounds = calculateUserOffsetBounds(
             containerSize = containerSize,
             contentSize = contentSize,
             contentScale = contentScale,
@@ -797,7 +797,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         )
         this.userOffsetBounds = userOffsetBounds.round()
 
-        scrollEdge = computeScrollEdge(
+        scrollEdge = calculateScrollEdge(
             userOffsetBounds = userOffsetBounds,
             userOffset = userTransform.offset,
         )

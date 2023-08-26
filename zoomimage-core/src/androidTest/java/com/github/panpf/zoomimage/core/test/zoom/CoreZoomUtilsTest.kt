@@ -1,11 +1,15 @@
 package com.github.panpf.zoomimage.core.test.zoom
 
-import com.github.panpf.zoomimage.util.IntOffsetCompat as IntOffset
-import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
-import com.github.panpf.zoomimage.util.TransformOriginCompat as Origin
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.zoomimage.core.test.internal.A
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
+import com.github.panpf.zoomimage.util.IntOffsetCompat
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.TopStart
+import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.round
+import com.github.panpf.zoomimage.util.toOffset
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomEnd
@@ -24,22 +28,19 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillWidth
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Fit
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Inside
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.None
-import com.github.panpf.zoomimage.util.IntOffsetCompat
-import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.TopStart
+import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
+import com.github.panpf.zoomimage.zoom.calculateContentBaseInsideDisplayRect
+import com.github.panpf.zoomimage.zoom.calculateContentRotateOrigin
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
-import com.github.panpf.zoomimage.zoom.computeContentBaseDisplayRect
-import com.github.panpf.zoomimage.zoom.computeContentBaseInsideDisplayRect
-import com.github.panpf.zoomimage.zoom.computeContentRotateOrigin
 import com.github.panpf.zoomimage.zoom.containerPointToContentPoint
 import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
-import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.zoom.name
-import com.github.panpf.zoomimage.util.round
-import com.github.panpf.zoomimage.util.toShortString
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import com.github.panpf.zoomimage.util.IntOffsetCompat as IntOffset
+import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
+import com.github.panpf.zoomimage.util.TransformOriginCompat as Origin
 
 @RunWith(AndroidJUnit4::class)
 class CoreZoomUtilsTest {
@@ -69,7 +70,7 @@ class CoreZoomUtilsTest {
     }
 
     @Test
-    fun testComputeContentRotateOrigin() {
+    fun testCalculateContentRotateOrigin() {
         val containerSize = IntSize(1080, 1656)
         val printBatchBuildExpression = false
 //        val printBatchBuildExpression = true
@@ -84,7 +85,7 @@ class CoreZoomUtilsTest {
                     Item8(p1, p2, Origin.TopStart)
                 },
             ) { item ->
-                computeContentRotateOrigin(
+                calculateContentRotateOrigin(
                     containerSize = containerSize,
                     contentSize = item.contentSize,
                     rotation = item.rotation,
@@ -114,7 +115,7 @@ class CoreZoomUtilsTest {
             Item8(IntSize(551, 1038), 270, Origin(0.26f, 0.31f)),
             Item8(IntSize(551, 1038), 360, Origin(0.26f, 0.31f)),
         ).forEach { item ->
-            val result = computeContentRotateOrigin(
+            val result = calculateContentRotateOrigin(
                 containerSize = containerSize,
                 contentSize = item.contentSize,
                 rotation = item.rotation,
@@ -128,7 +129,7 @@ class CoreZoomUtilsTest {
     }
 
 //    @Test
-//    fun testComputeAlignmentOffset() {
+//    fun testCalculateAlignmentOffset() {
 //        val containerSize = IntSize(1080, 1656)
 //        val printBatchBuildExpression = false
 ////        val printBatchBuildExpression = true
@@ -426,7 +427,7 @@ class CoreZoomUtilsTest {
 //    }
 //
 //    @Test
-//    fun testComputeLocationOffset() {
+//    fun testCalculateLocationOffset() {
 //        val containerSize = IntSize(1000, 2000)
 //
 //        var scale = 1f
@@ -470,7 +471,7 @@ class CoreZoomUtilsTest {
 
 
     @Test
-    fun testComputeContentBaseDisplayRect() {
+    fun testCalculateContentBaseDisplayRect() {
         val containerSize = IntSize(1080, 1656)
         val printBatchBuildExpression = false
 //        val printBatchBuildExpression = true
@@ -494,7 +495,7 @@ class CoreZoomUtilsTest {
                     Item5(p1, p2, p3, IntRectCompat.Zero)
                 },
             ) { item ->
-                computeContentBaseDisplayRect(
+                calculateContentBaseDisplayRect(
                     containerSize = containerSize,
                     contentSize = item.contentSize,
                     contentScale = item.contentScale,
@@ -1078,7 +1079,7 @@ class CoreZoomUtilsTest {
             Item5(IntSize(551, 1038), Crop, BottomCenter, IntRectCompat(0, -379, 1080, 1656)),
             Item5(IntSize(551, 1038), Crop, BottomEnd, IntRectCompat(0, -379, 1080, 1656)),
         ).forEach { item ->
-            val result = computeContentBaseDisplayRect(
+            val result = calculateContentBaseDisplayRect(
                 containerSize = containerSize,
                 contentSize = item.contentSize,
                 contentScale = item.contentScale,
@@ -1094,7 +1095,7 @@ class CoreZoomUtilsTest {
     }
 
     @Test
-    fun testComputeContentBaseInsideDisplayRect() {
+    fun testCalculateContentBaseInsideDisplayRect() {
         val containerSize = IntSize(1080, 1656)
 
         val printBatchBuildExpression = false
@@ -1118,7 +1119,7 @@ class CoreZoomUtilsTest {
                     Item5(p1, p2, p3, IntRectCompat.Zero)
                 },
             ) { item ->
-                computeContentBaseInsideDisplayRect(
+                calculateContentBaseInsideDisplayRect(
                     containerSize = containerSize,
                     contentSize = item.contentSize,
                     contentScale = item.contentScale,
@@ -1607,7 +1608,7 @@ class CoreZoomUtilsTest {
             Item5(IntSize(551, 1038), Crop, BottomCenter, IntRectCompat(0, 0, 1080, 1656)),
             Item5(IntSize(551, 1038), Crop, BottomEnd, IntRectCompat(0, 0, 1080, 1656)),
         ).forEach { item ->
-            val result = computeContentBaseInsideDisplayRect(
+            val result = calculateContentBaseInsideDisplayRect(
                 containerSize = containerSize,
                 contentSize = item.contentSize,
                 contentScale = item.contentScale,
@@ -1624,7 +1625,7 @@ class CoreZoomUtilsTest {
 
 
 //    @Test
-//    fun testComputeContainerVisibleRect() {
+//    fun testCalculateContainerVisibleRect() {
 //        val containerSize = IntSize(1000, 2000)
 //
 //        var scale = 1f
@@ -1671,7 +1672,7 @@ class CoreZoomUtilsTest {
 //    }
 //
 //        @Test
-//    fun testComputeContentInContainerVisibleRect() {
+//    fun testCalculateContentInContainerVisibleRect() {
 //        val containerSize = IntSize(1000, 1000)
 //
 //        var contentSize = IntSize(800, 400)
@@ -2024,7 +2025,7 @@ class CoreZoomUtilsTest {
 //    }
 //
 //    @Test
-//    fun testComputeOffsetBounds() {
+//    fun testCalculateOffsetBounds() {
 //        val containerSize = IntSize(1080, 1656)
 //        val printBatchBuildExpression = false
 ////        val printBatchBuildExpression = true
@@ -2613,7 +2614,7 @@ class CoreZoomUtilsTest {
 //    }
 
 //    @Test
-//    fun testComputeContentVisibleRect() {
+//    fun testCalculateContentVisibleRect() {
 //        Assert.assertEquals(
 //            IntRectCompat(0, 0, 345, 6088),
 //            computeContentVisibleRect(
@@ -2630,7 +2631,7 @@ class CoreZoomUtilsTest {
 
 
 //    @Test
-//    fun testComputeContainerOriginByTouchPosition() {
+//    fun testCalculateContainerOriginByTouchPosition() {
 //        var containerSize = IntSize(1080, 1920)
 //
 //        var scale = 1f
@@ -3489,7 +3490,7 @@ class CoreZoomUtilsTest {
 //    }
 
 //    @Test
-//    fun testComputeScrollEdge() {
+//    fun testCalculateScrollEdge() {
 //        val contentSize = IntSize(1000, 1000)
 //
 //        listOf(
@@ -3561,7 +3562,12 @@ class CoreZoomUtilsTest {
         if (printBatchBuildExpression) {
             printlnBatchBuildExpression(
                 p1s = listOf(
-                    IntSize(1000, 400), IntSize(400, 1000), IntSize(500, 200), IntSize(200, 500), IntSize(2000, 800), IntSize(800, 2000),
+                    IntSize(1000, 400),
+                    IntSize(400, 1000),
+                    IntSize(500, 200),
+                    IntSize(200, 500),
+                    IntSize(2000, 800),
+                    IntSize(800, 2000),
                 ),
                 p2s = listOf(None),
                 p3s = listOf(Center),
@@ -3586,66 +3592,66 @@ class CoreZoomUtilsTest {
                     contentScale = item.contentScale,
                     alignment = item.alignment,
                     rotation = 0,
-                    containerPoint = item.inputPoint,
-                )
+                    containerPoint = item.inputPoint.toOffset(),
+                ).round()
             }
         }
 
         listOf(
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 500),IntOffset(500, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(200, 500),IntOffset(200, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 200),IntOffset(500, 0)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(800, 500),IntOffset(800, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 800),IntOffset(500, 400)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(-200, 500),IntOffset(0, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, -200),IntOffset(500, 0)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(1200, 500),IntOffset(1000, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 1200),IntOffset(500, 400)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 500),IntOffset(200, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(200, 500),IntOffset(0, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 200),IntOffset(200, 200)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(800, 500),IntOffset(400, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 800),IntOffset(200, 800)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(-200, 500),IntOffset(0, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, -200),IntOffset(200, 0)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(1200, 500),IntOffset(400, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 1200),IntOffset(200, 1000)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 500),IntOffset(250, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(200, 500),IntOffset(0, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 200),IntOffset(250, 0)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(800, 500),IntOffset(500, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 800),IntOffset(250, 200)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(-200, 500),IntOffset(0, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, -200),IntOffset(250, 0)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(1200, 500),IntOffset(500, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 1200),IntOffset(250, 200)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 500),IntOffset(100, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(200, 500),IntOffset(0, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 200),IntOffset(100, 0)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(800, 500),IntOffset(200, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 800),IntOffset(100, 500)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(-200, 500),IntOffset(0, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, -200),IntOffset(100, 0)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(1200, 500),IntOffset(200, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 1200),IntOffset(100, 500)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 500),IntOffset(1000, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(200, 500),IntOffset(700, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 200),IntOffset(1000, 100)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(800, 500),IntOffset(1300, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 800),IntOffset(1000, 700)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(-200, 500),IntOffset(300, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, -200),IntOffset(1000, 0)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(1200, 500),IntOffset(1700, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 1200),IntOffset(1000, 800)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 500),IntOffset(400, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(200, 500),IntOffset(100, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 200),IntOffset(400, 700)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(800, 500),IntOffset(700, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 800),IntOffset(400, 1300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(-200, 500),IntOffset(0, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, -200),IntOffset(400, 300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(1200, 500),IntOffset(800, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 1200),IntOffset(400, 1700)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 500), IntOffset(500, 200)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(200, 500), IntOffset(200, 200)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 200), IntOffset(500, 0)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(800, 500), IntOffset(800, 200)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 800), IntOffset(500, 400)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(-200, 500), IntOffset(0, 200)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, -200), IntOffset(500, 0)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(1200, 500), IntOffset(1000, 200)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 1200), IntOffset(500, 400)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 500), IntOffset(200, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(200, 500), IntOffset(0, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 200), IntOffset(200, 200)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(800, 500), IntOffset(400, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 800), IntOffset(200, 800)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(-200, 500), IntOffset(0, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, -200), IntOffset(200, 0)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(1200, 500), IntOffset(400, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 1200), IntOffset(200, 1000)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, 500), IntOffset(250, 100)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(200, 500), IntOffset(0, 100)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, 200), IntOffset(250, 0)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(800, 500), IntOffset(500, 100)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, 800), IntOffset(250, 200)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(-200, 500), IntOffset(0, 100)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, -200), IntOffset(250, 0)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(1200, 500), IntOffset(500, 100)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, 1200), IntOffset(250, 200)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, 500), IntOffset(100, 250)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(200, 500), IntOffset(0, 250)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, 200), IntOffset(100, 0)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(800, 500), IntOffset(200, 250)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, 800), IntOffset(100, 500)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(-200, 500), IntOffset(0, 250)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, -200), IntOffset(100, 0)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(1200, 500), IntOffset(200, 250)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, 1200), IntOffset(100, 500)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 500), IntOffset(1000, 400)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(200, 500), IntOffset(700, 400)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 200), IntOffset(1000, 100)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(800, 500), IntOffset(1300, 400)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 800), IntOffset(1000, 700)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(-200, 500), IntOffset(300, 400)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, -200), IntOffset(1000, 0)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(1200, 500), IntOffset(1700, 400)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 1200), IntOffset(1000, 800)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 500), IntOffset(400, 1000)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(200, 500), IntOffset(100, 1000)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 200), IntOffset(400, 700)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(800, 500), IntOffset(700, 1000)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 800), IntOffset(400, 1300)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(-200, 500), IntOffset(0, 1000)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, -200), IntOffset(400, 300)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(1200, 500), IntOffset(800, 1000)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 1200), IntOffset(400, 1700)),
         ).forEach { item ->
             val result = containerPointToContentPoint(
                 containerSize = containerSize,
@@ -3653,8 +3659,8 @@ class CoreZoomUtilsTest {
                 contentScale = item.contentScale,
                 alignment = item.alignment,
                 rotation = 0,
-                containerPoint = item.inputPoint,
-            )
+                containerPoint = item.inputPoint.toOffset(),
+            ).round()
             Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
         }
     }
@@ -3668,7 +3674,12 @@ class CoreZoomUtilsTest {
         if (printBatchBuildExpression) {
             printlnBatchBuildExpression(
                 p1s = listOf(
-                    IntSize(1000, 400), IntSize(400, 1000), IntSize(500, 200), IntSize(200, 500), IntSize(2000, 800), IntSize(800, 2000),
+                    IntSize(1000, 400),
+                    IntSize(400, 1000),
+                    IntSize(500, 200),
+                    IntSize(200, 500),
+                    IntSize(2000, 800),
+                    IntSize(800, 2000),
                 ),
                 p2s = listOf(None),
                 p3s = listOf(Center),
@@ -3693,66 +3704,66 @@ class CoreZoomUtilsTest {
                     contentScale = item.contentScale,
                     alignment = item.alignment,
                     rotation = 0,
-                    contentPoint = item.inputPoint,
-                )
+                    contentPoint = item.inputPoint.toOffset(),
+                ).round()
             }
         }
 
         listOf(
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 500),IntOffset(500, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(200, 500),IntOffset(200, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 200),IntOffset(500, 500)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(800, 500),IntOffset(800, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 800),IntOffset(500, 1100)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(-200, 500),IntOffset(-200, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, -200),IntOffset(500, 100)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(1200, 500),IntOffset(1200, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 1200),IntOffset(500, 1500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 500),IntOffset(800, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(200, 500),IntOffset(500, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 200),IntOffset(800, 200)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(800, 500),IntOffset(1100, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 800),IntOffset(800, 800)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(-200, 500),IntOffset(100, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, -200),IntOffset(800, -200)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(1200, 500),IntOffset(1500, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 1200),IntOffset(800, 1200)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 500),IntOffset(750, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(200, 500),IntOffset(450, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 200),IntOffset(750, 600)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(800, 500),IntOffset(1050, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 800),IntOffset(750, 1200)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(-200, 500),IntOffset(50, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, -200),IntOffset(750, 200)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(1200, 500),IntOffset(1450, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 1200),IntOffset(750, 1600)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 500),IntOffset(900, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(200, 500),IntOffset(600, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 200),IntOffset(900, 450)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(800, 500),IntOffset(1200, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 800),IntOffset(900, 1050)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(-200, 500),IntOffset(200, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, -200),IntOffset(900, 50)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(1200, 500),IntOffset(1600, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 1200),IntOffset(900, 1450)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 500),IntOffset(0, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(200, 500),IntOffset(-300, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 200),IntOffset(0, 300)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(800, 500),IntOffset(300, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 800),IntOffset(0, 900)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(-200, 500),IntOffset(-700, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, -200),IntOffset(0, -100)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(1200, 500),IntOffset(700, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 1200),IntOffset(0, 1300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 500),IntOffset(600, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(200, 500),IntOffset(300, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 200),IntOffset(600, -300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(800, 500),IntOffset(900, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 800),IntOffset(600, 300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(-200, 500),IntOffset(-100, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, -200),IntOffset(600, -700)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(1200, 500),IntOffset(1300, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 1200),IntOffset(600, 700)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 500), IntOffset(500, 800)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(200, 500), IntOffset(200, 800)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 200), IntOffset(500, 500)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(800, 500), IntOffset(800, 800)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 800), IntOffset(500, 1100)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(-200, 500), IntOffset(-200, 800)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, -200), IntOffset(500, 100)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(1200, 500), IntOffset(1200, 800)),
+            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 1200), IntOffset(500, 1500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 500), IntOffset(800, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(200, 500), IntOffset(500, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 200), IntOffset(800, 200)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(800, 500), IntOffset(1100, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 800), IntOffset(800, 800)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(-200, 500), IntOffset(100, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, -200), IntOffset(800, -200)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(1200, 500), IntOffset(1500, 500)),
+            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 1200), IntOffset(800, 1200)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, 500), IntOffset(750, 900)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(200, 500), IntOffset(450, 900)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, 200), IntOffset(750, 600)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(800, 500), IntOffset(1050, 900)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, 800), IntOffset(750, 1200)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(-200, 500), IntOffset(50, 900)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, -200), IntOffset(750, 200)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(1200, 500), IntOffset(1450, 900)),
+            Item9(IntSize(500, 200), None, Center, IntOffset(500, 1200), IntOffset(750, 1600)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, 500), IntOffset(900, 750)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(200, 500), IntOffset(600, 750)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, 200), IntOffset(900, 450)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(800, 500), IntOffset(1200, 750)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, 800), IntOffset(900, 1050)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(-200, 500), IntOffset(200, 750)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, -200), IntOffset(900, 50)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(1200, 500), IntOffset(1600, 750)),
+            Item9(IntSize(200, 500), None, Center, IntOffset(500, 1200), IntOffset(900, 1450)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 500), IntOffset(0, 600)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(200, 500), IntOffset(-300, 600)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 200), IntOffset(0, 300)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(800, 500), IntOffset(300, 600)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 800), IntOffset(0, 900)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(-200, 500), IntOffset(-700, 600)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, -200), IntOffset(0, -100)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(1200, 500), IntOffset(700, 600)),
+            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 1200), IntOffset(0, 1300)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 500), IntOffset(600, 0)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(200, 500), IntOffset(300, 0)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 200), IntOffset(600, -300)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(800, 500), IntOffset(900, 0)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 800), IntOffset(600, 300)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(-200, 500), IntOffset(-100, 0)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, -200), IntOffset(600, -700)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(1200, 500), IntOffset(1300, 0)),
+            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 1200), IntOffset(600, 700)),
         ).forEach { item ->
             val result = contentPointToContainerPoint(
                 containerSize = containerSize,
@@ -3760,8 +3771,8 @@ class CoreZoomUtilsTest {
                 contentScale = item.contentScale,
                 alignment = item.alignment,
                 rotation = 0,
-                contentPoint = item.inputPoint,
-            )
+                contentPoint = item.inputPoint.toOffset(),
+            ).round()
             Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
         }
     }
