@@ -7,27 +7,26 @@ zoomimage 库支持双击缩放，手势缩放，scale() 等多种缩放方式�
 zoomimage 在缩放的过程中始终受到 minScale 和 maxScale 的约束，minScale 和 maxScale 分别表示最小缩放倍数和最大缩放倍数。
 
 * minScale：最小缩放倍数，用于限制 zoomimage 在缩放过程中的最小值，取值始终是 ContentScale.computeScaleFactor(srcSize, dstSize).scaleX 的值
-* mediumScale：中间缩放倍数，专门用于双击缩放，取值受 stepScalesComputer 参数控制
+* mediumScale：中间缩放倍数，专门用于双击缩放，取值受 scalesCalculator 参数控制
+* maxScale：最大缩放倍数，用于限制 zoomimage 在缩放过程中的最大值，取值受 scalesCalculator 参数控制
 
-* maxScale：最大缩放倍数，用于限制 zoomimage 在缩放过程中的最大值，取值受 stepScalesComputer 参数控制
 
-
-#### StepScalesComputer
+#### ScalesCalculator
 
 [//]: # (todo contine)
 
-StepScalesComputer.Dynamic，计算规则如下：
+ScalesCalculator.Dynamic，计算规则如下：
 
 * mediumScale 是在以下几个值中取最大值：
   * minMediumScale：minScale * stepScaleMultiple，stepScaleMinMultiple 默认值为 3f
   * fillContainerScale：完全充满容器时的缩放倍数，效果类似 ContentScale.Crop
 * maxScale 始终是 mediumScale * minStepScaleMultiple
 
-修改 stepScalesComputer：
+修改 scalesCalculator：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
-state.zoomable.stepScalesComputer = StepScalesComputer
+state.zoomable.scalesCalculator = ScalesCalculator.fixed(multiple = 4f)
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",

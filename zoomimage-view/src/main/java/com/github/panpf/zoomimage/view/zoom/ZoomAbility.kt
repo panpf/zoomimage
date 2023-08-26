@@ -41,7 +41,7 @@ import com.github.panpf.zoomimage.view.zoom.internal.UnifiedGestureDetector
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
-import com.github.panpf.zoomimage.zoom.StepScalesComputer
+import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlin.math.roundToInt
 
 class ZoomAbility constructor(
@@ -106,10 +106,10 @@ class ZoomAbility constructor(
         set(value) {
             zoomEngine.readMode = value
         }
-    var stepScalesComputer: StepScalesComputer
-        get() = zoomEngine.stepScalesComputer
+    var scalesCalculator: ScalesCalculator
+        get() = zoomEngine.scalesCalculator
         set(value) {
-            zoomEngine.stepScalesComputer = value
+            zoomEngine.scalesCalculator = value
         }
     var animationSpec: ZoomAnimationSpec
         get() = zoomEngine.animationSpec

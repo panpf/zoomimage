@@ -2,46 +2,48 @@ package com.github.panpf.zoomimage.zoom
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isNotEmpty
-import com.github.panpf.zoomimage.zoom.StepScalesComputer.Companion.Multiple
+import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.Multiple
 import kotlin.math.max
 
-interface StepScalesComputer {
+interface ScalesCalculator {
 
-    fun compute(
+    fun calculate(
         containerSize: IntSizeCompat,
         contentSize: IntSizeCompat,
         contentOriginSize: IntSizeCompat,
         contentScale: ContentScaleCompat,
         minScale: Float,
-    ): FloatArray
+    ): Result
 
     companion object {
         const val Multiple = 3f
 
-        val Dynamic = DynamicStepScalesComputer()
+        val Dynamic = DynamicScalesCalculator()
 
-        val Fixed = FixedStepScalesComputer()
+        val Fixed = FixedScalesCalculator()
 
-        fun dynamic(minStepScaleMultiple: Float = Multiple): StepScalesComputer =
-            DynamicStepScalesComputer(minStepScaleMultiple)
+        fun dynamic(multiple: Float = Multiple): ScalesCalculator =
+            DynamicScalesCalculator(multiple)
 
-        fun fixed(stepScaleMultiple: Float = Multiple): StepScalesComputer =
-            FixedStepScalesComputer(stepScaleMultiple)
+        fun fixed(multiple: Float = Multiple): ScalesCalculator =
+            FixedScalesCalculator(multiple)
     }
+
+    data class Result(val mediumScale: Float, val maxScale: Float)
 }
 
-data class DynamicStepScalesComputer(
-    private val minStepScaleMultiple: Float = Multiple
-) : StepScalesComputer {
+data class DynamicScalesCalculator(
+    private val multiple: Float = Multiple
+) : ScalesCalculator {
 
-    override fun compute(
+    override fun calculate(
         containerSize: IntSizeCompat,
         contentSize: IntSizeCompat,
         contentOriginSize: IntSizeCompat,
         contentScale: ContentScaleCompat,
         minScale: Float
-    ): FloatArray {
-        val minMediumScale = minScale * minStepScaleMultiple
+    ): ScalesCalculator.Result {
+        val minMediumScale = minScale * multiple
         val mediumScale = if (contentScale != ContentScaleCompat.FillBounds) {
             // The width and height of content fill the container at the same time
             val fillContainerScale = max(
@@ -61,32 +63,32 @@ data class DynamicStepScalesComputer(
         } else {
             minMediumScale
         }
-        val maxScale = mediumScale * minStepScaleMultiple
-        return floatArrayOf(mediumScale, maxScale)
+        val maxScale = mediumScale * multiple
+        return ScalesCalculator.Result(mediumScale = mediumScale, maxScale = maxScale)
     }
 
     override fun toString(): String {
-        return "DynamicStepScalesComputer($minStepScaleMultiple)"
+        return "DynamicScalesCalculator($multiple)"
     }
 }
 
-data class FixedStepScalesComputer(
-    private val stepScaleMultiple: Float = Multiple
-) : StepScalesComputer {
+data class FixedScalesCalculator(
+    private val multiple: Float = Multiple
+) : ScalesCalculator {
 
-    override fun compute(
+    override fun calculate(
         containerSize: IntSizeCompat,
         contentSize: IntSizeCompat,
         contentOriginSize: IntSizeCompat,
         contentScale: ContentScaleCompat,
         minScale: Float
-    ): FloatArray {
-        val mediumScale = minScale * stepScaleMultiple
-        val maxScale = mediumScale * stepScaleMultiple
-        return floatArrayOf(mediumScale, maxScale)
+    ): ScalesCalculator.Result {
+        val mediumScale = minScale * multiple
+        val maxScale = mediumScale * multiple
+        return ScalesCalculator.Result(mediumScale = mediumScale, maxScale = maxScale)
     }
 
     override fun toString(): String {
-        return "FixedStepScalesComputer($stepScaleMultiple)"
+        return "FixedScalesCalculator($multiple)"
     }
 }

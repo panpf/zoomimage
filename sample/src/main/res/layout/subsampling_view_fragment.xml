@@ -26,7 +26,7 @@
             android:shadowDy="1"
             android:shadowRadius="4"
             android:textColor="@android:color/white"
-            tools:text="draw：\nvisible: \nstepScales: " />
+            tools:text="draw：\nvisible: \nscales: " />
 
         <TextView
             android:id="@+id/subsamplingViewInfoContentText"
@@ -39,7 +39,7 @@
             android:shadowDy="1"
             android:shadowRadius="4"
             android:textColor="@android:color/white"
-            tools:text="draw：\nvisible: \nstepScales: " />
+            tools:text="draw：\nvisible: \nscales: " />
     </LinearLayout>
 
     <ProgressBar

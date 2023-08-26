@@ -125,21 +125,18 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     data = settingsService.slowerScaleAnimation,
                 )
             )
-            val stepScalesComputers = listOf(
-                "Dynamic",
-                "Fixed",
-            )
+            val scalesCalculators = listOf("Dynamic", "Fixed")
             add(
                 DropdownMenu(
-                    title = "Step Scales Computer",
-                    values = stepScalesComputers,
-                    getValue = { settingsService.stepScalesComputer.value },
+                    title = "Scales Calculator",
+                    values = scalesCalculators,
+                    getValue = { settingsService.scalesCalculator.value },
                     onSelected = { _, value ->
-                        settingsService.stepScalesComputer.value = value
+                        settingsService.scalesCalculator.value = value
                     }
                 )
             )
-            val stepScaleMultiples = listOf(
+            val scalesMultiples = listOf(
                 2.0f.toString(),
                 2.5f.toString(),
                 3.0f.toString(),
@@ -148,11 +145,11 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             )
             add(
                 DropdownMenu(
-                    title = "Step Scale Multiple",
-                    values = stepScaleMultiples,
-                    getValue = { settingsService.stepScaleMultiple.value },
+                    title = "Scales Multiple",
+                    values = scalesMultiples,
+                    getValue = { settingsService.scalesMultiple.value },
                     onSelected = { _, value ->
-                        settingsService.stepScaleMultiple.value = value
+                        settingsService.scalesMultiple.value = value
                     }
                 )
             )

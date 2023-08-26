@@ -76,7 +76,7 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
                 scale: $scaleFormatted
                 baseScale: $baseScaleFormatted
                 userScale: $userScaleFormatted
-                stepScales: $scales
+                scales: $scales
             """.trimIndent()
 
             val offsetInfo = """

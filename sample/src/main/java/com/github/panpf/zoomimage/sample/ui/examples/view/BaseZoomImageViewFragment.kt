@@ -36,7 +36,7 @@ import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
-import com.github.panpf.zoomimage.zoom.StepScalesComputer
+import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -71,24 +71,24 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScale = it
                 }
-                settingsService.stepScaleMultiple.stateFlow
+                settingsService.scalesMultiple.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        val stepScaleMultiple = settingsService.stepScaleMultiple.value.toFloat()
-                        val stepScalesComputerName = settingsService.stepScalesComputer.value
-                        stepScalesComputer = if (stepScalesComputerName == "Dynamic") {
-                            StepScalesComputer.dynamic(stepScaleMultiple)
+                        val scalesMultiple = settingsService.scalesMultiple.value.toFloat()
+                        val scalesCalculatorName = settingsService.scalesCalculator.value
+                        scalesCalculator = if (scalesCalculatorName == "Dynamic") {
+                            ScalesCalculator.dynamic(scalesMultiple)
                         } else {
-                            StepScalesComputer.fixed(stepScaleMultiple)
+                            ScalesCalculator.fixed(scalesMultiple)
                         }
                     }
-                settingsService.stepScalesComputer.stateFlow
+                settingsService.scalesCalculator.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        val stepScaleMultiple = settingsService.stepScaleMultiple.value.toFloat()
-                        val stepScalesComputerName = settingsService.stepScalesComputer.value
-                        stepScalesComputer = if (stepScalesComputerName == "Dynamic") {
-                            StepScalesComputer.dynamic(stepScaleMultiple)
+                        val scalesMultiple = settingsService.scalesMultiple.value.toFloat()
+                        val scalesCalculatorName = settingsService.scalesCalculator.value
+                        scalesCalculator = if (scalesCalculatorName == "Dynamic") {
+                            ScalesCalculator.dynamic(scalesMultiple)
                         } else {
-                            StepScalesComputer.fixed(stepScaleMultiple)
+                            ScalesCalculator.fixed(scalesMultiple)
                         }
                     }
                 settingsService.limitOffsetWithinBaseVisibleRect.stateFlow

@@ -21,7 +21,7 @@
             android:shadowDy="0"
             android:shadowRadius="10"
             android:textColor="@android:color/white"
-            tools:text="draw：\nvisible: \nstepScales: " />
+            tools:text="draw：\nvisible: \nscales: " />
 
         <TextView
             android:id="@+id/zoomImageViewInfoContentText"
@@ -34,7 +34,7 @@
             android:shadowDy="0"
             android:shadowRadius="10"
             android:textColor="@android:color/white"
-            tools:text="draw：\nvisible: \nstepScales: " />
+            tools:text="draw：\nvisible: \nscales: " />
     </LinearLayout>
 
     <com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView

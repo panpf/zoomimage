@@ -29,7 +29,7 @@ import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
-import com.github.panpf.zoomimage.zoom.StepScalesComputer
+import com.github.panpf.zoomimage.zoom.ScalesCalculator
 
 @Composable
 fun BaseZoomImageSample(
@@ -56,19 +56,19 @@ fun BaseZoomImageSample(
     val animateScale by settingsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.stateFlow.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.stateFlow.collectAsState()
-    val stepScalesComputerName by settingsService.stepScalesComputer.stateFlow.collectAsState()
-    val stepScaleMultipleString by settingsService.stepScaleMultiple.stateFlow.collectAsState()
+    val scalesCalculatorName by settingsService.scalesCalculator.stateFlow.collectAsState()
+    val scalesMultipleString by settingsService.scalesMultiple.stateFlow.collectAsState()
     val ignoreExifOrientation by settingsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by settingsService.showTileBounds.stateFlow.collectAsState()
     val horizontalLayout by settingsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
 
-    val stepScalesComputer by remember {
+    val scalesCalculator by remember {
         derivedStateOf {
-            val stepScaleMultiple = stepScaleMultipleString.toFloat()
-            if (stepScalesComputerName == "Dynamic") {
-                StepScalesComputer.dynamic(stepScaleMultiple)
+            val scalesMultiple = scalesMultipleString.toFloat()
+            if (scalesCalculatorName == "Dynamic") {
+                ScalesCalculator.dynamic(scalesMultiple)
             } else {
-                StepScalesComputer.fixed(stepScaleMultiple)
+                ScalesCalculator.fixed(scalesMultiple)
             }
         }
     }
@@ -101,8 +101,8 @@ fun BaseZoomImageSample(
         LaunchedEffect(zoomAnimationSpec) {
             zoomable.animationSpec = zoomAnimationSpec
         }
-        LaunchedEffect(stepScalesComputer) {
-            zoomable.stepScalesComputer = stepScalesComputer
+        LaunchedEffect(scalesCalculator) {
+            zoomable.scalesCalculator = scalesCalculator
         }
         LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
             zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect

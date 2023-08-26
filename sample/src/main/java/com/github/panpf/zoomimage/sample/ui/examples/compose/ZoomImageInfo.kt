@@ -56,7 +56,7 @@ fun ZoomImageInfo(
             scale: $scaleFormatted
             baseScale: $baseScaleFormatted
             userScale: $userScaleFormatted
-            stepScales: $scales
+            scales: $scales
         """.trimIndent()
     }
     val offsetInfo = remember(zoomableState.transform) {

@@ -145,13 +145,14 @@ fun computeInitialUserTransform(
     return initialUserTransform
 }
 
-fun computeStepScales(
+// todo compute to calculate
+fun computeScales(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     rotation: Int,
-    computer: StepScalesComputer,
+    calculator: ScalesCalculator,
 ): FloatArray {
     /*
      * Calculations are based on the following rules:
@@ -172,17 +173,14 @@ fun computeStepScales(
         dstSize = containerSize.toSize()
     )
     val minScale = baseScaleFactor.scaleX
-    val scales = computer.compute(
+    val result = calculator.calculate(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
         contentOriginSize = rotatedContentOriginSize,
         contentScale = contentScale,
         minScale = minScale,
     )
-    require(scales.size == 2) { "StepScalesComputer must return 2 scales, only mediumScale and maxScale are included" }
-    val mediumScale = scales[0]
-    val maxScale = scales[1]
-    return floatArrayOf(minScale, mediumScale, maxScale)
+    return floatArrayOf(minScale, result.mediumScale, result.maxScale)
 }
 
 fun computeInitialZoom(
@@ -193,7 +191,7 @@ fun computeInitialZoom(
     alignment: AlignmentCompat,
     rotation: Int,
     readMode: ReadMode?,
-    stepScalesComputer: StepScalesComputer,
+    scalesCalculator: ScalesCalculator,
 ): InitialZoom {
     /*
      * Calculations are based on the following rules:
@@ -206,13 +204,13 @@ fun computeInitialZoom(
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return InitialZoom.Origin
     }
-    val stepScales = computeStepScales(
+    val scales = computeScales(
         containerSize = containerSize,
         contentSize = contentSize,
         contentOriginSize = contentOriginSize,
         contentScale = contentScale,
         rotation = rotation,
-        computer = stepScalesComputer,
+        calculator = scalesCalculator,
     )
     val baseTransform = computeBaseTransform(
         containerSize = containerSize,
@@ -230,9 +228,9 @@ fun computeInitialZoom(
         readMode = readMode,
     )
     return InitialZoom(
-        minScale = stepScales[0],
-        mediumScale = stepScales[1],
-        maxScale = stepScales[2],
+        minScale = scales[0],
+        mediumScale = scales[1],
+        maxScale = scales[2],
         baseTransform = baseTransform,
         userTransform = userTransform ?: TransformCompat.Origin
     )

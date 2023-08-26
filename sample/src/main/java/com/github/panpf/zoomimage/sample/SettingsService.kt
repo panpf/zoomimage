@@ -19,7 +19,7 @@ import android.content.Context
 import android.widget.ImageView.ScaleType.FIT_CENTER
 import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
 import com.github.panpf.zoomimage.sample.util.StringMmkvData
-import com.github.panpf.zoomimage.zoom.StepScalesComputer
+import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.tencent.mmkv.MMKV
 
 class SettingsService(val context: Context) {
@@ -53,11 +53,11 @@ class SettingsService(val context: Context) {
     val slowerScaleAnimation by lazy {
         BooleanMmkvData(mmkv, "slowerScaleAnimation", false)
     }
-    val stepScalesComputer by lazy {
-        StringMmkvData(mmkv, "stepScalesComputer", "Dynamic")
+    val scalesCalculator by lazy {
+        StringMmkvData(mmkv, "scalesCalculator", "Dynamic")
     }
-    val stepScaleMultiple by lazy {
-        StringMmkvData(mmkv, "stepScaleMultiple", StepScalesComputer.Multiple.toString())
+    val scalesMultiple by lazy {
+        StringMmkvData(mmkv, "scalesMultiple", ScalesCalculator.Multiple.toString())
     }
     val limitOffsetWithinBaseVisibleRect by lazy {
         BooleanMmkvData(mmkv, "limitOffsetWithinBaseVisibleRect", false)
