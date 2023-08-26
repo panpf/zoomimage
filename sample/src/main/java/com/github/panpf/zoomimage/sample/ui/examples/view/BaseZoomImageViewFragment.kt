@@ -142,7 +142,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 }
             }
             subsamplingAbility.apply {
-                setLifecycle(viewLifecycleOwner.lifecycle)
                 settingsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBounds = it
                 }

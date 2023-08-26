@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -83,8 +84,6 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         get() = engine.imageLoadRect
 
     init {
-        setLifecycle(view.context.getLifecycle())
-
         engine.registerOnTileChangedListener {
             view.invalidate()
         }
@@ -99,6 +98,9 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         if (view.isAttachedToWindowCompat) {
             engine.setImageSource(imageSource)
         }
+
+        // At this time, view.findViewTreeLifecycleOwner() is not null
+        setLifecycle(view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.getLifecycle())
     }
 
     fun setLifecycle(lifecycle: Lifecycle?) {

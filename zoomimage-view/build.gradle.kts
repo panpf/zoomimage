@@ -43,6 +43,7 @@ dependencies {
     api(libs.androidx.annotation)
     api(libs.androidx.appcompat)
     api(libs.androidx.core.ktx)
+    api(libs.androidx.lifecycle.runtime.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

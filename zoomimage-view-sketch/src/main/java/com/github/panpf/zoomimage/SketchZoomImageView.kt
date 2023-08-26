@@ -39,7 +39,6 @@ import com.github.panpf.sketch.request.ImageOptions
 import com.github.panpf.sketch.request.ImageOptionsProvider
 import com.github.panpf.sketch.request.Listener
 import com.github.panpf.sketch.request.ProgressListener
-import com.github.panpf.sketch.request.isSketchGlobalLifecycle
 import com.github.panpf.sketch.sketch
 import com.github.panpf.sketch.stateimage.internal.SketchStateDrawable
 import com.github.panpf.sketch.util.SketchUtils
@@ -53,7 +52,6 @@ import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
 import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
 import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.view.sketch.internal.getLifecycle
 
 open class SketchZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -109,9 +107,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
             _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(result.drawable)
             _subsamplingAbility?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
             _subsamplingAbility?.ignoreExifOrientation = isIgnoreExifOrientation(result.drawable)
-            _subsamplingAbility?.setLifecycle(result.request.lifecycle
-                .takeIf { !it.isSketchGlobalLifecycle() }
-                ?: context.getLifecycle())
             _subsamplingAbility?.setImageSource(newImageSource(result.drawable))
         }
     }

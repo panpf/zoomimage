@@ -19,8 +19,10 @@ import android.content.Context
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
+import coil.drawable.CrossfadeDrawable
 import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.SuccessResult
@@ -28,9 +30,6 @@ import coil.util.CoilUtils
 import com.github.panpf.zoomimage.coil.internal.CoilImageSource
 import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.view.coil.internal.getLastChildDrawable
-import com.github.panpf.zoomimage.view.coil.internal.getLifecycle
-import com.github.panpf.zoomimage.view.coil.internal.isCoilGlobalLifecycle
 
 open class CoilZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -71,9 +70,6 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 return@post
             }
             _subsamplingAbility?.disableMemoryCache = isDisallowMemoryCache(result)
-            _subsamplingAbility?.setLifecycle(result.request.lifecycle
-                .takeIf { !it.isCoilGlobalLifecycle() }
-                ?: context.getLifecycle())
             _subsamplingAbility?.setImageSource(newImageSource(result))
         }
     }
@@ -93,5 +89,20 @@ open class CoilZoomImageView @JvmOverloads constructor(
             return null
         }
         return CoilImageSource(context.imageLoader, result.request)
+    }
+
+    private fun Drawable.getLastChildDrawable(): Drawable? {
+        return when (val drawable = this) {
+            is CrossfadeDrawable -> {
+                drawable.end?.getLastChildDrawable()
+            }
+
+            is LayerDrawable -> {
+                val layerCount = drawable.numberOfLayers.takeIf { it > 0 } ?: return null
+                drawable.getDrawable(layerCount - 1).getLastChildDrawable()
+            }
+
+            else -> drawable
+        }
     }
 }
