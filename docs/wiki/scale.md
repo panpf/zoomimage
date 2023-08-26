@@ -22,8 +22,8 @@ zoomimage 在缩放的过程中始终受到 minScale、mediumScale、maxScale �
 
 ScalesCalculator 专门用来计算 mediumScale 和 maxScale，zoomimage 有两个内置的 ScalesCalculator：
 
-* ScalesCalculator.Dynamic：根据 containerSize、contentSize、contentOriginSize 动态的计算
-  mediumScale，maxScale 始终是 `mediumScale * multiple`，mediumScale 计算规则是在以下几个值中取最大的：
+* ScalesCalculator.Dynamic：maxScale 始终是 `mediumScale * multiple`，mediumScale 则是根据
+  containerSize、contentSize、contentOriginSize 动态的计算，计算规则是在以下几个值中取最大的：
     * minMediumScale：最小中间缩放倍数，计算公式为：
       ```kotlin
       minScale * multiple
