@@ -9,8 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.Event.ON_START
+import androidx.lifecycle.Lifecycle.Event.ON_STOP
+import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
@@ -42,7 +47,14 @@ import kotlin.math.roundToInt
 @Composable
 fun rememberSubsamplingState(
     logger: Logger = rememberZoomImageLogger()
-): SubsamplingState = remember { SubsamplingState(logger) }
+): SubsamplingState {
+    val subsamplingState = remember { SubsamplingState(logger) }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(lifecycle) {
+        subsamplingState.setLifecycle(lifecycle)
+    }
+    return subsamplingState
+}
 
 @Stable
 class SubsamplingState(logger: Logger) : RememberObserver {
@@ -56,6 +68,16 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private var lastResetTileDecoderJob: Job? = null
     private val tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
     private val tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
+    private var lifecycle: Lifecycle? = null
+    private val resetPausedLifecycleObserver by lazy {
+        LifecycleEventObserver { _, event ->
+            if (event == ON_START) {
+                resetPaused("LifecycleStateChanged:ON_START")
+            } else if (event == ON_STOP) {
+                resetPaused("LifecycleStateChanged:ON_STOP")
+            }
+        }
+    }
 
     internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     internal var contentSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -90,6 +112,15 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         imageKey = imageSource?.key
         resetTileDecoder("setImageSource")
         return true
+    }
+
+    fun setLifecycle(lifecycle: Lifecycle?) {
+        if (this.lifecycle != lifecycle) {
+            unregisterLifecycleObserver()
+            this.lifecycle = lifecycle
+            registerLifecycleObserver()
+            resetPaused("setLifecycle")
+        }
     }
 
     @Composable
@@ -341,5 +372,23 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private fun destroy(caller: String) {
         cleanTileManager("destroy:$caller")
         cleanTileDecoder("destroy:$caller")
+        unregisterLifecycleObserver()
+    }
+
+    private fun resetPaused(caller: String) {
+        val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
+        val paused = !lifecycleStarted
+        logger.d {
+            "resetPaused:$caller. $paused. lifecycleStarted=$lifecycleStarted. '${imageKey}'"
+        }
+        this.paused = paused
+    }
+
+    private fun registerLifecycleObserver() {
+        lifecycle?.addObserver(resetPausedLifecycleObserver)
+    }
+
+    private fun unregisterLifecycleObserver() {
+        lifecycle?.removeObserver(resetPausedLifecycleObserver)
     }
 }
