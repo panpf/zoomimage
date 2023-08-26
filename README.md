@@ -142,7 +142,7 @@ usage [Get Started](docs/wiki/getstarted.md)
 为例，其它组件以及详细用法请查看文档 [开始使用](docs/wiki/getstarted.md)
 
 ```kotlin
-val sketchZoomImageView = ...
+val sketchZoomImageView: SketchZoomImageView = ...
 
 sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 ```
@@ -158,6 +158,7 @@ sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 * [Click: Receive click events/接收点击事件](docs/wiki/click.md)
 * [Subsampling: Subsampling the display of huge image to avoid OOM/对超大图进行子采样显示，避免 OOM](docs/wiki/subsampling.md)
 * [Scroll Bar: Displays horizontal and vertical scroll bars to clarify the current scroll position/显示水平和垂直滚动条，明确当前滚动位置](docs/wiki/scrollbar.md)
+* [Log/日志](docs/wiki/log.md)
 
 ## Changelog/更新日志
 

@@ -1,5 +1,15 @@
 ## 开始使用
 
+> * The following example takes precedence over the Compose version of the ZoomImage component for demonstration
+> * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
+> * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
+> * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
+    <br>-----------</br>
+> * 以下示例优先用 Compose 版本的 ZoomImage 组件来演示
+> * ZoomImageView 的 API 和 ZoomImage 一模一样，只是入口不一样
+> * ZoomState.zoomable 等价于 ZoomImageView.zoomAbility
+> * ZoomState.subsampling 等价于 ZoomImageView.subsamplingAbility
+
 ### Components/组件
 
 zoomimage 库包含了多个组件可供选择，你可以根据自己的需求选择合适的组件。
@@ -43,7 +53,8 @@ view：
     * 参考示例 [ZoomImageViewFragment]
 
 总结：
-* 集成了图片加载器的组件无需任何额外的工作即可支持任意来源的图片和子采样功能 
+
+* 集成了图片加载器的组件无需任何额外的工作即可支持任意来源的图片和子采样功能
 * 未集成图片加载器的组件只能显示本地图片，以及需要额外调用 setImageSource() 方法以开启子采样功能
 
 ## 使用
@@ -51,6 +62,26 @@ view：
 ### Compose
 
 [//]: # (todo contine)
+
+获取相关信息
+
+baseTransform
+userTransform
+transform
+transform.scale
+transform.offset
+transform.rotation
+minScale
+mediumScale
+maxScale
+transforming
+contentBaseDisplayRect
+contentBaseVisibleRect
+contentDisplayRect
+contentVisibleRect
+scrollEdge
+
+ZoomImageView 设置 contentScale 和 alignment
 
 ## Document/文档
 
@@ -62,6 +93,7 @@ view：
 * [Click: Receive click events/接收点击事件](click.md)
 * [Subsampling: Subsampling the display of huge image to avoid OOM/对超大图进行子采样显示，避免 OOM](subsampling.md)
 * [Scroll Bar: Displays horizontal and vertical scroll bars to clarify the current scroll position/显示水平和垂直滚动条，明确当前滚动位置](scrollbar.md)
+* [Log/日志](log.md)
 
 [ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
 

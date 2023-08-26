@@ -1,6 +1,11 @@
 ## Scale Image/缩放图像
 
-> * 以下示例均以 Compose 版本的 ZoomImage 组件为例
+> * The following example takes precedence over the Compose version of the ZoomImage component for demonstration
+> * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
+> * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
+> * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
+    <br>-----------</br>
+> * 以下示例优先用 Compose 版本的 ZoomImage 组件来演示
 > * ZoomImageView 的 API 和 ZoomImage 一模一样，只是入口不一样
 > * ZoomState.zoomable 等价于 ZoomImageView.zoomAbility
 > * ZoomState.subsampling 等价于 ZoomImageView.subsamplingAbility
@@ -84,7 +89,16 @@ SketchZoomAsyncImage(
 )
 ```
 
-双击缩放调用的是 zoomimage 的 switchScale() 方法，你也可以在需要的时候调用 switchScale()方法来切换缩放倍数，如下：
+双击缩放调用的是 zoomimage 的 switchScale() 方法，你也可以在需要的时候调用 switchScale()
+方法来切换缩放倍数，它有两个参数：
+
+* centroidContentPoint: IntOffset = contentVisibleRect.center。content 上的缩放中心点，原点是 content
+  的左上角，默认是 content 当前可见区域的中心
+* animated: Boolean = false。是否使用动画，默认为 false
+
+> 注意：centroidContentPoint 一定要是 content 上的点
+
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -103,6 +117,14 @@ Button(
 ) {
     Text(text = "switch scale")
 }
+```
+
+你还可以调用 getNextStepScale() 方法来获取下一个缩放倍数，如下：
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+
+state.zoomable.getNextStepScale()
 ```
 
 ### 手势缩放
@@ -127,7 +149,16 @@ SketchZoomAsyncImage(
 
 ### scale()
 
-zoomimage 提供了 scale() 方法用来缩放图像，你可以用通过 scale() 方法将图像缩放到指定的倍数，如下：
+zoomimage 提供了 scale() 方法用来缩放图像到指定的倍数，它有三个参数：
+
+* targetScale: Float。目标缩放倍数
+* centroidContentPoint: IntOffset = contentVisibleRect.center。content 上的缩放中心点，原点是 content
+  的左上角， 默认是 content 当前可见区域的中心
+* animated: Boolean = false。是否使用动画，默认为 false
+
+> 注意：centroidContentPoint 一定要是 content 上的点
+
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -157,24 +188,6 @@ Button(
     Text(text = "scale - 0.2")
 }
 ```
-
-scale() 方法默认以 content 当前可见区域的中心为缩放中心，你也可以通过 scale() 方法的
-centroidContentPoint 参数来指定缩放中心，如下：
-
-```kotlin
-val targetScale = state.zoomable.transform.scaleX + 0.2f
-
-// content 上的点
-val centroidContentPoint = Offset(100f, 100f)
-
-state.zoomable.scale(
-    targetScale = targetScale,
-    centroidContentPoint = centroidContentPoint,
-    animated = true
-)
-```
-
-> 注意：centroidContentPoint 一定要是 content 上的点
 
 ### 缩放动画
 
