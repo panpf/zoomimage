@@ -166,7 +166,7 @@ fun IntOffsetCompat.toIntSize(): IntSizeCompat = IntSizeCompat(width = x, height
 
 fun IntOffsetCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when (rotation % 360) {
+    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
         90 -> IntOffsetCompat(x = spaceSize.height - y, y = x)
         180 -> IntOffsetCompat(x = spaceSize.width - x, y = spaceSize.height - y)
         270 -> IntOffsetCompat(x = y, y = spaceSize.width - x)

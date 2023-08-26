@@ -365,7 +365,7 @@ fun RectCompat.limitTo(size: SizeCompat): RectCompat =
 
 fun RectCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): RectCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when (rotation % 360) {
+    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
         90 -> {
             RectCompat(
                 left = spaceSize.height - this.bottom,

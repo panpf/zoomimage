@@ -249,7 +249,7 @@ fun OffsetCompat.roundToSize(): IntSizeCompat =
 
 fun OffsetCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when (rotation % 360) {
+    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
         90 -> OffsetCompat(x = spaceSize.height - y, y = x)
         180 -> OffsetCompat(x = spaceSize.width - x, y = spaceSize.height - y)
         270 -> OffsetCompat(x = y, y = spaceSize.width - x)
