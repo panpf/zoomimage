@@ -57,7 +57,7 @@ fun CoilZoomAsyncImage(
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
     imageLoader: ImageLoader = LocalImageLoader.current,
     state: ZoomState = rememberZoomState(),
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
+    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = CoilZoomAsyncImage(
@@ -73,7 +73,7 @@ fun CoilZoomAsyncImage(
     filterQuality = filterQuality,
     imageLoader = imageLoader,
     state = state,
-    scrollBarSpec = scrollBarSpec,
+    scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -92,7 +92,7 @@ fun CoilZoomAsyncImage(
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
     imageLoader: ImageLoader = LocalImageLoader.current,
     state: ZoomState = rememberZoomState(),
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
+    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
@@ -106,7 +106,7 @@ fun CoilZoomAsyncImage(
     val transform1 = state.zoomable.transform
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBarSpec != null) it.zoomScrollBar(state.zoomable, scrollBarSpec) else it }
+        .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
         .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = transform1.scaleX

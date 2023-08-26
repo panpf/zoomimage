@@ -47,7 +47,7 @@ fun GlideZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     state: ZoomState = rememberZoomState(),
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
+    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
     // from glide: TODO(judds): Consider using separate GlideImage* methods instead of sealed classes.
@@ -70,7 +70,7 @@ fun GlideZoomAsyncImage(
     val transform = state.zoomable.transform
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBarSpec != null) it.zoomScrollBar(state.zoomable, scrollBarSpec) else it }
+        .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
         .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = transform.scaleX

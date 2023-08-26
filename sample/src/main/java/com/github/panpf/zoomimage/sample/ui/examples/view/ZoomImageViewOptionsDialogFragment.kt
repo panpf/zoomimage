@@ -171,8 +171,8 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             )
             add(
                 SwitchMenuFlow(
-                    title = "Read Mode Direction Both",
-                    data = settingsService.readModeDirectionBoth,
+                    title = "Read Mode Accepted Both",
+                    data = settingsService.readModeAcceptedBoth,
                 )
             )
 

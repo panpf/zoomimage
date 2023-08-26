@@ -18,7 +18,7 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = false
-    ) { contentScale, alignment, state: ZoomState, _, scrollBarSpec, onLongPress ->
+    ) { contentScale, alignment, state: ZoomState, _, scrollBar, onLongPress ->
         val context = LocalContext.current
         val coilData =
             remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
@@ -32,7 +32,7 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),
             state = state,
-            scrollBarSpec = scrollBarSpec,
+            scrollBar = scrollBar,
             onLongPress = onLongPress,
         )
     }

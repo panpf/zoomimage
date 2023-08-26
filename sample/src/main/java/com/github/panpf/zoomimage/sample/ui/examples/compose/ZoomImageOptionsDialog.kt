@@ -62,7 +62,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         )
 
         BindStateAndFlow(state.readModeEnabled, settingsService.readModeEnabled)
-        BindStateAndFlow(state.readModeDirectionBoth, settingsService.readModeDirectionBoth)
+        BindStateAndFlow(state.readModeAcceptedBoth, settingsService.readModeAcceptedBoth)
 
         BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
         BindStateAndFlow(state.ignoreExifOrientation, settingsService.ignoreExifOrientation)
@@ -96,7 +96,7 @@ class ZoomImageOptionsState {
     val limitOffsetWithinBaseVisibleRect = MutableStateFlow(false)
 
     val readModeEnabled = MutableStateFlow(true)
-    val readModeDirectionBoth = MutableStateFlow(true)
+    val readModeAcceptedBoth = MutableStateFlow(true)
 
     val showTileBounds = MutableStateFlow(false)
     val ignoreExifOrientation = MutableStateFlow(false)
@@ -122,7 +122,7 @@ fun ZoomImageOptionsDialog(
     val limitOffsetWithinBaseVisibleRect by state.limitOffsetWithinBaseVisibleRect.collectAsState()
 
     val readModeEnabled by state.readModeEnabled.collectAsState()
-    val readModeDirectionBoth by state.readModeDirectionBoth.collectAsState()
+    val readModeAcceptedBoth by state.readModeAcceptedBoth.collectAsState()
 
     val showTileBounds by state.showTileBounds.collectAsState()
     val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
@@ -226,8 +226,8 @@ fun ZoomImageOptionsDialog(
                     state.readModeEnabled.value = !state.readModeEnabled.value
                     onDismissRequest()
                 }
-                SwitchMenu("Read Mode Direction Both", readModeDirectionBoth) {
-                    state.readModeDirectionBoth.value = !state.readModeDirectionBoth.value
+                SwitchMenu("Read Mode Accepted Both", readModeAcceptedBoth) {
+                    state.readModeAcceptedBoth.value = !state.readModeAcceptedBoth.value
                     onDismissRequest()
                 }
 

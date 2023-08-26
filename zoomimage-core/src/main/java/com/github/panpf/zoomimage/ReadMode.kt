@@ -22,30 +22,31 @@ import com.github.panpf.zoomimage.util.times
 import kotlin.math.max
 
 data class ReadMode(
-    val direction: Direction = Direction.Both,
+    val acceptedImageSizeType: AcceptedImageSizeType = AcceptedImageSizeType.Both,
     val decider: Decider = Decider.Default
 ) {
 
-    fun accept(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
-        val directionMatched = when (direction) {
-            Direction.OnlyHorizontal -> srcSize.width > srcSize.height
-            Direction.OnlyVertical -> srcSize.width < srcSize.height
+    fun accept(contentSize: IntSizeCompat, containerSize: IntSizeCompat): Boolean {
+        val acceptedImageSizeTypeMatched = when (acceptedImageSizeType) {
+            AcceptedImageSizeType.OnlyHorizontal -> contentSize.width > contentSize.height
+            AcceptedImageSizeType.OnlyVertical -> contentSize.width < contentSize.height
             else -> true
         }
-        return if (directionMatched) decider.should(srcSize = srcSize, dstSize = dstSize) else false
+        return if (acceptedImageSizeTypeMatched)
+            decider.should(contentSize = contentSize, containerSize = containerSize) else false
     }
 
     companion object {
-        val Default = ReadMode(direction = Direction.Both, decider = Decider.Default)
+        val Default = ReadMode(acceptedImageSizeType = AcceptedImageSizeType.Both, decider = Decider.Default)
     }
 
-    enum class Direction {
+    enum class AcceptedImageSizeType {
         Both, OnlyHorizontal, OnlyVertical
     }
 
     interface Decider {
 
-        fun should(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean
+        fun should(contentSize: IntSizeCompat, containerSize: IntSizeCompat): Boolean
 
         companion object {
             val Default = LongImageDecider()
@@ -57,16 +58,17 @@ data class ReadMode(
         val notSameDirectionMultiple: Float = 5.0f,
     ) : Decider {
 
-        override fun should(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
+        override fun should(contentSize: IntSizeCompat, containerSize: IntSizeCompat): Boolean {
             val fillScale = max(
-                dstSize.width / srcSize.width.toFloat(), dstSize.height / srcSize.height.toFloat()
+                containerSize.width / contentSize.width.toFloat(),
+                containerSize.height / contentSize.height.toFloat()
             )
-            val filledSrcSize = srcSize.times(ScaleFactorCompat(fillScale))
+            val filledSrcSize = contentSize.times(ScaleFactorCompat(fillScale))
             val maxScaleMultiple = max(
-                filledSrcSize.width / dstSize.width.toFloat(),
-                filledSrcSize.height / dstSize.height.toFloat()
+                filledSrcSize.width / containerSize.width.toFloat(),
+                filledSrcSize.height / containerSize.height.toFloat()
             )
-            val sameDirection = isSameDirection(srcSize = srcSize, dstSize = dstSize)
+            val sameDirection = isSameDirection(srcSize = contentSize, dstSize = containerSize)
             val minMultiple = if (sameDirection) sameDirectionMultiple else notSameDirectionMultiple
             return maxScaleMultiple.format(1) >= minMultiple.format(1)
         }

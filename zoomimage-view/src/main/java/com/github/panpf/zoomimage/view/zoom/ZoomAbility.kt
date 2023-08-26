@@ -84,7 +84,7 @@ class ZoomAbility constructor(
         set(value) {
             zoomEngine.alignment = value
         }
-    var scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
+    var scrollBar: ScrollBarSpec? = ScrollBarSpec.Default
         set(value) {
             if (field != value) {
                 field = value
@@ -382,7 +382,7 @@ class ZoomAbility constructor(
     private fun resetScrollBarHelper() {
         scrollBarEngine?.cancel()
         scrollBarEngine = null
-        val scrollBarSpec = this@ZoomAbility.scrollBarSpec
+        val scrollBarSpec = this@ZoomAbility.scrollBar
         if (scrollBarSpec != null) {
             scrollBarEngine = ScrollBarEngine(view, scrollBarSpec)
         }

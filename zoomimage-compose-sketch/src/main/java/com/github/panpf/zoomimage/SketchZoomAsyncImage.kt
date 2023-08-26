@@ -60,7 +60,7 @@ fun SketchZoomAsyncImage(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
     state: ZoomState = rememberZoomState(),
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
+    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = SketchZoomAsyncImage(
@@ -75,7 +75,7 @@ fun SketchZoomAsyncImage(
     colorFilter = colorFilter,
     filterQuality = filterQuality,
     state = state,
-    scrollBarSpec = scrollBarSpec,
+    scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -98,7 +98,7 @@ fun SketchZoomAsyncImage(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
     state: ZoomState = rememberZoomState(),
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
+    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = SketchZoomAsyncImage(
@@ -113,7 +113,7 @@ fun SketchZoomAsyncImage(
     colorFilter = colorFilter,
     filterQuality = filterQuality,
     state = state,
-    scrollBarSpec = scrollBarSpec,
+    scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -132,7 +132,7 @@ fun SketchZoomAsyncImage(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
     state: ZoomState = rememberZoomState(),
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
+    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = SketchZoomAsyncImage(
@@ -147,7 +147,7 @@ fun SketchZoomAsyncImage(
     colorFilter = colorFilter,
     filterQuality = filterQuality,
     state = state,
-    scrollBarSpec = scrollBarSpec,
+    scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
 )
@@ -165,7 +165,7 @@ fun SketchZoomAsyncImage(
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
     state: ZoomState = rememberZoomState(),
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
+    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
@@ -182,7 +182,7 @@ fun SketchZoomAsyncImage(
     val transform1 = state.zoomable.transform
     val modifier1 = modifier
         .clipToBounds()
-        .let { if (scrollBarSpec != null) it.zoomScrollBar(state.zoomable, scrollBarSpec) else it }
+        .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
         .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = transform1.scaleX

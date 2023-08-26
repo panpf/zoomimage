@@ -147,7 +147,7 @@ private fun computeViewSize(contentSize: IntSize, containerSize: IntSize): IntSi
         (contentWidth >= contentHeight && containerWidth >= containerHeight) ||
                 (contentWidth < contentHeight && containerWidth < containerHeight)
     val isLongImage = ReadMode.LongImageDecider()
-        .should(srcSize = contentSize.toCompat(), dstSize = containerSize.toCompat())
+        .should(contentSize = contentSize.toCompat(), containerSize = containerSize.toCompat())
     val maxPercentage = if (isLongImage) 0.6f else if (sameDirection) 0.3f else 0.4f
     val maxWidth = containerWidth * maxPercentage
     val maxHeight = containerHeight * maxPercentage

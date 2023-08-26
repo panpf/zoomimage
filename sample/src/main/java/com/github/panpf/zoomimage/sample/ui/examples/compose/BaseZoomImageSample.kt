@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
@@ -40,7 +39,7 @@ fun BaseZoomImageSample(
         alignment: Alignment,
         state: ZoomState,
         ignoreExifOrientation: Boolean,
-        scrollBarSpec: ScrollBarSpec?,
+        scrollBar: ScrollBarSpec?,
         onLongPress: ((Offset) -> Unit),
     ) -> Unit
 ) {
@@ -51,7 +50,7 @@ fun BaseZoomImageSample(
     val threeStepScale by settingsService.threeStepScale.stateFlow.collectAsState()
     val rubberBandScale by settingsService.rubberBandScale.stateFlow.collectAsState()
     val readModeEnabled by settingsService.readModeEnabled.stateFlow.collectAsState()
-    val readModeDirectionBoth by settingsService.readModeDirectionBoth.stateFlow.collectAsState()
+    val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.stateFlow.collectAsState()
     val scrollBarEnabled by settingsService.scrollBarEnabled.stateFlow.collectAsState()
     val animateScale by settingsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.stateFlow.collectAsState()
@@ -82,16 +81,19 @@ fun BaseZoomImageSample(
     }
     val readMode by remember {
         derivedStateOf {
-            val readModeDirection = when {
-                readModeDirectionBoth -> ReadMode.Direction.Both
-                horizontalLayout -> ReadMode.Direction.OnlyVertical
-                else -> ReadMode.Direction.OnlyHorizontal
+            val readModeAcceptedImageSizeType = when {
+                readModeAcceptedBoth -> ReadMode.AcceptedImageSizeType.Both
+                horizontalLayout -> ReadMode.AcceptedImageSizeType.OnlyVertical
+                else -> ReadMode.AcceptedImageSizeType.OnlyHorizontal
             }
-            if (readModeEnabled) ReadMode.Default.copy(direction = readModeDirection) else null
+            if (readModeEnabled) ReadMode.Default.copy(acceptedImageSizeType = readModeAcceptedImageSizeType) else null
         }
     }
     val logLevel by remember { mutableStateOf(if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO) }
-    val zoomState = rememberZoomState(rememberZoomImageLogger(level = logLevel)).apply {
+    val zoomState = rememberZoomState().apply {
+        LaunchedEffect(logLevel) {
+            logger.level = logLevel
+        }
         LaunchedEffect(threeStepScale) {
             zoomable.threeStepScale = threeStepScale
         }

@@ -66,8 +66,8 @@ class SettingsService(val context: Context) {
     val readModeEnabled by lazy {
         BooleanMmkvData(mmkv, "readModeEnabled", true)
     }
-    val readModeDirectionBoth by lazy {
-        BooleanMmkvData(mmkv, "readModeDirectionBoth", true)
+    val readModeAcceptedBoth by lazy {
+        BooleanMmkvData(mmkv, "readModeAcceptedBoth", true)
     }
 
     val showTileBounds by lazy {

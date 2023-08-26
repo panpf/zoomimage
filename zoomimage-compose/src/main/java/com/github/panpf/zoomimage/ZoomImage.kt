@@ -34,7 +34,7 @@ fun ZoomImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     state: ZoomState = rememberZoomState(),
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default,
+    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
@@ -57,9 +57,7 @@ fun ZoomImage(
         val modifier1 = Modifier
             .fillMaxSize()
             .clipToBounds()
-            .let { modifier ->
-                scrollBarSpec?.let { modifier.zoomScrollBar(state.zoomable, it) } ?: modifier
-            }
+            .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
             .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
             .graphicsLayer {
                 scaleX = transform.scaleX

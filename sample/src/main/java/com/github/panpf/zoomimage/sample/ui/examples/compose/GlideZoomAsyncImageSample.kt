@@ -17,7 +17,7 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = false
-    ) { contentScale, alignment, state, _, scrollBarSpec, onLongPress ->
+    ) { contentScale, alignment, state, _, scrollBar, onLongPress ->
         val glideData =
             remember(key1 = sketchImageUri) { sketchUri2GlideModel(sketchImageUri) }
         GlideZoomAsyncImage(
@@ -27,7 +27,7 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),
             state = state,
-            scrollBarSpec = scrollBarSpec,
+            scrollBar = scrollBar,
             onLongPress = onLongPress,
         )
     }
