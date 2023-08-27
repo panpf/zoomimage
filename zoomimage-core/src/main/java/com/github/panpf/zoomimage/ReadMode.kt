@@ -22,26 +22,25 @@ import com.github.panpf.zoomimage.util.times
 import kotlin.math.max
 
 data class ReadMode(
-    val acceptedImageSizeType: AcceptedImageSizeType = AcceptedImageSizeType.Both,
+    val sizeType: Int = SIZE_TYPE_HORIZONTAL or SIZE_TYPE_VERTICAL,
     val decider: Decider = Decider.Default
 ) {
 
     fun accept(contentSize: IntSizeCompat, containerSize: IntSizeCompat): Boolean {
-        val acceptedImageSizeTypeMatched = when (acceptedImageSizeType) {
-            AcceptedImageSizeType.OnlyHorizontal -> contentSize.width > contentSize.height
-            AcceptedImageSizeType.OnlyVertical -> contentSize.width < contentSize.height
-            else -> true
-        }
-        return if (acceptedImageSizeTypeMatched)
-            decider.should(contentSize = contentSize, containerSize = containerSize) else false
+        val accepted = contentSize.width == contentSize.height
+                || (sizeType and SIZE_TYPE_HORIZONTAL != 0 && contentSize.width > contentSize.height)
+                || (sizeType and SIZE_TYPE_VERTICAL != 0 && contentSize.width < contentSize.height)
+        val should = decider.should(contentSize = contentSize, containerSize = containerSize)
+        return accepted && should
     }
 
     companion object {
-        val Default = ReadMode(acceptedImageSizeType = AcceptedImageSizeType.Both, decider = Decider.Default)
-    }
-
-    enum class AcceptedImageSizeType {
-        Both, OnlyHorizontal, OnlyVertical
+        const val SIZE_TYPE_HORIZONTAL = 1
+        const val SIZE_TYPE_VERTICAL = 2
+        val Default = ReadMode(
+            sizeType = SIZE_TYPE_HORIZONTAL or SIZE_TYPE_VERTICAL,
+            decider = Decider.Default
+        )
     }
 
     interface Decider {

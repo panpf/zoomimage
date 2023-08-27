@@ -99,28 +99,28 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     scrollBar = if (it) ScrollBarSpec.Default else null
                 }
                 settingsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    val acceptedImageSizeType = if (settingsService.readModeAcceptedBoth.value) {
-                        ReadMode.AcceptedImageSizeType.Both
+                    val sizeType = if (settingsService.readModeAcceptedBoth.value) {
+                        ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
                     } else if (settingsService.horizontalPagerLayout.value) {
-                        ReadMode.AcceptedImageSizeType.OnlyVertical
+                        ReadMode.SIZE_TYPE_HORIZONTAL
                     } else {
-                        ReadMode.AcceptedImageSizeType.OnlyHorizontal
+                        ReadMode.SIZE_TYPE_VERTICAL
                     }
                     readMode =
-                        if (settingsService.readModeEnabled.value) ReadMode(acceptedImageSizeType = acceptedImageSizeType) else null
+                        if (settingsService.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
                 settingsService.readModeAcceptedBoth.stateFlow.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
-                    val acceptedImageSizeType = if (settingsService.readModeAcceptedBoth.value) {
-                        ReadMode.AcceptedImageSizeType.Both
+                    val sizeType = if (settingsService.readModeAcceptedBoth.value) {
+                        ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
                     } else if (settingsService.horizontalPagerLayout.value) {
-                        ReadMode.AcceptedImageSizeType.OnlyVertical
+                        ReadMode.SIZE_TYPE_VERTICAL
                     } else {
-                        ReadMode.AcceptedImageSizeType.OnlyHorizontal
+                        ReadMode.SIZE_TYPE_HORIZONTAL
                     }
                     readMode =
-                        if (settingsService.readModeEnabled.value) ReadMode(acceptedImageSizeType = acceptedImageSizeType) else null
+                        if (settingsService.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
                 settingsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     val durationMillis = if (settingsService.animateScale.value) {

@@ -81,12 +81,12 @@ fun BaseZoomImageSample(
     }
     val readMode by remember {
         derivedStateOf {
-            val readModeAcceptedImageSizeType = when {
-                readModeAcceptedBoth -> ReadMode.AcceptedImageSizeType.Both
-                horizontalLayout -> ReadMode.AcceptedImageSizeType.OnlyVertical
-                else -> ReadMode.AcceptedImageSizeType.OnlyHorizontal
+            val sizeType = when {
+                readModeAcceptedBoth -> ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
+                horizontalLayout -> ReadMode.SIZE_TYPE_VERTICAL
+                else -> ReadMode.SIZE_TYPE_HORIZONTAL
             }
-            if (readModeEnabled) ReadMode.Default.copy(acceptedImageSizeType = readModeAcceptedImageSizeType) else null
+            if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
         }
     }
     val logLevel by remember { mutableStateOf(if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO) }
