@@ -161,7 +161,7 @@ sketchZoomImageView.zoomAbility  // ZoomAbility
 sketchZoomImageView.subsamplingAbility   // SubsamplingAbility
 ```
 
-*更多缩放、偏移、旋转、子采样、阅读模式、滚动条等功能请参考 [Document](#Document·文档)*
+*更多缩放、偏移、旋转、子采样、阅读模式、滚动条等功能请参考 [Document](#document文档)*
 
 ### contentScale 和 alignment
 
@@ -179,10 +179,10 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 
 ### 获取相关信息
 
-* ZoomableState.transform: Transform。获取当前的变换信息，包括缩放、偏移、旋转
-* ZoomableState.baseTransform: Transform。获取当前的基础变换信息，包括缩放、偏移、旋转，受
+* ZoomableState.transform: Transform。当前的变换信息（baseTransform * userTransform），包括缩放、偏移、旋转
+* ZoomableState.baseTransform: Transform。当前的基础变换信息，包括缩放、偏移、旋转，受
   contentScale、alignment 以及 rotate() 方法影响
-* ZoomableState.userTransform: Transform。获取当前的用户变换信息，包括缩放、偏移、旋转，受 scale()
+* ZoomableState.userTransform: Transform。当前的用户变换信息，包括缩放、偏移、旋转，受 scale()
   方法、location() 方法以及用户手势操作影响
 * ZoomableState.minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
 * ZoomableState.mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例

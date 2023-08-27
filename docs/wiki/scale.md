@@ -216,7 +216,7 @@ SketchZoomAsyncImage(
 
 ### 获取相关信息
 
-* ZoomableState.transform.scale: ScaleFactor。当前缩放比例（基础缩放比例 * 用户缩放比例）
+* ZoomableState.transform.scale: ScaleFactor。当前缩放比例（baseTransform.scale * userTransform.scale）
 * ZoomableState.baseTransform.scale: ScaleFactor。当前基础缩放比例，受 contentScale 参数影响
 * ZoomableState.userTransform.scale: ScaleFactor。当前用户缩放比例，受 scale()、location()
   以及用户手势缩放、双击等操作影响
