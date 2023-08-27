@@ -77,5 +77,5 @@ SketchZoomAsyncImage(
 
 * ZoomableState.transform.offset: Offset。当前偏移量（基础偏移量 + 用户偏移量）
 * ZoomableState.baseTransform.offset: Offset。当前基础偏移量，受 alignment 参数和 rotate 方法影响
-* ZoomableState.userTransform.offset: Offset。当前用户偏移量，受 offset() 方法、用户手势拖动
+* ZoomableState.userTransform.offset: Offset。当前用户偏移量，受 offset()、location() 以及用户手势拖动影响
 * ZoomableState.scrollEdge: ScrollEdge。当前偏移状态的边界信息，例如是否到达左边界、右边界、上边界、下边界等

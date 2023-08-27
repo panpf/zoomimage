@@ -1,6 +1,7 @@
 ## 开始使用
 
-> * The following example takes precedence over the Compose version of the ZoomImage component for demonstration
+> * The following example takes precedence over the Compose version of the ZoomImage component for
+    demonstration
 > * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
 > * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
 > * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
@@ -10,7 +11,7 @@
 > * ZoomState.zoomable 等价于 ZoomImageView.zoomAbility
 > * ZoomState.subsampling 等价于 ZoomImageView.subsamplingAbility
 
-### Components/组件
+### Components·组件
 
 zoomimage 库包含了多个组件可供选择，你可以根据自己的需求选择合适的组件。
 
@@ -55,39 +56,152 @@ view：
 总结：
 
 * 集成了图片加载器的组件无需任何额外的工作即可支持任意来源的图片和子采样功能
-* 未集成图片加载器的组件只能显示本地图片，以及需要额外调用 setImageSource() 方法以开启子采样功能
+* 未集成图片加载器的组件只能显示本地图片，以及需要额外调用 setImageSource() 方法以支持子采样功能
 
-## 使用
+### 使用
 
-### Compose
+#### Compose
 
-[//]: # (todo contine)
+```kotlin
+SketchZoomAsyncImage(
+    request = DisplayRequest(LocalContext.current, "http://sample.com/sample.jpg") {
+        placeholder(R.drawable.placeholder)
+        crossfade()
+    },
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+)
 
+CoilZoomAsyncImage(
+    model = ImageRequest.Builder(LocalContext.current).apply {
+        data("http://sample.com/sample.jpg")
+        placeholder(R.drawable.placeholder)
+        crossfade(true)
+    }.build(),
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+)
+
+GlideZoomAsyncImage(
+    model = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+) {
+    it.placeholder(R.drawable.placeholder)
+}
+
+val state: ZoomState by rememberZoomState()
+val context = LocalContext.current
+LaunchedEffect(Unit) {
+    val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
+    state.subsampling.setImageSource(imageSource)
+}
+ZoomImage(
+    painter = painterResource(R.drawable.huge_image_thumbnail),
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+```
+
+view:
+
+```kotlin
+val sketchZoomImageView: SketchZoomImageView = ...
+sketchZoomImageView.displayImage("http://sample.com/sample.jpg") {
+    placeholder(R.drawable.placeholder)
+    crossfade()
+}
+
+val coilZoomImageView: CoilZoomImageView = ...
+coilZoomImageView.load("http://sample.com/sample.jpg") {
+    placeholder(R.drawable.placeholder)
+    crossfade(true)
+}
+
+val glideZoomImageView: GlideZoomImageView = ...
+Glide.with(this@GlideZoomImageViewFragment)
+    .load("http://sample.com/sample.jpg")
+    .placeholder(R.drawable.placeholder)
+    .into(glideZoomImageView)
+
+val picassoZoomImageView: PicassoZoomImageView = ...
+binding.picassoZoomImageViewImage.loadImage("http://sample.com/sample.jpg") {
+    placeholder(R.drawable.placeholder)
+}
+
+val zoomImageView: ZoomImageView = ...
+zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
+val imageSource = ImageSource.fromResource(zoomImageView.context, R.drawable.huge_image)
+zoomImageView.subsamplingAbility.setImageSource(imageSource)
+```
+
+> PicassoZoomImageView 为了监听加载结果以及获得 uri，无奈之下对官方 API 进行封装提供了一套专用的
+> API，所以请不要直接使用官方的 API 去加载图片
+
+zoom 和子采样的对外 API 封装在不同的类中，compose 版本是 ZoomableState 和 SubsamplingState，view 版本是
+ZoomAbility 和 SubsamplingAbility，如下：
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+
+state.zoomable  // ZoomableState
+state.subsampling   // SubsamplingState
+
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+
+
+val sketchZoomImageView: SketchZoomImageView = ...
+sketchZoomImageView.zoomAbility  // ZoomAbility
+sketchZoomImageView.subsamplingAbility   // SubsamplingAbility
+```
+
+*更多缩放、偏移、旋转、子采样、阅读模式、滚动条等功能请参考 [Document](#Document·文档)*
+
+### contentScale 和 alignment
+
+zoomimage 支持所有的 [ContentScale] 和 [Alignment]
+
+得益于 compose 版本和 view 版本使用的是同一套逻辑代码，ZoomImageView 在支持 ScaleType
+之外也支持 [ContentScale] 和 [Alignment]，如下：
+
+```kotlin
+val sketchZoomImageView: SketchZoomImageView = ...
+
+sketchZoomImageView.zoomAbility.contentScale = ContentScale.None
+sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
+```
 
 ### 获取相关信息
 
-baseTransform
-userTransform
-transform
-transform.scale
-transform.offset
-transform.rotation
-minScale
-mediumScale
-maxScale
-transforming
-contentBaseDisplayRect
-contentBaseVisibleRect
-contentDisplayRect
-contentVisibleRect
-scrollEdge
-containerSize
-contentSize
-contentOriginSize
+* ZoomableState.transform: Transform。获取当前的变换信息，包括缩放、偏移、旋转
+* ZoomableState.baseTransform: Transform。获取当前的基础变换信息，包括缩放、偏移、旋转，受
+  contentScale、alignment 以及 rotate() 方法影响
+* ZoomableState.userTransform: Transform。获取当前的用户变换信息，包括缩放、偏移、旋转，受 scale()
+  方法、location() 方法以及用户手势操作影响
+* ZoomableState.minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
+* ZoomableState.mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
+* ZoomableState.maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
+* ZoomableState.transforming: Boolean。当前是否正在变换中，包括缩放、偏移、旋转
+* ZoomableState.contentBaseDisplayRect: IntRect。当前 content 在 container 中的基础显示区域，受
+  contentScale、alignment 以及 rotate() 方法影响
+* ZoomableState.contentBaseVisibleRect: IntRect。当前 content 的基础可见区域，受
+  contentScale、alignment 以及 rotate() 方法影响
+* ZoomableState.contentDisplayRect: IntRect。当前 content 在 container 中的显示区域，受
+  contentScale、alignment 以及 scale()、rotate()、location() 以及以及用户手势操作的影响
+* ZoomableState.contentVisibleRect: IntRect。当前 content 的可见区域，受
+  contentScale、alignment 以及 scale()、rotate()、location() 以及以及用户手势操作的影响
+* ZoomableState.scrollEdge: ScrollEdge。当前偏移状态的边界信息，例如是否到达左边界、右边界、上边界、下边界等
+* ZoomableState.containerSize: IntSize。当前 container 的大小
+* ZoomableState.contentSize: IntSize。当前 content 的大小
+* ZoomableState.contentOriginSize: IntSize。当前 content 的原始大小
 
-ZoomImageView 设置 contentScale 和 alignment
-
-## Document/文档
+## Document·文档
 
 * [Scale: scale, double-click scale, duration setting/缩放、双击缩放、时长设置](scale.md)
 * [Offset: Move to the specified position/移动到指定位置](offset.md)

@@ -35,10 +35,11 @@ ZoomImage 和 ZoomImageView 没有集成图片加载库的组件，需要额外�
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-val imageSource by remember {
-    mutableStateOf(ImageSource.fromResource(LocalContext.current, R.drawable.huge_image))
+val context = LocalContext.current
+LaunchedEffect(Unit) {
+    val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
+    state.subsampling.setImageSource(imageSource)
 }
-state.subsampling.setImageSource(imageSource)
 
 ZoomImage(
     painter = painterResource(R.drawable.huge_image_thumbnail),

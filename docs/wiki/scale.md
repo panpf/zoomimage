@@ -218,7 +218,8 @@ SketchZoomAsyncImage(
 
 * ZoomableState.transform.scale: ScaleFactor。当前缩放比例（基础缩放比例 * 用户缩放比例）
 * ZoomableState.baseTransform.scale: ScaleFactor。当前基础缩放比例，受 contentScale 参数影响
-* ZoomableState.userTransform.scale: ScaleFactor。当前用户缩放比例，受 scale() 方法、手势缩放、双击缩放影响
-* ZoomableState.minScale: Float。当前最小缩放比例
-* ZoomableState.mediumScale: Float。当前中间缩放比例
-* ZoomableState.maxScale: Float。当前最大缩放比例
+* ZoomableState.userTransform.scale: ScaleFactor。当前用户缩放比例，受 scale()、location()
+  以及用户手势缩放、双击等操作影响
+* ZoomableState.minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
+* ZoomableState.mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
+* ZoomableState.maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
