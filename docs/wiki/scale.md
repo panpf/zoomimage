@@ -1,15 +1,14 @@
 ## Scale Image/缩放图像
 
-> * The following example takes precedence over the Compose version of the ZoomImage component for
-    demonstration
-> * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
-> * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
-> * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
+> * The following example takes precedence over the Compose version component for demonstration
+> * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is different
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
     <br>-----------</br>
-> * 以下示例优先用 Compose 版本的 ZoomImage 组件来演示
-> * ZoomImageView 的 API 和 ZoomImage 一模一样，只是入口不一样
-> * ZoomState.zoomable 等价于 ZoomImageView.zoomAbility
-> * ZoomState.subsampling 等价于 ZoomImageView.subsamplingAbility
+> * 以下示例优先用 Compose 版本的组件来演示
+> * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
 zoomimage 支持双击缩放，手势缩放，scale() 等多种缩放方式来缩放图像。
 
@@ -26,9 +25,9 @@ zoomimage 在缩放的过程中始终受到 minScale、mediumScale、maxScale �
 
 #### ScalesCalculator
 
-ScalesCalculator 专门用来计算 mediumScale 和 maxScale，zoomimage 有两个内置的 ScalesCalculator：
+[ScalesCalculator] 专门用来计算 mediumScale 和 maxScale，zoomimage 有两个内置的 [ScalesCalculator]：
 
-* ScalesCalculator.Dynamic：maxScale 始终是 `mediumScale * multiple`，mediumScale 则是根据
+* [ScalesCalculator].Dynamic：maxScale 始终是 `mediumScale * multiple`，mediumScale 则是根据
   containerSize、contentSize、contentOriginSize 动态的计算，计算规则是在以下几个值中取最大的：
     * minMediumScale：最小中间缩放倍数，计算公式为：
       ```kotlin
@@ -48,12 +47,12 @@ ScalesCalculator 专门用来计算 mediumScale 和 maxScale，zoomimage 有两�
           contentOriginSize.height / contentSize.height.toFloat()
       )
       ```
-* ScalesCalculator.Fixed：固定的缩放倍数，mediumScale 始终是 `minScale * multiple`，maxScale
+* [ScalesCalculator].Fixed：固定的缩放倍数，mediumScale 始终是 `minScale * multiple`，maxScale
   始终是 `mediumScale * multiple`
 
 > multiple 默认值为 3f
 
-scalesCalculator 默认值为 ScalesCalculator.Dynamic，你可以将它修改 Fixed，或自定义的实现，如下：
+scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改 Fixed，或自定义的实现，如下：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -216,10 +215,20 @@ SketchZoomAsyncImage(
 
 ### 获取相关信息
 
-* ZoomableState.transform.scale: ScaleFactor。当前缩放比例（baseTransform.scale * userTransform.scale）
-* ZoomableState.baseTransform.scale: ScaleFactor。当前基础缩放比例，受 contentScale 参数影响
-* ZoomableState.userTransform.scale: ScaleFactor。当前用户缩放比例，受 scale()、location()
+* [ZoomableState].transform.scale: ScaleFactor。当前缩放比例（baseTransform.scale * userTransform.scale）
+* [ZoomableState].baseTransform.scale: ScaleFactor。当前基础缩放比例，受 contentScale 参数影响
+* [ZoomableState].userTransform.scale: ScaleFactor。当前用户缩放比例，受 scale()、location()
   以及用户手势缩放、双击等操作影响
-* ZoomableState.minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
-* ZoomableState.mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
-* ZoomableState.maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
+* [ZoomableState].minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
+* [ZoomableState].mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
+* [ZoomableState].maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
+
+[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+
+[ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
+
+[ZoomState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/ZoomState.kt
+
+[ZoomableState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
+
+[ScalesCalculator]: ../../zoomimage-core/src/main/java/com/github/panpf/zoomimage/zoom/ScalesCalculator.kt

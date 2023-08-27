@@ -1,15 +1,15 @@
 ## 开始使用
 
-> * The following example takes precedence over the Compose version of the ZoomImage component for
-    demonstration
-> * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
-> * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
-> * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
+> * The following example takes precedence over the Compose version component for demonstration
+> * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
+    different
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
     <br>-----------</br>
-> * 以下示例优先用 Compose 版本的 ZoomImage 组件来演示
-> * ZoomImageView 的 API 和 ZoomImage 一模一样，只是入口不一样
-> * ZoomState.zoomable 等价于 ZoomImageView.zoomAbility
-> * ZoomState.subsampling 等价于 ZoomImageView.subsamplingAbility
+> * 以下示例优先用 Compose 版本的组件来演示
+> * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
 ### Components·组件
 
@@ -60,7 +60,7 @@ view：
 
 ### 使用
 
-#### Compose
+#### compose
 
 ```kotlin
 SketchZoomAsyncImage(
@@ -139,8 +139,9 @@ zoomImageView.subsamplingAbility.setImageSource(imageSource)
 > PicassoZoomImageView 为了监听加载结果以及获得 uri，无奈之下对官方 API 进行封装提供了一套专用的
 > API，所以请不要直接使用官方的 API 去加载图片
 
-zoom 和子采样的对外 API 封装在不同的类中，compose 版本是 ZoomableState 和 SubsamplingState，view 版本是
-ZoomAbility 和 SubsamplingAbility，如下：
+zoom 和子采样的对外 API 封装在不同的类中，compose 版本是 [ZoomableState] 和 [SubsamplingState]，view
+版本是
+[ZoomAbility] 和 [SubsamplingAbility]，如下：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -167,7 +168,7 @@ sketchZoomImageView.subsamplingAbility   // SubsamplingAbility
 
 zoomimage 支持所有的 [ContentScale] 和 [Alignment]
 
-得益于 compose 版本和 view 版本使用的是同一套逻辑代码，ZoomImageView 在支持 ScaleType
+得益于 compose 版本和 view 版本使用的是同一套逻辑代码，view 版本的组件在支持 [ScaleType]
 之外也支持 [ContentScale] 和 [Alignment]，如下：
 
 ```kotlin
@@ -179,27 +180,27 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 
 ### 获取相关信息
 
-* ZoomableState.transform: Transform。当前的变换信息（baseTransform * userTransform），包括缩放、偏移、旋转
-* ZoomableState.baseTransform: Transform。当前的基础变换信息，包括缩放、偏移、旋转，受
+* [ZoomableState].transform: Transform。当前的变换信息（baseTransform * userTransform），包括缩放、偏移、旋转
+* [ZoomableState].baseTransform: Transform。当前的基础变换信息，包括缩放、偏移、旋转，受
   contentScale、alignment 以及 rotate() 方法影响
-* ZoomableState.userTransform: Transform。当前的用户变换信息，包括缩放、偏移、旋转，受 scale()
+* [ZoomableState].userTransform: Transform。当前的用户变换信息，包括缩放、偏移、旋转，受 scale()
   方法、location() 方法以及用户手势操作影响
-* ZoomableState.minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
-* ZoomableState.mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
-* ZoomableState.maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
-* ZoomableState.transforming: Boolean。当前是否正在变换中，包括缩放、偏移、旋转
-* ZoomableState.contentBaseDisplayRect: IntRect。当前 content 在 container 中的基础显示区域，受
+* [ZoomableState].minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
+* [ZoomableState].mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
+* [ZoomableState].maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
+* [ZoomableState].transforming: Boolean。当前是否正在变换中，包括缩放、偏移、旋转
+* [ZoomableState].contentBaseDisplayRect: IntRect。当前 content 在 container 中的基础显示区域，受
   contentScale、alignment 以及 rotate() 方法影响
-* ZoomableState.contentBaseVisibleRect: IntRect。当前 content 的基础可见区域，受
+* [ZoomableState].contentBaseVisibleRect: IntRect。当前 content 的基础可见区域，受
   contentScale、alignment 以及 rotate() 方法影响
-* ZoomableState.contentDisplayRect: IntRect。当前 content 在 container 中的显示区域，受
+* [ZoomableState].contentDisplayRect: IntRect。当前 content 在 container 中的显示区域，受
   contentScale、alignment 以及 scale()、rotate()、location() 以及以及用户手势操作的影响
-* ZoomableState.contentVisibleRect: IntRect。当前 content 的可见区域，受
+* [ZoomableState].contentVisibleRect: IntRect。当前 content 的可见区域，受
   contentScale、alignment 以及 scale()、rotate()、location() 以及以及用户手势操作的影响
-* ZoomableState.scrollEdge: ScrollEdge。当前偏移状态的边界信息，例如是否到达左边界、右边界、上边界、下边界等
-* ZoomableState.containerSize: IntSize。当前 container 的大小
-* ZoomableState.contentSize: IntSize。当前 content 的大小
-* ZoomableState.contentOriginSize: IntSize。当前 content 的原始大小
+* [ZoomableState].scrollEdge: ScrollEdge。当前偏移状态的边界信息，例如是否到达左边界、右边界、上边界、下边界等
+* [ZoomableState].containerSize: IntSize。当前 container 的大小
+* [ZoomableState].contentSize: IntSize。当前 content 的大小
+* [ZoomableState].contentOriginSize: IntSize。当前 content 的原始大小
 
 ## Document·文档
 
@@ -221,7 +222,6 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 
 [SketchZoomAsyncImage]: ../../zoomimage-compose-sketch/src/main/java/com/github/panpf/zoomimage/SketchZoomAsyncImage.kt
 
-
 [ZoomImageSample]: ../../sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/ZoomImageSample.kt
 
 [CoilZoomAsyncImageSample]: ../../sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/CoilZoomAsyncImageSample.kt
@@ -229,7 +229,6 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 [GlideZoomAsyncImageSample]: ../../sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/GlideZoomAsyncImageSample.kt
 
 [SketchZoomAsyncImageSample]: ../../sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/SketchZoomAsyncImageSample.kt
-
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 
@@ -240,7 +239,6 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 [PicassoZoomImageView]: ../../zoomimage-view-picasso/src/main/java/com/github/panpf/zoomimage/PicassoZoomImageView.kt
 
 [SketchZoomImageView]: ../../zoomimage-view-sketch/src/main/java/com/github/panpf/zoomimage/SketchZoomImageView.kt
-
 
 [ZoomImageViewFragment]: ../../sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/ZoomImageViewFragment.kt
 
@@ -267,3 +265,23 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 [Picasso]: https://github.com/square/picasso
 
 [README]: ../../README.md
+
+[ContentScale]: https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale
+
+[Alignment]: https://developer.android.com/reference/kotlin/androidx/compose/ui/Alignment
+
+[ScaleType]: https://developer.android.com/reference/android/widget/ImageView.ScaleType
+
+[ZoomableState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
+
+[SubsamplingState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
+
+[ZoomAbility]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/view/zoom/ZoomAbility.kt
+
+[SubsamplingAbility]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/view/subsampling/SubsamplingAbility.kt
+
+[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+
+[ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
+
+[ZoomState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/ZoomState.kt

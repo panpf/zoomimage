@@ -1,22 +1,22 @@
 ## Subsampling/子采样
 
-> * The following example takes precedence over the Compose version of the ZoomImage component for
-    demonstration
-> * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
-> * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
-> * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
+> * The following example takes precedence over the Compose version component for demonstration
+> * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
+    different
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
     <br>-----------</br>
-> * 以下示例优先用 Compose 版本的 ZoomImage 组件来演示
-> * ZoomImageView 的 API 和 ZoomImage 一模一样，只是入口不一样
-> * ZoomState.zoomable 等价于 ZoomImageView.zoomAbility
-> * ZoomState.subsampling 等价于 ZoomImageView.subsamplingAbility
+> * 以下示例优先用 Compose 版本的组件来演示
+> * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
 有一些图片的尺寸巨大，如果把它们完整的读到内存肯定会让 App 因内存不足而崩溃
 
 图片加载框架通常会采样后再加载，这时图片的尺寸会变小，但是图片的内容也会变的模糊不清
 
-所以就需要 zoomimage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图碎片显示到屏幕上，这样就能够在缩放时既显示清晰的图片，又不会让
-App 崩溃
+所以就需要 zoomimage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图碎片显示到屏幕上，
+这样就能够在缩放时既显示清晰的图片，又不会让 App 崩溃
 
 ### 前置条件
 
@@ -30,7 +30,7 @@ App 崩溃
 
 集成了图片加载库的组件无需任何额外的工作即可使用子采样功能
 
-ZoomImage 和 ZoomImageView 没有集成图片加载库的组件，需要额外调用 setImageSource() 方法以使用子采样功能，如下：
+[ZoomImage] 和 [ZoomImageView] 没有集成图片加载库的组件，需要额外调用 setImageSource() 方法以使用子采样功能，如下：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -129,7 +129,7 @@ SketchZoomAsyncImage(
 子采样功能支持内存缓存，可以将 Bitmap 缓存在内存中，这样可以避免重复解码，提高性能
 
 集成了图片加载库的组件无需任何额外的工作即可使用内存缓存功能，而没有集成图片加载库的组件需要先实现自己的
-TileMemoryCache 然后设置 tileMemoryCache 属性才能使用内存缓存功能，如下：
+[TileMemoryCache] 然后设置 tileMemoryCache 属性才能使用内存缓存功能，如下：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -168,7 +168,7 @@ ZoomImage(
 子采样功能支持重用 Bitmap，可以使用已经存在的 Bitmap 解码新的碎片，这样可以减少创建 Bitmap，减少内存抖动，提高性能
 
 因为只有 Sketch 和 Glide 有 BitmapPool，所以只有集成了这两个图片加载库的组件无需任何额外的工作即可使用重用
-Bitmap 功能，其它组件需要先实现自己的 TileBitmapPool 然后设置 tileBitmapPool 属性才能使用内存重用
+Bitmap 功能，其它组件需要先实现自己的 [TileBitmapPool] 然后设置 tileBitmapPool 属性才能使用内存重用
 Bitmap 功能，如下：
 
 ```kotlin
@@ -231,7 +231,19 @@ zoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
 
 ### 获取相关信息
 
-* SubsamplingState.ready: Boolean。是否已经准备好了
-* SubsamplingState.imageInfo: ImageInfo。当前碎片的快照信息列表
-* SubsamplingState.tileList: List<TileSnapshot>。当前碎片的快照信息列表
-* SubsamplingState.imageLoadRect: IntRect。原图上当前实际加载的区域
+* [SubsamplingState].ready: Boolean。是否已经准备好了
+* [SubsamplingState].imageInfo: ImageInfo。当前碎片的快照信息列表
+* [SubsamplingState].tileList: List<TileSnapshot>。当前碎片的快照信息列表
+* [SubsamplingState].imageLoadRect: IntRect。原图上当前实际加载的区域
+
+[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+
+[ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
+
+[ZoomState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/ZoomState.kt
+
+[TileBitmapPool]: ../../zoomimage-core/src/main/java/com/github/panpf/zoomimage/subsampling/TileBitmapPool.kt
+
+[TileMemoryCache]: ../../zoomimage-core/src/main/java/com/github/panpf/zoomimage/subsampling/TileMemoryCache.kt
+
+[SubsamplingState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt

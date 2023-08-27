@@ -1,18 +1,19 @@
 ## Location 图像/定位图像
 
-> * The following example takes precedence over the Compose version of the ZoomImage component for demonstration
-> * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
-> * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
-> * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
+> * The following example takes precedence over the Compose version component for demonstration
+> * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
+    different
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
     <br>-----------</br>
-> * 以下示例优先用 Compose 版本的 ZoomImage 组件来演示
-> * ZoomImageView 的 API 和 ZoomImage 一模一样，只是入口不一样
-> * ZoomState.zoomable 等价于 ZoomImageView.zoomAbility
-> * ZoomState.subsampling 等价于 ZoomImageView.subsamplingAbility
+> * 以下示例优先用 Compose 版本的组件来演示
+> * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
 ### location()
 
-zoomimage 提供改了 location() 方法用来定位到图像的指定位置，指定的位置一定会显示在屏幕的中间，它有两个参数：
+zoomimage 提供改了 location() 方法用来定位到图像的指定位置，指定的位置会显示在屏幕的中间（边缘位置除外），它有两个参数：
 
 * contentPoint: IntOffset。content 上的定位点，原点是 content 的左上角
 * targetScale: Float = transform.scaleX。目标缩放倍数，默认是当前缩放倍数
@@ -43,3 +44,9 @@ Button(
     Text(text = "location to center")
 }
 ```
+
+[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+
+[ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
+
+[ZoomState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/ZoomState.kt
