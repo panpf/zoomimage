@@ -164,11 +164,11 @@ ZoomImage(
 
 ### Reuse Bitmap
 
-子采样功能支持重用 Bitmap，可以使用已经存在的 Bitmap 解码新的碎片，这样可以避免重复创建
-Bitmap，避免内存抖动，提高性能
+子采样功能支持重用 Bitmap，可以使用已经存在的 Bitmap 解码新的碎片，这样可以减少创建 Bitmap，减少内存抖动，提高性能
 
-集成了图片加载库的组件无需任何额外的工作即可使用重用 Bitmap 功能，而没有集成图片加载库的组件需要先实现自己的
-TileBitmapPool 然后设置 tileBitmapPool 属性才能使用内存重用 Bitmap 功能，如下：
+因为只有 Sketch 和 Glide 有 BitmapPool，所以只有集成了这两个图片加载库的组件无需任何额外的工作即可使用重用
+Bitmap 功能，其它组件需要先实现自己的 TileBitmapPool 然后设置 tileBitmapPool 属性才能使用内存重用
+Bitmap 功能，如下：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()

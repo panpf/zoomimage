@@ -1,6 +1,7 @@
 ## Scale Image/缩放图像
 
-> * The following example takes precedence over the Compose version of the ZoomImage component for demonstration
+> * The following example takes precedence over the Compose version of the ZoomImage component for
+    demonstration
 > * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
 > * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
 > * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
@@ -212,3 +213,12 @@ SketchZoomAsyncImage(
     state = state,
 )
 ```
+
+### 获取相关信息
+
+* ZoomableState.transform.scale: ScaleFactor。当前缩放比例（基础缩放比例 * 用户缩放比例）
+* ZoomableState.baseTransform.scale: ScaleFactor。当前基础缩放比例，受 contentScale 参数影响
+* ZoomableState.userTransform.scale: ScaleFactor。当前用户缩放比例，受 scale() 方法、手势缩放、双击缩放影响
+* ZoomableState.minScale: Float。当前最小缩放比例
+* ZoomableState.mediumScale: Float。当前中间缩放比例
+* ZoomableState.maxScale: Float。当前最大缩放比例

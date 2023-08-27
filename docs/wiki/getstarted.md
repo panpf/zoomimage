@@ -63,7 +63,8 @@ view：
 
 [//]: # (todo contine)
 
-获取相关信息
+
+### 获取相关信息
 
 baseTransform
 userTransform
@@ -80,6 +81,9 @@ contentBaseVisibleRect
 contentDisplayRect
 contentVisibleRect
 scrollEdge
+containerSize
+contentSize
+contentOriginSize
 
 ZoomImageView 设置 contentScale 和 alignment
 

@@ -1,6 +1,7 @@
 ## Rotate Image/旋转图像
 
-> * The following example takes precedence over the Compose version of the ZoomImage component for demonstration
+> * The following example takes precedence over the Compose version of the ZoomImage component for
+    demonstration
 > * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
 > * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
 > * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
@@ -46,3 +47,9 @@ Button(
     Text(text = "left rotate 90")
 }
 ```
+
+### 获取相关信息
+
+* ZoomableState.transform.rotation: Float。当前旋转角度（基础旋转角度 + 用户旋转角度）
+* ZoomableState.baseTransform.rotation: Float。当前基础旋转角度，受 rotate() 方法影响
+* ZoomableState.userTransform.rotation: Float。当前用户旋转角度，一直为 0

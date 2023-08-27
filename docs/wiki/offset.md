@@ -1,6 +1,7 @@
 ## Offset Image/移动图像
 
-> * The following example takes precedence over the Compose version of the ZoomImage component for demonstration
+> * The following example takes precedence over the Compose version of the ZoomImage component for
+    demonstration
 > * The API of ZoomImageView is exactly the same as ZoomImage, except that the entrance is different
 > * ZoomState.zoomable is equivalent to ZoomImageView.zoomAbility
 > * ZoomState.subsampling is equivalent to ZoomImageView.subsamplingAbility
@@ -71,3 +72,10 @@ SketchZoomAsyncImage(
     state = state,
 )
 ```
+
+### 获取相关信息
+
+* ZoomableState.transform.offset: Offset。当前偏移量（基础偏移量 + 用户偏移量）
+* ZoomableState.baseTransform.offset: Offset。当前基础偏移量，受 alignment 参数和 rotate 方法影响
+* ZoomableState.userTransform.offset: Offset。当前用户偏移量，受 offset() 方法、用户手势拖动
+* ZoomableState.scrollEdge: ScrollEdge。当前偏移状态的边界信息，例如是否到达左边界、右边界、上边界、下边界等
