@@ -1,5 +1,7 @@
 package com.github.panpf.zoomimage.view.internal
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.os.Looper
@@ -7,6 +9,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
@@ -121,10 +125,7 @@ internal fun ScaleType.isHorizontalCenter(srcSize: IntSizeCompat, dstSize: IntSi
             || (this == ScaleType.FIT_END && scaledSrcSize.width >= dstSize.width)
 }
 
-internal fun ScaleType.isCenter(
-    @Suppress("UNUSED_PARAMETER") srcSize: IntSizeCompat,
-    @Suppress("UNUSED_PARAMETER") dstSize: IntSizeCompat
-): Boolean =
+internal fun ScaleType.isCenter(): Boolean =
     this == ScaleType.CENTER
             || this == ScaleType.CENTER_CROP
             || this == ScaleType.CENTER_INSIDE
@@ -200,4 +201,15 @@ internal fun Matrix.getRotation(): Int {
         else -> 0
     }
     return rotation
+}
+
+internal fun Context?.findLifecycle(): Lifecycle? {
+    var context: Context? = this
+    while (true) {
+        when (context) {
+            is LifecycleOwner -> return context.lifecycle
+            is ContextWrapper -> context = context.baseContext
+            else -> return null
+        }
+    }
 }

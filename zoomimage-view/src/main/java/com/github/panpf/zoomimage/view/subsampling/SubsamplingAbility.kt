@@ -14,7 +14,7 @@ import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
-import com.github.panpf.zoomimage.view.internal.getLifecycle
+import com.github.panpf.zoomimage.view.internal.findLifecycle
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
@@ -100,7 +100,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         }
 
         // At this time, view.findViewTreeLifecycleOwner() is not null
-        setLifecycle(view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.getLifecycle())
+        setLifecycle(view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle())
     }
 
     fun setLifecycle(lifecycle: Lifecycle?) {
@@ -161,10 +161,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         tileDrawHelper.drawTiles(canvas, transform, containerSize, showTileBounds)
     }
 
-    internal fun onVisibilityChanged(
-        @Suppress("UNUSED_PARAMETER") changedView: View,
-        visibility: Int
-    ) {
+    internal fun onVisibilityChanged(visibility: Int) {
         val visibilityName = when (visibility) {
             View.VISIBLE -> "VISIBLE"
             View.INVISIBLE -> "INVISIBLE"

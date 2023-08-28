@@ -14,9 +14,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
-import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.util.rotate
-import com.github.panpf.zoomimage.util.rotateInSpace
+import com.github.panpf.zoomimage.compose.internal.rotate
+import com.github.panpf.zoomimage.compose.internal.rotateInSpace
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
@@ -45,8 +44,9 @@ fun Modifier.zoomScrollBar(
             drawContent()
 
             val alpha = alphaAnimatable.value
-            val rotatedContentVisibleRect = contentVisibleRect.toCompat().rotateInSpace(contentSize.toCompat(), rotation.roundToInt())
-            val rotatedContentSize = contentSize.toCompat().rotate(rotation.roundToInt())
+            val rotatedContentVisibleRect = contentVisibleRect
+                .rotateInSpace(contentSize, rotation.roundToInt())
+            val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
 
             @Suppress("UnnecessaryVariable")
             val scrollBarSize = sizePx

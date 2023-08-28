@@ -47,7 +47,8 @@ class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragment
         toolbar.menu.add("Layout").apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             setOnMenuItemClickListener {
-                settingsService.horizontalPagerLayout.value = !settingsService.horizontalPagerLayout.value
+                settingsService.horizontalPagerLayout.value =
+                    !settingsService.horizontalPagerLayout.value
                 true
             }
             settingsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {

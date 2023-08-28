@@ -76,7 +76,8 @@ class ScrollBarEngine(
         val rotatedContentVisibleRect = contentVisibleRect.rotateInSpace(contentSize, rotation)
         val rotatedContentSize = contentSize.rotate(rotation)
         if (rotatedContentVisibleRect.width < rotatedContentSize.width) {
-            val widthScale = (containerSize.width - scrollBarSpec.margin * 4) / rotatedContentSize.width
+            val widthScale =
+                (containerSize.width - scrollBarSpec.margin * 4) / rotatedContentSize.width
             val left = (scrollBarSpec.margin * 2) + (rotatedContentVisibleRect.left * widthScale)
             val top = containerSize.height - scrollBarSpec.margin - scrollBarSpec.size
             val horScrollBarRectF = cacheRectF.apply {

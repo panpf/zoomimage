@@ -116,7 +116,9 @@ fun calculateInitialUserTransform(
         rotation = rotation,
     )
     val rotatedContentSize = baseTransformHelper.rotatedContentSize
-    if (!readMode.accept(contentSize = rotatedContentSize, containerSize = containerSize)) return null
+    if (!readMode.accept(contentSize = rotatedContentSize, containerSize = containerSize)) {
+        return null
+    }
 
     val widthScale = containerSize.width / rotatedContentSize.width.toFloat()
     val heightScale = containerSize.height / rotatedContentSize.height.toFloat()

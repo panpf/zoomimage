@@ -122,14 +122,14 @@ data class IntRectCompat(
      * rectangle.
      */
     val minDimension: Int
-        get() = kotlin.math.min(width.absoluteValue, height.absoluteValue)
+        get() = min(width.absoluteValue, height.absoluteValue)
 
     /**
      * The greater of the magnitudes of the [width] and the [height] of this
      * rectangle.
      */
     val maxDimension: Int
-        get() = kotlin.math.max(width.absoluteValue, height.absoluteValue)
+        get() = max(width.absoluteValue, height.absoluteValue)
 
     /**
      * The offset to the intersection of the top and left edges of this rectangle.

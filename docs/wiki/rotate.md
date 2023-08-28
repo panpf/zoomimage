@@ -1,7 +1,8 @@
 ## Rotate Image/旋转图像
 
 > * The following example takes precedence over the Compose version component for demonstration
-> * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is different
+> * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
+    different
 > * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
 > * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
     <br>-----------</br>

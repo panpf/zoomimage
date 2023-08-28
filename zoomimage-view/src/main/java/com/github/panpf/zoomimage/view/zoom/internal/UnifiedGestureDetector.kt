@@ -25,24 +25,25 @@ class UnifiedGestureDetector(
     canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
 ) {
 
-    private val tapGestureDetector = GestureDetector(view.context, object : SimpleOnGestureListener() {
+    private val tapGestureDetector =
+        GestureDetector(view.context, object : SimpleOnGestureListener() {
 
-        override fun onDown(e: MotionEvent): Boolean {
-            return onDownCallback(e)
-        }
+            override fun onDown(e: MotionEvent): Boolean {
+                return onDownCallback(e)
+            }
 
-        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            return onSingleTapConfirmedCallback(e)
-        }
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                return onSingleTapConfirmedCallback(e)
+            }
 
-        override fun onLongPress(e: MotionEvent) {
-            onLongPressCallback(e)
-        }
+            override fun onLongPress(e: MotionEvent) {
+                onLongPressCallback(e)
+            }
 
-        override fun onDoubleTap(e: MotionEvent): Boolean {
-            return onDoubleTapCallback(e)
-        }
-    })
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                return onDoubleTapCallback(e)
+            }
+        })
 
     private val scaleDragGestureDetector =
         ScaleDragGestureDetector(view, canDrag, object : OnGestureListener {

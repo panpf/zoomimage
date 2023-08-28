@@ -43,7 +43,7 @@ coil = "2.4.0"
 glide = "4.15.1"
 glide-compose = "1.0.0-alpha.3"
 picasso = "2.8"
-mavenpublish="0.25.3"
+mavenpublish = "0.25.3"
 
 [libraries]
 

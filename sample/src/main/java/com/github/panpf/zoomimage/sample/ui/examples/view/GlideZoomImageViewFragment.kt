@@ -16,7 +16,6 @@
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.graphics.drawable.Drawable
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide

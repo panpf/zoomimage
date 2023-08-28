@@ -7,9 +7,9 @@ import android.graphics.Paint
 import android.graphics.RectF
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.internal.safeConfig
 import kotlin.math.abs
 

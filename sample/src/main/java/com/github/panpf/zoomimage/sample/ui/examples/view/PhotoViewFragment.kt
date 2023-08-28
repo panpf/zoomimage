@@ -25,14 +25,14 @@ import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
-import com.github.panpf.zoomimage.util.OffsetCompat
-import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.pow
 import kotlin.math.sqrt
 

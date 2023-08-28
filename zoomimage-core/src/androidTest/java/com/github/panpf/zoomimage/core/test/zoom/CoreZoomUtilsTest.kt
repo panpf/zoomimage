@@ -1,5 +1,8 @@
 package com.github.panpf.zoomimage.core.test.zoom
 
+import com.github.panpf.zoomimage.util.IntOffsetCompat as IntOffset
+import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
+import com.github.panpf.zoomimage.util.TransformOriginCompat as Origin
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.zoomimage.core.test.internal.A
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
@@ -38,9 +41,6 @@ import com.github.panpf.zoomimage.zoom.name
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import com.github.panpf.zoomimage.util.IntOffsetCompat as IntOffset
-import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
-import com.github.panpf.zoomimage.util.TransformOriginCompat as Origin
 
 @RunWith(AndroidJUnit4::class)
 class CoreZoomUtilsTest {

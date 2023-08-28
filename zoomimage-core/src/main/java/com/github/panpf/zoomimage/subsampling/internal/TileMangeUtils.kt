@@ -15,11 +15,11 @@
  */
 package com.github.panpf.zoomimage.subsampling.internal
 
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
-import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.Tile
 import kotlin.math.abs
 import kotlin.math.ceil
 

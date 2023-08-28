@@ -30,14 +30,18 @@ class MyDialogState(showing: Boolean = false) {
 }
 
 @Composable
-fun MyDialog(state: MyDialogState, transparentBackground: Boolean = false, content: @Composable ColumnScope.() -> Unit) {
+fun MyDialog(
+    state: MyDialogState,
+    transparentBackground: Boolean = false,
+    content: @Composable ColumnScope.() -> Unit
+) {
     if (state.showing) {
         Dialog(onDismissRequest = { state.showing = false }) {
             Column(
                 Modifier
                     .fillMaxWidth()
                     .let {
-                        if(!transparentBackground) {
+                        if (!transparentBackground) {
                             it.background(Color.White, shape = RoundedCornerShape(20.dp))
                         } else {
                             it

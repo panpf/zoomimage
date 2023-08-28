@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.util.ScaleFactorCompat.Companion.Unspecified
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.lerp
 import com.github.panpf.zoomimage.util.internal.packFloats
@@ -113,19 +112,19 @@ value class SizeCompat internal constructor(@PublishedApi internal val packedVal
 }
 
 /**
- * `false` when this is [Size.Unspecified].
+ * `false` when this is [SizeCompat.Unspecified].
  */
 inline val SizeCompat.isSpecified: Boolean
     get() = packedValue != SizeCompat.Unspecified.packedValue
 
 /**
- * `true` when this is [Size.Unspecified].
+ * `true` when this is [SizeCompat.Unspecified].
  */
 inline val SizeCompat.isUnspecified: Boolean
     get() = packedValue == SizeCompat.Unspecified.packedValue
 
 /**
- * If this [Size]&nbsp;[isSpecified] then this is returned, otherwise [block] is executed
+ * If this [SizeCompat]&nbsp;[isSpecified] then this is returned, otherwise [block] is executed
  * and its result is returned.
  */
 inline fun SizeCompat.takeOrElse(block: () -> SizeCompat): SizeCompat =

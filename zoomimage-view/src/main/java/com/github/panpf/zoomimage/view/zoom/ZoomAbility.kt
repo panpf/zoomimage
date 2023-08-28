@@ -181,10 +181,9 @@ class ZoomAbility constructor(
                 onViewLongPressListenerList?.isNotEmpty() == true || view.performLongClick()
             },
             onDoubleTapCallback = { e: MotionEvent ->
-                switchScale(
-                    centroidContentPoint = zoomEngine.touchPointToContentPoint(OffsetCompat(e.x, e.y)),
-                    animated = true
-                )
+                val touchPoint = OffsetCompat(x = e.x, y = e.y)
+                val centroidContentPoint = zoomEngine.touchPointToContentPoint(touchPoint)
+                switchScale(centroidContentPoint = centroidContentPoint, animated = true)
                 true
             },
             onDragCallback = { dx: Float, dy: Float ->

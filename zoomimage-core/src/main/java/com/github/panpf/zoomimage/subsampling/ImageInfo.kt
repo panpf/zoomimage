@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.subsampling
 
-import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.subsampling.internal.exifOrientationName
+import com.github.panpf.zoomimage.util.IntSizeCompat
 
 data class ImageInfo constructor(
     val size: IntSizeCompat,

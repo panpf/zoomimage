@@ -35,13 +35,13 @@ import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.sample.ui.util.compose.isEmpty
 import com.github.panpf.zoomimage.sample.ui.util.compose.isNotEmpty
+import com.github.panpf.zoomimage.sample.ui.util.compose.times
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.subsampling.Tile
-import com.github.panpf.zoomimage.compose.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.sample.ui.util.compose.times
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min

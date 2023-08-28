@@ -128,7 +128,7 @@ open class ZoomImageView @JvmOverloads constructor(
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
-        _subsamplingAbility?.onVisibilityChanged(changedView, visibility)
+        _subsamplingAbility?.onVisibilityChanged(visibility)
     }
 
     override fun canScrollHorizontally(direction: Int): Boolean =

@@ -65,13 +65,15 @@ fun NoClipImage(
     Layout(
         {},
 //        modifier.then(semantics).clipToBounds().paint(
-        modifier.then(semantics).paint(
-            painter,
-            alignment = alignment,
-            contentScale = contentScale,
-            alpha = alpha,
-            colorFilter = colorFilter
-        )
+        modifier
+            .then(semantics)
+            .paint(
+                painter,
+                alignment = alignment,
+                contentScale = contentScale,
+                alpha = alpha,
+                colorFilter = colorFilter
+            )
     ) { _, constraints ->
         layout(constraints.minWidth, constraints.minHeight) {}
     }
