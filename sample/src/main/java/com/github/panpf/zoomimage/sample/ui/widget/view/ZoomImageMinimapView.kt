@@ -75,9 +75,9 @@ class ZoomImageMinimapView @JvmOverloads constructor(
             val widthTargetScale = contentOriginSize.width.toFloat() / viewWidth
             val heightTargetScale = contentOriginSize.height.toFloat() / viewHeight
             val imageLoadRect = zoomView.subsamplingAbility.imageLoadRect
-            zoomView.subsamplingAbility.tileList.forEach { tile ->
-                val load = tile.srcRect.overlaps(imageLoadRect)
-                val tileSrcRect = tile.srcRect
+            zoomView.subsamplingAbility.tileSnapshotList.forEach { tileSnapshot ->
+                val load = tileSnapshot.srcRect.overlaps(imageLoadRect)
+                val tileSrcRect = tileSnapshot.srcRect
                 val tileDrawRect = tileDrawRect.apply {
                     set(
                         floor((tileSrcRect.left / widthTargetScale) + strokeHalfWidth).toInt(),
@@ -88,8 +88,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                 }
                 val boundsColor = when {
                     !load -> Color.parseColor("#00BFFF")
-                    tile.state == Tile.STATE_LOADED -> Color.GREEN
-                    tile.state == Tile.STATE_LOADING -> Color.YELLOW
+                    tileSnapshot.state == Tile.STATE_LOADED -> Color.GREEN
+                    tileSnapshot.state == Tile.STATE_LOADING -> Color.YELLOW
                     else -> Color.RED
                 }
                 tileBoundsPaint.color = boundsColor

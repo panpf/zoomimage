@@ -77,12 +77,12 @@ fun ZoomImageInfo(
         """.trimIndent()
     }
     val tileInfo = remember(zoomableState.transform) {
-        val tileList = subsamplingState.tileList
-        val loadedTileCount = tileList.count { it.bitmap != null }
+        val tileSnapshotList = subsamplingState.tileSnapshotList
+        val loadedTileCount = tileSnapshotList.count { it.bitmap != null }
         val loadedTileBytes =
-            tileList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+            tileSnapshotList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
         """
-            tiles=${tileList.size}
+            tiles=${tileSnapshotList.size}
             loadedTiles=$loadedTileCount, $loadedTileBytes
         """.trimIndent()
     }

@@ -32,7 +32,7 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
     ) {
         val imageInfo = engine.imageInfo ?: return
         val contentSize = engine.contentSize.takeIf { !it.isEmpty() } ?: return
-        val tileList = engine.tileList.takeIf { it.isNotEmpty() } ?: return
+        val tileSnapshotList = engine.tileSnapshotList.takeIf { it.isNotEmpty() } ?: return
         val imageLoadRect = engine.imageLoadRect.takeIf { !it.isEmpty } ?: return
 
         val widthScale = imageInfo.width / contentSize.width.toFloat()
@@ -43,16 +43,16 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
         canvas.withSave {
             canvas.concat(cacheDisplayMatrix.applyTransform(transform, containerSize))
 
-            tileList.forEach { tile ->
-                if (tile.srcRect.overlaps(imageLoadRect)) {
+            tileSnapshotList.forEach { tileSnapshot ->
+                if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
                     insideLoadCount++
-                    val tileBitmap = tile.bitmap
+                    val tileBitmap = tileSnapshot.bitmap
                     val tileDrawDstRect = cacheRect1.apply {
                         set(
-                            /* left = */ floor(tile.srcRect.left / widthScale).toInt(),
-                            /* top = */ floor(tile.srcRect.top / heightScale).toInt(),
-                            /* right = */ floor(tile.srcRect.right / widthScale).toInt(),
-                            /* bottom = */ floor(tile.srcRect.bottom / heightScale).toInt()
+                            /* left = */ floor(tileSnapshot.srcRect.left / widthScale).toInt(),
+                            /* top = */ floor(tileSnapshot.srcRect.top / heightScale).toInt(),
+                            /* right = */ floor(tileSnapshot.srcRect.right / widthScale).toInt(),
+                            /* bottom = */ floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
                         )
                     }
                     if (tileBitmap != null) {
@@ -69,7 +69,7 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
                     }
 
                     if (showTileBounds) {
-                        val boundsColor = when (tile.state) {
+                        val boundsColor = when (tileSnapshot.state) {
                             Tile.STATE_LOADED -> Color.GREEN
                             Tile.STATE_LOADING -> Color.YELLOW
                             else -> Color.RED
@@ -97,7 +97,7 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
             }
         }
         engine.logger.d {
-            "drawTiles. tiles=${tileList.size}, " +
+            "drawTiles. tiles=${tileSnapshotList.size}, " +
                     "insideLoadCount=${insideLoadCount}, " +
                     "outsideLoadCount=${outsideLoadCount}, " +
                     "realDrawCount=${realDrawCount}. " +

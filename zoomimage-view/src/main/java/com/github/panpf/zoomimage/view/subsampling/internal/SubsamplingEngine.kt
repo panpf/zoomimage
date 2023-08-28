@@ -159,7 +159,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     /**
      * A snapshot of the tile list
      */
-    var tileList: List<TileSnapshot> = emptyList()
+    var tileSnapshotList: List<TileSnapshot> = emptyList()
         private set
 
     /**
@@ -186,7 +186,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     }
 
     /**
-     * Register a [tileList] property change listener
+     * Register a [tileSnapshotList] property change listener
      */
     fun registerOnTileChangedListener(listener: OnTileChangeListener) {
         this.onTileChangeListenerList = (onTileChangeListenerList ?: LinkedHashSet()).apply {
@@ -195,7 +195,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     }
 
     /**
-     * Unregister a [tileList] property change listener
+     * Unregister a [tileSnapshotList] property change listener
      */
     fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean {
         return onTileChangeListenerList?.remove(listener) == true
@@ -384,7 +384,7 @@ class SubsamplingEngine constructor(logger: Logger) {
             tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
-                tileList = manager.tileList.map { tile ->
+                tileSnapshotList = manager.tileList.map { tile ->
                     TileSnapshot(
                         srcRect = tile.srcRect,
                         inSampleSize = tile.inSampleSize,

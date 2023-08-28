@@ -20,7 +20,7 @@ fun Modifier.subsampling(
     val imageInfo = subsamplingState.imageInfo ?: return@drawWithContent
     val contentSize = subsamplingState.contentSize
         .takeIf { !it.isEmpty() } ?: return@drawWithContent
-    val tileList = subsamplingState.tileList
+    val tileSnapshotList = subsamplingState.tileSnapshotList
         .takeIf { it.isNotEmpty() } ?: return@drawWithContent
     val imageLoadRect = subsamplingState.imageLoadRect
         .takeIf { !it.isEmpty } ?: return@drawWithContent
@@ -30,10 +30,10 @@ fun Modifier.subsampling(
     var insideLoadCount = 0
     var outsideLoadCount = 0
     var realDrawCount = 0
-    tileList.forEach { tile ->
-        if (tile.srcRect.overlaps(imageLoadRect)) {
+    tileSnapshotList.forEach { tileSnapshot ->
+        if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
             insideLoadCount++
-            val tileSrcRect = tile.srcRect
+            val tileSrcRect = tileSnapshot.srcRect
             val tileDrawRect = IntRect(
                 left = floor(tileSrcRect.left / widthScale).toInt(),
                 top = floor(tileSrcRect.top / heightScale).toInt(),
@@ -41,7 +41,7 @@ fun Modifier.subsampling(
                 bottom = floor(tileSrcRect.bottom / heightScale).toInt()
             )
 
-            val tileBitmap = tile.bitmap
+            val tileBitmap = tileSnapshot.bitmap
             if (tileBitmap != null && !tileBitmap.isRecycled) {
                 realDrawCount++
                 val srcRect = IntRect(0, 0, tileBitmap.width, tileBitmap.height)
@@ -56,7 +56,7 @@ fun Modifier.subsampling(
             }
 
             if (subsamplingState.showTileBounds) {
-                val boundsColor = when (tile.state) {
+                val boundsColor = when (tileSnapshot.state) {
                     Tile.STATE_LOADED -> Color.Green
                     Tile.STATE_LOADING -> Color.Yellow
                     else -> Color.Red
@@ -82,7 +82,7 @@ fun Modifier.subsampling(
         }
     }
     subsamplingState.logger.d {
-        "drawTiles. tiles=${tileList.size}, " +
+        "drawTiles. tiles=${tileSnapshotList.size}, " +
                 "insideLoadCount=${insideLoadCount}, " +
                 "outsideLoadCount=${outsideLoadCount}, " +
                 "realDrawCount=${realDrawCount}. " +

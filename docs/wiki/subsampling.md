@@ -213,7 +213,7 @@ view 版本的需要注册监听器，如下：
 val zoomImageView = ZoomImageView(context)
 
 zoomImageView.subsumplingAbility.registerOnTileChangedListener {
-    // tileList 变化
+    // tileSnapshotList 变化
 }
 
 zoomImageView.subsumplingAbility.registerOnReadyChangeListener {
@@ -233,7 +233,7 @@ zoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
 
 * [SubsamplingState].ready: Boolean。是否已经准备好了
 * [SubsamplingState].imageInfo: ImageInfo。当前碎片的快照信息列表
-* [SubsamplingState].tileList: List<TileSnapshot>。当前碎片的快照信息列表
+* [SubsamplingState].tileSnapshotList: List<TileSnapshot>。当前碎片的快照列表
 * [SubsamplingState].imageLoadRect: IntRect。原图上当前实际加载的区域
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt

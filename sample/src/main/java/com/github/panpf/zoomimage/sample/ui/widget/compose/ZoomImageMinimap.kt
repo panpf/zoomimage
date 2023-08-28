@@ -89,11 +89,11 @@ fun ZoomImageMinimap(
                     .clipToBounds()
                     .drawWithContent {
                         drawContent()
-                        val tileList = subsamplingState.tileList
+                        val tileSnapshotList = subsamplingState.tileSnapshotList
                         val imageLoadRect = subsamplingState.imageLoadRect
                         if (contentSize.isNotEmpty() && imageSize.isNotEmpty()) {
                             drawTilesBounds(
-                                tileList = tileList,
+                                tileSnapshotList = tileSnapshotList,
                                 imageSize = imageSize,
                                 viewSize = viewSize,
                                 imageLoadRect = imageLoadRect,
@@ -156,7 +156,7 @@ private fun computeViewSize(contentSize: IntSize, containerSize: IntSize): IntSi
 }
 
 private fun ContentDrawScope.drawTilesBounds(
-    tileList: List<TileSnapshot>,
+    tileSnapshotList: List<TileSnapshot>,
     imageSize: IntSize,
     viewSize: IntSize,
     imageLoadRect: IntRect,
@@ -165,9 +165,9 @@ private fun ContentDrawScope.drawTilesBounds(
     val widthTargetScale = imageSize.width.toFloat() / viewSize.width
     val heightTargetScale = imageSize.height.toFloat() / viewSize.height
     val strokeHalfWidth = strokeWidth / 2
-    tileList.forEach { tile ->
-        val load = tile.srcRect.overlaps(imageLoadRect)
-        val tileSrcRect = tile.srcRect
+    tileSnapshotList.forEach { tileSnapshot ->
+        val load = tileSnapshot.srcRect.overlaps(imageLoadRect)
+        val tileSrcRect = tileSnapshot.srcRect
         val tileDrawRect = IntRect(
             left = floor((tileSrcRect.left / widthTargetScale) + strokeHalfWidth).toInt(),
             top = floor((tileSrcRect.top / heightTargetScale) + strokeHalfWidth).toInt(),
@@ -176,8 +176,8 @@ private fun ContentDrawScope.drawTilesBounds(
         )
         val boundsColor = when {
             !load -> android.graphics.Color.parseColor("#00BFFF")
-            tile.state == Tile.STATE_LOADED -> android.graphics.Color.GREEN
-            tile.state == Tile.STATE_LOADING -> android.graphics.Color.YELLOW
+            tileSnapshot.state == Tile.STATE_LOADED -> android.graphics.Color.GREEN
+            tileSnapshot.state == Tile.STATE_LOADING -> android.graphics.Color.YELLOW
             else -> android.graphics.Color.RED
         }
         drawRect(

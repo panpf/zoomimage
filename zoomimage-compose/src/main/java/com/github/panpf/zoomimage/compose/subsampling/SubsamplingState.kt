@@ -145,8 +145,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     /**
      * A snapshot of the tile list
      */
-    // todo rename to tileSnapshotList
-    var tileList: List<TileSnapshot> by mutableStateOf(emptyList())
+    var tileSnapshotList: List<TileSnapshot> by mutableStateOf(emptyList())
         private set
 
     /**
@@ -340,7 +339,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
-                tileList = manager.tileList.map { tile ->
+                tileSnapshotList = manager.tileList.map { tile ->
                     TileSnapshot(
                         tile.srcRect.toPlatform(),
                         tile.inSampleSize,

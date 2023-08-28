@@ -124,8 +124,8 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     /**
      * A snapshot of the tile list
      */
-    val tileList: List<TileSnapshot>
-        get() = engine.tileList
+    val tileSnapshotList: List<TileSnapshot>
+        get() = engine.tileSnapshotList
 
     /**
      * The image load rect
@@ -170,13 +170,13 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     }
 
     /**
-     * Register a [tileList] property change listener
+     * Register a [tileSnapshotList] property change listener
      */
     fun registerOnTileChangedListener(listener: OnTileChangeListener) =
         engine.registerOnTileChangedListener(listener)
 
     /**
-     * Unregister a [tileList] property change listener
+     * Unregister a [tileSnapshotList] property change listener
      */
     fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean =
         engine.unregisterOnTileChangedListener(listener)

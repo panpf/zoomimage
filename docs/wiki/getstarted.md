@@ -179,9 +179,12 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 
 ### 获取相关信息
 
-* [ZoomableState].baseTransform: Transform。基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment 属性以及 rotate() 方法的影响
-* [ZoomableState].userTransform: Transform。用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode 属性以及 scale()、offset()、location() 方法的影响
-* [ZoomableState].transform: Transform。最终的变换信息，包括缩放、偏移、旋转，等价于 `baseTransform * userTransform`
+* [ZoomableState].baseTransform: Transform。基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment
+  属性以及 rotate() 方法的影响
+* [ZoomableState].userTransform: Transform。用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode
+  属性以及 scale()、offset()、location() 方法的影响
+* [ZoomableState].transform:
+  Transform。最终的变换信息，包括缩放、偏移、旋转，等价于 `baseTransform * userTransform`
 * [ZoomableState].minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
 * [ZoomableState].mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
 * [ZoomableState].maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
@@ -194,6 +197,10 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 * [ZoomableState].containerSize: IntSize。当前 container 的大小
 * [ZoomableState].contentSize: IntSize。当前 content 的大小
 * [ZoomableState].contentOriginSize: IntSize。当前 content 的原始大小
+* [SubsamplingState].ready: Boolean。是否已经准备好了
+* [SubsamplingState].imageInfo: ImageInfo。当前碎片的快照信息列表
+* [SubsamplingState].tileSnapshotList: List<TileSnapshot>。当前碎片的快照列表
+* [SubsamplingState].imageLoadRect: IntRect。原图上当前实际加载的区域
 
 ## Document·文档
 
