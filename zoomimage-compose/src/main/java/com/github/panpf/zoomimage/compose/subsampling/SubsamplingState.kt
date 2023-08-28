@@ -45,10 +45,10 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun rememberSubsamplingState(
-    logger: Logger = rememberZoomImageLogger()
-): SubsamplingState {
-    val subsamplingState = remember { SubsamplingState(logger) }
+fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): SubsamplingState {
+    val subsamplingState = remember(logger) {
+        SubsamplingState(logger)
+    }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(lifecycle) {
         subsamplingState.setLifecycle(lifecycle)

@@ -280,20 +280,17 @@ class Logger(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-
         other as Logger
-
         if (tag != other.tag) return false
         if (module != other.module) return false
-        if (pipeline != other.pipeline) return false
-
+        if (showThreadName != other.showThreadName) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = tag.hashCode()
         result = 31 * result + (module?.hashCode() ?: 0)
-        result = 31 * result + pipeline.hashCode()
+        result = 31 * result + showThreadName.hashCode()
         return result
     }
 

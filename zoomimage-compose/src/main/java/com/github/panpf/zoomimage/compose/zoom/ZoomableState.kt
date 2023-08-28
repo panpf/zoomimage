@@ -79,7 +79,9 @@ import kotlin.coroutines.EmptyCoroutineContext
 @Composable
 fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
     val coroutineScope = rememberCoroutineScope()
-    val zoomableState = remember { ZoomableState(logger, coroutineScope) }
+    val zoomableState = remember(logger, coroutineScope) {
+        ZoomableState(logger, coroutineScope)
+    }
     LaunchedEffect(Unit) {
         snapshotFlow { zoomableState.containerSize }.collect {
             if (!it.isEmpty() && zoomableState.contentSize.isEmpty()) {
