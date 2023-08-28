@@ -165,9 +165,7 @@ class ZoomableState(
         internal set
 
 
-    /*
-     * Configurable properties
-     */
+    /* *********************************** Configurable properties ****************************** */
 
     /**
      * The scale of the content, usually set by [ZoomImage] component
@@ -213,9 +211,7 @@ class ZoomableState(
     var limitOffsetWithinBaseVisibleRect: Boolean by mutableStateOf(false)
 
 
-    /*
-     * Information properties
-     */
+    /* *********************************** Information properties ******************************* */
 
     /**
      * Base transformation, include the base scale, offset, rotation,
@@ -341,6 +337,9 @@ class ZoomableState(
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
         ).roundToPlatform()
     }
+
+
+    /* ********************************* Interact with consumers ******************************** */
 
     /**
      * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
@@ -630,13 +629,6 @@ class ZoomableState(
     }
 
     /**
-     * Stop all animations immediately
-     */
-    fun stopAllAnimation(caller: String) = coroutineScope.launch {
-        stopAllAnimationInternal(caller)
-    }
-
-    /**
      * If true is returned, scrolling can continue on the specified axis and direction
      *
      * @param horizontal Whether to scroll horizontally
@@ -666,6 +658,16 @@ class ZoomableState(
             touchPoint = touchPoint.toCompat()
         ).toPlatform()
         return contentPoint.round()
+    }
+
+
+    /* *************************************** Internal ***************************************** */
+
+    /**
+     * Stop all animations immediately
+     */
+    internal fun stopAllAnimation(caller: String) = coroutineScope.launch {
+        stopAllAnimationInternal(caller)
     }
 
     internal fun rollbackScale(centroid: Offset? = null): Boolean {

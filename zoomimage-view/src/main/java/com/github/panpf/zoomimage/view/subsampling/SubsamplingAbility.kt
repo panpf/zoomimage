@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage.view.subsampling
 
 import android.graphics.Canvas
 import android.view.View
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -19,7 +20,9 @@ import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
 
-// todo continue write comment
+/**
+ * Wrap [SubsamplingEngine] and connect [SubsamplingEngine] and [ImageView]
+ */
 class SubsamplingAbility(private val view: View, logger: Logger) {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingAbility")
@@ -35,12 +38,66 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     }
     private val tileDrawHelper = TileDrawHelper(engine)
 
-    /* Configurable properties */
+
+    /* *********************************** Configurable properties ****************************** */
+
+    /**
+     * If true, the Exif rotation information for the image is ignored
+     */
     var ignoreExifOrientation: Boolean
         get() = engine.ignoreExifOrientation
         set(value) {
             engine.ignoreExifOrientation = value
         }
+
+    /**
+     * Set up the tile memory cache container
+     */
+    var tileMemoryCache: TileMemoryCache?
+        get() = engine.tileMemoryCache
+        set(value) {
+            engine.tileMemoryCache = value
+        }
+
+    /**
+     * If true, disable memory cache
+     */
+    var disableMemoryCache: Boolean
+        get() = engine.disableMemoryCache
+        set(value) {
+            engine.disableMemoryCache = value
+        }
+
+    /**
+     * Set up a shared Bitmap pool for the tile
+     */
+    var tileBitmapPool: TileBitmapPool?
+        get() = engine.tileBitmapPool
+        set(value) {
+            engine.tileBitmapPool = value
+        }
+
+    /**
+     * If true, Bitmap reuse is disabled
+     */
+    var disallowReuseBitmap: Boolean
+        get() = engine.disallowReuseBitmap
+        set(value) {
+            engine.disallowReuseBitmap = value
+        }
+
+    /**
+     * If true, subsampling is paused and loaded tiles are released, which will be reloaded after resumed
+     */
+    var paused: Boolean
+        get() = engine.paused
+        set(value) {
+            engine.paused = value
+        }
+
+    /**
+     * If true, the bounds of each tile is displayed
+     */
     var showTileBounds = false
         set(value) {
             if (field != value) {
@@ -48,39 +105,31 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
                 view.invalidate()
             }
         }
-    var tileMemoryCache: TileMemoryCache?
-        get() = engine.tileMemoryCache
-        set(value) {
-            engine.tileMemoryCache = value
-        }
-    var disableMemoryCache: Boolean
-        get() = engine.disableMemoryCache
-        set(value) {
-            engine.disableMemoryCache = value
-        }
-    var tileBitmapPool: TileBitmapPool?
-        get() = engine.tileBitmapPool
-        set(value) {
-            engine.tileBitmapPool = value
-        }
-    var disallowReuseBitmap: Boolean
-        get() = engine.disallowReuseBitmap
-        set(value) {
-            engine.disallowReuseBitmap = value
-        }
-    var paused: Boolean
-        get() = engine.paused
-        set(value) {
-            engine.paused = value
-        }
 
-    /* Information properties */
+
+    /* *********************************** Information properties ******************************* */
+
+    /**
+     * The information of the image, including width, height, format, exif information, etc
+     */
     val imageInfo: ImageInfo?
         get() = engine.imageInfo
+
+    /**
+     * Whether the image is ready for subsampling
+     */
     val ready: Boolean
         get() = engine.ready
+
+    /**
+     * A snapshot of the tile list
+     */
     val tileList: List<TileSnapshot>
         get() = engine.tileList
+
+    /**
+     * The image load rect
+     */
     val imageLoadRect: IntRectCompat
         get() = engine.imageLoadRect
 
@@ -91,8 +140,11 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     }
 
 
-    /* ********************************* Interact with consumers ********************************* */
+    /* ********************************* Interact with consumers ******************************** */
 
+    /**
+     * Set up an image source from which image tile are loaded
+     */
     fun setImageSource(imageSource: ImageSource?) {
         if (this.imageSource == imageSource) return
         this.imageSource = imageSource
@@ -104,6 +156,10 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         setLifecycle(view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle())
     }
 
+    /**
+     * Set the lifecycle, which automatically controls pause and resume, which is obtained from View.findViewTreeLifecycleOwner() by default,
+     * and can be set by this method if the default acquisition method is not applicable
+     */
     fun setLifecycle(lifecycle: Lifecycle?) {
         if (this.lifecycle != lifecycle) {
             unregisterLifecycleObserver()
@@ -113,40 +169,56 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         }
     }
 
-    fun registerOnTileChangedListener(listener: OnTileChangeListener) {
+    /**
+     * Register a [tileList] property change listener
+     */
+    fun registerOnTileChangedListener(listener: OnTileChangeListener) =
         engine.registerOnTileChangedListener(listener)
-    }
 
-    fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean {
-        return engine.unregisterOnTileChangedListener(listener)
-    }
+    /**
+     * Unregister a [tileList] property change listener
+     */
+    fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean =
+        engine.unregisterOnTileChangedListener(listener)
 
-    fun registerOnReadyChangeListener(listener: OnReadyChangeListener) {
+    /**
+     * Register a [ready] property change listener
+     */
+    fun registerOnReadyChangeListener(listener: OnReadyChangeListener) =
         engine.registerOnReadyChangeListener(listener)
-    }
 
-    fun unregisterOnReadyChangeListener(listener: OnReadyChangeListener): Boolean {
-        return engine.unregisterOnReadyChangeListener(listener)
-    }
+    /**
+     * Unregister a [ready] property change listener
+     */
+    fun unregisterOnReadyChangeListener(listener: OnReadyChangeListener): Boolean =
+        engine.unregisterOnReadyChangeListener(listener)
 
-    fun registerOnPauseChangeListener(listener: OnPauseChangeListener) {
+    /**
+     * Register a [paused] property change listener
+     */
+    fun registerOnPauseChangeListener(listener: OnPauseChangeListener) =
         engine.registerOnPauseChangeListener(listener)
-    }
 
-    fun unregisterOnPauseChangeListener(listener: OnPauseChangeListener): Boolean {
-        return engine.unregisterOnPauseChangeListener(listener)
-    }
+    /**
+     * Unregister a [paused] property change listener
+     */
+    fun unregisterOnPauseChangeListener(listener: OnPauseChangeListener): Boolean =
+        engine.unregisterOnPauseChangeListener(listener)
 
-    fun registerOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener) {
+    /**
+     * Register a [imageLoadRect] property change listener
+     */
+    fun registerOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener) =
         engine.registerOnImageLoadRectChangeListener(listener)
-    }
 
-    fun unregisterOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener): Boolean {
-        return engine.unregisterOnImageLoadRectChangeListener(listener)
-    }
+    /**
+     * Unregister a [imageLoadRect] property change listener
+     */
+    fun unregisterOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener): Boolean =
+        engine.unregisterOnImageLoadRectChangeListener(listener)
 
 
-    /* ********************************* Interact with View ********************************* */
+    /* *********************************** Interact with View *********************************** */
 
     internal fun onAttachedToWindow() {
         engine.setImageSource(imageSource)
@@ -173,7 +245,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     }
 
 
-    /* ********************************* Internal ********************************* */
+    /* *************************************** Internal ***************************************** */
 
     private fun resetPaused(caller: String) {
         val viewVisible = view.isVisible

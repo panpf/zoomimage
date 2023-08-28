@@ -91,9 +91,7 @@ class ZoomAbility constructor(
         get() = zoomEngine.contentOriginSize
 
 
-    /*
-     * Configurable properties
-     */
+    /* *********************************** Configurable properties ****************************** */
 
     /**
      * The scale of the content, usually set by [ZoomImageView] component
@@ -182,9 +180,7 @@ class ZoomAbility constructor(
         }
 
 
-    /*
-     * Information properties
-     */
+    /* *********************************** Information properties ******************************* */
 
     /**
      * Base transformation, include the base scale, offset, rotation,
@@ -345,7 +341,7 @@ class ZoomAbility constructor(
     }
 
 
-    /*************************************** Interaction with consumers ******************************************/
+    /* ********************************* Interact with consumers ******************************** */
 
     /**
      * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
@@ -492,7 +488,7 @@ class ZoomAbility constructor(
     }
 
 
-    /**************************************** Interact with View ********************************************/
+    /* *********************************** Interact with View *********************************** */
 
     @Suppress("UNUSED_PARAMETER")
     fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {

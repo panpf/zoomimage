@@ -67,7 +67,6 @@ fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): Subsam
 class SubsamplingState(logger: Logger) : RememberObserver {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingState")
-
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
@@ -90,14 +89,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     internal var contentSize: IntSize by mutableStateOf(IntSize.Zero)
 
-    /*
-     * Configurable properties
-     */
 
-    /**
-     * If true, the bounds of each tile is displayed
-     */
-    var showTileBounds: Boolean by mutableStateOf(false)
+    /* *********************************** Configurable properties ****************************** */
 
     /**
      * If true, the Exif rotation information for the image is ignored
@@ -110,7 +103,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var tileMemoryCache: TileMemoryCache? by mutableStateOf(null)
 
     /**
-     * If true, disables memory cache
+     * If true, disable memory cache
      */
     var disableMemoryCache: Boolean by mutableStateOf(false)
 
@@ -125,14 +118,17 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var disallowReuseBitmap: Boolean by mutableStateOf(false)
 
     /**
-     * If true, subsampling is paused and loaded fragments are released, which will be reloaded after resumption
+     * If true, subsampling is paused and loaded tiles are released, which will be reloaded after resumed
      */
     var paused by mutableStateOf(false)
 
-
-    /*
-     * Information properties
+    /**
+     * If true, the bounds of each tile is displayed
      */
+    var showTileBounds: Boolean by mutableStateOf(false)
+
+
+    /* *********************************** Information properties ******************************* */
 
     /**
      * The information of the image, including width, height, format, exif information, etc
@@ -159,6 +155,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var imageLoadRect: IntRect by mutableStateOf(IntRect.Zero)
         private set
 
+
+    /* ********************************* Interact with consumers ******************************** */
+
     /**
      * Set up an image source from which image tile are loaded
      */
@@ -174,7 +173,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     }
 
     /**
-     * Set the lifecycle, which automatically controls pause and resume, which is obtained from [LocalLifecycleOwner] by default, and can be set by this method if the default acquisition method is not applicable
+     * Set the lifecycle, which automatically controls pause and resume, which is obtained from [LocalLifecycleOwner] by default,
+     * and can be set by this method if the default acquisition method is not applicable
      */
     fun setLifecycle(lifecycle: Lifecycle?) {
         if (this.lifecycle != lifecycle) {
@@ -184,6 +184,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             resetPaused("setLifecycle")
         }
     }
+
+
+    /* *************************************** Internal ***************************************** */
 
     @Composable
     internal fun BindZoomableState(zoomableState: ZoomableState) {

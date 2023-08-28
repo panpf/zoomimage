@@ -5,10 +5,29 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.unit.IntRect
 import com.github.panpf.zoomimage.subsampling.Tile.State
 
+/**
+ * A snapshot of the tile
+ */
 @Immutable
 data class TileSnapshot(
+    /**
+     * The region of Tile in the original image
+     */
     val srcRect: IntRect,
+
+    /**
+     * The magnet is several times smaller when loaded
+     */
     val inSampleSize: Int,
+
+    /**
+     * The bitmap of the tile
+     */
     val bitmap: Bitmap?,
-    @State val state: Int,
+
+    /**
+     * The state of the tile
+     */
+    @State
+    val state: Int,
 )

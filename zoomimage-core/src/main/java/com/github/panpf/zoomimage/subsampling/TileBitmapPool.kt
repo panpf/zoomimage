@@ -2,6 +2,9 @@ package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
 
+/**
+ * A pool of [Bitmap]s that can be reused to avoid triggering the garbage collector.
+ */
 interface TileBitmapPool {
 
     /**

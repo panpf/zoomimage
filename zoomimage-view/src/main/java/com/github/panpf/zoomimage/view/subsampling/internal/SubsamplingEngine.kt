@@ -45,10 +45,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+/**
+ * Engines that control subsampling
+ */
 class SubsamplingEngine constructor(logger: Logger) {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
-
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
@@ -60,6 +62,8 @@ class SubsamplingEngine constructor(logger: Logger) {
     private var onPauseChangeListenerList: MutableSet<OnPauseChangeListener>? = null
     private var onImageLoadRectChangeListenerList: MutableSet<OnImageLoadRectChangeListener>? = null
     private var lastResetTileDecoderJob: Job? = null
+    internal var imageKey: String? = null
+        private set
 
     internal var containerSize: IntSizeCompat = IntSizeCompat.Zero
         set(value) {
@@ -76,7 +80,12 @@ class SubsamplingEngine constructor(logger: Logger) {
             }
         }
 
-    /* Configurable properties */
+
+    /* *********************************** Configurable properties ****************************** */
+
+    /**
+     * If true, the Exif rotation information for the image is ignored
+     */
     var ignoreExifOrientation: Boolean = false
         set(value) {
             if (field != value) {
@@ -84,26 +93,46 @@ class SubsamplingEngine constructor(logger: Logger) {
                 resetTileManager("ignoreExifOrientationChanged")
             }
         }
+
+    /**
+     * Set up the tile memory cache container
+     */
     var tileMemoryCache: TileMemoryCache?
         get() = tileMemoryCacheHelper.tileMemoryCache
         set(value) {
             tileMemoryCacheHelper.tileMemoryCache = value
         }
+
+    /**
+     * If true, disable memory cache
+     */
     var disableMemoryCache: Boolean
         get() = tileMemoryCacheHelper.disableMemoryCache
         set(value) {
             tileMemoryCacheHelper.disableMemoryCache = value
         }
+
+    /**
+     * Set up a shared Bitmap pool for the tile
+     */
     var tileBitmapPool: TileBitmapPool?
         get() = tileBitmapPoolHelper.tileBitmapPool
         set(value) {
             tileBitmapPoolHelper.tileBitmapPool = value
         }
+
+    /**
+     * If true, Bitmap reuse is disabled
+     */
     var disallowReuseBitmap: Boolean
         get() = tileBitmapPoolHelper.disallowReuseBitmap
         set(value) {
             tileBitmapPoolHelper.disallowReuseBitmap = value
         }
+
+    /**
+     * If true, subsampling is paused and loaded tiles are released, which will be reloaded after resumed
+     */
     var paused = false
         set(value) {
             if (field != value) {
@@ -112,18 +141,39 @@ class SubsamplingEngine constructor(logger: Logger) {
             }
         }
 
-    /* Information properties */
-    var imageKey: String? = null
-        private set
+
+    /* *********************************** Information properties ******************************* */
+
+    /**
+     * The information of the image, including width, height, format, exif information, etc
+     */
     var imageInfo: ImageInfo? = null
         private set
+
+    /**
+     * Whether the image is ready for subsampling
+     */
     val ready: Boolean
         get() = imageInfo != null && tileDecoder != null && tileManager != null
+
+    /**
+     * A snapshot of the tile list
+     */
     var tileList: List<TileSnapshot> = emptyList()
         private set
+
+    /**
+     * The image load rect
+     */
     val imageLoadRect: IntRectCompat
         get() = tileManager?.imageLoadRect ?: IntRectCompat.Zero
 
+
+    /* ********************************* Interact with consumers ******************************** */
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
         logger.d { "setImageSource. '${imageSource?.key}'" }
@@ -135,36 +185,57 @@ class SubsamplingEngine constructor(logger: Logger) {
         return true
     }
 
+    /**
+     * Register a [tileList] property change listener
+     */
     fun registerOnTileChangedListener(listener: OnTileChangeListener) {
         this.onTileChangeListenerList = (onTileChangeListenerList ?: LinkedHashSet()).apply {
             add(listener)
         }
     }
 
+    /**
+     * Unregister a [tileList] property change listener
+     */
     fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean {
         return onTileChangeListenerList?.remove(listener) == true
     }
 
+    /**
+     * Register a [ready] property change listener
+     */
     fun registerOnReadyChangeListener(listener: OnReadyChangeListener) {
         this.onReadyChangeListenerList = (onReadyChangeListenerList ?: LinkedHashSet()).apply {
             add(listener)
         }
     }
 
+    /**
+     * Unregister a [ready] property change listener
+     */
     fun unregisterOnReadyChangeListener(listener: OnReadyChangeListener): Boolean {
         return onReadyChangeListenerList?.remove(listener) == true
     }
 
+    /**
+     * Register a [paused] property change listener
+     */
     fun registerOnPauseChangeListener(listener: OnPauseChangeListener) {
         this.onPauseChangeListenerList = (onPauseChangeListenerList ?: LinkedHashSet()).apply {
             add(listener)
         }
     }
 
+    /**
+     * Unregister a [paused] property change listener
+     */
     fun unregisterOnPauseChangeListener(listener: OnPauseChangeListener): Boolean {
         return onPauseChangeListenerList?.remove(listener) == true
     }
 
+    /**
+     * Register a [imageLoadRect] property change listener
+     */
     fun registerOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener) {
         this.onImageLoadRectChangeListenerList =
             (onImageLoadRectChangeListenerList ?: LinkedHashSet()).apply {
@@ -172,9 +243,15 @@ class SubsamplingEngine constructor(logger: Logger) {
             }
     }
 
+    /**
+     * Unregister a [imageLoadRect] property change listener
+     */
     fun unregisterOnImageLoadRectChangeListener(listener: OnImageLoadRectChangeListener): Boolean {
         return onImageLoadRectChangeListenerList?.remove(listener) == true
     }
+
+
+    /* *************************************** Internal ***************************************** */
 
     internal fun bindZoomEngine(zoomEngine: ZoomEngine) {
         containerSize = zoomEngine.containerSize

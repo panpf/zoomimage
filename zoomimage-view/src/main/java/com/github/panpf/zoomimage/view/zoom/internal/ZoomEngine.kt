@@ -75,7 +75,6 @@ import kotlin.math.roundToInt
 class ZoomEngine constructor(logger: Logger, val view: View) {
 
     val logger: Logger = logger.newLogger(module = "ZoomEngine")
-
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var rotation: Int = 0
@@ -119,9 +118,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
 
 
-    /*
-     * Configurable properties
-     */
+    /* *********************************** Configurable properties ****************************** */
 
     /**
      * The scale of the content, usually set by [ZoomImageView] component
@@ -197,9 +194,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
 
 
-    /*
-     * Information properties
-     */
+    /* *********************************** Information properties ******************************* */
 
     /**
      * Base transformation, include the base scale, offset, rotation,
@@ -290,6 +285,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     init {
         reset("init")
     }
+
+
+    /* ********************************* Interact with consumers ******************************** */
 
     /**
      * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
@@ -586,22 +584,6 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         lastFlingAnimatable = null
     }
 
-    fun stopAllAnimation(caller: String) {
-        val lastScaleAnimatable = lastScaleAnimatable
-        if (lastScaleAnimatable?.running == true) {
-            lastScaleAnimatable.stop()
-            transforming = false
-            logger.d { "stopScaleAnimation:$caller" }
-        }
-
-        val lastFlingAnimatable = lastFlingAnimatable
-        if (lastFlingAnimatable?.running == true) {
-            lastFlingAnimatable.stop()
-            transforming = false
-            logger.d { "stopFlingAnimation:$caller" }
-        }
-    }
-
     /**
      * Converts touch points on the screen to points on content
      */
@@ -678,6 +660,25 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      */
     fun unregisterOnContentSizeChangeListener(listener: OnContentSizeChangeListener): Boolean {
         return onContentSizeChangeListeners?.remove(listener) == true
+    }
+
+
+    /* *************************************** Internal ***************************************** */
+
+    internal fun stopAllAnimation(caller: String) {
+        val lastScaleAnimatable = lastScaleAnimatable
+        if (lastScaleAnimatable?.running == true) {
+            lastScaleAnimatable.stop()
+            transforming = false
+            logger.d { "stopScaleAnimation:$caller" }
+        }
+
+        val lastFlingAnimatable = lastFlingAnimatable
+        if (lastFlingAnimatable?.running == true) {
+            lastFlingAnimatable.stop()
+            transforming = false
+            logger.d { "stopFlingAnimation:$caller" }
+        }
     }
 
     /**

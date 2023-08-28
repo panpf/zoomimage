@@ -13,30 +13,54 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 
+/**
+ * Image source for subsampling.
+ */
 interface ImageSource {
 
+    /**
+     * Unique key for this image source.
+     */
     val key: String
 
+    /**
+     * Open an input stream for the image.
+     */
     @WorkerThread
     suspend fun openInputStream(): Result<InputStream>
 
     companion object {
+        /**
+         * Create an image source from a content URI.
+         */
         fun fromContent(context: Context, uri: Uri): ImageSource {
             return ContentImageSource(context, uri)
         }
 
+        /**
+         * Create an image source from a resource id.
+         */
         fun fromResource(resources: Resources, @RawRes @DrawableRes resId: Int): ImageSource {
             return ResourceImageSource(resources, resId)
         }
 
+        /**
+         * Create an image source from a resource id.
+         */
         fun fromResource(context: Context, @RawRes @DrawableRes resId: Int): ImageSource {
             return ResourceImageSource(context, resId)
         }
 
+        /**
+         * Create an image source from an asset file name.
+         */
         fun fromAsset(context: Context, assetFileName: String): ImageSource {
             return AssetImageSource(context, assetFileName)
         }
 
+        /**
+         * Create an image source from a file.
+         */
         fun fromFile(file: File): ImageSource {
             return FileImageSource(file)
         }
