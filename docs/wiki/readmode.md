@@ -11,9 +11,9 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
-对于文字类长图片，他们的高度通常非常大，如果初始状态显示全貌，那么图片里的文字内容什么也看不清楚，用户必须双击一下放大才能开始阅读
+对于文字类长图片，他们的高度通常非常大，如果初始状态显示全貌，那么图片里的文字内容什么也看不清楚，用户必须双击一下放大在滑动到开始位置才能开始阅读
 
-针对这样的图片 zoomimage 提供了阅读模式让其初始时就充满屏幕，并移动到开头位置，类似 [ContentScale]
+针对这样的图片 zoomimage 提供了阅读模式让图片初始状态时就充满屏幕，并定位到开始位置，类似 [ContentScale]
 .Crop 加 [Alignment].TopStart 的组合，这样用户就能直接开始阅读文字长图的内容了
 
 ### 开启阅读模式

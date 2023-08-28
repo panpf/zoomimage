@@ -52,7 +52,7 @@ ZoomImage(
 view:
 
 ```kotlin
-val zoomImageView: ZoomImageView = ...
+val zoomImageView = ZoomImageView(context)
 
 val imageSource = ImageSource.fromResource(LocalContext.current, R.drawable.huge_image)
 zoomImageView.subsamplingAbility.setImageSource(imageSource)
@@ -80,7 +80,7 @@ SketchZoomAsyncImage(
 
 ### pause/resume
 
-zoomimage 支持暂停和恢复子采样，暂停后会释放已加载的碎片并不再加载新碎片，如下：
+zoomimage 支持暂停子采样，暂停后会释放已加载的碎片并不再加载新碎片，恢复后自动重新加载，如下：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -210,7 +210,7 @@ compose 版本的相关属性是用 State 包装的，直接读取它即可实�
 view 版本的需要注册监听器，如下：
 
 ```kotlin
-val zoomImageView: ZoomImageView = ...
+val zoomImageView = ZoomImageView(context)
 
 zoomImageView.subsumplingAbility.registerOnTileChangedListener {
     // tileList 变化

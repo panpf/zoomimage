@@ -142,7 +142,7 @@ usage [Get Started](docs/wiki/getstarted.md)
 为例，其它组件以及详细用法请查看文档 [开始使用](docs/wiki/getstarted.md)
 
 ```kotlin
-val sketchZoomImageView: SketchZoomImageView = ...
+val sketchZoomImageView = SketchZoomImageView(context)
 
 sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 ```

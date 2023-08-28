@@ -32,7 +32,7 @@ SketchZoomAsyncImage(
 view：
 
 ```kotlin
-val sketchZoomImageView: SketchZoomImageView = ...
+val sketchZoomImageView = SketchZoomImageView(context)
 
 sketchZoomImageView.zoomAbility.registerOnViewTapListener { view: android.view.View, x: Float, y: Float ->
     // 单击事件

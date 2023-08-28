@@ -107,37 +107,36 @@ ZoomImage(
 view:
 
 ```kotlin
-val sketchZoomImageView: SketchZoomImageView = ...
+val sketchZoomImageView = SketchZoomImageView(context)
 sketchZoomImageView.displayImage("http://sample.com/sample.jpg") {
     placeholder(R.drawable.placeholder)
     crossfade()
 }
 
-val coilZoomImageView: CoilZoomImageView = ...
+val coilZoomImageView = CoilZoomImageView(context)
 coilZoomImageView.load("http://sample.com/sample.jpg") {
     placeholder(R.drawable.placeholder)
     crossfade(true)
 }
 
-val glideZoomImageView: GlideZoomImageView = ...
+val glideZoomImageView = GlideZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
     .load("http://sample.com/sample.jpg")
     .placeholder(R.drawable.placeholder)
     .into(glideZoomImageView)
 
-val picassoZoomImageView: PicassoZoomImageView = ...
-binding.picassoZoomImageViewImage.loadImage("http://sample.com/sample.jpg") {
+val picassoZoomImageView = PicassoZoomImageView(context)
+picassoZoomImageViewImage.loadImage("http://sample.com/sample.jpg") {
     placeholder(R.drawable.placeholder)
 }
 
-val zoomImageView: ZoomImageView = ...
+val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
-val imageSource = ImageSource.fromResource(zoomImageView.context, R.drawable.huge_image)
+val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
 zoomImageView.subsamplingAbility.setImageSource(imageSource)
 ```
 
-> PicassoZoomImageView 为了监听加载结果以及获得 uri，无奈之下对官方 API 进行封装提供了一套专用的
-> API，所以请不要直接使用官方的 API 去加载图片
+> PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，因此请不要直接使用官方 API 加载图片
 
 zoom 和子采样的对外 API 封装在不同的类中，compose 版本是 [ZoomableState] 和 [SubsamplingState]，view
 版本是
@@ -157,7 +156,7 @@ SketchZoomAsyncImage(
 )
 
 
-val sketchZoomImageView: SketchZoomImageView = ...
+val sketchZoomImageView = SketchZoomImageView(context)
 sketchZoomImageView.zoomAbility  // ZoomAbility
 sketchZoomImageView.subsamplingAbility   // SubsamplingAbility
 ```
@@ -172,7 +171,7 @@ zoomimage 支持所有的 [ContentScale] 和 [Alignment]
 之外也支持 [ContentScale] 和 [Alignment]，如下：
 
 ```kotlin
-val sketchZoomImageView: SketchZoomImageView = ...
+val sketchZoomImageView = SketchZoomImageView(context)
 
 sketchZoomImageView.zoomAbility.contentScale = ContentScale.None
 sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
@@ -180,24 +179,18 @@ sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
 
 ### 获取相关信息
 
-* [ZoomableState].transform: Transform。当前的变换信息（baseTransform * userTransform），包括缩放、偏移、旋转
-* [ZoomableState].baseTransform: Transform。当前的基础变换信息，包括缩放、偏移、旋转，受
-  contentScale、alignment 以及 rotate() 方法影响
-* [ZoomableState].userTransform: Transform。当前的用户变换信息，包括缩放、偏移、旋转，受 scale()
-  方法、location() 方法以及用户手势操作影响
+* [ZoomableState].baseTransform: Transform。基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment 属性以及 rotate() 方法的影响
+* [ZoomableState].userTransform: Transform。用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode 属性以及 scale()、offset()、location() 方法的影响
+* [ZoomableState].transform: Transform。最终的变换信息，包括缩放、偏移、旋转，等价于 `baseTransform * userTransform`
 * [ZoomableState].minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
 * [ZoomableState].mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
 * [ZoomableState].maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
-* [ZoomableState].transforming: Boolean。当前是否正在变换中，包括缩放、偏移、旋转
-* [ZoomableState].contentBaseDisplayRect: IntRect。当前 content 在 container 中的基础显示区域，受
-  contentScale、alignment 以及 rotate() 方法影响
-* [ZoomableState].contentBaseVisibleRect: IntRect。当前 content 的基础可见区域，受
-  contentScale、alignment 以及 rotate() 方法影响
-* [ZoomableState].contentDisplayRect: IntRect。当前 content 在 container 中的显示区域，受
-  contentScale、alignment 以及 scale()、rotate()、location() 以及以及用户手势操作的影响
-* [ZoomableState].contentVisibleRect: IntRect。当前 content 的可见区域，受
-  contentScale、alignment 以及 scale()、rotate()、location() 以及以及用户手势操作的影响
-* [ZoomableState].scrollEdge: ScrollEdge。当前偏移状态的边界信息，例如是否到达左边界、右边界、上边界、下边界等
+* [ZoomableState].transforming: Boolean。当前是否正在变换中，可能是在连续的手势操作中或者正在执行动画
+* [ZoomableState].contentBaseDisplayRect: IntRect。content 经过 baseTransform 变换后在 container 中的区域
+* [ZoomableState].contentBaseVisibleRect: content 经过 baseTransform 变换后自身对用户可见的区域
+* [ZoomableState].contentDisplayRect: IntRect。content 经过 transform 变换后在 container 中的区域
+* [ZoomableState].contentVisibleRect: IntRect。content 经过 transform 变换后自身对用户可见的区域
+* [ZoomableState].scrollEdge: ScrollEdge。当前偏移的边界状态，例如是否到达左边界、右边界、上边界、下边界等
 * [ZoomableState].containerSize: IntSize。当前 container 的大小
 * [ZoomableState].contentSize: IntSize。当前 content 的大小
 * [ZoomableState].contentOriginSize: IntSize。当前 content 的原始大小
