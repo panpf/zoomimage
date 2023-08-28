@@ -2,37 +2,35 @@ package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.lerp
 
+/**
+ * A simple version of a 2D transformation that includes scale, pan, and rotation
+ */
 data class TransformCompat(
+    /**
+     * Scale factor
+     */
     val scale: ScaleFactorCompat,
+
+    /**
+     * Pan position
+     */
     val offset: OffsetCompat,
+
+    /**
+     * The degree of rotation
+     */
     val rotation: Float = 0f,
+
+    /**
+     * The origin of the scaling operation
+     */
     val scaleOrigin: TransformOriginCompat = TransformOriginCompat.TopStart,
+
+    /**
+     * The origin of the rotation operation
+     */
     val rotationOrigin: TransformOriginCompat = TransformOriginCompat.TopStart,
 ) {
-
-    constructor(
-        scaleX: Float,
-        scaleY: Float,
-        offsetX: Float,
-        offsetY: Float,
-        rotation: Float = 0f,
-        scaleOriginX: Float = 0f,
-        scaleOriginY: Float = 0f,
-        rotationOriginX: Float = 0.5f,
-        rotationOriginY: Float = 0.5f,
-    ) : this(
-        scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
-        offset = OffsetCompat(x = offsetX, y = offsetY),
-        rotation = rotation,
-        scaleOrigin = TransformOriginCompat(
-            pivotFractionX = scaleOriginX,
-            pivotFractionY = scaleOriginY
-        ),
-        rotationOrigin = TransformOriginCompat(
-            pivotFractionX = rotationOriginX,
-            pivotFractionY = rotationOriginY
-        ),
-    )
 
     val scaleX: Float
         get() = scale.scaleX

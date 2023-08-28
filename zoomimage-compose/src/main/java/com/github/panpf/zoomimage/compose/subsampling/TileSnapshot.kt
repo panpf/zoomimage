@@ -16,7 +16,7 @@ data class TileSnapshot(
     val srcRect: IntRect,
 
     /**
-     * The magnet is several times smaller when loaded
+     * The sampling multiplier at load
      */
     val inSampleSize: Int,
 

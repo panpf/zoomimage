@@ -22,7 +22,21 @@ import com.github.panpf.zoomimage.util.internal.toShortString
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.Job
 
-class Tile constructor(val srcRect: IntRectCompat, val inSampleSize: Int) {
+/**
+ * A tile of the image, store the region, sample multiplier, Bitmap, load status, and other information of the tile
+ */
+class Tile constructor(
+
+    /**
+     * The region of Tile in the original image
+     */
+    val srcRect: IntRectCompat,
+
+    /**
+     * The sampling multiplier at load
+     */
+    val inSampleSize: Int
+) {
 
     internal var tileBitmap: TileBitmap? = null
         set(value) {
@@ -30,11 +44,17 @@ class Tile constructor(val srcRect: IntRectCompat, val inSampleSize: Int) {
             field = value
             value?.setIsDisplayed(true)
         }
+    internal var loadJob: Job? = null
 
+    /**
+     * The bitmap of the tile
+     */
     val bitmap: Bitmap?
         get() = tileBitmap?.bitmap
-    var loadJob: Job? = null
 
+    /**
+     * The state of the tile
+     */
     @State
     var state: Int = STATE_NONE
 

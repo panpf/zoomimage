@@ -13,38 +13,36 @@ import com.github.panpf.zoomimage.compose.internal.div
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
 
+/**
+ * A simple version of a 2D transformation that includes scale, pan, and rotation
+ */
 @Immutable
 data class Transform(
+    /**
+     * Scale factor
+     */
     val scale: ScaleFactor,
+
+    /**
+     * Pan position
+     */
     val offset: Offset,
+
+    /**
+     * The degree of rotation
+     */
     val rotation: Float = 0f,
+
+    /**
+     * The origin of the scaling operation
+     */
     val scaleOrigin: TransformOrigin = TransformOrigin.TopStart,
+
+    /**
+     * The origin of the rotation operation
+     */
     val rotationOrigin: TransformOrigin = TransformOrigin.TopStart,
 ) {
-
-    constructor(
-        scaleX: Float,
-        scaleY: Float,
-        offsetX: Float,
-        offsetY: Float,
-        rotation: Float = 0f,
-        scaleOriginX: Float = 0f,
-        scaleOriginY: Float = 0f,
-        rotationOriginX: Float = 0.5f,
-        rotationOriginY: Float = 0.5f,
-    ) : this(
-        scale = ScaleFactor(scaleX = scaleX, scaleY = scaleY),
-        offset = Offset(x = offsetX, y = offsetY),
-        rotation = rotation,
-        scaleOrigin = TransformOrigin(
-            pivotFractionX = scaleOriginX,
-            pivotFractionY = scaleOriginY
-        ),
-        rotationOrigin = TransformOrigin(
-            pivotFractionX = rotationOriginX,
-            pivotFractionY = rotationOriginY
-        ),
-    )
 
     val scaleX: Float
         get() = scale.scaleX
