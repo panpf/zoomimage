@@ -6,5 +6,15 @@ import com.github.panpf.zoomimage.Logger
 
 
 @Composable
-fun rememberZoomImageLogger(tag: String = "ZoomImage", level: Int = Logger.INFO): Logger =
-    remember { Logger(tag = tag) }.apply { this.level = level }
+fun rememberZoomImageLogger(
+    tag: String = "ZoomImage",
+    module: String? = null,
+    showThreadName: Boolean = false,
+    level: Int = Logger.INFO,
+): Logger {
+    val logger = remember(tag, module, showThreadName) {
+        Logger(tag = tag, module = module, showThreadName = showThreadName)
+    }
+    logger.level = level
+    return logger
+}
