@@ -665,7 +665,7 @@ fun calculateScrollEdge(
 /**
  * Whether you can scroll horizontally or vertical in the specified direction
  *
- * @param direction Negative to check scrolling left or up, positive to check scrolling right or down.
+ * @param direction positive means scroll to the right or scroll down, negative means scroll to the left or scroll up
  */
 fun canScrollByEdge(scrollEdge: ScrollEdge, horizontal: Boolean, direction: Int): Boolean {
     return if (horizontal) {

@@ -21,6 +21,7 @@ import android.view.View
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -41,6 +42,7 @@ import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
+import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnContentSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnTransformChangeListener
@@ -67,6 +69,9 @@ import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
 import kotlin.math.roundToInt
 
+/**
+ * Engines that control scale, pan, rotation
+ */
 class ZoomEngine constructor(logger: Logger, val view: View) {
 
     val logger: Logger = logger.newLogger(module = "ZoomEngine")
@@ -78,6 +83,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private var onContainerSizeChangeListeners: MutableSet<OnContainerSizeChangeListener>? = null
     private var onContentSizeChangeListeners: MutableSet<OnContentSizeChangeListener>? = null
 
+    /**
+     * The size of the container that holds the content, this is usually the size of the [ZoomImageView] component
+     */
     var containerSize = IntSizeCompat.Zero
         internal set(value) {
             if (field != value) {
@@ -86,6 +94,10 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 notifyContainerSizeChanged(value)
             }
         }
+
+    /**
+     * The size of the content, usually Painter.intrinsicSize.round(), setup by the [ZoomImageView] component
+     */
     var contentSize = IntSizeCompat.Zero
         internal set(value) {
             if (field != value) {
@@ -94,6 +106,10 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 notifyContentSizeChanged(value)
             }
         }
+
+    /**
+     * The original size of the content, it is usually set by [SubsamplingEngine] after parsing the original size of the image
+     */
     var contentOriginSize = IntSizeCompat.Zero
         internal set(value) {
             if (field != value) {
@@ -102,7 +118,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             }
         }
 
-    /* Configurable properties */
+
+    /*
+     * Configurable properties
+     */
+
+    /**
+     * The scale of the content, usually set by [ZoomImageView] component
+     */
     var contentScale: ContentScaleCompat = ContentScaleCompat.Fit
         set(value) {
             if (field != value) {
@@ -110,6 +133,10 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset("contentScaleChanged")
             }
         }
+
+    /**
+     * The alignment of the content, usually set by [ZoomImageView] component
+     */
     var alignment: AlignmentCompat = AlignmentCompat.Center
         set(value) {
             if (field != value) {
@@ -117,6 +144,10 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset("alignmentChanged")
             }
         }
+
+    /**
+     * Setup whether to enable read mode and configure read mode
+     */
     var readMode: ReadMode? = null
         set(value) {
             if (field != value) {
@@ -124,6 +155,10 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset("readModeChanged")
             }
         }
+
+    /**
+     * Set up [ScalesCalculator] for custom calculations mediumScale and maxScale
+     */
     var scalesCalculator: ScalesCalculator = ScalesCalculator.Dynamic
         set(value) {
             if (field != value) {
@@ -131,9 +166,28 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 reset("scalesCalculatorChanged")
             }
         }
-    var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
+
+    /**
+     * If true, the switchScale() method will cycle between minScale, mediumScale, maxScale,
+     * otherwise only cycle between minScale and mediumScale
+     */
     var threeStepScale: Boolean = false
+
+    /**
+     * If true, when the user zooms to the minimum or maximum zoom factor through a gesture,
+     * continuing to zoom will have a rubber band effect, and when the hand is released,
+     * it will spring back to the minimum or maximum zoom factor
+     */
     var rubberBandScale: Boolean = true
+
+    /**
+     * The animation configuration for the zoom animation
+     */
+    var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
+
+    /**
+     * Whether to limit the offset of the user's pan to within the base visible rect
+     */
     var limitOffsetWithinBaseVisibleRect: Boolean = false
         set(value) {
             if (field != value) {
@@ -142,19 +196,53 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             }
         }
 
-    /* Information properties */
+
+    /*
+     * Information properties
+     */
+
+    /**
+     * Base transformation, include the base scale, offset, rotation,
+     * which is affected by [contentScale], [alignment] properties and [rotate] method
+     */
     var baseTransform = TransformCompat.Origin
         private set
+
+    /**
+     * User transformation, include the user scale, offset, rotation,
+     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [location] method
+     */
     var userTransform = TransformCompat.Origin
         private set
+
+    /**
+     * Final transformation, include the final scale, offset, rotation,
+     * which is the sum of [baseTransform] and [userTransform]
+     */
     var transform = TransformCompat.Origin
         private set
+
+    /**
+     * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
+     */
     var minScale: Float = 1.0f
         private set
+
+    /**
+     * Medium scale factor, only as a target value for one of when switch scale
+     */
     var mediumScale: Float = 1.0f
         private set
+
+    /**
+     * Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
+     */
     var maxScale: Float = 1.0f
         private set
+
+    /**
+     * If true, a transformation is currently in progress, possibly in a continuous gesture operation, or an animation is in progress
+     */
     var transforming = false
         internal set(value) {
             if (field != value) {
@@ -162,16 +250,40 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                 notifyTransformChanged()
             }
         }
+
+    /**
+     * The content region in the container after the baseTransform transformation
+     */
     var contentBaseDisplayRect: IntRectCompat = IntRectCompat.Zero
         private set
+
+    /**
+     * The content is visible region to the user after the baseTransform transformation
+     */
     var contentBaseVisibleRect: IntRectCompat = IntRectCompat.Zero
         private set
+
+    /**
+     * The content region in the container after the transform transformation
+     */
     var contentDisplayRect: IntRectCompat = IntRectCompat.Zero
         private set
+
+    /**
+     * The content is visible region to the user after the transform transformation
+     */
     var contentVisibleRect: IntRectCompat = IntRectCompat.Zero
         private set
+
+    /**
+     * Edge state for the current offset
+     */
     var scrollEdge: ScrollEdge = ScrollEdge.Default
         private set
+
+    /**
+     * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
+     */
     var userOffsetBounds: IntRectCompat = IntRectCompat.Zero
         private set
 
@@ -179,6 +291,10 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         reset("init")
     }
 
+    /**
+     * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
+     * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
+     */
     fun reset(caller: String) {
         requiredMainThread()
         stopAllAnimation("reset:$caller")
@@ -231,6 +347,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         )
     }
 
+    /**
+     * Scale to the [targetScale] and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
+     *
+     * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
+     */
     fun scale(
         targetScale: Float,
         centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
@@ -294,6 +415,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         )
     }
 
+    /**
+     * Scale to the next step scale and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
+     *
+     * If [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
+     * otherwise it will only cycle between [minScale] and [mediumScale]
+     *
+     * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
+     */
     fun switchScale(
         centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
         animated: Boolean = false
@@ -307,6 +436,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         return nextScale
     }
 
+    /**
+     * Pan the image to the [targetOffset] position, and animation occurs when [animated] is true
+     */
     fun offset(
         targetOffset: OffsetCompat,
         animated: Boolean = false
@@ -343,6 +475,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         )
     }
 
+    /**
+     * Pan the [contentPoint] on content to the center of the screen while zooming to [targetScale], and there will be an animation when [animated] is true
+     *
+     * @param targetScale The target scale, the default is the current scale
+     */
     fun location(
         contentPoint: IntOffsetCompat,
         targetScale: Float = transform.scaleX,
@@ -408,6 +545,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         )
     }
 
+    /**
+     * Rotate the content to [targetRotation]
+     */
     fun rotate(targetRotation: Int) {
         require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
         val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 - it else it }
@@ -420,6 +560,11 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         reset("rotate")
     }
 
+    /**
+     * Gets the next step scale factor,
+     * and if [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
+     * otherwise it will only loop between [minScale], [mediumScale].
+     */
     fun getNextStepScale(): Float {
         val minScale = minScale
         val mediumScale = mediumScale
@@ -457,6 +602,9 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         }
     }
 
+    /**
+     * Converts touch points on the screen to points on content
+     */
     fun touchPointToContentPoint(touchPoint: OffsetCompat): IntOffsetCompat {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
@@ -478,37 +626,56 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     /**
-     * Whether you can scroll horizontally or vertical in the specified direction
+     * If true is returned, scrolling can continue on the specified axis and direction
      *
-     * @param direction Negative to check scrolling left or up, positive to check scrolling right or down.
+     * @param horizontal Whether to scroll horizontally
+     * @param direction positive means scroll to the right or scroll down, negative means scroll to the left or scroll up
      */
     fun canScroll(horizontal: Boolean, direction: Int): Boolean {
         return canScrollByEdge(scrollEdge, horizontal, direction)
     }
 
+    /**
+     * Register a [transform] property change listener
+     */
     fun registerOnTransformChangeListener(listener: OnTransformChangeListener) {
         this.onTransformChangeListeners = (onTransformChangeListeners ?: LinkedHashSet())
             .apply { add(listener) }
     }
 
+    /**
+     * Unregister a [transform] property change listener
+     */
     fun unregisterOnTransformChangeListener(listener: OnTransformChangeListener): Boolean {
         return onTransformChangeListeners?.remove(listener) == true
     }
 
+    /**
+     * Register a [containerSize] property change listener
+     */
     fun registerOnContainerSizeChangeListener(listener: OnContainerSizeChangeListener) {
         this.onContainerSizeChangeListeners = (onContainerSizeChangeListeners ?: LinkedHashSet())
             .apply { add(listener) }
     }
 
+    /**
+     * Unregister a [containerSize] property change listener
+     */
     fun unregisterOnContainerSizeChangeListener(listener: OnContainerSizeChangeListener): Boolean {
         return onContainerSizeChangeListeners?.remove(listener) == true
     }
 
+    /**
+     * Register a [contentSize] property change listener
+     */
     fun registerOnContentSizeChangeListener(listener: OnContentSizeChangeListener) {
         this.onContentSizeChangeListeners = (onContentSizeChangeListeners ?: LinkedHashSet())
             .apply { add(listener) }
     }
 
+    /**
+     * Unregister a [contentSize] property change listener
+     */
     fun unregisterOnContentSizeChangeListener(listener: OnContentSizeChangeListener): Boolean {
         return onContentSizeChangeListeners?.remove(listener) == true
     }

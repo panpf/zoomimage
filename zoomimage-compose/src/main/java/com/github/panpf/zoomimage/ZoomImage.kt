@@ -24,6 +24,44 @@ import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
 import kotlin.math.roundToInt
 
+/**
+ * A native Image component that zoom and subsampling huge images
+ *
+ * Example usages:
+ *
+ * ```kotlin
+ * val state: ZoomState by rememberZoomState()
+ * val context = LocalContext.current
+ * LaunchedEffect(Unit) {
+ *     val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
+ *     state.subsampling.setImageSource(imageSource)
+ * }
+ * ZoomImage(
+ *     painter = painterResource(R.drawable.huge_image_thumbnail),
+ *     contentDescription = "view image",
+ *     modifier = Modifier.fillMaxSize(),
+ *     state = state,
+ * )
+ * ```
+ *
+ * @param contentDescription text used by accessibility services to describe what this image
+ * represents. This should always be provided unless this image is used for decorative purposes,
+ * and does not represent a meaningful action that a user can take. This text should be
+ * localized, such as by using [androidx.compose.ui.res.stringResource] or similar
+ * @param modifier Modifier used to adjust the layout algorithm or draw decoration content (ex.
+ * background)
+ * @param alignment Optional alignment parameter used to place the [Painter] in the given
+ * bounds defined by the width and height.
+ * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be used
+ * if the bounds are a different size from the intrinsic size of the [Painter]
+ * @param alpha Optional opacity to be applied to the [Painter] when it is rendered onscreen
+ * the default renders the [Painter] completely opaque
+ * @param colorFilter Optional colorFilter to apply for the [Painter] when it is rendered onscreen
+ * @param state The state to control zoom
+ * @param scrollBar Controls whether scroll bars are displayed and their style
+ * @param onLongPress Called when the user long presses the image
+ * @param onTap Called when the user taps the image
+ */
 @Composable
 fun ZoomImage(
     painter: Painter,

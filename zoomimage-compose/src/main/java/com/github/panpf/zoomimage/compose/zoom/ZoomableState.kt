@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
@@ -47,6 +48,7 @@ import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
+import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
@@ -76,6 +78,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.EmptyCoroutineContext
 
+/**
+ * Creates and remember a [ZoomableState] that can be used to control the scale, pan, rotation of the content.
+ */
 @Composable
 fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
     val coroutineScope = rememberCoroutineScope()
@@ -128,6 +133,9 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
     return zoomableState
 }
 
+/**
+ * A state object that can be used to control the scale, pan, rotation of the content.
+ */
 @Stable
 class ZoomableState(
     logger: Logger,
@@ -135,41 +143,127 @@ class ZoomableState(
 ) : RememberObserver {
 
     val logger: Logger = logger.newLogger(module = "ZoomableState")
-
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var rotation: Int by mutableStateOf(0)
 
+    /**
+     * The size of the container that holds the content, this is usually the size of the [ZoomImage] component
+     */
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
         internal set
+
+    /**
+     * The size of the content, usually Painter.intrinsicSize.round(), setup by the [ZoomImage] component
+     */
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
+
+    /**
+     * The original size of the content, it is usually set by [SubsamplingState] after parsing the original size of the image
+     */
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
         internal set
 
-    /* Configurable properties */
+
+    /*
+     * Configurable properties
+     */
+
+    /**
+     * The scale of the content, usually set by [ZoomImage] component
+     */
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
+
+    /**
+     * The alignment of the content, usually set by [ZoomImage] component
+     */
     var alignment: Alignment by mutableStateOf(Alignment.Center)
+
+    /**
+     * Setup whether to enable read mode and configure read mode
+     */
     var readMode: ReadMode? by mutableStateOf(null)
+
+    /**
+     * Set up [ScalesCalculator] for custom calculations mediumScale and maxScale
+     */
     var scalesCalculator: ScalesCalculator by mutableStateOf(ScalesCalculator.Dynamic)
+
+    /**
+     * If true, the switchScale() method will cycle between minScale, mediumScale, maxScale,
+     * otherwise only cycle between minScale and mediumScale
+     */
     var threeStepScale: Boolean by mutableStateOf(false)
+
+    /**
+     * If true, when the user zooms to the minimum or maximum zoom factor through a gesture,
+     * continuing to zoom will have a rubber band effect, and when the hand is released,
+     * it will spring back to the minimum or maximum zoom factor
+     */
     var rubberBandScale: Boolean by mutableStateOf(true)
+
+    /**
+     * The animation configuration for the zoom animation
+     */
     var animationSpec: ZoomAnimationSpec by mutableStateOf(ZoomAnimationSpec.Default)
+
+    /**
+     * Whether to limit the offset of the user's pan to within the base visible rect
+     */
     var limitOffsetWithinBaseVisibleRect: Boolean by mutableStateOf(false)
 
-    /* Information properties */
+
+    /*
+     * Information properties
+     */
+
+    /**
+     * Base transformation, include the base scale, offset, rotation,
+     * which is affected by [contentScale], [alignment] properties and [rotate] method
+     */
     var baseTransform: Transform by mutableStateOf(Transform.Origin)
         private set
+
+    /**
+     * User transformation, include the user scale, offset, rotation,
+     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [location] method
+     */
     var userTransform: Transform by mutableStateOf(Transform.Origin)
         private set
+
+    /**
+     * Final transformation, include the final scale, offset, rotation,
+     * which is the sum of [baseTransform] and [userTransform]
+     */
     val transform: Transform by derivedStateOf { baseTransform + userTransform }
+
+    /**
+     * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
+     */
     var minScale: Float by mutableStateOf(1f)
         private set
+
+    /**
+     * Medium scale factor, only as a target value for one of when switch scale
+     */
     var mediumScale: Float by mutableStateOf(1f)
         private set
+
+    /**
+     * Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
+     */
     var maxScale: Float by mutableStateOf(1f)
         private set
+
+    /**
+     * If true, a transformation is currently in progress, possibly in a continuous gesture operation, or an animation is in progress
+     */
     var transforming: Boolean by mutableStateOf(false)
         internal set
+
+    /**
+     * The content region in the container after the baseTransform transformation
+     */
     val contentBaseDisplayRect: IntRect by derivedStateOf {
         calculateContentBaseDisplayRect(
             containerSize = containerSize.toCompat(),
@@ -179,6 +273,10 @@ class ZoomableState(
             rotation = rotation,
         ).roundToPlatform()
     }
+
+    /**
+     * The content is visible region to the user after the baseTransform transformation
+     */
     val contentBaseVisibleRect: IntRect by derivedStateOf {
         calculateContentBaseVisibleRect(
             containerSize = containerSize.toCompat(),
@@ -188,6 +286,10 @@ class ZoomableState(
             rotation = rotation,
         ).roundToPlatform()
     }
+
+    /**
+     * The content region in the container after the transform transformation
+     */
     val contentDisplayRect: IntRect by derivedStateOf {
         calculateContentDisplayRect(
             containerSize = containerSize.toCompat(),
@@ -199,6 +301,10 @@ class ZoomableState(
             userOffset = userTransform.offset.toCompat(),
         ).roundToPlatform()
     }
+
+    /**
+     * The content is visible region to the user after the transform transformation
+     */
     val contentVisibleRect: IntRect by derivedStateOf {
         calculateContentVisibleRect(
             containerSize = containerSize.toCompat(),
@@ -210,12 +316,20 @@ class ZoomableState(
             userOffset = userTransform.offset.toCompat(),
         ).roundToPlatform()
     }
+
+    /**
+     * Edge state for the current offset
+     */
     val scrollEdge: ScrollEdge by derivedStateOf {
         calculateScrollEdge(
             userOffsetBounds = userOffsetBounds.toCompatRect(),
             userOffset = userTransform.offset.toCompat(),
         )
     }
+
+    /**
+     * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
+     */
     val userOffsetBounds: IntRect by derivedStateOf {
         calculateUserOffsetBounds(
             containerSize = containerSize.toCompat(),
@@ -228,6 +342,10 @@ class ZoomableState(
         ).roundToPlatform()
     }
 
+    /**
+     * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
+     * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
+     */
     fun reset(
         caller: String = "consumer",
         immediate: Boolean = false
@@ -279,6 +397,11 @@ class ZoomableState(
         userTransform = initialZoom.userTransform.toPlatform()
     }
 
+    /**
+     * Scale to the [targetScale] and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
+     *
+     * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
+     */
     fun scale(
         targetScale: Float,
         centroidContentPoint: IntOffset = contentVisibleRect.center,
@@ -342,6 +465,14 @@ class ZoomableState(
         )
     }
 
+    /**
+     * Scale to the next step scale and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
+     *
+     * If [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
+     * otherwise it will only cycle between [minScale] and [mediumScale]
+     *
+     * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
+     */
     fun switchScale(
         centroidContentPoint: IntOffset = contentVisibleRect.center,
         animated: Boolean = false
@@ -355,6 +486,9 @@ class ZoomableState(
         return nextScale
     }
 
+    /**
+     * Pan the image to the [targetOffset] position, and animation occurs when [animated] is true
+     */
     fun offset(
         targetOffset: Offset,
         animated: Boolean = false
@@ -391,6 +525,11 @@ class ZoomableState(
         )
     }
 
+    /**
+     * Pan the [contentPoint] on content to the center of the screen while zooming to [targetScale], and there will be an animation when [animated] is true
+     *
+     * @param targetScale The target scale, the default is the current scale
+     */
     fun location(
         contentPoint: IntOffset,
         targetScale: Float = transform.scaleX,
@@ -456,6 +595,9 @@ class ZoomableState(
         )
     }
 
+    /**
+     * Rotate the content to [targetRotation]
+     */
     fun rotate(targetRotation: Int) = coroutineScope.launch {
         require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
         val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 - it else it }
@@ -468,6 +610,11 @@ class ZoomableState(
         reset("rotate")
     }
 
+    /**
+     * Gets the next step scale factor,
+     * and if [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
+     * otherwise it will only loop between [minScale], [mediumScale].
+     */
     fun getNextStepScale(): Float {
         val minScale = minScale
         val mediumScale = mediumScale
@@ -482,13 +629,25 @@ class ZoomableState(
         return calculateNextStepScale(stepScales, transform.scaleX)
     }
 
+    /**
+     * Stop all animations immediately
+     */
     fun stopAllAnimation(caller: String) = coroutineScope.launch {
         stopAllAnimationInternal(caller)
     }
 
+    /**
+     * If true is returned, scrolling can continue on the specified axis and direction
+     *
+     * @param horizontal Whether to scroll horizontally
+     * @param direction positive means scroll to the right or scroll down, negative means scroll to the left or scroll up
+     */
     fun canScroll(horizontal: Boolean, direction: Int): Boolean =
         canScrollByEdge(scrollEdge, horizontal, direction)
 
+    /**
+     * Converts touch points on the screen to points on content
+     */
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffset.Zero

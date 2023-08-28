@@ -27,6 +27,19 @@ import com.github.panpf.zoomimage.glide.internal.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.internal.GlideTileMemoryCache
 import com.github.panpf.zoomimage.glide.internal.newGlideImageSource
 
+/**
+ * An ImageView that integrates the Glide image loading framework that zoom and subsampling huge images
+ *
+ * Example usages:
+ *
+ * ```kotlin
+ * val glideZoomImageView = GlideZoomImageView(context)
+ * Glide.with(this@GlideZoomImageViewFragment)
+ *     .load("http://sample.com/sample.jpg")
+ *     .placeholder(R.drawable.placeholder)
+ *     .into(glideZoomImageView)
+ * ```
+ */
 open class GlideZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -81,9 +94,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
         }
     }
 
-    @Suppress("UsePropertyAccessSyntax")
     private fun isDisableMemoryCache(request: SingleRequest<*>): Boolean {
         val requestOptions = request.requestOptionsCompat
-        return !requestOptions.isMemoryCacheable()
+        return !requestOptions.isMemoryCacheable
     }
 }

@@ -21,11 +21,26 @@ import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.times
 import kotlin.math.max
 
+/**
+ * Read mode allows long text images to be displayed in a way that fills the screen at the beginning and is positioned at the beginning of the image,
+ * so that users can directly start read the content of the image without double-clicking to enlarge and then sliding to the beginning position
+ */
 data class ReadMode(
+    /**
+     * Limit the size types of image that can use read mode.
+     * Both the default horizontal and vertical image are available
+     */
     val sizeType: Int = SIZE_TYPE_HORIZONTAL or SIZE_TYPE_VERTICAL,
+
+    /**
+     * Determines whether the image can use read mode
+     */
     val decider: Decider = Decider.Default
 ) {
 
+    /**
+     * Based on contentSize and containerSize, determine whether read mode can be used
+     */
     fun accept(contentSize: IntSizeCompat, containerSize: IntSizeCompat): Boolean {
         val accepted = contentSize.width == contentSize.height
                 || (sizeType and SIZE_TYPE_HORIZONTAL != 0 && contentSize.width > contentSize.height)
@@ -35,14 +50,28 @@ data class ReadMode(
     }
 
     companion object {
+        /**
+         * Horizontal image
+         */
         const val SIZE_TYPE_HORIZONTAL = 1
+
+        /**
+         * Vertical image
+         */
         const val SIZE_TYPE_VERTICAL = 2
+
+        /**
+         * Default read mode
+         */
         val Default = ReadMode(
             sizeType = SIZE_TYPE_HORIZONTAL or SIZE_TYPE_VERTICAL,
             decider = Decider.Default
         )
     }
 
+    /**
+     * Determines whether the image can use read mode
+     */
     interface Decider {
 
         fun should(contentSize: IntSizeCompat, containerSize: IntSizeCompat): Boolean
@@ -52,6 +81,11 @@ data class ReadMode(
         }
     }
 
+    /**
+     * When contentSize and containerSize are in the same direction,
+     * read mode can be used when the difference multiple is greater than [sameDirectionMultiple],
+     * otherwise read mode can be used when the difference multiple is greater than [notSameDirectionMultiple]
+     */
     class LongImageDecider(
         val sameDirectionMultiple: Float = 2.5f,
         val notSameDirectionMultiple: Float = 5.0f,

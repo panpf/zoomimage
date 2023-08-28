@@ -1,10 +1,14 @@
 package com.github.panpf.zoomimage.zoom
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.Multiple
 import kotlin.math.max
 
+/**
+ * Used to calculate mediumScale and maxScale
+ */
 interface ScalesCalculator {
 
     fun calculate(
@@ -16,15 +20,30 @@ interface ScalesCalculator {
     ): Result
 
     companion object {
+        /**
+         * The default multiplier between the scales, because by default `mediumScale = minScale * multiple`, `maxScale = mediumScale * multiple`
+         */
         const val Multiple = 3f
 
+        /**
+         * Dynamic scales calculator based on content size, content raw size, and container size
+         */
         val Dynamic = DynamicScalesCalculator()
 
+        /**
+         * Fixed scales calculator, always 'mediumScale = minScale * multiple', 'maxScale = mediumScale * multiple'
+         */
         val Fixed = FixedScalesCalculator()
 
+        /**
+         * Creates a [DynamicScalesCalculator] and specified [multiple]
+         */
         fun dynamic(multiple: Float = Multiple): ScalesCalculator =
             DynamicScalesCalculator(multiple)
 
+        /**
+         * Creates a [FixedScalesCalculator] and specified [multiple]
+         */
         fun fixed(multiple: Float = Multiple): ScalesCalculator =
             FixedScalesCalculator(multiple)
     }
@@ -32,6 +51,9 @@ interface ScalesCalculator {
     data class Result(val mediumScale: Float, val maxScale: Float)
 }
 
+/**
+ * Dynamic scales calculator based on content size, content raw size, and container size
+ */
 data class DynamicScalesCalculator(
     private val multiple: Float = Multiple
 ) : ScalesCalculator {
@@ -68,10 +90,14 @@ data class DynamicScalesCalculator(
     }
 
     override fun toString(): String {
-        return "DynamicScalesCalculator($multiple)"
+        return "DynamicScalesCalculator(${multiple.format(2)})"
     }
 }
 
+
+/**
+ * Fixed scales calculator, always 'mediumScale = minScale * multiple', 'maxScale = mediumScale * multiple'
+ */
 data class FixedScalesCalculator(
     private val multiple: Float = Multiple
 ) : ScalesCalculator {
@@ -89,6 +115,6 @@ data class FixedScalesCalculator(
     }
 
     override fun toString(): String {
-        return "FixedScalesCalculator($multiple)"
+        return "FixedScalesCalculator(${multiple.format(2)})"
     }
 }

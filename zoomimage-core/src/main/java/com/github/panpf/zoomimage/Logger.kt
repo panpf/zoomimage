@@ -3,15 +3,36 @@ package com.github.panpf.zoomimage
 import android.util.Log
 import androidx.annotation.IntDef
 
+/**
+ * Used to print log
+ */
 class Logger(
+    /**
+     * The tag of the log
+     */
     val tag: String,
+
+    /**
+     * The module name of the log
+     */
     val module: String? = null,
+
+    /**
+     * Whether to show the name of the current thread in the log
+     */
     val showThreadName: Boolean = false,
-    private val rootLogger: Logger? = null // In order for all derived loggers to use levels and pipelines from rootLogger
+
+    /**
+     * The root logger, in order for all derived loggers to use the same level and pipeline
+     */
+    private val rootLogger: Logger? = null
 ) {
 
     private val threadNameLocal by lazy { ThreadLocal<String>() }
 
+    /**
+     * The level of the log. The level of the root logger will be modified directly
+     */
     var level: Int = rootLogger?.level ?: INFO
         get() {
             return rootLogger?.level ?: field
@@ -29,6 +50,10 @@ class Logger(
                 Log.w(tag, "Logger. setLevel. ${levelName(oldLevel)} -> ${levelName(value)}")
             }
         }
+
+    /**
+     * The pipeline of the log. The pipeline of the root logger will be modified directly
+     */
     var pipeline: Pipeline = rootLogger?.pipeline ?: AndroidLogPipeline()
         get() {
             return rootLogger?.pipeline ?: field
@@ -48,19 +73,23 @@ class Logger(
             }
         }
 
+    /**
+     * To create a new logger based on the current logger, you can only modify the values of module and showThreadName
+     */
     fun newLogger(
         module: String? = this.module,
         showThreadName: Boolean = this.showThreadName
-    ): Logger {
-        return Logger(
-            tag = tag,
-            module = module,
-            showThreadName = showThreadName,
-            rootLogger = rootLogger ?: this
-        )
-    }
+    ): Logger = Logger(
+        tag = tag,
+        module = module,
+        showThreadName = showThreadName,
+        rootLogger = rootLogger ?: this
+    )
 
 
+    /**
+     * Print a log with the VERBOSE level
+     */
     fun v(msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= VERBOSE) {
@@ -68,6 +97,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the VERBOSE level
+     */
     fun v(lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (this.level >= VERBOSE) {
@@ -75,6 +107,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the VERBOSE level
+     */
     fun v(throwable: Throwable?, msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= VERBOSE) {
@@ -82,6 +117,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the VERBOSE level
+     */
     fun v(throwable: Throwable?, lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= VERBOSE) {
@@ -90,6 +128,9 @@ class Logger(
     }
 
 
+    /**
+     * Print a log with the DEBUG level
+     */
     fun d(msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= DEBUG) {
@@ -97,6 +138,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the DEBUG level
+     */
     fun d(lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= DEBUG) {
@@ -104,6 +148,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the DEBUG level
+     */
     fun d(throwable: Throwable?, msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= DEBUG) {
@@ -111,6 +158,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the DEBUG level
+     */
     fun d(throwable: Throwable?, lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= DEBUG) {
@@ -119,6 +169,9 @@ class Logger(
     }
 
 
+    /**
+     * Print a log with the INFO level
+     */
     fun i(msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= INFO) {
@@ -126,6 +179,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the INFO level
+     */
     fun i(lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= INFO) {
@@ -133,6 +189,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the INFO level
+     */
     fun i(throwable: Throwable?, msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= INFO) {
@@ -140,6 +199,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the INFO level
+     */
     fun i(throwable: Throwable?, lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= INFO) {
@@ -148,6 +210,9 @@ class Logger(
     }
 
 
+    /**
+     * Print a log with the WARN level
+     */
     fun w(msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= WARN) {
@@ -155,6 +220,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the WARN level
+     */
     fun w(lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= WARN) {
@@ -162,6 +230,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the WARN level
+     */
     fun w(throwable: Throwable?, msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= WARN) {
@@ -169,6 +240,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the WARN level
+     */
     fun w(throwable: Throwable?, lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= WARN) {
@@ -177,6 +251,9 @@ class Logger(
     }
 
 
+    /**
+     * Print a log with the ERROR level
+     */
     fun e(msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= ERROR) {
@@ -184,6 +261,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the ERROR level
+     */
     fun e(lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= ERROR) {
@@ -191,6 +271,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the ERROR level
+     */
     fun e(throwable: Throwable?, msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= ERROR) {
@@ -198,6 +281,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the ERROR level
+     */
     fun e(throwable: Throwable?, lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= ERROR) {
@@ -206,6 +292,9 @@ class Logger(
     }
 
 
+    /**
+     * Print a log with the specified level
+     */
     fun log(@Level level: Int, msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= level) {
@@ -213,6 +302,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the specified level
+     */
     fun log(@Level level: Int, lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= level) {
@@ -220,6 +312,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the specified level
+     */
     fun log(@Level level: Int, throwable: Throwable?, msg: String) {
         val logger = rootLogger ?: this
         if (logger.level >= level) {
@@ -227,6 +322,9 @@ class Logger(
         }
     }
 
+    /**
+     * Print a log with the specified level
+     */
     fun log(@Level level: Int, throwable: Throwable?, lazyMessage: () -> String) {
         val logger = rootLogger ?: this
         if (logger.level >= level) {
@@ -235,6 +333,9 @@ class Logger(
     }
 
 
+    /**
+     * Flush the log pipeline
+     */
     fun flush() {
         val logger = rootLogger ?: this
         logger.pipeline.flush()
@@ -295,7 +396,7 @@ class Logger(
     }
 
     override fun toString(): String {
-        return "Logger(tag='$tag', module=$pipeline=$pipeline, level=$level)"
+        return "Logger(tag='$tag', module=$module, showThreadName=$showThreadName, level=$level, pipeline=$pipeline)"
     }
 
     @Retention(AnnotationRetention.SOURCE)
@@ -334,6 +435,9 @@ class Logger(
          */
         const val ASSERT = 7
 
+        /**
+         * Get the name of the level
+         */
         fun levelName(level: Int): String = when (level) {
             VERBOSE -> "VERBOSE"
             DEBUG -> "DEBUG"
@@ -344,6 +448,9 @@ class Logger(
             else -> "UNKNOWN"
         }
 
+        /**
+         * Get the level of the name
+         */
         fun level(levelName: String): Int = when (levelName) {
             "VERBOSE" -> VERBOSE
             "DEBUG" -> DEBUG
@@ -355,11 +462,17 @@ class Logger(
         }
     }
 
+    /**
+     * The pipeline of the log
+     */
     interface Pipeline {
         fun log(level: Int, tag: String, msg: String, tr: Throwable?)
         fun flush()
     }
 
+    /**
+     * The pipeline of the log, which prints the log to the Android logcat
+     */
     class AndroidLogPipeline : Pipeline {
         override fun log(level: Int, tag: String, msg: String, tr: Throwable?) {
             when (level) {

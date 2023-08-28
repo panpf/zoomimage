@@ -44,6 +44,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+
+/**
+ * Creates and remember a [SubsamplingState] that can be used to subsampling of the content.
+ */
 @Composable
 fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): SubsamplingState {
     val subsamplingState = remember(logger) {
@@ -56,6 +60,9 @@ fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): Subsam
     return subsamplingState
 }
 
+/**
+ * A state object that can be used to subsampling of the content.
+ */
 @Stable
 class SubsamplingState(logger: Logger) : RememberObserver {
 
@@ -78,31 +85,83 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             }
         }
     }
+    internal var imageKey: String? = null
 
     internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     internal var contentSize: IntSize by mutableStateOf(IntSize.Zero)
 
-    /* Configurable properties */
+    /*
+     * Configurable properties
+     */
+
+    /**
+     * If true, the bounds of each tile is displayed
+     */
     var showTileBounds: Boolean by mutableStateOf(false)
+
+    /**
+     * If true, the Exif rotation information for the image is ignored
+     */
     var ignoreExifOrientation by mutableStateOf(false)
+
+    /**
+     * Set up the tile memory cache container
+     */
     var tileMemoryCache: TileMemoryCache? by mutableStateOf(null)
+
+    /**
+     * If true, disables memory cache
+     */
     var disableMemoryCache: Boolean by mutableStateOf(false)
+
+    /**
+     * Set up a shared Bitmap pool for the tile
+     */
     var tileBitmapPool: TileBitmapPool? by mutableStateOf(null)
+
+    /**
+     * If true, Bitmap reuse is disabled
+     */
     var disallowReuseBitmap: Boolean by mutableStateOf(false)
+
+    /**
+     * If true, subsampling is paused and loaded fragments are released, which will be reloaded after resumption
+     */
     var paused by mutableStateOf(false)
 
-    /* Information properties */
-    var imageKey: String? by mutableStateOf(null)
-        private set
+
+    /*
+     * Information properties
+     */
+
+    /**
+     * The information of the image, including width, height, format, exif information, etc
+     */
     var imageInfo: ImageInfo? by mutableStateOf(null)
         private set
+
+    /**
+     * Whether the image is ready for subsampling
+     */
     var ready by mutableStateOf(false)
         private set
+
+    /**
+     * A snapshot of the tile list
+     */
+    // todo rename to tileSnapshotList
     var tileList: List<TileSnapshot> by mutableStateOf(emptyList())
         private set
+
+    /**
+     * The image load rect
+     */
     var imageLoadRect: IntRect by mutableStateOf(IntRect.Zero)
         private set
 
+    /**
+     * Set up an image source from which image tile are loaded
+     */
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
         logger.d { "setImageSource. '${imageSource?.key}'" }
@@ -114,6 +173,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         return true
     }
 
+    /**
+     * Set the lifecycle, which automatically controls pause and resume, which is obtained from [LocalLifecycleOwner] by default, and can be set by this method if the default acquisition method is not applicable
+     */
     fun setLifecycle(lifecycle: Lifecycle?) {
         if (this.lifecycle != lifecycle) {
             unregisterLifecycleObserver()

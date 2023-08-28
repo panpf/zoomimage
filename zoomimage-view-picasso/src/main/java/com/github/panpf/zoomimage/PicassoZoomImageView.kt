@@ -29,6 +29,20 @@ import com.squareup.picasso.isDisableMemoryCache
 import com.squareup.picasso.memoryPolicy
 import java.io.File
 
+/**
+ * An ImageView that integrates the Picasso image loading framework that zoom and subsampling huge images
+ *
+ * Example usages:
+ *
+ * ```kotlin
+ * val picassoZoomImageView = PicassoZoomImageView(context)
+ * picassoZoomImageViewImage.loadImage("http://sample.com/sample.jpg") {
+ *     placeholder(R.drawable.placeholder)
+ * }
+ * ```
+ *
+ * Note: PicassoZoomImageView provides a set of dedicated APIs to listen to load results and get URIs, so please do not use the official API directly to load images
+ */
 open class PicassoZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -39,6 +53,21 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         _subsamplingAbility?.tileMemoryCache = PicassoTileMemoryCache(Picasso.get())
     }
 
+    /**
+     * Start an image request using the specified image file. This is a convenience method for
+     * calling load(Uri).
+     *
+     * Passing null as a file will not trigger any request but will set a
+     * placeholder, if one is specified.
+     *
+     * Equivalent to calling load(Uri) load(Uri.fromFile(file)).
+     *
+     * @param file Image file
+     * @param callback Callback for loading results
+     * @param config Picasso Request configuration
+     *
+     * Note: Please use this API to load the image, only then can PicassoZoomImageView get the URI of the image and set the ImageSource to support the subsampling function after the listener load is successful
+     */
     fun loadImage(
         file: File,
         callback: Callback? = null,
@@ -49,6 +78,15 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         loadImage(Uri.fromFile(file), callback, creator)
     }
 
+    /**
+     * Start an image request using the specified drawable resource ID.
+     *
+     * @param resourceId Image resource ID
+     * @param callback Callback for loading results
+     * @param config Picasso Request configuration
+     *
+     * Note: Please use this API to load the image, only then can PicassoZoomImageView get the URI of the image and set the ImageSource to support the subsampling function after the listener load is successful
+     */
     fun loadImage(
         resourceId: Int,
         callback: Callback? = null,
@@ -59,6 +97,18 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         loadImage(Uri.parse("android.resource://$resourceId"), callback, creator)
     }
 
+    /**
+     * Start an image request using the specified URI.
+     *
+     * Passing null as a uri will not trigger any request but will set a placeholder,
+     * if one is specified.
+     *
+     * @param uri Image URI
+     * @param callback Callback for loading results
+     * @param config Picasso Request configuration
+     *
+     * Note: Please use this API to load the image, only then can PicassoZoomImageView get the URI of the image and set the ImageSource to support the subsampling function after the listener load is successful
+     */
     fun loadImage(
         uri: Uri?,
         callback: Callback? = null,
@@ -69,6 +119,20 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         loadImage(uri, callback, creator)
     }
 
+    /**
+     * Start an image request using the specified path. This is a convenience method for calling load(Uri).
+     *
+     * This path may be a remote URL, file resource (prefixed with 'file:'), content resource
+     * (prefixed with 'content:'), or android resource (prefixed with 'android.resource:').
+     *
+     * Passing null as a path will not trigger any request but will set a placeholder, if one is specified.
+     *
+     * @param path Image path
+     * @param callback Callback for loading results
+     * @param config Picasso Request configuration
+     *
+     * Note: Please use this API to load the image, only then can PicassoZoomImageView get the URI of the image and set the ImageSource to support the subsampling function after the listener load is successful
+     */
     fun loadImage(
         path: String?,
         callback: Callback? = null,

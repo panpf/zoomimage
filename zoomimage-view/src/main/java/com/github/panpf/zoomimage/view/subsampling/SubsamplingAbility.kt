@@ -19,6 +19,7 @@ import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
 
+// todo continue write comment
 class SubsamplingAbility(private val view: View, logger: Logger) {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingAbility")

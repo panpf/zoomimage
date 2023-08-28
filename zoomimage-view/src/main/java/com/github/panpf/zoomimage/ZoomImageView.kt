@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("MemberVisibilityCanBePrivate", "PropertyName", "LeakingThis")
 
 package com.github.panpf.zoomimage
 
@@ -31,21 +30,43 @@ import com.github.panpf.zoomimage.view.subsampling.SubsamplingAbility
 import com.github.panpf.zoomimage.view.zoom.ZoomAbility
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 
+/**
+ * A native ImageView that zoom and subsampling huge images
+ *
+ * Example usages:
+ *
+ * ```kotlin
+ * val zoomImageView = ZoomImageView(context)
+ * zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
+ * val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
+ * zoomImageView.subsamplingAbility.setImageSource(imageSource)
+ * ```
+ */
 open class ZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
 
-    open val logger = Logger(tag = "ZoomImageView")
+    // Must be nullable, otherwise it will cause initialization in the constructor to fail
+    @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
+    protected var _zoomAbility: ZoomAbility? = null
 
     // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    protected var _zoomAbility: ZoomAbility? = null
+    @Suppress("PropertyName")
+    protected val _subsamplingAbility: SubsamplingAbility?
+
+    open val logger = Logger(tag = "ZoomImageView")
+
+    /**
+     * Control the ability to zoom, pan, rotate
+     */
     val zoomAbility: ZoomAbility
         get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
 
-    // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    protected val _subsamplingAbility: SubsamplingAbility?
+    /**
+     * Control the ability to subsampling
+     */
     val subsamplingAbility: SubsamplingAbility
         get() = _subsamplingAbility
             ?: throw IllegalStateException("subsamplingAbility not initialized")

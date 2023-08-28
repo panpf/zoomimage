@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import coil.ImageLoader
 import coil.compose.AsyncImagePainter
+import coil.compose.AsyncImagePainter.State
 import coil.compose.LocalImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
@@ -38,6 +39,49 @@ import com.github.panpf.zoomimage.compose.zoom.zoomable
 import kotlin.math.roundToInt
 
 
+/**
+ * An image component that integrates the Coil image loading framework that zoom and subsampling huge images
+ *
+ * Example usages:
+ *
+ * ```kotlin
+ * CoilZoomAsyncImage(
+ *     model = ImageRequest.Builder(LocalContext.current).apply {
+ *         data("http://sample.com/sample.jpg")
+ *         placeholder(R.drawable.placeholder)
+ *         crossfade(true)
+ *     }.build(),
+ *     contentDescription = "view image",
+ *     modifier = Modifier.fillMaxSize(),
+ * )
+ * ```
+ *
+ * @param model Either an [ImageRequest] or the [ImageRequest.data] value.
+ * @param contentDescription Text used by accessibility services to describe what this image
+ *  represents. This should always be provided unless this image is used for decorative purposes,
+ *  and does not represent a meaningful action that a user can take.
+ * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
+ * @param placeholder A [Painter] that is displayed while the image is loading.
+ * @param error A [Painter] that is displayed when the image request is unsuccessful.
+ * @param fallback A [Painter] that is displayed when the request's [ImageRequest.data] is null.
+ * @param onLoading Called when the image request begins loading.
+ * @param onSuccess Called when the image request completes successfully.
+ * @param onError Called when the image request completes unsuccessfully.
+ * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
+ *  bounds defined by the width and height.
+ * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
+ *  used if the bounds are a different size from the intrinsic size of the [AsyncImagePainter].
+ * @param alpha Optional opacity to be applied to the [AsyncImagePainter] when it is rendered
+ *  onscreen.
+ * @param colorFilter Optional [ColorFilter] to apply for the [AsyncImagePainter] when it is
+ *  rendered onscreen.
+ * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
+ *  destination.
+ * @param state The state to control zoom
+ * @param scrollBar Controls whether scroll bars are displayed and their style
+ * @param onLongPress Called when the user long presses the image
+ * @param onTap Called when the user taps the image
+ */
 @Composable
 @NonRestartableComposable
 fun CoilZoomAsyncImage(
@@ -47,9 +91,9 @@ fun CoilZoomAsyncImage(
     placeholder: Painter? = null,
     error: Painter? = null,
     fallback: Painter? = error,
-    onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
-    onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
-    onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
+    onLoading: ((State.Loading) -> Unit)? = null,
+    onSuccess: ((State.Success) -> Unit)? = null,
+    onError: ((State.Error) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -78,13 +122,54 @@ fun CoilZoomAsyncImage(
     onTap = onTap,
 )
 
+
+/**
+ * An image component that integrates the Coil image loading framework that zoom and subsampling huge images
+ *
+ * Example usages:
+ *
+ * ```kotlin
+ * CoilZoomAsyncImage(
+ *     model = ImageRequest.Builder(LocalContext.current).apply {
+ *         data("http://sample.com/sample.jpg")
+ *         placeholder(R.drawable.placeholder)
+ *         crossfade(true)
+ *     }.build(),
+ *     contentDescription = "view image",
+ *     modifier = Modifier.fillMaxSize(),
+ * )
+ * ```
+ *
+ * @param model Either an [ImageRequest] or the [ImageRequest.data] value.
+ * @param contentDescription Text used by accessibility services to describe what this image
+ *  represents. This should always be provided unless this image is used for decorative purposes,
+ *  and does not represent a meaningful action that a user can take.
+ * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
+ * @param transform A callback to transform a new [State] before it's applied to the
+ *  [AsyncImagePainter]. Typically this is used to modify the state's [Painter].
+ * @param onState Called when the state of this painter changes.
+ * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
+ *  bounds defined by the width and height.
+ * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
+ *  used if the bounds are a different size from the intrinsic size of the [AsyncImagePainter].
+ * @param alpha Optional opacity to be applied to the [AsyncImagePainter] when it is rendered
+ *  onscreen.
+ * @param colorFilter Optional [ColorFilter] to apply for the [AsyncImagePainter] when it is
+ *  rendered onscreen.
+ * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
+ *  destination.
+ * @param state The state to control zoom
+ * @param scrollBar Controls whether scroll bars are displayed and their style
+ * @param onLongPress Called when the user long presses the image
+ * @param onTap Called when the user taps the image
+ */
 @Composable
 fun CoilZoomAsyncImage(
     model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
-    onState: ((AsyncImagePainter.State) -> Unit)? = null,
+    transform: (State) -> State = AsyncImagePainter.DefaultTransform,
+    onState: ((State) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -148,22 +233,20 @@ private fun onState(
     imageLoader: ImageLoader,
     state: ZoomState,
     request: ImageRequest,
-    loadState: AsyncImagePainter.State,
+    loadState: State,
 ) {
     state.logger.d("onState. state=${loadState.name}. data: ${request.data}")
     val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()
     val containerSize = state.zoomable.containerSize
-    val newContentSize = when {
+    val contentSize = when {
         painterSize != null -> painterSize
         containerSize.isNotEmpty() -> containerSize
         else -> IntSize.Zero
     }
-    if (state.zoomable.contentSize != newContentSize) {
-        state.zoomable.contentSize = newContentSize
-    }
+    state.zoomable.contentSize = contentSize
 
     when (loadState) {
-        is AsyncImagePainter.State.Success -> {
+        is State.Success -> {
             state.subsampling.disableMemoryCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
             state.subsampling.setImageSource(CoilImageSource(imageLoader, request))
@@ -175,12 +258,12 @@ private fun onState(
     }
 }
 
-val AsyncImagePainter.State.name: String
+val State.name: String
     get() = when (this) {
-        is AsyncImagePainter.State.Loading -> "Loading"
-        is AsyncImagePainter.State.Success -> "Success"
-        is AsyncImagePainter.State.Error -> "Error"
-        is AsyncImagePainter.State.Empty -> "Empty"
+        is State.Loading -> "Loading"
+        is State.Success -> "Success"
+        is State.Error -> "Error"
+        is State.Empty -> "Empty"
     }
 
 
@@ -200,15 +283,15 @@ private fun transformOf(
     placeholder: Painter?,
     error: Painter?,
     uriEmpty: Painter?,
-): (AsyncImagePainter.State) -> AsyncImagePainter.State {
+): (State) -> State {
     return if (placeholder != null || error != null || uriEmpty != null) {
         { state ->
             when (state) {
-                is AsyncImagePainter.State.Loading -> {
+                is State.Loading -> {
                     if (placeholder != null) state.copy(painter = placeholder) else state
                 }
 
-                is AsyncImagePainter.State.Error -> if (state.result.throwable is NullRequestDataException) {
+                is State.Error -> if (state.result.throwable is NullRequestDataException) {
                     if (uriEmpty != null) state.copy(painter = uriEmpty) else state
                 } else {
                     if (error != null) state.copy(painter = error) else state
@@ -224,17 +307,17 @@ private fun transformOf(
 
 @Stable
 private fun onStateOf(
-    onLoading: ((AsyncImagePainter.State.Loading) -> Unit)?,
-    onSuccess: ((AsyncImagePainter.State.Success) -> Unit)?,
-    onError: ((AsyncImagePainter.State.Error) -> Unit)?,
-): ((AsyncImagePainter.State) -> Unit)? {
+    onLoading: ((State.Loading) -> Unit)?,
+    onSuccess: ((State.Success) -> Unit)?,
+    onError: ((State.Error) -> Unit)?,
+): ((State) -> Unit)? {
     return if (onLoading != null || onSuccess != null || onError != null) {
         { state ->
             when (state) {
-                is AsyncImagePainter.State.Loading -> onLoading?.invoke(state)
-                is AsyncImagePainter.State.Success -> onSuccess?.invoke(state)
-                is AsyncImagePainter.State.Error -> onError?.invoke(state)
-                is AsyncImagePainter.State.Empty -> {}
+                is State.Loading -> onLoading?.invoke(state)
+                is State.Success -> onSuccess?.invoke(state)
+                is State.Error -> onError?.invoke(state)
+                is State.Empty -> {}
             }
         }
     } else {

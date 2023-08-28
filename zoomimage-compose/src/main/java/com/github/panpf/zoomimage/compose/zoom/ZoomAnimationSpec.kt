@@ -4,6 +4,9 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.runtime.Immutable
 
+/**
+ * Animation-related configurations
+ */
 @Immutable
 data class ZoomAnimationSpec(
     val durationMillis: Int,

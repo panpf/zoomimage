@@ -31,6 +31,19 @@ import com.github.panpf.zoomimage.coil.internal.CoilImageSource
 import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
+/**
+ * An ImageView that integrates the Coil image loading framework that zoom and subsampling huge images
+ *
+ * Example usages:
+ *
+ * ```kotlin
+ * val coilZoomImageView = CoilZoomImageView(context)
+ * coilZoomImageView.load("http://sample.com/sample.jpg") {
+ *     placeholder(R.drawable.placeholder)
+ *     crossfade(true)
+ * }
+ * ```
+ */
 open class CoilZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

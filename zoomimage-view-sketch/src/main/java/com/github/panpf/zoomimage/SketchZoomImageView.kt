@@ -53,15 +53,28 @@ import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
 import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
+/**
+ * An ImageView that integrates the Sketch image loading framework that zoom and subsampling huge images
+ *
+ * Example usages:
+ *
+ * ```kotlin
+ * val sketchZoomImageView = SketchZoomImageView(context)
+ * sketchZoomImageView.displayImage("http://sample.com/sample.jpg") {
+ *     placeholder(R.drawable.placeholder)
+ *     crossfade()
+ * }
+ * ```
+ */
 open class SketchZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle), ImageOptionsProvider, ViewAbilityContainer {
 
-    override var displayImageOptions: ImageOptions? = null
-
     private var viewAbilityManager: ViewAbilityManager? = null
+
+    override var displayImageOptions: ImageOptions? = null
 
     override val viewAbilityList: List<ViewAbility>
         get() = viewAbilityManager?.viewAbilityList ?: emptyList()
