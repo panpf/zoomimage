@@ -28,7 +28,6 @@ allprojects {
 
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             version = property("versionName").toString()
-            publishToMavenCentral("S01")
         }
     }
 }
