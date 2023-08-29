@@ -1,8 +1,8 @@
 package com.github.panpf.zoomimage
 
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -20,8 +20,12 @@ import com.github.panpf.zoomimage.compose.internal.toPx
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -80,20 +84,24 @@ fun ZoomImage(
     state.zoomable.alignment = alignment
     state.zoomable.contentSize = painter.intrinsicSize.round()
 
+    val coroutineScope = rememberCoroutineScope()
     BoxWithConstraints(modifier = modifier) {
-        // Here use BoxWithConstraints and then actively set containerSize and call reset(),
-        // In order to prepare the transform in advance, so that when the position of the image needs to be adjusted,
-        // the position change will not be seen by the user
+        /*
+         * Here use BoxWithConstraints and then actively set containerSize and call nowReset(),
+         * In order to prepare the transform in advance, so that when the position of the image needs to be adjusted,
+         * the position change will not be seen by the user
+         */
         val maxWidthPx = maxWidth.toPx().roundToInt()
         val maxHeightPx = maxHeight.toPx().roundToInt()
         val oldContainerSize = state.zoomable.containerSize
         if (oldContainerSize.width != maxWidthPx || oldContainerSize.height != maxHeightPx) {
             state.zoomable.containerSize = IntSize(maxWidthPx, maxHeightPx)
-            state.zoomable.reset("BoxWithConstraints", immediate = true)
+            state.zoomable.nowReset(coroutineScope, "BoxWithConstraints")
         }
+
         val transform = state.zoomable.transform
         val modifier1 = Modifier
-            .fillMaxSize()
+            .matchParentSize()
             .clipToBounds()
             .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
             .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
@@ -118,5 +126,11 @@ fun ZoomImage(
             alpha = alpha,
             colorFilter = colorFilter
         )
+    }
+}
+
+private fun ZoomableState.nowReset(coroutineScope: CoroutineScope, caller: String) {
+    coroutineScope.launch(Dispatchers.Main.immediate) {
+        reset(caller)
     }
 }

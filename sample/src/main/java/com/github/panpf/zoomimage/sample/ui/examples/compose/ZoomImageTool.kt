@@ -26,6 +26,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,7 @@ import com.github.panpf.zoomimage.sample.ui.common.compose.MyDialogState
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMoveKeyboardState
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
@@ -61,6 +63,7 @@ fun ZoomImageTool(
     infoDialogState: MyDialogState,
     imageUri: String,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Box(modifier = Modifier.fillMaxSize()) {
         Row(Modifier.padding(20.dp)) {
             val headerInfo = remember {
@@ -142,7 +145,9 @@ fun ZoomImageTool(
                         valueRange = zoomableState.minScale..zoomableState.maxScale,
                         onValueChange = {
                             value = it
-                            zoomableState.scale(targetScale = it, animated = true)
+                            coroutineScope.launch {
+                                zoomableState.scale(targetScale = it, animated = true)
+                            }
                         },
                         steps = 8,
                     )
@@ -184,10 +189,13 @@ private fun ButtonPad(
     onClickMore: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
+    val coroutineScope = rememberCoroutineScope()
     Row(Modifier.background(colorScheme.tertiary.copy(alpha = 0.8f), RoundedCornerShape(50))) {
         IconButton(
             onClick = {
-                zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
+                coroutineScope.launch {
+                    zoomableState.rotate((zoomableState.transform.rotation + 90).roundToInt())
+                }
             },
             modifier = Modifier.size(40.dp)
         ) {
@@ -199,7 +207,11 @@ private fun ButtonPad(
         }
 
         IconButton(
-            onClick = { zoomableState.switchScale(animated = true) },
+            onClick = {
+                coroutineScope.launch {
+                    zoomableState.switchScale(animated = true)
+                }
+          },
             modifier = Modifier.size(40.dp)
         ) {
             val zoomIn by remember {

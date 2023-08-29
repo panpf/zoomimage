@@ -9,13 +9,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -71,21 +69,18 @@ import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Creates and remember a [ZoomableState] that can be used to control the scale, pan, rotation of the content.
  */
 @Composable
 fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
-    val coroutineScope = rememberCoroutineScope()
-    val zoomableState = remember(logger, coroutineScope) {
-        ZoomableState(logger, coroutineScope)
+    val zoomableState = remember(logger) {
+        ZoomableState(logger)
     }
     LaunchedEffect(Unit) {
         snapshotFlow { zoomableState.containerSize }.collect {
@@ -137,10 +132,7 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
  * A state object that can be used to control the scale, pan, rotation of the content.
  */
 @Stable
-class ZoomableState(
-    logger: Logger,
-    private val coroutineScope: CoroutineScope
-) : RememberObserver {
+class ZoomableState(logger: Logger) {
 
     val logger: Logger = logger.newLogger(module = "ZoomableState")
     private var lastScaleAnimatable: Animatable<*, *>? = null
@@ -345,11 +337,8 @@ class ZoomableState(
      * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
      * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
      */
-    fun reset(
-        caller: String = "consumer",
-        immediate: Boolean = false
-    ) = coroutineScope.launch(getCoroutineContext(immediate)) {
-        stopAllAnimationInternal("reset:$caller")
+    suspend fun reset(caller: String = "consumer") = coroutineScope {
+        stopAllAnimation("reset:$caller")
 
         val containerSize = containerSize
         val contentSize = contentSize
@@ -401,20 +390,20 @@ class ZoomableState(
      *
      * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
      */
-    fun scale(
+    suspend fun scale(
         targetScale: Float,
         centroidContentPoint: IntOffset = contentVisibleRect.center,
         animated: Boolean = false
-    ) = coroutineScope.launch {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@launch
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+    ) = coroutineScope {
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         val currentBaseTransform = baseTransform
         val currentUserTransform = userTransform
         val contentScale = contentScale
         val alignment = alignment
         val rotation = rotation
 
-        stopAllAnimationInternal("scale")
+        stopAllAnimation("scale")
 
         val targetUserScale = targetScale / currentBaseTransform.scaleX
         val limitedTargetUserScale = limitUserScale(targetUserScale)
@@ -472,32 +461,32 @@ class ZoomableState(
      *
      * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
      */
-    fun switchScale(
+    suspend fun switchScale(
         centroidContentPoint: IntOffset = contentVisibleRect.center,
         animated: Boolean = false
-    ): Float {
+    ): Float = coroutineScope {
         val nextScale = getNextStepScale()
         scale(
             targetScale = nextScale,
             centroidContentPoint = centroidContentPoint,
             animated = animated
         )
-        return nextScale
+        nextScale
     }
 
     /**
      * Pan the image to the [targetOffset] position, and animation occurs when [animated] is true
      */
-    fun offset(
+    suspend fun offset(
         targetOffset: Offset,
         animated: Boolean = false
-    ) = coroutineScope.launch {
-        containerSize.takeIf { it.isNotEmpty() } ?: return@launch
-        contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+    ) = coroutineScope {
+        containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
+        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         val currentBaseTransform = baseTransform
         val currentUserTransform = userTransform
 
-        stopAllAnimationInternal("offset")
+        stopAllAnimation("offset")
 
         val scaledBaseOffset = currentBaseTransform.offset.times(currentUserTransform.scale)
         val targetUserOffset = targetOffset - scaledBaseOffset
@@ -529,21 +518,20 @@ class ZoomableState(
      *
      * @param targetScale The target scale, the default is the current scale
      */
-    fun location(
+    suspend fun location(
         contentPoint: IntOffset,
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
-    ) = coroutineScope.launch {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@launch
-        val contentSize =
-            contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+    ) = coroutineScope {
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         val contentScale = contentScale
         val alignment = alignment
         val rotation = rotation
         val currentBaseTransform = baseTransform
         val currentUserTransform = userTransform
 
-        stopAllAnimationInternal("location")
+        stopAllAnimation("location")
 
         val containerPoint = contentPointToContainerPoint(
             containerSize = containerSize.toCompat(),
@@ -597,13 +585,13 @@ class ZoomableState(
     /**
      * Rotate the content to [targetRotation]
      */
-    fun rotate(targetRotation: Int) = coroutineScope.launch {
+    suspend fun rotate(targetRotation: Int) = coroutineScope {
         require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
         val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 - it else it }
         val currentRotation = rotation
-        if (currentRotation == limitedTargetRotation) return@launch
+        if (currentRotation == limitedTargetRotation) return@coroutineScope
 
-        stopAllAnimationInternal("rotate")
+        stopAllAnimation("rotate")
 
         rotation = limitedTargetRotation
         reset("rotate")
@@ -666,13 +654,25 @@ class ZoomableState(
     /**
      * Stop all animations immediately
      */
-    internal fun stopAllAnimation(caller: String) = coroutineScope.launch {
-        stopAllAnimationInternal(caller)
+    internal suspend fun stopAllAnimation(caller: String) {
+        val lastScaleAnimatable = lastScaleAnimatable
+        if (lastScaleAnimatable?.isRunning == true) {
+            lastScaleAnimatable.stop()
+            transforming = false
+            logger.d { "stopScaleAnimation:$caller" }
+        }
+
+        val lastFlingAnimatable = lastFlingAnimatable
+        if (lastFlingAnimatable?.isRunning == true) {
+            lastFlingAnimatable.stop()
+            transforming = false
+            logger.d { "stopFlingAnimation:$caller" }
+        }
     }
 
-    internal fun rollbackScale(centroid: Offset? = null): Boolean {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return false
-        contentSize.takeIf { it.isNotEmpty() } ?: return false
+    internal suspend fun rollbackScale(centroid: Offset? = null): Boolean = coroutineScope {
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
+        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         val minScale = minScale
         val maxScale = maxScale
         val animationSpec = animationSpec
@@ -693,51 +693,52 @@ class ZoomableState(
                         "endScale=${endScale.format(4)}"
             }
             val finalCentroid = centroid ?: containerSize.toSize().center
-            coroutineScope.launch {
-                val updateAnimatable = Animatable(0f)
-                this@ZoomableState.lastScaleAnimatable = updateAnimatable
-                transforming = true
-                try {
-                    updateAnimatable.animateTo(
-                        targetValue = 1f,
-                        animationSpec = tween(
-                            durationMillis = animationSpec.durationMillis,
-                            easing = animationSpec.easing
-                        ),
-                        initialVelocity = animationSpec.initialVelocity,
-                    ) {
-                        val frameScale = androidx.compose.ui.util.lerp(
-                            start = startScale,
-                            stop = endScale,
-                            fraction = value
-                        )
-                        val nowScale = this@ZoomableState.transform.scaleX
-                        val addScale = frameScale / nowScale
-                        transform(
+            val updateAnimatable = Animatable(0f)
+            this@ZoomableState.lastScaleAnimatable = updateAnimatable
+            transforming = true
+            try {
+                val scope = CoroutineScope(coroutineContext)
+                updateAnimatable.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = animationSpec.durationMillis,
+                        easing = animationSpec.easing
+                    ),
+                    initialVelocity = animationSpec.initialVelocity,
+                ) {
+                    val frameScale = androidx.compose.ui.util.lerp(
+                        start = startScale,
+                        stop = endScale,
+                        fraction = value
+                    )
+                    val nowScale = this@ZoomableState.transform.scaleX
+                    val addScale = frameScale / nowScale
+                    scope.launch {
+                        gestureTransform(
                             centroid = finalCentroid,
                             panChange = Offset.Zero,
                             zoomChange = addScale,
                             rotationChange = 0f
                         )
                     }
-                } catch (e: CancellationException) {
-                    throw e
-                } finally {
-                    transforming = false
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } finally {
+                transforming = false
             }
         }
-        return targetScale != null
+        return@coroutineScope targetScale != null
     }
 
-    internal fun transform(
+    internal suspend fun gestureTransform(
         centroid: Offset,
         panChange: Offset,
         zoomChange: Float,
         rotationChange: Float
-    ) = coroutineScope.launch {
-        containerSize.takeIf { it.isNotEmpty() } ?: return@launch
-        contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+    ) = coroutineScope {
+        containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
+        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         val currentUserTransform = userTransform
 
         val targetScale = transform.scaleX * zoomChange
@@ -786,12 +787,12 @@ class ZoomableState(
         )
     }
 
-    internal fun fling(velocity: Velocity, density: Density) = coroutineScope.launch {
-        containerSize.takeIf { it.isNotEmpty() } ?: return@launch
-        contentSize.takeIf { it.isNotEmpty() } ?: return@launch
+    internal suspend fun fling(velocity: Velocity, density: Density) = coroutineScope {
+        containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
+        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         val currentUserTransform = userTransform
 
-        stopAllAnimationInternal("fling")
+        stopAllAnimation("fling")
 
         val startUserOffset = currentUserTransform.offset
         val flingAnimatable = Animatable(
@@ -871,22 +872,6 @@ class ZoomableState(
         return userOffset.limitTo(userOffsetBounds)
     }
 
-    private suspend fun stopAllAnimationInternal(caller: String) {
-        val lastScaleAnimatable = lastScaleAnimatable
-        if (lastScaleAnimatable?.isRunning == true) {
-            lastScaleAnimatable.stop()
-            transforming = false
-            logger.d { "stopScaleAnimation:$caller" }
-        }
-
-        val lastFlingAnimatable = lastFlingAnimatable
-        if (lastFlingAnimatable?.isRunning == true) {
-            lastFlingAnimatable.stop()
-            transforming = false
-            logger.d { "stopFlingAnimation:$caller" }
-        }
-    }
-
     private suspend fun updateUserTransform(
         targetUserTransform: Transform,
         animated: Boolean,
@@ -924,21 +909,6 @@ class ZoomableState(
         } else {
             this.userTransform = targetUserTransform
         }
-    }
-
-    private fun getCoroutineContext(immediate: Boolean) =
-        if (immediate) Dispatchers.Main.immediate else EmptyCoroutineContext
-
-    override fun onRemembered() {
-
-    }
-
-    override fun onAbandoned() {
-        coroutineScope.cancel("onAbandoned")
-    }
-
-    override fun onForgotten() {
-        coroutineScope.cancel("onForgotten")
     }
 
     override fun toString(): String =

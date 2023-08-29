@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,7 @@ import com.github.panpf.zoomimage.sample.ui.util.compose.isNotEmpty
 import com.github.panpf.zoomimage.sample.ui.util.compose.times
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.subsampling.Tile
+import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
@@ -57,6 +59,7 @@ fun ZoomImageMinimap(
     alignment: Alignment = Alignment.BottomStart,
     ignoreExifOrientation: Boolean = false,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val contentSize = zoomableState.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
     val strokeWidth = remember { 1f.dp2pxF }
     BoxWithConstraints(modifier = modifier.then(Modifier.fillMaxSize())) {
@@ -118,15 +121,17 @@ fun ZoomImageMinimap(
                         detectTapGestures(
                             onTap = {
                                 if (!imageNodeSize.isEmpty()) {
-                                    zoomableState.location(
-                                        contentPoint = IntOffset(
-                                            x = ((it.x / imageNodeSize.width) * contentSize.width).roundToInt(),
-                                            y = ((it.y / imageNodeSize.height) * contentSize.height).roundToInt(),
-                                        ),
-                                        targetScale = zoomableState.transform.scaleX
-                                            .coerceAtLeast(zoomableState.mediumScale),
-                                        animated = true,
-                                    )
+                                    coroutineScope.launch {
+                                        zoomableState.location(
+                                            contentPoint = IntOffset(
+                                                x = ((it.x / imageNodeSize.width) * contentSize.width).roundToInt(),
+                                                y = ((it.y / imageNodeSize.height) * contentSize.height).roundToInt(),
+                                            ),
+                                            targetScale = zoomableState.transform.scaleX
+                                                .coerceAtLeast(zoomableState.mediumScale),
+                                            animated = true,
+                                        )
+                                    }
                                 }
                             }
                         )
