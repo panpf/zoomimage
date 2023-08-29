@@ -11,26 +11,48 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
-有一些图片的尺寸巨大，如果把它们完整的读到内存肯定会让 App 因内存不足而崩溃
+Some images are huge in size, if they are read completely into memory will definitely make the app
+crash due to insufficient memory, the image loading framework will usually sample and then load,
+then the size of the image will become smaller, but the content of the image will also become blurry
+<br>-----------</br>
+有一些图片的尺寸巨大，如果把它们完整的读到内存肯定会让 App
+因内存不足而崩溃，图片加载框架通常会采样后再加载，这时图片的尺寸会变小，但是图片的内容也会变的模糊不清
 
-图片加载框架通常会采样后再加载，这时图片的尺寸会变小，但是图片的内容也会变的模糊不清
-
+Therefore, it is necessary that zoomimage can support subsampling when zooming, and the user can
+subsampling wherever he slides, and then display the clear original image fragments on the screen,
+so that it can display a clear picture when zooming without crashing the app
+<br>-----------</br>
 所以就需要 zoomimage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图碎片显示到屏幕上，
 这样就能够在缩放时既显示清晰的图片，又不会让 App 崩溃
 
-### 前置条件
+### Prefix/前置条件
 
-什么情况下才会开启超大图采样功能？
+When will subsampling be enabled?
+<br>-----------</br>
+什么情况下才会开启子采样功能？
 
-1. contentSize 比 contentOriginSize 小
-2. contentSize 的宽高比和 contentOriginSize 的宽高比相差不超过 0.5f
-3. 图片是 BitmapRegionDecoder 支持的类型
+* contentSize is smaller than contentOriginSize
+* The aspect ratio of contentSize and the aspect ratio of contentOriginSize do not differ by more
+  than 0.5f
+* The image is the type supported by BitmapRegionDecoder
+  <br>-----------</br>
+* contentSize 比 contentOriginSize 小
+* contentSize 的宽高比和 contentOriginSize 的宽高比相差不超过 0.5f
+* 图片是 BitmapRegionDecoder 支持的类型
 
-### 使用子采样功能
+### Use the subsampling feature/使用子采样功能
 
+Components that integrate the image loading library can use the subsampling function without any
+additional work
+<br>-----------</br>
 集成了图片加载库的组件无需任何额外的工作即可使用子采样功能
 
-[ZoomImage] 和 [ZoomImageView] 没有集成图片加载库的组件，需要额外调用 setImageSource() 方法以使用子采样功能，如下：
+[ZoomImage] and [ZoomImageView] do not have an integrated image loading library and require an
+additional call to the setImageSource() method to use the subsampling function
+<br>-----------</br>
+[ZoomImage] 和 [ZoomImageView] 没有集成图片加载库，需要额外调用 setImageSource() 方法以使用子采样功能
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -53,17 +75,22 @@ view:
 
 ```kotlin
 val zoomImageView = ZoomImageView(context)
-
-val imageSource = ImageSource.fromResource(LocalContext.current, R.drawable.huge_image)
-zoomImageView.subsamplingAbility.setImageSource(imageSource)
-
 zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
+
+val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
+zoomImageView.subsamplingAbility.setImageSource(imageSource)
 ```
 
 ### Exif Orientation
 
-zoomimage 默认会读取图片的 Exif Orientation 信息，然后旋转图片，如果你不想让 zoomimage
-读取 Exif Orientation 信息，可以修改 ignoreExifOrientation 参数为 true，如下：
+By default, zoomimage will read the Exif Orientation information of the image, and then rotate the
+image, if you do not want zoomimage to read the Exif Orientation information, you can modify the
+ignoreExifOrientation parameter to true
+<br>-----------</br>
+zoomimage 默认会读取图片的 Exif Orientation 信息，然后旋转图片，如果你不想让 zoomimage 读取 Exif
+Orientation 信息，可以修改 ignoreExifOrientation 参数为 true
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -80,7 +107,12 @@ SketchZoomAsyncImage(
 
 ### pause/resume
 
-zoomimage 支持暂停子采样，暂停后会释放已加载的碎片并不再加载新碎片，恢复后自动重新加载，如下：
+ZoomImage supports pausing subsampling, after which the loaded fragment is released and no new
+fragment is loaded, and the automatic reloading is after resuming
+<br>-----------</br>
+zoomimage 支持暂停子采样，暂停后会释放已加载的碎片并不再加载新碎片，恢复后自动重新加载
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -100,15 +132,27 @@ SketchZoomAsyncImage(
 
 #### Lifecycle
 
-zoomimage 默认会监听 Lifecycle，在 Lifecycle stop 或 start 时暂停或恢复子采样
+By default, zoomimage automatically fetches the most recent Lifecycle and listens to its state,
+pausing or resuming subsampling at the Lifecycle stop or start
+<br>-----------</br>
+zoomimage 默认会自动获取最近的 Lifecycle 然后监听它的状态，在 Lifecycle stop 或 start 时暂停或恢复子采样
 
-zoomimage 会自动获取最近的 Lifecycle，如果是在 Fragment 中就会获取到 Fragment 的
-Lifecycle，无需主动设置，compose 和 view 都可以
+If it is in a fragment, it will automatically get the Fragment's Lifecycle, no need to actively set
+it, compose and view can be used. Behind the dependence
+The LocalLifecycleOwner API for compos, and the View.findViewTreeLifecycleOwner() API in the
+Lifecycle KTX package
+<br>-----------</br>
+如果是在 Fragment 中就会自动获取到 Fragment 的 Lifecycle，无需主动设置，compose 和 view 都可以。背后依赖的是
+compos 的 LocalLifecycleOwner API 和 Lifecycle KTX 包中的 View.findViewTreeLifecycleOwner() API
 
-背后依赖的是 compos 的 LocalLifecycleOwner API 和 Lifecycle KTX 包中的
-View.findViewTreeLifecycleOwner() API
+If the Lifecycle cannot be obtained by the above APIs in a special running environment, or the
+Lifecycle obtained by default does not meet the requirements, you can also set it manually
+Lifecycle
+<br>-----------</br>
+如果是在特殊的运行环境中，上述 API 无法获取到 Lifecycle 或者默认获取的 Lifecycle 不满足要求，还可以手动设置
+Lifecycle
 
-如果是在特殊的运行环境中，上述 API 无法获取到 Lifecycle，还可以手动设置 Lifecycle，如下：
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -126,10 +170,20 @@ SketchZoomAsyncImage(
 
 ### Memory Cache
 
+The subsampling feature supports memory caching, which can cache Bitmap in memory, which can avoid
+repeated decoding and improve performance
+<br>-----------</br>
 子采样功能支持内存缓存，可以将 Bitmap 缓存在内存中，这样可以避免重复解码，提高性能
 
+Components that integrate the image loading library can use the memory caching feature without any
+additional work, while components that do not integrate the image loading library need to implement
+their own first
+[TileMemoryCache] Then set the tileMemoryCache property to use the memory cache feature
+<br>-----------</br>
 集成了图片加载库的组件无需任何额外的工作即可使用内存缓存功能，而没有集成图片加载库的组件需要先实现自己的
-[TileMemoryCache] 然后设置 tileMemoryCache 属性才能使用内存缓存功能，如下：
+[TileMemoryCache] 然后设置 tileMemoryCache 属性才能使用内存缓存功能
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -144,15 +198,21 @@ ZoomImage(
 )
 ```
 
+After setting the tileMemoryCache property, the memory caching function is turned on, and it can be
+passed without modifying the tileMemoryCache property
+The disableMemoryCache property controls the use of the memory cache feature
+<br>-----------</br>
 设置了 tileMemoryCache 属性后就开启了内存缓存功能，还可以在不修改 tileMemoryCache 属性的情况下通过
-disableMemoryCache 属性控制使用内存缓存功能，如下：
+disableMemoryCache 属性控制使用内存缓存功能
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// 禁用内存缓存
+// Disable memory caching, 禁用内存缓存
 state.subsampling.disableMemoryCache = true
-// 允许使用内存缓存
+// Memory caching is allowed, 允许使用内存缓存
 state.subsampling.disableMemoryCache = false
 
 ZoomImage(
@@ -165,11 +225,23 @@ ZoomImage(
 
 ### Reuse Bitmap
 
+The subsampling feature supports the reuse of Bitmaps, and new fragments can be decoded using
+existing Bitmaps, which reduces the creation of Bitmaps, reduces memory jitter, and improves
+performance
+<br>-----------</br>
 子采样功能支持重用 Bitmap，可以使用已经存在的 Bitmap 解码新的碎片，这样可以减少创建 Bitmap，减少内存抖动，提高性能
 
+Because only Sketch and Glide have BitmapPool, only components that integrate these two image
+loading libraries can be reused without any additional work
+Bitmap functionality, other components need to implement their own [TileBitmapPool] and then set the
+tileBitmapPool property to use memory reuse
+Bitmap functionality
+<br>-----------</br>
 因为只有 Sketch 和 Glide 有 BitmapPool，所以只有集成了这两个图片加载库的组件无需任何额外的工作即可使用重用
 Bitmap 功能，其它组件需要先实现自己的 [TileBitmapPool] 然后设置 tileBitmapPool 属性才能使用内存重用
-Bitmap 功能，如下：
+Bitmap 功能
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -184,15 +256,21 @@ ZoomImage(
 )
 ```
 
+After setting the tileBitmapPool property, the memory reuse Bitmap function is turned on, and it can
+also be passed without modifying the tileBitmapPool property
+The disallowReuseBitmap property controls the reuse of Bitmap
+<br>-----------</br>
 设置了 tileBitmapPool 属性后就开启了内存重用 Bitmap 功能，还可以在不修改 tileBitmapPool 属性的情况下通过
-disallowReuseBitmap 属性控制重用 Bitmap，如下：
+disallowReuseBitmap 属性控制重用 Bitmap
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// 禁止重用 Bitmap
+// Disabled reuse of Bitmaps，禁止重用 Bitmap
 state.subsampling.disallowReuseBitmap = true
-// 允许重用 Bitmap
+// Allows reuse of Bitmap，允许重用 Bitmap
 state.subsampling.disallowReuseBitmap = false
 
 ZoomImage(
@@ -203,38 +281,53 @@ ZoomImage(
 )
 ```
 
-### 监听相关事件
+### Listen for related events/监听相关事件
 
-compose 版本的相关属性是用 State 包装的，直接读取它即可实现监听
+The relevant properties of the compose version are wrapped in State, which can be read directly to
+achieve listening, and the view version needs to register a listener
+<br>-----------</br>
+compose 版本的相关属性是用 State 包装的，直接读取它即可实现监听，view 版本的则需要注册监听器
 
-view 版本的需要注册监听器，如下：
+example/示例：
 
 ```kotlin
 val zoomImageView = ZoomImageView(context)
 
 zoomImageView.subsumplingAbility.registerOnTileChangedListener {
-    // tileSnapshotList 变化
+    // tileSnapshotList changed
 }
 
 zoomImageView.subsumplingAbility.registerOnReadyChangeListener {
-    // ready 状态变化
+    // ready changed
 }
 
 zoomImageView.subsumplingAbility.registerOnPauseChangeListener {
-    // paused 状态变化
+    // paused changed
 }
 
 zoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
-    // imageLoadRect 变化
+    // imageLoadRect changed
 }
 ```
 
-### 获取相关信息
+### Get relevant information/获取相关信息
 
-* [SubsamplingState].ready: Boolean。是否已经准备好了
-* [SubsamplingState].imageInfo: ImageInfo。当前碎片的快照信息列表
-* [SubsamplingState].tileSnapshotList: List<TileSnapshot>。当前碎片的快照列表
-* [SubsamplingState].imageLoadRect: IntRect。原图上当前实际加载的区域
+* [SubsamplingState].ready: Boolean。
+    * Whether the image is ready for subsampling
+      <br>-----------</br>
+    * 是否已经准备好了
+* [SubsamplingState].imageInfo: ImageInfo。
+    * The information of the image, including width, height, format, exif information, etc
+      <br>-----------</br>
+    * 图片的尺寸、格式、exif 等信息
+* [SubsamplingState].tileSnapshotList: List<TileSnapshot>。
+    * A snapshot of the tile list
+      <br>-----------</br>
+    * 当前碎片的快照列表
+* [SubsamplingState].imageLoadRect: IntRect。
+    * The image load rect
+      <br>-----------</br>
+    * 原图上当前实际加载的区域
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 

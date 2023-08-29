@@ -13,13 +13,26 @@
 
 ### location()
 
-zoomimage 提供改了 location() 方法用来定位到图像的指定位置，指定的位置会显示在屏幕的中间（边缘位置除外），它有两个参数：
+ZoomImage provides a modified location() method to position the specified position of the image,
+which is displayed in the middle of the screen (except for the edge position), which has three
+parameters:
+<br>-----------</br>
+ZoomImage 提供改了 location() 方法用来定位到图像的指定位置，指定的位置会显示在屏幕的中间（边缘位置除外），它有三个参数：
 
-* contentPoint: IntOffset。content 上的定位点，原点是 content 的左上角
-* targetScale: Float = transform.scaleX。目标缩放倍数，默认是当前缩放倍数
-* animated: Boolean = false。是否使用动画，默认为 false
+* contentPoint: IntOffset。
+    * The anchor on the content, the origin is the upper-left corner of the content
+      <br>-----------</br>
+    * content 上的定位点，原点是 content 的左上角
+* targetScale: Float = transform.scaleX。
+    * The target magnification, which defaults to the current magnification
+      <br>-----------</br>
+    * 目标缩放倍数，默认是当前缩放倍数
+* animated: Boolean = false。
+    * Whether to use animation, the default is false
+      <br>-----------</br>
+    * 是否使用动画，默认为 false
 
-示例：
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -34,6 +47,7 @@ SketchZoomAsyncImage(
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
+        // Location to the center of the content and zoom to mediumScale if the current zoom factor is less than MediumScale
         // 定位到 content 的中心，如果当前缩放倍数小于 mediumScale，就缩放到 mediumScale
         coroutineScope.launch {
             state.zoomable.location(

@@ -11,7 +11,12 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
-zoomimage 需要接收双击事件，所以不得已也拦截了单击和长按事件，你可以通过提供的接口来接收这两个事件，如下：
+ZoomImage needs to receive double-click events, so it has to intercept click and long press events,
+and you can receive both events through the provided interface
+<br>-----------</br>
+ZoomImage 需要接收双击事件，所以不得已也拦截了单击和长按事件，你可以通过提供的接口来接收这两个事件
+
+example/示例：
 
 compose：
 
@@ -21,10 +26,10 @@ SketchZoomAsyncImage(
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     onTap = { touch: Offset ->
-        // 单击事件
+        // Click Events,单击事件
     },
     onLongPress = { touch: Offset ->
-        // 长按事件        
+        // Long press event,长按事件        
     },
 )
 ```
@@ -32,14 +37,17 @@ SketchZoomAsyncImage(
 view：
 
 ```kotlin
+
+import kotlin.coroutines.jvm.internal.CompletedContinuation.context
+
 val sketchZoomImageView = SketchZoomImageView(context)
 
 sketchZoomImageView.zoomAbility.registerOnViewTapListener { view: android.view.View, x: Float, y: Float ->
-    // 单击事件
+    // Click Events,单击事件
 }
 
 sketchZoomImageView.zoomAbility.registerOnViewLongPressListener { view: android.view.View, x: Float, y: Float ->
-    // 单击事件
+    // Long press event,长按事件        
 }
 ```
 

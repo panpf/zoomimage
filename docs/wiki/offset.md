@@ -11,16 +11,29 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
-zoomimage 支持单指、双指、惯性滑动，以及 offset() 方法来移动图像。
+ZoomImage supports one-finger drag, two-finger drag, inertial swipe, and the offset() method to move
+the image.
+<br>-----------</br>
+zoomimage 支持单指拖动、双指拖动、惯性滑动，以及 offset() 方法来移动图像。
 
 ### offset()
 
+ZoomImage provides a modified offset() method to move the image to a specified position, which has
+two parameters:
+<br>-----------</br>
 zoomimage 提供改了 offset() 方法用来移动图像到指定位置，它有两个参数：
 
-* targetOffset: Offset。目标偏移位置，offset 原点是组件的左上角
-* animated: Boolean = false。是否使用动画，默认为 false
+* targetOffset: Offset。
+    * The target offset location, with the offset origin being the upper-left corner of the
+      component
+      <br>-----------</br>
+    * 目标偏移位置，offset 原点是组件的左上角
+* animated: Boolean = false。
+    * Whether to use animation, the default is false
+      <br>-----------</br>
+    * 是否使用动画，默认为 false
 
-示例：
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -56,14 +69,25 @@ Button(
 }
 ```
 
-### 限制移动范围
+### Limit the bounds of offset/限制平移边界
 
-zoomimage 默认不管你设置的是什么 [ContentScale] 都可以拖动查看图像的全部内容
+By default, zoomImage can drag to view the entire content of the image regardless of what you
+set [ContentScale], for example, if you set [ContentScale] to Crop and [Alignment] to Center, then
+only the middle part of the image is displayed by default, and then you can also drag with one or
+two fingers to view the entire content of the image
+<br>-----------</br>
+zoomimage 默认不管你设置的是什么 [ContentScale]
+都可以拖动查看图像的全部内容，例如你设置了 [ContentScale] 为 Crop，[Alignment] 为
+Center，那么默认只显示图像中间的部分，然后你还可以单指或双指拖动来查看图像的全部内容
 
-例如你设置了 [ContentScale] 为 Crop，[Alignment] 为 Center，那么默认只显示图像中间的部分，然后你还可以单指或双指拖动来查看图像的全部内容
-
+If this is not what you want, and you want the image to be moved only within the area restricted
+by [ContentScale] and [Alignment], and not the entire content, you can modify the
+limitOffsetWithinBaseVisibleRect parameter to true to achieve this
+<br>-----------</br>
 如果这不是你想要的，你希望图像只能在 [ContentScale] 和 [Alignment] 所限制的区域内移动，不能查看全部内容，这时你可以修改
-limitOffsetWithinBaseVisibleRect 参数为 true 来达到此目的，如下：
+limitOffsetWithinBaseVisibleRect 参数为 true 来达到此目的
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -78,12 +102,24 @@ SketchZoomAsyncImage(
 )
 ```
 
-### 获取相关信息
+### Get relevant information/获取相关信息
 
-* [ZoomableState].transform.offset: Offset。当前偏移量（baseTransform.offset + userTransform.offset）
-* [ZoomableState].baseTransform.offset: Offset。当前基础偏移量，受 alignment 参数和 rotate 方法影响
-* [ZoomableState].userTransform.offset: Offset。当前用户偏移量，受 offset()、location() 以及用户手势拖动影响
-* [ZoomableState].scrollEdge: [ScrollEdge]。当前偏移状态的边界信息，例如是否到达左边界、右边界、上边界、下边界等
+* [ZoomableState].transform.offset: Offset。
+    * Current offset (baseTransform.offset + userTransform.offset)
+      <br>-----------</br>
+    * 当前偏移量（baseTransform.offset + userTransform.offset）
+* [ZoomableState].baseTransform.offset: Offset。
+    * The current base offset, affected by the alignment parameter and the rotate method
+      <br>-----------</br>
+    * 当前基础偏移量，受 alignment 参数和 rotate 方法影响
+* [ZoomableState].userTransform.offset: Offset。
+    * The current user offset, affected by offset(), location(), and user gesture dragging
+      <br>-----------</br>
+    * 当前用户偏移量，受 offset()、location() 以及用户手势拖动影响
+* [ZoomableState].scrollEdge: ScrollEdge。
+    * Edge state for the current offset
+      <br>-----------</br>
+    * 当前偏移的边界状态
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 

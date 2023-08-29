@@ -1,4 +1,4 @@
-## 开始使用
+## Get Started/开始使用
 
 > * The following example takes precedence over the Compose version component for demonstration
 > * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
@@ -11,54 +11,113 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
-### Components·组件
+### Components/组件
 
+The zoomimage library includes several components to choose from, so you can choose the right one
+for your needs.
+<br>-----------</br>
 zoomimage 库包含了多个组件可供选择，你可以根据自己的需求选择合适的组件。
 
+*Different components need to import different dependencies, please refer to [README] to import the
+corresponding dependencies*
+<br>-----------</br>
 *不同的组件需要导入不同的依赖，请参考 [README] 导入对应的依赖*
 
 compose：
 
-* [SketchZoomAsyncImage]：集成了 [Sketch] 图片加载库的缩放 Image 组件`（推荐使用）`
+* [SketchZoomAsyncImage]：
+    * Zoom Image component integrated with [Sketch] image loading library `(recommended)`
+    * The usage is the same as the [AsyncImage] [SketchAsyncImage] component of [Sketch].
+    * Network images and subsampling are already supported without any additional work
+    * Reference Example [SketchZoomAsyncImageSample]
+      <br>-----------</br>
+    * 集成了 [Sketch] 图片加载库的缩放 Image 组件`（推荐使用）`
     * 用法和 [Sketch] 的 [AsyncImage][SketchAsyncImage] 组件一样
     * 已支持网络图片和子采样，无需做任何额外的工作
     * 参考示例 [SketchZoomAsyncImageSample]
-* [CoilZoomAsyncImage]：集成了 [Coil] 图片加载库的缩放 Image 组件
+* [CoilZoomAsyncImage]：
+    * Zoom Image component integrated with the [Coil] image loading library
+    * The usage is the same as the [AsyncImage][CoilAsyncImage] component of [Coil].
+    * Network images and subsampling are already supported without any additional work
+    * Reference example [CoilZoomAsyncImageSample]
+      <br>-----------</br>
+    * 集成了 [Coil] 图片加载库的缩放 Image 组件
     * 用法和 [Coil] 的 [AsyncImage][CoilAsyncImage] 组件一样
     * 已支持网络图片和子采样，无需做任何额外的工作
     * 参考示例 [CoilZoomAsyncImageSample]
-* [GlideZoomAsyncImage]：集成了 [Glide] 图片加载库的缩放 Image 组件
+* [GlideZoomAsyncImage]：
+    * Zoom Image component that integrates the [Glide] image loading library
+    * The usage is the same as the [GlideImage] component of [Glide].
+    * Network images and subsampling are already supported without any additional work
+    * Reference example [GlideZoomAsyncImageSample]
+      <br>-----------</br>
+    * 集成了 [Glide] 图片加载库的缩放 Image 组件
     * 用法和 [Glide] 的 [GlideImage] 组件一样
     * 已支持网络图片和子采样，无需做任何额外的工作
     * 参考示例 [GlideZoomAsyncImageSample]
-* [ZoomImage]：最基础的缩放 Image 组件，未集成图片加载库
+* [ZoomImage]：
+    * The most basic zoom Image component, not integrate the image loading library
+    * Additional work needs to be done to support network pictures and subsampling
+    * Reference example [ZoomImageSample]
+      <br>-----------</br>
+    * 最基础的缩放 Image 组件，未集成图片加载库
     * 还需要做额外的工作以支持网络图片和子采样
     * 参考示例 [ZoomImageSample]
 
 view：
 
-* [SketchZoomImageView]：集成了 [Sketch] 图片加载库的缩放 ImageView`（推荐使用）`
+* [SketchZoomImageView]：
+    * Zoom ImageView with integrated [Sketch] image loading library `(recommended)`
+    * Adapted [Sketch] supports subsampling without any additional work
+    * Reference example [SketchZoomImageViewFragment]
+      <br>-----------</br>
+    * 集成了 [Sketch] 图片加载库的缩放 ImageView`（推荐使用）`
     * 已适配 [Sketch] 支持子采样，无需做任何额外的工作
     * 参考示例 [SketchZoomImageViewFragment]
-* [CoilZoomImageView]：集成了 [Coil] 图片加载库的缩放 ImageView
+* [CoilZoomImageView]：
+    * Zoomed ImageView with integrated [Coil] image loading library
+    * Adapted [Coil] supports subsampling without any additional work
+    * Reference example [CoilZoomImageViewFragment]
+      <br>-----------</br>
+    * 集成了 [Coil] 图片加载库的缩放 ImageView
     * 已适配 [Coil] 支持子采样，无需做任何额外的工作
     * 参考示例 [CoilZoomImageViewFragment]
-* [GlideZoomImageView]：集成了 [Glide] 图片加载库的缩放 ImageView
+* [GlideZoomImageView]：
+    * Zoomed ImageView with integrated [Glide] image loading library
+    * Adapted [Glide] supports subsampling without any additional work
+    * Reference example [GlideZoomImageViewFragment]
+      <br>-----------</br>
+    * 集成了 [Glide] 图片加载库的缩放 ImageView
     * 已适配 [Glide] 支持子采样，无需做任何额外的工作
     * 参考示例 [GlideZoomImageViewFragment]
-* [PicassoZoomImageView]：集成了 [Picasso] 图片加载库的缩放 ImageView
+* [PicassoZoomImageView]：
+    * Zoomed ImageView integrated with the [Picasso] image loading library
+    * Adapted [Picasso] supports subsampling without any additional work
+    * Reference example [PicassoZoomImageViewFragment]
+      <br>-----------</br>
+    * 集成了 [Picasso] 图片加载库的缩放 ImageView
     * 已适配 [Picasso] 支持子采样，无需做任何额外的工作
     * 参考示例 [PicassoZoomImageViewFragment]
-* [ZoomImageView]：最基础的缩放 ImageView，未集成图片加载库
+* [ZoomImageView]：
+    * The most basic zoom ImageView, not integrating the image loading library
+    * Additional work needs to be done to support network pictures and subsampling
+    * Reference example [ZoomImageViewFragment]
+      <br>-----------</br>
+    * 最基础的缩放 ImageView，未集成图片加载库
     * 还需要做额外的工作以支持网络图片和子采样
     * 参考示例 [ZoomImageViewFragment]
 
-总结：
+Summary/总结：
 
+* Components with integrated image loaders can support image and subsampling from any source without
+  any additional work
+* Components that do not integrate an image loader can only display local images and require an
+  additional call to the setImageSource() method to support subsampling functionality
+  <br>-----------</br>
 * 集成了图片加载器的组件无需任何额外的工作即可支持任意来源的图片和子采样功能
 * 未集成图片加载器的组件只能显示本地图片，以及需要额外调用 setImageSource() 方法以支持子采样功能
 
-### 使用
+### Example/示例
 
 #### compose
 
@@ -136,11 +195,19 @@ val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
 zoomImageView.subsamplingAbility.setImageSource(imageSource)
 ```
 
+> PicassoZoomImageView provides a set of specialized APIs to listen for load results and get URIs,
+> so please don't load images directly using the official API
+<br>-----------</br>
 > PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，因此请不要直接使用官方 API 加载图片
 
-zoom 和子采样的对外 API 封装在不同的类中，compose 版本是 [ZoomableState] 和 [SubsamplingState]，view
-版本是
-[ZoomAbility] 和 [SubsamplingAbility]，如下：
+The APIs for zoom and subsampling are encapsulated in separate classes, and the compose versions
+are [ZoomableState] and [SubsamplingState], view The versions are [ZoomAbility]
+and [SubsamplingAbility]
+<br>-----------</br>
+zoom 和子采样的 API 封装在不同的类中，compose 版本是 [ZoomableState] 和 [SubsamplingState]，view
+版本是 [ZoomAbility] 和 [SubsamplingAbility]
+
+example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -161,46 +228,108 @@ sketchZoomImageView.zoomAbility  // ZoomAbility
 sketchZoomImageView.subsamplingAbility   // SubsamplingAbility
 ```
 
-*更多缩放、偏移、旋转、子采样、阅读模式、滚动条等功能请参考 [Document](#document文档)*
+*For more detailed information about zoom, offset, rotation, subsampling, reading mode, scroll bar
+and other functions, please refer to the documentation at the end of the page*
+<br>-----------</br>
+*更多缩放、偏移、旋转、子采样、阅读模式、滚动条等功能详细介绍请参考页尾的文档*
 
 ### contentScale 和 alignment
 
-zoomimage 支持所有的 [ContentScale] 和 [Alignment]
+zoomimage supports all [ContentScale] and [Alignment], because the compose version and the view
+version use the same set of logic code, view The version of the component supports [ContentScale]
+and [Alignment] in addition to [ScaleType]
+<br>-----------</br>
+zoomimage 支持所有的 [ContentScale] 和 [Alignment]，得益于 compose 版本和 view 版本使用的是同一套逻辑代码，view
+版本的组件在支持 [ScaleType] 之外也支持 [ContentScale] 和 [Alignment]
 
-得益于 compose 版本和 view 版本使用的是同一套逻辑代码，view 版本的组件在支持 [ScaleType]
-之外也支持 [ContentScale] 和 [Alignment]，如下：
+example/示例：
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.zoomAbility.contentScale = ContentScale.None
-sketchZoomImageView.zoomAbility.alignment = Alignment.BottomEnd
+sketchZoomImageView.zoomAbility.contentScale = ContentScaleCompat.None
+sketchZoomImageView.zoomAbility.alignment = AlignmentCompat.BottomEnd
 ```
 
-### 获取相关信息
+### Get relevant information/获取相关信息
 
-* [ZoomableState].baseTransform: Transform。基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment
-  属性以及 rotate() 方法的影响
-* [ZoomableState].userTransform: Transform。用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode
-  属性以及 scale()、offset()、location() 方法的影响
-* [ZoomableState].transform:
-  Transform。最终的变换信息，包括缩放、偏移、旋转，等价于 `baseTransform * userTransform`
-* [ZoomableState].minScale: Float。当前最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
-* [ZoomableState].mediumScale: Float。当前中间缩放比例，用于双击缩放时的一个循环缩放比例
-* [ZoomableState].maxScale: Float。当前最大缩放比例，，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
-* [ZoomableState].transforming: Boolean。当前是否正在变换中，可能是在连续的手势操作中或者正在执行动画
-* [ZoomableState].contentBaseDisplayRect: IntRect。content 经过 baseTransform 变换后在 container 中的区域
-* [ZoomableState].contentBaseVisibleRect: content 经过 baseTransform 变换后自身对用户可见的区域
-* [ZoomableState].contentDisplayRect: IntRect。content 经过 transform 变换后在 container 中的区域
-* [ZoomableState].contentVisibleRect: IntRect。content 经过 transform 变换后自身对用户可见的区域
-* [ZoomableState].scrollEdge: ScrollEdge。当前偏移的边界状态，例如是否到达左边界、右边界、上边界、下边界等
-* [ZoomableState].containerSize: IntSize。当前 container 的大小
-* [ZoomableState].contentSize: IntSize。当前 content 的大小
-* [ZoomableState].contentOriginSize: IntSize。当前 content 的原始大小
-* [SubsamplingState].ready: Boolean。是否已经准备好了
-* [SubsamplingState].imageInfo: ImageInfo。当前碎片的快照信息列表
-* [SubsamplingState].tileSnapshotList: List<TileSnapshot>。当前碎片的快照列表
-* [SubsamplingState].imageLoadRect: IntRect。原图上当前实际加载的区域
+* [ZoomableState].baseTransform: Transform。
+    * Base transformation, include the base scale, offset, rotation, which is affected by [contentScale], [alignment] properties and [rotate] method
+      <br>-----------</br>
+    * 基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment 属性以及 rotate() 方法的影响
+* [ZoomableState].userTransform: Transform。
+    * User transformation, include the user scale, offset, rotation, which is affected by the user's gesture, [readMode] properties and [scale], [offset], [location] method
+      <br>-----------</br>
+    * 用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode 属性以及 scale()、offset()、location()
+      方法的影响
+* [ZoomableState].transform: Transform。
+    * Final transformation, include the final scale, offset, rotation, is equivalent to `baseTransform + userTransform`
+      <br>-----------</br>
+    * 最终的变换信息，包括缩放、偏移、旋转，等价于 `baseTransform + userTransform`
+* [ZoomableState].minScale: Float。
+    * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
+      <br>-----------</br>
+    * 最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
+* [ZoomableState].mediumScale: Float。
+    * Medium scale factor, only as a target value for one of when switch scale
+      <br>-----------</br>
+    * 中间缩放比例，用于双击缩放时的一个循环缩放比例
+* [ZoomableState].maxScale: Float。
+    * Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
+      <br>-----------</br>
+    * 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
+* [ZoomableState].transforming: Boolean。
+    * If true, a transformation is currently in progress, possibly in a continuous gesture operation, or an animation is in progress
+      <br>-----------</br>
+    * 是否正在变换中，可能是在连续的手势操作中或者正在执行动画
+* [ZoomableState].contentBaseDisplayRect: IntRect。
+    * The content region in the container after the baseTransform transformation
+      <br>-----------</br>
+    * content 经过 baseTransform 变换后在 container 中的区域
+* [ZoomableState].contentBaseVisibleRect:
+    * The content is visible region to the user after the baseTransform transformation
+      <br>-----------</br>
+    * content 经过 baseTransform 变换后自身对用户可见的区域
+* [ZoomableState].contentDisplayRect: IntRect。
+    * The content region in the container after the final transform transformation
+      <br>-----------</br>
+    * content 经过 transform 变换后在 container 中的区域
+* [ZoomableState].contentVisibleRect: IntRect。
+    * The content is visible region to the user after the final transform transformation
+      <br>-----------</br>
+    * content 经过 transform 变换后自身对用户可见的区域
+* [ZoomableState].scrollEdge: ScrollEdge。
+    * Edge state for the current offset
+      <br>-----------</br>
+    * 当前偏移的边界状态
+* [ZoomableState].containerSize: IntSize。
+    * The size of the container that holds the content
+      <br>-----------</br>
+    * 当前 container 的大小
+* [ZoomableState].contentSize: IntSize。
+    * The size of the content, usually Painter.intrinsicSize.round()
+      <br>-----------</br>
+    * 当前 content 的大小
+* [ZoomableState].contentOriginSize: IntSize。
+    * The original size of the content
+      <br>-----------</br>
+    * 当前 content 的原始大小
+* [SubsamplingState].ready: Boolean。
+    * Whether the image is ready for subsampling
+      <br>-----------</br>
+    * 是否已经准备好了
+* [SubsamplingState].imageInfo: ImageInfo。
+    * The information of the image, including width, height, format, exif information, etc
+      <br>-----------</br>
+    * 图片的尺寸、格式、exif 等信息
+* [SubsamplingState].tileSnapshotList: List<TileSnapshot>。
+    * A snapshot of the tile list
+      <br>-----------</br>
+    * 当前碎片的快照列表
+* [SubsamplingState].imageLoadRect: IntRect。
+    * The image load rect
+      <br>-----------</br>
+    * 原图上当前实际加载的区域
 
 ## Document·文档
 
