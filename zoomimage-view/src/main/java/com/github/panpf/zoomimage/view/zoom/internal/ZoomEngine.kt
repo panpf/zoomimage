@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 @file:Suppress("UnnecessaryVariable")
 
 package com.github.panpf.zoomimage.view.zoom.internal
@@ -259,13 +260,13 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         private set
 
     /**
-     * The content region in the container after the transform transformation
+     * The content region in the container after the final transform transformation
      */
     var contentDisplayRect: IntRectCompat = IntRectCompat.Zero
         private set
 
     /**
-     * The content is visible region to the user after the transform transformation
+     * The content is visible region to the user after the final transform transformation
      */
     var contentVisibleRect: IntRectCompat = IntRectCompat.Zero
         private set
