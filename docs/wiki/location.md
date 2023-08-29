@@ -31,14 +31,17 @@ SketchZoomAsyncImage(
     state = state,
 )
 
+val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         // 定位到 content 的中心，如果当前缩放倍数小于 mediumScale，就缩放到 mediumScale
-        state.zoomable.location(
-            contentPoint = state.zoomable.contentSize.center,
-            targetScale = state.zoomable.transform.scaleX.coerceAtLeast(state.zoomable.mediumScale),
-            animated = true,
-        )
+        coroutineScope.launch {
+            state.zoomable.location(
+                contentPoint = state.zoomable.contentSize.center,
+                targetScale = state.zoomable.transform.scaleX.coerceAtLeast(state.zoomable.mediumScale),
+                animated = true,
+            )
+        }
     }
 ) {
     Text(text = "location to center")

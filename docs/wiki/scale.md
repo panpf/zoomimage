@@ -111,9 +111,12 @@ SketchZoomAsyncImage(
     state = state,
 )
 
+val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
-        state.zoomable.switchScale(animated = true)
+        coroutineScope.launch {
+            state.zoomable.switchScale(animated = true)
+        }
     }
 ) {
     Text(text = "switch scale")
@@ -171,10 +174,13 @@ SketchZoomAsyncImage(
     state = state,
 )
 
+val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
-        val targetScale = state.zoomable.transform.scaleX + 0.2f
-        state.zoomable.scale(targetScale = targetScale, animated = true)
+        coroutineScope.launch {
+            val targetScale = state.zoomable.transform.scaleX + 0.2f
+            state.zoomable.scale(targetScale = targetScale, animated = true)
+        }
     }
 ) {
     Text(text = "scale + 0.2")
@@ -182,8 +188,10 @@ Button(
 
 Button(
     onClick = {
-        val targetScale = state.zoomable.transform.scaleX - 0.2f
-        state.zoomable.scale(targetScale = targetScale, animated = true)
+        coroutineScope.launch {
+            val targetScale = state.zoomable.transform.scaleX - 0.2f
+            state.zoomable.scale(targetScale = targetScale, animated = true)
+        }
     }
 ) {
     Text(text = "scale - 0.2")

@@ -32,10 +32,13 @@ SketchZoomAsyncImage(
     state = state,
 )
 
+val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
-        val targetOffset = state.zoomable.transform.offset + Offset(x = 100, y = 200)
-        state.zoomable.offset(targetOffset = targetOffset, animated = true)
+        coroutineScope.launch {
+            val targetOffset = state.zoomable.transform.offset + Offset(x = 100, y = 200)
+            state.zoomable.offset(targetOffset = targetOffset, animated = true)
+        }
     }
 ) {
     Text(text = "offset + Offset(100, 200)")
@@ -43,8 +46,10 @@ Button(
 
 Button(
     onClick = {
-        val targetOffset = state.zoomable.transform.offset - Offset(x = 100, y = 200)
-        state.zoomable.scale(targetScale = targetScale, animated = true)
+        coroutineScope.launch {
+            val targetOffset = state.zoomable.transform.offset - Offset(x = 100, y = 200)
+            state.zoomable.offset(targetScale = targetScale, animated = true)
+        }
     }
 ) {
     Text(text = "offset - Offset(100, 200)")

@@ -29,10 +29,13 @@ SketchZoomAsyncImage(
     state = state,
 )
 
+val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
-        val targetRotation = state.zoomable.transform.rotation.roundToInt() + 90
-        state.zoomable.rotate(targetRotation = targetRotation)
+        coroutineScope.launch {
+            val targetRotation = state.zoomable.transform.rotation.roundToInt() + 90
+            state.zoomable.rotate(targetRotation = targetRotation)
+        }
     }
 ) {
     Text(text = "right rotate 90")
@@ -40,8 +43,10 @@ Button(
 
 Button(
     onClick = {
-        val targetRotation = state.zoomable.transform.rotation.roundToInt() - 90
-        state.zoomable.rotate(targetRotation = targetRotation)
+        coroutineScope.launch {
+            val targetRotation = state.zoomable.transform.rotation.roundToInt() - 90
+            state.zoomable.rotate(targetRotation = targetRotation)
+        }
     }
 ) {
     Text(text = "left rotate 90")
