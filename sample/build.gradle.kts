@@ -112,8 +112,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
 
     /* compose */
-    implementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material)
