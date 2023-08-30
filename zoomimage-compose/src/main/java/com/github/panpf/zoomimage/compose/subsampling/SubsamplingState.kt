@@ -178,7 +178,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
      */
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
-        logger.d { "setImageSource. '${imageSource?.key}'" }
+        logger.d { "setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
         cleanTileManager("setImageSource")
         cleanTileDecoder("setImageSource")
         this.imageSource = imageSource
@@ -305,7 +305,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                             "contentSize=${contentSize.toShortString()}, " +
                             "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo=${imageInfo.toShortString()}. " +
-                            "'${imageSource.key}'"
+                            "'${imageKey}'"
                 }
                 this@SubsamplingState.tileDecoder = TileDecoder(
                     logger = logger,
@@ -329,7 +329,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                             "contentSize: ${contentSize.toShortString()}, " +
                             "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo: ${imageInfo?.toShortString()}. " +
-                            "'${imageSource.key}'"
+                            "'${imageKey}'"
                 }
             }
             lastResetTileDecoderJob = null
@@ -379,7 +379,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "tileMaxSize=${tileMaxSize.toShortString()}, " +
                     "tileMap=$tileMapInfoList, " +
-                    "'${imageSource.key}'"
+                    "'${imageKey}'"
         }
         this@SubsamplingState.tileManager = tileManager
         refreshReadyState()
@@ -392,10 +392,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         transforming: Boolean,
         caller: String,
     ) {
-        val imageSource = imageSource ?: return
         val tileManager = tileManager ?: return
         if (paused) {
-            logger.d { "refreshTiles:$caller. interrupted, paused. '${imageSource.key}'" }
+            logger.d { "refreshTiles:$caller. interrupted, paused. '${imageKey}'" }
             tileManager.clean("refreshTiles:paused")
             return
         }

@@ -177,7 +177,7 @@ class SubsamplingEngine constructor(logger: Logger) {
      */
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
-        logger.d { "setImageSource. '${imageSource?.key}'" }
+        logger.d { "setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
         cleanTileManager("setImageSource")
         cleanTileDecoder("setImageSource")
         this.imageSource = imageSource

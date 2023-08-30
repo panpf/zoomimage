@@ -39,6 +39,11 @@ import kotlinx.coroutines.withContext
 import kotlin.math.ceil
 import kotlin.math.floor
 
+// todo 优化 tile 替换逻辑，现在是切换到新的 scale 后，会先清空所有 tile，然后再加载新的 tile，
+//  这样会导致重新显示最模糊的图片，再到清晰的图片，体验不好
+//  可以考虑在切换到新的 scale 后，先加载新的 tile，旧的 tile 被完全覆盖以后再清空旧的 tile，这样就不会出现重新显示最模糊的图片的情况了
+
+// todo tile 显示时可以考虑添加动画，这样体验更好
 class TileManager constructor(
     logger: Logger,
     private val tileDecoder: TileDecoder,
