@@ -18,32 +18,33 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 * `Complete`. Support basic functions such as double-click zoom, gesture zoom, single-finger drag,
   and inertial swipe
-* `Location`. Supports animated positioning to any position in the image
-* `Rotate`. Supports 90°, 180°, 270° rotation of pictures
-* `Subsampling`. Supports subsampling display of very large images to avoid OOM
+* `Location`. Support for moving any position of the image to the center of the screen
+* `Rotate`. Supports 0°, 90°, 180°, 270°, 360° rotation of pictures
+* `Subsampling`. Supports subsampling display of huge images, the image is clearly displayed and OOM
+  is avoided
 * `Dynamic scaling`. Automatically calculates the most appropriate double-click scaling factor based
   on image size and container size
 * `Boundary damping`. When manually scaled beyond the maximum or minimum zoom factor, there is a
   damped rubber band effect
 * `Scroll bar`. Supports displaying horizontal and vertical scroll bars to clarify the current
   scroll position
-* `Read Mode`. When a long image is displayed in read mode, the screen will automatically fill up,
-  and the user can immediately start reading the image content, eliminating the need for the user to
-  double-click to zoom in
-* `Image Loader`. Provide support for image loaders such as glide, picasso, coil, sketch, etc., and
+* `Read Mode`. When a long image is displayed in reading mode, the initial state automatically fills
+  the screen, and the user can immediately start reading the image content, eliminating the need for
+  the user to double-click to zoom in
+* `Image Loader`. Provide support for image loaders such as sketch, coil, glide, picasso, etc., and
   can also customize support for more image loaders
 
 <div>-----------------</div>
 
 * `功能齐全`. 支持双击缩放、手势缩放、单指拖动、惯性滑动等基础功能
-* `定位`. 支持以动画的方式定位到图片的任意位置
-* `旋转`. 支持 90°, 180°, 270° 旋转图片
-* `子采样`. 支持对超大图进行子采样显示，避免 OOM
+* `定位`. 支持将图片的任意位置移动到屏幕中央
+* `旋转`. 支持 0°, 90°, 180°, 270°, 360° 旋转图片
+* `子采样`. 支持对超大图进行子采样显示，既清晰的展示了图片又避免了 OOM
 * `动态缩放`. 根据图片尺寸和容器尺寸自动计算出最合适的双击缩放比例
 * `边界阻尼`. 手动缩放超过最大或最小缩放比例后会有带阻尼感的橡皮筋效果
 * `滚动条`. 支持显示水平和垂直滚动条，明确当前滚动位置
-* `阅读模式`. 阅读模式下显示长图时会自动充满屏幕，用户可立即开始阅读图片内容，省去用户双击放大的操作
-* `图片加载器`. 提供对 glide、picasso、coil、sketch 等图片加载器的支持，也可以自定义支持更多图片加载器
+* `阅读模式`. 阅读模式下显示长图时初始状态会自动充满屏幕，用户可立即开始阅读图片内容，省去用户双击放大的操作
+* `图片加载器`. 提供对 sketch、coil、glide、picasso 等图片加载器的支持，也可以自定义支持更多图片加载器
 
 ## Import/导入
 
@@ -68,7 +69,8 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}
 // 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
 
-// Providing the most basic ZoomImage component, there is still a lot of work to be done to use it, additional work needs to be done to support network image and subsampling
+// Providing the most basic ZoomImage component, there is still a lot of work to be done to use it, 
+// additional work needs to be done to support network image and subsampling
 // 提供最基础的 ZoomImage 组件，还需要做额外的工作以支持网络图片和子采样
 implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
 ```
@@ -101,7 +103,8 @@ implementation("io.github.panpf.zoomimage:zoomimage-view-glide:${LAST_VERSION}")
 // 提供适配了 Picasso 图片加载器的 PicassoZoomImageView 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-view-picasso:${LAST_VERSION}")
 
-// Providing the most basic ZoomImageView component, there is still a lot of work to be done to use it, additional work needs to be done to support network image and subsampling
+// Providing the most basic ZoomImageView component, there is still a lot of work to be done to use it, 
+// additional work needs to be done to support network image and subsampling
 // 提供最基础的 ZoomImageView 组件，还需要做额外的工作以支持网络图片和子采样
 implementation("io.github.panpf.zoomimage:zoomimage-view:${LAST_VERSION}")
 ```
@@ -143,7 +146,6 @@ usage [Get Started](docs/wiki/getstarted.md)
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
-
 sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 ```
 
