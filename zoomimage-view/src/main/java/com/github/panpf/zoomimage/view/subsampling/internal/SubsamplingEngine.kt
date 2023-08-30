@@ -32,8 +32,8 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.subsampling.OnImageLoadRectChangeListener
-import com.github.panpf.zoomimage.view.subsampling.OnPauseChangeListener
 import com.github.panpf.zoomimage.view.subsampling.OnReadyChangeListener
+import com.github.panpf.zoomimage.view.subsampling.OnStoppedChangeListener
 import com.github.panpf.zoomimage.view.subsampling.OnTileChangeListener
 import com.github.panpf.zoomimage.view.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
@@ -60,7 +60,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     private var tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
     private var onTileChangeListenerList: MutableSet<OnTileChangeListener>? = null
     private var onReadyChangeListenerList: MutableSet<OnReadyChangeListener>? = null
-    private var onPauseChangeListenerList: MutableSet<OnPauseChangeListener>? = null
+    private var onStoppedChangeListenerList: MutableSet<OnStoppedChangeListener>? = null
     private var onImageLoadRectChangeListenerList: MutableSet<OnImageLoadRectChangeListener>? = null
     private var lastResetTileDecoderJob: Job? = null
     internal var imageKey: String? = null
@@ -132,13 +132,22 @@ class SubsamplingEngine constructor(logger: Logger) {
         }
 
     /**
-     * If true, subsampling is paused and loaded tiles are released, which will be reloaded after resumed
+     * Whether to pause loading tiles when transforming
      */
-    var paused = false
+    var pauseWhenTransforming: Boolean = false
+        set(value) {
+            field = value
+            tileManager?.pauseWhenTransforming = value
+        }
+
+    /**
+     * If true, subsampling stops and free loaded tiles, which are reloaded after restart
+     */
+    var stopped = false
         set(value) {
             if (field != value) {
                 field = value
-                notifyPauseChange()
+                notifyStopChange()
             }
         }
 
@@ -219,19 +228,19 @@ class SubsamplingEngine constructor(logger: Logger) {
     }
 
     /**
-     * Register a [paused] property change listener
+     * Register a [stopped] property change listener
      */
-    fun registerOnPauseChangeListener(listener: OnPauseChangeListener) {
-        this.onPauseChangeListenerList = (onPauseChangeListenerList ?: LinkedHashSet()).apply {
+    fun registerOnStoppedChangeListener(listener: OnStoppedChangeListener) {
+        this.onStoppedChangeListenerList = (onStoppedChangeListenerList ?: LinkedHashSet()).apply {
             add(listener)
         }
     }
 
     /**
-     * Unregister a [paused] property change listener
+     * Unregister a [stopped] property change listener
      */
-    fun unregisterOnPauseChangeListener(listener: OnPauseChangeListener): Boolean {
-        return onPauseChangeListenerList?.remove(listener) == true
+    fun unregisterOnStoppedChangeListener(listener: OnStoppedChangeListener): Boolean {
+        return onStoppedChangeListenerList?.remove(listener) == true
     }
 
     /**
@@ -289,8 +298,8 @@ class SubsamplingEngine constructor(logger: Logger) {
             refreshTiles("readyChanged")
         }
 
-        registerOnPauseChangeListener {
-            refreshTiles(if (it) "paused" else "resumed")
+        registerOnStoppedChangeListener {
+            refreshTiles(if (it) "stopped" else "started")
         }
     }
 
@@ -302,9 +311,9 @@ class SubsamplingEngine constructor(logger: Logger) {
         caller: String,
     ) {
         val tileManager = tileManager ?: return
-        if (paused) {
-            logger.d { "refreshTiles:$caller. interrupted, paused. '${imageKey}'" }
-            tileManager.clean("refreshTiles:paused")
+        if (stopped) {
+            logger.d { "refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
+            tileManager.clean("refreshTiles:stopped")
             return
         }
         tileManager.refreshTiles(
@@ -398,7 +407,9 @@ class SubsamplingEngine constructor(logger: Logger) {
             onImageLoadRectChanged = {
                 notifyImageLoadRectChange()
             }
-        )
+        ).apply {
+            pauseWhenTransforming = this@SubsamplingEngine.pauseWhenTransforming
+        }
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
             val tileMap = tileManager.tileMap
@@ -456,10 +467,10 @@ class SubsamplingEngine constructor(logger: Logger) {
         }
     }
 
-    private fun notifyPauseChange() {
-        val paused = paused
-        onPauseChangeListenerList?.forEach {
-            it.onPauseChanged(paused)
+    private fun notifyStopChange() {
+        val stopped = stopped
+        onStoppedChangeListenerList?.forEach {
+            it.onStoppedChanged(stopped)
         }
     }
 
@@ -469,23 +480,23 @@ class SubsamplingEngine constructor(logger: Logger) {
             it.onImageLoadRectChanged(imageLoadRect)
         }
     }
-}
 
-private class OnContainerSizeChangeListenerImpl(
-    private val subsamplingEngine: SubsamplingEngine
-) : OnContainerSizeChangeListener {
+    private class OnContainerSizeChangeListenerImpl(
+        private val subsamplingEngine: SubsamplingEngine
+    ) : OnContainerSizeChangeListener {
 
-    private var lastDelayJob: Job? = null
-    private val scope = CoroutineScope(Dispatchers.Main.immediate)
+        private var lastDelayJob: Job? = null
+        private val scope = CoroutineScope(Dispatchers.Main.immediate)
 
-    override fun onContainerSizeChanged(containerSize: IntSizeCompat) {
-        // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
-        // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
-        lastDelayJob?.cancel()
-        lastDelayJob = scope.launch(Dispatchers.Main) {
-            delay(60)
-            lastDelayJob = null
-            subsamplingEngine.containerSize = containerSize
+        override fun onContainerSizeChanged(containerSize: IntSizeCompat) {
+            // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
+            // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
+            lastDelayJob?.cancel()
+            lastDelayJob = scope.launch(Dispatchers.Main) {
+                delay(60)
+                lastDelayJob = null
+                subsamplingEngine.containerSize = containerSize
+            }
         }
     }
 }

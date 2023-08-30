@@ -181,8 +181,8 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
 
             add(
                 SwitchMenuFlow(
-                    title = "Show Tile Bounds",
-                    data = settingsService.showTileBounds,
+                    title = "Pause When Transforming",
+                    data = settingsService.pauseWhenTransforming,
                 )
             )
             add(
@@ -190,6 +190,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     title = "Ignore Exif Orientation",
                     data = settingsService.ignoreExifOrientation,
                     disabled = !zoomViewType.supportIgnoreExifOrientation,
+                )
+            )
+            add(
+                SwitchMenuFlow(
+                    title = "Show Tile Bounds",
+                    data = settingsService.showTileBounds,
                 )
             )
 

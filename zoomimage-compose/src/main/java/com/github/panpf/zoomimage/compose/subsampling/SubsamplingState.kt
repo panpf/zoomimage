@@ -32,6 +32,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.Event.ON_START
 import androidx.lifecycle.Lifecycle.Event.ON_STOP
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
@@ -91,15 +92,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private val tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
     private val tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
     private var lifecycle: Lifecycle? = null
-    private val resetPausedLifecycleObserver by lazy {
-        LifecycleEventObserver { _, event ->
-            if (event == ON_START) {
-                resetPaused("LifecycleStateChanged:ON_START")
-            } else if (event == ON_STOP) {
-                resetPaused("LifecycleStateChanged:ON_STOP")
-            }
-        }
-    }
+    private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
     internal var imageKey: String? = null
 
     internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -134,9 +127,14 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var disallowReuseBitmap: Boolean by mutableStateOf(false)
 
     /**
-     * If true, subsampling is paused and loaded tiles are released, which will be reloaded after resumed
+     * Whether to pause loading tiles when transforming
      */
-    var paused by mutableStateOf(false)
+    var pauseWhenTransforming by mutableStateOf(false)
+
+    /**
+     * If true, subsampling stops and free loaded tiles, which are reloaded after restart
+     */
+    var stopped by mutableStateOf(false)
 
     /**
      * If true, the bounds of each tile is displayed
@@ -188,7 +186,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     }
 
     /**
-     * Set the lifecycle, which automatically controls pause and resume, which is obtained from [LocalLifecycleOwner] by default,
+     * Set the lifecycle, which automatically controls stop and start, which is obtained from [LocalLifecycleOwner] by default,
      * and can be set by this method if the default acquisition method is not applicable
      */
     fun setLifecycle(lifecycle: Lifecycle?) {
@@ -196,7 +194,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             unregisterLifecycleObserver()
             this.lifecycle = lifecycle
             registerLifecycleObserver()
-            resetPaused("setLifecycle")
+            resetStopped("setLifecycle")
         }
     }
 
@@ -254,8 +252,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { paused }.collect {
-                refreshTiles(if (it) "paused" else "resumed")
+            snapshotFlow { stopped }.collect {
+                refreshTiles(if (it) "stopped" else "started")
             }
         }
         LaunchedEffect(Unit) {
@@ -281,6 +279,11 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         LaunchedEffect(Unit) {
             snapshotFlow { disallowReuseBitmap }.collect {
                 tileBitmapPoolHelper.disallowReuseBitmap = it
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { pauseWhenTransforming }.collect {
+                tileManager?.pauseWhenTransforming = it
             }
         }
     }
@@ -367,7 +370,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             onImageLoadRectChanged = {
                 imageLoadRect = it.imageLoadRect.toPlatform()
             }
-        )
+        ).apply {
+            pauseWhenTransforming = this@SubsamplingState.pauseWhenTransforming
+        }
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
             val tileMap = tileManager.tileMap
@@ -393,9 +398,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         caller: String,
     ) {
         val tileManager = tileManager ?: return
-        if (paused) {
-            logger.d { "refreshTiles:$caller. interrupted, paused. '${imageKey}'" }
-            tileManager.clean("refreshTiles:paused")
+        if (stopped) {
+            logger.d { "refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
+            tileManager.clean("refreshTiles:stopped")
             return
         }
         tileManager.refreshTiles(
@@ -454,20 +459,33 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         unregisterLifecycleObserver()
     }
 
-    private fun resetPaused(caller: String) {
+    private fun resetStopped(caller: String) {
         val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
-        val paused = !lifecycleStarted
+        val stopped = !lifecycleStarted
         logger.d {
-            "resetPaused:$caller. $paused. lifecycleStarted=$lifecycleStarted. '${imageKey}'"
+            "resetStopped:$caller. $stopped. lifecycleStarted=$lifecycleStarted. '${imageKey}'"
         }
-        this.paused = paused
+        this.stopped = stopped
     }
 
     private fun registerLifecycleObserver() {
-        lifecycle?.addObserver(resetPausedLifecycleObserver)
+        lifecycle?.addObserver(resetStoppedLifecycleObserver)
     }
 
     private fun unregisterLifecycleObserver() {
-        lifecycle?.removeObserver(resetPausedLifecycleObserver)
+        lifecycle?.removeObserver(resetStoppedLifecycleObserver)
+    }
+
+    private class ResetStoppedLifecycleObserver(
+        val subsamplingState: SubsamplingState
+    ) : LifecycleEventObserver {
+
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == ON_START) {
+                subsamplingState.resetStopped("LifecycleStateChanged:ON_START")
+            } else if (event == ON_STOP) {
+                subsamplingState.resetStopped("LifecycleStateChanged:ON_STOP")
+            }
+        }
     }
 }

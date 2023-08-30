@@ -146,6 +146,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 settingsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBounds = it
                 }
+                settingsService.pauseWhenTransforming.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    pauseWhenTransforming = it
+                }
             }
         }
 

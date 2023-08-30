@@ -22,6 +22,7 @@ import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -45,15 +46,16 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     internal val engine: SubsamplingEngine = SubsamplingEngine(this.logger)
     private var lifecycle: Lifecycle? = null
     private var imageSource: ImageSource? = null
-    private val resetPausedLifecycleObserver = LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_START) {
-            resetPaused("LifecycleStateChanged:ON_START")
-        } else if (event == Lifecycle.Event.ON_STOP) {
-            resetPaused("LifecycleStateChanged:ON_STOP")
-        }
-    }
+    private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
     private val tileDrawHelper = TileDrawHelper(engine)
 
+    init {
+        view.post {
+            val lifecycle1 =
+                view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
+            setLifecycle(lifecycle1)
+        }
+    }
 
     /* *********************************** Configurable properties ****************************** */
 
@@ -103,12 +105,21 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         }
 
     /**
-     * If true, subsampling is paused and loaded tiles are released, which will be reloaded after resumed
+     * Whether to pause loading tiles when transforming
      */
-    var paused: Boolean
-        get() = engine.paused
+    var pauseWhenTransforming: Boolean
+        get() = engine.pauseWhenTransforming
         set(value) {
-            engine.paused = value
+            engine.pauseWhenTransforming = value
+        }
+
+    /**
+     * If true, subsampling stops and free loaded tiles, which are reloaded after restart
+     */
+    var stopped: Boolean
+        get() = engine.stopped
+        set(value) {
+            engine.stopped = value
         }
 
     /**
@@ -167,13 +178,10 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         if (view.isAttachedToWindowCompat) {
             engine.setImageSource(imageSource)
         }
-
-        // At this time, view.findViewTreeLifecycleOwner() is not null
-        setLifecycle(view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle())
     }
 
     /**
-     * Set the lifecycle, which automatically controls pause and resume, which is obtained from View.findViewTreeLifecycleOwner() by default,
+     * Set the lifecycle, which automatically controls stop and start, which is obtained from View.findViewTreeLifecycleOwner() by default,
      * and can be set by this method if the default acquisition method is not applicable
      */
     fun setLifecycle(lifecycle: Lifecycle?) {
@@ -181,7 +189,7 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
             unregisterLifecycleObserver()
             this.lifecycle = lifecycle
             registerLifecycleObserver()
-            resetPaused("setLifecycle")
+            resetStopped("setLifecycle")
         }
     }
 
@@ -210,16 +218,16 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         engine.unregisterOnReadyChangeListener(listener)
 
     /**
-     * Register a [paused] property change listener
+     * Register a [stopped] property change listener
      */
-    fun registerOnPauseChangeListener(listener: OnPauseChangeListener) =
-        engine.registerOnPauseChangeListener(listener)
+    fun registerOnStoppedChangeListener(listener: OnStoppedChangeListener) =
+        engine.registerOnStoppedChangeListener(listener)
 
     /**
-     * Unregister a [paused] property change listener
+     * Unregister a [stopped] property change listener
      */
-    fun unregisterOnPauseChangeListener(listener: OnPauseChangeListener): Boolean =
-        engine.unregisterOnPauseChangeListener(listener)
+    fun unregisterOnStoppedChangeListener(listener: OnStoppedChangeListener): Boolean =
+        engine.unregisterOnStoppedChangeListener(listener)
 
     /**
      * Register a [imageLoadRect] property change listener
@@ -257,32 +265,45 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
             View.GONE -> "GONE"
             else -> "UNKNOWN"
         }
-        resetPaused("onVisibilityChanged:$visibilityName")
+        resetStopped("onVisibilityChanged:$visibilityName")
     }
 
 
     /* *************************************** Internal ***************************************** */
 
-    private fun resetPaused(caller: String) {
+    private fun resetStopped(caller: String) {
         val viewVisible = view.isVisible
         val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
-        val paused = !viewVisible || !lifecycleStarted
+        val stopped = !viewVisible || !lifecycleStarted
         logger.d {
-            "resetPaused:$caller. $paused. " +
+            "resetStopped:$caller. $stopped. " +
                     "viewVisible=$viewVisible, " +
                     "lifecycleStarted=$lifecycleStarted. " +
                     "'${imageSource?.key}'"
         }
-        engine.paused = paused
+        engine.stopped = stopped
     }
 
     private fun registerLifecycleObserver() {
         if (view.isAttachedToWindowCompat) {
-            lifecycle?.addObserver(resetPausedLifecycleObserver)
+            lifecycle?.addObserver(resetStoppedLifecycleObserver)
         }
     }
 
     private fun unregisterLifecycleObserver() {
-        lifecycle?.removeObserver(resetPausedLifecycleObserver)
+        lifecycle?.removeObserver(resetStoppedLifecycleObserver)
+    }
+
+    private class ResetStoppedLifecycleObserver(
+        val subsamplingAbility: SubsamplingAbility
+    ) : LifecycleEventObserver {
+
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_START) {
+                subsamplingAbility.resetStopped("LifecycleStateChanged:ON_START")
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                subsamplingAbility.resetStopped("LifecycleStateChanged:ON_STOP")
+            }
+        }
     }
 }

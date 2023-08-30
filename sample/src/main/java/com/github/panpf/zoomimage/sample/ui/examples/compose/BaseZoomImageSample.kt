@@ -57,6 +57,7 @@ fun BaseZoomImageSample(
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.stateFlow.collectAsState()
     val scalesCalculatorName by settingsService.scalesCalculator.stateFlow.collectAsState()
     val scalesMultipleString by settingsService.scalesMultiple.stateFlow.collectAsState()
+    val pauseWhenTransforming by settingsService.pauseWhenTransforming.stateFlow.collectAsState()
     val ignoreExifOrientation by settingsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by settingsService.showTileBounds.stateFlow.collectAsState()
     val horizontalLayout by settingsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
@@ -111,6 +112,9 @@ fun BaseZoomImageSample(
         }
         LaunchedEffect(readMode) {
             zoomable.readMode = readMode
+        }
+        LaunchedEffect(pauseWhenTransforming) {
+            subsampling.pauseWhenTransforming = pauseWhenTransforming
         }
         LaunchedEffect(ignoreExifOrientation) {
             subsampling.ignoreExifOrientation = ignoreExifOrientation

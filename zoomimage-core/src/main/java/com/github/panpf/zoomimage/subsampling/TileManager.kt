@@ -67,6 +67,11 @@ class TileManager constructor(
     private var lastContentSize: IntSizeCompat? = null
     private var lastContentVisibleRect: IntRectCompat? = null
 
+    /**
+     * Whether to pause loading tiles when transforming
+     */
+    var pauseWhenTransforming: Boolean = false
+
     val tileMaxSize: IntSizeCompat
     val tileMap: Map<Int, List<Tile>>
     val tileList: List<Tile>
@@ -124,7 +129,7 @@ class TileManager constructor(
             return
         }
 
-        if (transforming) {
+        if (pauseWhenTransforming && transforming) {
             logger.d { "refreshTiles:$caller. interrupted, transforming. '${imageSource.key}'" }
             return
         }

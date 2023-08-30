@@ -14,6 +14,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,22 +57,19 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
             refreshing = pagingItems.loadState.refresh is Loading,
             onRefresh = { pagingItems.refresh() }
         )
+        val context = LocalContext.current
         Box(modifier = Modifier.fillMaxSize()) {
+            val bgColor = remember {
+                Color(ResourcesCompat.getColor(context.resources, color.windowBackgroundDark, null))
+            }
+            val divider = Arrangement.spacedBy(dimensionResource(id = dimen.grid_divider))
             LazyVerticalGrid(
                 columns = Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = dimen.grid_divider)),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = dimen.grid_divider)),
+                horizontalArrangement = divider,
+                verticalArrangement = divider,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        Color(
-                            ResourcesCompat.getColor(
-                                LocalContext.current.resources,
-                                color.windowBackgroundDark,
-                                null
-                            )
-                        )
-                    )
+                    .background(bgColor)
                     .pullRefresh(pullRefreshState)
             ) {
                 items(

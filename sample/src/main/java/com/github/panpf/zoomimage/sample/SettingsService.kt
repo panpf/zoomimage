@@ -71,11 +71,14 @@ class SettingsService(val context: Context) {
         BooleanMmkvData(mmkv, "readModeAcceptedBoth", true)
     }
 
-    val showTileBounds by lazy {
-        BooleanMmkvData(mmkv, "showTileBounds", false)
+    val pauseWhenTransforming by lazy {
+        BooleanMmkvData(mmkv, "pauseWhenTransforming", false)
     }
     val ignoreExifOrientation by lazy {
         BooleanMmkvData(mmkv, "ignoreExifOrientation", false)
+    }
+    val showTileBounds by lazy {
+        BooleanMmkvData(mmkv, "showTileBounds", false)
     }
 
     val scrollBarEnabled by lazy {

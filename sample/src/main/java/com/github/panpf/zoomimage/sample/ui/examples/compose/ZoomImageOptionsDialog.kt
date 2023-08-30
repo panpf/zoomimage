@@ -64,8 +64,9 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.readModeEnabled, settingsService.readModeEnabled)
         BindStateAndFlow(state.readModeAcceptedBoth, settingsService.readModeAcceptedBoth)
 
-        BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
+        BindStateAndFlow(state.pauseWhenTransforming, settingsService.pauseWhenTransforming)
         BindStateAndFlow(state.ignoreExifOrientation, settingsService.ignoreExifOrientation)
+        BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
 
         BindStateAndFlow(state.scrollBarEnabled, settingsService.scrollBarEnabled)
     }
@@ -99,6 +100,7 @@ class ZoomImageOptionsState {
     val readModeAcceptedBoth = MutableStateFlow(true)
 
     val showTileBounds = MutableStateFlow(false)
+    val pauseWhenTransforming = MutableStateFlow(true)
     val ignoreExifOrientation = MutableStateFlow(false)
 
     val scrollBarEnabled = MutableStateFlow(true)
@@ -125,6 +127,7 @@ fun ZoomImageOptionsDialog(
     val readModeAcceptedBoth by state.readModeAcceptedBoth.collectAsState()
 
     val showTileBounds by state.showTileBounds.collectAsState()
+    val pauseWhenTransforming by state.pauseWhenTransforming.collectAsState()
     val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
 
     val scrollBarEnabled by state.scrollBarEnabled.collectAsState()
@@ -233,12 +236,16 @@ fun ZoomImageOptionsDialog(
 
                 Divider(Modifier.padding(horizontal = 20.dp))
 
-                SwitchMenu("Show Tile Bounds", showTileBounds) {
-                    state.showTileBounds.value = !state.showTileBounds.value
+                SwitchMenu("Pause When Transforming", pauseWhenTransforming) {
+                    state.pauseWhenTransforming.value = !state.pauseWhenTransforming.value
                     onDismissRequest()
                 }
                 SwitchMenu("Ignore Exif Orientation", ignoreExifOrientation) {
                     state.ignoreExifOrientation.value = !state.ignoreExifOrientation.value
+                    onDismissRequest()
+                }
+                SwitchMenu("Show Tile Bounds", showTileBounds) {
+                    state.showTileBounds.value = !state.showTileBounds.value
                     onDismissRequest()
                 }
 
