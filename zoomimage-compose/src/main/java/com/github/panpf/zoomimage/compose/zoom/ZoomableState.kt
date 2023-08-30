@@ -72,7 +72,7 @@ import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
 import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
 import com.github.panpf.zoomimage.zoom.calculateInitialZoom
-import com.github.panpf.zoomimage.zoom.calculateLocationUserOffset
+import com.github.panpf.zoomimage.zoom.calculateLocateUserOffset
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
 import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
 import com.github.panpf.zoomimage.zoom.calculateScrollEdge
@@ -230,7 +230,7 @@ class ZoomableState(logger: Logger) {
 
     /**
      * User transformation, include the user scale, offset, rotation,
-     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [location] method
+     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [locate] method
      */
     var userTransform: Transform by mutableStateOf(Transform.Origin)
         private set
@@ -534,7 +534,7 @@ class ZoomableState(logger: Logger) {
      *
      * @param targetScale The target scale, the default is the current scale
      */
-    suspend fun location(
+    suspend fun locate(
         contentPoint: IntOffset,
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
@@ -547,7 +547,7 @@ class ZoomableState(logger: Logger) {
         val currentBaseTransform = baseTransform
         val currentUserTransform = userTransform
 
-        stopAllAnimation("location")
+        stopAllAnimation("locate")
 
         val containerPoint = contentPointToContainerPoint(
             containerSize = containerSize.toCompat(),
@@ -561,7 +561,7 @@ class ZoomableState(logger: Logger) {
         val targetUserScale = targetScale / currentBaseTransform.scaleX
         val limitedTargetUserScale = limitUserScale(targetUserScale)
 
-        val targetUserOffset = calculateLocationUserOffset(
+        val targetUserOffset = calculateLocateUserOffset(
             containerSize = containerSize.toCompat(),
             containerPoint = containerPoint,
             userScale = limitedTargetUserScale,
@@ -579,7 +579,7 @@ class ZoomableState(logger: Logger) {
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
             val limitedTargetAddUserScaleFormatted = limitedTargetAddUserScale.format(4)
-            "location. " +
+            "locate. " +
                     "contentPoint=${contentPoint.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
                     "animated=${animated}. " +
@@ -594,7 +594,7 @@ class ZoomableState(logger: Logger) {
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
             animated = animated,
-            caller = "location"
+            caller = "locate"
         )
     }
 

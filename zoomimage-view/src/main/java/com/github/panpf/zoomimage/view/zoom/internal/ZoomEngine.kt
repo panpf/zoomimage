@@ -56,7 +56,7 @@ import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
 import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
 import com.github.panpf.zoomimage.zoom.calculateInitialZoom
-import com.github.panpf.zoomimage.zoom.calculateLocationUserOffset
+import com.github.panpf.zoomimage.zoom.calculateLocateUserOffset
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
 import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
 import com.github.panpf.zoomimage.zoom.calculateScrollEdge
@@ -206,7 +206,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
 
     /**
      * User transformation, include the user scale, offset, rotation,
-     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [location] method
+     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [locate] method
      */
     var userTransform = TransformCompat.Origin
         private set
@@ -479,7 +479,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      *
      * @param targetScale The target scale, the default is the current scale
      */
-    fun location(
+    fun locate(
         contentPoint: IntOffsetCompat,
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
@@ -493,7 +493,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val currentBaseTransform = baseTransform
         val currentUserTransform = userTransform
 
-        stopAllAnimation("location")
+        stopAllAnimation("locate")
 
         val containerPoint = contentPointToContainerPoint(
             containerSize = containerSize,
@@ -507,7 +507,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         val targetUserScale = targetScale / currentBaseTransform.scaleX
         val limitedTargetUserScale = limitUserScale(targetUserScale)
 
-        val targetUserOffset = calculateLocationUserOffset(
+        val targetUserOffset = calculateLocateUserOffset(
             containerSize = containerSize,
             containerPoint = containerPoint,
             userScale = limitedTargetUserScale,
@@ -525,7 +525,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
             val limitedTargetAddUserScaleFormatted = limitedTargetAddUserScale.format(4)
-            "location. " +
+            "locate. " +
                     "contentPoint=${contentPoint.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
                     "animated=${animated}. " +
@@ -540,7 +540,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
             animated = animated,
-            caller = "location"
+            caller = "locate"
         )
     }
 

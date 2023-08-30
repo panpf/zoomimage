@@ -342,10 +342,10 @@ SketchZoomAsyncImage(
       <br>-----------</br>
     * 当前基础缩放比例，受 contentScale 参数影响
 * [ZoomableState].userTransform.scale: ScaleFactor。
-    * The current user scaling factor is affected by scale(), location(), user gesture zoom,
+    * The current user scaling factor is affected by scale(), locate(), user gesture zoom,
       double-click and other operations
       <br>-----------</br>
-    * 当前用户缩放比例，受 scale()、location() 以及用户手势缩放、双击等操作影响
+    * 当前用户缩放比例，受 scale()、locate() 以及用户手势缩放、双击等操作影响
 * [ZoomableState].minScale: Float。
     * Minimum scale factor, for limits the final scale factor, and as a target value for one of when
       switch scale

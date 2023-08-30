@@ -585,7 +585,7 @@ fun calculateUserOffsetBounds(
     return offsetBounds
 }
 
-fun calculateLocationUserOffset(
+fun calculateLocateUserOffset(
     containerSize: IntSizeCompat,
     containerPoint: OffsetCompat,
     userScale: Float,
@@ -604,8 +604,8 @@ fun calculateLocationUserOffset(
     val scaledContainerPoint = containerPoint * userScale
     val containerCenter = containerSize.center.toOffset()
     val toCenterScaledContainerPoint = scaledContainerPoint - containerCenter
-    val locationOffset = toCenterScaledContainerPoint * -1f
-    return locationOffset
+    val locateOffset = toCenterScaledContainerPoint * -1f
+    return locateOffset
 }
 
 fun calculateScaleUserOffset(

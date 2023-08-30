@@ -192,7 +192,7 @@ class ZoomAbility constructor(
 
     /**
      * User transformation, include the user scale, offset, rotation,
-     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [location] method
+     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [locate] method
      */
     val userTransform: TransformCompat
         get() = zoomEngine.userTransform
@@ -389,11 +389,11 @@ class ZoomAbility constructor(
      *
      * @param targetScale The target scale, the default is the current scale
      */
-    fun location(
+    fun locate(
         contentPoint: IntOffsetCompat,
         targetScale: Float = zoomEngine.transform.scaleX,
         animated: Boolean = false,
-    ) = zoomEngine.location(contentPoint, targetScale, animated)
+    ) = zoomEngine.locate(contentPoint, targetScale, animated)
 
     /**
      * Rotate the content to [targetRotation]

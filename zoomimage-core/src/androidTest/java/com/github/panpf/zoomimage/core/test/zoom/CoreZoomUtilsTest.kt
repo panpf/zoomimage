@@ -427,7 +427,7 @@ class CoreZoomUtilsTest {
 //    }
 //
 //    @Test
-//    fun testCalculateLocationOffset() {
+//    fun testCalculateLocateOffset() {
 //        val containerSize = IntSize(1000, 2000)
 //
 //        var scale = 1f
@@ -445,7 +445,7 @@ class CoreZoomUtilsTest {
 //            Assert.assertEquals(
 //                /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
 //                /* expected = */ expected,
-//                /* actual = */ computeLocationUserOffset(containerSize, containerPoint, scale)
+//                /* actual = */ computeLocateUserOffset(containerSize, containerPoint, scale)
 //            )
 //        }
 //
@@ -464,7 +464,7 @@ class CoreZoomUtilsTest {
 //            Assert.assertEquals(
 //                /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
 //                /* expected = */ expected,
-//                /* actual = */ computeLocationUserOffset(containerSize, containerPoint, scale)
+//                /* actual = */ computeLocateUserOffset(containerSize, containerPoint, scale)
 //            )
 //        }
 //    }

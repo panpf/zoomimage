@@ -24,8 +24,7 @@ two parameters:
 zoomimage 提供改了 offset() 方法用来移动图像到指定位置，它有两个参数：
 
 * targetOffset: Offset。
-    * The target offset location, with the offset origin being the upper-left corner of the
-      component
+    * The target offset, with the offset origin being the upper-left corner of the component
       <br>-----------</br>
     * 目标偏移位置，offset 原点是组件的左上角
 * animated: Boolean = false。
@@ -113,9 +112,9 @@ SketchZoomAsyncImage(
       <br>-----------</br>
     * 当前基础偏移量，受 alignment 参数和 rotate 方法影响
 * [ZoomableState].userTransform.offset: Offset。
-    * The current user offset, affected by offset(), location(), and user gesture dragging
+    * The current user offset, affected by offset(), locate(), and user gesture dragging
       <br>-----------</br>
-    * 当前用户偏移量，受 offset()、location() 以及用户手势拖动影响
+    * 当前用户偏移量，受 offset()、locate() 以及用户手势拖动影响
 * [ZoomableState].scrollEdge: ScrollEdge。
     * Edge state for the current offset
       <br>-----------</br>

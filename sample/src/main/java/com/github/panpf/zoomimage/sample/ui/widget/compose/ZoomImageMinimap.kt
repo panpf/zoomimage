@@ -122,7 +122,7 @@ fun ZoomImageMinimap(
                             onTap = {
                                 if (!imageNodeSize.isEmpty()) {
                                     coroutineScope.launch {
-                                        zoomableState.location(
+                                        zoomableState.locate(
                                             contentPoint = IntOffset(
                                                 x = ((it.x / imageNodeSize.width) * contentSize.width).roundToInt(),
                                                 y = ((it.y / imageNodeSize.height) * contentSize.height).roundToInt(),

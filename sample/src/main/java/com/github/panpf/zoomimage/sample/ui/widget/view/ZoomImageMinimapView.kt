@@ -59,7 +59,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
 
     private val detector = GestureDetector(context, object : SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            location(e.x, e.y)
+            locate(e.x, e.y)
             return true
         }
     })
@@ -187,7 +187,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         return true
     }
 
-    private fun location(x: Float, y: Float) {
+    private fun locate(x: Float, y: Float) {
         val zoomView = zoomView ?: return
         val viewWidth = width.takeIf { it > 0 } ?: return
         val viewHeight = height.takeIf { it > 0 } ?: return
@@ -200,7 +200,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val realX = (x * widthScale).roundToInt()
         val realY = (y * heightScale).roundToInt()
 
-        zoomView.zoomAbility.location(
+        zoomView.zoomAbility.locate(
             contentPoint = IntOffsetCompat(x = realX, y = realY),
             targetScale = zoomView.zoomAbility.transform.scaleX
                 .coerceAtLeast(zoomView.zoomAbility.mediumScale),

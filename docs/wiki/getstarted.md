@@ -254,13 +254,13 @@ sketchZoomImageView.zoomAbility.alignment = AlignmentCompat.BottomEnd
 ### Get relevant information/获取相关信息
 
 * [ZoomableState].baseTransform: Transform。
-    * Base transformation, include the base scale, offset, rotation, which is affected by [contentScale], [alignment] properties and [rotate] method
+    * Base transformation, include the base scale, offset, rotation, which is affected by contentScale, alignment properties and rotate method
       <br>-----------</br>
     * 基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment 属性以及 rotate() 方法的影响
 * [ZoomableState].userTransform: Transform。
-    * User transformation, include the user scale, offset, rotation, which is affected by the user's gesture, [readMode] properties and [scale], [offset], [location] method
+    * User transformation, include the user scale, offset, rotation, which is affected by the user's gesture, readMode properties and scale, offset, locate method
       <br>-----------</br>
-    * 用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode 属性以及 scale()、offset()、location()
+    * 用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode 属性以及 scale()、offset()、locate()
       方法的影响
 * [ZoomableState].transform: Transform。
     * Final transformation, include the final scale, offset, rotation, is equivalent to `baseTransform + userTransform`
@@ -335,7 +335,7 @@ sketchZoomImageView.zoomAbility.alignment = AlignmentCompat.BottomEnd
 
 * [Scale: scale, double-click scale, duration setting/缩放、双击缩放、时长设置](scale.md)
 * [Offset: Move to the specified position/移动到指定位置](offset.md)
-* [Location: Moves the specified location of the picture to the middle of the screen/将图片的指定位置移动到屏幕中间](location.md)
+* [Locate: Locate anywhere in the image and keeping it in the center of the screen/定位到图片的任意位置并保持在屏幕中央](locate.md)
 * [Rotate: Rotate the image/旋转图片](rotate.md)
 * [Read Mode: Automatically fills the screen for easy reading/自动充满屏幕，方便阅读](readmode.md)
 * [Click: Receive click events/接收点击事件](click.md)

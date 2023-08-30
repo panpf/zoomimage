@@ -6,7 +6,7 @@
 [![version_icon]][version_link]
 
 Android library for scaling images, supporting double-tap zoom, gesture zoom, single-finger drag,
-inertial swipe, location, rotate, huge image sub-sampling, and more. Both View and Compose
+inertial swipe, locate, rotate, huge image sub-sampling, and more. Both View and Compose
 are supported.
 <br>-----------------</br>
 用于缩放图像的 Android 库，支持双击缩放、手势缩放、单指拖动、惯性滑动、定位、旋转、超大图子采样等功能。支持
@@ -18,7 +18,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 * `Complete`. Support basic functions such as double-click zoom, gesture zoom, single-finger drag,
   and inertial swipe
-* `Location`. Support for moving any position of the image to the center of the screen
+* `Locate`. Support for locate anywhere in the image and keeping it in the center of the screen
 * `Rotate`. Supports 0°, 90°, 180°, 270°, 360° rotation of pictures
 * `Subsampling`. Supports subsampling display of huge images, the image is clearly displayed and OOM
   is avoided
@@ -37,7 +37,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 <div>-----------------</div>
 
 * `功能齐全`. 支持双击缩放、手势缩放、单指拖动、惯性滑动等基础功能
-* `定位`. 支持将图片的任意位置移动到屏幕中央
+* `定位`. 支持定位到图片的任意位置并保持在屏幕中央
 * `旋转`. 支持 0°, 90°, 180°, 270°, 360° 旋转图片
 * `子采样`. 支持对超大图进行子采样显示，既清晰的展示了图片又避免了 OOM
 * `动态缩放`. 根据图片尺寸和容器尺寸自动计算出最合适的双击缩放比例
@@ -154,7 +154,7 @@ sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 * [Get Started/开始使用](docs/wiki/getstarted.md)
 * [Scale: scale, double-click scale, duration setting/缩放、双击缩放、时长设置](docs/wiki/scale.md)
 * [Offset: Move to the specified position/移动到指定位置](docs/wiki/offset.md)
-* [Location: Moves the specified location of the picture to the middle of the screen/将图片的指定位置移动到屏幕中间](docs/wiki/location.md)
+* [Locate: Locate anywhere in the image and keeping it in the center of the screen/定位到图片的任意位置并保持在屏幕中央](docs/wiki/locate.md)
 * [Rotate: Rotate the image/旋转图片](docs/wiki/rotate.md)
 * [Read Mode: Automatically fills the screen for easy reading/自动充满屏幕，方便阅读](docs/wiki/readmode.md)
 * [Click: Receive click events/接收点击事件](docs/wiki/click.md)

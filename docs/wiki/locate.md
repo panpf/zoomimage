@@ -1,4 +1,4 @@
-## Location 图像/定位图像
+## Locate 图像/定位图像
 
 > * The following example takes precedence over the Compose version component for demonstration
 > * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
@@ -11,13 +11,13 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
-### location()
+### locate()
 
-ZoomImage provides a modified location() method to position the specified position of the image,
+ZoomImage provides a modified locate() method to locate the specified position of the image,
 which is displayed in the middle of the screen (except for the edge position), which has three
 parameters:
 <br>-----------</br>
-ZoomImage 提供改了 location() 方法用来定位到图像的指定位置，指定的位置会显示在屏幕的中间（边缘位置除外），它有三个参数：
+ZoomImage 提供改了 locate() 方法用来定位到图像的指定位置，指定的位置会显示在屏幕的中间（边缘位置除外），它有三个参数：
 
 * contentPoint: IntOffset。
     * The anchor on the content, the origin is the upper-left corner of the content
@@ -47,10 +47,10 @@ SketchZoomAsyncImage(
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
-        // Location to the center of the content and zoom to mediumScale if the current zoom factor is less than MediumScale
+        // Locate to the center of the content and zoom to mediumScale if the current zoom factor is less than MediumScale
         // 定位到 content 的中心，如果当前缩放倍数小于 mediumScale，就缩放到 mediumScale
         coroutineScope.launch {
-            state.zoomable.location(
+            state.zoomable.locate(
                 contentPoint = state.zoomable.contentSize.center,
                 targetScale = state.zoomable.transform.scaleX.coerceAtLeast(state.zoomable.mediumScale),
                 animated = true,
@@ -58,7 +58,7 @@ Button(
         }
     }
 ) {
-    Text(text = "location to center")
+    Text(text = "locate to center")
 }
 ```
 
