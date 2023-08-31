@@ -488,6 +488,19 @@ class ZoomAbility constructor(
         return onViewLongPressListenerList?.remove(listener) == true
     }
 
+    /**
+     * Register reset listener
+     */
+    fun registerOnResetListener(listener: OnResetListener) =
+        zoomEngine.registerOnResetListener(listener)
+
+    /**
+     * Unregister reset listener
+     */
+    fun unregisterOnResetListener(listener: OnResetListener): Boolean {
+        return zoomEngine.unregisterOnResetListener(listener)
+    }
+
 
     /* *********************************** Interact with View *********************************** */
 

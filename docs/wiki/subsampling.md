@@ -370,21 +370,21 @@ compose 版本的相关属性是用 State 包装的，直接读取它即可实�
 example/示例：
 
 ```kotlin
-val zoomImageView = ZoomImageView(context)
+val sketchZoomImageView = SketchZoomImageView(context)
 
-zoomImageView.subsumplingAbility.registerOnTileChangedListener {
+sketchZoomImageView.subsumplingAbility.registerOnTileChangedListener {
     // tileSnapshotList changed
 }
 
-zoomImageView.subsumplingAbility.registerOnReadyChangeListener {
+sketchZoomImageView.subsumplingAbility.registerOnReadyChangeListener {
     // ready changed
 }
 
-zoomImageView.subsumplingAbility.registerOnStoppedChangeListener {
+sketchZoomImageView.subsumplingAbility.registerOnStoppedChangeListener {
     // stopped changed
 }
 
-zoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
+sketchZoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
     // imageLoadRect changed
 }
 ```

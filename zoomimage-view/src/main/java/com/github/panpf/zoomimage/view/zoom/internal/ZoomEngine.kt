@@ -46,6 +46,7 @@ import com.github.panpf.zoomimage.view.internal.requiredMainThread
 import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.OnContentSizeChangeListener
+import com.github.panpf.zoomimage.view.zoom.OnResetListener
 import com.github.panpf.zoomimage.view.zoom.OnTransformChangeListener
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -82,6 +83,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private var onTransformChangeListeners: MutableSet<OnTransformChangeListener>? = null
     private var onContainerSizeChangeListeners: MutableSet<OnContainerSizeChangeListener>? = null
     private var onContentSizeChangeListeners: MutableSet<OnContentSizeChangeListener>? = null
+    private var onResetListeners: MutableSet<OnResetListener>? = null
 
     /**
      * The size of the container that holds the content, this is usually the size of the [ZoomImageView] component
@@ -344,6 +346,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             animated = false,
             caller = "reset"
         )
+        notifyReset()
     }
 
     /**
@@ -661,6 +664,21 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
      */
     fun unregisterOnContentSizeChangeListener(listener: OnContentSizeChangeListener): Boolean {
         return onContentSizeChangeListeners?.remove(listener) == true
+    }
+
+    /**
+     * Register reset listener
+     */
+    fun registerOnResetListener(listener: OnResetListener) {
+        this.onResetListeners = (onResetListeners ?: LinkedHashSet())
+            .apply { add(listener) }
+    }
+
+    /**
+     * Unregister reset listener
+     */
+    fun unregisterOnResetListener(listener: OnResetListener): Boolean {
+        return onResetListeners?.remove(listener) == true
     }
 
 
@@ -989,6 +1007,12 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     private fun notifyContentSizeChanged(contentSize: IntSizeCompat) {
         onContentSizeChangeListeners?.forEach {
             it.onContentSizeChanged(contentSize)
+        }
+    }
+
+    private fun notifyReset() {
+        onResetListeners?.forEach {
+            it.onReset()
         }
     }
 }

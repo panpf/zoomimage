@@ -37,9 +37,6 @@ SketchZoomAsyncImage(
 view：
 
 ```kotlin
-
-import kotlin.coroutines.jvm.internal.CompletedContinuation.context
-
 val sketchZoomImageView = SketchZoomImageView(context)
 
 sketchZoomImageView.zoomAbility.registerOnViewTapListener { view: android.view.View, x: Float, y: Float ->

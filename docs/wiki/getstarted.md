@@ -251,6 +251,51 @@ sketchZoomImageView.zoomAbility.contentScale = ContentScaleCompat.None
 sketchZoomImageView.zoomAbility.alignment = AlignmentCompat.BottomEnd
 ```
 
+### Listen for related events/监听相关事件
+
+The relevant properties of the compose version are wrapped in State, which can be read directly to
+achieve listening, and the view version needs to register a listener
+<br>-----------</br>
+compose 版本的相关属性是用 State 包装的，直接读取它即可实现监听，view 版本的则需要注册监听器
+
+example/示例：
+
+```kotlin
+val sketchZoomImageView = SketchZoomImageView(context)
+
+sketchZoomImageView.zoomAbility.registerOnTransformChangeListener {
+    // transform changed
+}
+
+sketchZoomImageView.zoomAbility.registerOnResetListener {
+    // reset
+}
+
+sketchZoomImageView.zoomAbility.registerOnViewTapListener { view: android.view.View, x: Float, y: Float ->
+    // Click Events,单击事件
+}
+
+sketchZoomImageView.zoomAbility.registerOnViewLongPressListener { view: android.view.View, x: Float, y: Float ->
+    // Long press event,长按事件        
+}
+
+sketchZoomImageView.subsumplingAbility.registerOnTileChangedListener {
+    // tileSnapshotList changed
+}
+
+sketchZoomImageView.subsumplingAbility.registerOnReadyChangeListener {
+    // ready changed
+}
+
+sketchZoomImageView.subsumplingAbility.registerOnStoppedChangeListener {
+    // stopped changed
+}
+
+sketchZoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
+    // imageLoadRect changed
+}
+```
+
 ### Get relevant information/获取相关信息
 
 * [ZoomableState].baseTransform: Transform。

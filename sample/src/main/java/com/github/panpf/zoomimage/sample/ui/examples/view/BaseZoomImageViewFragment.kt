@@ -200,6 +200,38 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }.show(childFragmentManager, null)
         }
 
+        common.zoomImageViewLinearScaleSlider.apply {
+            var changing = false
+            zoomImageView.zoomAbility.registerOnResetListener {
+                if (changing || zoomImageView.zoomAbility.minScale >= zoomImageView.zoomAbility.maxScale) {
+                    return@registerOnResetListener
+                }
+                valueFrom = zoomImageView.zoomAbility.minScale
+                valueTo = zoomImageView.zoomAbility.maxScale
+                val step = (valueTo - valueFrom) / 9
+                changing = true
+                value =
+                    valueFrom + ((zoomImageView.zoomAbility.transform.scaleX - valueFrom) / step).toInt() * step
+                changing = false
+                stepSize = step
+            }
+            zoomImageView.zoomAbility.registerOnTransformChangeListener {
+                if (changing || zoomImageView.zoomAbility.minScale >= zoomImageView.zoomAbility.maxScale) {
+                    return@registerOnTransformChangeListener
+                }
+                val step = (valueTo - valueFrom) / 9
+                changing = true
+                value =
+                    valueFrom + ((zoomImageView.zoomAbility.transform.scaleX - valueFrom) / step).toInt() * step
+                changing = false
+            }
+            addOnChangeListener { _, value, _ ->
+                if (!changing) {
+                    zoomImageView.zoomAbility.scale(targetScale = value, animated = true)
+                }
+            }
+        }
+
         common.zoomImageViewMore.apply {
             common.zoomImageViewExtraLayout.isVisible = false
 
@@ -208,17 +240,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     return@setOnClickListener
                 }
                 if (common.zoomImageViewExtraLayout.isVisible) {
-                    common.zoomImageViewLinearScaleSlider.apply {
-                        valueFrom = zoomImageView.zoomAbility.minScale
-                        valueTo = zoomImageView.zoomAbility.maxScale
-                        val step = (valueTo - valueFrom) / 9
-                        value =
-                            valueFrom + ((zoomImageView.zoomAbility.maxScale - valueFrom) / step).toInt() * step
-                        stepSize = step
-                        addOnChangeListener { _, value, _ ->
-                            zoomImageView.zoomAbility.scale(targetScale = value, animated = true)
-                        }
-                    }
                     common.zoomImageViewExtraLayout.animTranslate(
                         fromXDelta = 0f,
                         toXDelta = common.zoomImageViewExtraLayout.width.toFloat(),
@@ -246,11 +267,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     )
                 }
             }
-//            viewLifecycleOwner.lifecycleScope.launch {
-//                linearScaleViewModel.changeFlow.collectLatest {
-//                    zoomImageView.zoomAbility.scale(it, animated = true)
-//                }
-//            }
         }
 
         zoomImageView.zoomAbility.registerOnTransformChangeListener {

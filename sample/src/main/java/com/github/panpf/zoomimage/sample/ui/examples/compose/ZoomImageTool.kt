@@ -139,12 +139,10 @@ fun ZoomImageTool(
 
                     Spacer(modifier = Modifier.size(6.dp))
 
-                    var value by remember { mutableStateOf(zoomableState.transform.scaleX) }
                     Slider(
-                        value = value,
+                        value = zoomableState.transform.scaleX,
                         valueRange = zoomableState.minScale..zoomableState.maxScale,
                         onValueChange = {
-                            value = it
                             coroutineScope.launch {
                                 zoomableState.scale(targetScale = it, animated = true)
                             }
