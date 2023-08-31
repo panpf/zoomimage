@@ -129,7 +129,7 @@ SketchZoomAsyncImage(
 )
 ```
 
-### Tile Animation
+### Tile Animation/碎片动画
 
 By default, zoomimage will read the Exif Orientation information of the image, and then rotate the
 image, if you do not want zoomimage to read the Exif Orientation information, you can modify the
@@ -149,6 +149,32 @@ state.subsampling.tileAnimationSpec = TileAnimationSpec.None
 // Modify the duration and refresh interval of the animation
 // 修改动画的持续时间和刷新间隔
 state.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+```
+
+### pauseWhenTransforming/变换中暂停加载
+
+ZoomImage supports pausing the loading of tiles during continuous transformations, such as gesture
+zooming, animation, fling, etc.
+This can avoid stuttering caused by frequent tile loading on devices with poor performance and
+affect the smoothness of the animation, and automatically resume loading tiles after continuous
+transformations, this feature is turned off by default, you can turn it on
+<br>-----------</br>
+ZoomImage 支持在连续变换时暂停加载磁贴，例如手势缩放中、动画中、fling 等，
+这样可以在性能较差的设备上避免因频繁加载磁贴导致卡顿影响动画的流畅性，连续变换结束后自动恢复加载磁贴，此功能默认关闭，你可以开启它
+
+example/示例：
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+
+state.subsampling.pauseWhenTransforming = true
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -183,38 +209,12 @@ SketchZoomAsyncImage(
 )
 ```
 
-### pauseWhenTransforming
-
-ZoomImage supports pausing the loading of tiles during continuous transformations, such as gesture
-zooming, animation, fling, etc.
-This can avoid stuttering caused by frequent tile loading on devices with poor performance and
-affect the smoothness of the animation, and automatically resume loading tiles after continuous
-transformations, this feature is turned off by default, you can turn it on
-<br>-----------</br>
-ZoomImage 支持在连续变换时暂停加载磁贴，例如手势缩放中、动画中、fling 等，
-这样可以在性能较差的设备上避免因频繁加载磁贴导致卡顿影响动画的流畅性，连续变换结束后自动恢复加载磁贴，此功能默认关闭，你可以开启它
-
-example/示例：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-state.subsampling.pauseWhenTransforming = true
-
-SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
-
 #### Lifecycle
 
 By default, zoomimage automatically fetches the most recent Lifecycle and listens to its state,
 pausing or resuming subsampling at the Lifecycle stop or start
 <br>-----------</br>
-zoomimage 默认会自动获取最近的 Lifecycle 然后监听它的状态，在 Lifecycle stop 或 start 时暂停或恢复子采样
+zoomimage 默认会自动获取最近的 Lifecycle 然后监听它的状态，在 Lifecycle stop 或 start 时停止或重启子采样
 
 If it is in a fragment, it will automatically get the Fragment's Lifecycle, no need to actively set
 it, compose and view can be used. Behind the dependence
