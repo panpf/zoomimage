@@ -89,39 +89,63 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end|right"
-        android:layout_margin="20dp"
-        android:background="@drawable/bg_bottom_toolbar">
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/zoomImageViewRotate"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_rotate_right"
-            app:tint="@android:color/white" />
+        <LinearLayout
+            android:id="@+id/zoomImageViewExtraLayout"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end|right"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/zoomImageViewZoom"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_zoom_in"
-            app:tint="@android:color/white" />
+            <com.google.android.material.slider.Slider
+                android:id="@+id/zoomImageViewLinearScaleSlider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/zoomImageViewLinearScale"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_linear_scale"
-            app:tint="@android:color/white" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end|right"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_bottom_toolbar">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/zoomImageViewInfo"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_info"
-            app:tint="@android:color/white" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/zoomImageViewRotate"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_rotate_right"
+                app:tint="@android:color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/zoomImageViewZoom"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_zoom_in"
+                app:tint="@android:color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/zoomImageViewInfo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_info"
+                app:tint="@android:color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/zoomImageViewMore"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_more_vert"
+                app:tint="@android:color/white" />
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

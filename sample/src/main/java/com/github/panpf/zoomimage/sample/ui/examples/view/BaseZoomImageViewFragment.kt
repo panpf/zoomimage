@@ -18,10 +18,10 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.animation.Animation
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
+import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
@@ -40,8 +40,6 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
@@ -49,7 +47,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
     abstract val sketchImageUri: String
 
-    private val linearScaleViewModel by viewModels<LinearScaleViewModel>()
+//    private val linearScaleViewModel by viewModels<LinearScaleViewModel>()
 
     abstract fun getZoomImageView(binding: VIEW_BINDING): ZoomImageView
 
@@ -202,21 +200,57 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }.show(childFragmentManager, null)
         }
 
-        common.zoomImageViewLinearScale.apply {
+        common.zoomImageViewMore.apply {
+            common.zoomImageViewExtraLayout.isVisible = false
+
             setOnClickListener {
-                ZoomImageViewLinearScaleDialogFragment().apply {
-                    arguments = ZoomImageViewLinearScaleDialogFragmentArgs(
-                        valueFrom = zoomImageView.zoomAbility.minScale,
-                        valueTo = zoomImageView.zoomAbility.maxScale,
-                        value = zoomImageView.zoomAbility.transform.scaleX,
-                    ).toBundle()
-                }.show(childFragmentManager, null)
-            }
-            viewLifecycleOwner.lifecycleScope.launch {
-                linearScaleViewModel.changeFlow.collectLatest {
-                    zoomImageView.zoomAbility.scale(it, animated = true)
+                if (zoomImageView.zoomAbility.minScale >= zoomImageView.zoomAbility.maxScale) {
+                    return@setOnClickListener
+                }
+                if (common.zoomImageViewExtraLayout.isVisible) {
+                    common.zoomImageViewLinearScaleSlider.apply {
+                        valueFrom = zoomImageView.zoomAbility.minScale
+                        valueTo = zoomImageView.zoomAbility.maxScale
+                        val step = (valueTo - valueFrom) / 9
+                        value =
+                            valueFrom + ((zoomImageView.zoomAbility.maxScale - valueFrom) / step).toInt() * step
+                        stepSize = step
+                        addOnChangeListener { _, value, _ ->
+                            zoomImageView.zoomAbility.scale(targetScale = value, animated = true)
+                        }
+                    }
+                    common.zoomImageViewExtraLayout.animTranslate(
+                        fromXDelta = 0f,
+                        toXDelta = common.zoomImageViewExtraLayout.width.toFloat(),
+                        fromYDelta = 0f,
+                        toYDelta = 0f,
+                        listener = object : Animation.AnimationListener {
+                            override fun onAnimationStart(animation: Animation?) {
+                            }
+
+                            override fun onAnimationEnd(animation: Animation?) {
+                                common.zoomImageViewExtraLayout.isVisible = false
+                            }
+
+                            override fun onAnimationRepeat(animation: Animation?) {
+                            }
+                        }
+                    )
+                } else {
+                    common.zoomImageViewExtraLayout.isVisible = true
+                    common.zoomImageViewExtraLayout.animTranslate(
+                        fromXDelta = common.zoomImageViewExtraLayout.width.toFloat(),
+                        toXDelta = 0f,
+                        fromYDelta = 0f,
+                        toYDelta = 0f,
+                    )
                 }
             }
+//            viewLifecycleOwner.lifecycleScope.launch {
+//                linearScaleViewModel.changeFlow.collectLatest {
+//                    zoomImageView.zoomAbility.scale(it, animated = true)
+//                }
+//            }
         }
 
         zoomImageView.zoomAbility.registerOnTransformChangeListener {
