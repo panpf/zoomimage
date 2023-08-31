@@ -39,13 +39,18 @@ class Tile constructor(
     val inSampleSize: Int
 ) {
 
+    internal var loadJob: Job? = null
     internal var tileBitmap: TileBitmap? = null
         set(value) {
             field?.setIsDisplayed(false)
             field = value
             value?.setIsDisplayed(true)
+            if (value != null) {
+                animationState.restart()
+            } else {
+                animationState.stop()
+            }
         }
-    internal var loadJob: Job? = null
 
     /**
      * The bitmap of the tile
@@ -58,6 +63,9 @@ class Tile constructor(
      */
     @State
     var state: Int = STATE_NONE
+
+    val animationState = AnimationState()
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -94,4 +102,34 @@ class Tile constructor(
     @IntDef(STATE_NONE, STATE_LOADING, STATE_LOADED, STATE_ERROR)
     @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
     annotation class State
+
+    class AnimationState {
+
+        private var startTime = System.currentTimeMillis()
+
+        private var progress: Float = 0f
+
+        var alpha: Int = 0
+            private set
+
+        fun calculate(duration: Long = 100): Boolean {
+            val currentTimeMillis = System.currentTimeMillis()
+            val elapsedTime = currentTimeMillis - startTime
+            progress = if (elapsedTime >= duration) 1f else elapsedTime / duration.toFloat()
+            alpha = (progress * 255).toInt()
+            return progress >= 1f
+        }
+
+        fun restart() {
+            startTime = System.currentTimeMillis()
+            calculate()
+        }
+
+        fun stop() {
+            startTime = 0
+            calculate()
+        }
+
+        fun isFinished(): Boolean = progress >= 1f
+    }
 }

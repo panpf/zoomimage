@@ -105,6 +105,59 @@ SketchZoomAsyncImage(
 )
 ```
 
+### Exif Orientation
+
+By default, zoomimage will read the Exif Orientation information of the image, and then rotate the
+image, if you do not want zoomimage to read the Exif Orientation information, you can modify the
+ignoreExifOrientation parameter to true
+<br>-----------</br>
+zoomimage 默认会读取图片的 Exif Orientation 信息，然后旋转图片，如果你不想让 zoomimage 读取 Exif
+Orientation 信息，可以修改 ignoreExifOrientation 参数为 true
+
+example/示例：
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+
+state.subsampling.ignoreExifOrientation = true
+
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+```
+
+### Tile Animation
+
+By default, zoomimage will read the Exif Orientation information of the image, and then rotate the
+image, if you do not want zoomimage to read the Exif Orientation information, you can modify the
+ignoreExifOrientation parameter to true
+<br>-----------</br>
+zoomimage 在显示 Tile 的时候支持透明度动画，默认开启动画，持续时间 200 毫秒，刷新间隔 8 毫秒，你可以通过 tileAnimationSpec 参数来关闭动画或修改动画的持续时间和刷新间隔
+
+example/示例：
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+
+// Turn off animations
+// 关闭动画
+state.subsampling.tileAnimationSpec = TileAnimationSpec.None
+
+// Modify the duration and refresh interval of the animation
+// 修改动画的持续时间和刷新间隔
+state.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+```
+
 ### stop/start
 
 ZoomImage supports stopping subsampling, which free the loaded tile after stopping and no new tiles

@@ -38,6 +38,7 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
     private val cacheRect1 = Rect()
     private val cacheRect2 = Rect()
     private val cacheDisplayMatrix: Matrix = Matrix()
+    private var tilePaint: Paint = Paint()
     private var cacheTileBoundsPaint: Paint? = null
 
     fun drawTiles(
@@ -76,11 +77,12 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
                         val tileDrawSrcRect = cacheRect2.apply {
                             set(0, 0, tileBitmap.width, tileBitmap.height)
                         }
+                        tilePaint.alpha = tileSnapshot.alpha
                         canvas.drawBitmap(
                             /* bitmap = */ tileBitmap,
                             /* src = */ tileDrawSrcRect,
                             /* dst = */ tileDrawDstRect,
-                            /* paint = */ null
+                            /* paint = */ tilePaint
                         )
                     }
 

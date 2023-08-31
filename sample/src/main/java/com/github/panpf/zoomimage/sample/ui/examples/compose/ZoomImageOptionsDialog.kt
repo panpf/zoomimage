@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.material3.Divider
@@ -29,14 +31,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
+import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.sample.util.BaseMmkvData
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,6 +72,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.pauseWhenTransforming, settingsService.pauseWhenTransforming)
         BindStateAndFlow(state.ignoreExifOrientation, settingsService.ignoreExifOrientation)
         BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
+        BindStateAndFlow(state.tileAnimation, settingsService.tileAnimation)
 
         BindStateAndFlow(state.scrollBarEnabled, settingsService.scrollBarEnabled)
     }
@@ -100,6 +106,7 @@ class ZoomImageOptionsState {
     val readModeAcceptedBoth = MutableStateFlow(true)
 
     val showTileBounds = MutableStateFlow(false)
+    val tileAnimation = MutableStateFlow(true)
     val pauseWhenTransforming = MutableStateFlow(true)
     val ignoreExifOrientation = MutableStateFlow(false)
 
@@ -127,16 +134,31 @@ fun ZoomImageOptionsDialog(
     val readModeAcceptedBoth by state.readModeAcceptedBoth.collectAsState()
 
     val showTileBounds by state.showTileBounds.collectAsState()
+    val tileAnimation by state.tileAnimation.collectAsState()
     val pauseWhenTransforming by state.pauseWhenTransforming.collectAsState()
     val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
 
     val scrollBarEnabled by state.scrollBarEnabled.collectAsState()
 
+    val menuCount = 16
     Dialog(onDismissRequest) {
+        val screenHeightPixels = LocalContext.current.getDisplayMetrics().heightPixels
+        val menuItemHeight = LocalContext.current.resources.getDimension(R.dimen.menu_item_height)
+        val dialogMaxHeight = screenHeightPixels * 0.8f
         Column(
             Modifier
                 .fillMaxWidth()
-                .background(Color.White, shape = RoundedCornerShape(20.dp))
+                .let {
+                    if (menuCount * menuItemHeight > dialogMaxHeight) {
+                        it
+                            .height(dialogMaxHeight.toDp())
+                            .background(Color.White, shape = RoundedCornerShape(20.dp))
+                            .verticalScroll(rememberScrollState())
+                    } else {
+                        it
+                            .background(Color.White, shape = RoundedCornerShape(20.dp))
+                    }
+                }
         ) {
             val contentScales = remember {
                 listOf(
@@ -214,6 +236,8 @@ fun ZoomImageOptionsDialog(
                     onDismissRequest()
                 }
 
+                Divider(Modifier.padding(horizontal = 20.dp))
+
                 SwitchMenu(
                     "Limit Offset Within Base Visible Rect",
                     limitOffsetWithinBaseVisibleRect
@@ -248,6 +272,10 @@ fun ZoomImageOptionsDialog(
                     state.showTileBounds.value = !state.showTileBounds.value
                     onDismissRequest()
                 }
+                SwitchMenu("Tile Animation", tileAnimation) {
+                    state.tileAnimation.value = !state.tileAnimation.value
+                    onDismissRequest()
+                }
 
                 Divider(Modifier.padding(horizontal = 20.dp))
 
@@ -277,7 +305,7 @@ private fun SwitchMenu(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(40.dp)
+            .height(dimensionResource(id = R.dimen.menu_item_height))
             .clickable {
                 onToggled(!value)
             }
@@ -316,7 +344,7 @@ private fun MyDropdownMenu(
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(40.dp)
+                .height(dimensionResource(id = R.dimen.menu_item_height))
                 .clickable {
                     expanded = !expanded
                 }

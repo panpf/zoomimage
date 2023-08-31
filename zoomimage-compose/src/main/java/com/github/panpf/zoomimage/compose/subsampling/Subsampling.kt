@@ -67,7 +67,7 @@ fun Modifier.subsampling(
                     srcSize = srcRect.size,
                     dstOffset = tileDrawRect.topLeft,
                     dstSize = tileDrawRect.size,
-//                        alpha = 0.5f,
+                    alpha = tileSnapshot.alpha / 255f,
                 )
             }
 

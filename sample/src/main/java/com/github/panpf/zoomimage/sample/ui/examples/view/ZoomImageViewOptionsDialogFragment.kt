@@ -19,9 +19,12 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import android.widget.ImageView.ScaleType.MATRIX
+import androidx.core.view.updateLayoutParams
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
+import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
+import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.RecyclerFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
@@ -42,7 +45,17 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
 
     override fun onViewCreated(binding: RecyclerFragmentBinding, savedInstanceState: Bundle?) {
+        val dataList = buildList()
         binding.recyclerRecycler.apply {
+            val screenHeightPixels = context.getDisplayMetrics().heightPixels
+            val menuItemHeight = context.resources.getDimension(R.dimen.menu_item_height)
+            val dialogMaxHeight = screenHeightPixels * 0.8f
+            if (dataList.size * menuItemHeight > dialogMaxHeight) {
+                updateLayoutParams {
+                    height = dialogMaxHeight.toInt()
+                }
+            }
+
             layoutManager = LinearLayoutManager(context)
             adapter = AssemblyRecyclerAdapter(
                 itemFactoryList = listOf(
@@ -51,7 +64,7 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                     ListSeparatorItemFactory(),
                     MenuDividerItemFactory(),
                 ),
-                initDataList = buildList()
+                initDataList = dataList
             )
         }
     }
@@ -155,6 +168,8 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 )
             )
 
+            add(MenuDivider())
+
             add(
                 SwitchMenuFlow(
                     title = "Limit Offset Within Base Visible Rect",
@@ -196,6 +211,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 SwitchMenuFlow(
                     title = "Show Tile Bounds",
                     data = settingsService.showTileBounds,
+                )
+            )
+            add(
+                SwitchMenuFlow(
+                    title = "Tile Animation",
+                    data = settingsService.tileAnimation,
                 )
             )
 

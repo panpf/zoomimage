@@ -34,7 +34,7 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewFragmentBinding>() {
 
-    private val args by navArgs<CoilZoomImageViewFragmentArgs>()
+    private val args by navArgs<GlideZoomImageViewFragmentArgs>()
 
     override val sketchImageUri: String
         get() = args.imageUri

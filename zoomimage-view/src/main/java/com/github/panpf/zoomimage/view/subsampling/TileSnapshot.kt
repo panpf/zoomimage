@@ -25,4 +25,5 @@ data class TileSnapshot(
     val inSampleSize: Int,
     val bitmap: Bitmap?,
     @State val state: Int,
+    val alpha: Int,
 )

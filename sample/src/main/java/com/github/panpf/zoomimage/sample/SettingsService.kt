@@ -80,6 +80,9 @@ class SettingsService(val context: Context) {
     val showTileBounds by lazy {
         BooleanMmkvData(mmkv, "showTileBounds", false)
     }
+    val tileAnimation by lazy {
+        BooleanMmkvData(mmkv, "tileAnimation", true)
+    }
 
     val scrollBarEnabled by lazy {
         BooleanMmkvData(mmkv, "scrollBarEnabled", true)

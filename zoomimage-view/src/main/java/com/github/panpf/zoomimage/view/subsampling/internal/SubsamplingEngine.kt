@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.view.subsampling.internal
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
@@ -43,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -63,6 +65,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     private var onStoppedChangeListenerList: MutableSet<OnStoppedChangeListener>? = null
     private var onImageLoadRectChangeListenerList: MutableSet<OnImageLoadRectChangeListener>? = null
     private var lastResetTileDecoderJob: Job? = null
+    private var notifyTileSnapshotListJob: Job? = null
     internal var imageKey: String? = null
         private set
 
@@ -150,6 +153,11 @@ class SubsamplingEngine constructor(logger: Logger) {
                 notifyStopChange()
             }
         }
+
+    /**
+     * The animation spec for tile animation
+     */
+    var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
 
 
     /* *********************************** Information properties ******************************* */
@@ -394,15 +402,7 @@ class SubsamplingEngine constructor(logger: Logger) {
             tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
-                tileSnapshotList = manager.tileList.map { tile ->
-                    TileSnapshot(
-                        srcRect = tile.srcRect,
-                        inSampleSize = tile.inSampleSize,
-                        bitmap = tile.bitmap,
-                        state = tile.state,
-                    )
-                }
-                notifyTileChange()
+                updateTileSnapshotList(manager)
             },
             onImageLoadRectChanged = {
                 notifyImageLoadRectChange()
@@ -496,6 +496,36 @@ class SubsamplingEngine constructor(logger: Logger) {
                 delay(60)
                 lastDelayJob = null
                 subsamplingEngine.containerSize = containerSize
+            }
+        }
+    }
+
+    private fun updateTileSnapshotList(manager: TileManager) {
+        if (notifyTileSnapshotListJob?.isActive == true) {
+            return
+        }
+
+        notifyTileSnapshotListJob = coroutineScope.launch {
+            var running = true
+            while (running && isActive) {
+                var allFinished = true
+                tileSnapshotList = manager.tileList.map { tile ->
+                    val animationState = tile.animationState
+                    animationState.calculate(tileAnimationSpec.duration)
+                    allFinished = allFinished && animationState.isFinished()
+                    TileSnapshot(
+                        srcRect = tile.srcRect,
+                        inSampleSize = tile.inSampleSize,
+                        bitmap = tile.bitmap,
+                        state = tile.state,
+                        alpha = animationState.alpha
+                    )
+                }
+                notifyTileChange()
+                running = !allFinished
+                if (running) {
+                    delay(tileAnimationSpec.interval)
+                }
             }
         }
     }

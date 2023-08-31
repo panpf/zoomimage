@@ -32,6 +32,7 @@ import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
@@ -146,7 +147,13 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 settingsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBounds = it
                 }
-                settingsService.pauseWhenTransforming.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.tileAnimation.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    tileAnimationSpec =
+                        if (it) TileAnimationSpec.Default else TileAnimationSpec.None
+                }
+                settingsService.pauseWhenTransforming.stateFlow.collectWithLifecycle(
+                    viewLifecycleOwner
+                ) {
                     pauseWhenTransforming = it
                 }
             }

@@ -33,7 +33,7 @@ import com.squareup.picasso.RequestCreator
 class PicassoZoomImageViewFragment :
     BaseZoomImageViewFragment<PicassoZoomImageViewFragmentBinding>() {
 
-    private val args by navArgs<CoilZoomImageViewFragmentArgs>()
+    private val args by navArgs<PicassoZoomImageViewFragmentArgs>()
 
     override val sketchImageUri: String
         get() = args.imageUri

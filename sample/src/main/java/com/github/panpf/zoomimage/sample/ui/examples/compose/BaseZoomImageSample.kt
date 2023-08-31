@@ -28,6 +28,7 @@ import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
+import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 
 @Composable
@@ -60,6 +61,7 @@ fun BaseZoomImageSample(
     val pauseWhenTransforming by settingsService.pauseWhenTransforming.stateFlow.collectAsState()
     val ignoreExifOrientation by settingsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by settingsService.showTileBounds.stateFlow.collectAsState()
+    val tileAnimation by settingsService.tileAnimation.stateFlow.collectAsState()
     val horizontalLayout by settingsService.horizontalPagerLayout.stateFlow.collectAsState(initial = true)
 
     val scalesCalculator by remember {
@@ -121,6 +123,10 @@ fun BaseZoomImageSample(
         }
         LaunchedEffect(showTileBounds) {
             subsampling.showTileBounds = showTileBounds
+        }
+        LaunchedEffect(tileAnimation) {
+            subsampling.tileAnimationSpec =
+                if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
         }
     }
     val infoDialogState = rememberMyDialogState()

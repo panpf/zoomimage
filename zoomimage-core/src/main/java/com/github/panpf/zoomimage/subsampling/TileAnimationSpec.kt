@@ -14,41 +14,28 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.compose.subsampling
-
-import android.graphics.Bitmap
-import androidx.compose.runtime.Immutable
-import androidx.compose.ui.unit.IntRect
-import com.github.panpf.zoomimage.subsampling.Tile.State
+package com.github.panpf.zoomimage.subsampling
 
 /**
- * A snapshot of the tile
+ * Tile animation configuration
  */
-@Immutable
-data class TileSnapshot(
+data class TileAnimationSpec(
     /**
-     * The region of Tile in the original image
+     * Animation duration
      */
-    val srcRect: IntRect,
+    val duration: Long = DEFAULT_DURATION,
 
     /**
-     * The sampling multiplier at load
+     * Animation refresh interval
      */
-    val inSampleSize: Int,
+    val interval: Long = DEFAULT_INTERVAL
+) {
 
-    /**
-     * The bitmap of the tile
-     */
-    val bitmap: Bitmap?,
+    companion object {
+        const val DEFAULT_DURATION = 200L
+        const val DEFAULT_INTERVAL = 8L
 
-    /**
-     * The state of the tile
-     */
-    @State
-    val state: Int,
-
-    /**
-     * The alpha of the tile
-     */
-    val alpha: Int,
-)
+        val Default = TileAnimationSpec(duration = DEFAULT_DURATION, interval = DEFAULT_INTERVAL)
+        val None = TileAnimationSpec(duration = 0, interval = DEFAULT_INTERVAL)
+    }
+}

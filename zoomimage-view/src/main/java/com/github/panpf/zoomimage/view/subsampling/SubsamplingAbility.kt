@@ -27,6 +27,7 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -131,6 +132,15 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
                 field = value
                 view.invalidate()
             }
+        }
+
+    /**
+     * The animation spec for tile animation
+     */
+    var tileAnimationSpec: TileAnimationSpec
+        get() = engine.tileAnimationSpec
+        set(value) {
+            engine.tileAnimationSpec = value
         }
 
 

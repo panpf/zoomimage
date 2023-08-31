@@ -43,6 +43,7 @@ import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
@@ -58,6 +59,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -89,6 +91,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
     private var lastResetTileDecoderJob: Job? = null
+    private var notifyTileSnapshotListJob: Job? = null
     private val tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
     private val tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
     private var lifecycle: Lifecycle? = null
@@ -140,6 +143,11 @@ class SubsamplingState(logger: Logger) : RememberObserver {
      * If true, the bounds of each tile is displayed
      */
     var showTileBounds: Boolean by mutableStateOf(false)
+
+    /**
+     * The animation spec for tile animation
+     */
+    var tileAnimationSpec: TileAnimationSpec by mutableStateOf(TileAnimationSpec.Default)
 
 
     /* *********************************** Information properties ******************************* */
@@ -358,14 +366,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
-                tileSnapshotList = manager.tileList.map { tile ->
-                    TileSnapshot(
-                        tile.srcRect.toPlatform(),
-                        tile.inSampleSize,
-                        tile.bitmap,
-                        tile.state
-                    )
-                }
+                updateTileSnapshotList(manager)
             },
             onImageLoadRectChanged = {
                 imageLoadRect = it.imageLoadRect.toPlatform()
@@ -457,6 +458,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         cleanTileManager("destroy:$caller")
         cleanTileDecoder("destroy:$caller")
         unregisterLifecycleObserver()
+        notifyTileSnapshotListJob?.cancel("destroy:$caller")
+        notifyTileSnapshotListJob = null
     }
 
     private fun resetStopped(caller: String) {
@@ -485,6 +488,35 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 subsamplingState.resetStopped("LifecycleStateChanged:ON_START")
             } else if (event == ON_STOP) {
                 subsamplingState.resetStopped("LifecycleStateChanged:ON_STOP")
+            }
+        }
+    }
+
+    private fun updateTileSnapshotList(manager: TileManager) {
+        if (notifyTileSnapshotListJob?.isActive == true) {
+            return
+        }
+
+        notifyTileSnapshotListJob = coroutineScope.launch {
+            var running = true
+            while (running && isActive) {
+                var allFinished = true
+                tileSnapshotList = manager.tileList.map { tile ->
+                    val animationState = tile.animationState
+                    animationState.calculate(tileAnimationSpec.duration)
+                    allFinished = allFinished && animationState.isFinished()
+                    TileSnapshot(
+                        srcRect = tile.srcRect.toPlatform(),
+                        inSampleSize = tile.inSampleSize,
+                        bitmap = tile.bitmap,
+                        state = tile.state,
+                        alpha = animationState.alpha
+                    )
+                }
+                running = !allFinished
+                if (running) {
+                    delay(tileAnimationSpec.interval)
+                }
             }
         }
     }
