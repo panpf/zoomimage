@@ -269,7 +269,7 @@ class TileManager constructor(
     private fun loadTile(tile: Tile): Boolean {
         requiredMainThread()
 
-        if (tile.tileBitmap != null) {
+        if (tile.bitmap != null) {
             logger.d {
                 "loadTile. skipped, loaded. $tile. '${imageSource.key}'"
             }
@@ -288,7 +288,7 @@ class TileManager constructor(
             "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${imageInfo.exifOrientation}_${tile.inSampleSize}"
         val cachedValue = tileMemoryCacheHelper.get(memoryCacheKey)
         if (cachedValue != null) {
-            tile.tileBitmap = cachedValue
+            tile.setTileBitmap(cachedValue, fromCache = true)
             tile.state = Tile.STATE_LOADED
             logger.d { "loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
             notifyTileChanged()
@@ -316,7 +316,7 @@ class TileManager constructor(
                         imageInfo = imageInfo,
                         tileBitmapPoolHelper = tileBitmapPoolHelper,
                     )
-                    tile.tileBitmap = newCountBitmap
+                    tile.setTileBitmap(newCountBitmap, fromCache = false)
                     tile.state = Tile.STATE_LOADED
                     logger.d { "loadTile. successful. $tile. '${imageSource.key}'" }
                 }
@@ -349,12 +349,10 @@ class TileManager constructor(
             tile.loadJob = null
         }
 
-        val bitmap = tile.tileBitmap
+        val bitmap = tile.bitmap
         if (bitmap != null) {
-            logger.d {
-                "freeTile. $tile. '${imageSource.key}'"
-            }
-            tile.tileBitmap = null
+            logger.d { "freeTile. $tile. '${imageSource.key}'" }
+            tile.setTileBitmap(null, fromCache = false)
         }
 
         if (nowNotifyTileChanged) {

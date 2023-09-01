@@ -40,17 +40,7 @@ class Tile constructor(
 ) {
 
     internal var loadJob: Job? = null
-    internal var tileBitmap: TileBitmap? = null
-        set(value) {
-            field?.setIsDisplayed(false)
-            field = value
-            value?.setIsDisplayed(true)
-            if (value != null) {
-                animationState.restart()
-            } else {
-                animationState.stop()
-            }
-        }
+    private var tileBitmap: TileBitmap? = null
 
     /**
      * The bitmap of the tile
@@ -66,6 +56,18 @@ class Tile constructor(
 
     val animationState = AnimationState()
 
+    fun setTileBitmap(tileBitmap: TileBitmap?, fromCache: Boolean) {
+        val oldTileBitmap = this.tileBitmap
+        if (tileBitmap == oldTileBitmap) return
+        oldTileBitmap?.setIsDisplayed(false)
+        this.tileBitmap = tileBitmap
+        tileBitmap?.setIsDisplayed(true)
+        if (tileBitmap != null && !fromCache) {
+            animationState.restart()
+        } else {
+            animationState.stop()
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
