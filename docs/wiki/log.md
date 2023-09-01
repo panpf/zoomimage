@@ -13,10 +13,10 @@
 
 ZoomImage generates some logs during its run, which can help you find the problem when something
 goes wrong and help you understand it
-How zoomimage works.
+How ZoomImage works.
 <br>-----------</br>
-zoomimage 在运行的过程中会产生一些日志，这些日志可以在出现问题时帮你查找问题所在，也可以帮你理解
-zoomimage 的运行机制。
+ZoomImage 在运行的过程中会产生一些日志，这些日志可以在出现问题时帮你查找问题所在，也可以帮你理解
+ZoomImage 的运行机制。
 
 ### Logger
 
@@ -29,7 +29,7 @@ The [Logger] class encapsulates the print, level control, and output pipelines o
 The [Logger].level property controls the print level of the log, the default is INFO, you can modify
 it to expand the output range of the log
 <br>-----------</br>
-[Logger].level 属性来控制日志的打印级别，默认是 INFO，你可以修改它来扩大日志的输出范围
+[Logger].level 属性用来控制日志的打印级别，默认是 INFO，你可以修改它来扩大日志的输出范围
 
 example/示例：
 
@@ -52,8 +52,8 @@ The [Logger].pipeline property controls the output pipeline of the log, and the 
 AndroidLogPipeline to output to Android
 console, you can modify it to output logs elsewhere
 <br>-----------</br>
-[Logger].pipeline 属性来控制日志的输出管道，默认是 AndroidLogPipeline 表示输出到 Android
-的控制台，你可以修改它来将日志的输出到别的地方
+[Logger].pipeline 属性用来控制日志的输出管道，默认是 AndroidLogPipeline 表示输出到 Android
+的控制台，你可以修改它来将日志输出到磁盘等别的地方
 
 example/示例：
 

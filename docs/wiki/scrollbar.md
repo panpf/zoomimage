@@ -11,11 +11,10 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
 
-ZoomImage supports displaying scroll bars, which can clearly tell the user where the current scroll
-is and how far to reach the bottom or top. The scroll bar is automatically hidden after 800
-milliseconds of no action and automatically appears when the user takes action again
+ZoomImage supports displaying scroll bars that clearly tell the user where they are and how far they have reached the bottom or top. The scroll bar will have no action
+Auto-hide after 800 milliseconds and automatically displayed when the user takes action again
 <br>-----------</br>
-zoomimage 支持显示滚动条，可以明确的告知用户当前的滚动位置，还有多远距离到达底部或顶部。滚动条会在无操作
+ZoomImage 支持显示滚动条，滚动条可以明确的告知用户当前的位置，还有多远距离到达底部或顶部。滚动条会在无操作
 800 毫秒后自动隐藏，当用户再次操作时会自动显示
 
 ### Configure the scroll bar/配置滚动条
@@ -36,20 +35,23 @@ zoomimage 支持显示滚动条，可以明确的告知用户当前的滚动位�
 * margin: Dp = 6.dp。
     * The distance of the scroll bar from the edge, which defaults to 6 dp.
       <br>-----------</br>
-    * 滚动条距离边缘的距离，默认为 6 dp。
+    * 滚动条到边缘的距离，默认为 6 dp。
 
 example/示例：
 
 ```kotlin
+val scrollBar = remember {
+    ScrollBarSpec(
+        color = androidx.compose.ui.graphics.Color.Red,
+        size = 6.dp,
+        margin = 12.dp,
+    )
+}
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    scrollBar = ScrollBarSpec(
-        color = androidx.compose.ui.graphics.Color.Red,
-        size = 6.dp,
-        margin = 12.dp,
-    ),
+    scrollBar = scrollBar,
 )
 ```
 
@@ -57,7 +59,7 @@ SketchZoomAsyncImage(
 
 ZoomImage displays the scroll bar by default, and you can turn it off
 <br>-----------</br>
-zoomimage 默认显示滚动条，你可以关闭它
+ZoomImage 默认显示滚动条，你可以关闭它
 
 example/示例：
 

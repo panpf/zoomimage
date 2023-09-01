@@ -14,20 +14,20 @@
 ZoomImage supports multiple zoom methods such as double-click zoom, gesture zoom, scale() and other
 zoom methods to scale the image.
 <br>-----------</br>
-zoomimage 支持双击缩放，手势缩放，scale() 等多种缩放方式来缩放图像。
+ZoomImage 支持双击缩放，手势缩放，scale() 等多种方式来缩放图像。
 
 ### minScale, mediumScale, maxScale
 
-The zoomimage is always controlled by three parameters in the process of scaling: minScale,
+The ZoomImage is always controlled by three parameters in the process of scaling: minScale,
 mediumScale, and maxScale:
 <br>-----------</br>
-zoomimage 在缩放的过程中始终受到 minScale、mediumScale、maxScale 三个参数控制：
+ZoomImage 在缩放的过程中始终受到 minScale、mediumScale、maxScale 三个参数控制：
 
 * minScale：
     * The minimum zoom multiplier, which limits the minimum value of ZoomImage during scaling, is
       calculated as:
       <br>-----------</br>
-    * 最小缩放倍数，用于限制 zoomimage 在缩放过程中的最小值，计算公式为：
+    * 最小缩放倍数，用于限制 ZoomImage 在缩放过程中的最小值，计算公式为：
         ```kotlin
         ContentScale.computeScaleFactor(srcSize, dstSize).scaleX
         ```
@@ -37,17 +37,17 @@ zoomimage 在缩放的过程中始终受到 minScale、mediumScale、maxScale �
       <br>-----------</br>
     * 中间缩放倍数，专门用于双击缩放，取值受 scalesCalculator 参数控制
 * maxScale：
-    * The maximum zoom multiplier is used to limit the maximum value of zoomimage during scaling,
+    * The maximum zoom multiplier is used to limit the maximum value of ZoomImage during scaling,
       and the value is controlled by the scalesCalculator parameter
       <br>-----------</br>
-    * 最大缩放倍数，用于限制 zoomimage 在缩放过程中的最大值，取值受 scalesCalculator 参数控制
+    * 最大缩放倍数，用于限制 ZoomImage 在缩放过程中的最大值，取值受 scalesCalculator 参数控制
 
 #### ScalesCalculator
 
-[ScalesCalculator] is designed to calculate mediumScale and maxScale, and zoomimage has two
+[ScalesCalculator] is designed to calculate mediumScale and maxScale, and ZoomImage has two
 built-in [ScalesCalculator]:
 <br>-----------</br>
-[ScalesCalculator] 专门用来计算 mediumScale 和 maxScale，zoomimage 有两个内置的 [ScalesCalculator]：
+[ScalesCalculator] 专门用来计算 mediumScale 和 maxScale，ZoomImage 有两个内置的 [ScalesCalculator]：
 
 * [ScalesCalculator].Dynamic：
     * maxScale is always `mediumScale * multiple`, mediumScale is dynamically calculated according
@@ -116,7 +116,7 @@ val state: ZoomState by rememberZoomState()
 
 state.zoomable.scalesCalculator = ScalesCalculator.Fixed
 // or
-val myScalesCalculator by remember { mutableStateof(MyScalesCalculator()) }
+val myScalesCalculator = remember { MyScalesCalculator() }
 state.zoomable.scalesCalculator = myScalesCalculator
 
 SketchZoomAsyncImage(
@@ -129,10 +129,10 @@ SketchZoomAsyncImage(
 
 ### Double-click Scale/双击缩放
 
-When you double-click the image, zoomimage zooms to the next zoom factor, always looping between
+When you double-click the image, ZoomImage zooms to the next zoom factor, always looping between
 minScale and mediumScale by default
 <br>-----------</br>
-双击图像时 zoomimage 会缩放到下一个缩放倍数，默认总是在 minScale 和 mediumScale 之间循环
+双击图像时 ZoomImage 会缩放到下一个缩放倍数，默认总是在 minScale 和 mediumScale 之间循环
 
 If you want to loop between minScale, mediumScale and maxScale, you can change threeStepScale to
 true
@@ -158,7 +158,7 @@ Double-clicking to zoom invokes ZoomImage's switchScale() method, or you can cal
 needed
 The method toggles the zoom factor, which has two parameters:
 <br>-----------</br>
-双击缩放调用的是 zoomimage 的 switchScale() 方法，你也可以在需要的时候调用 switchScale()
+双击缩放调用的是 ZoomImage 的 switchScale() 方法，你也可以在需要的时候调用 switchScale()
 方法来切换缩放倍数，它有两个参数：
 
 * centroidContentPoint: IntOffset = contentVisibleRect.center。
@@ -216,13 +216,13 @@ state.zoomable.getNextStepScale()
 ZoomImage scales the image when it detects a pinch-pinch or stretch gesture and limits the scale
 factor between minScale and maxScale
 <br>-----------</br>
-zoomimage 在检测到双指捏合或撑开手势时会缩放图像，并且会限制缩放倍数在 minScale 和 maxScale 之间
+ZoomImage 在检测到双指捏合或撑开手势时会缩放图像，并且会限制缩放倍数在 minScale 和 maxScale 之间
 
-If the minScale or maxScale is exceeded when the gesture scale, the zoomimage will have a rubber
+If the minScale or maxScale is exceeded when the gesture scale, the ZoomImage will have a rubber
 band-like damping effect, and will rebound when released
 minScale or maxScale, if this effect is not needed, you can set rubberBandScale to false
 <br>-----------</br>
-在手势缩放时如果超过了 minScale 或 maxScale，zoomimage 会有类似橡皮筋的阻尼效果，松手后会回弹到
+在手势缩放时如果超过了 minScale 或 maxScale，ZoomImage 会有类似橡皮筋的阻尼效果，松手后会回弹到
 minScale 或 maxScale，如果不需要这个效果，可以将 rubberBandScale 设置为 false
 
 example/示例：
@@ -245,7 +245,7 @@ SketchZoomAsyncImage(
 ZoomImage provides the scale() method to scale the image to a specified multiple, which has three
 parameters:
 <br>-----------</br>
-zoomimage 提供了 scale() 方法用来缩放图像到指定的倍数，它有三个参数：
+ZoomImage 提供了 scale() 方法用来缩放图像到指定的倍数，它有三个参数：
 
 * targetScale: Float。
     * Target scale multiple
@@ -303,10 +303,10 @@ Button(
 
 ### Zoom Animation/缩放动画
 
-zoomimage provides animationSpec parameters to modify the duration, Ease, and initial speed of the
+ZoomImage provides animationSpec parameters to modify the duration, Ease, and initial speed of the
 zoom animation
 <br>-----------</br>
-zoomimage 提供了 animationSpec 参数来修改缩放动画的时长、Easing 以及初始速度
+ZoomImage 提供了 animationSpec 参数用来修改缩放动画的时长、Easing 以及初始速度
 
 example/示例：
 

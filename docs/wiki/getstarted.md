@@ -13,10 +13,10 @@
 
 ### Components/组件
 
-The zoomimage library includes several components to choose from, so you can choose the right one
+The ZoomImage library includes several components to choose from, so you can choose the right one
 for your needs.
 <br>-----------</br>
-zoomimage 库包含了多个组件可供选择，你可以根据自己的需求选择合适的组件。
+ZoomImage 库包含了多个组件可供选择，你可以根据自己的需求选择合适的组件。
 
 *Different components need to import different dependencies, please refer to [README] to import the
 corresponding dependencies*
@@ -235,11 +235,11 @@ and other functions, please refer to the documentation at the end of the page*
 
 ### contentScale 和 alignment
 
-zoomimage supports all [ContentScale] and [Alignment], because the compose version and the view
+ZoomImage supports all [ContentScale] and [Alignment], because the compose version and the view
 version use the same set of logic code, view The version of the component supports [ContentScale]
 and [Alignment] in addition to [ScaleType]
 <br>-----------</br>
-zoomimage 支持所有的 [ContentScale] 和 [Alignment]，得益于 compose 版本和 view 版本使用的是同一套逻辑代码，view
+ZoomImage 支持所有的 [ContentScale] 和 [Alignment]，得益于 compose 版本和 view 版本使用的是同一套逻辑代码，view
 版本的组件在支持 [ScaleType] 之外也支持 [ContentScale] 和 [Alignment]
 
 example/示例：

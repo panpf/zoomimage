@@ -18,11 +18,11 @@ then the size of the image will become smaller, but the content of the image wil
 有一些图片的尺寸巨大，如果把它们完整的读到内存肯定会让 App
 因内存不足而崩溃，图片加载框架通常会采样后再加载，这时图片的尺寸会变小，但是图片的内容也会变的模糊不清
 
-Therefore, it is necessary that zoomimage can support subsampling when zooming, and the user can
+Therefore, it is necessary that ZoomImage can support subsampling when zooming, and the user can
 subsampling wherever he slides, and then display the clear original image fragments on the screen,
 so that it can display a clear picture when zooming without crashing the app
 <br>-----------</br>
-所以就需要 zoomimage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图图块显示到屏幕上，
+所以就需要 ZoomImage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图图块显示到屏幕上，
 这样就能够在缩放时既显示清晰的图片，又不会让 App 崩溃
 
 ### Prefix/前置条件
@@ -83,11 +83,11 @@ zoomImageView.subsamplingAbility.setImageSource(imageSource)
 
 ### Exif Orientation
 
-By default, zoomimage will read the Exif Orientation information of the image, and then rotate the
-image, if you do not want zoomimage to read the Exif Orientation information, you can modify the
+By default, ZoomImage will read the Exif Orientation information of the image, and then rotate the
+image, if you do not want ZoomImage to read the Exif Orientation information, you can modify the
 ignoreExifOrientation parameter to true
 <br>-----------</br>
-zoomimage 默认会读取图片的 Exif Orientation 信息，然后旋转图片，如果你不想让 zoomimage 读取 Exif
+ZoomImage 默认会读取图片的 Exif Orientation 信息，然后旋转图片，如果你不想让 ZoomImage 读取 Exif
 Orientation 信息，可以修改 ignoreExifOrientation 参数为 true
 
 example/示例：
@@ -107,11 +107,11 @@ SketchZoomAsyncImage(
 
 ### Tile Animation/图块动画
 
-By default, zoomimage will read the Exif Orientation information of the image, and then rotate the
-image, if you do not want zoomimage to read the Exif Orientation information, you can modify the
+By default, ZoomImage will read the Exif Orientation information of the image, and then rotate the
+image, if you do not want ZoomImage to read the Exif Orientation information, you can modify the
 ignoreExifOrientation parameter to true
 <br>-----------</br>
-zoomimage 在显示 Tile 的时候支持透明度动画，默认开启动画，持续时间 200 毫秒，刷新间隔 8 毫秒，你可以通过 tileAnimationSpec 参数来关闭动画或修改动画的持续时间和刷新间隔
+ZoomImage 在显示 Tile 的时候支持透明度动画，默认开启动画，持续时间 200 毫秒，刷新间隔 8 毫秒，你可以通过 tileAnimationSpec 参数来关闭动画或修改动画的持续时间和刷新间隔
 
 example/示例：
 
@@ -187,10 +187,10 @@ SketchZoomAsyncImage(
 
 #### Lifecycle
 
-By default, zoomimage automatically fetches the most recent Lifecycle and listens to its state,
+By default, ZoomImage automatically fetches the most recent Lifecycle and listens to its state,
 pausing or resuming subsampling at the Lifecycle stop or start
 <br>-----------</br>
-zoomimage 默认会自动获取最近的 Lifecycle 然后监听它的状态，在 Lifecycle stop 或 start 时停止或重启子采样
+ZoomImage 默认会自动获取最近的 Lifecycle 然后监听它的状态，在 Lifecycle stop 或 start 时停止或重启子采样
 
 If it is in a fragment, it will automatically get the Fragment's Lifecycle, no need to actively set
 it, compose and view can be used. Behind the dependence

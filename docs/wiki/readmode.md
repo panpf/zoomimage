@@ -15,14 +15,14 @@ For long text images, their height is usually very large, if the initial state s
 then the text content in the image is not clear, the user must double-click to zoom in and slide to
 the start position to start reading
 <br>-----------</br>
-对于文字类长图片，他们的高度通常非常大，如果初始状态显示全貌，那么图片里的文字内容什么也看不清楚，用户必须双击一下放大在滑动到开始位置才能开始阅读
+对于文字类长图片，他们的高度通常非常大，如果初始状态显示全貌，那么图片里的文字内容什么也看不清楚，用户必须双击一下放大再滑动到开始位置才能开始阅读
 
-For such images, zoomimage provides a reading mode to fill the screen at the initial state of the
+For such images, ZoomImage provides a reading mode to fill the screen at the initial state of the
 image and locate it to the beginning position, similar to [ContentScale]
 . Crop plus [alignment]. combination of TopStart, so that users can directly start reading the
 content of the long text image
 <br>-----------</br>
-针对这样的图片 zoomimage 提供了阅读模式让图片初始状态时就充满屏幕，并定位到开始位置，
+针对这样的图片 ZoomImage 提供了阅读模式让图片初始状态时就充满屏幕，并定位到开始位置，
 类似 [ContentScale].Crop 加 [Alignment] .TopStart 的组合，这样用户就能直接开始阅读文字长图的内容了
 
 ### Enabled Read Mode/开启阅读模式

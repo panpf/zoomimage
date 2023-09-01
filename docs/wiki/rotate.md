@@ -16,7 +16,7 @@
 ZoomImage provides a modified rotate() method to rotate the image to a specified angle, which has
 one parameter:
 <br>-----------</br>
-zoomimage 提供改了 rotate() 方法用来旋转图像到指定角度，它有一个参数：
+ZoomImage 提供了 rotate() 方法用来旋转图像到指定角度，它有一个参数：
 
 * targetRotation: Int。
     * Target rotation angle, which can only be a multiple of 90, such as 0, 90, 180, 270, 360, etc

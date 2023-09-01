@@ -14,14 +14,14 @@
 ZoomImage supports one-finger drag, two-finger drag, inertial swipe, and the offset() method to move
 the image.
 <br>-----------</br>
-zoomimage 支持单指拖动、双指拖动、惯性滑动，以及 offset() 方法来移动图像。
+ZoomImage 支持单指拖动、双指拖动、惯性滑动，以及 offset() 方法来移动图像。
 
 ### offset()
 
 ZoomImage provides a modified offset() method to move the image to a specified position, which has
 two parameters:
 <br>-----------</br>
-zoomimage 提供改了 offset() 方法用来移动图像到指定位置，它有两个参数：
+ZoomImage 提供了 offset() 方法用来移动图像到指定位置，它有两个参数：
 
 * targetOffset: Offset。
     * The target offset, with the offset origin being the upper-left corner of the component
@@ -75,15 +75,15 @@ set [ContentScale], for example, if you set [ContentScale] to Crop and [Alignmen
 only the middle part of the image is displayed by default, and then you can also drag with one or
 two fingers to view the entire content of the image
 <br>-----------</br>
-zoomimage 默认不管你设置的是什么 [ContentScale]
+ZoomImage 默认不管你设置的是什么 [ContentScale]
 都可以拖动查看图像的全部内容，例如你设置了 [ContentScale] 为 Crop，[Alignment] 为
 Center，那么默认只显示图像中间的部分，然后你还可以单指或双指拖动来查看图像的全部内容
 
-If this is not what you want, and you want the image to be moved only within the area restricted
+If you want the image to be moved only within the area restricted
 by [ContentScale] and [Alignment], and not the entire content, you can modify the
 limitOffsetWithinBaseVisibleRect parameter to true to achieve this
 <br>-----------</br>
-如果这不是你想要的，你希望图像只能在 [ContentScale] 和 [Alignment] 所限制的区域内移动，不能查看全部内容，这时你可以修改
+如果你希望图像只能在 [ContentScale] 和 [Alignment] 所限制的区域内移动，不能查看全部内容，这时你可以修改
 limitOffsetWithinBaseVisibleRect 参数为 true 来达到此目的
 
 example/示例：
