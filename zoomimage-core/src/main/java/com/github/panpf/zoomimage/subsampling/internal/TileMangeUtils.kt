@@ -119,10 +119,13 @@ fun canUseSubsampling(imageInfo: ImageInfo, drawableSize: IntSizeCompat): Int {
     if (drawableSize.width >= imageInfo.width && drawableSize.height >= imageInfo.height) {
         return -1
     }
-    if (!canUseSubsamplingByAspectRatio(
-            imageInfo.width, imageInfo.height, drawableSize.width, drawableSize.height
-        )
-    ) {
+    val canUseSubsamplingByAspectRatio = canUseSubsamplingByAspectRatio(
+        imageWidth = imageInfo.width,
+        imageHeight = imageInfo.height,
+        drawableWidth = drawableSize.width,
+        drawableHeight = drawableSize.height
+    )
+    if (!canUseSubsamplingByAspectRatio) {
         return -2
     }
     if (!isSupportBitmapRegionDecoder(imageInfo.mimeType)) {

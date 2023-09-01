@@ -33,13 +33,12 @@ fun ZoomImageInfo(
     subsamplingState: SubsamplingState,
 ) {
     val baseInfo = remember(zoomableState.transform) {
-        val exifOrientationName = subsamplingState.imageInfo
-            ?.exifOrientation?.let { exifOrientationName(it) }
+        val imageInfo = subsamplingState.imageInfo
         """
             containerSize: ${zoomableState.containerSize.let { "${it.width}x${it.height}" }}
             contentSize: ${zoomableState.contentSize.let { "${it.width}x${it.height}" }}
-            contentOriginSize: ${zoomableState.contentOriginSize.let { "${it.width}x${it.height}" }}
-            exifOrientation: $exifOrientationName
+            contentOriginSize: ${imageInfo?.let { "${it.width}x${it.height}" }}
+            exifOrientation: ${imageInfo?.exifOrientation?.let { exifOrientationName(it) }}
             rotation: ${zoomableState.transform.rotation.roundToInt()}
         """.trimIndent()
     }

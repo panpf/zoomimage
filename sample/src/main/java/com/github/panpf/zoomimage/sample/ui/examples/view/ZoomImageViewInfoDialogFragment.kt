@@ -54,13 +54,12 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
             val zoomAbility = zoomImageView.zoomAbility
             val subsamplingAbility = zoomImageView.subsamplingAbility
 
-            val exifOrientationName = subsamplingAbility.imageInfo
-                ?.exifOrientation?.let { exifOrientationName(it) }
+            val imageInfo = subsamplingAbility.imageInfo
             val baseInfo = """
                 containerSize: ${zoomAbility.containerSize.let { "${it.width}x${it.height}" }}
                 contentSize: ${zoomAbility.contentSize.let { "${it.width}x${it.height}" }}
-                contentOriginSize: ${zoomAbility.contentOriginSize.let { "${it.width}x${it.height}" }}
-                exifOrientation: $exifOrientationName
+                contentOriginSize: ${imageInfo?.let { "${it.width}x${it.height}" }}
+                exifOrientation: ${imageInfo?.exifOrientation?.let { exifOrientationName(it) }}
                 rotation: ${zoomAbility.transform.rotation.roundToInt()}
             """.trimIndent()
 
