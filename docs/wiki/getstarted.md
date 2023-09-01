@@ -279,7 +279,7 @@ sketchZoomImageView.zoomAbility.registerOnViewLongPressListener { view: android.
     // Long press event,长按事件        
 }
 
-sketchZoomImageView.subsumplingAbility.registerOnTileChangedListener {
+sketchZoomImageView.subsumplingAbility.registerOnTileChangeListener {
     // tileSnapshotList changed
 }
 
@@ -370,7 +370,7 @@ sketchZoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
 * [SubsamplingState].tileSnapshotList: List<TileSnapshot>。
     * A snapshot of the tile list
       <br>-----------</br>
-    * 当前碎片的快照列表
+    * 当前图块的快照列表
 * [SubsamplingState].imageLoadRect: IntRect。
     * The image load rect
       <br>-----------</br>

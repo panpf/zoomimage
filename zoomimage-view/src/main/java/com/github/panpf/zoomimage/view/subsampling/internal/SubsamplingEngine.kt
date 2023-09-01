@@ -206,7 +206,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     /**
      * Register a [tileSnapshotList] property change listener
      */
-    fun registerOnTileChangedListener(listener: OnTileChangeListener) {
+    fun registerOnTileChangeListener(listener: OnTileChangeListener) {
         this.onTileChangeListenerList = (onTileChangeListenerList ?: LinkedHashSet()).apply {
             add(listener)
         }
@@ -215,7 +215,7 @@ class SubsamplingEngine constructor(logger: Logger) {
     /**
      * Unregister a [tileSnapshotList] property change listener
      */
-    fun unregisterOnTileChangedListener(listener: OnTileChangeListener): Boolean {
+    fun unregisterOnTileChangeListener(listener: OnTileChangeListener): Boolean {
         return onTileChangeListenerList?.remove(listener) == true
     }
 

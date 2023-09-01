@@ -372,7 +372,7 @@ example/示例：
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.subsumplingAbility.registerOnTileChangedListener {
+sketchZoomImageView.subsumplingAbility.registerOnTileChangeListener {
     // tileSnapshotList changed
 }
 

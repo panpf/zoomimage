@@ -146,7 +146,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         zoomView.zoomAbility.registerOnTransformChangeListener {
             invalidate()
         }
-        zoomView.subsamplingAbility.registerOnTileChangedListener {
+        zoomView.subsamplingAbility.registerOnTileChangeListener {
             invalidate()
         }
     }
