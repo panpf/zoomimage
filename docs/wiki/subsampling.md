@@ -22,7 +22,7 @@ Therefore, it is necessary that zoomimage can support subsampling when zooming, 
 subsampling wherever he slides, and then display the clear original image fragments on the screen,
 so that it can display a clear picture when zooming without crashing the app
 <br>-----------</br>
-所以就需要 zoomimage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图碎片显示到屏幕上，
+所以就需要 zoomimage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图图块显示到屏幕上，
 这样就能够在缩放时既显示清晰的图片，又不会让 App 崩溃
 
 ### Prefix/前置条件
@@ -105,31 +105,7 @@ SketchZoomAsyncImage(
 )
 ```
 
-### Exif Orientation
-
-By default, zoomimage will read the Exif Orientation information of the image, and then rotate the
-image, if you do not want zoomimage to read the Exif Orientation information, you can modify the
-ignoreExifOrientation parameter to true
-<br>-----------</br>
-zoomimage 默认会读取图片的 Exif Orientation 信息，然后旋转图片，如果你不想让 zoomimage 读取 Exif
-Orientation 信息，可以修改 ignoreExifOrientation 参数为 true
-
-example/示例：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-state.subsampling.ignoreExifOrientation = true
-
-SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
-
-### Tile Animation/碎片动画
+### Tile Animation/图块动画
 
 By default, zoomimage will read the Exif Orientation information of the image, and then rotate the
 image, if you do not want zoomimage to read the Exif Orientation information, you can modify the
@@ -166,8 +142,8 @@ This can avoid stuttering caused by frequent tile loading on devices with poor p
 affect the smoothness of the animation, and automatically resume loading tiles after continuous
 transformations, this feature is turned off by default, you can turn it on
 <br>-----------</br>
-ZoomImage 支持在连续变换时暂停加载磁贴，例如手势缩放中、动画中、fling 等，
-这样可以在性能较差的设备上避免因频繁加载磁贴导致卡顿影响动画的流畅性，连续变换结束后自动恢复加载磁贴，此功能默认关闭，你可以开启它
+ZoomImage 支持在连续变换时暂停加载图块，例如手势缩放中、动画中、fling 等，
+这样可以在性能较差的设备上避免因频繁加载图块导致卡顿影响动画的流畅性，连续变换结束后自动恢复加载图块，此功能默认关闭，你可以开启它
 
 example/示例：
 
@@ -189,7 +165,7 @@ SketchZoomAsyncImage(
 ZoomImage supports stopping subsampling, which free the loaded tile after stopping and no new tiles
 are loaded, and automatically reloads the tiles after restarting
 <br>-----------</br>
-ZoomImage 支持停止子采样，停止后会释放已加载的磁贴并不再加载新磁贴，重启后自动重新加载磁贴
+ZoomImage 支持停止子采样，停止后会释放已加载的图块并不再加载新图块，重启后自动重新加载图块
 
 example/示例：
 
@@ -198,7 +174,7 @@ val state: ZoomState by rememberZoomState()
 
 // stop
 state.subsampling.stopped = true
-// start
+// restart
 state.subsampling.stopped = false
 
 SketchZoomAsyncImage(
@@ -237,7 +213,9 @@ example/示例：
 val state: ZoomState by rememberZoomState()
 
 val lifecycle: Lifecycle = ...
-state.subsampling.setLifecycle(lifecycle)
+LaunchedEffect(lifecycle) {
+    state.subsampling.setLifecycle(lifecycle)
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -308,7 +286,7 @@ The subsampling feature supports the reuse of Bitmaps, and new fragments can be 
 existing Bitmaps, which reduces the creation of Bitmaps, reduces memory jitter, and improves
 performance
 <br>-----------</br>
-子采样功能支持重用 Bitmap，可以使用已经存在的 Bitmap 解码新的碎片，这样可以减少创建 Bitmap，减少内存抖动，提高性能
+子采样功能支持重用 Bitmap，可以使用已经存在的 Bitmap 解码新的图块，这样可以减少创建 Bitmap，减少内存抖动，提高性能
 
 Because only Sketch and Glide have BitmapPool, only components that integrate these two image
 loading libraries can be reused without any additional work
@@ -317,8 +295,7 @@ tileBitmapPool property to use memory reuse
 Bitmap functionality
 <br>-----------</br>
 因为只有 Sketch 和 Glide 有 BitmapPool，所以只有集成了这两个图片加载库的组件无需任何额外的工作即可使用重用
-Bitmap 功能，其它组件需要先实现自己的 [TileBitmapPool] 然后设置 tileBitmapPool 属性才能使用内存重用
-Bitmap 功能
+Bitmap 功能，其它组件需要先实现自己的 [TileBitmapPool] 然后设置 tileBitmapPool 属性才能使用重用 Bitmap 功能
 
 example/示例：
 
@@ -339,7 +316,7 @@ After setting the tileBitmapPool property, the memory reuse Bitmap function is t
 also be passed without modifying the tileBitmapPool property
 The disallowReuseBitmap property controls the reuse of Bitmap
 <br>-----------</br>
-设置了 tileBitmapPool 属性后就开启了内存重用 Bitmap 功能，还可以在不修改 tileBitmapPool 属性的情况下通过
+设置了 tileBitmapPool 属性后就开启了重用 Bitmap 功能，还可以在不修改 tileBitmapPool 属性的情况下通过
 disallowReuseBitmap 属性控制重用 Bitmap
 
 example/示例：
@@ -402,7 +379,7 @@ sketchZoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
 * [SubsamplingState].tileSnapshotList: List<TileSnapshot>。
     * A snapshot of the tile list
       <br>-----------</br>
-    * 当前碎片的快照列表
+    * 当前图块的快照列表
 * [SubsamplingState].imageLoadRect: IntRect。
     * The image load rect
       <br>-----------</br>
