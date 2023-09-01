@@ -47,8 +47,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
     abstract val sketchImageUri: String
 
-//    private val linearScaleViewModel by viewModels<LinearScaleViewModel>()
-
     abstract fun getZoomImageView(binding: VIEW_BINDING): ZoomImageView
 
     abstract fun getCommonBinding(binding: VIEW_BINDING): ZoomImageViewCommonFragmentBinding
