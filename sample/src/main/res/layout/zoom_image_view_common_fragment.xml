@@ -100,6 +100,12 @@
             android:layout_marginBottom="10dp"
             android:orientation="vertical">
 
+            <com.github.panpf.zoomimage.sample.ui.widget.view.MoveKeyboardView
+                android:id="@+id/zoomImageViewMoveKeyboard"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal" />
+
             <com.google.android.material.slider.Slider
                 android:id="@+id/zoomImageViewLinearScaleSlider"
                 android:layout_width="match_parent"

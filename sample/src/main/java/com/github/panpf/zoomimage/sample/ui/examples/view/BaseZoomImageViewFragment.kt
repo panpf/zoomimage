@@ -201,35 +201,47 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         }
 
         common.zoomImageViewLinearScaleSlider.apply {
-            var changing = false
-            zoomImageView.zoomAbility.registerOnResetListener {
-                if (changing || zoomImageView.zoomAbility.minScale >= zoomImageView.zoomAbility.maxScale) {
-                    return@registerOnResetListener
+            val updateRange: () -> Unit = {
+                if (zoomImageView.zoomAbility.minScale < zoomImageView.zoomAbility.maxScale) {
+                    valueFrom = zoomImageView.zoomAbility.minScale
+                    valueTo = zoomImageView.zoomAbility.maxScale
+                    stepSize = (valueTo - valueFrom) / 9
                 }
-                valueFrom = zoomImageView.zoomAbility.minScale
-                valueTo = zoomImageView.zoomAbility.maxScale
-                val step = (valueTo - valueFrom) / 9
-                changing = true
-                value =
-                    valueFrom + ((zoomImageView.zoomAbility.transform.scaleX - valueFrom) / step).toInt() * step
-                changing = false
-                stepSize = step
+            }
+            zoomImageView.zoomAbility.registerOnResetListener {
+                updateRange()
+            }
+            updateRange()
+
+            var changing = false
+            val updateValue: () -> Unit = {
+                if (!changing && zoomImageView.zoomAbility.minScale < zoomImageView.zoomAbility.maxScale) {
+                    val step = (valueTo - valueFrom) / 9
+                    changing = true
+                    val limitedScale = zoomImageView.zoomAbility.transform.scaleX.coerceIn(
+                        zoomImageView.zoomAbility.minScale,
+                        zoomImageView.zoomAbility.maxScale
+                    )
+                    value =
+                        valueFrom + ((limitedScale - valueFrom) / step).toInt() * step
+                    changing = false
+                }
             }
             zoomImageView.zoomAbility.registerOnTransformChangeListener {
-                if (changing || zoomImageView.zoomAbility.minScale >= zoomImageView.zoomAbility.maxScale) {
-                    return@registerOnTransformChangeListener
-                }
-                val step = (valueTo - valueFrom) / 9
-                changing = true
-                value =
-                    valueFrom + ((zoomImageView.zoomAbility.transform.scaleX - valueFrom) / step).toInt() * step
-                changing = false
+                updateValue()
             }
+
+            updateValue()
             addOnChangeListener { _, value, _ ->
                 if (!changing) {
                     zoomImageView.zoomAbility.scale(targetScale = value, animated = true)
                 }
             }
+        }
+
+        common.zoomImageViewMoveKeyboard.moveFlow.collectWithLifecycle(viewLifecycleOwner) {
+            val offset = zoomImageView.zoomAbility.transform.offset
+            zoomImageView.zoomAbility.offset(offset + it * -1f)
         }
 
         common.zoomImageViewMore.apply {

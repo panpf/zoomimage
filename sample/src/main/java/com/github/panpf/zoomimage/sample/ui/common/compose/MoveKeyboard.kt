@@ -97,7 +97,7 @@ class MoveKeyboardState(
 
     private fun startMove() {
         lastJob?.cancel("startMove")
-        val gamePadOffset = gamePadOffset
+        val gamePadOffset = gamePadOffset.takeIf { it.x != 0f && it.y != 0f } ?: return
         val xSpace = (containerSize.width - contentSize.width) / 2f
         val ySpace = (containerSize.height - contentSize.height) / 2f
         val move = Offset(
