@@ -50,14 +50,6 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
     private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
     private val tileDrawHelper = TileDrawHelper(engine)
 
-    init {
-        view.post {
-            val lifecycle1 =
-                view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
-            setLifecycle(lifecycle1)
-        }
-    }
-
     /* *********************************** Configurable properties ****************************** */
 
     /**
@@ -171,6 +163,13 @@ class SubsamplingAbility(private val view: View, logger: Logger) {
         get() = engine.imageLoadRect
 
     init {
+        view.post {
+            if (view.isAttachedToWindowCompat) {
+                val lifecycle1 =
+                    view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
+                setLifecycle(lifecycle1)
+            }
+        }
         engine.registerOnTileChangeListener {
             view.invalidate()
         }
