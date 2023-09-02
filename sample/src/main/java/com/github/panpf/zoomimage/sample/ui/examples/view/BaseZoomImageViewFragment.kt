@@ -199,11 +199,19 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         }
 
         common.zoomImageViewLinearScaleSlider.apply {
+            var changing = false
             val updateRange: () -> Unit = {
-                if (zoomImageView.zoomAbility.minScale < zoomImageView.zoomAbility.maxScale) {
-                    valueFrom = zoomImageView.zoomAbility.minScale
-                    valueTo = zoomImageView.zoomAbility.maxScale
-                    stepSize = (valueTo - valueFrom) / 9
+                val minScale = zoomImageView.zoomAbility.minScale
+                val maxScale = zoomImageView.zoomAbility.maxScale
+                val scale = zoomImageView.zoomAbility.transform.scaleX
+                if (minScale < maxScale) {
+                    valueFrom = minScale
+                    valueTo = maxScale
+                    val step = (valueTo - valueFrom) / 9
+                    stepSize = step
+                    changing = true
+                    value = valueFrom + ((scale - valueFrom) / step).toInt() * step
+                    changing = false
                 }
             }
             zoomImageView.zoomAbility.registerOnResetListener {
@@ -211,17 +219,14 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }
             updateRange()
 
-            var changing = false
             val updateValue: () -> Unit = {
-                if (!changing && zoomImageView.zoomAbility.minScale < zoomImageView.zoomAbility.maxScale) {
+                val minScale = zoomImageView.zoomAbility.minScale
+                val maxScale = zoomImageView.zoomAbility.maxScale
+                val scale = zoomImageView.zoomAbility.transform.scaleX
+                if (!changing && scale in minScale..maxScale && minScale < maxScale) {
                     val step = (valueTo - valueFrom) / 9
                     changing = true
-                    val limitedScale = zoomImageView.zoomAbility.transform.scaleX.coerceIn(
-                        zoomImageView.zoomAbility.minScale,
-                        zoomImageView.zoomAbility.maxScale
-                    )
-                    value =
-                        valueFrom + ((limitedScale - valueFrom) / step).toInt() * step
+                    value = valueFrom + ((scale - valueFrom) / step).toInt() * step
                     changing = false
                 }
             }
