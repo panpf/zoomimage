@@ -56,7 +56,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val common = getCommonBinding(binding)
         zoomImageView.apply {
             logger.level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO
-            zoomAbility.apply {
+            settingsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                scrollBar = if (it) ScrollBarSpec.Default else null
+            }
+            zoomable.apply {
                 settingsService.contentScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     contentScale = ContentScaleCompat.valueOf(it)
                 }
@@ -93,9 +96,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     .collectWithLifecycle(viewLifecycleOwner) {
                         limitOffsetWithinBaseVisibleRect = it
                     }
-                settingsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    scrollBar = if (it) ScrollBarSpec.Default else null
-                }
                 settingsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     val sizeType = if (settingsService.readModeAcceptedBoth.value) {
                         ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
@@ -139,7 +139,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
             }
-            subsamplingAbility.apply {
+            subsampling.apply {
                 settingsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBounds = it
                 }
@@ -162,24 +162,24 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewTileMap.setZoomImageView(zoomImageView)
 
         common.zoomImageViewRotate.setOnClickListener {
-            zoomImageView.zoomAbility.rotate(zoomImageView.zoomAbility.transform.rotation.roundToInt() + 90)
+            zoomImageView.zoomable.rotate(zoomImageView.zoomable.transform.rotation.roundToInt() + 90)
         }
 
         common.zoomImageViewZoom.apply {
             setOnClickListener {
-                val nextStepScale = zoomImageView.zoomAbility.getNextStepScale()
-                zoomImageView.zoomAbility.scale(nextStepScale, animated = true)
+                val nextStepScale = zoomImageView.zoomable.getNextStepScale()
+                zoomImageView.zoomable.scale(nextStepScale, animated = true)
             }
             val resetIcon = {
                 val zoomIn =
-                    zoomImageView.zoomAbility.getNextStepScale() > zoomImageView.zoomAbility.transform.scaleX
+                    zoomImageView.zoomable.getNextStepScale() > zoomImageView.zoomable.transform.scaleX
                 if (zoomIn) {
                     setImageResource(R.drawable.ic_zoom_in)
                 } else {
                     setImageResource(R.drawable.ic_zoom_out)
                 }
             }
-            zoomImageView.zoomAbility.registerOnTransformChangeListener {
+            zoomImageView.zoomable.registerOnTransformChangeListener {
                 resetIcon()
             }
             resetIcon()
@@ -187,23 +187,26 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
         common.zoomImageViewInfo.setOnClickListener {
             ZoomImageViewInfoDialogFragment().apply {
-                arguments = ZoomImageViewInfoDialogFragment.buildArgs(zoomImageView, sketchImageUri)
+                arguments = ZoomImageViewInfoDialogFragment
+                    .buildArgs(zoomImageView, sketchImageUri)
                     .toBundle()
             }.show(childFragmentManager, null)
         }
-        zoomImageView.zoomAbility.registerOnViewLongPressListener { _, _, _ ->
+        zoomImageView.setOnLongClickListener {
             ZoomImageViewInfoDialogFragment().apply {
-                arguments = ZoomImageViewInfoDialogFragment.buildArgs(zoomImageView, sketchImageUri)
+                arguments = ZoomImageViewInfoDialogFragment
+                    .buildArgs(zoomImageView, sketchImageUri)
                     .toBundle()
             }.show(childFragmentManager, null)
+            true
         }
 
         common.zoomImageViewLinearScaleSlider.apply {
             var changing = false
             val updateRange: () -> Unit = {
-                val minScale = zoomImageView.zoomAbility.minScale
-                val maxScale = zoomImageView.zoomAbility.maxScale
-                val scale = zoomImageView.zoomAbility.transform.scaleX
+                val minScale = zoomImageView.zoomable.minScale
+                val maxScale = zoomImageView.zoomable.maxScale
+                val scale = zoomImageView.zoomable.transform.scaleX
                 if (minScale < maxScale) {
                     valueFrom = minScale
                     valueTo = maxScale
@@ -214,15 +217,15 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     changing = false
                 }
             }
-            zoomImageView.zoomAbility.registerOnResetListener {
+            zoomImageView.zoomable.registerOnResetListener {
                 updateRange()
             }
             updateRange()
 
             val updateValue: () -> Unit = {
-                val minScale = zoomImageView.zoomAbility.minScale
-                val maxScale = zoomImageView.zoomAbility.maxScale
-                val scale = zoomImageView.zoomAbility.transform.scaleX
+                val minScale = zoomImageView.zoomable.minScale
+                val maxScale = zoomImageView.zoomable.maxScale
+                val scale = zoomImageView.zoomable.transform.scaleX
                 if (!changing && scale in minScale..maxScale && minScale < maxScale) {
                     val step = (valueTo - valueFrom) / 9
                     changing = true
@@ -230,28 +233,28 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     changing = false
                 }
             }
-            zoomImageView.zoomAbility.registerOnTransformChangeListener {
+            zoomImageView.zoomable.registerOnTransformChangeListener {
                 updateValue()
             }
 
             updateValue()
             addOnChangeListener { _, value, _ ->
                 if (!changing) {
-                    zoomImageView.zoomAbility.scale(targetScale = value, animated = true)
+                    zoomImageView.zoomable.scale(targetScale = value, animated = true)
                 }
             }
         }
 
         common.zoomImageViewMoveKeyboard.moveFlow.collectWithLifecycle(viewLifecycleOwner) {
-            val offset = zoomImageView.zoomAbility.transform.offset
-            zoomImageView.zoomAbility.offset(offset + it * -1f)
+            val offset = zoomImageView.zoomable.transform.offset
+            zoomImageView.zoomable.offset(offset + it * -1f)
         }
 
         common.zoomImageViewMore.apply {
             common.zoomImageViewExtraLayout.isVisible = false
 
             setOnClickListener {
-                if (zoomImageView.zoomAbility.minScale >= zoomImageView.zoomAbility.maxScale) {
+                if (zoomImageView.zoomable.minScale >= zoomImageView.zoomable.maxScale) {
                     return@setOnClickListener
                 }
                 if (common.zoomImageViewExtraLayout.isVisible) {
@@ -284,7 +287,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }
         }
 
-        zoomImageView.zoomAbility.registerOnTransformChangeListener {
+        zoomImageView.zoomable.registerOnTransformChangeListener {
             updateInfo(zoomImageView, common)
         }
         updateInfo(zoomImageView, common)
@@ -337,7 +340,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 offset: 
                 rotation: 
             """.trimIndent()
-        common.zoomImageViewInfoContentText.text = zoomImageView.zoomAbility.run {
+        common.zoomImageViewInfoContentText.text = zoomImageView.zoomable.run {
             """
                 ${transform.scale.toShortString()}
                 ${transform.offset.toShortString()}

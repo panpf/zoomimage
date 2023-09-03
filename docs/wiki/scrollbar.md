@@ -3,13 +3,13 @@
 > * The following example takes precedence over the Compose version component for demonstration
 > * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
     different
-> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
     <br>-----------</br>
 > * 以下示例优先用 Compose 版本的组件来演示
 > * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
-> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
 ZoomImage supports displaying scroll bars that clearly tell the user where they are and how far they have reached the bottom or top. The scroll bar will have no action
 Auto-hide after 800 milliseconds and automatically displayed when the user takes action again
@@ -47,12 +47,18 @@ val scrollBar = remember {
         margin = 12.dp,
     )
 }
+
+// compose:
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     scrollBar = scrollBar,
 )
+
+// view
+val sketchImageView = SketchZoomImageView(context)
+sketchImageView.scrollBar = scrollBar
 ```
 
 ### Close the scroll bar/关闭滚动条
@@ -64,12 +70,17 @@ ZoomImage 默认显示滚动条，你可以关闭它
 example/示例：
 
 ```kotlin
+// compose:
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     scrollBar = null,
 )
+
+// view
+val sketchImageView = SketchZoomImageView(context)
+sketchImageView.scrollBar = null
 ```
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt

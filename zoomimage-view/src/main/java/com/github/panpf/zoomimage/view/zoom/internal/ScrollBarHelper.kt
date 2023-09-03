@@ -29,7 +29,7 @@ import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import kotlin.math.roundToInt
 
-class ScrollBarEngine(
+class ScrollBarHelper(
     private val view: View,
     private val scrollBarSpec: ScrollBarSpec,
 ) {
@@ -62,6 +62,15 @@ class ScrollBarEngine(
             },
             onEnd = {}
         )
+
+        view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+            }
+
+            override fun onViewDetachedFromWindow(v: View) {
+                cancel()
+            }
+        })
     }
 
     fun onDraw(

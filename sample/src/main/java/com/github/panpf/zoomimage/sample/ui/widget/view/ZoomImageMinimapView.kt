@@ -69,14 +69,14 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val viewWidth = width.takeIf { it > 0 } ?: return
         val viewHeight = height.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
-        val contentSize = zoomView.zoomAbility.contentSize.takeIf { !it.isEmpty() } ?: return
+        val contentSize = zoomView.zoomable.contentSize.takeIf { !it.isEmpty() } ?: return
 
-        val contentOriginSize = zoomView.zoomAbility.contentOriginSize
+        val contentOriginSize = zoomView.zoomable.contentOriginSize
         if (contentOriginSize.isNotEmpty()) {
             val widthTargetScale = contentOriginSize.width.toFloat() / viewWidth
             val heightTargetScale = contentOriginSize.height.toFloat() / viewHeight
-            val imageLoadRect = zoomView.subsamplingAbility.imageLoadRect
-            zoomView.subsamplingAbility.tileSnapshotList.forEach { tileSnapshot ->
+            val imageLoadRect = zoomView.subsampling.imageLoadRect
+            zoomView.subsampling.tileSnapshotList.forEach { tileSnapshot ->
                 val load = tileSnapshot.srcRect.overlaps(imageLoadRect)
                 val tileSrcRect = tileSnapshot.srcRect
                 val tileDrawRect = tileDrawRect.apply {
@@ -99,7 +99,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         }
 
         val contentVisibleRect =
-            zoomView.zoomAbility.contentVisibleRect.takeIf { !it.isEmpty } ?: return
+            zoomView.zoomable.contentVisibleRect.takeIf { !it.isEmpty } ?: return
         val mapVisibleRect = mapVisibleRect.apply {
             val widthScaled = contentSize.width / viewWidth.toFloat()
             val heightScaled = contentSize.height / viewHeight.toFloat()
@@ -143,10 +143,10 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                 }
             }
         }
-        zoomView.zoomAbility.registerOnTransformChangeListener {
+        zoomView.zoomable.registerOnTransformChangeListener {
             invalidate()
         }
-        zoomView.subsamplingAbility.registerOnTileChangeListener {
+        zoomView.subsampling.registerOnTileChangeListener {
             invalidate()
         }
     }
@@ -200,10 +200,10 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val realX = (x * widthScale).roundToInt()
         val realY = (y * heightScale).roundToInt()
 
-        zoomView.zoomAbility.locate(
+        zoomView.zoomable.locate(
             contentPoint = IntOffsetCompat(x = realX, y = realY),
-            targetScale = zoomView.zoomAbility.transform.scaleX
-                .coerceAtLeast(zoomView.zoomAbility.mediumScale),
+            targetScale = zoomView.zoomable.transform.scaleX
+                .coerceAtLeast(zoomView.zoomable.mediumScale),
             animated = true
         )
     }

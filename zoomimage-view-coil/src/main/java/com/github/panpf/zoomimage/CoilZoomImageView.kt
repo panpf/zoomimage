@@ -52,7 +52,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     init {
-        _subsamplingAbility?.tileMemoryCache = CoilTileMemoryCache(context.imageLoader)
+        _subsamplingEngine?.tileMemoryCache = CoilTileMemoryCache(context.imageLoader)
     }
 
     override fun onAttachedToWindow() {
@@ -83,8 +83,8 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 logger.d { "CoilZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
-            _subsamplingAbility?.disableMemoryCache = isDisallowMemoryCache(result)
-            _subsamplingAbility?.setImageSource(newImageSource(result))
+            _subsamplingEngine?.disableMemoryCache = isDisallowMemoryCache(result)
+            _subsamplingEngine?.setImageSource(newImageSource(result))
         }
     }
 

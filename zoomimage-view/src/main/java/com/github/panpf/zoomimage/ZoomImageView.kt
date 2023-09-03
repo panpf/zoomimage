@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -26,9 +25,20 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
-import com.github.panpf.zoomimage.view.subsampling.SubsamplingAbility
-import com.github.panpf.zoomimage.view.zoom.ZoomAbility
-import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.view.internal.applyTransform
+import com.github.panpf.zoomimage.view.internal.intrinsicSize
+import com.github.panpf.zoomimage.view.internal.toAlignment
+import com.github.panpf.zoomimage.view.internal.toContentScale
+import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
+import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
+import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
+import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
+import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
+import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarHelper
+import com.github.panpf.zoomimage.view.zoom.internal.TouchHelper
+import kotlin.math.roundToInt
 
 /**
  * A native ImageView that zoom and subsampling huge images
@@ -39,46 +49,125 @@ import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
  * val zoomImageView = ZoomImageView(context)
  * zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
  * val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
- * zoomImageView.subsamplingAbility.setImageSource(imageSource)
+ * zoomImageView.subsampling.setImageSource(imageSource)
  * ```
  */
+// todo Added xml support contentScale and alignment
 open class ZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : AppCompatImageView(context, attrs, defStyle), ImageViewBridge {
+) : AppCompatImageView(context, attrs, defStyle) {
 
-    // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
-    protected var _zoomAbility: ZoomAbility? = null
+    /* Must be nullable, otherwise it will cause initialization in the constructor to fail */
+    protected val _zoomableEngine: ZoomableEngine?
+    protected val _subsamplingEngine: SubsamplingEngine?
+    private var _scaleType: ScaleType
+    private var scrollBarHelper: ScrollBarHelper? = null
+    private val touchHelper: TouchHelper
+    private val tileDrawHelper: TileDrawHelper
+    private val cacheImageMatrix = Matrix()
 
-    // Must be nullable, otherwise it will cause initialization in the constructor to fail
-    @Suppress("PropertyName")
-    protected val _subsamplingAbility: SubsamplingAbility?
-
-    open val logger = Logger(tag = "ZoomImageView")
+    val logger = Logger(tag = "ZoomImageView")
 
     /**
      * Control the ability to zoom, pan, rotate
      */
-    val zoomAbility: ZoomAbility
-        get() = _zoomAbility ?: throw IllegalStateException("zoomAbility not initialized")
+    val zoomable: ZoomableEngine
+        get() = _zoomableEngine ?: throw IllegalStateException("zoomable not initialized")
 
     /**
      * Control the ability to subsampling
      */
-    val subsamplingAbility: SubsamplingAbility
-        get() = _subsamplingAbility
-            ?: throw IllegalStateException("subsamplingAbility not initialized")
+    val subsampling: SubsamplingEngine
+        get() = _subsamplingEngine
+            ?: throw IllegalStateException("subsampling not initialized")
+
+    /**
+     * Setup whether to enable scroll bar and configure scroll bar style
+     */
+    var scrollBar: ScrollBarSpec? = ScrollBarSpec.Default
+        set(value) {
+            if (field != value) {
+                field = value
+                resetScrollBarHelper()
+            }
+        }
+
+    /**
+     * Click event listener with touch location
+     */
+    var onViewTapListener: OnViewTapListener?
+        get() = touchHelper.onViewTapListener
+        set(value) {
+            touchHelper.onViewTapListener = value
+        }
+
+    /**
+     * Long press event listener with touch location
+     */
+    var onViewLongPressListener: OnViewLongPressListener?
+        get() = touchHelper.onViewLongPressListener
+        set(value) {
+            touchHelper.onViewLongPressListener = value
+        }
 
     init {
-        val zoomAbility = ZoomAbility(view = this, imageViewBridge = this, logger = logger)
-        _zoomAbility = zoomAbility
+        /* ScaleType */
+        val initScaleType = super.getScaleType()
+        require(initScaleType != ScaleType.MATRIX) { "ScaleType cannot be MATRIX" }
+        super.setScaleType(ScaleType.MATRIX)
+        _scaleType = initScaleType
 
-        val subsamplingAbility = SubsamplingAbility(view = this, logger = logger)
-        _subsamplingAbility = subsamplingAbility
+        /* ZoomableEngine */
+        val zoomableEngine = ZoomableEngine(logger, this).apply {
+            this@ZoomImageView._zoomableEngine = this
+            setScaleType(initScaleType)
+            registerOnTransformChangeListener {
+                val matrix = cacheImageMatrix.applyTransform(transform, containerSize)
+                super.setImageMatrix(matrix)
+            }
+            resetDrawableSize()
+        }
+        touchHelper = TouchHelper(this, zoomableEngine)
 
-        subsamplingAbility.engine.bindZoomEngine(zoomAbility.zoomEngine)
+        /* SubsamplingEngine */
+        val subsamplingEngine = SubsamplingEngine(logger, this).apply {
+            this@ZoomImageView._subsamplingEngine = this
+            bindZoomEngine(zoomableEngine)
+        }
+        tileDrawHelper = TileDrawHelper(subsamplingEngine).apply {
+            subsamplingEngine.registerOnTileChangeListener {
+                this@ZoomImageView.invalidate()
+            }
+        }
+
+        /* ScrollBar */
+        resetScrollBarHelper()
+        zoomableEngine.registerOnTransformChangeListener {
+            scrollBarHelper?.onMatrixChanged()
+        }
+    }
+
+
+    /**************************************** Internal ********************************************/
+
+    private fun resetDrawableSize() {
+        _zoomableEngine?.contentSize = drawable?.intrinsicSize() ?: IntSizeCompat.Zero
+    }
+
+    private fun resetScrollBarHelper() {
+        scrollBarHelper?.cancel()
+        scrollBarHelper = null
+        val scrollBarSpec = this.scrollBar
+        if (scrollBarSpec != null) {
+            scrollBarHelper = ScrollBarHelper(this, scrollBarSpec)
+        }
+    }
+
+    private fun ZoomableEngine.setScaleType(scaleType: ScaleType) {
+        contentScale = scaleType.toContentScale()
+        alignment = scaleType.toAlignment()
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
@@ -100,73 +189,71 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     open fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        _zoomAbility?.onDrawableChanged(oldDrawable, newDrawable)
+        resetDrawableSize()
     }
 
     override fun setScaleType(scaleType: ScaleType) {
-        if (_zoomAbility?.setScaleType(scaleType) != true) {
+        val zoomEngine = _zoomableEngine
+        if (zoomEngine != null) {
+            this._scaleType = scaleType
+            zoomEngine.setScaleType(scaleType)
+        } else {
             super.setScaleType(scaleType)
         }
     }
 
     override fun getScaleType(): ScaleType {
-        return _zoomAbility?.getScaleType() ?: super.getScaleType()
+        return if (_zoomableEngine != null) _scaleType else super.getScaleType()
     }
 
     override fun setImageMatrix(matrix: Matrix?) {
-        // intercept
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        _zoomAbility?.onAttachedToWindow()
-        _subsamplingAbility?.onAttachedToWindow()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        _zoomAbility?.onDetachedFromWindow()
-        _subsamplingAbility?.onDetachedFromWindow()
+        logger.w("setImageMatrix() is intercepted")
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        _zoomAbility?.onSizeChanged(w, h, oldw, oldh)
+        val viewWidth = width - paddingLeft - paddingRight
+        val viewHeight = height - paddingTop - paddingBottom
+        _zoomableEngine?.containerSize = IntSizeCompat(viewWidth, viewHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val zoomAbility = _zoomAbility ?: return
-        val subsamplingAbility = _subsamplingAbility ?: return
-        subsamplingAbility.onDraw(canvas, zoomAbility.transform, zoomAbility.containerSize)
-        zoomAbility.onDraw(canvas)
+        val zoomable = _zoomableEngine ?: return
+        val subsampling = _subsamplingEngine ?: return
+        tileDrawHelper.drawTiles(
+            canvas = canvas,
+            transform = zoomable.transform,
+            containerSize = zoomable.containerSize,
+            showTileBounds = subsampling.showTileBounds
+        )
+        scrollBarHelper?.onDraw(
+            canvas = canvas,
+            containerSize = zoomable.containerSize,
+            contentSize = zoomable.contentSize,
+            contentVisibleRect = zoomable.contentVisibleRect,
+            rotation = zoomable.transform.rotation.roundToInt(),
+        )
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return _zoomAbility?.onTouchEvent(event) == true || super.onTouchEvent(event)
+        return touchHelper.onTouchEvent(event) || super.onTouchEvent(event)
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
-        _subsamplingAbility?.onVisibilityChanged(visibility)
+        val visibilityName = when (visibility) {
+            View.VISIBLE -> "VISIBLE"
+            View.INVISIBLE -> "INVISIBLE"
+            View.GONE -> "GONE"
+            else -> "UNKNOWN"
+        }
+        _subsamplingEngine?.resetStopped("onVisibilityChanged:$visibilityName")
     }
 
     override fun canScrollHorizontally(direction: Int): Boolean =
-        _zoomAbility?.canScroll(horizontal = true, direction) == true
+        _zoomableEngine?.canScroll(horizontal = true, direction) == true
 
     override fun canScrollVertically(direction: Int): Boolean =
-        _zoomAbility?.canScroll(horizontal = false, direction) == true
-
-    final override fun superSetImageMatrix(matrix: Matrix?) {
-        super.setImageMatrix(matrix)
-    }
-
-    final override fun superSetScaleType(scaleType: ScaleType) {
-        super.setScaleType(scaleType)
-    }
-
-    final override fun superGetScaleType(): ScaleType {
-        return super.getScaleType()
-    }
+        _zoomableEngine?.canScroll(horizontal = false, direction) == true
 }

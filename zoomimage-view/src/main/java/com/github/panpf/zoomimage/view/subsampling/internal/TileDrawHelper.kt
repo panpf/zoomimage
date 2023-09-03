@@ -30,6 +30,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.view.internal.applyTransform
+import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import kotlin.math.ceil
 import kotlin.math.floor
 

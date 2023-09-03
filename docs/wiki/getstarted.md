@@ -3,13 +3,13 @@
 > * The following example takes precedence over the Compose version component for demonstration
 > * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
     different
-> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
     <br>-----------</br>
 > * 以下示例优先用 Compose 版本的组件来演示
 > * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
-> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
 ### Components/组件
 
@@ -192,7 +192,7 @@ picassoZoomImageViewImage.loadImage("http://sample.com/sample.jpg") {
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
 val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
-zoomImageView.subsamplingAbility.setImageSource(imageSource)
+zoomImageView.subsampling.setImageSource(imageSource)
 ```
 
 > PicassoZoomImageView provides a set of specialized APIs to listen for load results and get URIs,
@@ -201,11 +201,11 @@ zoomImageView.subsamplingAbility.setImageSource(imageSource)
 > PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，因此请不要直接使用官方 API 加载图片
 
 The APIs for zoom and subsampling are encapsulated in separate classes, and the compose versions
-are [ZoomableState] and [SubsamplingState], view The versions are [ZoomAbility]
-and [SubsamplingAbility]
+are [ZoomableState] and [SubsamplingState], view The versions are [ZoomableEngine]
+and [SubsamplingEngine]
 <br>-----------</br>
 zoom 和子采样的 API 封装在不同的类中，compose 版本是 [ZoomableState] 和 [SubsamplingState]，view
-版本是 [ZoomAbility] 和 [SubsamplingAbility]
+版本是 [ZoomableEngine] 和 [SubsamplingEngine]
 
 example/示例：
 
@@ -224,8 +224,8 @@ SketchZoomAsyncImage(
 
 
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.zoomAbility  // ZoomAbility
-sketchZoomImageView.subsamplingAbility   // SubsamplingAbility
+sketchZoomImageView.zoomable  // ZoomableEngine
+sketchZoomImageView.subsampling   // SubsamplingEngine
 ```
 
 *For more detailed information about zoom, offset, rotation, subsampling, reading mode, scroll bar
@@ -247,8 +247,8 @@ example/示例：
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.zoomAbility.contentScale = ContentScaleCompat.None
-sketchZoomImageView.zoomAbility.alignment = AlignmentCompat.BottomEnd
+sketchZoomImageView.zoomable.contentScale = ContentScaleCompat.None
+sketchZoomImageView.zoomable.alignment = AlignmentCompat.BottomEnd
 ```
 
 ### Listen for related events/监听相关事件
@@ -263,36 +263,36 @@ example/示例：
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.zoomAbility.registerOnTransformChangeListener {
+sketchZoomImageView.zoomable.registerOnTransformChangeListener {
     // transform changed
 }
 
-sketchZoomImageView.zoomAbility.registerOnResetListener {
+sketchZoomImageView.zoomable.registerOnResetListener {
     // reset
 }
 
-sketchZoomImageView.zoomAbility.registerOnViewTapListener { view: android.view.View, x: Float, y: Float ->
-    // Click Events,单击事件
-}
-
-sketchZoomImageView.zoomAbility.registerOnViewLongPressListener { view: android.view.View, x: Float, y: Float ->
-    // Long press event,长按事件        
-}
-
-sketchZoomImageView.subsumplingAbility.registerOnTileChangeListener {
+sketchZoomImageView.subsampling.registerOnTileChangeListener {
     // tileSnapshotList changed
 }
 
-sketchZoomImageView.subsumplingAbility.registerOnReadyChangeListener {
+sketchZoomImageView.subsampling.registerOnReadyChangeListener {
     // ready changed
 }
 
-sketchZoomImageView.subsumplingAbility.registerOnStoppedChangeListener {
+sketchZoomImageView.subsampling.registerOnStoppedChangeListener {
     // stopped changed
 }
 
-sketchZoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
+sketchZoomImageView.subsampling.registerOnImageLoadRectChangeListener {
     // imageLoadRect changed
+}
+
+sketchZoomImageView.onViewTapListener =  { view: android.view.View, x: Float, y: Float ->
+    // Click Events,单击事件
+}
+
+sketchZoomImageView.onViewLongPressListener =  { view: android.view.View, x: Float, y: Float ->
+    // Long press event,长按事件        
 }
 ```
 
@@ -450,9 +450,9 @@ sketchZoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
 
 [SubsamplingState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
 
-[ZoomAbility]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/view/zoom/ZoomAbility.kt
+[ZoomableEngine]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/view/zoom/ZoomableEngine.kt
 
-[SubsamplingAbility]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/view/subsampling/SubsamplingAbility.kt
+[SubsamplingEngine]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 

@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Matrix
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
@@ -228,4 +229,9 @@ internal fun Context?.findLifecycle(): Lifecycle? {
             else -> return null
         }
     }
+}
+
+internal fun Drawable.intrinsicSize(): IntSizeCompat? {
+    if (intrinsicWidth < 0 || intrinsicHeight < 0) return null
+    return IntSizeCompat(intrinsicWidth, intrinsicHeight)
 }

@@ -83,9 +83,9 @@ open class SketchZoomImageView @JvmOverloads constructor(
     init {
         @Suppress("LeakingThis")
         viewAbilityManager = RealViewAbilityManager(this, this)
-        _subsamplingAbility?.tileBitmapPool =
+        _subsamplingEngine?.tileBitmapPool =
             SketchTileBitmapPool(context.sketch, "SketchZoomImageView")
-        _subsamplingAbility?.tileMemoryCache =
+        _subsamplingEngine?.tileMemoryCache =
             SketchTileMemoryCache(context.sketch, "SketchZoomImageView")
     }
 
@@ -118,10 +118,10 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 logger.d { "SketchZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
-            _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(result.drawable)
-            _subsamplingAbility?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
-            _subsamplingAbility?.ignoreExifOrientation = isIgnoreExifOrientation(result.drawable)
-            _subsamplingAbility?.setImageSource(newImageSource(result.drawable))
+            _subsamplingEngine?.disableMemoryCache = isDisableMemoryCache(result.drawable)
+            _subsamplingEngine?.disallowReuseBitmap = isDisallowReuseBitmap(result.drawable)
+            _subsamplingEngine?.ignoreExifOrientation = isIgnoreExifOrientation(result.drawable)
+            _subsamplingEngine?.setImageSource(newImageSource(result.drawable))
         }
     }
 
@@ -262,13 +262,13 @@ open class SketchZoomImageView @JvmOverloads constructor(
         }
     }
 
-//    final override fun superSetScaleType(scaleType: ScaleType) {
-//        super.setScaleType(scaleType)
-//    }
-//
-//    final override fun superGetScaleType(): ScaleType {
-//        return super.getScaleType()
-//    }
+    final override fun superSetScaleType(scaleType: ScaleType) {
+        super.setScaleType(scaleType)
+    }
+
+    final override fun superGetScaleType(): ScaleType {
+        return super.getScaleType()
+    }
 
     final override fun setScaleType(scaleType: ScaleType) {
         if (viewAbilityManager?.setScaleType(scaleType) != true) {
@@ -280,9 +280,9 @@ open class SketchZoomImageView @JvmOverloads constructor(
         return viewAbilityManager?.getScaleType() ?: super.getScaleType()
     }
 
-//    final override fun superSetImageMatrix(matrix: Matrix?) {
-//        super.setImageMatrix(matrix)
-//    }
+    final override fun superSetImageMatrix(matrix: Matrix?) {
+        super.setImageMatrix(matrix)
+    }
 
     final override fun superGetImageMatrix(): Matrix {
         return super.getImageMatrix()
@@ -339,7 +339,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
             out.writeBundle(abilityListStateBundle)
         }
 
-        override fun toString(): String = "AbsAbilityImageViewSavedState"
+        override fun toString(): String = "SketchZoomImageView"
 
         private constructor(`in`: Parcel) : super(`in`) {
             abilityListStateBundle = `in`.readBundle(SavedState::class.java.classLoader)

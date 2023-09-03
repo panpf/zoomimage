@@ -3,13 +3,13 @@
 > * The following example takes precedence over the Compose version component for demonstration
 > * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
     different
-> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
     <br>-----------</br>
 > * 以下示例优先用 Compose 版本的组件来演示
 > * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
-> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
 Some images are huge in size, if they are read completely into memory will definitely make the app
 crash due to insufficient memory, the image loading framework will usually sample and then load,
@@ -78,7 +78,7 @@ val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
 
 val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
-zoomImageView.subsamplingAbility.setImageSource(imageSource)
+zoomImageView.subsampling.setImageSource(imageSource)
 ```
 
 ### Exif Orientation
@@ -349,19 +349,19 @@ example/示例：
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.subsumplingAbility.registerOnTileChangeListener {
+sketchZoomImageView.subsampling.registerOnTileChangeListener {
     // tileSnapshotList changed
 }
 
-sketchZoomImageView.subsumplingAbility.registerOnReadyChangeListener {
+sketchZoomImageView.subsampling.registerOnReadyChangeListener {
     // ready changed
 }
 
-sketchZoomImageView.subsumplingAbility.registerOnStoppedChangeListener {
+sketchZoomImageView.subsampling.registerOnStoppedChangeListener {
     // stopped changed
 }
 
-sketchZoomImageView.subsumplingAbility.registerOnImageLoadRectChangeListener {
+sketchZoomImageView.subsampling.registerOnImageLoadRectChangeListener {
     // imageLoadRect changed
 }
 ```

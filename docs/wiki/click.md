@@ -3,13 +3,13 @@
 > * The following example takes precedence over the Compose version component for demonstration
 > * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
     different
-> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
     <br>-----------</br>
 > * 以下示例优先用 Compose 版本的组件来演示
 > * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
-> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
 ZoomImage needs to receive double-click events, so it has to intercept click and long press events,
 and you can receive both events through the provided interface
@@ -36,14 +36,20 @@ SketchZoomAsyncImage(
 
 view：
 
+View's setOnClickListener and setOnLongClickListener methods are still available
+Additional onViewTapListener and onViewLongPressListener interfaces with touch location are provided
+<br>-----------</br>
+View 的 setOnClickListener 和 setOnLongClickListener 方法依然可以使用，额外提供了带触摸位置的
+onViewTapListener 和 onViewLongPressListener 接口
+
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.zoomAbility.registerOnViewTapListener { view: android.view.View, x: Float, y: Float ->
+sketchZoomImageView.onViewTapListener = { view: android.view.View, x: Float, y: Float ->
     // Click Events,单击事件
 }
 
-sketchZoomImageView.zoomAbility.registerOnViewLongPressListener { view: android.view.View, x: Float, y: Float ->
+sketchZoomImageView.onViewLongPressListener = { view: android.view.View, x: Float, y: Float ->
     // Long press event,长按事件        
 }
 ```

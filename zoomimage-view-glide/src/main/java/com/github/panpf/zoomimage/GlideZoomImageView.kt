@@ -49,8 +49,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     init {
         val glide = Glide.get(context)
-        _subsamplingAbility?.tileBitmapPool = GlideTileBitmapPool(glide)
-        _subsamplingAbility?.tileMemoryCache = GlideTileMemoryCache(glide)
+        _subsamplingEngine?.tileBitmapPool = GlideTileBitmapPool(glide)
+        _subsamplingEngine?.tileMemoryCache = GlideTileMemoryCache(glide)
     }
 
     override fun onAttachedToWindow() {
@@ -85,13 +85,13 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 logger.d { "GlideZoomImageView. Can't use Subsampling, request is not complete" }
                 return@post
             }
-            _subsamplingAbility?.disableMemoryCache = isDisableMemoryCache(request)
+            _subsamplingEngine?.disableMemoryCache = isDisableMemoryCache(request)
             val model = request.getModel()
             val imageSource = newGlideImageSource(context, model)
             if (imageSource == null) {
                 logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
             }
-            _subsamplingAbility?.setImageSource(imageSource)
+            _subsamplingEngine?.setImageSource(imageSource)
         }
     }
 

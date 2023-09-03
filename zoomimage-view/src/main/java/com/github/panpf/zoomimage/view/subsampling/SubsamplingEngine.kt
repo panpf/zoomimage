@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.view.subsampling.internal
+package com.github.panpf.zoomimage.view.subsampling
 
+import android.view.View
+import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -32,13 +38,10 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.view.subsampling.OnImageLoadRectChangeListener
-import com.github.panpf.zoomimage.view.subsampling.OnReadyChangeListener
-import com.github.panpf.zoomimage.view.subsampling.OnStoppedChangeListener
-import com.github.panpf.zoomimage.view.subsampling.OnTileChangeListener
-import com.github.panpf.zoomimage.view.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.view.internal.findLifecycle
+import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
-import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
+import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -51,7 +54,7 @@ import kotlin.math.roundToInt
 /**
  * Engines that control subsampling
  */
-class SubsamplingEngine constructor(logger: Logger) {
+class SubsamplingEngine constructor(logger: Logger, private val view: View) {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
@@ -66,6 +69,8 @@ class SubsamplingEngine constructor(logger: Logger) {
     private var onImageLoadRectChangeListenerList: MutableSet<OnImageLoadRectChangeListener>? = null
     private var lastResetTileDecoderJob: Job? = null
     private var notifyTileSnapshotListJob: Job? = null
+    private var lifecycle: Lifecycle? = null
+    private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
     internal var imageKey: String? = null
         private set
 
@@ -155,6 +160,17 @@ class SubsamplingEngine constructor(logger: Logger) {
         }
 
     /**
+     * If true, the bounds of each tile is displayed
+     */
+    var showTileBounds = false
+        set(value) {
+            if (field != value) {
+                field = value
+                notifyTileChange()
+            }
+        }
+
+    /**
      * The animation spec for tile animation
      */
     var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
@@ -187,6 +203,27 @@ class SubsamplingEngine constructor(logger: Logger) {
         get() = tileManager?.imageLoadRect ?: IntRectCompat.Zero
 
 
+    init {
+        view.post {
+            if (view.isAttachedToWindowCompat) {
+                val lifecycle1 =
+                    view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
+                setLifecycle(lifecycle1)
+            }
+        }
+        view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+                reset("onViewAttachedToWindow")
+                registerLifecycleObserver()
+            }
+
+            override fun onViewDetachedFromWindow(v: View) {
+                clean("onViewDetachedFromWindow")
+                unregisterLifecycleObserver()
+            }
+        })
+    }
+
     /* ********************************* Interact with consumers ******************************** */
 
     /**
@@ -199,8 +236,23 @@ class SubsamplingEngine constructor(logger: Logger) {
         cleanTileDecoder("setImageSource")
         this.imageSource = imageSource
         imageKey = imageSource?.key
-        resetTileDecoder("setImageSource")
+        if (view.isAttachedToWindowCompat) {
+            reset("setImageSource")
+        }
         return true
+    }
+
+    /**
+     * Set the lifecycle, which automatically controls stop and start, which is obtained from View.findViewTreeLifecycleOwner() by default,
+     * and can be set by this method if the default acquisition method is not applicable
+     */
+    fun setLifecycle(lifecycle: Lifecycle?) {
+        if (this.lifecycle != lifecycle) {
+            unregisterLifecycleObserver()
+            this.lifecycle = lifecycle
+            registerLifecycleObserver()
+            resetStopped("setLifecycle")
+        }
     }
 
     /**
@@ -271,34 +323,34 @@ class SubsamplingEngine constructor(logger: Logger) {
 
     /* *************************************** Internal ***************************************** */
 
-    internal fun bindZoomEngine(zoomEngine: ZoomEngine) {
-        containerSize = zoomEngine.containerSize
-        zoomEngine.registerOnContainerSizeChangeListener(
+    internal fun bindZoomEngine(zoomableEngine: ZoomableEngine) {
+        containerSize = zoomableEngine.containerSize
+        zoomableEngine.registerOnContainerSizeChangeListener(
             OnContainerSizeChangeListenerImpl(this@SubsamplingEngine)
         )
 
-        contentSize = zoomEngine.contentSize
-        zoomEngine.registerOnContentSizeChangeListener {
-            contentSize = zoomEngine.contentSize
+        contentSize = zoomableEngine.contentSize
+        zoomableEngine.registerOnContentSizeChangeListener {
+            contentSize = zoomableEngine.contentSize
         }
 
         val refreshTiles: (caller: String) -> Unit = { caller ->
             refreshTiles(
-                contentVisibleRect = zoomEngine.contentVisibleRect,
-                scale = zoomEngine.transform.scaleX,
-                rotation = zoomEngine.transform.rotation.roundToInt(),
-                transforming = zoomEngine.transforming,
+                contentVisibleRect = zoomableEngine.contentVisibleRect,
+                scale = zoomableEngine.transform.scaleX,
+                rotation = zoomableEngine.transform.rotation.roundToInt(),
+                transforming = zoomableEngine.transforming,
                 caller = caller
             )
         }
 
-        zoomEngine.registerOnTransformChangeListener {
+        zoomableEngine.registerOnTransformChangeListener {
             refreshTiles("transformChanged")
         }
 
         registerOnReadyChangeListener {
             val imageInfo = imageInfo
-            zoomEngine.contentOriginSize = if (ready && imageInfo != null) {
+            zoomableEngine.contentOriginSize = if (ready && imageInfo != null) {
                 imageInfo.size
             } else {
                 IntSizeCompat.Zero
@@ -481,23 +533,38 @@ class SubsamplingEngine constructor(logger: Logger) {
         }
     }
 
-    private class OnContainerSizeChangeListenerImpl(
-        private val subsamplingEngine: SubsamplingEngine
-    ) : OnContainerSizeChangeListener {
+    private fun reset(caller: String) {
+        clean("reset:$caller")
+        resetTileDecoder("destroy:$caller")
+    }
 
-        private var lastDelayJob: Job? = null
-        private val scope = CoroutineScope(Dispatchers.Main.immediate)
+    private fun clean(caller: String) {
+        cleanTileDecoder("clean:$caller")
+        cleanTileManager("clean:$caller")
+    }
 
-        override fun onContainerSizeChanged(containerSize: IntSizeCompat) {
-            // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
-            // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
-            lastDelayJob?.cancel()
-            lastDelayJob = scope.launch(Dispatchers.Main) {
-                delay(60)
-                lastDelayJob = null
-                subsamplingEngine.containerSize = containerSize
-            }
+
+    internal fun resetStopped(caller: String) {
+        val viewVisible = view.isVisible
+        val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
+        val stopped = !viewVisible || !lifecycleStarted
+        logger.d {
+            "resetStopped:$caller. $stopped. " +
+                    "viewVisible=$viewVisible, " +
+                    "lifecycleStarted=$lifecycleStarted. " +
+                    "'${imageSource?.key}'"
         }
+        this.stopped = stopped
+    }
+
+    private fun registerLifecycleObserver() {
+        if (view.isAttachedToWindowCompat) {
+            lifecycle?.addObserver(resetStoppedLifecycleObserver)
+        }
+    }
+
+    private fun unregisterLifecycleObserver() {
+        lifecycle?.removeObserver(resetStoppedLifecycleObserver)
     }
 
     private fun updateTileSnapshotList(manager: TileManager) {
@@ -526,6 +593,38 @@ class SubsamplingEngine constructor(logger: Logger) {
                 if (running) {
                     delay(tileAnimationSpec.interval)
                 }
+            }
+        }
+    }
+
+    private class ResetStoppedLifecycleObserver(
+        val engine: SubsamplingEngine
+    ) : LifecycleEventObserver {
+
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_START) {
+                engine.resetStopped("LifecycleStateChanged:ON_START")
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                engine.resetStopped("LifecycleStateChanged:ON_STOP")
+            }
+        }
+    }
+
+    private class OnContainerSizeChangeListenerImpl(
+        private val subsamplingEngine: SubsamplingEngine
+    ) : OnContainerSizeChangeListener {
+
+        private var lastDelayJob: Job? = null
+        private val scope = CoroutineScope(Dispatchers.Main.immediate)
+
+        override fun onContainerSizeChanged(containerSize: IntSizeCompat) {
+            // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
+            // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
+            lastDelayJob?.cancel()
+            lastDelayJob = scope.launch(Dispatchers.Main) {
+                delay(60)
+                lastDelayJob = null
+                subsamplingEngine.containerSize = containerSize
             }
         }
     }

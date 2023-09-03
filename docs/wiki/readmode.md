@@ -3,13 +3,13 @@
 > * The following example takes precedence over the Compose version component for demonstration
 > * The API of [ZoomImageView] is exactly the same as [ZoomImage], except that the entrance is
     different
-> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
+> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
     <br>-----------</br>
 > * 以下示例优先用 Compose 版本的组件来演示
 > * [ZoomImageView] 的 API 和 [ZoomImage] 一模一样，只是入口不一样
-> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomAbility
-> * [ZoomState].subsampling 等价于 [ZoomImageView].subsamplingAbility
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
 For long text images, their height is usually very large, if the initial state shows the full image,
 then the text content in the image is not clear, the user must double-click to zoom in and slide to

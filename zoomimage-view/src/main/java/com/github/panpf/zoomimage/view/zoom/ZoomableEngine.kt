@@ -16,7 +16,7 @@
 
 @file:Suppress("UnnecessaryVariable")
 
-package com.github.panpf.zoomimage.view.zoom.internal
+package com.github.panpf.zoomimage.view.zoom
 
 import android.view.View
 import com.github.panpf.zoomimage.Logger
@@ -43,12 +43,9 @@ import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
-import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
-import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
-import com.github.panpf.zoomimage.view.zoom.OnContentSizeChangeListener
-import com.github.panpf.zoomimage.view.zoom.OnResetListener
-import com.github.panpf.zoomimage.view.zoom.OnTransformChangeListener
-import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
+import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
+import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -74,9 +71,9 @@ import kotlin.math.roundToInt
 /**
  * Engines that control scale, pan, rotation
  */
-class ZoomEngine constructor(logger: Logger, val view: View) {
+class ZoomableEngine constructor(logger: Logger, val view: View) {
 
-    val logger: Logger = logger.newLogger(module = "ZoomEngine")
+    val logger: Logger = logger.newLogger(module = "ZoomableEngine")
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var rotation: Int = 0
@@ -286,6 +283,14 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
         private set
 
     init {
+        view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+            }
+
+            override fun onViewDetachedFromWindow(v: View) {
+                clean()
+            }
+        })
         reset("init")
     }
 
@@ -582,10 +587,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     fun clean() {
-        lastScaleAnimatable?.stop()
-        lastScaleAnimatable = null
-        lastFlingAnimatable?.stop()
-        lastFlingAnimatable = null
+        stopAllAnimation("clean")
     }
 
     /**
@@ -738,7 +740,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                         stop = endScale,
                         fraction = value
                     )
-                    val nowScale = this@ZoomEngine.transform.scaleX
+                    val nowScale = this@ZoomableEngine.transform.scaleX
                     val addScale = frameScale / nowScale
                     transform(
                         centroid = centroid,
@@ -856,7 +858,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
             velocity = velocity,
             onUpdateValue = { value ->
                 val targetUserOffset =
-                    this@ZoomEngine.userTransform.copy(offset = value.toOffset())
+                    this@ZoomableEngine.userTransform.copy(offset = value.toOffset())
                 updateUserTransform(targetUserOffset, false, "fling")
             },
             onEnd = {
@@ -920,7 +922,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
                     logger.d {
                         "$caller. animated running. transform=${userTransform.toShortString()}"
                     }
-                    this@ZoomEngine.userTransform = userTransform
+                    this@ZoomableEngine.userTransform = userTransform
                     updateTransform()
                 },
                 onEnd = {
@@ -992,7 +994,7 @@ class ZoomEngine constructor(logger: Logger, val view: View) {
     }
 
     private fun notifyTransformChanged() {
-        val transform = this@ZoomEngine.transform
+        val transform = this@ZoomableEngine.transform
         onTransformChangeListeners?.forEach { listener ->
             listener.onTransformChanged(transform)
         }
