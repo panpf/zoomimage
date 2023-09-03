@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -25,7 +26,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
+import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.intrinsicSize
 import com.github.panpf.zoomimage.view.internal.toAlignment
@@ -35,9 +38,12 @@ import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarHelper
 import com.github.panpf.zoomimage.view.zoom.internal.TouchHelper
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import kotlin.math.roundToInt
 
 /**
@@ -147,10 +153,131 @@ open class ZoomImageView @JvmOverloads constructor(
         zoomableEngine.registerOnTransformChangeListener {
             scrollBarHelper?.onMatrixChanged()
         }
+
+        parseAttrs(attrs)
     }
 
 
     /**************************************** Internal ********************************************/
+
+    @SuppressLint("Recycle")
+    private fun parseAttrs(attrs: AttributeSet?) {
+        val array = context.obtainStyledAttributes(attrs, styleable.ZoomImageView)
+        @Suppress("ConvertTryFinallyToUseCall")
+        try {
+            if (array.hasValue(styleable.ZoomImageView_contentScale)) {
+                val contentScaleCode = array.getInt(styleable.ZoomImageView_contentScale, -1)
+                zoomable.contentScale = when (contentScaleCode) {
+                    0 -> ContentScaleCompat.Crop
+                    1 -> ContentScaleCompat.Fit
+                    2 -> ContentScaleCompat.FillHeight
+                    3 -> ContentScaleCompat.FillWidth
+                    4 -> ContentScaleCompat.Inside
+                    5 -> ContentScaleCompat.None
+                    6 -> ContentScaleCompat.FillBounds
+                    else -> throw IllegalArgumentException("Unknown contentScaleCode: $contentScaleCode")
+                }
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_alignment)) {
+                val alignmentCode = array.getInt(styleable.ZoomImageView_alignment, -1)
+                zoomable.alignment = when (alignmentCode) {
+                    0 -> AlignmentCompat.TopStart
+                    1 -> AlignmentCompat.TopCenter
+                    2 -> AlignmentCompat.TopEnd
+                    3 -> AlignmentCompat.CenterStart
+                    4 -> AlignmentCompat.Center
+                    5 -> AlignmentCompat.CenterEnd
+                    6 -> AlignmentCompat.BottomStart
+                    7 -> AlignmentCompat.BottomCenter
+                    8 -> AlignmentCompat.BottomEnd
+                    else -> throw IllegalArgumentException("Unknown alignmentCode: $alignmentCode")
+                }
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_animateScale)) {
+                val animateScale = array.getBoolean(styleable.ZoomImageView_animateScale, false)
+                zoomable.animationSpec =
+                    if (animateScale) ZoomAnimationSpec.Default else ZoomAnimationSpec.None
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_rubberBandScale)) {
+                val rubberBandScale =
+                    array.getBoolean(styleable.ZoomImageView_rubberBandScale, false)
+                zoomable.rubberBandScale = rubberBandScale
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_threeStepScale)) {
+                val threeStepScale = array.getBoolean(styleable.ZoomImageView_threeStepScale, false)
+                zoomable.threeStepScale = threeStepScale
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_limitOffsetWithinBaseVisibleRect)) {
+                val limitOffsetWithinBaseVisibleRect = array.getBoolean(
+                    styleable.ZoomImageView_limitOffsetWithinBaseVisibleRect,
+                    false
+                )
+                zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_showTileBounds)) {
+                val showTileBounds = array.getBoolean(styleable.ZoomImageView_showTileBounds, false)
+                subsampling.showTileBounds = showTileBounds
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_pauseWhenTransforming)) {
+                val pauseWhenTransforming =
+                    array.getBoolean(styleable.ZoomImageView_pauseWhenTransforming, false)
+                subsampling.pauseWhenTransforming = pauseWhenTransforming
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_tileAnimation)) {
+                val tileAnimation = array.getBoolean(styleable.ZoomImageView_tileAnimation, false)
+                subsampling.tileAnimationSpec =
+                    if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
+            }
+
+            val disabledScrollBar =
+                array.getBoolean(styleable.ZoomImageView_disabledScrollBar, false)
+            scrollBar = if (!disabledScrollBar) {
+                ScrollBarSpec(
+                    color = array.getColor(
+                        styleable.ZoomImageView_scrollBarColor,
+                        ScrollBarSpec.DEFAULT_COLOR
+                    ),
+                    size = array.getDimension(
+                        styleable.ZoomImageView_scrollBarSize,
+                        ScrollBarSpec.DEFAULT_SIZE * resources.displayMetrics.density
+                    ),
+                    margin = array.getDimension(
+                        styleable.ZoomImageView_scrollBarMargin,
+                        ScrollBarSpec.DEFAULT_MARGIN * resources.displayMetrics.density
+                    ),
+                )
+            } else {
+                null
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_ignoreExifOrientation)) {
+                val ignoreExifOrientation =
+                    array.getBoolean(styleable.ZoomImageView_ignoreExifOrientation, false)
+                subsampling.ignoreExifOrientation = ignoreExifOrientation
+            }
+
+            if (array.hasValue(styleable.ZoomImageView_readMode)) {
+                val readModeCode = array.getInt(styleable.ZoomImageView_readMode, -1)
+                zoomable.readMode = when (readModeCode) {
+                    0 -> ReadMode.Default
+                    1 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_HORIZONTAL)
+                    2 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_VERTICAL)
+                    3 -> null
+                    else -> throw IllegalArgumentException("Unknown readModeCode: $readModeCode")
+                }
+            }
+        } finally {
+            array.close()
+        }
+    }
 
     private fun resetDrawableSize() {
         _zoomableEngine?.contentSize = drawable?.intrinsicSize() ?: IntSizeCompat.Zero

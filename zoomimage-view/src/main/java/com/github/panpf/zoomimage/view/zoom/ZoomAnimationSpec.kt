@@ -31,5 +31,9 @@ data class ZoomAnimationSpec(
             durationMillis = 300,
             interpolator = AccelerateDecelerateInterpolator(),
         )
+        val None = ZoomAnimationSpec(
+            durationMillis = 0,
+            interpolator = AccelerateDecelerateInterpolator(),
+        )
     }
 }
