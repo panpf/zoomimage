@@ -121,14 +121,14 @@ open class ZoomImageView @JvmOverloads constructor(
     init {
         /* ScaleType */
         val initScaleType = super.getScaleType()
-        require(initScaleType != ScaleType.MATRIX) { "ScaleType cannot be MATRIX" }
         super.setScaleType(ScaleType.MATRIX)
         _scaleType = initScaleType
 
         /* ZoomableEngine */
         val zoomableEngine = ZoomableEngine(logger, this).apply {
             this@ZoomImageView._zoomableEngine = this
-            setScaleType(initScaleType)
+            contentScale = initScaleType.toContentScale()
+            alignment = initScaleType.toAlignment()
             registerOnTransformChangeListener {
                 val matrix = cacheImageMatrix.applyTransform(transform, containerSize)
                 super.setImageMatrix(matrix)
@@ -292,11 +292,6 @@ open class ZoomImageView @JvmOverloads constructor(
         }
     }
 
-    private fun ZoomableEngine.setScaleType(scaleType: ScaleType) {
-        contentScale = scaleType.toContentScale()
-        alignment = scaleType.toAlignment()
-    }
-
     override fun setImageDrawable(drawable: Drawable?) {
         val oldDrawable = this.drawable
         super.setImageDrawable(drawable)
@@ -323,7 +318,8 @@ open class ZoomImageView @JvmOverloads constructor(
         val zoomEngine = _zoomableEngine
         if (zoomEngine != null) {
             this._scaleType = scaleType
-            zoomEngine.setScaleType(scaleType)
+            zoomEngine.contentScale = scaleType.toContentScale()
+            zoomEngine.alignment = scaleType.toAlignment()
         } else {
             super.setScaleType(scaleType)
         }
