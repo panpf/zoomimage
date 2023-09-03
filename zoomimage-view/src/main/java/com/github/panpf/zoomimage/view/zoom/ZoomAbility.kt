@@ -32,8 +32,6 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.TransformCompat
-import com.github.panpf.zoomimage.util.center
-import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.internal.toAlignment
@@ -41,7 +39,7 @@ import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.view.subsampling.internal.SubsamplingEngine
 import com.github.panpf.zoomimage.view.zoom.internal.ImageViewBridge
 import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarEngine
-import com.github.panpf.zoomimage.view.zoom.internal.UnifiedGestureDetector
+import com.github.panpf.zoomimage.view.zoom.internal.TouchEngine
 import com.github.panpf.zoomimage.view.zoom.internal.ZoomEngine
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
@@ -60,10 +58,8 @@ class ZoomAbility constructor(
     val logger = logger.newLogger(module = "ZoomAbility")
     internal val zoomEngine = ZoomEngine(logger = this.logger, view = view)
     private var scrollBarEngine: ScrollBarEngine? = null
-    private val gestureDetector: UnifiedGestureDetector
+    private val touchEngine = TouchEngine(view = view, zoomEngine = zoomEngine)
     private val cacheImageMatrix = Matrix()
-    private var onViewTapListenerList: MutableSet<OnViewTapListener>? = null
-    private var onViewLongPressListenerList: MutableSet<OnViewLongPressListener>? = null
     private var scaleType: ScaleType = ScaleType.FIT_CENTER
         set(value) {
             if (field != value) {
@@ -277,66 +273,6 @@ class ZoomAbility constructor(
             scrollBarEngine?.onMatrixChanged()
         }
 
-        gestureDetector = UnifiedGestureDetector(
-            view = view,
-            onDownCallback = { true },
-            onSingleTapConfirmedCallback = { e: MotionEvent ->
-                val onViewTapListenerList = onViewTapListenerList
-                onViewTapListenerList?.forEach {
-                    it.onViewTap(view, e.x, e.y)
-                }
-                onViewTapListenerList?.isNotEmpty() == true || view.performClick()
-            },
-            onLongPressCallback = { e: MotionEvent ->
-                val onViewLongPressListenerList = onViewLongPressListenerList
-                onViewLongPressListenerList?.forEach {
-                    it.onViewLongPress(view, e.x, e.y)
-                }
-                onViewLongPressListenerList?.isNotEmpty() == true || view.performLongClick()
-            },
-            onDoubleTapCallback = { e: MotionEvent ->
-                val touchPoint = OffsetCompat(x = e.x, y = e.y)
-                val centroidContentPoint = zoomEngine.touchPointToContentPoint(touchPoint)
-                switchScale(centroidContentPoint = centroidContentPoint, animated = true)
-                true
-            },
-            onDragCallback = { dx: Float, dy: Float ->
-                zoomEngine.transform(
-                    centroid = zoomEngine.containerSize.toSize().center,
-                    panChange = OffsetCompat(dx, dy),
-                    zoomChange = 1f,
-                    rotationChange = 0f,
-                )
-            },
-            onFlingCallback = { velocityX: Float, velocityY: Float ->
-                zoomEngine.fling(velocityX, velocityY)
-            },
-            onScaleCallback = { scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float ->
-                zoomEngine.transform(
-                    centroid = OffsetCompat(x = focusX, y = focusY),
-                    panChange = OffsetCompat(x = dx, y = dy),
-                    zoomChange = scaleFactor,
-                    rotationChange = 0f,
-                )
-            },
-            onScaleBeginCallback = {
-                zoomEngine.transforming = true
-                true
-            },
-            onScaleEndCallback = {
-                zoomEngine.transforming = false
-                zoomEngine.rollbackScale(it)
-            },
-            onActionDownCallback = {
-                zoomEngine.stopAllAnimation("onActionDown")
-            },
-            onActionUpCallback = { },
-            onActionCancelCallback = { },
-            canDrag = { horizontal: Boolean, direction: Int ->
-                zoomEngine.canScroll(horizontal, direction)
-            }
-        )
-
         resetDrawableSize()
         resetScrollBarHelper()
     }
@@ -462,30 +398,28 @@ class ZoomAbility constructor(
      * Register a single click event listener
      */
     fun registerOnViewTapListener(listener: OnViewTapListener) {
-        this.onViewTapListenerList = (onViewTapListenerList ?: LinkedHashSet())
-            .apply { add(listener) }
+        touchEngine.registerOnViewTapListener(listener)
     }
 
     /**
      * Unregister a single click event listener
      */
     fun unregisterOnViewTapListener(listener: OnViewTapListener): Boolean {
-        return onViewTapListenerList?.remove(listener) == true
+        return touchEngine.unregisterOnViewTapListener(listener)
     }
 
     /**
      * Register a long press event listener
      */
     fun registerOnViewLongPressListener(listener: OnViewLongPressListener) {
-        this.onViewLongPressListenerList = (onViewLongPressListenerList ?: LinkedHashSet())
-            .apply { add(listener) }
+        touchEngine.unregisterOnViewLongPressListener(listener)
     }
 
     /**
      * Unregister a long press event listener
      */
     fun unregisterOnViewLongPressListener(listener: OnViewLongPressListener): Boolean {
-        return onViewLongPressListenerList?.remove(listener) == true
+        return touchEngine.unregisterOnViewLongPressListener(listener)
     }
 
     /**
@@ -537,7 +471,7 @@ class ZoomAbility constructor(
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
-        return gestureDetector.onTouchEvent(event)
+        return touchEngine.onTouchEvent(event)
     }
 
     fun setScaleType(scaleType: ScaleType): Boolean {
