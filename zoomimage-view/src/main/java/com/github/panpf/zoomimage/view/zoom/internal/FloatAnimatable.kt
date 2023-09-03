@@ -74,8 +74,9 @@ internal class FloatAnimatable(
     @Suppress("UnnecessaryVariable")
     private fun computeProgress(): Float {
         val elapsedTime = System.currentTimeMillis() - startTime
+        if (elapsedTime <= 0) return 1f
         val progress = (elapsedTime.toFloat() / durationMillis).coerceAtMost(1f)
         val changedProgress = interpolator.getInterpolation(progress)
-        return changedProgress  // todo Probably NaN
+        return changedProgress
     }
 }
