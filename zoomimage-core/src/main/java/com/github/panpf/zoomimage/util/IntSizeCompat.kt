@@ -27,6 +27,8 @@ import kotlin.math.roundToInt
 
 /**
  * Constructs an [IntSizeCompat] from width and height [Int] values.
+ *
+ * Copy from androidx/compose/ui/unit/IntSize.kt
  */
 fun IntSizeCompat(width: Int, height: Int): IntSizeCompat = IntSizeCompat(packInts(width, height))
 
@@ -70,7 +72,7 @@ value class IntSizeCompat internal constructor(@PublishedApi internal val packed
         /**
          * IntSize with a zero (0) width and height.
          */
-        val Zero = IntSizeCompat(width = 0, height = 0)
+        val Zero = IntSizeCompat(0, 0)
     }
 }
 
@@ -98,6 +100,11 @@ val IntSizeCompat.center: IntOffsetCompat
 fun IntSizeCompat.toSize(): SizeCompat = SizeCompat(width.toFloat(), height.toFloat())
 
 
+/* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * Return short string descriptions, for example: '100x200'
+ */
 fun IntSizeCompat.toShortString(): String = "${width}x$height"
 
 fun IntSizeCompat.isEmpty(): Boolean = width <= 0 || height <= 0

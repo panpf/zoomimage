@@ -34,6 +34,9 @@ internal fun Float.toDp(): Dp {
 
 /* ****************************************** Size ********************************************** */
 
+/**
+ * Return short string descriptions, for example: '100.56x900.45'
+ */
 @Stable
 internal fun Size.toShortString(): String =
     if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
@@ -79,6 +82,9 @@ internal fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
 
 /* **************************************** IntSize ********************************************* */
 
+/**
+ * Return short string descriptions, for example: '100x200'
+ */
 @Stable
 internal fun IntSize.toShortString(): String = "${width}x${height}"
 
@@ -169,6 +175,9 @@ internal fun IntSize.copy(width: Int = this.width, height: Int = this.height) =
 
 /* ***************************************** Offset ********************************************* */
 
+/**
+ * Return short string descriptions, for example: '10.01x9.03'
+ */
 @Stable
 internal fun Offset.toShortString(): String =
     if (isSpecified) "${x.format(2)}x${y.format(2)}" else "Unspecified"
@@ -238,6 +247,9 @@ internal fun Offset.limitTo(rect: Rect): Offset {
 
 /* ************************************** IntOffset ********************************************* */
 
+/**
+ * Return short string descriptions, for example: '10x9'
+ */
 @Stable
 internal fun IntOffset.toShortString(): String = "${x}x${y}"
 
@@ -306,6 +318,9 @@ internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
 
 /* ******************************************* Rect ********************************************* */
 
+/**
+ * Return short string descriptions, for example: '[0.01x0.34,100.67x200.02]'
+ */
 @Stable
 internal fun Rect.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
@@ -425,6 +440,9 @@ internal fun Rect.reverseRotateInSpace(spaceSize: Size, rotation: Int): Rect {
 
 /* **************************************** IntRect ********************************************* */
 
+/**
+ * Return short string descriptions, for example: '[0x0,500x400]'
+ */
 @Stable
 internal fun IntRect.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
@@ -554,6 +572,9 @@ internal fun IntRect.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): In
 
 /* ************************************** ScaleFactor ******************************************* */
 
+/**
+ * Return short string descriptions, for example: '3.45x9.87'
+ */
 @Stable
 internal fun ScaleFactor.toShortString(): String = "${scaleX.format(2)}x${scaleY.format(2)}"
 
@@ -577,6 +598,9 @@ internal fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
 
 /* ************************************** TransformOrigin *************************************** */
 
+/**
+ * Return short string descriptions, for example: '0.52x0.52'
+ */
 @Stable
 internal fun TransformOrigin.toShortString(): String =
     "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"

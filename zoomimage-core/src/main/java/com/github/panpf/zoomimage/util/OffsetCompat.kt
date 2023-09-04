@@ -27,6 +27,8 @@ import kotlin.math.sqrt
 
 /**
  * Constructs an Offset from the given relative x and y offsets
+ *
+ * Copy from androidx/compose/ui/geometry/Offset.kt
  */
 fun OffsetCompat(x: Float, y: Float) = OffsetCompat(packFloats(x, y))
 
@@ -200,7 +202,7 @@ value class OffsetCompat internal constructor(internal val packedValue: Long) {
 }
 
 /**
- * Linearly interpolate between two [OffsetCompat] parameters
+ * Linearly interpolate between two offsets.
  *
  * The [fraction] argument represents position on the timeline, with 0.0 meaning
  * that the interpolation has not started, returning [start] (or something
@@ -244,6 +246,11 @@ inline fun OffsetCompat.takeOrElse(block: () -> OffsetCompat): OffsetCompat =
     if (isSpecified) this else block()
 
 
+/* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * Return short string descriptions, for example: '10.01x9.03'
+ */
 fun OffsetCompat.toShortString(): String =
     if (isSpecified) "${x.format(2)}x${y.format(2)}" else "Unspecified"
 

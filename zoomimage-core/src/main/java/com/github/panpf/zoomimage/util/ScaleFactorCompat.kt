@@ -24,6 +24,8 @@ import com.github.panpf.zoomimage.util.internal.unpackFloat2
 
 /**
  * Constructs a [ScaleFactorCompat] from the given x and y scale values
+ *
+ * Copy androidx/compose/ui/layout/ScaleFactor.kt
  */
 fun ScaleFactorCompat(scaleX: Float, scaleY: Float) = ScaleFactorCompat(packFloats(scaleX, scaleY))
 
@@ -96,7 +98,7 @@ value class ScaleFactorCompat internal constructor(@PublishedApi internal val pa
          * value used to initialize a non-null parameter.
          * Access to scaleX or scaleY on an unspecified size is not allowed
          */
-        val Unspecified = ScaleFactorCompat(scaleX = Float.NaN, scaleY = Float.NaN)
+        val Unspecified = ScaleFactorCompat(Float.NaN, Float.NaN)
     }
 }
 
@@ -183,6 +185,11 @@ fun lerp(start: ScaleFactorCompat, stop: ScaleFactorCompat, fraction: Float): Sc
 }
 
 
+/* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * Return short string descriptions, for example: '3.45x9.87'
+ */
 fun ScaleFactorCompat.toShortString(): String = "${scaleX.format(2)}x${scaleY.format(2)}"
 
 private val scaleFactorCompatOrigin by lazy { ScaleFactorCompat(scaleX = 1f, scaleY = 1f) }

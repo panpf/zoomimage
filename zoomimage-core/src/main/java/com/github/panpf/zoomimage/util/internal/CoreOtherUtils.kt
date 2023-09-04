@@ -22,9 +22,6 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-
-internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
-
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
         this
@@ -33,6 +30,7 @@ internal fun Float.format(newScale: Int): Float {
     }
 }
 
+// Copy from androidx/compose/ui/geometry/GeometryUtils.kt
 // File of internal utility methods used for the geometry library
 internal fun Float.toStringAsFixed(digits: Int): String {
     val clampedDigits: Int = kotlin.math.max(digits, 0) // Accept positive numbers and 0 only
@@ -60,6 +58,8 @@ internal fun Float.toStringAsFixed(digits: Int): String {
 
 /**
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
+ *
+ * Copy from androidx/compose/ui/util/MathHelpers.kt
  */
 internal fun lerp(start: Float, stop: Float, fraction: Float): Float {
     return (1 - fraction) * start + fraction * stop
@@ -67,6 +67,8 @@ internal fun lerp(start: Float, stop: Float, fraction: Float): Float {
 
 /**
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
+ *
+ * Copy from androidx/compose/ui/util/MathHelpers.kt
  */
 internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
     return start + ((stop - start) * fraction.toDouble()).roundToInt()
@@ -74,6 +76,8 @@ internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
 
 /**
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
+ *
+ * Copy from androidx/compose/ui/util/MathHelpers.kt
  */
 internal fun lerp(start: Long, stop: Long, fraction: Float): Long {
     return start + ((stop - start) * fraction.toDouble()).roundToLong()

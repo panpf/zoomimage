@@ -37,6 +37,8 @@ fun SizeCompat(width: Float, height: Float) = SizeCompat(packFloats(width, heigh
  * Holds a 2D floating-point size.
  *
  * You can think of this as an [SizeCompat] from the origin.
+ *
+ * Copy from androidx/compose/ui/geometry/Size.kt
  */
 @JvmInline
 value class SizeCompat internal constructor(@PublishedApi internal val packedValue: Long) {
@@ -75,7 +77,7 @@ value class SizeCompat internal constructor(@PublishedApi internal val packedVal
         /**
          * An empty size, one with a zero width and a zero height.
          */
-        val Zero = SizeCompat(width = 0f, height = 0f)
+        val Zero = SizeCompat(0.0f, 0.0f)
 
         /**
          * A size whose [width] and [height] are unspecified. This is a sentinel
@@ -123,7 +125,7 @@ value class SizeCompat internal constructor(@PublishedApi internal val packedVal
         } else {
             // In this case reading the width or height properties will throw, and they don't
             // contain meaningful values as strings anyway.
-            "Size.Unspecified"
+            "SizeCompat.Unspecified"
         }
 }
 
@@ -200,6 +202,11 @@ inline operator fun Float.times(size: SizeCompat) = size * this
 val SizeCompat.center: OffsetCompat get() = OffsetCompat(x = width / 2f, y = height / 2f)
 
 
+/* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * Return short string descriptions, for example: '100.56x900.45'
+ */
 fun SizeCompat.toShortString(): String =
     if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
 

@@ -27,10 +27,13 @@ import kotlin.math.roundToInt
 /**
  * Constructs a [IntOffsetCompat] from [x] and [y] position [Int] values.
  */
-fun IntOffsetCompat(x: Int, y: Int): IntOffsetCompat = IntOffsetCompat(packInts(x, y))
+fun IntOffsetCompat(x: Int, y: Int): IntOffsetCompat =
+    IntOffsetCompat(packInts(x, y))
 
 /**
  * A two-dimensional position using [Int] pixels for units
+ *
+ * Copy from androidx/compose/ui/unit/IntOffset.kt
  */
 @JvmInline
 value class IntOffsetCompat internal constructor(@PublishedApi internal val packedValue: Long) {
@@ -107,7 +110,7 @@ value class IntOffsetCompat internal constructor(@PublishedApi internal val pack
      */
     operator fun rem(operand: Int) = IntOffsetCompat(x % operand, y % operand)
 
-    override fun toString() = "($x, $y)"
+    override fun toString(): String = "($x, $y)"
 
     companion object {
         val Zero = IntOffsetCompat(0, 0)
@@ -130,12 +133,13 @@ value class IntOffsetCompat internal constructor(@PublishedApi internal val pack
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  */
-fun lerp(start: IntOffsetCompat, stop: IntOffsetCompat, fraction: Float): IntOffsetCompat {
-    return IntOffsetCompat(
-        lerp(start.x, stop.x, fraction),
-        lerp(start.y, stop.y, fraction)
-    )
-}
+fun lerp(start: IntOffsetCompat, stop: IntOffsetCompat, fraction: Float): IntOffsetCompat =
+    IntOffsetCompat(lerp(start.x, stop.x, fraction), lerp(start.y, stop.y, fraction))
+
+/**
+ * Converts the [IntOffsetCompat] to an [OffsetCompat].
+ */
+inline fun IntOffsetCompat.toOffset() = OffsetCompat(x.toFloat(), y.toFloat())
 
 operator fun OffsetCompat.plus(offset: IntOffsetCompat): OffsetCompat =
     OffsetCompat(x + offset.x, y + offset.y)
@@ -150,18 +154,25 @@ operator fun IntOffsetCompat.minus(offset: OffsetCompat): OffsetCompat =
     OffsetCompat(x - offset.x, y - offset.y)
 
 /**
- * Converts the [IntOffsetCompat] to an [OffsetCompat].
- */
-inline fun IntOffsetCompat.toOffset() = OffsetCompat(x.toFloat(), y.toFloat())
-
-/**
  * Round a [OffsetCompat] down to the nearest [Int] coordinates.
  */
 inline fun OffsetCompat.round(): IntOffsetCompat = IntOffsetCompat(x.roundToInt(), y.roundToInt())
 
 
+/* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * Return short string descriptions, for example: '10x9'
+ */
 fun IntOffsetCompat.toShortString(): String = "${x}x${y}"
 
+/**
+ * Multiplication operator.
+ *
+ * Returns an IntOffsetCompat whose coordinates are the coordinates of the
+ * left-hand-side operand (an IntOffsetCompat) multiplied by the scalar
+ * right-hand-side operand (a Float). The result is rounded to the nearest integer.
+ */
 operator fun IntOffsetCompat.times(scaleFactor: ScaleFactorCompat): IntOffsetCompat {
     return IntOffsetCompat(
         x = (x * scaleFactor.scaleX).roundToInt(),
@@ -169,6 +180,13 @@ operator fun IntOffsetCompat.times(scaleFactor: ScaleFactorCompat): IntOffsetCom
     )
 }
 
+/**
+ * Division operator.
+ *
+ * Returns an IntOffsetCompat whose coordinates are the coordinates of the
+ * left-hand-side operand (an IntOffsetCompat) divided by the scalar right-hand-side
+ * operand (a Float). The result is rounded to the nearest integer.
+ */
 operator fun IntOffsetCompat.div(scaleFactor: ScaleFactorCompat): IntOffsetCompat {
     return IntOffsetCompat(
         x = (x / scaleFactor.scaleX).roundToInt(),
@@ -176,10 +194,19 @@ operator fun IntOffsetCompat.div(scaleFactor: ScaleFactorCompat): IntOffsetCompa
     )
 }
 
+/**
+ * Convert to [SizeCompat]
+ */
 fun IntOffsetCompat.toSize(): SizeCompat = SizeCompat(width = x.toFloat(), height = y.toFloat())
 
+/**
+ * Convert to [IntSizeCompat]
+ */
 fun IntOffsetCompat.toIntSize(): IntSizeCompat = IntSizeCompat(width = x, height = y)
 
+/**
+ * Rotate the space by [rotation] degrees, and then return the rotated coordinates
+ */
 fun IntOffsetCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
     return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
@@ -190,6 +217,9 @@ fun IntOffsetCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntO
     }
 }
 
+/**
+ * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated coordinates
+ */
 fun IntOffsetCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
     val reverseRotation = 360 - rotation % 360

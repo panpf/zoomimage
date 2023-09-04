@@ -25,6 +25,9 @@ data class ScrollEdge(val horizontal: Edge, val vertical: Edge) {
     }
 }
 
+/**
+ * Return short string descriptions, for example: '(START,END)'
+ */
 fun ScrollEdge.toShortString(): String = "(${horizontal.name},${vertical.name})"
 
 /**

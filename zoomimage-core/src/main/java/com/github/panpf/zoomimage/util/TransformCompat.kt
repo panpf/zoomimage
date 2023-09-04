@@ -138,6 +138,9 @@ fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): Transf
     )
 }
 
+/**
+ * Return short string descriptions, for example: '(3.45x9.87,10.56x20.56,45.03,0.52x0.52,0.52x0.52)'
+ */
 fun TransformCompat.toShortString(): String =
     "(${scale.toShortString()},${offset.toShortString()},$rotation,${scaleOrigin.toShortString()},${rotationOrigin.toShortString()})"
 

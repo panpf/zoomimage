@@ -32,12 +32,10 @@ internal fun requiredWorkThread() {
     }
 }
 
-internal fun isMainThread() = Looper.myLooper() == Looper.getMainLooper()
-
 internal fun Bitmap.toShortString(): String = "(${width}x${height},$config)"
 
 internal fun Bitmap.toHexString(): String =
-    "Bitmap(${width}x${height},$config,@${(this as Any).toHexString()})"
+    "Bitmap(${width}x${height},$config,@${Integer.toHexString(hashCode())})"
 
 internal val Bitmap.safeConfig: Bitmap.Config
     get() = config ?: Bitmap.Config.ARGB_8888

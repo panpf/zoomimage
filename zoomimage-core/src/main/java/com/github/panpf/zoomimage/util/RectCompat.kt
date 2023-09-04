@@ -25,6 +25,8 @@ import kotlin.math.min
 
 /**
  * An immutable, 2D, axis-aligned, floating-point rectangle whose coordinates are relative to a given origin.
+ *
+ * Copy from androidx/compose/ui/geometry/Rect.kt
  */
 data class RectCompat(
     /**
@@ -56,15 +58,11 @@ data class RectCompat(
 
     /** The distance between the left and right edges of this rectangle. */
     val width: Float
-        get() {
-            return right - left
-        }
+        get() { return right - left }
 
     /** The distance between the top and bottom edges of this rectangle. */
     val height: Float
-        get() {
-            return bottom - top
-        }
+        get() { return bottom - top }
 
     /**
      * The distance between the upper-left corner and the lower-right corner of
@@ -77,16 +75,16 @@ data class RectCompat(
     // included for consistency with Offset and Size
     val isInfinite: Boolean
         get() = left >= Float.POSITIVE_INFINITY ||
-                top >= Float.POSITIVE_INFINITY ||
-                right >= Float.POSITIVE_INFINITY ||
-                bottom >= Float.POSITIVE_INFINITY
+            top >= Float.POSITIVE_INFINITY ||
+            right >= Float.POSITIVE_INFINITY ||
+            bottom >= Float.POSITIVE_INFINITY
 
     /** Whether all coordinates of this rectangle are finite. */
     val isFinite: Boolean
         get() = left.isFinite() &&
-                top.isFinite() &&
-                right.isFinite() &&
-                bottom.isFinite()
+            top.isFinite() &&
+            right.isFinite() &&
+            bottom.isFinite()
 
     /**
      * Whether this rectangle encloses a non-zero area. Negative areas are
@@ -213,17 +211,13 @@ data class RectCompat(
      * The offset to the center of the bottom edge of this rectangle.
      */
     val bottomCenter: OffsetCompat
-        get() {
-            return OffsetCompat(left + width / 2.0f, bottom)
-        }
+        get() { return OffsetCompat(left + width / 2.0f, bottom) }
 
     /**
      * The offset to the intersection of the bottom and right edges of this rectangle.
      */
     val bottomRight: OffsetCompat
-        get() {
-            return OffsetCompat(right, bottom)
-        }
+        get() { return OffsetCompat(right, bottom) }
 
     /**
      * Whether the point specified by the given offset (which is assumed to be
@@ -312,6 +306,11 @@ fun lerp(start: RectCompat, stop: RectCompat, fraction: Float): RectCompat {
 }
 
 
+/* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * Return short string descriptions, for example: '[0.01x0.34,100.67x200.02]'
+ */
 fun RectCompat.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 

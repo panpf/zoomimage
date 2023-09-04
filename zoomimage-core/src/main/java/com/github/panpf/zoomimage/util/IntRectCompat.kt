@@ -23,7 +23,9 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
- * An immutable, 2D, axis-aligned, integer rectangle whose coordinates are relative to a given origin.
+ * An immutable, 2D, axis-aligned, integer bounds rectangle whose coordinates are relative to a given origin.
+ *
+ * Copy from androidx/compose/ui/unit/IntRect.kt
  */
 data class IntRectCompat(
     /**
@@ -235,15 +237,13 @@ data class IntRectCompat(
  * [IntOffsetCompat.y] as [IntRectCompat.right] and [IntRectCompat.bottom] to [IntOffsetCompat.x] + [IntSizeCompat.width] and
  * [IntOffsetCompat.y] + [IntSizeCompat.height] respectively
  */
-fun IntRectCompat(
-    offset: IntOffsetCompat,
-    size: IntSizeCompat
-) = IntRectCompat(
-    left = offset.x,
-    top = offset.y,
-    right = offset.x + size.width,
-    bottom = offset.y + size.height
-)
+fun IntRectCompat(offset: IntOffsetCompat, size: IntSizeCompat) =
+    IntRectCompat(
+        left = offset.x,
+        top = offset.y,
+        right = offset.x + size.width,
+        bottom = offset.y + size.height
+    )
 
 /**
  * Construct the smallest rectangle that encloses the given offsets, treating
@@ -251,30 +251,26 @@ fun IntRectCompat(
  * @param topLeft OffsetCompat representing the left and top edges of the rectangle
  * @param bottomRight OffsetCompat representing the bottom and right edges of the rectangle
  */
-fun IntRectCompat(
-    topLeft: IntOffsetCompat,
-    bottomRight: IntOffsetCompat
-): IntRectCompat = IntRectCompat(
-    left = topLeft.x,
-    top = topLeft.y,
-    right = bottomRight.x,
-    bottom = bottomRight.y
-)
+fun IntRectCompat(topLeft: IntOffsetCompat, bottomRight: IntOffsetCompat): IntRectCompat =
+    IntRectCompat(
+        left = topLeft.x,
+        top = topLeft.y,
+        right = bottomRight.x,
+        bottom = bottomRight.y
+    )
 
 /**
  * Construct a rectangle that bounds the given circle
  * @param center OffsetCompat that represents the center of the circle
  * @param radius Radius of the circle to enclose
  */
-fun IntRectCompat(
-    center: IntOffsetCompat,
-    radius: Int
-): IntRectCompat = IntRectCompat(
-    left = center.x - radius,
-    top = center.y - radius,
-    right = center.x + radius,
-    bottom = center.y + radius
-)
+fun IntRectCompat(center: IntOffsetCompat, radius: Int): IntRectCompat =
+    IntRectCompat(
+        left = center.x - radius,
+        top = center.y - radius,
+        right = center.x + radius,
+        bottom = center.y + radius
+    )
 
 /**
  * Linearly interpolate between two rectangles.
@@ -321,6 +317,11 @@ fun RectCompat.roundToIntRect(): IntRectCompat = IntRectCompat(
 )
 
 
+/* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * Return short string descriptions, for example: '[0x0,500x400]'
+ */
 fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
 /**

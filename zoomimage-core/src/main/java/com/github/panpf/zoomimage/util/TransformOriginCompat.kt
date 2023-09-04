@@ -32,6 +32,8 @@ fun TransformOriginCompat(pivotFractionX: Float, pivotFractionY: Float): Transfo
 
 /**
  * A two-dimensional position represented as a fraction of the Layer's width and height
+ *
+ * Copy from androidx/compose/ui/graphics/TransformOrigin.kt
  */
 @JvmInline
 value class TransformOriginCompat internal constructor(@PublishedApi internal val packedValue: Long) {
@@ -73,11 +75,21 @@ value class TransformOriginCompat internal constructor(@PublishedApi internal va
         "TransformOriginCompat(${pivotFractionX.format(2)}, ${pivotFractionY.format(2)}))"
 
     companion object {
-        val Center = TransformOriginCompat(pivotFractionX = 0.5f, pivotFractionY = 0.5f)
+
+        /**
+         * [TransformOriginCompat] constant to indicate that the center of the content should
+         * be used for rotation and scale transformations
+         */
+        val Center = TransformOriginCompat(0.5f, 0.5f)
     }
 }
 
 
+/* ************************************ Extra-extended functions ******************************** */
+
+/**
+ * Return short string descriptions, for example: '0.52x0.52'
+ */
 fun TransformOriginCompat.toShortString(): String =
     "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"
 
