@@ -210,22 +210,21 @@ zoom 和子采样的 API 封装在不同的类中，compose 版本是 [ZoomableS
 example/示例：
 
 ```kotlin
+// compose
 val state: ZoomState by rememberZoomState()
-
-state.zoomable  // ZoomableState
-state.subsampling   // SubsamplingState
-
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     state = state,
 )
+val zoomable: ZoomableState = state.zoomable
+val subsampling: SubsamplingState = state.subsampling
 
-
+// view
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.zoomable  // ZoomableEngine
-sketchZoomImageView.subsampling   // SubsamplingEngine
+val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
+val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 ```
 
 *For more detailed information about zoom, offset, rotation, subsampling, reading mode, scroll bar
@@ -298,80 +297,98 @@ sketchZoomImageView.onViewLongPressListener =  { view: android.view.View, x: Flo
 
 ### Get relevant information/获取相关信息
 
-* [ZoomableState].baseTransform: Transform。
+```kotlin
+// compose
+val state: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+val zoomable: ZoomableState = state.zoomable
+val subsampling: SubsamplingState = state.subsampling
+
+// view
+val sketchZoomImageView = SketchZoomImageView(context)
+val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
+val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
+```
+
+* `zoomable.baseTransform: Transform`。
     * Base transformation, include the base scale, offset, rotation, which is affected by contentScale, alignment properties and rotate method
       <br>-----------</br>
     * 基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment 属性以及 rotate() 方法的影响
-* [ZoomableState].userTransform: Transform。
+* `zoomable.userTransform: Transform`。
     * User transformation, include the user scale, offset, rotation, which is affected by the user's gesture, readMode properties and scale, offset, locate method
       <br>-----------</br>
     * 用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode 属性以及 scale()、offset()、locate()
       方法的影响
-* [ZoomableState].transform: Transform。
+* `zoomable.transform: Transform`。
     * Final transformation, include the final scale, offset, rotation, is equivalent to `baseTransform + userTransform`
       <br>-----------</br>
     * 最终的变换信息，包括缩放、偏移、旋转，等价于 `baseTransform + userTransform`
-* [ZoomableState].minScale: Float。
+* `zoomable.minScale: Float`。
     * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
       <br>-----------</br>
     * 最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
-* [ZoomableState].mediumScale: Float。
+* `zoomable.mediumScale: Float`。
     * Medium scale factor, only as a target value for one of when switch scale
       <br>-----------</br>
     * 中间缩放比例，用于双击缩放时的一个循环缩放比例
-* [ZoomableState].maxScale: Float。
+* `zoomable.maxScale: Float`。
     * Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
       <br>-----------</br>
     * 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
-* [ZoomableState].transforming: Boolean。
+* `zoomable.transforming: Boolean`。
     * If true, a transformation is currently in progress, possibly in a continuous gesture operation, or an animation is in progress
       <br>-----------</br>
     * 是否正在变换中，可能是在连续的手势操作中或者正在执行动画
-* [ZoomableState].contentBaseDisplayRect: IntRect。
+* `zoomable.contentBaseDisplayRect: IntRect`。
     * The content region in the container after the baseTransform transformation
       <br>-----------</br>
     * content 经过 baseTransform 变换后在 container 中的区域
-* [ZoomableState].contentBaseVisibleRect:
+* `zoomable.contentBaseVisibleRect: IntRect`。
     * The content is visible region to the user after the baseTransform transformation
       <br>-----------</br>
     * content 经过 baseTransform 变换后自身对用户可见的区域
-* [ZoomableState].contentDisplayRect: IntRect。
+* `zoomable.contentDisplayRect: IntRect`。
     * The content region in the container after the final transform transformation
       <br>-----------</br>
     * content 经过 transform 变换后在 container 中的区域
-* [ZoomableState].contentVisibleRect: IntRect。
+* `zoomable.contentVisibleRect: IntRect`。
     * The content is visible region to the user after the final transform transformation
       <br>-----------</br>
     * content 经过 transform 变换后自身对用户可见的区域
-* [ZoomableState].scrollEdge: ScrollEdge。
+* `zoomable.scrollEdge: ScrollEdge`。
     * Edge state for the current offset
       <br>-----------</br>
     * 当前偏移的边界状态
-* [ZoomableState].containerSize: IntSize。
+* `zoomable.containerSize: IntSize`。
     * The size of the container that holds the content
       <br>-----------</br>
     * 当前 container 的大小
-* [ZoomableState].contentSize: IntSize。
+* `zoomable.contentSize: IntSize`。
     * The size of the content, usually Painter.intrinsicSize.round()
       <br>-----------</br>
     * 当前 content 的大小
-* [ZoomableState].contentOriginSize: IntSize。
+* `zoomable.contentOriginSize: IntSize`。
     * The original size of the content
       <br>-----------</br>
     * 当前 content 的原始大小
-* [SubsamplingState].ready: Boolean。
+* `subsampling.ready: Boolean`。
     * Whether the image is ready for subsampling
       <br>-----------</br>
     * 是否已经准备好了
-* [SubsamplingState].imageInfo: ImageInfo。
+* `subsampling.imageInfo: ImageInfo`。
     * The information of the image, including width, height, format, exif information, etc
       <br>-----------</br>
     * 图片的尺寸、格式、exif 等信息
-* [SubsamplingState].tileSnapshotList: List<TileSnapshot>。
+* `subsampling.tileSnapshotList: List<TileSnapshot>`。
     * A snapshot of the tile list
       <br>-----------</br>
     * 当前图块的快照列表
-* [SubsamplingState].imageLoadRect: IntRect。
+* `subsampling.imageLoadRect: IntRect`。
     * The image load rect
       <br>-----------</br>
     * 原图上当前实际加载的区域
