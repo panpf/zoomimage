@@ -82,6 +82,12 @@ internal fun Size.rotate(rotation: Int): Size =
     if (rotation % 180 == 0) this else Size(height, width)
 
 @Stable
+internal fun Size.reverseRotate(rotation: Int): Size {
+    val reverseRotation = (360 - rotation) % 360
+    return rotate(reverseRotation)
+}
+
+@Stable
 internal fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height
     val otherScale = other.width / other.height
@@ -146,6 +152,12 @@ internal fun IntSize.toIntOffset(): IntOffset = IntOffset(x = width, y = height)
 @Stable
 internal fun IntSize.rotate(rotation: Int): IntSize {
     return if (rotation % 180 == 0) this else IntSize(height, width)
+}
+
+@Stable
+internal fun IntSize.reverseRotate(rotation: Int): IntSize {
+    val reverseRotation = (360 - rotation) % 360
+    return rotate(reverseRotation)
 }
 
 @Stable

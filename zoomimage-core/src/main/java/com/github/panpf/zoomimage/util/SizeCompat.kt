@@ -233,6 +233,11 @@ fun SizeCompat.rotate(rotation: Int): SizeCompat {
     return if (rotation % 180 == 0) this else SizeCompat(width = height, height = width)
 }
 
+fun SizeCompat.reverseRotate(rotation: Int): SizeCompat {
+    val reverseRotation = (360 - rotation) % 360
+    return rotate(reverseRotation)
+}
+
 fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height
     val otherScale = other.width / other.height

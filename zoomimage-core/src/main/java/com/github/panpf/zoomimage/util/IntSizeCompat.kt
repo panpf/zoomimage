@@ -145,6 +145,14 @@ fun IntSizeCompat.rotate(rotation: Int): IntSizeCompat {
     return if (rotation % 180 == 0) this else IntSizeCompat(width = height, height = width)
 }
 
+/**
+ * The size after reverse rotating [rotation] degrees
+ */
+fun IntSizeCompat.reverseRotate(rotation: Int): IntSizeCompat {
+    val reverseRotation = (360 - rotation) % 360
+    return rotate(reverseRotation)
+}
+
 fun IntSizeCompat.isSameAspectRatio(other: IntSizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height.toFloat()
     val otherScale = other.width / other.height.toFloat()
