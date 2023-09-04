@@ -209,7 +209,7 @@ fun IntOffsetCompat.toIntSize(): IntSizeCompat = IntSizeCompat(width = x, height
  */
 fun IntOffsetCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
+    return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
         90 -> IntOffsetCompat(x = spaceSize.height - y, y = x)
         180 -> IntOffsetCompat(x = spaceSize.width - x, y = spaceSize.height - y)
         270 -> IntOffsetCompat(x = y, y = spaceSize.width - x)
@@ -222,10 +222,13 @@ fun IntOffsetCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntO
  */
 fun IntOffsetCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
-    val reverseRotation = 360 - rotation % 360
+    val reverseRotation = (360 - rotation) % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
+/**
+ * Limit offset to 0 to the range of size
+ */
 fun IntOffsetCompat.limitTo(size: IntSizeCompat): IntOffsetCompat {
     return if (x < 0 || x > size.width || y < 0 || y > size.height) {
         IntOffsetCompat(
@@ -237,6 +240,9 @@ fun IntOffsetCompat.limitTo(size: IntSizeCompat): IntOffsetCompat {
     }
 }
 
+/**
+ * Limit the offset to the rectangular extent
+ */
 fun IntOffsetCompat.limitTo(rect: IntRectCompat): IntOffsetCompat {
     return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
         IntOffsetCompat(

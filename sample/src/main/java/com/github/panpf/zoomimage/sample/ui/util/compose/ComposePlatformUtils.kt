@@ -205,7 +205,7 @@ internal fun Offset.roundToSize(): IntSize =
 @Stable
 internal fun Offset.rotateInSpace(spaceSize: Size, rotation: Int): Offset {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
+    return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
         90 -> Offset(x = spaceSize.height - y, y = x)
         180 -> Offset(x = spaceSize.width - x, y = spaceSize.height - y)
         270 -> Offset(x = y, y = spaceSize.width - x)
@@ -216,7 +216,7 @@ internal fun Offset.rotateInSpace(spaceSize: Size, rotation: Int): Offset {
 @Stable
 internal fun Offset.reverseRotateInSpace(spaceSize: Size, rotation: Int): Offset {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
-    val reverseRotation = 360 - rotation % 360
+    val reverseRotation = (360 - rotation) % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
@@ -276,7 +276,7 @@ internal fun IntOffset.toIntSize(): IntSize = IntSize(width = x, height = y)
 @Stable
 internal fun IntOffset.rotateInSpace(spaceSize: IntSize, rotation: Int): IntOffset {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
+    return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
         90 -> IntOffset(x = spaceSize.height - y, y = x)
         180 -> IntOffset(x = spaceSize.width - x, y = spaceSize.height - y)
         270 -> IntOffset(x = y, y = spaceSize.width - x)
@@ -287,7 +287,7 @@ internal fun IntOffset.rotateInSpace(spaceSize: IntSize, rotation: Int): IntOffs
 @Stable
 internal fun IntOffset.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): IntOffset {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
-    val reverseRotation = 360 - rotation % 360
+    val reverseRotation = (360 - rotation) % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
@@ -398,7 +398,7 @@ internal fun Rect.limitTo(size: Size): Rect =
 @Stable
 internal fun Rect.rotateInSpace(spaceSize: Size, rotation: Int): Rect {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
+    return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
         90 -> {
             Rect(
                 left = spaceSize.height - this.bottom,
@@ -433,7 +433,7 @@ internal fun Rect.rotateInSpace(spaceSize: Size, rotation: Int): Rect {
 @Stable
 internal fun Rect.reverseRotateInSpace(spaceSize: Size, rotation: Int): Rect {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
-    val reverseRotation = 360 - rotation % 360
+    val reverseRotation = (360 - rotation) % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
@@ -530,7 +530,7 @@ internal fun IntRect.limitTo(size: IntSize): IntRect =
 @Stable
 internal fun IntRect.rotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
+    return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
         90 -> {
             IntRect(
                 left = spaceSize.height - this.bottom,
@@ -565,7 +565,7 @@ internal fun IntRect.rotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
 @Stable
 internal fun IntRect.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
-    val reverseRotation = 360 - rotation % 360
+    val reverseRotation = (360 - rotation) % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 

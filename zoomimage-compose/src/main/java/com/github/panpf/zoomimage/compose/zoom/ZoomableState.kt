@@ -603,7 +603,7 @@ class ZoomableState(logger: Logger) {
      */
     suspend fun rotate(targetRotation: Int) = coroutineScope {
         require(targetRotation % 90 == 0) { "rotation must be in multiples of 90: $targetRotation" }
-        val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 - it else it }
+        val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 + it else it }
         val currentRotation = rotation
         if (currentRotation == limitedTargetRotation) return@coroutineScope
 

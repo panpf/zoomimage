@@ -400,7 +400,7 @@ fun IntRectCompat.limitTo(size: IntSizeCompat): IntRectCompat =
 
 fun IntRectCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
-    return when ((rotation % 360).let { if (it < 0) 360 - it else it }) {
+    return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
         90 -> {
             IntRectCompat(
                 left = spaceSize.height - this.bottom,
@@ -434,6 +434,6 @@ fun IntRectCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRec
 
 fun IntRectCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
-    val reverseRotation = 360 - rotation % 360
+    val reverseRotation = (360 - rotation) % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
