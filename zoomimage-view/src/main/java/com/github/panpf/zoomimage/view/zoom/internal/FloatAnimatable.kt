@@ -32,9 +32,9 @@ internal class FloatAnimatable(
 
     private val runnable = Runnable { frame() }
     private var startTime = 0L
+
     var value = startValue
         private set
-
     var running = false
         private set
 
@@ -73,6 +73,7 @@ internal class FloatAnimatable(
 
     @Suppress("UnnecessaryVariable")
     private fun computeProgress(): Float {
+        if (durationMillis <= 0) return 1f
         val elapsedTime = System.currentTimeMillis() - startTime
         if (elapsedTime <= 0) return 1f
         val progress = (elapsedTime.toFloat() / durationMillis).coerceAtMost(1f)
