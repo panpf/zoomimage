@@ -25,6 +25,7 @@ import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
@@ -34,7 +35,10 @@ import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import kotlin.math.ceil
 import kotlin.math.floor
 
-class TileDrawHelper(private val engine: SubsamplingEngine) {
+class TileDrawHelper(
+    private val logger: Logger,
+    private val subsampling: SubsamplingEngine
+) {
 
     private val cacheRect1 = Rect()
     private val cacheRect2 = Rect()
@@ -48,10 +52,10 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
         containerSize: IntSizeCompat,
         showTileBounds: Boolean,
     ) {
-        val imageInfo = engine.imageInfo ?: return
-        val contentSize = engine.contentSize.takeIf { !it.isEmpty() } ?: return
-        val tileSnapshotList = engine.tileSnapshotList.takeIf { it.isNotEmpty() } ?: return
-        val imageLoadRect = engine.imageLoadRect.takeIf { !it.isEmpty } ?: return
+        val imageInfo = subsampling.imageInfo ?: return
+        val contentSize = subsampling.contentSize.takeIf { !it.isEmpty() } ?: return
+        val tileSnapshotList = subsampling.tileSnapshotList.takeIf { it.isNotEmpty() } ?: return
+        val imageLoadRect = subsampling.imageLoadRect.takeIf { !it.isEmpty } ?: return
 
         val widthScale = imageInfo.width / contentSize.width.toFloat()
         val heightScale = imageInfo.height / contentSize.height.toFloat()
@@ -115,12 +119,13 @@ class TileDrawHelper(private val engine: SubsamplingEngine) {
                 }
             }
         }
-        engine.logger.d {
+
+        logger.d {
             "drawTiles. tiles=${tileSnapshotList.size}, " +
                     "insideLoadCount=${insideLoadCount}, " +
                     "outsideLoadCount=${outsideLoadCount}, " +
                     "realDrawCount=${realDrawCount}. " +
-                    "'${engine.imageKey}'"
+                    "'${subsampling.imageKey}'"
         }
     }
 

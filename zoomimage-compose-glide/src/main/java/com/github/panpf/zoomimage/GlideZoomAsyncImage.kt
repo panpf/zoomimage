@@ -168,7 +168,7 @@ fun GlideZoomAsyncImage(
             rotationZ = transform.rotation
             transformOrigin = transform.rotationOrigin
         }
-        .subsampling(state.subsampling)
+        .subsampling(state.logger, state.subsampling)
 
     GlideImage(
         model = model,

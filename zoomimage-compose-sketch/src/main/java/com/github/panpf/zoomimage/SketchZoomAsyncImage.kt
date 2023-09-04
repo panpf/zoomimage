@@ -369,7 +369,7 @@ fun SketchZoomAsyncImage(
             rotationZ = transform1.rotation
             transformOrigin = transform1.rotationOrigin
         }
-        .subsampling(state.subsampling)
+        .subsampling(state.logger, state.subsampling)
 
     val painter = rememberAsyncImagePainter(
         request = request,

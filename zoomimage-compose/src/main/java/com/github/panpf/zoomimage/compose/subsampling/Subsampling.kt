@@ -24,12 +24,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntRect
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.subsampling.Tile
 import kotlin.math.ceil
 import kotlin.math.floor
 
 fun Modifier.subsampling(
+    logger: Logger,
     subsamplingState: SubsamplingState,
 ): Modifier = this.drawWithContent {
     drawContent()
@@ -97,7 +99,8 @@ fun Modifier.subsampling(
             outsideLoadCount++
         }
     }
-    subsamplingState.logger.d {
+
+    logger.d {
         "drawTiles. tiles=${tileSnapshotList.size}, " +
                 "insideLoadCount=${insideLoadCount}, " +
                 "outsideLoadCount=${outsideLoadCount}, " +

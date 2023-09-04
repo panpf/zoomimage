@@ -58,17 +58,15 @@ import kotlin.math.roundToInt
  * zoomImageView.subsampling.setImageSource(imageSource)
  * ```
  */
-// todo Added xml support contentScale and alignment
 open class ZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : AppCompatImageView(context, attrs, defStyle) {
 
-    /* Must be nullable, otherwise it will cause initialization in the constructor to fail */
-    protected val _zoomableEngine: ZoomableEngine?
-    protected val _subsamplingEngine: SubsamplingEngine?
-    private var _scaleType: ScaleType
+    protected val _zoomableEngine: ZoomableEngine?  // Used when the overridden method is called by the parent class constructor
+    protected val _subsamplingEngine: SubsamplingEngine?  // Used when the overridden method is called by the parent class constructor
+    private var wrappedScaleType: ScaleType
     private var scrollBarHelper: ScrollBarHelper? = null
     private val touchHelper: TouchHelper
     private val tileDrawHelper: TileDrawHelper
@@ -122,7 +120,7 @@ open class ZoomImageView @JvmOverloads constructor(
         /* ScaleType */
         val initScaleType = super.getScaleType()
         super.setScaleType(ScaleType.MATRIX)
-        _scaleType = initScaleType
+        wrappedScaleType = initScaleType
 
         /* ZoomableEngine */
         val zoomableEngine = ZoomableEngine(logger, this).apply {
@@ -142,7 +140,7 @@ open class ZoomImageView @JvmOverloads constructor(
             this@ZoomImageView._subsamplingEngine = this
             bindZoomEngine(zoomableEngine)
         }
-        tileDrawHelper = TileDrawHelper(subsamplingEngine).apply {
+        tileDrawHelper = TileDrawHelper(logger, subsamplingEngine).apply {
             subsamplingEngine.registerOnTileChangeListener {
                 this@ZoomImageView.invalidate()
             }
@@ -317,7 +315,7 @@ open class ZoomImageView @JvmOverloads constructor(
     override fun setScaleType(scaleType: ScaleType) {
         val zoomEngine = _zoomableEngine
         if (zoomEngine != null) {
-            this._scaleType = scaleType
+            this.wrappedScaleType = scaleType
             zoomEngine.contentScale = scaleType.toContentScale()
             zoomEngine.alignment = scaleType.toAlignment()
         } else {
@@ -326,7 +324,7 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     override fun getScaleType(): ScaleType {
-        return if (_zoomableEngine != null) _scaleType else super.getScaleType()
+        return if (_zoomableEngine != null) wrappedScaleType else super.getScaleType()
     }
 
     override fun setImageMatrix(matrix: Matrix?) {
@@ -359,6 +357,7 @@ open class ZoomImageView @JvmOverloads constructor(
         )
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return touchHelper.onTouchEvent(event) || super.onTouchEvent(event)
     }

@@ -56,7 +56,7 @@ import kotlin.math.roundToInt
  */
 class SubsamplingEngine constructor(logger: Logger, private val view: View) {
 
-    val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
+    private val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null

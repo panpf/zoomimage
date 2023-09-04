@@ -150,7 +150,7 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
 @Stable
 class ZoomableState(logger: Logger) {
 
-    val logger: Logger = logger.newLogger(module = "ZoomableState")
+    private val logger: Logger = logger.newLogger(module = "ZoomableState")
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var rotation: Int by mutableStateOf(0)

@@ -73,7 +73,7 @@ import kotlin.math.roundToInt
  */
 class ZoomableEngine constructor(logger: Logger, val view: View) {
 
-    val logger: Logger = logger.newLogger(module = "ZoomableEngine")
+    private val logger: Logger = logger.newLogger(module = "ZoomableEngine")
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var rotation: Int = 0

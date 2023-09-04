@@ -132,7 +132,7 @@ fun ZoomImage(
                 rotationZ = transform.rotation
                 transformOrigin = transform.rotationOrigin
             }
-            .subsampling(state.subsampling)
+            .subsampling(state.logger, state.subsampling)
         NoClipImage(
             painter = painter,
             contentDescription = contentDescription,
