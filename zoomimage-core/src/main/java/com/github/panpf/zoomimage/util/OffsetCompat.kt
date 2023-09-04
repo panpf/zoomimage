@@ -254,15 +254,35 @@ inline fun OffsetCompat.takeOrElse(block: () -> OffsetCompat): OffsetCompat =
 fun OffsetCompat.toShortString(): String =
     if (isSpecified) "${x.format(2)}x${y.format(2)}" else "Unspecified"
 
+/**
+ * Multiplication operator.
+ *
+ * Returns an offset whose coordinates are the coordinates of the
+ * left-hand-side operand (an OffsetCompat) multiplied by the scalar
+ * right-hand-side operand (a Float).
+ */
 operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat =
     OffsetCompat(x = x * scaleFactor.scaleX, y = y * scaleFactor.scaleY)
 
+/**
+ * Division operator.
+ *
+ * Returns an offset whose coordinates are the coordinates of the
+ * left-hand-side operand (an OffsetCompat) divided by the scalar right-hand-side
+ * operand (a Float).
+ */
 operator fun OffsetCompat.div(scaleFactor: ScaleFactorCompat): OffsetCompat =
     OffsetCompat(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
 
+/**
+ * Convert to [SizeCompat]
+ */
 fun OffsetCompat.toSize(): SizeCompat =
     if (isSpecified) SizeCompat(width = x, height = y) else SizeCompat.Unspecified
 
+/**
+ * Round to the nearest integer, then convert to [IntSizeCompat]
+ */
 fun OffsetCompat.roundToSize(): IntSizeCompat =
     if (isSpecified) {
         IntSizeCompat(width = x.roundToInt(), height = y.roundToInt())
@@ -270,6 +290,9 @@ fun OffsetCompat.roundToSize(): IntSizeCompat =
         IntSizeCompat.Zero
     }
 
+/**
+ * Rotate the space by [rotation] degrees, and then return the rotated coordinates
+ */
 fun OffsetCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
     return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
@@ -280,12 +303,18 @@ fun OffsetCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetComp
     }
 }
 
+/**
+ * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated coordinates
+ */
 fun OffsetCompat.reverseRotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetCompat {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
     val reverseRotation = (360 - rotation) % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
+/**
+ * Limit offset to 0 to the range of size
+ */
 fun OffsetCompat.limitTo(size: SizeCompat): OffsetCompat {
     return if (x < 0f || x > size.width || y < 0f || y > size.height) {
         OffsetCompat(
@@ -297,6 +326,9 @@ fun OffsetCompat.limitTo(size: SizeCompat): OffsetCompat {
     }
 }
 
+/**
+ * Limit the offset to the rectangular extent
+ */
 fun OffsetCompat.limitTo(rect: RectCompat): OffsetCompat {
     return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
         OffsetCompat(

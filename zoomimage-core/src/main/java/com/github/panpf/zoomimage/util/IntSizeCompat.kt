@@ -107,10 +107,19 @@ fun IntSizeCompat.toSize(): SizeCompat = SizeCompat(width.toFloat(), height.toFl
  */
 fun IntSizeCompat.toShortString(): String = "${width}x$height"
 
+/**
+ * Return true if the size is empty
+ */
 fun IntSizeCompat.isEmpty(): Boolean = width <= 0 || height <= 0
 
+/**
+ * Return true if the size is not empty
+ */
 fun IntSizeCompat.isNotEmpty(): Boolean = width > 0 && height > 0
 
+/**
+ * Returns an IntSizeCompat scaled by multiplying [this] by [scaleFactor]
+ */
 operator fun IntSizeCompat.times(scaleFactor: ScaleFactorCompat): IntSizeCompat {
     return IntSizeCompat(
         width = (width * scaleFactor.scaleX).roundToInt(),
@@ -118,6 +127,9 @@ operator fun IntSizeCompat.times(scaleFactor: ScaleFactorCompat): IntSizeCompat 
     )
 }
 
+/**
+ * Returns an IntSizeCompat scaled by dividing [this] by [scaleFactor]
+ */
 operator fun IntSizeCompat.div(scaleFactor: ScaleFactorCompat): IntSizeCompat {
     return IntSizeCompat(
         width = (width / scaleFactor.scaleX).roundToInt(),
@@ -125,22 +137,37 @@ operator fun IntSizeCompat.div(scaleFactor: ScaleFactorCompat): IntSizeCompat {
     )
 }
 
+/**
+ * Returns an IntSizeCompat scaled by multiplying [this] by [scale]
+ */
 operator fun IntSizeCompat.times(scale: Float): IntSizeCompat =
     IntSizeCompat(
         width = (this.width * scale).roundToInt(),
         height = (this.height * scale).roundToInt()
     )
 
+/**
+ * Returns an IntSizeCompat scaled by dividing [this] by [scale]
+ */
 operator fun IntSizeCompat.div(scale: Float): IntSizeCompat =
     IntSizeCompat(
         width = (this.width / scale).roundToInt(),
         height = (this.height / scale).roundToInt()
     )
 
+/**
+ * Convert to [OffsetCompat]
+ */
 fun IntSizeCompat.toOffset(): OffsetCompat = OffsetCompat(x = width.toFloat(), y = height.toFloat())
 
+/**
+ * Convert to [IntOffsetCompat]
+ */
 fun IntSizeCompat.toIntOffset(): IntOffsetCompat = IntOffsetCompat(x = width, y = height)
 
+/**
+ * The size after rotating [rotation] degrees
+ */
 fun IntSizeCompat.rotate(rotation: Int): IntSizeCompat {
     return if (rotation % 180 == 0) this else IntSizeCompat(width = height, height = width)
 }
@@ -176,7 +203,7 @@ fun IntSizeCompat.isSameAspectRatio(other: IntSizeCompat, delta: Float = 0f): Bo
  * between [start] and [stop]. The interpolation can be extrapolated beyond 0.0 and
  * 1.0, so negative values and values greater than 1.0 are valid.
  */
-fun lerpCompat(start: IntSizeCompat, stop: IntSizeCompat, fraction: Float): IntSizeCompat =
+fun lerp(start: IntSizeCompat, stop: IntSizeCompat, fraction: Float): IntSizeCompat =
     IntSizeCompat(
         lerp(start.width, stop.width, fraction),
         lerp(start.height, stop.height, fraction)
