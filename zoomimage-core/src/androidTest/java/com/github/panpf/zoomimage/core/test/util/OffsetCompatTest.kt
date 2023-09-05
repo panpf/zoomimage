@@ -77,13 +77,12 @@ class OffsetCompatTest {
     @Test
     fun testRotateInSpace() {
         val spaceSize = SizeCompat(1000f, 500f)
-        val offset = OffsetCompat(600.6f, 200.4f)
 
         listOf(0, 0 - 360, 0 + 360, 0 - 360 - 360).forEach { rotation ->
             Assert.assertEquals(
                 "rotation: $rotation",
                 OffsetCompat(600.6f, 200.4f).toShortString(),
-                offset.rotateInSpace(spaceSize, rotation).toShortString()
+                OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
             )
         }
 
@@ -91,7 +90,7 @@ class OffsetCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 OffsetCompat(299.6f, 600.6f).toShortString(),
-                offset.rotateInSpace(spaceSize, rotation).toShortString()
+                OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
             )
         }
 
@@ -99,7 +98,7 @@ class OffsetCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 OffsetCompat(399.4f, 299.6f).toShortString(),
-                offset.rotateInSpace(spaceSize, rotation).toShortString()
+                OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
             )
         }
 
@@ -107,7 +106,7 @@ class OffsetCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 OffsetCompat(200.4f, 399.4f).toShortString(),
-                offset.rotateInSpace(spaceSize, rotation).toShortString()
+                OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
             )
         }
 
@@ -115,39 +114,39 @@ class OffsetCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 OffsetCompat(600.6f, 200.4f).toShortString(),
-                offset.rotateInSpace(spaceSize, rotation).toShortString()
+                OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
             )
         }
 
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, -1)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, -1)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 1)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 1)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 89)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 89)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 91)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 91)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 179)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 179)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 191)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 191)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 269)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 269)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 271)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 271)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 359)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 359)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 361)
+            OffsetCompat(600.6f, 200.4f).rotateInSpace(spaceSize, 361)
         }
     }
 
@@ -181,43 +180,54 @@ class OffsetCompatTest {
     }
 
     @Test
-    fun testLimitTo() {
-        val offset = OffsetCompat(600.6f, 200.4f)
-
+    fun testLimitToRect() {
         Assert.assertEquals(
-            offset,
-            offset.limitTo(SizeCompat(700.7f, 300.3f))
-        )
-        Assert.assertEquals(
-            OffsetCompat(500f, 200.4f),
-            offset.limitTo(SizeCompat(500f, 300f))
-        )
-        Assert.assertEquals(
-            OffsetCompat(600.6f, 100f),
-            offset.limitTo(SizeCompat(700f, 100f))
+            OffsetCompat(600.4f, 200.7f),
+            OffsetCompat(600.4f, 200.7f).limitTo(RectCompat(200.4f, 100.3f, 700.9f, 300.5f))
         )
 
         Assert.assertEquals(
-            offset,
-            offset.limitTo(RectCompat(200f, 100f, 700f, 300f))
+            OffsetCompat(200.4f, 200.7f),
+            OffsetCompat(100f, 200.7f).limitTo(RectCompat(200.4f, 100.3f, 700.9f, 300.5f))
+        )
+        Assert.assertEquals(
+            OffsetCompat(700.9f, 200.7f),
+            OffsetCompat(800.4f, 200.7f).limitTo(RectCompat(200.4f, 100.3f, 700.9f, 300.5f))
         )
 
         Assert.assertEquals(
-            OffsetCompat(650f, 200.4f),
-            offset.limitTo(RectCompat(650f, 100f, 700f, 300f))
+            OffsetCompat(600.4f, 100.3f),
+            OffsetCompat(600.4f, 50.6f).limitTo(RectCompat(200.4f, 100.3f, 700.9f, 300.5f))
         )
         Assert.assertEquals(
-            OffsetCompat(600.6f, 250f),
-            offset.limitTo(RectCompat(200f, 250f, 700f, 300f))
+            OffsetCompat(600.4f, 300.5f),
+            OffsetCompat(600.4f, 400.9f).limitTo(RectCompat(200.4f, 100.3f, 700.9f, 300.5f))
+        )
+    }
+
+    @Test
+    fun testLimitToSize() {
+        Assert.assertEquals(
+            OffsetCompat(600.4f, 200.7f),
+            OffsetCompat(600.4f, 200.7f).limitTo(SizeCompat(700.9f, 300.5f))
         )
 
         Assert.assertEquals(
-            OffsetCompat(550f, 200.4f),
-            offset.limitTo(RectCompat(200f, 100f, 550f, 300f))
+            OffsetCompat(0f, 200.7f),
+            OffsetCompat(-100.2f, 200.7f).limitTo(SizeCompat(700.9f, 300.5f))
         )
         Assert.assertEquals(
-            OffsetCompat(600.6f, 150f),
-            offset.limitTo(RectCompat(200f, 100f, 700f, 150f))
+            OffsetCompat(700.9f, 200.7f),
+            OffsetCompat(800.4f, 200.7f).limitTo(SizeCompat(700.9f, 300.5f))
+        )
+
+        Assert.assertEquals(
+            OffsetCompat(600.4f, 0f),
+            OffsetCompat(600.4f, -100.2f).limitTo(SizeCompat(700.9f, 300.5f))
+        )
+        Assert.assertEquals(
+            OffsetCompat(600.4f, 300.5f),
+            OffsetCompat(600.4f, 400.9f).limitTo(SizeCompat(700.9f, 300.5f))
         )
     }
 }

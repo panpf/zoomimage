@@ -76,13 +76,12 @@ class IntOffsetCompatTest {
     @Test
     fun testRotateInSpace() {
         val spaceSize = IntSizeCompat(1000, 500)
-        val offset = IntOffsetCompat(600, 200)
 
         listOf(0, 0 - 360, 0 + 360, 0 - 360 - 360).forEach { rotation ->
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntOffsetCompat(600, 200),
-                offset.rotateInSpace(spaceSize, rotation)
+                IntOffsetCompat(600, 200).rotateInSpace(spaceSize, rotation)
             )
         }
 
@@ -90,7 +89,7 @@ class IntOffsetCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntOffsetCompat(300, 600),
-                offset.rotateInSpace(spaceSize, rotation)
+                IntOffsetCompat(600, 200).rotateInSpace(spaceSize, rotation)
             )
         }
 
@@ -98,7 +97,7 @@ class IntOffsetCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntOffsetCompat(400, 300),
-                offset.rotateInSpace(spaceSize, rotation)
+                IntOffsetCompat(600, 200).rotateInSpace(spaceSize, rotation)
             )
         }
 
@@ -106,7 +105,7 @@ class IntOffsetCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntOffsetCompat(200, 400),
-                offset.rotateInSpace(spaceSize, rotation)
+                IntOffsetCompat(600, 200).rotateInSpace(spaceSize, rotation)
             )
         }
 
@@ -114,39 +113,39 @@ class IntOffsetCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntOffsetCompat(600, 200),
-                offset.rotateInSpace(spaceSize, rotation)
+                IntOffsetCompat(600, 200).rotateInSpace(spaceSize, rotation)
             )
         }
 
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, -1)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, -1)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 1)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 1)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 89)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 89)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 91)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 91)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 179)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 179)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 191)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 191)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 269)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 269)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 271)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 271)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 359)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 359)
         }
         assertThrow(IllegalArgumentException::class) {
-            offset.rotateInSpace(spaceSize, 361)
+            IntOffsetCompat(600, 200).rotateInSpace(spaceSize, 361)
         }
     }
 
@@ -180,43 +179,54 @@ class IntOffsetCompatTest {
     }
 
     @Test
-    fun testLimitTo() {
-        val offset = IntOffsetCompat(600, 200)
+    fun testLimitToRect() {
+        Assert.assertEquals(
+            IntOffsetCompat(600, 200),
+            IntOffsetCompat(600, 200).limitTo(IntRectCompat(200, 100, 700, 300))
+        )
 
         Assert.assertEquals(
-            offset,
-            offset.limitTo(IntSizeCompat(700, 300))
+            IntOffsetCompat(200, 200),
+            IntOffsetCompat(100, 200).limitTo(IntRectCompat(200, 100, 700, 300))
         )
         Assert.assertEquals(
-            IntOffsetCompat(500, 200),
-            offset.limitTo(IntSizeCompat(500, 300))
+            IntOffsetCompat(700, 200),
+            IntOffsetCompat(800, 200).limitTo(IntRectCompat(200, 100, 700, 300))
         )
+
         Assert.assertEquals(
             IntOffsetCompat(600, 100),
-            offset.limitTo(IntSizeCompat(600, 100))
+            IntOffsetCompat(600, 50).limitTo(IntRectCompat(200, 100, 700, 300))
+        )
+        Assert.assertEquals(
+            IntOffsetCompat(600, 300),
+            IntOffsetCompat(600, 400).limitTo(IntRectCompat(200, 100, 700, 300))
+        )
+    }
+
+    @Test
+    fun testLimitToSize() {
+        Assert.assertEquals(
+            IntOffsetCompat(600, 200),
+            IntOffsetCompat(600, 200).limitTo(IntSizeCompat(700, 300))
         )
 
         Assert.assertEquals(
-            offset,
-            offset.limitTo(IntRectCompat(200, 100, 700, 300))
+            IntOffsetCompat(0, 200),
+            IntOffsetCompat(-100, 200).limitTo(IntSizeCompat(700, 300))
+        )
+        Assert.assertEquals(
+            IntOffsetCompat(700, 200),
+            IntOffsetCompat(800, 200).limitTo(IntSizeCompat(700, 300))
         )
 
         Assert.assertEquals(
-            IntOffsetCompat(650, 200),
-            offset.limitTo(IntRectCompat(650, 100, 700, 300))
+            IntOffsetCompat(600, 0),
+            IntOffsetCompat(600, -100).limitTo(IntSizeCompat(700, 300))
         )
         Assert.assertEquals(
-            IntOffsetCompat(600, 250),
-            offset.limitTo(IntRectCompat(200, 250, 700, 300))
-        )
-
-        Assert.assertEquals(
-            IntOffsetCompat(550, 200),
-            offset.limitTo(IntRectCompat(200, 100, 550, 300))
-        )
-        Assert.assertEquals(
-            IntOffsetCompat(600, 150),
-            offset.limitTo(IntRectCompat(200, 100, 700, 150))
+            IntOffsetCompat(600, 300),
+            IntOffsetCompat(600, 400).limitTo(IntSizeCompat(700, 300))
         )
     }
 }

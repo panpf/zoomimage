@@ -1,8 +1,6 @@
 package com.github.panpf.zoomimage.core.test.util
 
-import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.copy
 import com.github.panpf.zoomimage.util.div
@@ -13,8 +11,6 @@ import com.github.panpf.zoomimage.util.lerp
 import com.github.panpf.zoomimage.util.reverseRotate
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.times
-import com.github.panpf.zoomimage.util.toIntOffset
-import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toShortString
 import org.junit.Assert
 import org.junit.Test
@@ -91,38 +87,12 @@ class IntSizeCompatTest {
     }
 
     @Test
-    fun testToOffset() {
-        Assert.assertEquals(
-            OffsetCompat(13f, 7f),
-            IntSizeCompat(13, 7).toOffset()
-        )
-        Assert.assertEquals(
-            OffsetCompat(7f, 13f),
-            IntSizeCompat(7, 13).toOffset()
-        )
-    }
-
-    @Test
-    fun testToIntOffset() {
-        Assert.assertEquals(
-            IntOffsetCompat(13, 7),
-            IntSizeCompat(13, 7).toIntOffset()
-        )
-        Assert.assertEquals(
-            IntOffsetCompat(7, 13),
-            IntSizeCompat(7, 13).toIntOffset()
-        )
-    }
-
-    @Test
     fun testRotate() {
-        val size = IntSizeCompat(600, 200)
-
         listOf(0, 0 - 360, 0 + 360, 0 - 360 - 360).forEach { rotation ->
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntSizeCompat(600, 200),
-                size.rotate(rotation)
+                IntSizeCompat(600, 200).rotate(rotation)
             )
         }
 
@@ -130,7 +100,7 @@ class IntSizeCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntSizeCompat(200, 600),
-                size.rotate(rotation)
+                IntSizeCompat(600, 200).rotate(rotation)
             )
         }
 
@@ -138,7 +108,7 @@ class IntSizeCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntSizeCompat(600, 200),
-                size.rotate(rotation)
+                IntSizeCompat(600, 200).rotate(rotation)
             )
         }
 
@@ -146,7 +116,7 @@ class IntSizeCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntSizeCompat(200, 600),
-                size.rotate(rotation)
+                IntSizeCompat(600, 200).rotate(rotation)
             )
         }
 
@@ -154,7 +124,7 @@ class IntSizeCompatTest {
             Assert.assertEquals(
                 "rotation: $rotation",
                 IntSizeCompat(600, 200),
-                size.rotate(rotation)
+                IntSizeCompat(600, 200).rotate(rotation)
             )
         }
     }
