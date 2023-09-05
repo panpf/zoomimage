@@ -93,16 +93,21 @@ value class TransformOriginCompat internal constructor(@PublishedApi internal va
 fun TransformOriginCompat.toShortString(): String =
     "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"
 
-private val transformOriginCompatTopStart =
-    TransformOriginCompat(pivotFractionX = 0f, pivotFractionY = 0f)
+/**
+ * [TransformOriginCompat] constant to indicate that the top start of the content should
+ * be used for rotation and scale transformations
+ */
 val TransformOriginCompat.Companion.TopStart
     get() = transformOriginCompatTopStart
+private val transformOriginCompatTopStart by lazy {
+    TransformOriginCompat(pivotFractionX = 0f, pivotFractionY = 0f)
+}
 
+/**
+ * Return a new [TransformOriginCompat] with the width and height multiplied by the [operand]
+ */
 operator fun TransformOriginCompat.times(operand: Float) =
     TransformOriginCompat(pivotFractionX * operand, pivotFractionY * operand)
-
-operator fun TransformOriginCompat.div(operand: Float) =
-    TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
 
 /**
  * Multiplication operator with [IntSizeCompat].
@@ -117,25 +122,22 @@ operator fun IntSizeCompat.times(origin: TransformOriginCompat): IntSizeCompat =
     )
 
 /**
- * Multiplication operator with [IntSizeCompat] with reverse parameter types to maintain
- * commutative properties of multiplication
+ * Multiplication operator with [SizeCompat].
  *
- * Return a new [IntSizeCompat] with the width and height multiplied by the [TransformOriginCompat.pivotFractionX] and
+ * Return a new [SizeCompat] with the width and height multiplied by the [TransformOriginCompat.pivotFractionX] and
  * [TransformOriginCompat.pivotFractionY] respectively
  */
-operator fun TransformOriginCompat.times(size: IntSizeCompat): IntSizeCompat = size * this
+operator fun SizeCompat.times(origin: TransformOriginCompat): SizeCompat =
+    SizeCompat(
+        width = this.width * origin.pivotFractionX,
+        height = this.height * origin.pivotFractionY
+    )
 
 /**
- * Division operator with [IntSizeCompat]
- *
- * Return a new [IntSizeCompat] with the width and height divided by [TransformOriginCompat.pivotFractionX] and
- * [TransformOriginCompat.pivotFractionY] respectively
+ * Return a new [TransformOriginCompat] with the width and height dividing by the [operand]
  */
-operator fun IntSizeCompat.div(origin: TransformOriginCompat): IntSizeCompat =
-    IntSizeCompat(
-        width = (width / origin.pivotFractionX).roundToInt(),
-        height = (height / origin.pivotFractionY).roundToInt()
-    )
+operator fun TransformOriginCompat.div(operand: Float) =
+    TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
 
 /**
  * Linearly interpolate between two [TransformOriginCompat] parameters

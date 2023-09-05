@@ -192,14 +192,26 @@ fun lerp(start: ScaleFactorCompat, stop: ScaleFactorCompat, fraction: Float): Sc
  */
 fun ScaleFactorCompat.toShortString(): String = "${scaleX.format(2)}x${scaleY.format(2)}"
 
-private val scaleFactorCompatOrigin by lazy { ScaleFactorCompat(scaleX = 1f, scaleY = 1f) }
+/**
+ * Create a ScaleFactorCompat, scaleX and scaleY are both [scale]
+ */
+fun ScaleFactorCompat(scale: Float): ScaleFactorCompat = ScaleFactorCompat(scale, scale)
+
+/**
+ * The scaling factor that remains the same scale, that is, scaleX and scaleY are both 1f
+ */
 val ScaleFactorCompat.Companion.Origin: ScaleFactorCompat
     get() = scaleFactorCompatOrigin
+private val scaleFactorCompatOrigin by lazy { ScaleFactorCompat(scaleX = 1f, scaleY = 1f) }
 
+/**
+ * Returns an ScaleFactorCompat scaled by multiplying [scaleFactor]
+ */
 operator fun ScaleFactorCompat.times(scaleFactor: ScaleFactorCompat) =
     ScaleFactorCompat(scaleX * scaleFactor.scaleX, scaleY * scaleFactor.scaleY)
 
+/**
+ * Returns an ScaleFactorCompat scaled by dividing [scaleFactor]
+ */
 operator fun ScaleFactorCompat.div(scaleFactor: ScaleFactorCompat) =
     ScaleFactorCompat(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
-
-fun ScaleFactorCompat(scale: Float): ScaleFactorCompat = ScaleFactorCompat(scale, scale)

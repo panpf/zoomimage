@@ -210,34 +210,35 @@ val SizeCompat.center: OffsetCompat get() = OffsetCompat(x = width / 2f, y = hei
 fun SizeCompat.toShortString(): String =
     if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
 
+/**
+ * Return true if the size is not empty
+ */
 fun SizeCompat.isNotEmpty(): Boolean = width > 0f && height > 0f
 
-fun SizeCompat.isSpecifiedAndNotEmpty(): Boolean = isSpecified && isNotEmpty()
-
-fun SizeCompat.isUnspecifiedOrEmpty(): Boolean = isUnspecified || isEmpty()
-
+/**
+ * Round a [SizeCompat] down to the nearest [Int] coordinates.
+ */
 fun SizeCompat.round(): IntSizeCompat =
     if (isSpecified) IntSizeCompat(width.roundToInt(), height.roundToInt()) else IntSizeCompat.Zero
 
-fun SizeCompat.toOffset(): OffsetCompat =
-    if (isSpecified) OffsetCompat(x = width, y = height) else OffsetCompat.Unspecified
-
-fun SizeCompat.roundToOffset(): IntOffsetCompat =
-    if (isSpecified) {
-        IntOffsetCompat(x = width.roundToInt(), y = height.roundToInt())
-    } else {
-        IntOffsetCompat.Zero
-    }
-
+/**
+ * The size after rotating [rotation] degrees
+ */
 fun SizeCompat.rotate(rotation: Int): SizeCompat {
     return if (rotation % 180 == 0) this else SizeCompat(width = height, height = width)
 }
 
+/**
+ * The size after reverse rotating [rotation] degrees
+ */
 fun SizeCompat.reverseRotate(rotation: Int): SizeCompat {
     val reverseRotation = (360 - rotation) % 360
     return rotate(reverseRotation)
 }
 
+/**
+ * Returns true if the aspect ratio of itself and other is the same
+ */
 fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height
     val otherScale = other.width / other.height

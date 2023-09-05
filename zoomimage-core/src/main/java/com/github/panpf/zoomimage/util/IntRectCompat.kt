@@ -325,15 +325,8 @@ fun RectCompat.roundToIntRect(): IntRectCompat = IntRectCompat(
 fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
 /**
- * Rounds a [RectCompat] to an [IntRectCompat]
+ * Returns an IntRectCompat scaled by multiplying [scale]
  */
-fun RectCompat.round(): IntRectCompat = IntRectCompat(
-    left = left.roundToInt(),
-    top = top.roundToInt(),
-    right = right.roundToInt(),
-    bottom = bottom.roundToInt()
-)
-
 operator fun IntRectCompat.times(scale: Float): IntRectCompat =
     IntRectCompat(
         left = (left * scale).roundToInt(),
@@ -342,14 +335,20 @@ operator fun IntRectCompat.times(scale: Float): IntRectCompat =
         bottom = (bottom * scale).roundToInt(),
     )
 
-operator fun IntRectCompat.times(scale: ScaleFactorCompat): IntRectCompat =
+/**
+ * Returns an IntRectCompat scaled by multiplying [scaleFactor]
+ */
+operator fun IntRectCompat.times(scaleFactor: ScaleFactorCompat): IntRectCompat =
     IntRectCompat(
-        left = (left * scale.scaleX).roundToInt(),
-        top = (top * scale.scaleY).roundToInt(),
-        right = (right * scale.scaleX).roundToInt(),
-        bottom = (bottom * scale.scaleY).roundToInt(),
+        left = (left * scaleFactor.scaleX).roundToInt(),
+        top = (top * scaleFactor.scaleY).roundToInt(),
+        right = (right * scaleFactor.scaleX).roundToInt(),
+        bottom = (bottom * scaleFactor.scaleY).roundToInt(),
     )
 
+/**
+ * Returns an IntRectCompat scaled by dividing [scale]
+ */
 operator fun IntRectCompat.div(scale: Float): IntRectCompat =
     IntRectCompat(
         left = (left / scale).roundToInt(),
@@ -358,6 +357,9 @@ operator fun IntRectCompat.div(scale: Float): IntRectCompat =
         bottom = (bottom / scale).roundToInt(),
     )
 
+/**
+ * Returns an IntRectCompat scaled by dividing [scaleFactor]
+ */
 operator fun IntRectCompat.div(scaleFactor: ScaleFactorCompat): IntRectCompat =
     IntRectCompat(
         left = (left / scaleFactor.scaleX).roundToInt(),
@@ -366,15 +368,18 @@ operator fun IntRectCompat.div(scaleFactor: ScaleFactorCompat): IntRectCompat =
         bottom = (bottom / scaleFactor.scaleY).roundToInt(),
     )
 
+/**
+ * Limit the offset to the rectangular extent
+ */
 fun IntRectCompat.limitTo(rect: IntRectCompat): IntRectCompat =
-    if (this.left < rect.left
-        || this.top < rect.top
+    if (this.left < rect.left || this.left > rect.right
+        || this.top < rect.top || this.top > rect.bottom
         || this.right < rect.left || this.right > rect.right
         || this.bottom < rect.top || this.bottom > rect.bottom
     ) {
         IntRectCompat(
-            left = left.coerceAtLeast(rect.left),
-            top = top.coerceAtLeast(rect.top),
+            left = left.coerceIn(rect.left, rect.right),
+            top = top.coerceIn(rect.top, rect.bottom),
             right = right.coerceIn(rect.left, rect.right),
             bottom = bottom.coerceIn(rect.top, rect.bottom),
         )
@@ -382,22 +387,15 @@ fun IntRectCompat.limitTo(rect: IntRectCompat): IntRectCompat =
         this
     }
 
+/**
+ * Limit Rect to 0 to the range of size
+ */
 fun IntRectCompat.limitTo(size: IntSizeCompat): IntRectCompat =
-    if (this.left < 0
-        || this.top < 0
-        || this.right < 0 || this.right > size.width
-        || this.bottom < 0 || this.bottom > size.height
-    ) {
-        IntRectCompat(
-            left = left.coerceAtLeast(0),
-            top = top.coerceAtLeast(0),
-            right = right.coerceIn(0, size.width),
-            bottom = bottom.coerceIn(0, size.height),
-        )
-    } else {
-        this
-    }
+    limitTo(IntRectCompat(0, 0, size.width, size.height))
 
+/**
+ * Rotate the space by [rotation] degrees, and then return the rotated Rect
+ */
 fun IntRectCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
     return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
@@ -432,6 +430,9 @@ fun IntRectCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRec
     }
 }
 
+/**
+ * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated Rect
+ */
 fun IntRectCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
     val reverseRotation = (360 - rotation) % 360

@@ -227,20 +227,6 @@ fun IntOffsetCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int
 }
 
 /**
- * Limit offset to 0 to the range of size
- */
-fun IntOffsetCompat.limitTo(size: IntSizeCompat): IntOffsetCompat {
-    return if (x < 0 || x > size.width || y < 0 || y > size.height) {
-        IntOffsetCompat(
-            x = x.coerceIn(0, size.width),
-            y = y.coerceIn(0, size.height),
-        )
-    } else {
-        this
-    }
-}
-
-/**
  * Limit the offset to the rectangular extent
  */
 fun IntOffsetCompat.limitTo(rect: IntRectCompat): IntOffsetCompat {
@@ -253,3 +239,9 @@ fun IntOffsetCompat.limitTo(rect: IntRectCompat): IntOffsetCompat {
         this
     }
 }
+
+/**
+ * Limit offset to 0 to the range of size
+ */
+fun IntOffsetCompat.limitTo(size: IntSizeCompat): IntOffsetCompat =
+    limitTo(IntRectCompat(0, 0, size.width, size.height))

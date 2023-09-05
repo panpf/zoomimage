@@ -23,7 +23,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
-import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
@@ -60,22 +59,8 @@ internal fun Size.toShortString(): String =
 internal fun Size.isNotEmpty(): Boolean = width > 0f && height > 0f
 
 @Stable
-internal fun Size.isSpecifiedAndNotEmpty(): Boolean = isSpecified && isNotEmpty()
-
-@Stable
-internal fun Size.isUnspecifiedOrEmpty(): Boolean = isUnspecified || isEmpty()
-
-@Stable
 internal fun Size.round(): IntSize =
     if (isSpecified) IntSize(width.roundToInt(), height.roundToInt()) else IntSize.Zero
-
-@Stable
-internal fun Size.toOffset(): Offset =
-    if (isSpecified) Offset(x = width, y = height) else Offset.Unspecified
-
-@Stable
-internal fun Size.roundToOffset(): IntOffset =
-    if (isSpecified) IntOffset(x = width.roundToInt(), y = height.roundToInt()) else IntOffset.Zero
 
 @Stable
 internal fun Size.rotate(rotation: Int): Size =
@@ -142,12 +127,6 @@ internal operator fun IntSize.div(scale: Float): IntSize =
         width = (this.width / scale).roundToInt(),
         height = (this.height / scale).roundToInt()
     )
-
-@Stable
-internal fun IntSize.toOffset(): Offset = Offset(x = width.toFloat(), y = height.toFloat())
-
-@Stable
-internal fun IntSize.toIntOffset(): IntOffset = IntOffset(x = width, y = height)
 
 @Stable
 internal fun IntSize.rotate(rotation: Int): IntSize {
@@ -248,18 +227,6 @@ internal fun Offset.reverseRotateInSpace(spaceSize: Size, rotation: Int): Offset
 }
 
 @Stable
-internal fun Offset.limitTo(size: Size): Offset {
-    return if (x < 0f || x > size.width || y < 0f || y > size.height) {
-        Offset(
-            x = x.coerceIn(0f, size.width),
-            y = y.coerceIn(0f, size.height),
-        )
-    } else {
-        this
-    }
-}
-
-@Stable
 internal fun Offset.limitTo(rect: Rect): Offset {
     return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
         Offset(
@@ -270,6 +237,10 @@ internal fun Offset.limitTo(rect: Rect): Offset {
         this
     }
 }
+
+@Stable
+internal fun Offset.limitTo(size: Size): Offset =
+    limitTo(Rect(0f, 0f, size.width, size.height))
 
 
 /* ************************************** IntOffset ********************************************* */
@@ -319,18 +290,6 @@ internal fun IntOffset.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): 
 }
 
 @Stable
-internal fun IntOffset.limitTo(size: IntSize): IntOffset {
-    return if (x < 0 || x > size.width || y < 0 || y > size.height) {
-        IntOffset(
-            x = x.coerceIn(0, size.width),
-            y = y.coerceIn(0, size.height),
-        )
-    } else {
-        this
-    }
-}
-
-@Stable
 internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
     return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
         IntOffset(
@@ -341,6 +300,10 @@ internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
         this
     }
 }
+
+@Stable
+internal fun IntOffset.limitTo(size: IntSize): IntOffset =
+    limitTo(IntRect(0, 0, size.width, size.height))
 
 
 /* ******************************************* Rect ********************************************* */
@@ -390,14 +353,14 @@ internal operator fun Rect.div(scaleFactor: ScaleFactor): Rect =
 
 @Stable
 internal fun Rect.limitTo(rect: Rect): Rect =
-    if (this.left < rect.left
-        || this.top < rect.top
+    if (this.left < rect.left || this.left > rect.right
+        || this.top < rect.top || this.top > rect.bottom
         || this.right < rect.left || this.right > rect.right
         || this.bottom < rect.top || this.bottom > rect.bottom
     ) {
         Rect(
-            left = left.coerceAtLeast(rect.left),
-            top = top.coerceAtLeast(rect.top),
+            left = left.coerceIn(rect.left, rect.right),
+            top = top.coerceIn(rect.top, rect.bottom),
             right = right.coerceIn(rect.left, rect.right),
             bottom = bottom.coerceIn(rect.top, rect.bottom),
         )
@@ -406,21 +369,7 @@ internal fun Rect.limitTo(rect: Rect): Rect =
     }
 
 @Stable
-internal fun Rect.limitTo(size: Size): Rect =
-    if (this.left < 0f
-        || this.top < 0f
-        || this.right < 0f || this.right > size.width
-        || this.bottom < 0f || this.bottom > size.height
-    ) {
-        Rect(
-            left = left.coerceAtLeast(0f),
-            top = top.coerceAtLeast(0f),
-            right = right.coerceIn(0f, size.width),
-            bottom = bottom.coerceIn(0f, size.height),
-        )
-    } else {
-        this
-    }
+internal fun Rect.limitTo(size: Size): Rect = limitTo(Rect(0f, 0f, size.width, size.height))
 
 @Stable
 internal fun Rect.rotateInSpace(spaceSize: Size, rotation: Int): Rect {
@@ -522,14 +471,14 @@ internal operator fun IntRect.div(scaleFactor: ScaleFactor): IntRect =
 
 @Stable
 internal fun IntRect.limitTo(rect: IntRect): IntRect =
-    if (this.left < rect.left
-        || this.top < rect.top
+    if (this.left < rect.left || this.left > rect.right
+        || this.top < rect.top || this.top > rect.bottom
         || this.right < rect.left || this.right > rect.right
         || this.bottom < rect.top || this.bottom > rect.bottom
     ) {
         IntRect(
-            left = left.coerceAtLeast(rect.left),
-            top = top.coerceAtLeast(rect.top),
+            left = left.coerceIn(rect.left, rect.right),
+            top = top.coerceIn(rect.top, rect.bottom),
             right = right.coerceIn(rect.left, rect.right),
             bottom = bottom.coerceIn(rect.top, rect.bottom),
         )
@@ -539,20 +488,7 @@ internal fun IntRect.limitTo(rect: IntRect): IntRect =
 
 @Stable
 internal fun IntRect.limitTo(size: IntSize): IntRect =
-    if (this.left < 0
-        || this.top < 0
-        || this.right < 0 || this.right > size.width
-        || this.bottom < 0 || this.bottom > size.height
-    ) {
-        IntRect(
-            left = left.coerceAtLeast(0),
-            top = top.coerceAtLeast(0),
-            right = right.coerceIn(0, size.width),
-            bottom = bottom.coerceIn(0, size.height),
-        )
-    } else {
-        this
-    }
+    limitTo(IntRect(0, 0, size.width, size.height))
 
 @Stable
 internal fun IntRect.rotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
@@ -660,26 +596,16 @@ internal operator fun IntSize.times(origin: TransformOrigin): IntSize =
     )
 
 /**
- * Multiplication operator with [IntSize] with reverse parameter types to maintain
- * commutative properties of multiplication
+ * Multiplication operator with [Size].
  *
- * Return a new [IntSize] with the width and height multiplied by the [TransformOrigin.pivotFractionX] and
+ * Return a new [Size] with the width and height multiplied by the [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
  */
 @Stable
-internal operator fun TransformOrigin.times(size: IntSize): IntSize = size * this
-
-/**
- * Division operator with [IntSize]
- *
- * Return a new [IntSize] with the width and height divided by [TransformOrigin.pivotFractionX] and
- * [TransformOrigin.pivotFractionY] respectively
- */
-@Stable
-internal operator fun IntSize.div(origin: TransformOrigin): IntSize =
-    IntSize(
-        width = (width / origin.pivotFractionX).roundToInt(),
-        height = (height / origin.pivotFractionY).roundToInt()
+internal operator fun Size.times(origin: TransformOrigin): Size =
+    Size(
+        width = this.width * origin.pivotFractionX,
+        height = this.height * origin.pivotFractionY
     )
 
 /**

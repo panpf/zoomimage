@@ -22,6 +22,7 @@ import com.github.panpf.zoomimage.util.internal.toStringAsFixed
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * An immutable, 2D, axis-aligned, floating-point rectangle whose coordinates are relative to a given origin.
@@ -58,11 +59,15 @@ data class RectCompat(
 
     /** The distance between the left and right edges of this rectangle. */
     val width: Float
-        get() { return right - left }
+        get() {
+            return right - left
+        }
 
     /** The distance between the top and bottom edges of this rectangle. */
     val height: Float
-        get() { return bottom - top }
+        get() {
+            return bottom - top
+        }
 
     /**
      * The distance between the upper-left corner and the lower-right corner of
@@ -75,16 +80,16 @@ data class RectCompat(
     // included for consistency with Offset and Size
     val isInfinite: Boolean
         get() = left >= Float.POSITIVE_INFINITY ||
-            top >= Float.POSITIVE_INFINITY ||
-            right >= Float.POSITIVE_INFINITY ||
-            bottom >= Float.POSITIVE_INFINITY
+                top >= Float.POSITIVE_INFINITY ||
+                right >= Float.POSITIVE_INFINITY ||
+                bottom >= Float.POSITIVE_INFINITY
 
     /** Whether all coordinates of this rectangle are finite. */
     val isFinite: Boolean
         get() = left.isFinite() &&
-            top.isFinite() &&
-            right.isFinite() &&
-            bottom.isFinite()
+                top.isFinite() &&
+                right.isFinite() &&
+                bottom.isFinite()
 
     /**
      * Whether this rectangle encloses a non-zero area. Negative areas are
@@ -211,13 +216,17 @@ data class RectCompat(
      * The offset to the center of the bottom edge of this rectangle.
      */
     val bottomCenter: OffsetCompat
-        get() { return OffsetCompat(left + width / 2.0f, bottom) }
+        get() {
+            return OffsetCompat(left + width / 2.0f, bottom)
+        }
 
     /**
      * The offset to the intersection of the bottom and right edges of this rectangle.
      */
     val bottomRight: OffsetCompat
-        get() { return OffsetCompat(right, bottom) }
+        get() {
+            return OffsetCompat(right, bottom)
+        }
 
     /**
      * Whether the point specified by the given offset (which is assumed to be
@@ -314,6 +323,19 @@ fun lerp(start: RectCompat, stop: RectCompat, fraction: Float): RectCompat {
 fun RectCompat.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 
+/**
+ * Rounds a [RectCompat] to an [IntRectCompat]
+ */
+fun RectCompat.round(): IntRectCompat = IntRectCompat(
+    left = left.roundToInt(),
+    top = top.roundToInt(),
+    right = right.roundToInt(),
+    bottom = bottom.roundToInt()
+)
+
+/**
+ * Returns an IntRectCompat scaled by multiplying [scale]
+ */
 operator fun RectCompat.times(scale: Float): RectCompat =
     RectCompat(
         left = (left * scale),
@@ -322,14 +344,20 @@ operator fun RectCompat.times(scale: Float): RectCompat =
         bottom = (bottom * scale),
     )
 
-operator fun RectCompat.times(scale: ScaleFactorCompat): RectCompat =
+/**
+ * Returns an IntRectCompat scaled by multiplying [scaleFactor]
+ */
+operator fun RectCompat.times(scaleFactor: ScaleFactorCompat): RectCompat =
     RectCompat(
-        left = (left * scale.scaleX),
-        top = (top * scale.scaleY),
-        right = (right * scale.scaleX),
-        bottom = (bottom * scale.scaleY),
+        left = (left * scaleFactor.scaleX),
+        top = (top * scaleFactor.scaleY),
+        right = (right * scaleFactor.scaleX),
+        bottom = (bottom * scaleFactor.scaleY),
     )
 
+/**
+ * Returns an IntRectCompat scaled by dividing [scale]
+ */
 operator fun RectCompat.div(scale: Float): RectCompat =
     RectCompat(
         left = (left / scale),
@@ -338,6 +366,9 @@ operator fun RectCompat.div(scale: Float): RectCompat =
         bottom = (bottom / scale),
     )
 
+/**
+ * Returns an IntRectCompat scaled by dividing [scaleFactor]
+ */
 operator fun RectCompat.div(scaleFactor: ScaleFactorCompat): RectCompat =
     RectCompat(
         left = (left / scaleFactor.scaleX),
@@ -346,15 +377,18 @@ operator fun RectCompat.div(scaleFactor: ScaleFactorCompat): RectCompat =
         bottom = (bottom / scaleFactor.scaleY),
     )
 
+/**
+ * Limit the offset to the rectangular extent
+ */
 fun RectCompat.limitTo(rect: RectCompat): RectCompat =
-    if (this.left < rect.left
-        || this.top < rect.top
+    if (this.left < rect.left || this.left > rect.right
+        || this.top < rect.top || this.top > rect.bottom
         || this.right < rect.left || this.right > rect.right
         || this.bottom < rect.top || this.bottom > rect.bottom
     ) {
         RectCompat(
-            left = left.coerceAtLeast(rect.left),
-            top = top.coerceAtLeast(rect.top),
+            left = left.coerceIn(rect.left, rect.right),
+            top = top.coerceIn(rect.top, rect.bottom),
             right = right.coerceIn(rect.left, rect.right),
             bottom = bottom.coerceIn(rect.top, rect.bottom),
         )
@@ -362,22 +396,15 @@ fun RectCompat.limitTo(rect: RectCompat): RectCompat =
         this
     }
 
+/**
+ * Limit Rect to 0 to the range of size
+ */
 fun RectCompat.limitTo(size: SizeCompat): RectCompat =
-    if (this.left < 0
-        || this.top < 0
-        || this.right < 0 || this.right > size.width
-        || this.bottom < 0 || this.bottom > size.height
-    ) {
-        RectCompat(
-            left = left.coerceAtLeast(0f),
-            top = top.coerceAtLeast(0f),
-            right = right.coerceIn(0f, size.width),
-            bottom = bottom.coerceIn(0f, size.height),
-        )
-    } else {
-        this
-    }
+    limitTo(RectCompat(0f, 0f, size.width, size.height))
 
+/**
+ * Rotate the space by [rotation] degrees, and then return the rotated Rect
+ */
 fun RectCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): RectCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
     return when ((rotation % 360).let { if (it < 0) 360 + it else it }) {
@@ -412,6 +439,9 @@ fun RectCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): RectCompat {
     }
 }
 
+/**
+ * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated Rect
+ */
 fun RectCompat.reverseRotateInSpace(spaceSize: SizeCompat, rotation: Int): RectCompat {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
     val reverseRotation = (360 - rotation) % 360

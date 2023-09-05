@@ -156,16 +156,6 @@ operator fun IntSizeCompat.div(scale: Float): IntSizeCompat =
     )
 
 /**
- * Convert to [OffsetCompat]
- */
-fun IntSizeCompat.toOffset(): OffsetCompat = OffsetCompat(x = width.toFloat(), y = height.toFloat())
-
-/**
- * Convert to [IntOffsetCompat]
- */
-fun IntSizeCompat.toIntOffset(): IntOffsetCompat = IntOffsetCompat(x = width, y = height)
-
-/**
  * The size after rotating [rotation] degrees
  */
 fun IntSizeCompat.rotate(rotation: Int): IntSizeCompat {
@@ -180,6 +170,9 @@ fun IntSizeCompat.reverseRotate(rotation: Int): IntSizeCompat {
     return rotate(reverseRotation)
 }
 
+/**
+ * Returns true if the aspect ratio of itself and other is the same
+ */
 fun IntSizeCompat.isSameAspectRatio(other: IntSizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height.toFloat()
     val otherScale = other.width / other.height.toFloat()
