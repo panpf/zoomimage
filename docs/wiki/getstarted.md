@@ -25,34 +25,32 @@ corresponding dependencies*
 
 compose：
 
-* [SketchZoomAsyncImage]：
-    * Zoom Image component integrated with [Sketch] image loading library `(recommended)`
-    * The usage is the same as the [AsyncImage] [SketchAsyncImage] component of [Sketch].
+* [SketchZoomAsyncImage]：`recommended/推荐使用`
+    * Zoom Image component integrated with [Sketch] image loading library, the usage is the same as
+      the [AsyncImage] [SketchAsyncImage] component of [Sketch].
     * Network images and subsampling are already supported without any additional work
     * Reference Example [SketchZoomAsyncImageSample]
       <br>-----------</br>
-    * 集成了 [Sketch] 图片加载库的缩放 Image 组件`（推荐使用）`
-    * 用法和 [Sketch] 的 [AsyncImage][SketchAsyncImage] 组件一样
+    * 集成了 [Sketch] 图片加载库的缩放 Image 组件，用法和 [Sketch] 的 [AsyncImage][SketchAsyncImage]
+      组件一样
     * 已支持网络图片和子采样，无需做任何额外的工作
     * 参考示例 [SketchZoomAsyncImageSample]
 * [CoilZoomAsyncImage]：
-    * Zoom Image component integrated with the [Coil] image loading library
-    * The usage is the same as the [AsyncImage][CoilAsyncImage] component of [Coil].
+    * Zoom Image component integrated with the [Coil] image loading library, the usage is the same
+      as the [AsyncImage][CoilAsyncImage] component of [Coil].
     * Network images and subsampling are already supported without any additional work
     * Reference example [CoilZoomAsyncImageSample]
       <br>-----------</br>
-    * 集成了 [Coil] 图片加载库的缩放 Image 组件
-    * 用法和 [Coil] 的 [AsyncImage][CoilAsyncImage] 组件一样
+    * 集成了 [Coil] 图片加载库的缩放 Image 组件，用法和 [Coil] 的 [AsyncImage][CoilAsyncImage] 组件一样
     * 已支持网络图片和子采样，无需做任何额外的工作
     * 参考示例 [CoilZoomAsyncImageSample]
 * [GlideZoomAsyncImage]：
-    * Zoom Image component that integrates the [Glide] image loading library
-    * The usage is the same as the [GlideImage] component of [Glide].
+    * Zoom Image component that integrates the [Glide] image loading library, the usage is the same
+      as the [GlideImage] component of [Glide].
     * Network images and subsampling are already supported without any additional work
     * Reference example [GlideZoomAsyncImageSample]
       <br>-----------</br>
-    * 集成了 [Glide] 图片加载库的缩放 Image 组件
-    * 用法和 [Glide] 的 [GlideImage] 组件一样
+    * 集成了 [Glide] 图片加载库的缩放 Image 组件，用法和 [Glide] 的 [GlideImage] 组件一样
     * 已支持网络图片和子采样，无需做任何额外的工作
     * 参考示例 [GlideZoomAsyncImageSample]
 * [ZoomImage]：
@@ -66,12 +64,12 @@ compose：
 
 view：
 
-* [SketchZoomImageView]：
-    * Zoom ImageView with integrated [Sketch] image loading library `(recommended)`
+* [SketchZoomImageView]：`recommended/推荐使用`
+    * Zoom ImageView with integrated [Sketch] image loading library
     * Adapted [Sketch] supports subsampling without any additional work
     * Reference example [SketchZoomImageViewFragment]
       <br>-----------</br>
-    * 集成了 [Sketch] 图片加载库的缩放 ImageView`（推荐使用）`
+    * 集成了 [Sketch] 图片加载库的缩放 ImageView
     * 已适配 [Sketch] 支持子采样，无需做任何额外的工作
     * 参考示例 [SketchZoomImageViewFragment]
 * [CoilZoomImageView]：
@@ -195,10 +193,10 @@ val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
 zoomImageView.subsampling.setImageSource(imageSource)
 ```
 
-> PicassoZoomImageView provides a set of specialized APIs to listen for load results and get URIs,
+> PicassoZoomImageView provides a set of specialized APIs to listen for load results and get URIs, to support subsampling
 > so please don't load images directly using the official API
 <br>-----------</br>
-> PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，因此请不要直接使用官方 API 加载图片
+> PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，以便支持子采样，因此请不要直接使用官方 API 加载图片
 
 The APIs for zoom and subsampling are encapsulated in separate classes, and the compose versions
 are [ZoomableState] and [SubsamplingState], view The versions are [ZoomableEngine]
@@ -286,11 +284,11 @@ sketchZoomImageView.subsampling.registerOnImageLoadRectChangeListener {
     // imageLoadRect changed
 }
 
-sketchZoomImageView.onViewTapListener =  { view: android.view.View, x: Float, y: Float ->
+sketchZoomImageView.onViewTapListener = { view: android.view.View, x: Float, y: Float ->
     // Click Events,单击事件
 }
 
-sketchZoomImageView.onViewLongPressListener =  { view: android.view.View, x: Float, y: Float ->
+sketchZoomImageView.onViewLongPressListener = { view: android.view.View, x: Float, y: Float ->
     // Long press event,长按事件        
 }
 ```
@@ -316,20 +314,24 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 ```
 
 * `zoomable.baseTransform: Transform`。
-    * Base transformation, include the base scale, offset, rotation, which is affected by contentScale, alignment properties and rotate method
+    * Base transformation, include the base scale, offset, rotation, which is affected by
+      contentScale, alignment properties and rotate method
       <br>-----------</br>
     * 基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment 属性以及 rotate() 方法的影响
 * `zoomable.userTransform: Transform`。
-    * User transformation, include the user scale, offset, rotation, which is affected by the user's gesture, readMode properties and scale, offset, locate method
+    * User transformation, include the user scale, offset, rotation, which is affected by the user's
+      gesture, readMode properties and scale, offset, locate method
       <br>-----------</br>
     * 用户变换信息，包括缩放、偏移、旋转，受用户手势操作、readMode 属性以及 scale()、offset()、locate()
       方法的影响
 * `zoomable.transform: Transform`。
-    * Final transformation, include the final scale, offset, rotation, is equivalent to `baseTransform + userTransform`
+    * Final transformation, include the final scale, offset, rotation, is equivalent
+      to `baseTransform + userTransform`
       <br>-----------</br>
     * 最终的变换信息，包括缩放、偏移、旋转，等价于 `baseTransform + userTransform`
 * `zoomable.minScale: Float`。
-    * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
+    * Minimum scale factor, for limits the final scale factor, and as a target value for one of when
+      switch scale
       <br>-----------</br>
     * 最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
 * `zoomable.mediumScale: Float`。
@@ -337,11 +339,13 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
       <br>-----------</br>
     * 中间缩放比例，用于双击缩放时的一个循环缩放比例
 * `zoomable.maxScale: Float`。
-    * Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
+    * Maximum scale factor, for limits the final scale factor, and as a target value for one of when
+      switch scale
       <br>-----------</br>
     * 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
 * `zoomable.transforming: Boolean`。
-    * If true, a transformation is currently in progress, possibly in a continuous gesture operation, or an animation is in progress
+    * If true, a transformation is currently in progress, possibly in a continuous gesture
+      operation, or an animation is in progress
       <br>-----------</br>
     * 是否正在变换中，可能是在连续的手势操作中或者正在执行动画
 * `zoomable.contentBaseDisplayRect: IntRect`。
