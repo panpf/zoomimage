@@ -22,7 +22,6 @@ import com.github.panpf.zoomimage.util.internal.packFloats
 import com.github.panpf.zoomimage.util.internal.toStringAsFixed
 import com.github.panpf.zoomimage.util.internal.unpackFloat1
 import com.github.panpf.zoomimage.util.internal.unpackFloat2
-import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 /**
@@ -273,22 +272,6 @@ operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat =
  */
 operator fun OffsetCompat.div(scaleFactor: ScaleFactorCompat): OffsetCompat =
     OffsetCompat(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
-
-/**
- * Convert to [SizeCompat]
- */
-fun OffsetCompat.toSize(): SizeCompat =
-    if (isSpecified) SizeCompat(width = x, height = y) else SizeCompat.Unspecified
-
-/**
- * Round to the nearest integer, then convert to [IntSizeCompat]
- */
-fun OffsetCompat.roundToSize(): IntSizeCompat =
-    if (isSpecified) {
-        IntSizeCompat(width = x.roundToInt(), height = y.roundToInt())
-    } else {
-        IntSizeCompat.Zero
-    }
 
 /**
  * Rotate the space by [rotation] degrees, and then return the rotated coordinates

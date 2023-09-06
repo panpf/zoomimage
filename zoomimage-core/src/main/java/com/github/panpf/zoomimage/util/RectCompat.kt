@@ -334,7 +334,7 @@ fun RectCompat.round(): IntRectCompat = IntRectCompat(
 )
 
 /**
- * Returns an IntRectCompat scaled by multiplying [scale]
+ * Returns an RectCompat scaled by multiplying [scale]
  */
 operator fun RectCompat.times(scale: Float): RectCompat =
     RectCompat(
@@ -345,7 +345,7 @@ operator fun RectCompat.times(scale: Float): RectCompat =
     )
 
 /**
- * Returns an IntRectCompat scaled by multiplying [scaleFactor]
+ * Returns an RectCompat scaled by multiplying [scaleFactor]
  */
 operator fun RectCompat.times(scaleFactor: ScaleFactorCompat): RectCompat =
     RectCompat(
@@ -356,7 +356,7 @@ operator fun RectCompat.times(scaleFactor: ScaleFactorCompat): RectCompat =
     )
 
 /**
- * Returns an IntRectCompat scaled by dividing [scale]
+ * Returns an RectCompat scaled by dividing [scale]
  */
 operator fun RectCompat.div(scale: Float): RectCompat =
     RectCompat(
@@ -367,7 +367,7 @@ operator fun RectCompat.div(scale: Float): RectCompat =
     )
 
 /**
- * Returns an IntRectCompat scaled by dividing [scaleFactor]
+ * Returns an RectCompat scaled by dividing [scaleFactor]
  */
 operator fun RectCompat.div(scaleFactor: ScaleFactorCompat): RectCompat =
     RectCompat(

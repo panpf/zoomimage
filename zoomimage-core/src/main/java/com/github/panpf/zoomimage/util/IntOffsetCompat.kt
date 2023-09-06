@@ -195,16 +195,6 @@ operator fun IntOffsetCompat.div(scaleFactor: ScaleFactorCompat): IntOffsetCompa
 }
 
 /**
- * Convert to [SizeCompat]
- */
-fun IntOffsetCompat.toSize(): SizeCompat = SizeCompat(width = x.toFloat(), height = y.toFloat())
-
-/**
- * Convert to [IntSizeCompat]
- */
-fun IntOffsetCompat.toIntSize(): IntSizeCompat = IntSizeCompat(width = x, height = y)
-
-/**
  * Rotate the space by [rotation] degrees, and then return the rotated coordinates
  */
 fun IntOffsetCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntOffsetCompat {

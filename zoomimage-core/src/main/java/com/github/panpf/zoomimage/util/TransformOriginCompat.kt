@@ -110,6 +110,12 @@ operator fun TransformOriginCompat.times(operand: Float) =
     TransformOriginCompat(pivotFractionX * operand, pivotFractionY * operand)
 
 /**
+ * Return a new [TransformOriginCompat] with the width and height dividing by the [operand]
+ */
+operator fun TransformOriginCompat.div(operand: Float) =
+    TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
+
+/**
  * Multiplication operator with [IntSizeCompat].
  *
  * Return a new [IntSizeCompat] with the width and height multiplied by the [TransformOriginCompat.pivotFractionX] and
@@ -132,12 +138,6 @@ operator fun SizeCompat.times(origin: TransformOriginCompat): SizeCompat =
         width = this.width * origin.pivotFractionX,
         height = this.height * origin.pivotFractionY
     )
-
-/**
- * Return a new [TransformOriginCompat] with the width and height dividing by the [operand]
- */
-operator fun TransformOriginCompat.div(operand: Float) =
-    TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
 
 /**
  * Linearly interpolate between two [TransformOriginCompat] parameters

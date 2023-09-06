@@ -5,15 +5,12 @@ import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
 import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.util.times
-import com.github.panpf.zoomimage.util.toIntSize
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.util.toSize
 import org.junit.Assert
 import org.junit.Test
 
@@ -46,30 +43,6 @@ class IntOffsetCompatTest {
         Assert.assertEquals(
             "8x11",
             (IntOffsetCompat(43, 37) / ScaleFactorCompat(5.3f, 3.3f)).toShortString()
-        )
-    }
-
-    @Test
-    fun testToSize() {
-        Assert.assertEquals(
-            SizeCompat(13f, 7f),
-            IntOffsetCompat(13, 7).toSize()
-        )
-        Assert.assertEquals(
-            SizeCompat(7f, 13f),
-            IntOffsetCompat(7, 13).toSize()
-        )
-    }
-
-    @Test
-    fun testToIntSize() {
-        Assert.assertEquals(
-            IntSizeCompat(13, 7),
-            IntOffsetCompat(13, 7).toIntSize()
-        )
-        Assert.assertEquals(
-            IntSizeCompat(7, 13),
-            IntOffsetCompat(7, 13).toIntSize()
         )
     }
 

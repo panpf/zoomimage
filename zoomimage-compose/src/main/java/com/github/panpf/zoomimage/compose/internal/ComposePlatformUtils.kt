@@ -55,23 +55,38 @@ internal fun Float.toDp(): Dp {
 internal fun Size.toShortString(): String =
     if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
 
+/**
+ * Return true if the size is not empty
+ */
 @Stable
 internal fun Size.isNotEmpty(): Boolean = width > 0f && height > 0f
 
+/**
+ * Round a [Size] down to the nearest [Int] coordinates.
+ */
 @Stable
 internal fun Size.round(): IntSize =
     if (isSpecified) IntSize(width.roundToInt(), height.roundToInt()) else IntSize.Zero
 
+/**
+ * The size after rotating [rotation] degrees
+ */
 @Stable
 internal fun Size.rotate(rotation: Int): Size =
     if (rotation % 180 == 0) this else Size(height, width)
 
+/**
+ * The size after reverse rotating [rotation] degrees
+ */
 @Stable
 internal fun Size.reverseRotate(rotation: Int): Size {
     val reverseRotation = (360 - rotation) % 360
     return rotate(reverseRotation)
 }
 
+/**
+ * Returns true if the aspect ratio of itself and other is the same
+ */
 @Stable
 internal fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height
@@ -94,12 +109,21 @@ internal fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
 @Stable
 internal fun IntSize.toShortString(): String = "${width}x${height}"
 
+/**
+ * Return true if the size is empty
+ */
 @Stable
 internal fun IntSize.isEmpty(): Boolean = width <= 0 || height <= 0
 
+/**
+ * Return true if the size is not empty
+ */
 @Stable
 internal fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0
 
+/**
+ * Returns an IntSize scaled by multiplying [this] by [scaleFactor]
+ */
 @Stable
 internal operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
     IntSize(
@@ -107,6 +131,9 @@ internal operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
         height = (this.height * scaleFactor.scaleY).roundToInt()
     )
 
+/**
+ * Returns an IntSize scaled by dividing [this] by [scaleFactor]
+ */
 @Stable
 internal operator fun IntSize.div(scaleFactor: ScaleFactor): IntSize =
     IntSize(
@@ -114,6 +141,9 @@ internal operator fun IntSize.div(scaleFactor: ScaleFactor): IntSize =
         height = (this.height / scaleFactor.scaleY).roundToInt()
     )
 
+/**
+ * Returns an IntSize scaled by multiplying [this] by [scale]
+ */
 @Stable
 internal operator fun IntSize.times(scale: Float): IntSize =
     IntSize(
@@ -121,6 +151,9 @@ internal operator fun IntSize.times(scale: Float): IntSize =
         height = (this.height * scale).roundToInt()
     )
 
+/**
+ * Returns an IntSize scaled by dividing [this] by [scale]
+ */
 @Stable
 internal operator fun IntSize.div(scale: Float): IntSize =
     IntSize(
@@ -128,17 +161,26 @@ internal operator fun IntSize.div(scale: Float): IntSize =
         height = (this.height / scale).roundToInt()
     )
 
+/**
+ * The size after rotating [rotation] degrees
+ */
 @Stable
 internal fun IntSize.rotate(rotation: Int): IntSize {
     return if (rotation % 180 == 0) this else IntSize(height, width)
 }
 
+/**
+ * The size after reverse rotating [rotation] degrees
+ */
 @Stable
 internal fun IntSize.reverseRotate(rotation: Int): IntSize {
     val reverseRotation = (360 - rotation) % 360
     return rotate(reverseRotation)
 }
 
+/**
+ * Returns true if the aspect ratio of itself and other is the same
+ */
 @Stable
 internal fun IntSize.isSameAspectRatio(other: IntSize, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height.toFloat()
@@ -188,26 +230,31 @@ internal fun IntSize.copy(width: Int = this.width, height: Int = this.height) =
 internal fun Offset.toShortString(): String =
     if (isSpecified) "${x.format(2)}x${y.format(2)}" else "Unspecified"
 
+/**
+ * Multiplication operator.
+ *
+ * Returns an offset whose coordinates are the coordinates of the
+ * left-hand-side operand (an Offset) multiplied by the scalar
+ * right-hand-side operand (a Float).
+ */
 @Stable
 internal operator fun Offset.times(scaleFactor: ScaleFactor): Offset =
     Offset(x * scaleFactor.scaleX, y * scaleFactor.scaleY)
 
+/**
+ * Division operator.
+ *
+ * Returns an offset whose coordinates are the coordinates of the
+ * left-hand-side operand (an Offset) divided by the scalar right-hand-side
+ * operand (a Float).
+ */
 @Stable
 internal operator fun Offset.div(scaleFactor: ScaleFactor): Offset =
     Offset(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
 
-@Stable
-internal fun Offset.toSize(): Size =
-    if (isSpecified) Size(width = x, height = y) else Size.Unspecified
-
-@Stable
-internal fun Offset.roundToSize(): IntSize =
-    if (isSpecified) {
-        IntSize(width = x.roundToInt(), height = y.roundToInt())
-    } else {
-        IntSize.Zero
-    }
-
+/**
+ * Rotate the space by [rotation] degrees, and then return the rotated coordinates
+ */
 @Stable
 internal fun Offset.rotateInSpace(spaceSize: Size, rotation: Int): Offset {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
@@ -219,6 +266,9 @@ internal fun Offset.rotateInSpace(spaceSize: Size, rotation: Int): Offset {
     }
 }
 
+/**
+ * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated coordinates
+ */
 @Stable
 internal fun Offset.reverseRotateInSpace(spaceSize: Size, rotation: Int): Offset {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
@@ -226,6 +276,9 @@ internal fun Offset.reverseRotateInSpace(spaceSize: Size, rotation: Int): Offset
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
+/**
+ * Limit the offset to the rectangular extent
+ */
 @Stable
 internal fun Offset.limitTo(rect: Rect): Offset {
     return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
@@ -238,6 +291,9 @@ internal fun Offset.limitTo(rect: Rect): Offset {
     }
 }
 
+/**
+ * Limit offset to 0 to the range of size
+ */
 @Stable
 internal fun Offset.limitTo(size: Size): Offset =
     limitTo(Rect(0f, 0f, size.width, size.height))
@@ -251,6 +307,13 @@ internal fun Offset.limitTo(size: Size): Offset =
 @Stable
 internal fun IntOffset.toShortString(): String = "${x}x${y}"
 
+/**
+ * Multiplication operator.
+ *
+ * Returns an IntOffset whose coordinates are the coordinates of the
+ * left-hand-side operand (an IntOffset) multiplied by the scalar
+ * right-hand-side operand (a Float). The result is rounded to the nearest integer.
+ */
 @Stable
 internal operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset =
     IntOffset(
@@ -258,6 +321,13 @@ internal operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset =
         y = (y * scaleFactor.scaleY).roundToInt()
     )
 
+/**
+ * Division operator.
+ *
+ * Returns an IntOffset whose coordinates are the coordinates of the
+ * left-hand-side operand (an IntOffset) divided by the scalar right-hand-side
+ * operand (a Float). The result is rounded to the nearest integer.
+ */
 @Stable
 internal operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
     IntOffset(
@@ -265,12 +335,9 @@ internal operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
         y = (y / scaleFactor.scaleY).roundToInt()
     )
 
-@Stable
-internal fun IntOffset.toSize(): Size = Size(width = x.toFloat(), height = y.toFloat())
-
-@Stable
-internal fun IntOffset.toIntSize(): IntSize = IntSize(width = x, height = y)
-
+/**
+ * Rotate the space by [rotation] degrees, and then return the rotated coordinates
+ */
 @Stable
 internal fun IntOffset.rotateInSpace(spaceSize: IntSize, rotation: Int): IntOffset {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
@@ -282,6 +349,9 @@ internal fun IntOffset.rotateInSpace(spaceSize: IntSize, rotation: Int): IntOffs
     }
 }
 
+/**
+ * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated coordinates
+ */
 @Stable
 internal fun IntOffset.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): IntOffset {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
@@ -289,6 +359,9 @@ internal fun IntOffset.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): 
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
 
+/**
+ * Limit the offset to the rectangular extent
+ */
 @Stable
 internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
     return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
@@ -301,6 +374,9 @@ internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
     }
 }
 
+/**
+ * Limit offset to 0 to the range of size
+ */
 @Stable
 internal fun IntOffset.limitTo(size: IntSize): IntOffset =
     limitTo(IntRect(0, 0, size.width, size.height))
@@ -315,6 +391,20 @@ internal fun IntOffset.limitTo(size: IntSize): IntOffset =
 internal fun Rect.toShortString(): String =
     "[${left.format(2)}x${top.format(2)},${right.format(2)}x${bottom.format(2)}]"
 
+/**
+ * Rounds a [Rect] to an [IntRect]
+ */
+@Stable
+internal fun Rect.round(): IntRect = IntRect(
+    left = left.roundToInt(),
+    top = top.roundToInt(),
+    right = right.roundToInt(),
+    bottom = bottom.roundToInt()
+)
+
+/**
+ * Returns an Rect scaled by multiplying [scale]
+ */
 @Stable
 internal operator fun Rect.times(scale: Float): Rect =
     Rect(
@@ -324,15 +414,21 @@ internal operator fun Rect.times(scale: Float): Rect =
         bottom = (bottom * scale),
     )
 
+/**
+ * Returns an Rect scaled by multiplying [scaleFactor]
+ */
 @Stable
-internal operator fun Rect.times(scale: ScaleFactor): Rect =
+internal operator fun Rect.times(scaleFactor: ScaleFactor): Rect =
     Rect(
-        left = (left * scale.scaleX),
-        top = (top * scale.scaleY),
-        right = (right * scale.scaleX),
-        bottom = (bottom * scale.scaleY),
+        left = (left * scaleFactor.scaleX),
+        top = (top * scaleFactor.scaleY),
+        right = (right * scaleFactor.scaleX),
+        bottom = (bottom * scaleFactor.scaleY),
     )
 
+/**
+ * Returns an Rect scaled by dividing [scale]
+ */
 @Stable
 internal operator fun Rect.div(scale: Float): Rect =
     Rect(
@@ -342,6 +438,9 @@ internal operator fun Rect.div(scale: Float): Rect =
         bottom = (bottom / scale),
     )
 
+/**
+ * Returns an Rect scaled by dividing [scaleFactor]
+ */
 @Stable
 internal operator fun Rect.div(scaleFactor: ScaleFactor): Rect =
     Rect(
@@ -351,6 +450,9 @@ internal operator fun Rect.div(scaleFactor: ScaleFactor): Rect =
         bottom = (bottom / scaleFactor.scaleY),
     )
 
+/**
+ * Limit the offset to the rectangular extent
+ */
 @Stable
 internal fun Rect.limitTo(rect: Rect): Rect =
     if (this.left < rect.left || this.left > rect.right
@@ -368,9 +470,15 @@ internal fun Rect.limitTo(rect: Rect): Rect =
         this
     }
 
+/**
+ * Limit Rect to 0 to the range of size
+ */
 @Stable
 internal fun Rect.limitTo(size: Size): Rect = limitTo(Rect(0f, 0f, size.width, size.height))
 
+/**
+ * Rotate the space by [rotation] degrees, and then return the rotated Rect
+ */
 @Stable
 internal fun Rect.rotateInSpace(spaceSize: Size, rotation: Int): Rect {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
@@ -406,6 +514,9 @@ internal fun Rect.rotateInSpace(spaceSize: Size, rotation: Int): Rect {
     }
 }
 
+/**
+ * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated Rect
+ */
 @Stable
 internal fun Rect.reverseRotateInSpace(spaceSize: Size, rotation: Int): Rect {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
@@ -423,16 +534,8 @@ internal fun Rect.reverseRotateInSpace(spaceSize: Size, rotation: Int): Rect {
 internal fun IntRect.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
 /**
- * Rounds a [Rect] to an [IntRect]
+ * Returns an IntRect scaled by multiplying [scale]
  */
-@Stable
-internal fun Rect.round(): IntRect = IntRect(
-    left = left.roundToInt(),
-    top = top.roundToInt(),
-    right = right.roundToInt(),
-    bottom = bottom.roundToInt()
-)
-
 @Stable
 internal operator fun IntRect.times(scale: Float): IntRect =
     IntRect(
@@ -442,15 +545,21 @@ internal operator fun IntRect.times(scale: Float): IntRect =
         bottom = (bottom * scale).roundToInt(),
     )
 
+/**
+ * Returns an IntRect scaled by multiplying [scaleFactor]
+ */
 @Stable
-internal operator fun IntRect.times(scale: ScaleFactor): IntRect =
+internal operator fun IntRect.times(scaleFactor: ScaleFactor): IntRect =
     IntRect(
-        left = (left * scale.scaleX).roundToInt(),
-        top = (top * scale.scaleY).roundToInt(),
-        right = (right * scale.scaleX).roundToInt(),
-        bottom = (bottom * scale.scaleY).roundToInt(),
+        left = (left * scaleFactor.scaleX).roundToInt(),
+        top = (top * scaleFactor.scaleY).roundToInt(),
+        right = (right * scaleFactor.scaleX).roundToInt(),
+        bottom = (bottom * scaleFactor.scaleY).roundToInt(),
     )
 
+/**
+ * Returns an IntRect scaled by dividing [scale]
+ */
 @Stable
 internal operator fun IntRect.div(scale: Float): IntRect =
     IntRect(
@@ -460,6 +569,9 @@ internal operator fun IntRect.div(scale: Float): IntRect =
         bottom = (bottom / scale).roundToInt(),
     )
 
+/**
+ * Returns an IntRect scaled by dividing [scaleFactor]
+ */
 @Stable
 internal operator fun IntRect.div(scaleFactor: ScaleFactor): IntRect =
     IntRect(
@@ -469,6 +581,9 @@ internal operator fun IntRect.div(scaleFactor: ScaleFactor): IntRect =
         bottom = (bottom / scaleFactor.scaleY).roundToInt(),
     )
 
+/**
+ * Limit the offset to the rectangular extent
+ */
 @Stable
 internal fun IntRect.limitTo(rect: IntRect): IntRect =
     if (this.left < rect.left || this.left > rect.right
@@ -486,10 +601,16 @@ internal fun IntRect.limitTo(rect: IntRect): IntRect =
         this
     }
 
+/**
+ * Limit Rect to 0 to the range of size
+ */
 @Stable
 internal fun IntRect.limitTo(size: IntSize): IntRect =
     limitTo(IntRect(0, 0, size.width, size.height))
 
+/**
+ * Rotate the space by [rotation] degrees, and then return the rotated Rect
+ */
 @Stable
 internal fun IntRect.rotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
@@ -525,6 +646,9 @@ internal fun IntRect.rotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
     }
 }
 
+/**
+ * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated Rect
+ */
 @Stable
 internal fun IntRect.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
@@ -541,22 +665,33 @@ internal fun IntRect.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): In
 @Stable
 internal fun ScaleFactor.toShortString(): String = "${scaleX.format(2)}x${scaleY.format(2)}"
 
-private val scaleFactorOrigin by lazy { ScaleFactor(scaleX = 1f, scaleY = 1f) }
+/**
+ * Create a ScaleFactor, scaleX and scaleY are both [scale]
+ */
+@Stable
+internal fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
 
+/**
+ * The scaling factor that remains the same scale, that is, scaleX and scaleY are both 1f
+ */
 @Stable
 internal val ScaleFactor.Companion.Origin: ScaleFactor
     get() = scaleFactorOrigin
+private val scaleFactorOrigin by lazy { ScaleFactor(scaleX = 1f, scaleY = 1f) }
 
+/**
+ * Returns an ScaleFactor scaled by multiplying [scaleFactor]
+ */
 @Stable
 internal operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
     ScaleFactor(scaleX * scaleFactor.scaleX, scaleY * scaleFactor.scaleY)
 
+/**
+ * Returns an ScaleFactor scaled by dividing [scaleFactor]
+ */
 @Stable
 internal operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
     ScaleFactor(scaleX / scaleFactor.scaleX, scaleY / scaleFactor.scaleY)
-
-@Stable
-internal fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
 
 
 /* ************************************** TransformOrigin *************************************** */
@@ -568,16 +703,25 @@ internal fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
 internal fun TransformOrigin.toShortString(): String =
     "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"
 
-private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
-
+/**
+ * [TransformOrigin] constant to indicate that the top start of the content should
+ * be used for rotation and scale transformations
+ */
 @Stable
 internal val TransformOrigin.Companion.TopStart: TransformOrigin
     get() = transformOriginTopStart
+private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
 
+/**
+ * Return a new [TransformOrigin] with the width and height multiplied by the [operand]
+ */
 @Stable
 internal operator fun TransformOrigin.times(operand: Float) =
     TransformOrigin(pivotFractionX * operand, pivotFractionY * operand)
 
+/**
+ * Return a new [TransformOrigin] with the width and height dividing by the [operand]
+ */
 @Stable
 internal operator fun TransformOrigin.div(operand: Float) =
     TransformOrigin(pivotFractionX / operand, pivotFractionY / operand)
