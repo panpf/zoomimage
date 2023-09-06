@@ -183,32 +183,36 @@ operator fun Transform.div(scaleFactor: ScaleFactor): Transform {
  */
 operator fun Transform.plus(other: Transform): Transform {
     require(
-        this.scale == ScaleFactor.Origin
-            || other.scale == ScaleFactor.Origin
-            || this.scaleOrigin == other.scaleOrigin
+        this.scaleOrigin == other.scaleOrigin
+                || this.scale == ScaleFactor.Origin
+                || other.scale == ScaleFactor.Origin
     ) {
         "When both this and other Transform's scale are not empty, their scaleOrigin must be the same: " +
-                "this.scaleOrigin=${this.scaleOrigin}, " +
-                "other.scaleOrigin=${other.scaleOrigin}"
+                "this.scaleOrigin=${this.scaleOrigin}, other.scaleOrigin=${other.scaleOrigin}"
     }
-    require(this.rotation == 0f || other.rotation == 0f || this.rotationOrigin == other.rotationOrigin) {
+    require(
+        this.rotationOrigin == other.rotationOrigin
+                || this.rotation == 0f
+                || other.rotation == 0f
+    ) {
         "When both this and other Transform's rotation are not zero, their rotationOrigin must be the same: " +
-                "this.rotationOrigin=${this.rotationOrigin}, " +
-                "other.rotationOrigin=${other.rotationOrigin}"
+                "this.rotationOrigin=${this.rotationOrigin}, other.rotationOrigin=${other.rotationOrigin}"
     }
-    val scaleOrigin = if (this.scale.let { it.isSpecified && it != ScaleFactor.Origin }) {
+    val scaleOrigin = if (
+        this.scaleOrigin == other.scaleOrigin
+        || other.scale == ScaleFactor.Origin
+    ) {
         this.scaleOrigin
-    } else if (other.scale.let { it.isSpecified && it != ScaleFactor.Origin }) {
+    } else {
         other.scaleOrigin
-    } else {
-        TransformOrigin.TopStart
     }
-    val rotationOrigin = if (this.rotation != 0f) {
+    val rotationOrigin = if (
+        this.rotationOrigin == other.rotationOrigin
+        || other.rotation == 0f
+    ) {
         this.rotationOrigin
-    } else if (other.rotation != 0f) {
-        other.rotationOrigin
     } else {
-        TransformOrigin.TopStart
+        other.rotationOrigin
     }
     val addScale = other.scale
     return this.copy(
@@ -225,32 +229,36 @@ operator fun Transform.plus(other: Transform): Transform {
  */
 operator fun Transform.minus(other: Transform): Transform {
     require(
-        this.scale == ScaleFactor.Origin
-            || other.scale == ScaleFactor.Origin
-            || this.scaleOrigin == other.scaleOrigin
+        this.scaleOrigin == other.scaleOrigin
+                || this.scale == ScaleFactor.Origin
+                || other.scale == ScaleFactor.Origin
     ) {
         "When both this and other Transform's scale are not empty, their scaleOrigin must be the same: " +
-                "this.scaleOrigin=${this.scaleOrigin}, " +
-                "other.scaleOrigin=${other.scaleOrigin}"
+                "this.scaleOrigin=${this.scaleOrigin}, other.scaleOrigin=${other.scaleOrigin}"
     }
-    require(this.rotation == 0f || other.rotation == 0f || this.rotationOrigin == other.rotationOrigin) {
+    require(
+        this.rotationOrigin == other.rotationOrigin
+                || this.rotation == 0f
+                || other.rotation == 0f
+    ) {
         "When both this and other Transform's rotation are not zero, their rotationOrigin must be the same: " +
-                "this.rotationOrigin=${this.rotationOrigin}, " +
-                "other.rotationOrigin=${other.rotationOrigin}"
+                "this.rotationOrigin=${this.rotationOrigin}, other.rotationOrigin=${other.rotationOrigin}"
     }
-    val scaleOrigin = if (this.scale.let { it.isSpecified && it != ScaleFactor.Origin }) {
+    val scaleOrigin = if (
+        this.scaleOrigin == other.scaleOrigin
+        || other.scale == ScaleFactor.Origin
+    ) {
         this.scaleOrigin
-    } else if (other.scale.let { it.isSpecified && it != ScaleFactor.Origin }) {
+    } else {
         other.scaleOrigin
-    } else {
-        TransformOrigin.TopStart
     }
-    val rotationOrigin = if (this.rotation != 0f) {
+    val rotationOrigin = if (
+        this.rotationOrigin == other.rotationOrigin
+        || other.rotation == 0f
+    ) {
         this.rotationOrigin
-    } else if (other.rotation != 0f) {
-        other.rotationOrigin
     } else {
-        TransformOrigin.TopStart
+        other.rotationOrigin
     }
     val minusScale = scale.div(other.scale)
     return this.copy(
@@ -280,32 +288,36 @@ operator fun Transform.minus(other: Transform): Transform {
 @Stable
 fun lerp(start: Transform, stop: Transform, fraction: Float): Transform {
     require(
-        start.scale == ScaleFactor.Origin
+        start.scaleOrigin == stop.scaleOrigin
+                || start.scale == ScaleFactor.Origin
                 || stop.scale == ScaleFactor.Origin
-                || start.scaleOrigin == stop.scaleOrigin
     ) {
         "When both start and stop Transform's scale are not empty, their scaleOrigin must be the same: " +
-                "start.scaleOrigin=${start.scaleOrigin}, " +
-                "stop.scaleOrigin=${stop.scaleOrigin}"
+                "start.scaleOrigin=${start.scaleOrigin}, stop.scaleOrigin=${stop.scaleOrigin}"
     }
-    require(start.rotation == 0f || stop.rotation == 0f || start.rotationOrigin == stop.rotationOrigin) {
+    require(
+        start.rotationOrigin == stop.rotationOrigin
+                || start.rotation == 0f
+                || stop.rotation == 0f
+    ) {
         "When both start and stop Transform's rotation are not zero, their rotationOrigin must be the same: " +
-                "start.rotationOrigin=${start.rotationOrigin}, " +
-                "stop.rotationOrigin=${stop.rotationOrigin}"
+                "start.rotationOrigin=${start.rotationOrigin}, stop.rotationOrigin=${stop.rotationOrigin}"
     }
-    val scaleOrigin = if (start.scale.let { it.isSpecified && it != ScaleFactor.Origin }) {
+    val scaleOrigin = if (
+        start.scaleOrigin == stop.scaleOrigin
+        || stop.scale == ScaleFactor.Origin
+    ) {
         start.scaleOrigin
-    } else if (stop.scale.let { it.isSpecified && it != ScaleFactor.Origin }) {
+    } else {
         stop.scaleOrigin
-    } else {
-        TransformOrigin.TopStart
     }
-    val rotationOrigin = if (start.rotation != 0f) {
+    val rotationOrigin = if (
+        start.rotationOrigin == stop.rotationOrigin
+        || stop.rotation == 0f
+    ) {
         start.rotationOrigin
-    } else if (stop.rotation != 0f) {
-        stop.rotationOrigin
     } else {
-        TransformOrigin.TopStart
+        stop.rotationOrigin
     }
     return start.copy(
         scale = androidx.compose.ui.layout.lerp(start.scale, stop.scale, fraction),
