@@ -7,6 +7,8 @@ import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.div
+import com.github.panpf.zoomimage.util.lerp
+import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toShortString
@@ -182,6 +184,7 @@ class TransformCompatTest {
     @Test
     fun testPlus() {
         assertThrow(IllegalArgumentException::class) {
+            // scale origin is different
             TransformCompat.Origin.copy(
                 scale = ScaleFactorCompat(2f),
                 scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
@@ -193,6 +196,7 @@ class TransformCompatTest {
             )
         }
         assertNoThrow {
+            // start scale default
             TransformCompat.Origin.copy(
                 scale = ScaleFactorCompat(1f),
                 scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
@@ -201,7 +205,11 @@ class TransformCompatTest {
                     scale = ScaleFactorCompat(3f),
                     scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
                 )
-            )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.2f, 0.2f), scaleOrigin)
+            }
+
+            // end scale default
             TransformCompat.Origin.copy(
                 scale = ScaleFactorCompat(2f),
                 scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
@@ -210,9 +218,418 @@ class TransformCompatTest {
                     scale = ScaleFactorCompat(1f),
                     scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
                 )
-            )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), scaleOrigin)
+            }
+
+            // start and end scale default
+            TransformCompat.Origin.copy(
+                scale = ScaleFactorCompat(1f),
+                scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).plus(
+                TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(1f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), scaleOrigin)
+            }
         }
 
-        // todo Unit tests
+        assertThrow(IllegalArgumentException::class) {
+            // rotation origin is different
+            TransformCompat.Origin.copy(
+                rotation = 90f,
+                rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).plus(
+                TransformCompat.Origin.copy(
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            )
+        }
+        assertNoThrow {
+            // start rotation default
+            TransformCompat.Origin.copy(
+                rotation = 0f,
+                rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).plus(
+                TransformCompat.Origin.copy(
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.2f, 0.2f), rotationOrigin)
+            }
+
+            // end rotation default
+            TransformCompat.Origin.copy(
+                rotation = 90f,
+                rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).plus(
+                TransformCompat.Origin.copy(
+                    rotation = 0f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), rotationOrigin)
+            }
+
+            // start and end rotation default
+            TransformCompat.Origin.copy(
+                rotation = 0f,
+                rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).plus(
+                TransformCompat.Origin.copy(
+                    rotation = 0f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), rotationOrigin)
+            }
+        }
+
+        val transform1 = TransformCompat(
+            scale = ScaleFactorCompat(2f),
+            scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            offset = OffsetCompat(199f, 563f),
+            rotation = 90f,
+            rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+        )
+        Assert.assertEquals(
+            "(2.0x2.0,199.0x563.0,90.0,0.5x0.5,0.2x0.2)",
+            transform1.toShortString()
+        )
+
+        val transform2 = TransformCompat(
+            scale = ScaleFactorCompat(3f),
+            scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            offset = OffsetCompat(-50f, 1006f),
+            rotation = 180f,
+            rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+        )
+        Assert.assertEquals(
+            "(3.0x3.0,-50.0x1006.0,180.0,0.5x0.5,0.2x0.2)",
+            transform2.toShortString()
+        )
+
+        val transform3 = transform1.plus(transform2)
+        Assert.assertEquals(
+            "(6.0x6.0,547.0x2695.0,270.0,0.5x0.5,0.2x0.2)",
+            transform3.toShortString()
+        )
+    }
+
+    @Test
+    fun testMinus() {
+        assertThrow(IllegalArgumentException::class) {
+            // scale origin is different
+            TransformCompat.Origin.copy(
+                scale = ScaleFactorCompat(2f),
+                scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).minus(
+                TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(3f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            )
+        }
+        assertNoThrow {
+            // start scale default
+            TransformCompat.Origin.copy(
+                scale = ScaleFactorCompat(1f),
+                scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).minus(
+                TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(3f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.2f, 0.2f), scaleOrigin)
+            }
+
+            // end scale default
+            TransformCompat.Origin.copy(
+                scale = ScaleFactorCompat(2f),
+                scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).minus(
+                TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(1f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), scaleOrigin)
+            }
+
+            // start and end scale default
+            TransformCompat.Origin.copy(
+                scale = ScaleFactorCompat(1f),
+                scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).plus(
+                TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(1f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), scaleOrigin)
+            }
+        }
+
+        assertThrow(IllegalArgumentException::class) {
+            // rotation origin is different
+            TransformCompat.Origin.copy(
+                rotation = 90f,
+                rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).minus(
+                TransformCompat.Origin.copy(
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            )
+        }
+        assertNoThrow {
+            // start rotation default
+            TransformCompat.Origin.copy(
+                rotation = 0f,
+                rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).minus(
+                TransformCompat.Origin.copy(
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.2f, 0.2f), rotationOrigin)
+            }
+
+            // end rotation default
+            TransformCompat.Origin.copy(
+                rotation = 90f,
+                rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).minus(
+                TransformCompat.Origin.copy(
+                    rotation = 0f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), rotationOrigin)
+            }
+
+            // start and end rotation default
+            TransformCompat.Origin.copy(
+                rotation = 0f,
+                rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+            ).plus(
+                TransformCompat.Origin.copy(
+                    rotation = 0f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                )
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), rotationOrigin)
+            }
+        }
+
+        val transform1 = TransformCompat(
+            scale = ScaleFactorCompat(2f),
+            scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            offset = OffsetCompat(199f, 563f),
+            rotation = 90f,
+            rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+        )
+        Assert.assertEquals(
+            "(2.0x2.0,199.0x563.0,90.0,0.5x0.5,0.2x0.2)",
+            transform1.toShortString()
+        )
+
+        val transform2 = TransformCompat(
+            scale = ScaleFactorCompat(3f),
+            scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            offset = OffsetCompat(-50f, 1006f),
+            rotation = 180f,
+            rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+        )
+        Assert.assertEquals(
+            "(3.0x3.0,-50.0x1006.0,180.0,0.5x0.5,0.2x0.2)",
+            transform2.toShortString()
+        )
+
+        val transform3 = transform1.plus(transform2)
+        Assert.assertEquals(
+            "(6.0x6.0,547.0x2695.0,270.0,0.5x0.5,0.2x0.2)",
+            transform3.toShortString()
+        )
+
+        val transform4 = transform3.minus(transform1)
+        Assert.assertEquals(
+            transform2.toShortString(),
+            transform4.toShortString()
+        )
+    }
+
+    @Test
+    fun testLerp() {
+        assertThrow(IllegalArgumentException::class) {
+            // scale origin is different
+            lerp(
+                start = TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(2f),
+                    scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+                ),
+                stop = TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(3f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                ),
+                fraction = 0.5f
+            )
+        }
+        assertNoThrow {
+            // start scale default
+            lerp(
+                start = TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(1f),
+                    scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+                ),
+                stop = TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(3f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                ),
+                fraction = 0.5f
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.2f, 0.2f), scaleOrigin)
+            }
+
+            // end scale default
+            lerp(
+                start = TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(2f),
+                    scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+                ),
+                stop = TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(1f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                ),
+                fraction = 0.5f
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), scaleOrigin)
+            }
+
+            // start and end scale default
+            lerp(
+                start = TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(1f),
+                    scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+                ),
+                stop = TransformCompat.Origin.copy(
+                    scale = ScaleFactorCompat(1f),
+                    scaleOrigin = TransformOriginCompat(0.2f, 0.2f),
+                ),
+                fraction = 0.5f
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), scaleOrigin)
+            }
+        }
+
+        assertThrow(IllegalArgumentException::class) {
+            // rotation origin is different
+            lerp(
+                start = TransformCompat.Origin.copy(
+                    rotation = 90f,
+                    rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+                ),
+                stop = TransformCompat.Origin.copy(
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                ),
+                fraction = 0.5f
+            )
+        }
+        assertNoThrow {
+            // start rotation default
+            lerp(
+                start = TransformCompat.Origin.copy(
+                    rotation = 0f,
+                    rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+                ),
+                stop = TransformCompat.Origin.copy(
+                    rotation = 180f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                ),
+                fraction = 0.5f
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.2f, 0.2f), rotationOrigin)
+            }
+
+            // end rotation default
+            lerp(
+                start = TransformCompat.Origin.copy(
+                    rotation = 90f,
+                    rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+                ),
+                stop = TransformCompat.Origin.copy(
+                    rotation = 0f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                ),
+                fraction = 0.5f
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), rotationOrigin)
+            }
+
+            // start and end rotation default
+            lerp(
+                start = TransformCompat.Origin.copy(
+                    rotation = 0f,
+                    rotationOrigin = TransformOriginCompat(0.5f, 0.5f),
+                ),
+                stop = TransformCompat.Origin.copy(
+                    rotation = 0f,
+                    rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+                ),
+                fraction = 0.5f
+            ).apply {
+                Assert.assertEquals(TransformOriginCompat(0.5f, 0.5f), rotationOrigin)
+            }
+        }
+
+        val transform1 = TransformCompat(
+            scale = ScaleFactorCompat(2f),
+            scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            offset = OffsetCompat(199f, 563f),
+            rotation = 90f,
+            rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+        )
+        Assert.assertEquals(
+            "(2.0x2.0,199.0x563.0,90.0,0.5x0.5,0.2x0.2)",
+            transform1.toShortString()
+        )
+
+        val transform2 = TransformCompat(
+            scale = ScaleFactorCompat(3f),
+            scaleOrigin = TransformOriginCompat(0.5f, 0.5f),
+            offset = OffsetCompat(-50f, 1006f),
+            rotation = 180f,
+            rotationOrigin = TransformOriginCompat(0.2f, 0.2f),
+        )
+        Assert.assertEquals(
+            "(3.0x3.0,-50.0x1006.0,180.0,0.5x0.5,0.2x0.2)",
+            transform2.toShortString()
+        )
+
+        lerp(transform1, transform2, fraction = 0f).apply {
+            Assert.assertEquals(
+                transform1.toShortString(),
+                this.toShortString()
+            )
+        }
+        lerp(transform1, transform2, fraction = 0.5f).apply {
+            Assert.assertEquals(
+                "(2.5x2.5,74.5x784.5,135.0,0.5x0.5,0.2x0.2)",
+                this.toShortString()
+            )
+        }
+        lerp(transform1, transform2, fraction = 1f).apply {
+            Assert.assertEquals(
+                transform2.toShortString(),
+                this.toShortString()
+            )
+        }
     }
 }
