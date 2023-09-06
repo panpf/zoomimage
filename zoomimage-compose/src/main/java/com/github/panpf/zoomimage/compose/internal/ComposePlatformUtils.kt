@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.valueOf
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -820,6 +822,9 @@ internal fun ContentScale.Companion.valueOf(name: String): ContentScale {
 
 /* ************************************** Alignment ********************************************* */
 
+/**
+ * Returns the name of [AlignmentCompat], which can also be converted back via the [valueOf] method
+ */
 @Stable
 internal val Alignment.name: String
     get() = when (this) {
@@ -835,6 +840,9 @@ internal val Alignment.name: String
         else -> "Unknown Alignment: $this"
     }
 
+/**
+ * Returns the [AlignmentCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ */
 @Stable
 internal fun Alignment.Companion.valueOf(name: String): Alignment {
     return when (name) {
@@ -851,30 +859,63 @@ internal fun Alignment.Companion.valueOf(name: String): Alignment {
     }
 }
 
+/**
+ * If true is returned, this [AlignmentCompat] is the horizontal starting position
+ */
 @Stable
 internal val Alignment.isStart: Boolean
-    get() = this == Alignment.TopStart || this == Alignment.CenterStart || this == Alignment.BottomStart
+    get() = this == Alignment.TopStart
+            || this == Alignment.CenterStart
+            || this == Alignment.BottomStart
 
+/**
+ * If true is returned, this [AlignmentCompat] is the horizontal center position
+ */
 @Stable
 internal val Alignment.isHorizontalCenter: Boolean
-    get() = this == Alignment.TopCenter || this == Alignment.Center || this == Alignment.BottomCenter
+    get() = this == Alignment.TopCenter
+            || this == Alignment.Center
+            || this == Alignment.BottomCenter
 
+/**
+ * If true is returned, this [AlignmentCompat] is the horizontal ending position
+ */
+@Stable
+internal val Alignment.isEnd: Boolean
+    get() = this == Alignment.TopEnd
+            || this == Alignment.CenterEnd
+            || this == Alignment.BottomEnd
+
+/**
+ * If true is returned, this [AlignmentCompat] is the horizontal and vertical center position
+ */
 @Stable
 internal val Alignment.isCenter: Boolean
     get() = this == Alignment.Center
 
-@Stable
-internal val Alignment.isEnd: Boolean
-    get() = this == Alignment.TopEnd || this == Alignment.CenterEnd || this == Alignment.BottomEnd
-
+/**
+ * If true is returned, this [AlignmentCompat] is the vertical starting position
+ */
 @Stable
 internal val Alignment.isTop: Boolean
-    get() = this == Alignment.TopStart || this == Alignment.TopCenter || this == Alignment.TopEnd
+    get() = this == Alignment.TopStart
+            || this == Alignment.TopCenter
+            || this == Alignment.TopEnd
 
+/**
+ * If true is returned, this [AlignmentCompat] is the vertical center position
+ */
 @Stable
 internal val Alignment.isVerticalCenter: Boolean
-    get() = this == Alignment.CenterStart || this == Alignment.Center || this == Alignment.CenterEnd
+    get() = this == Alignment.CenterStart
+            || this == Alignment.Center
+            || this == Alignment.CenterEnd
 
+/**
+ * If true is returned, this [AlignmentCompat] is the vertical ending position
+ */
 @Stable
 internal val Alignment.isBottom: Boolean
-    get() = this == Alignment.BottomStart || this == Alignment.BottomCenter || this == Alignment.BottomEnd
+    get() = this == Alignment.BottomStart
+            || this == Alignment.BottomCenter
+            || this == Alignment.BottomEnd

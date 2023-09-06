@@ -73,6 +73,9 @@ data class BiasAlignmentCompat(
     }
 }
 
+/**
+ * Returns the name of [AlignmentCompat], which can also be converted back via the [valueOf] method
+ */
 val AlignmentCompat.name: String
     get() = when (this) {
         AlignmentCompat.TopStart -> "TopStart"
@@ -87,6 +90,9 @@ val AlignmentCompat.name: String
         else -> "Unknown AlignmentCompat: $this"
     }
 
+/**
+ * Returns the [AlignmentCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ */
 fun AlignmentCompat.Companion.valueOf(name: String): AlignmentCompat {
     return when (name) {
         "TopStart" -> TopStart
@@ -102,17 +108,56 @@ fun AlignmentCompat.Companion.valueOf(name: String): AlignmentCompat {
     }
 }
 
+/**
+ * If true is returned, this [AlignmentCompat] is the horizontal starting position
+ */
 val AlignmentCompat.isStart: Boolean
-    get() = this == AlignmentCompat.TopStart || this == AlignmentCompat.CenterStart || this == AlignmentCompat.BottomStart
+    get() = this == AlignmentCompat.TopStart
+            || this == AlignmentCompat.CenterStart
+            || this == AlignmentCompat.BottomStart
+
+/**
+ * If true is returned, this [AlignmentCompat] is the horizontal center position
+ */
 val AlignmentCompat.isHorizontalCenter: Boolean
-    get() = this == AlignmentCompat.TopCenter || this == AlignmentCompat.Center || this == AlignmentCompat.BottomCenter
+    get() = this == AlignmentCompat.TopCenter
+            || this == AlignmentCompat.Center
+            || this == AlignmentCompat.BottomCenter
+
+/**
+ * If true is returned, this [AlignmentCompat] is the horizontal ending position
+ */
+val AlignmentCompat.isEnd: Boolean
+    get() = this == AlignmentCompat.TopEnd
+            || this == AlignmentCompat.CenterEnd
+            || this == AlignmentCompat.BottomEnd
+
+/**
+ * If true is returned, this [AlignmentCompat] is the horizontal and vertical center position
+ */
 val AlignmentCompat.isCenter: Boolean
     get() = this == AlignmentCompat.Center
-val AlignmentCompat.isEnd: Boolean
-    get() = this == AlignmentCompat.TopEnd || this == AlignmentCompat.CenterEnd || this == AlignmentCompat.BottomEnd
+
+/**
+ * If true is returned, this [AlignmentCompat] is the vertical starting position
+ */
 val AlignmentCompat.isTop: Boolean
-    get() = this == AlignmentCompat.TopStart || this == AlignmentCompat.TopCenter || this == AlignmentCompat.TopEnd
+    get() = this == AlignmentCompat.TopStart
+            || this == AlignmentCompat.TopCenter
+            || this == AlignmentCompat.TopEnd
+
+/**
+ * If true is returned, this [AlignmentCompat] is the vertical center position
+ */
 val AlignmentCompat.isVerticalCenter: Boolean
-    get() = this == AlignmentCompat.CenterStart || this == AlignmentCompat.Center || this == AlignmentCompat.CenterEnd
+    get() = this == AlignmentCompat.CenterStart
+            || this == AlignmentCompat.Center
+            || this == AlignmentCompat.CenterEnd
+
+/**
+ * If true is returned, this [AlignmentCompat] is the vertical ending position
+ */
 val AlignmentCompat.isBottom: Boolean
-    get() = this == AlignmentCompat.BottomStart || this == AlignmentCompat.BottomCenter || this == AlignmentCompat.BottomEnd
+    get() = this == AlignmentCompat.BottomStart
+            || this == AlignmentCompat.BottomCenter
+            || this == AlignmentCompat.BottomEnd
