@@ -105,7 +105,7 @@ fun calculateBaseTransform(
     return baseTransformHelper.transform
 }
 
-fun calculateInitialUserTransform(
+fun calculateReadModeTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
@@ -159,8 +159,7 @@ fun calculateInitialUserTransform(
         rotation = rotation.toFloat(),
         rotationOrigin = rotationOrigin,
     )
-    val initialUserTransform = readModeTransform - baseTransformHelper.transform
-    return initialUserTransform
+    return readModeTransform
 }
 
 fun calculateScales(
@@ -169,6 +168,7 @@ fun calculateScales(
     contentOriginSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     rotation: Int,
+    initialScale: Float,
     calculator: ScalesCalculator,
 ): FloatArray {
     /*
@@ -196,6 +196,7 @@ fun calculateScales(
         contentOriginSize = rotatedContentOriginSize,
         contentScale = contentScale,
         minScale = minScale,
+        initialScale = initialScale,
     )
     return floatArrayOf(minScale, result.mediumScale, result.maxScale)
 }
@@ -240,14 +241,6 @@ fun calculateInitialZoom(
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return InitialZoom.Origin
     }
-    val scales = calculateScales(
-        containerSize = containerSize,
-        contentSize = contentSize,
-        contentOriginSize = contentOriginSize,
-        contentScale = contentScale,
-        rotation = rotation,
-        calculator = scalesCalculator,
-    )
     val baseTransform = calculateBaseTransform(
         containerSize = containerSize,
         contentSize = contentSize,
@@ -255,7 +248,7 @@ fun calculateInitialZoom(
         alignment = alignment,
         rotation = rotation,
     )
-    val userTransform = calculateInitialUserTransform(
+    val readModeTransform = calculateReadModeTransform(
         containerSize = containerSize,
         contentSize = contentSize,
         contentScale = contentScale,
@@ -263,12 +256,26 @@ fun calculateInitialZoom(
         rotation = rotation,
         readMode = readMode,
     )
+    val userTransform = if (readModeTransform != null) {
+        readModeTransform - baseTransform
+    } else {
+        TransformCompat.Origin
+    }
+    val scales = calculateScales(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentOriginSize = contentOriginSize,
+        contentScale = contentScale,
+        rotation = rotation,
+        initialScale = readModeTransform?.scaleX ?: baseTransform.scaleX,
+        calculator = scalesCalculator,
+    )
     return InitialZoom(
         minScale = scales[0],
         mediumScale = scales[1],
         maxScale = scales[2],
         baseTransform = baseTransform,
-        userTransform = userTransform ?: TransformCompat.Origin
+        userTransform = userTransform
     )
 }
 

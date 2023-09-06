@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.Multiple
+import kotlin.math.abs
 import kotlin.math.max
 
 /**
@@ -33,6 +34,7 @@ interface ScalesCalculator {
         contentOriginSize: IntSizeCompat,
         contentScale: ContentScaleCompat,
         minScale: Float,
+        initialScale: Float,
     ): Result
 
     companion object {
@@ -54,8 +56,10 @@ interface ScalesCalculator {
         /**
          * Creates a [DynamicScalesCalculator] and specified [multiple]
          */
-        fun dynamic(multiple: Float = Multiple): ScalesCalculator =
-            DynamicScalesCalculator(multiple)
+        fun dynamic(
+            multiple: Float = Multiple,
+            difference: Float = multiple / 2
+        ): ScalesCalculator = DynamicScalesCalculator(multiple, difference)
 
         /**
          * Creates a [FixedScalesCalculator] and specified [multiple]
@@ -71,7 +75,8 @@ interface ScalesCalculator {
  * Dynamic scales calculator based on content size, content raw size, and container size
  */
 data class DynamicScalesCalculator(
-    private val multiple: Float = Multiple
+    private val multiple: Float = Multiple,
+    private val difference: Float = multiple / 2,
 ) : ScalesCalculator {
 
     override fun calculate(
@@ -79,10 +84,11 @@ data class DynamicScalesCalculator(
         contentSize: IntSizeCompat,
         contentOriginSize: IntSizeCompat,
         contentScale: ContentScaleCompat,
-        minScale: Float
+        minScale: Float,
+        initialScale: Float,
     ): ScalesCalculator.Result {
         val minMediumScale = minScale * multiple
-        val mediumScale = if (contentScale != ContentScaleCompat.FillBounds) {
+        val coarseMediumScale = if (contentScale != ContentScaleCompat.FillBounds) {
             // The width and height of content fill the container at the same time
             val fillContainerScale = max(
                 containerSize.width / contentSize.width.toFloat(),
@@ -101,12 +107,24 @@ data class DynamicScalesCalculator(
         } else {
             minMediumScale
         }
+
+        // initialScale is usually determined by the ReadMode, which has a higher priority when ReadMode is enabled
+        val mediumScale = if (
+            initialScale > minScale
+            && abs(initialScale - coarseMediumScale) < difference
+        ) {
+            initialScale
+        } else {
+            coarseMediumScale
+        }
+
         val maxScale = mediumScale * multiple
         return ScalesCalculator.Result(mediumScale = mediumScale, maxScale = maxScale)
     }
 
     override fun toString(): String {
-        return "DynamicScalesCalculator(${multiple.format(2)})"
+        return "DynamicScalesCalculator(" +
+                "multiple=${multiple.format(2)},difference=${difference.format(2)})"
     }
 }
 
@@ -123,14 +141,19 @@ data class FixedScalesCalculator(
         contentSize: IntSizeCompat,
         contentOriginSize: IntSizeCompat,
         contentScale: ContentScaleCompat,
-        minScale: Float
+        minScale: Float,
+        initialScale: Float,
     ): ScalesCalculator.Result {
-        val mediumScale = minScale * multiple
+        val mediumScale = if (initialScale > minScale) {
+            initialScale
+        } else {
+            minScale * multiple
+        }
         val maxScale = mediumScale * multiple
         return ScalesCalculator.Result(mediumScale = mediumScale, maxScale = maxScale)
     }
 
     override fun toString(): String {
-        return "FixedScalesCalculator(${multiple.format(2)})"
+        return "FixedScalesCalculator(multiple=${multiple.format(2)})"
     }
 }
