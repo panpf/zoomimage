@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -792,6 +793,9 @@ internal fun lerp(
 
 /* ************************************** ContentScale ****************************************** */
 
+/**
+ * Returns the name of [ContentScaleCompat], which can also be converted back via the [valueOf] method
+ */
 @Stable
 internal val ContentScale.name: String
     get() = when (this) {
@@ -805,6 +809,9 @@ internal val ContentScale.name: String
         else -> "Unknown ContentScale: $this"
     }
 
+/**
+ * Returns the [ContentScaleCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ */
 @Stable
 internal fun ContentScale.Companion.valueOf(name: String): ContentScale {
     return when (name) {

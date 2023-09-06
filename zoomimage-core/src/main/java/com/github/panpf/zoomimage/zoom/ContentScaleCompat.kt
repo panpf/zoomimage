@@ -179,6 +179,9 @@ private fun computeFillHeight(srcSize: SizeCompat, dstSize: SizeCompat): Float =
     dstSize.height / srcSize.height
 
 
+/**
+ * Returns the name of [ContentScaleCompat], which can also be converted back via the [valueOf] method
+ */
 val ContentScaleCompat.name: String
     get() = when (this) {
         ContentScaleCompat.FillWidth -> "FillWidth"
@@ -191,6 +194,9 @@ val ContentScaleCompat.name: String
         else -> "Unknown ContentScaleCompat: $this"
     }
 
+/**
+ * Returns the [ContentScaleCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ */
 fun ContentScaleCompat.Companion.valueOf(name: String): ContentScaleCompat {
     return when (name) {
         "FillWidth" -> FillWidth

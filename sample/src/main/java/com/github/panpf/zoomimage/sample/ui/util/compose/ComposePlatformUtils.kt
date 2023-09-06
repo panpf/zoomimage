@@ -24,6 +24,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -791,6 +793,45 @@ internal fun lerp(
 
 
 /* ************************************** ContentScale ****************************************** */
+
+
+/* ************************************** ContentScale ****************************************** */
+
+/**
+ * Returns the name of [ContentScaleCompat], which can also be converted back via the [valueOf] method
+ */
+@Stable
+internal val ContentScale.name: String
+    get() = when (this) {
+        ContentScale.FillWidth -> "FillWidth"
+        ContentScale.FillHeight -> "FillHeight"
+        ContentScale.FillBounds -> "FillBounds"
+        ContentScale.Fit -> "Fit"
+        ContentScale.Crop -> "Crop"
+        ContentScale.Inside -> "Inside"
+        ContentScale.None -> "None"
+        else -> "Unknown ContentScale: $this"
+    }
+
+/**
+ * Returns the [ContentScaleCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ */
+@Stable
+internal fun ContentScale.Companion.valueOf(name: String): ContentScale {
+    return when (name) {
+        "FillWidth" -> FillWidth
+        "FillHeight" -> FillHeight
+        "FillBounds" -> FillBounds
+        "Fit" -> Fit
+        "Crop" -> Crop
+        "Inside" -> Inside
+        "None" -> None
+        else -> throw IllegalArgumentException("Unknown ContentScale name: $name")
+    }
+}
+
+
+/* ************************************** Alignment ********************************************* */
 
 /**
  * Returns the name of [AlignmentCompat], which can also be converted back via the [valueOf] method
