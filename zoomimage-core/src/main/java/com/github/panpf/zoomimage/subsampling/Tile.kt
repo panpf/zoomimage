@@ -115,9 +115,13 @@ class Tile constructor(
             private set
 
         fun calculate(duration: Long = 100): Boolean {
-            val currentTimeMillis = System.currentTimeMillis()
-            val elapsedTime = currentTimeMillis - startTime
-            progress = if (elapsedTime >= duration) 1f else elapsedTime / duration.toFloat()
+            progress = if (duration > 0) {
+                val currentTimeMillis = System.currentTimeMillis()
+                val elapsedTime = currentTimeMillis - startTime
+                if (elapsedTime >= duration) 1f else elapsedTime / duration.toFloat()
+            } else {
+                1f
+            }
             alpha = (progress * 255).toInt()
             return progress >= 1f
         }
