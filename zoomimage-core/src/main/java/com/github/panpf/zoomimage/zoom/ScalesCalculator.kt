@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.zoom
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isNotEmpty
+import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.DifferencePercentage
 import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.Multiple
 import kotlin.math.abs
 import kotlin.math.max
@@ -39,9 +40,15 @@ interface ScalesCalculator {
 
     companion object {
         /**
-         * The default multiplier between the scales, because by default `mediumScale = minScale * multiple`, `maxScale = mediumScale * multiple`
+         * The default multiplier between the scales, because by default `mediumScale = minScale * multiple`,
+         * `maxScale = mediumScale * multiple`
          */
         const val Multiple = 3f
+
+        /**
+         * Participate in calculating mediumScale. If initialScale is greater than minScale and the difference between initialScale and mediumScale is less than mediumScale multiplied by differencePercentage, initialScale is used as the mediumScale
+         */
+        const val DifferencePercentage = 0.3f
 
         /**
          * Dynamic scales calculator based on content size, content raw size, and container size
@@ -58,13 +65,13 @@ interface ScalesCalculator {
          */
         fun dynamic(
             multiple: Float = Multiple,
-            difference: Float = multiple / 2
-        ): ScalesCalculator = DynamicScalesCalculator(multiple, difference)
+            differencePercentage: Float = DifferencePercentage
+        ): DynamicScalesCalculator = DynamicScalesCalculator(multiple, differencePercentage)
 
         /**
          * Creates a [FixedScalesCalculator] and specified [multiple]
          */
-        fun fixed(multiple: Float = Multiple): ScalesCalculator =
+        fun fixed(multiple: Float = Multiple): FixedScalesCalculator =
             FixedScalesCalculator(multiple)
     }
 
@@ -75,8 +82,16 @@ interface ScalesCalculator {
  * Dynamic scales calculator based on content size, content raw size, and container size
  */
 data class DynamicScalesCalculator(
-    private val multiple: Float = Multiple,
-    private val difference: Float = multiple / 2,
+    /**
+     * The multiplier between the scales, because by default `mediumScale = minScale * multiple`,
+     * `maxScale = mediumScale * multiple`
+     */
+    val multiple: Float = Multiple,
+
+    /**
+     * Participate in calculating mediumScale. If initialScale is greater than minScale and the difference between initialScale and mediumScale is less than mediumScale multiplied by differencePercentage, initialScale is used as the mediumScale
+     */
+    val differencePercentage: Float = DifferencePercentage,
 ) : ScalesCalculator {
 
     override fun calculate(
@@ -108,10 +123,10 @@ data class DynamicScalesCalculator(
             minMediumScale
         }
 
-        // initialScale is usually determined by the ReadMode, which has a higher priority when ReadMode is enabled
+        // initialScale is usually determined by the ReadMode, so initialScale takes precedence
         val mediumScale = if (
             initialScale > minScale
-            && abs(initialScale - coarseMediumScale) < difference
+            && abs(initialScale - coarseMediumScale) <= coarseMediumScale * differencePercentage
         ) {
             initialScale
         } else {
@@ -124,7 +139,7 @@ data class DynamicScalesCalculator(
 
     override fun toString(): String {
         return "DynamicScalesCalculator(" +
-                "multiple=${multiple.format(2)},difference=${difference.format(2)})"
+                "multiple=${multiple.format(2)},differencePercentage=${differencePercentage.format(2)})"
     }
 }
 
@@ -133,7 +148,11 @@ data class DynamicScalesCalculator(
  * Fixed scales calculator, always 'mediumScale = minScale * multiple', 'maxScale = mediumScale * multiple'
  */
 data class FixedScalesCalculator(
-    private val multiple: Float = Multiple
+    /**
+     * The multiplier between the scales, because by default `mediumScale = minScale * multiple`,
+     * `maxScale = mediumScale * multiple`
+     */
+    val multiple: Float = Multiple
 ) : ScalesCalculator {
 
     override fun calculate(
@@ -144,6 +163,7 @@ data class FixedScalesCalculator(
         minScale: Float,
         initialScale: Float,
     ): ScalesCalculator.Result {
+        // initialScale is usually determined by the ReadMode, so initialScale takes precedence
         val mediumScale = if (initialScale > minScale) {
             initialScale
         } else {
