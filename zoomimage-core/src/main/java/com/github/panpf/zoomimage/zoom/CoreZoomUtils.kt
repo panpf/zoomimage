@@ -21,6 +21,7 @@ package com.github.panpf.zoomimage.zoom
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
+import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
@@ -49,6 +50,49 @@ import kotlin.math.sin
 
 
 /* ******************************************* initial ***************************************** */
+
+fun calculateRotatedContentRect(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    rotation: Int,
+): RectCompat {
+    if (containerSize.isEmpty() || contentSize.isEmpty()) {
+        return RectCompat.Zero
+    }
+    require(rotation % 90 == 0) { "rotation must be multiple of 90" }
+
+    if (rotation % 180 == 0) {
+        return RectCompat(
+            left = 0f,
+            top = 0f,
+            right = containerSize.width.toFloat(),
+            bottom = containerSize.height.toFloat(),
+        )
+    } else {
+        val contentCenter = contentSize.toSize().center
+        val left = contentCenter.x - contentCenter.y
+        val top = contentCenter.y - contentCenter.x
+        return RectCompat(
+            left = left,
+            top = top,
+            right = left + contentSize.height,
+            bottom = top + contentSize.width,
+        )
+    }
+}
+
+fun calculateRotatedContentMoveToTopLeftOffset(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    rotation: Int,
+): OffsetCompat {
+    val rotatedContentRect = calculateRotatedContentRect(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        rotation = rotation,
+    )
+    return IntOffsetCompat.Zero - rotatedContentRect.topLeft
+}
 
 fun calculateContentRotateOrigin(
     containerSize: IntSizeCompat,
@@ -140,7 +184,7 @@ fun calculateReadModeTransform(
     val alignmentMoveToStartOffset = baseTransformHelper.alignmentOffset.let {
         OffsetCompat(it.x.coerceAtMost(0f), it.y.coerceAtMost(0f))
     }
-    val readModeOffset = (alignmentMoveToStartOffset + baseTransformHelper.rotateOffset) * addScale
+    val readModeOffset = (alignmentMoveToStartOffset + baseTransformHelper.rotateRectifyOffset) * addScale
 
     val rotationOrigin = calculateContentRotateOrigin(
         containerSize = containerSize,

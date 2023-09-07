@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.zoom.internal
 
-import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
@@ -25,10 +24,7 @@ import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.TopStart
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
-import com.github.panpf.zoomimage.util.center
-import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitTo
-import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.times
@@ -37,6 +33,7 @@ import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.calculateContentRotateOrigin
+import com.github.panpf.zoomimage.zoom.calculateRotatedContentMoveToTopLeftOffset
 
 internal class BaseTransformHelper(
     val containerSize: IntSizeCompat,
@@ -67,8 +64,8 @@ internal class BaseTransformHelper(
         rotatedContentSize.toSize().times(scaleFactor)
     }
 
-    val rotateOffset: OffsetCompat by lazy {
-        val rotatedContentMoveToTopLeftOffset = computeRotatedContentMoveToTopLeftOffset(
+    val rotateRectifyOffset: OffsetCompat by lazy {
+        val rotatedContentMoveToTopLeftOffset = calculateRotatedContentMoveToTopLeftOffset(
             containerSize = containerSize,
             contentSize = contentSize,
             rotation = rotation,
@@ -84,7 +81,7 @@ internal class BaseTransformHelper(
         ).toOffset()
     }
 
-    val offset: OffsetCompat by lazy { rotateOffset + alignmentOffset }
+    val offset: OffsetCompat by lazy { rotateRectifyOffset + alignmentOffset }
 
     val rotationOrigin by lazy {
         calculateContentRotateOrigin(
@@ -114,48 +111,5 @@ internal class BaseTransformHelper(
             rotation = rotation.toFloat(),
             rotationOrigin = rotationOrigin,
         )
-    }
-
-    private fun computeRotatedContentRect(
-        containerSize: IntSizeCompat,
-        contentSize: IntSizeCompat,
-        rotation: Int,
-    ): RectCompat {
-        if (containerSize.isEmpty() || contentSize.isEmpty()) {
-            return RectCompat.Zero
-        }
-        require(rotation % 90 == 0) { "rotation must be multiple of 90" }
-
-        if (rotation % 180 == 0) {
-            return RectCompat(
-                left = 0f,
-                top = 0f,
-                right = containerSize.width.toFloat(),
-                bottom = containerSize.height.toFloat(),
-            )
-        } else {
-            val contentCenter = contentSize.toSize().center
-            val left = contentCenter.x - contentCenter.y
-            val top = contentCenter.y - contentCenter.x
-            return RectCompat(
-                left = left,
-                top = top,
-                right = left + contentSize.height,
-                bottom = top + contentSize.width,
-            )
-        }
-    }
-
-    private fun computeRotatedContentMoveToTopLeftOffset(
-        containerSize: IntSizeCompat,
-        contentSize: IntSizeCompat,
-        rotation: Int,
-    ): OffsetCompat {
-        val rotatedContentRect = computeRotatedContentRect(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            rotation = rotation,
-        )
-        return IntOffsetCompat.Zero - rotatedContentRect.topLeft
     }
 }
