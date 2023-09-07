@@ -72,7 +72,10 @@ built-in [ScalesCalculator]:
               contentOriginSize.height / contentSize.height.toFloat()
           )
           ```
-      <br>-----------</br>
+        * In addition, when initialScale is greater than minScale and the difference between
+          initialScale and mediumScale is less than mediumScale multiplied by differencePercentage,
+          initialScale is used as mediumScale. initialScale is usually determined by ReadMode
+          <br>-----------</br>
     * maxScale 始终是 `mediumScale * multiple`，mediumScale 则是根据
       containerSize、contentSize、contentOriginSize 动态的计算，计算规则是在以下几个值中取最大的：
         * minMediumScale：最小中间缩放倍数，计算公式为：
@@ -93,16 +96,22 @@ built-in [ScalesCalculator]:
               contentOriginSize.height / contentSize.height.toFloat()
           )
           ```
+        * 另外当 initialScale 大于 minScale 并且 initialScale 和 mediumScale 的差值小于 mediumScale
+          乘以 differencePercentage 时用将 initialScale 作为 mediumScale。initialScale 通常由
+          ReadMode 决定
 * [ScalesCalculator].Fixed：
-    * Fixed zoom factor, mediumScale is always 'minScale * multiple', maxScale is
-      always `mediumScale * multiple`
+    * maxScale is always `mediumScale * multiple`
+    * The mediumScale calculation rule is used if initialScale is greater than minScale
+      initialScale, otherwise use 'minScale * multiple'
       <br>-----------</br>
-    * 固定的缩放倍数，mediumScale 始终是 `minScale * multiple`，maxScale
-      始终是 `mediumScale * multiple`
+    * maxScale 始终是 `mediumScale * multiple`
+    * mediumScale 计算规则是如果 initialScale 大于 minScale 则用
+      initialScale，否则用 `minScale * multiple`
 
 > The default value for multiple is 3f
 <br>-----------</br>
 > multiple 默认值为 3f
+> differencePercentage 默认值为 0.3f
 
 scalesCalculator defaults to [ScalesCalculator]. Dynamic, which you can modify into a Fixed or
 custom implementation
