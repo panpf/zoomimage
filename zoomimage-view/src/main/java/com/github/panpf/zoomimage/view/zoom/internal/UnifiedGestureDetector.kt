@@ -30,10 +30,10 @@ class UnifiedGestureDetector(
     onSingleTapConfirmedCallback: (e: MotionEvent) -> Boolean,
     onLongPressCallback: (e: MotionEvent) -> Unit,
     onDoubleTapCallback: (e: MotionEvent) -> Boolean,
-    onDragCallback: (dx: Float, dy: Float) -> Unit,
-    onFlingCallback: (velocityX: Float, velocityY: Float) -> Unit,
+    onDragCallback: (panChange: OffsetCompat) -> Unit,
+    onFlingCallback: (velocity: OffsetCompat) -> Unit,
     onScaleBeginCallback: () -> Boolean,
-    onScaleCallback: (scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float) -> Unit,
+    onScaleCallback: (scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat) -> Unit,
     onScaleEndCallback: (lastFocus: OffsetCompat?) -> Unit,
     onActionDownCallback: (ev: MotionEvent) -> Unit,
     onActionUpCallback: (ev: MotionEvent) -> Unit,
@@ -63,17 +63,15 @@ class UnifiedGestureDetector(
 
     private val scaleDragGestureDetector =
         ScaleDragGestureDetector(view, canDrag, object : OnGestureListener {
-            override fun onDrag(dx: Float, dy: Float) =
-                onDragCallback(dx, dy)
+            override fun onDrag(panChange: OffsetCompat) = onDragCallback(panChange)
 
-            override fun onFling(velocityX: Float, velocityY: Float) =
-                onFlingCallback(velocityX, velocityY)
+            override fun onFling(velocity: OffsetCompat) = onFlingCallback(velocity)
 
             override fun onScaleBegin(): Boolean = onScaleBeginCallback()
 
             override fun onScale(
-                scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float
-            ) = onScaleCallback(scaleFactor, focusX, focusY, dx, dy)
+                scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat
+            ) = onScaleCallback(scaleFactor, focus, panChange)
 
             override fun onScaleEnd(lastFocus: OffsetCompat?) = onScaleEndCallback(lastFocus)
         }).apply {

@@ -817,7 +817,35 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         )
     }
 
-    internal fun fling(velocityX: Float, velocityY: Float) {
+    internal fun drag(panChange: OffsetCompat) {
+        containerSize.takeIf { it.isNotEmpty() } ?: return
+        contentSize.takeIf { it.isNotEmpty() } ?: return
+        val currentUserTransform = userTransform
+
+        val currentUserScale = currentUserTransform.scale.scaleX
+        val currentUserOffset = currentUserTransform.offset
+        val targetUserOffset = currentUserOffset + panChange
+        val limitedTargetUserOffset = limitUserOffset(targetUserOffset, currentUserScale)
+        val limitedTargetUserTransform = currentUserTransform.copy(offset = limitedTargetUserOffset)
+        logger.d {
+            val targetAddUserOffset = targetUserOffset - currentUserOffset
+            val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
+            "drag. " +
+                    "panChange=${panChange.toShortString()}, " +
+                    "targetUserOffset=${targetUserOffset.toShortString()}, " +
+                    "limitedTargetUserOffset=${limitedTargetUserOffset.toShortString()}, " +
+                    "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
+                    "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
+        }
+
+        updateUserTransform(
+            targetUserTransform = limitedTargetUserTransform,
+            animated = false,
+            caller = "transform"
+        )
+    }
+
+    internal fun fling(velocity: OffsetCompat) {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
         val contentScale = contentScale
@@ -844,7 +872,6 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                 it.bottom.roundToInt()
             )
         }
-        val velocity = IntOffsetCompat(velocityX.roundToInt(), velocityY.roundToInt())
         logger.d {
             "fling. start. " +
                     "start=${startUserOffset.toShortString()}, " +
@@ -855,7 +882,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             view = view,
             start = startUserOffset.round(),
             bounds = userOffsetBounds,
-            velocity = velocity,
+            velocity = velocity.round(),
             onUpdateValue = { value ->
                 val targetUserOffset =
                     this@ZoomableEngine.userTransform.copy(offset = value.toOffset())

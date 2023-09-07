@@ -44,8 +44,8 @@ internal class ScaleDragGestureDetector(
     private val minimumVelocity: Float
     private val scaleDetector: ScaleGestureDetector
 
-    private var lastTouchX: Float = 0f
-    private var lastTouchY: Float = 0f
+    private var firstTouch: OffsetCompat? = null
+    private var lastTouch: OffsetCompat? = null
     private var velocityTracker: VelocityTracker? = null
     private var activePointerId: Int = INVALID_POINTER_ID
     private var activePointerIndex: Int = 0
@@ -68,10 +68,11 @@ internal class ScaleDragGestureDetector(
                     val lastFocus = this.lastFocus ?: OffsetCompat(detector.focusX, detector.focusY)
                     onGestureListener.onScale(
                         scaleFactor = scaleFactor,
-                        focusX = detector.focusX,
-                        focusY = detector.focusY,
-                        dx = detector.focusX - lastFocus.x,
-                        dy = detector.focusY - lastFocus.y
+                        focus = OffsetCompat(detector.focusX, detector.focusY),
+                        panChange = OffsetCompat(
+                            detector.focusX - lastFocus.x,
+                            detector.focusY - lastFocus.y
+                        ),
                     )
                     this.lastFocus = OffsetCompat(detector.focusX, detector.focusY)
                 }
@@ -123,39 +124,48 @@ internal class ScaleDragGestureDetector(
                 activePointerId = ev.getPointerId(0)
                 velocityTracker = VelocityTracker.obtain()
                 velocityTracker?.addMovement(ev)
-                lastTouchX = getActiveX(ev)
-                lastTouchY = getActiveY(ev)
+                // Avoid changing from two fingers to one finger, lastTouchX and lastTouchY mutations, causing the image to pan instantly
+                firstTouch = null
                 onActionListener?.onActionDown(ev)
             }
 
             MotionEvent.ACTION_MOVE -> {
                 // Disable multi-finger drag, which can prevent the ViewPager from accidentally triggering left and right swipe when the minimum zoom ratio is zoomed in
                 if (ev.pointerCount == 1) {
-                    val x = getActiveX(ev)
-                    val y = getActiveY(ev)
-                    val dx = x - lastTouchX
-                    val dy = y - lastTouchY
-                    if (!isDragging) {
-                        // Use Pythagoras to see if drag length is larger than touch slop
-                        isDragging = sqrt((dx * dx) + (dy * dy).toDouble()) >= touchSlop
-                        if (isDragging) {
-                            canDragged = if (abs(dx) > abs(dy)) {
-                                dx != 0f && canDrag(true, if (dx > 0f) -1 else 1)
-                            } else {
-                                dy != 0f && canDrag(false, if (dy > 0f) -1 else 1)
-                            }
-                            if (!canDragged) {
-                                view.parent.requestDisallowInterceptTouchEvent(false)
-                                isDragging = false
+                    val touch = OffsetCompat(getActiveX(ev), getActiveY(ev))
+                    // Avoid changing from two fingers to one finger, lastTouchX and lastTouchY mutations, causing the image to pan instantly
+                    val firstTouch = firstTouch
+                    val lastTouch = lastTouch
+                    if (firstTouch != null && lastTouch != null) {
+                        if (!isDragging) {
+                            val d = touch - firstTouch
+                            val dx = d.x
+                            val dy = d.y
+                            // Use Pythagoras to see if drag length is larger than touch slop
+                            isDragging = sqrt((dx * dx) + (dy * dy).toDouble()) >= touchSlop
+                            if (isDragging) {
+                                canDragged = if (abs(dx) > abs(dy)) {
+                                    dx != 0f && canDrag(true, if (dx > 0f) -1 else 1)
+                                } else {
+                                    dy != 0f && canDrag(false, if (dy > 0f) -1 else 1)
+                                }
+                                if (!canDragged) {
+                                    view.parent.requestDisallowInterceptTouchEvent(false)
+                                    isDragging = false
+                                }
                             }
                         }
+                        if (isDragging && canDragged) {
+                            val panChange = touch - lastTouch
+                            onGestureListener.onDrag(panChange)
+                            velocityTracker?.addMovement(ev)
+                        }
+                    } else {
+                        this@ScaleDragGestureDetector.firstTouch = touch
                     }
-                    if (isDragging && canDragged) {
-                        onGestureListener.onDrag(dx, dy)
-                        lastTouchX = x
-                        lastTouchY = y
-                        velocityTracker?.addMovement(ev)
-                    }
+                    this@ScaleDragGestureDetector.lastTouch = touch
+                } else {
+                    firstTouch = null
                 }
             }
 
@@ -170,8 +180,6 @@ internal class ScaleDragGestureDetector(
                     // active pointer and adjust accordingly.
                     val newPointerIndex = if (pointerIndex == 0) 1 else 0
                     activePointerId = ev.getPointerId(newPointerIndex)
-                    lastTouchX = ev.getX(newPointerIndex)
-                    lastTouchY = ev.getY(newPointerIndex)
                 }
             }
 
@@ -187,8 +195,6 @@ internal class ScaleDragGestureDetector(
                 activePointerId = INVALID_POINTER_ID
                 if (isDragging) {
                     velocityTracker?.let { velocityTracker ->
-                        lastTouchX = getActiveX(ev)
-                        lastTouchY = getActiveY(ev)
 
                         // Compute velocity within the last 1000ms
                         velocityTracker.addMovement(ev)
@@ -198,7 +204,7 @@ internal class ScaleDragGestureDetector(
 
                         // If the velocity is greater than minVelocity, call listener
                         if (max(abs(vX), abs(vY)) >= minimumVelocity) {
-                            onGestureListener.onFling(vX, vY)
+                            onGestureListener.onFling(OffsetCompat(vX, vY))
                         }
                     }
                 }
@@ -221,9 +227,9 @@ internal class ScaleDragGestureDetector(
     }
 
     interface OnGestureListener {
-        fun onDrag(dx: Float, dy: Float)
-        fun onFling(velocityX: Float, velocityY: Float)
-        fun onScale(scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float)
+        fun onDrag(panChange: OffsetCompat)
+        fun onFling(velocity: OffsetCompat)
+        fun onScale(scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat)
         fun onScaleBegin(): Boolean
         fun onScaleEnd(lastFocus: OffsetCompat?)
     }

@@ -19,8 +19,6 @@ package com.github.panpf.zoomimage.view.zoom.internal
 import android.view.MotionEvent
 import android.view.View
 import com.github.panpf.zoomimage.util.OffsetCompat
-import com.github.panpf.zoomimage.util.center
-import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
@@ -52,21 +50,22 @@ class TouchHelper(view: View, zoomableEngine: ZoomableEngine) {
                 )
                 true
             },
-            onDragCallback = { dx: Float, dy: Float ->
-                zoomableEngine.transform(
-                    centroid = zoomableEngine.containerSize.toSize().center,
-                    panChange = OffsetCompat(dx, dy),
-                    zoomChange = 1f,
-                    rotationChange = 0f,
-                )
+            onDragCallback = { panChange: OffsetCompat ->
+//                zoomableEngine.transform(
+//                    centroid = zoomableEngine.containerSize.toSize().center,
+//                    panChange = panChange,
+//                    zoomChange = 1f,
+//                    rotationChange = 0f,
+//                )
+                zoomableEngine.drag(panChange)
             },
-            onFlingCallback = { velocityX: Float, velocityY: Float ->
-                zoomableEngine.fling(velocityX, velocityY)
+            onFlingCallback = { velocity: OffsetCompat ->
+                zoomableEngine.fling(velocity)
             },
-            onScaleCallback = { scaleFactor: Float, focusX: Float, focusY: Float, dx: Float, dy: Float ->
+            onScaleCallback = { scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat ->
                 zoomableEngine.transform(
-                    centroid = OffsetCompat(x = focusX, y = focusY),
-                    panChange = OffsetCompat(x = dx, y = dy),
+                    centroid = focus,
+                    panChange = panChange,
                     zoomChange = scaleFactor,
                     rotationChange = 0f,
                 )
