@@ -26,7 +26,6 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.TopStart
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
@@ -53,8 +52,7 @@ import kotlin.math.sin
 
 fun calculateContentRotateOrigin(
     containerSize: IntSizeCompat,
-    contentSize: IntSizeCompat,
-    rotation: Int
+    contentSize: IntSizeCompat
 ): TransformOriginCompat {
     /*
      * Calculations are based on the following rules:
@@ -64,15 +62,11 @@ fun calculateContentRotateOrigin(
      * 4. Apply rotation before scaling and offset
      */
 
-    return if (rotation != 0) {
-        val center = contentSize.toSize().center
-        TransformOriginCompat(
-            pivotFractionX = center.x / containerSize.width,
-            pivotFractionY = center.y / containerSize.height
-        )
-    } else {
-        TransformOriginCompat.TopStart
-    }
+    val center = contentSize.toSize().center
+    return TransformOriginCompat(
+        pivotFractionX = center.x / containerSize.width,
+        pivotFractionY = center.y / containerSize.height
+    )
 }
 
 fun calculateBaseTransform(
@@ -150,8 +144,7 @@ fun calculateReadModeTransform(
 
     val rotationOrigin = calculateContentRotateOrigin(
         containerSize = containerSize,
-        contentSize = contentSize,
-        rotation = rotation
+        contentSize = contentSize
     )
     val readModeTransform = TransformCompat(
         scale = readModeScale,

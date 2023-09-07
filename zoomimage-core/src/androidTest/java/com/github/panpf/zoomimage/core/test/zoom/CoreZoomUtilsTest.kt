@@ -2,14 +2,13 @@ package com.github.panpf.zoomimage.core.test.zoom
 
 import com.github.panpf.zoomimage.util.IntOffsetCompat as IntOffset
 import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
-import com.github.panpf.zoomimage.util.TransformOriginCompat as Origin
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.zoomimage.core.test.internal.A
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.TopStart
-import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toShortString
@@ -47,83 +46,23 @@ class CoreZoomUtilsTest {
 
     // todo Unit tests
 
-    data class Item8(
-        val contentSize: IntSize,
-        val rotation: Int,
-        override val expected: Origin
-    ) : A<Origin> {
-        override fun getMessage(containerSize: IntSize): String {
-            return "Item8(" +
-                    "containerSize=${containerSize.toShortString()}, " +
-                    "contentSize=${contentSize.toShortString()}, " +
-                    "rotation=${rotation}" +
-                    ")"
-        }
-
-        override fun getBuildExpression(r: Origin): String {
-            return "Item8(" +
-                    "IntSize(${contentSize.width}, ${contentSize.height}), " +
-                    "${rotation}, " +
-                    "Origin(${r.pivotFractionX.format(2)}f, ${r.pivotFractionY.format(2)}f)" +
-                    ")"
-        }
-    }
-
     @Test
     fun testCalculateContentRotateOrigin() {
         val containerSize = IntSize(1080, 1656)
-        val printBatchBuildExpression = false
-//        val printBatchBuildExpression = true
-
-        if (printBatchBuildExpression) {
-            printlnBatchBuildExpression(
-                p1s = listOf(
-                    IntSize(7500, 232), IntSize(173, 3044), IntSize(575, 427), IntSize(551, 1038),
-                ),
-                p2s = listOf(0, 90, 180, 270, 360),
-                buildItem = { p1, p2 ->
-                    Item8(p1, p2, Origin.TopStart)
-                },
-            ) { item ->
-                calculateContentRotateOrigin(
-                    containerSize = containerSize,
-                    contentSize = item.contentSize,
-                    rotation = item.rotation,
-                )
-            }
-        }
-
         listOf(
-            Item8(IntSize(7500, 232), 0, Origin(0.0f, 0.0f)),
-            Item8(IntSize(7500, 232), 90, Origin(3.47f, 0.07f)),
-            Item8(IntSize(7500, 232), 180, Origin(3.47f, 0.07f)),
-            Item8(IntSize(7500, 232), 270, Origin(3.47f, 0.07f)),
-            Item8(IntSize(7500, 232), 360, Origin(3.47f, 0.07f)),
-            Item8(IntSize(173, 3044), 0, Origin(0.0f, 0.0f)),
-            Item8(IntSize(173, 3044), 90, Origin(0.08f, 0.92f)),
-            Item8(IntSize(173, 3044), 180, Origin(0.08f, 0.92f)),
-            Item8(IntSize(173, 3044), 270, Origin(0.08f, 0.92f)),
-            Item8(IntSize(173, 3044), 360, Origin(0.08f, 0.92f)),
-            Item8(IntSize(575, 427), 0, Origin(0.0f, 0.0f)),
-            Item8(IntSize(575, 427), 90, Origin(0.27f, 0.13f)),
-            Item8(IntSize(575, 427), 180, Origin(0.27f, 0.13f)),
-            Item8(IntSize(575, 427), 270, Origin(0.27f, 0.13f)),
-            Item8(IntSize(575, 427), 360, Origin(0.27f, 0.13f)),
-            Item8(IntSize(551, 1038), 0, Origin(0.0f, 0.0f)),
-            Item8(IntSize(551, 1038), 90, Origin(0.26f, 0.31f)),
-            Item8(IntSize(551, 1038), 180, Origin(0.26f, 0.31f)),
-            Item8(IntSize(551, 1038), 270, Origin(0.26f, 0.31f)),
-            Item8(IntSize(551, 1038), 360, Origin(0.26f, 0.31f)),
-        ).forEach { item ->
+            IntSizeCompat(7500, 232) to TransformOriginCompat(3.47f, 0.07f),
+            IntSizeCompat(173, 3044) to TransformOriginCompat(0.08f, 0.92f),
+            IntSizeCompat(575, 427) to TransformOriginCompat(0.27f, 0.13f),
+            IntSizeCompat(551, 1038) to TransformOriginCompat(0.26f, 0.31f),
+        ).forEach { (contentSize, expected) ->
             val result = calculateContentRotateOrigin(
                 containerSize = containerSize,
-                contentSize = item.contentSize,
-                rotation = item.rotation,
-            ).let { Origin(it.pivotFractionX.format(2), it.pivotFractionY.format(2)) }
+                contentSize = contentSize,
+            )
             Assert.assertEquals(
-                /* message = */ item.getMessage(containerSize),
-                /* expected = */ item.expected,
-                /* actual = */ result,
+                /* message = */ "contentSize=$contentSize",
+                /* expected = */ expected.toShortString(),
+                /* actual = */ result.toShortString(),
             )
         }
     }

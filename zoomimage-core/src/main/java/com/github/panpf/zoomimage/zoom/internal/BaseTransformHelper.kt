@@ -89,8 +89,7 @@ internal class BaseTransformHelper(
     val rotationOrigin by lazy {
         calculateContentRotateOrigin(
             containerSize = containerSize,
-            contentSize = contentSize,
-            rotation = rotation
+            contentSize = contentSize
         )
     }
 
