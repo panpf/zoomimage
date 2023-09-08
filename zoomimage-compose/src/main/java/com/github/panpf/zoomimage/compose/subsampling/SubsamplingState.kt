@@ -376,9 +376,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         }
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
-            val tileMap = tileManager.tileMap
-            val tileMapInfoList = tileMap.keys.sortedDescending()
-                .map { "${it}:${tileMap[it]?.size}" }
+            val tileMapInfoList =
+                tileManager.sortedTileMap.entries.map { "${it.key}:${it.value.size}" }
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
