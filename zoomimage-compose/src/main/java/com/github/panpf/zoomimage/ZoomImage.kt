@@ -17,7 +17,11 @@
 package com.github.panpf.zoomimage
 
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +32,7 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.NoClipImage
@@ -37,11 +42,14 @@ import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.compose.zoom.internal.NavigationBarHeightState
+import com.github.panpf.zoomimage.compose.zoom.internal.UpdateContainerSizeResult
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -109,9 +117,10 @@ fun ZoomImage(
          */
         val maxWidthPx = maxWidth.toPx().roundToInt()
         val maxHeightPx = maxHeight.toPx().roundToInt()
-        val oldContainerSize = state.zoomable.containerSize
-        if (oldContainerSize.width != maxWidthPx || oldContainerSize.height != maxHeightPx) {
-            state.zoomable.containerSize = IntSize(maxWidthPx, maxHeightPx)
+        val newContainerSize = IntSize(maxWidthPx, maxHeightPx)
+        val updateContainerSizeResult = remember { UpdateContainerSizeResult() }
+        UpdateContainerSize(state.zoomable, newContainerSize, updateContainerSizeResult)
+        if (updateContainerSizeResult.updated) {
             state.zoomable.nowReset(coroutineScope, "BoxWithConstraints")
         }
 
@@ -142,6 +151,46 @@ fun ZoomImage(
             alpha = alpha,
             colorFilter = colorFilter
         )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun UpdateContainerSize(
+    state: ZoomableState,
+    newContainerSize: IntSize,
+    result: UpdateContainerSizeResult
+) {
+    val density = LocalDensity.current
+    val navigationBarHeightState = remember { NavigationBarHeightState() }
+    val navigationBarsInsets = WindowInsets.navigationBarsIgnoringVisibility
+    val oldContainerSize = state.containerSize
+    result.updated = if (newContainerSize != oldContainerSize) {
+        /*
+         * In the model MIX4; ROM: 14.0.6.0; on Android 13, when the navigation bar is displayed, the following occurs:
+         * 1. When the ZoomImageView is unlocked again after the screen is locked, the height of the ZoomImageView will first increase and then change back to normal, and the difference is exactly the height of the current navigation bar
+         * 2. Due to the height of the ZoomImageView, the containerSize of the ZoomableEngine will also change
+         * 3. This causes the ZoomableEngine's transform to be reset, so this needs to be blocked here
+         */
+        val newNavigationBarHeight = navigationBarsInsets.getBottom(density)
+        if (newNavigationBarHeight != 0 && newNavigationBarHeight != navigationBarHeightState.navigationBarHeight) {
+            navigationBarHeightState.navigationBarHeight = newNavigationBarHeight
+        }
+        val navigationBarHeight = navigationBarHeightState.navigationBarHeight
+        val diffSize = IntSize(
+            width = newContainerSize.width - oldContainerSize.width,
+            height = newContainerSize.height - oldContainerSize.height
+        )
+        if (navigationBarHeight == 0 ||
+            (abs(diffSize.width) != navigationBarHeight && abs(diffSize.height) != navigationBarHeight)
+        ) {
+            state.containerSize = newContainerSize
+            true
+        } else {
+            false
+        }
+    } else {
+        false
     }
 }
 

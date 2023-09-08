@@ -30,6 +30,7 @@ import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
+import com.github.panpf.zoomimage.view.internal.getNavigationBarsHeight
 import com.github.panpf.zoomimage.view.internal.intrinsicSize
 import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
@@ -44,7 +45,9 @@ import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarHelper
 import com.github.panpf.zoomimage.view.zoom.internal.TouchHelper
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import kotlin.math.abs
 import kotlin.math.roundToInt
+
 
 /**
  * A native ImageView that zoom and subsampling huge images
@@ -71,6 +74,7 @@ open class ZoomImageView @JvmOverloads constructor(
     private val touchHelper: TouchHelper
     private val tileDrawHelper: TileDrawHelper
     private val cacheImageMatrix = Matrix()
+    private var navigationBarsHeight = 0
 
     val logger = Logger(tag = "ZoomImageView")
 
@@ -333,9 +337,8 @@ open class ZoomImageView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        val viewWidth = width - paddingLeft - paddingRight
-        val viewHeight = height - paddingTop - paddingBottom
-        _zoomableEngine?.containerSize = IntSizeCompat(viewWidth, viewHeight)
+        updateNavigationBarsHeight()
+        updateContainerSize()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -378,4 +381,39 @@ open class ZoomImageView @JvmOverloads constructor(
 
     override fun canScrollVertically(direction: Int): Boolean =
         _zoomableEngine?.canScroll(horizontal = false, direction) == true
+
+    private fun updateContainerSize() {
+        val zoomable = _zoomableEngine ?: return
+
+        val oldContainerSize = zoomable.containerSize
+        val newContainerSize = IntSizeCompat(
+            width = width - paddingLeft - paddingRight,
+            height = height - paddingTop - paddingBottom
+        )
+        if (newContainerSize != oldContainerSize) {
+            /*
+             * In the model MIX4; ROM: 14.0.6.0; on Android 13, when the navigation bar is displayed, the following occurs:
+             * 1. When the ZoomImageView is unlocked again after the screen is locked, the height of the ZoomImageView will first increase and then change back to normal, and the difference is exactly the height of the current navigation bar
+             * 2. Due to the height of the ZoomImageView, the containerSize of the ZoomableEngine will also change
+             * 3. This causes the ZoomableEngine's transform to be reset, so this needs to be blocked here
+             */
+            val navigationBarHeight = navigationBarsHeight
+            val diffSize = IntSizeCompat(
+                width = oldContainerSize.width - newContainerSize.width,
+                height = oldContainerSize.height - newContainerSize.height
+            )
+            if (navigationBarHeight == 0 ||
+                (abs(diffSize.width) != navigationBarHeight && abs(diffSize.height) != navigationBarHeight)
+            ) {
+                zoomable.containerSize = newContainerSize
+            }
+        }
+    }
+
+    private fun updateNavigationBarsHeight() {
+        val newNavigationBarsHeight = getNavigationBarsHeight()
+        if (newNavigationBarsHeight != 0 && newNavigationBarsHeight != navigationBarsHeight) {
+            navigationBarsHeight = newNavigationBarsHeight
+        }
+    }
 }

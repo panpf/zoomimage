@@ -26,6 +26,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -234,4 +235,10 @@ internal fun Context?.findLifecycle(): Lifecycle? {
 internal fun Drawable.intrinsicSize(): IntSizeCompat? {
     if (intrinsicWidth < 0 || intrinsicHeight < 0) return null
     return IntSizeCompat(intrinsicWidth, intrinsicHeight)
+}
+
+
+internal fun View.getNavigationBarsHeight(): Int {
+    val windowInsetsCompat = ViewCompat.getRootWindowInsets(this) ?: return 0
+    return windowInsetsCompat.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 }

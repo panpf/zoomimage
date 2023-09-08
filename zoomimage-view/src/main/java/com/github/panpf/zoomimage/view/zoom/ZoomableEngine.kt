@@ -326,19 +326,20 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         )
         logger.d {
             val transform = initialZoom.baseTransform + initialZoom.userTransform
-            "reset. containerSize=$containerSize, " +
-                    "contentSize=$contentSize, " +
-                    "contentOriginSize=$contentOriginSize, " +
+            "reset:$caller. " +
+                    "containerSize=${containerSize.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "contentOriginSize=${contentOriginSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}, " +
-                    "rotation=$rotation, " +
-                    "scalesCalculator=$scalesCalculator, " +
-                    "readMode=$readMode. " +
-                    "minScale=${initialZoom.minScale}, " +
-                    "mediumScale=${initialZoom.mediumScale}, " +
-                    "maxScale=${initialZoom.maxScale}, " +
-                    "baseTransform=${initialZoom.baseTransform}, " +
-                    "initialUserTransform=${initialZoom.userTransform}, " +
+                    "rotation=${rotation}, " +
+                    "scalesCalculator=${scalesCalculator}, " +
+                    "readMode=${readMode}. " +
+                    "minScale=${initialZoom.minScale.format(4)}, " +
+                    "mediumScale=${initialZoom.mediumScale.format(4)}, " +
+                    "maxScale=${initialZoom.maxScale.format(4)}, " +
+                    "baseTransform=${initialZoom.baseTransform.toShortString()}, " +
+                    "initialUserTransform=${initialZoom.userTransform.toShortString()}, " +
                     "transform=${transform.toShortString()}"
         }
 
