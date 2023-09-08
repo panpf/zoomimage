@@ -61,15 +61,31 @@ Button(
 
 ### Get relevant information/获取相关信息
 
-* [ZoomableState].transform.rotation: Float。
+```kotlin
+// compose
+val state: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+val zoomable: ZoomableState = state.zoomable
+
+// view
+val sketchZoomImageView = SketchZoomImageView(context)
+val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
+```
+
+* `zoomable.transform.rotation: Float`。
     * Current rotation angle (base rotation angle + user rotation angle)
       <br>-----------</br>
     * 当前旋转角度（基础旋转角度 + 用户旋转角度）
-* [ZoomableState].baseTransform.rotation: Float。
+* `zoomable.baseTransform.rotation: Float`。
     * The current base rotation angle, affected by the rotate() method
       <br>-----------</br>
     * 当前基础旋转角度，受 rotate() 方法影响
-* [ZoomableState].userTransform.rotation: Float。
+* `zoomable.userTransform.rotation: Float`。
     * The current user rotation angle, which is always 0
       <br>-----------</br>
     * 当前用户旋转角度，一直为 0

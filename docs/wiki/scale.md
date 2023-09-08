@@ -342,29 +342,45 @@ SketchZoomAsyncImage(
 
 ### Get relevant information/获取相关信息
 
-* [ZoomableState].transform.scale: ScaleFactor。
+```kotlin
+// compose
+val state: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+val zoomable: ZoomableState = state.zoomable
+
+// view
+val sketchZoomImageView = SketchZoomImageView(context)
+val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
+```
+
+* `zoomable.transform.scale: ScaleFactor`。
     * Current scaling (baseTransform.scale * userTransform.scale)
       <br>-----------</br>
     * 当前缩放比例（baseTransform.scale * userTransform.scale）
-* [ZoomableState].baseTransform.scale: ScaleFactor。
+* `zoomable.baseTransform.scale: ScaleFactor`。
     * The current underlying scale, affected by the contentScale parameter
       <br>-----------</br>
     * 当前基础缩放比例，受 contentScale 参数影响
-* [ZoomableState].userTransform.scale: ScaleFactor。
+* `zoomable.userTransform.scale: ScaleFactor`。
     * The current user scaling factor is affected by scale(), locate(), user gesture zoom,
       double-click and other operations
       <br>-----------</br>
     * 当前用户缩放比例，受 scale()、locate() 以及用户手势缩放、双击等操作影响
-* [ZoomableState].minScale: Float。
+* `zoomable.minScale: Float`。
     * Minimum scale factor, for limits the final scale factor, and as a target value for one of when
       switch scale
       <br>-----------</br>
     * 最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
-* [ZoomableState].mediumScale: Float。
+* `zoomable.mediumScale: Float`。
     * Medium scale factor, only as a target value for one of when switch scale
       <br>-----------</br>
     * 中间缩放比例，用于双击缩放时的一个循环缩放比例
-* [ZoomableState].maxScale: Float。
+* `zoomable.maxScale: Float`。
     * Maximum scale factor, for limits the final scale factor, and as a target value for one of when
       switch scale
       <br>-----------</br>

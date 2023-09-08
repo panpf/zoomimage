@@ -111,7 +111,8 @@ By default, ZoomImage will read the Exif Orientation information of the image, a
 image, if you do not want ZoomImage to read the Exif Orientation information, you can modify the
 ignoreExifOrientation parameter to true
 <br>-----------</br>
-ZoomImage 在显示 Tile 的时候支持透明度动画，默认开启动画，持续时间 200 毫秒，刷新间隔 8 毫秒，你可以通过 tileAnimationSpec 参数来关闭动画或修改动画的持续时间和刷新间隔
+ZoomImage 在显示 Tile 的时候支持透明度动画，默认开启动画，持续时间 200 毫秒，刷新间隔 8 毫秒，你可以通过
+tileAnimationSpec 参数来关闭动画或修改动画的持续时间和刷新间隔
 
 example/示例：
 
@@ -295,7 +296,8 @@ tileBitmapPool property to use memory reuse
 Bitmap functionality
 <br>-----------</br>
 因为只有 Sketch 和 Glide 有 BitmapPool，所以只有集成了这两个图片加载库的组件无需任何额外的工作即可使用重用
-Bitmap 功能，其它组件需要先实现自己的 [TileBitmapPool] 然后设置 tileBitmapPool 属性才能使用重用 Bitmap 功能
+Bitmap 功能，其它组件需要先实现自己的 [TileBitmapPool] 然后设置 tileBitmapPool 属性才能使用重用
+Bitmap 功能
 
 example/示例：
 
@@ -368,19 +370,35 @@ sketchZoomImageView.subsampling.registerOnImageLoadRectChangeListener {
 
 ### Get relevant information/获取相关信息
 
-* [SubsamplingState].ready: Boolean。
+```kotlin
+// compose
+val state: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+val subsampling: SubsamplingState = state.subsampling
+
+// view
+val sketchZoomImageView = SketchZoomImageView(context)
+val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
+```
+
+* `subsampling.ready: Boolean`。
     * Whether the image is ready for subsampling
       <br>-----------</br>
     * 是否已经准备好了
-* [SubsamplingState].imageInfo: ImageInfo。
+* `subsampling.imageInfo: ImageInfo`。
     * The information of the image, including width, height, format, exif information, etc
       <br>-----------</br>
     * 图片的尺寸、格式、exif 等信息
-* [SubsamplingState].tileSnapshotList: List<TileSnapshot>。
+* `subsampling.tileSnapshotList: List<TileSnapshot>`。
     * A snapshot of the tile list
       <br>-----------</br>
     * 当前图块的快照列表
-* [SubsamplingState].imageLoadRect: IntRect。
+* `subsampling.imageLoadRect: IntRect`。
     * The image load rect
       <br>-----------</br>
     * 原图上当前实际加载的区域

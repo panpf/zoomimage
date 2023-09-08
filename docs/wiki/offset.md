@@ -103,19 +103,35 @@ SketchZoomAsyncImage(
 
 ### Get relevant information/获取相关信息
 
-* [ZoomableState].transform.offset: Offset。
+```kotlin
+// compose
+val state: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+val zoomable: ZoomableState = state.zoomable
+
+// view
+val sketchZoomImageView = SketchZoomImageView(context)
+val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
+```
+
+* `zoomable.transform.offset: Offset`。
     * Current offset (baseTransform.offset + userTransform.offset)
       <br>-----------</br>
     * 当前偏移量（baseTransform.offset + userTransform.offset）
-* [ZoomableState].baseTransform.offset: Offset。
+* `zoomable.baseTransform.offset: Offset`。
     * The current base offset, affected by the alignment parameter and the rotate method
       <br>-----------</br>
     * 当前基础偏移量，受 alignment 参数和 rotate 方法影响
-* [ZoomableState].userTransform.offset: Offset。
+* `zoomable.userTransform.offset: Offset`。
     * The current user offset, affected by offset(), locate(), and user gesture dragging
       <br>-----------</br>
     * 当前用户偏移量，受 offset()、locate() 以及用户手势拖动影响
-* [ZoomableState].scrollEdge: ScrollEdge。
+* `zoomable.scrollEdge: ScrollEdge`。
     * Edge state for the current offset
       <br>-----------</br>
     * 当前偏移的边界状态
