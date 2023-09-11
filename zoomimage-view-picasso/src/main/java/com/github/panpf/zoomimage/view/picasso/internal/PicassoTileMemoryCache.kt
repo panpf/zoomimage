@@ -20,7 +20,7 @@ import android.graphics.Bitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.cache
 

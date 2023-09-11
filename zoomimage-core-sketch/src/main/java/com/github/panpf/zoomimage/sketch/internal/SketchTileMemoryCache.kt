@@ -23,7 +23,7 @@ import com.github.panpf.sketch.cache.MemoryCache
 import com.github.panpf.sketch.decode.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 
 class SketchTileMemoryCache constructor(
     private val sketch: Sketch,

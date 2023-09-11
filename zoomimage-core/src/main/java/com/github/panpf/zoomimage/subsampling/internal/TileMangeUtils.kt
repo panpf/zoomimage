@@ -16,12 +16,9 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.internal.format
-import kotlin.math.abs
 import kotlin.math.ceil
 
 internal fun initializeTileMap(
@@ -80,56 +77,15 @@ internal fun initializeTileMap(
     return tileMap
 }
 
-internal fun findSampleSize(
-    imageWidth: Int,
-    imageHeight: Int,
-    drawableWidth: Int,
-    drawableHeight: Int,
+internal fun calculateSampleSize(
+    imageSize: IntSizeCompat,
+    drawableSize: IntSizeCompat,
     scale: Float
 ): Int {
-    require(
-        canUseSubsamplingByAspectRatio(
-            imageWidth,
-            imageHeight,
-            drawableWidth,
-            drawableHeight
-        )
-    ) {
-        "imageSize(${imageWidth}x${imageHeight}) and drawableSize(${drawableWidth}x${drawableHeight}) must have the same aspect ratio"
-    }
-
-    val scaledWidthRatio = (imageWidth / (drawableWidth * scale))
+    val scaledWidthRatio = (imageSize.width / (drawableSize.width * scale))
     var sampleSize = 1
     while (scaledWidthRatio >= sampleSize * 2) {
         sampleSize *= 2
     }
     return sampleSize
-}
-
-fun canUseSubsamplingByAspectRatio(
-    imageWidth: Int, imageHeight: Int, drawableWidth: Int, drawableHeight: Int
-): Boolean {
-    if (imageWidth == 0 || imageHeight == 0 || drawableWidth == 0 || drawableHeight == 0) return false
-    val imageRatio = (imageWidth / imageHeight.toFloat()).format(2)
-    val drawableRatio = (drawableWidth / drawableHeight.toFloat()).format(2)
-    return abs(imageRatio - drawableRatio).format(2) <= 0.50f
-}
-
-fun canUseSubsampling(imageInfo: ImageInfo, drawableSize: IntSizeCompat): Int {
-    if (drawableSize.width >= imageInfo.width && drawableSize.height >= imageInfo.height) {
-        return -1
-    }
-    val canUseSubsamplingByAspectRatio = canUseSubsamplingByAspectRatio(
-        imageWidth = imageInfo.width,
-        imageHeight = imageInfo.height,
-        drawableWidth = drawableSize.width,
-        drawableHeight = drawableSize.height
-    )
-    if (!canUseSubsamplingByAspectRatio) {
-        return -2
-    }
-    if (!isSupportBitmapRegionDecoder(imageInfo.mimeType)) {
-        return -3
-    }
-    return 0
 }

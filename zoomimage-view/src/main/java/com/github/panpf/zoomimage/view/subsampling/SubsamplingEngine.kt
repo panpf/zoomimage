@@ -30,10 +30,10 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
-import com.github.panpf.zoomimage.subsampling.internal.TileMemoryCacheHelper
-import com.github.panpf.zoomimage.subsampling.internal.canUseSubsampling
-import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
+import com.github.panpf.zoomimage.subsampling.canUseSubsampling
+import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
+import com.github.panpf.zoomimage.subsampling.readImageInfo
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isEmpty

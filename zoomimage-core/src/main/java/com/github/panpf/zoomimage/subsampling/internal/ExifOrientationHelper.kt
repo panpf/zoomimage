@@ -24,6 +24,7 @@ import android.graphics.RectF
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.safeConfig
@@ -32,7 +33,7 @@ import kotlin.math.abs
 /**
  * Rotate and flip the image according to the 'orientation' attribute of Exif so that the image is presented to the user at a normal angle
  */
-class ExifOrientationHelper constructor(
+internal class ExifOrientationHelper constructor(
     val exifOrientation: Int,
     private val tileBitmapPoolHelper: TileBitmapPoolHelper? = null,
 ) {

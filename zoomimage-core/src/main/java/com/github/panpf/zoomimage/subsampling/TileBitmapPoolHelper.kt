@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling.internal
+package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.annotation.WorkerThread
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.internal.calculateSampledBitmapSizeForRegion
+import com.github.panpf.zoomimage.subsampling.internal.isAndSupportHardware
+import com.github.panpf.zoomimage.subsampling.internal.isSupportInBitmapForRegion
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.requiredWorkThread
 import com.github.panpf.zoomimage.util.internal.toHexString

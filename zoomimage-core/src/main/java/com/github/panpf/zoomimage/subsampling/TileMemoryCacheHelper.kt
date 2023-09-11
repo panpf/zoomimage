@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling.internal
+package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.subsampling.DefaultTileBitmap
-import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.TileBitmap
-import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 
 class TileMemoryCacheHelper(@Suppress("UNUSED_PARAMETER") logger: Logger) {
 

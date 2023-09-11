@@ -26,6 +26,7 @@ import kotlinx.coroutines.Job
 /**
  * A tile of the image, store the region, sample multiplier, Bitmap, load status, and other information of the tile
  */
+// todo 改为 internal
 class Tile constructor(
 
     /**
@@ -108,11 +109,18 @@ class Tile constructor(
     class AnimationState {
 
         private var startTime = System.currentTimeMillis()
-
         private var progress: Float = 0f
+            set(value) {
+                if (value != field) {
+                    field = value
+                    alpha = (value * 255).toInt()
+                }
+            }
 
         var alpha: Int = 0
             private set
+        val running: Boolean
+            get() = progress < 1f
 
         fun calculate(duration: Long = 100): Boolean {
             progress = if (duration > 0) {
@@ -122,8 +130,7 @@ class Tile constructor(
             } else {
                 1f
             }
-            alpha = (progress * 255).toInt()
-            return progress >= 1f
+            return running
         }
 
         fun restart() {
@@ -132,8 +139,10 @@ class Tile constructor(
         }
 
         fun stop() {
-            startTime = 0
-            calculate()
+            if (running) {
+                startTime = 0
+                calculate()
+            }
         }
 
         fun isFinished(): Boolean = progress >= 1f

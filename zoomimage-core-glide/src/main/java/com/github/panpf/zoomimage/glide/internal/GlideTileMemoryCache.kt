@@ -25,7 +25,7 @@ import com.bumptech.glide.load.engine.newEngineKey
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 
 class GlideTileMemoryCache(private val glide: Glide) : TileMemoryCache {
 

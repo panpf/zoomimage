@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapPoolHelper
 
 /**
  * Tile memory cache container interface, you need to implement it to customize tile memory cache
