@@ -406,6 +406,14 @@ open class ZoomImageView @JvmOverloads constructor(
                 (abs(diffSize.width) != navigationBarHeight && abs(diffSize.height) != navigationBarHeight)
             ) {
                 zoomable.containerSize = newContainerSize
+            } else {
+                logger.d {
+                    "updateContainerSize. intercepted. " +
+                            "oldContainerSize=$oldContainerSize, " +
+                            "newContainerSize=$newContainerSize, " +
+                            "diffSize=$diffSize, " +
+                            "navigationBarHeight=$navigationBarHeight"
+                }
             }
         }
     }

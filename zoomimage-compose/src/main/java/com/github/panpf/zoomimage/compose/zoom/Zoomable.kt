@@ -33,13 +33,15 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.zoom.internal.NavigationBarHeightState
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 fun Modifier.zoomable(
-    state: ZoomableState,
+    logger: Logger,
+    zoomable: ZoomableState,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = composed {
@@ -52,7 +54,7 @@ fun Modifier.zoomable(
 
     this
         .onSizeChanged {
-            val oldContainerSize = state.containerSize
+            val oldContainerSize = zoomable.containerSize
             val newContainerSize = it
             if (newContainerSize != oldContainerSize) {
                 /*
@@ -73,19 +75,27 @@ fun Modifier.zoomable(
                 if (navigationBarHeight == 0 ||
                     (abs(diffSize.width) != navigationBarHeight && abs(diffSize.height) != navigationBarHeight)
                 ) {
-                    state.containerSize = newContainerSize
+                    zoomable.containerSize = newContainerSize
+                } else {
+                    logger.d {
+                        "onSizeChanged. intercepted. " +
+                                "oldContainerSize=$oldContainerSize, " +
+                                "newContainerSize=$newContainerSize, " +
+                                "diffSize=$diffSize, " +
+                                "navigationBarHeight=$navigationBarHeight"
+                    }
                 }
             }
         }
         .pointerInput(Unit) {
             detectTapGestures(
                 onPress = {
-                    state.stopAllAnimation("onPress")
+                    zoomable.stopAllAnimation("onPress")
                 },
                 onDoubleTap = { touchPoint ->
                     coroutineScope.launch {
-                        val centroidContentPoint = state.touchPointToContentPoint(touchPoint)
-                        state.switchScale(centroidContentPoint, animated = true)
+                        val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
+                        zoomable.switchScale(centroidContentPoint, animated = true)
                     }
                 },
                 onLongPress = {
@@ -100,12 +110,12 @@ fun Modifier.zoomable(
             detectPowerfulTransformGestures(
                 panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
-                    state.canScroll(horizontal = horizontal, direction = direction)
+                    zoomable.canScroll(horizontal = horizontal, direction = direction)
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float ->
                     coroutineScope.launch {
-                        state.transforming = true
-                        state.gestureTransform(
+                        zoomable.transforming = true
+                        zoomable.gestureTransform(
                             centroid = centroid,
                             panChange = pan,
                             zoomChange = zoom,
@@ -115,9 +125,9 @@ fun Modifier.zoomable(
                 },
                 onEnd = { centroid, velocity ->
                     coroutineScope.launch {
-                        state.transforming = false
-                        if (!state.rollbackScale(centroid)) {
-                            state.fling(velocity, density)
+                        zoomable.transforming = false
+                        if (!zoomable.rollbackScale(centroid)) {
+                            zoomable.fling(velocity, density)
                         }
                     }
                 }

@@ -156,7 +156,12 @@ fun GlideZoomAsyncImage(
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
-        .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
+        .zoomable(
+            logger = state.logger,
+            zoomable = state.zoomable,
+            onLongPress = onLongPress,
+            onTap = onTap
+        )
         .graphicsLayer {
             scaleX = transform.scaleX
             scaleY = transform.scaleY

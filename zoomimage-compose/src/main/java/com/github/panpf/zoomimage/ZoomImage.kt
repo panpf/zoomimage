@@ -119,7 +119,12 @@ fun ZoomImage(
         val maxHeightPx = maxHeight.toPx().roundToInt()
         val newContainerSize = IntSize(maxWidthPx, maxHeightPx)
         val updateContainerSizeResult = remember { UpdateContainerSizeResult() }
-        UpdateContainerSize(state.zoomable, newContainerSize, updateContainerSizeResult)
+        UpdateContainerSize(
+            logger = state.logger,
+            zoomable = state.zoomable,
+            newContainerSize = newContainerSize,
+            result = updateContainerSizeResult
+        )
         if (updateContainerSizeResult.updated) {
             state.zoomable.nowReset(coroutineScope, "BoxWithConstraints")
         }
@@ -129,7 +134,12 @@ fun ZoomImage(
             .matchParentSize()
             .clipToBounds()
             .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
-            .zoomable(state = state.zoomable, onLongPress = onLongPress, onTap = onTap)
+            .zoomable(
+                logger = state.logger,
+                zoomable = state.zoomable,
+                onLongPress = onLongPress,
+                onTap = onTap
+            )
             .graphicsLayer {
                 scaleX = transform.scaleX
                 scaleY = transform.scaleY
@@ -157,14 +167,15 @@ fun ZoomImage(
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun UpdateContainerSize(
-    state: ZoomableState,
+    logger: Logger,
+    zoomable: ZoomableState,
     newContainerSize: IntSize,
     result: UpdateContainerSizeResult
 ) {
     val density = LocalDensity.current
     val navigationBarHeightState = remember { NavigationBarHeightState() }
     val navigationBarsInsets = WindowInsets.navigationBarsIgnoringVisibility
-    val oldContainerSize = state.containerSize
+    val oldContainerSize = zoomable.containerSize
     result.updated = if (newContainerSize != oldContainerSize) {
         /*
          * In the model MIX4; ROM: 14.0.6.0; on Android 13, when the navigation bar is displayed, the following occurs:
@@ -184,9 +195,16 @@ private fun UpdateContainerSize(
         if (navigationBarHeight == 0 ||
             (abs(diffSize.width) != navigationBarHeight && abs(diffSize.height) != navigationBarHeight)
         ) {
-            state.containerSize = newContainerSize
+            zoomable.containerSize = newContainerSize
             true
         } else {
+            logger.d {
+                "UpdateContainerSize. intercepted. " +
+                        "oldContainerSize=$oldContainerSize, " +
+                        "newContainerSize=$newContainerSize, " +
+                        "diffSize=$diffSize, " +
+                        "navigationBarHeight=$navigationBarHeight"
+            }
             false
         }
     } else {
