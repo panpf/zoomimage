@@ -27,7 +27,7 @@ data class PagerItem<T>(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState { pagerItems.size }
     val coroutineScope = rememberCoroutineScope()
     Column(modifier = Modifier.fillMaxSize()) {
         ScrollableTabRow(
@@ -58,7 +58,6 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
             }
         }
         HorizontalPager(
-            pageCount = pagerItems.size,
             state = pagerState,
             userScrollEnabled = true,
             beyondBoundsPageCount = 0,

@@ -37,5 +37,6 @@ internal fun Bitmap.toShortString(): String = "(${width}x${height},$config)"
 internal fun Bitmap.toHexString(): String =
     "Bitmap(${width}x${height},$config,@${Integer.toHexString(hashCode())})"
 
+@Suppress("USELESS_ELVIS")
 internal val Bitmap.safeConfig: Bitmap.Config
     get() = config ?: Bitmap.Config.ARGB_8888

@@ -77,11 +77,12 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
         val horizontalLayout by context.settingsService.horizontalPagerLayout.stateFlow
             .collectAsState(initial = true)
         val imageUrlList = remember { args.imageUris.split(",") }
-        val pagerState = rememberPagerState(initialPage = args.position - args.startPosition)
+        val pagerState = rememberPagerState(initialPage = args.position - args.startPosition) {
+            imageUrlList.size
+        }
         Box(modifier = Modifier.fillMaxSize()) {
             if (horizontalLayout) {
                 HorizontalPager(
-                    pageCount = imageUrlList.size,
                     state = pagerState,
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
@@ -90,7 +91,6 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
                 }
             } else {
                 VerticalPager(
-                    pageCount = imageUrlList.size,
                     state = pagerState,
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
