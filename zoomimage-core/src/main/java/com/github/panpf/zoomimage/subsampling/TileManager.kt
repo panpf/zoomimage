@@ -141,7 +141,7 @@ class TileManager constructor(
         contentVisibleRect: IntRectCompat,
         scale: Float,
         rotation: Int,
-        transforming: Boolean,
+        transforming: Boolean,  // todo 除手势操作外的如缩放动画，fling 都应该暂停，分为以下几种手势、缩放动画、位移动画、fling，这样的话 pauseWhenTransforming 也要改为 pauseWhenGestureTransforming，也可以搞成 pauseWhenTransforming 用位运算来判断，这样就可以同时支持多种暂停了
         caller: String,
     ) {
         requiredMainThread()

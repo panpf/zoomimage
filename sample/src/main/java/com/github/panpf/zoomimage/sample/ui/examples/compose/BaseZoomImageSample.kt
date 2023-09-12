@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,7 +93,7 @@ fun BaseZoomImageSample(
             if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
         }
     }
-    val logLevel by remember { mutableStateOf(if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO) }
+    val logLevel by remember { mutableIntStateOf(if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO) }
     val zoomState = rememberZoomState().apply {
         LaunchedEffect(logLevel) {
             logger.level = logLevel

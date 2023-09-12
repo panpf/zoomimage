@@ -28,6 +28,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -153,7 +155,7 @@ class ZoomableState(logger: Logger) {
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
-    private var rotation: Int by mutableStateOf(0)
+    private var rotation: Int by mutableIntStateOf(0)
 
     /**
      * The size of the container that holds the content, this is usually the size of the [ZoomImage] component
@@ -244,19 +246,19 @@ class ZoomableState(logger: Logger) {
     /**
      * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
      */
-    var minScale: Float by mutableStateOf(1f)
+    var minScale: Float by mutableFloatStateOf(1f)
         private set
 
     /**
      * Medium scale factor, only as a target value for one of when switch scale
      */
-    var mediumScale: Float by mutableStateOf(1f)
+    var mediumScale: Float by mutableFloatStateOf(1f)
         private set
 
     /**
      * Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
      */
-    var maxScale: Float by mutableStateOf(1f)
+    var maxScale: Float by mutableFloatStateOf(1f)
         private set
 
     /**
