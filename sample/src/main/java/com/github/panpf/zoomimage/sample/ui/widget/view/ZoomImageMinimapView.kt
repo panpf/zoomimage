@@ -76,7 +76,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
             val widthTargetScale = contentOriginSize.width.toFloat() / viewWidth
             val heightTargetScale = contentOriginSize.height.toFloat() / viewHeight
             val imageLoadRect = zoomView.subsampling.imageLoadRect
-            zoomView.subsampling.tileSnapshotList.forEach { tileSnapshot ->
+            zoomView.subsampling.foregroundTiles.forEach { tileSnapshot ->
                 val load = tileSnapshot.srcRect.overlaps(imageLoadRect)
                 val tileSrcRect = tileSnapshot.srcRect
                 val tileDrawRect = tileDrawRect.apply {

@@ -269,7 +269,7 @@ sketchZoomImageView.zoomable.registerOnResetListener {
 }
 
 sketchZoomImageView.subsampling.registerOnTileChangeListener {
-    // tileSnapshotList changed
+    // foregroundTiles, backgroundTiles changed
 }
 
 sketchZoomImageView.subsampling.registerOnReadyChangeListener {
@@ -388,10 +388,18 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
     * The information of the image, including width, height, format, exif information, etc
       <br>-----------</br>
     * 图片的尺寸、格式、exif 等信息
-* `subsampling.tileSnapshotList: List<TileSnapshot>`。
-    * A snapshot of the tile list
+* `subsampling.foregroundTiles: List<TileSnapshot>`。
+    * List of current foreground tiles
       <br>-----------</br>
-    * 当前图块的快照列表
+    * 当前前景图块列表
+* `subsampling.backgroundTiles: List<TileSnapshot>`。
+    * List of current background tiles
+      <br>-----------</br>
+    * 当前背景图块列表
+* `subsampling.sampleSize: Int`。
+    * The sample size of the image
+      <br>-----------</br>
+    * 当前采样大小
 * `subsampling.imageLoadRect: IntRect`。
     * The image load rect
       <br>-----------</br>

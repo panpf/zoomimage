@@ -14,41 +14,27 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.compose.subsampling
+package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
-import androidx.compose.runtime.Immutable
-import androidx.compose.ui.unit.IntRect
 import com.github.panpf.zoomimage.subsampling.Tile.State
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
 
-/**
- * A snapshot of the tile
- */
-@Immutable
 data class TileSnapshot(
-    /**
-     * The region of Tile in the original image
-     */
-    val srcRect: IntRect,
-
-    /**
-     * The sampling multiplier at load
-     */
-    val inSampleSize: Int,
-
-    /**
-     * The bitmap of the tile
-     */
+    val coordinate: IntSizeCompat,
+    val srcRect: IntRectCompat,
+    val sampleSize: Int,
     val bitmap: Bitmap?,
-
-    /**
-     * The state of the tile
-     */
-    @State
-    val state: Int,
-
-    /**
-     * The alpha of the tile
-     */
+    @State val state: Int,
     val alpha: Int,
+)
+
+fun Tile.toSnapshot(): TileSnapshot = TileSnapshot(
+    coordinate = coordinate,
+    srcRect = srcRect,
+    sampleSize = sampleSize,
+    bitmap = bitmap,
+    state = state,
+    alpha = animationState.alpha
 )

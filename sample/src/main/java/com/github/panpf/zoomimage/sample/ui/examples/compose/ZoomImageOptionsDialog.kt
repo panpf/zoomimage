@@ -70,6 +70,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.readModeAcceptedBoth, settingsService.readModeAcceptedBoth)
 
         BindStateAndFlow(state.pauseWhenTransforming, settingsService.pauseWhenTransforming)
+        BindStateAndFlow(state.disabledBackgroundTiles, settingsService.disabledBackgroundTiles)
         BindStateAndFlow(state.ignoreExifOrientation, settingsService.ignoreExifOrientation)
         BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
         BindStateAndFlow(state.tileAnimation, settingsService.tileAnimation)
@@ -107,7 +108,8 @@ class ZoomImageOptionsState {
 
     val showTileBounds = MutableStateFlow(false)
     val tileAnimation = MutableStateFlow(true)
-    val pauseWhenTransforming = MutableStateFlow(true)
+    val pauseWhenTransforming = MutableStateFlow(false)
+    val disabledBackgroundTiles = MutableStateFlow(false)
     val ignoreExifOrientation = MutableStateFlow(false)
 
     val scrollBarEnabled = MutableStateFlow(true)
@@ -136,6 +138,7 @@ fun ZoomImageOptionsDialog(
     val showTileBounds by state.showTileBounds.collectAsState()
     val tileAnimation by state.tileAnimation.collectAsState()
     val pauseWhenTransforming by state.pauseWhenTransforming.collectAsState()
+    val disabledBackgroundTiles by state.disabledBackgroundTiles.collectAsState()
     val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
 
     val scrollBarEnabled by state.scrollBarEnabled.collectAsState()
@@ -262,6 +265,10 @@ fun ZoomImageOptionsDialog(
 
                 SwitchMenu("Pause When Transforming", pauseWhenTransforming) {
                     state.pauseWhenTransforming.value = !state.pauseWhenTransforming.value
+                    onDismissRequest()
+                }
+                SwitchMenu("Disabled Background Tiles", disabledBackgroundTiles) {
+                    state.disabledBackgroundTiles.value = !state.disabledBackgroundTiles.value
                     onDismissRequest()
                 }
                 SwitchMenu("Ignore Exif Orientation", ignoreExifOrientation) {

@@ -137,14 +137,19 @@ SketchZoomAsyncImage(
 
 ### pauseWhenTransforming/变换中暂停加载
 
-ZoomImage supports pausing the loading of tiles during continuous transformations, such as gesture
-zooming, animation, fling, etc.
-This can avoid stuttering caused by frequent tile loading on devices with poor performance and
-affect the smoothness of the animation, and automatically resume loading tiles after continuous
-transformations, this feature is turned off by default, you can turn it on
+By default, ZoomImage will load new tiles as soon as there is any change in transform (such as
+gesture zoom, scale function zoom, fling, etc.), which can try to ensure that the tiles are loaded
+in the first place without the user's awareness
+
+However, frequent tile loading may have an impact on fluency on poor performing devices, so the
+pauseWhenTransforming property is provided to turn off this feature, which will automatically resume
+loading tiles after continuous transformations are completed, and you can turn it on
 <br>-----------</br>
-ZoomImage 支持在连续变换时暂停加载图块，例如手势缩放中、动画中、fling 等，
-这样可以在性能较差的设备上避免因频繁加载图块导致卡顿影响动画的流畅性，连续变换结束后自动恢复加载图块，此功能默认关闭，你可以开启它
+ZoomImage 默认在 transform 有任何变化时（例如手势缩放、scale 函数缩放、fling
+等）都会立即加载新的图块，这样可以尽量确保第一时间在用户无感知的情况下加载好图块
+
+但频繁加载图块在性能较差的设备上可能会对流畅性有影响，所以提供了 pauseWhenTransforming
+属性来关闭此功能，关闭后会在连续变换结束后自动恢复加载图块，你可以开启它
 
 example/示例：
 
@@ -152,6 +157,36 @@ example/示例：
 val state: ZoomState by rememberZoomState()
 
 state.subsampling.pauseWhenTransforming = true
+
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+```
+
+### disabledBackgroundTiles/禁用背景图块
+
+ZoomImage uses background tiles to change sampleSize when switching sampleSize
+The change in the clarity of the picture also changes step by step, and the basemap will not be
+exposed during the process of loading new tiles, which ensures the continuity of the clarity change
+and the user experience is better
+
+However, this feature uses more memory, which may affect fluency on devices with poor performance,
+and this feature is turned on by default, you can turn it off
+<br>-----------</br>
+ZoomImage 通过背景图块实现了在切换 sampleSize 时随着 sampleSize
+的变化图片清晰度也逐级变化的效果，并且在加载新图块的过程中也不会露出底图，这样就保证了清晰度变化的连续性，用户体验更好
+
+但是此功能使用了更多的内存，在性能较差的设备上可能会对流畅性有影响，此功能默认开启，你可以关闭它
+
+example/示例：
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+
+state.subsampling.disabledBackgroundTiles = true
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -352,7 +387,7 @@ example/示例：
 val sketchZoomImageView = SketchZoomImageView(context)
 
 sketchZoomImageView.subsampling.registerOnTileChangeListener {
-    // tileSnapshotList changed
+    // foregroundTiles, backgroundTiles changed
 }
 
 sketchZoomImageView.subsampling.registerOnReadyChangeListener {
@@ -394,10 +429,18 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
     * The information of the image, including width, height, format, exif information, etc
       <br>-----------</br>
     * 图片的尺寸、格式、exif 等信息
-* `subsampling.tileSnapshotList: List<TileSnapshot>`。
-    * A snapshot of the tile list
+* `subsampling.foregroundTiles: List<TileSnapshot>`。
+    * List of current foreground tiles
       <br>-----------</br>
-    * 当前图块的快照列表
+    * 当前前景图块列表
+* `subsampling.backgroundTiles: List<TileSnapshot>`。
+    * List of current background tiles
+      <br>-----------</br>
+    * 当前背景图块列表
+* `subsampling.sampleSize: Int`。
+    * The sample size of the image
+      <br>-----------</br>
+    * 当前采样大小
 * `subsampling.imageLoadRect: IntRect`。
     * The image load rect
       <br>-----------</br>

@@ -152,6 +152,11 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 ) {
                     pauseWhenTransforming = it
                 }
+                settingsService.disabledBackgroundTiles.stateFlow.collectWithLifecycle(
+                    viewLifecycleOwner
+                ) {
+                    disabledBackgroundTiles = it
+                }
             }
         }
 
@@ -285,6 +290,20 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     )
                 }
             }
+        }
+
+        common.zoomImageViewZoomOut.setOnClickListener {
+            zoomImageView.zoomable.scale(
+                targetScale = zoomImageView.zoomable.transform.scaleX - 0.5f,
+                animated = true
+            )
+        }
+
+        common.zoomImageViewZoomIn.setOnClickListener {
+            zoomImageView.zoomable.scale(
+                targetScale = zoomImageView.zoomable.transform.scaleX + 0.5f,
+                animated = true
+            )
         }
 
         zoomImageView.zoomable.registerOnTransformChangeListener {

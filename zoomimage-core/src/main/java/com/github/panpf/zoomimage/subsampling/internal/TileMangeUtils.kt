@@ -53,17 +53,28 @@ internal fun initializeTileMap(
         val tileList = ArrayList<Tile>(xTiles * yTiles)
         var left = 0
         var top = 0
+        var xCoordinate = 0
+        var yCoordinate = 0
         while (true) {
             val right = (left + sourceTileWidth).coerceAtMost(imageSize.width)
             val bottom = (top + sourceTileHeight).coerceAtMost(imageSize.height)
-            tileList.add(Tile(IntRectCompat(left, top, right, bottom), sampleSize))
+            tileList.add(
+                Tile(
+                    coordinate = IntSizeCompat(xCoordinate, yCoordinate),
+                    srcRect = IntRectCompat(left, top, right, bottom),
+                    sampleSize = sampleSize
+                )
+            )
             if (right >= imageSize.width && bottom >= imageSize.height) {
                 break
             } else if (right >= imageSize.width) {
                 left = 0
                 top += sourceTileHeight
+                xCoordinate = 0
+                yCoordinate++
             } else {
                 left += sourceTileWidth
+                xCoordinate++
             }
         }
         tileMap[sampleSize] = tileList

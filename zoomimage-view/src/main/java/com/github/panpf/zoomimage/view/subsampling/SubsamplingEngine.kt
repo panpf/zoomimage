@@ -27,12 +27,13 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.canUseSubsampling
-import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
+import com.github.panpf.zoomimage.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.subsampling.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.readImageInfo
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -47,7 +48,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -65,10 +65,10 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
     private var tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
     private var onTileChangeListenerList: MutableSet<OnTileChangeListener>? = null
     private var onReadyChangeListenerList: MutableSet<OnReadyChangeListener>? = null
+    private var onSampleSizeChangeListenerList: MutableSet<OnSampleSizeChangeListener>? = null
     private var onStoppedChangeListenerList: MutableSet<OnStoppedChangeListener>? = null
     private var onImageLoadRectChangeListenerList: MutableSet<OnImageLoadRectChangeListener>? = null
     private var lastResetTileDecoderJob: Job? = null
-    private var notifyTileSnapshotListJob: Job? = null
     private var lifecycle: Lifecycle? = null
     private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
     internal var imageKey: String? = null
@@ -140,12 +140,36 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         }
 
     /**
-     * Whether to pause loading tiles when transforming
+     * The animation spec for tile animation
+     */
+    var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
+        set(value) {
+            if (field != value) {
+                field = value
+                tileManager?.tileAnimationSpec = value
+            }
+        }
+
+    /**
+     * Whether to pause loading tiles when transforming, which improves performance,
+     * but delays the loading of tiles, allowing users to perceive the loading process more,
+     * and the user experience will be reduced
      */
     var pauseWhenTransforming: Boolean = false
         set(value) {
             field = value
             tileManager?.pauseWhenTransforming = value
+        }
+
+    /**
+     * Disabling the background tile, which saves memory and improves performance, but when switching sampleSize,
+     * the basemap will be exposed, the user will be able to perceive a choppy switching process,
+     * and the user experience will be reduced
+     */
+    var disabledBackgroundTiles: Boolean = false
+        set(value) {
+            field = value
+            tileManager?.disabledBackgroundTiles = value
         }
 
     /**
@@ -170,11 +194,6 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             }
         }
 
-    /**
-     * The animation spec for tile animation
-     */
-    var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
-
 
     /* *********************************** Information properties ******************************* */
 
@@ -191,9 +210,21 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         get() = imageInfo != null && tileDecoder != null && tileManager != null
 
     /**
-     * A snapshot of the tile list
+     * Foreground tiles, all tiles corresponding to the current sampleSize, this list will be updated when the sampleSize changes, when the loading state of any of the tiles and the progress of the animation changes
      */
-    var tileSnapshotList: List<TileSnapshot> = emptyList()
+    var foregroundTiles: List<TileSnapshot> = emptyList()
+        private set
+
+    /**
+     * Background tiles to avoid revealing the basemap during the process of switching sampleSize to load a new tile, the background tile will be emptied after the new tile is fully loaded and the transition animation is complete, the list of background tiles contains only tiles within the currently loaded area
+     */
+    var backgroundTiles: List<TileSnapshot> = emptyList()
+        private set
+
+    /**
+     * The sample size of the image
+     */
+    var sampleSize: Int = 0
         private set
 
     /**
@@ -256,7 +287,7 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
     }
 
     /**
-     * Register a [tileSnapshotList] property change listener
+     * Register a [backgroundTiles] or [foregroundTiles] property change listener
      */
     fun registerOnTileChangeListener(listener: OnTileChangeListener) {
         this.onTileChangeListenerList = (onTileChangeListenerList ?: LinkedHashSet()).apply {
@@ -265,7 +296,7 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
     }
 
     /**
-     * Unregister a [tileSnapshotList] property change listener
+     * Unregister a [backgroundTiles] or [foregroundTiles] property change listener
      */
     fun unregisterOnTileChangeListener(listener: OnTileChangeListener): Boolean {
         return onTileChangeListenerList?.remove(listener) == true
@@ -285,6 +316,23 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
      */
     fun unregisterOnReadyChangeListener(listener: OnReadyChangeListener): Boolean {
         return onReadyChangeListenerList?.remove(listener) == true
+    }
+
+    /**
+     * Register a [sampleSize] property change listener
+     */
+    fun registerOnSampleSizeChangeListener(listener: OnSampleSizeChangeListener) {
+        this.onSampleSizeChangeListenerList =
+            (onSampleSizeChangeListenerList ?: LinkedHashSet()).apply {
+                add(listener)
+            }
+    }
+
+    /**
+     * Unregister a [sampleSize] property change listener
+     */
+    fun unregisterOnSampleSizeChangeListener(listener: OnSampleSizeChangeListener): Boolean {
+        return onSampleSizeChangeListenerList?.remove(listener) == true
     }
 
     /**
@@ -454,18 +502,28 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             tileBitmapPoolHelper = tileBitmapPoolHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
-                updateTileSnapshotList(manager)
+                backgroundTiles = manager.backgroundTiles
+                foregroundTiles = manager.foregroundTiles
+                notifyTileChange()
+            },
+            onSampleSizeChanged = { manager ->
+                sampleSize = manager.sampleSize
+                notifySampleSizeChange()
             },
             onImageLoadRectChanged = {
                 notifyImageLoadRectChange()
             }
         ).apply {
             pauseWhenTransforming = this@SubsamplingEngine.pauseWhenTransforming
+            disabledBackgroundTiles = this@SubsamplingEngine.disabledBackgroundTiles
+            tileAnimationSpec = this@SubsamplingEngine.tileAnimationSpec
         }
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
-            val tileMapInfoList =
-                tileManager.sortedTileMap.entries.map { "${it.key}:${it.value.size}" }
+            val tileMapInfoList = tileManager.sortedTileMap.entries.map { entry ->
+                val tableSize = entry.value.last().coordinate.let { IntSizeCompat(it.width + 1, it.height + 1) }
+                "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
+            }
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
@@ -525,6 +583,13 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         }
     }
 
+    private fun notifySampleSizeChange() {
+        val sampleSize = sampleSize
+        onSampleSizeChangeListenerList?.forEach {
+            it.onSampleSizeChanged(sampleSize)
+        }
+    }
+
     private fun notifyImageLoadRectChange() {
         val imageLoadRect = imageLoadRect
         onImageLoadRectChangeListenerList?.forEach {
@@ -564,36 +629,6 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
 
     private fun unregisterLifecycleObserver() {
         lifecycle?.removeObserver(resetStoppedLifecycleObserver)
-    }
-
-    private fun updateTileSnapshotList(manager: TileManager) {
-        if (notifyTileSnapshotListJob?.isActive == true) {
-            return
-        }
-
-        notifyTileSnapshotListJob = coroutineScope.launch {
-            var running = true
-            while (running && isActive) {
-                var allFinished = true
-                tileSnapshotList = manager.tileList.map { tile ->
-                    val animationState = tile.animationState
-                    animationState.calculate(tileAnimationSpec.duration)
-                    allFinished = allFinished && animationState.isFinished()
-                    TileSnapshot(
-                        srcRect = tile.srcRect,
-                        inSampleSize = tile.inSampleSize,
-                        bitmap = tile.bitmap,
-                        state = tile.state,
-                        alpha = animationState.alpha
-                    )
-                }
-                notifyTileChange()
-                running = !allFinished
-                if (running) {
-                    delay(tileAnimationSpec.interval)
-                }
-            }
-        }
     }
 
     private class ResetStoppedLifecycleObserver(

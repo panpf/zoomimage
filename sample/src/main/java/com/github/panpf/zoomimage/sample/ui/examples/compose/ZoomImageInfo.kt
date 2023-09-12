@@ -30,10 +30,10 @@ import kotlin.math.roundToInt
 fun ZoomImageInfo(
     imageUri: String,
     zoomableState: ZoomableState,
-    subsamplingState: SubsamplingState,
+    subsampling: SubsamplingState,
 ) {
     val baseInfo = remember(zoomableState.transform) {
-        val imageInfo = subsamplingState.imageInfo
+        val imageInfo = subsampling.imageInfo
         """
             containerSize: ${zoomableState.containerSize.let { "${it.width}x${it.height}" }}
             contentSize: ${zoomableState.contentSize.let { "${it.width}x${it.height}" }}
@@ -76,13 +76,18 @@ fun ZoomImageInfo(
         """.trimIndent()
     }
     val tileInfo = remember(zoomableState.transform) {
-        val tileSnapshotList = subsamplingState.tileSnapshotList
-        val loadedTileCount = tileSnapshotList.count { it.bitmap != null }
+        val foregroundTiles = subsampling.foregroundTiles
+        val loadedTileCount = foregroundTiles.count { it.bitmap != null }
         val loadedTileBytes =
-            tileSnapshotList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+            foregroundTiles.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+        val backgroundTiles = subsampling.backgroundTiles
+        val backgroundTilesLoadedCount = backgroundTiles.count { it.bitmap != null }
+        val backgroundTilesLoadedBytes =
+            backgroundTiles.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
         """
-            tiles=${tileSnapshotList.size}
-            loadedTiles=$loadedTileCount, $loadedTileBytes
+            sampleSize：${subsampling.sampleSize}
+            foreground：size=${foregroundTiles.size}, load=$loadedTileCount, bytes=$loadedTileBytes
+            background：size=${backgroundTiles.size}, load=$backgroundTilesLoadedCount, bytes=$backgroundTilesLoadedBytes
         """.trimIndent()
     }
 
@@ -102,7 +107,7 @@ fun ZoomImageInfo(
         InfoItem("Display&Visible：", displayAndVisibleInfo)
 
         Spacer(modifier = Modifier.size(8.dp))
-        InfoItem("Tile：", tileInfo)
+        InfoItem("Tiles：", tileInfo)
     }
 }
 
@@ -112,7 +117,7 @@ fun ZoomImageInfoPreview() {
     ZoomImageInfo(
         imageUri = "https://www.sample.com/sample.jpg",
         zoomableState = rememberZoomableState(),
-        subsamplingState = rememberSubsamplingState()
+        subsampling = rememberSubsamplingState()
     )
 }
 

@@ -26,7 +26,9 @@ import android.graphics.Rect
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.isEmpty
@@ -50,69 +52,35 @@ class TileDrawHelper(
         canvas: Canvas,
         transform: TransformCompat,
         containerSize: IntSizeCompat,
-        showTileBounds: Boolean,
     ) {
         val imageInfo = subsampling.imageInfo ?: return
         val contentSize = subsampling.contentSize.takeIf { !it.isEmpty() } ?: return
-        val tileSnapshotList = subsampling.tileSnapshotList.takeIf { it.isNotEmpty() } ?: return
+        val backgroundTiles = subsampling.backgroundTiles
+        val foregroundTiles = subsampling.foregroundTiles.takeIf { it.isNotEmpty() } ?: return
         val imageLoadRect = subsampling.imageLoadRect.takeIf { !it.isEmpty } ?: return
 
-        val widthScale = imageInfo.width / contentSize.width.toFloat()
-        val heightScale = imageInfo.height / contentSize.height.toFloat()
+        var backgroundCount = 0
         var insideLoadCount = 0
         var outsideLoadCount = 0
         var realDrawCount = 0
         canvas.withSave {
             canvas.concat(cacheDisplayMatrix.applyTransform(transform, containerSize))
 
-            tileSnapshotList.forEach { tileSnapshot ->
+            backgroundTiles.forEach { tileSnapshot ->
+                if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
+                    if (drawTile(canvas, imageInfo, contentSize, tileSnapshot)) {
+                        backgroundCount++
+                    }
+                }
+            }
+            foregroundTiles.forEach { tileSnapshot ->
                 if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
                     insideLoadCount++
-                    val tileBitmap = tileSnapshot.bitmap
-                    val tileDrawDstRect = cacheRect1.apply {
-                        set(
-                            /* left = */ floor(tileSnapshot.srcRect.left / widthScale).toInt(),
-                            /* top = */ floor(tileSnapshot.srcRect.top / heightScale).toInt(),
-                            /* right = */ floor(tileSnapshot.srcRect.right / widthScale).toInt(),
-                            /* bottom = */ floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
-                        )
-                    }
-                    if (tileBitmap != null) {
+                    if (drawTile(canvas, imageInfo, contentSize, tileSnapshot)) {
                         realDrawCount++
-                        val tileDrawSrcRect = cacheRect2.apply {
-                            set(0, 0, tileBitmap.width, tileBitmap.height)
-                        }
-                        tilePaint.alpha = tileSnapshot.alpha
-                        canvas.drawBitmap(
-                            /* bitmap = */ tileBitmap,
-                            /* src = */ tileDrawSrcRect,
-                            /* dst = */ tileDrawDstRect,
-                            /* paint = */ tilePaint
-                        )
                     }
-
-                    if (showTileBounds) {
-                        val boundsColor = when (tileSnapshot.state) {
-                            Tile.STATE_LOADED -> Color.GREEN
-                            Tile.STATE_LOADING -> Color.YELLOW
-                            else -> Color.RED
-                        }
-                        val tileBoundsPaint = getTileBoundsPaint()
-                        tileBoundsPaint.color = ColorUtils.setAlphaComponent(boundsColor, 100)
-                        val boundsStrokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
-                        val tileBoundsRect = cacheRect2.apply {
-                            set(
-                                /* left = */
-                                floor(tileDrawDstRect.left + boundsStrokeHalfWidth).toInt(),
-                                /* top = */
-                                floor(tileDrawDstRect.top + boundsStrokeHalfWidth).toInt(),
-                                /* right = */
-                                ceil(tileDrawDstRect.right - boundsStrokeHalfWidth).toInt(),
-                                /* bottom = */
-                                ceil(tileDrawDstRect.bottom - boundsStrokeHalfWidth).toInt()
-                            )
-                        }
-                        canvas.drawRect(/* r = */ tileBoundsRect, /* paint = */ tileBoundsPaint)
+                    if (subsampling.showTileBounds) {
+                        drawTileBounds(canvas, imageInfo, contentSize, tileSnapshot)
                     }
                 } else {
                     outsideLoadCount++
@@ -121,12 +89,84 @@ class TileDrawHelper(
         }
 
         logger.d {
-            "drawTiles. tiles=${tileSnapshotList.size}, " +
+            "drawTiles. tiles=${foregroundTiles.size}, " +
                     "insideLoadCount=${insideLoadCount}, " +
                     "outsideLoadCount=${outsideLoadCount}, " +
-                    "realDrawCount=${realDrawCount}. " +
+                    "realDrawCount=${realDrawCount}, " +
+                    "backgroundCount=${backgroundCount}. " +
                     "'${subsampling.imageKey}'"
         }
+    }
+
+    private fun drawTile(
+        canvas: Canvas,
+        imageInfo: ImageInfo,
+        contentSize: IntSizeCompat,
+        tileSnapshot: TileSnapshot
+    ): Boolean {
+        val tileBitmap = tileSnapshot.bitmap
+        if (tileBitmap == null || tileBitmap.isRecycled) return false
+
+        val widthScale = imageInfo.width / contentSize.width.toFloat()
+        val heightScale = imageInfo.height / contentSize.height.toFloat()
+        val tileDrawDstRect = cacheRect1.apply {
+            set(
+                /* left = */ floor(tileSnapshot.srcRect.left / widthScale).toInt(),
+                /* top = */ floor(tileSnapshot.srcRect.top / heightScale).toInt(),
+                /* right = */ floor(tileSnapshot.srcRect.right / widthScale).toInt(),
+                /* bottom = */ floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
+            )
+        }
+        val tileDrawSrcRect = cacheRect2.apply {
+            set(0, 0, tileBitmap.width, tileBitmap.height)
+        }
+        tilePaint.alpha = tileSnapshot.alpha
+        canvas.drawBitmap(
+            /* bitmap = */ tileBitmap,
+            /* src = */ tileDrawSrcRect,
+            /* dst = */ tileDrawDstRect,
+            /* paint = */ tilePaint
+        )
+        return true
+    }
+
+    private fun drawTileBounds(
+        canvas: Canvas,
+        imageInfo: ImageInfo,
+        contentSize: IntSizeCompat,
+        tileSnapshot: TileSnapshot
+    ) {
+        val widthScale = imageInfo.width / contentSize.width.toFloat()
+        val heightScale = imageInfo.height / contentSize.height.toFloat()
+        val tileDrawDstRect = cacheRect1.apply {
+            set(
+                /* left = */ floor(tileSnapshot.srcRect.left / widthScale).toInt(),
+                /* top = */ floor(tileSnapshot.srcRect.top / heightScale).toInt(),
+                /* right = */ floor(tileSnapshot.srcRect.right / widthScale).toInt(),
+                /* bottom = */ floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
+            )
+        }
+        val boundsColor = when (tileSnapshot.state) {
+            Tile.STATE_LOADED -> Color.GREEN
+            Tile.STATE_LOADING -> Color.YELLOW
+            else -> Color.RED
+        }
+        val tileBoundsPaint = getTileBoundsPaint()
+        tileBoundsPaint.color = ColorUtils.setAlphaComponent(boundsColor, 100)
+        val boundsStrokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
+        val tileBoundsRect = cacheRect2.apply {
+            set(
+                /* left = */
+                floor(tileDrawDstRect.left + boundsStrokeHalfWidth).toInt(),
+                /* top = */
+                floor(tileDrawDstRect.top + boundsStrokeHalfWidth).toInt(),
+                /* right = */
+                ceil(tileDrawDstRect.right - boundsStrokeHalfWidth).toInt(),
+                /* bottom = */
+                ceil(tileDrawDstRect.bottom - boundsStrokeHalfWidth).toInt()
+            )
+        }
+        canvas.drawRect(/* r = */ tileBoundsRect, /* paint = */ tileBoundsPaint)
     }
 
     private fun getTileBoundsPaint(): Paint {

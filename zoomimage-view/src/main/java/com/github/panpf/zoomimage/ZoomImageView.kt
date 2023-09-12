@@ -233,6 +233,12 @@ open class ZoomImageView @JvmOverloads constructor(
                 subsampling.pauseWhenTransforming = pauseWhenTransforming
             }
 
+            if (array.hasValue(styleable.ZoomImageView_disabledBackgroundTiles)) {
+                val disabledBackgroundTiles =
+                    array.getBoolean(styleable.ZoomImageView_disabledBackgroundTiles, false)
+                subsampling.disabledBackgroundTiles = disabledBackgroundTiles
+            }
+
             if (array.hasValue(styleable.ZoomImageView_tileAnimation)) {
                 val tileAnimation = array.getBoolean(styleable.ZoomImageView_tileAnimation, false)
                 subsampling.tileAnimationSpec =
@@ -349,7 +355,6 @@ open class ZoomImageView @JvmOverloads constructor(
             canvas = canvas,
             transform = zoomable.transform,
             containerSize = zoomable.containerSize,
-            showTileBounds = subsampling.showTileBounds
         )
         scrollBarHelper?.onDraw(
             canvas = canvas,

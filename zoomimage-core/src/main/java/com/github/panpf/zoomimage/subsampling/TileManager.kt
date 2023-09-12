@@ -29,16 +29,19 @@ import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.LinkedList
 import kotlin.math.ceil
 import kotlin.math.floor
 
-// todo 优化 tile 替换逻辑，现在是切换到新的 scale 后，会先清空所有 tile，然后再加载新的 tile，
-//  这样会导致重新显示最模糊的图片，再到清晰的图片，体验不好
-//  可以考虑在切换到新的 scale 后，先加载新的 tile，旧的 tile 被完全覆盖以后再清空旧的 tile，这样就不会出现重新显示最模糊的图片的情况了
 class TileManager constructor(
     logger: Logger,
     private val tileDecoder: TileDecoder,
@@ -49,36 +52,89 @@ class TileManager constructor(
     containerSize: IntSizeCompat,
     private val contentSize: IntSizeCompat,
     private val onTileChanged: (tileManager: TileManager) -> Unit,
+    private val onSampleSizeChanged: (tileManager: TileManager) -> Unit,
     private val onImageLoadRectChanged: (tileManager: TileManager) -> Unit,
 ) {
-    private val logger: Logger = logger.newLogger(module = "SubsamplingTileManager")
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-    @Suppress("OPT_IN_USAGE")
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(4)
-    private var lastTileList: List<Tile>? = null
-    private var lastSampleSize: Int? = null
+    private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private val logger: Logger = logger.newLogger(module = "TileManager")
     private var lastScale: Float? = null
-    private var lastContentSize: IntSizeCompat? = null
+    private var lastSampleSize: Int = 0
     private var lastContentVisibleRect: IntRectCompat? = null
+    private var notifyTileSnapshotListJob: Job? = null
 
     /**
-     * Whether to pause loading tiles when transforming
+     * Whether to pause loading tiles when transforming, which improves performance,
+     * but delays the loading of tiles, allowing users to perceive the loading process more,
+     * and the user experience will be reduced
      */
     var pauseWhenTransforming: Boolean = false
 
-    val tileMaxSize: IntSizeCompat
-    val sortedTileMap: Map<Int, List<Tile>>
-    val tileList: List<Tile>
-        get() = lastTileList ?: emptyList()
+    /**
+     * Disabling the background tile, which saves memory and improves performance, but when switching sampleSize,
+     * the basemap will be exposed, the user will be able to perceive a choppy switching process,
+     * and the user experience will be reduced
+     */
+    var disabledBackgroundTiles: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                updateTileSnapshotList()
+            }
+        }
+
+    /**
+     * The animation spec for tile animation
+     */
+    var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
+
+    /**
+     * The maximum size of the tile
+     */
+    val tileMaxSize: IntSizeCompat =
+        IntSizeCompat(containerSize.width / 2, containerSize.height / 2)
+
+    /**
+     * Tile Map with sample size from largest to smallest
+     */
+    val sortedTileMap: Map<Int, List<Tile>> =
+        initializeTileMap(imageInfo.size, tileMaxSize).toSortedMap { o1, o2 -> (o1 - o2) * -1 }
+
+    /**
+     * The sample size of the image
+     */
+    var sampleSize: Int = 0
+        private set(value) {
+            if (field != value) {
+                field = value
+                notifySampleSizeChanged()
+            }
+        }
+
+    /**
+     * The image load rect
+     */
     var imageLoadRect = IntRectCompat.Zero
+        private set(value) {
+            if (field != value) {
+                field = value
+                notifyImageLoadRectChanged()
+            }
+        }
+
+    /**
+     * Foreground tiles, all tiles corresponding to the current sampleSize, this list will be updated when the sampleSize changes, when the loading state of any of the tiles and the progress of the animation changes
+     */
+    var foregroundTiles: List<TileSnapshot> = emptyList()
         private set
 
-    init {
-        tileMaxSize = IntSizeCompat(containerSize.width / 2, containerSize.height / 2)
-        sortedTileMap =
-            initializeTileMap(imageInfo.size, tileMaxSize).toSortedMap { o1, o2 -> (o1 - o2) * -1 }
-    }
+    /**
+     * Background tiles to avoid revealing the basemap during the process of switching sampleSize to load a new tile, the background tile will be emptied after the new tile is fully loaded and the transition animation is complete, the list of background tiles contains only tiles within the currently loaded area
+     */
+    var backgroundTiles: List<TileSnapshot> = emptyList()
+        private set
 
     @MainThread
     fun refreshTiles(
@@ -89,8 +145,6 @@ class TileManager constructor(
         caller: String,
     ) {
         requiredMainThread()
-        resetVisibleAndLoadRect(contentVisibleRect)
-
         if (contentVisibleRect.isEmpty) {
             logger.d {
                 "refreshTiles:$caller. interrupted, contentVisibleRect is empty. " +
@@ -99,73 +153,117 @@ class TileManager constructor(
             clean("refreshTiles:contentVisibleRectEmpty")
             return
         }
-
         if (scale.format(2) <= 1.0f) {
             logger.d { "refreshTiles:$caller. interrupted, zoom is less than or equal to 1f. '${imageSource.key}'" }
             clean("refreshTiles:scale1f")
             return
         }
-
+        if (rotation % 90 != 0) {
+            logger.d { "refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
+            return
+        }
         if (pauseWhenTransforming && transforming) {
             logger.d { "refreshTiles:$caller. interrupted, transforming. '${imageSource.key}'" }
             return
         }
 
-        if (rotation % 90 != 0) {
-            logger.d { "refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
-            return
-        }
+        resetImageLoadRect(contentVisibleRect)
+        resetSampleSize(scale)
 
-        val tiles = tryResetTiles(scale)
-        if (tiles.isNullOrEmpty()) {
+        val sampleSize = sampleSize
+        val foregroundTiles = sortedTileMap[sampleSize]
+        if (foregroundTiles == null) {
             logger.d {
-                "refreshTiles:$caller, interrupted, tiles size is ${tiles?.size ?: 0}. " +
-                        "contentSize=${contentSize.toShortString()}, " +
-                        "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
-                        "scale=$scale, " +
-                        "imageInfo=${imageInfo.toShortString()}, " +
-                        "sampleSize=$lastSampleSize. " +
-                        "'${imageSource.key}"
+                val tileMapInfoList =
+                    sortedTileMap.entries.map { "${it.key}:${it.value.size}" }
+                "refreshTiles:$caller. " +
+                        "interrupted, foregroundTilesEmpty. " +
+                        "scale=${scale.format(4)}, " +
+                        "sampleSize=$sampleSize, " +
+                        "tileMaxSize=${tileMaxSize.toShortString()}, " +
+                        "tileMapInfoList=${tileMapInfoList}, " +
+                        "'${imageSource.key}'"
             }
+            clean("refreshTiles:foregroundTilesEmpty")
+            return
+        }
+        if (foregroundTiles.size == 1) {
+            logger.d {
+                "refreshTiles:$caller. interrupted, foregroundTilesOnlyOne. sampleSize=$sampleSize, '${imageSource.key}'"
+            }
+            clean("refreshTiles:foregroundTilesOnlyOne")
             return
         }
 
-        var loadCount = 0
-        var freeCount = 0
-        var realLoadCount = 0
-        var realFreeCount = 0
-        tiles.forEach { tile ->
-            if (tile.srcRect.overlaps(imageLoadRect)) {
-                loadCount++
-                if (loadTile(tile)) {
-                    realLoadCount++
+        var expectLoadCount = 0
+        var actualLoadCount = 0
+        var expectFreeCount = 0
+        var actualFreeCount = 0
+        val imageLoadRect = imageLoadRect
+        val currentSampleSize = sampleSize
+        val lastSampleSize = lastSampleSize
+        sortedTileMap.entries.forEach { (eachSampleSize, eachTiles) ->
+            if (eachSampleSize == currentSampleSize) {
+                eachTiles.forEach { foregroundTile ->
+                    if (foregroundTile.srcRect.overlaps(imageLoadRect)) {
+                        expectLoadCount++
+                        if (loadTile(foregroundTile)) {
+                            actualLoadCount++
+                        }
+                    } else {
+                        expectFreeCount++
+                        if (freeTile(foregroundTile, skipNotify = true)) {
+                            actualFreeCount++
+                        }
+                    }
+                }
+            } else if (!disabledBackgroundTiles
+                && isBackground(lastSampleSize, currentSampleSize, eachSampleSize)
+            ) {
+                eachTiles.forEach { backgroundTile ->
+                    if (!backgroundTile.srcRect.overlaps(imageLoadRect)) {
+                        expectFreeCount++
+                        if (freeTile(backgroundTile, skipNotify = true)) {
+                            actualFreeCount++
+                        }
+                    }
                 }
             } else {
-                freeCount++
-                if (freeTile(tile, nowNotifyTileChanged = true)) {
-                    realFreeCount++
-                }
+                expectFreeCount += eachTiles.size
+                actualFreeCount += freeTiles(eachTiles, skipNotify = true)
             }
         }
-
         logger.d {
             "refreshTiles:$caller. " +
-                    "tiles=${tiles.size}, " +
-                    "loadCount=${realLoadCount}/${loadCount}, " +
-                    "freeCount=${realFreeCount}/${freeCount}. " +
-                    "contentSize=${contentSize.toShortString()}, " +
-                    "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
-                    "scale=$scale, " +
-                    "imageInfo=${imageInfo.toShortString()}, " +
-                    "sampleSize=$lastSampleSize, " +
+                    "loadCount=${actualLoadCount}/${expectLoadCount}, " +
+                    "freeCount=${actualFreeCount}/${expectFreeCount}. " +
+                    "sampleSize=${sampleSize}, " +
+                    "foregroundTiles=${foregroundTiles.size}, " +
                     "imageLoadRect=${imageLoadRect.toShortString()}. " +
+                    "scale=$scale, " +
+                    "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
+                    "contentSize=${contentSize.toShortString()}, " +
+                    "imageInfo=${imageInfo.toShortString()}, " +
                     "'${imageSource.key}"
+        }
+        if (actualFreeCount > 0) {
+            updateTileSnapshotList()
         }
     }
 
-    private fun resetVisibleAndLoadRect(contentVisibleRect: IntRectCompat) {
+    private fun isBackground(
+        lastSampleSize: Int,
+        currentSampleSize: Int,
+        eachSampleSize: Int
+    ): Boolean {
+        if (lastSampleSize == 0) return false
+        if (lastSampleSize > currentSampleSize && eachSampleSize > currentSampleSize) return true
+        return lastSampleSize < currentSampleSize && eachSampleSize < currentSampleSize
+    }
+
+    private fun resetImageLoadRect(contentVisibleRect: IntRectCompat): Boolean {
         if (lastContentVisibleRect == contentVisibleRect) {
-            return
+            return false
         }
         lastContentVisibleRect = contentVisibleRect
 
@@ -185,59 +283,52 @@ class TileManager constructor(
             right = imageVisibleRect.right + tileMaxSize.width / 2,
             bottom = imageVisibleRect.bottom + tileMaxSize.height / 2
         )
-
-        onImageLoadRectChanged(this)
+        return true
     }
 
-    private fun tryResetTiles(scale: Float): List<Tile>? {
+    private fun resetSampleSize(scale: Float): Boolean {
         val lastScale = lastScale
-        val lastSampleSize = lastSampleSize
-        val lastTileList = lastTileList
-        val lastContentSize = lastContentSize
-        if (scale == lastScale && contentSize == lastContentSize && lastSampleSize != null && lastTileList != null) {
-            return lastTileList
+        val currentSampleSize = sampleSize
+        if (currentSampleSize != 0 && scale == lastScale) {
+            return false
         }
-        val sampleSize = calculateSampleSize(
+        this.lastScale = scale
+
+        val newSampleSize = calculateSampleSize(
             imageSize = imageInfo.size,
             drawableSize = contentSize,
             scale = scale
         )
-        if (sampleSize == lastSampleSize && contentSize == lastContentSize && lastTileList != null) {
-            return lastTileList
+        if (newSampleSize == currentSampleSize) {
+            return false
         }
 
-        lastTileList?.forEach { tile ->
-            freeTile(tile, nowNotifyTileChanged = false)
-        }
-
-        val tiles = sortedTileMap[sampleSize]
-        this.lastScale = scale
-        this.lastContentSize = contentSize
-        this.lastSampleSize = sampleSize
-        this.lastTileList = tiles
-
-        notifyTileChanged()
-        return tiles
+        this.lastSampleSize = currentSampleSize
+        this.sampleSize = newSampleSize
+        return true
     }
 
     @MainThread
     fun clean(caller: String) {
         requiredMainThread()
-        val lastTileList = lastTileList
-        if (lastTileList != null) {
+
+        val notifyTileSnapshotListJob = notifyTileSnapshotListJob
+        if (notifyTileSnapshotListJob != null) {
+            notifyTileSnapshotListJob.cancel("clean:$caller")
+            this.notifyTileSnapshotListJob = null
+        }
+
+        val sampleSize = sampleSize
+        if (sampleSize != 0) {
             var freeCount = 0
             sortedTileMap.values.forEach { tileList ->
-                tileList.forEach { tile ->
-                    if (freeTile(tile, nowNotifyTileChanged = false)) {
-                        freeCount++
-                    }
-                }
+                freeCount += freeTiles(tileList, skipNotify = true)
             }
-            this@TileManager.lastSampleSize = null
-            this@TileManager.lastTileList = null
+            this.sampleSize = 0
             logger.d { "clean:$caller. freeCount=$freeCount. '${imageSource.key}" }
+
             if (freeCount > 0) {
-                notifyTileChanged()
+                updateTileSnapshotList()
             }
         }
     }
@@ -262,19 +353,20 @@ class TileManager constructor(
         }
 
         val memoryCacheKey =
-            "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${imageInfo.exifOrientation}_${tile.inSampleSize}"
+            "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${imageInfo.exifOrientation}_${tile.sampleSize}"
         val cachedValue = tileMemoryCacheHelper.get(memoryCacheKey)
         if (cachedValue != null) {
             tile.setTileBitmap(cachedValue, fromCache = true)
             tile.state = Tile.STATE_LOADED
             logger.d { "loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
-            notifyTileChanged()
+            updateTileSnapshotList()
             return true
         }
 
-        tile.loadJob = scope.async {
+        logger.d("loadTile. started. $tile. '${imageSource.key}'")
+        tile.loadJob = coroutineScope.async {
             tile.state = Tile.STATE_LOADING
-            notifyTileChanged()
+            updateTileSnapshotList()
 
             val bitmap = withContext(decodeDispatcher) {
                 tileDecoder.decode(tile)
@@ -306,14 +398,14 @@ class TileManager constructor(
                     tileBitmapPoolHelper.freeBitmap(bitmap, "loadTile:jobCanceled")
                 }
             }
-            notifyTileChanged()
+            updateTileSnapshotList()
         }
 
         return true
     }
 
     @MainThread
-    private fun freeTile(tile: Tile, nowNotifyTileChanged: Boolean): Boolean {
+    private fun freeTile(tile: Tile, skipNotify: Boolean = false): Boolean {
         if (tile.state == Tile.STATE_NONE) {
             return false
         }
@@ -332,13 +424,145 @@ class TileManager constructor(
             tile.setTileBitmap(null, fromCache = false)
         }
 
-        if (nowNotifyTileChanged) {
-            notifyTileChanged()
+        if (!skipNotify) {
+            updateTileSnapshotList()
         }
         return true
     }
 
+    @MainThread
+    private fun freeTiles(
+        tiles: List<Tile>,
+        @Suppress("SameParameterValue") skipNotify: Boolean = false
+    ): Int {
+        var freeCount = 0
+        tiles.forEach { tile ->
+            if (freeTile(tile, skipNotify)) {
+                freeCount++
+            }
+        }
+        if (!skipNotify && freeCount > 0) {
+            updateTileSnapshotList()
+        }
+        return freeCount
+    }
+
+    private fun updateTileSnapshotList() {
+        if (notifyTileSnapshotListJob?.isActive == true) {
+            return
+        }
+
+        notifyTileSnapshotListJob = coroutineScope.launch {
+            var running = true
+            while (running && isActive) {
+                val sampleSize = sampleSize
+                val imageLoadRect = imageLoadRect
+                val foregroundTileSnapshots = LinkedList<TileSnapshot>()
+                var foregroundLoadAllCompleted = true
+                var foregroundAnimationAllFinished = true
+                var foregroundInsideCount = 0
+                var foregroundOutsideCount = 0
+                var foregroundLoadedCount = 0
+                var foregroundLoadingCount = 0
+                var foregroundAnimatingCount = 0
+                val foregroundTiles = sortedTileMap[sampleSize]
+                val foregroundTileCount = foregroundTiles?.size ?: 0
+                foregroundTiles?.forEach { foregroundTile ->
+                    val animationState = foregroundTile.animationState
+                    animationState.calculate(tileAnimationSpec.duration)
+                    if (animationState.running) {
+                        foregroundAnimatingCount++
+                    }
+                    foregroundAnimationAllFinished =
+                        foregroundAnimationAllFinished && !animationState.running
+
+                    if (foregroundTile.state == Tile.STATE_LOADED) {
+                        foregroundLoadedCount++
+                    } else if (foregroundTile.state == Tile.STATE_LOADING) {
+                        foregroundLoadingCount++
+                    }
+
+                    if (foregroundTile.srcRect.overlaps(imageLoadRect)) {
+                        foregroundLoadAllCompleted =
+                            foregroundLoadAllCompleted && foregroundTile.state == Tile.STATE_LOADED
+                        foregroundInsideCount++
+                    } else {
+                        foregroundOutsideCount++
+                    }
+
+                    foregroundTileSnapshots.add(foregroundTile.toSnapshot())
+                }
+
+                /*
+                 * If the foreground tile is all loaded and the animation is all over, release the background tile,
+                 * otherwise continue to display the background tile
+                 */
+                var backgroundTileCount = 0
+                var backgroundFreeCount = 0
+                val backgroundTileSnapshots = LinkedList<TileSnapshot>()
+                val currentSampleSize = sampleSize
+                val lastSampleSize = lastSampleSize
+                val disabledBackgroundTiles = disabledBackgroundTiles
+                sortedTileMap.entries.forEach { (eachSampleSize, eachTiles) ->
+                    if (eachSampleSize != currentSampleSize) {
+                        if (!disabledBackgroundTiles
+                            && isBackground(lastSampleSize, currentSampleSize, eachSampleSize)
+                        ) {
+                            if (foregroundLoadAllCompleted && foregroundAnimationAllFinished) {
+                                val freeCount = freeTiles(eachTiles, skipNotify = true)
+                                backgroundFreeCount += freeCount
+                            } else {
+                                eachTiles.forEach { backgroundTile ->
+                                    if (backgroundTile.srcRect.overlaps(imageLoadRect) && backgroundTile.state == Tile.STATE_LOADED) {
+                                        backgroundTileCount++
+                                        if (backgroundTile.animationState.running) {
+                                            backgroundTile.animationState.stop()
+                                        }
+                                        backgroundTileSnapshots.add(backgroundTile.toSnapshot())
+                                    }
+                                }
+                            }
+                        } else {
+                            val freeCount = freeTiles(eachTiles, skipNotify = true)
+                            backgroundFreeCount += freeCount
+                        }
+                    }
+                }
+
+                logger.d {
+                    "updateTileSnapshotList. " +
+                            "sampleSize=$sampleSize, " +
+                            "foregroundTileCount=$foregroundTileCount," +
+                            "foregroundInsideCount=$foregroundInsideCount, " +
+                            "foregroundOutsideCount=$foregroundOutsideCount, " +
+                            "foregroundLoadedCount=$foregroundLoadedCount, " +
+                            "foregroundLoadingCount=$foregroundLoadingCount, " +
+                            "foregroundAnimatingCount=$foregroundAnimatingCount, " +
+                            "backgroundTileCount=$backgroundTileCount, " +
+                            "backgroundFreeCount=$backgroundFreeCount, "
+                }
+
+                this@TileManager.foregroundTiles = foregroundTileSnapshots
+                this@TileManager.backgroundTiles = backgroundTileSnapshots
+                notifyTileChanged()
+
+                running = !foregroundAnimationAllFinished
+                if (running) {
+                    delay(tileAnimationSpec.interval)
+                }
+            }
+        }
+    }
+
     private fun notifyTileChanged() {
         onTileChanged(this)
+    }
+
+    private fun notifySampleSizeChanged() {
+        onSampleSizeChanged(this)
+    }
+
+    private fun notifyImageLoadRectChanged() {
+        onImageLoadRectChanged(this)
     }
 }

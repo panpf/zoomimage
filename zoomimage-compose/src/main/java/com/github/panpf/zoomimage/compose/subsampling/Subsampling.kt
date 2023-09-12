@@ -22,11 +22,17 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.internal.isEmpty
+import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -38,62 +44,31 @@ fun Modifier.subsampling(
     val imageInfo = subsamplingState.imageInfo ?: return@drawWithContent
     val contentSize = subsamplingState.contentSize
         .takeIf { !it.isEmpty() } ?: return@drawWithContent
-    val tileSnapshotList = subsamplingState.tileSnapshotList
+    val foregroundTiles = subsamplingState.foregroundTiles
         .takeIf { it.isNotEmpty() } ?: return@drawWithContent
+    val backgroundTiles = subsamplingState.backgroundTiles
     val imageLoadRect = subsamplingState.imageLoadRect
-        .takeIf { !it.isEmpty } ?: return@drawWithContent
+        .takeIf { !it.isEmpty }?.toCompat() ?: return@drawWithContent
 
-    val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
-    val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
+    var backgroundCount = 0
     var insideLoadCount = 0
     var outsideLoadCount = 0
     var realDrawCount = 0
-    tileSnapshotList.forEach { tileSnapshot ->
+    backgroundTiles.forEach { tileSnapshot ->
+        if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
+            if (drawTile(imageInfo, contentSize, tileSnapshot)) {
+                backgroundCount++
+            }
+        }
+    }
+    foregroundTiles.forEach { tileSnapshot ->
         if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
             insideLoadCount++
-            val tileSrcRect = tileSnapshot.srcRect
-            val tileDrawRect = IntRect(
-                left = floor(tileSrcRect.left / widthScale).toInt(),
-                top = floor(tileSrcRect.top / heightScale).toInt(),
-                right = floor(tileSrcRect.right / widthScale).toInt(),
-                bottom = floor(tileSrcRect.bottom / heightScale).toInt()
-            )
-
-            val tileBitmap = tileSnapshot.bitmap
-            if (tileBitmap != null && !tileBitmap.isRecycled) {
+            if (drawTile(imageInfo, contentSize, tileSnapshot)) {
                 realDrawCount++
-                val srcRect = IntRect(0, 0, tileBitmap.width, tileBitmap.height)
-                drawImage(
-                    image = tileBitmap.asImageBitmap(),
-                    srcOffset = srcRect.topLeft,
-                    srcSize = srcRect.size,
-                    dstOffset = tileDrawRect.topLeft,
-                    dstSize = tileDrawRect.size,
-                    alpha = tileSnapshot.alpha / 255f,
-                )
             }
-
             if (subsamplingState.showTileBounds) {
-                val boundsColor = when (tileSnapshot.state) {
-                    Tile.STATE_LOADED -> Color.Green
-                    Tile.STATE_LOADING -> Color.Yellow
-                    else -> Color.Red
-                }
-                val boundsStrokeWidth = 1f * Resources.getSystem().displayMetrics.density
-                val boundsStrokeHalfWidth = boundsStrokeWidth / 2
-                val tileBoundsRect = Rect(
-                    left = floor(tileDrawRect.left + boundsStrokeHalfWidth),
-                    top = floor(tileDrawRect.top + boundsStrokeHalfWidth),
-                    right = ceil(tileDrawRect.right - boundsStrokeHalfWidth),
-                    bottom = ceil(tileDrawRect.bottom - boundsStrokeHalfWidth)
-                )
-                drawRect(
-                    color = boundsColor,
-                    topLeft = tileBoundsRect.topLeft,
-                    size = tileBoundsRect.size,
-                    style = Stroke(width = boundsStrokeWidth),
-                    alpha = 0.5f,
-                )
+                drawTileBounds(imageInfo, contentSize, tileSnapshot)
             }
         } else {
             outsideLoadCount++
@@ -101,10 +76,76 @@ fun Modifier.subsampling(
     }
 
     logger.d {
-        "drawTiles. tiles=${tileSnapshotList.size}, " +
+        "drawTiles. tiles=${foregroundTiles.size}, " +
                 "insideLoadCount=${insideLoadCount}, " +
                 "outsideLoadCount=${outsideLoadCount}, " +
-                "realDrawCount=${realDrawCount}. " +
+                "realDrawCount=${realDrawCount}, " +
+                "backgroundCount=${backgroundCount}. " +
                 "'${subsamplingState.imageKey}'"
     }
+}
+
+private fun ContentDrawScope.drawTile(
+    imageInfo: ImageInfo,
+    contentSize: IntSize,
+    tileSnapshot: TileSnapshot
+): Boolean {
+    val tileBitmap = tileSnapshot.bitmap
+    if (tileBitmap == null || tileBitmap.isRecycled) return false
+
+    val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
+    val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
+    val tileDrawRect = IntRect(
+        left = floor(tileSnapshot.srcRect.left / widthScale).toInt(),
+        top = floor(tileSnapshot.srcRect.top / heightScale).toInt(),
+        right = floor(tileSnapshot.srcRect.right / widthScale).toInt(),
+        bottom = floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
+    )
+    val srcOffset = IntOffset.Zero
+    val srcSize = IntSize(tileBitmap.width, tileBitmap.height)
+    val alpha = tileSnapshot.alpha / 255f
+    drawImage(
+        image = tileBitmap.asImageBitmap(),
+        srcOffset = srcOffset,
+        srcSize = srcSize,
+        dstOffset = tileDrawRect.topLeft,
+        dstSize = tileDrawRect.size,
+        alpha = alpha,
+    )
+    return true
+}
+
+private fun ContentDrawScope.drawTileBounds(
+    imageInfo: ImageInfo,
+    contentSize: IntSize,
+    tileSnapshot: TileSnapshot
+) {
+    val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
+    val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
+    val boundsColor = when (tileSnapshot.state) {
+        Tile.STATE_LOADED -> Color.Green
+        Tile.STATE_LOADING -> Color.Yellow
+        else -> Color.Red
+    }
+    val tileDrawRect = IntRect(
+        left = floor(tileSnapshot.srcRect.left / widthScale).toInt(),
+        top = floor(tileSnapshot.srcRect.top / heightScale).toInt(),
+        right = floor(tileSnapshot.srcRect.right / widthScale).toInt(),
+        bottom = floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
+    )
+    val boundsStrokeWidth = 1f * Resources.getSystem().displayMetrics.density
+    val boundsStrokeHalfWidth = boundsStrokeWidth / 2
+    val tileBoundsRect = Rect(
+        left = floor(tileDrawRect.left + boundsStrokeHalfWidth),
+        top = floor(tileDrawRect.top + boundsStrokeHalfWidth),
+        right = ceil(tileDrawRect.right - boundsStrokeHalfWidth),
+        bottom = ceil(tileDrawRect.bottom - boundsStrokeHalfWidth)
+    )
+    drawRect(
+        color = boundsColor,
+        topLeft = tileBoundsRect.topLeft,
+        size = tileBoundsRect.size,
+        style = Stroke(width = boundsStrokeWidth),
+        alpha = 0.5f,
+    )
 }

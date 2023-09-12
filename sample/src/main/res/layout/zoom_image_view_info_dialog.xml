@@ -96,13 +96,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="right"
-            android:text="Tile："
+            android:text="Tiles："
             android:textSize="13sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/imageInfoTileText"
+            android:id="@+id/imageInfoTilesText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"

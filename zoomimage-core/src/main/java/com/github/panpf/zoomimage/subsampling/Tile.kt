@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.subsampling
 import android.graphics.Bitmap
 import androidx.annotation.IntDef
 import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.toShortString
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.Job
@@ -26,8 +27,11 @@ import kotlinx.coroutines.Job
 /**
  * A tile of the image, store the region, sample multiplier, Bitmap, load status, and other information of the tile
  */
-// todo 改为 internal
 class Tile constructor(
+    /**
+     * Horizontal and vertical coordinates
+     */
+    val coordinate: IntSizeCompat,
 
     /**
      * The region of Tile in the original image
@@ -37,7 +41,7 @@ class Tile constructor(
     /**
      * The sampling multiplier at load
      */
-    val inSampleSize: Int
+    val sampleSize: Int
 ) {
 
     internal var loadJob: Job? = null
@@ -75,22 +79,24 @@ class Tile constructor(
         if (javaClass != other?.javaClass) return false
         other as Tile
         if (srcRect != other.srcRect) return false
-        if (inSampleSize != other.inSampleSize) return false
+        if (sampleSize != other.sampleSize) return false
         if (bitmap != other.bitmap) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = srcRect.hashCode()
-        result = 31 * result + inSampleSize
+        result = 31 * result + sampleSize
         result = 31 * result + (bitmap?.hashCode() ?: 0)
         return result
     }
 
     override fun toString(): String {
         return "Tile(" +
+                "coordinate=${coordinate.toShortString()}," +
                 "srcRect=${srcRect.toShortString()}," +
-                "inSampleSize=$inSampleSize," +
+                "state=${stateName(state)}," +
+                "sampleSize=$sampleSize," +
                 "bitmap=${bitmap?.toShortString().orEmpty()})"
     }
 
@@ -99,6 +105,14 @@ class Tile constructor(
         const val STATE_LOADING = 1
         const val STATE_LOADED = 2
         const val STATE_ERROR = 3
+
+        fun stateName(state: Int): String = when (state) {
+            STATE_NONE -> "NONE"
+            STATE_LOADING -> "LOADING"
+            STATE_LOADED -> "LOADED"
+            STATE_ERROR -> "ERROR"
+            else -> "UNKNOWN"
+        }
     }
 
     @Retention(AnnotationRetention.SOURCE)
@@ -144,7 +158,5 @@ class Tile constructor(
                 calculate()
             }
         }
-
-        fun isFinished(): Boolean = progress >= 1f
     }
 }

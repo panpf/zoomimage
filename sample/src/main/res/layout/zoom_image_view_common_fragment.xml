@@ -106,11 +106,41 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/zoomImageViewZoomOut"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/bg_arrow"
+                    android:padding="3dp"
+                    app:srcCompat="@drawable/ic_zoom_out"
+                    app:tint="@color/colorOnPrimary" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/zoomImageViewZoomIn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/bg_arrow"
+                    android:padding="3dp"
+                    app:srcCompat="@drawable/ic_zoom_in"
+                    app:tint="@color/colorOnPrimary" />
+            </LinearLayout>
+
             <com.google.android.material.slider.Slider
                 android:id="@+id/zoomImageViewLinearScaleSlider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp" />
         </LinearLayout>
 
         <LinearLayout

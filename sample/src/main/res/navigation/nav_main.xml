@@ -155,7 +155,7 @@
             app:argType="string"
             app:nullable="false" />
         <argument
-            android:name="tileInfo"
+            android:name="tilesInfo"
             app:argType="string"
             app:nullable="false" />
     </fragment>

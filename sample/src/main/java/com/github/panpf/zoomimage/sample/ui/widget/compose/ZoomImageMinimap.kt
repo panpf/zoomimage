@@ -36,13 +36,14 @@ import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.sample.ui.util.compose.isEmpty
 import com.github.panpf.zoomimage.sample.ui.util.compose.isNotEmpty
 import com.github.panpf.zoomimage.sample.ui.util.compose.times
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.util.IntRectCompat
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -92,11 +93,11 @@ fun ZoomImageMinimap(
                     .clipToBounds()
                     .drawWithContent {
                         drawContent()
-                        val tileSnapshotList = subsamplingState.tileSnapshotList
-                        val imageLoadRect = subsamplingState.imageLoadRect
+                        val foregroundTiles = subsamplingState.foregroundTiles
+                        val imageLoadRect = subsamplingState.imageLoadRect.toCompat()
                         if (contentSize.isNotEmpty() && imageSize.isNotEmpty()) {
                             drawTilesBounds(
-                                tileSnapshotList = tileSnapshotList,
+                                tileSnapshotList = foregroundTiles,
                                 imageSize = imageSize,
                                 viewSize = viewSize,
                                 imageLoadRect = imageLoadRect,
@@ -164,7 +165,7 @@ private fun ContentDrawScope.drawTilesBounds(
     tileSnapshotList: List<TileSnapshot>,
     imageSize: IntSize,
     viewSize: IntSize,
-    imageLoadRect: IntRect,
+    imageLoadRect: IntRectCompat,
     strokeWidth: Float,
 ) {
     val widthTargetScale = imageSize.width.toFloat() / viewSize.width

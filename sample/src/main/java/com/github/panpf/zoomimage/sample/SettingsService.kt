@@ -74,6 +74,9 @@ class SettingsService(val context: Context) {
     val pauseWhenTransforming by lazy {
         BooleanMmkvData(mmkv, "pauseWhenTransforming", false)
     }
+    val disabledBackgroundTiles by lazy {
+        BooleanMmkvData(mmkv, "disabledBackgroundTiles", false)
+    }
     val ignoreExifOrientation by lazy {
         BooleanMmkvData(mmkv, "ignoreExifOrientation", false)
     }

@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -40,7 +43,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -139,6 +141,50 @@ fun ZoomImageTool(
 
                     Spacer(modifier = Modifier.size(6.dp))
 
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        FilledIconButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    zoomableState.scale(
+                                        targetScale = zoomableState.transform.scaleX - 0.5f,
+                                        animated = true
+                                    )
+                                }
+                            },
+                            modifier = Modifier.size(30.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_zoom_out),
+                                contentDescription = "zoom out",
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(1.dp)
+                        )
+
+                        FilledIconButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    zoomableState.scale(
+                                        targetScale = zoomableState.transform.scaleX + 0.5f,
+                                        animated = true
+                                    )
+                                }
+                            },
+                            modifier = Modifier.size(30.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_zoom_in),
+                                contentDescription = "zoom in",
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.size(6.dp))
+
                     Slider(
                         value = zoomableState.transform.scaleX,
                         valueRange = zoomableState.minScale..zoomableState.maxScale,
@@ -163,7 +209,7 @@ fun ZoomImageTool(
             ZoomImageInfo(
                 imageUri = imageUri,
                 zoomableState = zoomableState,
-                subsamplingState = subsamplingState
+                subsampling = subsamplingState
             )
         }
     }
@@ -209,7 +255,7 @@ private fun ButtonPad(
                 coroutineScope.launch {
                     zoomableState.switchScale(animated = true)
                 }
-          },
+            },
             modifier = Modifier.size(40.dp)
         ) {
             val zoomIn by remember {
@@ -248,14 +294,4 @@ private fun ButtonPad(
             )
         }
     }
-}
-
-@Preview
-@Composable
-private fun ButtonPadPreview() {
-    ButtonPad(
-        infoDialogState = rememberMyDialogState(),
-        zoomableState = rememberZoomableState(logger = rememberZoomImageLogger()),
-        onClickMore = {}
-    )
 }

@@ -26,6 +26,7 @@
         <attr name="threeStepScale" format="boolean" />
         <attr name="limitOffsetWithinBaseVisibleRect" format="boolean" />
         <attr name="pauseWhenTransforming" format="boolean" />
+        <attr name="disabledBackgroundTiles" format="boolean" />
         <attr name="tileAnimation" format="boolean" />
         <attr name="disabledScrollBar" format="boolean" />
         <attr name="scrollBarColor" format="color|reference" />

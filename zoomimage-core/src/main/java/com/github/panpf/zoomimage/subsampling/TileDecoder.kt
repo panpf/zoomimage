@@ -43,7 +43,7 @@ class TileDecoder constructor(
     private val imageInfo: ImageInfo,
 ) {
 
-    private val logger = logger.newLogger(module = "SubsamplingTileDecoder")
+    private val logger = logger.newLogger(module = "TileDecoder")
     private var destroyed = false
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
     private val exifOrientationHelper =
@@ -55,7 +55,7 @@ class TileDecoder constructor(
         requiredWorkThread()
         if (destroyed) return null
         return useDecoder { decoder ->
-            decodeRegion(decoder, tile.srcRect, tile.inSampleSize)
+            decodeRegion(decoder, tile.srcRect, tile.sampleSize)
                 ?.let { applyExifOrientation(it) }
         }
     }

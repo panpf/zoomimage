@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 import android.os.Bundle
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.sketch.decode.internal.exifOrientationName
-import com.github.panpf.tools4j.io.ktx.formatFileSize
+import com.github.panpf.tools4j.io.ktx.formatCompactFileSize
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewInfoDialogBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
@@ -42,7 +42,7 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
         binding.imageInfoScaleText.text = args.scaleInfo
         binding.imageInfoOffsetText.text = args.offsetInfo
         binding.imageInfoDisplayAndVisibleText.text = args.displayAndVisibleInfo
-        binding.imageInfoTileText.text = args.tileInfo
+        binding.imageInfoTilesText.text = args.tilesInfo
     }
 
     companion object {
@@ -94,13 +94,18 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
                 contentVisible: ${zoomable.contentVisibleRect.toShortString()}
             """.trimIndent()
 
-            val tileSnapshotList = subsampling.tileSnapshotList
-            val loadedTileCount = tileSnapshotList.count { it.bitmap != null }
+            val foregroundTiles = subsampling.foregroundTiles
+            val loadedTileCount = foregroundTiles.count { it.bitmap != null }
             val loadedTileBytes =
-                tileSnapshotList.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatFileSize()
+                foregroundTiles.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+            val backgroundTiles = subsampling.backgroundTiles
+            val backgroundTilesLoadedCount = backgroundTiles.count { it.bitmap != null }
+            val backgroundTilesLoadedBytes =
+                backgroundTiles.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
             val tilesInfo = """
-                tiles=${tileSnapshotList.size}
-                loadedTiles=$loadedTileCount, $loadedTileBytes
+                sampleSize：${subsampling.sampleSize}
+                foreground：size=${foregroundTiles.size}, load=$loadedTileCount, bytes=$loadedTileBytes
+                background：size=${backgroundTiles.size}, load=$backgroundTilesLoadedCount, bytes=$backgroundTilesLoadedBytes
             """.trimIndent()
             return ZoomImageViewInfoDialogFragmentArgs(
                 imageUri = sketchImageUri,
@@ -108,7 +113,7 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
                 scaleInfo = scaleInfo,
                 offsetInfo = offsetInfo,
                 displayAndVisibleInfo = displayAndVisibleInfo,
-                tileInfo = tilesInfo
+                tilesInfo = tilesInfo
             )
         }
     }

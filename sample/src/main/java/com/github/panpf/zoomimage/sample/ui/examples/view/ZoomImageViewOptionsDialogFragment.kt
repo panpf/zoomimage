@@ -202,6 +202,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             )
             add(
                 SwitchMenuFlow(
+                    title = "Disabled Background Tiles",
+                    data = settingsService.disabledBackgroundTiles,
+                )
+            )
+            add(
+                SwitchMenuFlow(
                     title = "Ignore Exif Orientation",
                     data = settingsService.ignoreExifOrientation,
                     disabled = !zoomViewType.supportIgnoreExifOrientation,
