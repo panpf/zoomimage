@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.zoom.internal.NavigationBarHeightState
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -114,7 +115,7 @@ fun Modifier.zoomable(
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float ->
                     coroutineScope.launch {
-                        zoomable.transforming = true
+                        zoomable.continuousTransformType = ContinuousTransformType.GESTURE
                         zoomable.gestureTransform(
                             centroid = centroid,
                             panChange = pan,
@@ -125,9 +126,10 @@ fun Modifier.zoomable(
                 },
                 onEnd = { centroid, velocity ->
                     coroutineScope.launch {
-                        zoomable.transforming = false
                         if (!zoomable.rollbackScale(centroid)) {
-                            zoomable.fling(velocity, density)
+                            if (!zoomable.fling(velocity, density)) {
+                                zoomable.continuousTransformType = ContinuousTransformType.NONE
+                            }
                         }
                     }
                 }

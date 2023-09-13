@@ -30,6 +30,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
+import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPausedContinuousTransformType
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
@@ -43,6 +44,7 @@ import com.github.panpf.zoomimage.view.internal.findLifecycle
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.zoom.OnContainerSizeChangeListener
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -151,14 +153,12 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         }
 
     /**
-     * Whether to pause loading tiles when transforming, which improves performance,
-     * but delays the loading of tiles, allowing users to perceive the loading process more,
-     * and the user experience will be reduced
+     * A continuous transform type that needs to pause loading
      */
-    var pauseWhenTransforming: Boolean = false
+    var pausedContinuousTransformType: Int = DefaultPausedContinuousTransformType
         set(value) {
             field = value
-            tileManager?.pauseWhenTransforming = value
+            tileManager?.pausedContinuousTransformType = value
         }
 
     /**
@@ -387,7 +387,7 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
                 contentVisibleRect = zoomableEngine.contentVisibleRect,
                 scale = zoomableEngine.transform.scaleX,
                 rotation = zoomableEngine.transform.rotation.roundToInt(),
-                transforming = zoomableEngine.transforming,
+                continuousTransformType = zoomableEngine.continuousTransformType,
                 caller = caller
             )
         }
@@ -415,7 +415,7 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         contentVisibleRect: IntRectCompat,
         scale: Float,
         rotation: Int,
-        transforming: Boolean,
+        @ContinuousTransformType continuousTransformType: Int,
         caller: String,
     ) {
         val tileManager = tileManager ?: return
@@ -428,7 +428,7 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             contentVisibleRect = contentVisibleRect,
             scale = scale,
             rotation = rotation,
-            transforming = transforming,
+            continuousTransformType = continuousTransformType,
             caller = caller
         )
     }
@@ -514,14 +514,15 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
                 notifyImageLoadRectChange()
             }
         ).apply {
-            pauseWhenTransforming = this@SubsamplingEngine.pauseWhenTransforming
+            pausedContinuousTransformType = this@SubsamplingEngine.pausedContinuousTransformType
             disabledBackgroundTiles = this@SubsamplingEngine.disabledBackgroundTiles
             tileAnimationSpec = this@SubsamplingEngine.tileAnimationSpec
         }
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
             val tileMapInfoList = tileManager.sortedTileMap.entries.map { entry ->
-                val tableSize = entry.value.last().coordinate.let { IntSizeCompat(it.width + 1, it.height + 1) }
+                val tableSize =
+                    entry.value.last().coordinate.let { IntSizeCompat(it.width + 1, it.height + 1) }
                 "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
             }
             "resetTileManager:$caller. success. " +

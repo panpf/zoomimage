@@ -20,6 +20,7 @@ import android.content.Context
 import android.widget.ImageView.ScaleType.FIT_CENTER
 import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
 import com.github.panpf.zoomimage.sample.util.StringMmkvData
+import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.tencent.mmkv.MMKV
 
@@ -71,8 +72,8 @@ class SettingsService(val context: Context) {
         BooleanMmkvData(mmkv, "readModeAcceptedBoth", true)
     }
 
-    val pauseWhenTransforming by lazy {
-        BooleanMmkvData(mmkv, "pauseWhenTransforming", false)
+    val pausedContinuousTransformType by lazy {
+        StringMmkvData(mmkv, "pausedContinuousTransformType", TileManager.DefaultPausedContinuousTransformType.toString())
     }
     val disabledBackgroundTiles by lazy {
         BooleanMmkvData(mmkv, "disabledBackgroundTiles", false)

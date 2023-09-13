@@ -135,28 +135,36 @@ SketchZoomAsyncImage(
 )
 ```
 
-### pauseWhenTransforming/变换中暂停加载
+### pausedContinuousTransformType/连续变换时暂停加载图块
 
-By default, ZoomImage will load new tiles as soon as there is any change in transform (such as
-gesture zoom, scale function zoom, fling, etc.), which can try to ensure that the tiles are loaded
-in the first place without the user's awareness
+ZoomImage divides the continuous transformation behavior into five
+types: `SCALE`, `OFFSET`, `LOCATE`, `GESTURE`, `FLING`,
+and supports configuring the specified type of continuous transformation to pause
+loading tiles, which can improve performance
 
-However, frequent tile loading may have an impact on fluency on poor performing devices, so the
-pauseWhenTransforming property is provided to turn off this feature, which will automatically resume
-loading tiles after continuous transformations are completed, and you can turn it on
+The default configuration of ZoomImage is 'SCALE', 'OFFSET', 'LOCATE' three types of continuous
+transformations that pause the loading of tiles, 'GESTURE',
+The 'FLING' two types load tiles in real time, which you can configure via the
+pausedContinuousTransformType property
 <br>-----------</br>
-ZoomImage 默认在 transform 有任何变化时（例如手势缩放、scale 函数缩放、fling
-等）都会立即加载新的图块，这样可以尽量确保第一时间在用户无感知的情况下加载好图块
+ZoomImage 将连续变换行为分为 `SCALE`, `OFFSET`, `LOCATE`, `GESTURE`, `FLING`
+五种类型，支持配置指定类型的连续变换暂停加载图块，这样可以提高性能
 
-但频繁加载图块在性能较差的设备上可能会对流畅性有影响，所以提供了 pauseWhenTransforming
-属性来关闭此功能，关闭后会在连续变换结束后自动恢复加载图块，你可以开启它
+ZoomImage 在兼顾性能和体验的情况默认配置是 `SCALE`, `OFFSET`, `LOCATE`
+三种类型的连续变换会暂停加载图块，`GESTURE`, `FLING` 两种类型会实时加载图块，
+你可以通过 pausedContinuousTransformType 属性来配置它
 
 example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.subsampling.pauseWhenTransforming = true
+// 所有连续变换类型都实时加载图块
+state.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
+
+// 所有连续变换类型都暂停加载图块
+state.subsampling.pausedContinuousTransformType =
+    TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",

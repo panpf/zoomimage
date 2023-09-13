@@ -25,7 +25,14 @@
         <attr name="rubberBandScale" format="boolean" />
         <attr name="threeStepScale" format="boolean" />
         <attr name="limitOffsetWithinBaseVisibleRect" format="boolean" />
-        <attr name="pauseWhenTransforming" format="boolean" />
+        <attr name="pausedContinuousTransformType" format="flags" >
+            <flag name="none" value="0" />
+            <flag name="scale" value="1" />
+            <flag name="offset" value="2" />
+            <flag name="locate" value="4" />
+            <flag name="gesture" value="8" />
+            <flag name="fling" value="16" />
+        </attr>
         <attr name="disabledBackgroundTiles" format="boolean" />
         <attr name="tileAnimation" format="boolean" />
         <attr name="disabledScrollBar" format="boolean" />

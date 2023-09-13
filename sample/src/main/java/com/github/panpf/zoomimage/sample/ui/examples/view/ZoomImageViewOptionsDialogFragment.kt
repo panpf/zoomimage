@@ -33,10 +33,13 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDivider
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDividerItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenu
+import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.name
 
 class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
@@ -61,6 +64,7 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 itemFactoryList = listOf(
                     SwitchMenuItemFactory(),
                     DropdownMenuItemFactory(requireActivity()),
+                    MultiChooseMenuItemFactory(requireActivity()),
                     ListSeparatorItemFactory(),
                     MenuDividerItemFactory(),
                 ),
@@ -194,10 +198,35 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
 
             add(MenuDivider())
 
+            val continuousTransformTypes = listOf(
+                ContinuousTransformType.SCALE,
+                ContinuousTransformType.OFFSET,
+                ContinuousTransformType.LOCATE,
+                ContinuousTransformType.GESTURE,
+                ContinuousTransformType.FLING,
+            )
             add(
-                SwitchMenuFlow(
-                    title = "Pause When Transforming",
-                    data = settingsService.pauseWhenTransforming,
+                MultiChooseMenu(
+                    title = "Paused Continuous Transform Type",
+                    values = continuousTransformTypes.map { ContinuousTransformType.name(it) },
+                    getCheckeds = { continuousTransformTypes.map { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 } },
+                    getCheckedNames = {
+                        continuousTransformTypes.filter { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 }
+                            .joinToString(separator = ",") { ContinuousTransformType.name(it) }
+                    },
+                    onSelected = { which, isChecked ->
+                        val checkeds =
+                            continuousTransformTypes.map { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 }
+                        val newCheckeds = checkeds.toMutableList().apply { set(which, isChecked) }
+                        val newContinuousTransformType =
+                            newCheckeds.asSequence().mapIndexedNotNull { index, checked ->
+                                if (checked) continuousTransformTypes[index] else null
+                            }.fold(0) { acc, continuousTransformType ->
+                                acc or continuousTransformType
+                            }
+                        settingsService.pausedContinuousTransformType.value =
+                            newContinuousTransformType.toString()
+                    }
                 )
             )
             add(

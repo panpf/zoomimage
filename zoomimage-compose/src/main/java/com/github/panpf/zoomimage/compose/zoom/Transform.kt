@@ -76,7 +76,7 @@ data class Transform(
     /**
      * The horizontal offset
      */
-    val offsetX: Float
+    val offsetX: Float  // todo rename to translationX
         get() = offset.x
 
     /**

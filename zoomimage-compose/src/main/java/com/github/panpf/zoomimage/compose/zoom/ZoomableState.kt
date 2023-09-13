@@ -68,6 +68,7 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
@@ -262,9 +263,11 @@ class ZoomableState(logger: Logger) {
         private set
 
     /**
-     * If true, a transformation is currently in progress, possibly in a continuous gesture operation, or an animation is in progress
+     * The type of transformation currently in progress
+     *
+     * @see ContinuousTransformType
      */
-    var transforming: Boolean by mutableStateOf(false)
+    var continuousTransformType: Int by mutableIntStateOf(ContinuousTransformType.NONE)
         internal set
 
     /**
@@ -466,6 +469,7 @@ class ZoomableState(logger: Logger) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = ContinuousTransformType.SCALE,
             animated = animated,
             caller = "scale"
         )
@@ -526,11 +530,11 @@ class ZoomableState(logger: Logger) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = ContinuousTransformType.OFFSET,
             animated = animated,
             caller = "offset"
         )
     }
-
     /**
      * Pan the [contentPoint] on content to the center of the screen while zooming to [targetScale], and there will be an animation when [animated] is true
      *
@@ -595,6 +599,7 @@ class ZoomableState(logger: Logger) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = ContinuousTransformType.LOCATE,
             animated = animated,
             caller = "locate"
         )
@@ -676,15 +681,18 @@ class ZoomableState(logger: Logger) {
         val lastScaleAnimatable = lastScaleAnimatable
         if (lastScaleAnimatable?.isRunning == true) {
             lastScaleAnimatable.stop()
-            transforming = false
             logger.d { "stopScaleAnimation:$caller" }
         }
 
         val lastFlingAnimatable = lastFlingAnimatable
         if (lastFlingAnimatable?.isRunning == true) {
             lastFlingAnimatable.stop()
-            transforming = false
             logger.d { "stopFlingAnimation:$caller" }
+        }
+
+        val lastContinuousTransformType = continuousTransformType
+        if (lastContinuousTransformType != ContinuousTransformType.NONE) {
+            continuousTransformType = ContinuousTransformType.NONE
         }
     }
 
@@ -713,7 +721,7 @@ class ZoomableState(logger: Logger) {
             val finalCentroid = centroid ?: containerSize.toSize().center
             val updateAnimatable = Animatable(0f)
             this@ZoomableState.lastScaleAnimatable = updateAnimatable
-            transforming = true
+            continuousTransformType = ContinuousTransformType.SCALE
             try {
                 val scope = CoroutineScope(coroutineContext)
                 updateAnimatable.animateTo(
@@ -743,7 +751,7 @@ class ZoomableState(logger: Logger) {
             } catch (e: CancellationException) {
                 throw e
             } finally {
-                transforming = false
+                continuousTransformType = ContinuousTransformType.NONE
             }
         }
         return@coroutineScope targetScale != null
@@ -800,14 +808,15 @@ class ZoomableState(logger: Logger) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = null,
             animated = false,
             caller = "transform"
         )
     }
 
-    internal suspend fun fling(velocity: Velocity, density: Density) = coroutineScope {
-        containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
-        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
+    internal suspend fun fling(velocity: Velocity, density: Density): Boolean = coroutineScope {
+        containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
+        contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         val currentUserTransform = userTransform
 
         stopAllAnimation("fling")
@@ -821,7 +830,7 @@ class ZoomableState(logger: Logger) {
         var job: Job? = null
         job = coroutineScope {
             launch {
-                transforming = true
+                continuousTransformType = ContinuousTransformType.FLING
                 try {
                     val initialVelocity = Offset.VectorConverter
                         .convertFromVector(AnimationVector(velocity.x, velocity.y))
@@ -848,16 +857,17 @@ class ZoomableState(logger: Logger) {
                             // SubsamplingState(line 87) relies on the fling state to refresh tiles,
                             // so you need to end the fling animation as soon as possible
                             job?.cancel("reachBounds")
-                            transforming = false
+                            continuousTransformType = ContinuousTransformType.NONE
                         }
                     }
                 } catch (e: CancellationException) {
                     throw e
                 } finally {
-                    transforming = false
+                    continuousTransformType = ContinuousTransformType.NONE
                 }
             }
         }
+        return@coroutineScope true
     }
 
     private fun limitUserScale(targetUserScale: Float): Float {
@@ -892,6 +902,7 @@ class ZoomableState(logger: Logger) {
 
     private suspend fun updateUserTransform(
         targetUserTransform: Transform,
+        @ContinuousTransformType newContinuousTransformType: Int?,
         animated: Boolean,
         caller: String
     ) {
@@ -899,7 +910,9 @@ class ZoomableState(logger: Logger) {
             val currentUserTransform = userTransform
             val updateAnimatable = Animatable(0f)
             this.lastScaleAnimatable = updateAnimatable
-            transforming = true
+            if (newContinuousTransformType != null) {
+                continuousTransformType = newContinuousTransformType
+            }
             try {
                 updateAnimatable.animateTo(
                     targetValue = 1f,
@@ -922,7 +935,9 @@ class ZoomableState(logger: Logger) {
             } catch (e: CancellationException) {
                 throw e
             } finally {
-                transforming = false
+                if (newContinuousTransformType != null) {
+                    continuousTransformType = ContinuousTransformType.NONE
+                }
             }
         } else {
             this.userTransform = targetUserTransform

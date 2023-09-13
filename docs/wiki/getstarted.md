@@ -343,11 +343,11 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
       switch scale
       <br>-----------</br>
     * 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
-* `zoomable.transforming: Boolean`。
+* `zoomable.continuousTransformType: Int`。
     * If true, a transformation is currently in progress, possibly in a continuous gesture
       operation, or an animation is in progress
       <br>-----------</br>
-    * 是否正在变换中，可能是在连续的手势操作中或者正在执行动画
+    * 当前正在进行的连续变换的类型
 * `zoomable.contentBaseDisplayRect: IntRect`。
     * The content region in the container after the baseTransform transformation
       <br>-----------</br>

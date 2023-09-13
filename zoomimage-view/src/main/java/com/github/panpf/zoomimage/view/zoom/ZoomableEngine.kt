@@ -48,6 +48,7 @@ import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
 import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
@@ -236,9 +237,11 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         private set
 
     /**
-     * If true, a transformation is currently in progress, possibly in a continuous gesture operation, or an animation is in progress
+     * The type of transformation currently in progress
+     *
+     * @see ContinuousTransformType
      */
-    var transforming = false
+    var continuousTransformType: Int = ContinuousTransformType.NONE
         internal set(value) {
             if (field != value) {
                 field = value
@@ -349,6 +352,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         baseTransform = initialZoom.baseTransform
         updateUserTransform(
             targetUserTransform = initialZoom.userTransform,
+            newContinuousTransformType = null,
             animated = false,
             caller = "reset"
         )
@@ -418,6 +422,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = ContinuousTransformType.SCALE,
             animated = animated,
             caller = "scale"
         )
@@ -478,6 +483,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = ContinuousTransformType.OFFSET,
             animated = animated,
             caller = "offset"
         )
@@ -548,6 +554,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = ContinuousTransformType.LOCATE,
             animated = animated,
             caller = "locate"
         )
@@ -691,15 +698,18 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         val lastScaleAnimatable = lastScaleAnimatable
         if (lastScaleAnimatable?.running == true) {
             lastScaleAnimatable.stop()
-            transforming = false
             logger.d { "stopScaleAnimation:$caller" }
         }
 
         val lastFlingAnimatable = lastFlingAnimatable
         if (lastFlingAnimatable?.running == true) {
             lastFlingAnimatable.stop()
-            transforming = false
             logger.d { "stopFlingAnimation:$caller" }
+        }
+
+        val lastContinuousTransformType = continuousTransformType
+        if (lastContinuousTransformType != ContinuousTransformType.NONE) {
+            continuousTransformType = ContinuousTransformType.NONE
         }
     }
 
@@ -751,12 +761,12 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                     )
                 },
                 onEnd = {
-                    transforming = false
+                    continuousTransformType = ContinuousTransformType.NONE
                     notifyTransformChanged()
                 }
             )
 
-            transforming = true
+            continuousTransformType = ContinuousTransformType.SCALE
             lastScaleAnimatable?.start()
         }
         return targetScale != null
@@ -813,6 +823,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = null,
             animated = false,
             caller = "transform"
         )
@@ -841,14 +852,15 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
         updateUserTransform(
             targetUserTransform = limitedTargetUserTransform,
+            newContinuousTransformType = null,
             animated = false,
             caller = "transform"
         )
     }
 
-    internal fun fling(velocity: OffsetCompat) {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
+    internal fun fling(velocity: OffsetCompat): Boolean {
+        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return false
+        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return false
         val contentScale = contentScale
         val alignment = alignment
         val rotation = rotation
@@ -887,15 +899,21 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             onUpdateValue = { value ->
                 val targetUserOffset =
                     this@ZoomableEngine.userTransform.copy(offset = value.toOffset())
-                updateUserTransform(targetUserOffset, false, "fling")
+                updateUserTransform(
+                    targetUserTransform = targetUserOffset,
+                    newContinuousTransformType = null,
+                    animated = false,
+                    caller = "fling"
+                )
             },
             onEnd = {
-                transforming = false
+                continuousTransformType = ContinuousTransformType.NONE
                 notifyTransformChanged()
             }
         )
-        transforming = true
+        continuousTransformType = ContinuousTransformType.FLING
         lastFlingAnimatable?.start()
+        return true
     }
 
     private fun limitUserScale(targetUserScale: Float): Float {
@@ -930,6 +948,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     private fun updateUserTransform(
         targetUserTransform: TransformCompat,
+        newContinuousTransformType: Int?,
         animated: Boolean,
         caller: String
     ) {
@@ -954,11 +973,15 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                     updateTransform()
                 },
                 onEnd = {
-                    transforming = false
+                    if (newContinuousTransformType != null) {
+                        continuousTransformType = ContinuousTransformType.NONE
+                    }
                     notifyTransformChanged()
                 }
             )
-            transforming = true
+            if (newContinuousTransformType != null) {
+                continuousTransformType = newContinuousTransformType
+            }
             lastScaleAnimatable?.start()
         } else {
             this.userTransform = targetUserTransform

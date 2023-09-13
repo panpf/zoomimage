@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.requiredMainThread
 import com.github.panpf.zoomimage.util.internal.toHexString
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +57,11 @@ class TileManager constructor(
     private val onImageLoadRectChanged: (tileManager: TileManager) -> Unit,
 ) {
 
+    companion object {
+        const val DefaultPausedContinuousTransformType =
+            ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(4)
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -66,11 +72,9 @@ class TileManager constructor(
     private var notifyTileSnapshotListJob: Job? = null
 
     /**
-     * Whether to pause loading tiles when transforming, which improves performance,
-     * but delays the loading of tiles, allowing users to perceive the loading process more,
-     * and the user experience will be reduced
+     * A continuous transform type that needs to pause loading
      */
-    var pauseWhenTransforming: Boolean = false
+    var pausedContinuousTransformType: Int = DefaultPausedContinuousTransformType
 
     /**
      * Disabling the background tile, which saves memory and improves performance, but when switching sampleSize,
@@ -141,7 +145,7 @@ class TileManager constructor(
         contentVisibleRect: IntRectCompat,
         scale: Float,
         rotation: Int,
-        transforming: Boolean,  // todo 除手势操作外的如缩放动画，fling 都应该暂停，分为以下几种手势、缩放动画、位移动画、fling，这样的话 pauseWhenTransforming 也要改为 pauseWhenGestureTransforming，也可以搞成 pauseWhenTransforming 用位运算来判断，这样就可以同时支持多种暂停了
+        @ContinuousTransformType continuousTransformType: Int,
         caller: String,
     ) {
         requiredMainThread()
@@ -162,8 +166,11 @@ class TileManager constructor(
             logger.d { "refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
             return
         }
-        if (pauseWhenTransforming && transforming) {
-            logger.d { "refreshTiles:$caller. interrupted, transforming. '${imageSource.key}'" }
+        val continuousTransformTypeName = ContinuousTransformType.name(continuousTransformType)
+        if (continuousTransformType and pausedContinuousTransformType != 0) {
+            logger.d {
+                "refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${imageSource.key}'"
+            }
             return
         }
 
@@ -174,10 +181,8 @@ class TileManager constructor(
         val foregroundTiles = sortedTileMap[sampleSize]
         if (foregroundTiles == null) {
             logger.d {
-                val tileMapInfoList =
-                    sortedTileMap.entries.map { "${it.key}:${it.value.size}" }
-                "refreshTiles:$caller. " +
-                        "interrupted, foregroundTilesEmpty. " +
+                val tileMapInfoList = sortedTileMap.entries.map { "${it.key}:${it.value.size}" }
+                "refreshTiles:$caller. interrupted, foregroundTilesEmpty. " +
                         "scale=${scale.format(4)}, " +
                         "sampleSize=$sampleSize, " +
                         "tileMaxSize=${tileMaxSize.toShortString()}, " +
@@ -243,6 +248,7 @@ class TileManager constructor(
                     "scale=$scale, " +
                     "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
+                    "continuousTransformType=${continuousTransformTypeName}, " +
                     "imageInfo=${imageInfo.toShortString()}, " +
                     "'${imageSource.key}"
         }

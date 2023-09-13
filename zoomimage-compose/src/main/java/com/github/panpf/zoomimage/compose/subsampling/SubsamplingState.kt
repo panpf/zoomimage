@@ -49,6 +49,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
+import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPausedContinuousTransformType
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
@@ -56,6 +57,7 @@ import com.github.panpf.zoomimage.subsampling.canUseSubsampling
 import com.github.panpf.zoomimage.subsampling.readImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -136,11 +138,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     var tileAnimationSpec: TileAnimationSpec by mutableStateOf(TileAnimationSpec.Default)
 
     /**
-     * Whether to pause loading tiles when transforming, which improves performance,
-     * but delays the loading of tiles, allowing users to perceive the loading process more,
-     * and the user experience will be reduced
+     * A continuous transform type that needs to pause loading
      */
-    var pauseWhenTransforming: Boolean  by mutableStateOf(false)
+    var pausedContinuousTransformType: Int by mutableIntStateOf(DefaultPausedContinuousTransformType)
 
     /**
      * Disabling the background tile, which saves memory and improves performance, but when switching sampleSize,
@@ -256,7 +256,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 contentVisibleRect = zoomableState.contentVisibleRect,
                 scale = zoomableState.transform.scaleX,
                 rotation = zoomableState.transform.rotation.roundToInt(),
-                transforming = zoomableState.transforming,
+                continuousTransformType = zoomableState.continuousTransformType,
                 caller = caller
             )
         }
@@ -277,8 +277,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { zoomableState.transforming }.collect {
-                refreshTiles("transformingChanged")
+            snapshotFlow { zoomableState.continuousTransformType }.collect {
+                refreshTiles("continuousTransformTypeChanged")
             }
         }
         LaunchedEffect(Unit) {
@@ -312,8 +312,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { pauseWhenTransforming }.collect {
-                tileManager?.pauseWhenTransforming = it
+            snapshotFlow { pausedContinuousTransformType }.collect {
+                tileManager?.pausedContinuousTransformType = it
             }
         }
         LaunchedEffect(Unit) {
@@ -408,7 +408,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                 imageLoadRect = it.imageLoadRect.toPlatform()
             }
         ).apply {
-            pauseWhenTransforming = this@SubsamplingState.pauseWhenTransforming
+            pausedContinuousTransformType = this@SubsamplingState.pausedContinuousTransformType
             disabledBackgroundTiles = this@SubsamplingState.disabledBackgroundTiles
             tileAnimationSpec = this@SubsamplingState.tileAnimationSpec
         }
@@ -434,7 +434,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         contentVisibleRect: IntRect,
         scale: Float,
         rotation: Int,
-        transforming: Boolean,
+        @ContinuousTransformType continuousTransformType: Int,
         caller: String,
     ) {
         val tileManager = tileManager ?: return
@@ -447,7 +447,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             contentVisibleRect = contentVisibleRect.toCompat(),
             scale = scale,
             rotation = rotation,
-            transforming = transforming,
+            continuousTransformType = continuousTransformType,
             caller = caller
         )
     }

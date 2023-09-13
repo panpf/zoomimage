@@ -22,6 +22,7 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 
 class TouchHelper(view: View, zoomableEngine: ZoomableEngine) {
 
@@ -57,10 +58,13 @@ class TouchHelper(view: View, zoomableEngine: ZoomableEngine) {
 //                    zoomChange = 1f,
 //                    rotationChange = 0f,
 //                )
+                zoomableEngine.continuousTransformType = ContinuousTransformType.GESTURE
                 zoomableEngine.drag(panChange)
             },
             onFlingCallback = { velocity: OffsetCompat ->
-                zoomableEngine.fling(velocity)
+                if (!zoomableEngine.fling(velocity)) {
+                    zoomableEngine.continuousTransformType = ContinuousTransformType.NONE
+                }
             },
             onScaleCallback = { scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat ->
                 zoomableEngine.transform(
@@ -71,12 +75,13 @@ class TouchHelper(view: View, zoomableEngine: ZoomableEngine) {
                 )
             },
             onScaleBeginCallback = {
-                zoomableEngine.transforming = true
+                zoomableEngine.continuousTransformType = ContinuousTransformType.GESTURE
                 true
             },
             onScaleEndCallback = {
-                zoomableEngine.transforming = false
-                zoomableEngine.rollbackScale(it)
+                if (!zoomableEngine.rollbackScale(it)) {
+                    zoomableEngine.continuousTransformType = ContinuousTransformType.NONE
+                }
             },
             onActionDownCallback = {
                 zoomableEngine.stopAllAnimation("onActionDown")

@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,6 +35,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +47,8 @@ import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.sample.util.BaseMmkvData
+import com.github.panpf.zoomimage.subsampling.TileManager
+import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -69,7 +75,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.readModeEnabled, settingsService.readModeEnabled)
         BindStateAndFlow(state.readModeAcceptedBoth, settingsService.readModeAcceptedBoth)
 
-        BindStateAndFlow(state.pauseWhenTransforming, settingsService.pauseWhenTransforming)
+        BindStateAndFlow(state.pausedContinuousTransformType, settingsService.pausedContinuousTransformType)
         BindStateAndFlow(state.disabledBackgroundTiles, settingsService.disabledBackgroundTiles)
         BindStateAndFlow(state.ignoreExifOrientation, settingsService.ignoreExifOrientation)
         BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
@@ -108,7 +114,8 @@ class ZoomImageOptionsState {
 
     val showTileBounds = MutableStateFlow(false)
     val tileAnimation = MutableStateFlow(true)
-    val pauseWhenTransforming = MutableStateFlow(false)
+    val pausedContinuousTransformType =
+        MutableStateFlow(TileManager.DefaultPausedContinuousTransformType.toString())
     val disabledBackgroundTiles = MutableStateFlow(false)
     val ignoreExifOrientation = MutableStateFlow(false)
 
@@ -137,7 +144,10 @@ fun ZoomImageOptionsDialog(
 
     val showTileBounds by state.showTileBounds.collectAsState()
     val tileAnimation by state.tileAnimation.collectAsState()
-    val pauseWhenTransforming by state.pauseWhenTransforming.collectAsState()
+    val pausedContinuousTransformTypeName by state.pausedContinuousTransformType.collectAsState()
+    val pausedContinuousTransformType = remember(pausedContinuousTransformTypeName) {
+        pausedContinuousTransformTypeName.toInt()
+    }
     val disabledBackgroundTiles by state.disabledBackgroundTiles.collectAsState()
     val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
 
@@ -176,7 +186,7 @@ fun ZoomImageOptionsDialog(
             }
             MyDropdownMenu("ContentScale", contentScaleName, contentScales) {
                 state.contentScaleName.value = it
-                onDismissRequest()
+//                onDismissRequest()
             }
 
             val alignments = remember {
@@ -194,7 +204,7 @@ fun ZoomImageOptionsDialog(
             }
             MyDropdownMenu("Alignment", alignmentName, alignments) {
                 state.alignmentName.value = it
-                onDismissRequest()
+//                onDismissRequest()
             }
 
             if (my) {
@@ -202,19 +212,19 @@ fun ZoomImageOptionsDialog(
 
                 SwitchMenu("Animate Scale", animateScale) {
                     state.animateScale.value = !state.animateScale.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
                 SwitchMenu("Rubber Band Scale", rubberBandScale) {
                     state.rubberBandScale.value = !state.rubberBandScale.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
                 SwitchMenu("Three Step Scale", threeStepScale) {
                     state.threeStepScale.value = !state.threeStepScale.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
                 SwitchMenu("Slower Scale Animation", slowerScaleAnimation) {
                     state.slowerScaleAnimation.value = !state.slowerScaleAnimation.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
 
                 val scalesCalculators = remember {
@@ -222,7 +232,7 @@ fun ZoomImageOptionsDialog(
                 }
                 MyDropdownMenu("Scales Calculator", scalesCalculator, scalesCalculators) {
                     state.scalesCalculator.value = it
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
 
                 val scalesMultiples = remember {
@@ -236,7 +246,7 @@ fun ZoomImageOptionsDialog(
                 }
                 MyDropdownMenu("Scales Multiple", scalesMultiple, scalesMultiples) {
                     state.scalesMultiple.value = it
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
 
                 Divider(Modifier.padding(horizontal = 20.dp))
@@ -247,48 +257,79 @@ fun ZoomImageOptionsDialog(
                 ) {
                     state.limitOffsetWithinBaseVisibleRect.value =
                         !state.limitOffsetWithinBaseVisibleRect.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
 
                 Divider(Modifier.padding(horizontal = 20.dp))
 
                 SwitchMenu("Read Mode", readModeEnabled) {
                     state.readModeEnabled.value = !state.readModeEnabled.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
                 SwitchMenu("Read Mode Accepted Both", readModeAcceptedBoth) {
                     state.readModeAcceptedBoth.value = !state.readModeAcceptedBoth.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
 
                 Divider(Modifier.padding(horizontal = 20.dp))
 
-                SwitchMenu("Pause When Transforming", pauseWhenTransforming) {
-                    state.pauseWhenTransforming.value = !state.pauseWhenTransforming.value
-                    onDismissRequest()
+                val continuousTransformTypes = remember {
+                    listOf(
+                        ContinuousTransformType.SCALE,
+                        ContinuousTransformType.OFFSET,
+                        ContinuousTransformType.LOCATE,
+                        ContinuousTransformType.GESTURE,
+                        ContinuousTransformType.FLING,
+                    )
+                }
+                val continuousTransformTypeStrings = remember {
+                    continuousTransformTypes.map { ContinuousTransformType.name(it) }
+                }
+                val checkeds = remember(pausedContinuousTransformType) {
+                    continuousTransformTypes.map { it and pausedContinuousTransformType != 0 }
+                }
+                val checkedNames = remember(pausedContinuousTransformType) {
+                    continuousTransformTypes.filter { it and pausedContinuousTransformType != 0 }
+                        .joinToString(separator = ",") { ContinuousTransformType.name(it) }
+                }
+                MyMultiChooseMenu(
+                    name = "Paused Continuous Transform Type",
+                    values = continuousTransformTypeStrings,
+                    checkeds = checkeds,
+                    checkedNames = checkedNames,
+                ) { which, isChecked ->
+                    val newCheckeds = checkeds.toMutableList().apply { set(which, isChecked) }
+                    val newContinuousTransformType =
+                        newCheckeds.asSequence().mapIndexedNotNull { index, checked ->
+                            if (checked) continuousTransformTypes[index] else null
+                        }.fold(0) { acc, continuousTransformType ->
+                            acc or continuousTransformType
+                        }
+                    state.pausedContinuousTransformType.value = newContinuousTransformType.toString()
+//                    onDismissRequest()
                 }
                 SwitchMenu("Disabled Background Tiles", disabledBackgroundTiles) {
                     state.disabledBackgroundTiles.value = !state.disabledBackgroundTiles.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
                 SwitchMenu("Ignore Exif Orientation", ignoreExifOrientation) {
                     state.ignoreExifOrientation.value = !state.ignoreExifOrientation.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
                 SwitchMenu("Show Tile Bounds", showTileBounds) {
                     state.showTileBounds.value = !state.showTileBounds.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
                 SwitchMenu("Tile Animation", tileAnimation) {
                     state.tileAnimation.value = !state.tileAnimation.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
 
                 Divider(Modifier.padding(horizontal = 20.dp))
 
                 SwitchMenu("Scroll Bar", scrollBarEnabled) {
                     state.scrollBarEnabled.value = !state.scrollBarEnabled.value
-                    onDismissRequest()
+//                    onDismissRequest()
                 }
             }
         }
@@ -359,7 +400,7 @@ private fun MyDropdownMenu(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(text = name, modifier = Modifier.weight(1f), fontSize = 12.sp)
-            Text(text = value, fontSize = 12.sp)
+            Text(text = value, fontSize = 10.sp)
             Icon(
                 painter = painterResource(id = R.drawable.ic_expand_more),
                 contentDescription = "more"
@@ -400,6 +441,96 @@ private fun MyDropdownMenuPreview() {
         listOf("A", "B", "C", "D")
     }
     MyDropdownMenu("Animate Scale", "A", values) {
+
+    }
+}
+
+@Composable
+private fun MyMultiChooseMenu(
+    name: String,
+    values: List<String>,
+    checkeds: List<Boolean>,
+    checkedNames: String,
+    onSelected: (which: Int, isChecked: Boolean) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(dimensionResource(id = R.dimen.menu_item_height))
+                .clickable {
+                    expanded = !expanded
+                }
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = name,
+                modifier = Modifier.weight(1f),
+                fontSize = 12.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = checkedNames,
+                modifier = Modifier.weight(1f),
+                fontSize = 10.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.End,
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.ic_expand_more),
+                contentDescription = "more"
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = !expanded
+            },
+        ) {
+            values.forEachIndexed { index, value ->
+                if (index > 0) {
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp)
+                    )
+                }
+                DropdownMenuItem(
+                    text = {
+                        Text(text = value, modifier = Modifier.width(150.dp))
+                    },
+                    trailingIcon = {
+                        Checkbox(checked = checkeds[index], onCheckedChange = {
+//                            expanded = !expanded
+                            onSelected(index, !checkeds[index])
+                        })
+                    },
+                    onClick = {
+//                        expanded = !expanded
+                        onSelected(index, !checkeds[index])
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MyMultiChooseMenuPreview() {
+    val values = remember {
+        listOf("A", "B", "C", "D")
+    }
+    MyMultiChooseMenu(
+        name = "Animate Scale",
+        values = values,
+        checkeds = listOf(true, false, true, false),
+        checkedNames = "A, C",
+    ) { _, _ ->
 
     }
 }

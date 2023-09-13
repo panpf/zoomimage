@@ -147,10 +147,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     tileAnimationSpec =
                         if (it) TileAnimationSpec.Default else TileAnimationSpec.None
                 }
-                settingsService.pauseWhenTransforming.stateFlow.collectWithLifecycle(
+                settingsService.pausedContinuousTransformType.stateFlow.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
-                    pauseWhenTransforming = it
+                    pausedContinuousTransformType = it.toInt()
                 }
                 settingsService.disabledBackgroundTiles.stateFlow.collectWithLifecycle(
                     viewLifecycleOwner
