@@ -33,7 +33,6 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.requiredMainThread
 import com.github.panpf.zoomimage.util.internal.requiredWorkThread
 import com.github.panpf.zoomimage.util.toShortString
-import kotlinx.coroutines.runBlocking
 import java.util.LinkedList
 
 class TileDecoder constructor(
@@ -144,9 +143,7 @@ class TileDecoder constructor(
             decoderPool.poll()
         }
         if (bitmapRegionDecoder == null) {
-            bitmapRegionDecoder = runBlocking {
-                imageSource.openInputStream()
-            }.getOrNull()?.buffered()?.use {
+            bitmapRegionDecoder = imageSource.openInputStream().getOrNull()?.buffered()?.use {
                 if (VERSION.SDK_INT >= VERSION_CODES.S) {
                     BitmapRegionDecoder.newInstance(it)
                 } else {

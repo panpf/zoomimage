@@ -21,8 +21,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getDiskCache
 import com.bumptech.glide.load.model.GlideUrl
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -35,16 +33,12 @@ class GlideHttpImageSource(
     override val key: String = imageUri
 
     @WorkerThread
-    override suspend fun openInputStream(): Result<InputStream> {
-        return withContext(Dispatchers.IO) {
-            kotlin.runCatching {
-                val diskCache =
-                    getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
-                val file = diskCache.get(GlideUrl(imageUri))
-                    ?: throw FileNotFoundException("Cache file is null")
-                FileInputStream(file)
-            }
-        }
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+        val diskCache =
+            getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
+        val file = diskCache.get(GlideUrl(imageUri))
+            ?: throw FileNotFoundException("Cache file is null")
+        FileInputStream(file)
     }
 
     override fun equals(other: Any?): Boolean {

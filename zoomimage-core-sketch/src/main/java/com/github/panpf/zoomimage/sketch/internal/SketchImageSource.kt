@@ -24,8 +24,7 @@ import com.github.panpf.sketch.datasource.BasedStreamDataSource
 import com.github.panpf.sketch.request.Depth
 import com.github.panpf.sketch.request.LoadRequest
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
 import java.io.InputStream
 
 class SketchImageSource(
@@ -37,7 +36,7 @@ class SketchImageSource(
     override val key: String = imageUri
 
     @WorkerThread
-    override suspend fun openInputStream(): Result<InputStream> {
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
         val request = LoadRequest(context, imageUri) {
             downloadCachePolicy(CachePolicy.ENABLED)
             depth(Depth.LOCAL)   // Do not download image, by default go here The image have been downloaded
@@ -47,7 +46,7 @@ class SketchImageSource(
         } catch (e: Exception) {
             return Result.failure(e)
         }
-        val fetchResult = withContext(Dispatchers.IO) {
+        val fetchResult = runBlocking {
             fetcher.fetch()
         }.let {
             it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!)
@@ -56,7 +55,7 @@ class SketchImageSource(
         if (dataSource !is BasedStreamDataSource) {
             return Result.failure(IllegalStateException("DataSource is not BasedStreamDataSource. imageUri='$imageUri'"))
         }
-        return kotlin.runCatching { dataSource.newInputStream() }
+        dataSource.newInputStream()
     }
 
     override fun equals(other: Any?): Boolean {

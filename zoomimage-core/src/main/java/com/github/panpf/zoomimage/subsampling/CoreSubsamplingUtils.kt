@@ -17,49 +17,55 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.BitmapFactory
+import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.internal.applyExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.isSupportBitmapRegionDecoder
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isEmpty
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
-suspend fun ImageSource.readImageBounds(): Result<BitmapFactory.Options> {
-    return withContext(Dispatchers.IO) {
-        openInputStream()
-            .let { it.getOrNull() ?: return@withContext Result.failure(it.exceptionOrNull()!!) }
-            .use { inputStream ->
-                kotlin.runCatching {
-                    val options = BitmapFactory.Options()
-                    options.inJustDecodeBounds = true
-                    BitmapFactory.decodeStream(inputStream, null, options)
-                    require(options.outWidth > 0 && options.outHeight > 0) {
-                        "image width or height is error: ${options.outWidth}x${options.outHeight}"
-                    }
-                    options
+@WorkerThread
+fun ImageSource.readImageBounds(): Result<BitmapFactory.Options> {
+    return openInputStream()
+        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
+        .use { inputStream ->
+            kotlin.runCatching {
+                val options = BitmapFactory.Options()
+                options.inJustDecodeBounds = true
+                BitmapFactory.decodeStream(inputStream, null, options)
+                require(options.outWidth > 0 && options.outHeight > 0) {
+                    "image width or height is error: ${options.outWidth}x${options.outHeight}"
                 }
+                options
             }
-    }
+        }
 }
 
-suspend fun ImageSource.readExifOrientation(): Result<Int> {
+@WorkerThread
+fun ImageSource.readExifOrientation(): Result<Int> {
     val orientationUndefined = ExifInterface.ORIENTATION_UNDEFINED
-    return withContext(Dispatchers.IO) {
-        openInputStream()
-            .let { it.getOrNull() ?: return@withContext Result.failure(it.exceptionOrNull()!!) }
-            .use { inputStream ->
-                kotlin.runCatching {
-                    ExifInterface(inputStream)
-                        .getAttributeInt(ExifInterface.TAG_ORIENTATION, orientationUndefined)
-                }
+    return openInputStream()
+        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
+        .use { inputStream ->
+            kotlin.runCatching {
+                ExifInterface(inputStream)
+                    .getAttributeInt(ExifInterface.TAG_ORIENTATION, orientationUndefined)
             }
-    }
+        }
 }
 
-suspend fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): Result<ImageInfo> {
+@WorkerThread
+fun ImageSource.readExifOrientationWithMimeType(mimeType: String): Result<Int> =
+    if (ExifInterface.isSupportedMimeType(mimeType)) {
+        readExifOrientation()
+    } else {
+        Result.success(ExifInterface.ORIENTATION_UNDEFINED)
+    }
+
+@WorkerThread
+fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): Result<ImageInfo> {
     val options = readImageBounds()
         .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
     val exifOrientation = if (ignoreExifOrientation) {

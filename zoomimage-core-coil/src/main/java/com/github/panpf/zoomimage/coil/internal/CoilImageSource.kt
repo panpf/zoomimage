@@ -24,8 +24,7 @@ import coil.request.CachePolicy.ENABLED
 import coil.request.ImageRequest
 import coil.request.Options
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
 import java.io.InputStream
 
 class CoilImageSource(
@@ -36,7 +35,7 @@ class CoilImageSource(
     override val key: String = request.data.toString()
 
     @WorkerThread
-    override suspend fun openInputStream(): Result<InputStream> {
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
         val fetcher = try {
             val options = Options(
                 context = request.context,
@@ -48,17 +47,13 @@ class CoilImageSource(
         } catch (e: Exception) {
             return Result.failure(e)
         }
-        val fetchResult = withContext(Dispatchers.IO) {
-            kotlin.runCatching {
-                fetcher.fetch()
-            }
-        }.let {
-            it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!)
+        val fetchResult = runBlocking {
+            fetcher.fetch()
         }
         if (fetchResult !is SourceResult) {
             return Result.failure(IllegalStateException("FetchResult is not SourceResult. data='${request.data}'"))
         }
-        return kotlin.runCatching { fetchResult.source.source().inputStream() }
+        fetchResult.source.source().inputStream()
     }
 
     override fun equals(other: Any?): Boolean {

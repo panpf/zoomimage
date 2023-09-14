@@ -22,8 +22,6 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.annotation.WorkerThread
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -43,41 +41,44 @@ interface ImageSource {
      * Open an input stream for the image.
      */
     @WorkerThread
-    suspend fun openInputStream(): Result<InputStream>
+    fun openInputStream(): Result<InputStream>
 
     companion object {
         /**
          * Create an image source from a content URI.
          */
-        fun fromContent(context: Context, uri: Uri): ImageSource {
+        fun fromContent(context: Context, uri: Uri): ContentImageSource {
             return ContentImageSource(context, uri)
         }
 
         /**
          * Create an image source from a resource id.
          */
-        fun fromResource(resources: Resources, @RawRes @DrawableRes resId: Int): ImageSource {
+        fun fromResource(
+            resources: Resources,
+            @RawRes @DrawableRes resId: Int
+        ): ResourceImageSource {
             return ResourceImageSource(resources, resId)
         }
 
         /**
          * Create an image source from a resource id.
          */
-        fun fromResource(context: Context, @RawRes @DrawableRes resId: Int): ImageSource {
+        fun fromResource(context: Context, @RawRes @DrawableRes resId: Int): ResourceImageSource {
             return ResourceImageSource(context, resId)
         }
 
         /**
          * Create an image source from an asset file name.
          */
-        fun fromAsset(context: Context, assetFileName: String): ImageSource {
+        fun fromAsset(context: Context, assetFileName: String): AssetImageSource {
             return AssetImageSource(context, assetFileName)
         }
 
         /**
          * Create an image source from a file.
          */
-        fun fromFile(file: File): ImageSource {
+        fun fromFile(file: File): FileImageSource {
             return FileImageSource(file)
         }
     }
@@ -87,12 +88,8 @@ class AssetImageSource(val context: Context, val assetFileName: String) : ImageS
 
     override val key: String = "asset://$assetFileName"
 
-    override suspend fun openInputStream(): Result<InputStream> {
-        return withContext(Dispatchers.IO) {
-            kotlin.runCatching {
-                context.assets.open(assetFileName)
-            }
-        }
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+        context.assets.open(assetFileName)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -119,13 +116,9 @@ class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
 
     override val key: String = uri.toString()
 
-    override suspend fun openInputStream(): Result<InputStream> {
-        return withContext(Dispatchers.IO) {
-            kotlin.runCatching {
-                context.contentResolver.openInputStream(uri)
-                    ?: throw FileNotFoundException("Unable to open stream. uri='$uri'")
-            }
-        }
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+        context.contentResolver.openInputStream(uri)
+            ?: throw FileNotFoundException("Unable to open stream. uri='$uri'")
     }
 
     override fun equals(other: Any?): Boolean {
@@ -152,12 +145,8 @@ class FileImageSource(val file: File) : ImageSource {
 
     override val key: String = file.path
 
-    override suspend fun openInputStream(): Result<InputStream> {
-        return withContext(Dispatchers.IO) {
-            kotlin.runCatching {
-                FileInputStream(file)
-            }
-        }
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+        FileInputStream(file)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -191,12 +180,8 @@ class ResourceImageSource(
 
     override val key: String = "android.resources://resource?resId=$resId"
 
-    override suspend fun openInputStream(): Result<InputStream> {
-        return withContext(Dispatchers.IO) {
-            kotlin.runCatching {
-                resources.openRawResource(resId)
-            }
-        }
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+        resources.openRawResource(resId)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -215,6 +200,6 @@ class ResourceImageSource(
     }
 
     override fun toString(): String {
-        return "ResourceImageSource(resId=$resId)"
+        return "ResourceImageSource($resId)"
     }
 }
