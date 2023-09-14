@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoomimage"
+    namespace = "com.github.panpf.zoomimage.core"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
@@ -40,13 +40,13 @@ dependencies {
     api(libs.kotlin.stdlib)
     api(libs.androidx.annotation)
     api(libs.kotlinx.coroutines.android)
-//    api(libs.androidx.core.ktx)
     api(libs.androidx.exifinterface)
 //    api(libs.androidx.lifecycle.common)
 //    api(libs.androidx.appcompat)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.panpf.tools4j.test)
+    androidTestImplementation(libs.androidx.core.ktx)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.rules)
