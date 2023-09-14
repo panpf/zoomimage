@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlin.math.ceil
@@ -60,7 +61,7 @@ internal fun initializeTileMap(
             val bottom = (top + sourceTileHeight).coerceAtMost(imageSize.height)
             tileList.add(
                 Tile(
-                    coordinate = IntSizeCompat(xCoordinate, yCoordinate),
+                    coordinate = IntOffsetCompat(xCoordinate, yCoordinate),
                     srcRect = IntRectCompat(left, top, right, bottom),
                     sampleSize = sampleSize
                 )
@@ -88,12 +89,12 @@ internal fun initializeTileMap(
     return tileMap
 }
 
-internal fun calculateSampleSize(
+internal fun findSampleSize(
     imageSize: IntSizeCompat,
-    drawableSize: IntSizeCompat,
+    thumbnailSize: IntSizeCompat,
     scale: Float
 ): Int {
-    val scaledWidthRatio = (imageSize.width / (drawableSize.width * scale))
+    val scaledWidthRatio = (imageSize.width / (thumbnailSize.width * scale))
     var sampleSize = 1
     while (scaledWidthRatio >= sampleSize * 2) {
         sampleSize *= 2

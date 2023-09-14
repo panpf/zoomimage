@@ -101,23 +101,13 @@ internal class ExifOrientationHelper constructor(
         )
     }
 
-//    @WorkerThread
-//    fun addToBitmap(
-//        logger: Logger?,
-//        inBitmap: Bitmap,
-//        bitmapPool: TileBitmapPool,
-//        disallowReuseBitmap: Boolean
-//    ): Bitmap? {
-//        return applyFlipAndRotation(
-//            logger = logger,
-//            inBitmap = inBitmap,
-//            isFlipped = isFlipped,
-//            rotationDegrees = -rotationDegrees,
-//            bitmapPool = bitmapPool,
-//            disallowReuseBitmap = disallowReuseBitmap,
-//            apply = false
-//        )
-//    }
+    @WorkerThread
+    fun addToBitmap(inBitmap: Bitmap): Bitmap? = applyFlipAndRotation(
+        inBitmap = inBitmap,
+        isFlipped = isFlipped,
+        rotationDegrees = -rotationDegrees,
+        apply = false
+    )
 
     fun applyToSize(size: IntSizeCompat): IntSizeCompat {
         val matrix = Matrix().apply {
@@ -275,6 +265,6 @@ fun exifOrientationName(exifOrientation: Int): String =
     }
 
 fun ImageInfo.applyExifOrientation(): ImageInfo {
-    val applyImageSize = ExifOrientationHelper(exifOrientation).applyToSize(size)
-    return this.copy(size = applyImageSize)
+    val newSize = ExifOrientationHelper(exifOrientation).applyToSize(size)
+    return this.copy(size = newSize)
 }

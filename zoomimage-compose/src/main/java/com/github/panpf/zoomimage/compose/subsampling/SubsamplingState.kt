@@ -53,7 +53,7 @@ import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPause
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.subsampling.canUseSubsampling
+import com.github.panpf.zoomimage.subsampling.checkUseSubsampling
 import com.github.panpf.zoomimage.subsampling.readImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.toShortString
@@ -341,7 +341,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             val imageInfo = imageInfoResult.getOrNull()
             this@SubsamplingState.imageInfo = imageInfo
             val canUseSubsamplingResult =
-                imageInfo?.let { canUseSubsampling(it, contentSize.toCompat()) }
+                imageInfo?.let { checkUseSubsampling(it, contentSize.toCompat()) }
             if (imageInfo != null && canUseSubsamplingResult == 0) {
                 logger.d {
                     "resetTileDecoder:$caller. success. " +
@@ -415,7 +415,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
             val tileMapInfoList = tileManager.sortedTileMap.entries.map { entry ->
-                val tableSize = entry.value.last().coordinate.let { IntSizeCompat(it.width + 1, it.height + 1) }
+                val tableSize = entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
                 "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
             }
             "resetTileManager:$caller. success. " +

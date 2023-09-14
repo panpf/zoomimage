@@ -67,7 +67,7 @@ data class ImageInfo constructor(
     /**
      * Create a new [ImageInfo] based on the current [ImageInfo]
      */
-    fun newImageInfo(
+    fun copy(
         width: Int = this.width,
         height: Int = this.height,
         mimeType: String = this.mimeType,
@@ -76,7 +76,7 @@ data class ImageInfo constructor(
 
     override fun toString(): String {
         val exifOrientationName = exifOrientationName(exifOrientation)
-        return "ImageInfo(width=$width, height=$height, mimeType='$mimeType', exifOrientation=$exifOrientationName)"
+        return "ImageInfo(size=${width}x$height, mimeType='$mimeType', exifOrientation=$exifOrientationName)"
     }
 
     fun toShortString(): String =

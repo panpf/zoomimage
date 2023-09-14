@@ -18,11 +18,11 @@ package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
 import com.github.panpf.zoomimage.subsampling.Tile.State
+import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.IntSizeCompat
 
 data class TileSnapshot(
-    val coordinate: IntSizeCompat,
+    val coordinate: IntOffsetCompat,
     val srcRect: IntRectCompat,
     val sampleSize: Int,
     val bitmap: Bitmap?,

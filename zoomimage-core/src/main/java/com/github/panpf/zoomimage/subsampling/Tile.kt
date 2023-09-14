@@ -18,8 +18,8 @@ package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
 import androidx.annotation.IntDef
+import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.toShortString
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.Job
@@ -31,7 +31,7 @@ class Tile constructor(
     /**
      * Horizontal and vertical coordinates
      */
-    val coordinate: IntSizeCompat,
+    val coordinate: IntOffsetCompat,
 
     /**
      * The region of Tile in the original image
@@ -123,7 +123,7 @@ class Tile constructor(
     class AnimationState {
 
         private var startTime = System.currentTimeMillis()
-        private var progress: Float = 0f
+        private var progress: Float = 1f
             set(value) {
                 if (value != field) {
                     field = value
@@ -131,12 +131,12 @@ class Tile constructor(
                 }
             }
 
-        var alpha: Int = 0
+        var alpha: Int = 255
             private set
         val running: Boolean
             get() = progress < 1f
 
-        fun calculate(duration: Long = 100): Boolean {
+        fun calculate(duration: Long): Boolean {
             progress = if (duration > 0) {
                 val currentTimeMillis = System.currentTimeMillis()
                 val elapsedTime = currentTimeMillis - startTime
@@ -149,13 +149,15 @@ class Tile constructor(
 
         fun restart() {
             startTime = System.currentTimeMillis()
-            calculate()
+            progress = 0f
+            alpha = 0
         }
 
         fun stop() {
             if (running) {
                 startTime = 0
-                calculate()
+                progress = 1f
+                alpha = 255
             }
         }
     }

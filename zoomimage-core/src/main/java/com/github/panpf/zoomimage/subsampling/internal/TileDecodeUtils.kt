@@ -17,15 +17,11 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlin.math.ceil
 import kotlin.math.floor
-
-internal fun Bitmap.Config.isAndSupportHardware(): Boolean =
-    VERSION.SDK_INT >= VERSION_CODES.O && this == Bitmap.Config.HARDWARE
 
 /**
  * If true, indicates that the given mimeType can be using 'inBitmap' in BitmapRegionDecoder

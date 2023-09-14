@@ -30,10 +30,10 @@ class TileMemoryCacheHelper(@Suppress("UNUSED_PARAMETER") logger: Logger) {
     fun get(key: String): TileBitmap? {
         val tileMemoryCache = tileMemoryCache
         val disableMemoryCache = disableMemoryCache
-        if (tileMemoryCache == null || disableMemoryCache) {
-            return null
+        if (tileMemoryCache != null && !disableMemoryCache) {
+            return tileMemoryCache.get(key)
         }
-        return tileMemoryCache.get(key)
+        return null
     }
 
     fun put(
@@ -45,10 +45,10 @@ class TileMemoryCacheHelper(@Suppress("UNUSED_PARAMETER") logger: Logger) {
     ): TileBitmap {
         val tileMemoryCache = tileMemoryCache
         val disableMemoryCache = disableMemoryCache
-        if (tileMemoryCache == null || disableMemoryCache) {
-            return DefaultTileBitmap(key, bitmap)
+        if (tileMemoryCache != null && !disableMemoryCache) {
+            return tileMemoryCache.put(key, bitmap, imageKey, imageInfo, tileBitmapPoolHelper)
+                ?: DefaultTileBitmap(key, bitmap)
         }
-        return tileMemoryCache.put(key, bitmap, imageKey, imageInfo, tileBitmapPoolHelper)
-            ?: DefaultTileBitmap(key, bitmap)
+        return DefaultTileBitmap(key, bitmap)
     }
 }

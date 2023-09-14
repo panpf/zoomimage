@@ -82,11 +82,11 @@ fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): Result<ImageInfo>
     return Result.success(imageInfo)
 }
 
-fun canUseSubsampling(imageInfo: ImageInfo, drawableSize: IntSizeCompat): Int {
-    if (drawableSize.width >= imageInfo.width && drawableSize.height >= imageInfo.height) {
+fun checkUseSubsampling(imageInfo: ImageInfo, thumbnailSize: IntSizeCompat): Int {
+    if (thumbnailSize.width >= imageInfo.width && thumbnailSize.height >= imageInfo.height) {
         return -1
     }
-    if (!canUseSubsamplingByAspectRatio(imageSize = imageInfo.size, drawableSize = drawableSize)) {
+    if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
         return -2
     }
     if (!isSupportBitmapRegionDecoder(imageInfo.mimeType)) {
@@ -97,11 +97,11 @@ fun canUseSubsampling(imageInfo: ImageInfo, drawableSize: IntSizeCompat): Int {
 
 fun canUseSubsamplingByAspectRatio(
     imageSize: IntSizeCompat,
-    drawableSize: IntSizeCompat,
+    thumbnailSize: IntSizeCompat,
     minDifference: Float = 0.5f
 ): Boolean {
-    if (imageSize.isEmpty() || drawableSize.isEmpty()) return false
-    val imageAspectRatio = imageSize.width / imageSize.height.toFloat()
-    val drawableAspectRatio = drawableSize.width / drawableSize.height.toFloat()
-    return abs(imageAspectRatio - drawableAspectRatio).format(2) <= minDifference.format(2)
+    if (imageSize.isEmpty() || thumbnailSize.isEmpty()) return false
+    val widthScale = imageSize.width / thumbnailSize.width.toFloat()
+    val heightScale = imageSize.height / thumbnailSize.height.toFloat()
+    return abs(widthScale - heightScale).format(2) <= minDifference.format(2)
 }

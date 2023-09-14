@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.util.internal
 
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Looper
 
 
@@ -34,9 +35,12 @@ internal fun requiredWorkThread() {
 
 internal fun Bitmap.toShortString(): String = "(${width}x${height},$config)"
 
-internal fun Bitmap.toHexString(): String =
-    "Bitmap(${width}x${height},$config,@${Integer.toHexString(hashCode())})"
+internal fun Bitmap.toHexShortString(): String =
+    "(${width}x${height},$config,@${Integer.toHexString(hashCode())})"
 
 @Suppress("USELESS_ELVIS")
 internal val Bitmap.safeConfig: Bitmap.Config
     get() = config ?: Bitmap.Config.ARGB_8888
+
+internal fun Bitmap.Config.isAndSupportHardware(): Boolean =
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this == Bitmap.Config.HARDWARE

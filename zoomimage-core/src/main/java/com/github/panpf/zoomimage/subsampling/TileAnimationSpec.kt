@@ -36,6 +36,6 @@ data class TileAnimationSpec(
         const val DEFAULT_INTERVAL = 8L
 
         val Default = TileAnimationSpec(duration = DEFAULT_DURATION, interval = DEFAULT_INTERVAL)
-        val None = TileAnimationSpec(duration = 0, interval = DEFAULT_INTERVAL)
+        val None = TileAnimationSpec(duration = 0L, interval = DEFAULT_INTERVAL)
     }
 }

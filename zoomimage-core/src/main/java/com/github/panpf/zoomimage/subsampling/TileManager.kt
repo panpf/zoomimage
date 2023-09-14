@@ -18,13 +18,13 @@ package com.github.panpf.zoomimage.subsampling
 
 import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.subsampling.internal.calculateSampleSize
+import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.subsampling.internal.initializeTileMap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.requiredMainThread
-import com.github.panpf.zoomimage.util.internal.toHexString
+import com.github.panpf.zoomimage.util.internal.toHexShortString
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineDispatcher
@@ -300,9 +300,9 @@ class TileManager constructor(
         }
         this.lastScale = scale
 
-        val newSampleSize = calculateSampleSize(
+        val newSampleSize = findSampleSize(
             imageSize = imageInfo.size,
-            drawableSize = contentSize,
+            thumbnailSize = contentSize,
             scale = scale
         )
         if (newSampleSize == currentSampleSize) {
@@ -398,7 +398,7 @@ class TileManager constructor(
 
                 else -> {
                     logger.d {
-                        "loadTile. canceled. bitmap=${bitmap.toHexString()}, $tile. '${imageSource.key}'"
+                        "loadTile. canceled. bitmap=${bitmap.toHexShortString()}, $tile. '${imageSource.key}'"
                     }
                     tile.state = Tile.STATE_ERROR
                     tileBitmapPoolHelper.freeBitmap(bitmap, "loadTile:jobCanceled")

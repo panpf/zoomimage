@@ -21,11 +21,11 @@ import android.graphics.BitmapFactory
 import androidx.annotation.WorkerThread
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.internal.calculateSampledBitmapSizeForRegion
-import com.github.panpf.zoomimage.subsampling.internal.isAndSupportHardware
 import com.github.panpf.zoomimage.subsampling.internal.isSupportInBitmapForRegion
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.internal.isAndSupportHardware
 import com.github.panpf.zoomimage.util.internal.requiredWorkThread
-import com.github.panpf.zoomimage.util.internal.toHexString
+import com.github.panpf.zoomimage.util.internal.toHexShortString
 import com.github.panpf.zoomimage.util.isEmpty
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -118,7 +118,7 @@ class TileBitmapPoolHelper(logger: Logger) {
                     "imageMimeType=$imageMimeType, " +
                     "imageSize=$imageSize. " +
                     "inSampleSize=$inSampleSize, " +
-                    "inBitmap=${inBitmap.toHexString()}"
+                    "inBitmap=${inBitmap.toHexShortString()}"
         }
         return true
     }
@@ -141,14 +141,14 @@ class TileBitmapPoolHelper(logger: Logger) {
 
         val from = if (newCreate) "newCreate" else "fromPool"
         logger.d {
-            "getOrCreate:$caller. $from. width=$width, height=$height, config=$config. bitmap=${bitmap.toHexString()}"
+            "getOrCreate:$caller. $from. width=$width, height=$height, config=$config. bitmap=${bitmap.toHexShortString()}"
         }
         return bitmap
     }
 
     fun freeBitmap(bitmap: Bitmap?, caller: String) {
         if (bitmap == null || bitmap.isRecycled) {
-            logger.e("freeBitmap:$caller. error, bitmap null or recycled. bitmap=${bitmap?.toHexString()}")
+            logger.e("freeBitmap:$caller. error, bitmap null or recycled. bitmap=${bitmap?.toHexShortString()}")
             return
         }
 
@@ -179,10 +179,10 @@ class TileBitmapPoolHelper(logger: Logger) {
                 false
             }
             if (success) {
-                logger.d { "freeBitmap$$caller. successful. bitmap=${bitmap.toHexString()}" }
+                logger.d { "freeBitmap$$caller. successful. bitmap=${bitmap.toHexShortString()}" }
             } else {
                 bitmap.recycle()
-                logger.d { "freeBitmap$$caller. failed, execute recycle. bitmap=${bitmap.toHexString()}" }
+                logger.d { "freeBitmap$$caller. failed, execute recycle. bitmap=${bitmap.toHexShortString()}" }
             }
         }
     }
