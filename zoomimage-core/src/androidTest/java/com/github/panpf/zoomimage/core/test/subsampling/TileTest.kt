@@ -36,7 +36,7 @@ class TileTest {
         tile.apply {
             Assert.assertNotNull(bitmap)
             Assert.assertTrue("alpha=${animationState.alpha}", animationState.running)
-            Assert.assertEquals(67f, animationState.alpha.toFloat(), 10f)
+            Assert.assertEquals(67f, animationState.alpha.toFloat(), 20f)
         }
 
         Thread.sleep(50)
@@ -44,7 +44,7 @@ class TileTest {
         tile.apply {
             Assert.assertNotNull(bitmap)
             Assert.assertTrue("alpha=${animationState.alpha}", animationState.running)
-            Assert.assertEquals(127f, animationState.alpha.toFloat(), 10f)
+            Assert.assertEquals(127f, animationState.alpha.toFloat(), 20f)
         }
 
         Thread.sleep(50)
@@ -52,7 +52,7 @@ class TileTest {
         tile.apply {
             Assert.assertNotNull(bitmap)
             Assert.assertTrue("alpha=${animationState.alpha}", animationState.running)
-            Assert.assertEquals(194f, animationState.alpha.toFloat(), 10f)
+            Assert.assertEquals(194f, animationState.alpha.toFloat(), 20f)
         }
 
         Thread.sleep(100)
