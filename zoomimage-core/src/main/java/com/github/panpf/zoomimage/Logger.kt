@@ -50,9 +50,7 @@ class Logger(
      * The level of the log. The level of the root logger will be modified directly
      */
     var level: Int = rootLogger?.level ?: INFO
-        get() {
-            return rootLogger?.level ?: field
-        }
+        get() = rootLogger?.level ?: field
         set(value) {
             val rootLogger = rootLogger
             if (rootLogger != null) {
@@ -71,9 +69,7 @@ class Logger(
      * The pipeline of the log. The pipeline of the root logger will be modified directly
      */
     var pipeline: Pipeline = rootLogger?.pipeline ?: AndroidLogPipeline()
-        get() {
-            return rootLogger?.pipeline ?: field
-        }
+        get() = rootLogger?.pipeline ?: field
         set(value) {
             val rootLogger = rootLogger
             if (rootLogger != null) {
@@ -107,9 +103,9 @@ class Logger(
      * Print a log with the VERBOSE level
      */
     fun v(msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= VERBOSE) {
-            logger.pipeline.log(VERBOSE, tag, assembleMessage(msg), null)
+        if (isLoggable(VERBOSE)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(VERBOSE, tag, assembleMessage(msg), null)
         }
     }
 
@@ -117,9 +113,9 @@ class Logger(
      * Print a log with the VERBOSE level
      */
     fun v(lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (this.level >= VERBOSE) {
-            logger.pipeline.log(VERBOSE, tag, assembleMessage(lazyMessage()), null)
+        if (isLoggable(VERBOSE)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(VERBOSE, tag, assembleMessage(lazyMessage()), null)
         }
     }
 
@@ -127,9 +123,9 @@ class Logger(
      * Print a log with the VERBOSE level
      */
     fun v(throwable: Throwable?, msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= VERBOSE) {
-            logger.pipeline.log(VERBOSE, tag, assembleMessage(msg), throwable)
+        if (isLoggable(VERBOSE)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(VERBOSE, tag, assembleMessage(msg), throwable)
         }
     }
 
@@ -137,9 +133,9 @@ class Logger(
      * Print a log with the VERBOSE level
      */
     fun v(throwable: Throwable?, lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= VERBOSE) {
-            logger.pipeline.log(VERBOSE, tag, assembleMessage(lazyMessage()), throwable)
+        if (isLoggable(VERBOSE)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(VERBOSE, tag, assembleMessage(lazyMessage()), throwable)
         }
     }
 
@@ -148,9 +144,9 @@ class Logger(
      * Print a log with the DEBUG level
      */
     fun d(msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= DEBUG) {
-            logger.pipeline.log(DEBUG, tag, assembleMessage(msg), null)
+        if (isLoggable(DEBUG)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(DEBUG, tag, assembleMessage(msg), null)
         }
     }
 
@@ -158,9 +154,9 @@ class Logger(
      * Print a log with the DEBUG level
      */
     fun d(lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= DEBUG) {
-            logger.pipeline.log(DEBUG, tag, assembleMessage(lazyMessage()), null)
+        if (isLoggable(DEBUG)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(DEBUG, tag, assembleMessage(lazyMessage()), null)
         }
     }
 
@@ -168,9 +164,9 @@ class Logger(
      * Print a log with the DEBUG level
      */
     fun d(throwable: Throwable?, msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= DEBUG) {
-            logger.pipeline.log(DEBUG, tag, assembleMessage(msg), throwable)
+        if (isLoggable(DEBUG)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(DEBUG, tag, assembleMessage(msg), throwable)
         }
     }
 
@@ -178,9 +174,9 @@ class Logger(
      * Print a log with the DEBUG level
      */
     fun d(throwable: Throwable?, lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= DEBUG) {
-            logger.pipeline.log(DEBUG, tag, assembleMessage(lazyMessage()), throwable)
+        if (isLoggable(DEBUG)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(DEBUG, tag, assembleMessage(lazyMessage()), throwable)
         }
     }
 
@@ -189,9 +185,9 @@ class Logger(
      * Print a log with the INFO level
      */
     fun i(msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= INFO) {
-            logger.pipeline.log(INFO, tag, assembleMessage(msg), null)
+        if (isLoggable(INFO)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(INFO, tag, assembleMessage(msg), null)
         }
     }
 
@@ -199,9 +195,9 @@ class Logger(
      * Print a log with the INFO level
      */
     fun i(lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= INFO) {
-            logger.pipeline.log(INFO, tag, assembleMessage(lazyMessage()), null)
+        if (isLoggable(INFO)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(INFO, tag, assembleMessage(lazyMessage()), null)
         }
     }
 
@@ -209,9 +205,9 @@ class Logger(
      * Print a log with the INFO level
      */
     fun i(throwable: Throwable?, msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= INFO) {
-            logger.pipeline.log(INFO, tag, assembleMessage(msg), throwable)
+        if (isLoggable(INFO)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(INFO, tag, assembleMessage(msg), throwable)
         }
     }
 
@@ -219,9 +215,9 @@ class Logger(
      * Print a log with the INFO level
      */
     fun i(throwable: Throwable?, lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= INFO) {
-            logger.pipeline.log(INFO, tag, assembleMessage(lazyMessage()), throwable)
+        if (isLoggable(INFO)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(INFO, tag, assembleMessage(lazyMessage()), throwable)
         }
     }
 
@@ -230,9 +226,9 @@ class Logger(
      * Print a log with the WARN level
      */
     fun w(msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= WARN) {
-            logger.pipeline.log(WARN, tag, assembleMessage(msg), null)
+        if (isLoggable(WARN)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(WARN, tag, assembleMessage(msg), null)
         }
     }
 
@@ -240,9 +236,9 @@ class Logger(
      * Print a log with the WARN level
      */
     fun w(lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= WARN) {
-            logger.pipeline.log(WARN, tag, assembleMessage(lazyMessage()), null)
+        if (isLoggable(WARN)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(WARN, tag, assembleMessage(lazyMessage()), null)
         }
     }
 
@@ -250,9 +246,9 @@ class Logger(
      * Print a log with the WARN level
      */
     fun w(throwable: Throwable?, msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= WARN) {
-            logger.pipeline.log(WARN, tag, assembleMessage(msg), throwable)
+        if (isLoggable(WARN)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(WARN, tag, assembleMessage(msg), throwable)
         }
     }
 
@@ -260,9 +256,9 @@ class Logger(
      * Print a log with the WARN level
      */
     fun w(throwable: Throwable?, lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= WARN) {
-            logger.pipeline.log(WARN, tag, assembleMessage(lazyMessage()), throwable)
+        if (isLoggable(WARN)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(WARN, tag, assembleMessage(lazyMessage()), throwable)
         }
     }
 
@@ -271,9 +267,9 @@ class Logger(
      * Print a log with the ERROR level
      */
     fun e(msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= ERROR) {
-            logger.pipeline.log(ERROR, tag, assembleMessage(msg), null)
+        if (isLoggable(ERROR)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(ERROR, tag, assembleMessage(msg), null)
         }
     }
 
@@ -281,9 +277,9 @@ class Logger(
      * Print a log with the ERROR level
      */
     fun e(lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= ERROR) {
-            logger.pipeline.log(ERROR, tag, assembleMessage(lazyMessage()), null)
+        if (isLoggable(ERROR)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(ERROR, tag, assembleMessage(lazyMessage()), null)
         }
     }
 
@@ -291,9 +287,9 @@ class Logger(
      * Print a log with the ERROR level
      */
     fun e(throwable: Throwable?, msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= ERROR) {
-            logger.pipeline.log(ERROR, tag, assembleMessage(msg), throwable)
+        if (isLoggable(ERROR)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(ERROR, tag, assembleMessage(msg), throwable)
         }
     }
 
@@ -301,9 +297,9 @@ class Logger(
      * Print a log with the ERROR level
      */
     fun e(throwable: Throwable?, lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= ERROR) {
-            logger.pipeline.log(ERROR, tag, assembleMessage(lazyMessage()), throwable)
+        if (isLoggable(ERROR)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(ERROR, tag, assembleMessage(lazyMessage()), throwable)
         }
     }
 
@@ -312,9 +308,9 @@ class Logger(
      * Print a log with the specified level
      */
     fun log(@Level level: Int, msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= level) {
-            logger.pipeline.log(level, tag, assembleMessage(msg), null)
+        if (isLoggable(level)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(level, tag, assembleMessage(msg), null)
         }
     }
 
@@ -322,9 +318,9 @@ class Logger(
      * Print a log with the specified level
      */
     fun log(@Level level: Int, lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= level) {
-            logger.pipeline.log(level, tag, assembleMessage(lazyMessage()), null)
+        if (isLoggable(level)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(level, tag, assembleMessage(lazyMessage()), null)
         }
     }
 
@@ -332,9 +328,9 @@ class Logger(
      * Print a log with the specified level
      */
     fun log(@Level level: Int, throwable: Throwable?, msg: String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= level) {
-            logger.pipeline.log(level, tag, assembleMessage(msg), throwable)
+        if (isLoggable(level)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(level, tag, assembleMessage(msg), throwable)
         }
     }
 
@@ -342,10 +338,15 @@ class Logger(
      * Print a log with the specified level
      */
     fun log(@Level level: Int, throwable: Throwable?, lazyMessage: () -> String) {
-        val logger = rootLogger ?: this
-        if (logger.level >= level) {
-            logger.pipeline.log(level, tag, assembleMessage(lazyMessage()), throwable)
+        if (isLoggable(level)) {
+            val pipeline = (rootLogger ?: this).pipeline
+            pipeline.log(level, tag, assembleMessage(lazyMessage()), throwable)
         }
+    }
+
+    fun isLoggable(level: Int): Boolean {
+        val logger = rootLogger ?: this
+        return level >= logger.level
     }
 
 
@@ -365,12 +366,10 @@ class Logger(
             } else {
                 "$threadName - $msg"
             }
+        } else if (module?.isNotEmpty() == true) {
+            "$module. $msg"
         } else {
-            if (module?.isNotEmpty() == true) {
-                "$module. $msg"
-            } else {
-                msg
-            }
+            msg
         }
     }
 
@@ -474,7 +473,7 @@ class Logger(
             "WARN" -> WARN
             "ERROR" -> ERROR
             "ASSERT" -> ASSERT
-            else -> -1
+            else -> throw IllegalArgumentException("Unknown level name: $levelName")
         }
     }
 
