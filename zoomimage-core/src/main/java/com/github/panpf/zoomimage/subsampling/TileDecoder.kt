@@ -50,11 +50,11 @@ class TileDecoder constructor(
     private val addedImageSize = exifOrientationHelper.addToSize(imageInfo.size)
 
     @WorkerThread
-    fun decode(tile: Tile): Bitmap? {
+    fun decode(srcRect: IntRectCompat, sampleSize: Int): Bitmap? {
         requiredWorkThread()
         if (destroyed) return null
         return useDecoder { decoder ->
-            decodeRegion(decoder, tile.srcRect, tile.sampleSize)
+            decodeRegion(decoder, srcRect, sampleSize)
                 ?.let { applyExifOrientation(it) }
         }
     }
@@ -174,7 +174,7 @@ class TileDecoder constructor(
         requiredWorkThread()
 
         val newBitmap = exifOrientationHelper.applyToBitmap(bitmap)
-        return if (newBitmap != null && newBitmap != bitmap) {
+        return if (newBitmap != null && newBitmap !== bitmap) {
             tileBitmapPoolHelper.freeBitmap(bitmap, "applyExifOrientation")
             newBitmap
         } else {

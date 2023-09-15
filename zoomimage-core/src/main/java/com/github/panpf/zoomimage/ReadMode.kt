@@ -107,8 +107,12 @@ data class ReadMode(
             return maxScaleMultiple.format(1) >= minMultiple.format(1)
         }
 
-        override fun toString(): String {
-            return "LongImageDecider(same=$sameDirectionMultiple,notSame=$notSameDirectionMultiple)"
+        private fun isSameDirection(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
+            val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
+            val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
+            return (srcAspectRatio == 1.0f || dstAspectRatio == 1.0f)
+                    || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
+                    || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
         }
 
         override fun equals(other: Any?): Boolean {
@@ -126,12 +130,8 @@ data class ReadMode(
             return result
         }
 
-        private fun isSameDirection(srcSize: IntSizeCompat, dstSize: IntSizeCompat): Boolean {
-            val srcAspectRatio = srcSize.width.toFloat().div(srcSize.height).format(2)
-            val dstAspectRatio = dstSize.width.toFloat().div(dstSize.height).format(2)
-            return (srcAspectRatio == 1.0f || dstAspectRatio == 1.0f)
-                    || (srcAspectRatio > 1.0f && dstAspectRatio > 1.0f)
-                    || (srcAspectRatio < 1.0f && dstAspectRatio < 1.0f)
+        override fun toString(): String {
+            return "LongImageDecider($sameDirectionMultiple:$notSameDirectionMultiple)"
         }
     }
 }

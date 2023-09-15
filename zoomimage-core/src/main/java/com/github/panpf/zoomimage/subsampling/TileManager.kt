@@ -375,7 +375,7 @@ class TileManager constructor(
             updateTileSnapshotList()
 
             val bitmap = withContext(decodeDispatcher) {
-                tileDecoder.decode(tile)
+                tileDecoder.decode(tile.srcRect, tile.sampleSize)
             }
             when {
                 bitmap == null -> {

@@ -20,6 +20,7 @@ package com.github.panpf.zoomimage
  * Edge state for the current offset
  */
 data class ScrollEdge(val horizontal: Edge, val vertical: Edge) {
+
     companion object {
         val Default: ScrollEdge = ScrollEdge(Edge.BOTH, Edge.BOTH)
     }
