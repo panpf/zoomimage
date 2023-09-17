@@ -414,16 +414,16 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         }
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
-            val tileMapInfoList = tileManager.sortedTileMap.entries.map { entry ->
+            val tileGridMapInfo = tileManager.sortedTileGridMap.entries.map { entry ->
                 val tableSize = entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
                 "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
-            }
+            }.toString()
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "tileMaxSize=${tileMaxSize.toShortString()}, " +
-                    "tileMap=$tileMapInfoList, " +
+                    "tileGridMap=$tileGridMapInfo, " +
                     "'${imageKey}'"
         }
         this@SubsamplingState.tileManager = tileManager
@@ -444,8 +444,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             return
         }
         tileManager.refreshTiles(
-            contentVisibleRect = contentVisibleRect.toCompat(),
             scale = scale,
+            contentVisibleRect = contentVisibleRect.toCompat(),
             rotation = rotation,
             continuousTransformType = continuousTransformType,
             caller = caller

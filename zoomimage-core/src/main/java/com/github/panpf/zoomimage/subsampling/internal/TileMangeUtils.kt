@@ -21,8 +21,13 @@ import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlin.math.ceil
+import kotlin.math.floor
 
-internal fun initializeTileMap(
+internal fun calculateTileMaxSize(containerSize: IntSizeCompat): IntSizeCompat {
+    return containerSize / 2
+}
+
+internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
     tileMaxSize: IntSizeCompat
 ): Map<Int, List<Tile>> {
@@ -100,4 +105,31 @@ internal fun findSampleSize(
         sampleSize *= 2
     }
     return sampleSize
+}
+
+internal fun calculateImageLoadRect(
+    imageSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    tileMaxSize: IntSizeCompat,
+    contentVisibleRect: IntRectCompat
+): IntRectCompat {
+    val widthScale = imageSize.width / contentSize.width.toFloat()
+    val heightScale = imageSize.height / contentSize.height.toFloat()
+    val imageVisibleRect = IntRectCompat(
+        left = floor(contentVisibleRect.left * widthScale).toInt(),
+        top = floor(contentVisibleRect.top * heightScale).toInt(),
+        right = ceil(contentVisibleRect.right * widthScale).toInt(),
+        bottom = ceil(contentVisibleRect.bottom * heightScale).toInt()
+    )
+    /*
+     * Increase the visible area as the loading area,
+     * this preloads tiles around the visible area,
+     * the user will no longer feel the loading process while sliding slowly
+     */
+    return IntRectCompat(
+        left = imageVisibleRect.left - tileMaxSize.width / 2,
+        top = imageVisibleRect.top - tileMaxSize.height / 2,
+        right = imageVisibleRect.right + tileMaxSize.width / 2,
+        bottom = imageVisibleRect.bottom + tileMaxSize.height / 2
+    )
 }

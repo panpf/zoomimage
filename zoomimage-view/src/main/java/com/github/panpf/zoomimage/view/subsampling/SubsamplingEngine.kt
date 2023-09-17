@@ -425,8 +425,8 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             return
         }
         tileManager.refreshTiles(
-            contentVisibleRect = contentVisibleRect,
             scale = scale,
+            contentVisibleRect = contentVisibleRect,
             rotation = rotation,
             continuousTransformType = continuousTransformType,
             caller = caller
@@ -520,16 +520,15 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         }
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
-            val tileMapInfoList = tileManager.sortedTileMap.entries.map { entry ->
-                val tableSize =
-                    entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
+            val tileGridMapInfo = tileManager.sortedTileGridMap.entries.map { entry ->
+                val tableSize = entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
                 "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
-            }
+            }.toString()
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "tileMaxSize=${tileMaxSize.toShortString()}, " +
-                    "tileMap=$tileMapInfoList, " +
+                    "tileGridMap=$tileGridMapInfo, " +
                     "'${imageKey}'"
         }
         this@SubsamplingEngine.tileManager = tileManager

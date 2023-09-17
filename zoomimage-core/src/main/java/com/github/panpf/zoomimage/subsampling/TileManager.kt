@@ -18,8 +18,10 @@ package com.github.panpf.zoomimage.subsampling
 
 import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
+import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
+import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
-import com.github.panpf.zoomimage.subsampling.internal.initializeTileMap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
@@ -40,8 +42,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.LinkedList
-import kotlin.math.ceil
-import kotlin.math.floor
 
 class TileManager constructor(
     logger: Logger,
@@ -97,14 +97,13 @@ class TileManager constructor(
     /**
      * The maximum size of the tile
      */
-    val tileMaxSize: IntSizeCompat =
-        IntSizeCompat(containerSize.width / 2, containerSize.height / 2)
+    val tileMaxSize: IntSizeCompat = calculateTileMaxSize(containerSize)
 
     /**
      * Tile Map with sample size from largest to smallest
      */
-    val sortedTileMap: Map<Int, List<Tile>> =
-        initializeTileMap(imageInfo.size, tileMaxSize).toSortedMap { o1, o2 -> (o1 - o2) * -1 }
+    val sortedTileGridMap: Map<Int, List<Tile>> =
+        calculateTileGridMap(imageInfo.size, tileMaxSize).toSortedMap { o1, o2 -> (o1 - o2) * -1 }
 
     /**
      * The sample size of the image
@@ -140,74 +139,92 @@ class TileManager constructor(
     var backgroundTiles: List<TileSnapshot> = emptyList()
         private set
 
+    /**
+     * @return 0: Success;
+     * -1: scale is less than or equal to 1f;
+     * -2: foregroundTiles is null or size is 1;
+     * -3: imageLoadRect is empty;
+     * -4: rotation is not a multiple of 90;
+     * -5: continuousTransformType hits pausedContinuousTransformType;
+     */
     @MainThread
     fun refreshTiles(
-        contentVisibleRect: IntRectCompat,
         scale: Float,
+        contentVisibleRect: IntRectCompat,
         rotation: Int,
         @ContinuousTransformType continuousTransformType: Int,
         caller: String,
-    ) {
+    ): Int {
         requiredMainThread()
-        if (contentVisibleRect.isEmpty) {
+
+        if (scale.format(2) <= 1.0f) {
+            logger.d { "refreshTiles:$caller. interrupted, scale is less than or equal to 1f. '${imageSource.key}'" }
+            clean("refreshTiles:scaleLessThanOne")
+            if (this.sampleSize != 0) {
+                this.sampleSize = 0
+            }
+            return -1
+        }
+
+        resetSampleSize(scale)
+        val sampleSize = sampleSize
+        val foregroundTiles = sortedTileGridMap[sampleSize]
+        if (foregroundTiles == null || foregroundTiles.size == 1) {
             logger.d {
-                "refreshTiles:$caller. interrupted, contentVisibleRect is empty. " +
-                        "contentVisibleRect=${contentVisibleRect}. '${imageSource.key}'"
+                val tileGridMapInfo = sortedTileGridMap.entries.map { entry ->
+                    val tableSize =
+                        entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
+                    "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
+                }.toString()
+                "refreshTiles:$caller. interrupted, foregroundTiles is null or size is 1. " +
+                        "sampleSize=$sampleSize, " +
+                        "imageSize=${imageInfo.size.toShortString()}, " +
+                        "contentSize=${contentSize.toShortString()}, " +
+                        "scale=${scale.format(4)}, " +
+                        "tileMaxSize=${tileMaxSize.toShortString()}, " +
+                        "tileGridMap=${tileGridMapInfo}. " +
+                        "'${imageSource.key}'"
+            }
+            clean("refreshTiles:foregroundTilesEmpty")
+            return -2
+        }
+
+        resetImageLoadRect(contentVisibleRect)
+        val imageLoadRect = imageLoadRect
+        if (imageLoadRect.isEmpty) {
+            logger.d {
+                "refreshTiles:$caller. interrupted, imageLoadRect is empty. " +
+                        "imageLoadRect=${imageLoadRect.toShortString()}. " +
+                        "imageSize=${imageInfo.size.toShortString()}, " +
+                        "contentSize=${contentSize.toShortString()}, " +
+                        "tileMaxSize=${tileMaxSize.toShortString()}, " +
+                        "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
+                        "'${imageSource.key}'"
             }
             clean("refreshTiles:contentVisibleRectEmpty")
-            return
+            return -3
         }
-        if (scale.format(2) <= 1.0f) {
-            logger.d { "refreshTiles:$caller. interrupted, zoom is less than or equal to 1f. '${imageSource.key}'" }
-            clean("refreshTiles:scale1f")
-            return
-        }
+
         if (rotation % 90 != 0) {
             logger.d { "refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
-            return
+            return -4
         }
+
         val continuousTransformTypeName = ContinuousTransformType.name(continuousTransformType)
         if (continuousTransformType and pausedContinuousTransformType != 0) {
             logger.d {
                 "refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${imageSource.key}'"
             }
-            return
-        }
-
-        resetImageLoadRect(contentVisibleRect)
-        resetSampleSize(scale)
-
-        val sampleSize = sampleSize
-        val foregroundTiles = sortedTileMap[sampleSize]
-        if (foregroundTiles == null) {
-            logger.d {
-                val tileMapInfoList = sortedTileMap.entries.map { "${it.key}:${it.value.size}" }
-                "refreshTiles:$caller. interrupted, foregroundTilesEmpty. " +
-                        "scale=${scale.format(4)}, " +
-                        "sampleSize=$sampleSize, " +
-                        "tileMaxSize=${tileMaxSize.toShortString()}, " +
-                        "tileMapInfoList=${tileMapInfoList}, " +
-                        "'${imageSource.key}'"
-            }
-            clean("refreshTiles:foregroundTilesEmpty")
-            return
-        }
-        if (foregroundTiles.size == 1) {
-            logger.d {
-                "refreshTiles:$caller. interrupted, foregroundTilesOnlyOne. sampleSize=$sampleSize, '${imageSource.key}'"
-            }
-            clean("refreshTiles:foregroundTilesOnlyOne")
-            return
+            return -5
         }
 
         var expectLoadCount = 0
         var actualLoadCount = 0
         var expectFreeCount = 0
         var actualFreeCount = 0
-        val imageLoadRect = imageLoadRect
         val currentSampleSize = sampleSize
         val lastSampleSize = lastSampleSize
-        sortedTileMap.entries.forEach { (eachSampleSize, eachTiles) ->
+        sortedTileGridMap.entries.forEach { (eachSampleSize, eachTiles) ->
             if (eachSampleSize == currentSampleSize) {
                 eachTiles.forEach { foregroundTile ->
                     if (foregroundTile.srcRect.overlaps(imageLoadRect)) {
@@ -252,9 +269,8 @@ class TileManager constructor(
                     "imageInfo=${imageInfo.toShortString()}, " +
                     "'${imageSource.key}"
         }
-        if (actualFreeCount > 0) {
-            updateTileSnapshotList()
-        }
+        updateTileSnapshotList()
+        return 0
     }
 
     private fun isBackground(
@@ -272,22 +288,11 @@ class TileManager constructor(
             return false
         }
         lastContentVisibleRect = contentVisibleRect
-
-        val contentScale = imageInfo.width / contentSize.width.toFloat()
-        val imageVisibleRect = IntRectCompat(
-            left = floor(contentVisibleRect.left * contentScale).toInt(),
-            top = floor(contentVisibleRect.top * contentScale).toInt(),
-            right = ceil(contentVisibleRect.right * contentScale).toInt(),
-            bottom = ceil(contentVisibleRect.bottom * contentScale).toInt()
-        )
-        // Increase the visible area as the loading area,
-        // this preloads tiles around the visible area,
-        // the user will no longer feel the loading process while sliding slowly
-        imageLoadRect = IntRectCompat(
-            left = imageVisibleRect.left - tileMaxSize.width / 2,
-            top = imageVisibleRect.top - tileMaxSize.height / 2,
-            right = imageVisibleRect.right + tileMaxSize.width / 2,
-            bottom = imageVisibleRect.bottom + tileMaxSize.height / 2
+        imageLoadRect = calculateImageLoadRect(
+            imageSize = imageInfo.size,
+            contentSize = contentSize,
+            tileMaxSize = tileMaxSize,
+            contentVisibleRect = contentVisibleRect
         )
         return true
     }
@@ -327,12 +332,10 @@ class TileManager constructor(
         val sampleSize = sampleSize
         if (sampleSize != 0) {
             var freeCount = 0
-            sortedTileMap.values.forEach { tileList ->
+            sortedTileGridMap.values.forEach { tileList ->
                 freeCount += freeTiles(tileList, skipNotify = true)
             }
-            this.sampleSize = 0
             logger.d { "clean:$caller. freeCount=$freeCount. '${imageSource.key}" }
-
             if (freeCount > 0) {
                 updateTileSnapshotList()
             }
@@ -471,7 +474,7 @@ class TileManager constructor(
                 var foregroundLoadedCount = 0
                 var foregroundLoadingCount = 0
                 var foregroundAnimatingCount = 0
-                val foregroundTiles = sortedTileMap[sampleSize]
+                val foregroundTiles = sortedTileGridMap[sampleSize]
                 val foregroundTileCount = foregroundTiles?.size ?: 0
                 foregroundTiles?.forEach { foregroundTile ->
                     val animationState = foregroundTile.animationState
@@ -509,7 +512,7 @@ class TileManager constructor(
                 val currentSampleSize = sampleSize
                 val lastSampleSize = lastSampleSize
                 val disabledBackgroundTiles = disabledBackgroundTiles
-                sortedTileMap.entries.forEach { (eachSampleSize, eachTiles) ->
+                sortedTileGridMap.entries.forEach { (eachSampleSize, eachTiles) ->
                     if (eachSampleSize != currentSampleSize) {
                         if (!disabledBackgroundTiles
                             && isBackground(lastSampleSize, currentSampleSize, eachSampleSize)
@@ -538,7 +541,7 @@ class TileManager constructor(
                 logger.d {
                     "updateTileSnapshotList. " +
                             "sampleSize=$sampleSize, " +
-                            "foregroundTileCount=$foregroundTileCount," +
+                            "foregroundTileCount=$foregroundTileCount, " +
                             "foregroundInsideCount=$foregroundInsideCount, " +
                             "foregroundOutsideCount=$foregroundOutsideCount, " +
                             "foregroundLoadedCount=$foregroundLoadedCount, " +
