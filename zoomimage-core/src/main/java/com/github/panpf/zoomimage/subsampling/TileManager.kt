@@ -63,7 +63,7 @@ class TileManager constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(4)
+    private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(2)
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val logger: Logger = logger.newLogger(module = "TileManager")
     private var lastScale: Float? = null
