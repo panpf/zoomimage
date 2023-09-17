@@ -42,9 +42,9 @@ class TileManagerTest {
                 tileManager.pausedContinuousTransformType
             )
             listOf(
-                ContinuousTransformType.SCALE to -5,
-                ContinuousTransformType.OFFSET to -5,
-                ContinuousTransformType.LOCATE to -5,
+                ContinuousTransformType.SCALE to -2,
+                ContinuousTransformType.OFFSET to -2,
+                ContinuousTransformType.LOCATE to -2,
                 ContinuousTransformType.GESTURE to 0,
                 ContinuousTransformType.FLING to 0,
             ).forEach {
@@ -72,7 +72,7 @@ class TileManagerTest {
 
             tileManager.pausedContinuousTransformType = ContinuousTransformType.SCALE
             listOf(
-                ContinuousTransformType.SCALE to -5,
+                ContinuousTransformType.SCALE to -2,
                 ContinuousTransformType.OFFSET to 0,
                 ContinuousTransformType.LOCATE to 0,
                 ContinuousTransformType.GESTURE to 0,
@@ -88,8 +88,8 @@ class TileManagerTest {
             tileManager.pausedContinuousTransformType = ContinuousTransformType.SCALE or
                     ContinuousTransformType.OFFSET
             listOf(
-                ContinuousTransformType.SCALE to -5,
-                ContinuousTransformType.OFFSET to -5,
+                ContinuousTransformType.SCALE to -2,
+                ContinuousTransformType.OFFSET to -2,
                 ContinuousTransformType.LOCATE to 0,
                 ContinuousTransformType.GESTURE to 0,
                 ContinuousTransformType.FLING to 0,
@@ -105,9 +105,9 @@ class TileManagerTest {
                     ContinuousTransformType.OFFSET or
                     ContinuousTransformType.LOCATE
             listOf(
-                ContinuousTransformType.SCALE to -5,
-                ContinuousTransformType.OFFSET to -5,
-                ContinuousTransformType.LOCATE to -5,
+                ContinuousTransformType.SCALE to -2,
+                ContinuousTransformType.OFFSET to -2,
+                ContinuousTransformType.LOCATE to -2,
                 ContinuousTransformType.GESTURE to 0,
                 ContinuousTransformType.FLING to 0,
             ).forEach {
@@ -123,10 +123,10 @@ class TileManagerTest {
                     ContinuousTransformType.LOCATE or
                     ContinuousTransformType.GESTURE
             listOf(
-                ContinuousTransformType.SCALE to -5,
-                ContinuousTransformType.OFFSET to -5,
-                ContinuousTransformType.LOCATE to -5,
-                ContinuousTransformType.GESTURE to -5,
+                ContinuousTransformType.SCALE to -2,
+                ContinuousTransformType.OFFSET to -2,
+                ContinuousTransformType.LOCATE to -2,
+                ContinuousTransformType.GESTURE to -2,
                 ContinuousTransformType.FLING to 0,
             ).forEach {
                 Assert.assertEquals(
@@ -142,11 +142,11 @@ class TileManagerTest {
                     ContinuousTransformType.GESTURE or
                     ContinuousTransformType.FLING
             listOf(
-                ContinuousTransformType.SCALE to -5,
-                ContinuousTransformType.OFFSET to -5,
-                ContinuousTransformType.LOCATE to -5,
-                ContinuousTransformType.GESTURE to -5,
-                ContinuousTransformType.FLING to -5,
+                ContinuousTransformType.SCALE to -2,
+                ContinuousTransformType.OFFSET to -2,
+                ContinuousTransformType.LOCATE to -2,
+                ContinuousTransformType.GESTURE to -2,
+                ContinuousTransformType.FLING to -2,
             ).forEach {
                 Assert.assertEquals(
                     "continuousTransformType=${it.first}",

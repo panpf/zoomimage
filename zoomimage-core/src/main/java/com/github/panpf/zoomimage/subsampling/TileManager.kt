@@ -69,7 +69,7 @@ class TileManager constructor(
     private var lastScale: Float? = null
     private var lastSampleSize: Int = 0
     private var lastContentVisibleRect: IntRectCompat? = null
-    private var notifyTileSnapshotListJob: Job? = null
+    private var updateTileSnapshotListJob: Job? = null
 
     /**
      * A continuous transform type that needs to pause loading
@@ -85,7 +85,7 @@ class TileManager constructor(
         set(value) {
             if (field != value) {
                 field = value
-                updateTileSnapshotList()
+                updateTileSnapshotList("disabledBackgroundTilesChanged")
             }
         }
 
@@ -157,18 +157,33 @@ class TileManager constructor(
     ): Int {
         requiredMainThread()
 
-        if (scale.format(2) <= 1.0f) {
-            logger.d { "refreshTiles:$caller. interrupted, scale is less than or equal to 1f. '${imageSource.key}'" }
-            clean("refreshTiles:scaleLessThanOne")
-            if (this.sampleSize != 0) {
-                this.sampleSize = 0
-            }
+        /*
+         * If the following detections fail, simply skip the refresh and keep the current state
+         */
+        if (rotation % 90 != 0) {
+            logger.d { "refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
             return -1
         }
+        if (continuousTransformType and pausedContinuousTransformType != 0) {
+            val continuousTransformTypeName = ContinuousTransformType.name(continuousTransformType)
+            logger.d {
+                "refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${imageSource.key}'"
+            }
+            return -2
+        }
 
-        resetSampleSize(scale)
-        val sampleSize = sampleSize
-        val foregroundTiles = sortedTileGridMap[sampleSize]
+        /* reset sampleSize and imageLoadRect */
+        val oldSampleSize = sampleSize
+        val oldImageLoadRect = imageLoadRect
+        val sampleSizeChanged = resetSampleSize(scale)
+        val imageLoadRectChanged = resetImageLoadRect(contentVisibleRect)
+        val newSampleSize = sampleSize
+        val newImageLoadRect = imageLoadRect
+
+        /*
+         * When the following detection fails, subsampling is no longer needed, so empty the existing tile
+         */
+        val foregroundTiles = sortedTileGridMap[newSampleSize]
         if (foregroundTiles == null || foregroundTiles.size == 1) {
             logger.d {
                 val tileGridMapInfo = sortedTileGridMap.entries.map { entry ->
@@ -177,7 +192,9 @@ class TileManager constructor(
                     "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
                 }.toString()
                 "refreshTiles:$caller. interrupted, foregroundTiles is null or size is 1. " +
-                        "sampleSize=$sampleSize, " +
+                        "foregroundTilesSize=${foregroundTiles?.size ?: 0}, " +
+                        "sampleSizeChanged=${sampleSizeChanged}, " +
+                        "sampleSize=$oldSampleSize -> $newSampleSize, " +
                         "imageSize=${imageInfo.size.toShortString()}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "scale=${scale.format(4)}, " +
@@ -185,49 +202,41 @@ class TileManager constructor(
                         "tileGridMap=${tileGridMapInfo}. " +
                         "'${imageSource.key}'"
             }
-            clean("refreshTiles:foregroundTilesEmpty")
-            return -2
+            if (sampleSizeChanged) {
+                clean("refreshTiles:foregroundTilesEmptyOrOne")
+                updateTileSnapshotList("refreshTiles:foregroundTilesEmptyOrOne")
+            }
+            return -3
         }
-
-        resetImageLoadRect(contentVisibleRect)
-        val imageLoadRect = imageLoadRect
-        if (imageLoadRect.isEmpty) {
+        if (newImageLoadRect.isEmpty) {
             logger.d {
                 "refreshTiles:$caller. interrupted, imageLoadRect is empty. " +
-                        "imageLoadRect=${imageLoadRect.toShortString()}. " +
+                        "imageLoadRect=${oldImageLoadRect.toShortString()} -> ${newImageLoadRect.toShortString()}, " +
                         "imageSize=${imageInfo.size.toShortString()}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "tileMaxSize=${tileMaxSize.toShortString()}, " +
                         "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
                         "'${imageSource.key}'"
             }
-            clean("refreshTiles:contentVisibleRectEmpty")
-            return -3
-        }
-
-        if (rotation % 90 != 0) {
-            logger.d { "refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
+            if (imageLoadRectChanged) {
+                clean("refreshTiles:contentVisibleRectEmpty")
+                updateTileSnapshotList("refreshTiles:contentVisibleRectEmpty")
+            }
             return -4
         }
 
-        val continuousTransformTypeName = ContinuousTransformType.name(continuousTransformType)
-        if (continuousTransformType and pausedContinuousTransformType != 0) {
-            logger.d {
-                "refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${imageSource.key}'"
-            }
-            return -5
-        }
-
+        /*
+         * free or load the tile
+         */
         var expectLoadCount = 0
         var actualLoadCount = 0
         var expectFreeCount = 0
         var actualFreeCount = 0
-        val currentSampleSize = sampleSize
         val lastSampleSize = lastSampleSize
         sortedTileGridMap.entries.forEach { (eachSampleSize, eachTiles) ->
-            if (eachSampleSize == currentSampleSize) {
+            if (eachSampleSize == newSampleSize) {
                 eachTiles.forEach { foregroundTile ->
-                    if (foregroundTile.srcRect.overlaps(imageLoadRect)) {
+                    if (foregroundTile.srcRect.overlaps(newImageLoadRect)) {
                         expectLoadCount++
                         if (loadTile(foregroundTile)) {
                             actualLoadCount++
@@ -240,10 +249,10 @@ class TileManager constructor(
                     }
                 }
             } else if (!disabledBackgroundTiles
-                && isBackground(lastSampleSize, currentSampleSize, eachSampleSize)
+                && isBackground(lastSampleSize, newSampleSize, eachSampleSize)
             ) {
                 eachTiles.forEach { backgroundTile ->
-                    if (!backgroundTile.srcRect.overlaps(imageLoadRect)) {
+                    if (!backgroundTile.srcRect.overlaps(newImageLoadRect)) {
                         expectFreeCount++
                         if (freeTile(backgroundTile, skipNotify = true)) {
                             actualFreeCount++
@@ -256,12 +265,13 @@ class TileManager constructor(
             }
         }
         logger.d {
+            val continuousTransformTypeName = ContinuousTransformType.name(continuousTransformType)
             "refreshTiles:$caller. " +
                     "loadCount=${actualLoadCount}/${expectLoadCount}, " +
                     "freeCount=${actualFreeCount}/${expectFreeCount}. " +
-                    "sampleSize=${sampleSize}, " +
+                    "sampleSize=$oldSampleSize -> $newSampleSize, " +
                     "foregroundTiles=${foregroundTiles.size}, " +
-                    "imageLoadRect=${imageLoadRect.toShortString()}. " +
+                    "imageLoadRect=${oldImageLoadRect.toShortString()} -> ${newImageLoadRect.toShortString()}. " +
                     "scale=$scale, " +
                     "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -269,7 +279,9 @@ class TileManager constructor(
                     "imageInfo=${imageInfo.toShortString()}, " +
                     "'${imageSource.key}"
         }
-        updateTileSnapshotList()
+        if (sampleSizeChanged || imageLoadRectChanged || actualFreeCount > 0) {
+            updateTileSnapshotList("refreshTiles:loadOrFreeTile")
+        }
         return 0
     }
 
@@ -305,11 +317,16 @@ class TileManager constructor(
         }
         this.lastScale = scale
 
-        val newSampleSize = findSampleSize(
-            imageSize = imageInfo.size,
-            thumbnailSize = contentSize,
-            scale = scale
-        )
+        val newSampleSize = if (scale > 1f) {
+            findSampleSize(
+                imageSize = imageInfo.size,
+                thumbnailSize = contentSize,
+                scale = scale
+            )
+        } else {
+            // When scale is less than or equal to 0, there is no enlargement of content, so tile is not needed
+            0
+        }
         if (newSampleSize == currentSampleSize) {
             return false
         }
@@ -323,10 +340,11 @@ class TileManager constructor(
     fun clean(caller: String) {
         requiredMainThread()
 
-        val notifyTileSnapshotListJob = notifyTileSnapshotListJob
-        if (notifyTileSnapshotListJob != null) {
-            notifyTileSnapshotListJob.cancel("clean:$caller")
-            this.notifyTileSnapshotListJob = null
+        val updateTileSnapshotListJob = updateTileSnapshotListJob
+        if (updateTileSnapshotListJob != null && updateTileSnapshotListJob.isActive) {
+            logger.d { "clean:$caller. cancel updateTileSnapshotListJob. '${imageSource.key}" }
+            updateTileSnapshotListJob.cancel("clean:$caller")
+            this.updateTileSnapshotListJob = null
         }
 
         val sampleSize = sampleSize
@@ -337,7 +355,7 @@ class TileManager constructor(
             }
             logger.d { "clean:$caller. freeCount=$freeCount. '${imageSource.key}" }
             if (freeCount > 0) {
-                updateTileSnapshotList()
+                updateTileSnapshotList("clean:$caller")
             }
         }
     }
@@ -368,14 +386,14 @@ class TileManager constructor(
             tile.setTileBitmap(cachedValue, fromCache = true)
             tile.state = Tile.STATE_LOADED
             logger.d { "loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
-            updateTileSnapshotList()
+            updateTileSnapshotList("loadTile:fromMemory")
             return true
         }
 
         logger.d("loadTile. started. $tile. '${imageSource.key}'")
         tile.loadJob = coroutineScope.async {
             tile.state = Tile.STATE_LOADING
-            updateTileSnapshotList()
+            updateTileSnapshotList("loadTile:loading")
 
             val bitmap = withContext(decodeDispatcher) {
                 tileDecoder.decode(tile.srcRect, tile.sampleSize)
@@ -407,7 +425,7 @@ class TileManager constructor(
                     tileBitmapPoolHelper.freeBitmap(bitmap, "loadTile:jobCanceled")
                 }
             }
-            updateTileSnapshotList()
+            updateTileSnapshotList("loadTile:loaded")
         }
 
         return true
@@ -434,7 +452,7 @@ class TileManager constructor(
         }
 
         if (!skipNotify) {
-            updateTileSnapshotList()
+            updateTileSnapshotList("freeTile")
         }
         return true
     }
@@ -451,17 +469,19 @@ class TileManager constructor(
             }
         }
         if (!skipNotify && freeCount > 0) {
-            updateTileSnapshotList()
+            updateTileSnapshotList("freeTiles")
         }
         return freeCount
     }
 
-    private fun updateTileSnapshotList() {
-        if (notifyTileSnapshotListJob?.isActive == true) {
+    private fun updateTileSnapshotList(caller: String) {
+        if (updateTileSnapshotListJob?.isActive == true) {
+            logger.d { "updateTileSnapshotList:$caller. skipped, notifyTileSnapshotListJob is running. '${imageSource.key}'" }
             return
         }
 
-        notifyTileSnapshotListJob = coroutineScope.launch {
+        logger.d { "updateTileSnapshotList:$caller. launched. '${imageSource.key}'" }
+        updateTileSnapshotListJob = coroutineScope.launch {
             var running = true
             while (running && isActive) {
                 val sampleSize = sampleSize
@@ -560,6 +580,8 @@ class TileManager constructor(
                     delay(tileAnimationSpec.interval)
                 }
             }
+
+            logger.d { "updateTileSnapshotList:$caller. end, running=$running, active=$isActive. '${imageSource.key}'" }
         }
     }
 
