@@ -93,7 +93,8 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
                     }
                     if (zoomMotion > touchSlop ||
                         rotationMotion > touchSlop ||
-                        (panMotion > touchSlop && canDragged)
+                        (panMotion > touchSlop && canDragged) ||
+                        event.changes.size > 1 // Avoid triggering Pager's swipe at the smallest zoom factor and multi-finger touch
                     ) {
                         pastTouchSlop = true
                         lockedToPanZoom = panZoomLock && rotationMotion < touchSlop
