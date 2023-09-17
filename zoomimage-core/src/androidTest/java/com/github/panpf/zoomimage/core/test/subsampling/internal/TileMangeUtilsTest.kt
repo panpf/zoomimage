@@ -2,7 +2,7 @@ package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
-import com.github.panpf.zoomimage.subsampling.internal.initializeTileMap
+import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
 import org.junit.Test
@@ -51,7 +51,7 @@ class TileMangeUtilsTest {
                 Assert.assertEquals(imageSize.height, maxBottom)
             }
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(8000, 8000),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -62,7 +62,7 @@ class TileMangeUtilsTest {
             checkTiles(get(8)!!, 1, IntSizeCompat(8000, 8000))
         }
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(8000, 3000),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -73,7 +73,7 @@ class TileMangeUtilsTest {
             checkTiles(get(8)!!, 1, IntSizeCompat(8000, 3000))
         }
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(3000, 8000),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -85,7 +85,7 @@ class TileMangeUtilsTest {
         }
 
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(1500, 1500),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -94,7 +94,7 @@ class TileMangeUtilsTest {
             checkTiles(get(2)!!, 1, IntSizeCompat(1500, 1500))
         }
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(1000, 1500),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -102,7 +102,7 @@ class TileMangeUtilsTest {
             checkTiles(get(1)!!, 1, IntSizeCompat(1000, 1500))
         }
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(1500, 1000),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -111,7 +111,7 @@ class TileMangeUtilsTest {
             checkTiles(get(2)!!, 1, IntSizeCompat(1500, 1000))
         }
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(1000, 1000),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -120,7 +120,7 @@ class TileMangeUtilsTest {
         }
 
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(30000, 926),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -133,7 +133,7 @@ class TileMangeUtilsTest {
             checkTiles(get(32)!!, 1, IntSizeCompat(30000, 926))
         }
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(690, 12176),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -144,7 +144,7 @@ class TileMangeUtilsTest {
             checkTiles(get(8)!!, 1, IntSizeCompat(690, 12176))
         }
 
-        initializeTileMap(
+        calculateTileGridMap(
             imageSize = IntSizeCompat(7557, 5669),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -155,7 +155,7 @@ class TileMangeUtilsTest {
             checkTiles(get(8)!!, 1, IntSizeCompat(7557, 5669))
         }
 
-        initializeTileMap(
+        calculateTileGridMap(
             IntSizeCompat(9798, 6988),
             tileMaxSize = IntSizeCompat(1080, 1920)
         ).apply {
@@ -210,4 +210,6 @@ class TileMangeUtilsTest {
             findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(100, 100), 8f)
         )
     }
+
+    // todo calculateImageLoadRect
 }
