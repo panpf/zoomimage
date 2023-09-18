@@ -29,35 +29,28 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
-    val releaseSigningConfig = readReleaseSigningConfig()
     signingConfigs {
-        if (releaseSigningConfig != null) {
-            create("release") {
-                storeFile = releaseSigningConfig.storeFile
-                storePassword = releaseSigningConfig.storePassword
-                keyAlias = releaseSigningConfig.keyAlias
-                keyPassword = releaseSigningConfig.keyPassword
-            }
+        create("sample") {
+            storeFile = project.file("sample.keystore")
+            storePassword = "B027HHiiqKOMYesQ"
+            keyAlias = "panpf-sample"
+            keyPassword = "B027HHiiqKOMYesQ"
         }
     }
     buildTypes {
         debug {
             multiDexEnabled = true
-            if (releaseSigningConfig != null) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName("sample")
         }
         release {
             multiDexEnabled = true
             isMinifyEnabled = true
-//            isShrinkResources = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            if (releaseSigningConfig != null) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName("sample")
         }
     }
     compileOptions {
@@ -131,36 +124,3 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.rules)
 }
-
-fun readReleaseSigningConfig(): ReleaseSigningConfig? {
-    val localProperties = `java.util`.Properties().apply {
-        project.file("local.properties")
-            .takeIf { it.exists() }
-            ?.inputStream()?.use { this@apply.load(it) }
-    }
-    val jksFile = project.file("release.jks")
-    return if (
-        localProperties.containsKey("signing.storePassword")
-        && localProperties.containsKey("signing.keyAlias")
-        && localProperties.containsKey("signing.keyPassword")
-        && jksFile.exists()
-    ) {
-        println("hasReleaseSigningConfig: true")
-        ReleaseSigningConfig(
-            localProperties.getProperty("signing.storePassword"),
-            localProperties.getProperty("signing.keyAlias"),
-            localProperties.getProperty("signing.keyPassword"),
-            jksFile
-        )
-    } else {
-        println("hasReleaseSigningConfig: false")
-        null
-    }
-}
-
-class ReleaseSigningConfig(
-    val storePassword: String,
-    val keyAlias: String,
-    val keyPassword: String,
-    val storeFile: File,
-)
