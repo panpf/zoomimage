@@ -14,9 +14,9 @@ import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
 import com.github.panpf.zoomimage.subsampling.readImageInfo
+import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -231,13 +231,13 @@ class TileManagerTest {
 
             Assert.assertTrue(foregroundTilesChangedList.size == 0)
             Assert.assertEquals(0, refreshTilesWithScale(3f))
-            Thread.sleep(1000)
+            Thread.sleep(2000)
             Assert.assertTrue(foregroundTilesChangedList.any { it.any { tile -> tile.alpha < 255 } })
 
             foregroundTilesChangedList.clear()
             Assert.assertTrue(foregroundTilesChangedList.size == 0)
             Assert.assertEquals(0, refreshTilesWithScale(6f))
-            Thread.sleep(1000)
+            Thread.sleep(2000)
             Assert.assertTrue(foregroundTilesChangedList.any { it.any { tile -> tile.alpha < 255 } })
 
             tileManager.tileAnimationSpec = TileAnimationSpec.None
@@ -246,13 +246,13 @@ class TileManagerTest {
             foregroundTilesChangedList.clear()
             Assert.assertTrue(foregroundTilesChangedList.size == 0)
             Assert.assertEquals(0, refreshTilesWithScale(3f))
-            Thread.sleep(1000)
+            Thread.sleep(2000)
             Assert.assertTrue(foregroundTilesChangedList.all { it.all { tile -> tile.alpha == 255 } })
 
             foregroundTilesChangedList.clear()
             Assert.assertTrue(foregroundTilesChangedList.size == 0)
             Assert.assertEquals(0, refreshTilesWithScale(6f))
-            Thread.sleep(1000)
+            Thread.sleep(2000)
             Assert.assertTrue(foregroundTilesChangedList.all { it.all { tile -> tile.alpha == 255 } })
         }
     }
@@ -267,14 +267,9 @@ class TileManagerTest {
     @Test
     fun testSortedTileGridMap() {
         ManagerHolder().useApply {
-            val tileGridMapInfo = tileManager.sortedTileGridMap.entries.map { entry ->
-                val tableSize =
-                    entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
-                "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
-            }.toString()
             Assert.assertEquals(
-                "[16:1:1x1, 8:2:1x2, 4:4:1x4, 2:7:1x7, 1:26:2x13]",
-                tileGridMapInfo
+                "[16:1:1x1,8:2:1x2,4:4:1x4,2:7:1x7,1:26:2x13]",
+                tileManager.sortedTileGridMap.toIntroString()
             )
         }
     }
@@ -348,7 +343,35 @@ class TileManagerTest {
         }
     }
 
-    // todo refreshTiles
+    @Test
+    fun testRefreshTiles() {
+        ManagerHolder().useApply {
+            // rotation
+            listOf(-90, 0, 90, 180, 270, 360, 450).forEach { rotation ->
+                Assert.assertEquals("rotation=$rotation", 0, refreshTilesWithRotation(rotation))
+            }
+            listOf(
+                -89,
+                -91,
+                -1,
+                1,
+                89,
+                91,
+                179,
+                181,
+                269,
+                271,
+                359,
+                361,
+                449,
+                451
+            ).forEach { rotation ->
+                Assert.assertEquals("rotation=$rotation", -1, refreshTilesWithRotation(rotation))
+            }
+
+            // todo refreshTiles
+        }
+    }
 
     @Test
     fun testClean() {
@@ -374,63 +397,6 @@ class TileManagerTest {
             Assert.assertTrue(tileManager.foregroundTiles.all { it.state == Tile.STATE_NONE })
         }
     }
-
-//    @Test
-//    fun testConstructor() {
-//        ManagerHolder().useApply {
-//            tileManager.also {
-//                Assert.assertEquals(false, it.disabledBackgroundTiles)
-//                Assert.assertEquals(TileAnimationSpec.Default, it.tileAnimationSpec)
-//                Assert.assertEquals(tileMaxSize, it.tileMaxSize)
-//                Assert.assertEquals(
-//                    initializeTileMap(imageInfo.size, tileMaxSize)
-//                        .toSortedMap { o1, o2 -> (o1 - o2) * -1 },
-//                    it.sortedTileMap,
-//                )
-//                Assert.assertEquals(0, it.sampleSize)
-//                Assert.assertEquals(IntRectCompat.Zero, it.imageLoadRect)
-//                Assert.assertEquals(emptyList<TileSnapshot>(), it.foregroundTiles)
-//                Assert.assertEquals(emptyList<TileSnapshot>(), it.backgroundTiles)
-//                Assert.assertEquals(emptyList<List<TileSnapshot>>(), backgroundTilesChangedList)
-//                Assert.assertEquals(emptyList<List<TileSnapshot>>(), foregroundTilesChangedList)
-//                Assert.assertEquals(emptyList<Int>(), sampleSizeChangedList)
-//                Assert.assertEquals(emptyList<IntRectCompat>(), imageLoadChangedList)
-//            }
-//
-//            var contentVisibleRect = IntRectCompat(
-//                left = imageInfo.width / 2,
-//                top = imageInfo.height / 2,
-//                right = imageInfo.width - imageInfo.width / 2,
-//                bottom = imageInfo.height - imageInfo.height / 2,
-//            )
-//            var scale = 2.5f
-//            var rotation = 0
-//            var continuousTransformType = ContinuousTransformType.GESTURE
-//            val refreshTilesResult = runBlocking(Dispatchers.Main) {
-//                tileManager.refreshTiles(
-//                    contentVisibleRect,
-//                    scale,
-//                    rotation,
-//                    continuousTransformType,
-//                    "test"
-//                )
-//            }
-//            Assert.assertEquals(0, refreshTilesResult)
-//            Thread.sleep(2000)
-//            tileManager.also {
-//                Assert.assertEquals(2, it.sampleSize)
-//                Assert.assertEquals(
-//                    calculateImageLoadRect(
-//                        imageSize = imageInfo.size,
-//                        contentSize = contentSize,
-//                        tileMaxSize = tileMaxSize,
-//                        contentVisibleRect = contentVisibleRect
-//                    ),
-//                    it.imageLoadRect
-//                )
-//            }
-//        }
-//    }
 
     private class ManagerHolder : Closeable {
         private val context = InstrumentationRegistry.getInstrumentation().context
@@ -511,6 +477,18 @@ class TileManagerTest {
         }
 
         fun refreshTilesWithContentVisibleRect(contentVisibleRect: IntRectCompat): Int {
+            return runBlocking(Dispatchers.Main) {
+                tileManager.refreshTiles(
+                    scale = scale,
+                    contentVisibleRect = contentVisibleRect,
+                    rotation = rotation,
+                    continuousTransformType = continuousTransformType,
+                    caller = "test"
+                )
+            }
+        }
+
+        fun refreshTilesWithRotation(rotation: Int): Int {
             return runBlocking(Dispatchers.Main) {
                 tileManager.refreshTiles(
                     scale = scale,

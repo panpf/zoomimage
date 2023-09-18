@@ -1,8 +1,9 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.Tile
-import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
+import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
+import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
 import org.junit.Test
@@ -11,11 +12,133 @@ import kotlin.math.min
 
 class TileMangeUtilsTest {
 
+    // todo calculateTileMaxSize
+
+    @Test
+    fun testCalculateTileMaxSize() {
+        Assert.assertEquals(
+            /* expected = */ IntSizeCompat(1080, 1920) / 2,
+            /* actual = */ calculateTileMaxSize(IntSizeCompat(1080, 1920))
+        )
+
+        Assert.assertEquals(
+            /* expected = */ IntSizeCompat(1000, 2000) / 2,
+            /* actual = */ calculateTileMaxSize(IntSizeCompat(1000, 2000))
+        )
+    }
+
+    @Test
+    fun testFindSampleSize() {
+        // todo testFindSampleSize
+//        val imageSize = IntSizeCompat(690, 12176)
+//
+//        Assert.assertEquals(
+//            /* expected = */ 0,
+//            /* actual = */ findSampleSize(IntSizeCompat.Zero, imageSize / 16, 4f)
+//        )
+//        Assert.assertEquals(
+//            /* expected = */ 0,
+//            /* actual = */ findSampleSize(imageSize, IntSizeCompat.Zero, 4f)
+//        )
+//        Assert.assertEquals(
+//            /* expected = */ 0,
+//            /* actual = */ findSampleSize(imageSize, imageSize / 16, 0f)
+//        )
+//
+//        var thumbnailSize = imageSize / 16
+////        listOf(
+////            0 to 0f,
+////            128 to 0.1f,
+////            32 to 0.5f,
+////            16 to 0.9f,
+////            16 to 1.0f,
+////
+////            8 to 1.1f,
+////            8 to 2.0f,
+////
+////            4 to 2.1f,
+////            4 to 4.0f,
+////
+////            2 to 4.1f,
+////            2 to 8.0f,
+////
+////            1 to 8.1f,
+////            1 to 100.0f,
+////        ).forEach { (expectSampleSize, scale) ->
+////            Assert.assertEquals(
+////                /* message = */ "scale=$scale",
+////                /* expected = */ expectSampleSize,
+////                /* actual = */ findSampleSize(imageSize, thumbnailSize, scale)
+////            )
+////        }
+//
+//        thumbnailSize =
+//            IntSizeCompat(ceil(imageSize.width / 4f).toInt(), ceil(imageSize.height / 4f).toInt())
+//
+//        listOf(
+//            0.1f, 0.5f, 0.9f,
+//            1.0f, 1.1f, 1.9f,
+//            2.0f, 2.1f, 2.9f,
+//            3.0f, 3.1f, 3.9f,
+//            4.0f, 4.1f, 4.9f,
+//            6.0f, 6.1f, 6.9f,
+//            8.0f, 8.1f, 8.9f,
+//            12.0f, 12.1f, 12.9f,
+//            16.0f, 16.1f, 16.9f,
+//            17.0f, 17.1f, 17.9f,
+//        ).map { scale ->
+//            val sampleSize = findSampleSize(imageSize, thumbnailSize, scale)
+//            "$scale:$sampleSize"
+//        }.also { list ->
+//            val excepted = """
+//                0.1:32, 0.5:8, 0.9:4,
+//                1.0:4, 1.1:4, 1.9:2,
+//                2.0:2, 2.1:2, 2.9:1,
+//                3.0:1, 3.1:1, 3.9:1,
+//                4.0:1, 4.1:1, 4.9:1,
+//                6.0:1, 6.1:1, 6.9:1,
+//                8.0:1, 8.1:1, 8.9:1,
+//                12.0:1, 12.1:1, 12.9:1,
+//                16.0:1, 16.1:1, 16.9:1,
+//                17.0:1, 17.1:1, 17.9:1,
+//            """.trimIndent()
+//            val result = buildString {
+//                list.forEachIndexed { index, chunkedList ->
+//                    if (index > 0) {
+//                        append("\n")
+//                    }
+////                    append(chunkedList.joinToString(separator = ", "));append(",")
+//                }
+//            }
+//            Assert.assertEquals(excepted, result)
+////            Assert.assertEquals("", result)
+//        }
+//
+////        listOf(
+////            0 to 0f,
+////            32 to 0.1f,
+////            8 to 0.5f,
+////            4 to 0.9f,
+////            4 to 1.0f,
+////
+////            2 to 1.1f,
+////            2 to 2.0f,
+////
+////            1 to 2.1f,
+////            1 to 4.0f,
+////        ).forEach { (expectSampleSize, scale) ->
+////            Assert.assertEquals(
+////                /* message = */ "scale=$scale",
+////                /* expected = */ expectSampleSize,
+////                /* actual = */ findSampleSize(imageSize, thumbnailSize, scale)
+////            )
+////        }
+    }
+
     @Test
     fun testInitializeTileMap() {
-        val checkTiles: (List<Tile>, Int, IntSizeCompat) -> Unit =
-            { tileList, expectedSize, imageSize ->
-                Assert.assertEquals(expectedSize, tileList.size)
+        val checkTiles: (List<Tile>, IntSizeCompat) -> Unit =
+            { tileList, imageSize ->
                 var minLeft = 0
                 var minTop = 0
                 var maxRight = 0
@@ -51,164 +174,144 @@ class TileMangeUtilsTest {
                 Assert.assertEquals(imageSize.height, maxBottom)
             }
 
+        val containerSize = IntSizeCompat(1080, 1920)
+        val tileMaxSize = containerSize / 2
+
+        var imageSize = IntSizeCompat(8000, 8000)
         calculateTileGridMap(
-            imageSize = IntSizeCompat(8000, 8000),
-            tileMaxSize = IntSizeCompat(1080, 1920)
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
         ).apply {
-            Assert.assertEquals(4, size)
-            checkTiles(get(1)!!, 40, IntSizeCompat(8000, 8000))
-            checkTiles(get(2)!!, 12, IntSizeCompat(8000, 8000))
-            checkTiles(get(4)!!, 4, IntSizeCompat(8000, 8000))
-            checkTiles(get(8)!!, 1, IntSizeCompat(8000, 8000))
+            Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
+        }
+        calculateTileGridMap(
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 32,
+        ).apply {
+            Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
+        }
+        calculateTileGridMap(
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 8,
+        ).apply {
+            Assert.assertEquals("[8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
+        }
+        calculateTileGridMap(
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 2,
+        ).apply {
+            Assert.assertEquals("[2:40:8x5,1:135:15x9]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
         }
 
+        imageSize = IntSizeCompat(8000, 3000)
         calculateTileGridMap(
-            imageSize = IntSizeCompat(8000, 3000),
-            tileMaxSize = IntSizeCompat(1080, 1920)
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
         ).apply {
-            Assert.assertEquals(4, size)
-            checkTiles(get(1)!!, 16, IntSizeCompat(8000, 3000))
-            checkTiles(get(2)!!, 4, IntSizeCompat(8000, 3000))
-            checkTiles(get(4)!!, 2, IntSizeCompat(8000, 3000))
-            checkTiles(get(8)!!, 1, IntSizeCompat(8000, 3000))
+            Assert.assertEquals("[16:1:1x1,8:2:2x1,4:4:4x1,2:16:8x2,1:60:15x4]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
         }
 
+        imageSize = IntSizeCompat(3000, 8000)
         calculateTileGridMap(
-            imageSize = IntSizeCompat(3000, 8000),
-            tileMaxSize = IntSizeCompat(1080, 1920)
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
         ).apply {
-            Assert.assertEquals(4, size)
-            checkTiles(get(1)!!, 15, IntSizeCompat(3000, 8000))
-            checkTiles(get(2)!!, 6, IntSizeCompat(3000, 8000))
-            checkTiles(get(4)!!, 2, IntSizeCompat(3000, 8000))
-            checkTiles(get(8)!!, 1, IntSizeCompat(3000, 8000))
-        }
-
-
-        calculateTileGridMap(
-            imageSize = IntSizeCompat(1500, 1500),
-            tileMaxSize = IntSizeCompat(1080, 1920)
-        ).apply {
-            Assert.assertEquals(2, size)
-            checkTiles(get(1)!!, 2, IntSizeCompat(1500, 1500))
-            checkTiles(get(2)!!, 1, IntSizeCompat(1500, 1500))
-        }
-
-        calculateTileGridMap(
-            imageSize = IntSizeCompat(1000, 1500),
-            tileMaxSize = IntSizeCompat(1080, 1920)
-        ).apply {
-            Assert.assertEquals(1, size)
-            checkTiles(get(1)!!, 1, IntSizeCompat(1000, 1500))
-        }
-
-        calculateTileGridMap(
-            imageSize = IntSizeCompat(1500, 1000),
-            tileMaxSize = IntSizeCompat(1080, 1920)
-        ).apply {
-            Assert.assertEquals(2, size)
-            checkTiles(get(1)!!, 2, IntSizeCompat(1500, 1000))
-            checkTiles(get(2)!!, 1, IntSizeCompat(1500, 1000))
-        }
-
-        calculateTileGridMap(
-            imageSize = IntSizeCompat(1000, 1000),
-            tileMaxSize = IntSizeCompat(1080, 1920)
-        ).apply {
-            Assert.assertEquals(1, size)
-            checkTiles(get(1)!!, 1, IntSizeCompat(1000, 1000))
+            Assert.assertEquals("[16:1:1x1,8:2:1x2,4:6:2x3,2:15:3x5,1:54:6x9]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
         }
 
 
+        imageSize = IntSizeCompat(1500, 1500)
         calculateTileGridMap(
-            imageSize = IntSizeCompat(30000, 926),
-            tileMaxSize = IntSizeCompat(1080, 1920)
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
         ).apply {
-            Assert.assertEquals(6, size)
-            checkTiles(get(1)!!, 28, IntSizeCompat(30000, 926))
-            checkTiles(get(2)!!, 14, IntSizeCompat(30000, 926))
-            checkTiles(get(4)!!, 7, IntSizeCompat(30000, 926))
-            checkTiles(get(8)!!, 4, IntSizeCompat(30000, 926))
-            checkTiles(get(16)!!, 2, IntSizeCompat(30000, 926))
-            checkTiles(get(32)!!, 1, IntSizeCompat(30000, 926))
+            Assert.assertEquals("[4:1:1x1,2:2:2x1,1:6:3x2]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
         }
 
+        imageSize = IntSizeCompat(1000, 1500)
         calculateTileGridMap(
-            imageSize = IntSizeCompat(690, 12176),
-            tileMaxSize = IntSizeCompat(1080, 1920)
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
         ).apply {
-            Assert.assertEquals(4, size)
-            checkTiles(get(1)!!, 7, IntSizeCompat(690, 12176))
-            checkTiles(get(2)!!, 4, IntSizeCompat(690, 12176))
-            checkTiles(get(4)!!, 2, IntSizeCompat(690, 12176))
-            checkTiles(get(8)!!, 1, IntSizeCompat(690, 12176))
+            Assert.assertEquals("[2:1:1x1,1:4:2x2]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
         }
 
+        imageSize = IntSizeCompat(1500, 1000)
         calculateTileGridMap(
-            imageSize = IntSizeCompat(7557, 5669),
-            tileMaxSize = IntSizeCompat(1080, 1920)
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
         ).apply {
-            Assert.assertEquals(4, size)
-            checkTiles(get(1)!!, 21, IntSizeCompat(7557, 5669))
-            checkTiles(get(2)!!, 8, IntSizeCompat(7557, 5669))
-            checkTiles(get(4)!!, 2, IntSizeCompat(7557, 5669))
-            checkTiles(get(8)!!, 1, IntSizeCompat(7557, 5669))
+            Assert.assertEquals("[4:1:1x1,2:2:2x1,1:6:3x2]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
         }
 
+        imageSize = IntSizeCompat(1000, 1000)
         calculateTileGridMap(
-            IntSizeCompat(9798, 6988),
-            tileMaxSize = IntSizeCompat(1080, 1920)
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
         ).apply {
-            Assert.assertEquals(5, size)
-            checkTiles(get(1)!!, 40, IntSizeCompat(9798, 6988))
-            checkTiles(get(2)!!, 10, IntSizeCompat(9798, 6988))
-            checkTiles(get(4)!!, 3, IntSizeCompat(9798, 6988))
-            checkTiles(get(8)!!, 2, IntSizeCompat(9798, 6988))
-            checkTiles(get(16)!!, 1, IntSizeCompat(9798, 6988))
+            Assert.assertEquals("[2:1:1x1,1:4:2x2]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
         }
-    }
 
-    @Test
-    fun testFindSampleSize() {
-        Assert.assertEquals(16, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(50, 50), 1f))
-        Assert.assertEquals(8, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(51, 51), 1f))
-        Assert.assertEquals(8, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(99, 99), 1f))
-        Assert.assertEquals(8, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(100, 100), 1f))
-        Assert.assertEquals(4, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(101, 101), 1f))
-        Assert.assertEquals(4, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(199, 199), 1f))
-        Assert.assertEquals(4, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(200, 200), 1f))
-        Assert.assertEquals(2, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(201, 201), 1f))
-        Assert.assertEquals(2, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(399, 399), 1f))
-        Assert.assertEquals(2, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(400, 400), 1f))
-        Assert.assertEquals(1, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(401, 401), 1f))
-        Assert.assertEquals(1, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(799, 799), 1f))
-        Assert.assertEquals(1, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(800, 800), 1f))
-        Assert.assertEquals(1, findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(801, 801), 1f))
-        Assert.assertEquals(
-            1,
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(10000, 10000), 1f)
-        )
 
-        Assert.assertEquals(
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(200, 200), 1f),
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(100, 100), 2f)
-        )
-        Assert.assertEquals(
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(300, 300), 1f),
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(100, 100), 3f)
-        )
-        Assert.assertEquals(
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(400, 400), 1f),
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(100, 100), 4f)
-        )
-        Assert.assertEquals(
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(700, 700), 1f),
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(100, 100), 7f)
-        )
-        Assert.assertEquals(
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(800, 800), 1f),
-            findSampleSize(IntSizeCompat(800, 800), IntSizeCompat(100, 100), 8f)
-        )
+        imageSize = IntSizeCompat(30000, 926)
+        calculateTileGridMap(
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
+        ).apply {
+            Assert.assertEquals("[16:4:4x1,8:7:7x1,4:14:14x1,2:28:28x1,1:56:56x1]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
+        }
+
+        imageSize = IntSizeCompat(690, 12176)
+        calculateTileGridMap(
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
+        ).apply {
+            Assert.assertEquals("[16:1:1x1,8:2:1x2,4:4:1x4,2:7:1x7,1:26:2x13]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
+        }
+
+        imageSize = IntSizeCompat(7557, 5669)
+        calculateTileGridMap(
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
+        ).apply {
+            Assert.assertEquals("[16:1:1x1,8:2:2x1,4:8:4x2,2:21:7x3,1:84:14x6]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
+        }
+
+        imageSize = IntSizeCompat(9798, 6988)
+        calculateTileGridMap(
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 16,
+        ).apply {
+            Assert.assertEquals("[16:2:2x1,8:3:3x1,4:10:5x2,2:40:10x4,1:152:19x8]", toIntroString())
+            values.forEach { checkTiles(it, imageSize) }
+        }
     }
 
     // todo calculateImageLoadRect

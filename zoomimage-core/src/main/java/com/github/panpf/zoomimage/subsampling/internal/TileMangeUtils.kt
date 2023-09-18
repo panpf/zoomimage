@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.isEmpty
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -27,14 +28,41 @@ internal fun calculateTileMaxSize(containerSize: IntSizeCompat): IntSizeCompat {
     return containerSize / 2
 }
 
+internal fun findSampleSize(
+    imageSize: IntSizeCompat,
+    thumbnailSize: IntSizeCompat,
+    scale: Float
+): Int {
+    if (imageSize.isEmpty() || thumbnailSize.isEmpty() || scale <= 0) {
+        return 0
+    }
+//    val scaledWidthRatio = (imageSize.width / (thumbnailSize.width * scale)).roundToInt()
+//    var sampleSize = 1
+//    while (scaledWidthRatio >= sampleSize * 2) {
+//        sampleSize *= 2
+//    }
+//    return sampleSize
+    // todo 优化不精准的问题，例如 scale 为 1f， scaledWidthRatio 为 3.98，但是 sampleSize 为 2
+    val scaledWidthRatio = (imageSize.width / (thumbnailSize.width * scale))
+    var sampleSize = 1
+    while (scaledWidthRatio >= sampleSize * 2) {
+        sampleSize *= 2
+    }
+    return sampleSize
+}
+
 internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
-    tileMaxSize: IntSizeCompat
+    tileMaxSize: IntSizeCompat,
+    thumbnailSize: IntSizeCompat,
 ): Map<Int, List<Tile>> {
     /* The core rules are: The size of each tile does not exceed tileMaxSize */
     val tileMaxWith = tileMaxSize.width
     val tileMaxHeight = tileMaxSize.height
     val tileMap = HashMap<Int, List<Tile>>()
+
+    val maxSampleSize =
+        findSampleSize(imageSize = imageSize, thumbnailSize = thumbnailSize, scale = 1f)
 
     var sampleSize = 1
     while (true) {
@@ -85,26 +113,13 @@ internal fun calculateTileGridMap(
         }
         tileMap[sampleSize] = tileList
 
-        if (tileList.size == 1) {
+        if (tileList.size == 1 || sampleSize >= maxSampleSize) {
             break
         } else {
             sampleSize *= 2
         }
     }
     return tileMap.toSortedMap { o1, o2 -> (o1 - o2) * -1 }
-}
-
-internal fun findSampleSize(
-    imageSize: IntSizeCompat,
-    thumbnailSize: IntSizeCompat,
-    scale: Float
-): Int {
-    val scaledWidthRatio = (imageSize.width / (thumbnailSize.width * scale))
-    var sampleSize = 1
-    while (scaledWidthRatio >= sampleSize * 2) {
-        sampleSize *= 2
-    }
-    return sampleSize
 }
 
 internal fun calculateImageLoadRect(
