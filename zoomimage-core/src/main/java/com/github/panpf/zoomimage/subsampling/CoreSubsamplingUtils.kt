@@ -25,6 +25,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.requiredWorkThread
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.abs
 
 @WorkerThread
@@ -109,4 +110,15 @@ fun canUseSubsamplingByAspectRatio(
     val widthScale = imageSize.width / thumbnailSize.width.toFloat()
     val heightScale = imageSize.height / thumbnailSize.height.toFloat()
     return abs(widthScale - heightScale).format(2) <= minDifference.format(2)
+}
+
+fun Map<Int, List<Tile>>.toIntroString(): String {
+    return entries.joinToString(
+        prefix = "[",
+        postfix = "]",
+        separator = ","
+    ) { (sampleSize, tiles) ->
+        val tableSize = tiles.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
+        "${sampleSize}:${tiles.size}:${tableSize.toShortString()}"
+    }
 }

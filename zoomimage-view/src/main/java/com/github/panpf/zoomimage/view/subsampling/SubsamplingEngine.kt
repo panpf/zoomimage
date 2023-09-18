@@ -36,6 +36,7 @@ import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.checkUseSubsampling
 import com.github.panpf.zoomimage.subsampling.readImageInfo
+import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isEmpty
@@ -522,17 +523,11 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             tileAnimationSpec = this@SubsamplingEngine.tileAnimationSpec
         }
         logger.d {
-            val tileMaxSize = tileManager.tileMaxSize
-            val tileGridMapInfo = tileManager.sortedTileGridMap.entries.map { entry ->
-                val tableSize =
-                    entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
-                "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
-            }.toString()
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
-                    "tileMaxSize=${tileMaxSize.toShortString()}, " +
-                    "tileGridMap=$tileGridMapInfo, " +
+                    "tileMaxSize=${tileManager.tileMaxSize.toShortString()}, " +
+                    "tileGridMap=${tileManager.sortedTileGridMap.toIntroString()}. " +
                     "'${imageKey}'"
         }
         this@SubsamplingEngine.tileManager = tileManager

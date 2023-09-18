@@ -41,7 +41,7 @@ class TileBitmapPoolHelper(logger: Logger) {
         private val bitmapPoolLock = Mutex()
     }
 
-    private val logger = logger.newLogger(module = "SubsamplingTileBitmapPoolHelper")
+    private val logger = logger.newLogger(module = "TileBitmapPoolHelper")
     private val coroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Main + CoroutineExceptionHandler { _, throwable ->
             logger.e(throwable) { "TileBitmapPoolHelper. CoroutineExceptionHandler: ${throwable.message}" }

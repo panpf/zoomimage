@@ -103,7 +103,11 @@ class TileManager constructor(
      * Tile Map with sample size from largest to smallest
      */
     val sortedTileGridMap: Map<Int, List<Tile>> =
-        calculateTileGridMap(imageInfo.size, tileMaxSize).toSortedMap { o1, o2 -> (o1 - o2) * -1 }
+        calculateTileGridMap(
+            imageSize = imageInfo.size,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = contentSize
+        )
 
     /**
      * The sample size of the image
@@ -140,6 +144,10 @@ class TileManager constructor(
         private set
 
     /**
+     * Refresh the tiles, [scale] is used to calculate sampleSize, [contentVisibleRect] is used to calculate imageLoadRect, and then decide which tiles need to be loaded and which need to be freed based on sampleSize and imageLoadRect.
+     *
+     * [rotation] and [continuousTransformType] are only used to filter cases where a refresh is not required and will not affect the loading and release of the tile
+     *
      * @return 0: Success;
      * -1: scale is less than or equal to 1f;
      * -2: foregroundTiles is null or size is 1;
@@ -186,11 +194,6 @@ class TileManager constructor(
         val foregroundTiles = sortedTileGridMap[newSampleSize]
         if (foregroundTiles == null || foregroundTiles.size == 1) {
             logger.d {
-                val tileGridMapInfo = sortedTileGridMap.entries.map { entry ->
-                    val tableSize =
-                        entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
-                    "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
-                }.toString()
                 "refreshTiles:$caller. interrupted, foregroundTiles is null or size is 1. " +
                         "foregroundTilesSize=${foregroundTiles?.size ?: 0}, " +
                         "sampleSizeChanged=${sampleSizeChanged}, " +
@@ -199,7 +202,7 @@ class TileManager constructor(
                         "contentSize=${contentSize.toShortString()}, " +
                         "scale=${scale.format(4)}, " +
                         "tileMaxSize=${tileMaxSize.toShortString()}, " +
-                        "tileGridMap=${tileGridMapInfo}. " +
+                        "tileGridMap=${sortedTileGridMap.toIntroString()}. " +
                         "'${imageSource.key}'"
             }
             if (sampleSizeChanged) {

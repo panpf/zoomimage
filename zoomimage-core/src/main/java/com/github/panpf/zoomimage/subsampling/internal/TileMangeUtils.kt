@@ -91,7 +91,7 @@ internal fun calculateTileGridMap(
             sampleSize *= 2
         }
     }
-    return tileMap
+    return tileMap.toSortedMap { o1, o2 -> (o1 - o2) * -1 }
 }
 
 internal fun findSampleSize(
