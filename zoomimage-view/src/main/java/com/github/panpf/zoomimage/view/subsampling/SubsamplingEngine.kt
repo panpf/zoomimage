@@ -51,6 +51,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 /**
@@ -442,7 +443,9 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         val ignoreExifOrientation = ignoreExifOrientation
 
         lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
-            val imageInfoResult = imageSource.readImageInfo(ignoreExifOrientation)
+            val imageInfoResult = withContext(Dispatchers.IO) {
+                imageSource.readImageInfo(ignoreExifOrientation)
+            }
             val imageInfo = imageInfoResult.getOrNull()
             this@SubsamplingEngine.imageInfo = imageInfo
             val canUseSubsamplingResult = imageInfo?.let { checkUseSubsampling(it, contentSize) }
@@ -521,7 +524,8 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
             val tileGridMapInfo = tileManager.sortedTileGridMap.entries.map { entry ->
-                val tableSize = entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
+                val tableSize =
+                    entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
                 "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
             }.toString()
             "resetTileManager:$caller. success. " +

@@ -65,6 +65,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 
@@ -110,7 +111,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     /**
      * If true, the Exif rotation information for the image is ignored
      */
-    var ignoreExifOrientation: Boolean  by mutableStateOf(false)
+    var ignoreExifOrientation: Boolean by mutableStateOf(false)
 
     /**
      * Set up the tile memory cache container
@@ -171,7 +172,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     /**
      * Whether the image is ready for subsampling
      */
-    var ready: Boolean  by mutableStateOf(false)
+    var ready: Boolean by mutableStateOf(false)
         private set
 
     /**
@@ -337,7 +338,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         val ignoreExifOrientation = ignoreExifOrientation
 
         lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
-            val imageInfoResult = imageSource.readImageInfo(ignoreExifOrientation)
+            val imageInfoResult = withContext(Dispatchers.IO) {
+                imageSource.readImageInfo(ignoreExifOrientation)
+            }
             val imageInfo = imageInfoResult.getOrNull()
             this@SubsamplingState.imageInfo = imageInfo
             val canUseSubsamplingResult =
@@ -415,7 +418,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         logger.d {
             val tileMaxSize = tileManager.tileMaxSize
             val tileGridMapInfo = tileManager.sortedTileGridMap.entries.map { entry ->
-                val tableSize = entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
+                val tableSize =
+                    entry.value.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
                 "${entry.key}:${entry.value.size}:${tableSize.toShortString()}"
             }.toString()
             "resetTileManager:$caller. success. " +

@@ -23,11 +23,13 @@ import com.github.panpf.zoomimage.subsampling.internal.applyExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.isSupportBitmapRegionDecoder
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.internal.requiredWorkThread
 import com.github.panpf.zoomimage.util.isEmpty
 import kotlin.math.abs
 
 @WorkerThread
 fun ImageSource.readImageBounds(): Result<BitmapFactory.Options> {
+    requiredWorkThread()
     return openInputStream()
         .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
         .use { inputStream ->
@@ -45,6 +47,7 @@ fun ImageSource.readImageBounds(): Result<BitmapFactory.Options> {
 
 @WorkerThread
 fun ImageSource.readExifOrientation(): Result<Int> {
+    requiredWorkThread()
     val orientationUndefined = ExifInterface.ORIENTATION_UNDEFINED
     return openInputStream()
         .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
@@ -57,12 +60,14 @@ fun ImageSource.readExifOrientation(): Result<Int> {
 }
 
 @WorkerThread
-fun ImageSource.readExifOrientationWithMimeType(mimeType: String): Result<Int> =
-    if (ExifInterface.isSupportedMimeType(mimeType)) {
+fun ImageSource.readExifOrientationWithMimeType(mimeType: String): Result<Int> {
+    requiredWorkThread()
+    return if (ExifInterface.isSupportedMimeType(mimeType)) {
         readExifOrientation()
     } else {
         Result.success(ExifInterface.ORIENTATION_UNDEFINED)
     }
+}
 
 @WorkerThread
 fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): Result<ImageInfo> {
