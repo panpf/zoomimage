@@ -37,6 +37,7 @@ import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.checkUseSubsampling
 import com.github.panpf.zoomimage.subsampling.readImageInfo
 import com.github.panpf.zoomimage.subsampling.toIntroString
+import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isEmpty
@@ -232,8 +233,14 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
     /**
      * The image load rect
      */
-    val imageLoadRect: IntRectCompat
-        get() = tileManager?.imageLoadRect ?: IntRectCompat.Zero
+    var imageLoadRect: IntRectCompat = IntRectCompat.Zero
+        private set
+
+    /**
+     * Tile grid size map, key is sample size, value is tile grid size
+     */
+    var tileGridSizeMap: Map<Int, IntOffsetCompat> = emptyMap()
+        private set
 
 
     init {
@@ -514,7 +521,8 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
                 sampleSize = manager.sampleSize
                 notifySampleSizeChange()
             },
-            onImageLoadRectChanged = {
+            onImageLoadRectChanged = { manager ->
+                imageLoadRect = manager.imageLoadRect
                 notifyImageLoadRectChange()
             }
         ).apply {
@@ -522,6 +530,8 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             disabledBackgroundTiles = this@SubsamplingEngine.disabledBackgroundTiles
             tileAnimationSpec = this@SubsamplingEngine.tileAnimationSpec
         }
+        tileGridSizeMap = tileManager.sortedTileGridMap
+            .mapValues { it.value.last().coordinate }
         logger.d {
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
@@ -557,6 +567,11 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             logger.d { "cleanTileManager:$caller. '${imageKey}'" }
             tileManager.clean("cleanTileManager:$caller")
             this@SubsamplingEngine.tileManager = null
+            tileGridSizeMap = emptyMap()
+            foregroundTiles = emptyList()
+            backgroundTiles = emptyList()
+            sampleSize = 0
+            imageLoadRect = IntRectCompat.Zero
             notifyReadyChange()
             notifyTileChange()
         }

@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.Lifecycle
@@ -197,6 +198,12 @@ class SubsamplingState(logger: Logger) : RememberObserver {
      * The image load rect
      */
     var imageLoadRect: IntRect by mutableStateOf(IntRect.Zero)
+        private set
+
+    /**
+     * Tile grid size map, key is sample size, value is tile grid size
+     */
+    var tileGridSizeMap: Map<Int, IntOffset> by mutableStateOf(emptyMap())
         private set
 
 
@@ -415,6 +422,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             disabledBackgroundTiles = this@SubsamplingState.disabledBackgroundTiles
             tileAnimationSpec = this@SubsamplingState.tileAnimationSpec
         }
+        tileGridSizeMap = tileManager.sortedTileGridMap
+            .mapValues { it.value.last().coordinate.toPlatform() }
         logger.d {
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
@@ -486,6 +495,11 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         if (tileManager != null) {
             tileManager.clean("cleanTileManager:$caller")
             this@SubsamplingState.tileManager = null
+            tileGridSizeMap = emptyMap()
+            foregroundTiles = emptyList()
+            backgroundTiles = emptyList()
+            sampleSize = 0
+            imageLoadRect = IntRect.Zero
             logger.d { "cleanTileManager:$caller. '${imageKey}'" }
             refreshReadyState()
         }

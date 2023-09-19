@@ -453,6 +453,10 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
     * The image load rect
       <br>-----------</br>
     * 原图上当前实际加载的区域
+* `subsampling.tileGridSizeMap: Map<Int, IntOffset>`。
+    * Tile grid size map
+      <br>-----------</br>
+    * 磁贴网格大小映射表
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 
