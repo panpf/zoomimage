@@ -122,6 +122,9 @@ internal fun calculateImageLoadRect(
     tileMaxSize: IntSizeCompat,
     contentVisibleRect: IntRectCompat
 ): IntRectCompat {
+    if (imageSize.isEmpty() || contentSize.isEmpty() || contentVisibleRect.isEmpty) {
+        return IntRectCompat.Zero
+    }
     val widthScale = imageSize.width / contentSize.width.toFloat()
     val heightScale = imageSize.height / contentSize.height.toFloat()
     val imageVisibleRect = IntRectCompat(

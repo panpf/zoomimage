@@ -284,6 +284,19 @@ class TileMangeUtilsTest {
             calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
         )
 
+        Assert.assertEquals(
+            IntRectCompat.Zero,
+            calculateImageLoadRect(IntSizeCompat.Zero, contentSize, tileMaxSize, contentVisibleRect)
+        )
+        Assert.assertEquals(
+            IntRectCompat.Zero,
+            calculateImageLoadRect(imageSize, IntSizeCompat.Zero, tileMaxSize, contentVisibleRect)
+        )
+        Assert.assertEquals(
+            IntRectCompat.Zero,
+            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, IntRectCompat.Zero)
+        )
+
         contentVisibleRect = IntRectCompat(
             left = 0,
             top = contentSize.height - contentVisibleSize.height,
