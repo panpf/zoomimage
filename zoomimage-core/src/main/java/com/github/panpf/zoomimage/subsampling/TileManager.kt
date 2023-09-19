@@ -298,20 +298,6 @@ class TileManager constructor(
         return lastSampleSize < currentSampleSize && eachSampleSize < currentSampleSize
     }
 
-    private fun resetImageLoadRect(contentVisibleRect: IntRectCompat): Boolean {
-        if (lastContentVisibleRect == contentVisibleRect) {
-            return false
-        }
-        lastContentVisibleRect = contentVisibleRect
-        imageLoadRect = calculateImageLoadRect(
-            imageSize = imageInfo.size,
-            contentSize = contentSize,
-            tileMaxSize = tileMaxSize,
-            contentVisibleRect = contentVisibleRect
-        )
-        return true
-    }
-
     private fun resetSampleSize(scale: Float): Boolean {
         val lastScale = lastScale
         val currentSampleSize = sampleSize
@@ -336,6 +322,26 @@ class TileManager constructor(
 
         this.lastSampleSize = currentSampleSize
         this.sampleSize = newSampleSize
+        return true
+    }
+
+    private fun resetImageLoadRect(contentVisibleRect: IntRectCompat): Boolean {
+        if (lastContentVisibleRect == contentVisibleRect) {
+            return false
+        }
+        lastContentVisibleRect = contentVisibleRect
+
+        val newImageLoadRect = calculateImageLoadRect(
+            imageSize = imageInfo.size,
+            contentSize = contentSize,
+            tileMaxSize = tileMaxSize,
+            contentVisibleRect = contentVisibleRect
+        )
+        if (newImageLoadRect == imageLoadRect) {
+            return false
+        }
+
+        this.imageLoadRect = newImageLoadRect
         return true
     }
 

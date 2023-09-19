@@ -34,16 +34,9 @@ internal fun findSampleSize(
     thumbnailSize: IntSizeCompat,
     scale: Float
 ): Int {
-    if (imageSize.isEmpty() || thumbnailSize.isEmpty() || scale <= 0) {
+    if (imageSize.isEmpty() || thumbnailSize.isEmpty() || scale < 1f) {
         return 0
     }
-//    val scaledWidthRatio = (imageSize.width / (thumbnailSize.width * scale)).roundToInt()
-//    var sampleSize = 1
-//    while (scaledWidthRatio >= sampleSize * 2) {
-//        sampleSize *= 2
-//    }
-//    return sampleSize
-    // todo 优化不精准的问题，例如 scale 为 1f， scaledWidthRatio 为 3.98，但是 sampleSize 为 2
     val scaledWidthRatio = (imageSize.width / (thumbnailSize.width * scale))
     var sampleSize = 1
     while (scaledWidthRatio >= sampleSize * 2) {

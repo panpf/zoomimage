@@ -4,13 +4,18 @@ import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
+import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.toShortString
 import org.junit.Assert
 import org.junit.Test
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class TileMangeUtilsTest {
 
@@ -29,110 +34,48 @@ class TileMangeUtilsTest {
 
     @Test
     fun testFindSampleSize() {
-        // todo testFindSampleSize
-//        val imageSize = IntSizeCompat(690, 12176)
-//
-//        Assert.assertEquals(
-//            /* expected = */ 0,
-//            /* actual = */ findSampleSize(IntSizeCompat.Zero, imageSize / 16, 4f)
-//        )
-//        Assert.assertEquals(
-//            /* expected = */ 0,
-//            /* actual = */ findSampleSize(imageSize, IntSizeCompat.Zero, 4f)
-//        )
-//        Assert.assertEquals(
-//            /* expected = */ 0,
-//            /* actual = */ findSampleSize(imageSize, imageSize / 16, 0f)
-//        )
-//
-//        var thumbnailSize = imageSize / 16
-////        listOf(
-////            0 to 0f,
-////            128 to 0.1f,
-////            32 to 0.5f,
-////            16 to 0.9f,
-////            16 to 1.0f,
-////
-////            8 to 1.1f,
-////            8 to 2.0f,
-////
-////            4 to 2.1f,
-////            4 to 4.0f,
-////
-////            2 to 4.1f,
-////            2 to 8.0f,
-////
-////            1 to 8.1f,
-////            1 to 100.0f,
-////        ).forEach { (expectSampleSize, scale) ->
-////            Assert.assertEquals(
-////                /* message = */ "scale=$scale",
-////                /* expected = */ expectSampleSize,
-////                /* actual = */ findSampleSize(imageSize, thumbnailSize, scale)
-////            )
-////        }
-//
-//        thumbnailSize =
-//            IntSizeCompat(ceil(imageSize.width / 4f).toInt(), ceil(imageSize.height / 4f).toInt())
-//
-//        listOf(
-//            0.1f, 0.5f, 0.9f,
-//            1.0f, 1.1f, 1.9f,
-//            2.0f, 2.1f, 2.9f,
-//            3.0f, 3.1f, 3.9f,
-//            4.0f, 4.1f, 4.9f,
-//            6.0f, 6.1f, 6.9f,
-//            8.0f, 8.1f, 8.9f,
-//            12.0f, 12.1f, 12.9f,
-//            16.0f, 16.1f, 16.9f,
-//            17.0f, 17.1f, 17.9f,
-//        ).map { scale ->
-//            val sampleSize = findSampleSize(imageSize, thumbnailSize, scale)
-//            "$scale:$sampleSize"
-//        }.also { list ->
-//            val excepted = """
-//                0.1:32, 0.5:8, 0.9:4,
-//                1.0:4, 1.1:4, 1.9:2,
-//                2.0:2, 2.1:2, 2.9:1,
-//                3.0:1, 3.1:1, 3.9:1,
-//                4.0:1, 4.1:1, 4.9:1,
-//                6.0:1, 6.1:1, 6.9:1,
-//                8.0:1, 8.1:1, 8.9:1,
-//                12.0:1, 12.1:1, 12.9:1,
-//                16.0:1, 16.1:1, 16.9:1,
-//                17.0:1, 17.1:1, 17.9:1,
-//            """.trimIndent()
-//            val result = buildString {
-//                list.forEachIndexed { index, chunkedList ->
-//                    if (index > 0) {
-//                        append("\n")
-//                    }
-////                    append(chunkedList.joinToString(separator = ", "));append(",")
-//                }
-//            }
-//            Assert.assertEquals(excepted, result)
-////            Assert.assertEquals("", result)
-//        }
-//
-////        listOf(
-////            0 to 0f,
-////            32 to 0.1f,
-////            8 to 0.5f,
-////            4 to 0.9f,
-////            4 to 1.0f,
-////
-////            2 to 1.1f,
-////            2 to 2.0f,
-////
-////            1 to 2.1f,
-////            1 to 4.0f,
-////        ).forEach { (expectSampleSize, scale) ->
-////            Assert.assertEquals(
-////                /* message = */ "scale=$scale",
-////                /* expected = */ expectSampleSize,
-////                /* actual = */ findSampleSize(imageSize, thumbnailSize, scale)
-////            )
-////        }
+        val imageSize = IntSizeCompat(690, 12176)
+
+        Assert.assertEquals(
+            /* expected = */ 0,
+            /* actual = */ findSampleSize(IntSizeCompat.Zero, imageSize / 16, 4f)
+        )
+        Assert.assertEquals(
+            /* expected = */ 0,
+            /* actual = */ findSampleSize(imageSize, IntSizeCompat.Zero, 4f)
+        )
+        Assert.assertEquals(
+            /* expected = */ 0,
+            /* actual = */ findSampleSize(imageSize, imageSize / 16, 0f)
+        )
+        Assert.assertEquals(
+            /* expected = */ 0,
+            /* actual = */ findSampleSize(imageSize, imageSize / 16, 0.1f)
+        )
+        Assert.assertEquals(
+            /* expected = */ 0,
+            /* actual = */ findSampleSize(imageSize, imageSize / 16, 0.9f)
+        )
+
+        /* 计算从 1.0，1.1，1.2 一直到 17.9 等缩放比例的 sampleSize，然后保留变化开始时的缩放比例 */
+        // todo 优化不精准的问题，让下方三种情况保持一致
+        listOf(
+            imageSize.roundDiv(16f) to "[1.0:16, 1.1:8, 2.1:4, 4.1:2, 8.1:1]",
+            imageSize.ceilDiv(16f) to "[1.0:8, 2.0:4, 4.0:2, 7.9:1]",
+            imageSize.floorDiv(16f) to "[1.0:16, 1.1:8, 2.1:4, 4.1:2, 8.1:1]",
+        ).forEachIndexed { index, (thumbnailSize, excepted) ->
+            val result = (1..17)
+                .flatMap { number -> buildList { repeat(10) { index -> add(number + (index * 0.1f)) } } }
+                .map { scale -> scale to findSampleSize(imageSize, thumbnailSize, scale) }
+                .distinctBy { it.second }
+                .map { "${it.first}:${it.second}" }
+                .toString()
+            Assert.assertEquals(
+                /* message = */ "index=$index, thumbnailSize=${thumbnailSize.toShortString()}",
+                /* expected = */ excepted,
+                /* actual = */ result
+            )
+        }
     }
 
     @Test
@@ -385,4 +328,32 @@ class TileMangeUtilsTest {
             calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
         )
     }
+
+
+    /**
+     * Returns an IntSizeCompat scaled by dividing [this] by [scale]
+     */
+    fun IntSizeCompat.roundDiv(scale: Float): IntSizeCompat =
+        IntSizeCompat(
+            width = (this.width / scale).roundToInt(),
+            height = (this.height / scale).roundToInt()
+        )
+
+    /**
+     * Returns an IntSizeCompat scaled by dividing [this] by [scale]
+     */
+    fun IntSizeCompat.ceilDiv(scale: Float): IntSizeCompat =
+        IntSizeCompat(
+            width = ceil(this.width / scale).toInt(),
+            height = ceil(this.height / scale).toInt()
+        )
+
+    /**
+     * Returns an IntSizeCompat scaled by dividing [this] by [scale]
+     */
+    fun IntSizeCompat.floorDiv(scale: Float): IntSizeCompat =
+        IntSizeCompat(
+            width = floor(this.width / scale).toInt(),
+            height = floor(this.height / scale).toInt()
+        )
 }
