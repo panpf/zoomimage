@@ -21,6 +21,7 @@ import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.limitTo
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -141,10 +142,14 @@ internal fun calculateImageLoadRect(
      * this preloads tiles around the visible area,
      * the user will no longer feel the loading process while sliding slowly
      */
-    return IntRectCompat(
-        left = imageVisibleRect.left - tileMaxSize.width / 2,
-        top = imageVisibleRect.top - tileMaxSize.height / 2,
-        right = imageVisibleRect.right + tileMaxSize.width / 2,
-        bottom = imageVisibleRect.bottom + tileMaxSize.height / 2
+    val horExtend = tileMaxSize.width / 2f
+    val verExtend = tileMaxSize.height / 2f
+    val imageLoadRect = IntRectCompat(
+        left = floor(imageVisibleRect.left - horExtend).toInt(),
+        top = floor(imageVisibleRect.top - verExtend).toInt(),
+        right = ceil(imageVisibleRect.right + horExtend).toInt(),
+        bottom = ceil(imageVisibleRect.bottom + verExtend).toInt(),
     )
+    @Suppress("UnnecessaryVariable") val limitedImageLoadRect = imageLoadRect.limitTo(imageSize)
+    return limitedImageLoadRect
 }

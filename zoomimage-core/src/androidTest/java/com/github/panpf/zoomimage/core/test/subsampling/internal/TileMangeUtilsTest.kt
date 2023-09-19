@@ -1,9 +1,11 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
 import com.github.panpf.zoomimage.subsampling.toIntroString
+import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
 import org.junit.Test
@@ -11,8 +13,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 class TileMangeUtilsTest {
-
-    // todo calculateTileMaxSize
 
     @Test
     fun testCalculateTileMaxSize() {
@@ -314,5 +314,75 @@ class TileMangeUtilsTest {
         }
     }
 
-    // todo calculateImageLoadRect
+    @Test
+    fun testCalculateImageLoadRect() {
+        val imageSize = IntSizeCompat(1241, 3073)
+        val tileMaxSize = IntSizeCompat(333, 111)
+
+        val contentSize = imageSize / 8
+        Assert.assertEquals(
+            IntSizeCompat(155, 384),
+            contentSize
+        )
+
+        val contentVisibleSize = IntSizeCompat(
+            width = contentSize.width / 4,
+            height = contentSize.width / 8,
+        )
+        Assert.assertEquals(
+            IntSizeCompat(38, 19),
+            contentVisibleSize
+        )
+
+        var contentVisibleRect =
+            IntRectCompat(0, 0, contentVisibleSize.width, contentVisibleSize.height)
+        Assert.assertEquals(
+            IntRectCompat(0, 0, 472, 209),
+            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+        )
+
+        contentVisibleRect = IntRectCompat(
+            left = 0,
+            top = contentSize.height - contentVisibleSize.height,
+            right = contentVisibleSize.width,
+            bottom = contentSize.height
+        )
+        Assert.assertEquals(
+            IntRectCompat(0, 2864, 472, 3073),
+            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+        )
+
+        contentVisibleRect = IntRectCompat(
+            left = contentSize.width - contentVisibleSize.width,
+            top = 0,
+            right = contentSize.width,
+            bottom = contentVisibleSize.height
+        )
+        Assert.assertEquals(
+            IntRectCompat(769, 0, 1241, 209),
+            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+        )
+
+        contentVisibleRect = IntRectCompat(
+            left = contentSize.width - contentVisibleSize.width,
+            top = contentSize.height - contentVisibleSize.height,
+            right = contentSize.width,
+            bottom = contentSize.height
+        )
+        Assert.assertEquals(
+            IntRectCompat(769, 2864, 1241, 3073),
+            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+        )
+
+        contentVisibleRect = IntRectCompat(
+            left = (contentSize.width - contentVisibleSize.width) / 2,
+            top = (contentSize.height - contentVisibleSize.height) / 2,
+            right = contentSize.width - ((contentSize.width - contentVisibleSize.width) / 2),
+            bottom = contentSize.height - (contentSize.height - contentVisibleSize.height) / 2
+        )
+        Assert.assertEquals(
+            IntRectCompat(297, 1400, 944, 1673),
+            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+        )
+    }
 }
