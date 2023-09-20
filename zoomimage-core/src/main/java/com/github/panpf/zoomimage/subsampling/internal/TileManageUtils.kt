@@ -30,11 +30,11 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 /**
- * Calculates the maximum size of the tile based on the container size, typically half the container size
+ * Calculates the preferred size of the tile based on the container size, typically half the container size
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateTileMaxSize]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculatePreferredTileSize]
  */
-internal fun calculateTileMaxSize(containerSize: IntSizeCompat): IntSizeCompat {
+internal fun calculatePreferredTileSize(containerSize: IntSizeCompat): IntSizeCompat {
     return containerSize / 2
 }
 
@@ -75,86 +75,103 @@ internal fun closestPowerOfTwo(number: Float): Int {
 }
 
 /**
- * Calculates a list of tiles with different sample sizes, the result is a Map sorted by sample size from largest to smallest
+ * Calculates the size of the tile grid based on the [sampleSize] and [preferredTileSize].
+ * In addition, the calculation result is not allowed to exceed the [maxGridSize] limit
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateGridSize]
+ */
+internal fun calculateGridSize(
+    imageSize: IntSizeCompat,
+    preferredTileSize: IntSizeCompat,
+    sampleSize: Int,
+    maxGridSize: IntOffsetCompat? = null
+): IntOffsetCompat {
+    val xTiles =
+        ceil((imageSize.width / sampleSize.toFloat()) / preferredTileSize.width.toFloat()).toInt()
+    val yTiles =
+        ceil((imageSize.height / sampleSize.toFloat()) / preferredTileSize.height.toFloat()).toInt()
+    val initialGridSize = IntOffsetCompat(xTiles, yTiles)
+    val gridSize = if (maxGridSize != null) {
+        IntOffsetCompat(
+            initialGridSize.x.coerceAtMost(maxGridSize.x),
+            initialGridSize.y.coerceAtMost(maxGridSize.y)
+        )
+    } else {
+        initialGridSize
+    }
+    return gridSize
+}
+
+/**
+ * Calculates a list of tiles with different sample sizes based on the [preferredTileSize].
+ * Also, the grid size will never exceed 150x150.
+ * The result is a Map sorted by sample size from largest to smallest
  *
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateTileGridMap]
  */
 internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
-    tileMaxSize: IntSizeCompat,
+    preferredTileSize: IntSizeCompat,
 ): Map<Int, List<Tile>> {
-    /* The core rules are: The size of each tile does not exceed tileMaxSize */
-    val tileMaxWith = tileMaxSize.width
-    val tileMaxHeight = tileMaxSize.height
     val tileMap = HashMap<Int, List<Tile>>()
-
+    val singleDirectionMaxTiles = 150
+    val maxGridSize = if (imageSize.width > imageSize.height) {
+        IntOffsetCompat(
+            x = singleDirectionMaxTiles,
+            y = (imageSize.height / imageSize.width.toFloat() * singleDirectionMaxTiles).roundToInt()
+        )
+    } else {
+        IntOffsetCompat(
+            x = (imageSize.width / imageSize.height.toFloat() * singleDirectionMaxTiles).roundToInt(),
+            y = singleDirectionMaxTiles
+        )
+    }
     var sampleSize = 1
-    while (true) {
-        var xTiles = 0
-        var sourceTileWidth: Int
-        var sampleTileWidth: Int
-        do {
-            xTiles += 1
-            sourceTileWidth = ceil(imageSize.width / xTiles.toFloat()).toInt()
-            sampleTileWidth = ceil(sourceTileWidth / sampleSize.toFloat()).toInt()
-        } while (sampleTileWidth > tileMaxWith)
-
-        var yTiles = 0
-        var sourceTileHeight: Int
-        var sampleTileHeight: Int
-        do {
-            yTiles += 1
-            sourceTileHeight = ceil(imageSize.height / yTiles.toFloat()).toInt()
-            sampleTileHeight = ceil(sourceTileHeight / sampleSize.toFloat()).toInt()
-        } while (sampleTileHeight > tileMaxHeight)
-
-        val tileList = ArrayList<Tile>(xTiles * yTiles)
-        var left = 0
-        var top = 0
+    do {
+        val gridSize = calculateGridSize(
+            imageSize = imageSize,
+            preferredTileSize = preferredTileSize,
+            sampleSize = sampleSize,
+            maxGridSize = maxGridSize
+        )
+        val tileWidth: Int = ceil(imageSize.width / gridSize.x.toFloat()).toInt()
+        val tileHeight: Int = ceil(imageSize.height / gridSize.y.toFloat()).toInt()
+        val tileList = ArrayList<Tile>(gridSize.x * gridSize.y)
         var xCoordinate = 0
         var yCoordinate = 0
-        while (true) {
-            val right = (left + sourceTileWidth).coerceAtMost(imageSize.width)
-            val bottom = (top + sourceTileHeight).coerceAtMost(imageSize.height)
-            tileList.add(
-                Tile(
-                    coordinate = IntOffsetCompat(xCoordinate, yCoordinate),
-                    srcRect = IntRectCompat(left, top, right, bottom),
-                    sampleSize = sampleSize
-                )
+        do {
+            val coordinate = IntOffsetCompat(xCoordinate, yCoordinate)
+            val left = xCoordinate * tileWidth
+            val top = yCoordinate * tileHeight
+            val srcRect = IntRectCompat(
+                left = left,
+                top = top,
+                right = (left + tileWidth).coerceAtMost(imageSize.width),
+                bottom = (top + tileHeight).coerceAtMost(imageSize.height)
             )
-            if (right >= imageSize.width && bottom >= imageSize.height) {
-                break
-            } else if (right >= imageSize.width) {
-                left = 0
-                top += sourceTileHeight
+            tileList.add(Tile(coordinate = coordinate, srcRect = srcRect, sampleSize = sampleSize))
+            if (xCoordinate < gridSize.x - 1) {
+                xCoordinate++
+            } else {
                 xCoordinate = 0
                 yCoordinate++
-            } else {
-                left += sourceTileWidth
-                xCoordinate++
             }
-        }
+        } while (yCoordinate <= gridSize.y - 1)
         tileMap[sampleSize] = tileList
-
-        if (tileList.size == 1) {
-            break
-        } else {
-            sampleSize *= 2
-        }
-    }
+        sampleSize *= 2
+    } while (gridSize.x * gridSize.y > 1)
     return tileMap.toSortedMap { o1, o2 -> (o1 - o2) * -1 }
 }
 
 /**
- * The area that needs to be loaded on the original image is calculated from the area currently visible to the thumbnail, which is usually larger than the visible area, usually half the [tileMaxSize].
+ * The area that needs to be loaded on the original image is calculated from the area currently visible to the thumbnail, which is usually larger than the visible area, usually half the [preferredTileSize].
  *
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateImageLoadRect]
  */
 internal fun calculateImageLoadRect(
     imageSize: IntSizeCompat,
     contentSize: IntSizeCompat,
-    tileMaxSize: IntSizeCompat,
+    preferredTileSize: IntSizeCompat,
     contentVisibleRect: IntRectCompat
 ): IntRectCompat {
     if (imageSize.isEmpty() || contentSize.isEmpty() || contentVisibleRect.isEmpty) {
@@ -173,8 +190,8 @@ internal fun calculateImageLoadRect(
      * this preloads tiles around the visible area,
      * the user will no longer feel the loading process while sliding slowly
      */
-    val horExtend = tileMaxSize.width / 2f
-    val verExtend = tileMaxSize.height / 2f
+    val horExtend = preferredTileSize.width / 2f
+    val verExtend = preferredTileSize.height / 2f
     val imageLoadRect = IntRectCompat(
         left = floor(imageVisibleRect.left - horExtend).toInt(),
         top = floor(imageVisibleRect.top - verExtend).toInt(),

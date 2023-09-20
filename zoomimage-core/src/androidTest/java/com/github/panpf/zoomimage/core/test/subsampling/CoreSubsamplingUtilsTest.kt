@@ -134,10 +134,10 @@ class CoreSubsamplingUtilsTest {
     fun testToIntroString() {
         val imageSize = IntSizeCompat(8000, 8000)
         val containerSize = IntSizeCompat(1080, 1920)
-        val tileMaxSize = containerSize / 2
+        val preferredTileSize = containerSize / 2
         calculateTileGridMap(
             imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
+            preferredTileSize = preferredTileSize,
         ).apply {
             Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
         }

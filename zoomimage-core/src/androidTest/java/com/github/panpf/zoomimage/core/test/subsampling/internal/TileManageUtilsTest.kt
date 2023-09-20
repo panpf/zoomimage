@@ -1,12 +1,14 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.internal.calculateGridSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
-import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
+import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.closestPowerOfTwo
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.subsampling.toIntroString
+import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.toShortString
@@ -21,15 +23,15 @@ import kotlin.math.roundToInt
 class TileManageUtilsTest {
 
     @Test
-    fun testCalculateTileMaxSize() {
+    fun testCalculatePreferredTileSize() {
         Assert.assertEquals(
             /* expected = */ IntSizeCompat(1080, 1920) / 2,
-            /* actual = */ calculateTileMaxSize(IntSizeCompat(1080, 1920))
+            /* actual = */ calculatePreferredTileSize(IntSizeCompat(1080, 1920))
         )
 
         Assert.assertEquals(
             /* expected = */ IntSizeCompat(1000, 2000) / 2,
-            /* actual = */ calculateTileMaxSize(IntSizeCompat(1000, 2000))
+            /* actual = */ calculatePreferredTileSize(IntSizeCompat(1000, 2000))
         )
     }
 
@@ -90,6 +92,82 @@ class TileManageUtilsTest {
     }
 
     @Test
+    fun testCalculateGridSize() {
+        val containerSize = IntSizeCompat(1080, 1920)
+        val imageSize = IntSizeCompat(9798, 6988)
+        listOf(
+            Item(
+                imageSize = imageSize,
+                preferredTileSize = containerSize / 2,
+                sampleSize = 1,
+                excepted = IntOffsetCompat(19, 8)
+            ),
+            Item(
+                imageSize = imageSize,
+                preferredTileSize = containerSize / 4,
+                sampleSize = 1,
+                excepted = IntOffsetCompat(37, 15)
+            ),
+            Item(
+                imageSize = imageSize,
+                preferredTileSize = containerSize / 6,
+                sampleSize = 1,
+                excepted = IntOffsetCompat(55, 22)
+            ),
+            Item(
+                imageSize = imageSize,
+                preferredTileSize = containerSize / 8,
+                sampleSize = 1,
+                excepted = IntOffsetCompat(73, 30)
+            ),
+            Item(
+                imageSize = imageSize,
+                preferredTileSize = containerSize / 2,
+                sampleSize = 2,
+                excepted = IntOffsetCompat(10, 4)
+            ),
+            Item(
+                imageSize = imageSize,
+                preferredTileSize = containerSize / 2,
+                sampleSize = 4,
+                excepted = IntOffsetCompat(5, 2)
+            ),
+            Item(
+                imageSize = imageSize,
+                preferredTileSize = containerSize / 2,
+                sampleSize = 8,
+                excepted = IntOffsetCompat(3, 1)
+            ),
+        ).forEachIndexed { index, item ->
+            val result = calculateGridSize(item.imageSize, item.preferredTileSize, item.sampleSize)
+            Assert.assertEquals(
+                "index=$index, preferredTileSize=${item.preferredTileSize.toShortString()}, sampleSize=${item.sampleSize}",
+                item.excepted,
+                result
+            )
+        }
+
+        Assert.assertEquals(
+            /* expected = */ IntOffsetCompat(3266, 999),
+            /* actual = */ calculateGridSize(
+                imageSize = IntSizeCompat(9798, 6988),
+                preferredTileSize = IntSizeCompat(3, 7),
+                sampleSize = 1
+            )
+        )
+
+        Assert.assertEquals(
+            /* expected = */ IntOffsetCompat(200, 150),
+            /* actual = */ calculateGridSize(
+                imageSize = IntSizeCompat(9798, 6988),
+                preferredTileSize = IntSizeCompat(3, 7),
+                sampleSize = 1,
+                maxGridSize = IntOffsetCompat(200, 150)
+            )
+        )
+    }
+
+    @Test
     fun testCalculateTileGridMap() {
         val checkTiles: (List<Tile>, IntSizeCompat) -> Unit =
             { tileList, imageSize ->
@@ -132,85 +210,103 @@ class TileManageUtilsTest {
         listOf(
             Item(
                 imageSize = IntSizeCompat(8000, 8000),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]"
             ),
             Item(
                 imageSize = IntSizeCompat(8000, 8000),
-                tileMaxSize = containerSize / 4,
-                exceptedTileGridMapString = "[32:1:1x1,16:4:2x2,8:12:4x3,4:40:8x5,2:135:15x9,1:510:30x17]"
+                preferredTileSize = containerSize / 4,
+                excepted = "[32:1:1x1,16:4:2x2,8:12:4x3,4:40:8x5,2:135:15x9,1:510:30x17]"
             ),
             Item(
                 imageSize = IntSizeCompat(8000, 8000),
-                tileMaxSize = containerSize / 6,
-                exceptedTileGridMapString = "[64:1:1x1,32:2:2x1,16:6:3x2,8:24:6x4,4:84:12x7,2:299:23x13,1:1125:45x25]"
+                preferredTileSize = containerSize / 6,
+                excepted = "[64:1:1x1,32:2:2x1,16:6:3x2,8:24:6x4,4:84:12x7,2:299:23x13,1:1125:45x25]"
             ),
 
             Item(
                 imageSize = IntSizeCompat(8000, 3000),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[16:1:1x1,8:2:2x1,4:4:4x1,2:16:8x2,1:60:15x4]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[16:1:1x1,8:2:2x1,4:4:4x1,2:16:8x2,1:60:15x4]"
             ),
             Item(
                 imageSize = IntSizeCompat(3000, 8000),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[16:1:1x1,8:2:1x2,4:6:2x3,2:15:3x5,1:54:6x9]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[16:1:1x1,8:2:1x2,4:6:2x3,2:15:3x5,1:54:6x9]"
             ),
             Item(
                 imageSize = IntSizeCompat(1500, 1500),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[4:1:1x1,2:2:2x1,1:6:3x2]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[4:1:1x1,2:2:2x1,1:6:3x2]"
             ),
             Item(
                 imageSize = IntSizeCompat(1000, 1500),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[2:1:1x1,1:4:2x2]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[2:1:1x1,1:4:2x2]"
             ),
             Item(
                 imageSize = IntSizeCompat(1500, 1000),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[4:1:1x1,2:2:2x1,1:6:3x2]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[4:1:1x1,2:2:2x1,1:6:3x2]"
             ),
             Item(
                 imageSize = IntSizeCompat(1000, 1000),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[2:1:1x1,1:4:2x2]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[2:1:1x1,1:4:2x2]"
             ),
             Item(
                 imageSize = IntSizeCompat(30000, 926),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[64:1:1x1,32:2:2x1,16:4:4x1,8:7:7x1,4:14:14x1,2:28:28x1,1:56:56x1]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[64:1:1x1,32:2:2x1,16:4:4x1,8:7:7x1,4:14:14x1,2:28:28x1,1:56:56x1]"
             ),
             Item(
                 imageSize = IntSizeCompat(690, 12176),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[16:1:1x1,8:2:1x2,4:4:1x4,2:7:1x7,1:26:2x13]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[16:1:1x1,8:2:1x2,4:4:1x4,2:7:1x7,1:26:2x13]"
             ),
             Item(
                 imageSize = IntSizeCompat(7557, 5669),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[16:1:1x1,8:2:2x1,4:8:4x2,2:21:7x3,1:84:14x6]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[16:1:1x1,8:2:2x1,4:8:4x2,2:21:7x3,1:84:14x6]"
             ),
             Item(
                 imageSize = IntSizeCompat(9798, 6988),
-                tileMaxSize = containerSize / 2,
-                exceptedTileGridMapString = "[32:1:1x1,16:2:2x1,8:3:3x1,4:10:5x2,2:40:10x4,1:152:19x8]"
+                preferredTileSize = containerSize / 2,
+                excepted = "[32:1:1x1,16:2:2x1,8:3:3x1,4:10:5x2,2:40:10x4,1:152:19x8]"
             ),
         ).forEachIndexed { index, item ->
-            val result = calculateTileGridMap(item.imageSize, item.tileMaxSize)
+            val result = calculateTileGridMap(
+                imageSize = item.imageSize,
+                preferredTileSize = item.preferredTileSize
+            )
             Assert.assertEquals(
-                "index=$index, imageSize=${item.imageSize.toShortString()}, tileMaxSize=${item.tileMaxSize.toShortString()}",
-                item.exceptedTileGridMapString,
+                "index=$index, imageSize=${item.imageSize.toShortString()}, preferredTileSize=${item.preferredTileSize.toShortString()}",
+                item.excepted,
                 result.toIntroString()
             )
             result.values.forEach { checkTiles(it, item.imageSize) }
         }
+
+        Assert.assertEquals(
+            /* expected = */ "[4096:1:1x1,2048:2:2x1,1024:4:4x1,512:14:7x2,256:52:13x4,128:208:26x8,64:832:52x16,32:3296:103x32,16:9450:150x63,8:16050:150x107,4:16050:150x107,2:16050:150x107,1:16050:150x107]",
+            /* actual = */ calculateTileGridMap(
+                imageSize = IntSizeCompat(9798, 6988),
+                preferredTileSize = IntSizeCompat(3, 7)
+            ).toIntroString()
+        )
+        Assert.assertEquals(
+            /* expected = */ "[4096:1:1x1,2048:2:1x2,1024:4:1x4,512:14:2x7,256:52:4x13,128:208:8x26,64:832:16x52,32:3296:32x103,16:9450:63x150,8:16050:107x150,4:16050:107x150,2:16050:107x150,1:16050:107x150]",
+            /* actual = */ calculateTileGridMap(
+                imageSize = IntSizeCompat(6988, 9798),
+                preferredTileSize = IntSizeCompat(7, 3)
+            ).toIntroString()
+        )
     }
 
     @Test
     fun testCalculateImageLoadRect() {
         val imageSize = IntSizeCompat(1241, 3073)
-        val tileMaxSize = IntSizeCompat(333, 111)
+        val preferredTileSize = IntSizeCompat(333, 111)
 
         val contentSize = imageSize / 8
         Assert.assertEquals(
@@ -231,20 +327,20 @@ class TileManageUtilsTest {
             IntRectCompat(0, 0, contentVisibleSize.width, contentVisibleSize.height)
         Assert.assertEquals(
             IntRectCompat(0, 0, 472, 209),
-            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+            calculateImageLoadRect(imageSize, contentSize, preferredTileSize, contentVisibleRect)
         )
 
         Assert.assertEquals(
             IntRectCompat.Zero,
-            calculateImageLoadRect(IntSizeCompat.Zero, contentSize, tileMaxSize, contentVisibleRect)
+            calculateImageLoadRect(IntSizeCompat.Zero, contentSize, preferredTileSize, contentVisibleRect)
         )
         Assert.assertEquals(
             IntRectCompat.Zero,
-            calculateImageLoadRect(imageSize, IntSizeCompat.Zero, tileMaxSize, contentVisibleRect)
+            calculateImageLoadRect(imageSize, IntSizeCompat.Zero, preferredTileSize, contentVisibleRect)
         )
         Assert.assertEquals(
             IntRectCompat.Zero,
-            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, IntRectCompat.Zero)
+            calculateImageLoadRect(imageSize, contentSize, preferredTileSize, IntRectCompat.Zero)
         )
 
         contentVisibleRect = IntRectCompat(
@@ -255,7 +351,7 @@ class TileManageUtilsTest {
         )
         Assert.assertEquals(
             IntRectCompat(0, 2864, 472, 3073),
-            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+            calculateImageLoadRect(imageSize, contentSize, preferredTileSize, contentVisibleRect)
         )
 
         contentVisibleRect = IntRectCompat(
@@ -266,7 +362,7 @@ class TileManageUtilsTest {
         )
         Assert.assertEquals(
             IntRectCompat(769, 0, 1241, 209),
-            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+            calculateImageLoadRect(imageSize, contentSize, preferredTileSize, contentVisibleRect)
         )
 
         contentVisibleRect = IntRectCompat(
@@ -277,7 +373,7 @@ class TileManageUtilsTest {
         )
         Assert.assertEquals(
             IntRectCompat(769, 2864, 1241, 3073),
-            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+            calculateImageLoadRect(imageSize, contentSize, preferredTileSize, contentVisibleRect)
         )
 
         contentVisibleRect = IntRectCompat(
@@ -288,7 +384,7 @@ class TileManageUtilsTest {
         )
         Assert.assertEquals(
             IntRectCompat(297, 1400, 944, 1673),
-            calculateImageLoadRect(imageSize, contentSize, tileMaxSize, contentVisibleRect)
+            calculateImageLoadRect(imageSize, contentSize, preferredTileSize, contentVisibleRect)
         )
     }
 
@@ -320,9 +416,10 @@ class TileManageUtilsTest {
             height = floor(this.height / scale).toInt()
         )
 
-    private data class Item(
+    private data class Item<T>(
         val imageSize: IntSizeCompat,
-        val tileMaxSize: IntSizeCompat,
-        val exceptedTileGridMapString: String
+        val preferredTileSize: IntSizeCompat,
+        val sampleSize: Int = 1,
+        val excepted: T
     )
 }

@@ -532,7 +532,7 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
-                    "tileMaxSize=${tileManager.tileMaxSize.toShortString()}, " +
+                    "preferredTileSize=${tileManager.preferredTileSize.toShortString()}, " +
                     "tileGridMap=${tileManager.sortedTileGridMap.toIntroString()}. " +
                     "'${imageKey}'"
         }

@@ -20,7 +20,7 @@ import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
-import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
+import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -100,9 +100,9 @@ class TileManager constructor(
     var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
 
     /**
-     * The maximum size of the tile
+     * The preferred size of the tile
      */
-    val tileMaxSize: IntSizeCompat = calculateTileMaxSize(containerSize)
+    val preferredTileSize: IntSizeCompat = calculatePreferredTileSize(containerSize)
 
     /**
      * Tile Map with sample size from largest to smallest
@@ -148,7 +148,7 @@ class TileManager constructor(
             findSampleSize(imageSize = imageInfo.size, thumbnailSize = contentSize, scale = 1f)
         sortedTileGridMap = calculateTileGridMap(
             imageSize = imageInfo.size,
-            tileMaxSize = tileMaxSize,
+            preferredTileSize = preferredTileSize,
         ).filterKeys { it <= maxSampleSize }
     }
 
@@ -210,7 +210,7 @@ class TileManager constructor(
                         "imageSize=${imageInfo.size.toShortString()}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "scale=${scale.format(4)}, " +
-                        "tileMaxSize=${tileMaxSize.toShortString()}, " +
+                        "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileGridMap=${sortedTileGridMap.toIntroString()}. " +
                         "'${imageSource.key}'"
             }
@@ -226,7 +226,7 @@ class TileManager constructor(
                         "imageLoadRect=${oldImageLoadRect.toShortString()} -> ${newImageLoadRect.toShortString()}, " +
                         "imageSize=${imageInfo.size.toShortString()}, " +
                         "contentSize=${contentSize.toShortString()}, " +
-                        "tileMaxSize=${tileMaxSize.toShortString()}, " +
+                        "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "contentVisibleRect=${contentVisibleRect.toShortString()}, " +
                         "'${imageSource.key}'"
             }
@@ -343,7 +343,7 @@ class TileManager constructor(
         val newImageLoadRect = calculateImageLoadRect(
             imageSize = imageInfo.size,
             contentSize = contentSize,
-            tileMaxSize = tileMaxSize,
+            preferredTileSize = preferredTileSize,
             contentVisibleRect = contentVisibleRect
         )
         if (newImageLoadRect == imageLoadRect) {

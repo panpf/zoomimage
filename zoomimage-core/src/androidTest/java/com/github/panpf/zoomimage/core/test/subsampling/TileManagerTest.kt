@@ -12,7 +12,7 @@ import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
-import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
+import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -259,9 +259,12 @@ class TileManagerTest {
     }
 
     @Test
-    fun testTileMaxSize() {
+    fun testPreferredTileSize() {
         TileManagerHolder().useApply {
-            Assert.assertEquals(calculateTileMaxSize(containerSize), tileManager.tileMaxSize)
+            Assert.assertEquals(
+                /* expected = */ calculatePreferredTileSize(containerSize),
+                /* actual = */ tileManager.preferredTileSize
+            )
         }
     }
 
@@ -318,19 +321,19 @@ class TileManagerTest {
                 contentVisibleRect1 to calculateImageLoadRect(
                     imageSize = imageInfo.size,
                     contentSize = contentSize,
-                    tileMaxSize = tileMaxSize,
+                    preferredTileSize = preferredTileSize,
                     contentVisibleRect = contentVisibleRect1
                 ),
                 contentVisibleRect2 to calculateImageLoadRect(
                     imageSize = imageInfo.size,
                     contentSize = contentSize,
-                    tileMaxSize = tileMaxSize,
+                    preferredTileSize = preferredTileSize,
                     contentVisibleRect = contentVisibleRect2
                 ),
                 contentVisibleRect3 to calculateImageLoadRect(
                     imageSize = imageInfo.size,
                     contentSize = contentSize,
-                    tileMaxSize = tileMaxSize,
+                    preferredTileSize = preferredTileSize,
                     contentVisibleRect = contentVisibleRect3
                 ),
             ).forEach { (contentVisibleRect, expectedImageLoadRect) ->
@@ -509,7 +512,7 @@ class TileManagerTest {
         private val tileBitmapPoolHelper = TileBitmapPoolHelper(logger)
         private val tileMemoryCacheHelper = TileMemoryCacheHelper(logger)
         val containerSize = IntSizeCompat(1080, 1920)
-        val tileMaxSize = calculateTileMaxSize(containerSize)
+        val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
         val tileDecoder = TileDecoder(logger, imageSource, tileBitmapPoolHelper, imageInfo)
         val backgroundTilesChangedList = mutableListOf<List<TileSnapshot>>()

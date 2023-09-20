@@ -424,7 +424,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
-                    "tileMaxSize=${tileManager.tileMaxSize.toShortString()}, " +
+                    "preferredTileSize=${tileManager.preferredTileSize.toShortString()}, " +
                     "tileGridMap=${tileManager.sortedTileGridMap.toIntroString()}. " +
                     "'${imageKey}'"
         }
