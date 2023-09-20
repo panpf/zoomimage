@@ -1,13 +1,17 @@
 package com.github.panpf.zoomimage.core.test.zoom
 
-import com.github.panpf.zoomimage.util.IntOffsetCompat as IntOffset
 import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.core.test.internal.A
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.RectCompat
+import com.github.panpf.zoomimage.util.ScaleFactorCompat
+import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toOffset
@@ -30,10 +34,13 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.FillWidth
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Fit
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.Inside
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat.Companion.None
+import com.github.panpf.zoomimage.zoom.calculateBaseTransform
 import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentBaseInsideDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentRotateOrigin
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
+import com.github.panpf.zoomimage.zoom.calculateRotatedContentMoveToTopLeftOffset
+import com.github.panpf.zoomimage.zoom.calculateRotatedContentRect
 import com.github.panpf.zoomimage.zoom.containerPointToContentPoint
 import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
 import com.github.panpf.zoomimage.zoom.name
@@ -44,7 +51,77 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CoreZoomUtilsTest {
 
-    // todo Unit tests
+    @Test
+    fun testCalculateRotatedContentRect() {
+        val containerSize = IntSize(1080, 1656)
+        val contentSize = IntSizeCompat(575, 427)
+
+        listOf(
+            0 to RectCompat(0.0f, 0.0f, 1080.0f, 1656.0f),
+            90 to RectCompat(74.0f, -74.0f, 501.0f, 501.0f),
+            180 to RectCompat(0.0f, 0.0f, 1080.0f, 1656.0f),
+            270 to RectCompat(74.0f, -74.0f, 501.0f, 501.0f),
+        ).forEach { (rotation, excepted) ->
+            Assert.assertEquals(
+                /* message= */"rotation=$rotation",
+                /* expected = */ excepted,
+                /* actual = */ calculateRotatedContentRect(containerSize, contentSize, rotation)
+            )
+        }
+
+        Assert.assertEquals(
+            /* expected = */ RectCompat.Zero,
+            /* actual = */ calculateRotatedContentRect(IntSizeCompat.Zero, contentSize, 90)
+        )
+        Assert.assertEquals(
+            /* expected = */ RectCompat.Zero,
+            /* actual = */ calculateRotatedContentRect(containerSize, IntSizeCompat.Zero, 90)
+        )
+
+        listOf(-1, 1, 89, 91, 179, 181, 269, 271).forEach { rotation ->
+            assertThrow(IllegalArgumentException::class) {
+                calculateRotatedContentRect(containerSize, contentSize, rotation)
+            }
+        }
+    }
+
+    @Test
+    fun testCalculateRotatedContentMoveToTopLeftOffset() {
+        val containerSize = IntSize(1080, 1656)
+        val contentSize = IntSizeCompat(575, 427)
+
+        listOf(
+            0 to OffsetCompat(0.0f, 0.0f),
+            90 to OffsetCompat(-74.0f, 74.0f),
+            180 to OffsetCompat(0.0f, 0.0f),
+            270 to OffsetCompat(-74.0f, 74.0f),
+        ).forEach { (rotation, excepted) ->
+            Assert.assertEquals(
+                /* message= */"rotation=$rotation",
+                /* expected = */
+                excepted,
+                /* actual = */
+                calculateRotatedContentMoveToTopLeftOffset(containerSize, contentSize, rotation)
+            )
+        }
+
+        Assert.assertEquals(
+            /* expected = */ OffsetCompat.Zero,
+            /* actual = */
+            calculateRotatedContentMoveToTopLeftOffset(IntSizeCompat.Zero, contentSize, 90)
+        )
+        Assert.assertEquals(
+            /* expected = */ OffsetCompat.Zero,
+            /* actual = */
+            calculateRotatedContentMoveToTopLeftOffset(containerSize, IntSizeCompat.Zero, 90)
+        )
+
+        listOf(-1, 1, 89, 91, 179, 181, 269, 271).forEach { rotation ->
+            assertThrow(IllegalArgumentException::class) {
+                calculateRotatedContentMoveToTopLeftOffset(containerSize, contentSize, rotation)
+            }
+        }
+    }
 
     @Test
     fun testCalculateContentRotateOrigin() {
@@ -67,347 +144,310 @@ class CoreZoomUtilsTest {
         }
     }
 
-//    @Test
-//    fun testCalculateAlignmentOffset() {
-//        val containerSize = IntSize(1080, 1656)
-//        val printBatchBuildExpression = false
-////        val printBatchBuildExpression = true
-//
-//        if (printBatchBuildExpression) {
-//            printlnBatchBuildExpression(
-//                p1s = listOf(
-//                    IntSize(7500, 232), IntSize(173, 3044), IntSize(575, 427), IntSize(551, 1038),
-//                ),
-//                p2s = listOf(None, Inside, Fit, FillWidth, FillHeight, FillBounds, Crop),
-//                p3s = listOf(
-//                    TopStart, TopCenter, TopEnd,
-//                    CenterStart, Center, CenterEnd,
-//                    BottomStart, BottomCenter, BottomEnd,
-//                ),
-//                buildItem = { p1, p2, p3 ->
-//                    Item6(p1, p2, p3, IntOffsetCompat.Zero)
-//                },
-//            ) {
-//                computeAlignmentIntOffset(
-//                    containerSize = containerSize,
-//                    contentSize = it.contentSize,
-//                    contentScale = it.contentScale,
-//                    alignment = it.alignment,
-//                )
-//            }
-//        }
-//
-//        listOf(
-//            Item6(IntSize(7500, 232), None, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), None, TopCenter, IntOffsetCompat(-3210, 0)),
-//            Item6(IntSize(7500, 232), None, TopEnd, IntOffsetCompat(-6420, 0)),
-//            Item6(IntSize(7500, 232), None, CenterStart, IntOffsetCompat(0, 712)),
-//            Item6(IntSize(7500, 232), None, Center, IntOffsetCompat(-3210, 712)),
-//            Item6(IntSize(7500, 232), None, CenterEnd, IntOffsetCompat(-6420, 712)),
-//            Item6(IntSize(7500, 232), None, BottomStart, IntOffsetCompat(0, 1424)),
-//            Item6(IntSize(7500, 232), None, BottomCenter, IntOffsetCompat(-3210, 1424)),
-//            Item6(IntSize(7500, 232), None, BottomEnd, IntOffsetCompat(-6420, 1424)),
-//            Item6(IntSize(7500, 232), Inside, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Inside, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Inside, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Inside, CenterStart, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), Inside, Center, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), Inside, CenterEnd, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), Inside, BottomStart, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), Inside, BottomCenter, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), Inside, BottomEnd, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), Fit, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Fit, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Fit, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Fit, CenterStart, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), Fit, Center, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), Fit, CenterEnd, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), Fit, BottomStart, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), Fit, BottomCenter, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), Fit, BottomEnd, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), FillWidth, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillWidth, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillWidth, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillWidth, CenterStart, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), FillWidth, Center, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), FillWidth, CenterEnd, IntOffsetCompat(0, 812)),
-//            Item6(IntSize(7500, 232), FillWidth, BottomStart, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), FillWidth, BottomCenter, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), FillWidth, BottomEnd, IntOffsetCompat(0, 1623)),
-//            Item6(IntSize(7500, 232), FillHeight, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillHeight, TopCenter, IntOffsetCompat(-26227, 0)),
-//            Item6(IntSize(7500, 232), FillHeight, TopEnd, IntOffsetCompat(-52454, 0)),
-//            Item6(IntSize(7500, 232), FillHeight, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillHeight, Center, IntOffsetCompat(-26227, 0)),
-//            Item6(IntSize(7500, 232), FillHeight, CenterEnd, IntOffsetCompat(-52454, 0)),
-//            Item6(IntSize(7500, 232), FillHeight, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillHeight, BottomCenter, IntOffsetCompat(-26227, 0)),
-//            Item6(IntSize(7500, 232), FillHeight, BottomEnd, IntOffsetCompat(-52454, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, Center, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, CenterEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, BottomCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), FillBounds, BottomEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Crop, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Crop, TopCenter, IntOffsetCompat(-26227, 0)),
-//            Item6(IntSize(7500, 232), Crop, TopEnd, IntOffsetCompat(-52454, 0)),
-//            Item6(IntSize(7500, 232), Crop, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Crop, Center, IntOffsetCompat(-26227, 0)),
-//            Item6(IntSize(7500, 232), Crop, CenterEnd, IntOffsetCompat(-52454, 0)),
-//            Item6(IntSize(7500, 232), Crop, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(7500, 232), Crop, BottomCenter, IntOffsetCompat(-26227, 0)),
-//            Item6(IntSize(7500, 232), Crop, BottomEnd, IntOffsetCompat(-52454, 0)),
-//            Item6(IntSize(173, 3044), None, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), None, TopCenter, IntOffsetCompat(454, 0)),
-//            Item6(IntSize(173, 3044), None, TopEnd, IntOffsetCompat(907, 0)),
-//            Item6(IntSize(173, 3044), None, CenterStart, IntOffsetCompat(0, -694)),
-//            Item6(IntSize(173, 3044), None, Center, IntOffsetCompat(454, -694)),
-//            Item6(IntSize(173, 3044), None, CenterEnd, IntOffsetCompat(907, -694)),
-//            Item6(IntSize(173, 3044), None, BottomStart, IntOffsetCompat(0, -1388)),
-//            Item6(IntSize(173, 3044), None, BottomCenter, IntOffsetCompat(454, -1388)),
-//            Item6(IntSize(173, 3044), None, BottomEnd, IntOffsetCompat(907, -1388)),
-//            Item6(IntSize(173, 3044), Inside, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Inside, TopCenter, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), Inside, TopEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), Inside, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Inside, Center, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), Inside, CenterEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), Inside, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Inside, BottomCenter, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), Inside, BottomEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), Fit, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Fit, TopCenter, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), Fit, TopEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), Fit, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Fit, Center, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), Fit, CenterEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), Fit, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Fit, BottomCenter, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), Fit, BottomEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), FillWidth, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillWidth, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillWidth, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillWidth, CenterStart, IntOffsetCompat(0, -8673)),
-//            Item6(IntSize(173, 3044), FillWidth, Center, IntOffsetCompat(0, -8673)),
-//            Item6(IntSize(173, 3044), FillWidth, CenterEnd, IntOffsetCompat(0, -8673)),
-//            Item6(IntSize(173, 3044), FillWidth, BottomStart, IntOffsetCompat(0, -17347)),
-//            Item6(IntSize(173, 3044), FillWidth, BottomCenter, IntOffsetCompat(0, -17347)),
-//            Item6(IntSize(173, 3044), FillWidth, BottomEnd, IntOffsetCompat(0, -17347)),
-//            Item6(IntSize(173, 3044), FillHeight, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillHeight, TopCenter, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), FillHeight, TopEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), FillHeight, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillHeight, Center, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), FillHeight, CenterEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), FillHeight, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillHeight, BottomCenter, IntOffsetCompat(493, 0)),
-//            Item6(IntSize(173, 3044), FillHeight, BottomEnd, IntOffsetCompat(986, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, Center, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, CenterEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, BottomCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), FillBounds, BottomEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Crop, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Crop, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Crop, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(173, 3044), Crop, CenterStart, IntOffsetCompat(0, -8673)),
-//            Item6(IntSize(173, 3044), Crop, Center, IntOffsetCompat(0, -8673)),
-//            Item6(IntSize(173, 3044), Crop, CenterEnd, IntOffsetCompat(0, -8673)),
-//            Item6(IntSize(173, 3044), Crop, BottomStart, IntOffsetCompat(0, -17347)),
-//            Item6(IntSize(173, 3044), Crop, BottomCenter, IntOffsetCompat(0, -17347)),
-//            Item6(IntSize(173, 3044), Crop, BottomEnd, IntOffsetCompat(0, -17347)),
-//            Item6(IntSize(575, 427), None, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), None, TopCenter, IntOffsetCompat(253, 0)),
-//            Item6(IntSize(575, 427), None, TopEnd, IntOffsetCompat(505, 0)),
-//            Item6(IntSize(575, 427), None, CenterStart, IntOffsetCompat(0, 615)),
-//            Item6(IntSize(575, 427), None, Center, IntOffsetCompat(253, 615)),
-//            Item6(IntSize(575, 427), None, CenterEnd, IntOffsetCompat(505, 615)),
-//            Item6(IntSize(575, 427), None, BottomStart, IntOffsetCompat(0, 1229)),
-//            Item6(IntSize(575, 427), None, BottomCenter, IntOffsetCompat(253, 1229)),
-//            Item6(IntSize(575, 427), None, BottomEnd, IntOffsetCompat(505, 1229)),
-//            Item6(IntSize(575, 427), Inside, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), Inside, TopCenter, IntOffsetCompat(253, 0)),
-//            Item6(IntSize(575, 427), Inside, TopEnd, IntOffsetCompat(505, 0)),
-//            Item6(IntSize(575, 427), Inside, CenterStart, IntOffsetCompat(0, 615)),
-//            Item6(IntSize(575, 427), Inside, Center, IntOffsetCompat(253, 615)),
-//            Item6(IntSize(575, 427), Inside, CenterEnd, IntOffsetCompat(505, 615)),
-//            Item6(IntSize(575, 427), Inside, BottomStart, IntOffsetCompat(0, 1229)),
-//            Item6(IntSize(575, 427), Inside, BottomCenter, IntOffsetCompat(253, 1229)),
-//            Item6(IntSize(575, 427), Inside, BottomEnd, IntOffsetCompat(505, 1229)),
-//            Item6(IntSize(575, 427), Fit, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), Fit, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), Fit, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), Fit, CenterStart, IntOffsetCompat(0, 427)),
-//            Item6(IntSize(575, 427), Fit, Center, IntOffsetCompat(0, 427)),
-//            Item6(IntSize(575, 427), Fit, CenterEnd, IntOffsetCompat(0, 427)),
-//            Item6(IntSize(575, 427), Fit, BottomStart, IntOffsetCompat(0, 854)),
-//            Item6(IntSize(575, 427), Fit, BottomCenter, IntOffsetCompat(0, 854)),
-//            Item6(IntSize(575, 427), Fit, BottomEnd, IntOffsetCompat(0, 854)),
-//            Item6(IntSize(575, 427), FillWidth, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillWidth, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillWidth, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillWidth, CenterStart, IntOffsetCompat(0, 427)),
-//            Item6(IntSize(575, 427), FillWidth, Center, IntOffsetCompat(0, 427)),
-//            Item6(IntSize(575, 427), FillWidth, CenterEnd, IntOffsetCompat(0, 427)),
-//            Item6(IntSize(575, 427), FillWidth, BottomStart, IntOffsetCompat(0, 854)),
-//            Item6(IntSize(575, 427), FillWidth, BottomCenter, IntOffsetCompat(0, 854)),
-//            Item6(IntSize(575, 427), FillWidth, BottomEnd, IntOffsetCompat(0, 854)),
-//            Item6(IntSize(575, 427), FillHeight, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillHeight, TopCenter, IntOffsetCompat(-575, 0)),
-//            Item6(IntSize(575, 427), FillHeight, TopEnd, IntOffsetCompat(-1150, 0)),
-//            Item6(IntSize(575, 427), FillHeight, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillHeight, Center, IntOffsetCompat(-575, 0)),
-//            Item6(IntSize(575, 427), FillHeight, CenterEnd, IntOffsetCompat(-1150, 0)),
-//            Item6(IntSize(575, 427), FillHeight, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillHeight, BottomCenter, IntOffsetCompat(-575, 0)),
-//            Item6(IntSize(575, 427), FillHeight, BottomEnd, IntOffsetCompat(-1150, 0)),
-//            Item6(IntSize(575, 427), FillBounds, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillBounds, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillBounds, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillBounds, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillBounds, Center, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillBounds, CenterEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillBounds, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillBounds, BottomCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), FillBounds, BottomEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), Crop, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), Crop, TopCenter, IntOffsetCompat(-575, 0)),
-//            Item6(IntSize(575, 427), Crop, TopEnd, IntOffsetCompat(-1150, 0)),
-//            Item6(IntSize(575, 427), Crop, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), Crop, Center, IntOffsetCompat(-575, 0)),
-//            Item6(IntSize(575, 427), Crop, CenterEnd, IntOffsetCompat(-1150, 0)),
-//            Item6(IntSize(575, 427), Crop, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(575, 427), Crop, BottomCenter, IntOffsetCompat(-575, 0)),
-//            Item6(IntSize(575, 427), Crop, BottomEnd, IntOffsetCompat(-1150, 0)),
-//            Item6(IntSize(551, 1038), None, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), None, TopCenter, IntOffsetCompat(265, 0)),
-//            Item6(IntSize(551, 1038), None, TopEnd, IntOffsetCompat(529, 0)),
-//            Item6(IntSize(551, 1038), None, CenterStart, IntOffsetCompat(0, 309)),
-//            Item6(IntSize(551, 1038), None, Center, IntOffsetCompat(265, 309)),
-//            Item6(IntSize(551, 1038), None, CenterEnd, IntOffsetCompat(529, 309)),
-//            Item6(IntSize(551, 1038), None, BottomStart, IntOffsetCompat(0, 618)),
-//            Item6(IntSize(551, 1038), None, BottomCenter, IntOffsetCompat(265, 618)),
-//            Item6(IntSize(551, 1038), None, BottomEnd, IntOffsetCompat(529, 618)),
-//            Item6(IntSize(551, 1038), Inside, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), Inside, TopCenter, IntOffsetCompat(265, 0)),
-//            Item6(IntSize(551, 1038), Inside, TopEnd, IntOffsetCompat(529, 0)),
-//            Item6(IntSize(551, 1038), Inside, CenterStart, IntOffsetCompat(0, 309)),
-//            Item6(IntSize(551, 1038), Inside, Center, IntOffsetCompat(265, 309)),
-//            Item6(IntSize(551, 1038), Inside, CenterEnd, IntOffsetCompat(529, 309)),
-//            Item6(IntSize(551, 1038), Inside, BottomStart, IntOffsetCompat(0, 618)),
-//            Item6(IntSize(551, 1038), Inside, BottomCenter, IntOffsetCompat(265, 618)),
-//            Item6(IntSize(551, 1038), Inside, BottomEnd, IntOffsetCompat(529, 618)),
-//            Item6(IntSize(551, 1038), Fit, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), Fit, TopCenter, IntOffsetCompat(101, 0)),
-//            Item6(IntSize(551, 1038), Fit, TopEnd, IntOffsetCompat(201, 0)),
-//            Item6(IntSize(551, 1038), Fit, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), Fit, Center, IntOffsetCompat(101, 0)),
-//            Item6(IntSize(551, 1038), Fit, CenterEnd, IntOffsetCompat(201, 0)),
-//            Item6(IntSize(551, 1038), Fit, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), Fit, BottomCenter, IntOffsetCompat(101, 0)),
-//            Item6(IntSize(551, 1038), Fit, BottomEnd, IntOffsetCompat(201, 0)),
-//            Item6(IntSize(551, 1038), FillWidth, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillWidth, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillWidth, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillWidth, CenterStart, IntOffsetCompat(0, -189)),
-//            Item6(IntSize(551, 1038), FillWidth, Center, IntOffsetCompat(0, -189)),
-//            Item6(IntSize(551, 1038), FillWidth, CenterEnd, IntOffsetCompat(0, -189)),
-//            Item6(IntSize(551, 1038), FillWidth, BottomStart, IntOffsetCompat(0, -379)),
-//            Item6(IntSize(551, 1038), FillWidth, BottomCenter, IntOffsetCompat(0, -379)),
-//            Item6(IntSize(551, 1038), FillWidth, BottomEnd, IntOffsetCompat(0, -379)),
-//            Item6(IntSize(551, 1038), FillHeight, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillHeight, TopCenter, IntOffsetCompat(101, 0)),
-//            Item6(IntSize(551, 1038), FillHeight, TopEnd, IntOffsetCompat(201, 0)),
-//            Item6(IntSize(551, 1038), FillHeight, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillHeight, Center, IntOffsetCompat(101, 0)),
-//            Item6(IntSize(551, 1038), FillHeight, CenterEnd, IntOffsetCompat(201, 0)),
-//            Item6(IntSize(551, 1038), FillHeight, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillHeight, BottomCenter, IntOffsetCompat(101, 0)),
-//            Item6(IntSize(551, 1038), FillHeight, BottomEnd, IntOffsetCompat(201, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, CenterStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, Center, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, CenterEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, BottomStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, BottomCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), FillBounds, BottomEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), Crop, TopStart, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), Crop, TopCenter, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), Crop, TopEnd, IntOffsetCompat(0, 0)),
-//            Item6(IntSize(551, 1038), Crop, CenterStart, IntOffsetCompat(0, -189)),
-//            Item6(IntSize(551, 1038), Crop, Center, IntOffsetCompat(0, -189)),
-//            Item6(IntSize(551, 1038), Crop, CenterEnd, IntOffsetCompat(0, -189)),
-//            Item6(IntSize(551, 1038), Crop, BottomStart, IntOffsetCompat(0, -379)),
-//            Item6(IntSize(551, 1038), Crop, BottomCenter, IntOffsetCompat(0, -379)),
-//            Item6(IntSize(551, 1038), Crop, BottomEnd, IntOffsetCompat(0, -379)),
-//        ).forEach { item ->
-//            val result = computeAlignmentIntOffset(
-//                containerSize = containerSize,
-//                contentSize = item.contentSize,
-//                contentScale = item.contentScale,
-//                alignment = item.alignment,
-//            )
-//            Assert.assertEquals(
-//                /* message = */ item.getMessage(containerSize),
-//                /* expected = */ item.expected,
-//                /* actual = */ result,
-//            )
-//        }
-//    }
-//
-//    @Test
-//    fun testCalculateLocateOffset() {
-//        val containerSize = IntSize(1000, 2000)
-//
-//        var scale = 1f
-//        listOf(
-//            TransformOriginCompat(0.25f, 0.25f) to Offset(0f, 0f),
-//            TransformOriginCompat(0.75f, 0.25f) to Offset(-250f, 0f),
-//            TransformOriginCompat(0.5f, 0.5f) to Offset(-0f, -0f),
-//            TransformOriginCompat(0.25f, 0.75f) to Offset(0f, -500f),
-//            TransformOriginCompat(0.75f, 0.75f) to Offset(-250f, -500f),
-//        ).forEach { (containerOrigin, expected) ->
-//            val containerPoint = IntOffsetCompat(
-//                x = (containerOrigin.pivotFractionX * containerSize.width).roundToInt(),
-//                y = (containerOrigin.pivotFractionY * containerSize.height).roundToInt(),
-//            )
-//            Assert.assertEquals(
-//                /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
-//                /* expected = */ expected,
-//                /* actual = */ computeLocateUserOffset(containerSize, containerPoint, scale)
-//            )
-//        }
-//
-//        scale = 2f
-//        listOf(
-//            TransformOriginCompat(0.25f, 0.25f) to Offset(-0f, -0f),
-//            TransformOriginCompat(0.75f, 0.25f) to Offset(-1000f, -0f),
-//            TransformOriginCompat(0.5f, 0.5f) to Offset(-500f, -1000f),
-//            TransformOriginCompat(0.25f, 0.75f) to Offset(-0f, -2000f),
-//            TransformOriginCompat(0.75f, 0.75f) to Offset(-1000f, -2000f),
-//        ).forEach { (containerOrigin, expected) ->
-//            val containerPoint = IntOffsetCompat(
-//                x = (containerOrigin.pivotFractionX * containerSize.width).roundToInt(),
-//                y = (containerOrigin.pivotFractionY * containerSize.height).roundToInt(),
-//            )
-//            Assert.assertEquals(
-//                /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
-//                /* expected = */ expected,
-//                /* actual = */ computeLocateUserOffset(containerSize, containerPoint, scale)
-//            )
-//        }
-//    }
+    /**
+     *
+     * @formatter:off
+     */
+    @Test
+    fun testCalculateBaseTransform() {
+        val containerSize = IntSize(1080, 1920)
+        val contentSize = IntSize(500, 300)
 
+        val printBatchBuildExpression = false
+//        val printBatchBuildExpression = true
+        if (printBatchBuildExpression) {
+            printlnBatchBuildExpression(
+                p1s = listOf(Crop, Fit, FillHeight, FillWidth, Inside, None, FillBounds),
+                p2s = listOf(
+                    TopStart, TopCenter, TopEnd,
+                    CenterStart, Center, CenterEnd,
+                    BottomStart, BottomCenter, BottomEnd
+                ),
+                p3s = listOf(0, 90, 180, 270),
+                buildItem = { p1, p2, p3 ->
+                    Item3(p1, p2, p3, TransformCompat.Origin)
+                },
+            ) { item ->
+                calculateBaseTransform(
+                    containerSize = containerSize,
+                    contentSize = contentSize,
+                    contentScale = item.contentScale,
+                    alignment = item.alignment,
+                    rotation = item.rotation,
+                )
+            }
+        }
+
+        // @formatter:off. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
+        listOf(
+            Item3(Crop, TopStart, 0, Transform(6.4f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopStart, 90, Transform(3.84f, 3.84f, -384.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopStart, 180, Transform(6.4f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopStart, 270, Transform(3.84f, 3.84f, -384.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopCenter, 0, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopCenter, 90, Transform(3.84f, 3.84f, -420.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopCenter, 180, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopCenter, 270, Transform(3.84f, 3.84f, -420.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopEnd, 0, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopEnd, 90, Transform(3.84f, 3.84f, -456.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopEnd, 180, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, TopEnd, 270, Transform(3.84f, 3.84f, -456.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, CenterStart, 0, Transform(6.4f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, CenterStart, 90, Transform(3.84f, 3.84f, -384.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, CenterStart, 180, Transform(6.4f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, CenterStart, 270, Transform(3.84f, 3.84f, -384.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, Center, 0, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, Center, 90, Transform(3.84f, 3.84f, -420.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, Center, 180, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, Center, 270, Transform(3.84f, 3.84f, -420.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, CenterEnd, 0, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, CenterEnd, 90, Transform(3.84f, 3.84f, -456.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, CenterEnd, 180, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, CenterEnd, 270, Transform(3.84f, 3.84f, -456.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomStart, 0, Transform(6.4f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomStart, 90, Transform(3.84f, 3.84f, -384.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomStart, 180, Transform(6.4f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomStart, 270, Transform(3.84f, 3.84f, -384.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomCenter, 0, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomCenter, 90, Transform(3.84f, 3.84f, -420.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomCenter, 180, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomCenter, 270, Transform(3.84f, 3.84f, -420.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomEnd, 0, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomEnd, 90, Transform(3.84f, 3.84f, -456.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomEnd, 180, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Crop, BottomEnd, 270, Transform(3.84f, 3.84f, -456.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopStart, 0, Transform(2.16f, 2.16f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopStart, 90, Transform(3.6f, 3.6f, -360.0f, 360.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopStart, 180, Transform(2.16f, 2.16f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopStart, 270, Transform(3.6f, 3.6f, -360.0f, 360.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopCenter, 0, Transform(2.16f, 2.16f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopCenter, 90, Transform(3.6f, 3.6f, -360.0f, 360.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopCenter, 180, Transform(2.16f, 2.16f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopCenter, 270, Transform(3.6f, 3.6f, -360.0f, 360.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopEnd, 0, Transform(2.16f, 2.16f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopEnd, 90, Transform(3.6f, 3.6f, -360.0f, 360.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopEnd, 180, Transform(2.16f, 2.16f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, TopEnd, 270, Transform(3.6f, 3.6f, -360.0f, 360.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, CenterStart, 0, Transform(2.16f, 2.16f, 0.0f, 636.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, CenterStart, 90, Transform(3.6f, 3.6f, -360.0f, 420.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, CenterStart, 180, Transform(2.16f, 2.16f, 0.0f, 636.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, CenterStart, 270, Transform(3.6f, 3.6f, -360.0f, 420.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, Center, 0, Transform(2.16f, 2.16f, 0.0f, 636.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, Center, 90, Transform(3.6f, 3.6f, -360.0f, 420.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, Center, 180, Transform(2.16f, 2.16f, 0.0f, 636.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, Center, 270, Transform(3.6f, 3.6f, -360.0f, 420.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, CenterEnd, 0, Transform(2.16f, 2.16f, 0.0f, 636.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, CenterEnd, 90, Transform(3.6f, 3.6f, -360.0f, 420.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, CenterEnd, 180, Transform(2.16f, 2.16f, 0.0f, 636.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, CenterEnd, 270, Transform(3.6f, 3.6f, -360.0f, 420.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomStart, 0, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomStart, 90, Transform(3.6f, 3.6f, -360.0f, 480.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomStart, 180, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomStart, 270, Transform(3.6f, 3.6f, -360.0f, 480.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomCenter, 0, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomCenter, 90, Transform(3.6f, 3.6f, -360.0f, 480.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomCenter, 180, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomCenter, 270, Transform(3.6f, 3.6f, -360.0f, 480.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomEnd, 0, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomEnd, 90, Transform(3.6f, 3.6f, -360.0f, 480.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomEnd, 180, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Fit, BottomEnd, 270, Transform(3.6f, 3.6f, -360.0f, 480.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopStart, 0, Transform(6.4f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopStart, 90, Transform(3.84f, 3.84f, -384.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopStart, 180, Transform(6.4f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopStart, 270, Transform(3.84f, 3.84f, -384.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopCenter, 0, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopCenter, 90, Transform(3.84f, 3.84f, -420.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopCenter, 180, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopCenter, 270, Transform(3.84f, 3.84f, -420.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopEnd, 0, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopEnd, 90, Transform(3.84f, 3.84f, -456.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopEnd, 180, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, TopEnd, 270, Transform(3.84f, 3.84f, -456.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, CenterStart, 0, Transform(6.4f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, CenterStart, 90, Transform(3.84f, 3.84f, -384.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, CenterStart, 180, Transform(6.4f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, CenterStart, 270, Transform(3.84f, 3.84f, -384.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, Center, 0, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, Center, 90, Transform(3.84f, 3.84f, -420.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, Center, 180, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, Center, 270, Transform(3.84f, 3.84f, -420.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, CenterEnd, 0, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, CenterEnd, 90, Transform(3.84f, 3.84f, -456.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, CenterEnd, 180, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, CenterEnd, 270, Transform(3.84f, 3.84f, -456.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomStart, 0, Transform(6.4f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomStart, 90, Transform(3.84f, 3.84f, -384.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomStart, 180, Transform(6.4f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomStart, 270, Transform(3.84f, 3.84f, -384.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomCenter, 0, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomCenter, 90, Transform(3.84f, 3.84f, -420.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomCenter, 180, Transform(6.4f, 6.4f, -1060.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomCenter, 270, Transform(3.84f, 3.84f, -420.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomEnd, 0, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomEnd, 90, Transform(3.84f, 3.84f, -456.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomEnd, 180, Transform(6.4f, 6.4f, -2120.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillHeight, BottomEnd, 270, Transform(3.84f, 3.84f, -456.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopStart, 0, Transform(2.16f, 2.16f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopStart, 90, Transform(3.6f, 3.6f, -360.0f, 360.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopStart, 180, Transform(2.16f, 2.16f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopStart, 270, Transform(3.6f, 3.6f, -360.0f, 360.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopCenter, 0, Transform(2.16f, 2.16f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopCenter, 90, Transform(3.6f, 3.6f, -360.0f, 360.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopCenter, 180, Transform(2.16f, 2.16f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopCenter, 270, Transform(3.6f, 3.6f, -360.0f, 360.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopEnd, 0, Transform(2.16f, 2.16f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopEnd, 90, Transform(3.6f, 3.6f, -360.0f, 360.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopEnd, 180, Transform(2.16f, 2.16f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, TopEnd, 270, Transform(3.6f, 3.6f, -360.0f, 360.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, CenterStart, 0, Transform(2.16f, 2.16f, 0.0f, 636.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, CenterStart, 90, Transform(3.6f, 3.6f, -360.0f, 420.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, CenterStart, 180, Transform(2.16f, 2.16f, 0.0f, 636.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, CenterStart, 270, Transform(3.6f, 3.6f, -360.0f, 420.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, Center, 0, Transform(2.16f, 2.16f, 0.0f, 636.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, Center, 90, Transform(3.6f, 3.6f, -360.0f, 420.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, Center, 180, Transform(2.16f, 2.16f, 0.0f, 636.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, Center, 270, Transform(3.6f, 3.6f, -360.0f, 420.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, CenterEnd, 0, Transform(2.16f, 2.16f, 0.0f, 636.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, CenterEnd, 90, Transform(3.6f, 3.6f, -360.0f, 420.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, CenterEnd, 180, Transform(2.16f, 2.16f, 0.0f, 636.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, CenterEnd, 270, Transform(3.6f, 3.6f, -360.0f, 420.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomStart, 0, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomStart, 90, Transform(3.6f, 3.6f, -360.0f, 480.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomStart, 180, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomStart, 270, Transform(3.6f, 3.6f, -360.0f, 480.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomCenter, 0, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomCenter, 90, Transform(3.6f, 3.6f, -360.0f, 480.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomCenter, 180, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomCenter, 270, Transform(3.6f, 3.6f, -360.0f, 480.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomEnd, 0, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomEnd, 90, Transform(3.6f, 3.6f, -360.0f, 480.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomEnd, 180, Transform(2.16f, 2.16f, 0.0f, 1272.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillWidth, BottomEnd, 270, Transform(3.6f, 3.6f, -360.0f, 480.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopStart, 0, Transform(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopStart, 90, Transform(1.0f, 1.0f, -100.0f, 100.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopStart, 180, Transform(1.0f, 1.0f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopStart, 270, Transform(1.0f, 1.0f, -100.0f, 100.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopCenter, 0, Transform(1.0f, 1.0f, 290.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopCenter, 90, Transform(1.0f, 1.0f, 290.0f, 100.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopCenter, 180, Transform(1.0f, 1.0f, 290.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopCenter, 270, Transform(1.0f, 1.0f, 290.0f, 100.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopEnd, 0, Transform(1.0f, 1.0f, 580.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopEnd, 90, Transform(1.0f, 1.0f, 680.0f, 100.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopEnd, 180, Transform(1.0f, 1.0f, 580.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, TopEnd, 270, Transform(1.0f, 1.0f, 680.0f, 100.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, CenterStart, 0, Transform(1.0f, 1.0f, 0.0f, 810.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, CenterStart, 90, Transform(1.0f, 1.0f, -100.0f, 810.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, CenterStart, 180, Transform(1.0f, 1.0f, 0.0f, 810.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, CenterStart, 270, Transform(1.0f, 1.0f, -100.0f, 810.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, Center, 0, Transform(1.0f, 1.0f, 290.0f, 810.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, Center, 90, Transform(1.0f, 1.0f, 290.0f, 810.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, Center, 180, Transform(1.0f, 1.0f, 290.0f, 810.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, Center, 270, Transform(1.0f, 1.0f, 290.0f, 810.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, CenterEnd, 0, Transform(1.0f, 1.0f, 580.0f, 810.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, CenterEnd, 90, Transform(1.0f, 1.0f, 680.0f, 810.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, CenterEnd, 180, Transform(1.0f, 1.0f, 580.0f, 810.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, CenterEnd, 270, Transform(1.0f, 1.0f, 680.0f, 810.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomStart, 0, Transform(1.0f, 1.0f, 0.0f, 1620.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomStart, 90, Transform(1.0f, 1.0f, -100.0f, 1520.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomStart, 180, Transform(1.0f, 1.0f, 0.0f, 1620.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomStart, 270, Transform(1.0f, 1.0f, -100.0f, 1520.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomCenter, 0, Transform(1.0f, 1.0f, 290.0f, 1620.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomCenter, 90, Transform(1.0f, 1.0f, 290.0f, 1520.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomCenter, 180, Transform(1.0f, 1.0f, 290.0f, 1620.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomCenter, 270, Transform(1.0f, 1.0f, 290.0f, 1520.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomEnd, 0, Transform(1.0f, 1.0f, 580.0f, 1620.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomEnd, 90, Transform(1.0f, 1.0f, 680.0f, 1520.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomEnd, 180, Transform(1.0f, 1.0f, 580.0f, 1620.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(Inside, BottomEnd, 270, Transform(1.0f, 1.0f, 680.0f, 1520.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopStart, 0, Transform(1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopStart, 90, Transform(1.0f, 1.0f, -100.0f, 100.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopStart, 180, Transform(1.0f, 1.0f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopStart, 270, Transform(1.0f, 1.0f, -100.0f, 100.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopCenter, 0, Transform(1.0f, 1.0f, 290.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopCenter, 90, Transform(1.0f, 1.0f, 290.0f, 100.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopCenter, 180, Transform(1.0f, 1.0f, 290.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopCenter, 270, Transform(1.0f, 1.0f, 290.0f, 100.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopEnd, 0, Transform(1.0f, 1.0f, 580.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopEnd, 90, Transform(1.0f, 1.0f, 680.0f, 100.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopEnd, 180, Transform(1.0f, 1.0f, 580.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, TopEnd, 270, Transform(1.0f, 1.0f, 680.0f, 100.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, CenterStart, 0, Transform(1.0f, 1.0f, 0.0f, 810.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, CenterStart, 90, Transform(1.0f, 1.0f, -100.0f, 810.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, CenterStart, 180, Transform(1.0f, 1.0f, 0.0f, 810.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, CenterStart, 270, Transform(1.0f, 1.0f, -100.0f, 810.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, Center, 0, Transform(1.0f, 1.0f, 290.0f, 810.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, Center, 90, Transform(1.0f, 1.0f, 290.0f, 810.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, Center, 180, Transform(1.0f, 1.0f, 290.0f, 810.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, Center, 270, Transform(1.0f, 1.0f, 290.0f, 810.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, CenterEnd, 0, Transform(1.0f, 1.0f, 580.0f, 810.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, CenterEnd, 90, Transform(1.0f, 1.0f, 680.0f, 810.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, CenterEnd, 180, Transform(1.0f, 1.0f, 580.0f, 810.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, CenterEnd, 270, Transform(1.0f, 1.0f, 680.0f, 810.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomStart, 0, Transform(1.0f, 1.0f, 0.0f, 1620.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomStart, 90, Transform(1.0f, 1.0f, -100.0f, 1520.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomStart, 180, Transform(1.0f, 1.0f, 0.0f, 1620.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomStart, 270, Transform(1.0f, 1.0f, -100.0f, 1520.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomCenter, 0, Transform(1.0f, 1.0f, 290.0f, 1620.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomCenter, 90, Transform(1.0f, 1.0f, 290.0f, 1520.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomCenter, 180, Transform(1.0f, 1.0f, 290.0f, 1620.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomCenter, 270, Transform(1.0f, 1.0f, 290.0f, 1520.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomEnd, 0, Transform(1.0f, 1.0f, 580.0f, 1620.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomEnd, 90, Transform(1.0f, 1.0f, 680.0f, 1520.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomEnd, 180, Transform(1.0f, 1.0f, 580.0f, 1620.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(None, BottomEnd, 270, Transform(1.0f, 1.0f, 680.0f, 1520.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopStart, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopStart, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopStart, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopStart, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopCenter, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopCenter, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopCenter, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopCenter, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopEnd, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopEnd, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopEnd, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, TopEnd, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, CenterStart, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, CenterStart, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, CenterStart, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, CenterStart, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, Center, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, Center, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, Center, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, Center, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, CenterEnd, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, CenterEnd, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, CenterEnd, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, CenterEnd, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomStart, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomStart, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomStart, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomStart, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomCenter, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomCenter, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomCenter, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomCenter, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomEnd, 0, Transform(2.16f, 6.4f, 0.0f, 0.0f, 0.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomEnd, 90, Transform(3.6f, 3.84f, -360.0f, 384.0f, 90.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomEnd, 180, Transform(2.16f, 6.4f, 0.0f, 0.0f, 180.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+            Item3(FillBounds, BottomEnd, 270, Transform(3.6f, 3.84f, -360.0f, 384.0f, 270.0f, 0f, 0f, 0.23148148f, 0.078125f)),
+        ).forEach { item ->
+            val result = calculateBaseTransform(
+                containerSize = containerSize,
+                contentSize = contentSize,
+                contentScale = item.contentScale,
+                alignment = item.alignment,
+                rotation = item.rotation,
+            )
+            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+        }
+        // @formatter:on
+    }
+
+    // TODO calculateReadModeTransform
+    // TODO calculateScales
+    // TODO calculateInitialZoom
 
     @Test
     fun testCalculateContentBaseDisplayRect() {
@@ -429,7 +469,7 @@ class CoreZoomUtilsTest {
                     CenterStart, Center, CenterEnd,
                     BottomStart, BottomCenter, BottomEnd,
                 ),
-                // todo rotation
+                // TODO rotation
                 buildItem = { p1, p2, p3 ->
                     Item5(p1, p2, p3, IntRectCompat.Zero)
                 },
@@ -1033,6 +1073,8 @@ class CoreZoomUtilsTest {
         }
     }
 
+    // TODO calculateContentBaseVisibleRect
+
     @Test
     fun testCalculateContentBaseInsideDisplayRect() {
         val containerSize = IntSize(1080, 1656)
@@ -1053,7 +1095,7 @@ class CoreZoomUtilsTest {
                     CenterStart, Center, CenterEnd,
                     BottomStart, BottomCenter, BottomEnd,
                 ),
-                // todo rotation
+                // TODO rotation
                 buildItem = { p1, p2, p3 ->
                     Item5(p1, p2, p3, IntRectCompat.Zero)
                 },
@@ -1561,6 +1603,1259 @@ class CoreZoomUtilsTest {
             )
         }
     }
+
+    // TODO calculateContentDisplayRect
+    // TODO calculateContentVisibleRect
+    // TODO calculateUserOffsetBounds
+    // TODO calculateLocateUserOffset
+    // TODO calculateScaleUserOffset
+    // TODO calculateTransformOffset
+    // TODO calculateScrollEdge
+    // TODO canScrollByEdge
+    // TODO limitScaleWithRubberBand
+
+    @Test
+    fun testCalculateNextStepScale() {
+        val stepScales = floatArrayOf(1f, 2f, 3f, 4f, 5f)
+        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.0f))
+        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.8f))
+        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 0.8f, rangeOfError = 0.2f))
+        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 0.9f))
+        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.9f, rangeOfError = 0f))
+        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 1.0f))
+        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 1.5f))
+        Assert.assertEquals(3f, calculateNextStepScale(stepScales, 2.5f))
+        Assert.assertEquals(4f, calculateNextStepScale(stepScales, 3.5f))
+        Assert.assertEquals(5f, calculateNextStepScale(stepScales, 4.5f))
+        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 5.5f))
+        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 6.5f))
+
+        Assert.assertEquals(0.0f, calculateNextStepScale(floatArrayOf(), 0.0f))
+        Assert.assertEquals(0.8f, calculateNextStepScale(floatArrayOf(), 0.8f))
+        Assert.assertEquals(0.9f, calculateNextStepScale(floatArrayOf(), 0.9f))
+        Assert.assertEquals(1.0f, calculateNextStepScale(floatArrayOf(), 1.0f))
+        Assert.assertEquals(2.5f, calculateNextStepScale(floatArrayOf(), 2.5f))
+        Assert.assertEquals(3.5f, calculateNextStepScale(floatArrayOf(), 3.5f))
+    }
+
+    // TODO touchPointToContainerPoint
+    // TODO containerPointToTouchPoint
+
+    @Test
+    fun testContainerPointToContentPoint() {
+        val containerSize = IntSize(1000, 1000)
+
+        val printBatchBuildExpression = false
+//        val printBatchBuildExpression = true
+        if (printBatchBuildExpression) {
+            printlnBatchBuildExpression(
+                p1s = listOf(
+                    IntSize(1000, 400),
+                    IntSize(400, 1000),
+                    IntSize(500, 200),
+                    IntSize(200, 500),
+                    IntSize(2000, 800),
+                    IntSize(800, 2000),
+                ),
+                p2s = listOf(None),
+                p3s = listOf(Center),
+                p4s = listOf(
+                    IntOffsetCompat(500, 500),
+                    IntOffsetCompat(200, 500),
+                    IntOffsetCompat(500, 200),
+                    IntOffsetCompat(800, 500),
+                    IntOffsetCompat(500, 800),
+                    IntOffsetCompat(-200, 500),
+                    IntOffsetCompat(500, -200),
+                    IntOffsetCompat(1200, 500),
+                    IntOffsetCompat(500, 1200),
+                ),
+                buildItem = { p1, p2, p3, p4 ->
+                    Item9(p1, p2, p3, p4, IntOffsetCompat.Zero)
+                },
+            ) { item ->
+                containerPointToContentPoint(
+                    containerSize = containerSize,
+                    contentSize = item.contentSize,
+                    contentScale = item.contentScale,
+                    alignment = item.alignment,
+                    rotation = 0,
+                    containerPoint = item.inputPoint.toOffset(),
+                ).round()
+            }
+        }
+
+        listOf(
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(500, 200)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(200, 200)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(500, 0)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(800, 200)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(500, 400)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(0, 200)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(500, 0)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(1000, 200)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(500, 400)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(200, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(0, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(200, 200)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(400, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(200, 800)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(0, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(200, 0)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(400, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(200, 1000)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(250, 100)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(0, 100)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(250, 0)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(500, 100)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(250, 200)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(0, 100)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(250, 0)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(500, 100)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(250, 200)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(100, 250)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(0, 250)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(100, 0)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(200, 250)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(100, 500)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(0, 250)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(100, 0)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(200, 250)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(100, 500)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(1000, 400)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(700, 400)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(1000, 100)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(1300, 400)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(1000, 700)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(300, 400)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(1000, 0)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(1700, 400)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(1000, 800)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(400, 1000)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(100, 1000)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(400, 700)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(700, 1000)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(400, 1300)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(0, 1000)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(400, 300)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(800, 1000)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(400, 1700)
+            ),
+        ).forEach { item ->
+            val result = containerPointToContentPoint(
+                containerSize = containerSize,
+                contentSize = item.contentSize,
+                contentScale = item.contentScale,
+                alignment = item.alignment,
+                rotation = 0,
+                containerPoint = item.inputPoint.toOffset(),
+            ).round()
+            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+        }
+    }
+
+    @Test
+    fun testContentPointToContainerPoint() {
+        val containerSize = IntSize(1000, 1000)
+
+        val printBatchBuildExpression = false
+//        val printBatchBuildExpression = true
+        if (printBatchBuildExpression) {
+            printlnBatchBuildExpression(
+                p1s = listOf(
+                    IntSize(1000, 400),
+                    IntSize(400, 1000),
+                    IntSize(500, 200),
+                    IntSize(200, 500),
+                    IntSize(2000, 800),
+                    IntSize(800, 2000),
+                ),
+                p2s = listOf(None),
+                p3s = listOf(Center),
+                p4s = listOf(
+                    IntOffsetCompat(500, 500),
+                    IntOffsetCompat(200, 500),
+                    IntOffsetCompat(500, 200),
+                    IntOffsetCompat(800, 500),
+                    IntOffsetCompat(500, 800),
+                    IntOffsetCompat(-200, 500),
+                    IntOffsetCompat(500, -200),
+                    IntOffsetCompat(1200, 500),
+                    IntOffsetCompat(500, 1200),
+                ),
+                buildItem = { p1, p2, p3, p4 ->
+                    Item9(p1, p2, p3, p4, IntOffsetCompat.Zero)
+                },
+            ) { item ->
+                contentPointToContainerPoint(
+                    containerSize = containerSize,
+                    contentSize = item.contentSize,
+                    contentScale = item.contentScale,
+                    alignment = item.alignment,
+                    rotation = 0,
+                    contentPoint = item.inputPoint.toOffset(),
+                ).round()
+            }
+        }
+
+        listOf(
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(500, 800)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(200, 800)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(500, 500)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(800, 800)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(500, 1100)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(-200, 800)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(500, 100)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(1200, 800)
+            ),
+            Item9(
+                IntSize(1000, 400),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(500, 1500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(800, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(500, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(800, 200)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(1100, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(800, 800)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(100, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(800, -200)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(1500, 500)
+            ),
+            Item9(
+                IntSize(400, 1000),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(800, 1200)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(750, 900)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(450, 900)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(750, 600)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(1050, 900)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(750, 1200)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(50, 900)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(750, 200)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(1450, 900)
+            ),
+            Item9(
+                IntSize(500, 200),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(750, 1600)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(900, 750)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(600, 750)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(900, 450)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(1200, 750)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(900, 1050)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(200, 750)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(900, 50)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(1600, 750)
+            ),
+            Item9(
+                IntSize(200, 500),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(900, 1450)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(0, 600)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(-300, 600)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(0, 300)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(300, 600)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(0, 900)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(-700, 600)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(0, -100)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(700, 600)
+            ),
+            Item9(
+                IntSize(2000, 800),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(0, 1300)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, 500),
+                IntOffsetCompat(600, 0)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(200, 500),
+                IntOffsetCompat(300, 0)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, 200),
+                IntOffsetCompat(600, -300)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(800, 500),
+                IntOffsetCompat(900, 0)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, 800),
+                IntOffsetCompat(600, 300)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(-200, 500),
+                IntOffsetCompat(-100, 0)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, -200),
+                IntOffsetCompat(600, -700)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(1200, 500),
+                IntOffsetCompat(1300, 0)
+            ),
+            Item9(
+                IntSize(800, 2000),
+                None,
+                Center,
+                IntOffsetCompat(500, 1200),
+                IntOffsetCompat(600, 700)
+            ),
+        ).forEach { item ->
+            val result = contentPointToContainerPoint(
+                containerSize = containerSize,
+                contentSize = item.contentSize,
+                contentScale = item.contentScale,
+                alignment = item.alignment,
+                rotation = 0,
+                contentPoint = item.inputPoint.toOffset(),
+            ).round()
+            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+        }
+    }
+
+    // TODO touchPointToContentPoint
+    // TODO contentPointToTouchPoint
+
+//    @Test
+//    fun testCalculateAlignmentOffset() {
+//        val containerSize = IntSize(1080, 1656)
+//        val printBatchBuildExpression = false
+////        val printBatchBuildExpression = true
+//
+//        if (printBatchBuildExpression) {
+//            printlnBatchBuildExpression(
+//                p1s = listOf(
+//                    IntSize(7500, 232), IntSize(173, 3044), IntSize(575, 427), IntSize(551, 1038),
+//                ),
+//                p2s = listOf(None, Inside, Fit, FillWidth, FillHeight, FillBounds, Crop),
+//                p3s = listOf(
+//                    TopStart, TopCenter, TopEnd,
+//                    CenterStart, Center, CenterEnd,
+//                    BottomStart, BottomCenter, BottomEnd,
+//                ),
+//                buildItem = { p1, p2, p3 ->
+//                    Item6(p1, p2, p3, IntOffsetCompat.Zero)
+//                },
+//            ) {
+//                computeAlignmentIntOffset(
+//                    containerSize = containerSize,
+//                    contentSize = it.contentSize,
+//                    contentScale = it.contentScale,
+//                    alignment = it.alignment,
+//                )
+//            }
+//        }
+//
+//        listOf(
+//            Item6(IntSize(7500, 232), None, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), None, TopCenter, IntOffsetCompat(-3210, 0)),
+//            Item6(IntSize(7500, 232), None, TopEnd, IntOffsetCompat(-6420, 0)),
+//            Item6(IntSize(7500, 232), None, CenterStart, IntOffsetCompat(0, 712)),
+//            Item6(IntSize(7500, 232), None, Center, IntOffsetCompat(-3210, 712)),
+//            Item6(IntSize(7500, 232), None, CenterEnd, IntOffsetCompat(-6420, 712)),
+//            Item6(IntSize(7500, 232), None, BottomStart, IntOffsetCompat(0, 1424)),
+//            Item6(IntSize(7500, 232), None, BottomCenter, IntOffsetCompat(-3210, 1424)),
+//            Item6(IntSize(7500, 232), None, BottomEnd, IntOffsetCompat(-6420, 1424)),
+//            Item6(IntSize(7500, 232), Inside, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Inside, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Inside, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Inside, CenterStart, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), Inside, Center, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), Inside, CenterEnd, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), Inside, BottomStart, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), Inside, BottomCenter, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), Inside, BottomEnd, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), Fit, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Fit, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Fit, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Fit, CenterStart, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), Fit, Center, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), Fit, CenterEnd, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), Fit, BottomStart, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), Fit, BottomCenter, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), Fit, BottomEnd, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), FillWidth, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillWidth, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillWidth, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillWidth, CenterStart, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), FillWidth, Center, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), FillWidth, CenterEnd, IntOffsetCompat(0, 812)),
+//            Item6(IntSize(7500, 232), FillWidth, BottomStart, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), FillWidth, BottomCenter, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), FillWidth, BottomEnd, IntOffsetCompat(0, 1623)),
+//            Item6(IntSize(7500, 232), FillHeight, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillHeight, TopCenter, IntOffsetCompat(-26227, 0)),
+//            Item6(IntSize(7500, 232), FillHeight, TopEnd, IntOffsetCompat(-52454, 0)),
+//            Item6(IntSize(7500, 232), FillHeight, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillHeight, Center, IntOffsetCompat(-26227, 0)),
+//            Item6(IntSize(7500, 232), FillHeight, CenterEnd, IntOffsetCompat(-52454, 0)),
+//            Item6(IntSize(7500, 232), FillHeight, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillHeight, BottomCenter, IntOffsetCompat(-26227, 0)),
+//            Item6(IntSize(7500, 232), FillHeight, BottomEnd, IntOffsetCompat(-52454, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, Center, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, CenterEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, BottomCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), FillBounds, BottomEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Crop, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Crop, TopCenter, IntOffsetCompat(-26227, 0)),
+//            Item6(IntSize(7500, 232), Crop, TopEnd, IntOffsetCompat(-52454, 0)),
+//            Item6(IntSize(7500, 232), Crop, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Crop, Center, IntOffsetCompat(-26227, 0)),
+//            Item6(IntSize(7500, 232), Crop, CenterEnd, IntOffsetCompat(-52454, 0)),
+//            Item6(IntSize(7500, 232), Crop, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(7500, 232), Crop, BottomCenter, IntOffsetCompat(-26227, 0)),
+//            Item6(IntSize(7500, 232), Crop, BottomEnd, IntOffsetCompat(-52454, 0)),
+//            Item6(IntSize(173, 3044), None, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), None, TopCenter, IntOffsetCompat(454, 0)),
+//            Item6(IntSize(173, 3044), None, TopEnd, IntOffsetCompat(907, 0)),
+//            Item6(IntSize(173, 3044), None, CenterStart, IntOffsetCompat(0, -694)),
+//            Item6(IntSize(173, 3044), None, Center, IntOffsetCompat(454, -694)),
+//            Item6(IntSize(173, 3044), None, CenterEnd, IntOffsetCompat(907, -694)),
+//            Item6(IntSize(173, 3044), None, BottomStart, IntOffsetCompat(0, -1388)),
+//            Item6(IntSize(173, 3044), None, BottomCenter, IntOffsetCompat(454, -1388)),
+//            Item6(IntSize(173, 3044), None, BottomEnd, IntOffsetCompat(907, -1388)),
+//            Item6(IntSize(173, 3044), Inside, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Inside, TopCenter, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), Inside, TopEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), Inside, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Inside, Center, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), Inside, CenterEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), Inside, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Inside, BottomCenter, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), Inside, BottomEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), Fit, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Fit, TopCenter, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), Fit, TopEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), Fit, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Fit, Center, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), Fit, CenterEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), Fit, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Fit, BottomCenter, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), Fit, BottomEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), FillWidth, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillWidth, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillWidth, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillWidth, CenterStart, IntOffsetCompat(0, -8673)),
+//            Item6(IntSize(173, 3044), FillWidth, Center, IntOffsetCompat(0, -8673)),
+//            Item6(IntSize(173, 3044), FillWidth, CenterEnd, IntOffsetCompat(0, -8673)),
+//            Item6(IntSize(173, 3044), FillWidth, BottomStart, IntOffsetCompat(0, -17347)),
+//            Item6(IntSize(173, 3044), FillWidth, BottomCenter, IntOffsetCompat(0, -17347)),
+//            Item6(IntSize(173, 3044), FillWidth, BottomEnd, IntOffsetCompat(0, -17347)),
+//            Item6(IntSize(173, 3044), FillHeight, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillHeight, TopCenter, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), FillHeight, TopEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), FillHeight, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillHeight, Center, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), FillHeight, CenterEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), FillHeight, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillHeight, BottomCenter, IntOffsetCompat(493, 0)),
+//            Item6(IntSize(173, 3044), FillHeight, BottomEnd, IntOffsetCompat(986, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, Center, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, CenterEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, BottomCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), FillBounds, BottomEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Crop, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Crop, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Crop, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(173, 3044), Crop, CenterStart, IntOffsetCompat(0, -8673)),
+//            Item6(IntSize(173, 3044), Crop, Center, IntOffsetCompat(0, -8673)),
+//            Item6(IntSize(173, 3044), Crop, CenterEnd, IntOffsetCompat(0, -8673)),
+//            Item6(IntSize(173, 3044), Crop, BottomStart, IntOffsetCompat(0, -17347)),
+//            Item6(IntSize(173, 3044), Crop, BottomCenter, IntOffsetCompat(0, -17347)),
+//            Item6(IntSize(173, 3044), Crop, BottomEnd, IntOffsetCompat(0, -17347)),
+//            Item6(IntSize(575, 427), None, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), None, TopCenter, IntOffsetCompat(253, 0)),
+//            Item6(IntSize(575, 427), None, TopEnd, IntOffsetCompat(505, 0)),
+//            Item6(IntSize(575, 427), None, CenterStart, IntOffsetCompat(0, 615)),
+//            Item6(IntSize(575, 427), None, Center, IntOffsetCompat(253, 615)),
+//            Item6(IntSize(575, 427), None, CenterEnd, IntOffsetCompat(505, 615)),
+//            Item6(IntSize(575, 427), None, BottomStart, IntOffsetCompat(0, 1229)),
+//            Item6(IntSize(575, 427), None, BottomCenter, IntOffsetCompat(253, 1229)),
+//            Item6(IntSize(575, 427), None, BottomEnd, IntOffsetCompat(505, 1229)),
+//            Item6(IntSize(575, 427), Inside, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), Inside, TopCenter, IntOffsetCompat(253, 0)),
+//            Item6(IntSize(575, 427), Inside, TopEnd, IntOffsetCompat(505, 0)),
+//            Item6(IntSize(575, 427), Inside, CenterStart, IntOffsetCompat(0, 615)),
+//            Item6(IntSize(575, 427), Inside, Center, IntOffsetCompat(253, 615)),
+//            Item6(IntSize(575, 427), Inside, CenterEnd, IntOffsetCompat(505, 615)),
+//            Item6(IntSize(575, 427), Inside, BottomStart, IntOffsetCompat(0, 1229)),
+//            Item6(IntSize(575, 427), Inside, BottomCenter, IntOffsetCompat(253, 1229)),
+//            Item6(IntSize(575, 427), Inside, BottomEnd, IntOffsetCompat(505, 1229)),
+//            Item6(IntSize(575, 427), Fit, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), Fit, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), Fit, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), Fit, CenterStart, IntOffsetCompat(0, 427)),
+//            Item6(IntSize(575, 427), Fit, Center, IntOffsetCompat(0, 427)),
+//            Item6(IntSize(575, 427), Fit, CenterEnd, IntOffsetCompat(0, 427)),
+//            Item6(IntSize(575, 427), Fit, BottomStart, IntOffsetCompat(0, 854)),
+//            Item6(IntSize(575, 427), Fit, BottomCenter, IntOffsetCompat(0, 854)),
+//            Item6(IntSize(575, 427), Fit, BottomEnd, IntOffsetCompat(0, 854)),
+//            Item6(IntSize(575, 427), FillWidth, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillWidth, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillWidth, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillWidth, CenterStart, IntOffsetCompat(0, 427)),
+//            Item6(IntSize(575, 427), FillWidth, Center, IntOffsetCompat(0, 427)),
+//            Item6(IntSize(575, 427), FillWidth, CenterEnd, IntOffsetCompat(0, 427)),
+//            Item6(IntSize(575, 427), FillWidth, BottomStart, IntOffsetCompat(0, 854)),
+//            Item6(IntSize(575, 427), FillWidth, BottomCenter, IntOffsetCompat(0, 854)),
+//            Item6(IntSize(575, 427), FillWidth, BottomEnd, IntOffsetCompat(0, 854)),
+//            Item6(IntSize(575, 427), FillHeight, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillHeight, TopCenter, IntOffsetCompat(-575, 0)),
+//            Item6(IntSize(575, 427), FillHeight, TopEnd, IntOffsetCompat(-1150, 0)),
+//            Item6(IntSize(575, 427), FillHeight, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillHeight, Center, IntOffsetCompat(-575, 0)),
+//            Item6(IntSize(575, 427), FillHeight, CenterEnd, IntOffsetCompat(-1150, 0)),
+//            Item6(IntSize(575, 427), FillHeight, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillHeight, BottomCenter, IntOffsetCompat(-575, 0)),
+//            Item6(IntSize(575, 427), FillHeight, BottomEnd, IntOffsetCompat(-1150, 0)),
+//            Item6(IntSize(575, 427), FillBounds, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillBounds, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillBounds, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillBounds, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillBounds, Center, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillBounds, CenterEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillBounds, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillBounds, BottomCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), FillBounds, BottomEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), Crop, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), Crop, TopCenter, IntOffsetCompat(-575, 0)),
+//            Item6(IntSize(575, 427), Crop, TopEnd, IntOffsetCompat(-1150, 0)),
+//            Item6(IntSize(575, 427), Crop, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), Crop, Center, IntOffsetCompat(-575, 0)),
+//            Item6(IntSize(575, 427), Crop, CenterEnd, IntOffsetCompat(-1150, 0)),
+//            Item6(IntSize(575, 427), Crop, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(575, 427), Crop, BottomCenter, IntOffsetCompat(-575, 0)),
+//            Item6(IntSize(575, 427), Crop, BottomEnd, IntOffsetCompat(-1150, 0)),
+//            Item6(IntSize(551, 1038), None, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), None, TopCenter, IntOffsetCompat(265, 0)),
+//            Item6(IntSize(551, 1038), None, TopEnd, IntOffsetCompat(529, 0)),
+//            Item6(IntSize(551, 1038), None, CenterStart, IntOffsetCompat(0, 309)),
+//            Item6(IntSize(551, 1038), None, Center, IntOffsetCompat(265, 309)),
+//            Item6(IntSize(551, 1038), None, CenterEnd, IntOffsetCompat(529, 309)),
+//            Item6(IntSize(551, 1038), None, BottomStart, IntOffsetCompat(0, 618)),
+//            Item6(IntSize(551, 1038), None, BottomCenter, IntOffsetCompat(265, 618)),
+//            Item6(IntSize(551, 1038), None, BottomEnd, IntOffsetCompat(529, 618)),
+//            Item6(IntSize(551, 1038), Inside, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), Inside, TopCenter, IntOffsetCompat(265, 0)),
+//            Item6(IntSize(551, 1038), Inside, TopEnd, IntOffsetCompat(529, 0)),
+//            Item6(IntSize(551, 1038), Inside, CenterStart, IntOffsetCompat(0, 309)),
+//            Item6(IntSize(551, 1038), Inside, Center, IntOffsetCompat(265, 309)),
+//            Item6(IntSize(551, 1038), Inside, CenterEnd, IntOffsetCompat(529, 309)),
+//            Item6(IntSize(551, 1038), Inside, BottomStart, IntOffsetCompat(0, 618)),
+//            Item6(IntSize(551, 1038), Inside, BottomCenter, IntOffsetCompat(265, 618)),
+//            Item6(IntSize(551, 1038), Inside, BottomEnd, IntOffsetCompat(529, 618)),
+//            Item6(IntSize(551, 1038), Fit, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), Fit, TopCenter, IntOffsetCompat(101, 0)),
+//            Item6(IntSize(551, 1038), Fit, TopEnd, IntOffsetCompat(201, 0)),
+//            Item6(IntSize(551, 1038), Fit, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), Fit, Center, IntOffsetCompat(101, 0)),
+//            Item6(IntSize(551, 1038), Fit, CenterEnd, IntOffsetCompat(201, 0)),
+//            Item6(IntSize(551, 1038), Fit, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), Fit, BottomCenter, IntOffsetCompat(101, 0)),
+//            Item6(IntSize(551, 1038), Fit, BottomEnd, IntOffsetCompat(201, 0)),
+//            Item6(IntSize(551, 1038), FillWidth, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillWidth, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillWidth, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillWidth, CenterStart, IntOffsetCompat(0, -189)),
+//            Item6(IntSize(551, 1038), FillWidth, Center, IntOffsetCompat(0, -189)),
+//            Item6(IntSize(551, 1038), FillWidth, CenterEnd, IntOffsetCompat(0, -189)),
+//            Item6(IntSize(551, 1038), FillWidth, BottomStart, IntOffsetCompat(0, -379)),
+//            Item6(IntSize(551, 1038), FillWidth, BottomCenter, IntOffsetCompat(0, -379)),
+//            Item6(IntSize(551, 1038), FillWidth, BottomEnd, IntOffsetCompat(0, -379)),
+//            Item6(IntSize(551, 1038), FillHeight, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillHeight, TopCenter, IntOffsetCompat(101, 0)),
+//            Item6(IntSize(551, 1038), FillHeight, TopEnd, IntOffsetCompat(201, 0)),
+//            Item6(IntSize(551, 1038), FillHeight, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillHeight, Center, IntOffsetCompat(101, 0)),
+//            Item6(IntSize(551, 1038), FillHeight, CenterEnd, IntOffsetCompat(201, 0)),
+//            Item6(IntSize(551, 1038), FillHeight, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillHeight, BottomCenter, IntOffsetCompat(101, 0)),
+//            Item6(IntSize(551, 1038), FillHeight, BottomEnd, IntOffsetCompat(201, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, CenterStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, Center, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, CenterEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, BottomStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, BottomCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), FillBounds, BottomEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), Crop, TopStart, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), Crop, TopCenter, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), Crop, TopEnd, IntOffsetCompat(0, 0)),
+//            Item6(IntSize(551, 1038), Crop, CenterStart, IntOffsetCompat(0, -189)),
+//            Item6(IntSize(551, 1038), Crop, Center, IntOffsetCompat(0, -189)),
+//            Item6(IntSize(551, 1038), Crop, CenterEnd, IntOffsetCompat(0, -189)),
+//            Item6(IntSize(551, 1038), Crop, BottomStart, IntOffsetCompat(0, -379)),
+//            Item6(IntSize(551, 1038), Crop, BottomCenter, IntOffsetCompat(0, -379)),
+//            Item6(IntSize(551, 1038), Crop, BottomEnd, IntOffsetCompat(0, -379)),
+//        ).forEach { item ->
+//            val result = computeAlignmentIntOffset(
+//                containerSize = containerSize,
+//                contentSize = item.contentSize,
+//                contentScale = item.contentScale,
+//                alignment = item.alignment,
+//            )
+//            Assert.assertEquals(
+//                /* message = */ item.getMessage(containerSize),
+//                /* expected = */ item.expected,
+//                /* actual = */ result,
+//            )
+//        }
+//    }
+//
+//    @Test
+//    fun testCalculateLocateOffset() {
+//        val containerSize = IntSize(1000, 2000)
+//
+//        var scale = 1f
+//        listOf(
+//            TransformOriginCompat(0.25f, 0.25f) to Offset(0f, 0f),
+//            TransformOriginCompat(0.75f, 0.25f) to Offset(-250f, 0f),
+//            TransformOriginCompat(0.5f, 0.5f) to Offset(-0f, -0f),
+//            TransformOriginCompat(0.25f, 0.75f) to Offset(0f, -500f),
+//            TransformOriginCompat(0.75f, 0.75f) to Offset(-250f, -500f),
+//        ).forEach { (containerOrigin, expected) ->
+//            val containerPoint = IntOffsetCompat(
+//                x = (containerOrigin.pivotFractionX * containerSize.width).roundToInt(),
+//                y = (containerOrigin.pivotFractionY * containerSize.height).roundToInt(),
+//            )
+//            Assert.assertEquals(
+//                /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
+//                /* expected = */ expected,
+//                /* actual = */ computeLocateUserOffset(containerSize, containerPoint, scale)
+//            )
+//        }
+//
+//        scale = 2f
+//        listOf(
+//            TransformOriginCompat(0.25f, 0.25f) to Offset(-0f, -0f),
+//            TransformOriginCompat(0.75f, 0.25f) to Offset(-1000f, -0f),
+//            TransformOriginCompat(0.5f, 0.5f) to Offset(-500f, -1000f),
+//            TransformOriginCompat(0.25f, 0.75f) to Offset(-0f, -2000f),
+//            TransformOriginCompat(0.75f, 0.75f) to Offset(-1000f, -2000f),
+//        ).forEach { (containerOrigin, expected) ->
+//            val containerPoint = IntOffsetCompat(
+//                x = (containerOrigin.pivotFractionX * containerSize.width).roundToInt(),
+//                y = (containerOrigin.pivotFractionY * containerSize.height).roundToInt(),
+//            )
+//            Assert.assertEquals(
+//                /* message = */ "containerSize=$containerSize, scale=$scale, containerOrigin=$containerOrigin",
+//                /* expected = */ expected,
+//                /* actual = */ computeLocateUserOffset(containerSize, containerPoint, scale)
+//            )
+//        }
+//    }
 
 
 //    @Test
@@ -3468,254 +4763,6 @@ class CoreZoomUtilsTest {
 //        }
 //    }
 
-    @Test
-    fun testCalculateNextStepScale() {
-        val stepScales = floatArrayOf(1f, 2f, 3f, 4f, 5f)
-        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.0f))
-        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.8f))
-        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 0.8f, rangeOfError = 0.2f))
-        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 0.9f))
-        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.9f, rangeOfError = 0f))
-        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 1.0f))
-        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 1.5f))
-        Assert.assertEquals(3f, calculateNextStepScale(stepScales, 2.5f))
-        Assert.assertEquals(4f, calculateNextStepScale(stepScales, 3.5f))
-        Assert.assertEquals(5f, calculateNextStepScale(stepScales, 4.5f))
-        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 5.5f))
-        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 6.5f))
-
-        Assert.assertEquals(0.0f, calculateNextStepScale(floatArrayOf(), 0.0f))
-        Assert.assertEquals(0.8f, calculateNextStepScale(floatArrayOf(), 0.8f))
-        Assert.assertEquals(0.9f, calculateNextStepScale(floatArrayOf(), 0.9f))
-        Assert.assertEquals(1.0f, calculateNextStepScale(floatArrayOf(), 1.0f))
-        Assert.assertEquals(2.5f, calculateNextStepScale(floatArrayOf(), 2.5f))
-        Assert.assertEquals(3.5f, calculateNextStepScale(floatArrayOf(), 3.5f))
-    }
-
-    @Test
-    fun testContainerPointToContentPoint() {
-        val containerSize = IntSize(1000, 1000)
-
-        val printBatchBuildExpression = false
-//        val printBatchBuildExpression = true
-        if (printBatchBuildExpression) {
-            printlnBatchBuildExpression(
-                p1s = listOf(
-                    IntSize(1000, 400),
-                    IntSize(400, 1000),
-                    IntSize(500, 200),
-                    IntSize(200, 500),
-                    IntSize(2000, 800),
-                    IntSize(800, 2000),
-                ),
-                p2s = listOf(None),
-                p3s = listOf(Center),
-                p4s = listOf(
-                    IntOffset(500, 500),
-                    IntOffset(200, 500),
-                    IntOffset(500, 200),
-                    IntOffset(800, 500),
-                    IntOffset(500, 800),
-                    IntOffset(-200, 500),
-                    IntOffset(500, -200),
-                    IntOffset(1200, 500),
-                    IntOffset(500, 1200),
-                ),
-                buildItem = { p1, p2, p3, p4 ->
-                    Item9(p1, p2, p3, p4, IntOffsetCompat.Zero)
-                },
-            ) { item ->
-                containerPointToContentPoint(
-                    containerSize = containerSize,
-                    contentSize = item.contentSize,
-                    contentScale = item.contentScale,
-                    alignment = item.alignment,
-                    rotation = 0,
-                    containerPoint = item.inputPoint.toOffset(),
-                ).round()
-            }
-        }
-
-        listOf(
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 500), IntOffset(500, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(200, 500), IntOffset(200, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 200), IntOffset(500, 0)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(800, 500), IntOffset(800, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 800), IntOffset(500, 400)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(-200, 500), IntOffset(0, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, -200), IntOffset(500, 0)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(1200, 500), IntOffset(1000, 200)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 1200), IntOffset(500, 400)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 500), IntOffset(200, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(200, 500), IntOffset(0, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 200), IntOffset(200, 200)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(800, 500), IntOffset(400, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 800), IntOffset(200, 800)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(-200, 500), IntOffset(0, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, -200), IntOffset(200, 0)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(1200, 500), IntOffset(400, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 1200), IntOffset(200, 1000)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 500), IntOffset(250, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(200, 500), IntOffset(0, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 200), IntOffset(250, 0)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(800, 500), IntOffset(500, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 800), IntOffset(250, 200)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(-200, 500), IntOffset(0, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, -200), IntOffset(250, 0)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(1200, 500), IntOffset(500, 100)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 1200), IntOffset(250, 200)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 500), IntOffset(100, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(200, 500), IntOffset(0, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 200), IntOffset(100, 0)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(800, 500), IntOffset(200, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 800), IntOffset(100, 500)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(-200, 500), IntOffset(0, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, -200), IntOffset(100, 0)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(1200, 500), IntOffset(200, 250)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 1200), IntOffset(100, 500)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 500), IntOffset(1000, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(200, 500), IntOffset(700, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 200), IntOffset(1000, 100)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(800, 500), IntOffset(1300, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 800), IntOffset(1000, 700)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(-200, 500), IntOffset(300, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, -200), IntOffset(1000, 0)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(1200, 500), IntOffset(1700, 400)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 1200), IntOffset(1000, 800)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 500), IntOffset(400, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(200, 500), IntOffset(100, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 200), IntOffset(400, 700)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(800, 500), IntOffset(700, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 800), IntOffset(400, 1300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(-200, 500), IntOffset(0, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, -200), IntOffset(400, 300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(1200, 500), IntOffset(800, 1000)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 1200), IntOffset(400, 1700)),
-        ).forEach { item ->
-            val result = containerPointToContentPoint(
-                containerSize = containerSize,
-                contentSize = item.contentSize,
-                contentScale = item.contentScale,
-                alignment = item.alignment,
-                rotation = 0,
-                containerPoint = item.inputPoint.toOffset(),
-            ).round()
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
-        }
-    }
-
-    @Test
-    fun testContentPointToContainerPoint() {
-        val containerSize = IntSize(1000, 1000)
-
-        val printBatchBuildExpression = false
-//        val printBatchBuildExpression = true
-        if (printBatchBuildExpression) {
-            printlnBatchBuildExpression(
-                p1s = listOf(
-                    IntSize(1000, 400),
-                    IntSize(400, 1000),
-                    IntSize(500, 200),
-                    IntSize(200, 500),
-                    IntSize(2000, 800),
-                    IntSize(800, 2000),
-                ),
-                p2s = listOf(None),
-                p3s = listOf(Center),
-                p4s = listOf(
-                    IntOffset(500, 500),
-                    IntOffset(200, 500),
-                    IntOffset(500, 200),
-                    IntOffset(800, 500),
-                    IntOffset(500, 800),
-                    IntOffset(-200, 500),
-                    IntOffset(500, -200),
-                    IntOffset(1200, 500),
-                    IntOffset(500, 1200),
-                ),
-                buildItem = { p1, p2, p3, p4 ->
-                    Item9(p1, p2, p3, p4, IntOffsetCompat.Zero)
-                },
-            ) { item ->
-                contentPointToContainerPoint(
-                    containerSize = containerSize,
-                    contentSize = item.contentSize,
-                    contentScale = item.contentScale,
-                    alignment = item.alignment,
-                    rotation = 0,
-                    contentPoint = item.inputPoint.toOffset(),
-                ).round()
-            }
-        }
-
-        listOf(
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 500), IntOffset(500, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(200, 500), IntOffset(200, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 200), IntOffset(500, 500)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(800, 500), IntOffset(800, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 800), IntOffset(500, 1100)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(-200, 500), IntOffset(-200, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, -200), IntOffset(500, 100)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(1200, 500), IntOffset(1200, 800)),
-            Item9(IntSize(1000, 400), None, Center, IntOffset(500, 1200), IntOffset(500, 1500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 500), IntOffset(800, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(200, 500), IntOffset(500, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 200), IntOffset(800, 200)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(800, 500), IntOffset(1100, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 800), IntOffset(800, 800)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(-200, 500), IntOffset(100, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, -200), IntOffset(800, -200)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(1200, 500), IntOffset(1500, 500)),
-            Item9(IntSize(400, 1000), None, Center, IntOffset(500, 1200), IntOffset(800, 1200)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 500), IntOffset(750, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(200, 500), IntOffset(450, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 200), IntOffset(750, 600)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(800, 500), IntOffset(1050, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 800), IntOffset(750, 1200)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(-200, 500), IntOffset(50, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, -200), IntOffset(750, 200)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(1200, 500), IntOffset(1450, 900)),
-            Item9(IntSize(500, 200), None, Center, IntOffset(500, 1200), IntOffset(750, 1600)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 500), IntOffset(900, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(200, 500), IntOffset(600, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 200), IntOffset(900, 450)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(800, 500), IntOffset(1200, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 800), IntOffset(900, 1050)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(-200, 500), IntOffset(200, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, -200), IntOffset(900, 50)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(1200, 500), IntOffset(1600, 750)),
-            Item9(IntSize(200, 500), None, Center, IntOffset(500, 1200), IntOffset(900, 1450)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 500), IntOffset(0, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(200, 500), IntOffset(-300, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 200), IntOffset(0, 300)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(800, 500), IntOffset(300, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 800), IntOffset(0, 900)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(-200, 500), IntOffset(-700, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, -200), IntOffset(0, -100)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(1200, 500), IntOffset(700, 600)),
-            Item9(IntSize(2000, 800), None, Center, IntOffset(500, 1200), IntOffset(0, 1300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 500), IntOffset(600, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(200, 500), IntOffset(300, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 200), IntOffset(600, -300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(800, 500), IntOffset(900, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 800), IntOffset(600, 300)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(-200, 500), IntOffset(-100, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, -200), IntOffset(600, -700)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(1200, 500), IntOffset(1300, 0)),
-            Item9(IntSize(800, 2000), None, Center, IntOffset(500, 1200), IntOffset(600, 700)),
-        ).forEach { item ->
-            val result = contentPointToContainerPoint(
-                containerSize = containerSize,
-                contentSize = item.contentSize,
-                contentScale = item.contentScale,
-                alignment = item.alignment,
-                rotation = 0,
-                contentPoint = item.inputPoint.toOffset(),
-            ).round()
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
-        }
-    }
-
     data class Item5(
         val contentSize: IntSize,
         val contentScale: ContentScaleCompat,
@@ -3821,4 +4868,52 @@ class CoreZoomUtilsTest {
                     ")"
         }
     }
+
+    data class Item3(
+        val contentScale: ContentScaleCompat,
+        val alignment: AlignmentCompat,
+        val rotation: Int,
+        override val expected: TransformCompat
+    ) : A<TransformCompat> {
+        override fun getMessage(containerSize: IntSize): String {
+            return "Item3(" +
+                    "contentScale=${contentScale.name}, " +
+                    "alignment=${alignment.name}, " +
+                    "rotation=${rotation}" +
+                    ")"
+        }
+
+        override fun getBuildExpression(r: TransformCompat): String {
+            return "Item3(" +
+                    "${contentScale.name}, " +
+                    "${alignment.name}, " +
+                    "${rotation}, " +
+                    "Transform(${r.scaleX}f, ${r.scaleY}f, ${r.offsetX}f, ${r.offsetY}f, ${r.rotation}, 0f, 0f, ${r.rotationOriginX}f, ${r.rotationOriginY}f)" +
+                    ")"
+        }
+    }
 }
+
+fun Transform(
+    scaleX: Float,
+    scaleY: Float,
+    offsetX: Float,
+    offsetY: Float,
+    rotation: Float = 0f,
+    scaleOriginX: Float = 0f,
+    scaleOriginY: Float = 0f,
+    rotationOriginX: Float = 0.5f,
+    rotationOriginY: Float = 0.5f,
+): TransformCompat = TransformCompat(
+    scale = ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY),
+    offset = OffsetCompat(x = offsetX, y = offsetY),
+    rotation = rotation,
+    scaleOrigin = TransformOriginCompat(
+        pivotFractionX = scaleOriginX,
+        pivotFractionY = scaleOriginY
+    ),
+    rotationOrigin = TransformOriginCompat(
+        pivotFractionX = rotationOriginX,
+        pivotFractionY = rotationOriginY
+    ),
+)
