@@ -67,6 +67,8 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}
 
 // The GlideZoomAsyncImage component is provided with the Coil Image Loader, easy to use
 // 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件，用法简单
+// Relying on the alpha version of GlideImage is not recommended at this stage
+// 依赖于 alpha 版本的 GlideImage，不推荐在现阶段使用
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
 
 // Providing the most basic ZoomImage component, there is still a lot of work to be done to use it, 
@@ -162,11 +164,33 @@ sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 * [Scroll Bar: Displays horizontal and vertical scroll bars to clarify the current scroll position/显示水平和垂直滚动条，明确当前滚动位置](docs/wiki/scrollbar.md)
 * [Log/日志](docs/wiki/log.md)
 
+## Samples/示例
+
+你可以在 [sample](sample) 模块中找到示例代码，也可以下载 [sample.apk]() 安装体验
+
 ## Changelog/更新日志
 
 Please review the [CHANGELOG.md] file
 <br>-----------------</br>
 请查看 [CHANGELOG.md] 文件
+
+## My Projects/我的项目
+
+以下是我的其它开源项目，感兴趣的可以了解一下：
+
+* [sketch](https://github.com/panpf/sketch)：A powerful and comprehensive image loader on Android,
+  based entirely on coroutines, with support for GIFs, video thumbnails, and Compose
+* [assembly-adapter](https://github.com/panpf/assembly-adapter)：A library on Android that provides
+  multi-type Item implementations for various adapters. Incidentally, it also provides the most
+  powerful divider for RecyclerView.
+* [sticky-item-decoration](https://github.com/panpf/stickyitemdecoration)：RecyclerView sticky item
+  implementation
+  <br>-----------------</br>
+* [sketch](https://github.com/panpf/sketch)：Android 上的一个强大且全面的图片加载器，完全基于协程，还支持
+  GIF、视频缩略图以及 Compose
+* [assembly-adapter](https://github.com/panpf/assembly-adapter)：Android 上的一个为各种 Adapter 提供多类型
+  Item 实现的库。还顺带为 RecyclerView 提供了最强大的 divider。
+* [sticky-item-decoration](https://github.com/panpf/stickyitemdecoration)：RecyclerView 黏性 item 实现
 
 ## License
 

@@ -139,6 +139,8 @@ CoilZoomAsyncImage(
     modifier = Modifier.fillMaxSize(),
 )
 
+// Relying on the alpha version of GlideImage is not recommended at this stage
+// 依赖于 alpha 版本的 GlideImage，不推荐在现阶段使用
 GlideZoomAsyncImage(
     model = "http://sample.com/sample.jpg",
     contentDescription = "view image",
