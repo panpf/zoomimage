@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -41,7 +40,6 @@ fun BaseZoomImageSample(
         state: ZoomState,
         ignoreExifOrientation: Boolean,
         scrollBar: ScrollBarSpec?,
-        onLongPress: ((Offset) -> Unit),
     ) -> Unit
 ) {
     val context = LocalContext.current
@@ -146,7 +144,7 @@ fun BaseZoomImageSample(
             zoomState,
             supportIgnoreExifOrientation && ignoreExifOrientation,
             if (scrollBarEnabled) ScrollBarSpec.Default else null
-        ) { infoDialogState.showing = true }
+        )
 
         ZoomImageMinimap(
             sketchImageUri = sketchImageUri,

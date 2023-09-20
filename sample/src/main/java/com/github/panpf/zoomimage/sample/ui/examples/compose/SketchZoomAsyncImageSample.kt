@@ -15,7 +15,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = true
-    ) { contentScale, alignment, state, ignoreExifOrientation, scrollBar, onLongPress ->
+    ) { contentScale, alignment, state, ignoreExifOrientation, scrollBar ->
         SketchZoomAsyncImage(
             request = DisplayRequest(LocalContext.current, sketchImageUri) {
                 ignoreExifOrientation(ignoreExifOrientation)
@@ -27,7 +27,6 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             modifier = Modifier.fillMaxSize(),
             state = state,
             scrollBar = scrollBar,
-            onLongPress = onLongPress
         )
     }
 }

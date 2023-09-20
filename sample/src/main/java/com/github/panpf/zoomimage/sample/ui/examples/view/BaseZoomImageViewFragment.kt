@@ -197,14 +197,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     .toBundle()
             }.show(childFragmentManager, null)
         }
-        zoomImageView.setOnLongClickListener {
-            ZoomImageViewInfoDialogFragment().apply {
-                arguments = ZoomImageViewInfoDialogFragment
-                    .buildArgs(zoomImageView, sketchImageUri)
-                    .toBundle()
-            }.show(childFragmentManager, null)
-            true
-        }
 
         common.zoomImageViewLinearScaleSlider.apply {
             var changing = false
