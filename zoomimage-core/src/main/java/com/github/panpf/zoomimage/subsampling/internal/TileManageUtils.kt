@@ -51,7 +51,7 @@ internal fun findSampleSize(
     scale: Float
 ): Int {
     // A scale less than 1f indicates that the thumbnail is not enlarged, so subsampling is not required
-    if (imageSize.isEmpty() || thumbnailSize.isEmpty() || scale < 1f) {
+    if (imageSize.isEmpty() || thumbnailSize.isEmpty() || scale <= 0) {
         return 0
     }
     val scaledFactor = (imageSize.width / (thumbnailSize.width * scale)).format(1)
@@ -75,22 +75,18 @@ internal fun closestPowerOfTwo(number: Float): Int {
 }
 
 /**
- * Calculates a list of tiles with different sample sizes, and [thumbnailSize] is used to limit the maximum sample size, the result is a Map sorted by sample size from largest to smallest
+ * Calculates a list of tiles with different sample sizes, the result is a Map sorted by sample size from largest to smallest
  *
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateTileGridMap]
  */
 internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
     tileMaxSize: IntSizeCompat,
-    thumbnailSize: IntSizeCompat,
 ): Map<Int, List<Tile>> {
     /* The core rules are: The size of each tile does not exceed tileMaxSize */
     val tileMaxWith = tileMaxSize.width
     val tileMaxHeight = tileMaxSize.height
     val tileMap = HashMap<Int, List<Tile>>()
-
-    val maxSampleSize =
-        findSampleSize(imageSize = imageSize, thumbnailSize = thumbnailSize, scale = 1f)
 
     var sampleSize = 1
     while (true) {
@@ -141,7 +137,7 @@ internal fun calculateTileGridMap(
         }
         tileMap[sampleSize] = tileList
 
-        if (tileList.size == 1 || sampleSize >= maxSampleSize) {
+        if (tileList.size == 1) {
             break
         } else {
             sampleSize *= 2

@@ -138,7 +138,6 @@ class CoreSubsamplingUtilsTest {
         calculateTileGridMap(
             imageSize = imageSize,
             tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 32,
         ).apply {
             Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
         }

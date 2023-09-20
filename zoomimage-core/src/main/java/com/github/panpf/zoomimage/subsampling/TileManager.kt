@@ -107,12 +107,7 @@ class TileManager constructor(
     /**
      * Tile Map with sample size from largest to smallest
      */
-    val sortedTileGridMap: Map<Int, List<Tile>> =
-        calculateTileGridMap(
-            imageSize = imageInfo.size,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = contentSize
-        )
+    val sortedTileGridMap: Map<Int, List<Tile>>
 
     /**
      * The sample size of the image
@@ -147,6 +142,15 @@ class TileManager constructor(
      */
     var backgroundTiles: List<TileSnapshot> = emptyList()
         private set
+
+    init {
+        val maxSampleSize =
+            findSampleSize(imageSize = imageInfo.size, thumbnailSize = contentSize, scale = 1f)
+        sortedTileGridMap = calculateTileGridMap(
+            imageSize = imageInfo.size,
+            tileMaxSize = tileMaxSize,
+        ).filterKeys { it <= maxSampleSize }
+    }
 
     /**
      * Refresh the tiles, [scale] is used to calculate sampleSize, [contentVisibleRect] is used to calculate imageLoadRect, and then decide which tiles need to be loaded and which need to be freed based on sampleSize and imageLoadRect.

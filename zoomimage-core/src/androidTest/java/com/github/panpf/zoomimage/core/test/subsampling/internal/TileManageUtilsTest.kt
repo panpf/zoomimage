@@ -61,11 +61,11 @@ class TileManageUtilsTest {
             /* actual = */ findSampleSize(imageSize, imageSize / 16, 0f)
         )
         Assert.assertEquals(
-            /* expected = */ 0,
+            /* expected = */ 128,
             /* actual = */ findSampleSize(imageSize, imageSize / 16, 0.1f)
         )
         Assert.assertEquals(
-            /* expected = */ 0,
+            /* expected = */ 16,
             /* actual = */ findSampleSize(imageSize, imageSize / 16, 0.9f)
         )
 
@@ -129,142 +129,81 @@ class TileManageUtilsTest {
             }
 
         val containerSize = IntSizeCompat(1080, 1920)
-        val tileMaxSize = containerSize / 2
+        listOf(
+            Item(
+                imageSize = IntSizeCompat(8000, 8000),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(8000, 8000),
+                tileMaxSize = containerSize / 4,
+                exceptedTileGridMapString = "[32:1:1x1,16:4:2x2,8:12:4x3,4:40:8x5,2:135:15x9,1:510:30x17]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(8000, 8000),
+                tileMaxSize = containerSize / 6,
+                exceptedTileGridMapString = "[64:1:1x1,32:2:2x1,16:6:3x2,8:24:6x4,4:84:12x7,2:299:23x13,1:1125:45x25]"
+            ),
 
-        var imageSize = IntSizeCompat(8000, 8000)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 32,
-        ).apply {
-            Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 8,
-        ).apply {
-            Assert.assertEquals("[8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 2,
-        ).apply {
-            Assert.assertEquals("[2:40:8x5,1:135:15x9]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-        imageSize = IntSizeCompat(8000, 3000)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[16:1:1x1,8:2:2x1,4:4:4x1,2:16:8x2,1:60:15x4]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-        imageSize = IntSizeCompat(3000, 8000)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[16:1:1x1,8:2:1x2,4:6:2x3,2:15:3x5,1:54:6x9]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-
-        imageSize = IntSizeCompat(1500, 1500)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[4:1:1x1,2:2:2x1,1:6:3x2]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-        imageSize = IntSizeCompat(1000, 1500)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[2:1:1x1,1:4:2x2]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-        imageSize = IntSizeCompat(1500, 1000)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[4:1:1x1,2:2:2x1,1:6:3x2]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-        imageSize = IntSizeCompat(1000, 1000)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[2:1:1x1,1:4:2x2]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-
-        imageSize = IntSizeCompat(30000, 926)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[16:4:4x1,8:7:7x1,4:14:14x1,2:28:28x1,1:56:56x1]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-        imageSize = IntSizeCompat(690, 12176)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[16:1:1x1,8:2:1x2,4:4:1x4,2:7:1x7,1:26:2x13]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-        imageSize = IntSizeCompat(7557, 5669)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[16:1:1x1,8:2:2x1,4:8:4x2,2:21:7x3,1:84:14x6]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
-        }
-
-        imageSize = IntSizeCompat(9798, 6988)
-        calculateTileGridMap(
-            imageSize = imageSize,
-            tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
-        ).apply {
-            Assert.assertEquals("[16:2:2x1,8:3:3x1,4:10:5x2,2:40:10x4,1:152:19x8]", toIntroString())
-            values.forEach { checkTiles(it, imageSize) }
+            Item(
+                imageSize = IntSizeCompat(8000, 3000),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[16:1:1x1,8:2:2x1,4:4:4x1,2:16:8x2,1:60:15x4]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(3000, 8000),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[16:1:1x1,8:2:1x2,4:6:2x3,2:15:3x5,1:54:6x9]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(1500, 1500),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[4:1:1x1,2:2:2x1,1:6:3x2]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(1000, 1500),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[2:1:1x1,1:4:2x2]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(1500, 1000),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[4:1:1x1,2:2:2x1,1:6:3x2]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(1000, 1000),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[2:1:1x1,1:4:2x2]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(30000, 926),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[64:1:1x1,32:2:2x1,16:4:4x1,8:7:7x1,4:14:14x1,2:28:28x1,1:56:56x1]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(690, 12176),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[16:1:1x1,8:2:1x2,4:4:1x4,2:7:1x7,1:26:2x13]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(7557, 5669),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[16:1:1x1,8:2:2x1,4:8:4x2,2:21:7x3,1:84:14x6]"
+            ),
+            Item(
+                imageSize = IntSizeCompat(9798, 6988),
+                tileMaxSize = containerSize / 2,
+                exceptedTileGridMapString = "[32:1:1x1,16:2:2x1,8:3:3x1,4:10:5x2,2:40:10x4,1:152:19x8]"
+            ),
+        ).forEachIndexed { index, item ->
+            val result = calculateTileGridMap(item.imageSize, item.tileMaxSize)
+            Assert.assertEquals(
+                "index=$index, imageSize=${item.imageSize.toShortString()}, tileMaxSize=${item.tileMaxSize.toShortString()}",
+                item.exceptedTileGridMapString,
+                result.toIntroString()
+            )
+            result.values.forEach { checkTiles(it, item.imageSize) }
         }
     }
 
@@ -357,7 +296,7 @@ class TileManageUtilsTest {
     /**
      * Returns an IntSizeCompat scaled by dividing [this] by [scale]
      */
-    fun IntSizeCompat.roundDiv(scale: Float): IntSizeCompat =
+    private fun IntSizeCompat.roundDiv(scale: Float): IntSizeCompat =
         IntSizeCompat(
             width = (this.width / scale).roundToInt(),
             height = (this.height / scale).roundToInt()
@@ -366,7 +305,7 @@ class TileManageUtilsTest {
     /**
      * Returns an IntSizeCompat scaled by dividing [this] by [scale]
      */
-    fun IntSizeCompat.ceilDiv(scale: Float): IntSizeCompat =
+    private fun IntSizeCompat.ceilDiv(scale: Float): IntSizeCompat =
         IntSizeCompat(
             width = ceil(this.width / scale).toInt(),
             height = ceil(this.height / scale).toInt()
@@ -375,9 +314,15 @@ class TileManageUtilsTest {
     /**
      * Returns an IntSizeCompat scaled by dividing [this] by [scale]
      */
-    fun IntSizeCompat.floorDiv(scale: Float): IntSizeCompat =
+    private fun IntSizeCompat.floorDiv(scale: Float): IntSizeCompat =
         IntSizeCompat(
             width = floor(this.width / scale).toInt(),
             height = floor(this.height / scale).toInt()
         )
+
+    private data class Item(
+        val imageSize: IntSizeCompat,
+        val tileMaxSize: IntSizeCompat,
+        val exceptedTileGridMapString: String
+    )
 }
