@@ -422,8 +422,9 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             disabledBackgroundTiles = this@SubsamplingState.disabledBackgroundTiles
             tileAnimationSpec = this@SubsamplingState.tileAnimationSpec
         }
-        tileGridSizeMap = tileManager.sortedTileGridMap
-            .mapValues { it.value.last().coordinate.toPlatform() }
+        tileGridSizeMap = tileManager.sortedTileGridMap.mapValues { entry ->
+            entry.value.last().coordinate.let { IntOffset(it.x + 1, it.y + 1) }
+        }
         logger.d {
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +

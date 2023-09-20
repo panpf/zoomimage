@@ -21,6 +21,7 @@ import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.internal.applyExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.isSupportBitmapRegionDecoder
+import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.requiredWorkThread
@@ -118,7 +119,7 @@ fun Map<Int, List<Tile>>.toIntroString(): String {
         postfix = "]",
         separator = ","
     ) { (sampleSize, tiles) ->
-        val tableSize = tiles.last().coordinate.let { IntSizeCompat(it.x + 1, it.y + 1) }
+        val tableSize = tiles.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
         "${sampleSize}:${tiles.size}:${tableSize.toShortString()}"
     }
 }

@@ -530,8 +530,9 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             disabledBackgroundTiles = this@SubsamplingEngine.disabledBackgroundTiles
             tileAnimationSpec = this@SubsamplingEngine.tileAnimationSpec
         }
-        tileGridSizeMap = tileManager.sortedTileGridMap
-            .mapValues { it.value.last().coordinate }
+        tileGridSizeMap = tileManager.sortedTileGridMap.mapValues { entry ->
+            entry.value.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
+        }
         logger.d {
             "resetTileManager:$caller. success. " +
                     "containerSize=${containerSize.toShortString()}, " +
