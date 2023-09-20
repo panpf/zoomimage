@@ -30,7 +30,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
 
-// todo Refer to detectPowerfulTransformGestures to implement a unified drag-and-zoom gesture detector
+// TODO Refer to detectPowerfulTransformGestures to implement a unified drag-and-zoom gesture detector
 internal class ScaleDragGestureDetector(
     val view: View,
     val canDrag: (horizontal: Boolean, direction: Int) -> Boolean,

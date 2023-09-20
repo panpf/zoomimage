@@ -51,6 +51,11 @@ import kotlin.math.sin
 
 /* ******************************************* initial ***************************************** */
 
+/**
+ * Calculate the position of content after rotate in the container
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest.testCalculateRotatedContentRect]
+ */
 fun calculateRotatedContentRect(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -81,6 +86,11 @@ fun calculateRotatedContentRect(
     }
 }
 
+/**
+ * Calculate the offset of the content after it is rotated in the container and then moved back to the upper left corner
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest.testCalculateRotatedContentMoveToTopLeftOffset]
+ */
 fun calculateRotatedContentMoveToTopLeftOffset(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -94,6 +104,11 @@ fun calculateRotatedContentMoveToTopLeftOffset(
     return IntOffsetCompat.Zero - rotatedContentRect.topLeft
 }
 
+/**
+ * Calculate the rotation origin of content, usually the percentage of the center of content relative to container
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest.testCalculateContentRotateOrigin]
+ */
 fun calculateContentRotateOrigin(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat
@@ -113,6 +128,11 @@ fun calculateContentRotateOrigin(
     )
 }
 
+/**
+ * Calculate the basic transformation of content. The basic transformation is affected by contentScale, alignment, and rotation.
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest.testCalculateBaseTransform]
+ */
 fun calculateBaseTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -184,7 +204,8 @@ fun calculateReadModeTransform(
     val alignmentMoveToStartOffset = baseTransformHelper.alignmentOffset.let {
         OffsetCompat(it.x.coerceAtMost(0f), it.y.coerceAtMost(0f))
     }
-    val readModeOffset = (alignmentMoveToStartOffset + baseTransformHelper.rotateRectifyOffset) * addScale
+    val readModeOffset =
+        (alignmentMoveToStartOffset + baseTransformHelper.rotateRectifyOffset) * addScale
 
     val rotationOrigin = calculateContentRotateOrigin(
         containerSize = containerSize,
@@ -362,7 +383,7 @@ fun calculateContentBaseVisibleRect(
      * 3. The rotate center point is the content center
      * 4. Apply rotation before scaling and offset
      */
-    // todo It can be calculated directly based on baseDisplay
+    // TODO It can be calculated directly based on baseDisplay
 
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
