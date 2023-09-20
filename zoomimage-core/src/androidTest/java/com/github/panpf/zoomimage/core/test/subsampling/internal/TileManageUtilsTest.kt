@@ -17,7 +17,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class TileMangeUtilsTest {
+class TileManageUtilsTest {
 
     @Test
     fun testCalculateTileMaxSize() {
