@@ -4,6 +4,7 @@ import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileMaxSize
+import com.github.panpf.zoomimage.subsampling.internal.closestPowerOfTwo
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -33,6 +34,17 @@ class TileManageUtilsTest {
     }
 
     @Test
+    fun testClosestPowerOfTwo() {
+        val result = (1..17)
+            .flatMap { number -> buildList { repeat(10) { index -> add(number + (index * 0.1f)) } } }
+            .map { scale -> scale to closestPowerOfTwo(scale) }
+            .distinctBy { it.second }
+            .map { "${it.first}:${it.second}" }
+            .toString()
+        Assert.assertEquals("[1.0:1, 1.5:2, 2.9:4, 5.7:8, 11.4:16]", result)
+    }
+
+    @Test
     fun testFindSampleSize() {
         val imageSize = IntSizeCompat(690, 12176)
 
@@ -58,11 +70,10 @@ class TileManageUtilsTest {
         )
 
         /* 计算从 1.0，1.1，1.2 一直到 17.9 等缩放比例的 sampleSize，然后保留变化开始时的缩放比例 */
-        // todo 优化不精准的问题，让下方三种情况保持一致
         listOf(
-            imageSize.roundDiv(16f) to "[1.0:16, 1.1:8, 2.1:4, 4.1:2, 8.1:1]",
-            imageSize.ceilDiv(16f) to "[1.0:8, 2.0:4, 4.0:2, 7.9:1]",
-            imageSize.floorDiv(16f) to "[1.0:16, 1.1:8, 2.1:4, 4.1:2, 8.1:1]",
+            imageSize.roundDiv(16f) to "[1.0:16, 1.5:8, 2.9:4, 5.7:2, 11.1:1]",
+            imageSize.ceilDiv(16f) to "[1.0:16, 1.4:8, 2.8:4, 5.6:2, 10.9:1]",
+            imageSize.floorDiv(16f) to "[1.0:16, 1.5:8, 2.9:4, 5.7:2, 11.1:1]",
         ).forEachIndexed { index, (thumbnailSize, excepted) ->
             val result = (1..17)
                 .flatMap { number -> buildList { repeat(10) { index -> add(number + (index * 0.1f)) } } }
@@ -79,7 +90,7 @@ class TileManageUtilsTest {
     }
 
     @Test
-    fun testInitializeTileMap() {
+    fun testCalculateTileGridMap() {
         val checkTiles: (List<Tile>, IntSizeCompat) -> Unit =
             { tileList, imageSize ->
                 var minLeft = 0
@@ -124,7 +135,7 @@ class TileManageUtilsTest {
         calculateTileGridMap(
             imageSize = imageSize,
             tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 16,
+            thumbnailSize = imageSize / 32,
         ).apply {
             Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
             values.forEach { checkTiles(it, imageSize) }
@@ -132,7 +143,7 @@ class TileManageUtilsTest {
         calculateTileGridMap(
             imageSize = imageSize,
             tileMaxSize = tileMaxSize,
-            thumbnailSize = imageSize / 32,
+            thumbnailSize = imageSize / 16,
         ).apply {
             Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
             values.forEach { checkTiles(it, imageSize) }

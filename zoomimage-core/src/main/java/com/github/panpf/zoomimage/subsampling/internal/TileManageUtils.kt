@@ -20,31 +20,65 @@ import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.log2
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
+/**
+ * Calculates the maximum size of the tile based on the container size, typically half the container size
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateTileMaxSize]
+ */
 internal fun calculateTileMaxSize(containerSize: IntSizeCompat): IntSizeCompat {
     return containerSize / 2
 }
 
+/**
+ * Calculates the sample size of the subsampling when the specified scaling factor is calculated
+ *
+ * If the size of the thumbnail is the original image divided by 16, then when the scaling factor is from 1.0 to 17.9, the node that changes the sample size is [[1.0:16, 1.5:8, 2.9:4, 5.7:2, 11.1:1]]
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testFindSampleSize]
+ */
 internal fun findSampleSize(
     imageSize: IntSizeCompat,
     thumbnailSize: IntSizeCompat,
     scale: Float
 ): Int {
+    // A scale less than 1f indicates that the thumbnail is not enlarged, so subsampling is not required
     if (imageSize.isEmpty() || thumbnailSize.isEmpty() || scale < 1f) {
         return 0
     }
-    val scaledWidthRatio = (imageSize.width / (thumbnailSize.width * scale))
-    var sampleSize = 1
-    while (scaledWidthRatio >= sampleSize * 2) {
-        sampleSize *= 2
-    }
-    return sampleSize
+    val scaledFactor = (imageSize.width / (thumbnailSize.width * scale)).format(1)
+    val sampleSize = closestPowerOfTwo(scaledFactor)
+    @Suppress("UnnecessaryVariable") val limitedSampleSize = sampleSize.coerceAtLeast(1)
+    return limitedSampleSize
 }
 
+/**
+ * Find the closest power of two to the given number, rounding up.
+ *
+ * Results from 1.0 to 17.9 are [[1.0:1, 1.5:2, 2.9:4, 5.7:8, 11.4:16]]
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testClosestPowerOfTwo]
+ */
+internal fun closestPowerOfTwo(number: Float): Int {
+    val logValue = log2(number) // Takes the logarithm of the input number
+    val closestInteger = logValue.roundToInt()  // Take the nearest integer
+    val powerOfTwo = 2.0.pow(closestInteger)    // Calculate the nearest power of 2
+    return powerOfTwo.toInt()
+}
+
+/**
+ * Calculates a list of tiles with different sample sizes, and [thumbnailSize] is used to limit the maximum sample size, the result is a Map sorted by sample size from largest to smallest
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateTileGridMap]
+ */
 internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
     tileMaxSize: IntSizeCompat,
@@ -116,6 +150,11 @@ internal fun calculateTileGridMap(
     return tileMap.toSortedMap { o1, o2 -> (o1 - o2) * -1 }
 }
 
+/**
+ * The area that needs to be loaded on the original image is calculated from the area currently visible to the thumbnail, which is usually larger than the visible area, usually half the [tileMaxSize].
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateImageLoadRect]
+ */
 internal fun calculateImageLoadRect(
     imageSize: IntSizeCompat,
     contentSize: IntSizeCompat,
