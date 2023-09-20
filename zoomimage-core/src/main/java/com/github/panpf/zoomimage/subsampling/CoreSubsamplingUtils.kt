@@ -16,110 +16,73 @@
 
 package com.github.panpf.zoomimage.subsampling
 
-import android.graphics.BitmapFactory
 import androidx.annotation.WorkerThread
-import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.subsampling.internal.applyExifOrientation
+import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.subsampling.internal.canUseSubsamplingByAspectRatio
 import com.github.panpf.zoomimage.subsampling.internal.isSupportBitmapRegionDecoder
+import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.requiredWorkThread
-import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
-import kotlin.math.abs
 
+/**
+ * Create [TileDecoder]. If the image type is not supported or the thumbnail size is larger than the original image or the aspect ratio of the thumbnail and the original image is inconsistent, the creation will fail.
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.CoreSubsamplingUtilsTest.testCreateTileDecoder]
+ */
 @WorkerThread
-fun ImageSource.readImageBounds(): Result<BitmapFactory.Options> {
+fun createTileDecoder(
+    logger: Logger,
+    tileBitmapPoolHelper: TileBitmapPoolHelper,
+    imageSource: ImageSource,
+    thumbnailSize: IntSizeCompat,
+    ignoreExifOrientation: Boolean
+): Result<TileDecoder> {
     requiredWorkThread()
-    return openInputStream()
-        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-        .use { inputStream ->
-            kotlin.runCatching {
-                val options = BitmapFactory.Options()
-                options.inJustDecodeBounds = true
-                BitmapFactory.decodeStream(inputStream, null, options)
-                require(options.outWidth > 0 && options.outHeight > 0) {
-                    "image width or height is error: ${options.outWidth}x${options.outHeight}"
-                }
-                options
-            }
-        }
-}
-
-@WorkerThread
-fun ImageSource.readExifOrientation(): Result<Int> {
-    requiredWorkThread()
-    val orientationUndefined = ExifInterface.ORIENTATION_UNDEFINED
-    return openInputStream()
-        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-        .use { inputStream ->
-            kotlin.runCatching {
-                ExifInterface(inputStream)
-                    .getAttributeInt(ExifInterface.TAG_ORIENTATION, orientationUndefined)
-            }
-        }
-}
-
-@WorkerThread
-fun ImageSource.readExifOrientationWithMimeType(mimeType: String): Result<Int> {
-    requiredWorkThread()
-    return if (ExifInterface.isSupportedMimeType(mimeType)) {
-        readExifOrientation()
-    } else {
-        Result.success(ExifInterface.ORIENTATION_UNDEFINED)
-    }
-}
-
-@WorkerThread
-fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): Result<ImageInfo> {
-    val options = readImageBounds()
-        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-    val exifOrientation = if (ignoreExifOrientation) {
-        ExifInterface.ORIENTATION_UNDEFINED
-    } else {
-        readExifOrientation()
-            .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-    }
-    val imageInfo = ImageInfo(
-        size = IntSizeCompat(options.outWidth, options.outHeight),
-        mimeType = options.outMimeType,
-        exifOrientation = exifOrientation,
-    ).applyExifOrientation()
-    return Result.success(imageInfo)
-}
-
-fun checkUseSubsampling(imageInfo: ImageInfo, thumbnailSize: IntSizeCompat): Int {
-    if (thumbnailSize.width >= imageInfo.width && thumbnailSize.height >= imageInfo.height) {
-        return -1
-    }
-    if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
-        return -2
+    val imageInfoResult = imageSource.readImageInfo(ignoreExifOrientation)
+    val imageInfo = imageInfoResult.getOrNull()
+    if (imageInfo == null) {
+        val message = imageInfoResult.exceptionOrNull()!!.message.orEmpty()
+        return Result.failure(CreateTileDecoderException(-1, false, message, null))
     }
     if (!isSupportBitmapRegionDecoder(imageInfo.mimeType)) {
-        return -3
+        val message = "Image type not support subsampling"
+        return Result.failure(CreateTileDecoderException(-2, true, message, imageInfo))
     }
-    return 0
+    if (thumbnailSize.width >= imageInfo.width && thumbnailSize.height >= imageInfo.height) {
+        val message = "The thumbnail size is greater than or equal to the original image"
+        return Result.failure(CreateTileDecoderException(-3, true, message, imageInfo))
+    }
+    if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
+        val message = "The thumbnail aspect ratio is different with the original image"
+        return Result.failure(CreateTileDecoderException(-4, false, message, imageInfo))
+    }
+    val tileDecoder = TileDecoder(
+        logger = logger,
+        imageSource = imageSource,
+        tileBitmapPoolHelper = tileBitmapPoolHelper,
+        imageInfo = imageInfo,
+    )
+    return Result.success(tileDecoder)
 }
 
-fun canUseSubsamplingByAspectRatio(
-    imageSize: IntSizeCompat,
-    thumbnailSize: IntSizeCompat,
-    minDifference: Float = 0.5f
-): Boolean {
-    if (imageSize.isEmpty() || thumbnailSize.isEmpty()) return false
-    val widthScale = imageSize.width / thumbnailSize.width.toFloat()
-    val heightScale = imageSize.height / thumbnailSize.height.toFloat()
-    return abs(widthScale - heightScale).format(2) <= minDifference.format(2)
-}
+class CreateTileDecoderException(
+    val code: Int, val skipped: Boolean, message: String, val imageInfo: ImageInfo?
+) : Exception(message)
 
+/**
+ * Returns a string consisting of sample size, number of tiles, and grid size
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.CoreSubsamplingUtilsTest.testToIntroString]
+ */
 fun Map<Int, List<Tile>>.toIntroString(): String {
     return entries.joinToString(
         prefix = "[",
         postfix = "]",
         separator = ","
     ) { (sampleSize, tiles) ->
-        val tableSize = tiles.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
-        "${sampleSize}:${tiles.size}:${tableSize.toShortString()}"
+        val gridSize = tiles.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
+        "${sampleSize}:${tiles.size}:${gridSize.toShortString()}"
     }
 }

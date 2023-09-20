@@ -19,14 +19,14 @@ package com.github.panpf.zoomimage.subsampling
 import android.graphics.Bitmap
 import com.github.panpf.zoomimage.Logger
 
+/**
+ * Assist [TileManager] to obtain and store Bitmap from [TileMemoryCache]
+ */
 class TileMemoryCacheHelper(@Suppress("UNUSED_PARAMETER") logger: Logger) {
 
     var tileMemoryCache: TileMemoryCache? = null
     var disableMemoryCache: Boolean = false
 
-    /**
-     * Get the cache of the key
-     */
     fun get(key: String): TileBitmap? {
         val tileMemoryCache = tileMemoryCache
         val disableMemoryCache = disableMemoryCache

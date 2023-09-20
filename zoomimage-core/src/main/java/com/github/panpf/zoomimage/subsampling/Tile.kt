@@ -26,6 +26,8 @@ import kotlinx.coroutines.Job
 
 /**
  * A tile of the image, store the region, sample multiplier, Bitmap, load status, and other information of the tile
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.TileTest]
  */
 class Tile constructor(
     /**

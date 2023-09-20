@@ -26,6 +26,8 @@ import kotlin.math.max
 
 /**
  * Used to calculate mediumScale and maxScale
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.ScalesCalculatorTest]
  */
 interface ScalesCalculator {
 

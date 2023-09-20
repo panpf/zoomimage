@@ -26,6 +26,8 @@ import kotlin.math.roundToInt
  * An immutable, 2D, axis-aligned, integer bounds rectangle whose coordinates are relative to a given origin.
  *
  * Copy from androidx/compose/ui/unit/IntRect.kt
+ *
+ * @see [com.github.panpf.zoomimage.core.test.util.IntRectCompatTest]
  */
 data class IntRectCompat(
     /**

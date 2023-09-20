@@ -34,6 +34,8 @@ fun IntOffsetCompat(x: Int, y: Int): IntOffsetCompat =
  * A two-dimensional position using [Int] pixels for units
  *
  * Copy from androidx/compose/ui/unit/IntOffset.kt
+ *
+ * @see [com.github.panpf.zoomimage.core.test.util.IntOffsetCompatTest]
  */
 @JvmInline
 value class IntOffsetCompat internal constructor(@PublishedApi internal val packedValue: Long) {

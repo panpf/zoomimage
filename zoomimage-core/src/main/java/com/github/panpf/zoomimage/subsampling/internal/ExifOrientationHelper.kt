@@ -32,6 +32,8 @@ import kotlin.math.abs
 
 /**
  * Rotate and flip the image according to the 'orientation' attribute of Exif so that the image is presented to the user at a normal angle
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.ExifOrientationHelperTest]
  */
 internal class ExifOrientationHelper constructor(
     val exifOrientation: Int,

@@ -23,6 +23,8 @@ import kotlin.math.roundToInt
 /**
  * An interface to calculate the position of a sized box inside an available space. [AlignmentCompat] is
  * often used to define the alignment of a layout inside a parent layout.
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.AlignmentCompatTest]
  */
 fun interface AlignmentCompat {
     /**

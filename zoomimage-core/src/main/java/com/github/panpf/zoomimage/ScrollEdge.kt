@@ -18,6 +18,8 @@ package com.github.panpf.zoomimage
 
 /**
  * Edge state for the current offset
+ *
+ * @see [com.github.panpf.zoomimage.core.test.ScrollEdgeTest]
  */
 data class ScrollEdge(val horizontal: Edge, val vertical: Edge) {
 

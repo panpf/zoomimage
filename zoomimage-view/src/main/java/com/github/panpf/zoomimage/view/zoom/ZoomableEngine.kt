@@ -196,7 +196,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
 
     /* *********************************** Information properties ******************************* */
-
+    // todo Try changing all states to stateFlow
     /**
      * Base transformation, include the base scale, offset, rotation,
      * which is affected by [contentScale], [alignment] properties and [rotate] method

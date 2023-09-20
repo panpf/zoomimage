@@ -9,7 +9,7 @@ import com.github.panpf.zoomimage.core.test.internal.ImageSimilarHelper
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
 import com.github.panpf.zoomimage.subsampling.TileDecoder
-import com.github.panpf.zoomimage.subsampling.readImageInfo
+import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import com.github.panpf.zoomimage.util.IntRectCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

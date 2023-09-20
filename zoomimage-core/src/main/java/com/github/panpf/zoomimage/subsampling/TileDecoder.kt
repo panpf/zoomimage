@@ -35,11 +35,16 @@ import com.github.panpf.zoomimage.util.internal.requiredWorkThread
 import com.github.panpf.zoomimage.util.toShortString
 import java.util.LinkedList
 
+/**
+ * Decode the tile bitmap of the image
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.TileDecoderTest]
+ */
 class TileDecoder constructor(
     logger: Logger,
     private val imageSource: ImageSource,
     private val tileBitmapPoolHelper: TileBitmapPoolHelper,
-    private val imageInfo: ImageInfo,
+    val imageInfo: ImageInfo,
 ) {
 
     private val logger = logger.newLogger(module = "TileDecoder")

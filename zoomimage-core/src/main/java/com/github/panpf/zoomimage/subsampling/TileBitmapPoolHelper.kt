@@ -35,6 +35,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 
+/**
+ * Assist [TileDecoder] to obtain Bitmap from [TileBitmapPool] and set it to BitmapFactory and release Bitmap
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.TileBitmapPoolHelperTest]
+ */
 class TileBitmapPoolHelper(logger: Logger) {
 
     companion object {

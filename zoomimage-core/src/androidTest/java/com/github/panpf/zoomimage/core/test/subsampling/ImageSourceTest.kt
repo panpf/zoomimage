@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.readImageInfo
+import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import org.junit.Assert
 import org.junit.Test
 import java.io.File

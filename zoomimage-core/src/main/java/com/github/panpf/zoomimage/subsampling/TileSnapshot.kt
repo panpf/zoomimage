@@ -21,6 +21,9 @@ import com.github.panpf.zoomimage.subsampling.Tile.State
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 
+/**
+ * Tile-related information provided to users
+ */
 data class TileSnapshot(
     val coordinate: IntOffsetCompat,
     val srcRect: IntRectCompat,

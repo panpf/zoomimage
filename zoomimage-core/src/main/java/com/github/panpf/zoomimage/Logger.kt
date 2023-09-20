@@ -21,6 +21,8 @@ import androidx.annotation.IntDef
 
 /**
  * Used to print log
+ *
+ * @see [com.github.panpf.zoomimage.core.test.LoggerTest]
  */
 class Logger(
     /**

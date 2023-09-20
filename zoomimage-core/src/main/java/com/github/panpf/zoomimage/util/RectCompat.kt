@@ -28,6 +28,8 @@ import kotlin.math.roundToInt
  * An immutable, 2D, axis-aligned, floating-point rectangle whose coordinates are relative to a given origin.
  *
  * Copy from androidx/compose/ui/geometry/Rect.kt
+ *
+ * @see [com.github.panpf.zoomimage.core.test.util.RectCompatTest]
  */
 data class RectCompat(
     /**

@@ -1,268 +1,146 @@
 package com.github.panpf.zoomimage.core.test.subsampling
 
-import android.os.Build
 import androidx.exifinterface.media.ExifInterface
 import androidx.test.platform.app.InstrumentationRegistry
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.core.test.internal.ExifOrientationTestFileHelper
-import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.canUseSubsamplingByAspectRatio
-import com.github.panpf.zoomimage.subsampling.checkUseSubsampling
-import com.github.panpf.zoomimage.subsampling.readExifOrientation
-import com.github.panpf.zoomimage.subsampling.readExifOrientationWithMimeType
-import com.github.panpf.zoomimage.subsampling.readImageBounds
-import com.github.panpf.zoomimage.subsampling.readImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.createTileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
+import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
+import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.div
 import org.junit.Assert
 import org.junit.Test
+import kotlin.math.roundToInt
 
 class CoreSubsamplingUtilsTest {
 
     @Test
-    fun testReadImageBounds() {
+    fun testCreateTileDecoder() {
         val context = InstrumentationRegistry.getInstrumentation().context
+        val logger = Logger("MyTest")
+        val tileBitmapPoolHelper = TileBitmapPoolHelper(logger)
 
-        ImageSource.fromAsset(context, "sample_dog.jpg").readImageBounds().getOrThrow().apply {
-            Assert.assertEquals(575, outWidth)
-            Assert.assertEquals(427, outHeight)
-            Assert.assertEquals("image/jpeg", outMimeType)
-        }
-
-        ImageSource.fromAsset(context, "sample_cat.jpg").readImageBounds().getOrThrow().apply {
-            Assert.assertEquals(551, outWidth)
-            Assert.assertEquals(1038, outHeight)
-            Assert.assertEquals("image/jpeg", outMimeType)
-        }
-    }
-
-    @Test
-    fun testReadExifOrientation() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-
-        Assert.assertEquals(
-            ExifInterface.ORIENTATION_NORMAL,
-            ImageSource.fromAsset(context, "sample_dog.jpg").readExifOrientation().getOrThrow()
-        )
-
-        ExifOrientationTestFileHelper(context, "sample_dog.jpg").files().forEach {
+        val imageFile = ExifOrientationTestFileHelper(context, "sample_dog.jpg").files()
+            .find { it.exifOrientation == ExifInterface.ORIENTATION_TRANSVERSE }!!.file
+        val imageSource = ImageSource.fromFile(imageFile)
+        val imageInfo = imageSource.readImageInfo(false).getOrThrow()
+        val thumbnailSize = imageInfo.size / 8
+        createTileDecoder(
+            logger = logger,
+            tileBitmapPoolHelper = tileBitmapPoolHelper,
+            imageSource = imageSource,
+            thumbnailSize = thumbnailSize,
+            ignoreExifOrientation = false
+        ).getOrThrow().apply {
+            Assert.assertEquals(imageInfo, this.imageInfo)
             Assert.assertEquals(
-                it.exifOrientation,
-                ImageSource.fromFile(it.file).readExifOrientation().getOrThrow()
+                ExifInterface.ORIENTATION_TRANSVERSE,
+                this.imageInfo.exifOrientation
             )
         }
-    }
 
-    @Test
-    fun testReadExifOrientationWithMimeType() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-
-        Assert.assertEquals(
-            ExifInterface.ORIENTATION_NORMAL,
-            ImageSource.fromAsset(context, "sample_dog.jpg")
-                .readExifOrientationWithMimeType("image/jpeg").getOrThrow()
-        )
-
-        Assert.assertEquals(
-            ExifInterface.ORIENTATION_UNDEFINED,
-            ImageSource.fromAsset(context, "sample_dog.jpg")
-                .readExifOrientationWithMimeType("image/bmp").getOrThrow()
-        )
-
-        ExifOrientationTestFileHelper(context, "sample_dog.jpg").files().forEach {
-            Assert.assertEquals(
-                it.exifOrientation,
-                ImageSource.fromFile(it.file)
-                    .readExifOrientationWithMimeType("image/jpeg").getOrThrow()
-            )
+        val imageInfo2 = imageSource.readImageInfo(true).getOrThrow()
+        val thumbnailSize2 = imageInfo2.size / 8
+        createTileDecoder(
+            logger = logger,
+            tileBitmapPoolHelper = tileBitmapPoolHelper,
+            imageSource = imageSource,
+            thumbnailSize = thumbnailSize2,
+            ignoreExifOrientation = true
+        ).getOrThrow().apply {
+            Assert.assertEquals(imageInfo2, this.imageInfo)
             Assert.assertEquals(
                 ExifInterface.ORIENTATION_UNDEFINED,
-                ImageSource.fromFile(it.file)
-                    .readExifOrientationWithMimeType("image/bmp").getOrThrow()
+                this.imageInfo.exifOrientation
             )
+        }
+
+        val errorImageSource = ImageSource.fromAsset(context, "fake_image.jpg")
+        createTileDecoder(
+            logger = logger,
+            tileBitmapPoolHelper = tileBitmapPoolHelper,
+            imageSource = errorImageSource,
+            thumbnailSize = thumbnailSize,
+            ignoreExifOrientation = false
+        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
+            Assert.assertEquals(-1, this.code)
+            Assert.assertEquals(false, this.skipped)
+            Assert.assertNotEquals("", this.message)
+            Assert.assertNull(this.imageInfo)
+        }
+
+        val gifImageSource = ImageSource.fromAsset(context, "sample_anim.gif")
+        createTileDecoder(
+            logger = logger,
+            tileBitmapPoolHelper = tileBitmapPoolHelper,
+            imageSource = gifImageSource,
+            thumbnailSize = thumbnailSize,
+            ignoreExifOrientation = false
+        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
+            Assert.assertEquals(-2, this.code)
+            Assert.assertEquals(true, this.skipped)
+            Assert.assertEquals(
+                "Image type not support subsampling",
+                this.message
+            )
+            Assert.assertEquals("image/gif", this.imageInfo!!.mimeType)
+        }
+
+        val errorThumbnailSize = imageInfo.size * 2
+        createTileDecoder(
+            logger = logger,
+            tileBitmapPoolHelper = tileBitmapPoolHelper,
+            imageSource = imageSource,
+            thumbnailSize = errorThumbnailSize,
+            ignoreExifOrientation = false
+        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
+            Assert.assertEquals(-3, this.code)
+            Assert.assertEquals(true, this.skipped)
+            Assert.assertEquals(
+                "The thumbnail size is greater than or equal to the original image",
+                this.message
+            )
+            Assert.assertEquals(imageInfo, this.imageInfo)
+        }
+
+        val errorThumbnailSize2 = thumbnailSize.let {
+            IntSizeCompat(
+                width = it.width,
+                height = (it.height * 1.2).roundToInt()
+            )
+        }
+        createTileDecoder(
+            logger = logger,
+            tileBitmapPoolHelper = tileBitmapPoolHelper,
+            imageSource = imageSource,
+            thumbnailSize = errorThumbnailSize2,
+            ignoreExifOrientation = false
+        ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
+            Assert.assertEquals(-4, this.code)
+            Assert.assertEquals(false, this.skipped)
+            Assert.assertEquals(
+                "The thumbnail aspect ratio is different with the original image",
+                this.message
+            )
+            Assert.assertEquals(imageInfo, this.imageInfo)
         }
     }
 
     @Test
-    fun testReadImageInfo() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-
-        ImageSource.fromAsset(context, "sample_dog.jpg").readImageInfo(false).getOrThrow().apply {
-            Assert.assertEquals(IntSizeCompat(575, 427), size)
-            Assert.assertEquals("image/jpeg", mimeType)
-            Assert.assertEquals(ExifInterface.ORIENTATION_NORMAL, exifOrientation)
+    fun testToIntroString() {
+        val imageSize = IntSizeCompat(8000, 8000)
+        val containerSize = IntSizeCompat(1080, 1920)
+        val tileMaxSize = containerSize / 2
+        calculateTileGridMap(
+            imageSize = imageSize,
+            tileMaxSize = tileMaxSize,
+            thumbnailSize = imageSize / 32,
+        ).apply {
+            Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
         }
-
-        ImageSource.fromAsset(context, "sample_cat.jpg").readImageInfo(false).getOrThrow().apply {
-            Assert.assertEquals(IntSizeCompat(551, 1038), size)
-            Assert.assertEquals("image/jpeg", mimeType)
-            Assert.assertEquals(ExifInterface.ORIENTATION_NORMAL, exifOrientation)
-        }
-
-        ExifOrientationTestFileHelper(context, "sample_dog.jpg")
-            .files()
-            .find { it.exifOrientation == ExifInterface.ORIENTATION_ROTATE_90 }!!
-            .also {
-                ImageSource.fromFile(it.file).readImageInfo(false).getOrThrow().apply {
-                    Assert.assertEquals(ExifInterface.ORIENTATION_ROTATE_90, exifOrientation)
-                    Assert.assertEquals(IntSizeCompat(575, 427), size)
-                    Assert.assertEquals("image/jpeg", mimeType)
-                }
-
-                ImageSource.fromFile(it.file).readImageInfo(true).getOrThrow().apply {
-                    Assert.assertEquals(ExifInterface.ORIENTATION_UNDEFINED, exifOrientation)
-                    Assert.assertEquals(IntSizeCompat(427, 575), size)
-                    Assert.assertEquals("image/jpeg", mimeType)
-                }
-            }
-    }
-
-    @Test
-    fun testCheckUseSubsampling() {
-        val imageInfo = ImageInfo(IntSizeCompat(1000, 2000), "image/jpeg", 0)
-
-        Assert.assertEquals(
-            -1,
-            checkUseSubsampling(imageInfo, imageInfo.size)
-        )
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(imageInfo, imageInfo.size - IntSizeCompat(1, 0))
-        )
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(imageInfo, imageInfo.size - IntSizeCompat(0, 1))
-        )
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(imageInfo, imageInfo.size - IntSizeCompat(1, 1))
-        )
-        Assert.assertEquals(
-            -1,
-            checkUseSubsampling(imageInfo, imageInfo.size + IntSizeCompat(1, 0))
-        )
-        Assert.assertEquals(
-            -1,
-            checkUseSubsampling(imageInfo, imageInfo.size + IntSizeCompat(0, 1))
-        )
-        Assert.assertEquals(
-            -1,
-            checkUseSubsampling(imageInfo, imageInfo.size + IntSizeCompat(1, 1))
-        )
-
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(imageInfo, imageInfo.size / ScaleFactorCompat(17f, 17f))
-        )
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(imageInfo, imageInfo.size / ScaleFactorCompat(17f, 16.5f))
-        )
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(imageInfo, imageInfo.size / ScaleFactorCompat(17.3f, 17f))
-        )
-        Assert.assertEquals(
-            -2,
-            checkUseSubsampling(imageInfo, imageInfo.size / ScaleFactorCompat(17f, 16.4f))
-        )
-        Assert.assertEquals(
-            -2,
-            checkUseSubsampling(imageInfo, imageInfo.size / ScaleFactorCompat(17.6f, 17f))
-        )
-
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(
-                imageInfo.copy(mimeType = "image/jpeg"),
-                imageInfo.size / ScaleFactorCompat(17f, 17f)
-            )
-        )
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(
-                imageInfo.copy(mimeType = "image/png"),
-                imageInfo.size / ScaleFactorCompat(17f, 17f)
-            )
-        )
-        Assert.assertEquals(
-            0,
-            checkUseSubsampling(
-                imageInfo.copy(mimeType = "image/webp"),
-                imageInfo.size / ScaleFactorCompat(17f, 17f)
-            )
-        )
-        Assert.assertEquals(
-            -3,
-            checkUseSubsampling(
-                imageInfo.copy(mimeType = "image/bmp"),
-                imageInfo.size / ScaleFactorCompat(17f, 17f)
-            )
-        )
-        Assert.assertEquals(
-            -3,
-            checkUseSubsampling(
-                imageInfo.copy(mimeType = "image/gif"),
-                imageInfo.size / ScaleFactorCompat(17f, 17f)
-            )
-        )
-        Assert.assertEquals(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 0 else -3,
-            checkUseSubsampling(
-                imageInfo.copy(mimeType = "image/heic"),
-                imageInfo.size / ScaleFactorCompat(17f, 17f)
-            )
-        )
-        Assert.assertEquals(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 0 else -3,
-            checkUseSubsampling(
-                imageInfo.copy(mimeType = "image/heif"),
-                imageInfo.size / ScaleFactorCompat(17f, 17f)
-            )
-        )
-    }
-
-    @Test
-    fun testCanUseSubsamplingByAspectRatio() {
-        val imageSize = IntSizeCompat(1000, 2000)
-
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17f, 17f))
-        )
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17f, 16.5f))
-        )
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17.3f, 17f))
-        )
-        Assert.assertFalse(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17f, 16.4f))
-        )
-        Assert.assertFalse(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17.6f, 17f))
-        )
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(
-                imageSize,
-                imageSize / ScaleFactorCompat(17f, 16.4f),
-                minDifference = 0.8f
-            )
-        )
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(
-                imageSize,
-                imageSize / ScaleFactorCompat(17.6f, 17f),
-                minDifference = 0.8f
-            )
-        )
-    }
-
-    private operator fun IntSizeCompat.minus(other: IntSizeCompat): IntSizeCompat {
-        return IntSizeCompat(this.width - other.width, this.height - other.height)
-    }
-
-    private operator fun IntSizeCompat.plus(other: IntSizeCompat): IntSizeCompat {
-        return IntSizeCompat(this.width + other.width, this.height + other.height)
     }
 }

@@ -39,6 +39,8 @@ fun SizeCompat(width: Float, height: Float) = SizeCompat(packFloats(width, heigh
  * You can think of this as an [SizeCompat] from the origin.
  *
  * Copy from androidx/compose/ui/geometry/Size.kt
+ *
+ * @see [com.github.panpf.zoomimage.core.test.util.SizeCompatTest]
  */
 @JvmInline
 value class SizeCompat internal constructor(@PublishedApi internal val packedValue: Long) {

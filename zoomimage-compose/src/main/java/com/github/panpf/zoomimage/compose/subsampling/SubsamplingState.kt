@@ -43,6 +43,7 @@ import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
@@ -54,8 +55,7 @@ import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPause
 import com.github.panpf.zoomimage.subsampling.TileMemoryCache
 import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.subsampling.checkUseSubsampling
-import com.github.panpf.zoomimage.subsampling.readImageInfo
+import com.github.panpf.zoomimage.subsampling.createTileDecoder
 import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -345,43 +345,37 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         val ignoreExifOrientation = ignoreExifOrientation
 
         lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
-            val imageInfoResult = withContext(Dispatchers.IO) {
-                imageSource.readImageInfo(ignoreExifOrientation)
+            val result = withContext(Dispatchers.IO) {
+                createTileDecoder(
+                    logger = logger,
+                    tileBitmapPoolHelper = tileBitmapPoolHelper,
+                    imageSource = imageSource,
+                    thumbnailSize = contentSize.toCompat(),
+                    ignoreExifOrientation = ignoreExifOrientation
+                )
             }
-            val imageInfo = imageInfoResult.getOrNull()
-            this@SubsamplingState.imageInfo = imageInfo
-            val canUseSubsamplingResult =
-                imageInfo?.let { checkUseSubsampling(it, contentSize.toCompat()) }
-            if (imageInfo != null && canUseSubsamplingResult == 0) {
+            val newTileDecoder = result.getOrNull()
+            if (newTileDecoder != null) {
                 logger.d {
                     "resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
                             "ignoreExifOrientation=${ignoreExifOrientation}. " +
-                            "imageInfo=${imageInfo.toShortString()}. " +
+                            "imageInfo=${newTileDecoder.imageInfo.toShortString()}. " +
                             "'${imageKey}'"
                 }
-                this@SubsamplingState.tileDecoder = TileDecoder(
-                    logger = logger,
-                    imageSource = imageSource,
-                    tileBitmapPoolHelper = tileBitmapPoolHelper,
-                    imageInfo = imageInfo,
-                )
+                this@SubsamplingState.tileDecoder = newTileDecoder
+                this@SubsamplingState.imageInfo = newTileDecoder.imageInfo
                 resetTileManager(caller)
             } else {
-                val cause = when {
-                    imageInfo == null -> imageInfoResult.exceptionOrNull()!!.message
-                    canUseSubsamplingResult == -1 -> "The content size is greater than or equal to the original image"
-                    canUseSubsamplingResult == -2 -> "The content aspect ratio is different with the original image"
-                    canUseSubsamplingResult == -3 -> "Image type not support subsampling"
-                    else -> "Unknown canUseSubsamplingResult: $canUseSubsamplingResult"
-                }
-                val level = if (canUseSubsamplingResult == -1) Logger.DEBUG else Logger.ERROR
-                val type = if (canUseSubsamplingResult == -1) "skipped" else "failed"
+                val exception = result.exceptionOrNull()!! as CreateTileDecoderException
+                this@SubsamplingState.imageInfo = exception.imageInfo
+                val level = if (exception.skipped) Logger.DEBUG else Logger.ERROR
+                val type = if (exception.skipped) "skipped" else "error"
                 logger.log(level) {
-                    "resetTileDecoder:$caller. $type, $cause. " +
+                    "resetTileDecoder:$caller. $type, ${exception.message}. " +
                             "contentSize: ${contentSize.toShortString()}, " +
                             "ignoreExifOrientation=${ignoreExifOrientation}. " +
-                            "imageInfo: ${imageInfo?.toShortString()}. " +
+                            "imageInfo: ${exception.imageInfo?.toShortString()}. " +
                             "'${imageKey}'"
                 }
             }

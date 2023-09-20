@@ -17,16 +17,103 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
+import androidx.annotation.WorkerThread
+import androidx.exifinterface.media.ExifInterface
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.internal.requiredWorkThread
+import com.github.panpf.zoomimage.util.isEmpty
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
+
+
+/**
+ * Read information such as the size and mimeType of the image
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testReadImageBounds]
+ */
+@WorkerThread
+internal fun ImageSource.readImageBounds(): Result<BitmapFactory.Options> {
+    requiredWorkThread()
+    return openInputStream()
+        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
+        .use { inputStream ->
+            kotlin.runCatching {
+                val options = BitmapFactory.Options()
+                options.inJustDecodeBounds = true
+                BitmapFactory.decodeStream(inputStream, null, options)
+                require(options.outWidth > 0 && options.outHeight > 0) {
+                    "image width or height is error: ${options.outWidth}x${options.outHeight}"
+                }
+                options
+            }
+        }
+}
+
+/**
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testReadExifOrientation]
+ */
+@WorkerThread
+internal fun ImageSource.readExifOrientation(): Result<Int> {
+    requiredWorkThread()
+    val orientationUndefined = ExifInterface.ORIENTATION_UNDEFINED
+    return openInputStream()
+        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
+        .use { inputStream ->
+            kotlin.runCatching {
+                ExifInterface(inputStream)
+                    .getAttributeInt(ExifInterface.TAG_ORIENTATION, orientationUndefined)
+            }
+        }
+}
+
+/**
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testReadImageInfo]
+ */
+@WorkerThread
+internal fun ImageSource.readImageInfo(ignoreExifOrientation: Boolean): Result<ImageInfo> {
+    val options = readImageBounds()
+        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
+    val exifOrientation = if (ignoreExifOrientation) {
+        ExifInterface.ORIENTATION_UNDEFINED
+    } else {
+        readExifOrientation()
+            .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
+    }
+    val imageInfo = ImageInfo(
+        size = IntSizeCompat(options.outWidth, options.outHeight),
+        mimeType = options.outMimeType,
+        exifOrientation = exifOrientation,
+    ).applyExifOrientation()
+    return Result.success(imageInfo)
+}
+
+/**
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testCanUseSubsamplingByAspectRatio]
+ */
+internal fun canUseSubsamplingByAspectRatio(
+    imageSize: IntSizeCompat,
+    thumbnailSize: IntSizeCompat,
+    minDifference: Float = 0.5f
+): Boolean {
+    if (imageSize.isEmpty() || thumbnailSize.isEmpty()) return false
+    val widthScale = imageSize.width / thumbnailSize.width.toFloat()
+    val heightScale = imageSize.height / thumbnailSize.height.toFloat()
+    return abs(widthScale - heightScale).format(2) <= minDifference.format(2)
+}
 
 /**
  * If true, indicates that the given mimeType can be using 'inBitmap' in BitmapRegionDecoder
  *
  * Test results based on the BitmapRegionDecoderTest.testInBitmapAndInSampleSize() method
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testIsSupportInBitmapForRegion]
  */
 @SuppressLint("ObsoleteSdkInt")
 internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
@@ -44,6 +131,8 @@ internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
 
 /**
  * Calculate the size of the sampled Bitmap, support for BitmapRegionDecoder
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testCalculateSampledBitmapSizeForRegion]
  */
 internal fun calculateSampledBitmapSizeForRegion(
     regionSize: IntSizeCompat,
@@ -66,6 +155,9 @@ internal fun calculateSampledBitmapSizeForRegion(
     return IntSizeCompat(width, height)
 }
 
+/**
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testIsInBitmapError]
+ */
 internal fun isInBitmapError(throwable: Throwable): Boolean =
     if (throwable is IllegalArgumentException) {
         val message = throwable.message.orEmpty()
@@ -74,6 +166,9 @@ internal fun isInBitmapError(throwable: Throwable): Boolean =
         false
     }
 
+/**
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testIsSrcRectError]
+ */
 internal fun isSrcRectError(throwable: Throwable): Boolean =
     if (throwable is IllegalArgumentException) {
         val message = throwable.message.orEmpty()
@@ -82,6 +177,9 @@ internal fun isSrcRectError(throwable: Throwable): Boolean =
         false
     }
 
+/**
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testIsSupportBitmapRegionDecoder]
+ */
 @SuppressLint("ObsoleteSdkInt")
 internal fun isSupportBitmapRegionDecoder(mimeType: String): Boolean =
     "image/jpeg".equals(mimeType, true)

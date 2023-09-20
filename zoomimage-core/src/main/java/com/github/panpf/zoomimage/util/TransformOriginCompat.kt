@@ -34,6 +34,8 @@ fun TransformOriginCompat(pivotFractionX: Float, pivotFractionY: Float): Transfo
  * A two-dimensional position represented as a fraction of the Layer's width and height
  *
  * Copy from androidx/compose/ui/graphics/TransformOrigin.kt
+ *
+ * @see [com.github.panpf.zoomimage.core.test.util.TransformOriginCompatTest]
  */
 @JvmInline
 value class TransformOriginCompat internal constructor(@PublishedApi internal val packedValue: Long) {

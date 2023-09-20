@@ -35,6 +35,11 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.calculateContentRotateOrigin
 import com.github.panpf.zoomimage.zoom.calculateRotatedContentMoveToTopLeftOffset
 
+/**
+ * Calculate basic transformations such as contentScale, alignment, rotation, etc.
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.internal.BaseTransformHelperTest]
+ */
 internal class BaseTransformHelper(
     val containerSize: IntSizeCompat,
     val contentSize: IntSizeCompat,

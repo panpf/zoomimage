@@ -29,6 +29,8 @@ import java.io.InputStream
 
 /**
  * Image source for subsampling.
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.ImageSourceTest]
  */
 interface ImageSource {
 
