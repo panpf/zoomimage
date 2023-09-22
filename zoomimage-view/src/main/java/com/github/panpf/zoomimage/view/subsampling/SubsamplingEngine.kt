@@ -392,17 +392,25 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
         }
 
         val refreshTiles: (caller: String) -> Unit = { caller ->
+            val transform = zoomableEngine.transformState.value
             refreshTiles(
-                contentVisibleRect = zoomableEngine.contentVisibleRect,
-                scale = zoomableEngine.transform.scaleX,
-                rotation = zoomableEngine.transform.rotation.roundToInt(),
-                continuousTransformType = zoomableEngine.continuousTransformType,
+                contentVisibleRect = zoomableEngine.contentVisibleRectState.value,
+                scale = transform.scaleX,
+                rotation = transform.rotation.roundToInt(),
+                continuousTransformType = zoomableEngine.continuousTransformTypeState.value,
                 caller = caller
             )
         }
 
-        zoomableEngine.registerOnTransformChangeListener {
-            refreshTiles("transformChanged")
+        coroutineScope.launch {
+            zoomableEngine.transformState.collect {
+                refreshTiles("transformChanged")
+            }
+        }
+        coroutineScope.launch {
+            zoomableEngine.continuousTransformTypeState.collect {
+                refreshTiles("continuousTransformTypeChanged")
+            }
         }
 
         registerOnReadyChangeListener {
@@ -414,7 +422,6 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             }
             refreshTiles("readyChanged")
         }
-
         registerOnStoppedChangeListener {
             refreshTiles(if (it) "stopped" else "started")
         }

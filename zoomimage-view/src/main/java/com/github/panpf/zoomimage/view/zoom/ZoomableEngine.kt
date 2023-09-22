@@ -67,6 +67,8 @@ import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.roundToInt
 
 /**
@@ -83,6 +85,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     private var onContentSizeChangeListeners: MutableSet<OnContentSizeChangeListener>? = null
     private var onResetListeners: MutableSet<OnResetListener>? = null
 
+    // TODO Try changing all states to stateFlow
     /**
      * The size of the container that holds the content, this is usually the size of the [ZoomImageView] component
      */
@@ -120,6 +123,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
 
     /* *********************************** Configurable properties ****************************** */
+    // TODO Try changing all states to stateFlow
 
     /**
      * The scale of the content, usually set by [ZoomImageView] component
@@ -202,39 +206,81 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      * which is affected by [contentScale], [alignment] properties and [rotate] method
      */
     var baseTransform = TransformCompat.Origin
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _baseTransformFlow.value = value
+            }
+        }
+    private val _baseTransformFlow = MutableStateFlow(TransformCompat.Origin)
+    val baseTransformState: StateFlow<TransformCompat> = _baseTransformFlow
 
     /**
      * User transformation, include the user scale, offset, rotation,
      * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [locate] method
      */
     var userTransform = TransformCompat.Origin
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _userTransformFlow.value = value
+            }
+        }
+    private val _userTransformFlow = MutableStateFlow(TransformCompat.Origin)
+    val userTransformState: StateFlow<TransformCompat> = _userTransformFlow
 
     /**
      * Final transformation, include the final scale, offset, rotation,
      * which is the sum of [baseTransform] and [userTransform]
      */
     var transform = TransformCompat.Origin
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _transformFlow.value = value
+            }
+        }
+    private val _transformFlow = MutableStateFlow(TransformCompat.Origin)
+    val transformState: StateFlow<TransformCompat> = _transformFlow
 
     /**
      * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
      */
     var minScale: Float = 1.0f
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _minScaleFlow.value = value
+            }
+        }
+    private val _minScaleFlow = MutableStateFlow(1.0f)
+    val minScaleState: StateFlow<Float> = _minScaleFlow
 
     /**
      * Medium scale factor, only as a target value for one of when switch scale
      */
     var mediumScale: Float = 1.0f
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _mediumScaleFlow.value = value
+            }
+        }
+    private val _mediumScaleFlow = MutableStateFlow(1.0f)
+    val mediumScaleState: StateFlow<Float> = _mediumScaleFlow
 
     /**
      * Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
      */
     var maxScale: Float = 1.0f
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _maxScaleFlow.value = value
+            }
+        }
+    private val _maxScaleFlow = MutableStateFlow(1.0f)
+    val maxScaleState: StateFlow<Float> = _maxScaleFlow
 
     /**
      * The type of transformation currently in progress
@@ -245,45 +291,90 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         internal set(value) {
             if (field != value) {
                 field = value
+                _continuousTransformTypeFlow.value = value
                 notifyTransformChanged()
             }
         }
+    private val _continuousTransformTypeFlow = MutableStateFlow(ContinuousTransformType.NONE)
+    val continuousTransformTypeState: StateFlow<Int> = _continuousTransformTypeFlow
 
     /**
      * The content region in the container after the baseTransform transformation
      */
     var contentBaseDisplayRect: IntRectCompat = IntRectCompat.Zero
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _contentBaseDisplayRectFlow.value = value
+            }
+        }
+    private val _contentBaseDisplayRectFlow = MutableStateFlow(IntRectCompat.Zero)
+    val contentBaseDisplayRectState: StateFlow<IntRectCompat> = _contentBaseDisplayRectFlow
 
     /**
      * The content is visible region to the user after the baseTransform transformation
      */
     var contentBaseVisibleRect: IntRectCompat = IntRectCompat.Zero
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _contentBaseVisibleRectFlow.value = value
+            }
+        }
+    private val _contentBaseVisibleRectFlow = MutableStateFlow(IntRectCompat.Zero)
+    val contentBaseVisibleRectState: StateFlow<IntRectCompat> = _contentBaseVisibleRectFlow
 
     /**
      * The content region in the container after the final transform transformation
      */
     var contentDisplayRect: IntRectCompat = IntRectCompat.Zero
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _contentDisplayRectFlow.value = value
+            }
+        }
+    private val _contentDisplayRectFlow = MutableStateFlow(IntRectCompat.Zero)
+    val contentDisplayRectState: StateFlow<IntRectCompat> = _contentDisplayRectFlow
 
     /**
      * The content is visible region to the user after the final transform transformation
      */
     var contentVisibleRect: IntRectCompat = IntRectCompat.Zero
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _contentVisibleRectFlow.value = value
+            }
+        }
+    private val _contentVisibleRectFlow = MutableStateFlow(IntRectCompat.Zero)
+    val contentVisibleRectState: StateFlow<IntRectCompat> = _contentVisibleRectFlow
 
     /**
      * Edge state for the current offset
      */
     var scrollEdge: ScrollEdge = ScrollEdge.Default
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _scrollEdgeFlow.value = value
+            }
+        }
+    private val _scrollEdgeFlow = MutableStateFlow(ScrollEdge.Default)
+    val scrollEdgeState: StateFlow<ScrollEdge> = _scrollEdgeFlow
 
     /**
      * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
      */
     var userOffsetBounds: IntRectCompat = IntRectCompat.Zero
-        private set
+        private set(value) {
+            if (field != value) {
+                field = value
+                _userOffsetBoundsFlow.value = value
+            }
+        }
+    private val _userOffsetBoundsFlow = MutableStateFlow(IntRectCompat.Zero)
+    val userOffsetBoundsState: StateFlow<IntRectCompat> = _userOffsetBoundsFlow
 
     init {
         view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
@@ -967,7 +1058,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                         fraction = value
                     )
                     logger.d {
-                        "$caller. animated running. transform=${userTransform.toShortString()}"
+                        "$caller. animated running. fraction=$value, transform=${userTransform.toShortString()}"
                     }
                     this@ZoomableEngine.userTransform = userTransform
                     updateTransform()

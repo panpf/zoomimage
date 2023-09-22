@@ -26,12 +26,16 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.getNavigationBarsHeight
 import com.github.panpf.zoomimage.view.internal.intrinsicSize
+import com.github.panpf.zoomimage.view.internal.lifecycleOwner
 import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
@@ -45,6 +49,7 @@ import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarHelper
 import com.github.panpf.zoomimage.view.zoom.internal.TouchHelper
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -131,10 +136,6 @@ open class ZoomImageView @JvmOverloads constructor(
             this@ZoomImageView._zoomableEngine = this
             contentScale = initScaleType.toContentScale()
             alignment = initScaleType.toAlignment()
-            registerOnTransformChangeListener {
-                val matrix = cacheImageMatrix.applyTransform(transform, containerSize)
-                super.setImageMatrix(matrix)
-            }
             resetDrawableSize()
         }
         touchHelper = TouchHelper(this, zoomableEngine)
@@ -152,11 +153,19 @@ open class ZoomImageView @JvmOverloads constructor(
 
         /* ScrollBar */
         resetScrollBarHelper()
-        zoomableEngine.registerOnTransformChangeListener {
-            scrollBarHelper?.onMatrixChanged()
-        }
 
         parseAttrs(attrs)
+
+        lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                zoomable.transformState.collect { transform ->
+                    val matrix = cacheImageMatrix.applyTransform(transform, zoomable.containerSize)
+                    super.setImageMatrix(matrix)
+
+                    scrollBarHelper?.onMatrixChanged()
+                }
+            }
+        }
     }
 
 
@@ -350,18 +359,17 @@ open class ZoomImageView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val zoomable = _zoomableEngine ?: return
-        val subsampling = _subsamplingEngine ?: return
         tileDrawHelper.drawTiles(
             canvas = canvas,
-            transform = zoomable.transform,
+            transform = zoomable.transformState.value,
             containerSize = zoomable.containerSize,
         )
         scrollBarHelper?.onDraw(
             canvas = canvas,
             containerSize = zoomable.containerSize,
             contentSize = zoomable.contentSize,
-            contentVisibleRect = zoomable.contentVisibleRect,
-            rotation = zoomable.transform.rotation.roundToInt(),
+            contentVisibleRect = zoomable.contentVisibleRectState.value,
+            rotation = zoomable.transformState.value.rotation.roundToInt(),
         )
     }
 
