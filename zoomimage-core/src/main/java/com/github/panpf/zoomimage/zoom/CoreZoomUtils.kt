@@ -836,6 +836,12 @@ fun canScrollByEdge(scrollEdge: ScrollEdge, horizontal: Boolean, direction: Int)
 
 /* ******************************************* Scale ***************************************** */
 
+/**
+ * Limiting the scaling factor by means of a rubber band effect exceeds the maximum scaling limit, which has a damping effect when exceeded
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest3.testLimitScaleWithRubberBand]
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest3.testLimitScaleWithRubberBand2]
+ */
 fun limitScaleWithRubberBand(
     currentScale: Float,
     targetScale: Float,
@@ -846,43 +852,62 @@ fun limitScaleWithRubberBand(
     targetScale > maxScale -> {
         val addScale = targetScale - currentScale
         val rubberBandMaxScale = maxScale * rubberBandRatio
-        val overScale = targetScale - maxScale
-        val overMaxScale = rubberBandMaxScale - maxScale
-        val progress = overScale / overMaxScale
-        // Multiplying by 0.5f is to be a little slower
-        val limitedAddScale = addScale * (1 - progress) * 0.5f
-        currentScale + limitedAddScale
+        if (targetScale < rubberBandMaxScale) {
+            val overScale = targetScale - maxScale
+            val overMaxScale = rubberBandMaxScale - maxScale
+            val progress = overScale / overMaxScale
+            // Multiplying by 0.5f is to be a little slower
+            val limitedAddScale = addScale * (1 - progress) * 0.5f
+            currentScale + limitedAddScale
+        } else {
+            rubberBandMaxScale
+        }
     }
 
     targetScale < minScale -> {
         val addScale = targetScale - currentScale
         val rubberBandMinScale = minScale / rubberBandRatio
-        val overScale = targetScale - minScale
-        val overMinScale = rubberBandMinScale - minScale
-        val progress = overScale / overMinScale
-        // Multiplying by 0.5f is to be a little slower
-        val limitedAddScale = addScale * (1 - progress) * 0.5f
-        currentScale + limitedAddScale
+        if (targetScale > rubberBandMinScale) {
+            val overScale = targetScale - minScale
+            val overMinScale = rubberBandMinScale - minScale
+            val progress = overScale / overMinScale
+            // Multiplying by 0.5f is to be a little slower
+            val limitedAddScale = addScale * (1 - progress) * 0.5f
+            currentScale + limitedAddScale
+        } else {
+            rubberBandMinScale
+        }
     }
 
     else -> targetScale
 }
 
+/**
+ * Calculates the next scale factor for double-click scaling
+ *
+ * @param delta – the maximum delta between expected and actual for which both numbers are still considered equal.
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest3.testCalculateNextStepScale]
+ */
 fun calculateNextStepScale(
     stepScales: FloatArray,
     currentScale: Float,
-    rangeOfError: Float = 0.1f
+    delta: Float = 0.1f
 ): Float {
     if (stepScales.isEmpty()) return currentScale
     val formattedCurrentScale = currentScale.format(1)
     return stepScales
-        .find { it.format(1) > formattedCurrentScale + rangeOfError }
+        .find { it.format(1) > formattedCurrentScale + delta }
         ?: stepScales.first()
 }
 
 
 /* ******************************************* Point ***************************************** */
 
+/**
+ * Converts on-screen touch points to points on a container, supports scaling, panning, and ignoring rotation of the container
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest4.testTouchPointToContainerPoint]
+ */
 fun touchPointToContainerPoint(
     containerSize: IntSizeCompat,
     userScale: Float,
@@ -905,6 +930,11 @@ fun touchPointToContainerPoint(
     return containerPoint
 }
 
+/**
+ * Converts points on a container to on-screen touch points, supports zooming, panning, and ignoring rotation of the container
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest4.testContainerPointToTouchPoint]
+ */
 fun containerPointToTouchPoint(
     containerSize: IntSizeCompat,
     userScale: Float,
@@ -926,6 +956,11 @@ fun containerPointToTouchPoint(
     return touchPoint
 }
 
+/**
+ * Convert points on containers to points on content
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest4.testContainerPointToContentPoint]
+ */
 fun containerPointToContentPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -966,6 +1001,11 @@ fun containerPointToContentPoint(
     return contentPoint
 }
 
+/**
+ * Converts points on content to points on containers
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest4.testContentPointToContainerPoint]
+ */
 fun contentPointToContainerPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -1004,6 +1044,11 @@ fun contentPointToContainerPoint(
     return containerPoint
 }
 
+/**
+ * Converts touch points on the screen into points on content, and supports scaling, panning, and rotating containers
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest4.testTouchPointToContentPoint]
+ */
 fun touchPointToContentPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -1042,6 +1087,11 @@ fun touchPointToContentPoint(
     )
 }
 
+/**
+ * Converts points on content into touch points on the screen, and supports scaling, panning, and rotating containers
+ *
+ * @see [com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest4.testContentPointToTouchPoint]
+ */
 fun contentPointToTouchPoint(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,

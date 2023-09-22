@@ -11,6 +11,7 @@ import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ScrollEdge
 import com.github.panpf.zoomimage.core.test.internal.A
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomEnd
@@ -35,6 +36,7 @@ import com.github.panpf.zoomimage.zoom.calculateScrollEdge
 import com.github.panpf.zoomimage.zoom.calculateTransformOffset
 import com.github.panpf.zoomimage.zoom.calculateUserOffsetBounds
 import com.github.panpf.zoomimage.zoom.canScrollByEdge
+import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.name
 import org.junit.Assert
 import org.junit.Test
@@ -1919,16 +1921,491 @@ class CoreZoomUtilsTest3 {
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
     }
 
-    // TODO limitScaleWithRubberBand
+    @Test
+    fun testLimitScaleWithRubberBand() {
+        val minScale = 1f
+        val maxScale = 4f
+
+        val printBatchBuildExpression = false
+//        val printBatchBuildExpression = true
+        if (printBatchBuildExpression) {
+            val targetScales =
+                ((maxScale - 1f).toInt()..(maxScale * 3f + 1f).toInt()).flatMap { number ->
+                    buildList { repeat(10) { index -> add(number + (index * 0.1f)) } }
+                }
+            printlnBatchBuildExpression(
+                p1s = listOf(1f, 2f, 3f),
+                p2s = targetScales,
+                buildItem = { p1, p2 ->
+                    Item15(p1, p2, 0f)
+                },
+            ) { item ->
+                limitScaleWithRubberBand(
+                    currentScale = item.targetScale - 0.2f,
+                    targetScale = item.targetScale,
+                    minScale = minScale,
+                    maxScale = maxScale,
+                    rubberBandRatio = item.rubberBandRatio,
+                )
+            }
+        }
+
+        // @formatter:off. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
+        listOf(
+            Item15(1.0f, 3.0f, 3.0f),
+            Item15(1.0f, 3.1f, 3.1f),
+            Item15(1.0f, 3.2f, 3.2f),
+            Item15(1.0f, 3.3f, 3.3f),
+            Item15(1.0f, 3.4f, 3.4f),
+            Item15(1.0f, 3.5f, 3.5f),
+            Item15(1.0f, 3.6f, 3.6f),
+            Item15(1.0f, 3.7f, 3.7f),
+            Item15(1.0f, 3.8f, 3.8f),
+            Item15(1.0f, 3.9f, 3.9f),
+            Item15(1.0f, 4.0f, 4.0f),
+            Item15(1.0f, 4.1f, 4.0f),
+            Item15(1.0f, 4.2f, 4.0f),
+            Item15(1.0f, 4.3f, 4.0f),
+            Item15(1.0f, 4.4f, 4.0f),
+            Item15(1.0f, 4.5f, 4.0f),
+            Item15(1.0f, 4.6f, 4.0f),
+            Item15(1.0f, 4.7f, 4.0f),
+            Item15(1.0f, 4.8f, 4.0f),
+            Item15(1.0f, 4.9f, 4.0f),
+            Item15(1.0f, 5.0f, 4.0f),
+            Item15(1.0f, 5.1f, 4.0f),
+            Item15(1.0f, 5.2f, 4.0f),
+            Item15(1.0f, 5.3f, 4.0f),
+            Item15(1.0f, 5.4f, 4.0f),
+            Item15(1.0f, 5.5f, 4.0f),
+            Item15(1.0f, 5.6f, 4.0f),
+            Item15(1.0f, 5.7f, 4.0f),
+            Item15(1.0f, 5.8f, 4.0f),
+            Item15(1.0f, 5.9f, 4.0f),
+            Item15(1.0f, 6.0f, 4.0f),
+            Item15(1.0f, 6.1f, 4.0f),
+            Item15(1.0f, 6.2f, 4.0f),
+            Item15(1.0f, 6.3f, 4.0f),
+            Item15(1.0f, 6.4f, 4.0f),
+            Item15(1.0f, 6.5f, 4.0f),
+            Item15(1.0f, 6.6f, 4.0f),
+            Item15(1.0f, 6.7f, 4.0f),
+            Item15(1.0f, 6.8f, 4.0f),
+            Item15(1.0f, 6.9f, 4.0f),
+            Item15(1.0f, 7.0f, 4.0f),
+            Item15(1.0f, 7.1f, 4.0f),
+            Item15(1.0f, 7.2f, 4.0f),
+            Item15(1.0f, 7.3f, 4.0f),
+            Item15(1.0f, 7.4f, 4.0f),
+            Item15(1.0f, 7.5f, 4.0f),
+            Item15(1.0f, 7.6f, 4.0f),
+            Item15(1.0f, 7.7f, 4.0f),
+            Item15(1.0f, 7.8f, 4.0f),
+            Item15(1.0f, 7.9f, 4.0f),
+            Item15(1.0f, 8.0f, 4.0f),
+            Item15(1.0f, 8.1f, 4.0f),
+            Item15(1.0f, 8.2f, 4.0f),
+            Item15(1.0f, 8.3f, 4.0f),
+            Item15(1.0f, 8.4f, 4.0f),
+            Item15(1.0f, 8.5f, 4.0f),
+            Item15(1.0f, 8.6f, 4.0f),
+            Item15(1.0f, 8.7f, 4.0f),
+            Item15(1.0f, 8.8f, 4.0f),
+            Item15(1.0f, 8.9f, 4.0f),
+            Item15(1.0f, 9.0f, 4.0f),
+            Item15(1.0f, 9.1f, 4.0f),
+            Item15(1.0f, 9.2f, 4.0f),
+            Item15(1.0f, 9.3f, 4.0f),
+            Item15(1.0f, 9.4f, 4.0f),
+            Item15(1.0f, 9.5f, 4.0f),
+            Item15(1.0f, 9.6f, 4.0f),
+            Item15(1.0f, 9.7f, 4.0f),
+            Item15(1.0f, 9.8f, 4.0f),
+            Item15(1.0f, 9.9f, 4.0f),
+            Item15(1.0f, 10.0f, 4.0f),
+            Item15(1.0f, 10.1f, 4.0f),
+            Item15(1.0f, 10.2f, 4.0f),
+            Item15(1.0f, 10.3f, 4.0f),
+            Item15(1.0f, 10.4f, 4.0f),
+            Item15(1.0f, 10.5f, 4.0f),
+            Item15(1.0f, 10.6f, 4.0f),
+            Item15(1.0f, 10.7f, 4.0f),
+            Item15(1.0f, 10.8f, 4.0f),
+            Item15(1.0f, 10.9f, 4.0f),
+            Item15(1.0f, 11.0f, 4.0f),
+            Item15(1.0f, 11.1f, 4.0f),
+            Item15(1.0f, 11.2f, 4.0f),
+            Item15(1.0f, 11.3f, 4.0f),
+            Item15(1.0f, 11.4f, 4.0f),
+            Item15(1.0f, 11.5f, 4.0f),
+            Item15(1.0f, 11.6f, 4.0f),
+            Item15(1.0f, 11.7f, 4.0f),
+            Item15(1.0f, 11.8f, 4.0f),
+            Item15(1.0f, 11.9f, 4.0f),
+            Item15(1.0f, 12.0f, 4.0f),
+            Item15(1.0f, 12.1f, 4.0f),
+            Item15(1.0f, 12.2f, 4.0f),
+            Item15(1.0f, 12.3f, 4.0f),
+            Item15(1.0f, 12.4f, 4.0f),
+            Item15(1.0f, 12.5f, 4.0f),
+            Item15(1.0f, 12.6f, 4.0f),
+            Item15(1.0f, 12.7f, 4.0f),
+            Item15(1.0f, 12.8f, 4.0f),
+            Item15(1.0f, 12.9f, 4.0f),
+            Item15(1.0f, 13.0f, 4.0f),
+            Item15(1.0f, 13.1f, 4.0f),
+            Item15(1.0f, 13.2f, 4.0f),
+            Item15(1.0f, 13.3f, 4.0f),
+            Item15(1.0f, 13.4f, 4.0f),
+            Item15(1.0f, 13.5f, 4.0f),
+            Item15(1.0f, 13.6f, 4.0f),
+            Item15(1.0f, 13.7f, 4.0f),
+            Item15(1.0f, 13.8f, 4.0f),
+            Item15(1.0f, 13.9f, 4.0f),
+            Item15(2.0f, 3.0f, 3.0f),
+            Item15(2.0f, 3.1f, 3.1f),
+            Item15(2.0f, 3.2f, 3.2f),
+            Item15(2.0f, 3.3f, 3.3f),
+            Item15(2.0f, 3.4f, 3.4f),
+            Item15(2.0f, 3.5f, 3.5f),
+            Item15(2.0f, 3.6f, 3.6f),
+            Item15(2.0f, 3.7f, 3.7f),
+            Item15(2.0f, 3.8f, 3.8f),
+            Item15(2.0f, 3.9f, 3.9f),
+            Item15(2.0f, 4.0f, 4.0f),
+            Item15(2.0f, 4.1f, 3.9975f),
+            Item15(2.0f, 4.2f, 4.095f),
+            Item15(2.0f, 4.3f, 4.1925f),
+            Item15(2.0f, 4.4f, 4.29f),
+            Item15(2.0f, 4.5f, 4.3875003f),
+            Item15(2.0f, 4.6f, 4.485f),
+            Item15(2.0f, 4.7f, 4.5825f),
+            Item15(2.0f, 4.8f, 4.6800003f),
+            Item15(2.0f, 4.9f, 4.7775f),
+            Item15(2.0f, 5.0f, 4.875f),
+            Item15(2.0f, 5.1f, 4.9725f),
+            Item15(2.0f, 5.2f, 5.07f),
+            Item15(2.0f, 5.3f, 5.1675005f),
+            Item15(2.0f, 5.4f, 5.2650003f),
+            Item15(2.0f, 5.5f, 5.3625f),
+            Item15(2.0f, 5.6f, 5.46f),
+            Item15(2.0f, 5.7f, 5.5575f),
+            Item15(2.0f, 5.8f, 5.655f),
+            Item15(2.0f, 5.9f, 5.7525f),
+            Item15(2.0f, 6.0f, 5.8500004f),
+            Item15(2.0f, 6.1f, 5.9475f),
+            Item15(2.0f, 6.2f, 6.045f),
+            Item15(2.0f, 6.3f, 6.1425004f),
+            Item15(2.0f, 6.4f, 6.2400002f),
+            Item15(2.0f, 6.5f, 6.3375f),
+            Item15(2.0f, 6.6f, 6.435f),
+            Item15(2.0f, 6.7f, 6.5325f),
+            Item15(2.0f, 6.8f, 6.63f),
+            Item15(2.0f, 6.9f, 6.7275004f),
+            Item15(2.0f, 7.0f, 6.8250003f),
+            Item15(2.0f, 7.1f, 6.9225f),
+            Item15(2.0f, 7.2f, 7.02f),
+            Item15(2.0f, 7.3f, 7.1175003f),
+            Item15(2.0f, 7.4f, 7.215f),
+            Item15(2.0f, 7.5f, 7.3125f),
+            Item15(2.0f, 7.6f, 7.4100003f),
+            Item15(2.0f, 7.7f, 7.5075f),
+            Item15(2.0f, 7.8f, 7.6050005f),
+            Item15(2.0f, 7.9f, 7.7025003f),
+            Item15(2.0f, 8.0f, 8.0f),
+            Item15(2.0f, 8.1f, 8.0f),
+            Item15(2.0f, 8.2f, 8.0f),
+            Item15(2.0f, 8.3f, 8.0f),
+            Item15(2.0f, 8.4f, 8.0f),
+            Item15(2.0f, 8.5f, 8.0f),
+            Item15(2.0f, 8.6f, 8.0f),
+            Item15(2.0f, 8.7f, 8.0f),
+            Item15(2.0f, 8.8f, 8.0f),
+            Item15(2.0f, 8.9f, 8.0f),
+            Item15(2.0f, 9.0f, 8.0f),
+            Item15(2.0f, 9.1f, 8.0f),
+            Item15(2.0f, 9.2f, 8.0f),
+            Item15(2.0f, 9.3f, 8.0f),
+            Item15(2.0f, 9.4f, 8.0f),
+            Item15(2.0f, 9.5f, 8.0f),
+            Item15(2.0f, 9.6f, 8.0f),
+            Item15(2.0f, 9.7f, 8.0f),
+            Item15(2.0f, 9.8f, 8.0f),
+            Item15(2.0f, 9.9f, 8.0f),
+            Item15(2.0f, 10.0f, 8.0f),
+            Item15(2.0f, 10.1f, 8.0f),
+            Item15(2.0f, 10.2f, 8.0f),
+            Item15(2.0f, 10.3f, 8.0f),
+            Item15(2.0f, 10.4f, 8.0f),
+            Item15(2.0f, 10.5f, 8.0f),
+            Item15(2.0f, 10.6f, 8.0f),
+            Item15(2.0f, 10.7f, 8.0f),
+            Item15(2.0f, 10.8f, 8.0f),
+            Item15(2.0f, 10.9f, 8.0f),
+            Item15(2.0f, 11.0f, 8.0f),
+            Item15(2.0f, 11.1f, 8.0f),
+            Item15(2.0f, 11.2f, 8.0f),
+            Item15(2.0f, 11.3f, 8.0f),
+            Item15(2.0f, 11.4f, 8.0f),
+            Item15(2.0f, 11.5f, 8.0f),
+            Item15(2.0f, 11.6f, 8.0f),
+            Item15(2.0f, 11.7f, 8.0f),
+            Item15(2.0f, 11.8f, 8.0f),
+            Item15(2.0f, 11.9f, 8.0f),
+            Item15(2.0f, 12.0f, 8.0f),
+            Item15(2.0f, 12.1f, 8.0f),
+            Item15(2.0f, 12.2f, 8.0f),
+            Item15(2.0f, 12.3f, 8.0f),
+            Item15(2.0f, 12.4f, 8.0f),
+            Item15(2.0f, 12.5f, 8.0f),
+            Item15(2.0f, 12.6f, 8.0f),
+            Item15(2.0f, 12.7f, 8.0f),
+            Item15(2.0f, 12.8f, 8.0f),
+            Item15(2.0f, 12.9f, 8.0f),
+            Item15(2.0f, 13.0f, 8.0f),
+            Item15(2.0f, 13.1f, 8.0f),
+            Item15(2.0f, 13.2f, 8.0f),
+            Item15(2.0f, 13.3f, 8.0f),
+            Item15(2.0f, 13.4f, 8.0f),
+            Item15(2.0f, 13.5f, 8.0f),
+            Item15(2.0f, 13.6f, 8.0f),
+            Item15(2.0f, 13.7f, 8.0f),
+            Item15(2.0f, 13.8f, 8.0f),
+            Item15(2.0f, 13.9f, 8.0f),
+            Item15(3.0f, 3.0f, 3.0f),
+            Item15(3.0f, 3.1f, 3.1f),
+            Item15(3.0f, 3.2f, 3.2f),
+            Item15(3.0f, 3.3f, 3.3f),
+            Item15(3.0f, 3.4f, 3.4f),
+            Item15(3.0f, 3.5f, 3.5f),
+            Item15(3.0f, 3.6f, 3.6f),
+            Item15(3.0f, 3.7f, 3.7f),
+            Item15(3.0f, 3.8f, 3.8f),
+            Item15(3.0f, 3.9f, 3.9f),
+            Item15(3.0f, 4.0f, 4.0f),
+            Item15(3.0f, 4.1f, 3.99875f),
+            Item15(3.0f, 4.2f, 4.0975f),
+            Item15(3.0f, 4.3f, 4.1962504f),
+            Item15(3.0f, 4.4f, 4.295f),
+            Item15(3.0f, 4.5f, 4.39375f),
+            Item15(3.0f, 4.6f, 4.4925f),
+            Item15(3.0f, 4.7f, 4.59125f),
+            Item15(3.0f, 4.8f, 4.6900005f),
+            Item15(3.0f, 4.9f, 4.78875f),
+            Item15(3.0f, 5.0f, 4.8875003f),
+            Item15(3.0f, 5.1f, 4.98625f),
+            Item15(3.0f, 5.2f, 5.085f),
+            Item15(3.0f, 5.3f, 5.18375f),
+            Item15(3.0f, 5.4f, 5.2825003f),
+            Item15(3.0f, 5.5f, 5.38125f),
+            Item15(3.0f, 5.6f, 5.48f),
+            Item15(3.0f, 5.7f, 5.57875f),
+            Item15(3.0f, 5.8f, 5.6775002f),
+            Item15(3.0f, 5.9f, 5.7762504f),
+            Item15(3.0f, 6.0f, 5.875f),
+            Item15(3.0f, 6.1f, 5.97375f),
+            Item15(3.0f, 6.2f, 6.0724998f),
+            Item15(3.0f, 6.3f, 6.1712503f),
+            Item15(3.0f, 6.4f, 6.2700005f),
+            Item15(3.0f, 6.5f, 6.36875f),
+            Item15(3.0f, 6.6f, 6.4675f),
+            Item15(3.0f, 6.7f, 6.56625f),
+            Item15(3.0f, 6.8f, 6.6650004f),
+            Item15(3.0f, 6.9f, 6.76375f),
+            Item15(3.0f, 7.0f, 6.8625f),
+            Item15(3.0f, 7.1f, 6.96125f),
+            Item15(3.0f, 7.2f, 7.06f),
+            Item15(3.0f, 7.3f, 7.1587505f),
+            Item15(3.0f, 7.4f, 7.2575f),
+            Item15(3.0f, 7.5f, 7.3562503f),
+            Item15(3.0f, 7.6f, 7.455f),
+            Item15(3.0f, 7.7f, 7.55375f),
+            Item15(3.0f, 7.8f, 7.6525f),
+            Item15(3.0f, 7.9f, 7.7512503f),
+            Item15(3.0f, 8.0f, 7.8500004f),
+            Item15(3.0f, 8.1f, 7.9487505f),
+            Item15(3.0f, 8.2f, 8.0475f),
+            Item15(3.0f, 8.3f, 8.146251f),
+            Item15(3.0f, 8.4f, 8.245f),
+            Item15(3.0f, 8.5f, 8.34375f),
+            Item15(3.0f, 8.6f, 8.4425f),
+            Item15(3.0f, 8.7f, 8.54125f),
+            Item15(3.0f, 8.8f, 8.64f),
+            Item15(3.0f, 8.9f, 8.7387495f),
+            Item15(3.0f, 9.0f, 8.837501f),
+            Item15(3.0f, 9.1f, 8.936251f),
+            Item15(3.0f, 9.2f, 9.035f),
+            Item15(3.0f, 9.3f, 9.13375f),
+            Item15(3.0f, 9.4f, 9.2325f),
+            Item15(3.0f, 9.5f, 9.33125f),
+            Item15(3.0f, 9.6f, 9.43f),
+            Item15(3.0f, 9.7f, 9.52875f),
+            Item15(3.0f, 9.8f, 9.627501f),
+            Item15(3.0f, 9.9f, 9.72625f),
+            Item15(3.0f, 10.0f, 9.825f),
+            Item15(3.0f, 10.1f, 9.923751f),
+            Item15(3.0f, 10.2f, 10.0225f),
+            Item15(3.0f, 10.3f, 10.12125f),
+            Item15(3.0f, 10.4f, 10.22f),
+            Item15(3.0f, 10.5f, 10.31875f),
+            Item15(3.0f, 10.6f, 10.4175005f),
+            Item15(3.0f, 10.7f, 10.51625f),
+            Item15(3.0f, 10.8f, 10.615001f),
+            Item15(3.0f, 10.9f, 10.71375f),
+            Item15(3.0f, 11.0f, 10.8125f),
+            Item15(3.0f, 11.1f, 10.91125f),
+            Item15(3.0f, 11.2f, 11.01f),
+            Item15(3.0f, 11.3f, 11.10875f),
+            Item15(3.0f, 11.4f, 11.2074995f),
+            Item15(3.0f, 11.5f, 11.306251f),
+            Item15(3.0f, 11.6f, 11.405001f),
+            Item15(3.0f, 11.7f, 11.50375f),
+            Item15(3.0f, 11.8f, 11.6025f),
+            Item15(3.0f, 11.9f, 11.70125f),
+            Item15(3.0f, 12.0f, 12.0f),
+            Item15(3.0f, 12.1f, 12.0f),
+            Item15(3.0f, 12.2f, 12.0f),
+            Item15(3.0f, 12.3f, 12.0f),
+            Item15(3.0f, 12.4f, 12.0f),
+            Item15(3.0f, 12.5f, 12.0f),
+            Item15(3.0f, 12.6f, 12.0f),
+            Item15(3.0f, 12.7f, 12.0f),
+            Item15(3.0f, 12.8f, 12.0f),
+            Item15(3.0f, 12.9f, 12.0f),
+            Item15(3.0f, 13.0f, 12.0f),
+            Item15(3.0f, 13.1f, 12.0f),
+            Item15(3.0f, 13.2f, 12.0f),
+            Item15(3.0f, 13.3f, 12.0f),
+            Item15(3.0f, 13.4f, 12.0f),
+            Item15(3.0f, 13.5f, 12.0f),
+            Item15(3.0f, 13.6f, 12.0f),
+            Item15(3.0f, 13.7f, 12.0f),
+            Item15(3.0f, 13.8f, 12.0f),
+            Item15(3.0f, 13.9f, 12.0f),
+        ).forEach { item ->
+            val result = limitScaleWithRubberBand(
+                currentScale = item.targetScale - 0.2f,
+                targetScale = item.targetScale,
+                minScale = minScale,
+                maxScale = maxScale,
+                rubberBandRatio = item.rubberBandRatio,
+            )
+            Assert.assertEquals(item.getMessage(IntSizeCompat.Zero), item.expected, result, 0f)
+        }
+        // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
+    }
+
+    @Test
+    fun testLimitScaleWithRubberBand2() {
+        val minScale = 1f
+        val maxScale = 4f
+
+        val printBatchBuildExpression = false
+//        val printBatchBuildExpression = true
+        if (printBatchBuildExpression) {
+            val targetScales = listOf(1, 0).flatMap { number ->
+                buildList { repeat(10) { index -> add(number + ((9-index) * 0.1f)) } }
+            }
+            printlnBatchBuildExpression(
+                p1s = listOf(1f, 2f, 3f),
+                p2s = targetScales,
+                buildItem = { p1, p2 ->
+                    Item15(p1, p2, 0f)
+                },
+            ) { item ->
+                limitScaleWithRubberBand(
+                    currentScale = item.targetScale - 0.2f,
+                    targetScale = item.targetScale,
+                    minScale = minScale,
+                    maxScale = maxScale,
+                    rubberBandRatio = item.rubberBandRatio,
+                )
+            }
+        }
+
+        // @formatter:off. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
+        listOf(
+            Item15(1.0f, 1.9000001f, 1.9000001f),
+            Item15(1.0f, 1.8f, 1.8f),
+            Item15(1.0f, 1.7f, 1.7f),
+            Item15(1.0f, 1.6f, 1.6f),
+            Item15(1.0f, 1.5f, 1.5f),
+            Item15(1.0f, 1.4f, 1.4f),
+            Item15(1.0f, 1.3f, 1.3f),
+            Item15(1.0f, 1.2f, 1.2f),
+            Item15(1.0f, 1.1f, 1.1f),
+            Item15(1.0f, 1.0f, 1.0f),
+            Item15(1.0f, 0.90000004f, 1.0f),
+            Item15(1.0f, 0.8f, 1.0f),
+            Item15(1.0f, 0.7f, 1.0f),
+            Item15(1.0f, 0.6f, 1.0f),
+            Item15(1.0f, 0.5f, 1.0f),
+            Item15(1.0f, 0.4f, 1.0f),
+            Item15(1.0f, 0.3f, 1.0f),
+            Item15(1.0f, 0.2f, 1.0f),
+            Item15(1.0f, 0.1f, 1.0f),
+            Item15(1.0f, 0.0f, 1.0f),
+            Item15(2.0f, 1.9000001f, 1.9000001f),
+            Item15(2.0f, 1.8f, 1.8f),
+            Item15(2.0f, 1.7f, 1.7f),
+            Item15(2.0f, 1.6f, 1.6f),
+            Item15(2.0f, 1.5f, 1.5f),
+            Item15(2.0f, 1.4f, 1.4f),
+            Item15(2.0f, 1.3f, 1.3f),
+            Item15(2.0f, 1.2f, 1.2f),
+            Item15(2.0f, 1.1f, 1.1f),
+            Item15(2.0f, 1.0f, 1.0f),
+            Item15(2.0f, 0.90000004f, 0.78000003f),
+            Item15(2.0f, 0.8f, 0.66f),
+            Item15(2.0f, 0.7f, 0.54f),
+            Item15(2.0f, 0.6f, 0.42000005f),
+            Item15(2.0f, 0.5f, 0.5f),
+            Item15(2.0f, 0.4f, 0.5f),
+            Item15(2.0f, 0.3f, 0.5f),
+            Item15(2.0f, 0.2f, 0.5f),
+            Item15(2.0f, 0.1f, 0.5f),
+            Item15(2.0f, 0.0f, 0.5f),
+            Item15(3.0f, 1.9000001f, 1.9000001f),
+            Item15(3.0f, 1.8f, 1.8f),
+            Item15(3.0f, 1.7f, 1.7f),
+            Item15(3.0f, 1.6f, 1.6f),
+            Item15(3.0f, 1.5f, 1.5f),
+            Item15(3.0f, 1.4f, 1.4f),
+            Item15(3.0f, 1.3f, 1.3f),
+            Item15(3.0f, 1.2f, 1.2f),
+            Item15(3.0f, 1.1f, 1.1f),
+            Item15(3.0f, 1.0f, 1.0f),
+            Item15(3.0f, 0.90000004f, 0.785f),
+            Item15(3.0f, 0.8f, 0.67f),
+            Item15(3.0f, 0.7f, 0.555f),
+            Item15(3.0f, 0.6f, 0.44000003f),
+            Item15(3.0f, 0.5f, 0.32500002f),
+            Item15(3.0f, 0.4f, 0.21f),
+            Item15(3.0f, 0.3f, 0.33333334f),
+            Item15(3.0f, 0.2f, 0.33333334f),
+            Item15(3.0f, 0.1f, 0.33333334f),
+            Item15(3.0f, 0.0f, 0.33333334f),
+        ).forEach { item ->
+            val result = limitScaleWithRubberBand(
+                currentScale = item.targetScale - 0.2f,
+                targetScale = item.targetScale,
+                minScale = minScale,
+                maxScale = maxScale,
+                rubberBandRatio = item.rubberBandRatio,
+            )
+            Assert.assertEquals(item.getMessage(IntSizeCompat.Zero), item.expected, result, 0f)
+        }
+        // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
+    }
 
     @Test
     fun testCalculateNextStepScale() {
         val stepScales = floatArrayOf(1f, 2f, 3f, 4f, 5f)
         Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.0f))
         Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.8f))
-        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 0.8f, rangeOfError = 0.2f))
+        Assert.assertEquals(2f, calculateNextStepScale(stepScales, 0.8f, delta = 0.2f))
         Assert.assertEquals(2f, calculateNextStepScale(stepScales, 0.9f))
-        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.9f, rangeOfError = 0f))
+        Assert.assertEquals(1f, calculateNextStepScale(stepScales, 0.9f, delta = 0f))
         Assert.assertEquals(2f, calculateNextStepScale(stepScales, 1.0f))
         Assert.assertEquals(2f, calculateNextStepScale(stepScales, 1.5f))
         Assert.assertEquals(3f, calculateNextStepScale(stepScales, 2.5f))
@@ -2051,6 +2528,23 @@ class CoreZoomUtilsTest3 {
 
         override fun getBuildExpression(r: Boolean): String {
             return "Item14(ScrollEdge(Edge.${scrollEdge.horizontal}, Edge.${scrollEdge.vertical}), ${horizontal}, ${direction}, $r)"
+        }
+    }
+
+    data class Item15(
+        val rubberBandRatio: Float,
+        val targetScale: Float,
+        override val expected: Float,
+    ) : A<Float> {
+        override fun getMessage(containerSize: IntSize): String {
+            return "Item15(" +
+                    "rubberBandRatio=${rubberBandRatio}, " +
+                    "targetScale=${targetScale}," +
+                    ")"
+        }
+
+        override fun getBuildExpression(r: Float): String {
+            return "Item15(${rubberBandRatio}f, ${targetScale}f, ${r}f)"
         }
     }
 }
