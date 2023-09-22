@@ -6,7 +6,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.tools4j.test.ktx.assertThrow
-import com.github.panpf.zoomimage.core.test.internal.A
+import com.github.panpf.zoomimage.core.test.internal.Item
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.toShortString
@@ -131,7 +131,7 @@ class CoreZoomUtilsTest4 {
                 userOffset = item.userOffset,
                 touchPoint = item.inputPoint,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -237,7 +237,7 @@ class CoreZoomUtilsTest4 {
                 userOffset = item.userOffset,
                 containerPoint = item.inputPoint,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -1347,7 +1347,7 @@ class CoreZoomUtilsTest4 {
                 rotation = item.rotation,
                 containerPoint = item.inputPoint,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -2444,7 +2444,7 @@ class CoreZoomUtilsTest4 {
                 rotation = item.rotation,
                 contentPoint = item.inputPoint,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -3715,7 +3715,7 @@ class CoreZoomUtilsTest4 {
                 userOffset = item.userOffset,
                 touchPoint = item.inputPoint,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -4967,7 +4967,7 @@ class CoreZoomUtilsTest4 {
                 userOffset = item.userOffset,
                 contentPoint = item.inputPoint,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -5074,8 +5074,8 @@ class CoreZoomUtilsTest4 {
         val userOffset: Offset,
         val inputPoint: Offset,
         override val expected: Offset
-    ) : A<Offset> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Offset> {
+        override fun getMessage(): String {
             return "Item6(" +
                     "userScale=${userScale}, " +
                     "userOffset=${userOffset}, " +
@@ -5099,8 +5099,8 @@ class CoreZoomUtilsTest4 {
         val rotation: Int,
         val inputPoint: Offset,
         override val expected: Offset,
-    ) : A<Offset> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Offset> {
+        override fun getMessage(): String {
             return "Item9(" +
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}, " +
@@ -5128,8 +5128,8 @@ class CoreZoomUtilsTest4 {
         val userOffset: Offset,
         val inputPoint: Offset,
         override val expected: Offset,
-    ) : A<Offset> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Offset> {
+        override fun getMessage(): String {
             return "Item10(" +
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}, " +

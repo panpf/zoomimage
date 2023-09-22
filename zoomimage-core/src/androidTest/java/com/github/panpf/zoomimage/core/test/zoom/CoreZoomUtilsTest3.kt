@@ -9,9 +9,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.Edge
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.core.test.internal.A
+import com.github.panpf.zoomimage.core.test.internal.Item
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
-import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomEnd
@@ -1099,7 +1098,7 @@ class CoreZoomUtilsTest3 {
                 userScale = item.userScale,
                 limitBaseVisibleRect = item.limitBaseVisibleRect,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -1194,7 +1193,7 @@ class CoreZoomUtilsTest3 {
                 containerPoint = item.containerPoint,
                 userScale = item.userScale,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -1210,8 +1209,6 @@ class CoreZoomUtilsTest3 {
 
     @Test
     fun testCalculateScaleUserOffset() {
-        val containerSize = IntSize(1080, 1920)
-
         val printBatchBuildExpression = false
 //        val printBatchBuildExpression = true
         if (printBatchBuildExpression) {
@@ -1508,15 +1505,13 @@ class CoreZoomUtilsTest3 {
                 targetUserScale = item.targetUserScale,
                 centroid = item.centroid,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
     }
 
     @Test
     fun testCalculateTransformOffset() {
-        val containerSize = IntSize(1080, 1920)
-
         val printBatchBuildExpression = false
 //        val printBatchBuildExpression = true
         if (printBatchBuildExpression) {
@@ -1809,7 +1804,7 @@ class CoreZoomUtilsTest3 {
                 pan = item.pan,
                 gestureRotate = item.gestureRotate,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
     }
@@ -1916,7 +1911,7 @@ class CoreZoomUtilsTest3 {
                 horizontal = item.horizontal,
                 direction = item.direction,
             )
-            Assert.assertEquals(item.getMessage(IntSize.Zero), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
     }
@@ -2290,7 +2285,7 @@ class CoreZoomUtilsTest3 {
                 maxScale = maxScale,
                 rubberBandRatio = item.rubberBandRatio,
             )
-            Assert.assertEquals(item.getMessage(IntSizeCompat.Zero), item.expected, result, 0f)
+            Assert.assertEquals(item.getMessage(), item.expected, result, 0f)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
     }
@@ -2393,7 +2388,7 @@ class CoreZoomUtilsTest3 {
                 maxScale = maxScale,
                 rubberBandRatio = item.rubberBandRatio,
             )
-            Assert.assertEquals(item.getMessage(IntSizeCompat.Zero), item.expected, result, 0f)
+            Assert.assertEquals(item.getMessage(), item.expected, result, 0f)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
     }
@@ -2429,8 +2424,8 @@ class CoreZoomUtilsTest3 {
         val userScale: Float,
         val limitBaseVisibleRect: Boolean,
         override val expected: Rect,
-    ) : A<Rect> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Rect> {
+        override fun getMessage(): String {
             return "Item10(" +
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}," +
@@ -2450,8 +2445,8 @@ class CoreZoomUtilsTest3 {
         val containerPoint: Offset,
         val userScale: Float,
         override val expected: Offset,
-    ) : A<Offset> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Offset> {
+        override fun getMessage(): String {
             return "Item11(" +
                     "containerPoint=${containerPoint.toShortString()}, " +
                     "userScale=${userScale}," +
@@ -2469,8 +2464,8 @@ class CoreZoomUtilsTest3 {
         val targetUserScale: Float,
         val centroid: Offset,
         override val expected: Offset,
-    ) : A<Offset> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Offset> {
+        override fun getMessage(): String {
             return "Item12(" +
                     "currentUserScale=${currentUserScale}," +
                     "currentUserOffset=${currentUserOffset.toShortString()}, " +
@@ -2492,8 +2487,8 @@ class CoreZoomUtilsTest3 {
         val pan: Offset,
         val gestureRotate: Float,
         override val expected: Offset,
-    ) : A<Offset> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Offset> {
+        override fun getMessage(): String {
             return "Item13(" +
                     "currentScale=${currentScale}," +
                     "currentOffset=${currentOffset.toShortString()}, " +
@@ -2517,8 +2512,8 @@ class CoreZoomUtilsTest3 {
         val horizontal: Boolean,
         val direction: Int,
         override val expected: Boolean,
-    ) : A<Boolean> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Boolean> {
+        override fun getMessage(): String {
             return "Item14(" +
                     "scrollEdge=${scrollEdge}," +
                     "horizontal=${horizontal}, " +
@@ -2535,8 +2530,8 @@ class CoreZoomUtilsTest3 {
         val rubberBandRatio: Float,
         val targetScale: Float,
         override val expected: Float,
-    ) : A<Float> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<Float> {
+        override fun getMessage(): String {
             return "Item15(" +
                     "rubberBandRatio=${rubberBandRatio}, " +
                     "targetScale=${targetScale}," +

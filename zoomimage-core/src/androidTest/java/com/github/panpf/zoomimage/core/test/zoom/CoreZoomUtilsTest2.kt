@@ -8,7 +8,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.tools4j.test.ktx.assertThrow
-import com.github.panpf.zoomimage.core.test.internal.A
+import com.github.panpf.zoomimage.core.test.internal.Item
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
@@ -333,7 +333,7 @@ class CoreZoomUtilsTest2 {
                 rotation = item.rotation,
             ).round()
             Assert.assertEquals(
-                /* message = */ item.getMessage(containerSize),
+                /* message = */ item.getMessage(),
                 /* expected = */ item.expected,
                 /* actual = */ result,
             )
@@ -667,7 +667,7 @@ class CoreZoomUtilsTest2 {
                 rotation = item.rotation,
             ).round()
             Assert.assertEquals(
-                /* message = */ item.getMessage(containerSize),
+                /* message = */ item.getMessage(),
                 /* expected = */ item.expected,
                 /* actual = */ result,
             )
@@ -1763,7 +1763,7 @@ class CoreZoomUtilsTest2 {
                 userOffset = item.offset,
             ).round()
             Assert.assertEquals(
-                /* message = */ item.getMessage(containerSize),
+                /* message = */ item.getMessage(),
                 /* expected = */ item.expected,
                 /* actual = */ result,
             )
@@ -2865,7 +2865,7 @@ class CoreZoomUtilsTest2 {
                 userOffset = item.offset,
             ).round()
             Assert.assertEquals(
-                /* message = */ item.getMessage(containerSize),
+                /* message = */ item.getMessage(),
                 /* expected = */ item.expected,
                 /* actual = */ result,
             )
@@ -2917,8 +2917,8 @@ class CoreZoomUtilsTest2 {
         val alignment: Alignment,
         val rotation: Int,
         override val expected: IntRect
-    ) : A<IntRect> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<IntRect> {
+        override fun getMessage(): String {
             return "Item5(" +
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}" +
@@ -2943,8 +2943,8 @@ class CoreZoomUtilsTest2 {
         val scale: Float,
         val offset: Offset,
         override val expected: IntRect
-    ) : A<IntRect> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<IntRect> {
+        override fun getMessage(): String {
             return "Item8(" +
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}" +

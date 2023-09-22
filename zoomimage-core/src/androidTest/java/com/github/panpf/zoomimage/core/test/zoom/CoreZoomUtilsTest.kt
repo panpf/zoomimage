@@ -4,7 +4,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.ReadMode
-import com.github.panpf.zoomimage.core.test.internal.A
+import com.github.panpf.zoomimage.core.test.internal.Item
 import com.github.panpf.zoomimage.core.test.internal.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
@@ -433,7 +433,7 @@ class CoreZoomUtilsTest {
                 alignment = item.alignment,
                 rotation = item.rotation,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -1018,7 +1018,7 @@ class CoreZoomUtilsTest {
                 rotation = item.rotation,
                 readMode = readMode,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -1210,7 +1210,7 @@ class CoreZoomUtilsTest {
                 initialScale = item.initialScale,
                 calculator = ScalesCalculator.Dynamic,
             ).joinToString()
-            Assert.assertEquals(item.getMessage(containerSize), item.expected.joinToString(), result)
+            Assert.assertEquals(item.getMessage(), item.expected.joinToString(), result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -1811,7 +1811,7 @@ class CoreZoomUtilsTest {
                 readMode = ReadMode.Default,
                 scalesCalculator = ScalesCalculator.Dynamic,
             )
-            Assert.assertEquals(item.getMessage(containerSize), item.expected, result)
+            Assert.assertEquals(item.getMessage(), item.expected, result)
         }
         // @formatter:on. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
 
@@ -1863,8 +1863,8 @@ class CoreZoomUtilsTest {
         val alignment: AlignmentCompat,
         val rotation: Int,
         override val expected: TransformCompat
-    ) : A<TransformCompat> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<TransformCompat> {
+        override fun getMessage(): String {
             return "Item3(" +
                     "contentScale=${contentScale.name}, " +
                     "alignment=${alignment.name}, " +
@@ -1885,8 +1885,8 @@ class CoreZoomUtilsTest {
         val alignment: AlignmentCompat,
         val rotation: Int,
         override val expected: TransformCompat?
-    ) : A<TransformCompat?> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<TransformCompat?> {
+        override fun getMessage(): String {
             return "Item4(" +
                     "contentSize=${contentSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
@@ -1909,8 +1909,8 @@ class CoreZoomUtilsTest {
         val rotation: Int,
         val initialScale: Float,
         override val expected: FloatArray
-    ) : A<FloatArray> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<FloatArray> {
+        override fun getMessage(): String {
             return "Item2(" +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
@@ -1936,8 +1936,8 @@ class CoreZoomUtilsTest {
         val alignment: AlignmentCompat,
         val rotation: Int,
         override val expected: InitialZoom
-    ) : A<InitialZoom> {
-        override fun getMessage(containerSize: IntSize): String {
+    ) : Item<InitialZoom> {
+        override fun getMessage(): String {
             return "Item1(" +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
                     "contentScale=${contentScale.name}, " +
