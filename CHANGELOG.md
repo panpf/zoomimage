@@ -1,3 +1,34 @@
+## 1.0.0-beta01
+
+zoom:
+
+* fix: Fixed a bug where ZoomImageView sometimes did not animate when double-clicking to zoom
+* change: The external properties of ZoomableEngine are now wrapped in StateFlow and can be listened
+  to directly
+* improve: Avoid triggering Pager's swipe at the smallest zoom factor and multi-finger touch
+
+subsampling:
+
+* fix: Fixed a bug where subsampling could fail
+* fix: The tileGridSizeMap property now returns the correct size
+* fix: Fixed a bug where the calculateTileGridMap() function raised OutOfMemoryError when it
+  encountered a particularly small tileMaxSize
+* change: The external properties of SubsamplingEngine are now wrapped in StateFlow and can be
+  listened to directly
+* change: The ImageSource.openInputStream() method removes the suspend modifier
+* change: pauseWhenTransforming change to pausedContinuousTransformType
+* improve: Improved calculateImageLoadRect() calculations that now do not exceed imageSize
+* improve: Tile concurrent loads reduced from 4 to 2 to reduce memory footprint and improve UI
+  performance
+* new: SubsamplingState and SubsamplingEngine add tileGridSizeMap properties
+* new: Subsampling now changes in sharpness continuously when switching sampleSize and no longer
+  always transitions from the base image
+
+other:
+
+* fix: Fixed the bug that the level judgment error caused the log not to be printed
+* build: Upgrade compileSdk to 34, kotlinx-coroutines to 1.7.3, compose to 1.5.0
+
 ## 1.0.0-alpha03
 
 zoom:
