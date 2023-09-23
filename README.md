@@ -20,8 +20,8 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
   and inertial swipe
 * `Locate`. Support for locate anywhere in the image and keeping it in the center of the screen
 * `Rotate`. Supports 0°, 90°, 180°, 270°, 360° rotation of pictures
-* `Subsampling`. Supports subsampling display of huge images, the image is clearly displayed and OOM
-  is avoided
+* `Subsampling`. Support for subsampling of very large images to avoid OOM, tile support animation,
+  and sharpness gradients
 * `Dynamic scaling`. Automatically calculates the most appropriate double-click scaling factor based
   on image size and container size
 * `Boundary damping`. When manually scaled beyond the maximum or minimum zoom factor, there is a
@@ -39,7 +39,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 * `功能齐全`. 支持双击缩放、手势缩放、单指拖动、惯性滑动等基础功能
 * `定位`. 支持定位到图片的任意位置并保持在屏幕中央
 * `旋转`. 支持 0°, 90°, 180°, 270°, 360° 旋转图片
-* `子采样`. 支持对超大图进行子采样显示，既清晰的展示了图片又避免了 OOM
+* `子采样`. 支持对超大图进行子采样显示，避免 OOM，碎片支持动画以及清晰度渐变
 * `动态缩放`. 根据图片尺寸和容器尺寸自动计算出最合适的双击缩放比例
 * `边界阻尼`. 手动缩放超过最大或最小缩放比例后会有带阻尼感的橡皮筋效果
 * `滚动条`. 支持显示水平和垂直滚动条，明确当前滚动位置
@@ -166,7 +166,9 @@ sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 
 ## Samples/示例
 
-You can find the sample code in the [sample](https://github.com/panpf/zoomimage/tree/main/sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples) module, or you can download the APK experience
+You can find the sample code in
+the [sample](https://github.com/panpf/zoomimage/tree/main/sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
+module, or you can download the APK experience
 from the [release](https://github.com/panpf/zoomimage/releases) page
 <br>-----------------</br>
 你可以在 [sample](https://github.com/panpf/zoomimage/tree/main/sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
