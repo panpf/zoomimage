@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.SampleImages.Asset
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
@@ -159,6 +160,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 title = "Compose graphicsLayer Test",
                 navDirections = NavMainDirections.actionGlobalGraphicsLayerFragment(),
                 minSdk = 21,
+            ),
+
+            ListSeparator("Other"),
+            Link(
+                title = "v${BuildConfig.VERSION_NAME} · ${BuildConfig.BUILD_TYPE}",
+                navDirections = null,
             ),
         )
     }

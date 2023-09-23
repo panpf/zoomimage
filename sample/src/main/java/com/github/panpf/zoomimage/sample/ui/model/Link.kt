@@ -21,7 +21,7 @@ import com.github.panpf.assemblyadapter.recycler.DiffKey
 
 data class Link(
     val title: String,
-    val navDirections: NavDirections,
+    val navDirections: NavDirections?,
     val minSdk: Int? = null,
     val permissions: List<String>? = null
 ) : DiffKey {

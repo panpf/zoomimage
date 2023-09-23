@@ -64,7 +64,7 @@ class HomeFragment : ToolbarBindingFragment<HomeFragmentBinding>() {
                 pendingStartLink = data
                 permissionLauncher.launch(permissions.toTypedArray())
             } else {
-                findNavController().navigate(data.navDirections)
+                data.navDirections?.let { findNavController().navigate(it) }
             }
         } else {
             Toast.makeText(
@@ -77,7 +77,7 @@ class HomeFragment : ToolbarBindingFragment<HomeFragmentBinding>() {
 
     private fun requestLinkPermissionsResult(grantedMap: Map<String, Boolean>, data: Link) {
         if (grantedMap.values.all { it }) {
-            findNavController().navigate(data.navDirections)
+            data.navDirections?.let { findNavController().navigate(it) }
         } else {
             Toast.makeText(context, "Please grant permission", Toast.LENGTH_LONG).show()
         }
