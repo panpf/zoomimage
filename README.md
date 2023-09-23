@@ -166,7 +166,11 @@ sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 
 ## Samples/示例
 
-你可以在 [sample](sample) 模块中找到示例代码，也可以下载 [sample.apk]() 安装体验
+You can find the sample code in the [sample](https://github.com/panpf/zoomimage/tree/main/sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples) module, or you can download the APK experience
+from the [release](https://github.com/panpf/zoomimage/releases) page
+<br>-----------------</br>
+你可以在 [sample](https://github.com/panpf/zoomimage/tree/main/sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
+模块中找到示例代码，也可以到 [release](https://github.com/panpf/zoomimage/releases) 页面下载 APK 体验
 
 ## Changelog/更新日志
 
