@@ -24,7 +24,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
   and sharpness gradients
 * `Dynamic scaling`. Automatically calculates the most appropriate double-click scaling factor based
   on image size and container size
-* `Boundary damping`. When manually scaled beyond the maximum or minimum zoom factor, there is a
+* `Scaling damping`. When manually scaled beyond the maximum or minimum zoom factor, there is a
   damped rubber band effect
 * `Scroll bar`. Supports displaying horizontal and vertical scroll bars to clarify the current
   scroll position
@@ -41,10 +41,26 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 * `旋转`. 支持 0°, 90°, 180°, 270°, 360° 旋转图片
 * `子采样`. 支持对超大图进行子采样显示，避免 OOM，碎片支持动画以及清晰度渐变
 * `动态缩放`. 根据图片尺寸和容器尺寸自动计算出最合适的双击缩放比例
-* `边界阻尼`. 手动缩放超过最大或最小缩放比例后会有带阻尼感的橡皮筋效果
+* `缩放阻尼`. 手动缩放超过最大或最小缩放比例后会有带阻尼感的橡皮筋效果
 * `滚动条`. 支持显示水平和垂直滚动条，明确当前滚动位置
 * `阅读模式`. 阅读模式下显示长图时初始状态会自动充满屏幕，用户可立即开始阅读图片内容，省去用户双击放大的操作
 * `图片加载器`. 提供对 sketch、coil、glide、picasso 等图片加载器的支持，也可以自定义支持更多图片加载器
+
+## Comparison of similar libraries/同类库对比
+
+| Function/Library            | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
+|:----------------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
+| Compose                     |     ✅     |      ✅      |      ❌      |                ❌                 |
+| View                        |     ✅     |      ❌      |      ✅      |                ✅                 |
+| Subsampling/在采样             |     ✅     |      ✅      |      ❌      |                ✅                 |
+| Rotate/旋转                   |     ✅     |      ❌      |      ✅      |                ❌                 |
+| Locate/定位                   |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Read Mode/阅读模式              |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Scroll Bar/滚动条              |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Image Loader/集成图片加载器        |     ✅     |      ✅      |      ❌      |                ❌                 |
+| Dynamic scaling/动态缩放比例      |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Subsampling animation/子采样动画 |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Rich interfaces/丰富的交互接口     |     ✅     |      ❌      |      ✅      |                ✅                 |
 
 ## Import/导入
 
@@ -270,5 +286,10 @@ Please review the [CHANGELOG.md] file
 
 [SketchZoomImageViewFragment]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/SketchZoomImageViewFragment.kt
 
+[Telephoto]: https://github.com/saket/telephoto
+
+[PhotoView]: https://github.com/Baseflow/PhotoView
+
+[Subsampling<br/>ScaleImageView]: https://github.com/davemorrissey/subsampling-scale-image-view
 
 [CHANGELOG.md]: CHANGELOG.md
