@@ -358,6 +358,10 @@ val sketchZoomImageView = SketchZoomImageView(context)
 val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 ```
 
+> * Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
+    suffixed with State compared to the compose version
+> * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
+
 * `zoomable.transform.scale: ScaleFactor`。
     * Current scaling (baseTransform.scale * userTransform.scale)
       <br>-----------</br>

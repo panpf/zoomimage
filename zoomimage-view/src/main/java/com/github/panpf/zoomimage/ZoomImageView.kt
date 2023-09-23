@@ -26,16 +26,12 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.getNavigationBarsHeight
 import com.github.panpf.zoomimage.view.internal.intrinsicSize
-import com.github.panpf.zoomimage.view.internal.lifecycleOwner
 import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
@@ -49,9 +45,10 @@ import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarHelper
 import com.github.panpf.zoomimage.view.zoom.internal.TouchHelper
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.abs
-import kotlin.math.roundToInt
 
 
 /**
@@ -74,11 +71,12 @@ open class ZoomImageView @JvmOverloads constructor(
 
     protected val _zoomableEngine: ZoomableEngine?  // Used when the overridden method is called by the parent class constructor
     protected val _subsamplingEngine: SubsamplingEngine?  // Used when the overridden method is called by the parent class constructor
-    private var wrappedScaleType: ScaleType
-    private var scrollBarHelper: ScrollBarHelper? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private val touchHelper: TouchHelper
     private val tileDrawHelper: TileDrawHelper
     private val cacheImageMatrix = Matrix()
+    private var wrappedScaleType: ScaleType
+    private var scrollBarHelper: ScrollBarHelper? = null
     private var navigationBarsHeight = 0
 
     val logger = Logger(tag = "ZoomImageView")
@@ -134,8 +132,8 @@ open class ZoomImageView @JvmOverloads constructor(
         /* ZoomableEngine */
         val zoomableEngine = ZoomableEngine(logger, this).apply {
             this@ZoomImageView._zoomableEngine = this
-            contentScale = initScaleType.toContentScale()
-            alignment = initScaleType.toAlignment()
+            contentScaleState.value = initScaleType.toContentScale()
+            alignmentState.value = initScaleType.toAlignment()
             resetDrawableSize()
         }
         touchHelper = TouchHelper(this, zoomableEngine)
@@ -145,25 +143,21 @@ open class ZoomImageView @JvmOverloads constructor(
             this@ZoomImageView._subsamplingEngine = this
             bindZoomEngine(zoomableEngine)
         }
-        tileDrawHelper = TileDrawHelper(logger, subsamplingEngine).apply {
-            subsamplingEngine.registerOnTileChangeListener {
-                this@ZoomImageView.invalidate()
-            }
-        }
+        tileDrawHelper =
+            TileDrawHelper(logger, this@ZoomImageView, zoomableEngine, subsamplingEngine)
 
         /* ScrollBar */
         resetScrollBarHelper()
 
         parseAttrs(attrs)
 
-        lifecycleOwner.lifecycleScope.launch {
-            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                zoomable.transformState.collect { transform ->
-                    val matrix = cacheImageMatrix.applyTransform(transform, zoomable.containerSize)
-                    super.setImageMatrix(matrix)
+        coroutineScope.launch {
+            zoomable.transformState.collect { transform ->
+                val matrix =
+                    cacheImageMatrix.applyTransform(transform, zoomable.containerSizeState.value)
+                super.setImageMatrix(matrix)
 
-                    scrollBarHelper?.onMatrixChanged()
-                }
+                scrollBarHelper?.onMatrixChanged()
             }
         }
     }
@@ -178,7 +172,7 @@ open class ZoomImageView @JvmOverloads constructor(
         try {
             if (array.hasValue(styleable.ZoomImageView_contentScale)) {
                 val contentScaleCode = array.getInt(styleable.ZoomImageView_contentScale, -1)
-                zoomable.contentScale = when (contentScaleCode) {
+                zoomable.contentScaleState.value = when (contentScaleCode) {
                     0 -> ContentScaleCompat.Crop
                     1 -> ContentScaleCompat.Fit
                     2 -> ContentScaleCompat.FillHeight
@@ -192,7 +186,7 @@ open class ZoomImageView @JvmOverloads constructor(
 
             if (array.hasValue(styleable.ZoomImageView_alignment)) {
                 val alignmentCode = array.getInt(styleable.ZoomImageView_alignment, -1)
-                zoomable.alignment = when (alignmentCode) {
+                zoomable.alignmentState.value = when (alignmentCode) {
                     0 -> AlignmentCompat.TopStart
                     1 -> AlignmentCompat.TopCenter
                     2 -> AlignmentCompat.TopEnd
@@ -208,19 +202,19 @@ open class ZoomImageView @JvmOverloads constructor(
 
             if (array.hasValue(styleable.ZoomImageView_animateScale)) {
                 val animateScale = array.getBoolean(styleable.ZoomImageView_animateScale, false)
-                zoomable.animationSpec =
+                zoomable.animationSpecState.value =
                     if (animateScale) ZoomAnimationSpec.Default else ZoomAnimationSpec.None
             }
 
             if (array.hasValue(styleable.ZoomImageView_rubberBandScale)) {
                 val rubberBandScale =
                     array.getBoolean(styleable.ZoomImageView_rubberBandScale, false)
-                zoomable.rubberBandScale = rubberBandScale
+                zoomable.rubberBandScaleState.value = rubberBandScale
             }
 
             if (array.hasValue(styleable.ZoomImageView_threeStepScale)) {
                 val threeStepScale = array.getBoolean(styleable.ZoomImageView_threeStepScale, false)
-                zoomable.threeStepScale = threeStepScale
+                zoomable.threeStepScaleState.value = threeStepScale
             }
 
             if (array.hasValue(styleable.ZoomImageView_limitOffsetWithinBaseVisibleRect)) {
@@ -228,29 +222,30 @@ open class ZoomImageView @JvmOverloads constructor(
                     styleable.ZoomImageView_limitOffsetWithinBaseVisibleRect,
                     false
                 )
-                zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+                zoomable.limitOffsetWithinBaseVisibleRectState.value =
+                    limitOffsetWithinBaseVisibleRect
             }
 
             if (array.hasValue(styleable.ZoomImageView_showTileBounds)) {
                 val showTileBounds = array.getBoolean(styleable.ZoomImageView_showTileBounds, false)
-                subsampling.showTileBounds = showTileBounds
+                subsampling.showTileBoundsState.value = showTileBounds
             }
 
             if (array.hasValue(styleable.ZoomImageView_pausedContinuousTransformType)) {
                 val pausedContinuousTransformType =
                     array.getInt(styleable.ZoomImageView_pausedContinuousTransformType, 0)
-                subsampling.pausedContinuousTransformType = pausedContinuousTransformType
+                subsampling.pausedContinuousTransformTypeState.value = pausedContinuousTransformType
             }
 
             if (array.hasValue(styleable.ZoomImageView_disabledBackgroundTiles)) {
                 val disabledBackgroundTiles =
                     array.getBoolean(styleable.ZoomImageView_disabledBackgroundTiles, false)
-                subsampling.disabledBackgroundTiles = disabledBackgroundTiles
+                subsampling.disabledBackgroundTilesState.value = disabledBackgroundTiles
             }
 
             if (array.hasValue(styleable.ZoomImageView_tileAnimation)) {
                 val tileAnimation = array.getBoolean(styleable.ZoomImageView_tileAnimation, false)
-                subsampling.tileAnimationSpec =
+                subsampling.tileAnimationSpecState.value =
                     if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
             }
 
@@ -278,12 +273,12 @@ open class ZoomImageView @JvmOverloads constructor(
             if (array.hasValue(styleable.ZoomImageView_ignoreExifOrientation)) {
                 val ignoreExifOrientation =
                     array.getBoolean(styleable.ZoomImageView_ignoreExifOrientation, false)
-                subsampling.ignoreExifOrientation = ignoreExifOrientation
+                subsampling.ignoreExifOrientationState.value = ignoreExifOrientation
             }
 
             if (array.hasValue(styleable.ZoomImageView_readMode)) {
                 val readModeCode = array.getInt(styleable.ZoomImageView_readMode, -1)
-                zoomable.readMode = when (readModeCode) {
+                zoomable.readModeState.value = when (readModeCode) {
                     0 -> ReadMode.Default
                     1 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_HORIZONTAL)
                     2 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_VERTICAL)
@@ -297,7 +292,7 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     private fun resetDrawableSize() {
-        _zoomableEngine?.contentSize = drawable?.intrinsicSize() ?: IntSizeCompat.Zero
+        _zoomableEngine?.contentSizeState?.value = drawable?.intrinsicSize() ?: IntSizeCompat.Zero
     }
 
     private fun resetScrollBarHelper() {
@@ -305,7 +300,7 @@ open class ZoomImageView @JvmOverloads constructor(
         scrollBarHelper = null
         val scrollBarSpec = this.scrollBar
         if (scrollBarSpec != null) {
-            scrollBarHelper = ScrollBarHelper(this, scrollBarSpec)
+            scrollBarHelper = ScrollBarHelper(this, scrollBarSpec, zoomable)
         }
     }
 
@@ -335,8 +330,8 @@ open class ZoomImageView @JvmOverloads constructor(
         val zoomEngine = _zoomableEngine
         if (zoomEngine != null) {
             this.wrappedScaleType = scaleType
-            zoomEngine.contentScale = scaleType.toContentScale()
-            zoomEngine.alignment = scaleType.toAlignment()
+            zoomEngine.contentScaleState.value = scaleType.toContentScale()
+            zoomEngine.alignmentState.value = scaleType.toAlignment()
         } else {
             super.setScaleType(scaleType)
         }
@@ -358,19 +353,8 @@ open class ZoomImageView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val zoomable = _zoomableEngine ?: return
-        tileDrawHelper.drawTiles(
-            canvas = canvas,
-            transform = zoomable.transformState.value,
-            containerSize = zoomable.containerSize,
-        )
-        scrollBarHelper?.onDraw(
-            canvas = canvas,
-            containerSize = zoomable.containerSize,
-            contentSize = zoomable.contentSize,
-            contentVisibleRect = zoomable.contentVisibleRectState.value,
-            rotation = zoomable.transformState.value.rotation.roundToInt(),
-        )
+        tileDrawHelper.drawTiles(canvas)
+        scrollBarHelper?.onDraw(canvas)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -398,7 +382,7 @@ open class ZoomImageView @JvmOverloads constructor(
     private fun updateContainerSize() {
         val zoomable = _zoomableEngine ?: return
 
-        val oldContainerSize = zoomable.containerSize
+        val oldContainerSize = zoomable.containerSizeState.value
         val newContainerSize = IntSizeCompat(
             width = width - paddingLeft - paddingRight,
             height = height - paddingTop - paddingBottom
@@ -418,7 +402,7 @@ open class ZoomImageView @JvmOverloads constructor(
             if (navigationBarHeight == 0 ||
                 (abs(diffSize.width) != navigationBarHeight && abs(diffSize.height) != navigationBarHeight)
             ) {
-                zoomable.containerSize = newContainerSize
+                zoomable.containerSizeState.value = newContainerSize
             } else {
                 logger.d {
                     "updateContainerSize. intercepted. " +

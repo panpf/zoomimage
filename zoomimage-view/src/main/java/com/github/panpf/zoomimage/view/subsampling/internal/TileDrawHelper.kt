@@ -23,6 +23,7 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
+import android.view.View
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
 import com.github.panpf.zoomimage.Logger
@@ -34,30 +35,49 @@ import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
+import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
 
 class TileDrawHelper(
     private val logger: Logger,
-    private val subsampling: SubsamplingEngine
+    private val view: View,
+    private val zoomableEngine: ZoomableEngine,
+    private val subsamplingEngine: SubsamplingEngine,
 ) {
 
     private val cacheRect1 = Rect()
     private val cacheRect2 = Rect()
     private val cacheDisplayMatrix: Matrix = Matrix()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var tilePaint: Paint = Paint()
     private var cacheTileBoundsPaint: Paint? = null
 
-    fun drawTiles(
-        canvas: Canvas,
-        transform: TransformCompat,
-        containerSize: IntSizeCompat,
-    ) {
-        val imageInfo = subsampling.imageInfo ?: return
-        val contentSize = subsampling.contentSize.takeIf { !it.isEmpty() } ?: return
-        val backgroundTiles = subsampling.backgroundTiles
-        val foregroundTiles = subsampling.foregroundTiles.takeIf { it.isNotEmpty() } ?: return
-        val imageLoadRect = subsampling.imageLoadRect.takeIf { !it.isEmpty } ?: return
+    init {
+        coroutineScope.launch {
+            listOf(
+                subsamplingEngine.readyState,
+                subsamplingEngine.foregroundTilesState,
+                subsamplingEngine.backgroundTilesState,
+                subsamplingEngine.showTileBoundsState,
+            ).merge().collect {
+                view.invalidate()
+            }
+        }
+    }
+
+    fun drawTiles(canvas: Canvas) {
+        val containerSize = zoomableEngine.containerSizeState.value.takeIf { !it.isEmpty() } ?: return
+        val contentSize = zoomableEngine.contentSizeState.value.takeIf { !it.isEmpty() } ?: return
+        val transform = zoomableEngine.transformState.value
+        val imageInfo = subsamplingEngine.imageInfoState.value ?: return
+        val backgroundTiles = subsamplingEngine.backgroundTilesState.value
+        val foregroundTiles = subsamplingEngine.foregroundTilesState.value.takeIf { it.isNotEmpty() } ?: return
+        val imageLoadRect = subsamplingEngine.imageLoadRectState.value.takeIf { !it.isEmpty } ?: return
 
         var backgroundCount = 0
         var insideLoadCount = 0
@@ -79,7 +99,7 @@ class TileDrawHelper(
                     if (drawTile(canvas, imageInfo, contentSize, tileSnapshot)) {
                         realDrawCount++
                     }
-                    if (subsampling.showTileBounds) {
+                    if (subsamplingEngine.showTileBoundsState.value) {
                         drawTileBounds(canvas, imageInfo, contentSize, tileSnapshot)
                     }
                 } else {
@@ -94,7 +114,7 @@ class TileDrawHelper(
                     "outsideLoadCount=${outsideLoadCount}, " +
                     "realDrawCount=${realDrawCount}, " +
                     "backgroundCount=${backgroundCount}. " +
-                    "'${subsampling.imageKey}'"
+                    "'${subsamplingEngine.imageKey}'"
         }
     }
 

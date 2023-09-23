@@ -195,10 +195,12 @@ val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
 zoomImageView.subsampling.setImageSource(imageSource)
 ```
 
-> PicassoZoomImageView provides a set of specialized APIs to listen for load results and get URIs, to support subsampling
+> PicassoZoomImageView provides a set of specialized APIs to listen for load results and get URIs,
+> to support subsampling
 > so please don't load images directly using the official API
 <br>-----------</br>
-> PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，以便支持子采样，因此请不要直接使用官方 API 加载图片
+> PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，以便支持子采样，因此请不要直接使用官方
+> API 加载图片
 
 The APIs for zoom and subsampling are encapsulated in separate classes, and the compose versions
 are [ZoomableState] and [SubsamplingState], view The versions are [ZoomableEngine]
@@ -314,6 +316,10 @@ val sketchZoomImageView = SketchZoomImageView(context)
 val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 ```
+
+> * Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
+    suffixed with State compared to the compose version
+> * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
 * `zoomable.baseTransform: Transform`。
     * Base transformation, include the base scale, offset, rotation, which is affected by

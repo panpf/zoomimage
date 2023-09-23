@@ -51,7 +51,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     init {
-        _subsamplingEngine?.tileMemoryCache = PicassoTileMemoryCache(Picasso.get())
+        _subsamplingEngine?.tileMemoryCacheState?.value = PicassoTileMemoryCache(Picasso.get())
     }
 
     /**
@@ -147,7 +147,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     private fun loadImage(uri: Uri?, callback: Callback?, creator: RequestCreator) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
-                _subsamplingEngine?.disableMemoryCache =
+                _subsamplingEngine?.disableMemoryCacheState?.value =
                     isDisableMemoryCache(creator.memoryPolicy)
                 _subsamplingEngine?.setImageSource(newImageSource(uri))
                 callback?.onSuccess()
@@ -162,7 +162,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingEngine?.disableMemoryCache = false
+        _subsamplingEngine?.disableMemoryCacheState?.value = false
     }
 
     private fun newImageSource(uri: Uri?): ImageSource? {

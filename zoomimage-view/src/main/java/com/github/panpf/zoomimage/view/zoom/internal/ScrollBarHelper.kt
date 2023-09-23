@@ -21,17 +21,17 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlin.math.roundToInt
 
 class ScrollBarHelper(
     private val view: View,
     private val scrollBarSpec: ScrollBarSpec,
+    private val zoomableEngine: ZoomableEngine,
 ) {
 
     private val startAlpha: Int = 255
@@ -73,15 +73,12 @@ class ScrollBarHelper(
         })
     }
 
-    fun onDraw(
-        canvas: Canvas,
-        containerSize: IntSizeCompat,
-        contentSize: IntSizeCompat,
-        contentVisibleRect: IntRectCompat,
-        rotation: Int,
-    ) {
-        if (containerSize.isEmpty()) return
-        if (contentSize.isEmpty()) return
+    fun onDraw(canvas: Canvas) {
+        val containerSize =
+            zoomableEngine.containerSizeState.value.takeIf { !it.isEmpty() } ?: return
+        val contentSize = zoomableEngine.contentSizeState.value.takeIf { !it.isEmpty() } ?: return
+        val contentVisibleRect = zoomableEngine.contentVisibleRectState.value
+        val rotation = zoomableEngine.transformState.value.rotation.roundToInt()
 
         val rotatedContentVisibleRect = contentVisibleRect.rotateInSpace(contentSize, rotation)
         val rotatedContentSize = contentSize.rotate(rotation)

@@ -27,7 +27,7 @@ import com.github.panpf.zoomimage.sample.databinding.SketchZoomImageViewFragment
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 
 class SketchZoomImageViewFragment :
     BaseZoomImageViewFragment<SketchZoomImageViewFragmentBinding>() {

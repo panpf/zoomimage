@@ -33,7 +33,7 @@ import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragment
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,7 +83,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
-                    subsampling.ignoreExifOrientation =
+                    subsampling.ignoreExifOrientationState.value =
                         settingsService.ignoreExifOrientation.value
                     subsampling.setImageSource(newImageSource(binding, sketchImageUri))
                     onCallSuccess()

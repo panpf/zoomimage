@@ -382,35 +382,6 @@ ZoomImage(
 )
 ```
 
-### Listen for related events/监听相关事件
-
-The relevant properties of the compose version are wrapped in State, which can be read directly to
-achieve listening, and the view version needs to register a listener
-<br>-----------</br>
-compose 版本的相关属性是用 State 包装的，直接读取它即可实现监听，view 版本的则需要注册监听器
-
-example/示例：
-
-```kotlin
-val sketchZoomImageView = SketchZoomImageView(context)
-
-sketchZoomImageView.subsampling.registerOnTileChangeListener {
-    // foregroundTiles, backgroundTiles changed
-}
-
-sketchZoomImageView.subsampling.registerOnReadyChangeListener {
-    // ready changed
-}
-
-sketchZoomImageView.subsampling.registerOnStoppedChangeListener {
-    // stopped changed
-}
-
-sketchZoomImageView.subsampling.registerOnImageLoadRectChangeListener {
-    // imageLoadRect changed
-}
-```
-
 ### Get relevant information/获取相关信息
 
 ```kotlin
@@ -428,6 +399,10 @@ val subsampling: SubsamplingState = state.subsampling
 val sketchZoomImageView = SketchZoomImageView(context)
 val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 ```
+
+> * Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
+    suffixed with State compared to the compose version
+> * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
 * `subsampling.ready: Boolean`。
     * Whether the image is ready for subsampling

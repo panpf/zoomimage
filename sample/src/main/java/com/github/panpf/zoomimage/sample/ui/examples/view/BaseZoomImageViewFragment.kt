@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.animation.Animation
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.Logger
@@ -30,8 +31,9 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
+import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
@@ -40,6 +42,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
+import kotlinx.coroutines.flow.merge
 import kotlin.math.roundToInt
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
@@ -61,22 +64,22 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }
             zoomable.apply {
                 settingsService.contentScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    contentScale = ContentScaleCompat.valueOf(it)
+                    contentScaleState.value = ContentScaleCompat.valueOf(it)
                 }
                 settingsService.alignment.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    alignment = AlignmentCompat.valueOf(it)
+                    alignmentState.value = AlignmentCompat.valueOf(it)
                 }
                 settingsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    threeStepScale = it
+                    threeStepScaleState.value = it
                 }
                 settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    rubberBandScale = it
+                    rubberBandScaleState.value = it
                 }
                 settingsService.scalesMultiple.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {
                         val scalesMultiple = settingsService.scalesMultiple.value.toFloat()
                         val scalesCalculatorName = settingsService.scalesCalculator.value
-                        scalesCalculator = if (scalesCalculatorName == "Dynamic") {
+                        scalesCalculatorState.value = if (scalesCalculatorName == "Dynamic") {
                             ScalesCalculator.dynamic(scalesMultiple)
                         } else {
                             ScalesCalculator.fixed(scalesMultiple)
@@ -86,7 +89,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     .collectWithLifecycle(viewLifecycleOwner) {
                         val scalesMultiple = settingsService.scalesMultiple.value.toFloat()
                         val scalesCalculatorName = settingsService.scalesCalculator.value
-                        scalesCalculator = if (scalesCalculatorName == "Dynamic") {
+                        scalesCalculatorState.value = if (scalesCalculatorName == "Dynamic") {
                             ScalesCalculator.dynamic(scalesMultiple)
                         } else {
                             ScalesCalculator.fixed(scalesMultiple)
@@ -94,7 +97,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     }
                 settingsService.limitOffsetWithinBaseVisibleRect.stateFlow
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        limitOffsetWithinBaseVisibleRect = it
+                        limitOffsetWithinBaseVisibleRectState.value = it
                     }
                 settingsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     val sizeType = if (settingsService.readModeAcceptedBoth.value) {
@@ -104,7 +107,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     } else {
                         ReadMode.SIZE_TYPE_VERTICAL
                     }
-                    readMode =
+                    readModeState.value =
                         if (settingsService.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
                 settingsService.readModeAcceptedBoth.stateFlow.collectWithLifecycle(
@@ -117,7 +120,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     } else {
                         ReadMode.SIZE_TYPE_HORIZONTAL
                     }
-                    readMode =
+                    readModeState.value =
                         if (settingsService.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
                 settingsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
@@ -126,7 +129,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     } else {
                         0
                     }
-                    animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
+                    animationSpecState.value = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
                 settingsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(
                     viewLifecycleOwner
@@ -136,26 +139,26 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     } else {
                         0
                     }
-                    animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
+                    animationSpecState.value = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
             }
             subsampling.apply {
                 settingsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    showTileBounds = it
+                    showTileBoundsState.value = it
                 }
                 settingsService.tileAnimation.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    tileAnimationSpec =
+                    tileAnimationSpecState.value =
                         if (it) TileAnimationSpec.Default else TileAnimationSpec.None
                 }
                 settingsService.pausedContinuousTransformType.stateFlow.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
-                    pausedContinuousTransformType = it.toInt()
+                    pausedContinuousTransformTypeState.value = it.toInt()
                 }
                 settingsService.disabledBackgroundTiles.stateFlow.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
-                    disabledBackgroundTiles = it
+                    disabledBackgroundTilesState.value = it
                 }
             }
         }
@@ -167,7 +170,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewTileMap.setZoomImageView(zoomImageView)
 
         common.zoomImageViewRotate.setOnClickListener {
-            zoomImageView.zoomable.rotate(zoomImageView.zoomable.transform.rotation.roundToInt() + 90)
+            zoomImageView.zoomable.rotate(zoomImageView.zoomable.transformState.value.rotation.roundToInt() + 90)
         }
 
         common.zoomImageViewZoom.apply {
@@ -175,19 +178,16 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 val nextStepScale = zoomImageView.zoomable.getNextStepScale()
                 zoomImageView.zoomable.scale(nextStepScale, animated = true)
             }
-            val resetIcon = {
-                val zoomIn =
-                    zoomImageView.zoomable.getNextStepScale() > zoomImageView.zoomable.transform.scaleX
-                if (zoomIn) {
-                    setImageResource(R.drawable.ic_zoom_in)
-                } else {
-                    setImageResource(R.drawable.ic_zoom_out)
+            zoomImageView.zoomable.transformState
+                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
+                    val zoomIn =
+                        zoomImageView.zoomable.getNextStepScale() > zoomImageView.zoomable.transformState.value.scaleX
+                    if (zoomIn) {
+                        setImageResource(R.drawable.ic_zoom_in)
+                    } else {
+                        setImageResource(R.drawable.ic_zoom_out)
+                    }
                 }
-            }
-            zoomImageView.zoomable.registerOnTransformChangeListener {
-                resetIcon()
-            }
-            resetIcon()
         }
 
         common.zoomImageViewInfo.setOnClickListener {
@@ -200,41 +200,33 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
         common.zoomImageViewLinearScaleSlider.apply {
             var changing = false
-            val updateRange: () -> Unit = {
-                val minScale = zoomImageView.zoomable.minScale
-                val maxScale = zoomImageView.zoomable.maxScale
-                val scale = zoomImageView.zoomable.transform.scaleX
-                if (minScale < maxScale) {
-                    valueFrom = minScale
-                    valueTo = maxScale
-                    val step = (valueTo - valueFrom) / 9
-                    stepSize = step
-                    changing = true
-                    value = valueFrom + ((scale - valueFrom) / step).toInt() * step
-                    changing = false
+            listOf(zoomImageView.zoomable.minScaleState, zoomImageView.zoomable.maxScaleState).merge()
+                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
+                    val minScale = zoomImageView.zoomable.minScaleState.value
+                    val maxScale = zoomImageView.zoomable.maxScaleState.value
+                    val scale = zoomImageView.zoomable.transformState.value.scaleX
+                    if (minScale < maxScale) {
+                        valueFrom = minScale
+                        valueTo = maxScale
+                        val step = (valueTo - valueFrom) / 9
+                        stepSize = step
+                        changing = true
+                        value = valueFrom + ((scale - valueFrom) / step).toInt() * step
+                        changing = false
+                    }
                 }
-            }
-            zoomImageView.zoomable.registerOnResetListener {
-                updateRange()
-            }
-            updateRange()
-
-            val updateValue: () -> Unit = {
-                val minScale = zoomImageView.zoomable.minScale
-                val maxScale = zoomImageView.zoomable.maxScale
-                val scale = zoomImageView.zoomable.transform.scaleX
-                if (!changing && scale in minScale..maxScale && minScale < maxScale) {
-                    val step = (valueTo - valueFrom) / 9
-                    changing = true
-                    value = valueFrom + ((scale - valueFrom) / step).toInt() * step
-                    changing = false
+            zoomImageView.zoomable.transformState
+                .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
+                    val minScale = zoomImageView.zoomable.minScaleState.value
+                    val maxScale = zoomImageView.zoomable.maxScaleState.value
+                    val scale = it.scaleX
+                    if (!changing && scale in minScale..maxScale && minScale < maxScale) {
+                        val step = (valueTo - valueFrom) / 9
+                        changing = true
+                        value = valueFrom + ((scale - valueFrom) / step).toInt() * step
+                        changing = false
+                    }
                 }
-            }
-            zoomImageView.zoomable.registerOnTransformChangeListener {
-                updateValue()
-            }
-
-            updateValue()
             addOnChangeListener { _, value, _ ->
                 if (!changing) {
                     zoomImageView.zoomable.scale(targetScale = value, animated = true)
@@ -243,7 +235,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         }
 
         common.zoomImageViewMoveKeyboard.moveFlow.collectWithLifecycle(viewLifecycleOwner) {
-            val offset = zoomImageView.zoomable.transform.offset
+            val offset = zoomImageView.zoomable.transformState.value.offset
             zoomImageView.zoomable.offset(offset + it * -1f)
         }
 
@@ -251,7 +243,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             common.zoomImageViewExtraLayout.isVisible = false
 
             setOnClickListener {
-                if (zoomImageView.zoomable.minScale >= zoomImageView.zoomable.maxScale) {
+                if (zoomImageView.zoomable.minScaleState.value >= zoomImageView.zoomable.maxScaleState.value) {
                     return@setOnClickListener
                 }
                 if (common.zoomImageViewExtraLayout.isVisible) {
@@ -286,22 +278,22 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
         common.zoomImageViewZoomOut.setOnClickListener {
             zoomImageView.zoomable.scale(
-                targetScale = zoomImageView.zoomable.transform.scaleX - 0.5f,
+                targetScale = zoomImageView.zoomable.transformState.value.scaleX - 0.5f,
                 animated = true
             )
         }
 
         common.zoomImageViewZoomIn.setOnClickListener {
             zoomImageView.zoomable.scale(
-                targetScale = zoomImageView.zoomable.transform.scaleX + 0.5f,
+                targetScale = zoomImageView.zoomable.transformState.value.scaleX + 0.5f,
                 animated = true
             )
         }
 
-        zoomImageView.zoomable.registerOnTransformChangeListener {
-            updateInfo(zoomImageView, common)
-        }
-        updateInfo(zoomImageView, common)
+        zoomImageView.zoomable.transformState
+            .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
+                updateInfo(zoomImageView, common)
+            }
 
         loadData(binding, common, sketchImageUri)
     }
@@ -351,11 +343,11 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 offset: 
                 rotation: 
             """.trimIndent()
-        common.zoomImageViewInfoContentText.text = zoomImageView.zoomable.run {
+        common.zoomImageViewInfoContentText.text = zoomImageView.zoomable.transformState.value.run {
             """
-                ${transform.scale.toShortString()}
-                ${transform.offset.toShortString()}
-                ${transform.rotation.roundToInt()}
+                ${scale.toShortString()}
+                ${offset.toShortString()}
+                ${rotation.roundToInt()}
             """.trimIndent()
         }
     }

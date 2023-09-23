@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
-import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 
 class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragmentBinding>() {
 

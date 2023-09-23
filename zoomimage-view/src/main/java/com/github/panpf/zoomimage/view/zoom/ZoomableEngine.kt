@@ -67,8 +67,11 @@ import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -77,304 +80,159 @@ import kotlin.math.roundToInt
 class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     private val logger: Logger = logger.newLogger(module = "ZoomableEngine")
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var rotation: Int = 0
-    private var onTransformChangeListeners: MutableSet<OnTransformChangeListener>? = null
-    private var onContainerSizeChangeListeners: MutableSet<OnContainerSizeChangeListener>? = null
-    private var onContentSizeChangeListeners: MutableSet<OnContentSizeChangeListener>? = null
-    private var onResetListeners: MutableSet<OnResetListener>? = null
 
-    // TODO Try changing all states to stateFlow
+
     /**
      * The size of the container that holds the content, this is usually the size of the [ZoomImageView] component
      */
-    var containerSize = IntSizeCompat.Zero
-        internal set(value) {
-            if (field != value) {
-                field = value
-                reset("containerSizeChanged")
-                notifyContainerSizeChanged(value)
-            }
-        }
+    val containerSizeState = MutableStateFlow(IntSizeCompat.Zero)
 
     /**
-     * The size of the content, usually Painter.intrinsicSize.round(), setup by the [ZoomImageView] component
+     * The size of the content, this is usually the size of the thumbnail Drawable, setup by the [ZoomImageView] component
      */
-    var contentSize = IntSizeCompat.Zero
-        internal set(value) {
-            if (field != value) {
-                field = value
-                reset("contentSizeChanged")
-                notifyContentSizeChanged(value)
-            }
-        }
+    val contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
 
     /**
      * The original size of the content, it is usually set by [SubsamplingEngine] after parsing the original size of the image
      */
-    var contentOriginSize = IntSizeCompat.Zero
-        internal set(value) {
-            if (field != value) {
-                field = value
-                reset("contentOriginSizeChanged")
-            }
-        }
+    val contentOriginSizeState = MutableStateFlow(IntSizeCompat.Zero)
 
 
     /* *********************************** Configurable properties ****************************** */
-    // TODO Try changing all states to stateFlow
 
     /**
      * The scale of the content, usually set by [ZoomImageView] component
      */
-    var contentScale: ContentScaleCompat = ContentScaleCompat.Fit
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("contentScaleChanged")
-            }
-        }
+    val contentScaleState = MutableStateFlow(ContentScaleCompat.Fit)
 
     /**
      * The alignment of the content, usually set by [ZoomImageView] component
      */
-    var alignment: AlignmentCompat = AlignmentCompat.Center
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("alignmentChanged")
-            }
-        }
+    val alignmentState = MutableStateFlow(AlignmentCompat.Center)
 
     /**
      * Setup whether to enable read mode and configure read mode
      */
-    var readMode: ReadMode? = null
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("readModeChanged")
-            }
-        }
+    val readModeState = MutableStateFlow<ReadMode?>(null)
 
     /**
      * Set up [ScalesCalculator] for custom calculations mediumScale and maxScale
      */
-    var scalesCalculator: ScalesCalculator = ScalesCalculator.Dynamic
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("scalesCalculatorChanged")
-            }
-        }
+    val scalesCalculatorState = MutableStateFlow<ScalesCalculator>(ScalesCalculator.Dynamic)
 
     /**
      * If true, the switchScale() method will cycle between minScale, mediumScale, maxScale,
      * otherwise only cycle between minScale and mediumScale
      */
-    var threeStepScale: Boolean = false
+    val threeStepScaleState = MutableStateFlow(false)
 
     /**
      * If true, when the user zooms to the minimum or maximum zoom factor through a gesture,
      * continuing to zoom will have a rubber band effect, and when the hand is released,
      * it will spring back to the minimum or maximum zoom factor
      */
-    var rubberBandScale: Boolean = true
+    val rubberBandScaleState = MutableStateFlow(true)
 
     /**
      * The animation configuration for the zoom animation
      */
-    var animationSpec: ZoomAnimationSpec = ZoomAnimationSpec.Default
+    val animationSpecState = MutableStateFlow(ZoomAnimationSpec.Default)
 
     /**
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
-    var limitOffsetWithinBaseVisibleRect: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                reset("limitOffsetWithinBaseVisibleRectChanged")
-            }
-        }
+    val limitOffsetWithinBaseVisibleRectState = MutableStateFlow(false)
 
 
     /* *********************************** Information properties ******************************* */
-    // TODO Try changing all states to stateFlow
+
+    private val _baseTransformState = MutableStateFlow(TransformCompat.Origin)
+    private val _userTransformState = MutableStateFlow(TransformCompat.Origin)
+    private val _transformState = MutableStateFlow(TransformCompat.Origin)
+    private val _minScaleState = MutableStateFlow(1.0f)
+    private val _mediumScaleState = MutableStateFlow(1.0f)
+    private val _maxScaleState = MutableStateFlow(1.0f)
+    internal val _continuousTransformTypeState = MutableStateFlow(ContinuousTransformType.NONE)
+    private val _contentBaseDisplayRectState = MutableStateFlow(IntRectCompat.Zero)
+    private val _contentBaseVisibleRectState = MutableStateFlow(IntRectCompat.Zero)
+    private val _contentDisplayRectState = MutableStateFlow(IntRectCompat.Zero)
+    private val _contentVisibleRectState = MutableStateFlow(IntRectCompat.Zero)
+    private val _scrollEdgeState = MutableStateFlow(ScrollEdge.Default)
+    private val _userOffsetBoundsState = MutableStateFlow(IntRectCompat.Zero)
+
     /**
      * Base transformation, include the base scale, offset, rotation,
-     * which is affected by [contentScale], [alignment] properties and [rotate] method
+     * which is affected by [contentScaleState], [alignmentState] properties and [rotate] method
      */
-    var baseTransform = TransformCompat.Origin
-        private set(value) {
-            if (field != value) {
-                field = value
-                _baseTransformFlow.value = value
-            }
-        }
-    private val _baseTransformFlow = MutableStateFlow(TransformCompat.Origin)
-    val baseTransformState: StateFlow<TransformCompat> = _baseTransformFlow
+    val baseTransformState: StateFlow<TransformCompat> = _baseTransformState
 
     /**
      * User transformation, include the user scale, offset, rotation,
-     * which is affected by the user's gesture, [readMode] properties and [scale], [offset], [locate] method
+     * which is affected by the user's gesture, [readModeState] properties and [scale], [offset], [locate] method
      */
-    var userTransform = TransformCompat.Origin
-        private set(value) {
-            if (field != value) {
-                field = value
-                _userTransformFlow.value = value
-            }
-        }
-    private val _userTransformFlow = MutableStateFlow(TransformCompat.Origin)
-    val userTransformState: StateFlow<TransformCompat> = _userTransformFlow
+    val userTransformState: StateFlow<TransformCompat> = _userTransformState
 
     /**
      * Final transformation, include the final scale, offset, rotation,
-     * which is the sum of [baseTransform] and [userTransform]
+     * which is the sum of baseTransform and userTransform
      */
-    var transform = TransformCompat.Origin
-        private set(value) {
-            if (field != value) {
-                field = value
-                _transformFlow.value = value
-            }
-        }
-    private val _transformFlow = MutableStateFlow(TransformCompat.Origin)
-    val transformState: StateFlow<TransformCompat> = _transformFlow
+    val transformState: StateFlow<TransformCompat> = _transformState
 
     /**
      * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
      */
-    var minScale: Float = 1.0f
-        private set(value) {
-            if (field != value) {
-                field = value
-                _minScaleFlow.value = value
-            }
-        }
-    private val _minScaleFlow = MutableStateFlow(1.0f)
-    val minScaleState: StateFlow<Float> = _minScaleFlow
+    val minScaleState: StateFlow<Float> = _minScaleState
 
     /**
      * Medium scale factor, only as a target value for one of when switch scale
      */
-    var mediumScale: Float = 1.0f
-        private set(value) {
-            if (field != value) {
-                field = value
-                _mediumScaleFlow.value = value
-            }
-        }
-    private val _mediumScaleFlow = MutableStateFlow(1.0f)
-    val mediumScaleState: StateFlow<Float> = _mediumScaleFlow
+    val mediumScaleState: StateFlow<Float> = _mediumScaleState
 
     /**
      * Maximum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
      */
-    var maxScale: Float = 1.0f
-        private set(value) {
-            if (field != value) {
-                field = value
-                _maxScaleFlow.value = value
-            }
-        }
-    private val _maxScaleFlow = MutableStateFlow(1.0f)
-    val maxScaleState: StateFlow<Float> = _maxScaleFlow
+    val maxScaleState: StateFlow<Float> = _maxScaleState
 
     /**
      * The type of transformation currently in progress
      *
      * @see ContinuousTransformType
      */
-    var continuousTransformType: Int = ContinuousTransformType.NONE
-        internal set(value) {
-            if (field != value) {
-                field = value
-                _continuousTransformTypeFlow.value = value
-                notifyTransformChanged()
-            }
-        }
-    private val _continuousTransformTypeFlow = MutableStateFlow(ContinuousTransformType.NONE)
-    val continuousTransformTypeState: StateFlow<Int> = _continuousTransformTypeFlow
+    val continuousTransformTypeState: StateFlow<Int> = _continuousTransformTypeState
 
     /**
      * The content region in the container after the baseTransform transformation
      */
-    var contentBaseDisplayRect: IntRectCompat = IntRectCompat.Zero
-        private set(value) {
-            if (field != value) {
-                field = value
-                _contentBaseDisplayRectFlow.value = value
-            }
-        }
-    private val _contentBaseDisplayRectFlow = MutableStateFlow(IntRectCompat.Zero)
-    val contentBaseDisplayRectState: StateFlow<IntRectCompat> = _contentBaseDisplayRectFlow
+    val contentBaseDisplayRectState: StateFlow<IntRectCompat> = _contentBaseDisplayRectState
 
     /**
      * The content is visible region to the user after the baseTransform transformation
      */
-    var contentBaseVisibleRect: IntRectCompat = IntRectCompat.Zero
-        private set(value) {
-            if (field != value) {
-                field = value
-                _contentBaseVisibleRectFlow.value = value
-            }
-        }
-    private val _contentBaseVisibleRectFlow = MutableStateFlow(IntRectCompat.Zero)
-    val contentBaseVisibleRectState: StateFlow<IntRectCompat> = _contentBaseVisibleRectFlow
+    val contentBaseVisibleRectState: StateFlow<IntRectCompat> = _contentBaseVisibleRectState
 
     /**
      * The content region in the container after the final transform transformation
      */
-    var contentDisplayRect: IntRectCompat = IntRectCompat.Zero
-        private set(value) {
-            if (field != value) {
-                field = value
-                _contentDisplayRectFlow.value = value
-            }
-        }
-    private val _contentDisplayRectFlow = MutableStateFlow(IntRectCompat.Zero)
-    val contentDisplayRectState: StateFlow<IntRectCompat> = _contentDisplayRectFlow
+    val contentDisplayRectState: StateFlow<IntRectCompat> = _contentDisplayRectState
 
     /**
      * The content is visible region to the user after the final transform transformation
      */
-    var contentVisibleRect: IntRectCompat = IntRectCompat.Zero
-        private set(value) {
-            if (field != value) {
-                field = value
-                _contentVisibleRectFlow.value = value
-            }
-        }
-    private val _contentVisibleRectFlow = MutableStateFlow(IntRectCompat.Zero)
-    val contentVisibleRectState: StateFlow<IntRectCompat> = _contentVisibleRectFlow
+    val contentVisibleRectState: StateFlow<IntRectCompat> = _contentVisibleRectState
 
     /**
      * Edge state for the current offset
      */
-    var scrollEdge: ScrollEdge = ScrollEdge.Default
-        private set(value) {
-            if (field != value) {
-                field = value
-                _scrollEdgeFlow.value = value
-            }
-        }
-    private val _scrollEdgeFlow = MutableStateFlow(ScrollEdge.Default)
-    val scrollEdgeState: StateFlow<ScrollEdge> = _scrollEdgeFlow
+    val scrollEdgeState: StateFlow<ScrollEdge> = _scrollEdgeState
 
     /**
      * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
      */
-    var userOffsetBounds: IntRectCompat = IntRectCompat.Zero
-        private set(value) {
-            if (field != value) {
-                field = value
-                _userOffsetBoundsFlow.value = value
-            }
-        }
-    private val _userOffsetBoundsFlow = MutableStateFlow(IntRectCompat.Zero)
-    val userOffsetBoundsState: StateFlow<IntRectCompat> = _userOffsetBoundsFlow
+    val userOffsetBoundsState: StateFlow<IntRectCompat> = _userOffsetBoundsState
 
     init {
         view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
@@ -385,28 +243,69 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                 clean()
             }
         })
-        reset("init")
+
+        coroutineScope.launch {
+            containerSizeState.collect {
+                reset("containerSizeChanged")
+            }
+        }
+        coroutineScope.launch {
+            contentSizeState.collect {
+                reset("contentSizeChanged")
+            }
+        }
+        coroutineScope.launch {
+            contentOriginSizeState.collect {
+                reset("contentOriginSizeChanged")
+            }
+        }
+
+        coroutineScope.launch {
+            contentScaleState.collect {
+                reset("contentScaleChanged")
+            }
+        }
+        coroutineScope.launch {
+            alignmentState.collect {
+                reset("alignmentChanged")
+            }
+        }
+        coroutineScope.launch {
+            readModeState.collect {
+                reset("readModeChanged")
+            }
+        }
+        coroutineScope.launch {
+            scalesCalculatorState.collect {
+                reset("scalesCalculatorChanged")
+            }
+        }
+        coroutineScope.launch {
+            limitOffsetWithinBaseVisibleRectState.collect {
+                reset("limitOffsetWithinBaseVisibleRectChanged")
+            }
+        }
     }
 
 
     /* ********************************* Interact with consumers ******************************** */
 
     /**
-     * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
-     * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
+     * Reset [transformState] and [minScaleState], [mediumScaleState], [maxScaleState], automatically called when [containerSizeState],
+     * [contentSizeState], [contentOriginSizeState], [contentScaleState], [alignmentState], [rotate], [scalesCalculatorState], [readModeState] changes
      */
     fun reset(caller: String) {
         requiredMainThread()
         stopAllAnimation("reset:$caller")
 
-        val containerSize = containerSize
-        val contentSize = contentSize
-        val contentOriginSize = contentOriginSize
-        val readMode = readMode
+        val containerSize = containerSizeState.value
+        val contentSize = contentSizeState.value
+        val contentOriginSize = contentOriginSizeState.value
+        val readMode = readModeState.value
         val rotation = rotation
-        val contentScale = contentScale
-        val alignment = alignment
-        val scalesCalculator = scalesCalculator
+        val contentScale = contentScaleState.value
+        val alignment = alignmentState.value
+        val scalesCalculator = scalesCalculatorState.value
 
         val initialZoom = calculateInitialZoom(
             containerSize = containerSize,
@@ -437,17 +336,16 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                     "transform=${transform.toShortString()}"
         }
 
-        minScale = initialZoom.minScale
-        mediumScale = initialZoom.mediumScale
-        maxScale = initialZoom.maxScale
-        baseTransform = initialZoom.baseTransform
+        _minScaleState.value = initialZoom.minScale
+        _mediumScaleState.value = initialZoom.mediumScale
+        _maxScaleState.value = initialZoom.maxScale
+        _baseTransformState.value = initialZoom.baseTransform
         updateUserTransform(
             targetUserTransform = initialZoom.userTransform,
             newContinuousTransformType = null,
             animated = false,
             caller = "reset"
         )
-        notifyReset()
     }
 
     /**
@@ -457,15 +355,15 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      */
     fun scale(
         targetScale: Float,
-        centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
+        centroidContentPoint: IntOffsetCompat = contentVisibleRectState.value.center,
         animated: Boolean = false
     ) {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return
-        val currentBaseTransform = baseTransform
-        val currentUserTransform = userTransform
-        val contentScale = contentScale
-        val alignment = alignment
+        val containerSize = containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        val contentSize = contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        val currentBaseTransform = baseTransformState.value
+        val currentUserTransform = userTransformState.value
+        val contentScale = contentScaleState.value
+        val alignment = alignmentState.value
         val rotation = rotation
 
         stopAllAnimation("scale")
@@ -522,13 +420,13 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     /**
      * Scale to the next step scale and move the focus around [centroidContentPoint], and animation occurs when [animated] is true.
      *
-     * If [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
-     * otherwise it will only cycle between [minScale] and [mediumScale]
+     * If [threeStepScaleState] is true, it will cycle between [minScaleState], [mediumScaleState], [maxScaleState],
+     * otherwise it will only cycle between [minScaleState] and [mediumScaleState]
      *
      * @param centroidContentPoint The focus point of the scale, the default is the center of the visible area of the content
      */
     fun switchScale(
-        centroidContentPoint: IntOffsetCompat = contentVisibleRect.center,
+        centroidContentPoint: IntOffsetCompat = contentVisibleRectState.value.center,
         animated: Boolean = false
     ): Float {
         val nextScale = getNextStepScale()
@@ -547,10 +445,10 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         targetOffset: OffsetCompat,
         animated: Boolean = false
     ) {
-        containerSize.takeIf { it.isNotEmpty() } ?: return
-        contentSize.takeIf { it.isNotEmpty() } ?: return
-        val currentBaseTransform = baseTransform
-        val currentUserTransform = userTransform
+        containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        val currentBaseTransform = baseTransformState.value
+        val currentUserTransform = userTransformState.value
 
         stopAllAnimation("offset")
 
@@ -587,17 +485,16 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      */
     fun locate(
         contentPoint: IntOffsetCompat,
-        targetScale: Float = transform.scaleX,
+        targetScale: Float = transformState.value.scaleX,
         animated: Boolean = false,
     ) {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return
-        val contentSize =
-            contentSize.takeIf { it.isNotEmpty() } ?: return
-        val contentScale = contentScale
-        val alignment = alignment
+        val containerSize = containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        val contentSize = contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        val contentScale = contentScaleState.value
+        val alignment = alignmentState.value
         val rotation = rotation
-        val currentBaseTransform = baseTransform
-        val currentUserTransform = userTransform
+        val currentBaseTransform = baseTransformState.value
+        val currentUserTransform = userTransformState.value
 
         stopAllAnimation("locate")
 
@@ -668,15 +565,15 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     /**
      * Gets the next step scale factor,
-     * and if [threeStepScale] is true, it will cycle between [minScale], [mediumScale], [maxScale],
-     * otherwise it will only loop between [minScale], [mediumScale].
+     * and if [threeStepScaleState] is true, it will cycle between [minScaleState], [mediumScaleState], [maxScaleState],
+     * otherwise it will only loop between [minScaleState], [mediumScaleState].
      */
     fun getNextStepScale(): Float {
-        val minScale = minScale
-        val mediumScale = mediumScale
-        val maxScale = maxScale
-        val threeStepScale = threeStepScale
-        val transform = transform
+        val minScale = minScaleState.value
+        val mediumScale = mediumScaleState.value
+        val maxScale = maxScaleState.value
+        val threeStepScale = threeStepScaleState.value
+        val transform = transformState.value
         val stepScales = if (threeStepScale) {
             floatArrayOf(minScale, mediumScale, maxScale)
         } else {
@@ -693,11 +590,13 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      * Converts touch points on the screen to points on content
      */
     fun touchPointToContentPoint(touchPoint: OffsetCompat): IntOffsetCompat {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
-        val currentUserTransform = userTransform
-        val contentScale = contentScale
-        val alignment = alignment
+        val containerSize =
+            containerSizeState.value.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
+        val contentSize =
+            contentSizeState.value.takeIf { it.isNotEmpty() } ?: return IntOffsetCompat.Zero
+        val currentUserTransform = userTransformState.value
+        val contentScale = contentScaleState.value
+        val alignment = alignmentState.value
         val rotation = rotation
         val contentPoint = touchPointToContentPoint(
             containerSize = containerSize,
@@ -719,67 +618,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      * @param direction positive means scroll to the right or scroll down, negative means scroll to the left or scroll up
      */
     fun canScroll(horizontal: Boolean, direction: Int): Boolean {
-        return canScrollByEdge(scrollEdge, horizontal, direction)
-    }
-
-    /**
-     * Register a [transform] property change listener
-     */
-    fun registerOnTransformChangeListener(listener: OnTransformChangeListener) {
-        this.onTransformChangeListeners = (onTransformChangeListeners ?: LinkedHashSet())
-            .apply { add(listener) }
-    }
-
-    /**
-     * Unregister a [transform] property change listener
-     */
-    fun unregisterOnTransformChangeListener(listener: OnTransformChangeListener): Boolean {
-        return onTransformChangeListeners?.remove(listener) == true
-    }
-
-    /**
-     * Register a [containerSize] property change listener
-     */
-    fun registerOnContainerSizeChangeListener(listener: OnContainerSizeChangeListener) {
-        this.onContainerSizeChangeListeners = (onContainerSizeChangeListeners ?: LinkedHashSet())
-            .apply { add(listener) }
-    }
-
-    /**
-     * Unregister a [containerSize] property change listener
-     */
-    fun unregisterOnContainerSizeChangeListener(listener: OnContainerSizeChangeListener): Boolean {
-        return onContainerSizeChangeListeners?.remove(listener) == true
-    }
-
-    /**
-     * Register a [contentSize] property change listener
-     */
-    fun registerOnContentSizeChangeListener(listener: OnContentSizeChangeListener) {
-        this.onContentSizeChangeListeners = (onContentSizeChangeListeners ?: LinkedHashSet())
-            .apply { add(listener) }
-    }
-
-    /**
-     * Unregister a [contentSize] property change listener
-     */
-    fun unregisterOnContentSizeChangeListener(listener: OnContentSizeChangeListener): Boolean {
-        return onContentSizeChangeListeners?.remove(listener) == true
-    }
-
-    /**
-     * Register reset listener
-     */
-    fun registerOnResetListener(listener: OnResetListener) {
-        this.onResetListeners = (onResetListeners ?: LinkedHashSet())
-            .apply { add(listener) }
-    }
-
-    /**
-     * Unregister reset listener
-     */
-    fun unregisterOnResetListener(listener: OnResetListener): Boolean {
-        return onResetListeners?.remove(listener) == true
+        return canScrollByEdge(scrollEdgeState.value, horizontal, direction)
     }
 
 
@@ -798,9 +637,9 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             logger.d { "stopFlingAnimation:$caller" }
         }
 
-        val lastContinuousTransformType = continuousTransformType
+        val lastContinuousTransformType = _continuousTransformTypeState.value
         if (lastContinuousTransformType != ContinuousTransformType.NONE) {
-            continuousTransformType = ContinuousTransformType.NONE
+            _continuousTransformTypeState.value = ContinuousTransformType.NONE
         }
     }
 
@@ -808,13 +647,13 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      * Roll back to minimum or maximum scaling
      */
     internal fun rollbackScale(lastFocus: OffsetCompat? = null): Boolean {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return false
-        contentSize.takeIf { it.isNotEmpty() } ?: return false
-        val minScale = minScale
-        val maxScale = maxScale
-        val animationSpec = animationSpec
+        val containerSize = containerSizeState.value.takeIf { it.isNotEmpty() } ?: return false
+        contentSizeState.value.takeIf { it.isNotEmpty() } ?: return false
+        val minScale = minScaleState.value
+        val maxScale = maxScaleState.value
+        val animationSpec = animationSpecState.value
 
-        val currentScale = transform.scaleX
+        val currentScale = transformState.value.scaleX
         val targetScale = when {
             currentScale.format(2) > maxScale.format(2) -> maxScale
             currentScale.format(2) < minScale.format(2) -> minScale
@@ -842,7 +681,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                         stop = endScale,
                         fraction = value
                     )
-                    val nowScale = this@ZoomableEngine.transform.scaleX
+                    val nowScale = this@ZoomableEngine.transformState.value.scaleX
                     val addScale = frameScale / nowScale
                     transform(
                         centroid = centroid,
@@ -852,12 +691,11 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                     )
                 },
                 onEnd = {
-                    continuousTransformType = ContinuousTransformType.NONE
-                    notifyTransformChanged()
+                    _continuousTransformTypeState.value = ContinuousTransformType.NONE
                 }
             )
 
-            continuousTransformType = ContinuousTransformType.SCALE
+            _continuousTransformTypeState.value = ContinuousTransformType.SCALE
             lastScaleAnimatable?.start()
         }
         return targetScale != null
@@ -869,13 +707,13 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         zoomChange: Float,
         rotationChange: Float
     ) {
-        containerSize.takeIf { it.isNotEmpty() } ?: return
-        contentSize.takeIf { it.isNotEmpty() } ?: return
-        val currentUserTransform = userTransform
+        containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        val currentUserTransform = userTransformState.value
 
-        val targetScale = transform.scaleX * zoomChange
-        val targetUserScale = targetScale / baseTransform.scaleX
-        val limitedTargetUserScale = if (rubberBandScale) {
+        val targetScale = transformState.value.scaleX * zoomChange
+        val targetUserScale = targetScale / baseTransformState.value.scaleX
+        val limitedTargetUserScale = if (rubberBandScaleState.value) {
             limitUserScaleWithRubberBand(targetUserScale)
         } else {
             limitUserScale(targetUserScale)
@@ -921,9 +759,9 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     }
 
     internal fun drag(panChange: OffsetCompat) {
-        containerSize.takeIf { it.isNotEmpty() } ?: return
-        contentSize.takeIf { it.isNotEmpty() } ?: return
-        val currentUserTransform = userTransform
+        containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
+        val currentUserTransform = userTransformState.value
 
         val currentUserScale = currentUserTransform.scale.scaleX
         val currentUserOffset = currentUserTransform.offset
@@ -950,12 +788,12 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     }
 
     internal fun fling(velocity: OffsetCompat): Boolean {
-        val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return false
-        val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return false
-        val contentScale = contentScale
-        val alignment = alignment
+        val containerSize = containerSizeState.value.takeIf { it.isNotEmpty() } ?: return false
+        val contentSize = contentSizeState.value.takeIf { it.isNotEmpty() } ?: return false
+        val contentScale = contentScaleState.value
+        val alignment = alignmentState.value
         val rotation = rotation
-        val currentUserTransform = userTransform
+        val currentUserTransform = userTransformState.value
 
         stopAllAnimation("fling")
 
@@ -967,7 +805,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             alignment = alignment,
             rotation = rotation,
             userScale = currentUserTransform.scaleX,
-            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
         ).let {
             Rect(
                 it.left.roundToInt(),
@@ -989,7 +827,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             velocity = velocity.round(),
             onUpdateValue = { value ->
                 val targetUserOffset =
-                    this@ZoomableEngine.userTransform.copy(offset = value.toOffset())
+                    this@ZoomableEngine.userTransformState.value.copy(offset = value.toOffset())
                 updateUserTransform(
                     targetUserTransform = targetUserOffset,
                     newContinuousTransformType = null,
@@ -998,26 +836,25 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                 )
             },
             onEnd = {
-                continuousTransformType = ContinuousTransformType.NONE
-                notifyTransformChanged()
+                _continuousTransformTypeState.value = ContinuousTransformType.NONE
             }
         )
-        continuousTransformType = ContinuousTransformType.FLING
+        _continuousTransformTypeState.value = ContinuousTransformType.FLING
         lastFlingAnimatable?.start()
         return true
     }
 
     private fun limitUserScale(targetUserScale: Float): Float {
-        val minUserScale = minScale / baseTransform.scaleX
-        val maxUserScale = maxScale / baseTransform.scaleX
+        val minUserScale = minScaleState.value / baseTransformState.value.scaleX
+        val maxUserScale = maxScaleState.value / baseTransformState.value.scaleX
         return targetUserScale.coerceIn(minimumValue = minUserScale, maximumValue = maxUserScale)
     }
 
     private fun limitUserScaleWithRubberBand(targetUserScale: Float): Float {
-        val minUserScale = minScale / baseTransform.scaleX
-        val maxUserScale = maxScale / baseTransform.scaleX
+        val minUserScale = minScaleState.value / baseTransformState.value.scaleX
+        val maxUserScale = maxScaleState.value / baseTransformState.value.scaleX
         return limitScaleWithRubberBand(
-            currentScale = userTransform.scaleX,
+            currentScale = userTransformState.value.scaleX,
             targetScale = targetUserScale,
             minScale = minUserScale,
             maxScale = maxUserScale
@@ -1026,13 +863,13 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     private fun limitUserOffset(userOffset: OffsetCompat, userScale: Float): OffsetCompat {
         val userOffsetBounds = calculateUserOffsetBounds(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = alignment,
+            containerSize = containerSizeState.value,
+            contentSize = contentSizeState.value,
+            contentScale = contentScaleState.value,
+            alignment = alignmentState.value,
             rotation = rotation,
             userScale = userScale,
-            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
         ).round().toRect()      // round() makes sense
         return userOffset.limitTo(userOffsetBounds)
     }
@@ -1044,13 +881,13 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         caller: String
     ) {
         if (animated) {
-            val currentUserTransform = userTransform
+            val currentUserTransform = userTransformState.value
             lastScaleAnimatable = FloatAnimatable(
                 view = view,
                 startValue = 0f,
                 endValue = 1f,
-                durationMillis = animationSpec.durationMillis,
-                interpolator = animationSpec.interpolator,
+                durationMillis = animationSpecState.value.durationMillis,
+                interpolator = animationSpecState.value.interpolator,
                 onUpdateValue = { value ->
                     val userTransform = lerp(
                         start = currentUserTransform,
@@ -1060,103 +897,76 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                     logger.d {
                         "$caller. animated running. fraction=$value, transform=${userTransform.toShortString()}"
                     }
-                    this@ZoomableEngine.userTransform = userTransform
+                    this@ZoomableEngine._userTransformState.value = userTransform
                     updateTransform()
                 },
                 onEnd = {
                     if (newContinuousTransformType != null) {
-                        continuousTransformType = ContinuousTransformType.NONE
+                        _continuousTransformTypeState.value = ContinuousTransformType.NONE
                     }
-                    notifyTransformChanged()
                 }
             )
             if (newContinuousTransformType != null) {
-                continuousTransformType = newContinuousTransformType
+                _continuousTransformTypeState.value = newContinuousTransformType
             }
             lastScaleAnimatable?.start()
         } else {
-            this.userTransform = targetUserTransform
+            this._userTransformState.value = targetUserTransform
             updateTransform()
         }
     }
 
     private fun updateTransform() {
-        transform = baseTransform + userTransform
+        val userTransform = userTransformState.value
+        _transformState.value = baseTransformState.value + userTransform
 
-        contentBaseDisplayRect = calculateContentBaseDisplayRect(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = alignment,
+        _contentBaseDisplayRectState.value = calculateContentBaseDisplayRect(
+            containerSize = containerSizeState.value,
+            contentSize = contentSizeState.value,
+            contentScale = contentScaleState.value,
+            alignment = alignmentState.value,
             rotation = rotation,
         ).round()
-        contentBaseVisibleRect = calculateContentBaseVisibleRect(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = alignment,
+        _contentBaseVisibleRectState.value = calculateContentBaseVisibleRect(
+            containerSize = containerSizeState.value,
+            contentSize = contentSizeState.value,
+            contentScale = contentScaleState.value,
+            alignment = alignmentState.value,
             rotation = rotation,
         ).round()
-        contentDisplayRect = calculateContentDisplayRect(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = alignment,
+        _contentDisplayRectState.value = calculateContentDisplayRect(
+            containerSize = containerSizeState.value,
+            contentSize = contentSizeState.value,
+            contentScale = contentScaleState.value,
+            alignment = alignmentState.value,
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
         ).round()
-        contentVisibleRect = calculateContentVisibleRect(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = alignment,
+        _contentVisibleRectState.value = calculateContentVisibleRect(
+            containerSize = containerSizeState.value,
+            contentSize = contentSizeState.value,
+            contentScale = contentScaleState.value,
+            alignment = alignmentState.value,
             rotation = rotation,
             userScale = userTransform.scaleX,
             userOffset = userTransform.offset,
         ).round()
 
         val userOffsetBounds = calculateUserOffsetBounds(
-            containerSize = containerSize,
-            contentSize = contentSize,
-            contentScale = contentScale,
-            alignment = alignment,
+            containerSize = containerSizeState.value,
+            contentSize = contentSizeState.value,
+            contentScale = contentScaleState.value,
+            alignment = alignmentState.value,
             rotation = rotation,
             userScale = userTransform.scaleX,
-            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
         )
-        this.userOffsetBounds = userOffsetBounds.round()
+        this._userOffsetBoundsState.value = userOffsetBounds.round()
 
-        scrollEdge = calculateScrollEdge(
+        _scrollEdgeState.value = calculateScrollEdge(
             userOffsetBounds = userOffsetBounds,
             userOffset = userTransform.offset,
         )
-
-        notifyTransformChanged()
-    }
-
-    private fun notifyTransformChanged() {
-        val transform = this@ZoomableEngine.transform
-        onTransformChangeListeners?.forEach { listener ->
-            listener.onTransformChanged(transform)
-        }
-    }
-
-    private fun notifyContainerSizeChanged(containerSize: IntSizeCompat) {
-        onContainerSizeChangeListeners?.forEach {
-            it.onContainerSizeChanged(containerSize)
-        }
-    }
-
-    private fun notifyContentSizeChanged(contentSize: IntSizeCompat) {
-        onContentSizeChangeListeners?.forEach {
-            it.onContentSizeChanged(contentSize)
-        }
-    }
-
-    private fun notifyReset() {
-        onResetListeners?.forEach {
-            it.onReset()
-        }
     }
 }

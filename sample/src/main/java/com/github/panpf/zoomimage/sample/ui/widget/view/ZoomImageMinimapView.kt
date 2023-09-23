@@ -39,6 +39,11 @@ import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
@@ -53,9 +58,12 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         strokeWidth = 1f.dp2pxF
     }
     private val strokeHalfWidth = tileBoundsPaint.strokeWidth / 2
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private val mapVisibleRect = Rect()
     private val tileDrawRect = Rect()
     private var zoomView: ZoomImageView? = null
+    private var transformStateCollectJob: Job? = null
+    private var subsamplingStateCollectJob: Job? = null
 
     private val detector = GestureDetector(context, object : SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
@@ -69,14 +77,15 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val viewWidth = width.takeIf { it > 0 } ?: return
         val viewHeight = height.takeIf { it > 0 } ?: return
         val zoomView = zoomView ?: return
-        val contentSize = zoomView.zoomable.contentSize.takeIf { !it.isEmpty() } ?: return
+        val contentSize =
+            zoomView.zoomable.contentSizeState.value.takeIf { !it.isEmpty() } ?: return
 
-        val contentOriginSize = zoomView.zoomable.contentOriginSize
+        val contentOriginSize = zoomView.zoomable.contentOriginSizeState.value
         if (contentOriginSize.isNotEmpty()) {
             val widthTargetScale = contentOriginSize.width.toFloat() / viewWidth
             val heightTargetScale = contentOriginSize.height.toFloat() / viewHeight
-            val imageLoadRect = zoomView.subsampling.imageLoadRect
-            zoomView.subsampling.foregroundTiles.forEach { tileSnapshot ->
+            val imageLoadRect = zoomView.subsampling.imageLoadRectState.value
+            zoomView.subsampling.foregroundTilesState.value.forEach { tileSnapshot ->
                 val load = tileSnapshot.srcRect.overlaps(imageLoadRect)
                 val tileSrcRect = tileSnapshot.srcRect
                 val tileDrawRect = tileDrawRect.apply {
@@ -99,7 +108,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         }
 
         val contentVisibleRect =
-            zoomView.zoomable.contentVisibleRect.takeIf { !it.isEmpty } ?: return
+            zoomView.zoomable.contentVisibleRectState.value.takeIf { !it.isEmpty } ?: return
         val mapVisibleRect = mapVisibleRect.apply {
             val widthScaled = contentSize.width / viewWidth.toFloat()
             val heightScaled = contentSize.height / viewHeight.toFloat()
@@ -143,11 +152,21 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                 }
             }
         }
-        zoomView.zoomable.registerOnTransformChangeListener {
-            invalidate()
+        transformStateCollectJob?.cancel()
+        transformStateCollectJob = coroutineScope.launch {
+            zoomView.zoomable.transformState.collect {
+                invalidate()
+            }
         }
-        zoomView.subsampling.registerOnTileChangeListener {
-            invalidate()
+
+        subsamplingStateCollectJob?.cancel()
+        subsamplingStateCollectJob = coroutineScope.launch {
+            listOf(
+                zoomView.subsampling.readyState,
+                zoomView.subsampling.foregroundTilesState,
+            ).merge().collect {
+                invalidate()
+            }
         }
     }
 
@@ -202,8 +221,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
 
         zoomView.zoomable.locate(
             contentPoint = IntOffsetCompat(x = realX, y = realY),
-            targetScale = zoomView.zoomable.transform.scaleX
-                .coerceAtLeast(zoomView.zoomable.mediumScale),
+            targetScale = zoomView.zoomable.transformState.value.scaleX
+                .coerceAtLeast(zoomView.zoomable.mediumScaleState.value),
             animated = true
         )
     }

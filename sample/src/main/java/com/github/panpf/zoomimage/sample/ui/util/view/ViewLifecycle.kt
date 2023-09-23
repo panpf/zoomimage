@@ -1,21 +1,21 @@
-package com.github.panpf.zoomimage.view.internal
+package com.github.panpf.zoomimage.sample.ui.util.view
 
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import com.github.panpf.zoomimage.view.R
+import com.github.panpf.zoomimage.sample.R
 
 internal val View.lifecycleOwner: LifecycleOwner
     get() {
         synchronized(this) {
-            val tag = getTag(R.id.zoomimage_view_tagId_viewLifecycle)
+            val tag = getTag(R.id.tagId_viewLifecycle)
             if (tag != null && tag is ViewLifecycleOwner) {
                 return tag
             } else {
                 val viewLifecycleOwner = ViewLifecycleOwner(this)
-                setTag(R.id.zoomimage_view_tagId_viewLifecycle, viewLifecycleOwner)
+                setTag(R.id.tagId_viewLifecycle, viewLifecycleOwner)
                 return viewLifecycleOwner
             }
         }

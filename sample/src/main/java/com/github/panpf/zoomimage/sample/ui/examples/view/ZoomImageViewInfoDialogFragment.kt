@@ -54,22 +54,26 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
             val zoomable = zoomImageView.zoomable
             val subsampling = zoomImageView.subsampling
 
-            val imageInfo = subsampling.imageInfo
+            val imageInfo = subsampling.imageInfoState.value
+            val transform = zoomable.transformState.value
+            val baseTransform = zoomable.baseTransformState.value
+            val userTransform = zoomable.userTransformState.value
+
             val baseInfo = """
-                containerSize: ${zoomable.containerSize.let { "${it.width}x${it.height}" }}
-                contentSize: ${zoomable.contentSize.let { "${it.width}x${it.height}" }}
+                containerSize: ${zoomable.containerSizeState.value.let { "${it.width}x${it.height}" }}
+                contentSize: ${zoomable.contentSizeState.value.let { "${it.width}x${it.height}" }}
                 contentOriginSize: ${imageInfo?.let { "${it.width}x${it.height}" }}
                 exifOrientation: ${imageInfo?.exifOrientation?.let { exifOrientationName(it) }}
-                rotation: ${zoomable.transform.rotation.roundToInt()}
+                rotation: ${transform.rotation.roundToInt()}
             """.trimIndent()
 
-            val scaleFormatted = zoomable.transform.scale.toShortString()
-            val baseScaleFormatted = zoomable.baseTransform.scale.toShortString()
-            val userScaleFormatted = zoomable.userTransform.scale.toShortString()
+            val scaleFormatted = transform.scale.toShortString()
+            val baseScaleFormatted = baseTransform.scale.toShortString()
+            val userScaleFormatted = userTransform.scale.toShortString()
             val scales = floatArrayOf(
-                zoomable.minScale,
-                zoomable.mediumScale,
-                zoomable.maxScale
+                zoomable.minScaleState.value,
+                zoomable.mediumScaleState.value,
+                zoomable.maxScaleState.value,
             ).joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
 
             val scaleInfo = """
@@ -80,36 +84,36 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
             """.trimIndent()
 
             val offsetInfo = """
-                offset: ${zoomable.transform.offset.round().toShortString()}
-                baseOffset: ${zoomable.baseTransform.offset.round().toShortString()}
-                userOffset: ${zoomable.userTransform.offset.round().toShortString()}
-                userOffsetBounds: ${zoomable.userOffsetBounds.toShortString()}
-                edge: ${zoomable.scrollEdge.toShortString()}
+                offset: ${transform.offset.round().toShortString()}
+                baseOffset: ${baseTransform.offset.round().toShortString()}
+                userOffset: ${userTransform.offset.round().toShortString()}
+                userOffsetBounds: ${zoomable.userOffsetBoundsState.value.toShortString()}
+                edge: ${zoomable.scrollEdgeState.value.toShortString()}
             """.trimIndent()
 
             val displayAndVisibleInfo = """
-                contentBaseDisplay: ${zoomable.contentBaseDisplayRect.toShortString()}
-                contentBaseVisible: ${zoomable.contentBaseVisibleRect.toShortString()}
-                contentDisplay: ${zoomable.contentDisplayRect.toShortString()}
-                contentVisible: ${zoomable.contentVisibleRect.toShortString()}
+                contentBaseDisplay: ${zoomable.contentBaseDisplayRectState.value.toShortString()}
+                contentBaseVisible: ${zoomable.contentBaseVisibleRectState.value.toShortString()}
+                contentDisplay: ${zoomable.contentDisplayRectState.value.toShortString()}
+                contentVisible: ${zoomable.contentVisibleRectState.value.toShortString()}
             """.trimIndent()
 
-            val foregroundTiles = subsampling.foregroundTiles
+            val foregroundTiles = subsampling.foregroundTilesState.value
             val loadedTileCount = foregroundTiles.count { it.bitmap != null }
             val loadedTileBytes =
                 foregroundTiles.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
-            val backgroundTiles = subsampling.backgroundTiles
+            val backgroundTiles = subsampling.backgroundTilesState.value
             val backgroundTilesLoadedCount = backgroundTiles.count { it.bitmap != null }
             val backgroundTilesLoadedBytes =
                 backgroundTiles.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
-            val tileGridSizeMapString = subsampling.tileGridSizeMap.entries
+            val tileGridSizeMapString = subsampling.tileGridSizeMapState.value.entries
                 .joinToString(prefix = "[", postfix = "]", separator = ", ") {
                     "${it.key}:${it.value.toShortString()}"
                 }
             val tilesInfo = """
                 tileGridSizeMap：$tileGridSizeMapString
-                sampleSize：${subsampling.sampleSize}
-                imageLoadRect：${subsampling.imageLoadRect.toShortString()}
+                sampleSize：${subsampling.sampleSizeState.value}
+                imageLoadRect：${subsampling.imageLoadRectState.value.toShortString()}
                 foreground：size=${foregroundTiles.size}, load=$loadedTileCount, bytes=$loadedTileBytes
                 background：size=${backgroundTiles.size}, load=$backgroundTilesLoadedCount, bytes=$backgroundTilesLoadedBytes
             """.trimIndent()

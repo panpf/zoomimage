@@ -58,12 +58,12 @@ class TouchHelper(view: View, zoomableEngine: ZoomableEngine) {
 //                    zoomChange = 1f,
 //                    rotationChange = 0f,
 //                )
-                zoomableEngine.continuousTransformType = ContinuousTransformType.GESTURE
+                zoomableEngine._continuousTransformTypeState.value = ContinuousTransformType.GESTURE
                 zoomableEngine.drag(panChange)
             },
             onFlingCallback = { velocity: OffsetCompat ->
                 if (!zoomableEngine.fling(velocity)) {
-                    zoomableEngine.continuousTransformType = ContinuousTransformType.NONE
+                    zoomableEngine._continuousTransformTypeState.value = ContinuousTransformType.NONE
                 }
             },
             onScaleCallback = { scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat ->
@@ -75,12 +75,12 @@ class TouchHelper(view: View, zoomableEngine: ZoomableEngine) {
                 )
             },
             onScaleBeginCallback = {
-                zoomableEngine.continuousTransformType = ContinuousTransformType.GESTURE
+                zoomableEngine._continuousTransformTypeState.value = ContinuousTransformType.GESTURE
                 true
             },
             onScaleEndCallback = {
                 if (!zoomableEngine.rollbackScale(it)) {
-                    zoomableEngine.continuousTransformType = ContinuousTransformType.NONE
+                    zoomableEngine._continuousTransformTypeState.value = ContinuousTransformType.NONE
                 }
             },
             onActionDownCallback = {
