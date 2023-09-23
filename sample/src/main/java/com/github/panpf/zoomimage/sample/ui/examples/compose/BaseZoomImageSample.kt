@@ -51,6 +51,7 @@ fun BaseZoomImageSample(
     val readModeEnabled by settingsService.readModeEnabled.stateFlow.collectAsState()
     val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.stateFlow.collectAsState()
     val scrollBarEnabled by settingsService.scrollBarEnabled.stateFlow.collectAsState()
+    val logLevelName by settingsService.logLevel.stateFlow.collectAsState()
     val animateScale by settingsService.animateScale.stateFlow.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.stateFlow.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.stateFlow.collectAsState()
@@ -91,7 +92,7 @@ fun BaseZoomImageSample(
             if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
         }
     }
-    val logLevel by remember { mutableIntStateOf(if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO) }
+    val logLevel by remember { derivedStateOf { Logger.level(logLevelName) } }
     val zoomState = rememberZoomState().apply {
         LaunchedEffect(logLevel) {
             logger.level = logLevel

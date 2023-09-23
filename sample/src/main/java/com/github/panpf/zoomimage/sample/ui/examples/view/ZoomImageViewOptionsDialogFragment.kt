@@ -24,6 +24,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.RecyclerFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
@@ -191,7 +192,7 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             )
             add(
                 SwitchMenuFlow(
-                    title = "Read Mode Accepted Both",
+                    title = "Read Mode - Both",
                     data = settingsService.readModeAcceptedBoth,
                 )
             )
@@ -261,6 +262,26 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 SwitchMenuFlow(
                     title = "Scroll Bar",
                     data = settingsService.scrollBarEnabled,
+                )
+            )
+
+            add(MenuDivider())
+
+            add(
+                DropdownMenu(
+                    title = "Log Level",
+                    values = listOf(
+                        Logger.VERBOSE,
+                        Logger.DEBUG,
+                        Logger.INFO,
+                        Logger.WARN,
+                        Logger.ERROR,
+                        Logger.ASSERT,
+                    ).map { Logger.levelName(it) },
+                    getValue = { settingsService.logLevel.value },
+                    onSelected = { _, value ->
+                        settingsService.logLevel.value = value
+                    }
                 )
             )
         } else {

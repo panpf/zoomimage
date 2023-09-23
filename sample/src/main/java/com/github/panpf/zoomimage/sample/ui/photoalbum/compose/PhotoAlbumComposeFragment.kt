@@ -42,7 +42,7 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
     private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
 
     override fun getTitle(): String {
-        return "Photo Album (Compose)"
+        return "Compose"
     }
 
     override fun getSubtitle(): String {

@@ -50,7 +50,7 @@ class PhotoAlbumViewFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBin
         savedInstanceState: Bundle?
     ) {
         toolbar.apply {
-            title = "Photo album"
+            title = "View"
             subtitle = zoomViewType.title
         }
 

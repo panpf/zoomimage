@@ -42,7 +42,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
+import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.SettingsService
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
@@ -75,13 +77,17 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.readModeEnabled, settingsService.readModeEnabled)
         BindStateAndFlow(state.readModeAcceptedBoth, settingsService.readModeAcceptedBoth)
 
-        BindStateAndFlow(state.pausedContinuousTransformType, settingsService.pausedContinuousTransformType)
+        BindStateAndFlow(
+            state.pausedContinuousTransformType,
+            settingsService.pausedContinuousTransformType
+        )
         BindStateAndFlow(state.disabledBackgroundTiles, settingsService.disabledBackgroundTiles)
         BindStateAndFlow(state.ignoreExifOrientation, settingsService.ignoreExifOrientation)
         BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
         BindStateAndFlow(state.tileAnimation, settingsService.tileAnimation)
 
         BindStateAndFlow(state.scrollBarEnabled, settingsService.scrollBarEnabled)
+        BindStateAndFlow(state.logLevel, settingsService.logLevel)
     }
 
     return state
@@ -120,6 +126,7 @@ class ZoomImageOptionsState {
     val ignoreExifOrientation = MutableStateFlow(false)
 
     val scrollBarEnabled = MutableStateFlow(true)
+    val logLevel = MutableStateFlow(SettingsService.defaultLogLevel())
 }
 
 @Composable
@@ -152,6 +159,7 @@ fun ZoomImageOptionsDialog(
     val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
 
     val scrollBarEnabled by state.scrollBarEnabled.collectAsState()
+    val logLevel by state.logLevel.collectAsState()
 
     val menuCount = 16
     Dialog(onDismissRequest) {
@@ -266,7 +274,7 @@ fun ZoomImageOptionsDialog(
                     state.readModeEnabled.value = !state.readModeEnabled.value
 //                    onDismissRequest()
                 }
-                SwitchMenu("Read Mode Accepted Both", readModeAcceptedBoth) {
+                SwitchMenu("Read Mode - Both", readModeAcceptedBoth) {
                     state.readModeAcceptedBoth.value = !state.readModeAcceptedBoth.value
 //                    onDismissRequest()
                 }
@@ -305,7 +313,8 @@ fun ZoomImageOptionsDialog(
                         }.fold(0) { acc, continuousTransformType ->
                             acc or continuousTransformType
                         }
-                    state.pausedContinuousTransformType.value = newContinuousTransformType.toString()
+                    state.pausedContinuousTransformType.value =
+                        newContinuousTransformType.toString()
 //                    onDismissRequest()
                 }
                 SwitchMenu("Disabled Background Tiles", disabledBackgroundTiles) {
@@ -329,6 +338,23 @@ fun ZoomImageOptionsDialog(
 
                 SwitchMenu("Scroll Bar", scrollBarEnabled) {
                     state.scrollBarEnabled.value = !state.scrollBarEnabled.value
+//                    onDismissRequest()
+                }
+
+                Divider(Modifier.padding(horizontal = 20.dp))
+
+                val logLevelNames = remember {
+                    listOf(
+                        Logger.VERBOSE,
+                        Logger.DEBUG,
+                        Logger.INFO,
+                        Logger.WARN,
+                        Logger.ERROR,
+                        Logger.ASSERT,
+                    ).map { Logger.levelName(it) }
+                }
+                MyDropdownMenu("Log Level", logLevel, logLevelNames) {
+                    state.logLevel.value = it
 //                    onDismissRequest()
                 }
             }

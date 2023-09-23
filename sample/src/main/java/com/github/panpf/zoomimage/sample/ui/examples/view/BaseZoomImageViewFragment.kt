@@ -58,7 +58,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
         zoomImageView.apply {
-            logger.level = if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO
+            settingsService.logLevel.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                logger.level = Logger.level(it)
+            }
             settingsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 scrollBar = if (it) ScrollBarSpec.Default else null
             }

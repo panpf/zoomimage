@@ -51,7 +51,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun buildData(): List<Any> {
         return listOf(
-            ListSeparator("PhotoAlbum (Compose)"),
+            ListSeparator("Compose"),
             Link(
                 title = "ZoomImage（My）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumComposeFragment(
@@ -93,7 +93,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
 
-            ListSeparator("PhotoAlbum (View)"),
+            ListSeparator("View"),
             Link(
                 title = "ZoomImageView（My）",
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.ZoomImageView.name),
