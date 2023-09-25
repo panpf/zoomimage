@@ -23,14 +23,17 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.Logger
@@ -46,12 +49,14 @@ fun Modifier.zoomable(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = composed {
+    val context = LocalContext.current
     val density = LocalDensity.current
     val updatedOnTap by rememberUpdatedState(newValue = onTap)
     val updatedOnLongPress by rememberUpdatedState(newValue = onLongPress)
     val coroutineScope = rememberCoroutineScope()
     val navigationBarHeightState = remember { NavigationBarHeightState() }
     val navigationBarsInsets = WindowInsets.navigationBarsIgnoringVisibility
+    var longPressedPoint by remember { mutableStateOf<Offset?>(null) }
 
     this
         .onSizeChanged {
@@ -91,6 +96,9 @@ fun Modifier.zoomable(
         .pointerInput(Unit) {
             detectTapGestures(
                 onPress = {
+                    if (zoomable.longPressSlideScaleSpec != null) {
+                        longPressedPoint = null
+                    }
                     zoomable.stopAllAnimation("onPress")
                 },
                 onDoubleTap = { touchPoint ->
@@ -100,6 +108,11 @@ fun Modifier.zoomable(
                     }
                 },
                 onLongPress = {
+                    val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
+                    if (longPressSlideScaleSpec != null) {
+                        longPressedPoint = it
+                        longPressSlideScaleSpec.hapticFeedback.perform(context)
+                    }
                     updatedOnLongPress?.invoke(it)
                 },
                 onTap = {
@@ -111,17 +124,30 @@ fun Modifier.zoomable(
             detectPowerfulTransformGestures(
                 panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
-                    zoomable.canScroll(horizontal = horizontal, direction = direction)
+                    longPressedPoint != null
+                            || zoomable.canScroll(horizontal = horizontal, direction = direction)
                 },
-                onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float ->
+                onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float, pointCount ->
                     coroutineScope.launch {
                         zoomable.continuousTransformType = ContinuousTransformType.GESTURE
-                        zoomable.gestureTransform(
-                            centroid = centroid,
-                            panChange = pan,
-                            zoomChange = zoom,
-                            rotationChange = rotation
-                        )
+                        val longPressedPoint1 = longPressedPoint
+                        val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
+                        if (longPressSlideScaleSpec != null && pointCount <= 1 && longPressedPoint1 != null) {
+                            val scale = longPressSlideScaleSpec.panToScaleTransformer.transform(pan.y)
+                            zoomable.gestureTransform(
+                                centroid = longPressedPoint1,
+                                panChange = Offset.Zero,
+                                zoomChange = scale,
+                                rotationChange = 0f
+                            )
+                        } else {
+                            zoomable.gestureTransform(
+                                centroid = centroid,
+                                panChange = pan,
+                                zoomChange = zoom,
+                                rotationChange = rotation
+                            )
+                        }
                     }
                 },
                 onEnd = { centroid, velocity ->

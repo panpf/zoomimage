@@ -114,6 +114,7 @@ class ZoomImageOptionsState {
     val scalesCalculator = MutableStateFlow("Dynamic")
     val scalesMultiple = MutableStateFlow(ScalesCalculator.Multiple.toString())
     val limitOffsetWithinBaseVisibleRect = MutableStateFlow(false)
+    // todo longPressSlideScale
 
     val readModeEnabled = MutableStateFlow(true)
     val readModeAcceptedBoth = MutableStateFlow(true)

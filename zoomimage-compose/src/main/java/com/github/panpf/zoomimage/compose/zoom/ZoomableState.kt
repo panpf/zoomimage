@@ -69,6 +69,7 @@ import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
@@ -210,6 +211,11 @@ class ZoomableState(logger: Logger) {
      * it will spring back to the minimum or maximum zoom factor
      */
     var rubberBandScale: Boolean by mutableStateOf(true)
+
+    /**
+     * Long press and slide up and down to scale the configuration of the image
+     */
+    var longPressSlideScaleSpec: LongPressSlideScaleSpec? by mutableStateOf(null)
 
     /**
      * The animation configuration for the zoom animation
@@ -535,6 +541,7 @@ class ZoomableState(logger: Logger) {
             caller = "offset"
         )
     }
+
     /**
      * Pan the [contentPoint] on content to the center of the screen while zooming to [targetScale], and there will be an animation when [animated] is true
      *

@@ -137,6 +137,8 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      */
     val rubberBandScaleState = MutableStateFlow(true)
 
+    // todo longPressSlideScale
+
     /**
      * The animation configuration for the zoom animation
      */
