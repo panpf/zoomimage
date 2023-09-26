@@ -24,21 +24,18 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnGestureListener
 
-class UnifiedGestureDetector(
+internal class UnifiedGestureDetector(
     view: View,
+    onActionDownCallback: ((ev: MotionEvent) -> Unit)? = null,
+    onActionUpCallback: ((ev: MotionEvent) -> Unit)? = null,
+    onActionCancelCallback: ((ev: MotionEvent) -> Unit)? = null,
     onDownCallback: (e: MotionEvent) -> Boolean,
     onSingleTapConfirmedCallback: (e: MotionEvent) -> Boolean,
     onLongPressCallback: (e: MotionEvent) -> Unit,
     onDoubleTapCallback: (e: MotionEvent) -> Boolean,
-    onDragCallback: (panChange: OffsetCompat) -> Unit,
-    onFlingCallback: (velocity: OffsetCompat) -> Unit,
-    onScaleBeginCallback: () -> Boolean,
-    onScaleCallback: (scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat) -> Unit,
-    onScaleEndCallback: (lastFocus: OffsetCompat?) -> Unit,
-    onActionDownCallback: (ev: MotionEvent) -> Unit,
-    onActionUpCallback: (ev: MotionEvent) -> Unit,
-    onActionCancelCallback: (ev: MotionEvent) -> Unit,
     canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
+    onGestureCallback: (scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int) -> Unit,
+    onEndCallback: (focus: OffsetCompat, velocity: OffsetCompat) -> Unit,
 ) {
 
     private val tapGestureDetector =
@@ -63,22 +60,25 @@ class UnifiedGestureDetector(
 
     private val scaleDragGestureDetector =
         ScaleDragGestureDetector(view, canDrag, object : OnGestureListener {
-            override fun onDrag(panChange: OffsetCompat) = onDragCallback(panChange)
+            override fun onGesture(
+                scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int
+            ) = onGestureCallback(scaleFactor, focus, panChange, pointCount)
 
-            override fun onFling(velocity: OffsetCompat) = onFlingCallback(velocity)
-
-            override fun onScaleBegin(): Boolean = onScaleBeginCallback()
-
-            override fun onScale(
-                scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat
-            ) = onScaleCallback(scaleFactor, focus, panChange)
-
-            override fun onScaleEnd(lastFocus: OffsetCompat?) = onScaleEndCallback(lastFocus)
+            override fun onEnd(focus: OffsetCompat, velocity: OffsetCompat) =
+                onEndCallback(focus, velocity)
         }).apply {
             onActionListener = object : OnActionListener {
-                override fun onActionDown(ev: MotionEvent) = onActionDownCallback(ev)
-                override fun onActionUp(ev: MotionEvent) = onActionUpCallback(ev)
-                override fun onActionCancel(ev: MotionEvent) = onActionCancelCallback(ev)
+                override fun onActionDown(ev: MotionEvent) {
+                    onActionDownCallback?.invoke(ev)
+                }
+
+                override fun onActionUp(ev: MotionEvent) {
+                    onActionUpCallback?.invoke(ev)
+                }
+
+                override fun onActionCancel(ev: MotionEvent) {
+                    onActionCancelCallback?.invoke(ev)
+                }
             }
         }
 

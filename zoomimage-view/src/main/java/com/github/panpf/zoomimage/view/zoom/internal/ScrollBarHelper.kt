@@ -28,7 +28,7 @@ import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlin.math.roundToInt
 
-class ScrollBarHelper(
+internal class ScrollBarHelper(
     private val view: View,
     private val scrollBarSpec: ScrollBarSpec,
     private val zoomableEngine: ZoomableEngine,

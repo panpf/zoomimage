@@ -31,7 +31,15 @@ data class LongPressSlideScaleSpec(
 ) {
 
     companion object {
+        /**
+         * Default configuration, no haptic feedback
+         */
         val Default = LongPressSlideScaleSpec()
+
+        /**
+         * Vibration feedback
+         */
+        val Vibration = LongPressSlideScaleSpec(HapticFeedback.Vibration)
     }
 
     interface HapticFeedback {
@@ -69,7 +77,7 @@ data class LongPressSlideScaleSpec(
         }
 
         override fun perform(context: Context) {
-            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            @Suppress("DEPRECATION") val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 context.getSystemService(Vibrator::class.java)
             } else {
                 context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -79,6 +87,7 @@ data class LongPressSlideScaleSpec(
                     VibrationEffect.createOneShot(milliseconds, amplitude)
                 vibrator.vibrate(vibrationEffect)
             } else {
+                @Suppress("DEPRECATION")
                 vibrator.vibrate(milliseconds)
             }
         }
@@ -88,10 +97,6 @@ data class LongPressSlideScaleSpec(
 
         companion object {
             val Default = DefaultPanToScaleTransformer()
-
-            fun default(reference: Int = DefaultPanToScaleTransformer.DefaultReference): DefaultPanToScaleTransformer {
-                return DefaultPanToScaleTransformer(reference)
-            }
         }
 
         fun transform(panY: Float): Float

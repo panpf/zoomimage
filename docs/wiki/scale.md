@@ -14,7 +14,7 @@
 ZoomImage supports multiple zoom methods such as double-click zoom, gesture zoom, scale() and other
 zoom methods to scale the image.
 <br>-----------</br>
-ZoomImage 支持双击缩放，手势缩放，scale() 等多种方式来缩放图像。
+ZoomImage 支持双击缩放、双指捏合缩放、单指长按滑动缩放、scale() 等多种方式来缩放图像，在连续缩放时还支持阻尼和动画效果。
 
 ### minScale, mediumScale, maxScale
 
@@ -220,26 +220,32 @@ val state: ZoomState by rememberZoomState()
 state.zoomable.getNextStepScale()
 ```
 
-### Gesture Scale/手势缩放
+### Long Press Slide Scale/单指长按滑动缩放
 
-ZoomImage scales the image when it detects a pinch-pinch or stretch gesture and limits the scale
-factor between minScale and maxScale
+ZoomImage supports one-finger long press up and down to zoom the image, and after turning on, one
+finger long press on the screen triggers the long press behavior and then swipe up and down to zoom
+the image. This feature is turned off by default and you can pass The longPressSlideScaleSpec
+property turns it on
 <br>-----------</br>
-ZoomImage 在检测到双指捏合或撑开手势时会缩放图像，并且会限制缩放倍数在 minScale 和 maxScale 之间
-
-If the minScale or maxScale is exceeded when the gesture scale, the ZoomImage will have a rubber
-band-like damping effect, and will rebound when released
-minScale or maxScale, if this effect is not needed, you can set rubberBandScale to false
-<br>-----------</br>
-在手势缩放时如果超过了 minScale 或 maxScale，ZoomImage 会有类似橡皮筋的阻尼效果，松手后会回弹到
-minScale 或 maxScale，如果不需要这个效果，可以将 rubberBandScale 设置为 false
+ZoomImage 支持单指长按上下滑动缩放图像，开启后单指按住屏幕触发长按后上下滑动即可缩放图像。此功能默认关闭，你可以通过
+longPressSlideScaleSpec 属性开启它
 
 example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.zoomable.rubberBandScale = false
+// Turned, but no haptic feedback after the long-press behavior triggers
+// 开启，但长按行为触发后没有触觉反馈
+state.zoomable.longPressSlideScaleSpec = LongPressSlideScaleSpec.Default
+
+// Turned, and there will be vibration feedback after the long-press behavior is triggered
+// 开启，并且长按行为触发后会有震动反馈
+state.zoomable.longPressSlideScaleSpec = LongPressSlideScaleSpec.Vibration
+
+// Closed
+// 关闭
+state.zoomable.longPressSlideScaleSpec = null
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -308,6 +314,31 @@ Button(
 ) {
     Text(text = "scale - 0.2")
 }
+```
+
+### Scale damping/缩放阻尼
+
+ZoomImage will limit the scale factor between minScale and maxScale, and if it exceeds this
+range, it will have a rubber band-like damping effect, which will spring back when released
+minScale or maxScale, this feature is enabled by default, and you can turn it off via the
+rubberBandScale property
+<br>-----------</br>
+ZoomImage 会将缩放倍数限制在 minScale 和 maxScale 之间，如果超过了这个范围就会有类似橡皮筋的阻尼效果，松手后会回弹到
+minScale 或 maxScale，此功能默认开启，你可通过 rubberBandScale 属性关闭它
+
+example/示例：
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+
+state.zoomable.rubberBandScale = false
+
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
 ```
 
 ### Zoom Animation/缩放动画

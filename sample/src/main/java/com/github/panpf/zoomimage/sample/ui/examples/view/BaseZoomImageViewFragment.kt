@@ -26,7 +26,6 @@ import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
@@ -40,6 +39,7 @@ import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.merge
@@ -73,6 +73,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 }
                 settingsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScaleState.value = it
+                }
+                settingsService.longPressSlideScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                    longPressSlideScaleSpecState.value =
+                        if (it) LongPressSlideScaleSpec.Vibration else null
                 }
                 settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScaleState.value = it
@@ -131,7 +135,8 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     } else {
                         0
                     }
-                    animationSpecState.value = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
+                    animationSpecState.value =
+                        ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
                 settingsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(
                     viewLifecycleOwner
@@ -141,7 +146,8 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     } else {
                         0
                     }
-                    animationSpecState.value = ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
+                    animationSpecState.value =
+                        ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
             }
             subsampling.apply {
@@ -202,7 +208,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
         common.zoomImageViewLinearScaleSlider.apply {
             var changing = false
-            listOf(zoomImageView.zoomable.minScaleState, zoomImageView.zoomable.maxScaleState).merge()
+            listOf(
+                zoomImageView.zoomable.minScaleState,
+                zoomImageView.zoomable.maxScaleState
+            ).merge()
                 .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
                     val minScale = zoomImageView.zoomable.minScaleState.value
                     val maxScale = zoomImageView.zoomable.maxScaleState.value

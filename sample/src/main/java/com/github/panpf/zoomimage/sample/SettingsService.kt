@@ -53,6 +53,9 @@ class SettingsService(val context: Context) {
     val threeStepScale by lazy {
         BooleanMmkvData(mmkv, "threeStepScale", false)
     }
+    val longPressSlideScale by lazy {
+        BooleanMmkvData(mmkv, "longPressSlideScale", false)
+    }
     val slowerScaleAnimation by lazy {
         BooleanMmkvData(mmkv, "slowerScaleAnimation", false)
     }

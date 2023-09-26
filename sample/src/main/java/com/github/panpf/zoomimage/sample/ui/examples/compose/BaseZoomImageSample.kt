@@ -9,7 +9,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,12 +21,12 @@ import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
-import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 
 @Composable
@@ -47,6 +46,7 @@ fun BaseZoomImageSample(
     val contentScaleName by settingsService.contentScale.stateFlow.collectAsState()
     val alignmentName by settingsService.alignment.stateFlow.collectAsState()
     val threeStepScale by settingsService.threeStepScale.stateFlow.collectAsState()
+    val longPressSlideScale by settingsService.longPressSlideScale.stateFlow.collectAsState()
     val rubberBandScale by settingsService.rubberBandScale.stateFlow.collectAsState()
     val readModeEnabled by settingsService.readModeEnabled.stateFlow.collectAsState()
     val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.stateFlow.collectAsState()
@@ -99,6 +99,10 @@ fun BaseZoomImageSample(
         }
         LaunchedEffect(threeStepScale) {
             zoomable.threeStepScale = threeStepScale
+        }
+        LaunchedEffect(longPressSlideScale) {
+            zoomable.longPressSlideScaleSpec = if (longPressSlideScale)
+                LongPressSlideScaleSpec.Vibration else null
         }
         LaunchedEffect(rubberBandScale) {
             zoomable.rubberBandScale = rubberBandScale

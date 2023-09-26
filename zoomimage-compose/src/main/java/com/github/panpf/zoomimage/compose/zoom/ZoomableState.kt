@@ -213,7 +213,7 @@ class ZoomableState(logger: Logger) {
     var rubberBandScale: Boolean by mutableStateOf(true)
 
     /**
-     * Long press and slide up and down to scale the configuration of the image
+     * Long press and slide up and down to scale the configuration
      */
     var longPressSlideScaleSpec: LongPressSlideScaleSpec? by mutableStateOf(null)
 

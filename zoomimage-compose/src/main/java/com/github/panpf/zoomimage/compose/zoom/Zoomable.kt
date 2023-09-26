@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,7 +57,8 @@ fun Modifier.zoomable(
     val coroutineScope = rememberCoroutineScope()
     val navigationBarHeightState = remember { NavigationBarHeightState() }
     val navigationBarsInsets = WindowInsets.navigationBarsIgnoringVisibility
-    var longPressedPoint by remember { mutableStateOf<Offset?>(null) }
+    var lastLongPressPoint by remember { mutableStateOf<Offset?>(null) }
+    var lastPointCount by remember { mutableIntStateOf(0) }
 
     this
         .onSizeChanged {
@@ -97,9 +99,21 @@ fun Modifier.zoomable(
             detectTapGestures(
                 onPress = {
                     if (zoomable.longPressSlideScaleSpec != null) {
-                        longPressedPoint = null
+                        lastLongPressPoint = null
+                        lastPointCount = 0
                     }
                     zoomable.stopAllAnimation("onPress")
+                },
+                onTap = {
+                    updatedOnTap?.invoke(it)
+                },
+                onLongPress = {
+                    val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
+                    if (longPressSlideScaleSpec != null) {
+                        lastLongPressPoint = it
+                        longPressSlideScaleSpec.hapticFeedback.perform(context)
+                    }
+                    updatedOnLongPress?.invoke(it)
                 },
                 onDoubleTap = { touchPoint ->
                     coroutineScope.launch {
@@ -107,35 +121,27 @@ fun Modifier.zoomable(
                         zoomable.switchScale(centroidContentPoint, animated = true)
                     }
                 },
-                onLongPress = {
-                    val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
-                    if (longPressSlideScaleSpec != null) {
-                        longPressedPoint = it
-                        longPressSlideScaleSpec.hapticFeedback.perform(context)
-                    }
-                    updatedOnLongPress?.invoke(it)
-                },
-                onTap = {
-                    updatedOnTap?.invoke(it)
-                },
             )
         }
         .pointerInput(Unit) {
             detectPowerfulTransformGestures(
                 panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
-                    longPressedPoint != null
-                            || zoomable.canScroll(horizontal = horizontal, direction = direction)
+                    val longPressPoint = lastLongPressPoint
+                    longPressPoint != null || zoomable.canScroll(horizontal, direction)
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float, pointCount ->
                     coroutineScope.launch {
                         zoomable.continuousTransformType = ContinuousTransformType.GESTURE
-                        val longPressedPoint1 = longPressedPoint
+
+                        lastPointCount = pointCount
+                        val longPressPoint = lastLongPressPoint
                         val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
-                        if (longPressSlideScaleSpec != null && pointCount <= 1 && longPressedPoint1 != null) {
-                            val scale = longPressSlideScaleSpec.panToScaleTransformer.transform(pan.y)
+                        if (pointCount == 1 && longPressPoint != null && longPressSlideScaleSpec != null) {
+                            val scale =
+                                longPressSlideScaleSpec.panToScaleTransformer.transform(pan.y)
                             zoomable.gestureTransform(
-                                centroid = longPressedPoint1,
+                                centroid = longPressPoint,
                                 panChange = Offset.Zero,
                                 zoomChange = scale,
                                 rotationChange = 0f
@@ -152,7 +158,12 @@ fun Modifier.zoomable(
                 },
                 onEnd = { centroid, velocity ->
                     coroutineScope.launch {
-                        if (!zoomable.rollbackScale(centroid)) {
+                        val pointCount = lastPointCount
+                        val longPressedPoint = lastLongPressPoint
+                        val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
+                        if (pointCount == 1 && longPressedPoint != null && longPressSlideScaleSpec != null) {
+                            zoomable.rollbackScale(longPressedPoint)
+                        } else if (!zoomable.rollbackScale(centroid)) {
                             if (!zoomable.fling(velocity, density)) {
                                 zoomable.continuousTransformType = ContinuousTransformType.NONE
                             }

@@ -24,73 +24,86 @@ import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 
-class TouchHelper(view: View, zoomableEngine: ZoomableEngine) {
+internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
 
     private val gestureDetector: UnifiedGestureDetector
     var onViewTapListener: OnViewTapListener? = null
     var onViewLongPressListener: OnViewLongPressListener? = null
+    private var lastLongPressPoint: OffsetCompat? = null
+    private var lastPointCount: Int = 0
 
     init {
         gestureDetector = UnifiedGestureDetector(
             view = view,
+            onActionDownCallback = {
+                if (zoomable.longPressSlideScaleSpecState.value != null) {
+                    lastLongPressPoint = null
+                    lastPointCount = 0
+                }
+                zoomable.stopAllAnimation("onActionDown")
+            },
             onDownCallback = { true },
             onSingleTapConfirmedCallback = { e: MotionEvent ->
                 onViewTapListener?.onViewTap(view, e.x, e.y)
                 onViewTapListener != null || view.performClick()
             },
             onLongPressCallback = { e: MotionEvent ->
+                val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpecState.value
+                if (longPressSlideScaleSpec != null) {
+                    lastLongPressPoint = OffsetCompat(x = e.x, y = e.y)
+                    longPressSlideScaleSpec.hapticFeedback.perform(view.context)
+                }
                 onViewLongPressListener?.onViewLongPress(view, e.x, e.y)
                 onViewLongPressListener != null || view.performLongClick()
             },
             onDoubleTapCallback = { e: MotionEvent ->
                 val touchPoint = OffsetCompat(x = e.x, y = e.y)
-                val centroidContentPoint = zoomableEngine.touchPointToContentPoint(touchPoint)
-                zoomableEngine.switchScale(
-                    centroidContentPoint = centroidContentPoint,
-                    animated = true
-                )
+                val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
+                zoomable.switchScale(centroidContentPoint, animated = true)
                 true
             },
-            onDragCallback = { panChange: OffsetCompat ->
-//                zoomableEngine.transform(
-//                    centroid = zoomableEngine.containerSize.toSize().center,
-//                    panChange = panChange,
-//                    zoomChange = 1f,
-//                    rotationChange = 0f,
-//                )
-                zoomableEngine._continuousTransformTypeState.value = ContinuousTransformType.GESTURE
-                zoomableEngine.drag(panChange)
-            },
-            onFlingCallback = { velocity: OffsetCompat ->
-                if (!zoomableEngine.fling(velocity)) {
-                    zoomableEngine._continuousTransformTypeState.value = ContinuousTransformType.NONE
-                }
-            },
-            onScaleCallback = { scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat ->
-                zoomableEngine.transform(
-                    centroid = focus,
-                    panChange = panChange,
-                    zoomChange = scaleFactor,
-                    rotationChange = 0f,
-                )
-            },
-            onScaleBeginCallback = {
-                zoomableEngine._continuousTransformTypeState.value = ContinuousTransformType.GESTURE
-                true
-            },
-            onScaleEndCallback = {
-                if (!zoomableEngine.rollbackScale(it)) {
-                    zoomableEngine._continuousTransformTypeState.value = ContinuousTransformType.NONE
-                }
-            },
-            onActionDownCallback = {
-                zoomableEngine.stopAllAnimation("onActionDown")
-            },
-            onActionUpCallback = { },
-            onActionCancelCallback = { },
             canDrag = { horizontal: Boolean, direction: Int ->
-                zoomableEngine.canScroll(horizontal, direction)
-            }
+                val longPressPoint = lastLongPressPoint
+                longPressPoint != null || zoomable.canScroll(horizontal, direction)
+            },
+            onGestureCallback = { scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int ->
+                zoomable._continuousTransformTypeState.value = ContinuousTransformType.GESTURE
+
+                lastPointCount = pointCount
+                val longPressPoint = lastLongPressPoint
+                val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpecState.value
+                if (pointCount == 1 && longPressPoint != null && longPressSlideScaleSpec != null) {
+                    val scale = longPressSlideScaleSpec.panToScaleTransformer.transform(panChange.y)
+                    zoomable.gestureTransform(
+                        centroid = longPressPoint,
+                        panChange = OffsetCompat.Zero,
+                        zoomChange = scale,
+                        rotationChange = 0f
+                    )
+                } else {
+                    zoomable.gestureTransform(
+                        centroid = focus,
+                        panChange = panChange,
+                        zoomChange = scaleFactor,
+                        rotationChange = 0f,
+                    )
+                }
+            },
+            onEndCallback = { focus, velocity ->
+                val pointCount = lastPointCount
+                val longPressPoint = lastLongPressPoint
+                val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpecState.value
+                if (pointCount == 1 && longPressPoint != null && longPressSlideScaleSpec != null) {
+                    zoomable.rollbackScale(longPressPoint)
+                } else {
+                    if (!zoomable.rollbackScale(focus)) {
+                        if (!zoomable.fling(velocity)) {
+                            zoomable._continuousTransformTypeState.value =
+                                ContinuousTransformType.NONE
+                        }
+                    }
+                }
+            },
         )
     }
 
