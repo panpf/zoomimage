@@ -95,7 +95,7 @@ fun Modifier.zoomable(
                 }
             }
         }
-        .pointerInput(Unit) {
+        .pointerInput(zoomable) {
             detectTapGestures(
                 onPress = {
                     if (zoomable.longPressSlideScaleSpec != null) {
@@ -123,7 +123,7 @@ fun Modifier.zoomable(
                 },
             )
         }
-        .pointerInput(Unit) {
+        .pointerInput(zoomable) {
             detectPowerfulTransformGestures(
                 panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
