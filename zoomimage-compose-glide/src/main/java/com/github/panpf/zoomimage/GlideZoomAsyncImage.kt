@@ -191,14 +191,15 @@ fun GlideZoomAsyncImage(
         transition = transition,
         requestBuilderTransform = { requestBuilder ->
             requestBuilderTransform(requestBuilder)
-            requestBuilder.addListener(
-                ResetListener(
-                    context = context,
-                    state = state,
-                    requestBuilder = requestBuilder,
-                    model = model,
+                .centerInside()
+                .addListener(
+                    ResetListener(
+                        context = context,
+                        state = state,
+                        requestBuilder = requestBuilder,
+                        model = model,
+                    )
                 )
-            )
         },
     )
 }
