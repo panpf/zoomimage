@@ -44,16 +44,17 @@ fun getDiskCache(glide: Glide): DiskCache? {
     }
 }
 
-fun SingleRequest<*>.getModel(): Any? {
-    return try {
-        this.javaClass.getDeclaredField("model").apply {
-            isAccessible = true
-        }.get(this)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        return null
+val SingleRequest<*>.internalModel: Any?
+    get() {
+        return try {
+            this.javaClass.getDeclaredField("model").apply {
+                isAccessible = true
+            }.get(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
-}
 
 internal fun newEngineKey(key: String): EngineKey {
     val options = RequestOptions()
@@ -87,7 +88,7 @@ internal fun createGlideEngine(glide: Glide): GlideEngine? {
     }
 }
 
-val SingleRequest<*>.requestOptionsCompat: BaseRequestOptions<*>
+val SingleRequest<*>.internalRequestOptions: BaseRequestOptions<*>
     get() = this.javaClass.getDeclaredField("requestOptions")
         .apply { isAccessible = true }
         .get(this) as BaseRequestOptions<*>

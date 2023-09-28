@@ -21,8 +21,8 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.getModel
-import com.bumptech.glide.load.engine.requestOptionsCompat
+import com.bumptech.glide.load.engine.internalModel
+import com.bumptech.glide.load.engine.internalRequestOptions
 import com.bumptech.glide.request.SingleRequest
 import com.github.panpf.zoomimage.glide.internal.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.internal.GlideTileMemoryCache
@@ -86,7 +86,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 return@post
             }
             _subsamplingEngine?.disableMemoryCacheState?.value = isDisableMemoryCache(request)
-            val model = request.getModel()
+            val model = request.internalModel
             val imageSource = newGlideImageSource(context, model)
             if (imageSource == null) {
                 logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
@@ -96,7 +96,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
     }
 
     private fun isDisableMemoryCache(request: SingleRequest<*>): Boolean {
-        val requestOptions = request.requestOptionsCompat
+        val requestOptions = request.internalRequestOptions
         return !requestOptions.isMemoryCacheable
     }
 }
