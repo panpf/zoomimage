@@ -52,6 +52,8 @@ internal class ScaleDragGestureDetector(
 
     private var isDragging = false
     private var canDragged = true
+    private var lastFocus: OffsetCompat? = null
+    private var pointCount = 0
 
     var onActionListener: OnActionListener? = null
 
@@ -60,35 +62,36 @@ internal class ScaleDragGestureDetector(
         minimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
         touchSlop = configuration.scaledTouchSlop.toFloat()
         scaleDetector = ScaleGestureDetector(view.context, object : OnScaleGestureListener {
-            private var lastFocus: OffsetCompat? = null
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 val scaleFactor =
                     detector.scaleFactor.takeIf { !isNaN(it) && !isInfinite(it) } ?: return false
                 if (scaleFactor >= 0) {
-                    val lastFocus = this.lastFocus ?: OffsetCompat(detector.focusX, detector.focusY)
-                    onGestureListener.onScale(
+                    val lastFocus = this@ScaleDragGestureDetector.lastFocus ?: OffsetCompat(
+                        detector.focusX,
+                        detector.focusY
+                    )
+                    onGestureListener.onGesture(
                         scaleFactor = scaleFactor,
                         focus = OffsetCompat(detector.focusX, detector.focusY),
                         panChange = OffsetCompat(
                             detector.focusX - lastFocus.x,
                             detector.focusY - lastFocus.y
                         ),
+                        pointCount
                     )
-                    this.lastFocus = OffsetCompat(detector.focusX, detector.focusY)
+                    this@ScaleDragGestureDetector.lastFocus =
+                        OffsetCompat(detector.focusX, detector.focusY)
                 }
                 return true
             }
 
             override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
                 view.parent.requestDisallowInterceptTouchEvent(true)
-                lastFocus = OffsetCompat(detector.focusX, detector.focusY)
-                onGestureListener.onScaleBegin()
                 return true
             }
 
             override fun onScaleEnd(detector: ScaleGestureDetector) {
-                onGestureListener.onScaleEnd(lastFocus)
-                lastFocus = null
+
             }
         })
     }
@@ -107,8 +110,8 @@ internal class ScaleDragGestureDetector(
 
     fun onTouchEvent(ev: MotionEvent): Boolean {
         try {
-            scaleDetector.onTouchEvent(ev)
             processTouchEvent(ev)
+            scaleDetector.onTouchEvent(ev)
         } catch (e: IllegalArgumentException) {
             // Fix for support lib bug, happening when onDestroy is
         }
@@ -116,6 +119,7 @@ internal class ScaleDragGestureDetector(
     }
 
     private fun processTouchEvent(ev: MotionEvent) {
+        pointCount = ev.pointerCount
         when (ev.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
                 view.parent.requestDisallowInterceptTouchEvent(true)
@@ -127,6 +131,7 @@ internal class ScaleDragGestureDetector(
                 // Avoid changing from two fingers to one finger, lastTouchX and lastTouchY mutations, causing the image to pan instantly
                 firstTouch = null
                 onActionListener?.onActionDown(ev)
+                lastFocus = null
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -157,7 +162,13 @@ internal class ScaleDragGestureDetector(
                         }
                         if (isDragging && canDragged) {
                             val panChange = touch - lastTouch
-                            onGestureListener.onDrag(panChange)
+                            lastFocus = touch
+                            onGestureListener.onGesture(
+                                scaleFactor = 1f,
+                                focus = touch,
+                                panChange = panChange,
+                                pointCount
+                            )
                             velocityTracker?.addMovement(ev)
                         }
                     } else {
@@ -189,30 +200,37 @@ internal class ScaleDragGestureDetector(
                 velocityTracker?.recycle()
                 velocityTracker = null
                 onActionListener?.onActionCancel(ev)
+
+                val focus = lastFocus
+                if (focus != null) {
+                    onGestureListener.onEnd(focus, OffsetCompat.Zero)
+                }
             }
 
             MotionEvent.ACTION_UP -> {
                 activePointerId = INVALID_POINTER_ID
-                if (isDragging) {
-                    velocityTracker?.let { velocityTracker ->
 
-                        // Compute velocity within the last 1000ms
-                        velocityTracker.addMovement(ev)
-                        velocityTracker.computeCurrentVelocity(1000)
-                        val vX = velocityTracker.xVelocity
-                        val vY = velocityTracker.yVelocity
-
-                        // If the velocity is greater than minVelocity, call listener
-                        if (max(abs(vX), abs(vY)) >= minimumVelocity) {
-                            onGestureListener.onFling(OffsetCompat(vX, vY))
-                        }
-                    }
-                }
+                val velocity = velocityTracker?.takeIf { isDragging }?.let { velocityTracker ->
+                    // Compute velocity within the last 1000ms
+                    velocityTracker.addMovement(ev)
+                    velocityTracker.computeCurrentVelocity(1000)
+                    OffsetCompat(
+                        x = velocityTracker.xVelocity,
+                        y = velocityTracker.yVelocity,
+                    )
+                }?.takeIf {
+                    max(abs(it.x), abs(it.y)) >= minimumVelocity
+                } ?: OffsetCompat.Zero
 
                 // Recycle Velocity Tracker
                 velocityTracker?.recycle()
                 velocityTracker = null
                 onActionListener?.onActionUp(ev)
+
+                val focus = lastFocus
+                if (focus != null) {
+                    onGestureListener.onEnd(focus, velocity)
+                }
             }
         }
 
@@ -227,10 +245,11 @@ internal class ScaleDragGestureDetector(
     }
 
     interface OnGestureListener {
-        fun onDrag(panChange: OffsetCompat)
-        fun onFling(velocity: OffsetCompat)
-        fun onScale(scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat)
-        fun onScaleBegin(): Boolean
-        fun onScaleEnd(lastFocus: OffsetCompat?)
+
+        fun onGesture(
+            scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int
+        )
+
+        fun onEnd(focus: OffsetCompat, velocity: OffsetCompat)
     }
 }

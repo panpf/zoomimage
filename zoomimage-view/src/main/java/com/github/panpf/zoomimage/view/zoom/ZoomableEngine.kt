@@ -49,6 +49,7 @@ import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
@@ -136,6 +137,11 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      * it will spring back to the minimum or maximum zoom factor
      */
     val rubberBandScaleState = MutableStateFlow(true)
+
+    /**
+     * Long press and slide up and down to scale the configuration
+     */
+    val longPressSlideScaleSpecState = MutableStateFlow<LongPressSlideScaleSpec?>(null)
 
     /**
      * The animation configuration for the zoom animation
@@ -646,7 +652,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     /**
      * Roll back to minimum or maximum scaling
      */
-    internal fun rollbackScale(lastFocus: OffsetCompat? = null): Boolean {
+    internal fun rollbackScale(focus: OffsetCompat? = null): Boolean {
         val containerSize = containerSizeState.value.takeIf { it.isNotEmpty() } ?: return false
         contentSizeState.value.takeIf { it.isNotEmpty() } ?: return false
         val minScale = minScaleState.value
@@ -664,11 +670,11 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             val endScale = targetScale
             logger.d {
                 "rollbackScale. " +
-                        "lastFocus=${lastFocus?.toShortString()}. " +
+                        "focus=${focus?.toShortString()}. " +
                         "startScale=${startScale.format(4)}, " +
                         "endScale=${endScale.format(4)}"
             }
-            val centroid = lastFocus ?: containerSize.toSize().center
+            val centroid = focus ?: containerSize.toSize().center
             lastScaleAnimatable = FloatAnimatable(
                 view = view,
                 startValue = 0f,
@@ -683,7 +689,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                     )
                     val nowScale = this@ZoomableEngine.transformState.value.scaleX
                     val addScale = frameScale / nowScale
-                    transform(
+                    gestureTransform(
                         centroid = centroid,
                         panChange = OffsetCompat.Zero,
                         zoomChange = addScale,
@@ -701,7 +707,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         return targetScale != null
     }
 
-    internal fun transform(
+    internal fun gestureTransform(
         centroid: OffsetCompat,
         panChange: OffsetCompat,
         zoomChange: Float,

@@ -140,6 +140,12 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             )
             add(
                 SwitchMenuFlow(
+                    title = "Long Press Slide Scale",
+                    data = settingsService.longPressSlideScale,
+                )
+            )
+            add(
+                SwitchMenuFlow(
                     title = "Slower Scale Animation",
                     data = settingsService.slowerScaleAnimation,
                 )

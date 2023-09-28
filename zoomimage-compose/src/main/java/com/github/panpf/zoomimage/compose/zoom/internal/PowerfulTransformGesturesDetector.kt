@@ -54,7 +54,7 @@ import kotlin.math.abs
 internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
     panZoomLock: Boolean = false,
     canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
-    onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float) -> Unit,
+    onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float, pointCount: Int) -> Unit,
     onEnd: (centroid: Offset, velocity: Velocity) -> Unit = { _, _ -> },
 ) {
     awaitEachGesture {
@@ -110,7 +110,9 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
                     ) {
                         velocityTracker.addPointerInputChange(event.changes.first())
                         lastCentroid = centroid
-                        onGesture(centroid, panChange, zoomChange, effectiveRotation)
+                        onGesture(
+                            centroid, panChange, zoomChange, effectiveRotation, event.changes.size
+                        )
                     }
                     event.changes.fastForEach {
                         if (it.positionChanged()) {

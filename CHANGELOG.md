@@ -1,3 +1,10 @@
+## 1.0.0-beta02
+
+zoom:
+
+fix: Fixed a bug where ZoomImage could not be scaled after switching in Pager
+new: Supports one finger scale function
+
 ## 1.0.0-beta01
 
 zoom:
