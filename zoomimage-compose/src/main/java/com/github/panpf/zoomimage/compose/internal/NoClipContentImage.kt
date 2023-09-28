@@ -36,7 +36,7 @@ import androidx.compose.ui.semantics.semantics
  * parameter can be provided to adjust sizing or draw additional content (ex. background)
  *
  * **NOTE** a Painter might not have an intrinsic size, so if no LayoutModifier is provided
- * as part of the Modifier chain this might size the [NoClipImage] composable to a width and height
+ * as part of the Modifier chain this might size the [NoClipContentImage] composable to a width and height
  * of zero and will not draw any content. This can happen for Painter implementations that
  * always attempt to fill the bounds like [ColorPainter]
  *
@@ -58,7 +58,7 @@ import androidx.compose.ui.semantics.semantics
  * @param colorFilter Optional colorFilter to apply for the [Painter] when it is rendered onscreen
  */
 @Composable
-fun NoClipImage(
+fun NoClipContentImage(
     painter: Painter,
     contentDescription: String?,
     modifier: Modifier = Modifier,

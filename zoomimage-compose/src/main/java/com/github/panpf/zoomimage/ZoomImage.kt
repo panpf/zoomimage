@@ -35,7 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.internal.NoClipImage
+import com.github.panpf.zoomimage.compose.internal.NoClipContentImage
 import com.github.panpf.zoomimage.compose.internal.round
 import com.github.panpf.zoomimage.compose.internal.toPx
 import com.github.panpf.zoomimage.compose.rememberZoomState
@@ -152,7 +152,7 @@ fun ZoomImage(
                 transformOrigin = transform.rotationOrigin
             }
             .subsampling(state.logger, state.subsampling)
-        NoClipImage(
+        NoClipContentImage(
             painter = painter,
             contentDescription = contentDescription,
             modifier = modifier1,

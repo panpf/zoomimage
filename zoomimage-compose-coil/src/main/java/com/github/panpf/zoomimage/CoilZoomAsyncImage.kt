@@ -46,7 +46,7 @@ import coil.request.NullRequestDataException
 import com.github.panpf.zoomimage.coil.internal.CoilImageSource
 import com.github.panpf.zoomimage.coil.internal.CoilTileMemoryCache
 import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.internal.NoClipImage
+import com.github.panpf.zoomimage.compose.internal.NoClipContentImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
@@ -239,7 +239,7 @@ fun CoilZoomAsyncImage(
         contentScale = contentScale,
         filterQuality = filterQuality
     )
-    NoClipImage(
+    NoClipContentImage(
         painter = painter,
         contentDescription = contentDescription,
         modifier = modifier1,
