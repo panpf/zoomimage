@@ -1,3 +1,14 @@
+## 1.0.0-beta03
+
+zoom:
+
+* fix: Fixed a bug where the calculateUserOffsetBounds function could return the wrong bounds when
+  zooming to a full screen, causing a crash
+* fix: Fixed a bug where GlideZoomAsyncImage would load bitmaps larger than the view, causing a
+  crash
+* improve: Upgrade GlideImage 1.0.0-beta01
+* improve: NoClipImage rename to NoClipContentImage
+
 ## 1.0.0-beta02
 
 zoom:
