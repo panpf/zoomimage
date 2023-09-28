@@ -639,34 +639,45 @@ fun calculateUserOffsetBounds(
     ).let {
         if (limitBaseVisibleRect) it.limitTo(containerSize.toSize()) else it
     }
+
     val scaledRotatedContentBaseDisplayRect = rotatedContentBaseDisplayRect * userScale
 
     val horizontalBounds =
         if (scaledRotatedContentBaseDisplayRect.width.roundToInt() >= containerSize.width) {
-            ((scaledRotatedContentBaseDisplayRect.right - containerSize.width) * -1)..
-                    (scaledRotatedContentBaseDisplayRect.left * -1)
+            val leftBounds =
+                (scaledRotatedContentBaseDisplayRect.right - containerSize.width) * -1
+            val rightBounds = scaledRotatedContentBaseDisplayRect.left * -1
+            val correctLeftBounds = leftBounds.coerceAtMost(rightBounds)
+            correctLeftBounds..rightBounds
         } else if (alignment.isStart) {
             0f..0f
-        } else if (alignment.isHorizontalCenter) {
-            val horizontalSpace = (scaledContainerSize.width - containerSize.width) / 2f * -1
-            horizontalSpace..horizontalSpace
-        } else {   // alignment.isEnd
-            val horizontalSpace = (scaledContainerSize.width - containerSize.width) * -1
-            horizontalSpace..horizontalSpace
+        } else if (alignment.isBottom) {
+            val leftBounds = (scaledContainerSize.width - containerSize.width) * -1
+            leftBounds..leftBounds
+        } else {   // horizontal center
+            val horizontalSpace =
+                (containerSize.width - scaledRotatedContentBaseDisplayRect.width) / 2f
+            val leftBounds = (scaledRotatedContentBaseDisplayRect.left - horizontalSpace) * -1
+            leftBounds..leftBounds
         }
 
     val verticalBounds =
         if (scaledRotatedContentBaseDisplayRect.height.roundToInt() >= containerSize.height) {
-            ((scaledRotatedContentBaseDisplayRect.bottom - containerSize.height) * -1)..
-                    (scaledRotatedContentBaseDisplayRect.top * -1)
+            val topBounds = (scaledRotatedContentBaseDisplayRect.bottom - containerSize.height) * -1
+            val bottomBounds = scaledRotatedContentBaseDisplayRect.top * -1
+            val correctTopBounds = topBounds.coerceAtMost(bottomBounds)
+            correctTopBounds..bottomBounds
         } else if (alignment.isTop) {
             0f..0f
-        } else if (alignment.isVerticalCenter) {
-            val verticalSpace = (scaledContainerSize.height - containerSize.height) / 2f * -1
-            verticalSpace..verticalSpace
-        } else {   // alignment.isBottom
-            val verticalSpace = (scaledContainerSize.height - containerSize.height) * -1
-            verticalSpace..verticalSpace
+        } else if (alignment.isBottom) {
+            val topBounds = (scaledRotatedContentBaseDisplayRect.bottom - containerSize.height) * -1
+            topBounds..topBounds
+        } else {
+            // vertical center
+            val verticalSpace =
+                (containerSize.height - scaledRotatedContentBaseDisplayRect.height) / 2f
+            val topBounds = (scaledRotatedContentBaseDisplayRect.top - verticalSpace) * -1
+            topBounds..topBounds
         }
 
     val offsetBounds = RectCompat(
