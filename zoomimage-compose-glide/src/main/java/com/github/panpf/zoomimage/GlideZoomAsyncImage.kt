@@ -44,6 +44,7 @@ import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideCompos
 import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
 import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
 import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
+import com.github.panpf.zoomimage.compose.glide.internal.Transition
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
@@ -135,11 +136,12 @@ fun GlideZoomAsyncImage(
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-    // from glide: TODO(judds): Consider using separate GlideImage* methods instead of sealed classes.
+    // TODO(judds): Consider using separate GlideImage* methods instead of sealed classes.
     // See http://shortn/_x79pjkMZIH for an internal discussion.
     loading: Placeholder? = null,
     failure: Placeholder? = null,
-    // from glide: TODO(judds): Consider defaulting to load the model here instead of always doing so below.
+    transition: Transition.Factory? = null,
+    // TODO(judds): Consider defaulting to load the model here instead of always doing so below.
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it },
 ) {
     state.zoomable.contentScale = contentScale
@@ -183,9 +185,10 @@ fun GlideZoomAsyncImage(
         contentScale = ContentScale.None,
         alpha = alpha,
         colorFilter = colorFilter,
-        clipToBounds = false,
+        noClipContent = true,
         loading = loading,
         failure = failure,
+        transition = transition,
         requestBuilderTransform = { requestBuilder ->
             requestBuilderTransform(requestBuilder)
             requestBuilder.addListener(
@@ -206,11 +209,10 @@ private class ResetListener(
     private val requestBuilder: RequestBuilder<Drawable>,
     private val model: Any?,
 ) : RequestListener<Drawable> {
-
     override fun onLoadFailed(
         e: GlideException?,
         model: Any?,
-        target: Target<Drawable>?,
+        target: Target<Drawable>,
         isFirstResource: Boolean
     ): Boolean {
         state.logger.d("ResetListener. onLoadFailed. model: $model")
@@ -219,10 +221,10 @@ private class ResetListener(
     }
 
     override fun onResourceReady(
-        resource: Drawable?,
-        model: Any?,
+        resource: Drawable,
+        model: Any,
         target: Target<Drawable>?,
-        dataSource: DataSource?,
+        dataSource: DataSource,
         isFirstResource: Boolean
     ): Boolean {
         state.logger.d("ResetListener. onResourceReady. model: $model, resource: $resource")

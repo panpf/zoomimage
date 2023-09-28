@@ -83,8 +83,6 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}
 
 // The GlideZoomAsyncImage component is provided with the Coil Image Loader, easy to use
 // 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件，用法简单
-// Relying on the alpha version of GlideImage is not recommended at this stage
-// 依赖于 alpha 版本的 GlideImage，不推荐在现阶段使用
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
 
 // Providing the most basic ZoomImage component, there is still a lot of work to be done to use it, 
