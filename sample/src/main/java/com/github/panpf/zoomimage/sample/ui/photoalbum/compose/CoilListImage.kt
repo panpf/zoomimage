@@ -20,7 +20,7 @@ fun CoilListImage(sketchImageUri: String, modifier: Modifier) {
         model = ImageRequest.Builder(context).apply {
             data(coilModel)
             placeholder(R.drawable.im_placeholder)
-            error(R.drawable.im_placeholder)
+            error(R.drawable.im_error)
             crossfade(true)
         }.build(),
         modifier = modifier,

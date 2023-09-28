@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
@@ -28,6 +29,7 @@ class GlidePhotoGridItemFactory : BasePhotoGridItemFactory() {
             .load(sketchUri2GlideModel(sketchImageUri))
             .placeholder(R.drawable.im_placeholder)
             .error(R.drawable.im_error)
+            .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
     }
 }
