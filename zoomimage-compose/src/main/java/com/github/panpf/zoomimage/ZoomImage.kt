@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -46,9 +45,6 @@ import com.github.panpf.zoomimage.compose.zoom.internal.NavigationBarHeightState
 import com.github.panpf.zoomimage.compose.zoom.internal.UpdateContainerSizeResult
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -108,7 +104,6 @@ fun ZoomImage(
     state.zoomable.alignment = alignment
     state.zoomable.contentSize = painter.intrinsicSize.round()
 
-    val coroutineScope = rememberCoroutineScope()
     BoxWithConstraints(modifier = modifier) {
         /*
          * Here use BoxWithConstraints and then actively set containerSize and call nowReset(),
@@ -126,7 +121,7 @@ fun ZoomImage(
             result = updateContainerSizeResult
         )
         if (updateContainerSizeResult.updated) {
-            state.zoomable.nowReset(coroutineScope, "BoxWithConstraints")
+            state.zoomable.nowReset("initialize")
         }
 
         val transform = state.zoomable.transform
@@ -209,11 +204,5 @@ private fun UpdateContainerSize(
         }
     } else {
         false
-    }
-}
-
-private fun ZoomableState.nowReset(coroutineScope: CoroutineScope, caller: String) {
-    coroutineScope.launch(Dispatchers.Main.immediate) {
-        reset(caller)
     }
 }

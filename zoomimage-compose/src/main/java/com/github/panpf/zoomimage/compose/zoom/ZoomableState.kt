@@ -364,9 +364,18 @@ class ZoomableState(logger: Logger) {
      * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
      * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
      */
-    suspend fun reset(caller: String = "consumer") = coroutineScope {
+    suspend fun reset(caller: String) = coroutineScope {
         stopAllAnimation("reset:$caller")
+        nowReset(caller)
+    }
 
+    /**
+     * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
+     * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
+     */
+    fun nowReset(caller: String) {
+        // todo 仅 containerSize 改变或重建时需要保留状态，其他情况下都需要重置状态，这里需要优化
+        // todo 初步的想法是 根据 containerSize 的变化量来相应的修改 scale 和 offset，例如 containerSize 变大了，那么 scale 和 offset 都要变大
         val containerSize = containerSize
         val contentSize = contentSize
         val contentOriginSize = contentOriginSize
@@ -624,7 +633,7 @@ class ZoomableState(logger: Logger) {
         stopAllAnimation("rotate")
 
         rotation = limitedTargetRotation
-        reset("rotate")
+        nowReset("rotate")
     }
 
     /**

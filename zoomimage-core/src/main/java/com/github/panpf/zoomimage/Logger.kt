@@ -24,6 +24,7 @@ import androidx.annotation.IntDef
  *
  * @see [com.github.panpf.zoomimage.core.test.LoggerTest]
  */
+// todo 拆分和平台无关的代码，然后分成 jvm 和 android 两个模块，为 Compose Multiplatform 做准备
 class Logger(
     /**
      * The tag of the log
@@ -63,7 +64,7 @@ class Logger(
             } else if (field != value) {
                 val oldLevel = field
                 field = value
-                Log.w(tag, "Logger. setLevel. ${levelName(oldLevel)} -> ${levelName(value)}")
+                pipeline.log(WARN, tag, "Logger. setLevel. ${levelName(oldLevel)} -> ${levelName(value)}", null)
             }
         }
 
@@ -81,9 +82,9 @@ class Logger(
                 }
             } else if (field != value) {
                 val oldPipeline = field
+                oldPipeline.log(WARN, tag, "Logger. setPipeline. $oldPipeline -> $value", null)
                 oldPipeline.flush()
                 field = value
-                Log.w(tag, "Logger. setPipeline. $oldPipeline -> $value")
             }
         }
 
