@@ -50,9 +50,9 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
-import com.github.panpf.zoomimage.glide.internal.GlideTileBitmapPool
-import com.github.panpf.zoomimage.glide.internal.GlideTileMemoryCache
-import com.github.panpf.zoomimage.glide.internal.newGlideImageSource
+import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
+import com.github.panpf.zoomimage.glide.GlideTileMemoryCache
+import com.github.panpf.zoomimage.glide.newGlideImageSource
 
 
 /**

@@ -56,17 +56,14 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-core"))
-    api(libs.kotlin.stdlib)
-    api(libs.kotlinx.coroutines.android)
-    api(libs.androidx.core.ktx)
-    api(libs.androidx.appcompat)
+    api(project(":zoomimage-core-zoomable-android"))
+    api(project(":zoomimage-core-subsampling-android"))
 
     /* compose */
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.ui)
     api(libs.androidx.compose.ui.util)
-    api(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

@@ -42,6 +42,7 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
+import com.github.panpf.zoomimage.zoom.vibration
 import kotlinx.coroutines.flow.merge
 import kotlin.math.roundToInt
 
@@ -76,7 +77,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 }
                 settingsService.longPressSlideScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     longPressSlideScaleSpecState.value =
-                        if (it) LongPressSlideScaleSpec.Vibration else null
+                        if (it) LongPressSlideScaleSpec.vibration(context) else null
                 }
                 settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScaleState.value = it

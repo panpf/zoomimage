@@ -51,7 +51,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpecState.value
                 if (longPressSlideScaleSpec != null) {
                     lastLongPressPoint = OffsetCompat(x = e.x, y = e.y)
-                    longPressSlideScaleSpec.hapticFeedback.perform(view.context)
+                    longPressSlideScaleSpec.hapticFeedback.perform()
                 }
                 onViewLongPressListener?.onViewLongPress(view, e.x, e.y)
                 onViewLongPressListener != null || view.performLongClick()

@@ -19,9 +19,9 @@ import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
-import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
-import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
+import com.github.panpf.zoomimage.sketch.SketchImageSource
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
+import com.github.panpf.zoomimage.sketch.SketchTileMemoryCache
 import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable

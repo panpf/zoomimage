@@ -37,11 +37,12 @@
         coil.compose.base,
         com.github.panpf.zoomimage.view.coil,
         com.github.panpf.sketch.compose,
-        com.github.panpf.zoomimage.core.coil,
+        com.github.panpf.zoomimage.core.subsampling.android.coil,
         com.github.panpf.zoomimage.compose.coil,
         com.github.panpf.zoomimage.compose.sketch,
         com.github.panpf.zoomimage.compose.glide,
         androidx.constraintlayout.compose,
+        com.github.panpf.zoomimage.compose.core,
     " />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />

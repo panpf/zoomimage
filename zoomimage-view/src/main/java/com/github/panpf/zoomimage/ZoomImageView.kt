@@ -26,11 +26,11 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
+import com.github.panpf.zoomimage.subsampling.AndroidTilePlatformAdapter
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
-import com.github.panpf.zoomimage.view.internal.getNavigationBarsHeight
 import com.github.panpf.zoomimage.view.internal.intrinsicSize
 import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
@@ -41,6 +41,7 @@ import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
+import com.github.panpf.zoomimage.view.zoom.internal.ContainerSizeDitheringInterceptor
 import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarHelper
 import com.github.panpf.zoomimage.view.zoom.internal.TouchHelper
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -48,7 +49,6 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 
 /**
@@ -77,9 +77,8 @@ open class ZoomImageView @JvmOverloads constructor(
     private val cacheImageMatrix = Matrix()
     private var wrappedScaleType: ScaleType
     private var scrollBarHelper: ScrollBarHelper? = null
-    private var navigationBarsHeight = 0
 
-    val logger = Logger(tag = "ZoomImageView")
+    val logger = Logger(tag = "ZoomImageView", pipeline = AndroidLogPipeline())
 
     /**
      * Control the ability to zoom, pan, rotate
@@ -135,14 +134,16 @@ open class ZoomImageView @JvmOverloads constructor(
             contentScaleState.value = initScaleType.toContentScale()
             alignmentState.value = initScaleType.toAlignment()
             resetDrawableSize()
+            containerSizeInterceptor = ContainerSizeDitheringInterceptor(this@ZoomImageView)
         }
         touchHelper = TouchHelper(this, zoomableEngine)
 
         /* SubsamplingEngine */
-        val subsamplingEngine = SubsamplingEngine(logger, this).apply {
-            this@ZoomImageView._subsamplingEngine = this
-            bindZoomEngine(zoomableEngine)
-        }
+        val subsamplingEngine =
+            SubsamplingEngine(logger, this, AndroidTilePlatformAdapter()).apply {
+                this@ZoomImageView._subsamplingEngine = this
+                bindZoomEngine(zoomableEngine)
+            }
         tileDrawHelper =
             TileDrawHelper(logger, this@ZoomImageView, zoomableEngine, subsamplingEngine)
 
@@ -347,8 +348,19 @@ open class ZoomImageView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        updateNavigationBarsHeight()
-        updateContainerSize()
+        val zoomable = _zoomableEngine ?: return
+
+        val oldContainerSize = zoomable.containerSizeState.value
+        val newContainerSize = IntSizeCompat(
+            width = width - paddingLeft - paddingRight,
+            height = height - paddingTop - paddingBottom
+        )
+        val finalNewContainerSize = newContainerSize.let {
+            zoomable.containerSizeInterceptor?.intercept(logger, oldContainerSize, it) ?: it
+        }
+        if (finalNewContainerSize != oldContainerSize) {
+            zoomable.containerSizeState.value = finalNewContainerSize
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -378,47 +390,4 @@ open class ZoomImageView @JvmOverloads constructor(
 
     override fun canScrollVertically(direction: Int): Boolean =
         _zoomableEngine?.canScroll(horizontal = false, direction) == true
-
-    private fun updateContainerSize() {
-        val zoomable = _zoomableEngine ?: return
-
-        val oldContainerSize = zoomable.containerSizeState.value
-        val newContainerSize = IntSizeCompat(
-            width = width - paddingLeft - paddingRight,
-            height = height - paddingTop - paddingBottom
-        )
-        if (newContainerSize != oldContainerSize) {
-            /*
-             * In the model MIX4; ROM: 14.0.6.0; on Android 13, when the navigation bar is displayed, the following occurs:
-             * 1. When the ZoomImageView is unlocked again after the screen is locked, the height of the ZoomImageView will first increase and then change back to normal, and the difference is exactly the height of the current navigation bar
-             * 2. Due to the height of the ZoomImageView, the containerSize of the ZoomableEngine will also change
-             * 3. This causes the ZoomableEngine's transform to be reset, so this needs to be blocked here
-             */
-            val navigationBarHeight = navigationBarsHeight
-            val diffSize = IntSizeCompat(
-                width = oldContainerSize.width - newContainerSize.width,
-                height = oldContainerSize.height - newContainerSize.height
-            )
-            if (navigationBarHeight == 0 ||
-                (abs(diffSize.width) != navigationBarHeight && abs(diffSize.height) != navigationBarHeight)
-            ) {
-                zoomable.containerSizeState.value = newContainerSize
-            } else {
-                logger.d {
-                    "updateContainerSize. intercepted. " +
-                            "oldContainerSize=$oldContainerSize, " +
-                            "newContainerSize=$newContainerSize, " +
-                            "diffSize=$diffSize, " +
-                            "navigationBarHeight=$navigationBarHeight"
-                }
-            }
-        }
-    }
-
-    private fun updateNavigationBarsHeight() {
-        val newNavigationBarsHeight = getNavigationBarsHeight()
-        if (newNavigationBarsHeight != 0 && newNavigationBarsHeight != navigationBarsHeight) {
-            navigationBarsHeight = newNavigationBarsHeight
-        }
-    }
 }

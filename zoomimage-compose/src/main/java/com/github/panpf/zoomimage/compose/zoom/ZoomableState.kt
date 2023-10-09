@@ -48,8 +48,6 @@ import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ReadMode
 import com.github.panpf.zoomimage.ScrollEdge
-import com.github.panpf.zoomimage.ZoomImage
-import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
@@ -63,7 +61,6 @@ import com.github.panpf.zoomimage.compose.internal.toCompatRect
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
@@ -98,7 +95,7 @@ import kotlinx.coroutines.launch
  * Creates and remember a [ZoomableState] that can be used to control the scale, pan, rotation of the content.
  */
 @Composable
-fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
+fun rememberZoomableState(logger: Logger): ZoomableState {
     val zoomableState = remember(logger) {
         ZoomableState(logger)
     }
@@ -160,13 +157,12 @@ class ZoomableState(logger: Logger) {
     private var rotation: Int by mutableIntStateOf(0)
 
     /**
-     * The size of the container that holds the content, this is usually the size of the [ZoomImage] component
+     * The size of the container that holds the content, this is usually the size of the ZoomImage component
      */
     var containerSize: IntSize by mutableStateOf(IntSize.Zero)
-        internal set
 
     /**
-     * The size of the content, usually Painter.intrinsicSize.round(), setup by the [ZoomImage] component
+     * The size of the content, usually Painter.intrinsicSize.round(), setup by the ZoomImage component
      */
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
 
@@ -174,18 +170,19 @@ class ZoomableState(logger: Logger) {
      * The original size of the content, it is usually set by [SubsamplingState] after parsing the original size of the image
      */
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
-        internal set
+
+    var containerSizeInterceptor: ContainerSizeInterceptor? = null
 
 
     /* *********************************** Configurable properties ****************************** */
 
     /**
-     * The scale of the content, usually set by [ZoomImage] component
+     * The scale of the content, usually set by ZoomImage component
      */
     var contentScale: ContentScale by mutableStateOf(ContentScale.Fit)
 
     /**
-     * The alignment of the content, usually set by [ZoomImage] component
+     * The alignment of the content, usually set by ZoomImage component
      */
     var alignment: Alignment by mutableStateOf(Alignment.Center)
 
@@ -463,7 +460,7 @@ class ZoomableState(logger: Logger) {
         ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
-            scale = ScaleFactor(limitedTargetUserScale),
+            scale = com.github.panpf.zoomimage.compose.internal.ScaleFactor(limitedTargetUserScale),
             offset = limitedTargetUserOffset
         )
         logger.d {
@@ -590,7 +587,7 @@ class ZoomableState(logger: Logger) {
         ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
-            scale = ScaleFactor(limitedTargetUserScale),
+            scale = com.github.panpf.zoomimage.compose.internal.ScaleFactor(limitedTargetUserScale),
             offset = limitedTargetUserOffset
         )
         logger.d {
@@ -802,7 +799,7 @@ class ZoomableState(logger: Logger) {
         ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
-            scale = ScaleFactor(limitedTargetUserScale),
+            scale = com.github.panpf.zoomimage.compose.internal.ScaleFactor(limitedTargetUserScale),
             offset = limitedTargetUserOffset
         )
         logger.d {

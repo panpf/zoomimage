@@ -39,7 +39,7 @@ android {
 
 dependencies {
     api(project(":zoomimage-view"))
-    api(libs.picasso)
+    api(project(":zoomimage-core-subsampling-android-picasso"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

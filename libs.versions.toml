@@ -51,6 +51,7 @@ mavenpublish = "0.25.3"
 # kotlin
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
 
 # android
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
@@ -110,6 +111,7 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "android-plugin" }
 com-android-library = { id = "com.android.library", version.ref = "android-plugin" }
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidx-navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "androidx-navigation" }
 mavenpublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenpublish" }

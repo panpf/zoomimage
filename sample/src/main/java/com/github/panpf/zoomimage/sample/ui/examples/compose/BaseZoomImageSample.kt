@@ -28,6 +28,7 @@ import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
+import com.github.panpf.zoomimage.zoom.vibration
 
 @Composable
 fun BaseZoomImageSample(
@@ -102,7 +103,7 @@ fun BaseZoomImageSample(
         }
         LaunchedEffect(longPressSlideScale) {
             zoomable.longPressSlideScaleSpec = if (longPressSlideScale)
-                LongPressSlideScaleSpec.Vibration else null
+                LongPressSlideScaleSpec.vibration(context) else null
         }
         LaunchedEffect(rubberBandScale) {
             zoomable.rubberBandScale = rubberBandScale

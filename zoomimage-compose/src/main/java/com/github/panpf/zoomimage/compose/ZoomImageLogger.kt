@@ -35,10 +35,18 @@ fun rememberZoomImageLogger(
     module: String? = null,
     showThreadName: Boolean = false,
     level: Int = Logger.INFO,
+    pipeline: Logger.Pipeline? = null
 ): Logger {
-    val logger = remember(tag, module, showThreadName) {
-        Logger(tag = tag, module = module, showThreadName = showThreadName)
+    val logger = remember(tag, module, showThreadName, pipeline) {
+        Logger(
+            tag = tag,
+            module = module,
+            showThreadName = showThreadName,
+            pipeline = pipeline
+        )
     }
-    logger.level = level
+    if (logger.level != level) {
+        logger.level = level
+    }
     return logger
 }

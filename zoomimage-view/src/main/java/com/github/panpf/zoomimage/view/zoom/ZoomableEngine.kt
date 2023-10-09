@@ -102,6 +102,8 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      */
     val contentOriginSizeState = MutableStateFlow(IntSizeCompat.Zero)
 
+    var containerSizeInterceptor: ContainerSizeInterceptor? = null
+
 
     /* *********************************** Configurable properties ****************************** */
 

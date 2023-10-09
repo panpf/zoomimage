@@ -27,11 +27,11 @@ import android.view.View
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
 import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
@@ -124,8 +124,7 @@ class TileDrawHelper(
         contentSize: IntSizeCompat,
         tileSnapshot: TileSnapshot
     ): Boolean {
-        val tileBitmap = tileSnapshot.bitmap
-        if (tileBitmap == null || tileBitmap.isRecycled) return false
+        val bitmap = (tileSnapshot.bitmap as AndroidTileBitmap?)?.bitmap ?: return false
 
         val widthScale = imageInfo.width / contentSize.width.toFloat()
         val heightScale = imageInfo.height / contentSize.height.toFloat()
@@ -138,11 +137,11 @@ class TileDrawHelper(
             )
         }
         val tileDrawSrcRect = cacheRect2.apply {
-            set(0, 0, tileBitmap.width, tileBitmap.height)
+            set(0, 0, bitmap.width, bitmap.height)
         }
         tilePaint.alpha = tileSnapshot.alpha
         canvas.drawBitmap(
-            /* bitmap = */ tileBitmap,
+            /* bitmap = */ bitmap,
             /* src = */ tileDrawSrcRect,
             /* dst = */ tileDrawDstRect,
             /* paint = */ tilePaint

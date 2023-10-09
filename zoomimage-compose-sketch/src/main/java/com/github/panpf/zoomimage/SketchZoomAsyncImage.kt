@@ -53,9 +53,9 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zoomable
-import com.github.panpf.zoomimage.sketch.internal.SketchImageSource
-import com.github.panpf.zoomimage.sketch.internal.SketchTileBitmapPool
-import com.github.panpf.zoomimage.sketch.internal.SketchTileMemoryCache
+import com.github.panpf.zoomimage.sketch.SketchImageSource
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
+import com.github.panpf.zoomimage.sketch.SketchTileMemoryCache
 import kotlin.math.roundToInt
 
 

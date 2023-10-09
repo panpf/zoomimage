@@ -57,7 +57,7 @@ android {
 
 dependencies {
     api(project(":zoomimage-compose"))
-    api(project(":zoomimage-core-sketch"))
+    api(project(":zoomimage-core-subsampling-android-sketch"))
     api(libs.panpf.sketch3.compose)
 
     debugImplementation(libs.androidx.compose.ui.tooling)

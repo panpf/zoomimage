@@ -24,9 +24,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.internalModel
 import com.bumptech.glide.load.engine.internalRequestOptions
 import com.bumptech.glide.request.SingleRequest
-import com.github.panpf.zoomimage.glide.internal.GlideTileBitmapPool
-import com.github.panpf.zoomimage.glide.internal.GlideTileMemoryCache
-import com.github.panpf.zoomimage.glide.internal.newGlideImageSource
+import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
+import com.github.panpf.zoomimage.glide.GlideTileMemoryCache
+import com.github.panpf.zoomimage.glide.newGlideImageSource
 
 /**
  * An ImageView that integrates the Glide image loading framework that zoom and subsampling huge images

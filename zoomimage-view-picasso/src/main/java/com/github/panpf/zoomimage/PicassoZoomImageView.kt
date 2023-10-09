@@ -20,14 +20,17 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
+import com.github.panpf.zoomimage.picasso.PicassoHttpImageSource
+import com.github.panpf.zoomimage.picasso.PicassoTileMemoryCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.view.picasso.internal.PicassoHttpImageSource
-import com.github.panpf.zoomimage.view.picasso.internal.PicassoTileMemoryCache
+import com.github.panpf.zoomimage.subsampling.fromAsset
+import com.github.panpf.zoomimage.subsampling.fromContent
+import com.github.panpf.zoomimage.subsampling.fromResource
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
-import com.squareup.picasso.isDisableMemoryCache
-import com.squareup.picasso.memoryPolicy
+import com.squareup.picasso.checkMemoryCacheDisabled
+import com.squareup.picasso.internalMemoryPolicy
 import java.io.File
 
 /**
@@ -148,7 +151,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         creator.into(this, object : Callback {
             override fun onSuccess() {
                 _subsamplingEngine?.disableMemoryCacheState?.value =
-                    isDisableMemoryCache(creator.memoryPolicy)
+                    checkMemoryCacheDisabled(creator.internalMemoryPolicy)
                 _subsamplingEngine?.setImageSource(newImageSource(uri))
                 callback?.onSuccess()
             }

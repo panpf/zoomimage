@@ -28,13 +28,15 @@ import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.subsampling.TileBitmapCache
+import com.github.panpf.zoomimage.subsampling.TileBitmapCacheHelper
+import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
-import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPausedContinuousTransformType
-import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
+import com.github.panpf.zoomimage.subsampling.TilePlatformAdapter
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.createTileDecoder
 import com.github.panpf.zoomimage.subsampling.toIntroString
@@ -61,15 +63,22 @@ import kotlin.math.roundToInt
 /**
  * Engines that control subsampling
  */
-class SubsamplingEngine constructor(logger: Logger, private val view: View) {
+class SubsamplingEngine constructor(
+    logger: Logger,
+    private val view: View,
+    private val tilePlatformAdapter: TilePlatformAdapter
+) {
 
     private val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
-    private var tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
-    private var tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
+    private val tileBitmapCacheSpec = TileBitmapCacheSpec()
+    private val tileBitmapReuseSpec = TileBitmapReuseSpec()
+    private var tileBitmapCacheHelper = TileBitmapCacheHelper(this.logger, tileBitmapCacheSpec)
+    private var tileBitmapReuseHelper =
+        tilePlatformAdapter.createReuseHelper(this.logger, tileBitmapReuseSpec)
     private var lastResetTileDecoderJob: Job? = null
     private var lifecycle: Lifecycle? = null
     private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
@@ -99,11 +108,13 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
     /**
      * Set up the tile memory cache container
      */
-    val tileMemoryCacheState = MutableStateFlow<TileMemoryCache?>(null)
+    // todo rename
+    val tileMemoryCacheState = MutableStateFlow<TileBitmapCache?>(null)
 
     /**
      * If true, disable memory cache
      */
+    // todo rename
     val disableMemoryCacheState = MutableStateFlow(false)
 
     /**
@@ -114,6 +125,7 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
     /**
      * If true, Bitmap reuse is disabled
      */
+    // todo rename
     val disallowReuseBitmapState = MutableStateFlow(false)
 
     /**
@@ -229,22 +241,22 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
 
         coroutineScope.launch {
             tileMemoryCacheState.collect {
-                tileMemoryCacheHelper.tileMemoryCache = it
+                tileBitmapCacheSpec.tileBitmapCache = it
             }
         }
         coroutineScope.launch {
             disableMemoryCacheState.collect {
-                tileMemoryCacheHelper.disableMemoryCache = it
+                tileBitmapCacheSpec.disabled = it
             }
         }
         coroutineScope.launch {
             tileBitmapPoolState.collect {
-                tileBitmapPoolHelper.tileBitmapPool = it
+                tileBitmapReuseSpec.tileBitmapPool = it
             }
         }
         coroutineScope.launch {
             disallowReuseBitmapState.collect {
-                tileBitmapPoolHelper.disallowReuseBitmap = it
+                tileBitmapReuseSpec.disabled = it
             }
         }
 
@@ -388,10 +400,11 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             val result = withContext(Dispatchers.IO) {
                 createTileDecoder(
                     logger = logger,
-                    tileBitmapPoolHelper = tileBitmapPoolHelper,
                     imageSource = imageSource,
                     thumbnailSize = contentSize,
-                    ignoreExifOrientation = ignoreExifOrientation
+                    ignoreExifOrientation = ignoreExifOrientation,
+                    tilePlatformAdapter = tilePlatformAdapter,
+                    reuseHelper = tileBitmapReuseHelper,
                 )
             }
             val newTileDecoder = result.getOrNull()
@@ -438,8 +451,8 @@ class SubsamplingEngine constructor(logger: Logger, private val view: View) {
             imageSource = imageSource,
             containerSize = containerSize,
             contentSize = contentSize,
-            tileMemoryCacheHelper = tileMemoryCacheHelper,
-            tileBitmapPoolHelper = tileBitmapPoolHelper,
+            tileBitmapCacheHelper = tileBitmapCacheHelper,
+            tileBitmapReuseHelper = tileBitmapReuseHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
                 _backgroundTilesState.value = manager.backgroundTiles

@@ -25,9 +25,9 @@ import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.isSpecified
 import com.github.panpf.zoomimage.compose.internal.Origin
 import com.github.panpf.zoomimage.compose.internal.TopStart
-import com.github.panpf.zoomimage.compose.internal.div
-import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
+import com.github.panpf.zoomimage.compose.internal.times
+import com.github.panpf.zoomimage.compose.internal.div
 
 /**
  * A simple version of a 2D transformation that includes scale, pan, and rotation

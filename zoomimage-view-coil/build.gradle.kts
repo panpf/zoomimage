@@ -37,8 +37,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-core-coil"))
     api(project(":zoomimage-view"))
+    api(project(":zoomimage-core-subsampling-android-coil"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

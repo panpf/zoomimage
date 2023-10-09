@@ -37,7 +37,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-core"))
+    api(project(":zoomimage-core-zoomable-android"))
+    api(project(":zoomimage-core-subsampling-android"))
     api(libs.kotlin.stdlib)
     api(libs.kotlinx.coroutines.android)
     api(libs.androidx.annotation)

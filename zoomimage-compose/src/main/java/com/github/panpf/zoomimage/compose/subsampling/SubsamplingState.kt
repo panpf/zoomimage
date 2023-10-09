@@ -41,19 +41,20 @@ import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.subsampling.TileBitmapCache
+import com.github.panpf.zoomimage.subsampling.TileBitmapCacheHelper
+import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
-import com.github.panpf.zoomimage.subsampling.TileBitmapPoolHelper
+import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPausedContinuousTransformType
-import com.github.panpf.zoomimage.subsampling.TileMemoryCache
-import com.github.panpf.zoomimage.subsampling.TileMemoryCacheHelper
+import com.github.panpf.zoomimage.subsampling.TilePlatformAdapter
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.createTileDecoder
 import com.github.panpf.zoomimage.subsampling.toIntroString
@@ -74,9 +75,9 @@ import kotlin.math.roundToInt
  * Creates and remember a [SubsamplingState] that can be used to subsampling of the content.
  */
 @Composable
-fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): SubsamplingState {
-    val subsamplingState = remember(logger) {
-        SubsamplingState(logger)
+fun rememberSubsamplingState(logger: Logger, tilePlatformAdapter: TilePlatformAdapter): SubsamplingState {
+    val subsamplingState = remember(logger, tilePlatformAdapter) {
+        SubsamplingState(logger, tilePlatformAdapter)
     }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(lifecycle) {
@@ -89,7 +90,10 @@ fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): Subsam
  * A state object that can be used to subsampling of the content.
  */
 @Stable
-class SubsamplingState(logger: Logger) : RememberObserver {
+class SubsamplingState constructor(
+    logger: Logger,
+    private val tilePlatformAdapter: TilePlatformAdapter
+) : RememberObserver {
 
     private val logger: Logger = logger.newLogger(module = "SubsamplingState")
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -97,8 +101,11 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
     private var lastResetTileDecoderJob: Job? = null
-    private val tileMemoryCacheHelper = TileMemoryCacheHelper(this.logger)
-    private val tileBitmapPoolHelper = TileBitmapPoolHelper(this.logger)
+    private val tileBitmapCacheSpec = TileBitmapCacheSpec()
+    private val tileBitmapReuseSpec = TileBitmapReuseSpec()
+    private val tileBitmapCacheHelper = TileBitmapCacheHelper(this.logger, tileBitmapCacheSpec)
+    private val tileBitmapReuseHelper =
+        tilePlatformAdapter.createReuseHelper(this.logger, tileBitmapReuseSpec)
     private var lifecycle: Lifecycle? = null
     private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
     internal var imageKey: String? = null
@@ -117,11 +124,13 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     /**
      * Set up the tile memory cache container
      */
-    var tileMemoryCache: TileMemoryCache? by mutableStateOf(null)
+    // todo rename
+    var tileMemoryCache: TileBitmapCache? by mutableStateOf(null)
 
     /**
      * If true, disable memory cache
      */
+    // todo rename
     var disableMemoryCache: Boolean by mutableStateOf(false)
 
     /**
@@ -132,6 +141,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     /**
      * If true, Bitmap reuse is disabled
      */
+    // todo rename
     var disallowReuseBitmap: Boolean by mutableStateOf(false)
 
     /**
@@ -240,7 +250,7 @@ class SubsamplingState(logger: Logger) : RememberObserver {
     /* *************************************** Internal ***************************************** */
 
     @Composable
-    internal fun BindZoomableState(zoomableState: ZoomableState) {
+    fun BindZoomableState(zoomableState: ZoomableState) {
         LaunchedEffect(Unit) {
             snapshotFlow { zoomableState.containerSize }.collect {
                 // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
@@ -301,22 +311,22 @@ class SubsamplingState(logger: Logger) : RememberObserver {
         }
         LaunchedEffect(Unit) {
             snapshotFlow { tileMemoryCache }.collect {
-                tileMemoryCacheHelper.tileMemoryCache = it
+                tileBitmapCacheSpec.tileBitmapCache = it
             }
         }
         LaunchedEffect(Unit) {
             snapshotFlow { disableMemoryCache }.collect {
-                tileMemoryCacheHelper.disableMemoryCache = it
+                tileBitmapCacheSpec.disabled = it
             }
         }
         LaunchedEffect(Unit) {
             snapshotFlow { tileBitmapPool }.collect {
-                tileBitmapPoolHelper.tileBitmapPool = it
+                tileBitmapReuseSpec.tileBitmapPool = it
             }
         }
         LaunchedEffect(Unit) {
             snapshotFlow { disallowReuseBitmap }.collect {
-                tileBitmapPoolHelper.disallowReuseBitmap = it
+                tileBitmapReuseSpec.disabled = it
             }
         }
         LaunchedEffect(Unit) {
@@ -348,10 +358,11 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             val result = withContext(Dispatchers.IO) {
                 createTileDecoder(
                     logger = logger,
-                    tileBitmapPoolHelper = tileBitmapPoolHelper,
                     imageSource = imageSource,
                     thumbnailSize = contentSize.toCompat(),
-                    ignoreExifOrientation = ignoreExifOrientation
+                    ignoreExifOrientation = ignoreExifOrientation,
+                    tilePlatformAdapter = tilePlatformAdapter,
+                    reuseHelper = tileBitmapReuseHelper,
                 )
             }
             val newTileDecoder = result.getOrNull()
@@ -398,8 +409,8 @@ class SubsamplingState(logger: Logger) : RememberObserver {
             imageSource = imageSource,
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
-            tileMemoryCacheHelper = tileMemoryCacheHelper,
-            tileBitmapPoolHelper = tileBitmapPoolHelper,
+            tileBitmapCacheHelper = tileBitmapCacheHelper,
+            tileBitmapReuseHelper = tileBitmapReuseHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
                 backgroundTiles = manager.backgroundTiles

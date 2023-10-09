@@ -20,8 +20,6 @@ package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,15 +32,11 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.Logger
-import com.github.panpf.zoomimage.compose.zoom.internal.NavigationBarHeightState
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 fun Modifier.zoomable(
     logger: Logger,
@@ -50,49 +44,21 @@ fun Modifier.zoomable(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = composed {
-    val context = LocalContext.current
     val density = LocalDensity.current
     val updatedOnTap by rememberUpdatedState(newValue = onTap)
     val updatedOnLongPress by rememberUpdatedState(newValue = onLongPress)
     val coroutineScope = rememberCoroutineScope()
-    val navigationBarHeightState = remember { NavigationBarHeightState() }
-    val navigationBarsInsets = WindowInsets.navigationBarsIgnoringVisibility
     var lastLongPressPoint by remember { mutableStateOf<Offset?>(null) }
     var lastPointCount by remember { mutableIntStateOf(0) }
 
     this
-        .onSizeChanged {
+        .onSizeChanged { newContainerSize ->
             val oldContainerSize = zoomable.containerSize
-            val newContainerSize = it
-            if (newContainerSize != oldContainerSize) {
-                /*
-                 * In the model MIX4; ROM: 14.0.6.0; on Android 13, when the navigation bar is displayed, the following occurs:
-                 * 1. When the ZoomImageView is unlocked again after the screen is locked, the height of the ZoomImageView will first increase and then change back to normal, and the difference is exactly the height of the current navigation bar
-                 * 2. Due to the height of the ZoomImageView, the containerSize of the ZoomableEngine will also change
-                 * 3. This causes the ZoomableEngine's transform to be reset, so this needs to be blocked here
-                 */
-                val newNavigationBarHeight = navigationBarsInsets.getBottom(density)
-                if (newNavigationBarHeight != 0 && newNavigationBarHeight != navigationBarHeightState.navigationBarHeight) {
-                    navigationBarHeightState.navigationBarHeight = newNavigationBarHeight
-                }
-                val navigationBarHeight = navigationBarHeightState.navigationBarHeight
-                val diffSize = IntSize(
-                    width = newContainerSize.width - oldContainerSize.width,
-                    height = newContainerSize.height - oldContainerSize.height
-                )
-                if (navigationBarHeight == 0 ||
-                    (abs(diffSize.width) != navigationBarHeight && abs(diffSize.height) != navigationBarHeight)
-                ) {
-                    zoomable.containerSize = newContainerSize
-                } else {
-                    logger.d {
-                        "onSizeChanged. intercepted. " +
-                                "oldContainerSize=$oldContainerSize, " +
-                                "newContainerSize=$newContainerSize, " +
-                                "diffSize=$diffSize, " +
-                                "navigationBarHeight=$navigationBarHeight"
-                    }
-                }
+            val finalNewContainerSize = newContainerSize.let {
+                zoomable.containerSizeInterceptor?.intercept(logger, oldContainerSize, it) ?: it
+            }
+            if (finalNewContainerSize != oldContainerSize) {
+                zoomable.containerSize = finalNewContainerSize
             }
         }
         .pointerInput(zoomable) {
@@ -111,7 +77,7 @@ fun Modifier.zoomable(
                     val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
                     if (longPressSlideScaleSpec != null) {
                         lastLongPressPoint = it
-                        longPressSlideScaleSpec.hapticFeedback.perform(context)
+                        longPressSlideScaleSpec.hapticFeedback.perform()
                     }
                     updatedOnLongPress?.invoke(it)
                 },

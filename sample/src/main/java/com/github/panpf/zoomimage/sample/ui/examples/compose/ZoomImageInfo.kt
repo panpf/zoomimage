@@ -17,10 +17,9 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.github.panpf.sketch.decode.internal.exifOrientationName
 import com.github.panpf.tools4j.io.ktx.formatCompactFileSize
+import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
-import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.toShortString
@@ -120,10 +119,11 @@ fun ZoomImageInfo(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun ZoomImageInfoPreview() {
+    val zoomState = rememberZoomState()
     ZoomImageInfo(
         imageUri = "https://www.sample.com/sample.jpg",
-        zoomableState = rememberZoomableState(),
-        subsampling = rememberSubsamplingState()
+        zoomableState = zoomState.zoomable,
+        subsampling = zoomState.subsampling
     )
 }
 
