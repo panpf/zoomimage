@@ -17,8 +17,14 @@
 package com.github.panpf.zoomimage.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.github.panpf.zoomimage.AndroidLogPipeline
 import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -43,9 +49,14 @@ fun rememberZoomState(): ZoomState {
     val subsamplingState = rememberSubsamplingState(logger, tilePlatformAdapter)
     subsamplingState.BindZoomableState(zoomableState)
 
-    return remember(logger, zoomableState, subsamplingState) {
+    val zoomState = remember(logger, zoomableState, subsamplingState) {
         ZoomState(logger, zoomableState, subsamplingState)
     }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(lifecycle) {
+        zoomState.setLifecycle(lifecycle)
+    }
+    return zoomState
 }
 
 /**
@@ -67,9 +78,65 @@ class ZoomState(
      * Used to control the state of subsampling
      */
     val subsampling: SubsamplingState,
-) {
+) : RememberObserver {
+
+    private var lifecycle: Lifecycle? = null
+    private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
+
+    /**
+     * Set the lifecycle, which automatically controls stop and start, which is obtained from [LocalLifecycleOwner] by default,
+     * and can be set by this method if the default acquisition method is not applicable
+     */
+    fun setLifecycle(lifecycle: Lifecycle?) {
+        if (this.lifecycle != lifecycle) {
+            unregisterLifecycleObserver()
+            this.lifecycle = lifecycle
+            registerLifecycleObserver()
+            resetStopped("setLifecycle")
+        }
+    }
+
+    private fun resetStopped(caller: String) {
+        val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
+        val stopped = !lifecycleStarted
+        logger.d {
+            "resetStopped:$caller. $stopped. lifecycleStarted=$lifecycleStarted. '${subsampling.imageKey}'"
+        }
+        subsampling.stopped = stopped
+    }
+
+    private fun registerLifecycleObserver() {
+        lifecycle?.addObserver(resetStoppedLifecycleObserver)
+    }
+
+    private fun unregisterLifecycleObserver() {
+        lifecycle?.removeObserver(resetStoppedLifecycleObserver)
+    }
+
+    private class ResetStoppedLifecycleObserver(val state: ZoomState) : LifecycleEventObserver {
+
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_START) {
+                state.resetStopped("LifecycleStateChanged:ON_START")
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                state.resetStopped("LifecycleStateChanged:ON_STOP")
+            }
+        }
+    }
 
     override fun toString(): String {
         return "ZoomState(logger=${logger}, zoomable=${zoomable}, subsampling=${subsampling})"
+    }
+
+    override fun onRemembered() {
+
+    }
+
+    override fun onAbandoned() {
+        unregisterLifecycleObserver()
+    }
+
+    override fun onForgotten() {
+        unregisterLifecycleObserver()
     }
 }

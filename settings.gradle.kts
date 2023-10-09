@@ -26,6 +26,7 @@ dependencyResolutionManagement {
 include(":sample")
 include(":zoomimage-compose")
 include(":zoomimage-compose-coil")
+//include(":zoomimage-compose-common")
 include(":zoomimage-compose-glide")
 include(":zoomimage-compose-sketch")
 include(":zoomimage-core-subsampling")

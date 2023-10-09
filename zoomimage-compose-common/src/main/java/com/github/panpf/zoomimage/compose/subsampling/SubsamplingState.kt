@@ -69,7 +69,10 @@ import kotlin.math.roundToInt
  * Creates and remember a [SubsamplingState] that can be used to subsampling of the content.
  */
 @Composable
-fun rememberSubsamplingState(logger: Logger, tilePlatformAdapter: TilePlatformAdapter): SubsamplingState {
+fun rememberSubsamplingState(
+    logger: Logger,
+    tilePlatformAdapter: TilePlatformAdapter
+): SubsamplingState {
     val subsamplingState = remember(logger, tilePlatformAdapter) {
         SubsamplingState(logger, tilePlatformAdapter)
     }
@@ -96,8 +99,8 @@ class SubsamplingState constructor(
     private val tileBitmapCacheHelper = TileBitmapCacheHelper(this.logger, tileBitmapCacheSpec)
     private val tileBitmapReuseHelper =
         tilePlatformAdapter.createReuseHelper(this.logger, tileBitmapReuseSpec)
+    internal var imageKey: String? = null
 
-    var imageKey: String? = null
     internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     internal var contentSize: IntSize by mutableStateOf(IntSize.Zero)
 
@@ -341,15 +344,15 @@ class SubsamplingState constructor(
                 )
             }
             val newTileDecoder = result.getOrNull()
+            logger.d {
+                "resetTileDecoder:$caller. success. " +
+                        "contentSize=${contentSize.toShortString()}, " +
+                        "ignoreExifOrientation=${ignoreExifOrientation}. " +
+                        "imageInfo=${newTileDecoder?.imageInfo?.toShortString()}. " +
+                        "'${imageKey}'"
+            }
+            this@SubsamplingState.tileDecoder = newTileDecoder
             if (newTileDecoder != null) {
-                logger.d {
-                    "resetTileDecoder:$caller. success. " +
-                            "contentSize=${contentSize.toShortString()}, " +
-                            "ignoreExifOrientation=${ignoreExifOrientation}. " +
-                            "imageInfo=${newTileDecoder.imageInfo.toShortString()}. " +
-                            "'${imageKey}'"
-                }
-                this@SubsamplingState.tileDecoder = newTileDecoder
                 this@SubsamplingState.imageInfo = newTileDecoder.imageInfo
                 resetTileManager(caller)
             } else {

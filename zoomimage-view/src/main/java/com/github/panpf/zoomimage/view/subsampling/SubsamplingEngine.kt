@@ -80,7 +80,7 @@ class SubsamplingEngine constructor(
     private var tileBitmapReuseHelper =
         tilePlatformAdapter.createReuseHelper(this.logger, tileBitmapReuseSpec)
     private var lastResetTileDecoderJob: Job? = null
-    private var lifecycle: Lifecycle? = null
+    private var lifecycle: Lifecycle? = null    // todo 挪出去，并更新文档
     private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
     private val _containerSizeState = MutableStateFlow(IntSizeCompat.Zero)
     private val _contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
