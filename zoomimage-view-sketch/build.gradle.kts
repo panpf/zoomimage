@@ -38,7 +38,7 @@ android {
 
 dependencies {
     api(project(":zoomimage-view"))
-    api(project(":zoomimage-core-subsampling-android-sketch"))
+    api(project(":zoomimage-core-sketch"))
     api(libs.panpf.sketch3.viewability)
 
     testImplementation(libs.junit)

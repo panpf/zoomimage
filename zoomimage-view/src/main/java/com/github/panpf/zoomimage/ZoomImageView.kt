@@ -24,28 +24,34 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
-import com.github.panpf.zoomimage.subsampling.AndroidTilePlatformAdapter
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.util.AndroidLogPipeline
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
+import com.github.panpf.zoomimage.view.internal.findLifecycle
+import com.github.panpf.zoomimage.view.internal.getNavigationBarsHeight
 import com.github.panpf.zoomimage.view.internal.intrinsicSize
+import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
+import com.github.panpf.zoomimage.view.subsampling.internal.ViewLifecycleStoppedController
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
-import com.github.panpf.zoomimage.view.zoom.internal.ContainerSizeDitheringInterceptor
 import com.github.panpf.zoomimage.view.zoom.internal.ScrollBarHelper
 import com.github.panpf.zoomimage.view.zoom.internal.TouchHelper
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
+import com.github.panpf.zoomimage.zoom.ReadMode
+import com.github.panpf.zoomimage.zoom.internal.NavigationBarDitherContainerSizeInterceptor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -134,16 +140,30 @@ open class ZoomImageView @JvmOverloads constructor(
             contentScaleState.value = initScaleType.toContentScale()
             alignmentState.value = initScaleType.toAlignment()
             resetDrawableSize()
-            containerSizeInterceptor = ContainerSizeDitheringInterceptor(this@ZoomImageView)
+            containerSizeInterceptor = NavigationBarDitherContainerSizeInterceptor(object :
+                NavigationBarDitherContainerSizeInterceptor.NavigationBarHeightGetter {
+                override fun getNavigationBarHeight(): Int {
+                    return this@ZoomImageView.getNavigationBarsHeight()
+                }
+            })
         }
         touchHelper = TouchHelper(this, zoomableEngine)
 
         /* SubsamplingEngine */
-        val subsamplingEngine =
-            SubsamplingEngine(logger, this, AndroidTilePlatformAdapter()).apply {
-                this@ZoomImageView._subsamplingEngine = this
-                bindZoomEngine(zoomableEngine)
+        val subsamplingEngine = SubsamplingEngine(logger, this).apply {
+            this@ZoomImageView._subsamplingEngine = this
+            bindZoomEngine(zoomableEngine)
+            post {
+                val view = this@ZoomImageView
+                if (view.isAttachedToWindowCompat) {
+                    val lifecycle =
+                        view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
+                    if (lifecycle != null) {
+                        stoppedController = ViewLifecycleStoppedController(view, lifecycle)
+                    }
+                }
             }
+        }
         tileDrawHelper =
             TileDrawHelper(logger, this@ZoomImageView, zoomableEngine, subsamplingEngine)
 
@@ -372,17 +392,6 @@ open class ZoomImageView @JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return touchHelper.onTouchEvent(event) || super.onTouchEvent(event)
-    }
-
-    override fun onVisibilityChanged(changedView: View, visibility: Int) {
-        super.onVisibilityChanged(changedView, visibility)
-        val visibilityName = when (visibility) {
-            View.VISIBLE -> "VISIBLE"
-            View.INVISIBLE -> "INVISIBLE"
-            View.GONE -> "GONE"
-            else -> "UNKNOWN"
-        }
-        _subsamplingEngine?.resetStopped("onVisibilityChanged:$visibilityName")
     }
 
     override fun canScrollHorizontally(direction: Int): Boolean =

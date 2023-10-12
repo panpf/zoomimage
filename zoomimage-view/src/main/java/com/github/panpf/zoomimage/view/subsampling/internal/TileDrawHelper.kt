@@ -26,7 +26,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
-import com.github.panpf.zoomimage.Logger
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.Tile

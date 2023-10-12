@@ -17,16 +17,13 @@
 package com.github.panpf.zoomimage.view.subsampling
 
 import android.view.View
-import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import com.github.panpf.zoomimage.Logger
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.createTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
+import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.StoppedController
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheHelper
@@ -36,16 +33,15 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPausedContinuousTransformType
-import com.github.panpf.zoomimage.subsampling.TilePlatformAdapter
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.subsampling.createTileDecoder
+import com.github.panpf.zoomimage.subsampling.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.view.internal.findLifecycle
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -66,7 +62,6 @@ import kotlin.math.roundToInt
 class SubsamplingEngine constructor(
     logger: Logger,
     private val view: View,
-    private val tilePlatformAdapter: TilePlatformAdapter
 ) {
 
     private val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
@@ -78,10 +73,8 @@ class SubsamplingEngine constructor(
     private val tileBitmapReuseSpec = TileBitmapReuseSpec()
     private var tileBitmapCacheHelper = TileBitmapCacheHelper(this.logger, tileBitmapCacheSpec)
     private var tileBitmapReuseHelper =
-        tilePlatformAdapter.createReuseHelper(this.logger, tileBitmapReuseSpec)
+        createTileBitmapReuseHelper(this.logger, tileBitmapReuseSpec)
     private var lastResetTileDecoderJob: Job? = null
-    private var lifecycle: Lifecycle? = null    // todo 挪出去，并更新文档
-    private val resetStoppedLifecycleObserver by lazy { ResetStoppedLifecycleObserver(this) }
     private val _containerSizeState = MutableStateFlow(IntSizeCompat.Zero)
     private val _contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
     internal var imageKey: String? = null
@@ -151,6 +144,24 @@ class SubsamplingEngine constructor(
     val stoppedState = MutableStateFlow(false)
 
     /**
+     * The stopped property controller, which can automatically stop and restart with the help of Lifecycle
+     */
+    var stoppedController: StoppedController? = null
+        set(value) {
+            if (field != value) {
+                field?.onDestroy()
+                field = value
+                value?.bindStoppedWrapper(object : StoppedController.StoppedWrapper {
+                    override var stopped: Boolean
+                        get() = this@SubsamplingEngine.stoppedState.value
+                        set(value) {
+                            this@SubsamplingEngine.stoppedState.value = value
+                        }
+                })
+            }
+        }
+
+    /**
      * If true, the bounds of each tile is displayed
      */
     val showTileBoundsState = MutableStateFlow(false)
@@ -159,6 +170,7 @@ class SubsamplingEngine constructor(
     /* *********************************** Information properties ******************************* */
 
     private val _imageInfoState = MutableStateFlow<ImageInfo?>(null)
+    private val _exifOrientation = MutableStateFlow<ExifOrientation?>(null)
     private val _readyState = MutableStateFlow(false)
     private val _foregroundTilesState = MutableStateFlow<List<TileSnapshot>>(emptyList())
     private val _backgroundTilesState = MutableStateFlow<List<TileSnapshot>>(emptyList())
@@ -167,9 +179,14 @@ class SubsamplingEngine constructor(
     private val _tileGridSizeMapState = MutableStateFlow<Map<Int, IntOffsetCompat>>(emptyMap())
 
     /**
-     * The information of the image, including width, height, format, exif information, etc
+     * The information of the image, including width, height, format, etc
      */
     val imageInfoState: StateFlow<ImageInfo?> = _imageInfoState
+
+    /**
+     * The exif information of the image
+     */
+    val exifOrientation: StateFlow<ExifOrientation?> = _exifOrientation
 
     /**
      * Whether the image is ready for subsampling
@@ -203,22 +220,13 @@ class SubsamplingEngine constructor(
 
 
     init {
-        view.post {
-            if (view.isAttachedToWindowCompat) {
-                val lifecycle1 =
-                    view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
-                setLifecycle(lifecycle1)
-            }
-        }
         view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 reset("onViewAttachedToWindow")
-                registerLifecycleObserver()
             }
 
             override fun onViewDetachedFromWindow(v: View) {
                 clean("onViewDetachedFromWindow")
-                unregisterLifecycleObserver()
             }
         })
 
@@ -293,19 +301,6 @@ class SubsamplingEngine constructor(
             reset("setImageSource")
         }
         return true
-    }
-
-    /**
-     * Set the lifecycle, which automatically controls stop and start, which is obtained from View.findViewTreeLifecycleOwner() by default,
-     * and can be set by this method if the default acquisition method is not applicable
-     */
-    fun setLifecycle(lifecycle: Lifecycle?) {
-        if (this.lifecycle != lifecycle) {
-            unregisterLifecycleObserver()
-            this.lifecycle = lifecycle
-            registerLifecycleObserver()
-            resetStopped("setLifecycle")
-        }
     }
 
 
@@ -398,13 +393,12 @@ class SubsamplingEngine constructor(
 
         lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
             val result = withContext(Dispatchers.IO) {
-                createTileDecoder(
+                decodeAndCreateTileDecoder(
                     logger = logger,
                     imageSource = imageSource,
                     thumbnailSize = contentSize,
                     ignoreExifOrientation = ignoreExifOrientation,
-                    tilePlatformAdapter = tilePlatformAdapter,
-                    reuseHelper = tileBitmapReuseHelper,
+                    tileBitmapReuseHelper = tileBitmapReuseHelper,
                 )
             }
             val newTileDecoder = result.getOrNull()
@@ -418,6 +412,7 @@ class SubsamplingEngine constructor(
                 }
                 this@SubsamplingEngine.tileDecoder = newTileDecoder
                 this@SubsamplingEngine._imageInfoState.value = newTileDecoder.imageInfo
+                this@SubsamplingEngine._exifOrientation.value = newTileDecoder.exifOrientation
                 resetTileManager(caller)
             } else {
                 val exception = result.exceptionOrNull()!! as CreateTileDecoderException
@@ -499,6 +494,7 @@ class SubsamplingEngine constructor(
             refreshReadyState()
         }
         _imageInfoState.value = null
+        _exifOrientation.value = null
     }
 
     private fun cleanTileManager(caller: String) {
@@ -529,41 +525,5 @@ class SubsamplingEngine constructor(
     private fun clean(caller: String) {
         cleanTileDecoder("clean:$caller")
         cleanTileManager("clean:$caller")
-    }
-
-    internal fun resetStopped(caller: String) {
-        val viewVisible = view.isVisible
-        val lifecycleStarted = lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) != false
-        val stopped = !viewVisible || !lifecycleStarted
-        logger.d {
-            "resetStopped:$caller. $stopped. " +
-                    "viewVisible=$viewVisible, " +
-                    "lifecycleStarted=$lifecycleStarted. " +
-                    "'${imageSource?.key}'"
-        }
-        this.stoppedState.value = stopped
-    }
-
-    private fun registerLifecycleObserver() {
-        if (view.isAttachedToWindowCompat) {
-            lifecycle?.addObserver(resetStoppedLifecycleObserver)
-        }
-    }
-
-    private fun unregisterLifecycleObserver() {
-        lifecycle?.removeObserver(resetStoppedLifecycleObserver)
-    }
-
-    private class ResetStoppedLifecycleObserver(
-        val engine: SubsamplingEngine
-    ) : LifecycleEventObserver {
-
-        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            if (event == Lifecycle.Event.ON_START) {
-                engine.resetStopped("LifecycleStateChanged:ON_START")
-            } else if (event == Lifecycle.Event.ON_STOP) {
-                engine.resetStopped("LifecycleStateChanged:ON_STOP")
-            }
-        }
     }
 }

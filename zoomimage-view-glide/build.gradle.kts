@@ -39,7 +39,7 @@ android {
 
 dependencies {
     api(project(":zoomimage-view"))
-    api(project(":zoomimage-core-subsampling-android-glide"))
+    api(project(":zoomimage-core-glide"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

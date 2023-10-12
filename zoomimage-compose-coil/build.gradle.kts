@@ -57,7 +57,7 @@ android {
 
 dependencies {
     api(project(":zoomimage-compose"))
-    api(project(":zoomimage-core-subsampling-android-coil"))
+    api(project(":zoomimage-core-coil"))
     api(libs.coil.compose)
 
     debugImplementation(libs.androidx.compose.ui.tooling)

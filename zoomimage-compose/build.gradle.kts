@@ -1,6 +1,58 @@
 plugins {
+    alias(libs.plugins.org.jetbrains.kotlin.multiplatform)
+    alias(libs.plugins.org.jetbrains.compose)
     alias(libs.plugins.com.android.library)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
+}
+
+group = property("GROUP").toString()
+version = property("versionName").toString()
+
+kotlin {
+    androidTarget {
+        publishLibraryVariants("release")
+        compilations.configureEach {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
+
+    jvm("desktop") {
+        compilations.configureEach {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
+
+    sourceSets {
+        named("androidMain") {
+            dependencies {
+            }
+        }
+
+        named("commonMain") {
+            dependencies {
+                api(project(":zoomimage-core"))
+                api(compose.foundation)
+                api(compose.ui)
+                api(compose.uiTooling.replace("ui-tooling", "ui-util"))
+            }
+        }
+        named("commonTest") {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.junit)
+                implementation(libs.panpf.tools4j.test)
+            }
+        }
+    }
+}
+
+compose {
+    val compilerDependencyDeclaration =
+        libs.androidx.compose.compiler.get().run { "$module:$version" }
+    kotlinCompilerPlugin.set(compilerDependencyDeclaration)
 }
 
 android {
@@ -15,61 +67,13 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildFeatures {
-        compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
-    }
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-
-        // Enable Compose Compiler Report
-        freeCompilerArgs = freeCompilerArgs.plus(
-            arrayOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + project.buildDir.absolutePath + "/compose_metrics"
-            )
-        )
-        // Enable Compose Compiler Metrics
-        freeCompilerArgs = freeCompilerArgs.plus(
-            arrayOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + project.buildDir.absolutePath + "/compose_metrics"
-            )
-        )
-    }
-}
-
-dependencies {
-    api(project(":zoomimage-core-zoomable-android"))
-    api(project(":zoomimage-core-subsampling-android"))
-
-    /* compose */
-    api(libs.androidx.compose.foundation)
-    api(libs.androidx.compose.ui)
-    api(libs.androidx.compose.ui.util)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.panpf.tools4j.test)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.androidx.test.rules)
 }

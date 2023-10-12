@@ -1,5 +1,7 @@
 pluginManagement {
     repositories {
+//        maven { setUrl("https://maven.aliyun.com/repository/public") }  // central and jcenter
+//        maven { setUrl("https://maven.aliyun.com/repository/google") }  // google
 //        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }
         gradlePluginPortal()
         mavenCentral()
@@ -9,12 +11,14 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+//        maven { setUrl("https://maven.aliyun.com/repository/public") }  // central and jcenter
+//        maven { setUrl("https://maven.aliyun.com/repository/google") }  // google
 //        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }
         mavenCentral()
-        maven { setUrl("https://www.jitpack.io") }
         google()
+        maven { setUrl("https://www.jitpack.io") }
 //        maven { setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots") }
-//        mavenLocal()
+        mavenLocal()
     }
     versionCatalogs {
         create("libs") {
@@ -23,22 +27,17 @@ dependencyResolutionManagement {
     }
 }
 
-include(":sample")
+include(":sample-android")
+include(":sample-desktop")
 include(":zoomimage-compose")
 include(":zoomimage-compose-coil")
-//include(":zoomimage-compose-common")
 include(":zoomimage-compose-glide")
 include(":zoomimage-compose-sketch")
-include(":zoomimage-core-subsampling")
-include(":zoomimage-core-subsampling-android")
-include(":zoomimage-core-subsampling-android-coil")
-include(":zoomimage-core-subsampling-android-glide")
-include(":zoomimage-core-subsampling-android-picasso")
-include(":zoomimage-core-subsampling-android-sketch")
-include(":zoomimage-core-util")
-include(":zoomimage-core-util-android")
-include(":zoomimage-core-zoomable")
-include(":zoomimage-core-zoomable-android")
+include(":zoomimage-core")
+include(":zoomimage-core-coil")
+include(":zoomimage-core-glide")
+include(":zoomimage-core-picasso")
+include(":zoomimage-core-sketch")
 include(":zoomimage-view")
 include(":zoomimage-view-coil")
 include(":zoomimage-view-glide")
