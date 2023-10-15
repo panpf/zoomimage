@@ -27,7 +27,6 @@ import java.io.PrintStream
  *
  * @see [com.github.panpf.zoomimage.core.test.LoggerTest]
  */
-// todo move to util
 class Logger(
     /**
      * The tag of the log

@@ -18,8 +18,6 @@ package com.github.panpf.zoomimage.subsampling
 
 /**
  * Assist [TileDecoder] to obtain Bitmap from [TileBitmapPool] and set it to BitmapFactory and release Bitmap
- *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.TileBitmapPoolHelperTest]
  */
 interface TileBitmapReuseHelper {
 

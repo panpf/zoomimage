@@ -26,9 +26,8 @@ import kotlin.math.max
  * Read mode allows long text images to be displayed in a way that fills the screen at the beginning and is positioned at the beginning of the image,
  * so that users can directly start read the content of the image without double-clicking to enlarge and then sliding to the beginning position
  *
- * @see [com.github.panpf.zoomimage.core.test.ReadModeTest]
+ * @see [com.github.panpf.zoomimage.core.test.zoom.ReadModeTest]
  */
-// todo move to zoom
 data class ReadMode(
     /**
      * Limit the size types of image that can use read mode.

@@ -19,9 +19,8 @@ package com.github.panpf.zoomimage.zoom
 /**
  * Edge state for the current offset
  *
- * @see [com.github.panpf.zoomimage.core.test.ScrollEdgeTest]
+ * @see [com.github.panpf.zoomimage.core.test.zoom.ScrollEdgeTest]
  */
-// todo move to zoom
 data class ScrollEdge(val horizontal: Edge, val vertical: Edge) {
 
     companion object {

@@ -55,41 +55,6 @@ class AndroidTileDecodeUtilsTest {
     }
 
     @Test
-    fun testCanUseSubsamplingByAspectRatio() {
-        val imageSize = IntSizeCompat(1000, 2000)
-
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17f, 17f))
-        )
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17f, 16.5f))
-        )
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17.3f, 17f))
-        )
-        Assert.assertFalse(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17f, 16.4f))
-        )
-        Assert.assertFalse(
-            canUseSubsamplingByAspectRatio(imageSize, imageSize / ScaleFactorCompat(17.6f, 17f))
-        )
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(
-                imageSize,
-                imageSize / ScaleFactorCompat(17f, 16.4f),
-                minDifference = 0.8f
-            )
-        )
-        Assert.assertTrue(
-            canUseSubsamplingByAspectRatio(
-                imageSize,
-                imageSize / ScaleFactorCompat(17.6f, 17f),
-                minDifference = 0.8f
-            )
-        )
-    }
-
-    @Test
     fun testIsSupportInBitmapForRegion() {
         Assert.assertEquals(Build.VERSION.SDK_INT >= 16, isSupportInBitmapForRegion("image/jpeg"))
         Assert.assertEquals(Build.VERSION.SDK_INT >= 16, isSupportInBitmapForRegion("image/png"))

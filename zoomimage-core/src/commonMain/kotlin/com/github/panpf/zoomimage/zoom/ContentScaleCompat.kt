@@ -45,7 +45,7 @@ interface ContentScaleCompat {
          * corresponding dimension of the destination.
          *
          * This [ContentScaleCompat] implementation in combination with usage of [AlignmentCompat.Center]
-         * provides similar behavior to [android.widget.ImageView.ScaleType.CENTER_CROP]
+         * provides similar behavior to 'android.widget.ImageView.ScaleType.CENTER_CROP'
          */
         val Crop = object : ContentScaleCompat {
             override fun computeScaleFactor(
@@ -63,7 +63,7 @@ interface ContentScaleCompat {
          * corresponding dimension of the destination
          *
          * This [ContentScaleCompat] implementation in combination with usage of [AlignmentCompat.Center]
-         * provides similar behavior to [android.widget.ImageView.ScaleType.FIT_CENTER]
+         * provides similar behavior to 'android.widget.ImageView.ScaleType.FIT_CENTER'
          */
         val Fit = object : ContentScaleCompat {
             override fun computeScaleFactor(
@@ -112,7 +112,7 @@ interface ContentScaleCompat {
          * always be contained within the bounds of the destination.
          *
          * This [ContentScaleCompat] implementation in combination with usage of [AlignmentCompat.Center]
-         * provides similar behavior to [android.widget.ImageView.ScaleType.CENTER_INSIDE]
+         * provides similar behavior to 'android.widget.ImageView.ScaleType.CENTER_INSIDE'
          */
         val Inside = object : ContentScaleCompat {
 

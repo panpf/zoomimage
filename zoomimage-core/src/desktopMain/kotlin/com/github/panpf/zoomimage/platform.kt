@@ -30,6 +30,6 @@ actual fun createTileDecoder(
     logger: Logger,
     imageSource: ImageSource,
     imageInfo: ImageInfo,
-    tileBitmapReuseHelper: TileBitmapReuseHelper?,
     exifOrientation: ExifOrientation?,
+    tileBitmapReuseHelper: TileBitmapReuseHelper?,
 ): Result<TileDecoder> = Result.failure(UnsupportedOperationException("The desktop platform does not support subsampling"))

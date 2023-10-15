@@ -22,8 +22,6 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 
 /**
  * Decode the tile bitmap of the image
- *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.TileDecoderTest]
  */
 interface TileDecoder {
 

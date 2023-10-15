@@ -37,8 +37,8 @@ actual fun createTileDecoder(
     logger: Logger,
     imageSource: ImageSource,
     imageInfo: ImageInfo,
-    tileBitmapReuseHelper: TileBitmapReuseHelper?,
     exifOrientation: ExifOrientation?,
+    tileBitmapReuseHelper: TileBitmapReuseHelper?,
 ): Result<TileDecoder> {
     val tileDecoder = AndroidTileDecoder(
         logger = logger,

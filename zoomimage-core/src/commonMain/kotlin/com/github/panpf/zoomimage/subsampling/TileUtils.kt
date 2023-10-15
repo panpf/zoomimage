@@ -33,7 +33,7 @@ import kotlin.math.abs
 /**
  * Create [TileDecoder]. If the image type is not supported or the thumbnail size is larger than the original image or the aspect ratio of the thumbnail and the original image is inconsistent, the creation will fail.
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.CoreSubsamplingUtilsTest.testCreateTileDecoder]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.TileUtilsTest.testDecodeAndCreateTileDecoder]
  */
 @WorkerThread
 fun decodeAndCreateTileDecoder(
@@ -87,9 +87,9 @@ fun decodeAndCreateTileDecoder(
 }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testCanUseSubsamplingByAspectRatio]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.TileUtilsTest.testCanUseSubsamplingByAspectRatio]
  */
-internal fun canUseSubsamplingByAspectRatio(
+fun canUseSubsamplingByAspectRatio(
     imageSize: IntSizeCompat,
     thumbnailSize: IntSizeCompat,
     minDifference: Float = 0.5f
@@ -107,7 +107,7 @@ class CreateTileDecoderException(
 /**
  * Returns a string consisting of sample size, number of tiles, and grid size
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.CoreSubsamplingUtilsTest.testToIntroString]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.TileUtilsTest.testToIntroString]
  */
 fun Map<Int, List<Tile>>.toIntroString(): String {
     return entries.joinToString(
@@ -119,17 +119,3 @@ fun Map<Int, List<Tile>>.toIntroString(): String {
         "${sampleSize}:${tiles.size}:${gridSize.toShortString()}"
     }
 }
-
-fun exifOrientationName(exifOrientation: Int): String =
-    when (exifOrientation) {
-        6 -> "ROTATE_90" //        ExifInterface.ORIENTATION_ROTATE_90
-        5 -> "TRANSPOSE" //        ExifInterface.ORIENTATION_TRANSPOSE
-        3 -> "ROTATE_180" //        ExifInterface.ORIENTATION_ROTATE_180
-        4 -> "FLIP_VERTICAL" //        ExifInterface.ORIENTATION_FLIP_VERTICAL
-        8 -> "ROTATE_270" //        ExifInterface.ORIENTATION_ROTATE_270
-        7 -> "TRANSVERSE" //        ExifInterface.ORIENTATION_TRANSVERSE
-        2 -> "FLIP_HORIZONTAL" //        ExifInterface.ORIENTATION_FLIP_HORIZONTAL
-        0 -> "UNDEFINED" //        ExifInterface.ORIENTATION_UNDEFINED
-        1 -> "NORMAL" //        ExifInterface.ORIENTATION_NORMAL
-        else -> exifOrientation.toString()
-    }

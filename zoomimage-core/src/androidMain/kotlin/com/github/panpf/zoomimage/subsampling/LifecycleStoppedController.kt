@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.subsampling
 
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 
@@ -35,8 +36,7 @@ open class LifecycleStoppedController constructor(val lifecycle: Lifecycle) : St
     }
 
     fun resetStopped() {
-        val lifecycleStarted = lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
-        val stopped = !lifecycleStarted
+        val stopped = !lifecycle.currentState.isAtLeast(STARTED)
         stoppedWrapper?.stopped = stopped
     }
 

@@ -9,7 +9,6 @@ import com.github.panpf.zoomimage.core.test.internal.cornerC
 import com.github.panpf.zoomimage.core.test.internal.cornerD
 import com.github.panpf.zoomimage.core.test.internal.corners
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
-import com.github.panpf.zoomimage.subsampling.exifOrientationName
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
@@ -502,22 +501,22 @@ class AndroidExifOrientationTest {
 
     @Test
     fun testExifOrientationName() {
-        Assert.assertEquals("ROTATE_90", exifOrientationName(ExifInterface.ORIENTATION_ROTATE_90))
-        Assert.assertEquals("TRANSPOSE", exifOrientationName(ExifInterface.ORIENTATION_TRANSPOSE))
-        Assert.assertEquals("ROTATE_180", exifOrientationName(ExifInterface.ORIENTATION_ROTATE_180))
+        Assert.assertEquals("ROTATE_90", AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90).name())
+        Assert.assertEquals("TRANSPOSE", AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE).name())
+        Assert.assertEquals("ROTATE_180", AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180).name())
         Assert.assertEquals(
             "FLIP_VERTICAL",
-            exifOrientationName(ExifInterface.ORIENTATION_FLIP_VERTICAL)
+            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL).name()
         )
-        Assert.assertEquals("ROTATE_270", exifOrientationName(ExifInterface.ORIENTATION_ROTATE_270))
-        Assert.assertEquals("TRANSVERSE", exifOrientationName(ExifInterface.ORIENTATION_TRANSVERSE))
+        Assert.assertEquals("ROTATE_270", AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270).name())
+        Assert.assertEquals("TRANSVERSE", AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE).name())
         Assert.assertEquals(
             "FLIP_HORIZONTAL",
-            exifOrientationName(ExifInterface.ORIENTATION_FLIP_HORIZONTAL)
+            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL).name()
         )
-        Assert.assertEquals("UNDEFINED", exifOrientationName(ExifInterface.ORIENTATION_UNDEFINED))
-        Assert.assertEquals("NORMAL", exifOrientationName(ExifInterface.ORIENTATION_NORMAL))
-        Assert.assertEquals("-1", exifOrientationName(-1))
-        Assert.assertEquals("100", exifOrientationName(100))
+        Assert.assertEquals("UNDEFINED", AndroidExifOrientation(ExifInterface.ORIENTATION_UNDEFINED).name())
+        Assert.assertEquals("NORMAL", AndroidExifOrientation(ExifInterface.ORIENTATION_NORMAL).name())
+        Assert.assertEquals("-1", AndroidExifOrientation(-1).name())
+        Assert.assertEquals("100", AndroidExifOrientation(100).name())
     }
 }

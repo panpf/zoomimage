@@ -20,7 +20,5 @@ class ImageSourceTest {
             Assert.assertEquals(imageFile2.path, key)
             Assert.assertEquals("FileImageSource('$imageFile2')", toString())
         }
-
-        // todo openInputStream
     }
 }

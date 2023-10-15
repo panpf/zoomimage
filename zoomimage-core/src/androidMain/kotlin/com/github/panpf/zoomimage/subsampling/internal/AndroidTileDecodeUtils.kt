@@ -30,7 +30,7 @@ import kotlin.math.floor
 
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testReadExifOrientation]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadExifOrientation]
  */
 @WorkerThread
 internal fun ImageSource.readExifOrientation(): Result<Int> {
@@ -46,7 +46,7 @@ internal fun ImageSource.readExifOrientation(): Result<Int> {
 }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testReadImageInfo]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadImageInfo]
  */
 @WorkerThread
 internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
@@ -74,7 +74,7 @@ internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
  *
  * Test results based on the BitmapRegionDecoderTest.testInBitmapAndInSampleSize() method
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testIsSupportInBitmapForRegion]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSupportInBitmapForRegion]
  */
 @SuppressLint("ObsoleteSdkInt")
 internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
@@ -93,7 +93,7 @@ internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
 /**
  * Calculate the size of the sampled Bitmap, support for BitmapRegionDecoder
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testCalculateSampledBitmapSizeForRegion]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testCalculateSampledBitmapSizeForRegion]
  */
 internal fun calculateSampledBitmapSizeForRegion(
     regionSize: IntSizeCompat,
@@ -117,7 +117,7 @@ internal fun calculateSampledBitmapSizeForRegion(
 }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testIsInBitmapError]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsInBitmapError]
  */
 internal fun isInBitmapError(throwable: Throwable): Boolean =
     if (throwable is IllegalArgumentException) {
@@ -128,7 +128,7 @@ internal fun isInBitmapError(throwable: Throwable): Boolean =
     }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testIsSrcRectError]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSrcRectError]
  */
 internal fun isSrcRectError(throwable: Throwable): Boolean =
     if (throwable is IllegalArgumentException) {
@@ -139,7 +139,7 @@ internal fun isSrcRectError(throwable: Throwable): Boolean =
     }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecodeUtilsTest.testIsSupportBitmapRegionDecoder]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSupportBitmapRegionDecoder]
  */
 @SuppressLint("ObsoleteSdkInt")
 internal fun isSupportBitmapRegionDecoder(mimeType: String): Boolean =

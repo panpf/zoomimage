@@ -626,7 +626,6 @@ fun calculateUserOffsetBounds(
     require(rotation % 90 == 0) { "rotation must be multiple of 90" }
 
     val rotatedContentSize = contentSize.rotate(rotation)
-    val scaledContainerSize = containerSize.toSize() * userScale
     val rotatedContentBaseDisplayRect = calculateContentBaseDisplayRect(
         containerSize = containerSize,
         contentSize = rotatedContentSize,
