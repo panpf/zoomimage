@@ -62,9 +62,13 @@ class Tile constructor(
     fun setTileBitmap(tileBitmap: TileBitmap?, fromCache: Boolean) {
         val oldTileBitmap = this.bitmap
         if (tileBitmap == oldTileBitmap) return
-        (oldTileBitmap as CacheTileBitmap?)?.setIsDisplayed(false)
+        if (oldTileBitmap is CacheTileBitmap) {
+            oldTileBitmap.setIsDisplayed(false)
+        }
         this.bitmap = tileBitmap
-        (tileBitmap as CacheTileBitmap?)?.setIsDisplayed(true)
+        if (tileBitmap is CacheTileBitmap) {
+            tileBitmap.setIsDisplayed(true)
+        }
         if (tileBitmap != null && !fromCache) {
             animationState.restart()
         } else {
