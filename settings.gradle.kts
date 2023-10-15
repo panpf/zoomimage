@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
-//        maven { setUrl("https://maven.aliyun.com/repository/public") }  // central and jcenter
+//        maven { setUrl("https://maven.aliyun.com/repository/public") }  // central、jcenter
 //        maven { setUrl("https://maven.aliyun.com/repository/google") }  // google
-//        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }
+//        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }    // central、google、jcenter
         gradlePluginPortal()
         mavenCentral()
         google()
@@ -11,14 +11,14 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-//        maven { setUrl("https://maven.aliyun.com/repository/public") }  // central and jcenter
+//        maven { setUrl("https://maven.aliyun.com/repository/public") }  // central、jcenter
 //        maven { setUrl("https://maven.aliyun.com/repository/google") }  // google
-//        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }
+//        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }    // central、google、jcenter
         mavenCentral()
         google()
         maven { setUrl("https://www.jitpack.io") }
 //        maven { setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots") }
-        mavenLocal()
+//        mavenLocal()
     }
     versionCatalogs {
         create("libs") {
