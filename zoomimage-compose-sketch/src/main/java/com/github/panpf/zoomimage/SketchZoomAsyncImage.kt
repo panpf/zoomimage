@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -51,8 +50,8 @@ import com.github.panpf.zoomimage.compose.internal.NoClipContentImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.compose.zoom.zoomable
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
 import com.github.panpf.zoomimage.sketch.SketchTileMemoryCache
@@ -353,27 +352,10 @@ fun SketchZoomAsyncImage(
         state.subsampling.tileMemoryCache = SketchTileMemoryCache(sketch, "SketchZoomAsyncImage")
     }
 
-    val transform1 = state.zoomable.transform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
-        .zoomable(
-            logger = state.logger,
-            zoomable = state.zoomable,
-            onLongPress = onLongPress,
-            onTap = onTap
-        )
-        .graphicsLayer {
-            scaleX = transform1.scaleX
-            scaleY = transform1.scaleY
-            translationX = transform1.offsetX
-            translationY = transform1.offsetY
-            transformOrigin = transform1.scaleOrigin
-        }
-        .graphicsLayer {
-            rotationZ = transform1.rotation
-            transformOrigin = transform1.rotationOrigin
-        }
+        .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .subsampling(state.logger, state.subsampling)
 
     val painter = rememberAsyncImagePainter(

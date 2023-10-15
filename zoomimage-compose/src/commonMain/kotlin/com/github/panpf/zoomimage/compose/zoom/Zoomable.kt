@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalLayoutApi::class)
-
 package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -40,7 +38,30 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.launch
 
-// todo 搞一个 Modifier.zoom()
+// todo edit docs
+
+fun Modifier.zoom(
+    logger: Logger,
+    zoomable: ZoomableState,
+    onLongPress: ((Offset) -> Unit)? = null,
+    onTap: ((Offset) -> Unit)? = null,
+) = composed {
+    val transform = zoomable.transform
+    val zoomModifier = Modifier
+        .zoomable(logger, zoomable, onLongPress = onLongPress, onTap = onTap)
+        .graphicsLayer {
+            scaleX = transform.scaleX
+            scaleY = transform.scaleY
+            translationX = transform.offsetX
+            translationY = transform.offsetY
+            transformOrigin = transform.scaleOrigin
+        }
+        .graphicsLayer {
+            rotationZ = transform.rotation
+            transformOrigin = transform.rotationOrigin
+        }
+    this.then(zoomModifier)
+}
 
 fun Modifier.zoomable(
     logger: Logger,

@@ -48,8 +48,8 @@ import com.github.panpf.zoomimage.compose.glide.internal.Transition
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.compose.zoom.zoomable
 import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.GlideTileMemoryCache
 import com.github.panpf.zoomimage.glide.newGlideImageSource
@@ -154,27 +154,10 @@ fun GlideZoomAsyncImage(
         state.subsampling.tileMemoryCache = GlideTileMemoryCache(glide)
     }
 
-    val transform = state.zoomable.transform
     val modifier1 = modifier
         .clipToBounds()
         .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
-        .zoomable(
-            logger = state.logger,
-            zoomable = state.zoomable,
-            onLongPress = onLongPress,
-            onTap = onTap
-        )
-        .graphicsLayer {
-            scaleX = transform.scaleX
-            scaleY = transform.scaleY
-            translationX = transform.offsetX
-            translationY = transform.offsetY
-            transformOrigin = transform.scaleOrigin
-        }
-        .graphicsLayer {
-            rotationZ = transform.rotation
-            transformOrigin = transform.rotationOrigin
-        }
+        .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .subsampling(state.logger, state.subsampling)
 
     GlideImage(

@@ -13,6 +13,7 @@ import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
+// todo API 21 的模拟器上从大图页面返回后崩溃，貌似是清明上河图图片，coil 加载的太大了
 @Composable
 fun CoilZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(

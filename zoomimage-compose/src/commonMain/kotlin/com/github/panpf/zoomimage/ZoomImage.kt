@@ -24,7 +24,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntSize
@@ -37,8 +36,8 @@ import com.github.panpf.zoomimage.compose.internal.toPx
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.compose.zoom.zoomable
 import kotlin.math.roundToInt
 
 /**
@@ -118,28 +117,11 @@ fun ZoomImage(
             zoomable.nowReset("initialize")
         }
 
-        val transform = zoomable.transform
         val modifier1 = Modifier
             .matchParentSize()
             .clipToBounds()
             .let { if (scrollBar != null) it.zoomScrollBar(zoomable, scrollBar) else it }
-            .zoomable(
-                logger = state.logger,
-                zoomable = zoomable,
-                onLongPress = onLongPress,
-                onTap = onTap
-            )
-            .graphicsLayer {
-                scaleX = transform.scaleX
-                scaleY = transform.scaleY
-                translationX = transform.offsetX
-                translationY = transform.offsetY
-                transformOrigin = transform.scaleOrigin
-            }
-            .graphicsLayer {
-                rotationZ = transform.rotation
-                transformOrigin = transform.rotationOrigin
-            }
+            .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
             .subsampling(state.logger, state.subsampling)
         NoClipContentImage(
             painter = painter,
