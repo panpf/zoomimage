@@ -57,7 +57,7 @@ import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
 import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
-import com.github.panpf.zoomimage.zoom.calculateInitialZoom
+import com.github.panpf.zoomimage.zoom.calculateInitialZoomWithContainerSizeChanged
 import com.github.panpf.zoomimage.zoom.calculateLocateUserOffset
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
 import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
@@ -166,6 +166,15 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      * @see com.github.panpf.zoomimage.zoom.GestureType
      */
     var disabledGestureTypeState = MutableStateFlow(0)
+
+    private var lastContainerSize: IntSizeCompat = containerSizeState.value
+    private var lastContentSize: IntSizeCompat = contentSizeState.value
+    private var lastContentOriginSize: IntSizeCompat = contentOriginSizeState.value
+    private var lastContentScale: ContentScaleCompat = contentScaleState.value
+    private var lastAlignment: AlignmentCompat = alignmentState.value
+    private var lastRotation: Int = rotation
+    private var lastReadMode: ReadMode? = readModeState.value
+    private var lastScalesCalculator: ScalesCalculator = scalesCalculatorState.value
 
 
     /* *********************************** Information properties ******************************* */
@@ -327,7 +336,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         val alignment = alignmentState.value
         val scalesCalculator = scalesCalculatorState.value
 
-        val initialZoom = calculateInitialZoom(
+        val initialZoom = calculateInitialZoomWithContainerSizeChanged(
             containerSize = containerSize,
             contentSize = contentSize,
             contentOriginSize = contentOriginSize,
@@ -336,6 +345,15 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
+            lastTransform = transformState.value,
+            lastContainerSize = lastContainerSize,
+            lastContentSize = lastContentSize,
+            lastContentOriginSize = lastContentOriginSize,
+            lastContentScale = lastContentScale,
+            lastAlignment = lastAlignment,
+            lastRotation = lastRotation,
+            lastReadMode = lastReadMode,
+            lastScalesCalculator = lastScalesCalculator,
         )
         logger.d {
             val transform = initialZoom.baseTransform + initialZoom.userTransform
@@ -366,6 +384,15 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             animated = false,
             caller = "reset"
         )
+
+        this.lastContainerSize = containerSize
+        this.lastContentSize = contentSize
+        this.lastContentOriginSize = contentOriginSize
+        this.lastContentScale = contentScale
+        this.lastAlignment = alignment
+        this.lastReadMode = readMode
+        this.lastRotation = rotation
+        this.lastScalesCalculator = scalesCalculator
     }
 
     /**

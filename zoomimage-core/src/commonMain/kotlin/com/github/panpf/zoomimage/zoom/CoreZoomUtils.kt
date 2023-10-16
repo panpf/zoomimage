@@ -29,6 +29,7 @@ import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
@@ -37,6 +38,7 @@ import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
+import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.internal.BaseTransformHelper
 import com.github.panpf.zoomimage.zoom.internal.format
@@ -366,6 +368,68 @@ data class InitialZoom(
     }
 }
 
+fun calculateInitialZoomWithContainerSizeChanged(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentOriginSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+    readMode: ReadMode?,
+    scalesCalculator: ScalesCalculator,
+    lastTransform: TransformCompat,
+    lastContainerSize: IntSizeCompat,
+    lastContentSize: IntSizeCompat,
+    lastContentOriginSize: IntSizeCompat,
+    lastContentScale: ContentScaleCompat,
+    lastAlignment: AlignmentCompat,
+    lastRotation: Int,
+    lastReadMode: ReadMode?,
+    lastScalesCalculator: ScalesCalculator?,
+): InitialZoom {
+    val newInitialZoom = calculateInitialZoom(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentOriginSize = contentOriginSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+        readMode = readMode,
+        scalesCalculator = scalesCalculator
+    )
+    return newInitialZoom
+//    val onlyContainerSizeChanged = lastContainerSize.isNotEmpty()
+//            && lastContentSize.isNotEmpty()
+//            && containerSize.isNotEmpty()
+//            && contentSize.isNotEmpty()
+////            && lastContainerSize != containerSize
+//            && lastContentSize == contentSize
+//            && lastContentOriginSize == contentOriginSize
+//            && lastContentScale == contentScale
+//            && lastAlignment == alignment
+//            && lastReadMode == readMode
+//            && lastRotation == rotation
+//            && lastScalesCalculator == scalesCalculator
+//    val lastTransformNotEmpty = lastTransform.scaleX != 1f
+//            || lastTransform.scaleY != 1f
+//            || lastTransform.offsetX != 0f
+//            || lastTransform.offsetY != 0f
+//    if (!onlyContainerSizeChanged || !lastTransformNotEmpty) {
+//        return newInitialZoom
+//    }
+//
+//    val containerSizeSize = containerSize.width * containerSize.height
+//    val lastContainerSizeSize = lastContainerSize.width * lastContainerSize.height
+//    val containerSizeScaleFactor =
+//        ScaleFactorCompat(containerSizeSize.toFloat() / lastContainerSizeSize)
+//    val newScale = lastTransform.scale * containerSizeScaleFactor
+//    val newOffset = lastTransform.offset * containerSizeScaleFactor
+//    val newTransform = lastTransform.copy(offset = newOffset)
+//    val newUserTransform = newTransform - newInitialZoom.baseTransform
+//    // todo 限制 offset
+//    // todo 根据当前 content center，计算出新的 offset，然后限制 offset
+//    return newInitialZoom.copy(userTransform = newUserTransform)
+}
 
 /* ******************************************* Rect ***************************************** */
 

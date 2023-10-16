@@ -75,7 +75,7 @@ import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
 import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
-import com.github.panpf.zoomimage.zoom.calculateInitialZoom
+import com.github.panpf.zoomimage.zoom.calculateInitialZoomWithContainerSizeChanged
 import com.github.panpf.zoomimage.zoom.calculateLocateUserOffset
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
 import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
@@ -370,6 +370,14 @@ class ZoomableState(logger: Logger) {
         ).roundToPlatform()
     }
 
+    private var lastContainerSize: IntSize = containerSize
+    private var lastContentSize: IntSize = contentSize
+    private var lastContentOriginSize: IntSize = contentOriginSize
+    private var lastContentScale: ContentScale = contentScale
+    private var lastAlignment: Alignment = alignment
+    private var lastRotation: Int = rotation
+    private var lastReadMode: ReadMode? = readMode
+    private var lastScalesCalculator: ScalesCalculator = scalesCalculator
 
     /* ********************************* Interact with consumers ******************************** */
 
@@ -387,8 +395,6 @@ class ZoomableState(logger: Logger) {
      * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
      */
     fun nowReset(caller: String) {
-        // todo 仅 containerSize 改变或重建时需要保留状态，其他情况下都需要重置状态，这里需要优化
-        // todo 初步的想法是 根据 containerSize 的变化量来相应的修改 scale 和 offset，例如 containerSize 变大了，那么 scale 和 offset 都要变大
         val containerSize = containerSize
         val contentSize = contentSize
         val contentOriginSize = contentOriginSize
@@ -398,7 +404,7 @@ class ZoomableState(logger: Logger) {
         val rotation = rotation
         val scalesCalculator = scalesCalculator
 
-        val initialZoom = calculateInitialZoom(
+        val initialZoom = calculateInitialZoomWithContainerSizeChanged(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentOriginSize = contentOriginSize.toCompat(),
@@ -406,7 +412,16 @@ class ZoomableState(logger: Logger) {
             alignment = alignment.toCompat(),
             rotation = rotation,
             readMode = readMode,
-            scalesCalculator = scalesCalculator
+            scalesCalculator = scalesCalculator,
+            lastTransform = transform.toCompat(),
+            lastContainerSize = lastContainerSize.toCompat(),
+            lastContentSize = lastContentSize.toCompat(),
+            lastContentOriginSize = lastContentOriginSize.toCompat(),
+            lastContentScale = lastContentScale.toCompat(),
+            lastAlignment = lastAlignment.toCompat(),
+            lastRotation = lastRotation,
+            lastReadMode = lastReadMode,
+            lastScalesCalculator = lastScalesCalculator,
         )
         logger.d {
             val transform = initialZoom.baseTransform + initialZoom.userTransform
@@ -432,6 +447,15 @@ class ZoomableState(logger: Logger) {
         maxScale = initialZoom.maxScale
         baseTransform = initialZoom.baseTransform.toPlatform()
         userTransform = initialZoom.userTransform.toPlatform()
+
+        this.lastContainerSize = containerSize
+        this.lastContentSize = contentSize
+        this.lastContentOriginSize = contentOriginSize
+        this.lastContentScale = contentScale
+        this.lastAlignment = alignment
+        this.lastReadMode = readMode
+        this.lastRotation = rotation
+        this.lastScalesCalculator = scalesCalculator
     }
 
     /**
