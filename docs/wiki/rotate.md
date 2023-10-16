@@ -90,10 +90,21 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
       <br>-----------</br>
     * 当前用户旋转角度，一直为 0
 
+#### Listen property changed/监听属性变化
+
+* The relevant properties of the compose version are wrapped in State and can be read directly in
+  the Composable function to implement listening
+  <br>-----------</br>
+  compose 版本的相关属性是用 State 包装的，在 Composable 函数中直接读取它即可实现监听
+* The relevant properties of the view are wrapped in StateFlow, and its collect function can be
+  called to implement the listening
+  <br>-----------</br>
+  view 的相关属性是用 StateFlow 包装，调用其 collect 函数即可实现监听
+
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
+[ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[ZoomState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/ZoomState.kt
+[ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[ZoomableState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
+[ZoomableState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt

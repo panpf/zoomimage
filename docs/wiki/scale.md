@@ -11,17 +11,18 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-ZoomImage supports multiple zoom methods such as double-click zoom, gesture zoom, scale() and other
+ZoomImage supports multiple zoom methods such as double-click zoom, gesture zoom, scale(Float) and
+other
 zoom methods to scale the image.
 <br>-----------</br>
-ZoomImage 支持双击缩放、双指捏合缩放、单指长按滑动缩放、scale() 等多种方式来缩放图像，在连续缩放时还支持阻尼和动画效果。
+ZoomImage 支持双击缩放、双指捏合缩放、单指长按滑动缩放、scale(Float) 等多种方式来缩放图像，在连续缩放时还支持阻尼和动画效果。
 
 ### minScale, mediumScale, maxScale
 
 The ZoomImage is always controlled by three parameters in the process of scaling: minScale,
 mediumScale, and maxScale:
 <br>-----------</br>
-ZoomImage 在缩放的过程中始终受到 minScale、mediumScale、maxScale 三个参数控制：
+ZoomImage 在缩放的过程中始终受 minScale、mediumScale、maxScale 三个参数的控制：
 
 * minScale：
     * The minimum zoom multiplier, which limits the minimum value of ZoomImage during scaling, is
@@ -116,7 +117,7 @@ built-in [ScalesCalculator]:
 scalesCalculator defaults to [ScalesCalculator]. Dynamic, which you can modify into a Fixed or
 custom implementation
 <br>-----------</br>
-scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改 Fixed 或自定义的实现
+scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改为 Fixed 或自定义的实现
 
 example/示例：
 
@@ -143,10 +144,10 @@ minScale and mediumScale by default
 <br>-----------</br>
 双击图像时 ZoomImage 会缩放到下一个缩放倍数，默认总是在 minScale 和 mediumScale 之间循环
 
-If you want to loop between minScale, mediumScale and maxScale, you can change threeStepScale to
-true
+If you want to loop between minScale, mediumScale and maxScale, you can change threeStepScale
+property to true
 <br>-----------</br>
-如果你想在 minScale、mediumScale 和 maxScale 之间循环，可以修改 threeStepScale 为 true
+如果你想在 minScale、mediumScale 和 maxScale 之间循环，可以修改 threeStepScale 属性为 true
 
 example/示例：
 
@@ -255,12 +256,12 @@ SketchZoomAsyncImage(
 )
 ```
 
-### scale()
+### scale(Float)
 
 ZoomImage provides the scale() method to scale the image to a specified multiple, which has three
 parameters:
 <br>-----------</br>
-ZoomImage 提供了 scale() 方法用来缩放图像到指定的倍数，它有三个参数：
+ZoomImage 提供了 scale(Float) 方法用来缩放图像到指定的倍数，它有三个参数：
 
 * targetScale: Float。
     * Target scale multiple
@@ -456,12 +457,23 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
       <br>-----------</br>
     * 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
 
+#### Listen property changed/监听属性变化
+
+* The relevant properties of the compose version are wrapped in State and can be read directly in
+  the Composable function to implement listening
+  <br>-----------</br>
+  compose 版本的相关属性是用 State 包装的，在 Composable 函数中直接读取它即可实现监听
+* The relevant properties of the view are wrapped in StateFlow, and its collect function can be
+  called to implement the listening
+  <br>-----------</br>
+  view 的相关属性是用 StateFlow 包装，调用其 collect 函数即可实现监听
+
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
+[ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[ZoomState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/ZoomState.kt
+[ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[ZoomableState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
+[ZoomableState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
 
-[ScalesCalculator]: ../../zoomimage-core/src/main/java/com/github/panpf/zoomimage/zoom/ScalesCalculator.kt
+[ScalesCalculator]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ScalesCalculator.kt

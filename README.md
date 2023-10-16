@@ -1,16 +1,17 @@
 # ![logo_image] ZoomImage
 
 ![Platform][platform_image]
+![Platform2][platform_image2]
 [![API][min_api_image]][min_api_link]
 [![License][license_image]][license_link]
 [![version_icon]][version_link]
 
-Android library for scaling images, supporting double-tap zoom, gesture zoom, single-finger drag,
-inertial swipe, locate, rotate, huge image sub-sampling, and more. Both View and Compose
-are supported.
+Library for zoom images, supported Android View, Compose and Compose Multiplatform; supported
+double-click zoom, gesture zoom, single-finger drag, inertial sliding, positioning, rotation,
+super-large image subsampling and other functions.
 <br>-----------------</br>
-用于缩放图像的 Android 库，支持双击缩放、手势缩放、单指拖动、惯性滑动、定位、旋转、超大图子采样等功能。支持
-View 和 Compose 两种方式。
+用于缩放图像的库，支持 Android View、Compose 以及 Compose
+Multiplatform；支持双击缩放、手势缩放、单指拖动、惯性滑动、定位、旋转、超大图子采样等功能。
 
 https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e155f4ef
 
@@ -36,6 +37,8 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
   the user to double-click to zoom in
 * `Image Loader`. Provide support for image loaders such as sketch, coil, glide, picasso, etc., and
   can also customize support for more image loaders
+* `Compose Multiplatform`. Support for Compose Multiplatform, which can be used on Android, macOS,
+  Windows, Linux and other platforms
 
 <div>-----------------</div>
 
@@ -49,12 +52,14 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 * `滚动条`. 支持显示水平和垂直滚动条，明确当前滚动位置
 * `阅读模式`. 阅读模式下显示长图时初始状态会自动充满屏幕，用户可立即开始阅读图片内容，省去用户双击放大的操作
 * `图片加载器`. 提供对 sketch、coil、glide、picasso 等图片加载器的支持，也可以自定义支持更多图片加载器
+* `Compose Multiplatform`. 支持 Compose Multiplatform，可在 Android、macOS、Windows、Linux 等平台使用
 
 ## Comparison of similar libraries/同类库对比
 
 | Function/Library            | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
 |:----------------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
 | Compose                     |     ✅     |      ✅      |      ❌      |                ❌                 |
+| Compose Multiplatform       |     ✅     |      ✅      |      ❌      |                ❌                 |
 | View                        |     ✅     |      ❌      |      ✅      |                ✅                 |
 | Rotate/旋转                   |     ✅     |      ❌      |      ✅      |                ❌                 |
 | Locate/定位                   |     ✅     |      ❌      |      ❌      |                ✅                 |
@@ -78,18 +83,22 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 `Choose one of the following modules · 以下模块任选其一即可`
 
 ```kotlin
+// Only Android is supported/仅支持 Android
 // The SketchZoomAsyncImage component is provided with the Coil Image Loader, easy to use (recommended)
 // 提供适配了 Sketch 图片加载器的 SketchZoomAsyncImage 组件，用法简单（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch:${LAST_VERSION}")
 
+// Only Android is supported/仅支持 Android
 // The CoilZoomAsyncImage component is provided with the Coil Image Loader, easy to use
 // 提供适配了 Coil 图片加载器的 CoilZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}")
 
+// Only Android is supported/仅支持 Android
 // The GlideZoomAsyncImage component is provided with the Coil Image Loader, easy to use
 // 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
 
+// Support for ComposeMultiplatform/支持 ComposeMultiplatform
 // Providing the most basic ZoomImage component, there is still a lot of work to be done to use it, 
 // additional work needs to be done to support network image and subsampling
 // 提供最基础的 ZoomImage 组件，还需要做额外的工作以支持网络图片和子采样
@@ -98,7 +107,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
 
 Why is there no picasso version of the compose ZoomImage component? Picasso has officially stated
 that it will not provide compose
-Support ([sic](https://github.com/square/picasso/issues/2203#issuecomment-826444442))
+Support ([Reference](https://github.com/square/picasso/issues/2203#issuecomment-826444442))
 <br>-----------------</br>
 为什么没有 picasso 版本的 compose ZoomImage 组件？因为 Picasso 官方已经说明不会提供对 compose
 的支持（[原文在此](https://github.com/square/picasso/issues/2203#issuecomment-826444442)）
@@ -186,12 +195,15 @@ sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 ## Samples/示例
 
 You can find the sample code in
-the [sample](https://github.com/panpf/zoomimage/tree/main/sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
-module, or you can download the APK experience
-from the [release](https://github.com/panpf/zoomimage/releases) page
+the [sample-android](sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
+and [sample-desktop](sample-desktop/src/jvmMain/kotlin) module, or you can download the
+APK、MSI、DMG、DEB package experience from the [release](https://github.com/panpf/zoomimage/releases)
+page
 <br>-----------------</br>
-你可以在 [sample](https://github.com/panpf/zoomimage/tree/main/sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
-模块中找到示例代码，也可以到 [release](https://github.com/panpf/zoomimage/releases) 页面下载 APK 体验
+你可以在 [sample-android](sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
+和 [sample-desktop](sample-desktop/src/jvmMain/kotlin)
+模块中找到示例代码，也可以到 [release](https://github.com/panpf/zoomimage/releases) 页面下载
+APK、MSI、DMG、DEB 包体验
 
 ## Changelog/更新日志
 
@@ -237,6 +249,8 @@ Please review the [CHANGELOG.md] file
 
 [platform_image]: https://img.shields.io/badge/Platform-Android-brightgreen.svg
 
+[platform_image2]: https://img.shields.io/badge/Platform-ComposeMultiplatform-brightblue.svg
+
 [license_image]: https://img.shields.io/badge/License-Apache%202-blue.svg
 
 [license_link]: https://www.apache.org/licenses/LICENSE-2.0
@@ -245,49 +259,9 @@ Please review the [CHANGELOG.md] file
 
 [version_link]: https://repo1.maven.org/maven2/io/github/panpf/zoomimage/
 
-[min_api_image]: https://img.shields.io/badge/API-16%2B-orange.svg
+[min_api_image]: https://img.shields.io/badge/AndroidAPI-16%2B-orange.svg
 
 [min_api_link]: https://android-arsenal.com/api?level=16
-
-
-[ZoomImage]: zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
-
-[CoilZoomAsyncImage]: zoomimage-compose-coil/src/main/java/com/github/panpf/zoomimage/CoilZoomAsyncImage.kt
-
-[GlideZoomAsyncImage]: zoomimage-compose-glide/src/main/java/com/github/panpf/zoomimage/GlideZoomAsyncImage.kt
-
-[SketchZoomAsyncImage]: zoomimage-compose-sketch/src/main/java/com/github/panpf/zoomimage/SketchZoomAsyncImage.kt
-
-
-[ZoomImageSample]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/ZoomImageSample.kt
-
-[CoilZoomAsyncImageSample]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/CoilZoomAsyncImageSample.kt
-
-[GlideZoomAsyncImageSample]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/GlideZoomAsyncImageSample.kt
-
-[SketchZoomAsyncImageSample]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/SketchZoomAsyncImageSample.kt
-
-
-[ZoomImageView]: zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
-
-[CoilZoomImageView]: zoomimage-view-coil/src/main/java/com/github/panpf/zoomimage/CoilZoomImageView.kt
-
-[GlideZoomImageView]: zoomimage-view-glide/src/main/java/com/github/panpf/zoomimage/GlideZoomImageView.kt
-
-[PicassoZoomImageView]: zoomimage-view-picasso/src/main/java/com/github/panpf/zoomimage/PicassoZoomImageView.kt
-
-[SketchZoomImageView]: zoomimage-view-sketch/src/main/java/com/github/panpf/zoomimage/SketchZoomImageView.kt
-
-
-[ZoomImageViewFragment]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/ZoomImageViewFragment.kt
-
-[CoilZoomImageViewFragment]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/CoilZoomImageViewFragment.kt
-
-[GlideZoomImageViewFragment]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/GlideZoomImageViewFragment.kt
-
-[PicassoZoomImageViewFragment]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/PicassoZoomImageViewFragment.kt
-
-[SketchZoomImageViewFragment]: sample/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/SketchZoomImageViewFragment.kt
 
 [Telephoto]: https://github.com/saket/telephoto
 

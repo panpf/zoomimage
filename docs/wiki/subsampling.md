@@ -258,7 +258,7 @@ val state: ZoomState by rememberZoomState()
 
 val lifecycle: Lifecycle = ...
 LaunchedEffect(lifecycle) {
-    state.subsampling.setLifecycle(lifecycle)
+    state.subsampling.stoppedController = LifecycleStoppedController(lifecycle)
 }
 
 SketchZoomAsyncImage(
@@ -279,17 +279,17 @@ repeated decoding and improve performance
 Components that integrate the image loading library can use the memory caching feature without any
 additional work, while components that do not integrate the image loading library need to implement
 their own first
-[TileMemoryCache] Then set the tileMemoryCache property to use the memory cache feature
+[TileBitmapCache] Then set the tileBitmapCache property to use the memory cache feature
 <br>-----------</br>
 集成了图片加载库的组件无需任何额外的工作即可使用内存缓存功能，而没有集成图片加载库的组件需要先实现自己的
-[TileMemoryCache] 然后设置 tileMemoryCache 属性才能使用内存缓存功能
+[TileBitmapCache] 然后设置 tileBitmapCache 属性才能使用内存缓存功能
 
 example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.subsampling.tileMemoryCache = MyTileMemoryCache()
+state.subsampling.tileBitmapCache = MyTileBitmapCache()
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -299,12 +299,12 @@ ZoomImage(
 )
 ```
 
-After setting the tileMemoryCache property, the memory caching function is turned on, and it can be
-passed without modifying the tileMemoryCache property
-The disableMemoryCache property controls the use of the memory cache feature
+After setting the tileBitmapCache property, the memory caching function is turned on, and it can be
+passed without modifying the tileBitmapCache property
+The disabledTileBitmapCache property controls the use of the memory cache feature
 <br>-----------</br>
-设置了 tileMemoryCache 属性后就开启了内存缓存功能，还可以在不修改 tileMemoryCache 属性的情况下通过
-disableMemoryCache 属性控制使用内存缓存功能
+设置了 tileBitmapCache 属性后就开启了内存缓存功能，还可以在不修改 tileBitmapCache 属性的情况下通过
+disabledTileBitmapCache 属性控制使用内存缓存功能
 
 example/示例：
 
@@ -312,9 +312,9 @@ example/示例：
 val state: ZoomState by rememberZoomState()
 
 // Disable memory caching, 禁用内存缓存
-state.subsampling.disableMemoryCache = true
+state.subsampling.disabledTileBitmapCache = true
 // Memory caching is allowed, 允许使用内存缓存
-state.subsampling.disableMemoryCache = false
+state.subsampling.disabledTileBitmapCache = false
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -325,6 +325,8 @@ ZoomImage(
 ```
 
 ### Reuse Bitmap
+
+> Only Android is supported/仅支持 Android
 
 The subsampling feature supports the reuse of Bitmaps, and new fragments can be decoded using
 existing Bitmaps, which reduces the creation of Bitmaps, reduces memory jitter, and improves
@@ -359,10 +361,10 @@ ZoomImage(
 
 After setting the tileBitmapPool property, the memory reuse Bitmap function is turned on, and it can
 also be passed without modifying the tileBitmapPool property
-The disallowReuseBitmap property controls the reuse of Bitmap
+The disabledTileBitmapReuse property controls the reuse of Bitmap
 <br>-----------</br>
 设置了 tileBitmapPool 属性后就开启了重用 Bitmap 功能，还可以在不修改 tileBitmapPool 属性的情况下通过
-disallowReuseBitmap 属性控制重用 Bitmap
+disabledTileBitmapReuse 属性控制重用 Bitmap
 
 example/示例：
 
@@ -370,9 +372,9 @@ example/示例：
 val state: ZoomState by rememberZoomState()
 
 // Disabled reuse of Bitmaps，禁止重用 Bitmap
-state.subsampling.disallowReuseBitmap = true
+state.subsampling.disabledTileBitmapReuse = true
 // Allows reuse of Bitmap，允许重用 Bitmap
-state.subsampling.disallowReuseBitmap = false
+state.subsampling.disabledTileBitmapReuse = false
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -411,7 +413,11 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * `subsampling.imageInfo: ImageInfo`。
     * The information of the image, including width, height, format, exif information, etc
       <br>-----------</br>
-    * 图片的尺寸、格式、exif 等信息
+    * 图片的尺寸、格式信息
+* `subsampling.exifOrientation: ExifOrientation`。
+    * The exif information of the image
+      <br>-----------</br>
+    * 图片的 exif 信息
 * `subsampling.foregroundTiles: List<TileSnapshot>`。
     * List of current foreground tiles
       <br>-----------</br>
@@ -433,14 +439,25 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
       <br>-----------</br>
     * 磁贴网格大小映射表
 
+#### Listen property changed/监听属性变化
+
+* The relevant properties of the compose version are wrapped in State and can be read directly in
+  the Composable function to implement listening
+  <br>-----------</br>
+  compose 版本的相关属性是用 State 包装的，在 Composable 函数中直接读取它即可实现监听
+* The relevant properties of the view are wrapped in StateFlow, and its collect function can be
+  called to implement the listening
+  <br>-----------</br>
+  view 的相关属性是用 StateFlow 包装，调用其 collect 函数即可实现监听
+
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
+[ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[ZoomState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/ZoomState.kt
+[ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[TileBitmapPool]: ../../zoomimage-core/src/main/java/com/github/panpf/zoomimage/subsampling/TileBitmapPool.kt
+[TileBitmapPool]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapPool.kt
 
-[TileMemoryCache]: ../../zoomimage-core/src/main/java/com/github/panpf/zoomimage/subsampling/TileMemoryCache.kt
+[TileBitmapCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapCache.kt
 
-[SubsamplingState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
+[SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt

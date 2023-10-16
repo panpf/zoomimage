@@ -69,11 +69,11 @@ The [ReadMode] class is used to control the read mode, and it has two parameters
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[ZoomImage]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/ZoomImage.kt
+[ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[ZoomState]: ../../zoomimage-compose/src/main/java/com/github/panpf/zoomimage/compose/ZoomState.kt
+[ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[ReadMode]: ../../zoomimage-core/src/main/java/com/github/panpf/zoomimage/ReadMode.kt
+[ReadMode]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ReadMode.kt
 
 [ContentScale]: https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale
 
