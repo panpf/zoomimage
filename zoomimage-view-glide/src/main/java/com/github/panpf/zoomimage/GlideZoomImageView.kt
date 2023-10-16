@@ -85,7 +85,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 logger.d { "GlideZoomImageView. Can't use Subsampling, request is not complete" }
                 return@post
             }
-            _subsamplingEngine?.disableTileBitmapCacheState?.value = isDisableMemoryCache(request)
+            _subsamplingEngine?.disabledTileBitmapCacheState?.value = isDisableMemoryCache(request)
             val model = request.internalModel
             val imageSource = newGlideImageSource(context, model)
             if (imageSource == null) {

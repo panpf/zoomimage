@@ -399,9 +399,9 @@ private fun onState(
     when (loadState) {
         is State.Success -> {
             subsamplingState.ignoreExifOrientation = request.ignoreExifOrientation
-            subsamplingState.disableTileBitmapCache =
+            subsamplingState.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            subsamplingState.disableTileBitmapReuse = request.disallowReuseBitmap
+            subsamplingState.disabledTileBitmapReuse = request.disallowReuseBitmap
             val imageSource = SketchImageSource(context, sketch, request.uriString)
             subsamplingState.setImageSource(imageSource)
         }

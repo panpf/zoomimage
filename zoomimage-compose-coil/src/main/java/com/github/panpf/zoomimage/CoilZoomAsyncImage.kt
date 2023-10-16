@@ -248,7 +248,7 @@ private fun onState(
 
     when (loadState) {
         is State.Success -> {
-            state.subsampling.disableTileBitmapCache =
+            state.subsampling.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
             state.subsampling.setImageSource(CoilImageSource(imageLoader, request))
         }

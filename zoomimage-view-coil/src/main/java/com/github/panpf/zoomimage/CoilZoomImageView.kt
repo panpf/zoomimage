@@ -83,7 +83,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 logger.d { "CoilZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
-            _subsamplingEngine?.disableTileBitmapCacheState?.value = isDisallowMemoryCache(result)
+            _subsamplingEngine?.disabledTileBitmapCacheState?.value = isDisallowMemoryCache(result)
             _subsamplingEngine?.setImageSource(newImageSource(result))
         }
     }

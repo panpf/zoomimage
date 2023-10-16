@@ -226,7 +226,7 @@ private class ResetListener(
         state.zoomable.contentSize = contentSize
 
         val imageSource = if (resource != null) {
-            state.subsampling.disableTileBitmapCache = !requestBuilder.isMemoryCacheable
+            state.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
             newGlideImageSource(context, model).apply {
                 if (this == null) {
                     state.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model: '$model'" }

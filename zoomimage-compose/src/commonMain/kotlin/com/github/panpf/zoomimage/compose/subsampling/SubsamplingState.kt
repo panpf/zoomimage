@@ -118,9 +118,9 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     var tileBitmapCache: TileBitmapCache? by mutableStateOf(null)
 
     /**
-     * If true, disable TileBitmap memory cache
+     * If true, disabled TileBitmap memory cache
      */
-    var disableTileBitmapCache: Boolean by mutableStateOf(false)
+    var disabledTileBitmapCache: Boolean by mutableStateOf(false)
 
     /**
      * Set up a shared TileBitmap pool for the tile
@@ -130,7 +130,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     /**
      * If true, TileBitmap reuse is disabled
      */
-    var disableTileBitmapReuse: Boolean by mutableStateOf(false)
+    var disabledTileBitmapReuse: Boolean by mutableStateOf(false)
 
     /**
      * The animation spec for tile animation
@@ -314,7 +314,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { disableTileBitmapCache }.collect {
+            snapshotFlow { disabledTileBitmapCache }.collect {
                 tileBitmapCacheSpec.disabled = it
             }
         }
@@ -324,7 +324,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { disableTileBitmapReuse }.collect {
+            snapshotFlow { disabledTileBitmapReuse }.collect {
                 tileBitmapReuseSpec.disabled = it
             }
         }

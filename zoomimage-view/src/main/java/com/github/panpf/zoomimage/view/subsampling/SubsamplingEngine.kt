@@ -105,9 +105,9 @@ class SubsamplingEngine constructor(
     val tileBitmapCacheState = MutableStateFlow<TileBitmapCache?>(null)
 
     /**
-     * If true, disable TileBitmap memory cache
+     * If true, disabled TileBitmap memory cache
      */
-    val disableTileBitmapCacheState = MutableStateFlow(false)
+    val disabledTileBitmapCacheState = MutableStateFlow(false)
 
     /**
      * Set up a shared TileBitmap pool for the tile
@@ -117,7 +117,7 @@ class SubsamplingEngine constructor(
     /**
      * If true, TileBitmap reuse is disabled
      */
-    val disableTileBitmapReuseState = MutableStateFlow(false)
+    val disabledTileBitmapReuseState = MutableStateFlow(false)
 
     /**
      * The animation spec for tile animation
@@ -251,7 +251,7 @@ class SubsamplingEngine constructor(
             }
         }
         coroutineScope.launch {
-            disableTileBitmapCacheState.collect {
+            disabledTileBitmapCacheState.collect {
                 tileBitmapCacheSpec.disabled = it
             }
         }
@@ -261,7 +261,7 @@ class SubsamplingEngine constructor(
             }
         }
         coroutineScope.launch {
-            disableTileBitmapReuseState.collect {
+            disabledTileBitmapReuseState.collect {
                 tileBitmapReuseSpec.disabled = it
             }
         }
