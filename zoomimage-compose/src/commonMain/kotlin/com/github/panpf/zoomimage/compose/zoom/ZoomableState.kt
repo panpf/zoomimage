@@ -66,7 +66,7 @@ import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContainerSizeInterceptor
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
-import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
+import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.ScrollEdge
@@ -176,8 +176,6 @@ class ZoomableState(logger: Logger) {
      */
     var contentOriginSize: IntSize by mutableStateOf(IntSize.Zero)
 
-    var containerSizeInterceptor: ContainerSizeInterceptor? = null
-
 
     /* *********************************** Configurable properties ****************************** */
 
@@ -215,9 +213,9 @@ class ZoomableState(logger: Logger) {
     var rubberBandScale: Boolean by mutableStateOf(true)
 
     /**
-     * Long press and slide up and down to scale the configuration
+     * One finger long press and slide up and down to scale the configuration
      */
-    var longPressSlideScaleSpec: LongPressSlideScaleSpec? by mutableStateOf(null)
+    var oneFingerScaleSpec: OneFingerScaleSpec? by mutableStateOf(null)
 
     /**
      * The animation configuration for the zoom animation
@@ -228,6 +226,11 @@ class ZoomableState(logger: Logger) {
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
     var limitOffsetWithinBaseVisibleRect: Boolean by mutableStateOf(false)
+
+    /**
+     * Used to intercept unwanted containerSize changes
+     */
+    var containerSizeInterceptor: ContainerSizeInterceptor? = null
 
 
     /* *********************************** Information properties ******************************* */

@@ -93,7 +93,7 @@ fun Modifier.zoomable(
         .pointerInput(zoomable) {
             detectTapGestures(
                 onPress = {
-                    if (zoomable.longPressSlideScaleSpec != null) {
+                    if (zoomable.oneFingerScaleSpec != null) {
                         lastLongPressPoint = null
                         lastPointCount = 0
                     }
@@ -103,10 +103,10 @@ fun Modifier.zoomable(
                     updatedOnTap?.invoke(it)
                 },
                 onLongPress = {
-                    val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
-                    if (longPressSlideScaleSpec != null) {
+                    val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
+                    if (oneFingerScaleSpec != null) {
                         lastLongPressPoint = it
-                        longPressSlideScaleSpec.hapticFeedback.perform()
+                        oneFingerScaleSpec.hapticFeedback.perform()
                     }
                     updatedOnLongPress?.invoke(it)
                 },
@@ -131,10 +131,10 @@ fun Modifier.zoomable(
 
                         lastPointCount = pointCount
                         val longPressPoint = lastLongPressPoint
-                        val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
-                        if (pointCount == 1 && longPressPoint != null && longPressSlideScaleSpec != null) {
+                        val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
+                        if (pointCount == 1 && longPressPoint != null && oneFingerScaleSpec != null) {
                             val scale =
-                                longPressSlideScaleSpec.panToScaleTransformer.transform(pan.y)
+                                oneFingerScaleSpec.panToScaleTransformer.transform(pan.y)
                             zoomable.gestureTransform(
                                 centroid = longPressPoint,
                                 panChange = Offset.Zero,
@@ -155,8 +155,8 @@ fun Modifier.zoomable(
                     coroutineScope.launch {
                         val pointCount = lastPointCount
                         val longPressedPoint = lastLongPressPoint
-                        val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpec
-                        if (pointCount == 1 && longPressedPoint != null && longPressSlideScaleSpec != null) {
+                        val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
+                        if (pointCount == 1 && longPressedPoint != null && oneFingerScaleSpec != null) {
                             zoomable.rollbackScale(longPressedPoint)
                         } else if (!zoomable.rollbackScale(centroid)) {
                             if (!zoomable.fling(velocity, density)) {

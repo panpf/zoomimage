@@ -18,10 +18,10 @@ package com.github.panpf.zoomimage.sample
 
 import android.content.Context
 import android.widget.ImageView.ScaleType.FIT_CENTER
-import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
 import com.github.panpf.zoomimage.sample.util.StringMmkvData
 import com.github.panpf.zoomimage.subsampling.TileManager
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.tencent.mmkv.MMKV
 
@@ -53,8 +53,8 @@ class SettingsService(val context: Context) {
     val threeStepScale by lazy {
         BooleanMmkvData(mmkv, "threeStepScale", false)
     }
-    val longPressSlideScale by lazy {
-        BooleanMmkvData(mmkv, "longPressSlideScale", false)
+    val oneFingerScale by lazy {
+        BooleanMmkvData(mmkv, "oneFingerScale", false)
     }
     val slowerScaleAnimation by lazy {
         BooleanMmkvData(mmkv, "slowerScaleAnimation", false)

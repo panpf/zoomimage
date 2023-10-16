@@ -225,11 +225,11 @@ state.zoomable.getNextStepScale()
 
 ZoomImage supports one-finger long press up and down to zoom the image, and after turning on, one
 finger long press on the screen triggers the long press behavior and then swipe up and down to zoom
-the image. This feature is turned off by default and you can pass The longPressSlideScaleSpec
+the image. This feature is turned off by default and you can pass The oneFingerScaleSpec
 property turns it on
 <br>-----------</br>
 ZoomImage 支持单指长按上下滑动缩放图像，开启后单指按住屏幕触发长按后上下滑动即可缩放图像。此功能默认关闭，你可以通过
-longPressSlideScaleSpec 属性开启它
+oneFingerScaleSpec 属性开启它
 
 example/示例：
 
@@ -238,15 +238,15 @@ val state: ZoomState by rememberZoomState()
 
 // Turned, but no haptic feedback after the long-press behavior triggers
 // 开启，但长按行为触发后没有触觉反馈
-state.zoomable.longPressSlideScaleSpec = LongPressSlideScaleSpec.Default
+state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
 
 // Turned, and there will be vibration feedback after the long-press behavior is triggered
 // 开启，并且长按行为触发后会有震动反馈
-state.zoomable.longPressSlideScaleSpec = LongPressSlideScaleSpec.Vibration
+state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Vibration
 
 // Closed
 // 关闭
-state.zoomable.longPressSlideScaleSpec = null
+state.zoomable.oneFingerScaleSpec = null
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",

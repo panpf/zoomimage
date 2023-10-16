@@ -17,9 +17,9 @@
 package com.github.panpf.zoomimage.zoom
 
 /**
- * Long press and slide up and down to scale the configuration of the image
+ * One finger long press and slide up and down to scale the configuration of the image
  */
-data class LongPressSlideScaleSpec(
+data class OneFingerScaleSpec(
     val hapticFeedback: HapticFeedback = HapticFeedback.None,
     val panToScaleTransformer: PanToScaleTransformer = PanToScaleTransformer.Default
 ) {
@@ -28,7 +28,7 @@ data class LongPressSlideScaleSpec(
         /**
          * Default configuration, no haptic feedback
          */
-        val Default = LongPressSlideScaleSpec()
+        val Default = OneFingerScaleSpec()
     }
 
     interface HapticFeedback {

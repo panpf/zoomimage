@@ -66,7 +66,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.animateScale, settingsService.animateScale)
         BindStateAndFlow(state.rubberBandScale, settingsService.rubberBandScale)
         BindStateAndFlow(state.threeStepScale, settingsService.threeStepScale)
-        BindStateAndFlow(state.longPressSlideScale, settingsService.longPressSlideScale)
+        BindStateAndFlow(state.oneFingerScale, settingsService.oneFingerScale)
         BindStateAndFlow(state.slowerScaleAnimation, settingsService.slowerScaleAnimation)
         BindStateAndFlow(state.scalesCalculator, settingsService.scalesCalculator)
         BindStateAndFlow(state.scalesMultiple, settingsService.scalesMultiple)
@@ -111,7 +111,7 @@ class ZoomImageOptionsState {
     val animateScale = MutableStateFlow(true)
     val rubberBandScale = MutableStateFlow(true)
     val threeStepScale = MutableStateFlow(false)
-    val longPressSlideScale = MutableStateFlow(false)
+    val oneFingerScale = MutableStateFlow(false)
     val slowerScaleAnimation = MutableStateFlow(false)
     val scalesCalculator = MutableStateFlow("Dynamic")
     val scalesMultiple = MutableStateFlow(ScalesCalculator.Multiple.toString())
@@ -143,7 +143,7 @@ fun ZoomImageOptionsDialog(
     val animateScale by state.animateScale.collectAsState()
     val rubberBandScale by state.rubberBandScale.collectAsState()
     val threeStepScale by state.threeStepScale.collectAsState()
-    val longPressSlideScale by state.longPressSlideScale.collectAsState()
+    val oneFingerScale by state.oneFingerScale.collectAsState()
     val slowerScaleAnimation by state.slowerScaleAnimation.collectAsState()
     val scalesCalculator by state.scalesCalculator.collectAsState()
     val scalesMultiple by state.scalesMultiple.collectAsState()
@@ -233,8 +233,8 @@ fun ZoomImageOptionsDialog(
                     state.threeStepScale.value = !state.threeStepScale.value
 //                    onDismissRequest()
                 }
-                SwitchMenu("Long Press Slide Scale", longPressSlideScale) {
-                    state.longPressSlideScale.value = !state.longPressSlideScale.value
+                SwitchMenu("One Finger Scale", oneFingerScale) {
+                    state.oneFingerScale.value = !state.oneFingerScale.value
 //                    onDismissRequest()
                 }
                 SwitchMenu("Slower Scale Animation", slowerScaleAnimation) {

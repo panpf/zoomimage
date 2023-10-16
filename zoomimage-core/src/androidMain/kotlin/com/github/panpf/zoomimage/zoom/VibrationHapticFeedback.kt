@@ -30,19 +30,19 @@ import androidx.annotation.RequiresPermission
 
 
 @RequiresPermission("android.permission.VIBRATE")
-fun LongPressSlideScaleSpec.Companion.vibration(
+fun OneFingerScaleSpec.Companion.vibration(
     context: Context,
     milliseconds: Long = VibrationHapticFeedback.DefaultMilliseconds,
     @IntRange(from = -1, to = 255)
     amplitude: Int = VibrationHapticFeedback.DefaultAmplitude
-): LongPressSlideScaleSpec {
+): OneFingerScaleSpec {
     val feedback =
-        LongPressSlideScaleSpec.HapticFeedback.vibration(context, milliseconds, amplitude)
-    return LongPressSlideScaleSpec(feedback)
+        OneFingerScaleSpec.HapticFeedback.vibration(context, milliseconds, amplitude)
+    return OneFingerScaleSpec(feedback)
 }
 
 @RequiresPermission("android.permission.VIBRATE")
-fun LongPressSlideScaleSpec.HapticFeedback.Companion.vibration(
+fun OneFingerScaleSpec.HapticFeedback.Companion.vibration(
     context: Context,
     milliseconds: Long = VibrationHapticFeedback.DefaultMilliseconds,
     @IntRange(from = -1, to = 255)
@@ -55,7 +55,7 @@ data class VibrationHapticFeedback(
     val context: Context,
     val milliseconds: Long = DefaultMilliseconds,
     @IntRange(from = -1, to = 255) val amplitude: Int = DefaultAmplitude
-) : LongPressSlideScaleSpec.HapticFeedback {
+) : OneFingerScaleSpec.HapticFeedback {
 
     companion object {
         const val DefaultMilliseconds = 50L

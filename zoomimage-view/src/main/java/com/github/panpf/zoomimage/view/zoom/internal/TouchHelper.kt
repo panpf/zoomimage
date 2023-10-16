@@ -36,7 +36,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
         gestureDetector = UnifiedGestureDetector(
             view = view,
             onActionDownCallback = {
-                if (zoomable.longPressSlideScaleSpecState.value != null) {
+                if (zoomable.oneFingerScaleSpecState.value != null) {
                     lastLongPressPoint = null
                     lastPointCount = 0
                 }
@@ -48,10 +48,10 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 onViewTapListener != null || view.performClick()
             },
             onLongPressCallback = { e: MotionEvent ->
-                val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpecState.value
-                if (longPressSlideScaleSpec != null) {
+                val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
+                if (oneFingerScaleSpec != null) {
                     lastLongPressPoint = OffsetCompat(x = e.x, y = e.y)
-                    longPressSlideScaleSpec.hapticFeedback.perform()
+                    oneFingerScaleSpec.hapticFeedback.perform()
                 }
                 onViewLongPressListener?.onViewLongPress(view, e.x, e.y)
                 onViewLongPressListener != null || view.performLongClick()
@@ -71,9 +71,9 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
 
                 lastPointCount = pointCount
                 val longPressPoint = lastLongPressPoint
-                val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpecState.value
-                if (pointCount == 1 && longPressPoint != null && longPressSlideScaleSpec != null) {
-                    val scale = longPressSlideScaleSpec.panToScaleTransformer.transform(panChange.y)
+                val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
+                if (pointCount == 1 && longPressPoint != null && oneFingerScaleSpec != null) {
+                    val scale = oneFingerScaleSpec.panToScaleTransformer.transform(panChange.y)
                     zoomable.gestureTransform(
                         centroid = longPressPoint,
                         panChange = OffsetCompat.Zero,
@@ -92,8 +92,8 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
             onEndCallback = { focus, velocity ->
                 val pointCount = lastPointCount
                 val longPressPoint = lastLongPressPoint
-                val longPressSlideScaleSpec = zoomable.longPressSlideScaleSpecState.value
-                if (pointCount == 1 && longPressPoint != null && longPressSlideScaleSpec != null) {
+                val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
+                if (pointCount == 1 && longPressPoint != null && oneFingerScaleSpec != null) {
                     zoomable.rollbackScale(longPressPoint)
                 } else {
                     if (!zoomable.rollbackScale(focus)) {

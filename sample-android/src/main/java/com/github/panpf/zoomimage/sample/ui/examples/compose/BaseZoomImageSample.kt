@@ -25,7 +25,7 @@ import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
+import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.vibration
@@ -47,7 +47,7 @@ fun BaseZoomImageSample(
     val contentScaleName by settingsService.contentScale.stateFlow.collectAsState()
     val alignmentName by settingsService.alignment.stateFlow.collectAsState()
     val threeStepScale by settingsService.threeStepScale.stateFlow.collectAsState()
-    val longPressSlideScale by settingsService.longPressSlideScale.stateFlow.collectAsState()
+    val oneFingerScale by settingsService.oneFingerScale.stateFlow.collectAsState()
     val rubberBandScale by settingsService.rubberBandScale.stateFlow.collectAsState()
     val readModeEnabled by settingsService.readModeEnabled.stateFlow.collectAsState()
     val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.stateFlow.collectAsState()
@@ -101,9 +101,9 @@ fun BaseZoomImageSample(
         LaunchedEffect(threeStepScale) {
             zoomable.threeStepScale = threeStepScale
         }
-        LaunchedEffect(longPressSlideScale) {
-            zoomable.longPressSlideScaleSpec = if (longPressSlideScale)
-                LongPressSlideScaleSpec.vibration(context) else null
+        LaunchedEffect(oneFingerScale) {
+            zoomable.oneFingerScaleSpec = if (oneFingerScale)
+                OneFingerScaleSpec.vibration(context) else null
         }
         LaunchedEffect(rubberBandScale) {
             zoomable.rubberBandScale = rubberBandScale

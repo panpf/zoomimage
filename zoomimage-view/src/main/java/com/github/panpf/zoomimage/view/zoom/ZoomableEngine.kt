@@ -48,7 +48,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContainerSizeInterceptor
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
-import com.github.panpf.zoomimage.zoom.LongPressSlideScaleSpec
+import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.ScrollEdge
@@ -142,9 +142,9 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     val rubberBandScaleState = MutableStateFlow(true)
 
     /**
-     * Long press and slide up and down to scale the configuration
+     * One finger long press and slide up and down to scale the configuration
      */
-    val longPressSlideScaleSpecState = MutableStateFlow<LongPressSlideScaleSpec?>(null)
+    val oneFingerScaleSpecState = MutableStateFlow<OneFingerScaleSpec?>(null)
 
     /**
      * The animation configuration for the zoom animation

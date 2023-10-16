@@ -26,20 +26,20 @@ import android.view.View
  */
 
 
-fun LongPressSlideScaleSpec.Companion.viewGesture(
+fun OneFingerScaleSpec.Companion.viewGesture(
     view: View,
-): LongPressSlideScaleSpec {
-    val feedback = LongPressSlideScaleSpec.HapticFeedback.viewGesture(view)
-    return LongPressSlideScaleSpec(feedback)
+): OneFingerScaleSpec {
+    val feedback = OneFingerScaleSpec.HapticFeedback.viewGesture(view)
+    return OneFingerScaleSpec(feedback)
 }
 
-fun LongPressSlideScaleSpec.HapticFeedback.Companion.viewGesture(
+fun OneFingerScaleSpec.HapticFeedback.Companion.viewGesture(
     view: View,
 ): ViewGestureHapticFeedback {
     return ViewGestureHapticFeedback(view)
 }
 
-data class ViewGestureHapticFeedback(val view: View) : LongPressSlideScaleSpec.HapticFeedback {
+data class ViewGestureHapticFeedback(val view: View) : OneFingerScaleSpec.HapticFeedback {
 
     override fun perform() {
         val feedbackConstant = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
