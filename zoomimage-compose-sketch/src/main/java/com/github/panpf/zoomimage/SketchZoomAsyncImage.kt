@@ -26,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
@@ -53,8 +52,8 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
 import kotlin.math.roundToInt
 
 
@@ -353,7 +352,6 @@ fun SketchZoomAsyncImage(
     }
 
     val modifier1 = modifier
-        .clipToBounds()
         .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
         .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .subsampling(state.logger, state.subsampling)

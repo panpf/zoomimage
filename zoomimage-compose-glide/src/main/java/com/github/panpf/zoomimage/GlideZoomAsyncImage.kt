@@ -25,7 +25,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
@@ -49,8 +48,8 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
+import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.newGlideImageSource
 
 
@@ -154,7 +153,6 @@ fun GlideZoomAsyncImage(
     }
 
     val modifier1 = modifier
-        .clipToBounds()
         .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
         .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .subsampling(state.logger, state.subsampling)

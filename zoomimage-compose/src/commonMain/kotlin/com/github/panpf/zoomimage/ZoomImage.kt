@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
@@ -119,7 +118,6 @@ fun ZoomImage(
 
         val modifier1 = Modifier
             .matchParentSize()
-            .clipToBounds()
             .let { if (scrollBar != null) it.zoomScrollBar(zoomable, scrollBar) else it }
             .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
             .subsampling(state.logger, state.subsampling)

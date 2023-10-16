@@ -23,7 +23,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
@@ -204,7 +203,6 @@ fun CoilZoomAsyncImage(
     }
 
     val modifier1 = modifier
-        .clipToBounds()
         .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
         .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
         .subsampling(state.logger, state.subsampling)

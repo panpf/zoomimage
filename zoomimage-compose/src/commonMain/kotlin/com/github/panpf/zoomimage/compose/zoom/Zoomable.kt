@@ -26,6 +26,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -38,8 +39,6 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.launch
 
-// todo edit docs
-
 fun Modifier.zoom(
     logger: Logger,
     zoomable: ZoomableState,
@@ -48,6 +47,7 @@ fun Modifier.zoom(
 ) = composed {
     val transform = zoomable.transform
     val zoomModifier = Modifier
+        .clipToBounds()
         .zoomable(logger, zoomable, onLongPress = onLongPress, onTap = onTap)
         .graphicsLayer {
             scaleX = transform.scaleX
