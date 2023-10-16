@@ -372,8 +372,34 @@ SketchZoomAsyncImage(
 )
 ```
 
+### Disabled gestures/禁用手势
+
+ZoomImage supports gestures such as double-click zoom, two-finger zoom, one-finger zoom, drag, etc., which are enabled by default, and you can disable them through the disabledGestureType property
+<br>-----------</br>
+ZoomImage 支持双击缩放、双指缩放、单指缩放、拖动等手势，这些手势默认都开启，你可以通过 disabledGestureType 属性来禁用它们
+
+example/示例：
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+
+// Turn off all scale gestures and keep only the drag gesture
+// 关闭所有缩放手势，只保留拖动手势
+state.zoomable.disabledGestureType =
+    GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
+
+SketchZoomAsyncImage(
+    imageUri = "http://sample.com/sample.jpg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
+)
+```
+
 ### Modifier.zoom()
 
+The Compose version of the ZoomImage component relies on Modifier.zoom() for scaling, and it can also be used on any Compose component
+<br>-----------</br>
 Compose 版本的 ZoomImage 组件依赖 Modifier.zoom() 实现缩放，它还可以用在任意 Compose 组件上
 
 example/示例：

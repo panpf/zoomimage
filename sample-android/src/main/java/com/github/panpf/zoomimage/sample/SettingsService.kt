@@ -65,6 +65,10 @@ class SettingsService(val context: Context) {
     val scalesMultiple by lazy {
         StringMmkvData(mmkv, "scalesMultiple", ScalesCalculator.Multiple.toString())
     }
+    val disabledGestureType by lazy {
+        StringMmkvData(mmkv, "disabledGestureType", "0")
+    }
+
     val limitOffsetWithinBaseVisibleRect by lazy {
         BooleanMmkvData(mmkv, "limitOffsetWithinBaseVisibleRect", false)
     }

@@ -23,6 +23,7 @@ import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.GestureType
 
 internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
 
@@ -49,7 +50,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
             },
             onLongPressCallback = { e: MotionEvent ->
                 val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
-                if (oneFingerScaleSpec != null) {
+                if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE) && oneFingerScaleSpec != null) {
                     lastLongPressPoint = OffsetCompat(x = e.x, y = e.y)
                     oneFingerScaleSpec.hapticFeedback.perform()
                 }
@@ -57,14 +58,21 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 onViewLongPressListener != null || view.performLongClick()
             },
             onDoubleTapCallback = { e: MotionEvent ->
-                val touchPoint = OffsetCompat(x = e.x, y = e.y)
-                val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
-                zoomable.switchScale(centroidContentPoint, animated = true)
+                if (zoomable.isSupportGestureType(GestureType.DOUBLE_TAP_SCALE)) {
+                    val touchPoint = OffsetCompat(x = e.x, y = e.y)
+                    val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
+                    zoomable.switchScale(centroidContentPoint, animated = true)
+                }
                 true
             },
             canDrag = { horizontal: Boolean, direction: Int ->
                 val longPressPoint = lastLongPressPoint
-                longPressPoint != null || zoomable.canScroll(horizontal, direction)
+                val allowDrag = zoomable.isSupportGestureType(GestureType.DRAG)
+                val canScroll = zoomable.canScroll(horizontal, direction)
+                val allowOneFingerScale =
+                    zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE)
+                val oneFingerAlready = longPressPoint != null
+                (allowDrag && canScroll) || (allowOneFingerScale && oneFingerAlready)
             },
             onGestureCallback = { scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int ->
                 zoomable._continuousTransformTypeState.value = ContinuousTransformType.GESTURE
@@ -73,33 +81,41 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 val longPressPoint = lastLongPressPoint
                 val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
                 if (pointCount == 1 && longPressPoint != null && oneFingerScaleSpec != null) {
-                    val scale = oneFingerScaleSpec.panToScaleTransformer.transform(panChange.y)
-                    zoomable.gestureTransform(
-                        centroid = longPressPoint,
-                        panChange = OffsetCompat.Zero,
-                        zoomChange = scale,
-                        rotationChange = 0f
-                    )
+                    if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE)) {
+                        val scale = oneFingerScaleSpec.panToScaleTransformer.transform(panChange.y)
+                        zoomable.gestureTransform(
+                            centroid = longPressPoint,
+                            panChange = OffsetCompat.Zero,
+                            zoomChange = scale,
+                            rotationChange = 0f
+                        )
+                    }
                 } else {
-                    zoomable.gestureTransform(
-                        centroid = focus,
-                        panChange = panChange,
-                        zoomChange = scaleFactor,
-                        rotationChange = 0f,
-                    )
+                    if (zoomable.isSupportGestureType(GestureType.TWO_FINGER_SCALE)) {
+                        val finalPan =
+                            if (zoomable.isSupportGestureType(GestureType.DRAG)) panChange else OffsetCompat.Zero
+                        zoomable.gestureTransform(
+                            centroid = focus,
+                            panChange = finalPan,
+                            zoomChange = scaleFactor,
+                            rotationChange = 0f,
+                        )
+                    }
                 }
             },
             onEndCallback = { focus, velocity ->
-                val pointCount = lastPointCount
-                val longPressPoint = lastLongPressPoint
-                val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
-                if (pointCount == 1 && longPressPoint != null && oneFingerScaleSpec != null) {
-                    zoomable.rollbackScale(longPressPoint)
-                } else {
-                    if (!zoomable.rollbackScale(focus)) {
-                        if (!zoomable.fling(velocity)) {
-                            zoomable._continuousTransformTypeState.value =
-                                ContinuousTransformType.NONE
+                if (zoomable.isSupportGestureType(GestureType.DRAG)) {
+                    val pointCount = lastPointCount
+                    val longPressPoint = lastLongPressPoint
+                    val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
+                    if (pointCount == 1 && longPressPoint != null && oneFingerScaleSpec != null) {
+                        zoomable.rollbackScale(longPressPoint)
+                    } else {
+                        if (!zoomable.rollbackScale(focus)) {
+                            if (!zoomable.fling(velocity)) {
+                                zoomable._continuousTransformTypeState.value =
+                                    ContinuousTransformType.NONE
+                            }
                         }
                     }
                 }

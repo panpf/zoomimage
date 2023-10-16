@@ -23,8 +23,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.tools4a.view.ktx.animTranslate
-import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
@@ -34,12 +32,14 @@ import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
+import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
 import com.github.panpf.zoomimage.zoom.vibration
@@ -150,6 +150,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     animationSpecState.value =
                         ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
+                settingsService.disabledGestureType.stateFlow
+                    .collectWithLifecycle(viewLifecycleOwner) {
+                        disabledGestureTypeState.value = it.toInt()
+                    }
             }
             subsampling.apply {
                 settingsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {

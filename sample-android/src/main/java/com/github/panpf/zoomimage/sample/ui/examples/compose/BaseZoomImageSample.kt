@@ -59,6 +59,7 @@ fun BaseZoomImageSample(
     val scalesCalculatorName by settingsService.scalesCalculator.stateFlow.collectAsState()
     val scalesMultipleString by settingsService.scalesMultiple.stateFlow.collectAsState()
     val pausedContinuousTransformType by settingsService.pausedContinuousTransformType.stateFlow.collectAsState()
+    val disabledGestureType by settingsService.disabledGestureType.stateFlow.collectAsState()
     val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.stateFlow.collectAsState()
     val ignoreExifOrientation by settingsService.ignoreExifOrientation.stateFlow.collectAsState()
     val showTileBounds by settingsService.showTileBounds.stateFlow.collectAsState()
@@ -119,6 +120,9 @@ fun BaseZoomImageSample(
         }
         LaunchedEffect(readMode) {
             zoomable.readMode = readMode
+        }
+        LaunchedEffect(disabledGestureType) {
+            zoomable.disabledGestureType = disabledGestureType.toInt()
         }
         LaunchedEffect(pausedContinuousTransformType) {
             subsampling.pausedContinuousTransformType = pausedContinuousTransformType.toInt()

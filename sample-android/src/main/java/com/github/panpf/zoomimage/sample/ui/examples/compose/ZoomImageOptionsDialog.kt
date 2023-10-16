@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
-import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.SettingsService
 import com.github.panpf.zoomimage.sample.settingsService
@@ -50,7 +49,9 @@ import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.sample.util.BaseMmkvData
 import com.github.panpf.zoomimage.subsampling.TileManager
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -78,6 +79,10 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.readModeEnabled, settingsService.readModeEnabled)
         BindStateAndFlow(state.readModeAcceptedBoth, settingsService.readModeAcceptedBoth)
 
+        BindStateAndFlow(
+            state.disabledGestureType,
+            settingsService.disabledGestureType
+        )
         BindStateAndFlow(
             state.pausedContinuousTransformType,
             settingsService.pausedContinuousTransformType
@@ -124,6 +129,7 @@ class ZoomImageOptionsState {
     val tileAnimation = MutableStateFlow(true)
     val pausedContinuousTransformType =
         MutableStateFlow(TileManager.DefaultPausedContinuousTransformType.toString())
+    val disabledGestureType = MutableStateFlow(0.toString())
     val disabledBackgroundTiles = MutableStateFlow(false)
     val ignoreExifOrientation = MutableStateFlow(false)
 
@@ -154,9 +160,13 @@ fun ZoomImageOptionsDialog(
 
     val showTileBounds by state.showTileBounds.collectAsState()
     val tileAnimation by state.tileAnimation.collectAsState()
-    val pausedContinuousTransformTypeName by state.pausedContinuousTransformType.collectAsState()
-    val pausedContinuousTransformType = remember(pausedContinuousTransformTypeName) {
-        pausedContinuousTransformTypeName.toInt()
+    val disabledGestureTypeString by state.disabledGestureType.collectAsState()
+    val disabledGestureType = remember(disabledGestureTypeString) {
+        disabledGestureTypeString.toInt()
+    }
+    val pausedContinuousTransformTypeString by state.pausedContinuousTransformType.collectAsState()
+    val pausedContinuousTransformType = remember(pausedContinuousTransformTypeString) {
+        pausedContinuousTransformTypeString.toInt()
     }
     val disabledBackgroundTiles by state.disabledBackgroundTiles.collectAsState()
     val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
@@ -263,6 +273,36 @@ fun ZoomImageOptionsDialog(
                     state.scalesMultiple.value = it
 //                    onDismissRequest()
                 }
+                val gestureTypes = remember {
+                    listOf(
+                        GestureType.DRAG,
+                        GestureType.TWO_FINGER_SCALE,
+                        GestureType.ONE_FINGER_SCALE,
+                        GestureType.DOUBLE_TAP_SCALE,
+                    )
+                }
+                val gestureTypeStrings = remember {
+                    gestureTypes.map { GestureType.name(it) }
+                }
+                val disabledGestureTypeCheckedList = remember(disabledGestureType) {
+                    gestureTypes.map { it and disabledGestureType != 0 }
+                }
+                MyMultiChooseMenu(
+                    name = "Disabled Gesture Type",
+                    values = gestureTypeStrings,
+                    checkedList = disabledGestureTypeCheckedList,
+                ) { which, isChecked ->
+                    val newCheckedList = disabledGestureTypeCheckedList.toMutableList().apply { set(which, isChecked) }
+                    val newDisabledGestureType =
+                        newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
+                            if (checked) gestureTypes[index] else null
+                        }.fold(0) { acc, disabledGestureType ->
+                            acc or disabledGestureType
+                        }
+                    state.disabledGestureType.value =
+                        newDisabledGestureType.toString()
+//                    onDismissRequest()
+                }
 
                 Divider(Modifier.padding(horizontal = 20.dp))
 
@@ -300,22 +340,17 @@ fun ZoomImageOptionsDialog(
                 val continuousTransformTypeStrings = remember {
                     continuousTransformTypes.map { ContinuousTransformType.name(it) }
                 }
-                val checkeds = remember(pausedContinuousTransformType) {
+                val pausedContinuousTransformTypeCheckedList = remember(pausedContinuousTransformType) {
                     continuousTransformTypes.map { it and pausedContinuousTransformType != 0 }
-                }
-                val checkedNames = remember(pausedContinuousTransformType) {
-                    continuousTransformTypes.filter { it and pausedContinuousTransformType != 0 }
-                        .joinToString(separator = ",") { ContinuousTransformType.name(it) }
                 }
                 MyMultiChooseMenu(
                     name = "Paused Continuous Transform Type",
                     values = continuousTransformTypeStrings,
-                    checkeds = checkeds,
-                    checkedNames = checkedNames,
+                    checkedList = pausedContinuousTransformTypeCheckedList,
                 ) { which, isChecked ->
-                    val newCheckeds = checkeds.toMutableList().apply { set(which, isChecked) }
+                    val newCheckedList = pausedContinuousTransformTypeCheckedList.toMutableList().apply { set(which, isChecked) }
                     val newContinuousTransformType =
-                        newCheckeds.asSequence().mapIndexedNotNull { index, checked ->
+                        newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
                             if (checked) continuousTransformTypes[index] else null
                         }.fold(0) { acc, continuousTransformType ->
                             acc or continuousTransformType
@@ -482,11 +517,13 @@ private fun MyDropdownMenuPreview() {
 private fun MyMultiChooseMenu(
     name: String,
     values: List<String>,
-    checkeds: List<Boolean>,
-    checkedNames: String,
+    checkedList: List<Boolean>,
     onSelected: (which: Int, isChecked: Boolean) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val checkedCount = remember(key1 = checkedList) {
+        checkedList.count { it }.toString()
+    }
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             Modifier
@@ -506,8 +543,7 @@ private fun MyMultiChooseMenu(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = checkedNames,
-                modifier = Modifier.weight(1f),
+                text = checkedCount,
                 fontSize = 10.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -537,14 +573,14 @@ private fun MyMultiChooseMenu(
                         Text(text = value, modifier = Modifier.width(150.dp))
                     },
                     trailingIcon = {
-                        Checkbox(checked = checkeds[index], onCheckedChange = {
+                        Checkbox(checked = checkedList[index], onCheckedChange = {
 //                            expanded = !expanded
-                            onSelected(index, !checkeds[index])
+                            onSelected(index, !checkedList[index])
                         })
                     },
                     onClick = {
 //                        expanded = !expanded
-                        onSelected(index, !checkeds[index])
+                        onSelected(index, !checkedList[index])
                     }
                 )
             }
@@ -561,8 +597,7 @@ private fun MyMultiChooseMenuPreview() {
     MyMultiChooseMenu(
         name = "Animate Scale",
         values = values,
-        checkeds = listOf(true, false, true, false),
-        checkedNames = "A, C",
+        checkedList = listOf(true, false, true, false),
     ) { _, _ ->
 
     }

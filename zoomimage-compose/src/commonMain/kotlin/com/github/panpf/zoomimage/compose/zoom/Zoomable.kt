@@ -37,6 +37,7 @@ import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
 
 fun Modifier.zoom(
@@ -104,16 +105,18 @@ fun Modifier.zoomable(
                 },
                 onLongPress = {
                     val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
-                    if (oneFingerScaleSpec != null) {
+                    if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE) && oneFingerScaleSpec != null) {
                         lastLongPressPoint = it
                         oneFingerScaleSpec.hapticFeedback.perform()
                     }
                     updatedOnLongPress?.invoke(it)
                 },
                 onDoubleTap = { touchPoint ->
-                    coroutineScope.launch {
-                        val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
-                        zoomable.switchScale(centroidContentPoint, animated = true)
+                    if (zoomable.isSupportGestureType(GestureType.DOUBLE_TAP_SCALE)) {
+                        coroutineScope.launch {
+                            val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
+                            zoomable.switchScale(centroidContentPoint, animated = true)
+                        }
                     }
                 },
             )
@@ -123,7 +126,12 @@ fun Modifier.zoomable(
                 panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
                     val longPressPoint = lastLongPressPoint
-                    longPressPoint != null || zoomable.canScroll(horizontal, direction)
+                    val allowDrag = zoomable.isSupportGestureType(GestureType.DRAG)
+                    val canScroll = zoomable.canScroll(horizontal, direction)
+                    val allowOneFingerScale =
+                        zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE)
+                    val oneFingerAlready = longPressPoint != null
+                    (allowDrag && canScroll) || (allowOneFingerScale && oneFingerAlready)
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float, pointCount ->
                     coroutineScope.launch {
@@ -133,34 +141,42 @@ fun Modifier.zoomable(
                         val longPressPoint = lastLongPressPoint
                         val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
                         if (pointCount == 1 && longPressPoint != null && oneFingerScaleSpec != null) {
-                            val scale =
-                                oneFingerScaleSpec.panToScaleTransformer.transform(pan.y)
-                            zoomable.gestureTransform(
-                                centroid = longPressPoint,
-                                panChange = Offset.Zero,
-                                zoomChange = scale,
-                                rotationChange = 0f
-                            )
+                            if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE)) {
+                                val scale =
+                                    oneFingerScaleSpec.panToScaleTransformer.transform(pan.y)
+                                zoomable.gestureTransform(
+                                    centroid = longPressPoint,
+                                    panChange = Offset.Zero,
+                                    zoomChange = scale,
+                                    rotationChange = 0f
+                                )
+                            }
                         } else {
-                            zoomable.gestureTransform(
-                                centroid = centroid,
-                                panChange = pan,
-                                zoomChange = zoom,
-                                rotationChange = rotation
-                            )
+                            if (zoomable.isSupportGestureType(GestureType.TWO_FINGER_SCALE)) {
+                                val finalPan =
+                                    if (zoomable.isSupportGestureType(GestureType.DRAG)) pan else Offset.Zero
+                                zoomable.gestureTransform(
+                                    centroid = centroid,
+                                    panChange = finalPan,
+                                    zoomChange = zoom,
+                                    rotationChange = rotation
+                                )
+                            }
                         }
                     }
                 },
                 onEnd = { centroid, velocity ->
-                    coroutineScope.launch {
-                        val pointCount = lastPointCount
-                        val longPressedPoint = lastLongPressPoint
-                        val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
-                        if (pointCount == 1 && longPressedPoint != null && oneFingerScaleSpec != null) {
-                            zoomable.rollbackScale(longPressedPoint)
-                        } else if (!zoomable.rollbackScale(centroid)) {
-                            if (!zoomable.fling(velocity, density)) {
-                                zoomable.continuousTransformType = ContinuousTransformType.NONE
+                    if (zoomable.isSupportGestureType(GestureType.DRAG)) {
+                        coroutineScope.launch {
+                            val pointCount = lastPointCount
+                            val longPressedPoint = lastLongPressPoint
+                            val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
+                            if (pointCount == 1 && longPressedPoint != null && oneFingerScaleSpec != null) {
+                                zoomable.rollbackScale(longPressedPoint)
+                            } else if (!zoomable.rollbackScale(centroid)) {
+                                if (!zoomable.fling(velocity, density)) {
+                                    zoomable.continuousTransformType = ContinuousTransformType.NONE
+                                }
                             }
                         }
                     }

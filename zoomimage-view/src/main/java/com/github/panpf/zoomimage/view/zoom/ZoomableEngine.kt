@@ -48,6 +48,7 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContainerSizeInterceptor
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -103,8 +104,6 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      */
     val contentOriginSizeState = MutableStateFlow(IntSizeCompat.Zero)
 
-    var containerSizeInterceptor: ContainerSizeInterceptor? = null
-
 
     /* *********************************** Configurable properties ****************************** */
 
@@ -155,6 +154,18 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
     val limitOffsetWithinBaseVisibleRectState = MutableStateFlow(false)
+
+    /**
+     * Used to intercept unwanted containerSize changes
+     */
+    var containerSizeInterceptor: ContainerSizeInterceptor? = null
+
+    /**
+     * Disabled gesture types. Allow multiple types to be combined through the 'and' operator
+     *
+     * @see com.github.panpf.zoomimage.zoom.GestureType
+     */
+    var disabledGestureTypeState = MutableStateFlow(0)
 
 
     /* *********************************** Information properties ******************************* */
@@ -852,6 +863,9 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         lastFlingAnimatable?.start()
         return true
     }
+
+    fun isSupportGestureType(@GestureType gestureType: Int): Boolean =
+        disabledGestureTypeState.value.and(gestureType) == 0
 
     private fun limitUserScale(targetUserScale: Float): Float {
         val minUserScale = minScaleState.value / baseTransformState.value.scaleX

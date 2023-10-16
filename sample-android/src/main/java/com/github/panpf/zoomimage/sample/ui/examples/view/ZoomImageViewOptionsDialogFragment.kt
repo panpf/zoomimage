@@ -24,7 +24,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
-import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.RecyclerFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
@@ -38,9 +37,11 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.name
 
 class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
@@ -179,6 +180,33 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 )
             )
 
+            val gestureTypes = listOf(
+                GestureType.DRAG,
+                GestureType.TWO_FINGER_SCALE,
+                GestureType.ONE_FINGER_SCALE,
+                GestureType.DOUBLE_TAP_SCALE,
+            )
+            add(
+                MultiChooseMenu(
+                    title = "Disabled Gesture Type",
+                    values = gestureTypes.map { GestureType.name(it) },
+                    getCheckedList = { gestureTypes.map { it and settingsService.disabledGestureType.value.toInt() != 0 } },
+                    onSelected = { which, isChecked ->
+                        val checkedList =
+                            gestureTypes.map { it and settingsService.disabledGestureType.value.toInt() != 0 }
+                        val newCheckedList = checkedList.toMutableList().apply { set(which, isChecked) }
+                        val newDisabledGestureTypeType =
+                            newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
+                                if (checked) gestureTypes[index] else null
+                            }.fold(0) { acc, gestureType ->
+                                acc or gestureType
+                            }
+                        settingsService.disabledGestureType.value =
+                            newDisabledGestureTypeType.toString()
+                    }
+                )
+            )
+
             add(MenuDivider())
 
             add(
@@ -216,17 +244,13 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
                 MultiChooseMenu(
                     title = "Paused Continuous Transform Type",
                     values = continuousTransformTypes.map { ContinuousTransformType.name(it) },
-                    getCheckeds = { continuousTransformTypes.map { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 } },
-                    getCheckedNames = {
-                        continuousTransformTypes.filter { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 }
-                            .joinToString(separator = ",") { ContinuousTransformType.name(it) }
-                    },
+                    getCheckedList = { continuousTransformTypes.map { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 } },
                     onSelected = { which, isChecked ->
-                        val checkeds =
+                        val checkedList =
                             continuousTransformTypes.map { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 }
-                        val newCheckeds = checkeds.toMutableList().apply { set(which, isChecked) }
+                        val newCheckedList = checkedList.toMutableList().apply { set(which, isChecked) }
                         val newContinuousTransformType =
-                            newCheckeds.asSequence().mapIndexedNotNull { index, checked ->
+                            newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
                                 if (checked) continuousTransformTypes[index] else null
                             }.fold(0) { acc, continuousTransformType ->
                                 acc or continuousTransformType

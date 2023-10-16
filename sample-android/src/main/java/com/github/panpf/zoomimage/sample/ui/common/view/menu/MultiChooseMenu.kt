@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 class MultiChooseMenu(
     val title: String,
     val values: List<String>,
-    val getCheckeds: () -> List<Boolean>,
-    val getCheckedNames: () -> String,
+    val getCheckedList: () -> List<Boolean>,
     val onSelected: (which: Int, isChecked: Boolean) -> Unit
 )

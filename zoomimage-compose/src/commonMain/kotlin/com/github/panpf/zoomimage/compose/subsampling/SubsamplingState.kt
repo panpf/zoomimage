@@ -138,7 +138,9 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     var tileAnimationSpec: TileAnimationSpec by mutableStateOf(TileAnimationSpec.Default)
 
     /**
-     * A continuous transform type that needs to pause loading
+     * A continuous transform type that needs to pause loading. Allow multiple types to be combined through the 'and' operator
+     *
+     * @see com.github.panpf.zoomimage.zoom.ContinuousTransformType
      */
     var pausedContinuousTransformType: Int by mutableIntStateOf(DefaultPausedContinuousTransformType)
 

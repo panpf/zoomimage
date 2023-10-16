@@ -33,7 +33,8 @@ class MultiChooseMenuItemFactory(private val activity: Activity) :
         binding.root.setOnClickListener {
             val data = item.dataOrThrow
             showDialog(data) {
-                binding.multiChooseMenuItemInfoText.text = data.getCheckedNames()
+                binding.multiChooseMenuItemInfoText.text =
+                    data.getCheckedList().count { it }.toString()
             }
         }
     }
@@ -47,12 +48,15 @@ class MultiChooseMenuItemFactory(private val activity: Activity) :
         data: MultiChooseMenu
     ) {
         binding.multiChooseMenuItemTitleText.text = data.title
-        binding.multiChooseMenuItemInfoText.text = data.getCheckedNames()
+        binding.multiChooseMenuItemInfoText.text = data.getCheckedList().count { it }.toString()
     }
 
     private fun showDialog(data: MultiChooseMenu, after: () -> Unit) {
         AlertDialog.Builder(activity).apply {
-            setMultiChoiceItems(data.values.toTypedArray(), data.getCheckeds().toBooleanArray()) { _, which, isChecked ->
+            setMultiChoiceItems(
+                data.values.toTypedArray(),
+                data.getCheckedList().toBooleanArray()
+            ) { _, which, isChecked ->
                 data.onSelected(which, isChecked)
                 after()
             }

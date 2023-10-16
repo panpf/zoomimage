@@ -66,6 +66,7 @@ import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContainerSizeInterceptor
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -231,6 +232,13 @@ class ZoomableState(logger: Logger) {
      * Used to intercept unwanted containerSize changes
      */
     var containerSizeInterceptor: ContainerSizeInterceptor? = null
+
+    /**
+     * Disabled gesture types. Allow multiple types to be combined through the 'and' operator
+     *
+     * @see com.github.panpf.zoomimage.zoom.GestureType
+     */
+    var disabledGestureType: Int by mutableIntStateOf(0)
 
 
     /* *********************************** Information properties ******************************* */
@@ -890,6 +898,9 @@ class ZoomableState(logger: Logger) {
         }
         return@coroutineScope true
     }
+
+    fun isSupportGestureType(@GestureType gestureType: Int): Boolean =
+        disabledGestureType.and(gestureType) == 0
 
     private fun limitUserScale(targetUserScale: Float): Float {
         val minUserScale = minScale / baseTransform.scaleX
