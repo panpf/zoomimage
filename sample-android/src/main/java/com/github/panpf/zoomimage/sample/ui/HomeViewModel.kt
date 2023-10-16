@@ -93,6 +93,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 minSdk = 21,
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
+            Link(
+                title = "Modifier.zoom()",
+                navDirections = NavMainDirections.actionGlobalZoomFunctionSampleFragment(),
+                minSdk = 21,
+            ),
 
             ListSeparator("View"),
             Link(
