@@ -16,8 +16,14 @@
 
 package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
+import android.content.Context
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
+import androidx.core.content.res.ResourcesCompat
 import coil.load
+import com.github.panpf.sketch.drawable.internal.IconDrawable
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
@@ -25,9 +31,22 @@ class CoilPhotoGridItemFactory : BasePhotoGridItemFactory() {
 
     override fun displayImage(imageView: ImageView, sketchImageUri: String) {
         imageView.load(sketchUri2CoilModel(imageView.context, sketchImageUri)) {
-            placeholder(R.drawable.im_placeholder)
+            placeholder(
+                iconDrawable(
+                    imageView.context,
+                    R.drawable.ic_image_outline,
+                    R.color.placeholder_bg
+                )
+            )
             error(R.drawable.im_error)
             crossfade(true)
         }
     }
+}
+
+fun iconDrawable(context: Context, @DrawableRes icon: Int, bg: Int): Drawable {
+    return IconDrawable(
+        ResourcesCompat.getDrawable(context.resources, icon, null)!!,
+        ColorDrawable(ResourcesCompat.getColor(context.resources, bg, null)),
+    )
 }
