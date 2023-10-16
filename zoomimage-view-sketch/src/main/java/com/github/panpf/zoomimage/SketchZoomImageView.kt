@@ -51,7 +51,7 @@ import com.github.panpf.sketch.viewability.ViewAbilityManager
 import com.github.panpf.sketch.viewability.internal.RealViewAbilityManager
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
-import com.github.panpf.zoomimage.sketch.SketchTileMemoryCache
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 /**
@@ -85,8 +85,8 @@ open class SketchZoomImageView @JvmOverloads constructor(
         viewAbilityManager = RealViewAbilityManager(this, this)
         _subsamplingEngine?.tileBitmapPoolState?.value =
             SketchTileBitmapPool(context.sketch, "SketchZoomImageView")
-        _subsamplingEngine?.tileMemoryCacheState?.value =
-            SketchTileMemoryCache(context.sketch, "SketchZoomImageView")
+        _subsamplingEngine?.tileBitmapCacheState?.value =
+            SketchTileBitmapCache(context.sketch, "SketchZoomImageView")
     }
 
     override fun onAttachedToWindow() {
@@ -118,8 +118,8 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 logger.d { "SketchZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
-            _subsamplingEngine?.disableMemoryCacheState?.value = isDisableMemoryCache(result.drawable)
-            _subsamplingEngine?.disallowReuseBitmapState?.value = isDisallowReuseBitmap(result.drawable)
+            _subsamplingEngine?.disableTileBitmapCacheState?.value = isDisableMemoryCache(result.drawable)
+            _subsamplingEngine?.disableTileBitmapReuseState?.value = isDisallowReuseBitmap(result.drawable)
             _subsamplingEngine?.ignoreExifOrientationState?.value = isIgnoreExifOrientation(result.drawable)
             _subsamplingEngine?.setImageSource(newImageSource(result.drawable))
         }

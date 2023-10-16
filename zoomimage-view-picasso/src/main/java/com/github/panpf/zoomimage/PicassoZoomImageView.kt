@@ -21,7 +21,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import com.github.panpf.zoomimage.picasso.PicassoHttpImageSource
-import com.github.panpf.zoomimage.picasso.PicassoTileMemoryCache
+import com.github.panpf.zoomimage.picasso.PicassoTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.fromContent
@@ -54,7 +54,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     init {
-        _subsamplingEngine?.tileMemoryCacheState?.value = PicassoTileMemoryCache(Picasso.get())
+        _subsamplingEngine?.tileBitmapCacheState?.value = PicassoTileBitmapCache(Picasso.get())
     }
 
     /**
@@ -150,7 +150,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     private fun loadImage(uri: Uri?, callback: Callback?, creator: RequestCreator) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
-                _subsamplingEngine?.disableMemoryCacheState?.value =
+                _subsamplingEngine?.disableTileBitmapCacheState?.value =
                     checkMemoryCacheDisabled(creator.internalMemoryPolicy)
                 _subsamplingEngine?.setImageSource(newImageSource(uri))
                 callback?.onSuccess()
@@ -165,7 +165,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingEngine?.disableMemoryCacheState?.value = false
+        _subsamplingEngine?.disableTileBitmapCacheState?.value = false
     }
 
     private fun newImageSource(uri: Uri?): ImageSource? {

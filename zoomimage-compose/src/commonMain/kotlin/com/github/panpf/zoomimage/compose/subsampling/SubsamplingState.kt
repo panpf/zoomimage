@@ -113,27 +113,24 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     var ignoreExifOrientation: Boolean by mutableStateOf(false)
 
     /**
-     * Set up the tile memory cache container
+     * Set up the TileBitmap memory cache container
      */
-    // todo rename
-    var tileMemoryCache: TileBitmapCache? by mutableStateOf(null)
+    var tileBitmapCache: TileBitmapCache? by mutableStateOf(null)
 
     /**
-     * If true, disable memory cache
+     * If true, disable TileBitmap memory cache
      */
-    // todo rename
-    var disableMemoryCache: Boolean by mutableStateOf(false)
+    var disableTileBitmapCache: Boolean by mutableStateOf(false)
 
     /**
-     * Set up a shared Bitmap pool for the tile
+     * Set up a shared TileBitmap pool for the tile
      */
     var tileBitmapPool: TileBitmapPool? by mutableStateOf(null)
 
     /**
-     * If true, Bitmap reuse is disabled
+     * If true, TileBitmap reuse is disabled
      */
-    // todo rename
-    var disallowReuseBitmap: Boolean by mutableStateOf(false)
+    var disableTileBitmapReuse: Boolean by mutableStateOf(false)
 
     /**
      * The animation spec for tile animation
@@ -312,12 +309,12 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { tileMemoryCache }.collect {
+            snapshotFlow { tileBitmapCache }.collect {
                 tileBitmapCacheSpec.tileBitmapCache = it
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { disableMemoryCache }.collect {
+            snapshotFlow { disableTileBitmapCache }.collect {
                 tileBitmapCacheSpec.disabled = it
             }
         }
@@ -327,7 +324,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { disallowReuseBitmap }.collect {
+            snapshotFlow { disableTileBitmapReuse }.collect {
                 tileBitmapReuseSpec.disabled = it
             }
         }

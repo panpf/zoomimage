@@ -25,7 +25,7 @@ import com.bumptech.glide.load.engine.internalModel
 import com.bumptech.glide.load.engine.internalRequestOptions
 import com.bumptech.glide.request.SingleRequest
 import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
-import com.github.panpf.zoomimage.glide.GlideTileMemoryCache
+import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
 import com.github.panpf.zoomimage.glide.newGlideImageSource
 
 /**
@@ -50,7 +50,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
     init {
         val glide = Glide.get(context)
         _subsamplingEngine?.tileBitmapPoolState?.value = GlideTileBitmapPool(glide)
-        _subsamplingEngine?.tileMemoryCacheState?.value = GlideTileMemoryCache(glide)
+        _subsamplingEngine?.tileBitmapCacheState?.value = GlideTileBitmapCache(glide)
     }
 
     override fun onAttachedToWindow() {
@@ -85,7 +85,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 logger.d { "GlideZoomImageView. Can't use Subsampling, request is not complete" }
                 return@post
             }
-            _subsamplingEngine?.disableMemoryCacheState?.value = isDisableMemoryCache(request)
+            _subsamplingEngine?.disableTileBitmapCacheState?.value = isDisableMemoryCache(request)
             val model = request.internalModel
             val imageSource = newGlideImageSource(context, model)
             if (imageSource == null) {

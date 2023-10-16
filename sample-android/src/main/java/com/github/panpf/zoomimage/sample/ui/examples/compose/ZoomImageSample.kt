@@ -20,8 +20,8 @@ import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sketch.SketchImageSource
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
-import com.github.panpf.zoomimage.sketch.SketchTileMemoryCache
 import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable
@@ -33,7 +33,7 @@ fun ZoomImageSample(sketchImageUri: String) {
         val context = LocalContext.current
         LaunchedEffect(Unit) {
             state.subsampling.tileBitmapPool = SketchTileBitmapPool(context.sketch, "ZoomImage")
-            state.subsampling.tileMemoryCache = SketchTileMemoryCache(context.sketch, "ZoomImage")
+            state.subsampling.tileBitmapCache = SketchTileBitmapCache(context.sketch, "ZoomImage")
         }
         LaunchedEffect(ignoreExifOrientation) {
             state.subsampling.ignoreExifOrientation = ignoreExifOrientation

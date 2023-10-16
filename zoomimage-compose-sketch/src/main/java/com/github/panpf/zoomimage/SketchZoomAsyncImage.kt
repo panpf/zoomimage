@@ -54,7 +54,7 @@ import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
-import com.github.panpf.zoomimage.sketch.SketchTileMemoryCache
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import kotlin.math.roundToInt
 
 
@@ -349,7 +349,7 @@ fun SketchZoomAsyncImage(
     val sketch by remember { mutableStateOf(context.sketch) }
     LaunchedEffect(Unit) {
         state.subsampling.tileBitmapPool = SketchTileBitmapPool(sketch, "SketchZoomAsyncImage")
-        state.subsampling.tileMemoryCache = SketchTileMemoryCache(sketch, "SketchZoomAsyncImage")
+        state.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
     }
 
     val modifier1 = modifier
@@ -401,9 +401,9 @@ private fun onState(
     when (loadState) {
         is State.Success -> {
             subsamplingState.ignoreExifOrientation = request.ignoreExifOrientation
-            subsamplingState.disableMemoryCache =
+            subsamplingState.disableTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            subsamplingState.disallowReuseBitmap = request.disallowReuseBitmap
+            subsamplingState.disableTileBitmapReuse = request.disallowReuseBitmap
             val imageSource = SketchImageSource(context, sketch, request.uriString)
             subsamplingState.setImageSource(imageSource)
         }

@@ -43,7 +43,7 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.request.NullRequestDataException
 import com.github.panpf.zoomimage.coil.CoilImageSource
-import com.github.panpf.zoomimage.coil.CoilTileMemoryCache
+import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.NoClipContentImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
@@ -200,7 +200,7 @@ fun CoilZoomAsyncImage(
     state.zoomable.alignment = alignment
 
     LaunchedEffect(Unit) {
-        state.subsampling.tileMemoryCache = CoilTileMemoryCache(imageLoader)
+        state.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
     }
 
     val modifier1 = modifier
@@ -250,7 +250,7 @@ private fun onState(
 
     when (loadState) {
         is State.Success -> {
-            state.subsampling.disableMemoryCache =
+            state.subsampling.disableTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
             state.subsampling.setImageSource(CoilImageSource(imageLoader, request))
         }

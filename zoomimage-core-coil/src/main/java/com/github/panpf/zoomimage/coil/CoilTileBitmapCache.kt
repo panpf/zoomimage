@@ -24,7 +24,7 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
-class CoilTileMemoryCache(private val imageLoader: ImageLoader) : TileBitmapCache {
+class CoilTileBitmapCache(private val imageLoader: ImageLoader) : TileBitmapCache {
 
     override fun get(key: String): CacheTileBitmap? {
         return imageLoader.memoryCache

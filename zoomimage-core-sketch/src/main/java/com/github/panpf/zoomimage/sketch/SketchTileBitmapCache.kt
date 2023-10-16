@@ -25,7 +25,7 @@ import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
-class SketchTileMemoryCache constructor(
+class SketchTileBitmapCache constructor(
     private val sketch: Sketch,
     private val caller: String
 ) : TileBitmapCache {

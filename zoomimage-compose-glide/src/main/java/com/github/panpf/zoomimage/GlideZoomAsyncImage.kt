@@ -29,7 +29,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
@@ -51,7 +50,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
-import com.github.panpf.zoomimage.glide.GlideTileMemoryCache
+import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
 import com.github.panpf.zoomimage.glide.newGlideImageSource
 
 
@@ -151,7 +150,7 @@ fun GlideZoomAsyncImage(
     LaunchedEffect(Unit) {
         val glide = Glide.get(context)
         state.subsampling.tileBitmapPool = GlideTileBitmapPool(glide)
-        state.subsampling.tileMemoryCache = GlideTileMemoryCache(glide)
+        state.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
     }
 
     val modifier1 = modifier
@@ -229,7 +228,7 @@ private class ResetListener(
         state.zoomable.contentSize = contentSize
 
         val imageSource = if (resource != null) {
-            state.subsampling.disableMemoryCache = !requestBuilder.isMemoryCacheable
+            state.subsampling.disableTileBitmapCache = !requestBuilder.isMemoryCacheable
             newGlideImageSource(context, model).apply {
                 if (this == null) {
                     state.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model: '$model'" }

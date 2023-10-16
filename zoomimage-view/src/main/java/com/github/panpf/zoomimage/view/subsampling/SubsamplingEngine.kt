@@ -47,6 +47,7 @@ import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -99,27 +100,24 @@ class SubsamplingEngine constructor(
     val ignoreExifOrientationState = MutableStateFlow(false)
 
     /**
-     * Set up the tile memory cache container
+     * Set up the TileBitmap memory cache container
      */
-    // todo rename
-    val tileMemoryCacheState = MutableStateFlow<TileBitmapCache?>(null)
+    val tileBitmapCacheState = MutableStateFlow<TileBitmapCache?>(null)
 
     /**
-     * If true, disable memory cache
+     * If true, disable TileBitmap memory cache
      */
-    // todo rename
-    val disableMemoryCacheState = MutableStateFlow(false)
+    val disableTileBitmapCacheState = MutableStateFlow(false)
 
     /**
-     * Set up a shared Bitmap pool for the tile
+     * Set up a shared TileBitmap pool for the tile
      */
     val tileBitmapPoolState = MutableStateFlow<TileBitmapPool?>(null)
 
     /**
-     * If true, Bitmap reuse is disabled
+     * If true, TileBitmap reuse is disabled
      */
-    // todo rename
-    val disallowReuseBitmapState = MutableStateFlow(false)
+    val disableTileBitmapReuseState = MutableStateFlow(false)
 
     /**
      * The animation spec for tile animation
@@ -248,12 +246,12 @@ class SubsamplingEngine constructor(
         }
 
         coroutineScope.launch {
-            tileMemoryCacheState.collect {
+            tileBitmapCacheState.collect {
                 tileBitmapCacheSpec.tileBitmapCache = it
             }
         }
         coroutineScope.launch {
-            disableMemoryCacheState.collect {
+            disableTileBitmapCacheState.collect {
                 tileBitmapCacheSpec.disabled = it
             }
         }
@@ -263,7 +261,7 @@ class SubsamplingEngine constructor(
             }
         }
         coroutineScope.launch {
-            disallowReuseBitmapState.collect {
+            disableTileBitmapReuseState.collect {
                 tileBitmapReuseSpec.disabled = it
             }
         }
@@ -306,6 +304,7 @@ class SubsamplingEngine constructor(
 
     /* *************************************** Internal ***************************************** */
 
+    @OptIn(FlowPreview::class)
     internal fun bindZoomEngine(zoomableEngine: ZoomableEngine) {
         coroutineScope.launch {
             // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.

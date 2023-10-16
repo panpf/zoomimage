@@ -29,7 +29,7 @@ import coil.request.CachePolicy
 import coil.request.SuccessResult
 import coil.util.CoilUtils
 import com.github.panpf.zoomimage.coil.CoilImageSource
-import com.github.panpf.zoomimage.coil.CoilTileMemoryCache
+import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 /**
@@ -52,7 +52,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     init {
-        _subsamplingEngine?.tileMemoryCacheState?.value = CoilTileMemoryCache(context.imageLoader)
+        _subsamplingEngine?.tileBitmapCacheState?.value = CoilTileBitmapCache(context.imageLoader)
     }
 
     override fun onAttachedToWindow() {
@@ -83,7 +83,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 logger.d { "CoilZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
-            _subsamplingEngine?.disableMemoryCacheState?.value = isDisallowMemoryCache(result)
+            _subsamplingEngine?.disableTileBitmapCacheState?.value = isDisallowMemoryCache(result)
             _subsamplingEngine?.setImageSource(newImageSource(result))
         }
     }
