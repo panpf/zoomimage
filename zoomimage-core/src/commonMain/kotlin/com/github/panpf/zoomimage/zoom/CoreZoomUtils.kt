@@ -29,7 +29,6 @@ import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.isEmpty
-import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
@@ -38,7 +37,6 @@ import com.github.panpf.zoomimage.util.rotateInSpace
 import com.github.panpf.zoomimage.util.times
 import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
-import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.internal.BaseTransformHelper
 import com.github.panpf.zoomimage.zoom.internal.format
@@ -368,6 +366,9 @@ data class InitialZoom(
     }
 }
 
+/**
+ * When only the containerSize changes, keep the original visible center unchanged
+ */
 fun calculateInitialZoomWithContainerSizeChanged(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -386,6 +387,7 @@ fun calculateInitialZoomWithContainerSizeChanged(
     lastRotation: Int,
     lastReadMode: ReadMode?,
     lastScalesCalculator: ScalesCalculator?,
+    contentVisibleCenterPoint: IntOffsetCompat,
 ): InitialZoom {
     val newInitialZoom = calculateInitialZoom(
         containerSize = containerSize,
@@ -402,7 +404,7 @@ fun calculateInitialZoomWithContainerSizeChanged(
 //            && lastContentSize.isNotEmpty()
 //            && containerSize.isNotEmpty()
 //            && contentSize.isNotEmpty()
-////            && lastContainerSize != containerSize
+//            && lastContainerSize != containerSize
 //            && lastContentSize == contentSize
 //            && lastContentOriginSize == contentOriginSize
 //            && lastContentScale == contentScale
@@ -414,10 +416,12 @@ fun calculateInitialZoomWithContainerSizeChanged(
 //            || lastTransform.scaleY != 1f
 //            || lastTransform.offsetX != 0f
 //            || lastTransform.offsetY != 0f
-//    if (!onlyContainerSizeChanged || !lastTransformNotEmpty) {
+//    if (!onlyContainerSizeChanged || !lastTransformNotEmpty
+//        || contentVisibleCenterPoint.x <= 0 || contentVisibleCenterPoint.y <= 0
+//    ) {
 //        return newInitialZoom
 //    }
-//
+
 //    val containerSizeSize = containerSize.width * containerSize.height
 //    val lastContainerSizeSize = lastContainerSize.width * lastContainerSize.height
 //    val containerSizeScaleFactor =

@@ -336,6 +336,26 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         val alignment = alignmentState.value
         val scalesCalculator = scalesCalculatorState.value
 
+        val lastTransform = transformState.value
+        val lastContainerSize = lastContainerSize
+        val lastContentSize = lastContentSize
+        val lastContentOriginSize = lastContentOriginSize
+        val lastContentScale = lastContentScale
+        val lastAlignment = lastAlignment
+        val lastReadMode = lastReadMode
+        val lastRotation = lastRotation
+        val lastScalesCalculator = lastScalesCalculator
+        if (lastContainerSize == containerSize
+            && lastContentSize == contentSize
+            && lastContentOriginSize == contentOriginSize
+            && lastContentScale == contentScale
+            && lastAlignment == alignment
+            && lastReadMode == readMode
+            && lastRotation == rotation
+            && lastScalesCalculator == scalesCalculator
+        ) {
+            return
+        }
         val initialZoom = calculateInitialZoomWithContainerSizeChanged(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -345,7 +365,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
-            lastTransform = transformState.value,
+            lastTransform = lastTransform,
             lastContainerSize = lastContainerSize,
             lastContentSize = lastContentSize,
             lastContentOriginSize = lastContentOriginSize,
@@ -354,6 +374,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             lastRotation = lastRotation,
             lastReadMode = lastReadMode,
             lastScalesCalculator = lastScalesCalculator,
+            contentVisibleCenterPoint = contentVisibleRectState.value.center,
         )
         logger.d {
             val transform = initialZoom.baseTransform + initialZoom.userTransform

@@ -404,6 +404,27 @@ class ZoomableState(logger: Logger) {
         val rotation = rotation
         val scalesCalculator = scalesCalculator
 
+        val lastTransform = transform
+        val lastContainerSize = lastContainerSize
+        val lastContentSize = lastContentSize
+        val lastContentOriginSize = lastContentOriginSize
+        val lastContentScale = lastContentScale
+        val lastAlignment = lastAlignment
+        val lastReadMode = lastReadMode
+        val lastRotation = lastRotation
+        val lastScalesCalculator = lastScalesCalculator
+        if (lastContainerSize == containerSize
+            && lastContentSize == contentSize
+            && lastContentOriginSize == contentOriginSize
+            && lastContentScale == contentScale
+            && lastAlignment == alignment
+            && lastReadMode == readMode
+            && lastRotation == rotation
+            && lastScalesCalculator == scalesCalculator
+        ) {
+            return
+        }
+
         val initialZoom = calculateInitialZoomWithContainerSizeChanged(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
@@ -413,7 +434,7 @@ class ZoomableState(logger: Logger) {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
-            lastTransform = transform.toCompat(),
+            lastTransform = lastTransform.toCompat(),
             lastContainerSize = lastContainerSize.toCompat(),
             lastContentSize = lastContentSize.toCompat(),
             lastContentOriginSize = lastContentOriginSize.toCompat(),
@@ -422,6 +443,7 @@ class ZoomableState(logger: Logger) {
             lastRotation = lastRotation,
             lastReadMode = lastReadMode,
             lastScalesCalculator = lastScalesCalculator,
+            contentVisibleCenterPoint = contentVisibleRect.center.toCompat(),
         )
         logger.d {
             val transform = initialZoom.baseTransform + initialZoom.userTransform
