@@ -416,23 +416,59 @@ fun calculateInitialZoomWithContainerSizeChanged(
 //            || lastTransform.scaleY != 1f
 //            || lastTransform.offsetX != 0f
 //            || lastTransform.offsetY != 0f
-//    if (!onlyContainerSizeChanged || !lastTransformNotEmpty
-//        || contentVisibleCenterPoint.x <= 0 || contentVisibleCenterPoint.y <= 0
-//    ) {
+//    val contentVisibleCenterNotEmpty = contentVisibleCenterPoint.x > 0
+//            && contentVisibleCenterPoint.y > 0
+//    if (!onlyContainerSizeChanged || !lastTransformNotEmpty || !contentVisibleCenterNotEmpty) {
 //        return newInitialZoom
 //    }
-
-//    val containerSizeSize = containerSize.width * containerSize.height
-//    val lastContainerSizeSize = lastContainerSize.width * lastContainerSize.height
-//    val containerSizeScaleFactor =
-//        ScaleFactorCompat(containerSizeSize.toFloat() / lastContainerSizeSize)
-//    val newScale = lastTransform.scale * containerSizeScaleFactor
-//    val newOffset = lastTransform.offset * containerSizeScaleFactor
-//    val newTransform = lastTransform.copy(offset = newOffset)
-//    val newUserTransform = newTransform - newInitialZoom.baseTransform
-//    // todo 限制 offset
-//    // todo 根据当前 content center，计算出新的 offset，然后限制 offset
+//    // todo 记录初始 transform，如果重置时，初始 transform 与当前 transform 相同，则直接走初始化流程即可
+//
+//    val newUserTransform = calculateRestoreCenterUserTransform(
+//        containerSize = containerSize,
+//        contentSize = contentSize,
+//        contentScale = contentScale,
+//        alignment = alignment,
+//        rotation = rotation,
+//        newBaseTransform = newInitialZoom.baseTransform,
+//        contentVisibleCenterPoint = contentVisibleCenterPoint,
+//        lastScale = lastTransform.scale,
+//    )
+//
+//    val newTransform = newInitialZoom.baseTransform + newUserTransform
 //    return newInitialZoom.copy(userTransform = newUserTransform)
+}
+
+fun calculateRestoreCenterUserTransform(
+    containerSize: IntSizeCompat,
+    contentSize: IntSizeCompat,
+    contentScale: ContentScaleCompat,
+    alignment: AlignmentCompat,
+    rotation: Int,
+    newBaseTransform: TransformCompat,
+    contentVisibleCenterPoint: IntOffsetCompat,
+    lastScale: ScaleFactorCompat,
+): TransformCompat {
+    val contentBaseDisplayRect = calculateContentBaseDisplayRect(
+        containerSize = containerSize,
+        contentSize = contentSize,
+        contentScale = contentScale,
+        alignment = alignment,
+        rotation = rotation,
+    )
+    val baseScaledContentSize = contentSize.toSize() * newBaseTransform.scale
+    val centerProportion = ScaleFactorCompat(
+        scaleX = contentVisibleCenterPoint.x.toFloat() / contentSize.width,
+        scaleY = contentVisibleCenterPoint.y.toFloat() / contentSize.height,
+    )
+
+    val sizeCompat = baseScaledContentSize * centerProportion
+    val contentVisibleCenterOnBaseDisplay =
+        contentBaseDisplayRect.topLeft + sizeCompat.let { OffsetCompat(it.width, it.height) }
+    val newUserScale = lastScale / newBaseTransform.scale
+    val scaledContentVisibleCenterOnBaseDisplay = contentVisibleCenterOnBaseDisplay * newUserScale
+    val containerSizeCenter = containerSize.center
+    val newUserOffset = containerSizeCenter - scaledContentVisibleCenterOnBaseDisplay
+    return TransformCompat(scale = newUserScale, offset = newUserOffset)
 }
 
 /* ******************************************* Rect ***************************************** */

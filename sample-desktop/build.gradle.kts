@@ -18,6 +18,7 @@ kotlin {
             dependencies {
                 implementation(project(":zoomimage-compose"))
                 implementation(compose.desktop.currentOs)
+                implementation("me.saket.telephoto:zoomable:0.6.2")
             }
         }
         val jvmTest by getting
