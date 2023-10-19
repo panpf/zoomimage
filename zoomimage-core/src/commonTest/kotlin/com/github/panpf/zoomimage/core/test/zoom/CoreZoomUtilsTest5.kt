@@ -5,7 +5,6 @@ import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
-import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
@@ -29,26 +28,26 @@ class CoreZoomUtilsTest5 {
         val rotation = 0
         val readMode: ReadMode? = null
         val scalesCalculator = ScalesCalculator.Dynamic
-        val lastBaseTransform = TransformCompat(
-            scale = ScaleFactorCompat(0.117165096f, 0.117165096f),
-            offset = OffsetCompat(2.0f, 0.0f),
-            rotationOrigin = TransformOriginCompat(4.249375f, 4.2674823f)
-        )
+//        val lastBaseTransform = TransformCompat(
+//            scale = ScaleFactorCompat(0.117165096f, 0.117165096f),
+//            offset = OffsetCompat(2.0f, 0.0f),
+//            rotationOrigin = TransformOriginCompat(4.249375f, 4.2674823f)
+//        )
         val lastUserTransform = TransformCompat(
             scale = ScaleFactorCompat(8.5349655f, 8.5349655f),
             offset = OffsetCompat(-3948.0999f, -2968.974f),
             rotationOrigin = TransformOriginCompat(4.249375f, 4.2674823f)
         )
-        val lastTransform = (lastBaseTransform + lastUserTransform).apply {
-            Assert.assertEquals(
-                "TransformCompat(scale=1.0x1.0, " +
-                        "offset=-3931.03x-2968.97, " +
-                        "rotation=0.0, " +
-                        "scaleOrigin=0.0x0.0, " +
-                        "rotationOrigin=4.25x4.27)",
-                this.toString()
-            )
-        }
+//        val lastTransform = (lastBaseTransform + lastUserTransform).apply {
+//            Assert.assertEquals(
+//                "TransformCompat(scale=1.0x1.0, " +
+//                        "offset=-3931.03x-2968.97, " +
+//                        "rotation=0.0, " +
+//                        "scaleOrigin=0.0x0.0, " +
+//                        "rotationOrigin=4.25x4.27)",
+//                this.toString()
+//            )
+//        }
         val contentVisibleCenterPoint = calculateContentVisibleRect(
             containerSize = containerSize,
             contentSize = contentSize,
@@ -95,7 +94,6 @@ class CoreZoomUtilsTest5 {
             userScale = newUserTransform.scaleX,
             userOffset = newUserTransform.offset,
         ).center
-        val newTransform = newBaseTransform + newUserTransform
 
         Assert.assertEquals(
             contentVisibleCenterPoint.round(),

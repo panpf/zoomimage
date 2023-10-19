@@ -26,7 +26,6 @@ import androidx.compose.animation.splineBasedDecay
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,7 +54,6 @@ import com.github.panpf.zoomimage.compose.internal.roundToPlatform
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toCompatOffset
-import com.github.panpf.zoomimage.compose.internal.toCompatRect
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
@@ -234,6 +232,7 @@ class ZoomableState(logger: Logger) {
     /**
      * Used to intercept unwanted containerSize changes
      */
+    // todo 支持 containerSize change 了，可以不用 containerSizeInterceptor 了
     var containerSizeInterceptor: ContainerSizeInterceptor? = null
 
     /**
@@ -264,7 +263,8 @@ class ZoomableState(logger: Logger) {
      * Final transformation, include the final scale, offset, rotation,
      * which is the sum of [baseTransform] and [userTransform]
      */
-    val transform: Transform by derivedStateOf { baseTransform + userTransform }
+    var transform: Transform by mutableStateOf(Transform.Origin)
+        private set
 
     /**
      * Minimum scale factor, for limits the final scale factor, and as a target value for one of when switch scale
@@ -295,83 +295,38 @@ class ZoomableState(logger: Logger) {
     /**
      * The content region in the container after the baseTransform transformation
      */
-    val contentBaseDisplayRect: IntRect by derivedStateOf {
-        calculateContentBaseDisplayRect(
-            containerSize = containerSize.toCompat(),
-            contentSize = contentSize.toCompat(),
-            contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
-            rotation = rotation,
-        ).roundToPlatform()
-    }
+    var contentBaseDisplayRect: IntRect by mutableStateOf(IntRect.Zero)
+        private set
 
     /**
      * The content is visible region to the user after the baseTransform transformation
      */
-    val contentBaseVisibleRect: IntRect by derivedStateOf {
-        calculateContentBaseVisibleRect(
-            containerSize = containerSize.toCompat(),
-            contentSize = contentSize.toCompat(),
-            contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
-            rotation = rotation,
-        ).roundToPlatform()
-    }
+    var contentBaseVisibleRect: IntRect by mutableStateOf(IntRect.Zero)
+        private set
 
     /**
      * The content region in the container after the final transform transformation
      */
-    val contentDisplayRect: IntRect by derivedStateOf {
-        calculateContentDisplayRect(
-            containerSize = containerSize.toCompat(),
-            contentSize = contentSize.toCompat(),
-            contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
-            rotation = rotation,
-            userScale = userTransform.scaleX,
-            userOffset = userTransform.offset.toCompat(),
-        ).roundToPlatform()
-    }
+    var contentDisplayRect: IntRect by mutableStateOf(IntRect.Zero)
+        private set
 
     /**
      * The content is visible region to the user after the final transform transformation
      */
-    val contentVisibleRect: IntRect by derivedStateOf {
-        calculateContentVisibleRect(
-            containerSize = containerSize.toCompat(),
-            contentSize = contentSize.toCompat(),
-            contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
-            rotation = rotation,
-            userScale = userTransform.scaleX,
-            userOffset = userTransform.offset.toCompat(),
-        ).roundToPlatform()
-    }
+    var contentVisibleRect: IntRect by mutableStateOf(IntRect.Zero)
+        private set
 
     /**
      * Edge state for the current offset
      */
-    val scrollEdge: ScrollEdge by derivedStateOf {
-        calculateScrollEdge(
-            userOffsetBounds = userOffsetBounds.toCompatRect(),
-            userOffset = userTransform.offset.toCompat(),
-        )
-    }
+    var scrollEdge: ScrollEdge by mutableStateOf(ScrollEdge.Default)
+        private set
 
     /**
      * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
      */
-    val userOffsetBounds: IntRect by derivedStateOf {
-        calculateUserOffsetBounds(
-            containerSize = containerSize.toCompat(),
-            contentSize = contentSize.toCompat(),
-            contentScale = contentScale.toCompat(),
-            alignment = alignment.toCompat(),
-            rotation = rotation,
-            userScale = userTransform.scaleX,
-            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
-        ).roundToPlatform()
-    }
+    var userOffsetBounds: IntRect by mutableStateOf(IntRect.Zero)
+        private set
 
     private var lastContainerSize: IntSize = containerSize
     private var lastContentSize: IntSize = contentSize
@@ -452,6 +407,7 @@ class ZoomableState(logger: Logger) {
 
         val lastInitialUserTransform = lastInitialUserTransform
         val lastUserTransform = userTransform
+        val lastContentVisibleCenter = contentVisibleRect.center
         val newUserTransform = if (
             paramsChanges == 1 &&
             lastInitialUserTransform != lastUserTransform    // ReadMode compatible
@@ -465,7 +421,7 @@ class ZoomableState(logger: Logger) {
                 lastUserTransform = lastUserTransform.toCompat(),
                 lastContainerSize = lastContainerSize.toCompat(),
                 newBaseTransform = newBaseTransform,
-                lastContentVisibleCenter = contentVisibleRect.center.toCompat(),
+                lastContentVisibleCenter = lastContentVisibleCenter.toCompat(),
             )
         } else {
             newInitialZoom.userTransform
@@ -473,6 +429,16 @@ class ZoomableState(logger: Logger) {
 
         logger.d {
             val transform = newBaseTransform + newUserTransform
+            val newContentVisibleCenter = calculateContentVisibleRect(
+                containerSize = containerSize.toCompat(),
+                contentSize = contentSize.toCompat(),
+                contentScale = contentScale.toCompat(),
+                alignment = alignment.toCompat(),
+                rotation = rotation,
+                userScale = newUserTransform.scaleX,
+                userOffset = newUserTransform.offset,
+            ).center
+
             "reset:$caller. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -487,14 +453,29 @@ class ZoomableState(logger: Logger) {
                     "maxScale=${newInitialZoom.maxScale.format(4)}, " +
                     "baseTransform=${newBaseTransform.toShortString()}, " +
                     "userTransform=${newUserTransform.toShortString()}, " +
-                    "transform=${transform.toShortString()}"
+                    "transform=${transform.toShortString()}" +
+                    "contentVisibleCenter=${lastContentVisibleCenter.toShortString()} -> ${newContentVisibleCenter.toShortString()}"
         }
 
         minScale = newInitialZoom.minScale
         mediumScale = newInitialZoom.mediumScale
         maxScale = newInitialZoom.maxScale
+        contentBaseDisplayRect = calculateContentBaseDisplayRect(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = alignment.toCompat(),
+            rotation = rotation,
+        ).roundToPlatform()
+        contentBaseVisibleRect = calculateContentBaseVisibleRect(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = alignment.toCompat(),
+            rotation = rotation,
+        ).roundToPlatform()
         baseTransform = newBaseTransform.toPlatform()
-        userTransform = newUserTransform.toPlatform()
+        updateUserTransform(newUserTransform.toPlatform())
 
         this.lastInitialUserTransform = newInitialZoom.userTransform.toPlatform()
         this.lastContainerSize = containerSize
@@ -568,12 +549,15 @@ class ZoomableState(logger: Logger) {
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
         }
 
-        updateUserTransform(
-            targetUserTransform = limitedTargetUserTransform,
-            newContinuousTransformType = ContinuousTransformType.SCALE,
-            animated = animated,
-            caller = "scale"
-        )
+        if (animated) {
+            animatedUpdateUserTransform(
+                targetUserTransform = limitedTargetUserTransform,
+                newContinuousTransformType = ContinuousTransformType.SCALE,
+                caller = "scale"
+            )
+        } else {
+            updateUserTransform(limitedTargetUserTransform)
+        }
     }
 
     /**
@@ -629,12 +613,15 @@ class ZoomableState(logger: Logger) {
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
         }
 
-        updateUserTransform(
-            targetUserTransform = limitedTargetUserTransform,
-            newContinuousTransformType = ContinuousTransformType.OFFSET,
-            animated = animated,
-            caller = "offset"
-        )
+        if (animated) {
+            animatedUpdateUserTransform(
+                targetUserTransform = limitedTargetUserTransform,
+                newContinuousTransformType = ContinuousTransformType.OFFSET,
+                caller = "offset"
+            )
+        } else {
+            updateUserTransform(limitedTargetUserTransform)
+        }
     }
 
     /**
@@ -699,12 +686,15 @@ class ZoomableState(logger: Logger) {
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
         }
 
-        updateUserTransform(
-            targetUserTransform = limitedTargetUserTransform,
-            newContinuousTransformType = ContinuousTransformType.LOCATE,
-            animated = animated,
-            caller = "locate"
-        )
+        if (animated) {
+            animatedUpdateUserTransform(
+                targetUserTransform = limitedTargetUserTransform,
+                newContinuousTransformType = ContinuousTransformType.LOCATE,
+                caller = "locate"
+            )
+        } else {
+            updateUserTransform(limitedTargetUserTransform)
+        }
     }
 
     /**
@@ -908,12 +898,7 @@ class ZoomableState(logger: Logger) {
                     "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
         }
 
-        updateUserTransform(
-            targetUserTransform = limitedTargetUserTransform,
-            newContinuousTransformType = null,
-            animated = false,
-            caller = "transform"
-        )
+        updateUserTransform(limitedTargetUserTransform)
     }
 
     internal suspend fun fling(velocity: Velocity, density: Density): Boolean = coroutineScope {
@@ -945,16 +930,15 @@ class ZoomableState(logger: Logger) {
                         val limitedTargetUserOffset =
                             limitUserOffset(targetUserOffset, currentUserTransform2.scaleX)
                         if (limitedTargetUserOffset != currentUserTransform2.offset) {
-                            val distance = limitedTargetUserOffset - startUserOffset
                             logger.d {
                                 "fling. running. " +
                                         "velocity=$velocity. " +
                                         "startUserOffset=${startUserOffset.toShortString()}, " +
-                                        "currentUserOffset=${limitedTargetUserOffset.toShortString()}, " +
-                                        "distance=$distance"
+                                        "currentUserOffset=${limitedTargetUserOffset.toShortString()}"
                             }
-                            userTransform =
+                            val newUserOffset =
                                 currentUserTransform2.copy(offset = limitedTargetUserOffset)
+                            updateUserTransform(newUserOffset)
                         } else {
                             // SubsamplingState(line 87) relies on the fling state to refresh tiles,
                             // so you need to end the fling animation as soon as possible
@@ -1005,48 +989,89 @@ class ZoomableState(logger: Logger) {
         return userOffset.limitTo(userOffsetBounds)
     }
 
-    private suspend fun updateUserTransform(
+    private suspend fun animatedUpdateUserTransform(
         targetUserTransform: Transform,
         @ContinuousTransformType newContinuousTransformType: Int?,
-        animated: Boolean,
         caller: String
     ) {
-        if (animated) {
-            val currentUserTransform = userTransform
-            val updateAnimatable = Animatable(0f)
-            this.lastScaleAnimatable = updateAnimatable
-            if (newContinuousTransformType != null) {
-                continuousTransformType = newContinuousTransformType
-            }
-            try {
-                updateAnimatable.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(
-                        durationMillis = animationSpec.durationMillis,
-                        easing = animationSpec.easing
-                    ),
-                    initialVelocity = animationSpec.initialVelocity,
-                ) {
-                    val userTransform = lerp(
-                        start = currentUserTransform,
-                        stop = targetUserTransform,
-                        fraction = value
-                    )
-                    logger.d {
-                        "$caller. animated running. transform=${userTransform.toShortString()}"
-                    }
-                    this@ZoomableState.userTransform = userTransform
-                }
-            } catch (e: CancellationException) {
-                throw e
-            } finally {
-                if (newContinuousTransformType != null) {
-                    continuousTransformType = ContinuousTransformType.NONE
-                }
-            }
-        } else {
-            this.userTransform = targetUserTransform
+        val currentUserTransform = userTransform
+        val updateAnimatable = Animatable(0f)
+        this.lastScaleAnimatable = updateAnimatable
+        if (newContinuousTransformType != null) {
+            continuousTransformType = newContinuousTransformType
         }
+        try {
+            updateAnimatable.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(
+                    durationMillis = animationSpec.durationMillis,
+                    easing = animationSpec.easing
+                ),
+                initialVelocity = animationSpec.initialVelocity,
+            ) {
+                val userTransform = lerp(
+                    start = currentUserTransform,
+                    stop = targetUserTransform,
+                    fraction = value
+                )
+                logger.d {
+                    "$caller. animated running. transform=${userTransform.toShortString()}"
+                }
+                this@ZoomableState.userTransform = userTransform
+                updateTransform()
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } finally {
+            if (newContinuousTransformType != null) {
+                continuousTransformType = ContinuousTransformType.NONE
+            }
+        }
+    }
+
+    private fun updateUserTransform(targetUserTransform: Transform) {
+        this.userTransform = targetUserTransform
+        updateTransform()
+    }
+
+    private fun updateTransform() {
+        val userTransform = userTransform
+        transform = baseTransform + userTransform
+
+        contentDisplayRect = calculateContentDisplayRect(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = alignment.toCompat(),
+            rotation = rotation,
+            userScale = userTransform.scaleX,
+            userOffset = userTransform.offset.toCompat(),
+        ).roundToPlatform()
+        contentVisibleRect = calculateContentVisibleRect(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = alignment.toCompat(),
+            rotation = rotation,
+            userScale = userTransform.scaleX,
+            userOffset = userTransform.offset.toCompat(),
+        ).roundToPlatform()
+
+        val userOffsetBounds = calculateUserOffsetBounds(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = alignment.toCompat(),
+            rotation = rotation,
+            userScale = userTransform.scaleX,
+            limitBaseVisibleRect = limitOffsetWithinBaseVisibleRect,
+        )
+        this.userOffsetBounds = userOffsetBounds.roundToPlatform()
+
+        scrollEdge = calculateScrollEdge(
+            userOffsetBounds = userOffsetBounds,
+            userOffset = userTransform.offset.toCompat(),
+        )
     }
 
     override fun toString(): String =
