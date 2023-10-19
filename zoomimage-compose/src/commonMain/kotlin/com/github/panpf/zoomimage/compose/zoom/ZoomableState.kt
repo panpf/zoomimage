@@ -75,14 +75,16 @@ import com.github.panpf.zoomimage.zoom.calculateContentBaseDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentBaseVisibleRect
 import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
-import com.github.panpf.zoomimage.zoom.calculateInitialZoomWithContainerSizeChanged
+import com.github.panpf.zoomimage.zoom.calculateInitialZoom
 import com.github.panpf.zoomimage.zoom.calculateLocateUserOffset
 import com.github.panpf.zoomimage.zoom.calculateNextStepScale
+import com.github.panpf.zoomimage.zoom.calculateRestoreContentVisibleCenterUserTransform
 import com.github.panpf.zoomimage.zoom.calculateScaleUserOffset
 import com.github.panpf.zoomimage.zoom.calculateScrollEdge
 import com.github.panpf.zoomimage.zoom.calculateTransformOffset
 import com.github.panpf.zoomimage.zoom.calculateUserOffsetBounds
 import com.github.panpf.zoomimage.zoom.canScrollByEdge
+import com.github.panpf.zoomimage.zoom.checkParamsChanges
 import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
 import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
@@ -160,6 +162,7 @@ class ZoomableState(logger: Logger) {
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
+    private var lastInitialUserTransform: Transform = Transform.Origin
     private var rotation: Int by mutableIntStateOf(0)
 
     /**
@@ -403,8 +406,6 @@ class ZoomableState(logger: Logger) {
         val readMode = readMode
         val rotation = rotation
         val scalesCalculator = scalesCalculator
-
-        val lastTransform = transform
         val lastContainerSize = lastContainerSize
         val lastContentSize = lastContentSize
         val lastContentOriginSize = lastContentOriginSize
@@ -413,19 +414,8 @@ class ZoomableState(logger: Logger) {
         val lastReadMode = lastReadMode
         val lastRotation = lastRotation
         val lastScalesCalculator = lastScalesCalculator
-        if (lastContainerSize == containerSize
-            && lastContentSize == contentSize
-            && lastContentOriginSize == contentOriginSize
-            && lastContentScale == contentScale
-            && lastAlignment == alignment
-            && lastReadMode == readMode
-            && lastRotation == rotation
-            && lastScalesCalculator == scalesCalculator
-        ) {
-            return
-        }
 
-        val initialZoom = calculateInitialZoomWithContainerSizeChanged(
+        val paramsChanges = checkParamsChanges(
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
             contentOriginSize = contentOriginSize.toCompat(),
@@ -434,7 +424,6 @@ class ZoomableState(logger: Logger) {
             rotation = rotation,
             readMode = readMode,
             scalesCalculator = scalesCalculator,
-            lastTransform = lastTransform.toCompat(),
             lastContainerSize = lastContainerSize.toCompat(),
             lastContentSize = lastContentSize.toCompat(),
             lastContentOriginSize = lastContentOriginSize.toCompat(),
@@ -443,10 +432,47 @@ class ZoomableState(logger: Logger) {
             lastRotation = lastRotation,
             lastReadMode = lastReadMode,
             lastScalesCalculator = lastScalesCalculator,
-            contentVisibleCenterPoint = contentVisibleRect.center.toCompat(),
         )
+        if (paramsChanges == 0) {
+            logger.d { "reset:$caller. All parameters unchanged" }
+            return
+        }
+
+        val newInitialZoom = calculateInitialZoom(
+            containerSize = containerSize.toCompat(),
+            contentSize = contentSize.toCompat(),
+            contentOriginSize = contentOriginSize.toCompat(),
+            contentScale = contentScale.toCompat(),
+            alignment = alignment.toCompat(),
+            rotation = rotation,
+            readMode = readMode,
+            scalesCalculator = scalesCalculator,
+        )
+        val newBaseTransform = newInitialZoom.baseTransform
+
+        val lastInitialUserTransform = lastInitialUserTransform
+        val lastUserTransform = userTransform
+        val newUserTransform = if (
+            paramsChanges == 1 &&
+            lastInitialUserTransform != lastUserTransform    // ReadMode compatible
+        ) { // Only containerSize changed and no user action
+            calculateRestoreContentVisibleCenterUserTransform(
+                containerSize = containerSize.toCompat(),
+                contentSize = contentSize.toCompat(),
+                contentScale = contentScale.toCompat(),
+                alignment = alignment.toCompat(),
+                rotation = rotation,
+                lastUserTransform = lastUserTransform.toCompat(),
+                lastContainerSize = lastContainerSize.toCompat(),
+                newBaseTransform = newBaseTransform,
+                lastContentVisibleCenter = contentVisibleRect.center.toCompat(),
+            )
+        } else {
+            newInitialZoom.userTransform
+        }
+
         logger.d {
-            val transform = initialZoom.baseTransform + initialZoom.userTransform
+            val transform = newBaseTransform + newUserTransform
             "reset:$caller. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -456,20 +482,21 @@ class ZoomableState(logger: Logger) {
                     "rotation=${rotation}, " +
                     "scalesCalculator=${scalesCalculator}, " +
                     "readMode=${readMode}. " +
-                    "minScale=${initialZoom.minScale.format(4)}, " +
-                    "mediumScale=${initialZoom.mediumScale.format(4)}, " +
-                    "maxScale=${initialZoom.maxScale.format(4)}, " +
-                    "baseTransform=${initialZoom.baseTransform.toShortString()}, " +
-                    "initialUserTransform=${initialZoom.userTransform.toShortString()}, " +
+                    "minScale=${newInitialZoom.minScale.format(4)}, " +
+                    "mediumScale=${newInitialZoom.mediumScale.format(4)}, " +
+                    "maxScale=${newInitialZoom.maxScale.format(4)}, " +
+                    "baseTransform=${newBaseTransform.toShortString()}, " +
+                    "userTransform=${newUserTransform.toShortString()}, " +
                     "transform=${transform.toShortString()}"
         }
 
-        minScale = initialZoom.minScale
-        mediumScale = initialZoom.mediumScale
-        maxScale = initialZoom.maxScale
-        baseTransform = initialZoom.baseTransform.toPlatform()
-        userTransform = initialZoom.userTransform.toPlatform()
+        minScale = newInitialZoom.minScale
+        mediumScale = newInitialZoom.mediumScale
+        maxScale = newInitialZoom.maxScale
+        baseTransform = newBaseTransform.toPlatform()
+        userTransform = newUserTransform.toPlatform()
 
+        this.lastInitialUserTransform = newInitialZoom.userTransform.toPlatform()
         this.lastContainerSize = containerSize
         this.lastContentSize = contentSize
         this.lastContentOriginSize = contentOriginSize

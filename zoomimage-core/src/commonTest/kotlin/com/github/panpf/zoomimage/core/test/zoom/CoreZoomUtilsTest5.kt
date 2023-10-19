@@ -13,7 +13,7 @@ import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.calculateContentVisibleRect
 import com.github.panpf.zoomimage.zoom.calculateInitialZoom
-import com.github.panpf.zoomimage.zoom.calculateRestoreCenterUserTransform
+import com.github.panpf.zoomimage.zoom.calculateRestoreContentVisibleCenterUserTransform
 import org.junit.Assert
 import org.junit.Test
 
@@ -61,7 +61,7 @@ class CoreZoomUtilsTest5 {
             Assert.assertEquals("OffsetCompat(4331.0, 3255.0)", this.toString())
         }
 
-        val newContainerSize = IntSizeCompat(900, 1072)
+        val newContainerSize = IntSizeCompat(1900, 1072)
 
         val newInitialZoom = calculateInitialZoom(
             containerSize = newContainerSize,
@@ -74,15 +74,16 @@ class CoreZoomUtilsTest5 {
             scalesCalculator = scalesCalculator
         )
         val newBaseTransform = newInitialZoom.baseTransform
-        val newUserTransform = calculateRestoreCenterUserTransform(
+        val newUserTransform = calculateRestoreContentVisibleCenterUserTransform(
             containerSize = newContainerSize,
             contentSize = contentSize,
             contentScale = contentScale,
             alignment = alignment,
             rotation = rotation,
+            lastContainerSize = containerSize,
+            lastContentVisibleCenter = contentVisibleCenterPoint.round(),
             newBaseTransform = newBaseTransform,
-            contentVisibleCenterPoint = contentVisibleCenterPoint.round(),
-            lastScale = lastTransform.scale,
+            lastUserTransform = lastUserTransform,
         )
 
         val newContentVisibleCenterPoint = calculateContentVisibleRect(

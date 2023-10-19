@@ -29,6 +29,7 @@ import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.div
 import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
@@ -367,9 +368,12 @@ data class InitialZoom(
 }
 
 /**
- * When only the containerSize changes, keep the original visible center unchanged
+ * Check whether the parameters have changed
+ *
+ * @return 0: All unchanged; 1: Only containerSize changes; -1: More changes
  */
-fun calculateInitialZoomWithContainerSizeChanged(
+// todo test
+fun checkParamsChanges(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentOriginSize: IntSizeCompat,
@@ -378,7 +382,6 @@ fun calculateInitialZoomWithContainerSizeChanged(
     rotation: Int,
     readMode: ReadMode?,
     scalesCalculator: ScalesCalculator,
-    lastTransform: TransformCompat,
     lastContainerSize: IntSizeCompat,
     lastContentSize: IntSizeCompat,
     lastContentOriginSize: IntSizeCompat,
@@ -386,67 +389,36 @@ fun calculateInitialZoomWithContainerSizeChanged(
     lastAlignment: AlignmentCompat,
     lastRotation: Int,
     lastReadMode: ReadMode?,
-    lastScalesCalculator: ScalesCalculator?,
-    contentVisibleCenterPoint: IntOffsetCompat,
-): InitialZoom {
-    val newInitialZoom = calculateInitialZoom(
-        containerSize = containerSize,
-        contentSize = contentSize,
-        contentOriginSize = contentOriginSize,
-        contentScale = contentScale,
-        alignment = alignment,
-        rotation = rotation,
-        readMode = readMode,
-        scalesCalculator = scalesCalculator
-    )
-    return newInitialZoom
-//    val onlyContainerSizeChanged = lastContainerSize.isNotEmpty()
-//            && lastContentSize.isNotEmpty()
-//            && containerSize.isNotEmpty()
-//            && contentSize.isNotEmpty()
-//            && lastContainerSize != containerSize
-//            && lastContentSize == contentSize
-//            && lastContentOriginSize == contentOriginSize
-//            && lastContentScale == contentScale
-//            && lastAlignment == alignment
-//            && lastReadMode == readMode
-//            && lastRotation == rotation
-//            && lastScalesCalculator == scalesCalculator
-//    val lastTransformNotEmpty = lastTransform.scaleX != 1f
-//            || lastTransform.scaleY != 1f
-//            || lastTransform.offsetX != 0f
-//            || lastTransform.offsetY != 0f
-//    val contentVisibleCenterNotEmpty = contentVisibleCenterPoint.x > 0
-//            && contentVisibleCenterPoint.y > 0
-//    if (!onlyContainerSizeChanged || !lastTransformNotEmpty || !contentVisibleCenterNotEmpty) {
-//        return newInitialZoom
-//    }
-//    // todo 记录初始 transform，如果重置时，初始 transform 与当前 transform 相同，则直接走初始化流程即可
-//
-//    val newUserTransform = calculateRestoreCenterUserTransform(
-//        containerSize = containerSize,
-//        contentSize = contentSize,
-//        contentScale = contentScale,
-//        alignment = alignment,
-//        rotation = rotation,
-//        newBaseTransform = newInitialZoom.baseTransform,
-//        contentVisibleCenterPoint = contentVisibleCenterPoint,
-//        lastScale = lastTransform.scale,
-//    )
-//
-//    val newTransform = newInitialZoom.baseTransform + newUserTransform
-//    return newInitialZoom.copy(userTransform = newUserTransform)
+    lastScalesCalculator: ScalesCalculator,
+): Int {
+    return if (
+        lastContainerSize.isNotEmpty()
+        && lastContentSize.isNotEmpty()
+        && containerSize.isNotEmpty()
+        && contentSize.isNotEmpty()
+        && lastContentOriginSize == contentOriginSize
+        && lastContentScale == contentScale
+        && lastAlignment == alignment
+        && lastRotation == rotation
+        && lastReadMode == readMode
+        && lastScalesCalculator == scalesCalculator
+    ) {
+        if (lastContainerSize == containerSize) 0 else 1
+    } else {
+        -1
+    }
 }
 
-fun calculateRestoreCenterUserTransform(
+fun calculateRestoreContentVisibleCenterUserTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
     rotation: Int,
+    lastContainerSize: IntSizeCompat,
+    lastContentVisibleCenter: IntOffsetCompat,
     newBaseTransform: TransformCompat,
-    contentVisibleCenterPoint: IntOffsetCompat,
-    lastScale: ScaleFactorCompat,
+    lastUserTransform: TransformCompat,
 ): TransformCompat {
     val contentBaseDisplayRect = calculateContentBaseDisplayRect(
         containerSize = containerSize,
@@ -457,19 +429,21 @@ fun calculateRestoreCenterUserTransform(
     )
     val baseScaledContentSize = contentSize.toSize() * newBaseTransform.scale
     val centerProportion = ScaleFactorCompat(
-        scaleX = contentVisibleCenterPoint.x.toFloat() / contentSize.width,
-        scaleY = contentVisibleCenterPoint.y.toFloat() / contentSize.height,
+        scaleX = lastContentVisibleCenter.x.toFloat() / contentSize.width,
+        scaleY = lastContentVisibleCenter.y.toFloat() / contentSize.height,
     )
 
+    // todo The optimization effect is now not living up to expectations
     val sizeCompat = baseScaledContentSize * centerProportion
     val contentVisibleCenterOnBaseDisplay =
         contentBaseDisplayRect.topLeft + sizeCompat.let { OffsetCompat(it.width, it.height) }
-    val newUserScale = lastScale / newBaseTransform.scale
-    val scaledContentVisibleCenterOnBaseDisplay = contentVisibleCenterOnBaseDisplay * newUserScale
+    val oldUserScale = lastUserTransform.scale
+    val scaledContentVisibleCenterOnBaseDisplay = contentVisibleCenterOnBaseDisplay * oldUserScale
     val containerSizeCenter = containerSize.center
     val newUserOffset = containerSizeCenter - scaledContentVisibleCenterOnBaseDisplay
-    return TransformCompat(scale = newUserScale, offset = newUserOffset)
+    return TransformCompat(scale = oldUserScale, offset = newUserOffset)
 }
+
 
 /* ******************************************* Rect ***************************************** */
 
