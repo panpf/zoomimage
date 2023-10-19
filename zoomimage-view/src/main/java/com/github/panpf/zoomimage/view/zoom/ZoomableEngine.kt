@@ -45,7 +45,6 @@ import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
 import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
-import com.github.panpf.zoomimage.zoom.ContainerSizeInterceptor
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
@@ -158,11 +157,6 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
     val limitOffsetWithinBaseVisibleRectState = MutableStateFlow(false)
-
-    /**
-     * Used to intercept unwanted containerSize changes
-     */
-    var containerSizeInterceptor: ContainerSizeInterceptor? = null
 
     /**
      * Disabled gesture types. Allow multiple types to be combined through the 'and' operator

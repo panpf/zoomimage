@@ -104,15 +104,8 @@ fun ZoomImage(
          */
         val oldContainerSize = zoomable.containerSize
         val newContainerSize = IntSize(maxWidth.toPx().roundToInt(), maxHeight.toPx().roundToInt())
-        val finalNewContainerSize = newContainerSize.let {
-            zoomable.containerSizeInterceptor?.intercept(
-                logger = state.logger,
-                oldContainerSize = oldContainerSize.toCompat(),
-                newContainerSize = it.toCompat()
-            )?.toPlatform() ?: it
-        }
-        if (finalNewContainerSize != oldContainerSize) {
-            zoomable.containerSize = finalNewContainerSize
+        if (newContainerSize != oldContainerSize) {
+            zoomable.containerSize = newContainerSize
             zoomable.nowReset("initialize")
         }
 

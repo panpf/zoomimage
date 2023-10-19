@@ -16,14 +16,10 @@
 
 package com.github.panpf.zoomimage.compose
 
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -31,24 +27,6 @@ import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.LifecycleStoppedController
 import com.github.panpf.zoomimage.subsampling.StoppedController
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.zoom.ContainerSizeInterceptor
-import com.github.panpf.zoomimage.zoom.internal.NavigationBarDitherContainerSizeInterceptor
-
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
-actual fun defaultContainerSizeInterceptor(): ContainerSizeInterceptor? {
-    val density = LocalDensity.current
-    val navigationBarsInsets = WindowInsets.navigationBarsIgnoringVisibility
-    return remember {
-        val navigationBarHeightGetter =
-            object : NavigationBarDitherContainerSizeInterceptor.NavigationBarHeightGetter {
-                override fun getNavigationBarHeight(): Int {
-                    return navigationBarsInsets.getBottom(density)
-                }
-            }
-        NavigationBarDitherContainerSizeInterceptor(navigationBarHeightGetter)
-    }
-}
 
 @Composable
 actual fun defaultStoppedController(): StoppedController? {

@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toSize
-import com.github.panpf.zoomimage.compose.defaultContainerSizeInterceptor
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
@@ -62,7 +61,6 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.zoom.ContainerSizeInterceptor
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
@@ -100,11 +98,8 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun rememberZoomableState(logger: Logger): ZoomableState {
-    val defaultContainerSizeInterceptor = defaultContainerSizeInterceptor()
     val zoomableState = remember(logger) {
-        ZoomableState(logger).apply {
-            containerSizeInterceptor = defaultContainerSizeInterceptor
-        }
+        ZoomableState(logger)
     }
     LaunchedEffect(Unit) {
         snapshotFlow { zoomableState.containerSize }.collect {
@@ -229,12 +224,6 @@ class ZoomableState(logger: Logger) {
      * Whether to limit the offset of the user's pan to within the base visible rect
      */
     var limitOffsetWithinBaseVisibleRect: Boolean by mutableStateOf(false)
-
-    /**
-     * Used to intercept unwanted containerSize changes
-     */
-    // todo 支持 containerSize change 了，可以不用 containerSizeInterceptor 了
-    var containerSizeInterceptor: ContainerSizeInterceptor? = null
 
     /**
      * Disabled gesture types. Allow multiple types to be combined through the 'and' operator

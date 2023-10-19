@@ -22,10 +22,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.subsampling.StoppedController
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.zoom.ContainerSizeInterceptor
-
-@Composable
-actual fun defaultContainerSizeInterceptor(): ContainerSizeInterceptor? = null
 
 @Composable
 actual fun defaultStoppedController(): StoppedController? = null

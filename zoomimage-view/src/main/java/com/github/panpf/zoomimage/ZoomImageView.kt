@@ -33,7 +33,6 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.findLifecycle
-import com.github.panpf.zoomimage.view.internal.getNavigationBarsHeight
 import com.github.panpf.zoomimage.view.internal.intrinsicSize
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.internal.toAlignment
@@ -51,7 +50,6 @@ import com.github.panpf.zoomimage.view.zoom.internal.TouchHelper
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
-import com.github.panpf.zoomimage.zoom.internal.NavigationBarDitherContainerSizeInterceptor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -140,12 +138,6 @@ open class ZoomImageView @JvmOverloads constructor(
             contentScaleState.value = initScaleType.toContentScale()
             alignmentState.value = initScaleType.toAlignment()
             resetDrawableSize()
-            containerSizeInterceptor = NavigationBarDitherContainerSizeInterceptor(object :
-                NavigationBarDitherContainerSizeInterceptor.NavigationBarHeightGetter {
-                override fun getNavigationBarHeight(): Int {
-                    return this@ZoomImageView.getNavigationBarsHeight()
-                }
-            })
         }
         touchHelper = TouchHelper(this, zoomableEngine)
 
@@ -375,11 +367,8 @@ open class ZoomImageView @JvmOverloads constructor(
             width = width - paddingLeft - paddingRight,
             height = height - paddingTop - paddingBottom
         )
-        val finalNewContainerSize = newContainerSize.let {
-            zoomable.containerSizeInterceptor?.intercept(logger, oldContainerSize, it) ?: it
-        }
-        if (finalNewContainerSize != oldContainerSize) {
-            zoomable.containerSizeState.value = finalNewContainerSize
+        if (newContainerSize != oldContainerSize) {
+            zoomable.containerSizeState.value = newContainerSize
         }
     }
 

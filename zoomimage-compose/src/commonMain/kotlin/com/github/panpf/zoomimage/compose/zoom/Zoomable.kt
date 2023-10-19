@@ -32,8 +32,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -80,15 +78,8 @@ fun Modifier.zoomable(
     this
         .onSizeChanged { newContainerSize ->
             val oldContainerSize = zoomable.containerSize
-            val finalNewContainerSize = newContainerSize.let {
-                zoomable.containerSizeInterceptor?.intercept(
-                    logger = logger,
-                    oldContainerSize = oldContainerSize.toCompat(),
-                    newContainerSize = it.toCompat()
-                )?.toPlatform() ?: it
-            }
-            if (finalNewContainerSize != oldContainerSize) {
-                zoomable.containerSize = finalNewContainerSize
+            if (newContainerSize != oldContainerSize) {
+                zoomable.containerSize = newContainerSize
             }
         }
         .pointerInput(zoomable) {
