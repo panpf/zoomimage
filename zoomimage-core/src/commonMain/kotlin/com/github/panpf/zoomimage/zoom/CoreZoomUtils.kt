@@ -432,13 +432,15 @@ fun calculateRestoreContentVisibleCenterUserTransform(
         alignment = alignment,
         rotation = rotation,
     )
-    val baseScaledContentSize = contentSize.toSize() * newBaseTransform.scale
-    val centerProportion = ScaleFactorCompat(
-        scaleX = lastContentVisibleCenter.x.toFloat() / contentSize.width,
-        scaleY = lastContentVisibleCenter.y.toFloat() / contentSize.height,
+    val rotatedContentSize = contentSize.rotate(rotation)
+    val rotatedLastContentVisibleCenter = lastContentVisibleCenter.rotateInSpace(contentSize, rotation)
+    val baseScaledRotatedContentSize = rotatedContentSize.toSize() * newBaseTransform.scale
+    val rotatedCenterProportion = ScaleFactorCompat(
+        scaleX = rotatedLastContentVisibleCenter.x.toFloat() / rotatedContentSize.width,
+        scaleY = rotatedLastContentVisibleCenter.y.toFloat() / rotatedContentSize.height,
     )
 
-    val sizeCompat = baseScaledContentSize * centerProportion
+    val sizeCompat = baseScaledRotatedContentSize * rotatedCenterProportion
     val contentVisibleCenterOnBaseDisplay =
         contentBaseDisplayRect.topLeft + sizeCompat.let { OffsetCompat(it.width, it.height) }
     // The purpose of the user to expand the window is to see more content, so keep the total zoom factor unchanged, and more content can be displayed

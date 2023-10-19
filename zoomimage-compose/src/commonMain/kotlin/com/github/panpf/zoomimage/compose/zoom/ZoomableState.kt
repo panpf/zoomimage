@@ -402,9 +402,9 @@ class ZoomableState(logger: Logger) {
             one = lastInitialUserTransform.toCompat(),
             two = lastUserTransform.toCompat()
         )
+        val lastContentVisibleCenter = contentVisibleRect.center
         val newUserTransform = if (onlyContainerSizeChanged && thereAreUserActions) {
             val lastTransform = transform
-            val lastContentVisibleCenter = contentVisibleRect.center
             calculateRestoreContentVisibleCenterUserTransform(
                 containerSize = containerSize.toCompat(),
                 contentSize = contentSize.toCompat(),
@@ -436,6 +436,7 @@ class ZoomableState(logger: Logger) {
                     "rotation=${rotation}, " +
                     "scalesCalculator=${scalesCalculator}, " +
                     "readMode=${readMode}. " +
+                    "lastContentVisibleCenter=${lastContentVisibleCenter.toShortString()}. " +
                     "minScale=${newInitialZoom.minScale.format(4)}, " +
                     "mediumScale=${newInitialZoom.mediumScale.format(4)}, " +
                     "maxScale=${newInitialZoom.maxScale.format(4)}, " +
