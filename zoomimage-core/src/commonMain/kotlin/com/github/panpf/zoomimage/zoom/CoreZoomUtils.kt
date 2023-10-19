@@ -371,8 +371,8 @@ data class InitialZoom(
  * Check whether the parameters have changed
  *
  * @return 0: All unchanged; 1: Only containerSize changes; -1: More changes
+ * @see com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest5.testCheckParamsChanges
  */
-// todo test
 fun checkParamsChanges(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
@@ -396,6 +396,7 @@ fun checkParamsChanges(
         && lastContentSize.isNotEmpty()
         && containerSize.isNotEmpty()
         && contentSize.isNotEmpty()
+        && contentSize == lastContentSize
         && lastContentOriginSize == contentOriginSize
         && lastContentScale == contentScale
         && lastAlignment == alignment
@@ -409,16 +410,20 @@ fun checkParamsChanges(
     }
 }
 
+/**
+ * Calculates the user transform required to restore the last content-visible hub
+ *
+ * @see com.github.panpf.zoomimage.core.test.zoom.CoreZoomUtilsTest5.testCalculateRestoreContentVisibleCenterUserTransform
+ */
 fun calculateRestoreContentVisibleCenterUserTransform(
     containerSize: IntSizeCompat,
     contentSize: IntSizeCompat,
     contentScale: ContentScaleCompat,
     alignment: AlignmentCompat,
     rotation: Int,
-    lastContainerSize: IntSizeCompat,
-    lastContentVisibleCenter: IntOffsetCompat,
     newBaseTransform: TransformCompat,
-    lastUserTransform: TransformCompat,
+    lastTransform: TransformCompat,
+    lastContentVisibleCenter: IntOffsetCompat,
 ): TransformCompat {
     val contentBaseDisplayRect = calculateContentBaseDisplayRect(
         containerSize = containerSize,
@@ -433,15 +438,16 @@ fun calculateRestoreContentVisibleCenterUserTransform(
         scaleY = lastContentVisibleCenter.y.toFloat() / contentSize.height,
     )
 
-    // todo The optimization effect is now not living up to expectations
     val sizeCompat = baseScaledContentSize * centerProportion
     val contentVisibleCenterOnBaseDisplay =
         contentBaseDisplayRect.topLeft + sizeCompat.let { OffsetCompat(it.width, it.height) }
-    val oldUserScale = lastUserTransform.scale
-    val scaledContentVisibleCenterOnBaseDisplay = contentVisibleCenterOnBaseDisplay * oldUserScale
+    // The purpose of the user to expand the window is to see more content, so keep the total zoom factor unchanged, and more content can be displayed
+//    val newUserScale = lastUserTransform.scale    // This causes the window to always show the contents of a fixed area and not see more
+    val newUserScale = lastTransform.scale / newBaseTransform.scale
+    val scaledContentVisibleCenterOnBaseDisplay = contentVisibleCenterOnBaseDisplay * newUserScale
     val containerSizeCenter = containerSize.center
     val newUserOffset = containerSizeCenter - scaledContentVisibleCenterOnBaseDisplay
-    return TransformCompat(scale = oldUserScale, offset = newUserOffset)
+    return TransformCompat(scale = newUserScale, offset = newUserOffset)
 }
 
 
@@ -1214,4 +1220,11 @@ fun contentPointToTouchPoint(
         containerPoint = containerPoint
     )
     return touchPoint
+}
+
+fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
+    return one.scaleX.format(2) == two.scaleX.format(2)
+            && one.scaleY.format(2) == two.scaleY.format(2)
+            && one.offsetX.format(2) == two.offsetX.format(2)
+            && one.offsetY.format(2) == two.offsetY.format(2)
 }

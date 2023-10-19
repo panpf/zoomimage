@@ -72,6 +72,7 @@ import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.name
 import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
+import com.github.panpf.zoomimage.zoom.transformAboutEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -381,23 +382,32 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         )
         val newBaseTransform = newInitialZoom.baseTransform
 
+        val onlyContainerSizeChanged = paramsChanges == 1
         val lastInitialUserTransform = lastInitialUserTransform
         val lastUserTransform = userTransformState.value
-        val newUserTransform = if (
-            paramsChanges == 1 &&
-            lastInitialUserTransform != lastUserTransform    // ReadMode compatible
-        ) { // Only containerSize changed and no user action
+        val thereAreUserActions = !transformAboutEquals(
+            one = lastInitialUserTransform,
+            two = lastUserTransform
+        )
+        val newUserTransform = if (onlyContainerSizeChanged && thereAreUserActions) {
+            val lastTransform = transformState.value
+            val lastContentVisibleCenter = contentVisibleRectState.value.center
             calculateRestoreContentVisibleCenterUserTransform(
                 containerSize = containerSize,
                 contentSize = contentSize,
                 contentScale = contentScale,
                 alignment = alignment,
                 rotation = rotation,
-                lastUserTransform = lastUserTransform,
-                lastContainerSize = lastContainerSize,
                 newBaseTransform = newBaseTransform,
-                lastContentVisibleCenter = contentVisibleRectState.value.center,
-            )
+                lastTransform = lastTransform,
+                lastContentVisibleCenter = lastContentVisibleCenter,
+            ).let {
+                val limitUserOffset = limitUserOffset(
+                    userOffset = it.offset,
+                    userScale = it.scaleX
+                )
+                it.copy(offset = limitUserOffset)
+            }
         } else {
             newInitialZoom.userTransform
         }

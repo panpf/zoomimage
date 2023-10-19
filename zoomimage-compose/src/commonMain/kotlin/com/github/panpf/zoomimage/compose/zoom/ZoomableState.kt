@@ -87,6 +87,7 @@ import com.github.panpf.zoomimage.zoom.contentPointToContainerPoint
 import com.github.panpf.zoomimage.zoom.contentPointToTouchPoint
 import com.github.panpf.zoomimage.zoom.limitScaleWithRubberBand
 import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
+import com.github.panpf.zoomimage.zoom.transformAboutEquals
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -405,40 +406,38 @@ class ZoomableState(logger: Logger) {
         )
         val newBaseTransform = newInitialZoom.baseTransform
 
+        val onlyContainerSizeChanged = paramsChanges == 1
         val lastInitialUserTransform = lastInitialUserTransform
         val lastUserTransform = userTransform
-        val lastContentVisibleCenter = contentVisibleRect.center
-        val newUserTransform = if (
-            paramsChanges == 1 &&
-            lastInitialUserTransform != lastUserTransform    // ReadMode compatible
-        ) { // Only containerSize changed and no user action
+        val thereAreUserActions = !transformAboutEquals(
+            one = lastInitialUserTransform.toCompat(),
+            two = lastUserTransform.toCompat()
+        )
+        val newUserTransform = if (onlyContainerSizeChanged && thereAreUserActions) {
+            val lastTransform = transform
+            val lastContentVisibleCenter = contentVisibleRect.center
             calculateRestoreContentVisibleCenterUserTransform(
                 containerSize = containerSize.toCompat(),
                 contentSize = contentSize.toCompat(),
                 contentScale = contentScale.toCompat(),
                 alignment = alignment.toCompat(),
                 rotation = rotation,
-                lastUserTransform = lastUserTransform.toCompat(),
-                lastContainerSize = lastContainerSize.toCompat(),
                 newBaseTransform = newBaseTransform,
+                lastTransform = lastTransform.toCompat(),
                 lastContentVisibleCenter = lastContentVisibleCenter.toCompat(),
-            )
+            ).let {
+                val limitUserOffset = limitUserOffset(
+                    userOffset = it.offset.toPlatform(),
+                    userScale = it.scaleX
+                )
+                it.copy(offset = limitUserOffset.toCompat())
+            }
         } else {
             newInitialZoom.userTransform
         }
 
         logger.d {
             val transform = newBaseTransform + newUserTransform
-            val newContentVisibleCenter = calculateContentVisibleRect(
-                containerSize = containerSize.toCompat(),
-                contentSize = contentSize.toCompat(),
-                contentScale = contentScale.toCompat(),
-                alignment = alignment.toCompat(),
-                rotation = rotation,
-                userScale = newUserTransform.scaleX,
-                userOffset = newUserTransform.offset,
-            ).center
-
             "reset:$caller. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
@@ -453,8 +452,7 @@ class ZoomableState(logger: Logger) {
                     "maxScale=${newInitialZoom.maxScale.format(4)}, " +
                     "baseTransform=${newBaseTransform.toShortString()}, " +
                     "userTransform=${newUserTransform.toShortString()}, " +
-                    "transform=${transform.toShortString()}" +
-                    "contentVisibleCenter=${lastContentVisibleCenter.toShortString()} -> ${newContentVisibleCenter.toShortString()}"
+                    "transform=${transform.toShortString()}"
         }
 
         minScale = newInitialZoom.minScale
