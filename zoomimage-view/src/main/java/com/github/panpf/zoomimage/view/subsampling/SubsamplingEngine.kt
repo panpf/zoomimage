@@ -50,6 +50,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
@@ -80,6 +81,7 @@ class SubsamplingEngine constructor(
     private val _contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
     internal var imageKey: String? = null
         private set
+    internal val refreshTilesFlow = MutableSharedFlow<String>()
 
     /**
      * The size of the container that holds the content, this is usually the size of the [ZoomImageView] component
@@ -154,6 +156,9 @@ class SubsamplingEngine constructor(
                         get() = this@SubsamplingEngine.stoppedState.value
                         set(value) {
                             this@SubsamplingEngine.stoppedState.value = value
+                            coroutineScope.launch {
+                                refreshTilesFlow.emit(if (value) "stopped" else "started")
+                            }
                         }
                 })
             }
@@ -238,13 +243,11 @@ class SubsamplingEngine constructor(
                 resetTileDecoder("contentSizeChanged")
             }
         }
-
         coroutineScope.launch {
             ignoreExifOrientationState.collect {
                 resetTileDecoder("ignoreExifOrientationChanged")
             }
         }
-
         coroutineScope.launch {
             tileBitmapCacheState.collect {
                 tileBitmapCacheSpec.tileBitmapCache = it
@@ -265,7 +268,6 @@ class SubsamplingEngine constructor(
                 tileBitmapReuseSpec.disabled = it
             }
         }
-
         coroutineScope.launch {
             tileAnimationSpecState.collect {
                 tileManager?.tileAnimationSpec = it
@@ -319,6 +321,14 @@ class SubsamplingEngine constructor(
             }
         }
 
+        coroutineScope.launch {
+            readyState.collect {
+                val imageInfo = imageInfoState.value
+                val imageSize = if (it && imageInfo != null) imageInfo.size else IntSizeCompat.Zero
+                zoomableEngine.contentOriginSizeState.value = imageSize
+            }
+        }
+
         val refreshTiles: (caller: String) -> Unit = { caller ->
             val transform = zoomableEngine.transformState.value
             refreshTiles(
@@ -329,7 +339,11 @@ class SubsamplingEngine constructor(
                 caller = caller
             )
         }
-
+        coroutineScope.launch {
+            refreshTilesFlow.collect {
+                refreshTiles(it)
+            }
+        }
         coroutineScope.launch {
             zoomableEngine.transformState.collect {
                 refreshTiles("transformChanged")
@@ -338,24 +352,6 @@ class SubsamplingEngine constructor(
         coroutineScope.launch {
             zoomableEngine.continuousTransformTypeState.collect {
                 refreshTiles("continuousTransformTypeChanged")
-            }
-        }
-
-        coroutineScope.launch {
-            readyState.collect {
-                val imageInfo = imageInfoState.value
-                zoomableEngine.contentOriginSizeState.value = if (it && imageInfo != null) {
-                    imageInfo.size
-                } else {
-                    IntSizeCompat.Zero
-                }
-
-                refreshTiles("readyChanged")
-            }
-        }
-        coroutineScope.launch {
-            stoppedState.collect {
-                refreshTiles(if (it) "stopped" else "started")
             }
         }
     }
@@ -535,6 +531,9 @@ class SubsamplingEngine constructor(
         val newReady = imageInfoState.value != null && tileManager != null && tileDecoder != null
         logger.d { "refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
         _readyState.value = newReady
+        coroutineScope.launch {
+            refreshTilesFlow.emit("refreshReadyState:$caller")
+        }
     }
 
     private fun reset(caller: String) {

@@ -53,14 +53,17 @@ import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPause
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.toIntroString
+import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,6 +81,7 @@ fun rememberSubsamplingState(logger: Logger): SubsamplingState {
             stoppedController = defaultStopAutoController
         }
     }
+    subsamplingState.initial()
     return subsamplingState
 }
 
@@ -102,6 +106,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     var imageKey: String? = null
     internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
     internal var contentSize: IntSize by mutableStateOf(IntSize.Zero)
+    internal val refreshTilesFlow = MutableSharedFlow<String>()
 
 
     /* *********************************** Configurable properties ****************************** */
@@ -168,6 +173,9 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
                         get() = this@SubsamplingState.stopped
                         set(value) {
                             this@SubsamplingState.stopped = value
+                            coroutineScope.launch {
+                                refreshTilesFlow.emit(if (value) "stopped" else "started")
+                            }
                         }
                 })
             }
@@ -250,55 +258,15 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     /* *************************************** Internal ***************************************** */
 
     @Composable
-    fun BindZoomableState(zoomableState: ZoomableState) {
+    internal fun initial() {
         LaunchedEffect(Unit) {
-            // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
-            // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
-            snapshotFlow { zoomableState.containerSize }.debounce(80).collect {
-                containerSize = it
+            snapshotFlow { containerSize }.collect {
                 resetTileManager("containerSizeChanged")
             }
         }
         LaunchedEffect(Unit) {
-            snapshotFlow { zoomableState.contentSize }.collect {
-                contentSize = it
+            snapshotFlow { contentSize }.collect {
                 resetTileDecoder("contentSizeChanged")
-            }
-        }
-
-        val refreshTiles: (caller: String) -> Unit = { caller ->
-            refreshTiles(
-                contentVisibleRect = zoomableState.contentVisibleRect,
-                scale = zoomableState.transform.scaleX,
-                rotation = zoomableState.transform.rotation.roundToInt(),
-                continuousTransformType = zoomableState.continuousTransformType,
-                caller = caller
-            )
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { ready }.collect {
-                val imageInfo = imageInfo
-                zoomableState.contentOriginSize = if (it && imageInfo != null) {
-                    IntSize(imageInfo.width, imageInfo.height)
-                } else {
-                    IntSize.Zero
-                }
-                refreshTiles("readyChanged")
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { zoomableState.transform }.collect {
-                refreshTiles("transformChanged")
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { zoomableState.continuousTransformType }.collect {
-                refreshTiles("continuousTransformTypeChanged")
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { stopped }.collect {
-                refreshTiles(if (it) "stopped" else "started")
             }
         }
         LaunchedEffect(Unit) {
@@ -339,6 +307,56 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         LaunchedEffect(Unit) {
             snapshotFlow { tileAnimationSpec }.collect {
                 tileManager?.tileAnimationSpec = it
+            }
+        }
+    }
+
+    @Composable
+    @OptIn(FlowPreview::class)
+    internal fun bindZoomableState(zoomableState: ZoomableState) {
+        LaunchedEffect(Unit) {
+            // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
+            // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
+            snapshotFlow { zoomableState.containerSize }.debounce(80).collect {
+                containerSize = it
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { zoomableState.contentSize }.collect {
+                contentSize = it
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { ready }.collect {
+                val imageInfo = imageInfo
+                val imageSize = if (it && imageInfo != null) imageInfo.size else IntSizeCompat.Zero
+                zoomableState.contentOriginSize = imageSize.toPlatform()
+            }
+        }
+
+        val refreshTiles: (caller: String) -> Unit = { caller ->
+            refreshTiles(
+                contentVisibleRect = zoomableState.contentVisibleRect,
+                scale = zoomableState.transform.scaleX,
+                rotation = zoomableState.transform.rotation.roundToInt(),
+                continuousTransformType = zoomableState.continuousTransformType,
+                caller = caller
+            )
+        }
+        LaunchedEffect(Unit) {
+            refreshTilesFlow.collect {
+                refreshTiles(it)
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { zoomableState.transform }.collect {
+                refreshTiles("transformChanged")
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { zoomableState.continuousTransformType }.collect {
+                refreshTiles("continuousTransformTypeChanged")
             }
         }
     }
@@ -499,6 +517,9 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         val newReady = imageInfo != null && tileDecoder != null && tileManager != null
         logger.d { "refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
         ready = newReady
+        coroutineScope.launch {
+            refreshTilesFlow.emit("refreshReadyState:$caller")
+        }
     }
 
     private fun cleanTileDecoder(caller: String) {
