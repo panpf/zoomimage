@@ -1,3 +1,23 @@
+## 1.0.0-beta04
+
+zoom:
+
+* change: LongPressSlide rename to OneFingerScale
+* improve: Now keep the scale and visible center of content unchanged only when the container size
+  changes
+* new: Support for disabling gestures
+* new: Added the Modifier.zoom() function to easily add zoom functionality to other components
+
+subsampling:
+
+* change: Added stoppedController attribute instead of setLifecycle() method
+* change: Improved some API names
+
+other:
+
+* new: Support for Compose Multiplatform
+* change: The rememberZoomImageLogger function removes the level parameters
+
 ## 1.0.0-beta03
 
 zoom:
