@@ -82,6 +82,7 @@ import kotlin.math.roundToInt
 /**
  * Engines that control scale, pan, rotation
  */
+// todo Save and restore the state
 class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     private val logger: Logger = logger.newLogger(module = "ZoomableEngine")

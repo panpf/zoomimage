@@ -23,7 +23,7 @@ actual fun createTileBitmapReuseHelper(
     tileBitmapReuseSpec: TileBitmapReuseSpec,
 ): TileBitmapReuseHelper? = null
 
-// todo 尝试用以下文章提到的方法实现桌面平台的子采样
+// todo Try subsampling for desktop platforms using the methods mentioned in the following articles
 // todo https://github.com/saket/telephoto/issues/9
 // todo https://stackoverflow.com/questions/15141539/how-do-i-load-an-enormous-image-to-java-via-bufferedimage/15149382#15149382
 actual fun createTileDecoder(

@@ -151,6 +151,7 @@ fun rememberZoomableState(logger: Logger): ZoomableState {
  * A state object that can be used to control the scale, pan, rotation of the content.
  */
 @Stable
+// todo Save and restore the state
 class ZoomableState(logger: Logger) {
 
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
