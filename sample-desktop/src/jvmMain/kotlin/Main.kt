@@ -1,3 +1,4 @@
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -7,7 +8,6 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
@@ -40,9 +40,9 @@ fun App() {
     MaterialTheme {
         val zoomState = rememberZoomState()
         zoomState.logger.level = Logger.DEBUG
-        LaunchedEffect(Unit) {
-            zoomState.zoomable.rotate(90)
-        }
+//        LaunchedEffect(Unit) {
+//            zoomState.zoomable.rotate(90)
+//        }
         ZoomImage(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource("sample_huge_china.jpg"),
