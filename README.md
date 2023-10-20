@@ -191,6 +191,7 @@ sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 * [Subsampling: Subsampling the display of huge image to avoid OOM/对超大图进行子采样显示，避免 OOM](docs/wiki/subsampling.md)
 * [Scroll Bar: Displays horizontal and vertical scroll bars to clarify the current scroll position/显示水平和垂直滚动条，明确当前滚动位置](docs/wiki/scrollbar.md)
 * [Log/日志](docs/wiki/log.md)
+* [Compose Multiplatform/Compose 多平台](docs/wiki/multiplatform.md)
 
 ## Samples/示例
 
