@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.defaultStoppedController
 import com.github.panpf.zoomimage.compose.internal.isEmpty
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
@@ -62,7 +61,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
@@ -253,12 +252,9 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     @Composable
     fun BindZoomableState(zoomableState: ZoomableState) {
         LaunchedEffect(Unit) {
-            snapshotFlow { zoomableState.containerSize }.collect {
-                // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
-                // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
-                if (it.isNotEmpty()) {
-                    delay(60)
-                }
+            // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
+            // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
+            snapshotFlow { zoomableState.containerSize }.debounce(80).collect {
                 containerSize = it
                 resetTileManager("containerSizeChanged")
             }
@@ -351,10 +347,19 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         cleanTileManager("resetTileDecoder:$caller")
         cleanTileDecoder("resetTileDecoder:$caller")
 
-        val imageSource = imageSource ?: return
-        val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
-        val ignoreExifOrientation = ignoreExifOrientation
+        val imageSource = imageSource
+        val contentSize = contentSize
+        if (imageSource == null || contentSize.isEmpty()) {
+            logger.d {
+                "resetTileDecoder:$caller. failed. " +
+                        "imageSource=${imageSource}, " +
+                        "contentSize=${contentSize.toShortString()}, " +
+                        "'${imageKey}'"
+            }
+            return
+        }
 
+        val ignoreExifOrientation = ignoreExifOrientation
         lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
             val result = withContext(Dispatchers.IO) {
                 decodeAndCreateTileDecoder(
@@ -398,11 +403,22 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     private fun resetTileManager(caller: String) {
         cleanTileManager("resetTileManager:$caller")
 
-        val imageSource = imageSource ?: return
-        val tileDecoder = tileDecoder ?: return
-        val imageInfo = imageInfo ?: return
-        val containerSize = containerSize.takeIf { !it.isEmpty() } ?: return
-        val contentSize = contentSize.takeIf { !it.isEmpty() } ?: return
+        val imageSource = imageSource
+        val tileDecoder = tileDecoder
+        val imageInfo = imageInfo
+        val containerSize = containerSize
+        val contentSize = contentSize
+        if (imageSource == null || tileDecoder == null || imageInfo == null || containerSize.isEmpty() || contentSize.isEmpty()) {
+            logger.d {
+                "resetTileManager:$caller. failed. " +
+                        "imageSource=${imageSource}, " +
+                        "containerSize=${containerSize.toShortString()}, " +
+                        "contentSize=${contentSize.toShortString()}, " +
+                        "tileDecoder=${tileDecoder}, " +
+                        "'${imageKey}'"
+            }
+            return
+        }
 
         val tileManager = TileManager(
             logger = logger,
@@ -441,7 +457,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
                     "'${imageKey}'"
         }
         this@SubsamplingState.tileManager = tileManager
-        refreshReadyState()
+        refreshReadyState("resetTileManager:$caller")
     }
 
     private fun refreshTiles(
@@ -479,8 +495,10 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         stoppedController?.onDestroy()
     }
 
-    private fun refreshReadyState() {
-        ready = imageInfo != null && tileDecoder != null && tileManager != null
+    private fun refreshReadyState(caller: String) {
+        val newReady = imageInfo != null && tileDecoder != null && tileManager != null
+        logger.d { "refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
+        ready = newReady
     }
 
     private fun cleanTileDecoder(caller: String) {
@@ -494,7 +512,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             tileDecoder.destroy("cleanTileDecoder:$caller")
             this@SubsamplingState.tileDecoder = null
             logger.d { "cleanTileDecoder:$caller. '${imageKey}'" }
-            refreshReadyState()
+            refreshReadyState("cleanTileDecoder:$caller")
         }
         imageInfo = null
         exifOrientation = null
@@ -511,7 +529,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             sampleSize = 0
             imageLoadRect = IntRect.Zero
             logger.d { "cleanTileManager:$caller. '${imageKey}'" }
-            refreshReadyState()
+            refreshReadyState("cleanTileManager:$caller")
         }
     }
 

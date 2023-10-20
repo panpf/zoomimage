@@ -195,4 +195,8 @@ class AndroidTileDecoder constructor(
     private fun IntRectCompat.toAndroidRect(): Rect {
         return Rect(left, top, right, bottom)
     }
+
+    override fun toString(): String {
+        return "AndroidTileDecoder(imageSource='${imageSource.key}', imageInfo=$imageInfo, exifOrientation=$exifOrientation)"
+    }
 }
