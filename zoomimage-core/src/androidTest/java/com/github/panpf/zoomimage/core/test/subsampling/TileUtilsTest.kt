@@ -78,7 +78,7 @@ class TileUtilsTest {
             ignoreExifOrientation = false,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-            Assert.assertEquals(-2, this.code)
+            Assert.assertEquals(-3, this.code)
             Assert.assertEquals(true, this.skipped)
             Assert.assertEquals(
                 "Image type not support subsampling",
@@ -95,7 +95,7 @@ class TileUtilsTest {
             ignoreExifOrientation = false,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-            Assert.assertEquals(-3, this.code)
+            Assert.assertEquals(-4, this.code)
             Assert.assertEquals(true, this.skipped)
             Assert.assertEquals(
                 "The thumbnail size is greater than or equal to the original image",
@@ -117,7 +117,7 @@ class TileUtilsTest {
             ignoreExifOrientation = false,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
-            Assert.assertEquals(-4, this.code)
+            Assert.assertEquals(-5, this.code)
             Assert.assertEquals(false, this.skipped)
             Assert.assertEquals(
                 "The thumbnail aspect ratio is different with the original image",

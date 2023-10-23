@@ -5,7 +5,6 @@ import androidx.exifinterface.media.ExifInterface
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.core.test.internal.ExifOrientationTestFileHelper
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.canUseSubsamplingByAspectRatio
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.internal.calculateSampledBitmapSizeForRegion
 import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
@@ -15,8 +14,6 @@ import com.github.panpf.zoomimage.subsampling.internal.isSupportInBitmapForRegio
 import com.github.panpf.zoomimage.subsampling.internal.readExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.div
 import org.junit.Assert
 import org.junit.Test
 

@@ -58,17 +58,21 @@ fun decodeAndCreateTileDecoder(
         val message = imageInfoResult.exceptionOrNull()!!.message.orEmpty()
         return Result.failure(CreateTileDecoderException(-1, false, message, null))
     }
+    if (imageInfo.width <= 0 || imageInfo.height <= 0) {
+        val message = "image width or height is error: ${imageInfo.width}x${imageInfo.height}"
+        return Result.failure(CreateTileDecoderException(-2, true, message, imageInfo))
+    }
     if (!checkSupportSubsamplingByMimeType(imageInfo.mimeType)) {
         val message = "Image type not support subsampling"
-        return Result.failure(CreateTileDecoderException(-2, true, message, imageInfo))
+        return Result.failure(CreateTileDecoderException(-3, true, message, imageInfo))
     }
     if (thumbnailSize.width >= imageInfo.width && thumbnailSize.height >= imageInfo.height) {
         val message = "The thumbnail size is greater than or equal to the original image"
-        return Result.failure(CreateTileDecoderException(-3, true, message, imageInfo))
+        return Result.failure(CreateTileDecoderException(-4, true, message, imageInfo))
     }
     if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
         val message = "The thumbnail aspect ratio is different with the original image"
-        return Result.failure(CreateTileDecoderException(-4, false, message, imageInfo))
+        return Result.failure(CreateTileDecoderException(-5, false, message, imageInfo))
     }
 
     val result = createTileDecoder(

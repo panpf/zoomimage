@@ -61,9 +61,6 @@ internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
             }
         }
         .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-    require(options.outWidth > 0 && options.outHeight > 0) {
-        "image width or height is error: ${options.outWidth}x${options.outHeight}"
-    }
     val size = IntSizeCompat(options.outWidth, options.outHeight)
     val imageInfo = ImageInfo(size, options.outMimeType)
     return Result.success(imageInfo)
