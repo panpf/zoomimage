@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.picasso
 
 import android.graphics.Bitmap
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
-import com.github.panpf.zoomimage.util.IntSizeCompat
 
 class PicassoTileBitmap(
     override val key: String,
@@ -27,9 +26,11 @@ class PicassoTileBitmap(
 
     override val bitmap: Bitmap
         get() = cacheValue
+
     override val width: Int = bitmap.width
+
     override val height: Int = bitmap.height
-    override val size: IntSizeCompat = IntSizeCompat(width, height)
+
     override val byteCount: Int = bitmap.byteCount
 
     override fun setIsDisplayed(displayed: Boolean) {

@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage.sketch
 import android.graphics.Bitmap
 import com.github.panpf.sketch.cache.MemoryCache
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
-import com.github.panpf.zoomimage.util.IntSizeCompat
 
 class SketchTileBitmap constructor(
     override val key: String,
@@ -29,9 +28,11 @@ class SketchTileBitmap constructor(
 
     override val bitmap: Bitmap?
         get() = cacheValue.countBitmap.bitmap
+
     override val width: Int = bitmap!!.width
+
     override val height: Int = bitmap!!.height
-    override val size: IntSizeCompat = IntSizeCompat(width, height)
+
     override val byteCount: Int = bitmap!!.byteCount
 
     override fun setIsDisplayed(displayed: Boolean) {

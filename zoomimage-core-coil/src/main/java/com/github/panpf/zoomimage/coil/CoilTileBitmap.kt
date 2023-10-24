@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage.coil
 import android.graphics.Bitmap
 import coil.memory.MemoryCache
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
-import com.github.panpf.zoomimage.util.IntSizeCompat
 
 class CoilTileBitmap(
     override val key: String,
@@ -28,9 +27,11 @@ class CoilTileBitmap(
 
     override val bitmap: Bitmap
         get() = cacheValue.bitmap
+
     override val width: Int = bitmap.width
+
     override val height: Int = bitmap.height
-    override val size: IntSizeCompat = IntSizeCompat(width, height)
+
     override val byteCount: Int = bitmap.byteCount
 
     override fun setIsDisplayed(displayed: Boolean) {

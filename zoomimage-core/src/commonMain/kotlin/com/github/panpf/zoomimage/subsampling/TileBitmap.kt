@@ -16,15 +16,12 @@
 
 package com.github.panpf.zoomimage.subsampling
 
-import com.github.panpf.zoomimage.util.IntSizeCompat
-
 /**
  * Tile bitmap interface, you need to implement it to customize tile bitmap
  */
 interface TileBitmap {
     val width: Int
     val height: Int
-    val size: IntSizeCompat
     val byteCount: Int
     fun recycle()
     val isRecycled: Boolean

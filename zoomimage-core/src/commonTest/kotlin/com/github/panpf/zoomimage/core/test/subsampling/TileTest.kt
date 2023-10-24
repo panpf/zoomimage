@@ -4,7 +4,6 @@ import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
 import org.junit.Test
 
@@ -101,24 +100,22 @@ class TileTest {
 
     class TestTileBitmap(override val key: String) : CacheTileBitmap {
         var displayed: Boolean = false
-        override fun setIsDisplayed(displayed: Boolean) {
-            this.displayed = displayed
-        }
 
-        override val width: Int
-            get() = 0
-        override val height: Int
-            get() = 0
-        override val size: IntSizeCompat
-            get() = IntSizeCompat.Zero
-        override val byteCount: Int
-            get() = 0
+        override val width: Int = 0
+
+        override val height: Int = 0
+
+        override val byteCount: Int = 0
+
+        override val isRecycled: Boolean
+            get() = true
 
         override fun recycle() {
 
         }
 
-        override val isRecycled: Boolean
-            get() = true
+        override fun setIsDisplayed(displayed: Boolean) {
+            this.displayed = displayed
+        }
     }
 }
