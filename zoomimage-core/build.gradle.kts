@@ -52,6 +52,12 @@ kotlin {
                 implementation(libs.panpf.tools4j.test)
             }
         }
+
+        named("desktopMain") {
+            dependencies {
+                api(libs.kotlinx.coroutines.swing)
+            }
+        }
     }
 }
 
