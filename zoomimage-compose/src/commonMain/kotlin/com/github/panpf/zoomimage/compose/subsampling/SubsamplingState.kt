@@ -441,6 +441,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
+            tileBitmapConvertor = null,
             imageSource = imageSource,
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),

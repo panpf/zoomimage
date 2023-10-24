@@ -458,6 +458,7 @@ class SubsamplingEngine constructor(
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
+            tileBitmapConvertor = null,
             imageSource = imageSource,
             containerSize = containerSize,
             contentSize = contentSize,

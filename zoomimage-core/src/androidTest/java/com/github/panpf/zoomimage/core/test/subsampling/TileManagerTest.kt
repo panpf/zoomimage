@@ -527,6 +527,7 @@ class TileManagerTest {
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
+            tileBitmapConvertor = null,
             tileBitmapCacheHelper = tileBitmapCacheHelper,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
             imageSource = imageSource,

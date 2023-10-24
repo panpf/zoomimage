@@ -49,6 +49,7 @@ import java.util.LinkedList
 class TileManager constructor(
     logger: Logger,
     private val tileDecoder: TileDecoder,
+    private val tileBitmapConvertor: TileBitmapConvertor?,
     private val tileBitmapCacheHelper: TileBitmapCacheHelper,
     private val tileBitmapReuseHelper: TileBitmapReuseHelper?,
     private val imageSource: ImageSource,
@@ -405,13 +406,24 @@ class TileManager constructor(
             tile.state = Tile.STATE_LOADING
             updateTileSnapshotList("loadTile:loading")
 
-            val tileBitmap = withContext(decodeDispatcher) {
-                tileDecoder.decode(tile.srcRect, tile.sampleSize)
+            val decodeResult = withContext(decodeDispatcher) {
+                kotlin.runCatching {
+                    tileDecoder.decode(tile.srcRect, tile.sampleSize)
+                        ?.let { tileBitmapConvertor?.convert(it) ?: it }
+                }
             }
+            val tileBitmap = decodeResult.getOrNull()
             when {
+                decodeResult.isFailure -> {
+                    tile.state = Tile.STATE_ERROR
+                    logger.e("loadTile. failed, ${decodeResult.exceptionOrNull()?.message}. $tile. '${imageSource.key}'")
+                    updateTileSnapshotList("loadTile:failed")
+                }
+
                 tileBitmap == null -> {
                     tile.state = Tile.STATE_ERROR
                     logger.e("loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
+                    updateTileSnapshotList("loadTile:failed")
                 }
 
                 isActive -> {
@@ -425,6 +437,7 @@ class TileManager constructor(
                     tile.setTileBitmap(cacheTileBitmap ?: tileBitmap, fromCache = false)
                     tile.state = Tile.STATE_LOADED
                     logger.d { "loadTile. successful. $tile. '${imageSource.key}'" }
+                    updateTileSnapshotList("loadTile:successful")
                 }
 
                 else -> {
@@ -437,9 +450,9 @@ class TileManager constructor(
                     } else {
                         tileBitmap.recycle()
                     }
+                    updateTileSnapshotList("loadTile:canceled")
                 }
             }
-            updateTileSnapshotList("loadTile:loaded")
         }
 
         return true
