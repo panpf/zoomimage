@@ -108,6 +108,7 @@ internal fun calculateGridSize(
  *
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateTileGridMap]
  */
+// todo Improve the calculation of the tile grid and no longer rely on containerSize, so that containerSize does not need to be reset when it changes
 internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
     preferredTileSize: IntSizeCompat,

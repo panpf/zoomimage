@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.util.internal
 
+import java.io.Closeable
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.pow
@@ -81,4 +82,12 @@ internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
  */
 internal fun lerp(start: Long, stop: Long, fraction: Float): Long {
     return start + ((stop - start) * fraction.toDouble()).roundToLong()
+}
+
+internal fun Closeable.quietClose() {
+    try {
+        close()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }

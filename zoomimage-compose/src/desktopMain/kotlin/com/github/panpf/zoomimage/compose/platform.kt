@@ -20,12 +20,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.zoomimage.compose.subsampling.ComposeTileBitmap
+import com.github.panpf.zoomimage.compose.subsampling.DesktopToComposeTileBitmapConvertor
 import com.github.panpf.zoomimage.subsampling.StoppedController
+import com.github.panpf.zoomimage.subsampling.TileBitmapConvertor
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 
 @Composable
 actual fun defaultStoppedController(): StoppedController? = null
 
+actual fun createTileBitmapConvertor(): TileBitmapConvertor? = DesktopToComposeTileBitmapConvertor()
+
+// todo Let all TileBitmaps on compose implement the ComposeTileBitmap interface, so that there is no need for a separate drawTile
 actual fun drawTile(
     contentDrawScope: ContentDrawScope,
     tileSnapshot: TileSnapshot,
@@ -34,4 +40,15 @@ actual fun drawTile(
     dstOffset: IntOffset,
     dstSize: IntSize,
     alpha: Float,
-): Boolean = false
+): Boolean {
+    val bitmap = (tileSnapshot.bitmap as ComposeTileBitmap?)?.imageBitmap ?: return false
+    contentDrawScope.drawImage(
+        image = bitmap,
+        srcOffset = srcOffset,
+        srcSize = srcSize,
+        dstOffset = dstOffset,
+        dstSize = dstSize,
+        alpha = alpha,
+    )
+    return true
+}

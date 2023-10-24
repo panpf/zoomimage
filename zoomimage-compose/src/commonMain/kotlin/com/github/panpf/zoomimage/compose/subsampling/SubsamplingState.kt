@@ -29,6 +29,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import com.github.panpf.zoomimage.compose.createTileBitmapConvertor
 import com.github.panpf.zoomimage.compose.defaultStoppedController
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
@@ -102,6 +103,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     private val tileBitmapCacheHelper = TileBitmapCacheHelper(this.logger, tileBitmapCacheSpec)
     private val tileBitmapReuseHelper =
         createTileBitmapReuseHelper(this.logger, tileBitmapReuseSpec)
+    private val tileBitmapConvertor = createTileBitmapConvertor()
 
     var imageKey: String? = null
     internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -441,7 +443,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         val tileManager = TileManager(
             logger = logger,
             tileDecoder = tileDecoder,
-            tileBitmapConvertor = null,
+            tileBitmapConvertor = tileBitmapConvertor,
             imageSource = imageSource,
             containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),

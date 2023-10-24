@@ -21,10 +21,13 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.subsampling.StoppedController
+import com.github.panpf.zoomimage.subsampling.TileBitmapConvertor
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 
 @Composable
 expect fun defaultStoppedController(): StoppedController?
+
+expect fun createTileBitmapConvertor(): TileBitmapConvertor?
 
 expect fun drawTile(
     contentDrawScope: ContentDrawScope,

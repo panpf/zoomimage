@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.LifecycleStoppedController
 import com.github.panpf.zoomimage.subsampling.StoppedController
+import com.github.panpf.zoomimage.subsampling.TileBitmapConvertor
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 
 @Composable
@@ -35,6 +36,8 @@ actual fun defaultStoppedController(): StoppedController? {
         LifecycleStoppedController(lifecycle)
     }
 }
+
+actual fun createTileBitmapConvertor(): TileBitmapConvertor? = null
 
 actual fun drawTile(
     contentDrawScope: ContentDrawScope,
