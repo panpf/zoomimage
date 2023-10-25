@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.util
 
+import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.internal.lerp
 
 /**
@@ -128,6 +129,16 @@ data class TransformCompat(
                 ")"
     }
 }
+
+fun TransformCompat.isEmpty(): Boolean {
+    return scaleX.format(2) == 1f
+            && scaleY.format(2) == 1f
+            && offsetX.format(2) == 0f
+            && offsetY.format(2) == 0f
+            && rotation.format(2) == 0f
+}
+
+fun TransformCompat.isNotEmpty(): Boolean = !isEmpty()
 
 /**
  * Return short string descriptions, for example: '(3.45x9.87,10.56x20.56,45.03,0.52x0.52,0.52x0.52)'

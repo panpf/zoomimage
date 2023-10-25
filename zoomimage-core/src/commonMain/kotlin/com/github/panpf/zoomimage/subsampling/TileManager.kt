@@ -21,10 +21,10 @@ import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
-import com.github.panpf.zoomimage.subsampling.internal.format
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineDispatcher

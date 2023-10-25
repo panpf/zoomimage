@@ -28,6 +28,7 @@ import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.div
+import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.limitTo
@@ -40,7 +41,6 @@ import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.internal.BaseTransformHelper
-import com.github.panpf.zoomimage.zoom.internal.format
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -433,7 +433,8 @@ fun calculateRestoreContentVisibleCenterUserTransform(
         rotation = rotation,
     )
     val rotatedContentSize = contentSize.rotate(rotation)
-    val rotatedLastContentVisibleCenter = lastContentVisibleCenter.rotateInSpace(contentSize, rotation)
+    val rotatedLastContentVisibleCenter =
+        lastContentVisibleCenter.rotateInSpace(contentSize, rotation)
     val baseScaledRotatedContentSize = rotatedContentSize.toSize() * newBaseTransform.scale
     val rotatedCenterProportion = ScaleFactorCompat(
         scaleX = rotatedLastContentVisibleCenter.x.toFloat() / rotatedContentSize.width,

@@ -25,9 +25,10 @@ import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.isSpecified
 import com.github.panpf.zoomimage.compose.internal.Origin
 import com.github.panpf.zoomimage.compose.internal.TopStart
-import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.div
+import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.compose.internal.times
+import com.github.panpf.zoomimage.compose.internal.toShortString
 
 /**
  * A simple version of a 2D transformation that includes scale, pan, and rotation
@@ -139,6 +140,16 @@ data class Transform(
                 ")"
     }
 }
+
+fun Transform.isEmpty(): Boolean {
+    return scaleX.format(2) == 1f
+            && scaleY.format(2) == 1f
+            && offsetX.format(2) == 0f
+            && offsetY.format(2) == 0f
+            && rotation.format(2) == 0f
+}
+
+fun Transform.isNotEmpty(): Boolean = !isEmpty()
 
 /**
  * Return short string descriptions, for example: '(3.45x9.87,10.56x20.56,45.03,0.52x0.52,0.52x0.52)'

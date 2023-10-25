@@ -151,7 +151,6 @@ fun rememberZoomableState(logger: Logger): ZoomableState {
  * A state object that can be used to control the scale, pan, rotation of the content.
  */
 @Stable
-// todo Save and restore the state
 class ZoomableState(logger: Logger) {
 
     private val logger: Logger = logger.newLogger(module = "ZoomableState")
@@ -694,11 +693,8 @@ class ZoomableState(logger: Logger) {
         val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 + it else it }
         val currentRotation = rotation
         if (currentRotation == limitedTargetRotation) return@coroutineScope
-
-        stopAllAnimation("rotate")
-
         rotation = limitedTargetRotation
-        nowReset("rotate")
+        reset("rotationChanged")
     }
 
     /**

@@ -21,10 +21,10 @@ import com.github.panpf.zoomimage.checkSupportSubsamplingByMimeType
 import com.github.panpf.zoomimage.createTileDecoder
 import com.github.panpf.zoomimage.decodeExifOrientation
 import com.github.panpf.zoomimage.decodeImageInfo
-import com.github.panpf.zoomimage.subsampling.internal.format
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.abs

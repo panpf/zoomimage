@@ -82,7 +82,6 @@ import kotlin.math.roundToInt
 /**
  * Engines that control scale, pan, rotation
  */
-// todo Save and restore the state
 class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     private val logger: Logger = logger.newLogger(module = "ZoomableEngine")
@@ -673,11 +672,8 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         val limitedTargetRotation = (targetRotation % 360).let { if (it < 0) 360 + it else it }
         val currentRotation = rotation
         if (currentRotation == limitedTargetRotation) return
-
-        stopAllAnimation("rotate")
-
         rotation = limitedTargetRotation
-        reset("rotate")
+        reset("rotationChanged")
     }
 
     /**

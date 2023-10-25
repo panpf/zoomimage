@@ -17,10 +17,10 @@
 package com.github.panpf.zoomimage.zoom
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.DifferencePercentage
 import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.Multiple
-import com.github.panpf.zoomimage.zoom.internal.format
 import kotlin.math.abs
 import kotlin.math.max
 
