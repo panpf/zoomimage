@@ -59,8 +59,7 @@ val state: ZoomState by rememberZoomState()
 
 val context = LocalContext.current
 LaunchedEffect(Unit) {
-    val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
-    state.subsampling.setImageSource(imageSource)
+    state.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
 }
 
 ZoomImage(
@@ -95,7 +94,9 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.subsampling.ignoreExifOrientation = true
+LaunchEffect(Unit) {
+    state.subsampling.ignoreExifOrientation = true
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -119,13 +120,15 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// Turn off animations
-// 关闭动画
-state.subsampling.tileAnimationSpec = TileAnimationSpec.None
+LaunchEffect(Unit) {
+    // Turn off animations
+    // 关闭动画
+    state.subsampling.tileAnimationSpec = TileAnimationSpec.None
 
-// Modify the duration and refresh interval of the animation
-// 修改动画的持续时间和刷新间隔
-state.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+    // Modify the duration and refresh interval of the animation
+    // 修改动画的持续时间和刷新间隔
+    state.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -159,12 +162,14 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// 所有连续变换类型都实时加载图块
-state.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
+LaunchEffect(Unit) {
+    // 所有连续变换类型都实时加载图块
+    state.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
 
-// 所有连续变换类型都暂停加载图块
-state.subsampling.pausedContinuousTransformType =
-    TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
+    // 所有连续变换类型都暂停加载图块
+    state.subsampling.pausedContinuousTransformType =
+        TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -194,7 +199,9 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.subsampling.disabledBackgroundTiles = true
+LaunchEffect(Unit) {
+    state.subsampling.disabledBackgroundTiles = true
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -216,10 +223,12 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// stop
-state.subsampling.stopped = true
-// restart
-state.subsampling.stopped = false
+LaunchEffect(Unit) {
+    // stop
+    state.subsampling.stopped = true
+    // restart
+    state.subsampling.stopped = false
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -289,7 +298,9 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.subsampling.tileBitmapCache = MyTileBitmapCache()
+LaunchEffect(Unit) {
+    state.subsampling.tileBitmapCache = MyTileBitmapCache()
+}
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -311,10 +322,12 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// Disable memory caching, 禁用内存缓存
-state.subsampling.disabledTileBitmapCache = true
-// Memory caching is allowed, 允许使用内存缓存
-state.subsampling.disabledTileBitmapCache = false
+LaunchEffect(Unit) {
+    // Disable memory caching, 禁用内存缓存
+    state.subsampling.disabledTileBitmapCache = true
+    // Memory caching is allowed, 允许使用内存缓存
+    state.subsampling.disabledTileBitmapCache = false
+}
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -349,7 +362,9 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.subsampling.tileBitmapPool = MyTileBitmapPool()
+LaunchEffect(Unit) {
+    state.subsampling.tileBitmapPool = MyTileBitmapPool()
+}
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -371,10 +386,12 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// Disabled reuse of Bitmaps，禁止重用 Bitmap
-state.subsampling.disabledTileBitmapReuse = true
-// Allows reuse of Bitmap，允许重用 Bitmap
-state.subsampling.disabledTileBitmapReuse = false
+LaunchEffect(Unit) {
+    // Disabled reuse of Bitmaps，禁止重用 Bitmap
+    state.subsampling.disabledTileBitmapReuse = true
+    // Allows reuse of Bitmap，允许重用 Bitmap
+    state.subsampling.disabledTileBitmapReuse = false
+}
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",

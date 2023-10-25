@@ -11,11 +11,34 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-ZoomImage supports multiple zoom methods such as double-click zoom, gesture zoom, scale(Float) and
+ZoomImage supports multiple zoom methods such as double-click zoom, gesture zoom, scale() and
 other
 zoom methods to scale the image.
 <br>-----------</br>
-ZoomImage 支持双击缩放、双指捏合缩放、单指长按滑动缩放、scale(Float) 等多种方式来缩放图像，在连续缩放时还支持阻尼和动画效果。
+ZoomImage 支持双击缩放、双指捏合缩放、单指长按滑动缩放、scale() 等多种方式来缩放图像，在连续缩放时还支持阻尼和动画效果。
+
+### Scale Features/缩放特性
+
+* 仅 containerSize 改变时，ZoomImage 会保持缩放比例和 content 可见中心点不变
+* 页面重建时（屏幕旋转、App 在后台被回收）会重置缩放和偏移数据
+
+### contentScale, alignment
+
+ZoomImage supports all [ContentScale] and [Alignment], and because the compose version and the view
+version use the same algorithm, view The version of the component supports [ContentScale]
+and [Alignment] in addition to [ScaleType]
+<br>-----------</br>
+ZoomImage 支持所有的 [ContentScale] 和 [Alignment]，并且得益于 compose 版本和 view 版本使用的是同一套算法，view
+版本的组件在支持 [ScaleType] 之外也支持 [ContentScale] 和 [Alignment]
+
+example/示例：
+
+```kotlin
+val sketchZoomImageView = SketchZoomImageView(context)
+
+sketchZoomImageView.zoomable.contentScale = ContentScaleCompat.None
+sketchZoomImageView.zoomable.alignment = AlignmentCompat.BottomEnd
+```
 
 ### minScale, mediumScale, maxScale
 
@@ -124,10 +147,11 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.zoomable.scalesCalculator = ScalesCalculator.Fixed
-// or
-val myScalesCalculator = remember { MyScalesCalculator() }
-state.zoomable.scalesCalculator = myScalesCalculator
+LaunchEffect(Unit) {
+    state.zoomable.scalesCalculator = ScalesCalculator.Fixed
+    // or
+    state.zoomable.scalesCalculator = MyScalesCalculator()
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -154,7 +178,9 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.zoomable.threeStepScale = true
+LaunchEffect(Unit) {
+    state.zoomable.threeStepScale = true
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -221,14 +247,14 @@ val state: ZoomState by rememberZoomState()
 state.zoomable.getNextStepScale()
 ```
 
-### Long Press Slide Scale/单指长按滑动缩放
+### One Finger Scale/单指缩放
 
-ZoomImage supports one-finger long press up and down to zoom the image, and after turning on, one
-finger long press on the screen triggers the long press behavior and then swipe up and down to zoom
+ZoomImage supports one-finger scale the image, and after turning on, one finger long press on the
+screen triggers the long press behavior and then swipe up and down to scale
 the image. This feature is turned off by default and you can pass The oneFingerScaleSpec
 property turns it on
 <br>-----------</br>
-ZoomImage 支持单指长按上下滑动缩放图像，开启后单指按住屏幕触发长按后上下滑动即可缩放图像。此功能默认关闭，你可以通过
+ZoomImage 支持单指缩放图像，开启后单指按住屏幕触发长按后上下滑动即可缩放图像。此功能默认关闭，你可以通过
 oneFingerScaleSpec 属性开启它
 
 example/示例：
@@ -236,17 +262,19 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// Turned, but no haptic feedback after the long-press behavior triggers
-// 开启，但长按行为触发后没有触觉反馈
-state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
+LaunchEffect(Unit) {
+    // Turned, but no haptic feedback after the long-press behavior triggers
+    // 开启，但长按行为触发后没有触觉反馈
+    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
 
-// Turned, and there will be vibration feedback after the long-press behavior is triggered
-// 开启，并且长按行为触发后会有震动反馈
-state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Vibration
+    // Turned, and there will be vibration feedback after the long-press behavior is triggered
+    // 开启，并且长按行为触发后会有震动反馈
+    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.vibration(context)
 
-// Closed
-// 关闭
-state.zoomable.oneFingerScaleSpec = null
+    // Closed
+    // 关闭
+    state.zoomable.oneFingerScaleSpec = null
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -256,12 +284,12 @@ SketchZoomAsyncImage(
 )
 ```
 
-### scale(Float)
+### scale()
 
 ZoomImage provides the scale() method to scale the image to a specified multiple, which has three
 parameters:
 <br>-----------</br>
-ZoomImage 提供了 scale(Float) 方法用来缩放图像到指定的倍数，它有三个参数：
+ZoomImage 提供了 scale() 方法用来缩放图像到指定的倍数，它有三个参数：
 
 * targetScale: Float。
     * Target scale multiple
@@ -332,7 +360,9 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.zoomable.rubberBandScale = false
+LaunchEffect(Unit) {
+    state.zoomable.rubberBandScale = false
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -342,7 +372,7 @@ SketchZoomAsyncImage(
 )
 ```
 
-### Zoom Animation/缩放动画
+### Animation/动画
 
 ZoomImage provides animationSpec parameters to modify the duration, Ease, and initial speed of the
 zoom animation
@@ -354,15 +384,17 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.animationSpec = ZoomAnimationSpec(
-    durationMillis = 500,
-    easing = LinearOutSlowInEasing,
-    initialVelocity = 10f
-)
+LaunchEffect(Unit) {
+    state.animationSpec = ZoomAnimationSpec(
+        durationMillis = 500,
+        easing = LinearOutSlowInEasing,
+        initialVelocity = 10f
+    )
 
-// Or modify some parameters based on the default values
-// 或者在默认值的基础上修改部分参数
-state.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
+    // Or modify some parameters based on the default values
+    // 或者在默认值的基础上修改部分参数
+    state.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -374,19 +406,23 @@ SketchZoomAsyncImage(
 
 ### Disabled gestures/禁用手势
 
-ZoomImage supports gestures such as double-click zoom, two-finger zoom, one-finger zoom, drag, etc., which are enabled by default, and you can disable them through the disabledGestureType property
+ZoomImage supports gestures such as double-click zoom, two-finger zoom, one-finger zoom, drag, etc.,
+which are enabled by default, and you can disable them through the disabledGestureType property
 <br>-----------</br>
-ZoomImage 支持双击缩放、双指缩放、单指缩放、拖动等手势，这些手势默认都开启，你可以通过 disabledGestureType 属性来禁用它们
+ZoomImage 支持双击缩放、双指缩放、单指缩放、拖动等手势，这些手势除单指缩放外默认都是开启的，你可以通过
+disabledGestureType 属性来禁用它们
 
 example/示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-// Turn off all scale gestures and keep only the drag gesture
-// 关闭所有缩放手势，只保留拖动手势
-state.zoomable.disabledGestureType =
-    GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
+LaunchEffect(Unit) {
+    // Turn off all scale gestures and keep only the drag gesture
+    // 关闭所有缩放手势，只保留拖动手势
+    state.zoomable.disabledGestureType =
+        GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
@@ -398,11 +434,13 @@ SketchZoomAsyncImage(
 
 ### Modifier.zoom()
 
-The Compose version of the ZoomImage component relies on Modifier.zoom() for scaling, and it can also be used on any Compose component
+The Compose version of the ZoomImage component relies on Modifier.zoom() for scaling, and it can
+also be used on any Compose component
 <br>-----------</br>
 Compose 版本的 ZoomImage 组件依赖 Modifier.zoom() 实现缩放，它还可以用在任意 Compose 组件上
 
 example/示例：
+
 ```kotlin
 val logger = rememberZoomImageLogger()
 val zoomState = rememberZoomableState(logger)
@@ -503,3 +541,9 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 [ZoomableState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
 
 [ScalesCalculator]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/zoom/ScalesCalculator.kt
+
+[ContentScale]: https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale
+
+[Alignment]: https://developer.android.com/reference/kotlin/androidx/compose/ui/Alignment
+
+[ScaleType]: https://developer.android.com/reference/android/widget/ImageView.ScaleType

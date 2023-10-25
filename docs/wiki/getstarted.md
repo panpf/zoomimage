@@ -23,7 +23,7 @@ corresponding dependencies*
 <br>-----------</br>
 *不同的组件需要导入不同的依赖，请参考 [README] 导入对应的依赖*
 
-compose：
+compose android：
 
 * [SketchZoomAsyncImage]：`recommended/推荐使用`
     * Zoom Image component integrated with [Sketch] image loading library, the usage is the same as
@@ -53,6 +53,9 @@ compose：
     * 集成了 [Glide] 图片加载库的缩放 Image 组件，用法和 [Glide] 的 [GlideImage] 组件一样
     * 已支持网络图片和子采样，无需做任何额外的工作
     * `仅支持 Android`，参考示例 [GlideZoomAsyncImageSample]
+
+compose multiplatform：
+
 * [ZoomImage]：
     * The most basic zoom Image component, not integrate the image loading library
     * Additional work needs to be done to support network pictures and subsampling
@@ -139,8 +142,6 @@ CoilZoomAsyncImage(
     modifier = Modifier.fillMaxSize(),
 )
 
-// Relying on the alpha version of GlideImage is not recommended at this stage
-// 依赖于 alpha 版本的 GlideImage，不推荐在现阶段使用
 GlideZoomAsyncImage(
     model = "http://sample.com/sample.jpg",
     contentDescription = "view image",
@@ -148,12 +149,18 @@ GlideZoomAsyncImage(
 ) {
     it.placeholder(R.drawable.placeholder)
 }
+```
 
+#### compose multiplatform
+
+```kotlin
+/* 
+ * android
+ */
 val state: ZoomState by rememberZoomState()
 val context = LocalContext.current
 LaunchedEffect(Unit) {
-    val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
-    state.subsampling.setImageSource(imageSource)
+    state.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
 }
 ZoomImage(
     painter = painterResource(R.drawable.huge_image_thumbnail),
@@ -161,27 +168,23 @@ ZoomImage(
     modifier = Modifier.fillMaxSize(),
     state = state,
 )
-```
 
-#### compose multiplatform
-
-MultiPlatform currently supports Android and Desktop, of which Android supports subsampling, but
-subsampling is not supported because the desktop platform does not have subsampling-related APIs
-<br>-----------</br>
-multiplatform 目前支持 android 和 desktop，其中 android 支持子采样，而受限于 desktop 平台没有子采样相关
-API 所以暂不支持子采样
-
-desktop:
-
-```kotlin
+/* 
+ * desktop
+ */
+val state: ZoomState by rememberZoomState()
+LaunchedEffect(Unit) {
+    state.subsampling.setImageSource(ImageSource.fromResource("huge_image.jpeg"))
+}
 ZoomImage(
     painter = painterResource("huge_image_thumbnail.jpeg"),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
+    state = state,
 )
 ```
 
-view:
+#### view:
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
@@ -247,28 +250,10 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 ```
 
-*For more detailed information about zoom, offset, rotation, subsampling, reading mode, scroll bar
+*For more detailed information about scale, offset, rotation, subsampling, read mode, scroll bar
 and other functions, please refer to the documentation at the end of the page*
 <br>-----------</br>
 *更多缩放、偏移、旋转、子采样、阅读模式、滚动条等功能详细介绍请参考页尾的文档*
-
-### contentScale 和 alignment
-
-ZoomImage supports all [ContentScale] and [Alignment], because the compose version and the view
-version use the same set of logic code, view The version of the component supports [ContentScale]
-and [Alignment] in addition to [ScaleType]
-<br>-----------</br>
-ZoomImage 支持所有的 [ContentScale] 和 [Alignment]，得益于 compose 版本和 view 版本使用的是同一套逻辑代码，view
-版本的组件在支持 [ScaleType] 之外也支持 [ContentScale] 和 [Alignment]
-
-example/示例：
-
-```kotlin
-val sketchZoomImageView = SketchZoomImageView(context)
-
-sketchZoomImageView.zoomable.contentScale = ContentScaleCompat.None
-sketchZoomImageView.zoomable.alignment = AlignmentCompat.BottomEnd
-```
 
 ### Get relevant information/获取相关信息
 
@@ -468,12 +453,6 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [Picasso]: https://github.com/square/picasso
 
 [README]: ../../README.md
-
-[ContentScale]: https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale
-
-[Alignment]: https://developer.android.com/reference/kotlin/androidx/compose/ui/Alignment
-
-[ScaleType]: https://developer.android.com/reference/android/widget/ImageView.ScaleType
 
 [ZoomableState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/zoom/ZoomableState.kt
 

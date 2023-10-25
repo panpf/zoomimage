@@ -91,7 +91,9 @@ example/示例：
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
-state.limitOffsetWithinBaseVisibleRect = true
+LaunchEffect(Unit) {
+    state.limitOffsetWithinBaseVisibleRect = true
+}
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",

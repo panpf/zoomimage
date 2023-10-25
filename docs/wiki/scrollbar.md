@@ -40,6 +40,7 @@ ZoomImage 支持显示滚动条，滚动条可以明确的告知用户当前的�
 example/示例：
 
 ```kotlin
+// compose
 val scrollBar = remember {
     ScrollBarSpec(
         color = androidx.compose.ui.graphics.Color.Red,
@@ -47,8 +48,6 @@ val scrollBar = remember {
         margin = 12.dp,
     )
 }
-
-// compose:
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
@@ -70,7 +69,7 @@ ZoomImage 默认显示滚动条，你可以关闭它
 example/示例：
 
 ```kotlin
-// compose:
+// compose
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",

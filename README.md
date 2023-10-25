@@ -78,30 +78,36 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 `${LAST_VERSION}`: [![Download][version_icon]][version_link] (Not included 'v' · 不包含 'v')
 
-### compose
+### compose android
 
-`Choose one of the following modules · 以下模块任选其一即可`
+`Choose according to the image loader you use · 根据你用的图片加载器选择`
 
 ```kotlin
-// Only Android is supported/仅支持 Android
 // The SketchZoomAsyncImage component is provided with the Coil Image Loader, easy to use (recommended)
 // 提供适配了 Sketch 图片加载器的 SketchZoomAsyncImage 组件，用法简单（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch:${LAST_VERSION}")
 
-// Only Android is supported/仅支持 Android
 // The CoilZoomAsyncImage component is provided with the Coil Image Loader, easy to use
 // 提供适配了 Coil 图片加载器的 CoilZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}")
 
-// Only Android is supported/仅支持 Android
 // The GlideZoomAsyncImage component is provided with the Coil Image Loader, easy to use
 // 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
+```
 
-// Support for ComposeMultiplatform/支持 ComposeMultiplatform
-// Providing the most basic ZoomImage component, there is still a lot of work to be done to use it, 
-// additional work needs to be done to support network image and subsampling
-// 提供最基础的 ZoomImage 组件，还需要做额外的工作以支持网络图片和子采样
+Why is there no picasso version of the compose ZoomImage component? Picasso has officially stated
+that it will not provide compose
+Support ([Reference](https://github.com/square/picasso/issues/2203#issuecomment-826444442))
+<br>-----------------</br>
+为什么没有 picasso 版本的 compose ZoomImage 组件？因为 Picasso 官方已经说明不会提供对 compose
+的支持（[原文在此](https://github.com/square/picasso/issues/2203#issuecomment-826444442)）
+
+### compose multiplatform
+
+```kotlin
+// Providing the basic ZoomImage component, additional work is required to support network images and subsampling 
+// 提供基础的 ZoomImage 组件，还需要做额外的工作以支持网络图片和子采样
 implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
 ```
 
@@ -114,7 +120,7 @@ Support ([Reference](https://github.com/square/picasso/issues/2203#issuecomment-
 
 ### view
 
-`Choose one of the following modules · 以下模块任选其一即可`
+`Choose according to the image loader you use · 根据你用的图片加载器选择`
 
 ```kotlin
 // The SketchZoomImageView component is provided with the Sketch Image Loader, easy to use (recommended)

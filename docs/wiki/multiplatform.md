@@ -13,8 +13,3 @@ automatically loaded according to the current platform
 <br>-----------------</br>
 配置依赖时只需要在项目中添加 `zoomimage-core` 或 `zoomimage-compose` 依赖即可，不需指定平台，Gradle
 会自动根据当前平台加载对应的包
-
-The desktop platform does not currently support subsampling because the desktop platform does not
-currently have an API similar to BitmapRegionDecoder in Android
-<br>-----------------</br>
-桌面平台目前不支持子采样，因为桌面平台目前没有类似 Android 中 BitmapRegionDecoder 的 API
