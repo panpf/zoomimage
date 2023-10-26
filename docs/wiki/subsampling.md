@@ -25,6 +25,33 @@ so that it can display a clear picture when zooming without crashing the app
 所以就需要 ZoomImage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图图块显示到屏幕上，
 这样就能够在缩放时既显示清晰的图片，又不会让 App 崩溃
 
+### Features/特点
+
+* [Exif Orientation](#exif-orientation). Support reading the Exif Orientation information of the
+  image and then rotating the image
+* [Animation](#tile-animation图块动画). Support transparency animation when displaying Tile, making
+  the transition more natural
+* [Background tiles](#disabledbackgroundtiles禁用背景图块). When switching sampleSize, the picture
+  clarity changes step by step, making the transition more natural.
+* [Pause load tiles](#pausedcontinuoustransformtype连续变换时暂停加载图块). Pause loading of tiles
+  during continuous transformations to improve performance
+* [Stop load tiles](#stoprestart). Listen to Lifecycle, stop loading tiles and release loaded tiles
+  at stop to improve performance
+* [Memory cache](#memory-cache). Avoid repeated decoding and improve performance
+* [Reuse Bitmap](#reuse-bitmap). Avoid repeated creation of Bitmap, reduce memory jitter, and
+  improve performance
+* [Read information](#get-relevant-information获取相关信息). Can read sampling size, picture
+  information, tile list and other information
+* <br>-----------</br>
+* [Exif Orientation](#exif-orientation). 支持读取图片的 Exif Orientation 信息，然后旋转图片
+* [动画](#tile-animation图块动画). 在显示 Tile 的时候支持透明度动画，过渡更自然
+* [背景图快](#disabledbackgroundtiles禁用背景图块). 切换 sampleSize 时图片清晰度逐级变化，过渡更自然
+* [暂停加载图块](#pausedcontinuoustransformtype连续变换时暂停加载图块). 连续变换时暂停加载图块，提高性能
+* [不可见时停止加载图块](#stoprestart). 监听 Lifecycle，在 stop 时停止加载图块并释放已加载的图块，提高性能
+* [内存缓存](#memory-cache). 避免重复解码，提高性能
+* [Bitmap 重用](#reuse-bitmap). 避免重复创建 Bitmap，减少内存抖动，提高性能
+* [读取相关信息](#get-relevant-information获取相关信息). 可以读取采样大小、图片信息、图块列表等信息
+
 ### Prefix/前置条件
 
 When will subsampling be enabled?
@@ -211,7 +238,7 @@ SketchZoomAsyncImage(
 )
 ```
 
-### stop/start
+### stop/restart
 
 ZoomImage supports stopping subsampling, which free the loaded tile after stopping and no new tiles
 are loaded, and automatically reloads the tiles after restarting

@@ -11,7 +11,7 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-### Scale Features/缩放特性
+### Features/特点
 
 * Support [One-Finger Scale](#one-finger-scale单指缩放)
   , Two-Finger Scale, [Double-click Scale](#double-click-scale双击缩放)and scaling to a specified
@@ -33,7 +33,9 @@
 * When the page is rebuilt (the screen rotates, the app is recycled in the background), the scale
   and offset are reset
 * [Open the Modifier.zoom() function](#modifierzoom--), which can be applied to any component
-* [Supports reading all scaling-related information](#get-relevant-information读取相关信息)
+* [Supports reading related information](#get-relevant-information读取相关信息). You can read
+  scale-related information such as the current scale multiplier and the minimum, middle, and
+  maximum scale multiples
   <br>-----------</br>
 * 支持[单指长按后上下滑动缩放](#one-finger-scale单指缩放)
   、双指捏合缩放、[双击循环缩放](#double-click-scale双击缩放)以及通过 [scale()](#scale--) 方法缩放到指定的倍数
@@ -48,7 +50,7 @@
 * 仅 containerSize 改变时（桌面平台上拖动调整窗口大小），ZoomImage 会保持缩放比例和 content 可见中心点不变
 * 页面重建时（屏幕旋转、App 在后台被回收）会重置缩放和偏移
 * [开放 Modifier.zoom() 函数](#modifierzoom--)，可以应用在任意组件上
-* [支持读取全部的缩放相关信息](#get-relevant-information读取相关信息)
+* [支持读取相关信息](#get-relevant-information读取相关信息). 支持读取当前缩放倍数、最小/中间/最大缩放倍数等缩放相关信息
 
 ### ContentScale, Alignment
 
