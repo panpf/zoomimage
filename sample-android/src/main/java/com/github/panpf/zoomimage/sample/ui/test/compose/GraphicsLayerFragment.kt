@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.test.compose
 
+import com.github.panpf.zoomimage.sample.common.R as CommonR
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -374,7 +375,7 @@ private fun GraphicsLayerSample() {
                             modifier = Modifier.size(40.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_zoom_out),
+                                painter = painterResource(id = CommonR.drawable.ic_zoom_out),
                                 contentDescription = "zoom out"
                             )
                         }
@@ -390,7 +391,7 @@ private fun GraphicsLayerSample() {
                             modifier = Modifier.size(40.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_zoom_in),
+                                painter = painterResource(id = CommonR.drawable.ic_zoom_in),
                                 contentDescription = "zoom in"
                             )
                         }
@@ -416,7 +417,7 @@ private fun GraphicsLayerSample() {
                             modifier = Modifier.size(40.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_rotate_right),
+                                painter = painterResource(id = CommonR.drawable.ic_rotate_right),
                                 contentDescription = "rotate right"
                             )
                         }

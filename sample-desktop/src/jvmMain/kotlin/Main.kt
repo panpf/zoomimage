@@ -1,4 +1,3 @@
-
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -21,6 +20,9 @@ import androidx.compose.ui.window.application
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.fromResource
+import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageMinimap
+import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageTool
+import com.github.panpf.zoomimage.sample.compose.widget.rememberMyDialogState
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
@@ -53,7 +55,9 @@ fun App() {
             zoomState.subsampling.setImageSource(
                 ImageSource.fromResource(
                     ResourceLoader.Default,
-                    "sample_huge_china.jpg"
+//                    "sample_huge_china.jpg"
+//                    "sample_huge_card.jpg"
+                    "sample_huge_world.jpg"
                 )
             )
 //            zoomState.subsampling.setImageSource(ImageSource.fromFile(File("/Users/panpf/Downloads/sample_huge_china.jpg")))
@@ -61,30 +65,24 @@ fun App() {
         }
         ZoomImage(
             modifier = Modifier.fillMaxSize(),
-            painter = painterResource("sample_huge_china_thumbnail.jpg"),
+//            painter = painterResource("sample_huge_china_thumbnail.jpg"),
+//            painter = painterResource("sample_huge_card_thumbnail.jpg"),
+            painter = painterResource("sample_huge_world_thumbnail.jpg"),
             contentDescription = "China",
             state = zoomState,
         )
-        Column(Modifier.padding(20.dp)) {
-            Text(
-                text = "scale: ${zoomState.zoomable.transform.scale.toShortString()}",
-                style = LocalTextStyle.current.copy(
-                    shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                ),
-            )
-            Text(
-                text = "offset: ${zoomState.zoomable.transform.offset.toShortString()}",
-                style = LocalTextStyle.current.copy(
-                    shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                ),
-            )
-            Text(
-                text = "center: ${zoomState.zoomable.contentVisibleRect.center.toShortString()}",
-                style = LocalTextStyle.current.copy(
-                    shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                ),
-            )
-        }
+        ZoomImageMinimap(
+            imageUri = "sample_huge_world_thumbnail.jpg",
+            zoomableState = zoomState.zoomable,
+            subsamplingState = zoomState.subsampling,
+        )
+        val infoDialogState = rememberMyDialogState()
+        ZoomImageTool(
+            zoomableState = zoomState.zoomable,
+            subsamplingState = zoomState.subsampling,
+            infoDialogState = infoDialogState,
+            imageUri = "sample_huge_world_thumbnail.jpg",
+        )
     }
 }
 

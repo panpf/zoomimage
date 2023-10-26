@@ -105,7 +105,8 @@ panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "pan
 
 # other
 junit = { module = "junit:junit", version.ref = "junit" }
-telephoto = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
+telephoto = { module = "me.saket.telephoto:zoomable", version.ref = "telephoto" }
+telephoto-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 mmkv = { module = "com.tencent:mmkv", version.ref = "mmkv" }
 subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }

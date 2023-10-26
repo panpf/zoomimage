@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
+import com.github.panpf.zoomimage.sample.common.R as CommonR
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.animation.Animation
@@ -24,7 +25,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
@@ -196,9 +196,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                     val zoomIn =
                         zoomImageView.zoomable.getNextStepScale() > zoomImageView.zoomable.transformState.value.scaleX
                     if (zoomIn) {
-                        setImageResource(R.drawable.ic_zoom_in)
+                        setImageResource(CommonR.drawable.ic_zoom_in)
                     } else {
-                        setImageResource(R.drawable.ic_zoom_out)
+                        setImageResource(CommonR.drawable.ic_zoom_out)
                     }
                 }
         }

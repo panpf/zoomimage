@@ -28,6 +28,7 @@ dependencyResolutionManagement {
 }
 
 include(":sample-android")
+include(":sample-common")
 include(":sample-desktop")
 include(":zoomimage-compose")
 include(":zoomimage-compose-coil")

@@ -19,10 +19,11 @@ import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageMinimap
+import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageTool
+import com.github.panpf.zoomimage.sample.compose.widget.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.settingsService
-import com.github.panpf.zoomimage.sample.ui.common.compose.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
-import com.github.panpf.zoomimage.sample.ui.widget.compose.ZoomImageMinimap
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
@@ -157,7 +158,7 @@ fun BaseZoomImageSample(
         )
 
         ZoomImageMinimap(
-            sketchImageUri = sketchImageUri,
+            imageUri = sketchImageUri,
             zoomableState = zoomState.zoomable,
             subsamplingState = zoomState.subsampling,
             ignoreExifOrientation = supportIgnoreExifOrientation && ignoreExifOrientation,

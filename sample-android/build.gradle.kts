@@ -87,6 +87,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":sample-common"))
     implementation(project(":zoomimage-compose-coil"))
     implementation(project(":zoomimage-compose-glide"))
     implementation(project(":zoomimage-compose-sketch"))
@@ -126,7 +127,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.paging.compose)
     implementation(libs.panpf.sketch3.compose)
-    implementation(libs.telephoto)
+    implementation(libs.telephoto.coil)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
