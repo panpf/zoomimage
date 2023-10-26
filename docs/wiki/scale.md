@@ -11,18 +11,46 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-ZoomImage supports multiple zoom methods such as double-click zoom, gesture zoom, scale() and
-other
-zoom methods to scale the image.
-<br>-----------</br>
-ZoomImage 支持双击缩放、双指捏合缩放、单指长按滑动缩放、scale() 等多种方式来缩放图像，在连续缩放时还支持阻尼和动画效果。
-
 ### Scale Features/缩放特性
 
-* 仅 containerSize 改变时，ZoomImage 会保持缩放比例和 content 可见中心点不变
-* 页面重建时（屏幕旋转、App 在后台被回收）会重置缩放和偏移数据
+* Support [One-Finger Scale](#one-finger-scale单指缩放)
+  , Two-Finger Scale, [Double-click Scale](#double-click-scale双击缩放)and scaling to a specified
+  multiple by the [scale()](#scale--) method
+* [Supports rubber band effect](#rubber-band-scale橡皮筋效果).
+  When the gesture is continuously zoomed (one-finger/two-finger scale) exceeds the maximum or
+  minimum range, zooming can continue, but there is a damping effect, and it will spring back to the
+  maximum or minimum zoom multiplier when released
+* [Dynamic scaling range](#minscale-mediumscale-maxscale). Default based on
+  containerSize, contentSize, contentOriginSize dynamically calculate mediumScale and maxScale
+* [Support for animation](#animation动画). Both the scale() method and double-click scaling support
+  animation
+* [All ContentScale and Alignment are supported](#contentscale-alignment)，ZoomImageView also
+  supports ContentScale and Alignment
+* [Support for disabling gestures](#disabled-gestures禁用手势). Supports disabling gestures such as
+  double-click scale, two-finger scale, one-finger scale, and drag
+* Only when the containerSize changes (dragging to resize the window on the desktop), ZoomImage will
+  keep the scale factor and content visible center point unchanged
+* When the page is rebuilt (the screen rotates, the app is recycled in the background), the scale
+  and offset are reset
+* [Open the Modifier.zoom() function](#modifierzoom--), which can be applied to any component
+* [Supports reading all scaling-related information](#get-relevant-information读取相关信息)
+  <br>-----------</br>
+* 支持[单指长按后上下滑动缩放](#one-finger-scale单指缩放)
+  、双指捏合缩放、[双击循环缩放](#double-click-scale双击缩放)以及通过 [scale()](#scale--) 方法缩放到指定的倍数
+* [支持橡皮筋效果](#rubber-band-scale橡皮筋效果).
+  手势连续缩放时（单指/双指缩放）超过最大或最小范围时可以继续缩放，但有阻尼效果，松手后会回弹到最大或最小缩放倍数
+* [动态缩放范围](#minscale-mediumscale-maxscale). 默认根据
+  containerSize、contentSize、contentOriginSize 动态计算 mediumScale 和 maxScale
+* [支持动画](#animation动画). scale() 方法和双击缩放均支持动画
+* [支持全部的 ContentScale, 和 Alignment](#contentscale-alignment)，ZoomImageView 也支持 ContentScale
+  和 Alignment
+* [支持禁用手势](#disabled-gestures禁用手势). 支持分别禁用双击缩放、双指缩放、单指缩放、拖动等手势
+* 仅 containerSize 改变时（桌面平台上拖动调整窗口大小），ZoomImage 会保持缩放比例和 content 可见中心点不变
+* 页面重建时（屏幕旋转、App 在后台被回收）会重置缩放和偏移
+* [开放 Modifier.zoom() 函数](#modifierzoom--)，可以应用在任意组件上
+* [支持读取全部的缩放相关信息](#get-relevant-information读取相关信息)
 
-### contentScale, alignment
+### ContentScale, Alignment
 
 ZoomImage supports all [ContentScale] and [Alignment], and because the compose version and the view
 version use the same algorithm, view The version of the component supports [ContentScale]
@@ -345,15 +373,16 @@ Button(
 }
 ```
 
-### Scale damping/缩放阻尼
+### Rubber Band Scale/橡皮筋效果
 
-ZoomImage will limit the scale factor between minScale and maxScale, and if it exceeds this
-range, it will have a rubber band-like damping effect, which will spring back when released
-minScale or maxScale, this feature is enabled by default, and you can turn it off via the
-rubberBandScale property
+ZoomImage will limit the scale multiplier between `minScale` and `maxScale`, if it exceeds this
+range when scaling with one or two fingers, you can continue to scale, but there will be a damping
+effect similar to a rubber band, and it will spring back to `minScale` or `maxScale` after letting
+go, this function is turned on by default, you can turn it off through the `rubberBandScale`property
 <br>-----------</br>
-ZoomImage 会将缩放倍数限制在 minScale 和 maxScale 之间，如果超过了这个范围就会有类似橡皮筋的阻尼效果，松手后会回弹到
-minScale 或 maxScale，此功能默认开启，你可通过 rubberBandScale 属性关闭它
+ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指或双指缩放时如果超过了这个范围依然可以继续缩放，
+但会有类似橡皮筋的阻尼效果，松手后会回弹到 `minScale`或 `maxScale`
+，此功能默认开启，你可通过 `rubberBandScale` 属性关闭它
 
 example/示例：
 
@@ -471,7 +500,7 @@ Box(
 }
 ```
 
-### Get relevant information/获取相关信息
+### Get relevant information/读取相关信息
 
 ```kotlin
 // compose
