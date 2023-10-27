@@ -36,12 +36,12 @@ kotlin {
             dependencies {
                 api(project(":zoomimage-compose"))
                 api(compose.foundation)
+                api(compose.material3)
                 api(compose.ui)
                 api(compose.preview)
                 api(compose.uiTooling.replace("ui-tooling", "ui-util"))
                 api(libs.telephoto)
-                implementation(compose.material3)
-                implementation(libs.panpf.tools4j)
+                api(libs.panpf.tools4j)
             }
         }
         named("commonTest") {
