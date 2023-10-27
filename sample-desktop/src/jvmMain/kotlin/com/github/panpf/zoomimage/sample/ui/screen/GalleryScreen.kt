@@ -77,7 +77,7 @@ fun GalleryScreen(navigation: Navigation) {
     Box(Modifier.fillMaxSize()) {
         val state: LazyGridState = rememberLazyGridState()
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Adaptive(150.dp),
             horizontalArrangement = divider,
             verticalArrangement = divider,
             modifier = Modifier.fillMaxSize(),
