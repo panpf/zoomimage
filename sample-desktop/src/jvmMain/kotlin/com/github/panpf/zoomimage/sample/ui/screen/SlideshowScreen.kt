@@ -5,14 +5,23 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.sample.ui.model.ImageResource
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.screen.base.ToolbarScreen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -30,6 +40,7 @@ fun SlideshowScreen(
     initialIndex: Int
 ) {
     ToolbarScreen(navigation) {
+        val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState(initialPage = initialIndex) {
             imageResources.size
         }
@@ -40,6 +51,39 @@ fun SlideshowScreen(
         ) { index ->
             ViewerScreen(navigation, imageResources[index])
         }
+
+        IconButton(
+            onClick = {
+                coroutineScope.launch {
+                    val nextPageIndex =
+                        (pagerState.currentPage - 1).let { if (it < 0) pagerState.pageCount + it else it }
+                    pagerState.animateScrollToPage(nextPageIndex)
+                }
+            },
+            modifier = Modifier
+                .padding(20.dp)
+                .size(50.dp)
+                .background(Color.Black.copy(0.5f), shape = CircleShape)
+                .align(Alignment.CenterStart)
+        ) {
+            Icon(Icons.Filled.ArrowBack, contentDescription = "Previous", tint = Color.White)
+        }
+        IconButton(
+            onClick = {
+                coroutineScope.launch {
+                    val nextPageIndex = (pagerState.currentPage + 1) % pagerState.pageCount
+                    pagerState.animateScrollToPage(nextPageIndex)
+                }
+            },
+            modifier = Modifier
+                .padding(20.dp)
+                .size(50.dp)
+                .background(Color.Black.copy(0.5f), shape = CircleShape)
+                .align(Alignment.CenterEnd)
+        ) {
+            Icon(Icons.Filled.ArrowForward, contentDescription = "Next", tint = Color.White)
+        }
+
         PageNumber(
             number = pagerState.currentPage + 1,
             total = imageResources.size,

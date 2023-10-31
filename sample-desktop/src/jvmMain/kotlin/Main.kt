@@ -10,14 +10,14 @@ fun main() = application {
     Window(
         title = "ZoomImage",
         onCloseRequest = ::exitApplication,
-        onKeyEvent = {
-//            if (it.type == KeyEventType.KeyUp) {  // invalid
-//                when (it.key) {
-//                    Key.Escape -> navigation.back()
-//                }
-//            }
-            false
-        }
+//        onKeyEvent = {
+////            if (it.type == KeyEventType.KeyUp) {  // invalid
+////                when (it.key) {
+////                    Key.Escape -> navigation.back()
+////                }
+////            }
+//            false
+//        }
     ) {
         MaterialTheme {
             NavigationContainer(Page.Main)
