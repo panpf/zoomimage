@@ -35,6 +35,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 * `Read Mode`. When a long image is displayed in reading mode, the initial state automatically fills
   the screen, and the user can immediately start reading the image content, eliminating the need for
   the user to double-click to zoom in
+* `Exif`. Support reading Exif Orientation information and automatically rotating images
 * `Image Loader`. Provide support for image loaders such as sketch, coil, glide, picasso, etc., and
   can also customize support for more image loaders
 * `Compose Multiplatform`. Support for Compose Multiplatform, which can be used on Android, macOS,
@@ -51,6 +52,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 * `单指缩放`. 按住屏幕触发长按后上下滑动可缩放图像
 * `滚动条`. 支持显示水平和垂直滚动条，明确当前滚动位置
 * `阅读模式`. 阅读模式下显示长图时初始状态会自动充满屏幕，用户可立即开始阅读图片内容，省去用户双击放大的操作
+* `Exif`. 支持读取 Exif Orientation 信息并自动旋转图片
 * `图片加载器`. 提供对 sketch、coil、glide、picasso 等图片加载器的支持，也可以自定义支持更多图片加载器
 * `Compose Multiplatform`. 支持 Compose Multiplatform，可在 Android、macOS、Windows、Linux 等平台使用
 
