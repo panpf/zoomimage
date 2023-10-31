@@ -50,7 +50,8 @@ class AndroidTileDecoder constructor(
     private val logger = logger.newLogger(module = "TileDecoder")
     private var destroyed = false
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
-    private val addedImageSize = exifOrientation?.addToSize(imageInfo.size) ?: imageInfo.size
+    private val addedImageSize =
+        exifOrientation?.applyToSize(imageInfo.size, reverse = true) ?: imageInfo.size
 
     @WorkerThread
     override fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
@@ -84,7 +85,7 @@ class AndroidTileDecoder constructor(
     ): Bitmap? {
         requiredWorkThread()
         val imageSize = imageInfo.size
-        val newSrcRect = exifOrientation?.addToRect(srcRect, imageSize) ?: srcRect
+        val newSrcRect = exifOrientation?.applyToRect(srcRect, imageSize, reverse = true) ?: srcRect
         val decodeOptions = BitmapFactory.Options().apply {
             this.inSampleSize = inSampleSize
         }
@@ -178,7 +179,7 @@ class AndroidTileDecoder constructor(
     private fun applyExifOrientation(tileBitmap: TileBitmap): TileBitmap {
         requiredWorkThread()
         val newBitmap = exifOrientation
-            ?.applyToTileBitmap(tileBitmapReuseHelper, tileBitmap)
+            ?.applyToTileBitmap(tileBitmap, reverse = false, tileBitmapReuseHelper)
             ?: tileBitmap
         return if (newBitmap !== tileBitmap) {
             if (tileBitmapReuseHelper != null) {

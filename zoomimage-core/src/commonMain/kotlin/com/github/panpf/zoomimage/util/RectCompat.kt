@@ -449,3 +449,25 @@ fun RectCompat.reverseRotateInSpace(spaceSize: SizeCompat, rotation: Int): RectC
     val reverseRotation = (360 - rotation) % 360
     return rotateInSpace(rotatedSpaceSize, reverseRotation)
 }
+
+/**
+ * Flip this rect horizontally or vertically within a given container
+ */
+// todo test
+fun RectCompat.flip(spaceSize: SizeCompat, horizontal: Boolean = true): RectCompat {
+    return if (horizontal) {
+        RectCompat(
+            left = spaceSize.width - right,
+            top = top,
+            right = spaceSize.width - left,
+            bottom = bottom
+        )
+    } else {
+        RectCompat(
+            left = left,
+            top = spaceSize.height - bottom,
+            right = right,
+            bottom = spaceSize.height - top
+        )
+    }
+}

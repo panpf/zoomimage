@@ -21,6 +21,8 @@ import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
+import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.DefaultAndroidTileBitmap
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -78,8 +80,11 @@ class ExifOrientationTestFileHelper(
         sourceBitmap: Bitmap,
         orientation: Int
     ) {
+        val tileBitmap = DefaultAndroidTileBitmap(sourceBitmap)
         val newBitmap =
-            AndroidExifOrientation(orientation).addToBitmap(sourceBitmap) ?: sourceBitmap
+            AndroidExifOrientation(orientation)
+                .applyToTileBitmap(tileBitmap, reverse = true)
+                .let { it as AndroidTileBitmap }.bitmap!!
         file.parentFile?.mkdirs()
         file.createNewFile()
         FileOutputStream(file).use {

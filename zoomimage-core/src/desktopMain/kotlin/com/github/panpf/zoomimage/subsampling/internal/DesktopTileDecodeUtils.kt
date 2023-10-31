@@ -1,6 +1,9 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import androidx.annotation.WorkerThread
+import com.drew.imaging.ImageMetadataReader
+import com.github.panpf.zoomimage.subsampling.DesktopExifOrientation
+import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import java.io.InputStream
@@ -8,6 +11,29 @@ import javax.imageio.ImageIO
 import javax.imageio.ImageReader
 import javax.imageio.stream.ImageInputStream
 
+
+@WorkerThread
+@Suppress("FoldInitializerAndIfToElvis")
+internal fun ImageSource.readExifOrientation(): Result<ExifOrientation> {
+    val inputStreamResult = openInputStream()
+    if (inputStreamResult.isFailure) {
+        return Result.failure(inputStreamResult.exceptionOrNull()!!)
+    }
+    val inputStream = inputStreamResult.getOrNull()!!
+    val metadata = inputStream.use { ImageMetadataReader.readMetadata(it) }
+    val directory = metadata.directories
+        .find { it.tags.find { tag -> tag.tagName == "Orientation" } != null }
+    if (directory == null) {
+        return Result.success(DesktopExifOrientation(ExifOrientation.ORIENTATION_UNDEFINED))
+    }
+    val orientationTag = directory
+        .tags?.find { it.tagName == "Orientation" }
+    if (orientationTag == null) {
+        return Result.success(DesktopExifOrientation(ExifOrientation.ORIENTATION_UNDEFINED))
+    }
+    val exifOrientationInt = directory.getInt(orientationTag.tagType)
+    return Result.success(DesktopExifOrientation(exifOrientationInt))
+}
 
 @WorkerThread
 internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
@@ -32,3 +58,5 @@ internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
         inputStream.close()
     }
 }
+
+internal fun isSupportSourceRegion(mimeType: String): Boolean = !"image/gif".equals(mimeType, true)

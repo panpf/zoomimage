@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.github.panpf.zoomimage.subsampling
 
 import androidx.annotation.WorkerThread
@@ -11,13 +27,17 @@ import java.util.LinkedList
 import javax.imageio.ImageIO
 import javax.imageio.ImageReader
 
+/**
+ * Decode the tile bitmap of the image
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.AndroidTileDecoderTest]
+ */
 class DesktopTileDecoder constructor(
     logger: Logger,
     private val imageSource: ImageSource,
-    override val imageInfo: ImageInfo
+    override val imageInfo: ImageInfo,
+    override val exifOrientation: ExifOrientation?
 ) : TileDecoder {
-
-    override val exifOrientation: ExifOrientation? = null
 
     private val logger = logger.newLogger(module = "TileDecoder")
     private var destroyed = false
@@ -55,7 +75,7 @@ class DesktopTileDecoder constructor(
     ): BufferedImage? {
 //        requiredWorkThread()
         val imageSize = imageInfo.size
-        val newSrcRect = exifOrientation?.addToRect(srcRect, imageSize) ?: srcRect
+        val newSrcRect = exifOrientation?.applyToRect(srcRect, imageSize, reverse = true) ?: srcRect
         val readParam = imageReader.defaultReadParam.apply {
             sourceRegion = Rectangle(
                 /* x = */ newSrcRect.left,
@@ -64,13 +84,6 @@ class DesktopTileDecoder constructor(
                 /* height = */ newSrcRect.height
             )
             setSourceSubsampling(inSampleSize, inSampleSize, 0, 0)
-            // todo When the inSampleSize is greater than 1, there is a problem with the color of the decoded picture, similar to zebra stripe, with one line of light color and one line of dark color
-//            setDestinationType(ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_BGR))
-//            destination = BufferedImage(
-//                /* width = */ newSrcRect.width / inSampleSize,
-//                /* height = */ newSrcRect.height / inSampleSize,
-//                /* imageType = */ BufferedImage.TYPE_INT_ARGB
-//            )
         }
         return imageReader.read(0, readParam)
     }
@@ -90,8 +103,7 @@ class DesktopTileDecoder constructor(
             val inputStream = imageSource.openInputStream().getOrNull()?.buffered()
             val imageStream = ImageIO.createImageInputStream(inputStream)
             imageReader = ImageIO.getImageReaders(imageStream).next().apply {
-//                setInput(imageStream, true, true)
-                setInput(imageStream)
+                input = imageStream
             }
         }
         if (imageReader == null) {
@@ -115,7 +127,7 @@ class DesktopTileDecoder constructor(
     private fun applyExifOrientation(tileBitmap: TileBitmap): TileBitmap {
 //        requiredWorkThread()
         val newBitmap = exifOrientation
-            ?.applyToTileBitmap(null, tileBitmap)
+            ?.applyToTileBitmap(tileBitmap, reverse = false, null)
             ?: tileBitmap
         return if (newBitmap !== tileBitmap) {
 //            if (tileBitmapReuseHelper != null) {

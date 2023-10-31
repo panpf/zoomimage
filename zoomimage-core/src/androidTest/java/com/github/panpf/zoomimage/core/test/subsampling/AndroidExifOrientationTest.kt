@@ -9,6 +9,8 @@ import com.github.panpf.zoomimage.core.test.internal.cornerC
 import com.github.panpf.zoomimage.core.test.internal.cornerD
 import com.github.panpf.zoomimage.core.test.internal.corners
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
+import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.DefaultAndroidTileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
@@ -25,6 +27,48 @@ class AndroidExifOrientationTest {
         AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270).apply {
             Assert.assertEquals(ExifInterface.ORIENTATION_ROTATE_270, exifOrientation)
         }
+    }
+
+    @Test
+    fun testName() {
+        Assert.assertEquals(
+            "ROTATE_90",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90).name()
+        )
+        Assert.assertEquals(
+            "TRANSPOSE",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE).name()
+        )
+        Assert.assertEquals(
+            "ROTATE_180",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180).name()
+        )
+        Assert.assertEquals(
+            "FLIP_VERTICAL",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL).name()
+        )
+        Assert.assertEquals(
+            "ROTATE_270",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270).name()
+        )
+        Assert.assertEquals(
+            "TRANSVERSE",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE).name()
+        )
+        Assert.assertEquals(
+            "FLIP_HORIZONTAL",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL).name()
+        )
+        Assert.assertEquals(
+            "UNDEFINED",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_UNDEFINED).name()
+        )
+        Assert.assertEquals(
+            "NORMAL",
+            AndroidExifOrientation(ExifInterface.ORIENTATION_NORMAL).name()
+        )
+        Assert.assertEquals("-1", AndroidExifOrientation(-1).name())
+        Assert.assertEquals("100", AndroidExifOrientation(100).name())
     }
 
     @Test
@@ -85,6 +129,59 @@ class AndroidExifOrientationTest {
     }
 
     @Test
+    fun testApplyToSize() {
+        val size = IntSizeCompat(100, 50)
+        listOf(
+            ExifInterface.ORIENTATION_ROTATE_90 to IntSizeCompat(50, 100),
+            ExifInterface.ORIENTATION_TRANSVERSE to IntSizeCompat(50, 100),
+            ExifInterface.ORIENTATION_ROTATE_180 to IntSizeCompat(100, 50),
+            ExifInterface.ORIENTATION_FLIP_VERTICAL to IntSizeCompat(100, 50),
+            ExifInterface.ORIENTATION_ROTATE_270 to IntSizeCompat(50, 100),
+            ExifInterface.ORIENTATION_TRANSPOSE to IntSizeCompat(50, 100),
+            ExifInterface.ORIENTATION_UNDEFINED to IntSizeCompat(100, 50),
+            ExifInterface.ORIENTATION_NORMAL to IntSizeCompat(100, 50),
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL to IntSizeCompat(100, 50),
+            -1 to IntSizeCompat(100, 50),
+            100 to IntSizeCompat(100, 50),
+        ).forEach { (exifOrientationInt, exceptedSize) ->
+            val exifOrientation = AndroidExifOrientation(exifOrientationInt)
+            val message = "exifOrientationInt=${exifOrientation.name()}, exceptedSize=$exceptedSize"
+            val appliedSize = exifOrientation.applyToSize(size)
+            Assert.assertEquals(message, exceptedSize, appliedSize)
+            val reverseAppliedSize = exifOrientation.applyToSize(appliedSize, reverse = true)
+            Assert.assertEquals(message, size, reverseAppliedSize)
+        }
+    }
+
+    @Test
+    fun testApplyToRect() {
+        val srcRect = IntRectCompat(40, 10, 50, 30)
+        val imageSize = IntSizeCompat(100, 50)
+        listOf(
+            ExifInterface.ORIENTATION_ROTATE_90 to IntRectCompat(20, 40, 40, 50),
+            ExifInterface.ORIENTATION_TRANSVERSE to IntRectCompat(20, 50, 40, 60),
+            ExifInterface.ORIENTATION_ROTATE_180 to IntRectCompat(50, 20, 60, 40),
+            ExifInterface.ORIENTATION_FLIP_VERTICAL to IntRectCompat(40, 20, 50, 40),
+            ExifInterface.ORIENTATION_ROTATE_270 to IntRectCompat(10, 50, 30, 60),
+            ExifInterface.ORIENTATION_TRANSPOSE to IntRectCompat(10, 40, 30, 50),
+            ExifInterface.ORIENTATION_UNDEFINED to IntRectCompat(40, 10, 50, 30),
+            ExifInterface.ORIENTATION_NORMAL to IntRectCompat(40, 10, 50, 30),
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL to IntRectCompat(50, 10, 60, 30),
+            -1 to IntRectCompat(40, 10, 50, 30),
+            100 to IntRectCompat(40, 10, 50, 30),
+        ).forEach { (exifOrientationInt, exceptedRect) ->
+            val exifOrientation = AndroidExifOrientation(exifOrientationInt)
+            val message = "exifOrientationInt=${exifOrientation.name()}, exceptedRect=$exceptedRect"
+            val appliedRect = exifOrientation.applyToRect(srcRect, imageSize)
+            val appliedImageSize = exifOrientation.applyToSize(imageSize)
+            Assert.assertEquals(message, exceptedRect, appliedRect)
+            val reverseAppliedRect =
+                exifOrientation.applyToRect(appliedRect, appliedImageSize, reverse = true)
+            Assert.assertEquals(message, srcRect, reverseAppliedRect)
+        }
+    }
+
+    @Test
     fun testApplyToBitmap() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val inBitmap = context.assets.open("sample_dog.jpg").use {
@@ -96,427 +193,50 @@ class AndroidExifOrientationTest {
                     && inBitmap.cornerA != inBitmap.cornerD
         )
 
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90)
-            .applyToBitmap(inBitmap)!!.let { outBitmap ->
-                Assert.assertEquals(
+        listOf(
+            ExifInterface.ORIENTATION_ROTATE_90 to true,
+            ExifInterface.ORIENTATION_TRANSVERSE to true,
+            ExifInterface.ORIENTATION_ROTATE_180 to true,
+            ExifInterface.ORIENTATION_FLIP_VERTICAL to true,
+            ExifInterface.ORIENTATION_ROTATE_270 to true,
+            ExifInterface.ORIENTATION_TRANSPOSE to true,
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL to true,
+            ExifInterface.ORIENTATION_NORMAL to false,
+            ExifInterface.ORIENTATION_UNDEFINED to false,
+            -1 to false,
+            100 to false,
+        ).forEach { (exifOrientationInt, change) ->
+            val exifOrientation = AndroidExifOrientation(exifOrientationInt)
+            val message = "exifOrientationInt=${exifOrientation.name()}"
+
+            val appliedBitmap = exifOrientation.applyToTileBitmap(
+                DefaultAndroidTileBitmap(inBitmap),
+                reverse = false
+            ).let { it as AndroidTileBitmap }.bitmap!!
+            if (change) {
+                Assert.assertNotEquals(
+                    message,
                     inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerD, cornerA, cornerB, cornerC) }.toString(),
+                    appliedBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
+                )
+
+                val reversedBitmap = exifOrientation.applyToTileBitmap(
+                    DefaultAndroidTileBitmap(appliedBitmap),
+                    reverse = true
+                ).let { it as AndroidTileBitmap }.bitmap!!
+                Assert.assertEquals(
+                    message,
+                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
+                    reversedBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }
+                        .toString(),
+                )
+            } else {
+                Assert.assertEquals(
+                    message,
+                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
+                    appliedBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
                 )
             }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE)
-            .applyToBitmap(inBitmap)!!.let { outBitmap ->
-                // Flip horizontally and apply ORIENTATION_ROTATE_90
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerC, cornerB, cornerA, cornerD) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180)
-            .applyToBitmap(inBitmap)!!.let { outBitmap ->
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerC, cornerD, cornerA, cornerB) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL)
-            .applyToBitmap(inBitmap)!!.let { outBitmap ->
-                // Flip horizontally and apply ORIENTATION_ROTATE_180
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerD, cornerC, cornerB, cornerA) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270)
-            .applyToBitmap(inBitmap)!!.let { outBitmap ->
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerB, cornerC, cornerD, cornerA) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE)
-            .applyToBitmap(inBitmap)!!.let { outBitmap ->
-                // Flip horizontally and apply ORIENTATION_ROTATE_270
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerA, cornerD, cornerC, cornerB) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL)
-            .applyToBitmap(inBitmap)!!.let { outBitmap ->
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerB, cornerA, cornerD, cornerC) }.toString(),
-                )
-            }
-        Assert.assertNull(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_UNDEFINED).applyToBitmap(inBitmap)
-        )
-        Assert.assertNull(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_NORMAL).applyToBitmap(inBitmap)
-        )
-        Assert.assertNull(
-            AndroidExifOrientation(-1).applyToBitmap(inBitmap)
-        )
-        Assert.assertNull(
-            AndroidExifOrientation(100).applyToBitmap(inBitmap)
-        )
-    }
-
-    @Test
-    fun testAddToBitmap() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val inBitmap = context.assets.open("sample_dog.jpg").use {
-            BitmapFactory.decodeStream(it)
         }
-        Assert.assertTrue(
-            inBitmap.cornerA != inBitmap.cornerB
-                    && inBitmap.cornerA != inBitmap.cornerC
-                    && inBitmap.cornerA != inBitmap.cornerD
-        )
-
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90)
-            .addToBitmap(inBitmap)!!.let { outBitmap ->
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerB, cornerC, cornerD, cornerA) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE)
-            .addToBitmap(inBitmap)!!.let { outBitmap ->
-                // Flip horizontally based on ORIENTATION_ROTATE_90
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerC, cornerB, cornerA, cornerD) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180)
-            .addToBitmap(inBitmap)!!.let { outBitmap ->
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerC, cornerD, cornerA, cornerB) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL)
-            .addToBitmap(inBitmap)!!.let { outBitmap ->
-                // Flip horizontally based on ORIENTATION_ROTATE_180
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerD, cornerC, cornerB, cornerA) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270)
-            .addToBitmap(inBitmap)!!.let { outBitmap ->
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerD, cornerA, cornerB, cornerC) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE)
-            .addToBitmap(inBitmap)!!.let { outBitmap ->
-                // Flip horizontally based on ORIENTATION_ROTATE_270
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerA, cornerD, cornerC, cornerB) }.toString(),
-                )
-            }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL)
-            .addToBitmap(inBitmap)!!.let { outBitmap ->
-                Assert.assertEquals(
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    inBitmap.corners { listOf(cornerB, cornerA, cornerD, cornerC) }.toString(),
-                )
-            }
-        Assert.assertNull(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_UNDEFINED)
-                .addToBitmap(inBitmap)
-        )
-        Assert.assertNull(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_NORMAL)
-                .addToBitmap(inBitmap)
-        )
-        Assert.assertNull(
-            AndroidExifOrientation(-1).addToBitmap(inBitmap)
-        )
-        Assert.assertNull(
-            AndroidExifOrientation(100).addToBitmap(inBitmap)
-        )
-    }
-
-    @Test
-    fun testAddAndApplyToBitmap() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val inBitmap = context.assets.open("sample_dog.jpg").use {
-            BitmapFactory.decodeStream(it)
-        }
-        Assert.assertTrue(
-            inBitmap.cornerA != inBitmap.cornerB
-                    && inBitmap.cornerA != inBitmap.cornerC
-                    && inBitmap.cornerA != inBitmap.cornerD
-        )
-
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90).applyToBitmap(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90)
-                .addToBitmap(inBitmap)!!,
-        )!!.let { outBitmap ->
-            Assert.assertEquals(
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-            )
-        }
-
-        AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE).applyToBitmap(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE)
-                .addToBitmap(inBitmap)!!
-        )!!.let { outBitmap ->
-            Assert.assertEquals(
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-            )
-        }
-
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180).applyToBitmap(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180)
-                .addToBitmap(inBitmap)!!
-        )!!.let { outBitmap ->
-            Assert.assertEquals(
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-            )
-        }
-
-        AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL).applyToBitmap(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL)
-                .addToBitmap(inBitmap)!!
-        )!!.let { outBitmap ->
-            Assert.assertEquals(
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-            )
-        }
-
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270).applyToBitmap(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270)
-                .addToBitmap(inBitmap)!!
-        )!!.let { outBitmap ->
-            Assert.assertEquals(
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-            )
-        }
-
-        AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE).applyToBitmap(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE)
-                .addToBitmap(inBitmap)!!
-        )!!.let { outBitmap ->
-            Assert.assertEquals(
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-            )
-        }
-
-        AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL).applyToBitmap(
-            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL)
-                .addToBitmap(inBitmap)!!
-        )!!.let { outBitmap ->
-            Assert.assertEquals(
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                outBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-            )
-        }
-    }
-
-    @Test
-    fun testApplyToSize() {
-        Assert.assertEquals(
-            IntSizeCompat(50, 100),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(50, 100),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(100, 50),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(100, 50),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(50, 100),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(50, 100),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(100, 50),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_UNDEFINED)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(100, 50),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_NORMAL)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(100, 50),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL)
-                .applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(100, 50),
-            AndroidExifOrientation(-1).applyToSize(IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntSizeCompat(100, 50),
-            AndroidExifOrientation(100).applyToSize(IntSizeCompat(100, 50))
-        )
-    }
-
-    @Test
-    fun testAddToSize() {
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90).apply {
-            Assert.assertEquals(IntSizeCompat(50, 100), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE).apply {
-            Assert.assertEquals(IntSizeCompat(50, 100), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180).apply {
-            Assert.assertEquals(IntSizeCompat(100, 50), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL).apply {
-            Assert.assertEquals(IntSizeCompat(100, 50), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270).apply {
-            Assert.assertEquals(IntSizeCompat(50, 100), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE).apply {
-            Assert.assertEquals(IntSizeCompat(50, 100), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_UNDEFINED).apply {
-            Assert.assertEquals(IntSizeCompat(100, 50), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_NORMAL).apply {
-            Assert.assertEquals(IntSizeCompat(100, 50), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL).apply {
-            Assert.assertEquals(IntSizeCompat(100, 50), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(-1).apply {
-            Assert.assertEquals(IntSizeCompat(100, 50), addToSize(IntSizeCompat(100, 50)))
-        }
-        AndroidExifOrientation(100).apply {
-            Assert.assertEquals(IntSizeCompat(100, 50), addToSize(IntSizeCompat(100, 50)))
-        }
-    }
-
-    @Test
-    fun testAddToRect() {
-        Assert.assertEquals(
-            IntRectCompat(10, 50, 30, 60),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(20, 50, 40, 60),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(50, 20, 60, 40),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(40, 20, 50, 40),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(20, 40, 40, 50),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(10, 40, 30, 50),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(50, 10, 60, 30),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(40, 10, 50, 30),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_UNDEFINED)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(40, 10, 50, 30),
-            AndroidExifOrientation(ExifInterface.ORIENTATION_NORMAL)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(40, 10, 50, 30),
-            AndroidExifOrientation(-1)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-        Assert.assertEquals(
-            IntRectCompat(40, 10, 50, 30),
-            AndroidExifOrientation(100)
-                .addToRect(IntRectCompat(40, 10, 50, 30), IntSizeCompat(100, 50))
-        )
-    }
-
-    @Test
-    fun testExifOrientationName() {
-        Assert.assertEquals("ROTATE_90", AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_90).name())
-        Assert.assertEquals("TRANSPOSE", AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSPOSE).name())
-        Assert.assertEquals("ROTATE_180", AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_180).name())
-        Assert.assertEquals(
-            "FLIP_VERTICAL",
-            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_VERTICAL).name()
-        )
-        Assert.assertEquals("ROTATE_270", AndroidExifOrientation(ExifInterface.ORIENTATION_ROTATE_270).name())
-        Assert.assertEquals("TRANSVERSE", AndroidExifOrientation(ExifInterface.ORIENTATION_TRANSVERSE).name())
-        Assert.assertEquals(
-            "FLIP_HORIZONTAL",
-            AndroidExifOrientation(ExifInterface.ORIENTATION_FLIP_HORIZONTAL).name()
-        )
-        Assert.assertEquals("UNDEFINED", AndroidExifOrientation(ExifInterface.ORIENTATION_UNDEFINED).name())
-        Assert.assertEquals("NORMAL", AndroidExifOrientation(ExifInterface.ORIENTATION_NORMAL).name())
-        Assert.assertEquals("-1", AndroidExifOrientation(-1).name())
-        Assert.assertEquals("100", AndroidExifOrientation(100).name())
     }
 }
