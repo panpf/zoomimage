@@ -41,6 +41,7 @@ import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.internal.BaseTransformHelper
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -1226,8 +1227,12 @@ fun contentPointToTouchPoint(
 }
 
 fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
-    return one.scaleX.format(2) == two.scaleX.format(2)
-            && one.scaleY.format(2) == two.scaleY.format(2)
-            && one.offsetX.format(2) == two.offsetX.format(2)
-            && one.offsetY.format(2) == two.offsetY.format(2)
+    return one.scaleX.format(2).aboutEquals(two.scaleX.format(2), delta = 0.1f)
+            && one.scaleY.format(2).aboutEquals(two.scaleY.format(2), delta = 0.1f)
+            && one.offsetX.format(2).aboutEquals(two.offsetX.format(2), delta = 1f)
+            && one.offsetY.format(2).aboutEquals(two.offsetY.format(2), delta = 1f)
+}
+
+private fun Float.aboutEquals(other: Float, delta: Float): Boolean {
+    return abs(this - other) <= delta
 }
