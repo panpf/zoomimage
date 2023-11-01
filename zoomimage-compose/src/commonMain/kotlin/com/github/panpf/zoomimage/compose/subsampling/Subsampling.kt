@@ -28,25 +28,27 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
-import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.compose.drawTile
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.compose.drawTile
+import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.util.Logger
 import kotlin.math.ceil
 import kotlin.math.floor
 
 fun Modifier.subsampling(
     logger: Logger,
+    zoomableState: ZoomableState,
     subsamplingState: SubsamplingState,
 ): Modifier = composed {
     val density = LocalDensity.current
     this.drawWithContent {
         drawContent()
         val imageInfo = subsamplingState.imageInfo ?: return@drawWithContent
-        val contentSize = subsamplingState.contentSize
+        val contentSize = zoomableState.contentSize
             .takeIf { !it.isEmpty() } ?: return@drawWithContent
         val foregroundTiles = subsamplingState.foregroundTiles
             .takeIf { it.isNotEmpty() } ?: return@drawWithContent

@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.core.test.subsampling.internal
 import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.internal.calculateGridSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
-import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.closestPowerOfTwo
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
@@ -21,19 +20,6 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 class TileManageUtilsTest {
-
-    @Test
-    fun testCalculatePreferredTileSize() {
-        Assert.assertEquals(
-            /* expected = */ IntSizeCompat(1080, 1920) / 2,
-            /* actual = */ calculatePreferredTileSize(IntSizeCompat(1080, 1920))
-        )
-
-        Assert.assertEquals(
-            /* expected = */ IntSizeCompat(1000, 2000) / 2,
-            /* actual = */ calculatePreferredTileSize(IntSizeCompat(1000, 2000))
-        )
-    }
 
     @Test
     fun testClosestPowerOfTwo() {
@@ -332,11 +318,21 @@ class TileManageUtilsTest {
 
         Assert.assertEquals(
             IntRectCompat.Zero,
-            calculateImageLoadRect(IntSizeCompat.Zero, contentSize, preferredTileSize, contentVisibleRect)
+            calculateImageLoadRect(
+                IntSizeCompat.Zero,
+                contentSize,
+                preferredTileSize,
+                contentVisibleRect
+            )
         )
         Assert.assertEquals(
             IntRectCompat.Zero,
-            calculateImageLoadRect(imageSize, IntSizeCompat.Zero, preferredTileSize, contentVisibleRect)
+            calculateImageLoadRect(
+                imageSize,
+                IntSizeCompat.Zero,
+                preferredTileSize,
+                contentVisibleRect
+            )
         )
         Assert.assertEquals(
             IntRectCompat.Zero,

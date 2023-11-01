@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.core.test.subsampling
 
+import com.github.panpf.zoomimage.subsampling.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.canUseSubsamplingByAspectRatio
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.toIntroString
@@ -57,5 +58,18 @@ class TileUtilsTest {
         ).apply {
             Assert.assertEquals("[16:1:1x1,8:4:2x2,4:12:4x3,2:40:8x5,1:135:15x9]", toIntroString())
         }
+    }
+
+    @Test
+    fun testCalculatePreferredTileSize() {
+        Assert.assertEquals(
+            /* expected = */ IntSizeCompat(1080, 1920) / 2,
+            /* actual = */ calculatePreferredTileSize(IntSizeCompat(1080, 1920))
+        )
+
+        Assert.assertEquals(
+            /* expected = */ IntSizeCompat(1000, 2000) / 2,
+            /* actual = */ calculatePreferredTileSize(IntSizeCompat(1000, 2000))
+        )
     }
 }

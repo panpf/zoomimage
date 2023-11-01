@@ -205,7 +205,7 @@ fun CoilZoomAsyncImage(
     val modifier1 = modifier
         .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
         .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
-        .subsampling(state.logger, state.subsampling)
+        .subsampling(state.logger, state.zoomable, state.subsampling)
 
     val request = requestOf(model)
     val painter = rememberAsyncImagePainter(

@@ -12,9 +12,9 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.subsampling.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
-import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -258,16 +258,6 @@ class TileManagerTest {
             Assert.assertEquals(0, refreshTiles(scale = 6f))
             Thread.sleep(2000)
             Assert.assertTrue(foregroundTilesChangedList.all { it.all { tile -> tile.alpha == 255 } })
-        }
-    }
-
-    @Test
-    fun testPreferredTileSize() {
-        TileManagerHolder().useApply {
-            Assert.assertEquals(
-                /* expected = */ calculatePreferredTileSize(containerSize),
-                /* actual = */ tileManager.preferredTileSize
-            )
         }
     }
 
@@ -532,7 +522,7 @@ class TileManagerTest {
             tileBitmapReuseHelper = tileBitmapReuseHelper,
             imageSource = imageSource,
             imageInfo = imageInfo,
-            containerSize = containerSize,
+            preferredTileSize = preferredTileSize,
             contentSize = contentSize,
             onTileChanged = {
                 backgroundTilesChangedList.add(it.backgroundTiles)

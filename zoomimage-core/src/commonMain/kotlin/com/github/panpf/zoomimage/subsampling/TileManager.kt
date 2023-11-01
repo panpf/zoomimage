@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.subsampling
 
 import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
-import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -54,8 +53,8 @@ class TileManager constructor(
     private val tileBitmapReuseHelper: TileBitmapReuseHelper?,
     private val imageSource: ImageSource,
     private val imageInfo: ImageInfo,
-    containerSize: IntSizeCompat,
     private val contentSize: IntSizeCompat,
+    private val preferredTileSize: IntSizeCompat,
     private val onTileChanged: (tileManager: TileManager) -> Unit,
     private val onSampleSizeChanged: (tileManager: TileManager) -> Unit,
     private val onImageLoadRectChanged: (tileManager: TileManager) -> Unit,
@@ -97,11 +96,6 @@ class TileManager constructor(
      * The animation spec for tile animation
      */
     var tileAnimationSpec: TileAnimationSpec = TileAnimationSpec.Default
-
-    /**
-     * The preferred size of the tile
-     */
-    val preferredTileSize: IntSizeCompat = calculatePreferredTileSize(containerSize)
 
     /**
      * Tile Map with sample size from largest to smallest

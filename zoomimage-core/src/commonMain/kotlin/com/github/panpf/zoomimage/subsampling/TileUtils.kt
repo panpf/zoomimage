@@ -123,3 +123,12 @@ fun Map<Int, List<Tile>>.toIntroString(): String {
         "${sampleSize}:${tiles.size}:${gridSize.toShortString()}"
     }
 }
+
+/**
+ * Calculates the preferred size of the tile based on the container size, typically half the container size
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.TileUtilsTest.testCalculatePreferredTileSize]
+ */
+fun calculatePreferredTileSize(containerSize: IntSizeCompat): IntSizeCompat {
+    return containerSize / 2
+}

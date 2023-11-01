@@ -30,15 +30,6 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 /**
- * Calculates the preferred size of the tile based on the container size, typically half the container size
- *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculatePreferredTileSize]
- */
-internal fun calculatePreferredTileSize(containerSize: IntSizeCompat): IntSizeCompat {
-    return containerSize / 2
-}
-
-/**
  * Calculates the sample size of the subsampling when the specified scaling factor is calculated
  *
  * If the size of the thumbnail is the original image divided by 16, then when the scaling factor is from 1.0 to 17.9, the node that changes the sample size is [[1.0:16, 1.5:8, 2.9:4, 5.7:2, 11.1:1]]
@@ -109,7 +100,6 @@ internal fun calculateGridSize(
  *
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManageUtilsTest.testCalculateTileGridMap]
  */
-// todo Improve the calculation of the tile grid and no longer rely on containerSize, so that containerSize does not need to be reset when it changes
 internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
     preferredTileSize: IntSizeCompat,

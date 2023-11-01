@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.view.subsampling
 
 import android.view.View
-import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.createTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
@@ -34,6 +33,7 @@ import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPausedContinuousTransformType
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.subsampling.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -56,6 +56,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -77,21 +78,11 @@ class SubsamplingEngine constructor(
     private var tileBitmapReuseHelper =
         createTileBitmapReuseHelper(this.logger, tileBitmapReuseSpec)
     private var lastResetTileDecoderJob: Job? = null
-    private val _containerSizeState = MutableStateFlow(IntSizeCompat.Zero)
-    private val _contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
-    internal var imageKey: String? = null
-        private set
-    internal val refreshTilesFlow = MutableSharedFlow<String>()
+    private val refreshTilesFlow = MutableSharedFlow<String>()
+    private val preferredTileSizeState = MutableStateFlow(IntSizeCompat.Zero)
+    private val contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
 
-    /**
-     * The size of the container that holds the content, this is usually the size of the [ZoomImageView] component
-     */
-    val containerSizeState: StateFlow<IntSizeCompat> = _containerSizeState
-
-    /**
-     * The size of the content, this is usually the size of the thumbnail Drawable, setup by the [ZoomImageView] component
-     */
-    val contentSizeState: StateFlow<IntSizeCompat> = _contentSizeState
+    var imageKey: String? = null
 
 
     /* *********************************** Configurable properties ****************************** */
@@ -234,8 +225,8 @@ class SubsamplingEngine constructor(
         })
 
         coroutineScope.launch {
-            containerSizeState.collect {
-                resetTileManager("containerSizeChanged")
+            preferredTileSizeState.collect {
+                resetTileManager("preferredTileSizeChanged")
             }
         }
         coroutineScope.launch {
@@ -312,12 +303,26 @@ class SubsamplingEngine constructor(
             // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
             // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
             zoomableEngine.containerSizeState.debounce(80).collect {
-                _containerSizeState.value = it
+                val newTileSize = calculatePreferredTileSize(it)
+                val preferredTileSize = preferredTileSizeState.value
+                if (preferredTileSize.isEmpty()) {
+                    preferredTileSizeState.value = newTileSize
+                } else if (abs(newTileSize.width - preferredTileSize.width) >=
+                    // When the width changes by more than 1x, the preferredTileSize is recalculated to reduce the need to reset the TileManager
+                    preferredTileSizeState.value.width * (if (newTileSize.width > preferredTileSize.width) 1f else 0.5f)
+                ) {
+                    preferredTileSizeState.value = newTileSize
+                } else if (abs(newTileSize.height - preferredTileSize.height) >=
+                    preferredTileSize.height * (if (newTileSize.height > preferredTileSize.height) 1f else 0.5f)
+                ) {
+                    // When the height changes by more than 1x, the preferredTileSize is recalculated to reduce the need to reset the TileManager
+                    preferredTileSizeState.value = newTileSize
+                }
             }
         }
         coroutineScope.launch {
             zoomableEngine.contentSizeState.collect {
-                _contentSizeState.value = it
+                contentSizeState.value = it
             }
         }
 
@@ -441,14 +446,14 @@ class SubsamplingEngine constructor(
         val imageSource = imageSource
         val tileDecoder = tileDecoder
         val imageInfo = imageInfoState.value
-        val containerSize = containerSizeState.value
+        val preferredTileSize = preferredTileSizeState.value
         val contentSize = contentSizeState.value
-        if (imageSource == null || tileDecoder == null || imageInfo == null || containerSize.isEmpty() || contentSize.isEmpty()) {
+        if (imageSource == null || tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
             logger.d {
                 "resetTileManager:$caller. failed. " +
                         "imageSource=${imageSource}, " +
-                        "containerSize=${containerSize.toShortString()}, " +
                         "contentSize=${contentSize.toShortString()}, " +
+                        "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileDecoder=${tileDecoder}, " +
                         "'${imageKey}'"
             }
@@ -460,7 +465,7 @@ class SubsamplingEngine constructor(
             tileDecoder = tileDecoder,
             tileBitmapConvertor = null,
             imageSource = imageSource,
-            containerSize = containerSize,
+            preferredTileSize = preferredTileSize,
             contentSize = contentSize,
             tileBitmapCacheHelper = tileBitmapCacheHelper,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
@@ -486,9 +491,8 @@ class SubsamplingEngine constructor(
         }
         logger.d {
             "resetTileManager:$caller. success. " +
-                    "containerSize=${containerSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
-                    "preferredTileSize=${tileManager.preferredTileSize.toShortString()}, " +
+                    "preferredTileSize=${preferredTileSize.toShortString()}, " +
                     "tileGridMap=${tileManager.sortedTileGridMap.toIntroString()}. " +
                     "'${imageKey}'"
         }

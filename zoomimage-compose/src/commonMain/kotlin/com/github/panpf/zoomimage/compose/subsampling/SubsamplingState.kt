@@ -52,11 +52,11 @@ import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPausedContinuousTransformType
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.subsampling.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.toIntroString
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +68,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 
@@ -104,11 +105,11 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     private val tileBitmapReuseHelper =
         createTileBitmapReuseHelper(this.logger, tileBitmapReuseSpec)
     private val tileBitmapConvertor = createTileBitmapConvertor()
+    private val refreshTilesFlow = MutableSharedFlow<String>()
+    private var preferredTileSize: IntSize by mutableStateOf(IntSize.Zero)
+    private var contentSize: IntSize by mutableStateOf(IntSize.Zero)
 
     var imageKey: String? = null
-    internal var containerSize: IntSize by mutableStateOf(IntSize.Zero)
-    internal var contentSize: IntSize by mutableStateOf(IntSize.Zero)
-    internal val refreshTilesFlow = MutableSharedFlow<String>()
 
 
     /* *********************************** Configurable properties ****************************** */
@@ -262,8 +263,8 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     @Composable
     internal fun initial() {
         LaunchedEffect(Unit) {
-            snapshotFlow { containerSize }.collect {
-                resetTileManager("containerSizeChanged")
+            snapshotFlow { preferredTileSize }.collect {
+                resetTileManager("preferredTileSizeChanged")
             }
         }
         LaunchedEffect(Unit) {
@@ -320,7 +321,20 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
             // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
             snapshotFlow { zoomableState.containerSize }.debounce(80).collect {
-                containerSize = it
+                val newTileSize = calculatePreferredTileSize(it.toCompat())
+                if (preferredTileSize.isEmpty()) {
+                    preferredTileSize = newTileSize.toPlatform()
+                } else if (abs(newTileSize.width - preferredTileSize.width) >=
+                    // When the width changes by more than 1x, the preferredTileSize is recalculated to reduce the need to reset the TileManager
+                    preferredTileSize.width * (if (newTileSize.width > preferredTileSize.width) 1f else 0.5f)
+                ) {
+                    preferredTileSize = newTileSize.toPlatform()
+                } else if (abs(newTileSize.height - preferredTileSize.height) >=
+                    preferredTileSize.height * (if (newTileSize.height > preferredTileSize.height) 1f else 0.5f)
+                ) {
+                    // When the height changes by more than 1x, the preferredTileSize is recalculated to reduce the need to reset the TileManager
+                    preferredTileSize = newTileSize.toPlatform()
+                }
             }
         }
         LaunchedEffect(Unit) {
@@ -426,14 +440,14 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         val imageSource = imageSource
         val tileDecoder = tileDecoder
         val imageInfo = imageInfo
-        val containerSize = containerSize
         val contentSize = contentSize
-        if (imageSource == null || tileDecoder == null || imageInfo == null || containerSize.isEmpty() || contentSize.isEmpty()) {
+        val preferredTileSize = preferredTileSize
+        if (imageSource == null || tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
             logger.d {
                 "resetTileManager:$caller. failed. " +
                         "imageSource=${imageSource}, " +
-                        "containerSize=${containerSize.toShortString()}, " +
                         "contentSize=${contentSize.toShortString()}, " +
+                        "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileDecoder=${tileDecoder}, " +
                         "'${imageKey}'"
             }
@@ -445,8 +459,8 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             tileDecoder = tileDecoder,
             tileBitmapConvertor = tileBitmapConvertor,
             imageSource = imageSource,
-            containerSize = containerSize.toCompat(),
             contentSize = contentSize.toCompat(),
+            preferredTileSize = preferredTileSize.toCompat(),
             tileBitmapCacheHelper = tileBitmapCacheHelper,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
             imageInfo = imageInfo,
@@ -470,10 +484,9 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         }
         logger.d {
             "resetTileManager:$caller. success. " +
-                    "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
+                    "preferredTileSize=${preferredTileSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
-                    "preferredTileSize=${tileManager.preferredTileSize.toShortString()}, " +
                     "tileGridMap=${tileManager.sortedTileGridMap.toIntroString()}. " +
                     "'${imageKey}'"
         }

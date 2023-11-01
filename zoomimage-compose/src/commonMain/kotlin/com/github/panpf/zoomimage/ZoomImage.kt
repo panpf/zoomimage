@@ -29,8 +29,6 @@ import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.NoClipContentImage
 import com.github.panpf.zoomimage.compose.internal.round
-import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPx
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
@@ -113,7 +111,7 @@ fun ZoomImage(
             .matchParentSize()
             .let { if (scrollBar != null) it.zoomScrollBar(zoomable, scrollBar) else it }
             .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(state.logger, state.subsampling)
+            .subsampling(state.logger, state.zoomable, state.subsampling)
         NoClipContentImage(
             painter = painter,
             contentDescription = contentDescription,
