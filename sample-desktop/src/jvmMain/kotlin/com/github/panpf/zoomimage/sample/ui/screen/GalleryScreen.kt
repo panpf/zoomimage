@@ -43,32 +43,32 @@ fun GalleryScreen(navigation: Navigation) {
             ImageResource("sample_long_qmsht.jpg", "sample_long_qmsht_thumbnail.jpg"),
             ImageResource("sample_long_comic.jpg", "sample_long_comic_thumbnail.jpg"),
             ImageResource(
-                "sample_exif_girl_flip_hor.jpeg",
-                "sample_exif_girl_flip_hor_thumbnail.jpeg"
+                "sample_exif_girl_flip_hor.jpg",
+                "sample_exif_girl_flip_hor_thumbnail.jpg"
             ),
             ImageResource(
-                "sample_exif_girl_flip_ver.jpeg",
-                "sample_exif_girl_flip_ver_thumbnail.jpeg"
+                "sample_exif_girl_flip_ver.jpg",
+                "sample_exif_girl_flip_ver_thumbnail.jpg"
             ),
             ImageResource(
-                "sample_exif_girl_rotate_90.jpeg",
-                "sample_exif_girl_rotate_90_thumbnail.jpeg"
+                "sample_exif_girl_rotate_90.jpg",
+                "sample_exif_girl_rotate_90_thumbnail.jpg"
             ),
             ImageResource(
-                "sample_exif_girl_rotate_180.jpeg",
-                "sample_exif_girl_rotate_180_thumbnail.jpeg"
+                "sample_exif_girl_rotate_180.jpg",
+                "sample_exif_girl_rotate_180_thumbnail.jpg"
             ),
             ImageResource(
-                "sample_exif_girl_rotate_270.jpeg",
-                "sample_exif_girl_rotate_270_thumbnail.jpeg"
+                "sample_exif_girl_rotate_270.jpg",
+                "sample_exif_girl_rotate_270_thumbnail.jpg"
             ),
             ImageResource(
-                "sample_exif_girl_transpose.jpeg",
-                "sample_exif_girl_transpose_thumbnail.jpeg"
+                "sample_exif_girl_transpose.jpg",
+                "sample_exif_girl_transpose_thumbnail.jpg"
             ),
             ImageResource(
-                "sample_exif_girl_transverse.jpeg",
-                "sample_exif_girl_transverse_thumbnail.jpeg"
+                "sample_exif_girl_transverse.jpg",
+                "sample_exif_girl_transverse_thumbnail.jpg"
             ),
         )
     }

@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.ResourceLoader
 import androidx.compose.ui.res.painterResource
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomState
@@ -29,8 +28,7 @@ fun ViewerScreen(navigation: Navigation, imageResource: ImageResource) {
         val zoomState = rememberZoomState()
         LaunchedEffect(Unit) {
             zoomState.logger.level = Logger.DEBUG
-            val imageSource =
-                ImageSource.fromResource(ResourceLoader.Default, imageResource.resourcePath)
+            val imageSource = ImageSource.fromResource(imageResource.resourcePath)
             zoomState.subsampling.setImageSource(imageSource)
             zoomState.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
         }
