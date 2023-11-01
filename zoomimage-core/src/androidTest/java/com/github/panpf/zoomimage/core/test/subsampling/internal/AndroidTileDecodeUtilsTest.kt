@@ -1,11 +1,12 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import android.os.Build
-import androidx.exifinterface.media.ExifInterface
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.panpf.zoomimage.core.test.internal.ExifOrientationTestFileHelper
+import com.github.panpf.zoomimage.subsampling.ExifOrientation
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
+import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.subsampling.internal.calculateSampledBitmapSizeForRegion
 import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
 import com.github.panpf.zoomimage.subsampling.internal.isSrcRectError
@@ -23,15 +24,15 @@ class AndroidTileDecodeUtilsTest {
     fun testReadExifOrientation() {
         val context = InstrumentationRegistry.getInstrumentation().context
 
-        Assert.assertEquals(
-            ExifInterface.ORIENTATION_NORMAL,
-            ImageSource.fromAsset(context, "sample_dog.jpg").readExifOrientation().getOrThrow()
-        )
-
-        ExifOrientationTestFileHelper(context, "sample_dog.jpg").files().forEach {
+        listOf(
+            "sample_dog.jpg" to ExifOrientation.ORIENTATION_NORMAL,
+            "sample_exif_girl_rotate_90.jpg" to ExifOrientation.ORIENTATION_ROTATE_90,
+        ).forEach { (assetPath, excepted) ->
             Assert.assertEquals(
-                it.exifOrientation,
-                ImageSource.fromFile(it.file).readExifOrientation().getOrThrow()
+                "assetPath=$assetPath, excepted=$excepted",
+                excepted,
+                ImageSource.fromAsset(context, assetPath).readExifOrientation()
+                    .getOrThrow().exifOrientation
             )
         }
     }
@@ -40,14 +41,15 @@ class AndroidTileDecodeUtilsTest {
     fun testReadImageInfo() {
         val context = InstrumentationRegistry.getInstrumentation().context
 
-        ImageSource.fromAsset(context, "sample_dog.jpg").readImageInfo().getOrThrow().apply {
-            Assert.assertEquals(IntSizeCompat(575, 427), size)
-            Assert.assertEquals("image/jpeg", mimeType)
-        }
-
-        ImageSource.fromAsset(context, "sample_cat.jpg").readImageInfo().getOrThrow().apply {
-            Assert.assertEquals(IntSizeCompat(551, 1038), size)
-            Assert.assertEquals("image/jpeg", mimeType)
+        listOf(
+            "sample_dog.jpg" to ImageInfo(575, 427, "image/jpeg"),
+            "sample_exif_girl_rotate_90.jpg" to ImageInfo(6400, 1080, "image/jpeg"),
+        ).forEach { (assetPath, excepted) ->
+            Assert.assertEquals(
+                "assetPath=$assetPath, excepted=$excepted",
+                excepted,
+                ImageSource.fromAsset(context, assetPath).readImageInfo().getOrThrow()
+            )
         }
     }
 

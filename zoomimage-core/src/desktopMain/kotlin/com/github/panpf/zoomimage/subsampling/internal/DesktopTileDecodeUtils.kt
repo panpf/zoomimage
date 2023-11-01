@@ -14,13 +14,17 @@ import javax.imageio.stream.ImageInputStream
 
 @WorkerThread
 @Suppress("FoldInitializerAndIfToElvis")
-internal fun ImageSource.readExifOrientation(): Result<ExifOrientation> {
+internal fun ImageSource.readExifOrientation(): Result<DesktopExifOrientation> {
     val inputStreamResult = openInputStream()
     if (inputStreamResult.isFailure) {
         return Result.failure(inputStreamResult.exceptionOrNull()!!)
     }
     val inputStream = inputStreamResult.getOrNull()!!
-    val metadata = inputStream.use { ImageMetadataReader.readMetadata(it) }
+    val metadata = try {
+        inputStream.use { ImageMetadataReader.readMetadata(it) }
+    } catch (e: Exception) {
+        return Result.failure(e)
+    }
     val directory = metadata.directories
         .find { it.tags.find { tag -> tag.tagName == "Orientation" } != null }
     if (directory == null) {

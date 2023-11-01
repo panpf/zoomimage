@@ -1,14 +1,11 @@
-package com.github.panpf.zoomimage.compose.subsampling
+package com.github.panpf.zoomimage.core.test.internal
 
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.res.ResourceLoader
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import java.io.InputStream
 
 /**
  * Create an image source from a resource id.
  */
-@OptIn(ExperimentalComposeUiApi::class)
 fun ImageSource.Companion.fromResource(
     resourcePath: String,
     resourcesLoader: ResourceLoader = ResourceLoader.Default,
@@ -16,7 +13,6 @@ fun ImageSource.Companion.fromResource(
     return ResourceImageSource(resourcePath, resourcesLoader)
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 class ResourceImageSource(
     val resourcePath: String,
     val resourcesLoader: ResourceLoader = ResourceLoader.Default,

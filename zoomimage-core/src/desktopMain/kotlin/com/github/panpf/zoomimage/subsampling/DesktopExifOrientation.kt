@@ -22,11 +22,13 @@ import com.github.panpf.zoomimage.util.flip
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
 import java.awt.Graphics2D
-import java.awt.RenderingHints
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import kotlin.math.abs
 
+/**
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.DesktopExifOrientationTest]
+ */
 class DesktopExifOrientation(val exifOrientation: Int) : ExifOrientation {
 
     /**
@@ -96,13 +98,13 @@ class DesktopExifOrientation(val exifOrientation: Int) : ExifOrientation {
         val isRotated = abs(rotationDegrees % 360) != 0
         return if (!reverse) {
             srcRect
-                .let { if (isFlipped) it.flip(imageSize, horizontal = true) else it }
+                .let { if (isFlipped) it.flip(imageSize, vertical = false) else it }
                 .let { if (isRotated) it.rotateInSpace(imageSize, rotationDegrees) else it }
         } else {
             val rotatedImageSize = imageSize.rotate(-rotationDegrees)
             srcRect
                 .let { if (isRotated) it.rotateInSpace(imageSize, -rotationDegrees) else it }
-                .let { if (isFlipped) it.flip(rotatedImageSize, horizontal = true) else it }
+                .let { if (isFlipped) it.flip(rotatedImageSize, vertical = false) else it }
         }
     }
 
@@ -118,7 +120,7 @@ class DesktopExifOrientation(val exifOrientation: Int) : ExifOrientation {
         val isRotated = abs(rotationDegrees % 360) != 0
         if (!reverse) {
             bufferedImage2 = if (isFlipped) {
-                flipImage(bufferedImage, horizontal = true)
+                flipImage(bufferedImage, vertical = false)
             } else {
                 bufferedImage
             }
@@ -134,7 +136,7 @@ class DesktopExifOrientation(val exifOrientation: Int) : ExifOrientation {
                 bufferedImage
             }
             bufferedImage3 = if (isFlipped) {
-                flipImage(bufferedImage2, horizontal = true)
+                flipImage(bufferedImage2, vertical = false)
             } else {
                 bufferedImage2
             }
@@ -144,16 +146,16 @@ class DesktopExifOrientation(val exifOrientation: Int) : ExifOrientation {
 
     private fun flipImage(
         source: BufferedImage,
-        @Suppress("SameParameterValue") horizontal: Boolean = true
+        @Suppress("SameParameterValue") vertical: Boolean = false
     ): BufferedImage {
         val flipped = BufferedImage(source.width, source.height, source.type)
         val graphics = flipped.createGraphics()
-        val transform = if (horizontal) {
+        val transform = if (!vertical) {
             AffineTransform.getTranslateInstance(source.width.toDouble(), 0.0)
         } else {
             AffineTransform.getTranslateInstance(0.0, source.height.toDouble())
         }.apply {
-            val flip = if (horizontal) {
+            val flip = if (!vertical) {
                 AffineTransform.getScaleInstance(-1.0, 1.0)
             } else {
                 AffineTransform.getScaleInstance(1.0, -1.0)
@@ -172,10 +174,10 @@ class DesktopExifOrientation(val exifOrientation: Int) : ExifOrientation {
         val type = source.colorModel.transparency
         val newImage = BufferedImage(newSize.width, newSize.height, type)
         val graphics: Graphics2D = newImage.createGraphics()
-        graphics.setRenderingHint(
-            RenderingHints.KEY_INTERPOLATION,
-            RenderingHints.VALUE_INTERPOLATION_BILINEAR
-        )
+//        graphics.setRenderingHint(
+//            RenderingHints.KEY_INTERPOLATION,
+//            RenderingHints.VALUE_INTERPOLATION_BILINEAR
+//        )
         graphics.translate(
             /* tx = */ (newSize.width - sourceSize.width) / 2.0,
             /* ty = */ (newSize.height - sourceSize.height) / 2.0

@@ -3,8 +3,8 @@ package com.github.panpf.zoomimage.core.test.subsampling
 import android.graphics.Bitmap
 import androidx.exifinterface.media.ExifInterface
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.panpf.zoomimage.core.test.internal.ExifOrientationTestFileHelper
-import com.github.panpf.zoomimage.core.test.internal.ImageSimilarHelper
+import com.github.panpf.zoomimage.core.test.internal.hammingDistance
+import com.github.panpf.zoomimage.core.test.internal.produceFingerPrint
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmapReuseHelper
@@ -29,10 +29,10 @@ class AndroidTileDecoderTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val logger = Logger("Test")
 
-        val imageSource = ImageSource.fromAsset(context, "sample_dog.jpg")
+        val imageSource = ImageSource.fromAsset(context, "sample_exif_girl_normal.jpg")
         val exifOrientation = imageSource.readExifOrientation().getOrThrow().apply {
-            Assert.assertEquals(ExifInterface.ORIENTATION_NORMAL, this)
-        }.let { AndroidExifOrientation(it) }
+            Assert.assertEquals(ExifInterface.ORIENTATION_NORMAL, this.exifOrientation)
+        }
         val imageInfo = imageSource.readImageInfo().getOrThrow().let {
             exifOrientation.applyToImageInfo(it)
         }
@@ -45,11 +45,20 @@ class AndroidTileDecoderTest {
         )
         val bitmap: Bitmap
         try {
-            bitmap = (tileDecoder.decode(
-                IntRectCompat(100, 200, 300, 300),
-                4
-            )!! as AndroidTileBitmap).bitmap!!
+            bitmap = tileDecoder
+                .decode(IntRectCompat(100, 200, 300, 300), 1)!!
+                .let { it as AndroidTileBitmap }
+                .bitmap!!
             bitmap.apply {
+                Assert.assertEquals(200, width)
+                Assert.assertEquals(100, height)
+            }
+
+            val bitmap1 = tileDecoder
+                .decode(IntRectCompat(100, 200, 300, 300), 4)!!
+                .let { it as AndroidTileBitmap }
+                .bitmap!!
+            bitmap1.apply {
                 Assert.assertEquals(50, width)
                 Assert.assertEquals(25, height)
             }
@@ -59,12 +68,10 @@ class AndroidTileDecoderTest {
             }
         }
 
-        val file = ExifOrientationTestFileHelper(context, "sample_dog.jpg").files()
-            .find { it.exifOrientation == ExifInterface.ORIENTATION_ROTATE_90 }!!.file
-        val imageSource2 = ImageSource.fromFile(file)
+        val imageSource2 = ImageSource.fromAsset(context, "sample_exif_girl_rotate_90.jpg")
         val exifOrientation2 = imageSource2.readExifOrientation().getOrThrow().apply {
-            Assert.assertEquals(ExifInterface.ORIENTATION_ROTATE_90, this)
-        }.let { AndroidExifOrientation(it) }
+            Assert.assertEquals(ExifInterface.ORIENTATION_ROTATE_90, this.exifOrientation)
+        }
         val imageInfo2 = imageSource2.readImageInfo().getOrThrow().let {
             exifOrientation2.applyToImageInfo(it)
         }
@@ -77,24 +84,23 @@ class AndroidTileDecoderTest {
         )
         val bitmap2: Bitmap
         try {
-            bitmap2 = (tileDecoder2.decode(
-                IntRectCompat(100, 200, 300, 300),
-                4
-            )!! as AndroidTileBitmap).bitmap!!
+            bitmap2 = tileDecoder2
+                .decode(IntRectCompat(100, 200, 300, 300), 1)!!
+                .let { it as AndroidTileBitmap }
+                .bitmap!!
             bitmap2.apply {
-                Assert.assertEquals(50, width)
-                Assert.assertEquals(25, height)
+                Assert.assertEquals(200, width)
+                Assert.assertEquals(100, height)
             }
         } finally {
             runBlocking(Dispatchers.Main) {
                 tileDecoder2.destroy("test")
             }
         }
-        val bitmapFinger = ImageSimilarHelper.produceFingerPrint(bitmap)
-        val bitmap2Finger = ImageSimilarHelper.produceFingerPrint(bitmap2)
-        val hanming2 = ImageSimilarHelper.hammingDistance(bitmapFinger, bitmap2Finger)
+        val bitmapFinger = produceFingerPrint(bitmap)
+        val bitmap2Finger = produceFingerPrint(bitmap2)
+        val hanming2 = hammingDistance(bitmapFinger, bitmap2Finger)
         Assert.assertTrue(hanming2 <= 2)
-
 
         val exifOrientation3 = ExifInterface.ORIENTATION_UNDEFINED.apply {
             Assert.assertEquals(ExifInterface.ORIENTATION_UNDEFINED, this)
@@ -111,21 +117,21 @@ class AndroidTileDecoderTest {
         )
         val bitmap3: Bitmap
         try {
-            bitmap3 = (tileDecoder3.decode(
-                IntRectCompat(100, 200, 300, 300),
-                4
-            )!! as AndroidTileBitmap).bitmap!!
+            bitmap3 = tileDecoder3
+                .decode(IntRectCompat(100, 200, 300, 300), 1)!!
+                .let { it as AndroidTileBitmap }
+                .bitmap!!
             bitmap3.apply {
-                Assert.assertEquals(50, width)
-                Assert.assertEquals(25, height)
+                Assert.assertEquals(200, width)
+                Assert.assertEquals(100, height)
             }
         } finally {
             runBlocking(Dispatchers.Main) {
                 tileDecoder3.destroy("test")
             }
         }
-        val bitmap3Finger = ImageSimilarHelper.produceFingerPrint(bitmap3)
-        val hanming3 = ImageSimilarHelper.hammingDistance(bitmapFinger, bitmap3Finger)
+        val bitmap3Finger = produceFingerPrint(bitmap3)
+        val hanming3 = hammingDistance(bitmapFinger, bitmap3Finger)
         Assert.assertTrue(hanming3 > 2)
     }
 }

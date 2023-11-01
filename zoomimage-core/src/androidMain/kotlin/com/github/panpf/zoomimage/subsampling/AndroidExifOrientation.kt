@@ -99,13 +99,13 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) : ExifOrienta
         val isRotated = abs(rotationDegrees % 360) != 0
         return if (!reverse) {
             srcRect
-                .let { if (isFlipped) it.flip(imageSize, horizontal = true) else it }
+                .let { if (isFlipped) it.flip(imageSize, vertical = false) else it }
                 .let { if (isRotated) it.rotateInSpace(imageSize, rotationDegrees) else it }
         } else {
             val rotatedImageSize = imageSize.rotate(-rotationDegrees)
             srcRect
                 .let { if (isRotated) it.rotateInSpace(imageSize, -rotationDegrees) else it }
-                .let { if (isFlipped) it.flip(rotatedImageSize, horizontal = true) else it }
+                .let { if (isFlipped) it.flip(rotatedImageSize, vertical = false) else it }
         }
     }
 

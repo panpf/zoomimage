@@ -3,11 +3,7 @@ package com.github.panpf.zoomimage.core.test.subsampling
 import android.graphics.BitmapFactory
 import androidx.exifinterface.media.ExifInterface
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.panpf.zoomimage.core.test.internal.cornerA
-import com.github.panpf.zoomimage.core.test.internal.cornerB
-import com.github.panpf.zoomimage.core.test.internal.cornerC
-import com.github.panpf.zoomimage.core.test.internal.cornerD
-import com.github.panpf.zoomimage.core.test.internal.corners
+import com.github.panpf.zoomimage.core.test.internal.produceFingerPrint
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.DefaultAndroidTileBitmap
@@ -187,12 +183,6 @@ class AndroidExifOrientationTest {
         val inBitmap = context.assets.open("sample_dog.jpg").use {
             BitmapFactory.decodeStream(it)
         }
-        Assert.assertTrue(
-            inBitmap.cornerA != inBitmap.cornerB
-                    && inBitmap.cornerA != inBitmap.cornerC
-                    && inBitmap.cornerA != inBitmap.cornerD
-        )
-
         listOf(
             ExifInterface.ORIENTATION_ROTATE_90 to true,
             ExifInterface.ORIENTATION_TRANSVERSE to true,
@@ -216,8 +206,8 @@ class AndroidExifOrientationTest {
             if (change) {
                 Assert.assertNotEquals(
                     message,
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    appliedBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
+                    produceFingerPrint(inBitmap),
+                    produceFingerPrint(appliedBitmap),
                 )
 
                 val reversedBitmap = exifOrientation.applyToTileBitmap(
@@ -226,15 +216,14 @@ class AndroidExifOrientationTest {
                 ).let { it as AndroidTileBitmap }.bitmap!!
                 Assert.assertEquals(
                     message,
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    reversedBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }
-                        .toString(),
+                    produceFingerPrint(inBitmap),
+                    produceFingerPrint(reversedBitmap),
                 )
             } else {
                 Assert.assertEquals(
                     message,
-                    inBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
-                    appliedBitmap.corners { listOf(cornerA, cornerB, cornerC, cornerD) }.toString(),
+                    produceFingerPrint(inBitmap),
+                    produceFingerPrint(appliedBitmap),
                 )
             }
         }

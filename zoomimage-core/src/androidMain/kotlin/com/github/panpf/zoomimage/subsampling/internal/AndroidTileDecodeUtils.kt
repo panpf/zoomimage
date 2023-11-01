@@ -22,6 +22,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
+import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -33,16 +34,23 @@ import kotlin.math.floor
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadExifOrientation]
  */
 @WorkerThread
-internal fun ImageSource.readExifOrientation(): Result<Int> {
-    val orientationUndefined = ExifInterface.ORIENTATION_UNDEFINED
-    return openInputStream()
-        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-        .use { inputStream ->
-            kotlin.runCatching {
-                ExifInterface(inputStream)
-                    .getAttributeInt(ExifInterface.TAG_ORIENTATION, orientationUndefined)
-            }
+internal fun ImageSource.readExifOrientation(): Result<AndroidExifOrientation> {
+    val inputStreamResult = openInputStream()
+    if (inputStreamResult.isFailure) {
+        return Result.failure(inputStreamResult.exceptionOrNull()!!)
+    }
+    val inputStream = inputStreamResult.getOrNull()!!
+    val exifOrientation = try {
+        inputStream.use {
+            ExifInterface(it).getAttributeInt(
+                /* tag = */ ExifInterface.TAG_ORIENTATION,
+                /* defaultValue = */ ExifInterface.ORIENTATION_UNDEFINED
+            )
         }
+    } catch (e: Exception) {
+        return Result.failure(e)
+    }
+    return Result.success(AndroidExifOrientation(exifOrientation))
 }
 
 /**
@@ -50,17 +58,21 @@ internal fun ImageSource.readExifOrientation(): Result<Int> {
  */
 @WorkerThread
 internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
-    val options = openInputStream()
-        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-        .use { inputStream ->
-            kotlin.runCatching {
-                val options = BitmapFactory.Options()
-                options.inJustDecodeBounds = true
-                BitmapFactory.decodeStream(inputStream, null, options)
-                options
-            }
+    val inputStreamResult = openInputStream()
+    if (inputStreamResult.isFailure) {
+        return Result.failure(inputStreamResult.exceptionOrNull()!!)
+    }
+    val inputStream = inputStreamResult.getOrNull()!!
+    val options = try {
+        inputStream.use {
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            BitmapFactory.decodeStream(it, null, options)
+            options
         }
-        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
+    } catch (e: Exception) {
+        return Result.failure(e)
+    }
     val size = IntSizeCompat(options.outWidth, options.outHeight)
     val imageInfo = ImageInfo(size, options.outMimeType)
     return Result.success(imageInfo)

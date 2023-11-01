@@ -1,8 +1,6 @@
 package com.github.panpf.zoomimage.core.test.subsampling
 
-import androidx.exifinterface.media.ExifInterface
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.panpf.zoomimage.core.test.internal.ExifOrientationTestFileHelper
 import com.github.panpf.zoomimage.decodeExifOrientation
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
@@ -26,9 +24,7 @@ class TileUtilsTest {
         val logger = Logger("MyTest")
         val tileBitmapReuseHelper = AndroidTileBitmapReuseHelper(logger, TileBitmapReuseSpec())
 
-        val imageFile = ExifOrientationTestFileHelper(context, "sample_dog.jpg").files()
-            .find { it.exifOrientation == ExifInterface.ORIENTATION_TRANSVERSE }!!.file
-        val imageSource = ImageSource.fromFile(imageFile)
+        val imageSource = ImageSource.fromAsset(context, "sample_exif_girl_rotate_90.jpg")
         val exifOrientation = decodeExifOrientation(imageSource).getOrThrow()
         val imageInfo = imageSource.readImageInfo().getOrThrow()
         val correctOrientationImageInfo = exifOrientation.applyToImageInfo(imageInfo)
@@ -41,7 +37,7 @@ class TileUtilsTest {
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).getOrThrow().apply {
             Assert.assertEquals(correctOrientationImageInfo, this.imageInfo)
-            Assert.assertEquals("TRANSVERSE", this.exifOrientation!!.name())
+            Assert.assertEquals("ROTATE_90", this.exifOrientation!!.name())
         }
 
         val thumbnailSize2 = imageInfo.size / 8

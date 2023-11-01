@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage
 
-import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.AndroidTileDecoder
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
@@ -19,11 +18,8 @@ actual fun createLogPipeline(): Logger.Pipeline = AndroidLogPipeline()
 
 actual fun decodeImageInfo(imageSource: ImageSource): Result<ImageInfo> = imageSource.readImageInfo()
 
-actual fun decodeExifOrientation(imageSource: ImageSource): Result<ExifOrientation> {
-    val exifOrientationValue = imageSource.readExifOrientation()
-        .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
-    return Result.success(AndroidExifOrientation(exifOrientationValue))
-}
+actual fun decodeExifOrientation(imageSource: ImageSource): Result<ExifOrientation> =
+    imageSource.readExifOrientation()
 
 actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
     isSupportBitmapRegionDecoder(mimeType)

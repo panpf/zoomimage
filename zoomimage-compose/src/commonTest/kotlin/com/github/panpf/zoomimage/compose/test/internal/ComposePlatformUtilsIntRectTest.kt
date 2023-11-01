@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.compose.internal.div
+import com.github.panpf.zoomimage.compose.internal.flip
 import com.github.panpf.zoomimage.compose.internal.limitTo
 import com.github.panpf.zoomimage.compose.internal.reverseRotateInSpace
 import com.github.panpf.zoomimage.compose.internal.rotateInSpace
@@ -285,5 +286,20 @@ class ComposePlatformUtilsIntRectTest {
                     rotatedSize.reverseRotateInSpace(spaceSize, rotation)
                 )
             }
+    }
+
+    @Test
+    fun testFlip() {
+        val spaceSize = IntSize(1000, 700)
+        val rect = IntRect(100, 200, 600, 400)
+
+        Assert.assertEquals(
+            IntRect(400, 200, 900, 400),
+            rect.flip(spaceSize, vertical = false)
+        )
+        Assert.assertEquals(
+            IntRect(100, 300, 600, 500),
+            rect.flip(spaceSize, vertical = true)
+        )
     }
 }

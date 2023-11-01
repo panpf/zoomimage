@@ -453,9 +453,8 @@ fun RectCompat.reverseRotateInSpace(spaceSize: SizeCompat, rotation: Int): RectC
 /**
  * Flip this rect horizontally or vertically within a given container
  */
-// todo test
-fun RectCompat.flip(spaceSize: SizeCompat, horizontal: Boolean = true): RectCompat {
-    return if (horizontal) {
+fun RectCompat.flip(spaceSize: SizeCompat, vertical: Boolean = false): RectCompat {
+    return if (!vertical) {
         RectCompat(
             left = spaceSize.width - right,
             top = top,

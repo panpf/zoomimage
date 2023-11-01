@@ -530,9 +530,8 @@ internal fun Rect.reverseRotateInSpace(spaceSize: Size, rotation: Int): Rect {
 /**
  * Flip this rect horizontally or vertically within a given container
  */
-// todo test
-fun Rect.flip(spaceSize: Size, horizontal: Boolean = true): Rect {
-    return if (horizontal) {
+fun Rect.flip(spaceSize: Size, vertical: Boolean = false): Rect {
+    return if (!vertical) {
         Rect(
             left = spaceSize.width - right,
             top = top,
@@ -684,9 +683,8 @@ internal fun IntRect.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): In
 /**
  * Flip this rect horizontally or vertically within a given container
  */
-// todo test
-fun IntRect.flip(spaceSize: IntSize, horizontal: Boolean = true): IntRect {
-    return if (horizontal) {
+fun IntRect.flip(spaceSize: IntSize, vertical: Boolean = false): IntRect {
+    return if (!vertical) {
         IntRect(
             left = spaceSize.width - right,
             top = top,

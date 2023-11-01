@@ -5,6 +5,7 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.div
+import com.github.panpf.zoomimage.util.flip
 import com.github.panpf.zoomimage.util.limitTo
 import com.github.panpf.zoomimage.util.reverseRotateInSpace
 import com.github.panpf.zoomimage.util.rotateInSpace
@@ -285,5 +286,20 @@ class IntRectCompatTest {
                     rotatedSize.reverseRotateInSpace(spaceSize, rotation)
                 )
             }
+    }
+
+    @Test
+    fun testFlip() {
+        val spaceSize = IntSizeCompat(1000, 700)
+        val rect = IntRectCompat(100, 200, 600, 400)
+
+        Assert.assertEquals(
+            IntRectCompat(400, 200, 900, 400),
+            rect.flip(spaceSize, vertical = false)
+        )
+        Assert.assertEquals(
+            IntRectCompat(100, 300, 600, 500),
+            rect.flip(spaceSize, vertical = true)
+        )
     }
 }

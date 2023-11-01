@@ -26,6 +26,15 @@ import com.github.panpf.zoomimage.subsampling.DefaultAndroidTileBitmap
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Float
+import kotlin.Boolean
+import kotlin.Int
+import kotlin.String
+import kotlin.Suppress
+import kotlin.apply
+import kotlin.arrayOf
+import kotlin.let
+import kotlin.math.roundToInt
 
 class ExifOrientationTestFileHelper(
     private val context: Context,
@@ -38,6 +47,7 @@ class ExifOrientationTestFileHelper(
         "exif_files" + "/" + File(assetFileName).nameWithoutExtension + "_${inSampleSize}"
     )
     private val configs = arrayOf(
+        Config("NORMAL", ExifInterface.ORIENTATION_NORMAL, cacheDir),
         Config("ROTATE_90", ExifInterface.ORIENTATION_ROTATE_90, cacheDir),
         Config("TRANSVERSE", ExifInterface.ORIENTATION_TRANSVERSE, cacheDir),
         Config("ROTATE_180", ExifInterface.ORIENTATION_ROTATE_180, cacheDir),
@@ -47,9 +57,9 @@ class ExifOrientationTestFileHelper(
         Config("FLIP_HOR", ExifInterface.ORIENTATION_FLIP_HORIZONTAL, cacheDir),
     )
 
-    fun files(): List<TestFile> {
+    fun files(thumbnail: Boolean = false, forceReset: Boolean = false): List<TestFile> {
         val needReset = configs.any { !it.file.exists() }
-        if (needReset) {
+        if (needReset || forceReset) {
             cacheDir.deleteRecursively()
             cacheDir.mkdirs()
             val originBitmap = context.assets.open(assetFileName).use {
@@ -57,6 +67,20 @@ class ExifOrientationTestFileHelper(
                     inSampleSize = this@ExifOrientationTestFileHelper.inSampleSize
                 })
             }!!
+            val thumbnailBitmap: Bitmap? = if (thumbnail) {
+                val scale = Float.max(
+                    originBitmap.width / 1000f,
+                    originBitmap.height / 1000f
+                )
+                Bitmap.createScaledBitmap(
+                    /* src = */ originBitmap,
+                    /* dstWidth = */ (originBitmap.width / scale).roundToInt(),
+                    /* dstHeight = */ (originBitmap.height / scale).roundToInt(),
+                    /* filter = */ false
+                )
+            } else {
+                null
+            }
             for (config in configs) {
                 val file = config.file
                 if (!file.exists()) {
@@ -66,8 +90,21 @@ class ExifOrientationTestFileHelper(
                         orientation = config.orientation
                     )
                 }
+                if (thumbnailBitmap != null) {
+                    val thumbnailFile = File(
+                        file.parentFile,
+                        file.nameWithoutExtension + "_thumbnail." + file.extension
+                    )
+                    if (!thumbnailFile.exists()) {
+                        generatorTestFile(
+                            file = thumbnailFile,
+                            sourceBitmap = thumbnailBitmap,
+                            orientation = config.orientation
+                        )
+                    }
+                }
             }
-            originBitmap.recycle()
+//            originBitmap.recycle()
         }
 
         return configs.map {
@@ -88,9 +125,11 @@ class ExifOrientationTestFileHelper(
         file.parentFile?.mkdirs()
         file.createNewFile()
         FileOutputStream(file).use {
-            newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            newBitmap.compress(Bitmap.CompressFormat.JPEG, 90, it)
         }
-        newBitmap.recycle()
+        if (newBitmap !== sourceBitmap) {
+            newBitmap.recycle()
+        }
 
         val exifInterface: ExifInterface
         try {
@@ -115,7 +154,7 @@ class ExifOrientationTestFileHelper(
         val orientation: Int,
         cacheDir: File,
     ) {
-        val file = File(cacheDir, "${name}.jpeg")
+        val file = File(cacheDir, "${name.lowercase()}.jpg")
     }
 
     class TestFile(@Suppress("unused") val title: String, val file: File, val exifOrientation: Int)
