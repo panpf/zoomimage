@@ -9,9 +9,15 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.with
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import com.github.panpf.zoomimage.sample.ui.Page
+import com.github.panpf.zoomimage.sample.ui.util.EventBus
 
 @Composable
 fun rememberNavigation(initialPage: Page): Navigation {
@@ -23,15 +29,20 @@ fun rememberNavigation(initialPage: Page): Navigation {
 //    ) {
 //        Navigation(initialPage)
 //    }
-    return remember { Navigation(initialPage) }
+    val navigation = remember { Navigation(initialPage) }
+    LaunchedEffect(Unit) {
+        EventBus.keyEvent.collect {
+            if (it.key == Key.Escape && it.type == KeyEventType.KeyUp) {
+                navigation.back()
+            }
+        }
+    }
+    return navigation
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun NavigationContainer(
-    initialPage: Page,
-    navigation: Navigation = rememberNavigation(initialPage)
-) {
+fun NavigationContainer(navigation: Navigation) {
     AnimatedContent(targetState = navigation.lastWithIndex(), transitionSpec = {
         val previousIdx = initialState.index
         val currentIdx = targetState.index
@@ -46,6 +57,9 @@ fun NavigationContainer(
         page.content(navigation, index)
     }
 }
+
+@Composable
+fun NavigationContainer(initialPage: Page) = NavigationContainer(rememberNavigation(initialPage))
 
 class Navigation(vararg initial: Page) {
 
