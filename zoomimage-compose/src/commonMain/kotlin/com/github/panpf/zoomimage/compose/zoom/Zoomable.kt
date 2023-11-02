@@ -44,26 +44,13 @@ fun Modifier.zoom(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = composed {
-    val transform = zoomable.transform
-    val zoomModifier = Modifier
-        .clipToBounds()
+    this
         .zoomable(logger, zoomable, onLongPress = onLongPress, onTap = onTap)
-        .graphicsLayer {
-            scaleX = transform.scaleX
-            scaleY = transform.scaleY
-            translationX = transform.offsetX
-            translationY = transform.offsetY
-            transformOrigin = transform.scaleOrigin
-        }
-        .graphicsLayer {
-            rotationZ = transform.rotation
-            transformOrigin = transform.rotationOrigin
-        }
-    this.then(zoomModifier)
+        .zooming(logger, zoomable)
 }
 
 fun Modifier.zoomable(
-    logger: Logger,
+    @Suppress("UNUSED_PARAMETER") logger: Logger,
     zoomable: ZoomableState,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -173,5 +160,25 @@ fun Modifier.zoomable(
                     }
                 }
             )
+        }
+}
+
+fun Modifier.zooming(
+    @Suppress("UNUSED_PARAMETER") logger: Logger,
+    zoomable: ZoomableState,
+) = composed {
+    val transform = zoomable.transform
+    this
+        .clipToBounds()
+        .graphicsLayer {
+            scaleX = transform.scaleX
+            scaleY = transform.scaleY
+            translationX = transform.offsetX
+            translationY = transform.offsetY
+            transformOrigin = transform.scaleOrigin
+        }
+        .graphicsLayer {
+            rotationZ = transform.rotation
+            transformOrigin = transform.rotationOrigin
         }
 }

@@ -16,8 +16,10 @@
 
 package com.github.panpf.zoomimage
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -35,6 +37,7 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zooming
 import kotlin.math.roundToInt
 
 /**
@@ -89,10 +92,11 @@ fun ZoomImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    val zoomable = state.zoomable
-    zoomable.contentScale = contentScale
-    zoomable.alignment = alignment
-    zoomable.contentSize = painter.intrinsicSize.round()
+    state.zoomable.contentScale = contentScale
+    state.zoomable.alignment = alignment
+    state.zoomable.contentSize = remember(painter.intrinsicSize) {
+        painter.intrinsicSize.round()
+    }
 
     BoxWithConstraints(modifier = modifier) {
         /*
@@ -100,26 +104,32 @@ fun ZoomImage(
          * In order to prepare the transform in advance, so that when the position of the image needs to be adjusted,
          * the position change will not be seen by the user
          */
-        val oldContainerSize = zoomable.containerSize
+        val oldContainerSize = state.zoomable.containerSize
         val newContainerSize = IntSize(maxWidth.toPx().roundToInt(), maxHeight.toPx().roundToInt())
         if (newContainerSize != oldContainerSize) {
-            zoomable.containerSize = newContainerSize
-            zoomable.nowReset("initialize")
+            state.zoomable.containerSize = newContainerSize
+            state.zoomable.nowReset("initialize")
         }
 
-        val modifier1 = Modifier
-            .matchParentSize()
-            .let { if (scrollBar != null) it.zoomScrollBar(zoomable, scrollBar) else it }
-            .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(state.logger, state.zoomable, state.subsampling)
         NoClipContentImage(
             painter = painter,
             contentDescription = contentDescription,
-            modifier = modifier1,
             alignment = Alignment.TopStart,
             contentScale = ContentScale.None,
             alpha = alpha,
-            colorFilter = colorFilter
+            colorFilter = colorFilter,
+            modifier = Modifier
+                .matchParentSize()
+                .zoomScrollBar(state.zoomable, scrollBar)
+                .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap),
+        )
+
+        // todo 在桌面平台上移动到右下角并且窗口尺寸较小时，会因绘制子采样图块而导致组件的内容消失（这也许是 compose desktop 的 bug）所以将图块在单独的组件上绘制可以降低这个问题的影响，避免底图也无法显示
+        Box(
+            Modifier
+                .matchParentSize()
+                .zooming(state.logger, state.zoomable)
+                .subsampling(state.logger, state.zoomable, state.subsampling)
         )
     }
 }

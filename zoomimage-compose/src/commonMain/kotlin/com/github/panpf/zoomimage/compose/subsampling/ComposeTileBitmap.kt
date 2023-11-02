@@ -20,10 +20,16 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 
 // todo Improved implementation of TileBitmap, it's a bit messy now
-class ComposeTileBitmap constructor(
-    val imageBitmap: ImageBitmap,
+
+interface ComposeTileBitmap : TileBitmap {
+
+    val imageBitmap: ImageBitmap
+}
+
+class DefaultComposeTileBitmap constructor(
+    override val imageBitmap: ImageBitmap,
     bitmapByteCount: Int,
-) : TileBitmap {
+) : ComposeTileBitmap {
 
     override val width: Int = imageBitmap.width
 

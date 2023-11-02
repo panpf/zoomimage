@@ -37,8 +37,11 @@ import kotlin.math.roundToInt
 
 fun Modifier.zoomScrollBar(
     zoomableState: ZoomableState,
-    scrollBarSpec: ScrollBarSpec = ScrollBarSpec.Default
+    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
 ): Modifier = composed {
+    if (scrollBarSpec == null) {
+        return@composed this
+    }
     val contentSize = zoomableState.contentSize
     val contentVisibleRect = zoomableState.contentVisibleRect
     val rotation = zoomableState.transform.rotation

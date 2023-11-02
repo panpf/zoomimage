@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
@@ -50,6 +51,7 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.compose.zoom.zooming
 import kotlin.math.roundToInt
 
 
@@ -202,32 +204,39 @@ fun CoilZoomAsyncImage(
         state.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
     }
 
-    val modifier1 = modifier
-        .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
-        .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
-        .subsampling(state.logger, state.zoomable, state.subsampling)
+    Box(modifier) {
+        val request = requestOf(model)
+        val painter = rememberAsyncImagePainter(
+            model = request,
+            imageLoader = imageLoader,
+            transform = transform,
+            onState = { loadState ->
+                onState(imageLoader, state, request, loadState)
+                onState?.invoke(loadState)
+            },
+            contentScale = contentScale,
+            filterQuality = filterQuality
+        )
+        NoClipContentImage(
+            painter = painter,
+            contentDescription = contentDescription,
+            alignment = Alignment.TopStart,
+            contentScale = ContentScale.None,
+            alpha = alpha,
+            colorFilter = colorFilter,
+            modifier = Modifier
+                .matchParentSize()
+                .zoomScrollBar(state.zoomable, scrollBar)
+                .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
+        )
 
-    val request = requestOf(model)
-    val painter = rememberAsyncImagePainter(
-        model = request,
-        imageLoader = imageLoader,
-        transform = transform,
-        onState = { loadState ->
-            onState(imageLoader, state, request, loadState)
-            onState?.invoke(loadState)
-        },
-        contentScale = contentScale,
-        filterQuality = filterQuality
-    )
-    NoClipContentImage(
-        painter = painter,
-        contentDescription = contentDescription,
-        modifier = modifier1,
-        alignment = Alignment.TopStart,
-        contentScale = ContentScale.None,
-        alpha = alpha,
-        colorFilter = colorFilter,
-    )
+        Box(
+            Modifier
+                .matchParentSize()
+                .zooming(state.logger, state.zoomable)
+                .subsampling(state.logger, state.zoomable, state.subsampling)
+        )
+    }
 }
 
 private fun onState(
