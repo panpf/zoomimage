@@ -37,14 +37,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @Composable
-fun rememberMoveKeyboardState(maxStep: Offset, stepInterval: Long = 16): MoveKeyboardState {
+fun rememberMoveKeyboardState(stepInterval: Long = 8): MoveKeyboardState {
     val coroutineScope = rememberCoroutineScope()
-    return remember(maxStep) { MoveKeyboardState(coroutineScope, maxStep, stepInterval) }
+    return remember(stepInterval) { MoveKeyboardState(coroutineScope, stepInterval) }
 }
 
 class MoveKeyboardState(
     private val coroutineScope: CoroutineScope,
-    private val maxStep: Offset,
     private val stepInterval: Long
 ) : RememberObserver {
 
@@ -52,6 +51,8 @@ class MoveKeyboardState(
     private val _moveFlow = MutableSharedFlow<Offset>()
     private var lastRollbackAnimatable: Animatable<*, *>? = null
 
+    var maxStep by mutableStateOf(Offset(100f, 100f))
+        internal set
     var containerSize by mutableStateOf(IntSize.Zero)
         internal set
     var contentSize by mutableStateOf(IntSize.Zero)

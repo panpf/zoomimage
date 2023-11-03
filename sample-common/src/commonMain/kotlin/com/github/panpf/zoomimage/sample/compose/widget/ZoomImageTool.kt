@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -115,14 +116,12 @@ fun ZoomImageTool(
                 exit = slideOutHorizontally(targetOffsetX = { it * 2 }),
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val maxStep by remember {
-                        derivedStateOf {
-                            (zoomableState.containerSize / 20)
-                                .let { Offset(it.width.toFloat(), it.height.toFloat()) }
+                    val moveKeyboardState = rememberMoveKeyboardState()
+                    LaunchedEffect(Unit) {
+                        snapshotFlow { zoomableState.containerSize }.collect { size ->
+                            moveKeyboardState.maxStep = Offset(size.width / 20f, size.height / 20f)
                         }
                     }
-                    val moveKeyboardState =
-                        rememberMoveKeyboardState(maxStep = maxStep, stepInterval = 8)
                     LaunchedEffect(Unit) {
                         moveKeyboardState.moveFlow.collect {
                             zoomableState.offset(zoomableState.transform.offset + it * -1f)

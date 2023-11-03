@@ -61,17 +61,15 @@ fun SlideshowScreen(
         val coroutineScope = rememberCoroutineScope()
         LaunchedEffect(Unit) {
             EventBus.keyEvent.collect { keyEvent ->
-                when (keyEvent.key) {
-                    Key.DirectionLeft -> {
-                        if (!keyEvent.isMetaPressed && keyEvent.type == KeyEventType.KeyUp) {
+                if (keyEvent.type == KeyEventType.KeyUp && !keyEvent.isMetaPressed) {
+                    when (keyEvent.key) {
+                        Key.PageUp, Key.DirectionLeft -> {
                             val nextPageIndex =
                                 (pagerState.currentPage - 1).let { if (it < 0) pagerState.pageCount + it else it }
                             pagerState.animateScrollToPage(nextPageIndex)
                         }
-                    }
 
-                    Key.DirectionRight -> {
-                        if (!keyEvent.isMetaPressed && keyEvent.type == KeyEventType.KeyUp) {
+                        Key.PageDown, Key.DirectionRight -> {
                             val nextPageIndex = (pagerState.currentPage + 1) % pagerState.pageCount
                             pagerState.animateScrollToPage(nextPageIndex)
                         }
