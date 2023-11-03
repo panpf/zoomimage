@@ -1,3 +1,19 @@
+## 1.0.0-beta05
+
+zoom:
+
+* fix: Fixed a bug where the content did not change with the window due to a slight difference
+  between the user and the initial value when the user operated and returned to the starting state
+  and then adjusted the window size
+
+subsampling:
+
+* remove: Remove the size property of TileBitmap
+* improve: Subsampling tiles are drawn on separate components
+* improve: Reduce the frequency of TileManager due to containerSize changes
+* new: The Desktop platform supports subsampling
+* new: The Desktop platform supports exif orientation
+
 ## 1.0.0-beta04
 
 zoom:
