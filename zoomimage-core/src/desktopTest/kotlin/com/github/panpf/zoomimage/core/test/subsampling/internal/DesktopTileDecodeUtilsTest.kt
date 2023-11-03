@@ -1,12 +1,13 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import com.github.panpf.zoomimage.core.test.internal.fromResource
+import com.github.panpf.zoomimage.subsampling.DesktopExifOrientation
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.internal.isSupportSourceRegion
-import com.github.panpf.zoomimage.subsampling.internal.readExifOrientation
-import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
+import com.github.panpf.zoomimage.subsampling.internal.checkSupportSubsamplingByMimeType
+import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
+import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
 import org.junit.Assert
 import org.junit.Test
 
@@ -21,8 +22,8 @@ class DesktopTileDecodeUtilsTest {
             Assert.assertEquals(
                 "resourcePath=$resourcePath, excepted=$excepted",
                 excepted,
-                ImageSource.fromResource(resourcePath).readExifOrientation()
-                    .getOrThrow().exifOrientation
+                ImageSource.fromResource(resourcePath).decodeExifOrientation()
+                    .getOrThrow().let { it as DesktopExifOrientation }.exifOrientation
             )
         }
     }
@@ -36,7 +37,7 @@ class DesktopTileDecodeUtilsTest {
             Assert.assertEquals(
                 "resourcePath=$resourcePath, excepted=$excepted",
                 excepted,
-                ImageSource.fromResource(resourcePath).readImageInfo().getOrThrow()
+                ImageSource.fromResource(resourcePath).decodeImageInfo().getOrThrow()
             )
         }
     }
@@ -52,7 +53,7 @@ class DesktopTileDecodeUtilsTest {
             Assert.assertEquals(
                 "mimeType=$mimeType, excepted=$excepted",
                 excepted,
-                isSupportSourceRegion(mimeType)
+                checkSupportSubsamplingByMimeType(mimeType)
             )
         }
     }

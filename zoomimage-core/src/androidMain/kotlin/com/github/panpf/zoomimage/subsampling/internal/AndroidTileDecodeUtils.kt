@@ -23,9 +23,12 @@ import android.os.Build.VERSION_CODES
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
+import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.Logger
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -34,7 +37,7 @@ import kotlin.math.floor
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadExifOrientation]
  */
 @WorkerThread
-internal fun ImageSource.readExifOrientation(): Result<AndroidExifOrientation> {
+internal actual fun ImageSource.decodeExifOrientation(): Result<ExifOrientation> {
     val inputStreamResult = openInputStream()
     if (inputStreamResult.isFailure) {
         return Result.failure(inputStreamResult.exceptionOrNull()!!)
@@ -57,7 +60,7 @@ internal fun ImageSource.readExifOrientation(): Result<AndroidExifOrientation> {
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadImageInfo]
  */
 @WorkerThread
-internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
+internal actual fun ImageSource.decodeImageInfo(): Result<ImageInfo> {
     val inputStreamResult = openInputStream()
     if (inputStreamResult.isFailure) {
         return Result.failure(inputStreamResult.exceptionOrNull()!!)
@@ -151,9 +154,31 @@ internal fun isSrcRectError(throwable: Throwable): Boolean =
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSupportBitmapRegionDecoder]
  */
 @SuppressLint("ObsoleteSdkInt")
-internal fun isSupportBitmapRegionDecoder(mimeType: String): Boolean =
+internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
     "image/jpeg".equals(mimeType, true)
             || "image/png".equals(mimeType, true)
             || "image/webp".equals(mimeType, true)
             || ("image/heic".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
             || ("image/heif".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
+
+actual fun createTileBitmapReuseHelper(
+    logger: Logger,
+    tileBitmapReuseSpec: TileBitmapReuseSpec,
+): TileBitmapReuseHelper? = AndroidTileBitmapReuseHelper(logger, tileBitmapReuseSpec)
+
+actual fun createTileDecoder(
+    logger: Logger,
+    imageSource: ImageSource,
+    imageInfo: ImageInfo,
+    exifOrientation: ExifOrientation?,
+    tileBitmapReuseHelper: TileBitmapReuseHelper?,
+): Result<TileDecoder> {
+    val tileDecoder = AndroidTileDecoder(
+        logger = logger,
+        imageSource = imageSource,
+        imageInfo = imageInfo,
+        exifOrientation = exifOrientation,
+        tileBitmapReuseHelper = tileBitmapReuseHelper as AndroidTileBitmapReuseHelper,
+    )
+    return Result.success(tileDecoder)
+}

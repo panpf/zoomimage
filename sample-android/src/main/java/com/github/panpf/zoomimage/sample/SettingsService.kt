@@ -20,7 +20,7 @@ import android.content.Context
 import android.widget.ImageView.ScaleType.FIT_CENTER
 import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
 import com.github.panpf.zoomimage.sample.util.StringMmkvData
-import com.github.panpf.zoomimage.subsampling.TileManager
+import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.tencent.mmkv.MMKV
@@ -109,6 +109,7 @@ class SettingsService(val context: Context) {
     }
 
     companion object {
-        fun defaultLogLevel(): String = Logger.levelName(if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO)
+        fun defaultLogLevel(): String =
+            Logger.levelName(if (BuildConfig.DEBUG) Logger.DEBUG else Logger.INFO)
     }
 }

@@ -34,12 +34,12 @@ internal class GlideTileBitmap(
 
     override val byteCount: Int = bitmap.byteCount
 
+    override val isRecycled: Boolean
+        get() = bitmap.isRecycled
+
     override fun recycle() {
         bitmap.recycle()
     }
-
-    override val isRecycled: Boolean
-        get() = bitmap.isRecycled
 
     override fun setIsDisplayed(displayed: Boolean) {
         resource.setIsDisplayed(displayed)

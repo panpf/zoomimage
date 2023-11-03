@@ -17,25 +17,25 @@
 package com.github.panpf.zoomimage.view.subsampling
 
 import android.view.View
-import com.github.panpf.zoomimage.createTileBitmapReuseHelper
-import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.StoppedController
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
-import com.github.panpf.zoomimage.subsampling.TileBitmapCacheHelper
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapPool
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
-import com.github.panpf.zoomimage.subsampling.TileDecoder
-import com.github.panpf.zoomimage.subsampling.TileManager
-import com.github.panpf.zoomimage.subsampling.TileManager.Companion.DefaultPausedContinuousTransformType
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.subsampling.calculatePreferredTileSize
-import com.github.panpf.zoomimage.subsampling.decodeAndCreateTileDecoder
-import com.github.panpf.zoomimage.subsampling.toIntroString
+import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
+import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.TileManager
+import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformType
+import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
+import com.github.panpf.zoomimage.subsampling.internal.createTileBitmapReuseHelper
+import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -180,7 +180,7 @@ class SubsamplingEngine constructor(
     /**
      * The exif information of the image
      */
-    val exifOrientation: StateFlow<ExifOrientation?> = _exifOrientation
+    val exifOrientationState: StateFlow<ExifOrientation?> = _exifOrientation
 
     /**
      * Whether the image is ready for subsampling

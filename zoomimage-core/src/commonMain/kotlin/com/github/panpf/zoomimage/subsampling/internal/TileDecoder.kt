@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.internal.Tile
-import com.github.panpf.zoomimage.util.IntOffsetCompat
+import androidx.annotation.MainThread
+import androidx.annotation.WorkerThread
+import com.github.panpf.zoomimage.subsampling.ExifOrientation
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 
 /**
- * Tile-related information provided to users
+ * Decode the tile bitmap of the image
  */
-data class TileSnapshot(
-    val coordinate: IntOffsetCompat,
-    val srcRect: IntRectCompat,
-    val sampleSize: Int,
-    val bitmap: TileBitmap?,
-    @TileState val state: Int,
-    val alpha: Int,
-)
+interface TileDecoder {
 
-fun Tile.toSnapshot(): TileSnapshot = TileSnapshot(
-    coordinate = coordinate,
-    srcRect = srcRect,
-    sampleSize = sampleSize,
-    bitmap = bitmap,
-    state = state,
-    alpha = animationState.alpha
-)
+    val imageInfo: ImageInfo
+
+    val exifOrientation: ExifOrientation?
+
+    @WorkerThread
+    fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap?
+
+    @MainThread
+    fun destroy(caller: String)
+}

@@ -124,7 +124,6 @@ fun ZoomImage(
                 .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap),
         )
 
-        // todo 在桌面平台上移动到右下角并且窗口尺寸较小时，会因绘制子采样图块而导致组件的内容消失（这也许是 compose desktop 的 bug）所以将图块在单独的组件上绘制可以降低这个问题的影响，避免底图也无法显示
         Box(
             Modifier
                 .matchParentSize()

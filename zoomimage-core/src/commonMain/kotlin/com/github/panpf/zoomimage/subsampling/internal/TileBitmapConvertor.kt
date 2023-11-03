@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.compose.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
-import androidx.compose.ui.graphics.ImageBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 
-interface ComposeTileBitmap : TileBitmap {
-    val imageBitmap: ImageBitmap
+interface TileBitmapConvertor {
+
+    suspend fun convert(tileBitmap: TileBitmap): TileBitmap
 }

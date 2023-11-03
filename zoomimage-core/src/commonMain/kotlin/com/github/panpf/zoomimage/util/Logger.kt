@@ -17,15 +17,13 @@
 package com.github.panpf.zoomimage.util
 
 import androidx.annotation.IntDef
-import com.github.panpf.zoomimage.createLogPipeline
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 
+expect fun createLogPipeline(): Logger.Pipeline
 
 /**
  * Used to print log
  *
- * @see [com.github.panpf.zoomimage.core.test.LoggerTest]
+ * @see [com.github.panpf.zoomimage.core.test.util.LoggerTest]
  */
 class Logger(
     /**
@@ -498,44 +496,5 @@ class Logger(
     interface Pipeline {
         fun log(level: Int, tag: String, msg: String, tr: Throwable?)
         fun flush()
-    }
-
-
-    /**
-     * The pipeline of the log, which prints the log to the println
-     */
-    class LogPipeline : Pipeline {
-        override fun log(level: Int, tag: String, msg: String, tr: Throwable?) {
-            if (tr != null) {
-                val trString = stackTraceToString(tr)
-                println("${levelName(level)}. $tag. $msg. $trString")
-            } else {
-                println("${levelName(level)}. $tag. $msg")
-            }
-        }
-
-        private fun stackTraceToString(throwable: Throwable): String {
-            val arrayOutputStream = ByteArrayOutputStream()
-            val printWriter = PrintStream(arrayOutputStream)
-            throwable.printStackTrace(printWriter)
-            return String(arrayOutputStream.toByteArray())
-        }
-
-        override fun flush() {
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return javaClass.hashCode()
-        }
-
-        override fun toString(): String {
-            return "LogPipeline"
-        }
     }
 }

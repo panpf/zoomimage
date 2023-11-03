@@ -22,6 +22,8 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
 import androidx.exifinterface.media.ExifInterface
+import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.internal.safeConfig
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -155,7 +157,7 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) : ExifOrienta
         val canvas = Canvas(outBitmap)
         val paint = Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG)
         canvas.drawBitmap(bitmap, matrix, paint)
-        return DefaultAndroidTileBitmap(outBitmap)
+        return AndroidTileBitmap(outBitmap)
     }
 
     override fun name(): String {

@@ -6,6 +6,8 @@ import com.github.panpf.zoomimage.subsampling.DesktopExifOrientation
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
+import com.github.panpf.zoomimage.util.Logger
 import java.io.InputStream
 import javax.imageio.ImageIO
 import javax.imageio.ImageReader
@@ -14,7 +16,7 @@ import javax.imageio.stream.ImageInputStream
 
 @WorkerThread
 @Suppress("FoldInitializerAndIfToElvis")
-internal fun ImageSource.readExifOrientation(): Result<DesktopExifOrientation> {
+internal actual fun ImageSource.decodeExifOrientation(): Result<ExifOrientation> {
     val inputStreamResult = openInputStream()
     if (inputStreamResult.isFailure) {
         return Result.failure(inputStreamResult.exceptionOrNull()!!)
@@ -40,7 +42,7 @@ internal fun ImageSource.readExifOrientation(): Result<DesktopExifOrientation> {
 }
 
 @WorkerThread
-internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
+internal actual fun ImageSource.decodeImageInfo(): Result<ImageInfo> {
     val inputStream: InputStream = openInputStream()
         .let { it.getOrNull() ?: return Result.failure(it.exceptionOrNull()!!) }
     var imageStream: ImageInputStream? = null
@@ -63,4 +65,19 @@ internal fun ImageSource.readImageInfo(): Result<ImageInfo> {
     }
 }
 
-internal fun isSupportSourceRegion(mimeType: String): Boolean = !"image/gif".equals(mimeType, true)
+internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
+    !"image/gif".equals(mimeType, true)
+
+actual fun createTileBitmapReuseHelper(
+    logger: Logger,
+    tileBitmapReuseSpec: TileBitmapReuseSpec,
+): TileBitmapReuseHelper? = null
+
+actual fun createTileDecoder(
+    logger: Logger,
+    imageSource: ImageSource,
+    imageInfo: ImageInfo,
+    exifOrientation: ExifOrientation?,
+    tileBitmapReuseHelper: TileBitmapReuseHelper?,
+): Result<TileDecoder> =
+    Result.success(DesktopTileDecoder(logger, imageSource, imageInfo, exifOrientation))

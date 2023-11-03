@@ -1,12 +1,12 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.internal.Tile
 import com.github.panpf.zoomimage.subsampling.internal.calculateGridSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.closestPowerOfTwo
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
-import com.github.panpf.zoomimage.subsampling.toIntroString
+import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat

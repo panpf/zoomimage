@@ -26,12 +26,12 @@ import android.graphics.Rect
 import android.view.View
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
-import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
@@ -71,13 +71,16 @@ class TileDrawHelper(
     }
 
     fun drawTiles(canvas: Canvas) {
-        val containerSize = zoomableEngine.containerSizeState.value.takeIf { !it.isEmpty() } ?: return
+        val containerSize =
+            zoomableEngine.containerSizeState.value.takeIf { !it.isEmpty() } ?: return
         val contentSize = zoomableEngine.contentSizeState.value.takeIf { !it.isEmpty() } ?: return
         val transform = zoomableEngine.transformState.value
         val imageInfo = subsamplingEngine.imageInfoState.value ?: return
         val backgroundTiles = subsamplingEngine.backgroundTilesState.value
-        val foregroundTiles = subsamplingEngine.foregroundTilesState.value.takeIf { it.isNotEmpty() } ?: return
-        val imageLoadRect = subsamplingEngine.imageLoadRectState.value.takeIf { !it.isEmpty } ?: return
+        val foregroundTiles =
+            subsamplingEngine.foregroundTilesState.value.takeIf { it.isNotEmpty() } ?: return
+        val imageLoadRect =
+            subsamplingEngine.imageLoadRectState.value.takeIf { !it.isEmpty } ?: return
 
         var backgroundCount = 0
         var insideLoadCount = 0
@@ -124,7 +127,8 @@ class TileDrawHelper(
         contentSize: IntSizeCompat,
         tileSnapshot: TileSnapshot
     ): Boolean {
-        val bitmap = (tileSnapshot.bitmap as AndroidTileBitmap?)?.bitmap ?: return false
+        val tileBitmap = tileSnapshot.bitmap ?: return false
+        val bitmap = (tileBitmap as AndroidTileBitmap).bitmap ?: return false
 
         val widthScale = imageInfo.width / contentSize.width.toFloat()
         val heightScale = imageInfo.height / contentSize.height.toFloat()
@@ -166,8 +170,8 @@ class TileDrawHelper(
             )
         }
         val boundsColor = when (tileSnapshot.state) {
-            Tile.STATE_LOADED -> Color.GREEN
-            Tile.STATE_LOADING -> Color.YELLOW
+            TileState.STATE_LOADED -> Color.GREEN
+            TileState.STATE_LOADING -> Color.YELLOW
             else -> Color.RED
         }
         val tileBoundsPaint = getTileBoundsPaint()

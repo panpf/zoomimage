@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
+import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileBitmapCache
+import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
 import com.github.panpf.zoomimage.util.Logger
 
 /**

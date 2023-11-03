@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -24,10 +24,11 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
-import com.github.panpf.zoomimage.subsampling.internal.isSrcRectError
-import com.github.panpf.zoomimage.subsampling.internal.requiredMainThread
-import com.github.panpf.zoomimage.subsampling.internal.requiredWorkThread
+import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.ExifOrientation
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -37,7 +38,7 @@ import java.util.LinkedList
 /**
  * Decode the tile bitmap of the image
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.AndroidTileDecoderTest]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecoderTest]
  */
 class AndroidTileDecoder constructor(
     logger: Logger,
@@ -60,7 +61,7 @@ class AndroidTileDecoder constructor(
         val bitmap = useDecoder { decoder ->
             decodeRegion(decoder, srcRect, sampleSize)
         } ?: return null
-        return applyExifOrientation(DefaultAndroidTileBitmap(bitmap))
+        return applyExifOrientation(AndroidTileBitmap(bitmap))
     }
 
     @MainThread

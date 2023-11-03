@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
-interface TileBitmapConvertor {
+import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 
-    fun convert(tileBitmap: TileBitmap): TileBitmap
+/**
+ * Assist [TileDecoder] to obtain Bitmap from [TileBitmapPool] and set it to BitmapFactory and release Bitmap
+ */
+interface TileBitmapReuseHelper {
+
+    val spec: TileBitmapReuseSpec
+
+    fun freeTileBitmap(tileBitmap: TileBitmap?, caller: String)
 }

@@ -1,16 +1,16 @@
-package com.github.panpf.zoomimage.core.test.subsampling
+package com.github.panpf.zoomimage.core.test.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.calculatePreferredTileSize
-import com.github.panpf.zoomimage.subsampling.canUseSubsamplingByAspectRatio
+import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
-import com.github.panpf.zoomimage.subsampling.toIntroString
+import com.github.panpf.zoomimage.subsampling.internal.canUseSubsamplingByAspectRatio
+import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.div
 import org.junit.Assert
 import org.junit.Test
 
-class TileUtilsTest {
+class SubsamplingUtilsTest {
 
     @Test
     fun testCanUseSubsamplingByAspectRatio() {

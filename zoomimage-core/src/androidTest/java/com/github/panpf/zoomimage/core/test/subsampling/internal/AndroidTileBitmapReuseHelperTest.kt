@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.core.test.subsampling
+package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -6,8 +6,8 @@ import android.os.Build
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.core.test.internal.LruTileBitmapPool
 import com.github.panpf.zoomimage.core.test.internal.formatFileSize
-import com.github.panpf.zoomimage.subsampling.AndroidTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
+import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import org.junit.Assert

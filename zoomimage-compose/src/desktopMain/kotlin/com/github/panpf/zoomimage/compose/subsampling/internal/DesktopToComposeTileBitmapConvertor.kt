@@ -14,41 +14,26 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.compose.subsampling
+package com.github.panpf.zoomimage.compose.subsampling.internal
 
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
+import com.github.panpf.zoomimage.compose.subsampling.DesktopComposeTileBitmap
 import com.github.panpf.zoomimage.subsampling.DesktopTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
-import com.github.panpf.zoomimage.subsampling.TileBitmapConvertor
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class DesktopToComposeTileBitmapConvertor : TileBitmapConvertor {
 
-    override fun convert(tileBitmap: TileBitmap): TileBitmap {
+    override suspend fun convert(tileBitmap: TileBitmap): TileBitmap {
         val desktopTileBitmap = tileBitmap as DesktopTileBitmap
-//        return DesktopComposeTileBitmap(
-//            sourceTileBitmap = desktopTileBitmap,
-//        )
-        return DefaultComposeTileBitmap(
-            imageBitmap = desktopTileBitmap.bufferedImage.toComposeImageBitmap(),
+        val imageBitmap = withContext(Dispatchers.IO) {
+            desktopTileBitmap.bufferedImage.toComposeImageBitmap()
+        }
+        return DesktopComposeTileBitmap(
+            imageBitmap = imageBitmap,
             bitmapByteCount = tileBitmap.byteCount
         )
     }
-}
-
-class DesktopComposeTileBitmap constructor(
-    val sourceTileBitmap: DesktopTileBitmap,
-) : ComposeTileBitmap {
-
-    override val imageBitmap: ImageBitmap = sourceTileBitmap.bufferedImage.toComposeImageBitmap()
-
-    override val width: Int = imageBitmap.width
-
-    override val height: Int = imageBitmap.height
-
-    override val byteCount: Int = sourceTileBitmap.byteCount
-
-    override fun recycle() {}
-
-    override val isRecycled: Boolean = false
 }

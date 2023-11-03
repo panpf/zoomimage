@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
 import androidx.annotation.WorkerThread
+import com.github.panpf.zoomimage.subsampling.DesktopTileBitmap
+import com.github.panpf.zoomimage.subsampling.ExifOrientation
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.internal.quietClose
@@ -30,7 +35,7 @@ import javax.imageio.ImageReader
 /**
  * Decode the tile bitmap of the image
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.AndroidTileDecoderTest]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.DesktopTileDecoderTest]
  */
 class DesktopTileDecoder constructor(
     logger: Logger,

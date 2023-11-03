@@ -6,7 +6,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.core.test.internal.produceFingerPrint
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
-import com.github.panpf.zoomimage.subsampling.DefaultAndroidTileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
@@ -200,7 +199,7 @@ class AndroidExifOrientationTest {
             val message = "exifOrientationInt=${exifOrientation.name()}"
 
             val appliedBitmap = exifOrientation.applyToTileBitmap(
-                DefaultAndroidTileBitmap(inBitmap),
+                tileBitmap = AndroidTileBitmap(inBitmap),
                 reverse = false
             ).let { it as AndroidTileBitmap }.bitmap!!
             if (change) {
@@ -211,7 +210,7 @@ class AndroidExifOrientationTest {
                 )
 
                 val reversedBitmap = exifOrientation.applyToTileBitmap(
-                    DefaultAndroidTileBitmap(appliedBitmap),
+                    tileBitmap = AndroidTileBitmap(appliedBitmap),
                     reverse = true
                 ).let { it as AndroidTileBitmap }.bitmap!!
                 Assert.assertEquals(

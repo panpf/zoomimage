@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.compose.subsampling
 
-import java.awt.image.BufferedImage
+import androidx.compose.ui.graphics.ImageBitmap
 
-fun DesktopTileBitmap(bufferedImage: BufferedImage): DesktopTileBitmap {
-    return DesktopTileBitmapImpl(bufferedImage)
-}
+class DesktopComposeTileBitmap constructor(
+    override val imageBitmap: ImageBitmap,
+    bitmapByteCount: Int,
+) : ComposeTileBitmap {
 
-interface DesktopTileBitmap : TileBitmap {
-    val bufferedImage: BufferedImage
-}
+    override val width: Int = imageBitmap.width
 
-private class DesktopTileBitmapImpl(override val bufferedImage: BufferedImage) :
-    DesktopTileBitmap {
+    override val height: Int = imageBitmap.height
 
-    override val width: Int = bufferedImage.width
-
-    override val height: Int = bufferedImage.height
-
-    override val byteCount: Int = width * height * (bufferedImage.colorModel.pixelSize / 8)
+    override val byteCount: Int = bitmapByteCount
 
     override val isRecycled: Boolean = false
 

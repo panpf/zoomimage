@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling
 
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapReuseHelper
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.flip

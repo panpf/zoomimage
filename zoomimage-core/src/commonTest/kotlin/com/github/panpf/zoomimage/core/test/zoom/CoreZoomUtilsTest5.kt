@@ -366,8 +366,8 @@ class CoreZoomUtilsTest5 {
             one = transform,
             two = transform.copy(
                 scale = ScaleFactorCompat(
-                    transform.scaleX + 0.002f,
-                    transform.scaleY - 0.003f
+                    transform.scaleX + 0.1f,
+                    transform.scaleY - 0.1f
                 )
             )
         ).apply {
@@ -377,8 +377,8 @@ class CoreZoomUtilsTest5 {
             one = transform,
             two = transform.copy(
                 scale = ScaleFactorCompat(
-                    transform.scaleX + 0.008f,
-                    transform.scaleY - 0.007f
+                    transform.scaleX + 0.11f,
+                    transform.scaleY - 0.11f
                 )
             )
         ).apply {
@@ -388,8 +388,8 @@ class CoreZoomUtilsTest5 {
             one = transform,
             two = transform.copy(
                 offset = OffsetCompat(
-                    transform.offsetX + 0.002f,
-                    transform.offsetY - 0.003f
+                    transform.offsetX + 1f,
+                    transform.offsetY - 1f
                 )
             )
         ).apply {
@@ -399,8 +399,8 @@ class CoreZoomUtilsTest5 {
             one = transform,
             two = transform.copy(
                 offset = OffsetCompat(
-                    transform.offsetX + 0.008f,
-                    transform.offsetY - 0.007f
+                    transform.offsetX + 1.1f,
+                    transform.offsetY - 1.1f
                 )
             )
         ).apply {

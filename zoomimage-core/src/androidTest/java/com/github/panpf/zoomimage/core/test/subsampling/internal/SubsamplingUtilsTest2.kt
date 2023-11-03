@@ -1,22 +1,23 @@
-package com.github.panpf.zoomimage.core.test.subsampling
+package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.panpf.zoomimage.decodeExifOrientation
-import com.github.panpf.zoomimage.subsampling.AndroidTileBitmapReuseHelper
-import com.github.panpf.zoomimage.subsampling.CreateTileDecoderException
+import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.applyToImageInfo
-import com.github.panpf.zoomimage.subsampling.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.fromAsset
-import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
+import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
+import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
+import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
+import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import org.junit.Assert
 import org.junit.Test
 import kotlin.math.roundToInt
 
-class TileUtilsTest {
+class SubsamplingUtilsTest2 {
 
     @Test
     fun testDecodeAndCreateTileDecoder() {
@@ -25,8 +26,9 @@ class TileUtilsTest {
         val tileBitmapReuseHelper = AndroidTileBitmapReuseHelper(logger, TileBitmapReuseSpec())
 
         val imageSource = ImageSource.fromAsset(context, "sample_exif_girl_rotate_90.jpg")
-        val exifOrientation = decodeExifOrientation(imageSource).getOrThrow()
-        val imageInfo = imageSource.readImageInfo().getOrThrow()
+        val exifOrientation =
+            imageSource.decodeExifOrientation().getOrThrow().let { it as AndroidExifOrientation }
+        val imageInfo = imageSource.decodeImageInfo().getOrThrow()
         val correctOrientationImageInfo = exifOrientation.applyToImageInfo(imageInfo)
         val thumbnailSize = correctOrientationImageInfo.size / 8
         decodeAndCreateTileDecoder(

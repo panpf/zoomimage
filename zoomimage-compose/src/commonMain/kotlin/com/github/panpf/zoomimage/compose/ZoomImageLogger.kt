@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.github.panpf.zoomimage.util.Logger
 
-
 /**
  * Creates and remember a [Logger]
  *

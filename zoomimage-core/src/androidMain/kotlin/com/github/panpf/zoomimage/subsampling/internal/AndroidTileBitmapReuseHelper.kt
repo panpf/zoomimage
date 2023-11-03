@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.subsampling.internal.calculateSampledBitmapSizeForRegion
-import com.github.panpf.zoomimage.subsampling.internal.isAndSupportHardware
-import com.github.panpf.zoomimage.subsampling.internal.isSupportInBitmapForRegion
-import com.github.panpf.zoomimage.subsampling.internal.toHexShortString
+import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.AndroidTileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileBitmapPool
+import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
@@ -37,7 +38,7 @@ import kotlinx.coroutines.sync.Mutex
 /**
  * Assist [TileDecoder] to obtain Bitmap from [TileBitmapPool] and set it to BitmapFactory and release Bitmap
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.AndroidTileBitmapReuseHelperTest]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileBitmapReuseHelperTest]
  */
 class AndroidTileBitmapReuseHelper(
     logger: Logger,

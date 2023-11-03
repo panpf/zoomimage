@@ -22,18 +22,10 @@ import android.graphics.BitmapFactory.Options
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
-import com.github.panpf.zoomimage.subsampling.DefaultAndroidTileBitmap
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Float
-import kotlin.Boolean
-import kotlin.Int
-import kotlin.String
-import kotlin.Suppress
-import kotlin.apply
-import kotlin.arrayOf
-import kotlin.let
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 class ExifOrientationTestFileHelper(
@@ -68,7 +60,7 @@ class ExifOrientationTestFileHelper(
                 })
             }!!
             val thumbnailBitmap: Bitmap? = if (thumbnail) {
-                val scale = Float.max(
+                val scale = max(
                     originBitmap.width / 1000f,
                     originBitmap.height / 1000f
                 )
@@ -117,7 +109,7 @@ class ExifOrientationTestFileHelper(
         sourceBitmap: Bitmap,
         orientation: Int
     ) {
-        val tileBitmap = DefaultAndroidTileBitmap(sourceBitmap)
+        val tileBitmap = AndroidTileBitmap(sourceBitmap)
         val newBitmap =
             AndroidExifOrientation(orientation)
                 .applyToTileBitmap(tileBitmap, reverse = true)
@@ -157,5 +149,9 @@ class ExifOrientationTestFileHelper(
         val file = File(cacheDir, "${name.lowercase()}.jpg")
     }
 
-    class TestFile(@Suppress("unused") val title: String, val file: File, val exifOrientation: Int)
+    class TestFile(
+        @Suppress("unused") val title: String,
+        @Suppress("unused") val file: File,
+        @Suppress("unused") val exifOrientation: Int
+    )
 }

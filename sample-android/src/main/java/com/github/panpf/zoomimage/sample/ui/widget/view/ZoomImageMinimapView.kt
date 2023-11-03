@@ -35,7 +35,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.subsampling.Tile
+import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
@@ -98,8 +98,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                 }
                 val boundsColor = when {
                     !load -> Color.parseColor("#00BFFF")
-                    tileSnapshot.state == Tile.STATE_LOADED -> Color.GREEN
-                    tileSnapshot.state == Tile.STATE_LOADING -> Color.YELLOW
+                    tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
+                    tileSnapshot.state == TileState.STATE_LOADING -> Color.YELLOW
                     else -> Color.RED
                 }
                 tileBoundsPaint.color = boundsColor

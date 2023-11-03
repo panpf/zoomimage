@@ -2,18 +2,18 @@ package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import android.os.Build
 import androidx.test.platform.app.InstrumentationRegistry
+import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
-import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.subsampling.internal.calculateSampledBitmapSizeForRegion
+import com.github.panpf.zoomimage.subsampling.internal.checkSupportSubsamplingByMimeType
+import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
+import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
 import com.github.panpf.zoomimage.subsampling.internal.isSrcRectError
-import com.github.panpf.zoomimage.subsampling.internal.isSupportBitmapRegionDecoder
 import com.github.panpf.zoomimage.subsampling.internal.isSupportInBitmapForRegion
-import com.github.panpf.zoomimage.subsampling.internal.readExifOrientation
-import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
 import org.junit.Test
@@ -31,8 +31,8 @@ class AndroidTileDecodeUtilsTest {
             Assert.assertEquals(
                 "assetPath=$assetPath, excepted=$excepted",
                 excepted,
-                ImageSource.fromAsset(context, assetPath).readExifOrientation()
-                    .getOrThrow().exifOrientation
+                ImageSource.fromAsset(context, assetPath).decodeExifOrientation()
+                    .getOrThrow().let { it as AndroidExifOrientation }.exifOrientation
             )
         }
     }
@@ -48,7 +48,7 @@ class AndroidTileDecodeUtilsTest {
             Assert.assertEquals(
                 "assetPath=$assetPath, excepted=$excepted",
                 excepted,
-                ImageSource.fromAsset(context, assetPath).readImageInfo().getOrThrow()
+                ImageSource.fromAsset(context, assetPath).decodeImageInfo().getOrThrow()
             )
         }
     }
@@ -162,20 +162,20 @@ class AndroidTileDecodeUtilsTest {
     @Test
     fun testIsSupportBitmapRegionDecoder() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Assert.assertTrue(isSupportBitmapRegionDecoder("image/heic"))
+            Assert.assertTrue(checkSupportSubsamplingByMimeType("image/heic"))
         } else {
-            Assert.assertFalse(isSupportBitmapRegionDecoder("image/heic"))
+            Assert.assertFalse(checkSupportSubsamplingByMimeType("image/heic"))
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Assert.assertTrue(isSupportBitmapRegionDecoder("image/heif"))
+            Assert.assertTrue(checkSupportSubsamplingByMimeType("image/heif"))
         } else {
-            Assert.assertFalse(isSupportBitmapRegionDecoder("image/heif"))
+            Assert.assertFalse(checkSupportSubsamplingByMimeType("image/heif"))
         }
-        Assert.assertFalse(isSupportBitmapRegionDecoder("image/bmp"))
-        Assert.assertFalse(isSupportBitmapRegionDecoder("image/gif"))
-        Assert.assertTrue(isSupportBitmapRegionDecoder("image/jpeg"))
-        Assert.assertTrue(isSupportBitmapRegionDecoder("image/png"))
-        Assert.assertTrue(isSupportBitmapRegionDecoder("image/webp"))
+        Assert.assertFalse(checkSupportSubsamplingByMimeType("image/bmp"))
+        Assert.assertFalse(checkSupportSubsamplingByMimeType("image/gif"))
+        Assert.assertTrue(checkSupportSubsamplingByMimeType("image/jpeg"))
+        Assert.assertTrue(checkSupportSubsamplingByMimeType("image/png"))
+        Assert.assertTrue(checkSupportSubsamplingByMimeType("image/webp"))
     }
 
     private operator fun IntSizeCompat.minus(other: IntSizeCompat): IntSizeCompat {

@@ -16,25 +16,34 @@
 
 package com.github.panpf.zoomimage.util
 
-import android.util.Log
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+
+actual fun createLogPipeline(): Logger.Pipeline = JvmLogPipeline()
 
 /**
- * The pipeline of the log, which prints the log to the Android logcat
+ * The pipeline of the log, which prints the log to the println
  */
-class AndroidLogPipeline : Logger.Pipeline {
+class JvmLogPipeline : Logger.Pipeline {
 
     override fun log(level: Int, tag: String, msg: String, tr: Throwable?) {
-        when (level) {
-            Logger.VERBOSE -> Log.v(tag, msg, tr)
-            Logger.DEBUG -> Log.d(tag, msg, tr)
-            Logger.INFO -> Log.i(tag, msg, tr)
-            Logger.WARN -> Log.w(tag, msg, tr)
-            Logger.ERROR -> Log.e(tag, msg, tr)
-            Logger.ASSERT -> Log.wtf(tag, msg, tr)
+        if (tr != null) {
+            val trString = stackTraceToString(tr)
+            println("${Logger.levelName(level)}. $tag. $msg. $trString")
+        } else {
+            println("${Logger.levelName(level)}. $tag. $msg")
         }
     }
 
+    private fun stackTraceToString(throwable: Throwable): String {
+        val arrayOutputStream = ByteArrayOutputStream()
+        val printWriter = PrintStream(arrayOutputStream)
+        throwable.printStackTrace(printWriter)
+        return String(arrayOutputStream.toByteArray())
+    }
+
     override fun flush() {
+
     }
 
     override fun equals(other: Any?): Boolean {
@@ -48,6 +57,6 @@ class AndroidLogPipeline : Logger.Pipeline {
     }
 
     override fun toString(): String {
-        return "AndroidLogPipeline"
+        return "JvmLogPipeline"
     }
 }

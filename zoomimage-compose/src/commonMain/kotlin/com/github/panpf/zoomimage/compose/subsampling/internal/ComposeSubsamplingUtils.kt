@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.compose.subsampling.internal
 
-/**
- * Assist [TileDecoder] to obtain Bitmap from [TileBitmapPool] and set it to BitmapFactory and release Bitmap
- */
-interface TileBitmapReuseHelper {
+import androidx.compose.runtime.Composable
+import com.github.panpf.zoomimage.subsampling.StoppedController
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
 
-    val spec: TileBitmapReuseSpec
+@Composable
+expect fun defaultStoppedController(): StoppedController?
 
-    fun freeTileBitmap(tileBitmap: TileBitmap?, caller: String)
-}
+expect fun createTileBitmapConvertor(): TileBitmapConvertor?

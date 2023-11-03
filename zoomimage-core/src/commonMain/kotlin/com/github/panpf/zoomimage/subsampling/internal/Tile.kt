@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
-import androidx.annotation.IntDef
+import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
+import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.toShortString
@@ -25,7 +27,7 @@ import kotlinx.coroutines.Job
 /**
  * A tile of the image, store the region, sample multiplier, Bitmap, load status, and other information of the tile
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.TileTest]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileTest]
  */
 class Tile constructor(
     /**
@@ -54,8 +56,8 @@ class Tile constructor(
     /**
      * The state of the tile
      */
-    @State
-    var state: Int = STATE_NONE
+    @TileState
+    var state: Int = TileState.STATE_NONE
 
     val animationState = AnimationState()
 
@@ -97,30 +99,10 @@ class Tile constructor(
         return "Tile(" +
                 "coordinate=${coordinate.toShortString()}," +
                 "srcRect=${srcRect.toShortString()}," +
-                "state=${stateName(state)}," +
+                "state=${TileState.name(state)}," +
                 "sampleSize=$sampleSize," +
                 "bitmap=${bitmap})"
     }
-
-    companion object {
-        const val STATE_NONE = 0
-        const val STATE_LOADING = 1
-        const val STATE_LOADED = 2
-        const val STATE_ERROR = 3
-
-        fun stateName(state: Int): String = when (state) {
-            STATE_NONE -> "NONE"
-            STATE_LOADING -> "LOADING"
-            STATE_LOADED -> "LOADED"
-            STATE_ERROR -> "ERROR"
-            else -> "UNKNOWN"
-        }
-    }
-
-    @Retention(AnnotationRetention.SOURCE)
-    @IntDef(STATE_NONE, STATE_LOADING, STATE_LOADED, STATE_ERROR)
-    @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
-    annotation class State
 
     class AnimationState {
 

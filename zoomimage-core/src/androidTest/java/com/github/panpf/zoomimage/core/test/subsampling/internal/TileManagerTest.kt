@@ -1,22 +1,22 @@
-package com.github.panpf.zoomimage.core.test.subsampling
+package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.core.test.internal.useApply
-import com.github.panpf.zoomimage.subsampling.AndroidTileBitmapReuseHelper
-import com.github.panpf.zoomimage.subsampling.AndroidTileDecoder
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.subsampling.TileBitmapCacheHelper
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
-import com.github.panpf.zoomimage.subsampling.TileManager
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.subsampling.calculatePreferredTileSize
+import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.fromAsset
+import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
+import com.github.panpf.zoomimage.subsampling.internal.AndroidTileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
+import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
-import com.github.panpf.zoomimage.subsampling.internal.readImageInfo
-import com.github.panpf.zoomimage.subsampling.toIntroString
+import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
+import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
+import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -403,7 +403,7 @@ class TileManagerTest {
             Assert.assertEquals(
                 "[0x0, 1x0, 2x0]",
                 tileManager.foregroundTiles
-                    .filter { it.state == Tile.STATE_LOADED }
+                    .filter { it.state == TileState.STATE_LOADED }
                     .map { it.coordinate.toShortString() }
                     .toString()
             )
@@ -415,7 +415,7 @@ class TileManagerTest {
             Assert.assertEquals(
                 "[0x0, 1x0, 2x0, 3x0, 0x1, 1x1, 2x1, 3x1]",
                 tileManager.foregroundTiles
-                    .filter { it.state == Tile.STATE_LOADED }
+                    .filter { it.state == TileState.STATE_LOADED }
                     .map { it.coordinate.toShortString() }
                     .toString()
             )
@@ -427,7 +427,7 @@ class TileManagerTest {
             Assert.assertEquals(
                 "[0x0, 1x0, 2x0, 3x0]",
                 tileManager.foregroundTiles
-                    .filter { it.state == Tile.STATE_LOADED }
+                    .filter { it.state == TileState.STATE_LOADED }
                     .map { it.coordinate.toShortString() }
                     .toString()
             )
@@ -439,7 +439,7 @@ class TileManagerTest {
             Assert.assertEquals(
                 "[0x0, 1x0, 2x0, 3x0, 0x1, 1x1, 2x1, 3x1]",
                 tileManager.foregroundTiles
-                    .filter { it.state == Tile.STATE_LOADED }
+                    .filter { it.state == TileState.STATE_LOADED }
                     .map { it.coordinate.toShortString() }
                     .toString()
             )
@@ -451,7 +451,7 @@ class TileManagerTest {
             Assert.assertEquals(
                 "[1x0, 2x0, 3x0, 4x0, 5x0, 1x1, 2x1, 3x1, 4x1, 5x1, 1x2, 2x2, 3x2, 4x2, 5x2]",
                 tileManager.foregroundTiles
-                    .filter { it.state == Tile.STATE_LOADED }
+                    .filter { it.state == TileState.STATE_LOADED }
                     .map { it.coordinate.toShortString() }
                     .toString()
             )
@@ -463,7 +463,7 @@ class TileManagerTest {
             Assert.assertEquals(
                 "[1x0, 2x0, 3x0, 4x0, 5x0, 1x1, 2x1, 3x1, 4x1, 5x1]",
                 tileManager.foregroundTiles
-                    .filter { it.state == Tile.STATE_LOADED }
+                    .filter { it.state == TileState.STATE_LOADED }
                     .map { it.coordinate.toShortString() }
                     .toString()
             )
@@ -475,23 +475,23 @@ class TileManagerTest {
         TileManagerHolder().useApply {
             Assert.assertEquals(0, refreshTiles(scale = 3f))
             Thread.sleep(1000)
-            Assert.assertTrue(tileManager.foregroundTiles.all { it.state == Tile.STATE_LOADED })
+            Assert.assertTrue(tileManager.foregroundTiles.all { it.state == TileState.STATE_LOADED })
 
             runBlocking(Dispatchers.Main) {
                 tileManager.clean("testClean")
             }
             Thread.sleep(1000)
-            Assert.assertTrue(tileManager.foregroundTiles.all { it.state == Tile.STATE_NONE })
+            Assert.assertTrue(tileManager.foregroundTiles.all { it.state == TileState.STATE_NONE })
 
             Assert.assertEquals(0, refreshTiles(scale = 6f))
             Thread.sleep(1000)
-            Assert.assertTrue(tileManager.foregroundTiles.all { it.state == Tile.STATE_LOADED })
+            Assert.assertTrue(tileManager.foregroundTiles.all { it.state == TileState.STATE_LOADED })
 
             runBlocking(Dispatchers.Main) {
                 tileManager.clean("testClean")
             }
             Thread.sleep(1000)
-            Assert.assertTrue(tileManager.foregroundTiles.all { it.state == Tile.STATE_NONE })
+            Assert.assertTrue(tileManager.foregroundTiles.all { it.state == TileState.STATE_NONE })
         }
     }
 
@@ -501,7 +501,7 @@ class TileManagerTest {
             level = Logger.DEBUG
         }
         private val imageSource = ImageSource.fromAsset(context, assetName)
-        val imageInfo = imageSource.readImageInfo().getOrThrow()
+        val imageInfo = imageSource.decodeImageInfo().getOrThrow()
         private val tileBitmapCacheHelper = TileBitmapCacheHelper(logger, TileBitmapCacheSpec())
         private val tileBitmapReuseHelper =
             AndroidTileBitmapReuseHelper(logger, TileBitmapReuseSpec())

@@ -48,7 +48,7 @@ import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
 import com.github.panpf.zoomimage.sample.ui.util.compose.toDp
 import com.github.panpf.zoomimage.sample.util.BaseMmkvData
-import com.github.panpf.zoomimage.subsampling.TileManager
+import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
@@ -292,7 +292,8 @@ fun ZoomImageOptionsDialog(
                     values = gestureTypeStrings,
                     checkedList = disabledGestureTypeCheckedList,
                 ) { which, isChecked ->
-                    val newCheckedList = disabledGestureTypeCheckedList.toMutableList().apply { set(which, isChecked) }
+                    val newCheckedList = disabledGestureTypeCheckedList.toMutableList()
+                        .apply { set(which, isChecked) }
                     val newDisabledGestureType =
                         newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
                             if (checked) gestureTypes[index] else null
@@ -340,15 +341,17 @@ fun ZoomImageOptionsDialog(
                 val continuousTransformTypeStrings = remember {
                     continuousTransformTypes.map { ContinuousTransformType.name(it) }
                 }
-                val pausedContinuousTransformTypeCheckedList = remember(pausedContinuousTransformType) {
-                    continuousTransformTypes.map { it and pausedContinuousTransformType != 0 }
-                }
+                val pausedContinuousTransformTypeCheckedList =
+                    remember(pausedContinuousTransformType) {
+                        continuousTransformTypes.map { it and pausedContinuousTransformType != 0 }
+                    }
                 MyMultiChooseMenu(
                     name = "Paused Continuous Transform Type",
                     values = continuousTransformTypeStrings,
                     checkedList = pausedContinuousTransformTypeCheckedList,
                 ) { which, isChecked ->
-                    val newCheckedList = pausedContinuousTransformTypeCheckedList.toMutableList().apply { set(which, isChecked) }
+                    val newCheckedList = pausedContinuousTransformTypeCheckedList.toMutableList()
+                        .apply { set(which, isChecked) }
                     val newContinuousTransformType =
                         newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
                             if (checked) continuousTransformTypes[index] else null

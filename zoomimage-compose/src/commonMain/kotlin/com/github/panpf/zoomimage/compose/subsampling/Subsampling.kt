@@ -28,13 +28,12 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
-import com.github.panpf.zoomimage.compose.drawTile
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.Tile
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
+import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.util.Logger
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -62,7 +61,7 @@ fun Modifier.subsampling(
         var realDrawCount = 0
         backgroundTiles.forEach { tileSnapshot ->
             if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
-                if (internalDrawTile(imageInfo, contentSize, tileSnapshot)) {
+                if (drawTile(imageInfo, contentSize, tileSnapshot)) {
                     backgroundCount++
                 }
             }
@@ -70,7 +69,7 @@ fun Modifier.subsampling(
         foregroundTiles.forEach { tileSnapshot ->
             if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
                 insideLoadCount++
-                if (internalDrawTile(imageInfo, contentSize, tileSnapshot)) {
+                if (drawTile(imageInfo, contentSize, tileSnapshot)) {
                     realDrawCount++
                 }
                 if (subsamplingState.showTileBounds) {
@@ -92,12 +91,13 @@ fun Modifier.subsampling(
     }
 }
 
-private fun ContentDrawScope.internalDrawTile(
+private fun ContentDrawScope.drawTile(
     imageInfo: ImageInfo,
     contentSize: IntSize,
     tileSnapshot: TileSnapshot,
 ): Boolean {
     val tileBitmap = tileSnapshot.bitmap ?: return false
+    val imageBitmap = (tileBitmap as ComposeTileBitmap).imageBitmap
     val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
     val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
     val tileDrawRect = IntRect(
@@ -108,14 +108,15 @@ private fun ContentDrawScope.internalDrawTile(
     )
     val srcOffset = IntOffset.Zero
     val srcSize = IntSize(tileBitmap.width, tileBitmap.height)
+    val dstOffset = tileDrawRect.topLeft
+    val dstSize = tileDrawRect.size
     val alpha = tileSnapshot.alpha / 255f
-    drawTile(
-        contentDrawScope = this,
-        tileSnapshot = tileSnapshot,
+    drawImage(
+        image = imageBitmap,
         srcOffset = srcOffset,
         srcSize = srcSize,
-        dstOffset = tileDrawRect.topLeft,
-        dstSize = tileDrawRect.size,
+        dstOffset = dstOffset,
+        dstSize = dstSize,
         alpha = alpha,
     )
     return true
@@ -130,8 +131,8 @@ private fun ContentDrawScope.drawTileBounds(
     val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
     val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
     val boundsColor = when (tileSnapshot.state) {
-        Tile.STATE_LOADED -> Color.Green
-        Tile.STATE_LOADING -> Color.Yellow
+        TileState.STATE_LOADED -> Color.Green
+        TileState.STATE_LOADING -> Color.Yellow
         else -> Color.Red
     }
     val tileDrawRect = IntRect(

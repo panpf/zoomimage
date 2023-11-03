@@ -1227,12 +1227,12 @@ fun contentPointToTouchPoint(
 }
 
 fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
-    return one.scaleX.format(2).aboutEquals(two.scaleX.format(2), delta = 0.1f)
-            && one.scaleY.format(2).aboutEquals(two.scaleY.format(2), delta = 0.1f)
-            && one.offsetX.format(2).aboutEquals(two.offsetX.format(2), delta = 1f)
-            && one.offsetY.format(2).aboutEquals(two.offsetY.format(2), delta = 1f)
+    return one.scaleX.aboutEquals(two.scaleX, delta = 0.1f)
+            && one.scaleY.aboutEquals(two.scaleY, delta = 0.1f)
+            && one.offsetX.aboutEquals(two.offsetX, delta = 1f)
+            && one.offsetY.aboutEquals(two.offsetY, delta = 1f)
 }
 
-private fun Float.aboutEquals(other: Float, delta: Float): Boolean {
-    return abs(this - other) <= delta
+private fun Float.aboutEquals(other: Float, delta: Float, scale: Int = 2): Boolean {
+    return abs(this - other).format(scale) <= delta
 }

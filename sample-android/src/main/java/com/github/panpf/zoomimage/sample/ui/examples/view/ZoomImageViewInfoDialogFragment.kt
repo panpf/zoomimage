@@ -62,7 +62,7 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
                 containerSize: ${zoomable.containerSizeState.value.let { "${it.width}x${it.height}" }}
                 contentSize: ${zoomable.contentSizeState.value.let { "${it.width}x${it.height}" }}
                 contentOriginSize: ${imageInfo?.let { "${it.width}x${it.height}" }}
-                exifOrientation: ${subsampling.exifOrientation}
+                exifOrientation: ${subsampling.exifOrientationState.value?.name()}
                 rotation: ${transform.rotation.roundToInt()}
             """.trimIndent()
 

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
 import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.checkSupportSubsamplingByMimeType
-import com.github.panpf.zoomimage.createTileDecoder
-import com.github.panpf.zoomimage.decodeExifOrientation
-import com.github.panpf.zoomimage.decodeImageInfo
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.applyToImageInfo
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -33,7 +32,7 @@ import kotlin.math.abs
 /**
  * Create [TileDecoder]. If the image type is not supported or the thumbnail size is larger than the original image or the aspect ratio of the thumbnail and the original image is inconsistent, the creation will fail.
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.TileUtilsTest.testDecodeAndCreateTileDecoder]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest2.testDecodeAndCreateTileDecoder]
  */
 @WorkerThread
 fun decodeAndCreateTileDecoder(
@@ -44,12 +43,12 @@ fun decodeAndCreateTileDecoder(
     tileBitmapReuseHelper: TileBitmapReuseHelper?,
 ): Result<TileDecoder> {
     val exifOrientation = if (!ignoreExifOrientation) {
-        decodeExifOrientation(imageSource = imageSource).getOrNull()
+        imageSource.decodeExifOrientation().getOrNull()
     } else {
         null
     }
 
-    val imageInfoResult = decodeImageInfo(imageSource = imageSource)
+    val imageInfoResult = imageSource.decodeImageInfo()
     val imageInfo = imageInfoResult.getOrNull()?.let {
         exifOrientation?.applyToImageInfo(it) ?: it
     }
@@ -91,7 +90,7 @@ fun decodeAndCreateTileDecoder(
 }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.TileUtilsTest.testCanUseSubsamplingByAspectRatio]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testCanUseSubsamplingByAspectRatio]
  */
 fun canUseSubsamplingByAspectRatio(
     imageSize: IntSizeCompat,
@@ -111,7 +110,7 @@ class CreateTileDecoderException(
 /**
  * Returns a string consisting of sample size, number of tiles, and grid size
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.TileUtilsTest.testToIntroString]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testToIntroString]
  */
 fun Map<Int, List<Tile>>.toIntroString(): String {
     return entries.joinToString(
@@ -127,7 +126,7 @@ fun Map<Int, List<Tile>>.toIntroString(): String {
 /**
  * Calculates the preferred size of the tile based on the container size, typically half the container size
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.TileUtilsTest.testCalculatePreferredTileSize]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testCalculatePreferredTileSize]
  */
 fun calculatePreferredTileSize(containerSize: IntSizeCompat): IntSizeCompat {
     return containerSize / 2

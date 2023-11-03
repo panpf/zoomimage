@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage
+package com.github.panpf.zoomimage.subsampling.internal
 
+import androidx.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.TileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
-import com.github.panpf.zoomimage.subsampling.TileDecoder
 import com.github.panpf.zoomimage.util.Logger
 
-expect fun createLogPipeline(): Logger.Pipeline
+@WorkerThread
+internal expect fun ImageSource.decodeExifOrientation(): Result<ExifOrientation>
 
-expect fun decodeImageInfo(imageSource: ImageSource): Result<ImageInfo>
+@WorkerThread
+internal expect fun ImageSource.decodeImageInfo(): Result<ImageInfo>
 
-expect fun decodeExifOrientation(imageSource: ImageSource): Result<ExifOrientation>
-
-expect fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean
+internal expect fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean
 
 expect fun createTileBitmapReuseHelper(
     logger: Logger,

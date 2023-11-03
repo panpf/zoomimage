@@ -35,14 +35,14 @@ class SketchTileBitmap constructor(
 
     override val byteCount: Int = bitmap!!.byteCount
 
-    override fun setIsDisplayed(displayed: Boolean) {
-        cacheValue.countBitmap.setIsDisplayed(displayed, caller)
-    }
+    override val isRecycled: Boolean
+        get() = bitmap?.isRecycled ?: true
 
     override fun recycle() {
         bitmap?.recycle()
     }
 
-    override val isRecycled: Boolean
-        get() = bitmap?.isRecycled ?: true
+    override fun setIsDisplayed(displayed: Boolean) {
+        cacheValue.countBitmap.setIsDisplayed(displayed, caller)
+    }
 }

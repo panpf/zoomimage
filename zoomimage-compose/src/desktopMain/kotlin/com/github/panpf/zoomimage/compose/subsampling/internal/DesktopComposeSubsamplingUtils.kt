@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.compose.subsampling.internal
 
-import androidx.annotation.MainThread
-import androidx.annotation.WorkerThread
-import com.github.panpf.zoomimage.util.IntRectCompat
+import androidx.compose.runtime.Composable
+import com.github.panpf.zoomimage.subsampling.StoppedController
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
 
-/**
- * Decode the tile bitmap of the image
- */
-interface TileDecoder {
+@Composable
+actual fun defaultStoppedController(): StoppedController? = null
 
-    val imageInfo: ImageInfo
-
-    val exifOrientation: ExifOrientation?
-
-    @WorkerThread
-    fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap?
-
-    @MainThread
-    fun destroy(caller: String)
-}
+actual fun createTileBitmapConvertor(): TileBitmapConvertor? = DesktopToComposeTileBitmapConvertor()
