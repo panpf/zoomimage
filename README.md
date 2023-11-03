@@ -113,13 +113,6 @@ Support ([Reference](https://github.com/square/picasso/issues/2203#issuecomment-
 implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
 ```
 
-Why is there no picasso version of the compose ZoomImage component? Picasso has officially stated
-that it will not provide compose
-Support ([Reference](https://github.com/square/picasso/issues/2203#issuecomment-826444442))
-<br>-----------------</br>
-为什么没有 picasso 版本的 compose ZoomImage 组件？因为 Picasso 官方已经说明不会提供对 compose
-的支持（[原文在此](https://github.com/square/picasso/issues/2203#issuecomment-826444442)）
-
 ### view
 
 `Choose according to the image loader you use · 根据你用的图片加载器选择`
@@ -156,7 +149,7 @@ ZoomImage 自己的混淆已经包含在了 aar 中，但你可能还需要为�
 
 ## Quickly Started/快速上手
 
-### compose
+### compose android
 
 The following is `SketchZoomAsyncImage`
 For example, see the documentation for other components and detailed
@@ -170,6 +163,21 @@ SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
+)
+```
+
+### compose multiplatform
+
+```kotlin
+val state: ZoomState by rememberZoomState()
+LaunchedEffect(Unit) {
+    state.subsampling.setImageSource(ImageSource.fromResource("huge_image.jpeg"))
+}
+ZoomImage(
+    painter = painterResource("huge_image_thumbnail.jpeg"),
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    state = state,
 )
 ```
 
