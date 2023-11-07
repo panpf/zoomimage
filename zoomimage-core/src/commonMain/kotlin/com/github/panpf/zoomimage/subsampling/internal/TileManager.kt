@@ -234,7 +234,6 @@ class TileManager constructor(
         /*
          * free or load the tile
          */
-        // todo If there is no successfully loaded background, it will not be loaded again.
         var expectLoadCount = 0
         var actualLoadCount = 0
         var expectFreeCount = 0
@@ -259,7 +258,14 @@ class TileManager constructor(
                 && isBackground(lastSampleSize, newSampleSize, eachSampleSize)
             ) {
                 eachTiles.forEach { backgroundTile ->
-                    if (!backgroundTile.srcRect.overlaps(newImageLoadRect)) {
+                    if (backgroundTile.srcRect.overlaps(newImageLoadRect)) {
+                        if (backgroundTile.state == TileState.STATE_LOADING) {
+                            expectFreeCount++
+                            if (freeTile(backgroundTile, skipNotify = true)) {
+                                actualFreeCount++
+                            }
+                        }
+                    } else {
                         expectFreeCount++
                         if (freeTile(backgroundTile, skipNotify = true)) {
                             actualFreeCount++

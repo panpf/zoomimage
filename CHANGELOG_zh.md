@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+subsampling:
+
+* fix: 修复双击放大时，因为没有及时取消未完成的背景图块导致同一个图块会加载多次的 bug
+
 ## 1.0.0-beta05
 
 zoom:

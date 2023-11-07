@@ -2,6 +2,13 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+subsampling:
+
+* fix: Fixed a bug where the same tile would be loaded multiple times due to failure to cancel
+  unfinished background tiles in time when double-clicking to enlarge.
+
 ## 1.0.0-beta05
 
 zoom:
