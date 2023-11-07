@@ -179,11 +179,6 @@ the [sample-android](sample-android/src/main/java/com/github/panpf/zoomimage/sam
 and [sample-desktop](sample-desktop/src/jvmMain/kotlin) module, or you can download the
 APK、MSI、DMG、DEB package experience from the [release](https://github.com/panpf/zoomimage/releases)
 page
-<br>-----------------</br>
-你可以在 [sample-android](sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
-和 [sample-desktop](sample-desktop/src/jvmMain/kotlin)
-模块中找到示例代码，也可以到 [release](https://github.com/panpf/zoomimage/releases) 页面下载
-APK、MSI、DMG、DEB 包体验
 
 ## Changelog
 
