@@ -1,44 +1,34 @@
-## Scale
+## 缩放
 
-Translations: [简体中文](scale_zh.md)
+翻译：[English](scale.md)
 
-> * The following example takes precedence over the Compose version component for demonstration
-> * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
-> * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
+> * 以下示例优先用 Compose 版本的组件来演示
+> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
+> * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-### Features
+### 特点
 
-* Support [One-Finger Scale](#one-finger-scale)
-  , Two-Finger Scale, [Double-click Scale](#double-click-scale)and scaling to a specified
-  multiple by the [scale()](#scale--) method
-* [Supports rubber band effect](#rubber-band-scale).
-  When the gesture is continuously zoomed (one-finger/two-finger scale) exceeds the maximum or
-  minimum range, zooming can continue, but there is a damping effect, and it will spring back to the
-  maximum or minimum zoom multiplier when released
-* [Dynamic scaling range](#minscale-mediumscale-maxscale). Default based on
-  containerSize, contentSize, contentOriginSize dynamically calculate mediumScale and maxScale
-* [Support for animation](#animation). Both the scale() method and double-click scaling support
-  animation
-* [All ContentScale and Alignment are supported](#contentscale-alignment)，ZoomImageView also
-  supports ContentScale and Alignment
-* [Support for disabling gestures](#disabled-gestures). Supports disabling gestures such as
-  double-click scale, two-finger scale, one-finger scale, and drag
-* Only when the containerSize changes (dragging to resize the window on the desktop), ZoomImage will
-  keep the scale factor and content visible center point unchanged
-* When the page is rebuilt (the screen rotates, the app is recycled in the background), the scale
-  and offset are reset
-* [Open the Modifier.zoom() function](#modifierzoom--), which can be applied to any component
-* [Supports reading related information](#public-properties). You can read
-  scale-related information such as the current scale multiplier and the minimum, middle, and
-  maximum scale multiples
+* 支持[单指长按后上下滑动缩放](#单指缩放)
+  、双指捏合缩放、[双击循环缩放](#双击缩放)以及通过 [scale()](#scale--) 方法缩放到指定的倍数
+* [支持橡皮筋效果](#橡皮筋效果).
+  手势连续缩放时（单指/双指缩放）超过最大或最小范围时可以继续缩放，但有阻尼效果，松手后会回弹到最大或最小缩放倍数
+* [动态缩放范围](#minscale-mediumscale-maxscale). 默认根据
+  containerSize、contentSize、contentOriginSize 动态计算 mediumScale 和 maxScale
+* [支持动画](#动画). scale() 方法和双击缩放均支持动画
+* [支持全部的 ContentScale, 和 Alignment](#contentscale-alignment)，ZoomImageView 也支持 ContentScale
+  和 Alignment
+* [支持禁用手势](#禁用手势). 支持分别禁用双击缩放、双指缩放、单指缩放、拖动等手势
+* 仅 containerSize 改变时（桌面平台上拖动调整窗口大小），ZoomImage 会保持缩放比例和 content 可见中心点不变
+* 页面重建时（屏幕旋转、App 在后台被回收）会重置缩放和偏移
+* [开放 Modifier.zoom() 函数](#modifierzoom--)，可以应用在任意组件上
+* [支持读取相关信息](#可访问属性). 支持读取当前缩放倍数、最小/中间/最大缩放倍数等缩放相关信息
 
 ### ContentScale, Alignment
 
-ZoomImage supports all [ContentScale] and [Alignment], and because the compose version and the view
-version use the same algorithm, view The version of the component supports [ContentScale]
-and [Alignment] in addition to [ScaleType]
+ZoomImage 支持所有的 [ContentScale] 和 [Alignment]，并且得益于 compose 版本和 view 版本使用的是同一套算法，view
+版本的组件在支持 [ScaleType] 之外也支持 [ContentScale] 和 [Alignment]
 
-example：
+示例：
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
@@ -49,69 +39,60 @@ sketchZoomImageView.zoomable.alignment = AlignmentCompat.BottomEnd
 
 ### minScale, mediumScale, maxScale
 
-The ZoomImage is always controlled by three parameters in the process of scaling: minScale,
-mediumScale, and maxScale:
+ZoomImage 在缩放的过程中始终受 minScale、mediumScale、maxScale 三个参数的控制：
 
-* `minScale`：The minimum zoom multiplier, which limits the minimum value of ZoomImage during
-  scaling,
-  is calculated as:
+* `minScale`：最小缩放倍数，用于限制 ZoomImage 在缩放过程中的最小值，计算公式为：
     ```kotlin
     ContentScale.computeScaleFactor(srcSize, dstSize).scaleX
     ```
-* `mediumScale`：The intermediate zoom multiplier is specially used for double-click scaling, and the
-  value is controlled by the scalesCalculator parameter
-* `maxScale`：The maximum zoom multiplier is used to limit the maximum value of ZoomImage during
-  scaling, and the value is controlled by the scalesCalculator parameter
+* `mediumScale`：中间缩放倍数，专门用于双击缩放，取值受 scalesCalculator 参数控制
+* `maxScale`：最大缩放倍数，用于限制 ZoomImage 在缩放过程中的最大值，取值受 scalesCalculator 参数控制
 
 #### ScalesCalculator
 
-[ScalesCalculator] is specially used to calculate mediumScale and maxScale. ZoomImage has two
-built-in [ScalesCalculator]:
+[ScalesCalculator] 专门用来计算 mediumScale 和 maxScale，ZoomImage 有两个内置的 [ScalesCalculator]：
 
 * [ScalesCalculator].Dynamic：
-    * maxScale is always `mediumScale * multiple`, mediumScale is dynamically calculated according
-      to containerSize, contentSize, contentOriginSize, and the calculation rule is the largest of
-      the following values:
-        * minMediumScale：The minimum intermediate zoom factor, calculated as:
+    * maxScale 始终是 `mediumScale * multiple`，mediumScale 则是根据
+      containerSize、contentSize、contentOriginSize 动态的计算，计算规则是在以下几个值中取最大的：
+        * minMediumScale：最小中间缩放倍数，计算公式为：
           ```kotlin
           minScale * multiple
           ```
-        * fillContainerScale：The zoom multiplier when the container is completely full, similar to
-          ContentScale.Crop, is calculated as:
+        * fillContainerScale：完全充满容器时的缩放倍数，效果类似 ContentScale.Crop，计算公式为：
           ```kotlin
           max(
               containerSize.width / contentSize.width.toFloat(), 
               containerSize.height / contentSize.height.toFloat()
           )
           ```
-        * originScale：Scale contentSize to a multiple of contentOriginSize, calculated as:
+        * originScale：将 contentSize 缩放到 contentOriginSize 的倍数，计算公式为：
           ```kotlin
           max(
               contentOriginSize.width / contentSize.width.toFloat(), 
               contentOriginSize.height / contentSize.height.toFloat()
           )
           ```
-        * In addition, when initialScale is greater than minScale and the difference between
-          initialScale and mediumScale is less than mediumScale multiplied by differencePercentage,
-          initialScale is used as mediumScale. initialScale is usually determined by ReadMode
+        * 另外当 initialScale 大于 minScale 并且 initialScale 和 mediumScale 的差值小于 mediumScale
+          乘以 differencePercentage 时用将 initialScale 作为 mediumScale。initialScale 通常由
+          ReadMode 决定
 * [ScalesCalculator].Fixed：
-    * maxScale is always `mediumScale * multiple`
-    * The mediumScale calculation rule is used if initialScale is greater than minScale
-      initialScale, otherwise use 'minScale * multiple'
+    * maxScale 始终是 `mediumScale * multiple`
+    * mediumScale 计算规则是如果 initialScale 大于 minScale 则用
+      initialScale，否则用 `minScale * multiple`
 
-> The default value for multiple is 3f, differencePercentage is 0.3f
+> multiple 默认值为 3f，differencePercentage 默认值为 0.3f
 
-scalesCalculator defaults to [ScalesCalculator]. Dynamic, which you can modify into a Fixed or
-custom implementation
+scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改为 Fixed 或自定义的实现
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     state.zoomable.scalesCalculator = ScalesCalculator.Fixed
-    // or
+    // 或
     state.zoomable.scalesCalculator = MyScalesCalculator()
 }
 
@@ -123,15 +104,13 @@ SketchZoomAsyncImage(
 )
 ```
 
-### Double-click Scale
+### 双击缩放
 
-When you double-click the image, ZoomImage zooms to the next zoom factor, always looping between
-minScale and mediumScale by default
+双击图像时 ZoomImage 会缩放到下一个缩放倍数，默认总是在 minScale 和 mediumScale 之间循环
 
-If you want to loop between minScale, mediumScale and maxScale, you can change threeStepScale
-property to true
+如果你想在 minScale、mediumScale 和 maxScale 之间循环，可以修改 threeStepScale 属性为 true
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -148,18 +127,16 @@ SketchZoomAsyncImage(
 )
 ```
 
-Double-clicking to zoom invokes ZoomImage's `switchScale()` method, or you can call `switchScale()`
-when
-needed The method toggles the zoom factor, which has two parameters:
+双击缩放调用的是 ZoomImage 的 `switchScale()` 方法，你也可以在需要的时候调用 `switchScale()`
+方法来切换缩放倍数，它有两个参数：
 
-* `centroidContentPoint: IntOffset = contentVisibleRect.center`: The zoom center point on Content,
-  the origin is the upper-left corner of Content, and the default is the center of Content's
-  currently visible area
-* `animated: Boolean = false`: Whether to use animation, the default is false
+* `centroidContentPoint: IntOffset = contentVisibleRect.center`：content 上的缩放中心点，原点是
+  content 的左上角，默认是 content 当前可见区域的中心
+* `animated: Boolean = false`：是否使用动画，默认为 false
 
-> Note: centroidContentPoint must be a point on content
+> 注意：centroidContentPoint 一定要是 content 上的点
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -183,9 +160,9 @@ Button(
 }
 ```
 
-You can also call the `getNextStepScale()` method to get the next scale multiplier
+你还可以调用 `getNextStepScale()` 方法来获取下一个缩放倍数
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -193,26 +170,24 @@ val state: ZoomState by rememberZoomState()
 state.zoomable.getNextStepScale()
 ```
 
-### One Finger Scale
+### 单指缩放
 
-ZoomImage supports one-finger scale the image, and after turning on, one finger long press on the
-screen triggers the long press behavior and then swipe up and down to scale
-the image. This feature is turned off by default and you can pass The `oneFingerScaleSpec`
-property turns it on
+ZoomImage 支持单指缩放图像，开启后单指按住屏幕触发长按后上下滑动即可缩放图像。此功能默认关闭，你可以通过
+`oneFingerScaleSpec` 属性开启它
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    // Turned, but no haptic feedback after the long-press behavior triggers
+    // 开启，但长按行为触发后没有触觉反馈
     state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
 
-    // Turned, and there will be vibration feedback after the long-press behavior is triggered
+    // 开启，并且长按行为触发后会有震动反馈
     state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.vibration(context)
 
-    // Closed
+    // 关闭
     state.zoomable.oneFingerScaleSpec = null
 }
 
@@ -226,18 +201,16 @@ SketchZoomAsyncImage(
 
 ### scale()
 
-ZoomImage provides the scale() method to scale the image to a specified multiple, which has three
-parameters:
+ZoomImage 提供了 scale() 方法用来缩放图像到指定的倍数，它有三个参数：
 
-* `targetScale: Float`: Target scale multiple
-* `centroidContentPoint: IntOffset = contentVisibleRect.center`: The scale center point on the
-  content, the origin is the upper-left corner of the content, and
-  the default is the center of the currently visible area of the content
-* `animated: Boolean = false`: Whether to use animation, the default is false
+* `targetScale: Float`: 目标缩放倍数
+* `centroidContentPoint: IntOffset = contentVisibleRect.center`: content 上的缩放中心点，原点是
+  content 的左上角， 默认是 content 当前可见区域的中心
+* `animated: Boolean = false`: 是否使用动画，默认为 false
 
-> Note: centroidContentPoint must be a point on content
+> 注意：centroidContentPoint 一定要是 content 上的点
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -273,13 +246,13 @@ Button(
 }
 ```
 
-### Rubber Band Scale
+### 橡皮筋效果
 
 ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指或双指缩放时如果超过了这个范围依然可以继续缩放，
 但会有类似橡皮筋的阻尼效果，松手后会回弹到 `minScale`或 `maxScale`
 ，此功能默认开启，你可通过 `rubberBandScale` 属性关闭它
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -296,12 +269,11 @@ SketchZoomAsyncImage(
 )
 ```
 
-### Animation
+### 动画
 
-ZoomImage provides `animationSpec` parameters to modify the duration, Ease, and initial speed of the
-zoom animation
+ZoomImage 提供了 `animationSpec` 参数用来修改缩放动画的时长、Easing 以及初始速度
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
@@ -313,7 +285,7 @@ LaunchEffect(Unit) {
         initialVelocity = 10f
     )
 
-    // Or modify some parameters based on the default values
+    // 或者在默认值的基础上修改部分参数
     state.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
 }
 
@@ -325,18 +297,18 @@ SketchZoomAsyncImage(
 )
 ```
 
-### Disabled gestures
+### 禁用手势
 
-ZoomImage supports gestures such as double-click zoom, two-finger zoom, one-finger zoom, drag, etc.,
-which are enabled by default, and you can disable them through the `disabledGestureType` property
+ZoomImage 支持双击缩放、双指缩放、单指缩放、拖动等手势，这些手势除单指缩放外默认都是开启的，你可以通过
+`disabledGestureType` 属性来禁用它们
 
-example：
+示例：
 
 ```kotlin
 val state: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    // Turn off all scale gestures and keep only the drag gesture
+    // 关闭所有缩放手势，只保留拖动手势
     state.zoomable.disabledGestureType =
         GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
 }
@@ -351,10 +323,9 @@ SketchZoomAsyncImage(
 
 ### Modifier.zoom()
 
-The Compose version of the ZoomImage component relies on `Modifier.zoom()` for scaling, and it can
-also be used on any Compose component
+Compose 版本的 ZoomImage 组件依赖 `Modifier.zoom()` 实现缩放，它还可以用在任意 Compose 组件上
 
-example：
+示例：
 
 ```kotlin
 val logger = rememberZoomImageLogger()
@@ -386,7 +357,7 @@ Box(
 }
 ```
 
-### Public Properties
+### 可访问属性
 
 ```kotlin
 // compose
@@ -399,28 +370,19 @@ val sketchZoomImageView = SketchZoomImageView(context)
 val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 ```
 
-> Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
-> suffixed with State compared to the compose version
+> * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
-* `zoomable.transform.scale: ScaleFactor`: Current scaling (baseTransform.scale *
-  userTransform.scale)
-* `zoomable.baseTransform.scale: ScaleFactor`: The current underlying scale, affected by the
-  contentScale parameter
-* `zoomable.userTransform.scale: ScaleFactor`: The current user scaling factor is affected by
-  scale(), locate(), user gesture zoom, double-click and other operations
-* `zoomable.minScale: Float`: Minimum scale factor, for limits the final scale factor, and as a
-  target value for one of when switch scale
-* `zoomable.mediumScale: Float`: Medium scale factor, only as a target value for one of when switch
-  scale
-* `zoomable.maxScale: Float`: Maximum scale factor, for limits the final scale factor, and as a
-  target value for one of when switch scale
+* `zoomable.transform.scale: ScaleFactor`: 当前缩放比例（baseTransform.scale * userTransform.scale）
+* `zoomable.baseTransform.scale: ScaleFactor`: 当前基础缩放比例，受 contentScale 参数影响
+* `zoomable.userTransform.scale: ScaleFactor`: 当前用户缩放比例，受 scale()、locate() 以及用户手势缩放、双击等操作影响
+* `zoomable.minScale: Float`: 最小缩放比例，用于缩放时限制最小缩放比例以及双击缩放时的一个循环缩放比例
+* `zoomable.mediumScale: Float`: 中间缩放比例，用于双击缩放时的一个循环缩放比例
+* `zoomable.maxScale: Float`: 最大缩放比例，用于缩放时限制最大缩放比例以及双击缩放时的一个循环缩放比例
 
-#### Listen property changed
+#### 监听属性变化
 
-* The relevant properties of the compose version are wrapped in State and can be read directly in
-  the Composable function to implement listening
-* The relevant properties of the view are wrapped in StateFlow, and its collect function can be
-  called to implement the listening
+* compose 版本的相关属性是用 State 包装的，在 Composable 函数中直接读取它即可实现监听
+* view 的相关属性是用 StateFlow 包装，调用其 collect 函数即可实现监听
 
 [ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
 

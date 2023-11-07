@@ -6,16 +6,15 @@
 [![License][license_image]][license_link]
 [![version_icon]][version_link]
 
+Translations: [简体中文](README_zh.md)
+
 Library for zoom images, supported Android View, Compose and Compose Multiplatform; supported
 double-click zoom, gesture zoom, single-finger drag, inertial sliding, positioning, rotation,
 super-large image subsampling and other functions.
-<br>-----------------</br>
-用于缩放图像的库，支持 Android View、Compose 以及 Compose
-Multiplatform；支持双击缩放、手势缩放、单指拖动、惯性滑动、定位、旋转、超大图子采样等功能。
 
 https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e155f4ef
 
-## Features/特点
+## Features
 
 * `Complete`. Support basic functions such as double-click zoom, gesture zoom, single-finger drag,
   and inertial swipe
@@ -41,102 +40,74 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 * `Compose Multiplatform`. Support for Compose Multiplatform, which can be used on Android, macOS,
   Windows, Linux and other platforms
 
-<div>-----------------</div>
+## Comparison of similar libraries
 
-* `功能齐全`. 支持双击缩放、手势缩放、单指拖动、惯性滑动等基础功能
-* `定位`. 支持定位到图片的任意位置并保持在屏幕中央
-* `旋转`. 支持 0°, 90°, 180°, 270°, 360° 旋转图片
-* `子采样`. 支持对超大图进行子采样显示，避免 OOM，碎片支持动画以及清晰度渐变
-* `动态缩放比例`. 根据图片尺寸和容器尺寸自动计算出最合适的双击缩放比例
-* `缩放阻尼`. 手动缩放超过最大或最小缩放比例后会有带阻尼感的橡皮筋效果
-* `单指缩放`. 按住屏幕触发长按后上下滑动可缩放图像
-* `滚动条`. 支持显示水平和垂直滚动条，明确当前滚动位置
-* `阅读模式`. 阅读模式下显示长图时初始状态会自动充满屏幕，用户可立即开始阅读图片内容，省去用户双击放大的操作
-* `Exif`. 支持读取 Exif Orientation 信息并自动旋转图片
-* `图片加载器`. 提供对 sketch、coil、glide、picasso 等图片加载器的支持，也可以自定义支持更多图片加载器
-* `Compose Multiplatform`. 支持 Compose Multiplatform，可在 Android、macOS、Windows、Linux 等平台使用
+| Function/Library      | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
+|:----------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
+| Compose               |     ✅     |      ✅      |      ❌      |                ❌                 |
+| Compose Multiplatform |     ✅     |      ✅      |      ❌      |                ❌                 |
+| View                  |     ✅     |      ❌      |      ✅      |                ✅                 |
+| Rotate                |     ✅     |      ❌      |      ✅      |                ❌                 |
+| Locate                |     ✅     |      ❌      |      ❌      |                ✅                 |
+| Scroll Bar            |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Read Mode             |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Subsampling           |     ✅     |      ✅      |      ❌      |                ✅                 |
+| One-finger scale      |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Image Loader          |     ✅     |      ✅      |      ❌      |                ❌                 |
+| Dynamic scale factor  |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Subsampling animation |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Rich interfaces       |     ✅     |      ❌      |      ✅      |                ✅                 |
 
-## Comparison of similar libraries/同类库对比
+## Import
 
-| Function/Library            | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
-|:----------------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
-| Compose                     |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Compose Multiplatform       |     ✅     |      ✅      |      ❌      |                ❌                 |
-| View                        |     ✅     |      ❌      |      ✅      |                ✅                 |
-| Rotate/旋转                   |     ✅     |      ❌      |      ✅      |                ❌                 |
-| Locate/定位                   |     ✅     |      ❌      |      ❌      |                ✅                 |
-| Scroll Bar/滚动条              |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Read Mode/阅读模式              |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Subsampling/子采样             |     ✅     |      ✅      |      ❌      |                ✅                 |
-| One-finger scale/单指缩放       |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Image Loader/集成图片加载器        |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Dynamic scale factor/动态缩放比例 |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Subsampling animation/子采样动画 |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Rich interfaces/丰富的交互接口     |     ✅     |      ❌      |      ✅      |                ✅                 |
+`Published to mavenCentral`
 
-## Import/导入
-
-`Published to mavenCentral · 已发布到 mavenCentral`
-
-`${LAST_VERSION}`: [![Download][version_icon]][version_link] (Not included 'v' · 不包含 'v')
+`${LAST_VERSION}`: [![Download][version_icon]][version_link] (Not included 'v')
 
 ### compose android
 
-`Choose according to the image loader you use · 根据你用的图片加载器选择`
+`Choose according to the image loader you use`
 
 ```kotlin
 // The SketchZoomAsyncImage component is provided with the Coil Image Loader, easy to use (recommended)
-// 提供适配了 Sketch 图片加载器的 SketchZoomAsyncImage 组件，用法简单（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch:${LAST_VERSION}")
 
 // The CoilZoomAsyncImage component is provided with the Coil Image Loader, easy to use
-// 提供适配了 Coil 图片加载器的 CoilZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}")
 
 // The GlideZoomAsyncImage component is provided with the Coil Image Loader, easy to use
-// 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION}")
 ```
 
 Why is there no picasso version of the compose ZoomImage component? Picasso has officially stated
 that it will not provide compose
 Support ([Reference](https://github.com/square/picasso/issues/2203#issuecomment-826444442))
-<br>-----------------</br>
-为什么没有 picasso 版本的 compose ZoomImage 组件？因为 Picasso 官方已经说明不会提供对 compose
-的支持（[原文在此](https://github.com/square/picasso/issues/2203#issuecomment-826444442)）
 
 ### compose multiplatform
 
 ```kotlin
 // Providing the basic ZoomImage component, additional work is required to support network images and subsampling 
-// 提供基础的 ZoomImage 组件，还需要做额外的工作以支持网络图片和子采样
 implementation("io.github.panpf.zoomimage:zoomimage-compose:${LAST_VERSION}")
 ```
 
 ### view
 
-`Choose according to the image loader you use · 根据你用的图片加载器选择`
+`Choose according to the image loader you use`
 
 ```kotlin
 // The SketchZoomImageView component is provided with the Sketch Image Loader, easy to use (recommended)
-// 提供适配了 Sketch 图片加载器的 SketchZoomImageView 组件，用法简单（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch:${LAST_VERSION}")
 
 // The SketchZoomImageView component is provided with the Coil Image Loader, easy to use
-// 提供适配了 Coil 图片加载器的 CoilZoomImageView 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil:${LAST_VERSION}")
 
 // The SketchZoomImageView component is provided with the Glide Image Loader, easy to use
-// 提供适配了 Glide 图片加载器的 GlideZoomImageView 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-view-glide:${LAST_VERSION}")
 
 // The SketchZoomImageView component is provided with the Picasso Image Loader, easy to use
-// 提供适配了 Picasso 图片加载器的 PicassoZoomImageView 组件，用法简单
 implementation("io.github.panpf.zoomimage:zoomimage-view-picasso:${LAST_VERSION}")
 
-// Providing the most basic ZoomImageView component, there is still a lot of work to be done to use it, 
-// additional work needs to be done to support network image and subsampling
-// 提供最基础的 ZoomImageView 组件，还需要做额外的工作以支持网络图片和子采样
+// Providing the basic ZoomImageView component, additional work is required to support network images and subsampling
 implementation("io.github.panpf.zoomimage:zoomimage-view:${LAST_VERSION}")
 ```
 
@@ -144,19 +115,14 @@ implementation("io.github.panpf.zoomimage:zoomimage-view:${LAST_VERSION}")
 
 ZoomImage's own obfuscation is already included in aar, but you may also need to add obfuscation
 configuration for other libraries that depend indirectly
-<br>-----------------</br>
-ZoomImage 自己的混淆已经包含在了 aar 中，但你可能还需要为间接依赖的其它库添加混淆配置
 
-## Quickly Started/快速上手
+## Quickly Started
 
 ### compose android
 
 The following is `SketchZoomAsyncImage`
 For example, see the documentation for other components and detailed
 usage [Get Started](docs/wiki/getstarted.md)
-<br>-----------------</br>
-下面以 `SketchZoomAsyncImage`
-为例，其它组件以及详细用法请查看文档 [开始使用](docs/wiki/getstarted.md)
 
 ```kotlin
 SketchZoomAsyncImage(
@@ -186,30 +152,27 @@ ZoomImage(
 The following is `SketchZoomImageView`
 For example, see the documentation for other components and detailed
 usage [Get Started](docs/wiki/getstarted.md)
-<br>-----------------</br>
-下面以 `SketchZoomImageView`
-为例，其它组件以及详细用法请查看文档 [开始使用](docs/wiki/getstarted.md)
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
 ```
 
-## Document/文档
+## Document
 
-* [Get Started/开始使用](docs/wiki/getstarted.md)
-* [Scale: scale, double-click scale, duration setting/缩放、双击缩放、单指缩放、时长设置](docs/wiki/scale.md)
-* [Offset: Move to the specified position/移动到指定位置](docs/wiki/offset.md)
-* [Locate: Locate anywhere in the image and keeping it in the center of the screen/定位到图片的任意位置并保持在屏幕中央](docs/wiki/locate.md)
-* [Rotate: Rotate the image/旋转图片](docs/wiki/rotate.md)
-* [Read Mode: Automatically fills the screen for easy reading/自动充满屏幕，方便阅读](docs/wiki/readmode.md)
-* [Click: Receive click events/接收点击事件](docs/wiki/click.md)
-* [Subsampling: Subsampling the display of huge image to avoid OOM/对超大图进行子采样显示，避免 OOM](docs/wiki/subsampling.md)
-* [Scroll Bar: Displays horizontal and vertical scroll bars to clarify the current scroll position/显示水平和垂直滚动条，明确当前滚动位置](docs/wiki/scrollbar.md)
-* [Log/日志](docs/wiki/log.md)
-* [Compose Multiplatform/Compose 多平台](docs/wiki/multiplatform.md)
+* [Get Started](docs/wiki/getstarted.md)
+* [Scale: scale, double-click scale, duration setting](docs/wiki/scale.md)
+* [Offset: Move to the specified position](docs/wiki/offset.md)
+* [Locate: Locate anywhere in the image and keeping it in the center of the screen](docs/wiki/locate.md)
+* [Rotate: Rotate the image](docs/wiki/rotate.md)
+* [Read Mode: Long images initially fill the screen for easy reading](docs/wiki/readmode.md)
+* [Click: Receive click events](docs/wiki/click.md)
+* [Subsampling: Subsampling the display of huge image to avoid OOM](docs/wiki/subsampling.md)
+* [Scroll Bar: Displays horizontal and vertical scroll bars to clarify the current scroll position](docs/wiki/scrollbar.md)
+* [Log: Modify log level and output pipeline](docs/wiki/log.md)
+* [Compose Multiplatform: Use on desktop platform](docs/wiki/multiplatform.md)
 
-## Samples/示例
+## Samples
 
 You can find the sample code in
 the [sample-android](sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples)
@@ -222,15 +185,13 @@ page
 模块中找到示例代码，也可以到 [release](https://github.com/panpf/zoomimage/releases) 页面下载
 APK、MSI、DMG、DEB 包体验
 
-## Changelog/更新日志
+## Changelog
 
-Please review the [CHANGELOG.md] file
-<br>-----------------</br>
-请查看 [CHANGELOG.md] 文件
+Please review the [CHANGELOG](CHANGELOG.md) file
 
-## My Projects/我的项目
+## My Projects
 
-以下是我的其它开源项目，感兴趣的可以了解一下：
+The following are my other open source projects. If you are interested, you can learn about them:
 
 * [sketch](https://github.com/panpf/sketch)：A powerful and comprehensive image loader on Android,
   based entirely on coroutines, with support for GIFs, video thumbnails, and Compose
@@ -239,12 +200,6 @@ Please review the [CHANGELOG.md] file
   powerful divider for RecyclerView.
 * [sticky-item-decoration](https://github.com/panpf/stickyitemdecoration)：RecyclerView sticky item
   implementation
-  <br>-----------------</br>
-* [sketch](https://github.com/panpf/sketch)：Android 上的一个强大且全面的图片加载器，完全基于协程，还支持
-  GIF、视频缩略图以及 Compose
-* [assembly-adapter](https://github.com/panpf/assembly-adapter)：Android 上的一个为各种 Adapter 提供多类型
-  Item 实现的库。还顺带为 RecyclerView 提供了最强大的 divider。
-* [sticky-item-decoration](https://github.com/panpf/stickyitemdecoration)：RecyclerView 黏性 item 实现
 
 ## License
 
@@ -285,5 +240,3 @@ Please review the [CHANGELOG.md] file
 [PhotoView]: https://github.com/Baseflow/PhotoView
 
 [Subsampling<br/>ScaleImageView]: https://github.com/davemorrissey/subsampling-scale-image-view
-
-[CHANGELOG.md]: CHANGELOG.md

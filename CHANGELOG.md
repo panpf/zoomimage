@@ -1,3 +1,7 @@
+# Change Log
+
+Translations: [简体中文](CHANGELOG_zh.md)
+
 ## 1.0.0-beta05
 
 zoom:
@@ -19,7 +23,7 @@ subsampling:
 zoom:
 
 * change: LongPressSlide rename to OneFingerScale
-* improve: Now keep the scale and visible center of content unchanged only when the container size
+* improve: Now keep the scale and visible center unchanged of content only when the container size
   changes
 * new: Support for disabling gestures
 * new: Added the Modifier.zoom() function to easily add zoom functionality to other components
@@ -100,7 +104,7 @@ zoom:
 * improve: Compatible with models MIX4, ROM version 14.0.6.0, Android version 13 environment when
   the navigation bar is enabled but the app does not actively adapt to the navigation bar, an issue
   that triggers a reset due to a change in View size after the screen is unlocked
-* improve: ZoomImageView now supports scaleType as Matrix
+* improve: ZoomImageView now supports scaleType is MATRIX
 * new: ZoomImageView adds xml attribute support
 
 other:
