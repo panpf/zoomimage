@@ -169,9 +169,11 @@ class TileDrawHelper(
                 /* bottom = */ floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
             )
         }
-        val boundsColor = when (tileSnapshot.state) {
-            TileState.STATE_LOADED -> Color.GREEN
-            TileState.STATE_LOADING -> Color.YELLOW
+        val bitmapNoRecycled = tileSnapshot.bitmap?.isRecycled == false
+        val boundsColor = when {
+            bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
+            tileSnapshot.state == TileState.STATE_LOADING -> Color.YELLOW
+            tileSnapshot.state == TileState.STATE_NONE -> Color.GRAY
             else -> Color.RED
         }
         val tileBoundsPaint = getTileBoundsPaint()
