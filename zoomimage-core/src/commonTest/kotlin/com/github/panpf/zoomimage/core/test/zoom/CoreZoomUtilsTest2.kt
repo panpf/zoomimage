@@ -2918,7 +2918,7 @@ class CoreZoomUtilsTest2 {
         override fun getMessage(): String {
             return "Item5(" +
                     "contentScale=${contentScale.name}, " +
-                    "alignment=${alignment.name}" +
+                    "alignment=${alignment.name}, " +
                     "rotation=${rotation}" +
                     ")"
         }
@@ -2944,9 +2944,9 @@ class CoreZoomUtilsTest2 {
         override fun getMessage(): String {
             return "Item8(" +
                     "contentScale=${contentScale.name}, " +
-                    "alignment=${alignment.name}" +
-                    "rotation=${rotation}" +
-                    "scale=${scale}" +
+                    "alignment=${alignment.name}, " +
+                    "rotation=${rotation}, " +
+                    "scale=${scale}, " +
                     "offset=${offset.toShortString()}" +
                     ")"
         }

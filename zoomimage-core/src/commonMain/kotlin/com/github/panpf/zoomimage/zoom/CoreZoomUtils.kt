@@ -512,7 +512,6 @@ fun calculateContentBaseVisibleRect(
      * 3. The rotate center point is the content center
      * 4. Apply rotation before scaling and offset
      */
-    // TODO It can be calculated directly based on baseDisplay
     if (containerSize.isEmpty() || contentSize.isEmpty()) {
         return RectCompat.Zero
     }

@@ -8,14 +8,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 
-// todo Flow.flowWithLifecycle
 fun <T> Flow<T>.collectWithLifecycle(lifecycleOwner: LifecycleOwner, collector: FlowCollector<T>) {
     lifecycleOwner.lifecycleScope.launch {
         collect(collector)
     }
 }
 
-// todo Flow.flowWithLifecycle
 fun <T> Flow<T>.repeatCollectWithLifecycle(
     lifecycleOwner: LifecycleOwner,
     state: Lifecycle.State,
