@@ -50,8 +50,8 @@ import com.github.panpf.sketch.viewability.ViewAbilityContainer
 import com.github.panpf.sketch.viewability.ViewAbilityManager
 import com.github.panpf.sketch.viewability.internal.RealViewAbilityManager
 import com.github.panpf.zoomimage.sketch.SketchImageSource
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 /**

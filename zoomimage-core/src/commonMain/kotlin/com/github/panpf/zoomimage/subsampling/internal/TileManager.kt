@@ -20,6 +20,7 @@ import androidx.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.toSnapshot
@@ -430,16 +431,16 @@ class TileManager constructor(
                     }
 
                     isActive -> {
-                        val cacheTileBitmap = tileBitmapCacheHelper.put(
+                        val cacheTileBitmap: TileBitmap = tileBitmapCacheHelper.put(
                             key = memoryCacheKey,
                             tileBitmap = tileBitmap,
                             imageUrl = imageSource.key,
                             imageInfo = imageInfo,
                             disableReuseBitmap = tileBitmapReuseHelper?.spec?.disabled ?: true,
-                        )
-                        val convertedTileBitmap =
-                            tileBitmapConvertor?.convert(cacheTileBitmap ?: tileBitmap)
-                        tile.setTileBitmap(convertedTileBitmap ?: tileBitmap, fromCache = false)
+                        ) ?: tileBitmap
+                        val convertedTileBitmap: TileBitmap =
+                            tileBitmapConvertor?.convert(cacheTileBitmap) ?: cacheTileBitmap
+                        tile.setTileBitmap(convertedTileBitmap, fromCache = false)
                         tile.state = TileState.STATE_LOADED
                         logger.d { "loadTile. successful. $tile. '${imageSource.key}'" }
                         updateTileSnapshotList("loadTile:successful")

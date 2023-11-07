@@ -8,6 +8,8 @@ subsampling:
 
 * fix: Fixed a bug where the same tile would be loaded multiple times due to failure to cancel
   unfinished background tiles in time when double-clicking to enlarge.
+* fix: Fixed a bug that caused the View version of subsampling tiles to be unexpectedly recycled due
+  to incorrect display count settings.
 
 ## 1.0.0-beta05
 
