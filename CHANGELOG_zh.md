@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.0.0-beta06-SNAPSHOT
 
 subsampling:
 
