@@ -128,13 +128,16 @@ private fun ContentDrawScope.drawTileBounds(
     tileSnapshot: TileSnapshot,
     density: Density,
 ) {
-    val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
-    val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
-    val boundsColor = when (tileSnapshot.state) {
-        TileState.STATE_LOADED -> Color.Green
-        TileState.STATE_LOADING -> Color.Yellow
+    val bitmapNoRecycled = tileSnapshot.tileBitmap?.isRecycled == false
+    val boundsColor = when {
+        bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.Green
+        tileSnapshot.state == TileState.STATE_LOADING -> Color.Yellow
+        tileSnapshot.state == TileState.STATE_NONE -> Color.Gray
         else -> Color.Red
     }
+
+    val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
+    val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())
     val tileDrawRect = IntRect(
         left = floor(tileSnapshot.srcRect.left / widthScale).toInt(),
         top = floor(tileSnapshot.srcRect.top / heightScale).toInt(),
@@ -149,6 +152,7 @@ private fun ContentDrawScope.drawTileBounds(
         right = ceil(tileDrawRect.right - boundsStrokeHalfWidth),
         bottom = ceil(tileDrawRect.bottom - boundsStrokeHalfWidth)
     )
+
     drawRect(
         color = boundsColor,
         topLeft = tileBoundsRect.topLeft,
