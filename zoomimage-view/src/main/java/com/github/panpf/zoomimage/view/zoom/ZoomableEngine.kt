@@ -84,8 +84,9 @@ import kotlin.math.roundToInt
  */
 class ZoomableEngine constructor(logger: Logger, val view: View) {
 
+    // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+    private val immediateCoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private val logger: Logger = logger.newLogger(module = "ZoomableEngine")
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var lastInitialUserTransform: TransformCompat = TransformCompat.Origin
@@ -271,43 +272,43 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             }
         })
 
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             containerSizeState.collect {
                 reset("containerSizeChanged")
             }
         }
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             contentSizeState.collect {
                 reset("contentSizeChanged")
             }
         }
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             contentOriginSizeState.collect {
                 reset("contentOriginSizeChanged")
             }
         }
 
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             contentScaleState.collect {
                 reset("contentScaleChanged")
             }
         }
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             alignmentState.collect {
                 reset("alignmentChanged")
             }
         }
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             readModeState.collect {
                 reset("readModeChanged")
             }
         }
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             scalesCalculatorState.collect {
                 reset("scalesCalculatorChanged")
             }
         }
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             limitOffsetWithinBaseVisibleRectState.collect {
                 reset("limitOffsetWithinBaseVisibleRectChanged")
             }

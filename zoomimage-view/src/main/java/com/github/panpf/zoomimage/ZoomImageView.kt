@@ -75,7 +75,9 @@ open class ZoomImageView @JvmOverloads constructor(
 
     protected val _zoomableEngine: ZoomableEngine?  // Used when the overridden method is called by the parent class constructor
     protected val _subsamplingEngine: SubsamplingEngine?  // Used when the overridden method is called by the parent class constructor
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+    // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+    private val immediateCoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private val touchHelper: TouchHelper
     private val tileDrawHelper: TileDrawHelper
     private val cacheImageMatrix = Matrix()
@@ -164,7 +166,7 @@ open class ZoomImageView @JvmOverloads constructor(
 
         parseAttrs(attrs)
 
-        coroutineScope.launch {
+        immediateCoroutineScope.launch {
             zoomable.transformState.collect { transform ->
                 val matrix =
                     cacheImageMatrix.applyTransform(transform, zoomable.containerSizeState.value)

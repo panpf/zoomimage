@@ -4,6 +4,11 @@ Translations: [简体中文](CHANGELOG_zh.md)
 
 ## new
 
+zoom:
+
+* fix: Fixed the issue where the image can be seen quickly moving from the top to the center in the
+  initial View version.
+
 subsampling:
 
 * fix: Fixed a bug where the same tile would be loaded multiple times due to failure to cancel
