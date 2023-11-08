@@ -7,6 +7,7 @@
 zoom:
 
 * fix: 修复 View 版本初始时能看到图像从顶部快速移到中间的过程
+* fix: 修复 Compose 版本初始时能看到图像从顶部快速移到中间的过程
 
 subsampling:
 

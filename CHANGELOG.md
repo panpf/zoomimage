@@ -8,6 +8,8 @@ zoom:
 
 * fix: Fixed the issue where the image can be seen quickly moving from the top to the center in the
   initial View version.
+* fix: Fixed the issue where the image can be seen quickly moving from the top to the center in the
+  initial Compose version.
 
 subsampling:
 

@@ -24,7 +24,6 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -46,7 +45,6 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.internal.convert
 import com.github.panpf.zoomimage.compose.internal.format
-import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
 import com.github.panpf.zoomimage.compose.internal.limitTo
 import com.github.panpf.zoomimage.compose.internal.name
@@ -90,6 +88,7 @@ import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
 import com.github.panpf.zoomimage.zoom.transformAboutEquals
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
@@ -103,46 +102,6 @@ fun rememberZoomableState(logger: Logger): ZoomableState {
     val zoomableState = remember(logger) {
         ZoomableState(logger)
     }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.containerSize }.collect {
-            zoomableState.reset("containerSizeChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.contentSize }.collect {
-            zoomableState.reset("contentSizeChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.contentOriginSize }.collect {
-            zoomableState.reset("contentOriginSizeChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.contentScale }.collect {
-            zoomableState.reset("contentScaleChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.alignment }.collect {
-            zoomableState.reset("alignmentChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.readMode }.collect {
-            zoomableState.reset("readModeChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.scalesCalculator }.collect {
-            zoomableState.reset("scalesCalculatorChanged")
-        }
-    }
-    LaunchedEffect(Unit) {
-        snapshotFlow { zoomableState.limitOffsetWithinBaseVisibleRect }.collect {
-            zoomableState.reset("limitOffsetWithinBaseVisibleRectChanged")
-        }
-    }
     return zoomableState
 }
 
@@ -154,6 +113,7 @@ class ZoomableState(logger: Logger) {
 
     val logger: Logger = logger.newLogger(module = "ZoomableState@${this.toHexString()}")
 
+    private val immediateCoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var lastInitialUserTransform: Transform = Transform.Origin
@@ -327,6 +287,50 @@ class ZoomableState(logger: Logger) {
     private var lastRotation: Int = rotation
     private var lastReadMode: ReadMode? = readMode
     private var lastScalesCalculator: ScalesCalculator = scalesCalculator
+
+    init {
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+        immediateCoroutineScope.launch {
+            snapshotFlow { containerSize }.collect {
+                reset("containerSizeChanged")
+            }
+        }
+        immediateCoroutineScope.launch {
+            snapshotFlow { contentSize }.collect {
+                reset("contentSizeChanged")
+            }
+        }
+        immediateCoroutineScope.launch {
+            snapshotFlow { contentOriginSize }.collect {
+                reset("contentOriginSizeChanged")
+            }
+        }
+        immediateCoroutineScope.launch {
+            snapshotFlow { contentScale }.collect {
+                reset("contentScaleChanged")
+            }
+        }
+        immediateCoroutineScope.launch {
+            snapshotFlow { alignment }.collect {
+                reset("alignmentChanged")
+            }
+        }
+        immediateCoroutineScope.launch {
+            snapshotFlow { readMode }.collect {
+                reset("readModeChanged")
+            }
+        }
+        immediateCoroutineScope.launch {
+            snapshotFlow { scalesCalculator }.collect {
+                reset("scalesCalculatorChanged")
+            }
+        }
+        immediateCoroutineScope.launch {
+            snapshotFlow { limitOffsetWithinBaseVisibleRect }.collect {
+                reset("limitOffsetWithinBaseVisibleRectChanged")
+            }
+        }
+    }
 
     /* ********************************* Interact with consumers ******************************** */
 
