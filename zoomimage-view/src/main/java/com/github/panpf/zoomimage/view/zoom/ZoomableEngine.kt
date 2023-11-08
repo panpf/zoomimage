@@ -87,7 +87,6 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     val logger: Logger = logger.newLogger(module = "ZoomableEngine@${this.toHexString()}")
 
-    // Must be immediate, otherwise the user will see the image move quickly from the top to the center
     private val immediateCoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
@@ -274,6 +273,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             }
         })
 
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
         immediateCoroutineScope.launch {
             containerSizeState.collect {
                 reset("containerSizeChanged")
