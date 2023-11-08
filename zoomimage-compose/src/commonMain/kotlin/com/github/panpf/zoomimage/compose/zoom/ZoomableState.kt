@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.zoomimage.compose.internal.convert
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.isNotEmpty
@@ -103,9 +104,6 @@ fun rememberZoomableState(logger: Logger): ZoomableState {
     }
     LaunchedEffect(Unit) {
         snapshotFlow { zoomableState.containerSize }.collect {
-            if (!it.isEmpty() && zoomableState.contentSize.isEmpty()) {
-                zoomableState.contentSize = it
-            }
             zoomableState.reset("containerSizeChanged")
         }
     }
@@ -168,6 +166,7 @@ class ZoomableState(logger: Logger) {
      * The size of the content, usually Painter.intrinsicSize.round(), setup by the ZoomImage component
      */
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
+        .convert { if (it.isNotEmpty()) it else containerSize }
 
     /**
      * The original size of the content, it is usually set by [SubsamplingState] after parsing the original size of the image

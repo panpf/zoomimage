@@ -226,13 +226,7 @@ private class ResetListener(
         val drawableSize = resource
             ?.let { IntSize(it.intrinsicWidth, it.intrinsicHeight) }
             ?.takeIf { it.isNotEmpty() }
-        val containerSize = state.zoomable.containerSize
-        val contentSize = when {
-            drawableSize != null -> drawableSize
-            containerSize.isNotEmpty() -> containerSize
-            else -> IntSize.Zero
-        }
-        state.zoomable.contentSize = contentSize
+        state.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
         val imageSource = if (resource != null) {
             state.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
@@ -249,4 +243,4 @@ private class ResetListener(
 }
 
 @Stable
-private fun IntSize.isNotEmpty(): Boolean = width != 0 && height != 0
+private fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0

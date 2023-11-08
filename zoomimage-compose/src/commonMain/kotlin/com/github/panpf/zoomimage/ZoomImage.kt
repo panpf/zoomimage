@@ -27,11 +27,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.NoClipContentImage
 import com.github.panpf.zoomimage.compose.internal.round
-import com.github.panpf.zoomimage.compose.internal.toPx
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
@@ -105,7 +105,13 @@ fun ZoomImage(
          * the position change will not be seen by the user
          */
         val oldContainerSize = state.zoomable.containerSize
-        val newContainerSize = IntSize(maxWidth.toPx().roundToInt(), maxHeight.toPx().roundToInt())
+        val density = LocalDensity.current
+        val newContainerSize = remember(maxWidth, maxHeight) {
+            IntSize(
+                width = with(density) { maxWidth.toPx() }.roundToInt(),
+                height = with(density) { maxHeight.toPx() }.roundToInt()
+            )
+        }
         if (newContainerSize != oldContainerSize) {
             state.zoomable.containerSize = newContainerSize
             state.zoomable.nowReset("initialize")

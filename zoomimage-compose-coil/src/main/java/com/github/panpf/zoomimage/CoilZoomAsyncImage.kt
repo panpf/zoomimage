@@ -246,14 +246,8 @@ private fun onState(
     loadState: State,
 ) {
     state.logger.d("onState. state=${loadState.name}. data: ${request.data}")
-    val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()
-    val containerSize = state.zoomable.containerSize
-    val contentSize = when {
-        painterSize != null -> painterSize
-        containerSize.isNotEmpty() -> containerSize
-        else -> IntSize.Zero
-    }
-    state.zoomable.contentSize = contentSize
+    val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()?.takeIf { it.isNotEmpty() }
+    state.zoomable.contentSize = painterSize ?: IntSize.Zero
 
     when (loadState) {
         is State.Success -> {
@@ -339,5 +333,4 @@ private fun Size.roundToIntSize(): IntSize {
     return IntSize(width.roundToInt(), height.roundToInt())
 }
 
-@Stable
-private fun IntSize.isNotEmpty(): Boolean = width != 0 && height != 0
+private fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0
