@@ -41,6 +41,7 @@ import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
+import com.github.panpf.zoomimage.view.internal.toHexString
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
 import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
@@ -84,9 +85,10 @@ import kotlin.math.roundToInt
  */
 class ZoomableEngine constructor(logger: Logger, val view: View) {
 
+    val logger: Logger = logger.newLogger(module = "ZoomableEngine@${this.toHexString()}")
+
     // Must be immediate, otherwise the user will see the image move quickly from the top to the center
     private val immediateCoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
-    private val logger: Logger = logger.newLogger(module = "ZoomableEngine")
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var lastInitialUserTransform: TransformCompat = TransformCompat.Origin

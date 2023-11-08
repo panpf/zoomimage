@@ -26,3 +26,5 @@ internal fun Float.format(newScale: Int): Float {
         BigDecimal(toDouble()).setScale(newScale, RoundingMode.HALF_UP).toFloat()
     }
 }
+
+internal fun Any.toHexString(): String = Integer.toHexString(hashCode())

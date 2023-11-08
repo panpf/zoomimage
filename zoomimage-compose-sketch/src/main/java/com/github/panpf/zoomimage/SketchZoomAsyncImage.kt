@@ -374,14 +374,14 @@ fun SketchZoomAsyncImage(
             modifier = Modifier
                 .matchParentSize()
                 .zoomScrollBar(state.zoomable, scrollBar)
-                .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
         )
 
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(state.logger, state.zoomable)
-                .subsampling(state.logger, state.zoomable, state.subsampling)
+                .zooming(state.zoomable)
+                .subsampling(state.zoomable, state.subsampling)
         )
     }
 }
@@ -393,7 +393,7 @@ private fun onState(
     request: DisplayRequest,
     loadState: State,
 ) {
-    state.logger.d("onState. state=${loadState.name}. uri: ${request.uriString}")
+    state.zoomable.logger.d { "SketchZoomAsyncImage. onState. state=${loadState.name}. uri='${request.uriString}'" }
     val zoomableState = state.zoomable
     val subsamplingState = state.subsampling
     val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()?.takeIf { it.isNotEmpty() }

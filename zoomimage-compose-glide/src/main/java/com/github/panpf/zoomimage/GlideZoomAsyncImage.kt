@@ -181,14 +181,14 @@ fun GlideZoomAsyncImage(
             modifier = Modifier
                 .matchParentSize()
                 .zoomScrollBar(state.zoomable, scrollBar)
-                .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap),
+                .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap),
         )
 
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(state.logger, state.zoomable)
-                .subsampling(state.logger, state.zoomable, state.subsampling)
+                .zooming(state.zoomable)
+                .subsampling(state.zoomable, state.subsampling)
         )
     }
 }
@@ -205,7 +205,7 @@ private class ResetListener(
         target: Target<Drawable>,
         isFirstResource: Boolean
     ): Boolean {
-        state.logger.d("ResetListener. onLoadFailed. model: $model")
+        state.zoomable.logger.d { "GlideZoomAsyncImage. onLoadFailed. model='$model'" }
         reset(resource = null)
         return false
     }
@@ -217,7 +217,7 @@ private class ResetListener(
         dataSource: DataSource,
         isFirstResource: Boolean
     ): Boolean {
-        state.logger.d("ResetListener. onResourceReady. model: $model, resource: $resource")
+        state.zoomable.logger.d { "GlideZoomAsyncImage. onResourceReady. model='$model', resource=$resource" }
         reset(resource = resource)
         return false
     }
@@ -232,7 +232,7 @@ private class ResetListener(
             state.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
             newGlideImageSource(context, model).apply {
                 if (this == null) {
-                    state.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model: '$model'" }
+                    state.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
                 }
             }
         } else {

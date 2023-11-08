@@ -41,7 +41,7 @@ class ZoomFunctionSampleFragment : AppBarFragment() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .zoom(logger, zoomState)
+                .zoom(zoomState)
         ) {
             Text(
                 text = text,

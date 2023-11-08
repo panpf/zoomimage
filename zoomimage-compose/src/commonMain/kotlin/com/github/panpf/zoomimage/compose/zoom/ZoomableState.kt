@@ -54,6 +54,7 @@ import com.github.panpf.zoomimage.compose.internal.roundToPlatform
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toCompatOffset
+import com.github.panpf.zoomimage.compose.internal.toHexString
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
@@ -151,7 +152,8 @@ fun rememberZoomableState(logger: Logger): ZoomableState {
 @Stable
 class ZoomableState(logger: Logger) {
 
-    private val logger: Logger = logger.newLogger(module = "ZoomableState")
+    val logger: Logger = logger.newLogger(module = "ZoomableState@${this.toHexString()}")
+
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var lastInitialUserTransform: Transform = Transform.Origin

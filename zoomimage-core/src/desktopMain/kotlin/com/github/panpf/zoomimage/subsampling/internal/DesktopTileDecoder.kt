@@ -38,13 +38,12 @@ import javax.imageio.ImageReader
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.DesktopTileDecoderTest]
  */
 class DesktopTileDecoder constructor(
-    logger: Logger,
+    private val logger: Logger,
     private val imageSource: ImageSource,
     override val imageInfo: ImageInfo,
     override val exifOrientation: ExifOrientation?
 ) : TileDecoder {
 
-    private val logger = logger.newLogger(module = "TileDecoder")
     private var destroyed = false
     private val decoderPool = LinkedList<ImageReader>()
 //    private val addedImageSize = exifOrientation?.addToSize(imageInfo.size) ?: imageInfo.size
@@ -63,7 +62,7 @@ class DesktopTileDecoder constructor(
 //        requiredMainThread()
         if (destroyed) return
         destroyed = true
-        logger.d { "destroy:$caller. '${imageSource.key}'" }
+        logger.d { "destroyDecoder:$caller. '${imageSource.key}'" }
         synchronized(decoderPool) {
             decoderPool.forEach {
                 it.recycle()

@@ -227,14 +227,14 @@ fun CoilZoomAsyncImage(
             modifier = Modifier
                 .matchParentSize()
                 .zoomScrollBar(state.zoomable, scrollBar)
-                .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
         )
 
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(state.logger, state.zoomable)
-                .subsampling(state.logger, state.zoomable, state.subsampling)
+                .zooming(state.zoomable)
+                .subsampling(state.zoomable, state.subsampling)
         )
     }
 }
@@ -245,7 +245,7 @@ private fun onState(
     request: ImageRequest,
     loadState: State,
 ) {
-    state.logger.d("onState. state=${loadState.name}. data: ${request.data}")
+    state.zoomable.logger.d { "CoilZoomAsyncImage. onState. state=${loadState.name}. data='${request.data}'" }
     val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()?.takeIf { it.isNotEmpty() }
     state.zoomable.contentSize = painterSize ?: IntSize.Zero
 

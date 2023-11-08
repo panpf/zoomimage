@@ -50,7 +50,7 @@ import java.util.LinkedList
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileManagerTest]
  */
 class TileManager constructor(
-    logger: Logger,
+    private val logger: Logger,
     private val tileDecoder: TileDecoder,
     private val tileBitmapConvertor: TileBitmapConvertor?,
     private val tileBitmapCacheHelper: TileBitmapCacheHelper,
@@ -72,7 +72,6 @@ class TileManager constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(2)
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-    private val logger: Logger = logger.newLogger(module = "TileManager")
     private var lastScale: Float? = null
     private var lastSampleSize: Int = 0
     private var lastContentVisibleRect: IntRectCompat? = null
@@ -360,7 +359,7 @@ class TileManager constructor(
     fun clean(caller: String) {
         val updateTileSnapshotListJob = updateTileSnapshotListJob
         if (updateTileSnapshotListJob != null && updateTileSnapshotListJob.isActive) {
-            logger.d { "clean:$caller. cancel updateTileSnapshotListJob. '${imageSource.key}" }
+            logger.d { "cleanTiles:$caller. cancel updateTileSnapshotListJob. '${imageSource.key}" }
             updateTileSnapshotListJob.cancel("clean:$caller")
             this.updateTileSnapshotListJob = null
         }
@@ -371,7 +370,7 @@ class TileManager constructor(
             sortedTileGridMap.values.forEach { tileList ->
                 freeCount += freeTiles(tileList, skipNotify = true)
             }
-            logger.d { "clean:$caller. freeCount=$freeCount. '${imageSource.key}" }
+            logger.d { "cleanTiles:$caller. freeCount=$freeCount. '${imageSource.key}" }
             if (freeCount > 0) {
                 updateTileSnapshotList("clean:$caller")
             }

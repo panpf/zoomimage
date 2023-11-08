@@ -41,14 +41,13 @@ import java.util.LinkedList
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecoderTest]
  */
 class AndroidTileDecoder constructor(
-    logger: Logger,
+    private val logger: Logger,
     private val imageSource: ImageSource,
     override val imageInfo: ImageInfo,
     override val exifOrientation: ExifOrientation?,
     private val tileBitmapReuseHelper: AndroidTileBitmapReuseHelper?,
 ) : TileDecoder {
 
-    private val logger = logger.newLogger(module = "TileDecoder")
     private var destroyed = false
     private val decoderPool = LinkedList<BitmapRegionDecoder>()
     private val addedImageSize =
@@ -69,7 +68,7 @@ class AndroidTileDecoder constructor(
         requiredMainThread()
         if (destroyed) return
         destroyed = true
-        logger.d { "destroy:$caller. '${imageSource.key}'" }
+        logger.d { "destroyDecoder:$caller. '${imageSource.key}'" }
         synchronized(decoderPool) {
             decoderPool.forEach {
                 it.recycle()
@@ -95,7 +94,7 @@ class AndroidTileDecoder constructor(
             regionSize = IntSizeCompat(newSrcRect.width, newSrcRect.height),
             imageMimeType = imageInfo.mimeType,
             imageSize = addedImageSize,
-            caller = "decodeRegion"
+            caller = "decodeTile"
         )
 
         return try {
@@ -104,7 +103,7 @@ class AndroidTileDecoder constructor(
             throwable.printStackTrace()
             val inBitmap = decodeOptions.inBitmap
             if (inBitmap != null && isInBitmapError(throwable)) {
-                logger.e("decodeRegion. Bitmap region decode inBitmap error. '${imageSource.key}'")
+                logger.e("decodeTile. Bitmap region decode inBitmap error. '${imageSource.key}'")
 
                 if (tileBitmapReuseHelper != null) {
                     tileBitmapReuseHelper.freeBitmap(inBitmap, "decodeRegion:error")
@@ -118,13 +117,13 @@ class AndroidTileDecoder constructor(
                 } catch (throwable1: Throwable) {
                     throwable1.printStackTrace()
                     logger.e(throwable) {
-                        "decodeRegion. Bitmap region decode error. srcRect=${newSrcRect}. '${imageSource.key}'"
+                        "decodeTile. Bitmap region decode error. srcRect=${newSrcRect}. '${imageSource.key}'"
                     }
                     null
                 }
             } else if (isSrcRectError(throwable)) {
                 logger.e(throwable) {
-                    "decodeRegion. Bitmap region decode srcRect error. " +
+                    "decodeTile. Bitmap region decode srcRect error. " +
                             "imageSize=${imageSize.toShortString()}, " +
                             "srcRect=${newSrcRect.toShortString()}, " +
                             "inSampleSize=${decodeOptions.inSampleSize}. " +

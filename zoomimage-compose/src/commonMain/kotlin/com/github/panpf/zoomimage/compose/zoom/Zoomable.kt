@@ -33,24 +33,21 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
-import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
 
 fun Modifier.zoom(
-    logger: Logger,
     zoomable: ZoomableState,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = composed {
     this
-        .zoomable(logger, zoomable, onLongPress = onLongPress, onTap = onTap)
-        .zooming(logger, zoomable)
+        .zoomable(zoomable, onLongPress = onLongPress, onTap = onTap)
+        .zooming(zoomable)
 }
 
 fun Modifier.zoomable(
-    @Suppress("UNUSED_PARAMETER") logger: Logger,
     zoomable: ZoomableState,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -163,14 +160,12 @@ fun Modifier.zoomable(
         }
 }
 
-fun Modifier.zooming(
-    @Suppress("UNUSED_PARAMETER") logger: Logger,
-    zoomable: ZoomableState,
-) = composed {
+fun Modifier.zooming(zoomable: ZoomableState) = composed {
     val transform = zoomable.transform
     this
         .clipToBounds()
         .graphicsLayer {
+            zoomable.logger.d { "graphicsLayer. transform=$transform" }
             scaleX = transform.scaleX
             scaleY = transform.scaleY
             translationX = transform.offsetX

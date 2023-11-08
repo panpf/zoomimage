@@ -43,6 +43,7 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
+import com.github.panpf.zoomimage.view.internal.toHexString
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
@@ -67,7 +68,8 @@ class SubsamplingEngine constructor(
     private val view: View,
 ) {
 
-    private val logger: Logger = logger.newLogger(module = "SubsamplingEngine")
+    val logger: Logger = logger.newLogger(module = "SubsamplingEngine@${this.toHexString()}")
+
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null

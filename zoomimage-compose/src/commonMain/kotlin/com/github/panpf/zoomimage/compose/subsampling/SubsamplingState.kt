@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
+import com.github.panpf.zoomimage.compose.internal.toHexString
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.subsampling.internal.createTileBitmapConvertor
@@ -93,7 +94,8 @@ fun rememberSubsamplingState(logger: Logger): SubsamplingState {
 @Stable
 class SubsamplingState constructor(logger: Logger) : RememberObserver {
 
-    private val logger: Logger = logger.newLogger(module = "SubsamplingState")
+    val logger: Logger = logger.newLogger(module = "SubsamplingState@${this.toHexString()}")
+
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null

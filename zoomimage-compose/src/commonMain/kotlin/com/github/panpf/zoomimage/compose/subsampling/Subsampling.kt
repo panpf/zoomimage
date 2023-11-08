@@ -34,12 +34,10 @@ import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
-import com.github.panpf.zoomimage.util.Logger
 import kotlin.math.ceil
 import kotlin.math.floor
 
 fun Modifier.subsampling(
-    logger: Logger,
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState,
 ): Modifier = composed {
@@ -80,7 +78,7 @@ fun Modifier.subsampling(
             }
         }
 
-        logger.d {
+        subsamplingState.logger.d {
             "drawTiles. tiles=${foregroundTiles.size}, " +
                     "insideLoadCount=${insideLoadCount}, " +
                     "outsideLoadCount=${outsideLoadCount}, " +

@@ -31,6 +31,8 @@ internal fun Float.format(newScale: Int): Float {
     }
 }
 
+internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
+
 // Copy from androidx/compose/ui/geometry/GeometryUtils.kt
 // File of internal utility methods used for the geometry library
 internal fun Float.toStringAsFixed(digits: Int): String {

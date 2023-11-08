@@ -127,14 +127,14 @@ fun ZoomImage(
             modifier = Modifier
                 .matchParentSize()
                 .zoomScrollBar(state.zoomable, scrollBar)
-                .zoom(state.logger, state.zoomable, onLongPress = onLongPress, onTap = onTap),
+                .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap),
         )
 
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(state.logger, state.zoomable)
-                .subsampling(state.logger, state.zoomable, state.subsampling)
+                .zooming(state.zoomable)
+                .subsampling(state.zoomable, state.subsampling)
         )
     }
 }

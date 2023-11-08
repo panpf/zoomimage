@@ -41,7 +41,7 @@ import kotlinx.coroutines.sync.Mutex
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileBitmapReuseHelperTest]
  */
 class AndroidTileBitmapReuseHelper(
-    logger: Logger,
+    private val logger: Logger,
     override val spec: TileBitmapReuseSpec
 ): TileBitmapReuseHelper {
 
@@ -49,10 +49,9 @@ class AndroidTileBitmapReuseHelper(
         private val bitmapPoolLock = Mutex()
     }
 
-    private val logger = logger.newLogger(module = "TileBitmapPoolHelper")
     private val coroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Main + CoroutineExceptionHandler { _, throwable ->
-            logger.e(throwable) { "TileBitmapPoolHelper. CoroutineExceptionHandler: ${throwable.message}" }
+            logger.e(throwable) { "BitmapReuse. CoroutineExceptionHandler: ${throwable.message}" }
         })
 
     private suspend fun <R> withBitmapPoolLock(block: () -> R): R {
@@ -78,17 +77,17 @@ class AndroidTileBitmapReuseHelper(
             return false
         }
         if (regionSize.isEmpty()) {
-            logger.e("setInBitmapForRegion:$caller. error. regionSize is empty: $regionSize")
+            logger.e("BitmapReuse. setInBitmapForRegion:$caller. error. regionSize is empty: $regionSize")
             return false
         }
         val config = options.inPreferredConfig
         if (config?.isAndSupportHardware() == true) {
-            logger.d { "setInBitmapForRegion:$caller. error. inPreferredConfig is HARDWARE does not support inBitmap" }
+            logger.d { "BitmapReuse. setInBitmapForRegion:$caller. error. inPreferredConfig is HARDWARE does not support inBitmap" }
             return false
         }
         if (!isSupportInBitmapForRegion(imageMimeType)) {
             logger.d {
-                "setInBitmapForRegion:$caller. error. " +
+                "BitmapReuse. setInBitmapForRegion:$caller. error. " +
                         "The current configuration does not support the use of inBitmap in BitmapFactory. " +
                         "imageMimeType=$imageMimeType. " +
                         "For details, please refer to 'DecodeUtils.isSupportInBitmapForRegion()'"
@@ -118,7 +117,7 @@ class AndroidTileBitmapReuseHelper(
 
         val from = if (newCreate) "newCreate" else "fromPool"
         logger.d {
-            "setInBitmapForRegion:$caller. successful, $from. " +
+            "BitmapReuse. setInBitmapForRegion:$caller. successful, $from. " +
                     "regionSize=$regionSize, " +
                     "imageMimeType=$imageMimeType, " +
                     "imageSize=$imageSize. " +
@@ -145,7 +144,7 @@ class AndroidTileBitmapReuseHelper(
 
         val from = if (newCreate) "newCreate" else "fromPool"
         logger.d {
-            "getOrCreate:$caller. $from. width=$width, height=$height, config=$config. bitmap=${bitmap.toHexShortString()}"
+            "BitmapReuse. getOrCreate:$caller. $from. width=$width, height=$height, config=$config. bitmap=${bitmap.toHexShortString()}"
         }
         return bitmap
     }
@@ -157,7 +156,7 @@ class AndroidTileBitmapReuseHelper(
 
     fun freeBitmap(bitmap: Bitmap?, caller: String) {
         if (bitmap == null || bitmap.isRecycled) {
-            logger.e("freeBitmap:$caller. error, bitmap null or recycled. bitmap=${bitmap?.toHexShortString()}")
+            logger.e("BitmapReuse. freeBitmap:$caller. error, bitmap null or recycled. bitmap=${bitmap?.toHexShortString()}")
             return
         }
 
@@ -188,10 +187,10 @@ class AndroidTileBitmapReuseHelper(
                 false
             }
             if (success) {
-                logger.d { "freeBitmap$$caller. successful. bitmap=${bitmap.toHexShortString()}" }
+                logger.d { "BitmapReuse. freeBitmap$$caller. successful. bitmap=${bitmap.toHexShortString()}" }
             } else {
                 bitmap.recycle()
-                logger.d { "freeBitmap$$caller. failed, execute recycle. bitmap=${bitmap.toHexShortString()}" }
+                logger.d { "BitmapReuse. freeBitmap$$caller. failed, execute recycle. bitmap=${bitmap.toHexShortString()}" }
             }
         }
     }
