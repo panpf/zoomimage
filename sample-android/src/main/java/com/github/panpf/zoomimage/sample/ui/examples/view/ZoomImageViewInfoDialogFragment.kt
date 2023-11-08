@@ -98,13 +98,15 @@ class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoD
             """.trimIndent()
 
             val foregroundTiles = subsampling.foregroundTilesState.value
-            val loadedTileCount = foregroundTiles.count { it.bitmap != null }
+            val loadedTileCount = foregroundTiles.count { it.tileBitmap != null }
             val loadedTileBytes =
-                foregroundTiles.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+                foregroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.toLong()
+                    .formatCompactFileSize()
             val backgroundTiles = subsampling.backgroundTilesState.value
-            val backgroundTilesLoadedCount = backgroundTiles.count { it.bitmap != null }
+            val backgroundTilesLoadedCount = backgroundTiles.count { it.tileBitmap != null }
             val backgroundTilesLoadedBytes =
-                backgroundTiles.sumOf { it.bitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+                backgroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.toLong()
+                    .formatCompactFileSize()
             val tileGridSizeMapString = subsampling.tileGridSizeMapState.value.entries
                 .joinToString(prefix = "[", postfix = "]", separator = ", ") {
                     "${it.key}:${it.value.toShortString()}"

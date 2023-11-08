@@ -96,7 +96,7 @@ private fun ContentDrawScope.drawTile(
     contentSize: IntSize,
     tileSnapshot: TileSnapshot,
 ): Boolean {
-    val tileBitmap = tileSnapshot.bitmap ?: return false
+    val tileBitmap = tileSnapshot.tileBitmap?.takeIf { !it.isRecycled } ?: return false
     val imageBitmap = (tileBitmap as ComposeTileBitmap).imageBitmap
     val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
     val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())

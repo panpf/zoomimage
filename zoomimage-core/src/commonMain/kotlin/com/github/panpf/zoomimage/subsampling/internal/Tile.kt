@@ -51,7 +51,7 @@ class Tile constructor(
     /**
      * The bitmap of the tile
      */
-    var bitmap: TileBitmap? = null
+    var tileBitmap: TileBitmap? = null
 
     /**
      * The state of the tile
@@ -62,12 +62,12 @@ class Tile constructor(
     val animationState = AnimationState()
 
     fun setTileBitmap(tileBitmap: TileBitmap?, fromCache: Boolean) {
-        val oldTileBitmap = this.bitmap
+        val oldTileBitmap = this.tileBitmap
         if (tileBitmap == oldTileBitmap) return
         if (oldTileBitmap is CacheTileBitmap) {
             oldTileBitmap.setIsDisplayed(false)
         }
-        this.bitmap = tileBitmap
+        this.tileBitmap = tileBitmap
         if (tileBitmap is CacheTileBitmap) {
             tileBitmap.setIsDisplayed(true)
         }
@@ -84,14 +84,14 @@ class Tile constructor(
         other as Tile
         if (srcRect != other.srcRect) return false
         if (sampleSize != other.sampleSize) return false
-        if (bitmap != other.bitmap) return false
+        if (tileBitmap != other.tileBitmap) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = srcRect.hashCode()
         result = 31 * result + sampleSize
-        result = 31 * result + (bitmap?.hashCode() ?: 0)
+        result = 31 * result + (tileBitmap?.hashCode() ?: 0)
         return result
     }
 
@@ -101,7 +101,7 @@ class Tile constructor(
                 "srcRect=${srcRect.toShortString()}," +
                 "state=${TileState.name(state)}," +
                 "sampleSize=$sampleSize," +
-                "bitmap=${bitmap})"
+                "bitmap=${tileBitmap})"
     }
 
     class AnimationState {

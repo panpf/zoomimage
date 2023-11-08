@@ -13,7 +13,7 @@ class TileTest {
     fun test() {
         val tile = Tile(IntOffsetCompat(0, 1), IntRectCompat(0, 0, 100, 100), 2)
         tile.apply {
-            Assert.assertNull(bitmap)
+            Assert.assertNull(tileBitmap)
             Assert.assertFalse(animationState.running)
             Assert.assertEquals(255, animationState.alpha)
         }
@@ -23,7 +23,7 @@ class TileTest {
         tile.setTileBitmap(tileBitmap, false)
         Assert.assertTrue(tileBitmap.displayed)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertTrue(animationState.running)
             Assert.assertEquals(0, animationState.alpha)
         }
@@ -32,7 +32,7 @@ class TileTest {
         Thread.sleep(50)
         tile.animationState.calculate(duration)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertTrue("alpha=${animationState.alpha}", animationState.running)
             Assert.assertEquals(67f, animationState.alpha.toFloat(), 20f)
         }
@@ -40,7 +40,7 @@ class TileTest {
         Thread.sleep(50)
         tile.animationState.calculate(duration)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertTrue("alpha=${animationState.alpha}", animationState.running)
             Assert.assertEquals(127f, animationState.alpha.toFloat(), 20f)
         }
@@ -48,7 +48,7 @@ class TileTest {
         Thread.sleep(50)
         tile.animationState.calculate(duration)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertTrue("alpha=${animationState.alpha}", animationState.running)
             Assert.assertEquals(194f, animationState.alpha.toFloat(), 20f)
         }
@@ -56,7 +56,7 @@ class TileTest {
         Thread.sleep(100)
         tile.animationState.calculate(duration)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertFalse(animationState.running)
             Assert.assertEquals(255, animationState.alpha)
         }
@@ -64,7 +64,7 @@ class TileTest {
         tile.setTileBitmap(tileBitmap, false)
         Assert.assertTrue(tileBitmap.displayed)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertFalse(animationState.running)
             Assert.assertEquals(255, animationState.alpha)
         }
@@ -76,7 +76,7 @@ class TileTest {
         Assert.assertFalse(tileBitmap.displayed)
         Assert.assertTrue(tileBitmap2.displayed)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertFalse(animationState.running)
             Assert.assertEquals(255, animationState.alpha)
         }
@@ -84,7 +84,7 @@ class TileTest {
         val tileBitmap3 = TestTileBitmap("key")
         tile.setTileBitmap(tileBitmap3, false)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertTrue(animationState.running)
             Assert.assertEquals(0, animationState.alpha)
         }
@@ -92,7 +92,7 @@ class TileTest {
         val tileBitmap4 = TestTileBitmap("key")
         tile.setTileBitmap(tileBitmap4, true)
         tile.apply {
-            Assert.assertNotNull(bitmap)
+            Assert.assertNotNull(this.tileBitmap)
             Assert.assertFalse(animationState.running)
             Assert.assertEquals(255, animationState.alpha)
         }

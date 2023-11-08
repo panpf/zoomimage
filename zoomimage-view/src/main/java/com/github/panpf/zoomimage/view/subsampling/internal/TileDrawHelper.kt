@@ -127,8 +127,9 @@ class TileDrawHelper(
         contentSize: IntSizeCompat,
         tileSnapshot: TileSnapshot
     ): Boolean {
-        val tileBitmap = tileSnapshot.bitmap ?: return false
-        val bitmap = (tileBitmap as AndroidTileBitmap).bitmap ?: return false
+        val tileBitmap = tileSnapshot.tileBitmap?.takeIf { !it.isRecycled } ?: return false
+        val bitmap =
+            (tileBitmap as AndroidTileBitmap).bitmap?.takeIf { !it.isRecycled } ?: return false
 
         val widthScale = imageInfo.width / contentSize.width.toFloat()
         val heightScale = imageInfo.height / contentSize.height.toFloat()
@@ -159,6 +160,18 @@ class TileDrawHelper(
         contentSize: IntSizeCompat,
         tileSnapshot: TileSnapshot
     ) {
+        val bitmapNoRecycled = tileSnapshot.tileBitmap?.isRecycled == false
+        val boundsColor = when {
+            bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
+            tileSnapshot.state == TileState.STATE_LOADING -> Color.YELLOW
+            tileSnapshot.state == TileState.STATE_NONE -> Color.GRAY
+            else -> Color.RED
+        }
+
+        val tileBoundsPaint = getTileBoundsPaint()
+        tileBoundsPaint.color = ColorUtils.setAlphaComponent(boundsColor, 100)
+        val boundsStrokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
+
         val widthScale = imageInfo.width / contentSize.width.toFloat()
         val heightScale = imageInfo.height / contentSize.height.toFloat()
         val tileDrawDstRect = cacheRect1.apply {
@@ -169,16 +182,6 @@ class TileDrawHelper(
                 /* bottom = */ floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
             )
         }
-        val bitmapNoRecycled = tileSnapshot.bitmap?.isRecycled == false
-        val boundsColor = when {
-            bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
-            tileSnapshot.state == TileState.STATE_LOADING -> Color.YELLOW
-            tileSnapshot.state == TileState.STATE_NONE -> Color.GRAY
-            else -> Color.RED
-        }
-        val tileBoundsPaint = getTileBoundsPaint()
-        tileBoundsPaint.color = ColorUtils.setAlphaComponent(boundsColor, 100)
-        val boundsStrokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
         val tileBoundsRect = cacheRect2.apply {
             set(
                 /* left = */

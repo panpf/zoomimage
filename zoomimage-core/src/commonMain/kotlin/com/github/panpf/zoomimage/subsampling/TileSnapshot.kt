@@ -27,7 +27,7 @@ data class TileSnapshot(
     val coordinate: IntOffsetCompat,
     val srcRect: IntRectCompat,
     val sampleSize: Int,
-    val bitmap: TileBitmap?,
+    val tileBitmap: TileBitmap?,
     @TileState val state: Int,
     val alpha: Int,
 )
@@ -36,7 +36,7 @@ fun Tile.toSnapshot(): TileSnapshot = TileSnapshot(
     coordinate = coordinate,
     srcRect = srcRect,
     sampleSize = sampleSize,
-    bitmap = bitmap,
+    tileBitmap = tileBitmap,
     state = state,
     alpha = animationState.alpha
 )

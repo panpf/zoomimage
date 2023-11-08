@@ -96,7 +96,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                         ceil((tileSrcRect.bottom / heightTargetScale) - strokeHalfWidth).toInt()
                     )
                 }
-                val bitmapNoRecycled = tileSnapshot.bitmap?.isRecycled == false
+                val bitmapNoRecycled = tileSnapshot.tileBitmap?.isRecycled == false
                 val boundsColor = when {
                     !load -> Color.parseColor("#00BFFF")
                     bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
