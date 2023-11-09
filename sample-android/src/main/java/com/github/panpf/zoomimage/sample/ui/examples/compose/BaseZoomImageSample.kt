@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.github.panpf.zoomimage.compose.ZoomState
+import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
@@ -96,10 +97,7 @@ fun BaseZoomImageSample(
         }
     }
     val logLevel by remember { derivedStateOf { Logger.level(logLevelName) } }
-    val zoomState = rememberZoomState().apply {
-        LaunchedEffect(logLevel) {
-            logger.level = logLevel
-        }
+    val zoomState = rememberZoomState(rememberZoomImageLogger(level = logLevel)).apply {
         LaunchedEffect(threeStepScale) {
             zoomable.threeStepScale = threeStepScale
         }

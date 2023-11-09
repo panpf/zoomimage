@@ -56,6 +56,7 @@ import com.github.panpf.zoomimage.compose.internal.toHexString
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
+import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.plus
@@ -98,7 +99,7 @@ import kotlinx.coroutines.launch
  * Creates and remember a [ZoomableState] that can be used to control the scale, pan, rotation of the content.
  */
 @Composable
-fun rememberZoomableState(logger: Logger): ZoomableState {
+fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
     val zoomableState = remember(logger) {
         ZoomableState(logger)
     }

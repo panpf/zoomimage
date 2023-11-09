@@ -14,6 +14,7 @@ import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
+import com.github.panpf.zoomimage.util.Logger
 
 class ZoomFunctionSampleFragment : AppBarFragment() {
 
@@ -23,8 +24,7 @@ class ZoomFunctionSampleFragment : AppBarFragment() {
 
     @Composable
     override fun DrawContent() {
-        val logger = rememberZoomImageLogger()
-        val zoomState = rememberZoomableState(logger)
+        val zoomState = rememberZoomableState(rememberZoomImageLogger(level = Logger.DEBUG))
         val text = remember {
             """
             六王毕，四海一，蜀山兀，阿房出。覆压三百余里，隔离天日。骊山北构而西折，直走咸阳。二川溶溶，流入宫墙。五步一楼，十步一阁；廊腰缦回，檐牙高啄；各抱地势，钩心斗角。盘盘焉，囷囷焉，蜂房水涡，矗不知其几千万落。长桥卧波，未云何龙？复道行空，不霁何虹？高低冥迷，不知西东。歌台暖响，春光融融；舞殿冷袖，风雨凄凄。一日之内，一宫之间，而气候不齐。　　

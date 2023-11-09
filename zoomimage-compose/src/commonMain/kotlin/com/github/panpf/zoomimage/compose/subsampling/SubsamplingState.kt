@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toHexString
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
+import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.internal.createTileBitmapConvertor
 import com.github.panpf.zoomimage.compose.subsampling.internal.defaultStoppedController
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -77,7 +78,7 @@ import kotlin.math.roundToInt
  * Creates and remember a [SubsamplingState] that can be used to subsampling of the content.
  */
 @Composable
-fun rememberSubsamplingState(logger: Logger): SubsamplingState {
+fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): SubsamplingState {
     val defaultStopAutoController = defaultStoppedController()
     val subsamplingState = remember(logger) {
         SubsamplingState(logger).apply {

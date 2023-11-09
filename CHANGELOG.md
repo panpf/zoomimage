@@ -22,6 +22,10 @@ subsampling:
 * fix: Fixed a bug where the tiles read from the memory cache in the View version were accidentally
   discarded, causing the image at the corresponding position to be blurred.
 
+other:
+
+* change: rememberZoomImageLogger() function adds level and pipeline parameters
+
 ## 1.0.0-beta05
 
 zoom:

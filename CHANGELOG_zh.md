@@ -17,6 +17,10 @@ subsampling:
 * fix: 修复 View 版本的子采样图块因没有正确设置显示计数，导致对应位置图像显示黑色的 bug
 * fix: 修复 View 版本从内存缓存中读取的图块被意外的丢弃，导致对应位置的图像模糊的 bug
 
+other:
+
+* change: rememberZoomImageLogger() 函数增加 level 和 pipeline 参数
+
 ## 1.0.0-beta05
 
 zoom:

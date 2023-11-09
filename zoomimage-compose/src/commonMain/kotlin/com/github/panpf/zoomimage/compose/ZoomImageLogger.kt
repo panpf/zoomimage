@@ -32,13 +32,23 @@ fun rememberZoomImageLogger(
     tag: String = "ZoomImage",
     module: String? = null,
     showThreadName: Boolean = false,
+    @Logger.Level level: Int? = null,
+    pipeline: Logger.Pipeline? = null,
 ): Logger {
     val logger = remember(tag, module, showThreadName) {
         Logger(
             tag = tag,
             module = module,
             showThreadName = showThreadName,
+            level = level,
+            pipeline = pipeline,
         )
+    }
+    if (level != null && logger.level != level) {
+        logger.level = level
+    }
+    if (pipeline != null && logger.pipeline != pipeline) {
+        logger.pipeline = pipeline
     }
     return logger
 }

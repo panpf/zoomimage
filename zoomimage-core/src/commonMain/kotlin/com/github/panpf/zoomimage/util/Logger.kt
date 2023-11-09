@@ -42,6 +42,12 @@ class Logger(
     val showThreadName: Boolean = false,
 
     /**
+     * Initial Level
+     */
+    @Level
+    level: Int? = null,
+
+    /**
      * Specifies the output pipeline of the log
      */
     pipeline: Pipeline? = null,
@@ -57,7 +63,7 @@ class Logger(
     /**
      * The level of the log. The level of the root logger will be modified directly
      */
-    var level: Int = rootLogger?.level ?: INFO
+    var level: Int = rootLogger?.level ?: level ?: INFO
         get() = rootLogger?.level ?: field
         set(value) {
             val rootLogger = rootLogger
