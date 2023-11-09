@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -49,7 +48,6 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.compose.zoom.zooming
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
 import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.newGlideImageSource
@@ -154,43 +152,27 @@ fun GlideZoomAsyncImage(
         state.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
     }
 
-    Box(modifier) {
-        GlideImage(
-            model = model,
-            contentDescription = contentDescription,
-            alignment = Alignment.TopStart,
-            contentScale = ContentScale.None,
-            alpha = alpha,
-            colorFilter = colorFilter,
-            noClipContent = true,
-            loading = loading,
-            failure = failure,
-            transition = transition,
-            requestBuilderTransform = { requestBuilder ->
-                requestBuilderTransform(requestBuilder)
-                    .centerInside()
-                    .addListener(
-                        ResetListener(
-                            context = context,
-                            state = state,
-                            requestBuilder = requestBuilder,
-                            model = model,
-                        )
-                    )
-            },
-            modifier = Modifier
-                .matchParentSize()
-                .zoomScrollBar(state.zoomable, scrollBar)
-                .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap),
-        )
-
-        Box(
-            Modifier
-                .matchParentSize()
-                .zooming(state.zoomable)
-                .subsampling(state.zoomable, state.subsampling)
-        )
-    }
+    GlideImage(
+        model = model,
+        contentDescription = contentDescription,
+        alignment = Alignment.TopStart,
+        contentScale = ContentScale.None,
+        alpha = alpha,
+        colorFilter = colorFilter,
+        noClipContent = true,
+        loading = loading,
+        failure = failure,
+        transition = transition,
+        requestBuilderTransform = { requestBuilder ->
+            requestBuilderTransform(requestBuilder)
+                .centerInside()
+                .addListener(ResetListener(context, state, requestBuilder, model))
+        },
+        modifier = modifier
+            .zoomScrollBar(state.zoomable, scrollBar)
+            .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
+            .subsampling(state.zoomable, state.subsampling),
+    )
 }
 
 private class ResetListener(

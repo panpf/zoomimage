@@ -130,6 +130,11 @@ fun ZoomImage(
                 .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap),
         )
 
+        // Why are subsampling tiles drawn on separate components?
+        // Because when drawing the bottom and right edge subsampling tiles on the desktop platform,
+        // a drawing failure will occur, resulting in the loss of all component content.
+        // Therefore, if the subsampling tile is drawn on a separate component, when a problem occurs, the user will only see that the problem area is unclear, rather than the entire component content being lost.
+        // issue: https://github.com/JetBrains/compose-multiplatform/issues/3904
         Box(
             Modifier
                 .matchParentSize()
