@@ -85,7 +85,7 @@ import kotlin.math.roundToInt
  */
 class ZoomableEngine constructor(logger: Logger, val view: View) {
 
-    val logger: Logger = logger.newLogger(module = "ZoomableEngine@${this.toHexString()}")
+    val logger: Logger = logger.newLogger(module = "ZoomableEngine@${logger.toHexString()}")
 
     private val immediateCoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var lastScaleAnimatable: FloatAnimatable? = null

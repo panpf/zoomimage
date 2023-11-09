@@ -112,7 +112,7 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
 @Stable
 class ZoomableState(logger: Logger) {
 
-    val logger: Logger = logger.newLogger(module = "ZoomableState@${this.toHexString()}")
+    val logger: Logger = logger.newLogger(module = "ZoomableState@${logger.toHexString()}")
 
     private val immediateCoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var lastScaleAnimatable: Animatable<*, *>? = null

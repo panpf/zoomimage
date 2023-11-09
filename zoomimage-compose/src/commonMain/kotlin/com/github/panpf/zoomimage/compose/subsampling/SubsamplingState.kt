@@ -95,7 +95,7 @@ fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): Subsam
 @Stable
 class SubsamplingState constructor(logger: Logger) : RememberObserver {
 
-    val logger: Logger = logger.newLogger(module = "SubsamplingState@${this.toHexString()}")
+    val logger: Logger = logger.newLogger(module = "SubsamplingState@${logger.toHexString()}")
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var imageSource: ImageSource? = null

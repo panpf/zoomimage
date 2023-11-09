@@ -19,6 +19,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import com.github.panpf.zoomimage.ZoomImage
+import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.fromResource
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -42,9 +43,8 @@ import kotlinx.coroutines.launch
 @Preview
 fun ViewerScreen(navigation: Navigation, imageResource: ImageResource) {
     Box(Modifier.fillMaxSize()) {
-        val zoomState = rememberZoomState()
+        val zoomState = rememberZoomState(rememberZoomImageLogger(level = Logger.DEBUG))
         LaunchedEffect(Unit) {
-            zoomState.logger.level = Logger.DEBUG
             val imageSource = ImageSource.fromResource(imageResource.resourcePath)
             zoomState.subsampling.setImageSource(imageSource)
             zoomState.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default

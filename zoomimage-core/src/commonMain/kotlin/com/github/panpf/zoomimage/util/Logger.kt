@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.util
 
 import androidx.annotation.IntDef
+import com.github.panpf.zoomimage.util.internal.toHexString
 
 expect fun createLogPipeline(): Logger.Pipeline
 
@@ -78,7 +79,11 @@ class Logger(
                 pipeline.log(
                     WARN,
                     tag,
-                    "Logger. setLevel. ${levelName(oldLevel)} -> ${levelName(value)}",
+                    "Logger@${this.toHexString()}. setLevel. ${levelName(oldLevel)} -> ${
+                        levelName(
+                            value
+                        )
+                    }",
                     null
                 )
             }
@@ -98,7 +103,12 @@ class Logger(
                 }
             } else if (field != value) {
                 val oldPipeline = field
-                oldPipeline.log(WARN, tag, "Logger. setPipeline. $oldPipeline -> $value", null)
+                oldPipeline.log(
+                    WARN,
+                    tag,
+                    "Logger@${this.toHexString()}. setPipeline. $oldPipeline -> $value",
+                    null
+                )
                 oldPipeline.flush()
                 field = value
             }

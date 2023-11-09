@@ -68,7 +68,7 @@ class SubsamplingEngine constructor(
     private val view: View,
 ) {
 
-    val logger: Logger = logger.newLogger(module = "SubsamplingEngine@${this.toHexString()}")
+    val logger: Logger = logger.newLogger(module = "SubsamplingEngine@${logger.toHexString()}")
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
     private var imageSource: ImageSource? = null
