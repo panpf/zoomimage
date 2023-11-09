@@ -140,6 +140,7 @@ class ZoomImageOptionsState {
 @Composable
 fun ZoomImageOptionsDialog(
     my: Boolean,
+    supportIgnoreExifOrientation: Boolean,
     state: ZoomImageOptionsState = rememberZoomImageOptionsState(),
     onDismissRequest: () -> Unit
 ) {
@@ -366,9 +367,11 @@ fun ZoomImageOptionsDialog(
                     state.disabledBackgroundTiles.value = !state.disabledBackgroundTiles.value
 //                    onDismissRequest()
                 }
-                SwitchMenu("Ignore Exif Orientation", ignoreExifOrientation) {
-                    state.ignoreExifOrientation.value = !state.ignoreExifOrientation.value
+                if (supportIgnoreExifOrientation) {
+                    SwitchMenu("Ignore Exif Orientation", ignoreExifOrientation) {
+                        state.ignoreExifOrientation.value = !state.ignoreExifOrientation.value
 //                    onDismissRequest()
+                    }
                 }
                 SwitchMenu("Show Tile Bounds", showTileBounds) {
                     state.showTileBounds.value = !state.showTileBounds.value
@@ -410,7 +413,7 @@ fun ZoomImageOptionsDialog(
 @Composable
 @Preview
 private fun ZoomImageOptionsDialogPreview() {
-    ZoomImageOptionsDialog(true) {
+    ZoomImageOptionsDialog(my = true, supportIgnoreExifOrientation = true) {
 
     }
 }

@@ -12,6 +12,7 @@ enum class ZoomImageType(
     val drawListContent: @Composable (sketchImageUri: String, modifier: Modifier) -> Unit,
     val drawContent: @Composable (sketchImageUri: String) -> Unit,
     val my: Boolean,
+    val supportIgnoreExifOrientation: Boolean,
 ) {
     MyZoomImage(
         title = "ZoomImage",
@@ -23,6 +24,7 @@ enum class ZoomImageType(
             ZoomImageSample(sketchImageUri)
         },
         my = true,
+        supportIgnoreExifOrientation = true,
     ),
 
     SketchZoomAsyncImage(
@@ -35,6 +37,7 @@ enum class ZoomImageType(
             SketchZoomAsyncImageSample(sketchImageUri)
         },
         my = true,
+        supportIgnoreExifOrientation = true,
     ),
 
     CoilZoomAsyncImage(
@@ -47,6 +50,7 @@ enum class ZoomImageType(
             CoilZoomAsyncImageSample(sketchImageUri)
         },
         my = true,
+        supportIgnoreExifOrientation = false,
     ),
 
     GlideZoomAsyncImage(
@@ -59,6 +63,7 @@ enum class ZoomImageType(
             GlideZoomAsyncImageSample(sketchImageUri)
         },
         my = true,
+        supportIgnoreExifOrientation = false,
     ),
 
     TelephotoZoomableAsyncImage(
@@ -71,5 +76,6 @@ enum class ZoomImageType(
             TelephotoZoomableAsyncImageSample(sketchImageUri)
         },
         my = false,
+        supportIgnoreExifOrientation = false,
     ),
 }

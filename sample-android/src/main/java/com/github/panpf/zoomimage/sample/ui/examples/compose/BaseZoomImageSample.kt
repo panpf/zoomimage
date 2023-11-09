@@ -131,8 +131,10 @@ fun BaseZoomImageSample(
         LaunchedEffect(disabledBackgroundTiles) {
             subsampling.disabledBackgroundTiles = disabledBackgroundTiles
         }
-        LaunchedEffect(ignoreExifOrientation) {
-            subsampling.ignoreExifOrientation = ignoreExifOrientation
+        if (supportIgnoreExifOrientation) {
+            LaunchedEffect(ignoreExifOrientation) {
+                subsampling.ignoreExifOrientation = ignoreExifOrientation
+            }
         }
         LaunchedEffect(showTileBounds) {
             subsampling.showTileBounds = showTileBounds

@@ -58,7 +58,10 @@ class ComposeExifOrientationTestFragment : AppBarFragment() {
 
         val showingOptionsDialog by optionDialogShowViewModel.showStateFlow.collectAsState(initial = false)
         if (showingOptionsDialog) {
-            ZoomImageOptionsDialog(my = ZoomImageType.MyZoomImage.my) {
+            ZoomImageOptionsDialog(
+                my = ZoomImageType.MyZoomImage.my,
+                supportIgnoreExifOrientation = ZoomImageType.MyZoomImage.supportIgnoreExifOrientation
+            ) {
                 optionDialogShowViewModel.toggleOptionDialogShow()
             }
         }

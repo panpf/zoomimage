@@ -107,7 +107,10 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
 
         val showingOptionsDialog by optionDialogShowViewModel.showStateFlow.collectAsState(initial = false)
         if (showingOptionsDialog) {
-            ZoomImageOptionsDialog(my = zoomImageType.my) {
+            ZoomImageOptionsDialog(
+                my = zoomImageType.my,
+                supportIgnoreExifOrientation = zoomImageType.supportIgnoreExifOrientation
+            ) {
                 optionDialogShowViewModel.toggleOptionDialogShow()
             }
         }

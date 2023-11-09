@@ -31,7 +31,15 @@ object SampleImages {
         Content.CHINA,
         LocalFile.CARD,
         Resource.QMSHT,
-        Http.COMIC
+        Http.COMIC,
+        Asset.EXIF_NORMAL,
+        Asset.EXIF_FLIP_HOR,
+        Asset.EXIF_FLIP_VER,
+        Asset.EXIF_ROTATE_90,
+        Asset.EXIF_ROTATE_180,
+        Asset.EXIF_ROTATE_270,
+        Asset.EXIF_TRANSPOSE,
+        Asset.EXIF_TRANSVERSE,
     )
 
     object Asset {
@@ -89,7 +97,73 @@ object SampleImages {
             uri = newAssetUri("sample_long_comic.jpg"),
             size = Size(690, 12176)
         )
-        val ALL = listOf(DOG, CAT, ELEPHANT, WHALE, WORLD, CHINA, CARD, QMSHT, COMIC)
+        val EXIF_NORMAL = SampleImage(
+            name = "EXIF_NORMAL",
+            fileName = "sample_exif_girl_normal.jpg",
+            uri = newAssetUri("sample_exif_girl_normal.jpg"),
+            size = Size(1080, 6400)
+        )
+        val EXIF_FLIP_HOR = SampleImage(
+            name = "EXIF_FLIP_HOR",
+            fileName = "sample_exif_girl_flip_hor.jpg",
+            uri = newAssetUri("sample_exif_girl_flip_hor.jpg"),
+            size = Size(1080, 6400)
+        )
+        val EXIF_FLIP_VER = SampleImage(
+            name = "EXIF_FLIP_VER",
+            fileName = "sample_exif_girl_flip_ver.jpg",
+            uri = newAssetUri("sample_exif_girl_flip_ver.jpg"),
+            size = Size(1080, 6400)
+        )
+        val EXIF_ROTATE_90 = SampleImage(
+            name = "EXIF_ROTATE_90",
+            fileName = "sample_exif_girl_rotate_90.jpg",
+            uri = newAssetUri("sample_exif_girl_rotate_90.jpg"),
+            size = Size(1080, 6400)
+        )
+        val EXIF_ROTATE_180 = SampleImage(
+            name = "EXIF_ROTATE_180",
+            fileName = "sample_exif_girl_rotate_180.jpg",
+            uri = newAssetUri("sample_exif_girl_rotate_180.jpg"),
+            size = Size(1080, 6400)
+        )
+        val EXIF_ROTATE_270 = SampleImage(
+            name = "EXIF_ROTATE_270",
+            fileName = "sample_exif_girl_rotate_270.jpg",
+            uri = newAssetUri("sample_exif_girl_rotate_270.jpg"),
+            size = Size(1080, 6400)
+        )
+        val EXIF_TRANSPOSE = SampleImage(
+            name = "EXIF_TRANSPOSE",
+            fileName = "sample_exif_girl_transpose.jpg",
+            uri = newAssetUri("sample_exif_girl_transpose.jpg"),
+            size = Size(1080, 6400)
+        )
+        val EXIF_TRANSVERSE = SampleImage(
+            name = "EXIF_TRANSVERSE",
+            fileName = "sample_exif_girl_transverse.jpg",
+            uri = newAssetUri("sample_exif_girl_transverse.jpg"),
+            size = Size(1080, 6400)
+        )
+        val ALL = listOf(
+            DOG,
+            CAT,
+            ELEPHANT,
+            WHALE,
+            WORLD,
+            CHINA,
+            CARD,
+            QMSHT,
+            COMIC,
+            EXIF_NORMAL,
+            EXIF_FLIP_HOR,
+            EXIF_FLIP_VER,
+            EXIF_ROTATE_90,
+            EXIF_ROTATE_180,
+            EXIF_ROTATE_270,
+            EXIF_TRANSPOSE,
+            EXIF_TRANSVERSE,
+        )
     }
 
     object Resource {

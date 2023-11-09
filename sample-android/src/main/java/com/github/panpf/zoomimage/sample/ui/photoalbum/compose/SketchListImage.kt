@@ -13,11 +13,13 @@ import com.github.panpf.sketch.stateimage.IconStateImage
 import com.github.panpf.sketch.stateimage.ResColor
 import com.github.panpf.zoomimage.sample.R.color
 import com.github.panpf.zoomimage.sample.R.drawable
+import com.github.panpf.zoomimage.sample.settingsService
 
 @Composable
 fun SketchListImage(sketchImageUri: String, modifier: Modifier) {
+    val context = LocalContext.current
     AsyncImage(
-        request = DisplayRequest(LocalContext.current, sketchImageUri) {
+        request = DisplayRequest(context, sketchImageUri) {
             placeholder(
                 IconStateImage(
                     drawable.ic_image_outline,
@@ -32,6 +34,7 @@ fun SketchListImage(sketchImageUri: String, modifier: Modifier) {
             )
             crossfade()
             resizeApplyToDrawable()
+            ignoreExifOrientation(context.settingsService.ignoreExifOrientation.value)
             resizePrecision(LongImageClipPrecisionDecider(SAME_ASPECT_RATIO))
             resizeScale(LongImageScaleDecider())
         },
