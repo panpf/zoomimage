@@ -10,6 +10,8 @@ zoom:
   initial View version.
 * fix: Fixed the issue where the image can be seen quickly moving from the top to the center in the
   initial Compose version.
+* fix: Fixed a bug where weird flashing image content would appear at the edge of the
+  SketchZoomAsyncImage and CoilZoomAsyncImage components when they are quickly switched in Pager.
 
 subsampling:
 

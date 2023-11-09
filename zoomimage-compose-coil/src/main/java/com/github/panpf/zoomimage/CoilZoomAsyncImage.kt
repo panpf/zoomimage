@@ -16,12 +16,10 @@
 
 package com.github.panpf.zoomimage
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
-import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -32,26 +30,27 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import coil.ImageLoader
 import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State
 import coil.compose.LocalImageLoader
-import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import coil.request.NullRequestDataException
 import com.github.panpf.zoomimage.coil.CoilImageSource
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.internal.NoClipContentImage
+import com.github.panpf.zoomimage.compose.coil.internal.AsyncImage
+import com.github.panpf.zoomimage.compose.coil.internal.ConstraintsSizeResolver
+import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
+import com.github.panpf.zoomimage.compose.coil.internal.requestOf
+import com.github.panpf.zoomimage.compose.coil.internal.toScale
+import com.github.panpf.zoomimage.compose.coil.internal.transformOf
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.compose.zoom.zooming
 import kotlin.math.roundToInt
 
 
@@ -204,38 +203,44 @@ fun CoilZoomAsyncImage(
         state.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
     }
 
-    Box(modifier) {
-        val request = requestOf(model)
-        val painter = rememberAsyncImagePainter(
-            model = request,
-            imageLoader = imageLoader,
-            transform = transform,
-            onState = { loadState ->
-                onState(imageLoader, state, request, loadState)
-                onState?.invoke(loadState)
-            },
-            contentScale = contentScale,
-            filterQuality = filterQuality
-        )
-        NoClipContentImage(
-            painter = painter,
-            contentDescription = contentDescription,
-            alignment = Alignment.TopStart,
-            contentScale = ContentScale.None,
-            alpha = alpha,
-            colorFilter = colorFilter,
-            modifier = Modifier
-                .matchParentSize()
-                .zoomScrollBar(state.zoomable, scrollBar)
-                .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
-        )
+    val request = updateRequest(requestOf(model), contentScale)
+    AsyncImage(
+        model = request,
+        contentDescription = contentDescription,
+        imageLoader = imageLoader,
+        transform = transform,
+        onState = { loadState ->
+            onState(imageLoader, state, request, loadState)
+            onState?.invoke(loadState)
+        },
+        alignment = Alignment.TopStart,
+        contentScale = ContentScale.None,
+        alpha = alpha,
+        colorFilter = colorFilter,
+        filterQuality = filterQuality,
+        noClipContent = true,
+        modifier = modifier
+            .zoomScrollBar(state.zoomable, scrollBar)
+            .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
+            .subsampling(state.zoomable, state.subsampling),
+    )
+}
 
-        Box(
-            Modifier
-                .matchParentSize()
-                .zooming(state.zoomable)
-                .subsampling(state.zoomable, state.subsampling)
-        )
+@Composable
+internal fun updateRequest(request: ImageRequest, contentScale: ContentScale): ImageRequest {
+    return request.let {
+        if (it.defined.sizeResolver == null) {
+            val sizeResolver = remember { ConstraintsSizeResolver() }
+            it.newBuilder().size(sizeResolver).build()
+        } else {
+            it
+        }
+    }.let {
+        if (it.defined.scale == null) {
+            it.newBuilder().scale(contentScale.toScale()).build()
+        } else {
+            it
+        }
     }
 }
 
@@ -262,72 +267,13 @@ private fun onState(
     }
 }
 
-val State.name: String
+private val State.name: String
     get() = when (this) {
         is State.Loading -> "Loading"
         is State.Success -> "Success"
         is State.Error -> "Error"
         is State.Empty -> "Empty"
     }
-
-
-/** Create an [ImageRequest] from the [model]. */
-@Composable
-@ReadOnlyComposable
-internal fun requestOf(model: Any?): ImageRequest {
-    if (model is ImageRequest) {
-        return model
-    } else {
-        return ImageRequest.Builder(LocalContext.current).data(model).build()
-    }
-}
-
-@Stable
-private fun transformOf(
-    placeholder: Painter?,
-    error: Painter?,
-    uriEmpty: Painter?,
-): (State) -> State {
-    return if (placeholder != null || error != null || uriEmpty != null) {
-        { state ->
-            when (state) {
-                is State.Loading -> {
-                    if (placeholder != null) state.copy(painter = placeholder) else state
-                }
-
-                is State.Error -> if (state.result.throwable is NullRequestDataException) {
-                    if (uriEmpty != null) state.copy(painter = uriEmpty) else state
-                } else {
-                    if (error != null) state.copy(painter = error) else state
-                }
-
-                else -> state
-            }
-        }
-    } else {
-        AsyncImagePainter.DefaultTransform
-    }
-}
-
-@Stable
-private fun onStateOf(
-    onLoading: ((State.Loading) -> Unit)?,
-    onSuccess: ((State.Success) -> Unit)?,
-    onError: ((State.Error) -> Unit)?,
-): ((State) -> Unit)? {
-    return if (onLoading != null || onSuccess != null || onError != null) {
-        { state ->
-            when (state) {
-                is State.Loading -> onLoading?.invoke(state)
-                is State.Success -> onSuccess?.invoke(state)
-                is State.Error -> onError?.invoke(state)
-                is State.Empty -> {}
-            }
-        }
-    } else {
-        null
-    }
-}
 
 private fun Size.roundToIntSize(): IntSize {
     return IntSize(width.roundToInt(), height.roundToInt())
