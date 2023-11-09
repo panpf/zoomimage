@@ -25,15 +25,12 @@ import androidx.compose.runtime.Immutable
  */
 @Immutable
 data class ZoomAnimationSpec(
-    val durationMillis: Int,
-    val easing: Easing,
-    val initialVelocity: Float,
+    val durationMillis: Int = 300,
+    val easing: Easing = FastOutSlowInEasing,
+    val initialVelocity: Float = 0f,
 ) {
     companion object {
-        val Default = ZoomAnimationSpec(
-            durationMillis = 300,
-            easing = FastOutSlowInEasing,
-            initialVelocity = 0f
-        )
+        val Default = ZoomAnimationSpec()
+        val None = ZoomAnimationSpec(durationMillis = 0)
     }
 }

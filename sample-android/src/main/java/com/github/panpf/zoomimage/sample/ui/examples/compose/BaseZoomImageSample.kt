@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.compose.zoom.heartbeat
 import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.compose.widget.rememberMyDialogState
@@ -30,7 +31,6 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
-import com.github.panpf.zoomimage.zoom.vibration
 
 @Composable
 fun BaseZoomImageSample(
@@ -103,7 +103,7 @@ fun BaseZoomImageSample(
         }
         LaunchedEffect(oneFingerScale) {
             zoomable.oneFingerScaleSpec = if (oneFingerScale)
-                OneFingerScaleSpec.vibration(context) else null
+                OneFingerScaleSpec.heartbeat(zoomable) else null
         }
         LaunchedEffect(rubberBandScale) {
             zoomable.rubberBandScale = rubberBandScale

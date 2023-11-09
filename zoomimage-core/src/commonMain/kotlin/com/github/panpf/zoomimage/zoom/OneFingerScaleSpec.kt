@@ -30,39 +30,39 @@ data class OneFingerScaleSpec(
          */
         val Default = OneFingerScaleSpec()
     }
+}
 
-    interface HapticFeedback {
+interface HapticFeedback {
 
-        companion object {
+    companion object {
 
-            val None = object : HapticFeedback {
-                override fun perform() {
+        val None = object : HapticFeedback {
+            override suspend fun perform() {
 
-                }
             }
         }
-
-        fun perform()
     }
 
-    interface PanToScaleTransformer {
+    suspend fun perform()
+}
 
-        companion object {
-            val Default = DefaultPanToScaleTransformer()
-        }
+interface PanToScaleTransformer {
 
-        fun transform(panY: Float): Float
+    companion object {
+        val Default = DefaultPanToScaleTransformer()
     }
 
-    class DefaultPanToScaleTransformer(val reference: Int = DefaultReference) :
-        PanToScaleTransformer {
+    fun transform(panY: Float): Float
+}
 
-        companion object {
-            const val DefaultReference: Int = 200
-        }
+class DefaultPanToScaleTransformer(private val reference: Int = DefaultReference) :
+    PanToScaleTransformer {
 
-        override fun transform(panY: Float): Float {
-            return 1f + (panY / reference)
-        }
+    companion object {
+        const val DefaultReference: Int = 200
+    }
+
+    override fun transform(panY: Float): Float {
+        return 1f + (panY / reference)
     }
 }

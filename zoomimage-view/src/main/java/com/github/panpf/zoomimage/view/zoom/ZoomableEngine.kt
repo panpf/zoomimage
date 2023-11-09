@@ -467,7 +467,8 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     fun scale(
         targetScale: Float,
         centroidContentPoint: IntOffsetCompat = contentVisibleRectState.value.center,
-        animated: Boolean = false
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
     ) {
         val containerSize = containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
         val contentSize = contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
@@ -523,6 +524,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             animatedUpdateUserTransform(
                 targetUserTransform = limitedTargetUserTransform,
                 newContinuousTransformType = ContinuousTransformType.SCALE,
+                animationSpec = animationSpec,
                 caller = "scale"
             )
         } else {
@@ -540,12 +542,14 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      */
     fun switchScale(
         centroidContentPoint: IntOffsetCompat = contentVisibleRectState.value.center,
-        animated: Boolean = false
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
     ): Float {
         val nextScale = getNextStepScale()
         scale(
             targetScale = nextScale,
             centroidContentPoint = centroidContentPoint,
+            animationSpec = animationSpec,
             animated = animated
         )
         return nextScale
@@ -556,7 +560,8 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
      */
     fun offset(
         targetOffset: OffsetCompat,
-        animated: Boolean = false
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
     ) {
         containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
         contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
@@ -587,6 +592,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             animatedUpdateUserTransform(
                 targetUserTransform = limitedTargetUserTransform,
                 newContinuousTransformType = ContinuousTransformType.OFFSET,
+                animationSpec = animationSpec,
                 caller = "offset"
             )
         } else {
@@ -603,6 +609,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         contentPoint: IntOffsetCompat,
         targetScale: Float = transformState.value.scaleX,
         animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
     ) {
         val containerSize = containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
         val contentSize = contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
@@ -660,6 +667,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             animatedUpdateUserTransform(
                 targetUserTransform = limitedTargetUserTransform,
                 newContinuousTransformType = ContinuousTransformType.LOCATE,
+                animationSpec = animationSpec,
                 caller = "locate"
             )
         } else {
@@ -986,15 +994,17 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     private fun animatedUpdateUserTransform(
         targetUserTransform: TransformCompat,
         newContinuousTransformType: Int?,
+        animationSpec: ZoomAnimationSpec?,
         caller: String
     ) {
+        val finalAnimationSpec = animationSpec ?: animationSpecState.value
         val currentUserTransform = userTransformState.value
         lastScaleAnimatable = FloatAnimatable(
             view = view,
             startValue = 0f,
             endValue = 1f,
-            durationMillis = animationSpecState.value.durationMillis,
-            interpolator = animationSpecState.value.interpolator,
+            durationMillis = finalAnimationSpec.durationMillis,
+            interpolator = finalAnimationSpec.interpolator,
             onUpdateValue = { value ->
                 val userTransform = lerp(
                     start = currentUserTransform,

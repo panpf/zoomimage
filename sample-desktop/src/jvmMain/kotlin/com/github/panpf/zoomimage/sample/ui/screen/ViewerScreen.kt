@@ -23,6 +23,7 @@ import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.fromResource
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.compose.zoom.heartbeat
 import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.compose.widget.rememberMyDialogState
@@ -47,7 +48,7 @@ fun ViewerScreen(navigation: Navigation, imageResource: ImageResource) {
         LaunchedEffect(Unit) {
             val imageSource = ImageSource.fromResource(imageResource.resourcePath)
             zoomState.subsampling.setImageSource(imageSource)
-            zoomState.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
+            zoomState.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.heartbeat(zoomState.zoomable)
         }
 
         var lastMoveJob by remember { mutableStateOf<Job?>(null) }

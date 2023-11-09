@@ -20,13 +20,10 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.view.HapticFeedbackConstants
+import android.view.View
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresPermission
-
-
-/*
- * Vibration feedback
- */
 
 
 @RequiresPermission("android.permission.VIBRATE")
@@ -34,28 +31,30 @@ fun OneFingerScaleSpec.Companion.vibration(
     context: Context,
     milliseconds: Long = VibrationHapticFeedback.DefaultMilliseconds,
     @IntRange(from = -1, to = 255)
-    amplitude: Int = VibrationHapticFeedback.DefaultAmplitude
+    amplitude: Int = VibrationHapticFeedback.DefaultAmplitude,
+    panToScaleTransformer: PanToScaleTransformer = PanToScaleTransformer.Default
 ): OneFingerScaleSpec {
-    val feedback =
-        OneFingerScaleSpec.HapticFeedback.vibration(context, milliseconds, amplitude)
-    return OneFingerScaleSpec(feedback)
+    return OneFingerScaleSpec(
+        hapticFeedback = VibrationHapticFeedback(context, milliseconds, amplitude),
+        panToScaleTransformer = panToScaleTransformer
+    )
 }
 
-@RequiresPermission("android.permission.VIBRATE")
-fun OneFingerScaleSpec.HapticFeedback.Companion.vibration(
-    context: Context,
-    milliseconds: Long = VibrationHapticFeedback.DefaultMilliseconds,
-    @IntRange(from = -1, to = 255)
-    amplitude: Int = VibrationHapticFeedback.DefaultAmplitude
-): VibrationHapticFeedback {
-    return VibrationHapticFeedback(context, milliseconds, amplitude)
+fun OneFingerScaleSpec.Companion.viewGesture(
+    view: View,
+    panToScaleTransformer: PanToScaleTransformer = PanToScaleTransformer.Default
+): OneFingerScaleSpec {
+    return OneFingerScaleSpec(
+        hapticFeedback = ViewGestureHapticFeedback(view),
+        panToScaleTransformer = panToScaleTransformer
+    )
 }
 
 data class VibrationHapticFeedback(
     val context: Context,
     val milliseconds: Long = DefaultMilliseconds,
     @IntRange(from = -1, to = 255) val amplitude: Int = DefaultAmplitude
-) : OneFingerScaleSpec.HapticFeedback {
+) : HapticFeedback {
 
     companion object {
         const val DefaultMilliseconds = 50L
@@ -63,7 +62,7 @@ data class VibrationHapticFeedback(
     }
 
     @RequiresPermission("android.permission.VIBRATE")
-    override fun perform() {
+    override suspend fun perform() {
         @Suppress("DEPRECATION") val vibrator =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 context.getSystemService(Vibrator::class.java)
@@ -78,5 +77,19 @@ data class VibrationHapticFeedback(
             @Suppress("DEPRECATION")
             vibrator.vibrate(milliseconds)
         }
+    }
+}
+
+data class ViewGestureHapticFeedback(val view: View) : HapticFeedback {
+
+    override suspend fun perform() {
+        val feedbackConstant = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            HapticFeedbackConstants.GESTURE_END
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            HapticFeedbackConstants.CONTEXT_CLICK
+        } else {
+            HapticFeedbackConstants.LONG_PRESS
+        }
+        view.performHapticFeedback(feedbackConstant)
     }
 }

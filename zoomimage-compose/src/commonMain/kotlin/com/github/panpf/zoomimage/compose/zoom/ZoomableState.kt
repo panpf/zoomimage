@@ -490,7 +490,8 @@ class ZoomableState(logger: Logger) {
     suspend fun scale(
         targetScale: Float,
         centroidContentPoint: IntOffset = contentVisibleRect.center,
-        animated: Boolean = false
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
     ) = coroutineScope {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
@@ -547,6 +548,7 @@ class ZoomableState(logger: Logger) {
             animatedUpdateUserTransform(
                 targetUserTransform = limitedTargetUserTransform,
                 newContinuousTransformType = ContinuousTransformType.SCALE,
+                animationSpec = animationSpec,
                 caller = "scale"
             )
         } else {
@@ -564,12 +566,14 @@ class ZoomableState(logger: Logger) {
      */
     suspend fun switchScale(
         centroidContentPoint: IntOffset = contentVisibleRect.center,
-        animated: Boolean = false
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
     ): Float = coroutineScope {
         val nextScale = getNextStepScale()
         scale(
             targetScale = nextScale,
             centroidContentPoint = centroidContentPoint,
+            animationSpec = animationSpec,
             animated = animated
         )
         nextScale
@@ -580,7 +584,8 @@ class ZoomableState(logger: Logger) {
      */
     suspend fun offset(
         targetOffset: Offset,
-        animated: Boolean = false
+        animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
     ) = coroutineScope {
         containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
@@ -611,6 +616,7 @@ class ZoomableState(logger: Logger) {
             animatedUpdateUserTransform(
                 targetUserTransform = limitedTargetUserTransform,
                 newContinuousTransformType = ContinuousTransformType.OFFSET,
+                animationSpec = animationSpec,
                 caller = "offset"
             )
         } else {
@@ -627,6 +633,7 @@ class ZoomableState(logger: Logger) {
         contentPoint: IntOffset,
         targetScale: Float = transform.scaleX,
         animated: Boolean = false,
+        animationSpec: ZoomAnimationSpec? = null,
     ) = coroutineScope {
         val containerSize = containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
         val contentSize = contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope
@@ -684,6 +691,7 @@ class ZoomableState(logger: Logger) {
             animatedUpdateUserTransform(
                 targetUserTransform = limitedTargetUserTransform,
                 newContinuousTransformType = ContinuousTransformType.LOCATE,
+                animationSpec = animationSpec,
                 caller = "locate"
             )
         } else {
@@ -983,6 +991,7 @@ class ZoomableState(logger: Logger) {
     private suspend fun animatedUpdateUserTransform(
         targetUserTransform: Transform,
         @ContinuousTransformType newContinuousTransformType: Int?,
+        animationSpec: ZoomAnimationSpec?,
         caller: String
     ) {
         val currentUserTransform = userTransform
@@ -991,14 +1000,15 @@ class ZoomableState(logger: Logger) {
         if (newContinuousTransformType != null) {
             continuousTransformType = newContinuousTransformType
         }
+        val finalAnimationSpec = animationSpec ?: this@ZoomableState.animationSpec
         try {
             updateAnimatable.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(
-                    durationMillis = animationSpec.durationMillis,
-                    easing = animationSpec.easing
+                    durationMillis = finalAnimationSpec.durationMillis,
+                    easing = finalAnimationSpec.easing
                 ),
-                initialVelocity = animationSpec.initialVelocity,
+                initialVelocity = finalAnimationSpec.initialVelocity,
             ) {
                 val userTransform = lerp(
                     start = currentUserTransform,

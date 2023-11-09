@@ -82,7 +82,9 @@ fun Modifier.zoomable(
                     val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
                     if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE) && oneFingerScaleSpec != null) {
                         lastLongPressPoint = it
-                        oneFingerScaleSpec.hapticFeedback.perform()
+                        coroutineScope.launch {
+                            oneFingerScaleSpec.hapticFeedback.perform()
+                        }
                     }
                     updatedOnLongPress?.invoke(it)
                 },

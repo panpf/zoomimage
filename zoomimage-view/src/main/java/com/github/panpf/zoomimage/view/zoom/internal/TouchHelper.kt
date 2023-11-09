@@ -24,14 +24,19 @@ import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
 
     private val gestureDetector: UnifiedGestureDetector
-    var onViewTapListener: OnViewTapListener? = null
-    var onViewLongPressListener: OnViewLongPressListener? = null
     private var lastLongPressPoint: OffsetCompat? = null
     private var lastPointCount: Int = 0
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+    var onViewTapListener: OnViewTapListener? = null
+    var onViewLongPressListener: OnViewLongPressListener? = null
 
     init {
         gestureDetector = UnifiedGestureDetector(
@@ -52,7 +57,9 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
                 if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE) && oneFingerScaleSpec != null) {
                     lastLongPressPoint = OffsetCompat(x = e.x, y = e.y)
-                    oneFingerScaleSpec.hapticFeedback.perform()
+                    coroutineScope.launch {
+                        oneFingerScaleSpec.hapticFeedback.perform()
+                    }
                 }
                 onViewLongPressListener?.onViewLongPress(view, e.x, e.y)
                 onViewLongPressListener != null || view.performLongClick()

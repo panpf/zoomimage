@@ -12,6 +12,8 @@ zoom:
   initial Compose version.
 * fix: Fixed a bug where weird flashing image content would appear at the edge of the
   SketchZoomAsyncImage and CoilZoomAsyncImage components when they are quickly switched in Pager.
+* new: Added HeartbeatHapticFeedback, which will have a heartbeat-like effect when triggering
+  single-finger zoom.
 
 subsampling:
 
