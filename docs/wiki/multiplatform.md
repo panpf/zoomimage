@@ -38,3 +38,6 @@ automatically loaded according to the current platform
       pictures have different window sizes that can solve the problem under different zoom factors.
     * This BUG only exists in the desktop version, the Android version does not have this problem
     * Reported to the official, issue https://github.com/JetBrains/compose-multiplatform/issues/3904
+2. There will be a visible gap between subsampling tiles
+    * This BUG only exists in the desktop version, the Android version does not have this problem
+    * Reported to the official, issue https://github.com/JetBrains/compose-multiplatform/issues/3917
