@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.0.0-beta06
 
 zoom:
 

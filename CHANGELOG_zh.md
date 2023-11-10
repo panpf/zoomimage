@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## 1.0.0-beta06-SNAPSHOT
+## 1.0.0-beta06
 
 zoom:
 
