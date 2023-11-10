@@ -1,9 +1,12 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
+import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.subsampling.internal.Tile
 import com.github.panpf.zoomimage.subsampling.internal.calculateGridSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
+import com.github.panpf.zoomimage.subsampling.internal.calculateMaxGridSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
+import com.github.panpf.zoomimage.subsampling.internal.calculateTiles
 import com.github.panpf.zoomimage.subsampling.internal.closestPowerOfTwo
 import com.github.panpf.zoomimage.subsampling.internal.findSampleSize
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
@@ -153,45 +156,44 @@ class TileManageUtilsTest {
         )
     }
 
-    @Test
-    fun testCalculateTileGridMap() {
-        val checkTiles: (List<Tile>, IntSizeCompat) -> Unit =
-            { tileList, imageSize ->
-                var minLeft = 0
-                var minTop = 0
-                var maxRight = 0
-                var maxBottom = 0
-                var lastTop = 0
-                var lastRight = 0
-                tileList.forEachIndexed { index, tile ->
-                    if (index == 0) {
-                        Assert.assertEquals(0, tile.srcRect.left)
-                        Assert.assertEquals(0, tile.srcRect.top)
-                    } else if (index == tileList.lastIndex) {
-                        Assert.assertEquals(imageSize.width, tile.srcRect.right)
-                        Assert.assertEquals(imageSize.height, tile.srcRect.bottom)
-                    }
-
-                    Assert.assertEquals(lastRight, tile.srcRect.left)
-                    Assert.assertEquals(lastTop, tile.srcRect.top)
-                    if (tile.srcRect.right >= imageSize.width) {
-                        lastTop = tile.srcRect.bottom
-                        lastRight = 0
-                    } else {
-                        lastRight = tile.srcRect.right
-                    }
-
-                    minLeft = min(minLeft, tile.srcRect.left)
-                    minTop = min(minTop, tile.srcRect.top)
-                    maxRight = max(maxRight, tile.srcRect.right)
-                    maxBottom = max(maxBottom, tile.srcRect.bottom)
-                }
-                Assert.assertEquals(0, minLeft)
-                Assert.assertEquals(0, minTop)
-                Assert.assertEquals(imageSize.width, maxRight)
-                Assert.assertEquals(imageSize.height, maxBottom)
+    private fun checkTiles(tileList: List<Tile>, imageSize: IntSizeCompat) {
+        var minLeft = 0
+        var minTop = 0
+        var maxRight = 0
+        var maxBottom = 0
+        var lastTop = 0
+        var lastRight = 0
+        tileList.forEachIndexed { index, tile ->
+            if (index == 0) {
+                Assert.assertEquals(0, tile.srcRect.left)
+                Assert.assertEquals(0, tile.srcRect.top)
+            } else if (index == tileList.lastIndex) {
+                Assert.assertEquals(imageSize.width, tile.srcRect.right)
+                Assert.assertEquals(imageSize.height, tile.srcRect.bottom)
             }
 
+            Assert.assertEquals(lastRight, tile.srcRect.left)
+            Assert.assertEquals(lastTop, tile.srcRect.top)
+            if (tile.srcRect.right >= imageSize.width) {
+                lastTop = tile.srcRect.bottom
+                lastRight = 0
+            } else {
+                lastRight = tile.srcRect.right
+            }
+
+            minLeft = min(minLeft, tile.srcRect.left)
+            minTop = min(minTop, tile.srcRect.top)
+            maxRight = max(maxRight, tile.srcRect.right)
+            maxBottom = max(maxBottom, tile.srcRect.bottom)
+        }
+        Assert.assertEquals(0, minLeft)
+        Assert.assertEquals(0, minTop)
+        Assert.assertEquals(imageSize.width, maxRight)
+        Assert.assertEquals(imageSize.height, maxBottom)
+    }
+
+    @Test
+    fun testCalculateTileGridMap() {
         val containerSize = IntSizeCompat(1080, 1920)
         listOf(
             Item(
@@ -243,7 +245,7 @@ class TileManageUtilsTest {
             Item(
                 imageSize = IntSizeCompat(30000, 926),
                 preferredTileSize = containerSize / 2,
-                excepted = "[64:1:1x1,32:2:2x1,16:4:4x1,8:7:7x1,4:14:14x1,2:28:28x1,1:56:56x1]"
+                excepted = "[64:1:1x1,32:2:2x1,16:4:4x1,8:7:7x1,4:14:14x1,2:28:28x1,1:50:50x1]"
             ),
             Item(
                 imageSize = IntSizeCompat(690, 12176),
@@ -274,19 +276,82 @@ class TileManageUtilsTest {
         }
 
         Assert.assertEquals(
-            /* expected = */ "[4096:1:1x1,2048:2:2x1,1024:4:4x1,512:14:7x2,256:52:13x4,128:208:26x8,64:832:52x16,32:3296:103x32,16:9450:150x63,8:16050:150x107,4:16050:150x107,2:16050:150x107,1:16050:150x107]",
+            /* expected = */ "[4096:1:1x1,2048:2:2x1,1024:4:4x1,512:14:7x2,256:52:13x4,128:208:26x8,64:800:50x16,32:1600:50x32,16:1800:50x36,8:1800:50x36,4:1800:50x36,2:1800:50x36,1:1800:50x36]",
             /* actual = */ calculateTileGridMap(
                 imageSize = IntSizeCompat(9798, 6988),
                 preferredTileSize = IntSizeCompat(3, 7)
             ).toIntroString()
         )
         Assert.assertEquals(
-            /* expected = */ "[4096:1:1x1,2048:2:1x2,1024:4:1x4,512:14:2x7,256:52:4x13,128:208:8x26,64:832:16x52,32:3296:32x103,16:9450:63x150,8:16050:107x150,4:16050:107x150,2:16050:107x150,1:16050:107x150]",
+            /* expected = */ "[4096:1:1x1,2048:2:1x2,1024:4:1x4,512:14:2x7,256:52:4x13,128:208:8x26,64:800:16x50,32:1600:32x50,16:1800:36x50,8:1800:36x50,4:1800:36x50,2:1800:36x50,1:1800:36x50]",
             /* actual = */ calculateTileGridMap(
                 imageSize = IntSizeCompat(6988, 9798),
                 preferredTileSize = IntSizeCompat(7, 3)
             ).toIntroString()
         )
+    }
+
+    @Test
+    fun testCalculateMaxGridSize() {
+        val imageSize1 = IntSizeCompat(800, 600)
+        val singleDirectionMaxTiles1 = 10
+        val expected1 = IntOffsetCompat(10, 8)
+        val result1 = calculateMaxGridSize(imageSize1, singleDirectionMaxTiles1)
+        Assert.assertEquals(expected1, result1)
+
+        val imageSize2 = IntSizeCompat(600, 800)
+        val singleDirectionMaxTiles2 = 10
+        val expected2 = IntOffsetCompat(8, 10)
+        val result2 = calculateMaxGridSize(imageSize2, singleDirectionMaxTiles2)
+        Assert.assertEquals(expected2, result2)
+
+        val imageSize3 = IntSizeCompat(500, 500)
+        val singleDirectionMaxTiles3 = 10
+        val expected3 = IntOffsetCompat(10, 10)
+        val result3 = calculateMaxGridSize(imageSize3, singleDirectionMaxTiles3)
+        Assert.assertEquals(expected3, result3)
+
+        val imageSize4 = IntSizeCompat(800, 600)
+        val singleDirectionMaxTiles4 = 0
+        assertThrow(IllegalArgumentException::class) {
+            calculateMaxGridSize(imageSize4, singleDirectionMaxTiles4)
+        }
+
+        val imageSize5 = IntSizeCompat(800, 600)
+        val singleDirectionMaxTiles5 = -10
+        assertThrow(IllegalArgumentException::class) {
+            calculateMaxGridSize(imageSize5, singleDirectionMaxTiles5)
+        }
+    }
+
+    @Test
+    fun testCalculateTiles() {
+        val imageSize = IntSizeCompat(999, 801)
+        val gridSize = IntOffsetCompat(10, 8)
+        val sampleSize = 2
+        calculateTiles(imageSize, gridSize, sampleSize).apply {
+            Assert.assertEquals(80, size)
+            checkTiles(this, imageSize)
+            Assert.assertTrue(this.all { it.sampleSize == sampleSize })
+        }
+
+        val imageSize2 = IntSizeCompat(999, 801)
+        val gridSize2 = IntOffsetCompat(8, 10)
+        val sampleSize2 = 2
+        calculateTiles(imageSize2, gridSize2, sampleSize2).apply {
+            Assert.assertEquals(80, size)
+            checkTiles(this, imageSize2)
+            Assert.assertTrue(this.all { it.sampleSize == sampleSize2 })
+        }
+
+        val imageSize3 = IntSizeCompat(999, 801)
+        val gridSize3 = IntOffsetCompat(7, 7)
+        val sampleSize3 = 4
+        calculateTiles(imageSize3, gridSize3, sampleSize3).apply {
+            Assert.assertEquals(49, size)
+            checkTiles(this, imageSize3)
+            Assert.assertTrue(this.all { it.sampleSize == sampleSize3 })
+        }
     }
 
     @Test
