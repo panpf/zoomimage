@@ -10,12 +10,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.painterResource
 import androidx.fragment.app.viewModels
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.compose.ui.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
 import com.github.panpf.zoomimage.sample.ui.common.compose.HorizontalTabPager
 import com.github.panpf.zoomimage.sample.ui.common.compose.PagerItem
-import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageSample
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
+import com.github.panpf.zoomimage.sample.ui.examples.compose.rememberZoomImageOptionsState
 import com.github.panpf.zoomimage.sample.ui.photoalbum.compose.OptionsDialogShowViewModel
 import com.github.panpf.zoomimage.sample.ui.test.view.ExifOrientationTestContentViewModel
 
@@ -60,7 +61,8 @@ class ComposeExifOrientationTestFragment : AppBarFragment() {
         if (showingOptionsDialog) {
             ZoomImageOptionsDialog(
                 my = ZoomImageType.MyZoomImage.my,
-                supportIgnoreExifOrientation = ZoomImageType.MyZoomImage.supportIgnoreExifOrientation
+                supportIgnoreExifOrientation = ZoomImageType.MyZoomImage.supportIgnoreExifOrientation,
+                state = rememberZoomImageOptionsState()
             ) {
                 optionDialogShowViewModel.toggleOptionDialogShow()
             }

@@ -30,10 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.compose.ui.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
-import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
+import com.github.panpf.zoomimage.sample.ui.examples.compose.rememberZoomImageOptionsState
 
 class PhotoSlideshowComposeFragment : AppBarFragment() {
 
@@ -109,7 +110,8 @@ class PhotoSlideshowComposeFragment : AppBarFragment() {
         if (showingOptionsDialog) {
             ZoomImageOptionsDialog(
                 my = zoomImageType.my,
-                supportIgnoreExifOrientation = zoomImageType.supportIgnoreExifOrientation
+                supportIgnoreExifOrientation = zoomImageType.supportIgnoreExifOrientation,
+                state = rememberZoomImageOptionsState()
             ) {
                 optionDialogShowViewModel.toggleOptionDialogShow()
             }

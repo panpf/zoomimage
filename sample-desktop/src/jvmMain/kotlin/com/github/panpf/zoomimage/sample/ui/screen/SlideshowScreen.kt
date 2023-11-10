@@ -13,13 +13,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +37,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.panpf.zoomimage.sample.compose.ui.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.model.ImageResource
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
+import com.github.panpf.zoomimage.sample.ui.screen.base.ToolbarIcon
 import com.github.panpf.zoomimage.sample.ui.screen.base.ToolbarScreen
 import com.github.panpf.zoomimage.sample.ui.util.EventBus
 import kotlinx.coroutines.launch
@@ -46,7 +53,17 @@ fun SlideshowScreen(
     imageResources: List<ImageResource>,
     initialIndex: Int
 ) {
-    ToolbarScreen(navigation) {
+    var showSettingsDialog by remember { mutableStateOf(false) }
+    ToolbarScreen(
+        navigation = navigation,
+        menus = {
+            ToolbarIcon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Settings",
+                onClick = { showSettingsDialog = true }
+            )
+        }
+    ) {
         val pagerState = rememberPagerState(initialPage = initialIndex) {
             imageResources.size
         }
@@ -115,6 +132,16 @@ fun SlideshowScreen(
             total = imageResources.size,
             modifier = Modifier.align(Alignment.TopEnd)
         )
+
+        if (showSettingsDialog) {
+            ZoomImageOptionsDialog(
+                my = true,
+                supportIgnoreExifOrientation = true,
+                state = rememberZoomImageOptionsState()
+            ) {
+                showSettingsDialog = false
+            }
+        }
     }
 }
 

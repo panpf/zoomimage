@@ -20,3 +20,6 @@ expect fun icZoomInPainter(): Painter
 
 @Composable
 expect fun icZoomOutPainter(): Painter
+
+@Composable
+expect fun icExpandMorePainter(): Painter

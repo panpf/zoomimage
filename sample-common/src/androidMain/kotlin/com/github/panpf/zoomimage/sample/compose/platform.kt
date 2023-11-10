@@ -22,3 +22,6 @@ actual fun icZoomInPainter(): Painter = painterResource(R.drawable.ic_zoom_in)
 
 @Composable
 actual fun icZoomOutPainter(): Painter = painterResource(R.drawable.ic_zoom_out)
+
+@Composable
+actual fun icExpandMorePainter(): Painter = painterResource(R.drawable.ic_expand_more)

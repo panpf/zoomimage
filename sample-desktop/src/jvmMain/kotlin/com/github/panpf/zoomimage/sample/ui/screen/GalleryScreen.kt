@@ -33,13 +33,13 @@ import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 fun GalleryScreen(navigation: Navigation) {
     val imageResourceList = remember {
         listOf(
-            ImageResource("sample_cat.jpg"),
             ImageResource("sample_dog.jpg"),
+            ImageResource("sample_cat.jpg"),
             ImageResource("sample_elephant.jpg"),
             ImageResource("sample_whale.jpg"),
-            ImageResource("sample_huge_card.jpg", "sample_huge_card_thumbnail.jpg"),
-            ImageResource("sample_huge_china.jpg", "sample_huge_china_thumbnail.jpg"),
             ImageResource("sample_huge_world.jpg", "sample_huge_world_thumbnail.jpg"),
+            ImageResource("sample_huge_china.jpg", "sample_huge_china_thumbnail.jpg"),
+            ImageResource("sample_huge_card.jpg", "sample_huge_card_thumbnail.jpg"),
             ImageResource("sample_long_qmsht.jpg", "sample_long_qmsht_thumbnail.jpg"),
             ImageResource("sample_long_comic.jpg", "sample_long_comic_thumbnail.jpg"),
             ImageResource(

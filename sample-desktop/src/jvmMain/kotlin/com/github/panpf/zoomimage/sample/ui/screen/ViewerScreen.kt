@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,22 +20,30 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.fromResource
+import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.heartbeat
 import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.compose.widget.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.ui.MySettings
 import com.github.panpf.zoomimage.sample.ui.model.ImageResource
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.util.EventBus
+import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
+import com.github.panpf.zoomimage.zoom.ReadMode
+import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -43,12 +54,109 @@ import kotlinx.coroutines.launch
 @Composable
 @Preview
 fun ViewerScreen(navigation: Navigation, imageResource: ImageResource) {
+    val supportIgnoreExifOrientation = true
     Box(Modifier.fillMaxSize()) {
-        val zoomState = rememberZoomState(rememberZoomImageLogger(level = Logger.DEBUG))
+        val contentScaleName by MySettings.contentScaleName.collectAsState()
+        val alignmentName by MySettings.alignmentName.collectAsState()
+        val threeStepScale by MySettings.threeStepScale.collectAsState()
+        val oneFingerScale by MySettings.oneFingerScale.collectAsState()
+        val rubberBandScale by MySettings.rubberBandScale.collectAsState()
+        val readModeEnabled by MySettings.readModeEnabled.collectAsState()
+        val readModeAcceptedBoth by MySettings.readModeAcceptedBoth.collectAsState()
+        val scrollBarEnabled by MySettings.scrollBarEnabled.collectAsState()
+        val logLevelName by MySettings.logLevel.collectAsState()
+        val animateScale by MySettings.animateScale.collectAsState()
+        val slowerScaleAnimation by MySettings.slowerScaleAnimation.collectAsState()
+        val limitOffsetWithinBaseVisibleRect by MySettings.limitOffsetWithinBaseVisibleRect.collectAsState()
+        val scalesCalculatorName by MySettings.scalesCalculator.collectAsState()
+        val scalesMultipleString by MySettings.scalesMultiple.collectAsState()
+        val pausedContinuousTransformType by MySettings.pausedContinuousTransformType.collectAsState()
+        val disabledGestureType by MySettings.disabledGestureType.collectAsState()
+        val disabledBackgroundTiles by MySettings.disabledBackgroundTiles.collectAsState()
+        val ignoreExifOrientation by MySettings.ignoreExifOrientation.collectAsState()
+        val showTileBounds by MySettings.showTileBounds.collectAsState()
+        val tileAnimation by MySettings.tileAnimation.collectAsState()
+//        val horizontalLayout by MySettings.horizontalPagerLayout.collectAsState(initial = true)
+
+        val scalesCalculator by remember {
+            derivedStateOf {
+                val scalesMultiple = scalesMultipleString.toFloat()
+                if (scalesCalculatorName == "Dynamic") {
+                    ScalesCalculator.dynamic(scalesMultiple)
+                } else {
+                    ScalesCalculator.fixed(scalesMultiple)
+                }
+            }
+        }
+        val contentScale by remember { derivedStateOf { ContentScale.valueOf(contentScaleName) } }
+        val alignment by remember { derivedStateOf { Alignment.valueOf(alignmentName) } }
+        val zoomAnimationSpec by remember {
+            derivedStateOf {
+                val durationMillis =
+                    if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
+                ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
+            }
+        }
+        val readMode by remember {
+            derivedStateOf {
+                val sizeType = when {
+                    readModeAcceptedBoth -> ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
+                    else -> ReadMode.SIZE_TYPE_VERTICAL
+//                    horizontalLayout -> ReadMode.SIZE_TYPE_VERTICAL
+//                    else -> ReadMode.SIZE_TYPE_HORIZONTAL
+                }
+                if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
+            }
+        }
+        val logLevel by remember { derivedStateOf { Logger.level(logLevelName) } }
+        val zoomState = rememberZoomState(rememberZoomImageLogger(level = logLevel)).apply {
+            LaunchedEffect(threeStepScale) {
+                zoomable.threeStepScale = threeStepScale
+            }
+            LaunchedEffect(oneFingerScale) {
+                zoomable.oneFingerScaleSpec = if (oneFingerScale)
+                    OneFingerScaleSpec.heartbeat(zoomable) else null
+            }
+            LaunchedEffect(rubberBandScale) {
+                zoomable.rubberBandScale = rubberBandScale
+            }
+            LaunchedEffect(zoomAnimationSpec) {
+                zoomable.animationSpec = zoomAnimationSpec
+            }
+            LaunchedEffect(scalesCalculator) {
+                zoomable.scalesCalculator = scalesCalculator
+            }
+            LaunchedEffect(limitOffsetWithinBaseVisibleRect) {
+                zoomable.limitOffsetWithinBaseVisibleRect = limitOffsetWithinBaseVisibleRect
+            }
+            LaunchedEffect(readMode) {
+                zoomable.readMode = readMode
+            }
+            LaunchedEffect(disabledGestureType) {
+                zoomable.disabledGestureType = disabledGestureType.toInt()
+            }
+            LaunchedEffect(pausedContinuousTransformType) {
+                subsampling.pausedContinuousTransformType = pausedContinuousTransformType.toInt()
+            }
+            LaunchedEffect(disabledBackgroundTiles) {
+                subsampling.disabledBackgroundTiles = disabledBackgroundTiles
+            }
+            if (supportIgnoreExifOrientation) {
+                LaunchedEffect(ignoreExifOrientation) {
+                    subsampling.ignoreExifOrientation = ignoreExifOrientation
+                }
+            }
+            LaunchedEffect(showTileBounds) {
+                subsampling.showTileBounds = showTileBounds
+            }
+            LaunchedEffect(tileAnimation) {
+                subsampling.tileAnimationSpec =
+                    if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
+            }
+        }
         LaunchedEffect(Unit) {
             val imageSource = ImageSource.fromResource(imageResource.resourcePath)
             zoomState.subsampling.setImageSource(imageSource)
-            zoomState.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.heartbeat(zoomState.zoomable)
         }
 
         var lastMoveJob by remember { mutableStateOf<Job?>(null) }
@@ -91,8 +199,11 @@ fun ViewerScreen(navigation: Navigation, imageResource: ImageResource) {
         ZoomImage(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(imageResource.thumbnailResourcePath),
+            contentScale = contentScale,
+            alignment = alignment,
             contentDescription = "Viewer",
             state = zoomState,
+            scrollBar = if (scrollBarEnabled) ScrollBarSpec.Default else null
         )
 
         ZoomImageMinimap(

@@ -21,3 +21,6 @@ actual fun icZoomInPainter(): Painter = painterResource("ic_zoom_in.xml")
 
 @Composable
 actual fun icZoomOutPainter(): Painter = painterResource("ic_zoom_out.xml")
+
+@Composable
+actual fun icExpandMorePainter(): Painter = painterResource("ic_expand_more.xml")
