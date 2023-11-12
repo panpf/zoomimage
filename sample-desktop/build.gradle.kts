@@ -10,7 +10,7 @@ version = property("versionName").toString()
 
 kotlin {
     jvm {
-        jvmToolchain(11)
+        jvmToolchain(17)
         withJava()
     }
     sourceSets {
