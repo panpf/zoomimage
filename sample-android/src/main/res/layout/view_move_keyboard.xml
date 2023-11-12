@@ -20,7 +20,7 @@
             android:layout_height="0dp"
             android:background="@drawable/bg_move_keyboard_thumb"
             android:padding="10dp"
-            android:src="@drawable/ic_gamepad"
+            app:srcCompat="@drawable/ic_gamepad"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"
