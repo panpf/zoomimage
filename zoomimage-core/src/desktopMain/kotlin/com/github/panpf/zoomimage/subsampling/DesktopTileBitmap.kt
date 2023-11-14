@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling
 
+import com.github.panpf.zoomimage.util.internal.toHexString
 import java.awt.image.BufferedImage
 
 fun DesktopTileBitmap(bufferedImage: BufferedImage): DesktopTileBitmap {
@@ -38,4 +39,8 @@ private class DesktopTileBitmapImpl(override val bufferedImage: BufferedImage) :
     override val isRecycled: Boolean = false
 
     override fun recycle() {}
+
+    override fun toString(): String {
+        return "DesktopTileBitmap(size=${width}x${height},colorModel='${bufferedImage.colorModel}',@${bufferedImage.toHexString()})"
+    }
 }

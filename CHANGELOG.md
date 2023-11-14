@@ -2,6 +2,11 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## 1.0.0-beta07-SNAPSHOT
+
+* improve: Improve the calculateTiles() function, now the right and bottom of the last cell are
+  always `width-1` and `height -1`
+
 ## 1.0.0-beta06
 
 zoom:

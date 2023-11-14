@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+## 1.0.0-beta07-SNAPSHOT
+
+* improve: 改进 calculateTiles() 函数，现在最后一格的 right 和 bottom 始终是 `width-1` 和 `height -1`
+
 ## 1.0.0-beta06
 
 zoom:

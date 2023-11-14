@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.glide
 
 import android.graphics.Bitmap
 import com.bumptech.glide.load.engine.EngineResourceWrapper
+import com.github.panpf.zoomimage.glide.internal.toHexString
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
 
 internal class GlideTileBitmap(
@@ -43,5 +44,9 @@ internal class GlideTileBitmap(
 
     override fun setIsDisplayed(displayed: Boolean) {
         resource.setIsDisplayed(displayed)
+    }
+
+    override fun toString(): String {
+        return "GlideTileBitmap(size=${width}x${height},config=${bitmap.config},@${bitmap.toHexString()})"
     }
 }

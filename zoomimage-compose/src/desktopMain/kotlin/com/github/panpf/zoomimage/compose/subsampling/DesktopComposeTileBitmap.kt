@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.compose.subsampling
 
 import androidx.compose.ui.graphics.ImageBitmap
+import com.github.panpf.zoomimage.compose.internal.toHexString
 
 class DesktopComposeTileBitmap constructor(
     override val imageBitmap: ImageBitmap,
@@ -32,4 +33,8 @@ class DesktopComposeTileBitmap constructor(
     override val isRecycled: Boolean = false
 
     override fun recycle() {}
+
+    override fun toString(): String {
+        return "DesktopComposeTileBitmap(size=${width}x${height},config='${imageBitmap.config}',colorModel='${imageBitmap.colorSpace}',@${imageBitmap.toHexString()})"
+    }
 }

@@ -407,6 +407,7 @@ class TileManager constructor(
                 logger.d { "loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
                 updateTileSnapshotList("loadTile:fromMemory")
             } else {
+                tile.setTileBitmap(null, fromCache = false)
                 tile.state = TileState.STATE_LOADING
                 updateTileSnapshotList("loadTile:loading")
 
@@ -419,14 +420,28 @@ class TileManager constructor(
                 val tileBitmap = decodeResult.getOrNull()
                 when {
                     decodeResult.isFailure -> {
+                        tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
                         logger.e("loadTile. failed, ${decodeResult.exceptionOrNull()?.message}. $tile. '${imageSource.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     tileBitmap == null -> {
+                        tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
                         logger.e("loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
+                        updateTileSnapshotList("loadTile:failed")
+                    }
+
+                    tile.sampleSize == 1 && (tile.srcRect.width != tileBitmap.width || tile.srcRect.height != tileBitmap.height) -> {
+                        tile.setTileBitmap(null, fromCache = false)
+                        tile.state = TileState.STATE_ERROR
+                        logger.e("loadTile. failed, size is different. $tile. $tileBitmap. '${imageSource.key}'")
+                        if (tileBitmapReuseHelper != null) {
+                            tileBitmapReuseHelper.freeTileBitmap(tileBitmap, "loadTile:jobCanceled")
+                        } else {
+                            tileBitmap.recycle()
+                        }
                         updateTileSnapshotList("loadTile:failed")
                     }
 
@@ -450,6 +465,7 @@ class TileManager constructor(
                         logger.d {
                             "loadTile. canceled. bitmap=${tileBitmap}, $tile. '${imageSource.key}'"
                         }
+                        tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
                         if (tileBitmapReuseHelper != null) {
                             tileBitmapReuseHelper.freeTileBitmap(tileBitmap, "loadTile:jobCanceled")

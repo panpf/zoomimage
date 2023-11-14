@@ -165,16 +165,24 @@ class TileManageUtilsTest {
         var lastRight = 0
         tileList.forEachIndexed { index, tile ->
             if (index == 0) {
-                Assert.assertEquals(0, tile.srcRect.left)
-                Assert.assertEquals(0, tile.srcRect.top)
+                Assert.assertEquals("tile=$tile", 0, tile.srcRect.left)
+                Assert.assertEquals("tile=$tile", 0, tile.srcRect.top)
             } else if (index == tileList.lastIndex) {
-                Assert.assertEquals(imageSize.width, tile.srcRect.right)
-                Assert.assertEquals(imageSize.height, tile.srcRect.bottom)
+                Assert.assertEquals(
+                    "index=$index, tile=$tile",
+                    imageSize.width - 1,
+                    tile.srcRect.right
+                )
+                Assert.assertEquals(
+                    "index=$index, tile=$tile",
+                    imageSize.height - 1,
+                    tile.srcRect.bottom
+                )
             }
 
-            Assert.assertEquals(lastRight, tile.srcRect.left)
-            Assert.assertEquals(lastTop, tile.srcRect.top)
-            if (tile.srcRect.right >= imageSize.width) {
+            Assert.assertEquals("index=$index, tile=$tile", lastRight, tile.srcRect.left)
+            Assert.assertEquals("index=$index, tile=$tile", lastTop, tile.srcRect.top)
+            if (tile.srcRect.right >= imageSize.width - 1) {
                 lastTop = tile.srcRect.bottom
                 lastRight = 0
             } else {
@@ -188,8 +196,8 @@ class TileManageUtilsTest {
         }
         Assert.assertEquals(0, minLeft)
         Assert.assertEquals(0, minTop)
-        Assert.assertEquals(imageSize.width, maxRight)
-        Assert.assertEquals(imageSize.height, maxBottom)
+        Assert.assertEquals(imageSize.width - 1, maxRight)
+        Assert.assertEquals(imageSize.height - 1, maxBottom)
     }
 
     @Test

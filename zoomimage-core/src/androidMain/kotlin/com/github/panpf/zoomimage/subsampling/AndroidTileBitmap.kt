@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
+import com.github.panpf.zoomimage.util.internal.toHexString
 
 fun AndroidTileBitmap(bitmap: Bitmap): AndroidTileBitmap {
     return AndroidTileBitmapImpl(bitmap)
@@ -41,5 +42,9 @@ private class AndroidTileBitmapImpl(override val bitmap: Bitmap) : AndroidTileBi
 
     override fun recycle() {
         bitmap.recycle()
+    }
+
+    override fun toString(): String {
+        return "AndroidTileBitmap(size=${width}x${height},config=${bitmap.config},@${bitmap.toHexString()})"
     }
 }

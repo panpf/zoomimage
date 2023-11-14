@@ -43,6 +43,10 @@ class AndroidComposeTileBitmap constructor(
     override fun recycle() {
         androidTileBitmap.recycle()
     }
+
+    override fun toString(): String {
+        return "AndroidComposeTileBitmap($androidTileBitmap)"
+    }
 }
 
 class AndroidCacheComposeTileBitmap constructor(
@@ -72,5 +76,9 @@ class AndroidCacheComposeTileBitmap constructor(
 
     override fun recycle() {
         androidTileBitmap.recycle()
+    }
+
+    override fun toString(): String {
+        return "AndroidCacheComposeTileBitmap($androidTileBitmap)"
     }
 }

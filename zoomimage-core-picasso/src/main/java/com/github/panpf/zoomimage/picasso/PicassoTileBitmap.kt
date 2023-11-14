@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.picasso
 
 import android.graphics.Bitmap
+import com.github.panpf.zoomimage.picasso.internal.toHexString
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
 
 class PicassoTileBitmap(
@@ -41,4 +42,8 @@ class PicassoTileBitmap(
     }
 
     override fun setIsDisplayed(displayed: Boolean) {}
+
+    override fun toString(): String {
+        return "PicassoTileBitmap(size=${width}x${height},config=${bitmap.config},@${bitmap.toHexString()})"
+    }
 }

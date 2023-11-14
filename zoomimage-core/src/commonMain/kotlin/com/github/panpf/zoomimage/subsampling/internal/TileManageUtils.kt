@@ -136,8 +136,8 @@ internal fun calculateTiles(
             val srcRect = IntRectCompat(
                 left = left,
                 top = top,
-                right = (left + tileWidth).coerceAtMost(imageSize.width),
-                bottom = (top + tileHeight).coerceAtMost(imageSize.height)
+                right = (left + tileWidth).coerceAtMost(imageSize.width - 1),
+                bottom = (top + tileHeight).coerceAtMost(imageSize.height - 1)
             )
             val coordinate = IntOffsetCompat(x, y)
             tileList.add(Tile(coordinate, srcRect, sampleSize))

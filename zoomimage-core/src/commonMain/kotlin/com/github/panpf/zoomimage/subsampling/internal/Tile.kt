@@ -99,6 +99,7 @@ class Tile constructor(
         return "Tile(" +
                 "coordinate=${coordinate.toShortString()}," +
                 "srcRect=${srcRect.toShortString()}," +
+                "srcSize=${srcRect.width}x${srcRect.height}," +
                 "state=${TileState.name(state)}," +
                 "sampleSize=$sampleSize," +
                 "bitmap=${tileBitmap})"
