@@ -15,19 +15,38 @@ Explain the performance issue you're experiencing, including the following detai
 
 **Affected platforms**
 
-Select one of the platforms below:
+Select of the platforms below:
 
 - Android
 - Desktop
+
+**Affected components**
+
+Select of the components below:
+
+- ZoomImage
+- SketchAsyncZoomImage
+- CoilAsyncZoomImage
+- GlideAsyncZoomImage
+- ZoomImageView
+- SketchZoomImageView
+- CoilZoomImageView
+- GlideZoomImageView
+- PicassoZoomImageView
 
 **Versions**
 
 - zoomimage version*:
 - Kotlin version:
 - Compose version(s)* (Jetpack/Multiplatform):
-- Running Devices (*) (Model, OS, CPU Architecture, JDK.):
-    - MacBookPro 14 2021; macOS 13.4.1; arm64
-    - XiaoMi MIX 4; MIUI 14.0.6; arm64
+- JDK version(Only Desktop):
+
+**Running Devices**
+
+Please accurately describe the device Model, OS version, and CPU Architecture
+
+- MacBookPro 14 2021; macOS 13.4.1; arm64
+- XiaoMi MIX 4; MIUI 14.0.6; arm64
 
 **Sample code**
 
