@@ -85,8 +85,9 @@ fun Modifier.zoomable(
                         coroutineScope.launch {
                             oneFingerScaleSpec.hapticFeedback.perform()
                         }
+                    } else {
+                        updatedOnLongPress?.invoke(it)
                     }
-                    updatedOnLongPress?.invoke(it)
                 },
                 onDoubleTap = { touchPoint ->
                     if (zoomable.isSupportGestureType(GestureType.DOUBLE_TAP_SCALE)) {

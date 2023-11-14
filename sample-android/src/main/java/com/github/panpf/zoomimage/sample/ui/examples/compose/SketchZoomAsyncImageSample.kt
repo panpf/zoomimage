@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,8 +17,9 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = true
     ) { contentScale, alignment, state, ignoreExifOrientation, scrollBar ->
+        val context = LocalContext.current
         SketchZoomAsyncImage(
-            request = DisplayRequest(LocalContext.current, sketchImageUri) {
+            request = DisplayRequest(context, sketchImageUri) {
                 ignoreExifOrientation(ignoreExifOrientation)
                 crossfade()
             },
@@ -27,6 +29,9 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             modifier = Modifier.fillMaxSize(),
             state = state,
             scrollBar = scrollBar,
+            onLongPress = {
+                Toast.makeText(context, "Long click", Toast.LENGTH_LONG).show()
+            }
         )
     }
 }

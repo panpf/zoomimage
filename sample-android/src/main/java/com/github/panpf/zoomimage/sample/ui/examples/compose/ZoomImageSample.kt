@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -66,6 +67,9 @@ fun ZoomImageSample(sketchImageUri: String) {
                     modifier = Modifier.fillMaxSize(),
                     state = state,
                     scrollBar = scrollBar,
+                    onLongPress = {
+                        Toast.makeText(context, "Long click", Toast.LENGTH_LONG).show()
+                    }
                 )
             }
             LaunchedEffect(Unit) {

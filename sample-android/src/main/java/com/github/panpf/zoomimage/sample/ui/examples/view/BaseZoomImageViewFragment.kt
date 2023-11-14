@@ -23,6 +23,7 @@ import android.view.animation.Animation
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.viewbinding.ViewBinding
+import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
@@ -59,6 +60,10 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
         zoomImageView.apply {
+            setOnLongClickListener {
+                showShortToast("Long click")
+                true
+            }
             settingsService.logLevel.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 logger.level = Logger.level(it)
             }

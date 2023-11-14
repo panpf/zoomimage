@@ -50,19 +50,27 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
             },
             onDownCallback = { true },
             onSingleTapConfirmedCallback = { e: MotionEvent ->
-                onViewTapListener?.onViewTap(view, e.x, e.y)
-                onViewTapListener != null || view.performClick()
+                val onViewTapListener = onViewTapListener
+                if (onViewTapListener != null) {
+                    onViewTapListener.onViewTap(view, e.x, e.y)
+                    true
+                } else {
+                    view.performClick()
+                }
             },
             onLongPressCallback = { e: MotionEvent ->
+                val onViewLongPressListener = onViewLongPressListener
                 val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
                 if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE) && oneFingerScaleSpec != null) {
                     lastLongPressPoint = OffsetCompat(x = e.x, y = e.y)
                     coroutineScope.launch {
                         oneFingerScaleSpec.hapticFeedback.perform()
                     }
+                } else if (onViewLongPressListener != null) {
+                    onViewLongPressListener.onViewLongPress(view, e.x, e.y)
+                } else {
+                    view.performLongClick()
                 }
-                onViewLongPressListener?.onViewLongPress(view, e.x, e.y)
-                onViewLongPressListener != null || view.performLongClick()
             },
             onDoubleTapCallback = { e: MotionEvent ->
                 if (zoomable.isSupportGestureType(GestureType.DOUBLE_TAP_SCALE)) {

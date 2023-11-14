@@ -4,7 +4,10 @@
 
 ## 1.0.0-beta07-SNAPSHOT
 
+zoom:
+
 * improve: 改进 calculateTiles() 函数，现在最后一格的 right 和 bottom 始终是 `width-1` 和 `height -1`
+* fix: 现在单指缩放和长按回调不会再同时触发
 
 ## 1.0.0-beta06
 

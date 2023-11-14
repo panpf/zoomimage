@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -33,6 +34,9 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
             modifier = Modifier.fillMaxSize(),
             state = state,
             scrollBar = scrollBar,
+            onLongPress = {
+                Toast.makeText(context, "Long click", Toast.LENGTH_LONG).show()
+            }
         )
     }
 }
