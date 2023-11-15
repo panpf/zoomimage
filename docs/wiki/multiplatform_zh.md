@@ -28,6 +28,3 @@ Android、macOS、Linux、Windows 等平台上使用（暂不支持 iOS）
     * 出现问题时拖动窗口右下角调大窗口就能解决问题，没有固定能解决问题的窗口大小，不同图片不同缩放倍数下能解决问题的窗口大小不一样
     * 此 BUG 仅在桌面版存在，Android 版本没有此问题
     * 已报告官方，issue https://github.com/JetBrains/compose-multiplatform/issues/3904
-2. 子采样图块之间会有一条明显可见的缝隙
-    * 此 BUG 仅在桌面版存在，Android 版本没有此问题
-    * 已报告官方，issue https://github.com/JetBrains/compose-multiplatform/issues/3917

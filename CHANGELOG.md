@@ -13,6 +13,10 @@ zoom:
 * fix: Fixed a bug where the View version's double-tap event, long-press event, and two-finger scale
   event would be triggered at the same time
 
+subsampling:
+
+* fix: Fixed a bug with gaps between tiles on desktop platforms
+
 ## 1.0.0-beta06
 
 zoom:

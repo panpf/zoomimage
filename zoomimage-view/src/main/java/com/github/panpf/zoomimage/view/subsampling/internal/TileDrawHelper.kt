@@ -16,15 +16,14 @@
 
 package com.github.panpf.zoomimage.view.subsampling.internal
 
-import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
+import android.graphics.RectF
 import android.view.View
-import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.withSave
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -40,8 +39,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
-import kotlin.math.ceil
-import kotlin.math.floor
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 class TileDrawHelper(
     private val logger: Logger,
@@ -52,10 +51,16 @@ class TileDrawHelper(
 
     private val cacheRect1 = Rect()
     private val cacheRect2 = Rect()
+    private val cacheRect3 = RectF()
     private val cacheDisplayMatrix: Matrix = Matrix()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var tilePaint: Paint = Paint()
-    private var cacheTileBoundsPaint: Paint? = null
+    private val boundsPaint: Paint by lazy {
+        Paint().apply {
+            style = STROKE
+            strokeWidth = 0.5f * view.resources.displayMetrics.density
+        }
+    }
 
     init {
         coroutineScope.launch {
@@ -131,20 +136,23 @@ class TileDrawHelper(
         val bitmap =
             (tileBitmap as AndroidTileBitmap).bitmap?.takeIf { !it.isRecycled } ?: return false
 
+        val tileDrawSrcRect = cacheRect2.apply {
+            set(0, 0, bitmap.width, bitmap.height)
+        }
+
         val widthScale = imageInfo.width / contentSize.width.toFloat()
         val heightScale = imageInfo.height / contentSize.height.toFloat()
         val tileDrawDstRect = cacheRect1.apply {
             set(
-                /* left = */ floor(tileSnapshot.srcRect.left / widthScale).toInt(),
-                /* top = */ floor(tileSnapshot.srcRect.top / heightScale).toInt(),
-                /* right = */ floor(tileSnapshot.srcRect.right / widthScale).toInt(),
-                /* bottom = */ floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
+                /* left = */ (tileSnapshot.srcRect.left / widthScale).roundToInt(),
+                /* top = */ (tileSnapshot.srcRect.top / heightScale).roundToInt(),
+                /* right = */ (tileSnapshot.srcRect.right / widthScale).roundToInt(),
+                /* bottom = */ (tileSnapshot.srcRect.bottom / heightScale).roundToInt()
             )
         }
-        val tileDrawSrcRect = cacheRect2.apply {
-            set(0, 0, bitmap.width, bitmap.height)
-        }
+
         tilePaint.alpha = tileSnapshot.alpha
+
         canvas.drawBitmap(
             /* bitmap = */ bitmap,
             /* src = */ tileDrawSrcRect,
@@ -160,6 +168,18 @@ class TileDrawHelper(
         contentSize: IntSizeCompat,
         tileSnapshot: TileSnapshot
     ) {
+        val widthScale = imageInfo.width / contentSize.width.toFloat()
+        val heightScale = imageInfo.height / contentSize.height.toFloat()
+        val tileDrawRect = cacheRect3.apply {
+            set(
+                /* left = */ round(tileSnapshot.srcRect.left / widthScale),
+                /* top = */ round(tileSnapshot.srcRect.top / heightScale),
+                /* right = */ round(tileSnapshot.srcRect.right / widthScale),
+                /* bottom = */ round(tileSnapshot.srcRect.bottom / heightScale)
+            )
+        }
+
+        val tileBoundsPaint = boundsPaint
         val bitmapNoRecycled = tileSnapshot.tileBitmap?.isRecycled == false
         val boundsColor = when {
             bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
@@ -167,44 +187,8 @@ class TileDrawHelper(
             tileSnapshot.state == TileState.STATE_NONE -> Color.GRAY
             else -> Color.RED
         }
+        tileBoundsPaint.color = boundsColor
 
-        val tileBoundsPaint = getTileBoundsPaint()
-        tileBoundsPaint.color = ColorUtils.setAlphaComponent(boundsColor, 100)
-        val boundsStrokeHalfWidth by lazy { (tileBoundsPaint.strokeWidth) / 2 }
-
-        val widthScale = imageInfo.width / contentSize.width.toFloat()
-        val heightScale = imageInfo.height / contentSize.height.toFloat()
-        val tileDrawDstRect = cacheRect1.apply {
-            set(
-                /* left = */ floor(tileSnapshot.srcRect.left / widthScale).toInt(),
-                /* top = */ floor(tileSnapshot.srcRect.top / heightScale).toInt(),
-                /* right = */ floor(tileSnapshot.srcRect.right / widthScale).toInt(),
-                /* bottom = */ floor(tileSnapshot.srcRect.bottom / heightScale).toInt()
-            )
-        }
-        val tileBoundsRect = cacheRect2.apply {
-            set(
-                /* left = */
-                floor(tileDrawDstRect.left + boundsStrokeHalfWidth).toInt(),
-                /* top = */
-                floor(tileDrawDstRect.top + boundsStrokeHalfWidth).toInt(),
-                /* right = */
-                ceil(tileDrawDstRect.right - boundsStrokeHalfWidth).toInt(),
-                /* bottom = */
-                ceil(tileDrawDstRect.bottom - boundsStrokeHalfWidth).toInt()
-            )
-        }
-        canvas.drawRect(/* r = */ tileBoundsRect, /* paint = */ tileBoundsPaint)
-    }
-
-    private fun getTileBoundsPaint(): Paint {
-        return cacheTileBoundsPaint ?: Paint()
-            .apply {
-                style = STROKE
-                strokeWidth = 1f * Resources.getSystem().displayMetrics.density
-            }
-            .apply {
-                this@TileDrawHelper.cacheTileBoundsPaint = this
-            }
+        canvas.drawRect(tileDrawRect, tileBoundsPaint)
     }
 }
