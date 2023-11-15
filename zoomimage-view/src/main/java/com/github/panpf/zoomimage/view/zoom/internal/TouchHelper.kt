@@ -48,7 +48,6 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 }
                 zoomable.stopAllAnimation("onActionDown")
             },
-            onDownCallback = { true },
             onSingleTapConfirmedCallback = { e: MotionEvent ->
                 val onViewTapListener = onViewTapListener
                 if (onViewTapListener != null) {

@@ -10,6 +10,8 @@ zoom:
   always `width-1` and `height -1`
 * fix: Now the one-finger scale and long press callbacks will no longer be triggered at the same
   time.
+* fix: Fixed a bug where the View version's double-tap event, long-press event, and two-finger scale
+  event would be triggered at the same time
 
 ## 1.0.0-beta06
 

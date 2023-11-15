@@ -29,7 +29,6 @@ internal class UnifiedGestureDetector(
     onActionDownCallback: ((ev: MotionEvent) -> Unit)? = null,
     onActionUpCallback: ((ev: MotionEvent) -> Unit)? = null,
     onActionCancelCallback: ((ev: MotionEvent) -> Unit)? = null,
-    onDownCallback: (e: MotionEvent) -> Boolean,
     onSingleTapConfirmedCallback: (e: MotionEvent) -> Boolean,
     onLongPressCallback: (e: MotionEvent) -> Unit,
     onDoubleTapCallback: (e: MotionEvent) -> Boolean,
@@ -38,11 +37,13 @@ internal class UnifiedGestureDetector(
     onEndCallback: (focus: OffsetCompat, velocity: OffsetCompat) -> Unit,
 ) {
 
+    private var doubleTapExecuted = false
+
     private val tapGestureDetector =
         GestureDetector(view.context, object : SimpleOnGestureListener() {
 
             override fun onDown(e: MotionEvent): Boolean {
-                return onDownCallback(e)
+                return true
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -50,10 +51,13 @@ internal class UnifiedGestureDetector(
             }
 
             override fun onLongPress(e: MotionEvent) {
-                onLongPressCallback(e)
+                if (!doubleTapExecuted) {
+                    onLongPressCallback(e)
+                }
             }
 
             override fun onDoubleTap(e: MotionEvent): Boolean {
+                doubleTapExecuted = true
                 return onDoubleTapCallback(e)
             }
         })
@@ -62,10 +66,17 @@ internal class UnifiedGestureDetector(
         ScaleDragGestureDetector(view, canDrag, object : OnGestureListener {
             override fun onGesture(
                 scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int
-            ) = onGestureCallback(scaleFactor, focus, panChange, pointCount)
+            ) {
+                if (!doubleTapExecuted) {
+                    onGestureCallback(scaleFactor, focus, panChange, pointCount)
+                }
+            }
 
-            override fun onEnd(focus: OffsetCompat, velocity: OffsetCompat) =
-                onEndCallback(focus, velocity)
+            override fun onEnd(focus: OffsetCompat, velocity: OffsetCompat) {
+                if (!doubleTapExecuted) {
+                    onEndCallback(focus, velocity)
+                }
+            }
         }).apply {
             onActionListener = object : OnActionListener {
                 override fun onActionDown(ev: MotionEvent) {
@@ -83,6 +94,9 @@ internal class UnifiedGestureDetector(
         }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
+        if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_DOWN && event.pointerCount == 1) {
+            doubleTapExecuted = false
+        }
         val scaleAndDragConsumed = scaleDragGestureDetector.onTouchEvent(event)
         val tapConsumed = tapGestureDetector.onTouchEvent(event)
         return scaleAndDragConsumed || tapConsumed
