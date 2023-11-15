@@ -9,7 +9,7 @@
 ### 特点
 
 * 支持[单指长按后上下滑动缩放](#单指缩放)
-  、双指捏合缩放、[双击循环缩放](#双击缩放)以及通过 [scale()](#scale--) 方法缩放到指定的倍数
+  、双指捏合缩放、[双击循环缩放](#双击缩放)以及通过 [scale()](#scale) 方法缩放到指定的倍数
 * [支持橡皮筋效果](#橡皮筋效果).
   手势连续缩放时（单指/双指缩放）超过最大或最小范围时可以继续缩放，但有阻尼效果，松手后会回弹到最大或最小缩放倍数
 * [动态缩放范围](#minscale-mediumscale-maxscale). 默认根据
@@ -20,7 +20,7 @@
 * [支持禁用手势](#禁用手势). 支持分别禁用双击缩放、双指缩放、单指缩放、拖动等手势
 * 仅 containerSize 改变时（桌面平台上拖动调整窗口大小），ZoomImage 会保持缩放比例和 content 可见中心点不变
 * 页面重建时（屏幕旋转、App 在后台被回收）会重置缩放和偏移
-* [开放 Modifier.zoom() 函数](#modifierzoom--)，可以应用在任意组件上
+* [开放 Modifier.zoom() 函数](#modifierzoom)，可以应用在任意组件上
 * [支持读取相关信息](#可访问属性). 支持读取当前缩放倍数、最小/中间/最大缩放倍数等缩放相关信息
 
 ### ContentScale, Alignment
@@ -183,6 +183,9 @@ val state: ZoomState by rememberZoomState()
 LaunchEffect(Unit) {
     // 开启，但长按行为触发后没有触觉反馈
     state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
+
+    // 开启，并且长按行为触发后会有类似心跳的动画效果
+    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.heartbeat(state.zoomable)
 
     // 开启，并且长按行为触发后会有震动反馈
     state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.vibration(context)

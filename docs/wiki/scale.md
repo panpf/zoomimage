@@ -10,7 +10,7 @@ Translations: [简体中文](scale_zh.md)
 
 * Support [One-Finger Scale](#one-finger-scale)
   , Two-Finger Scale, [Double-click Scale](#double-click-scale)and scaling to a specified
-  multiple by the [scale()](#scale--) method
+  multiple by the [scale()](#scale) method
 * [Supports rubber band effect](#rubber-band-scale).
   When the gesture is continuously zoomed (one-finger/two-finger scale) exceeds the maximum or
   minimum range, zooming can continue, but there is a damping effect, and it will spring back to the
@@ -27,7 +27,7 @@ Translations: [简体中文](scale_zh.md)
   keep the scale factor and content visible center point unchanged
 * When the page is rebuilt (the screen rotates, the app is recycled in the background), the scale
   and offset are reset
-* [Open the Modifier.zoom() function](#modifierzoom--), which can be applied to any component
+* [Open the Modifier.zoom() function](#modifierzoom), which can be applied to any component
 * [Supports reading related information](#public-properties). You can read
   scale-related information such as the current scale multiplier and the minimum, middle, and
   maximum scale multiples
@@ -206,10 +206,13 @@ example：
 val state: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    // Turned, but no haptic feedback after the long-press behavior triggers
+    // Turn on, but no haptic feedback after the long-press behavior triggers
     state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
 
-    // Turned, and there will be vibration feedback after the long-press behavior is triggered
+    // Turn on, and there will be a heartbeat-like animation effect after the long press behavior is triggered.
+    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.heartbeat(state.zoomable)
+
+    // Turn on, and there will be vibration feedback after the long-press behavior is triggered
     state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.vibration(context)
 
     // Closed
