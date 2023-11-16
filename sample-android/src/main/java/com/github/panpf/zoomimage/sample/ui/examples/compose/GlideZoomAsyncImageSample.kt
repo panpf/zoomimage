@@ -31,8 +31,11 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
             modifier = Modifier.fillMaxSize(),
             state = state,
             scrollBar = scrollBar,
+            onTap = {
+                Toast.makeText(context, "Click", Toast.LENGTH_SHORT).show()
+            },
             onLongPress = {
-                Toast.makeText(context, "Long click", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Long click", Toast.LENGTH_SHORT).show()
             }
         )
     }

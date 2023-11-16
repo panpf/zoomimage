@@ -60,6 +60,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
         zoomImageView.apply {
+            setOnClickListener {
+                showShortToast("Click")
+            }
             setOnLongClickListener {
                 showShortToast("Long click")
                 true
