@@ -9,6 +9,7 @@ zoom:
 * improve: 改进 calculateTiles() 函数，现在最后一格的 right 和 bottom 始终是 `width-1` 和 `height -1`
 * fix: 现在单指缩放和长按回调不会再同时触发
 * fix: 修复 View 版本双击事件和长按事件以及双指缩放事件会同时触发的 bug
+* change: 单指缩放手势改为双击后上下拖动，并且现在默认开启
 
 subsampling:
 

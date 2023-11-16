@@ -21,7 +21,6 @@ import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
 import com.github.panpf.zoomimage.util.OffsetCompat
-import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnActionListener
 import com.github.panpf.zoomimage.view.zoom.internal.ScaleDragGestureDetector.OnGestureListener
 
 internal class UnifiedGestureDetector(
@@ -31,13 +30,36 @@ internal class UnifiedGestureDetector(
     onActionCancelCallback: ((ev: MotionEvent) -> Unit)? = null,
     onSingleTapConfirmedCallback: (e: MotionEvent) -> Boolean,
     onLongPressCallback: (e: MotionEvent) -> Unit,
-    onDoubleTapCallback: (e: MotionEvent) -> Boolean,
+    onDoubleTapPressCallback: (e: MotionEvent) -> Boolean,
+    onDoubleTapUpCallback: (e: MotionEvent) -> Boolean,
     canDrag: (horizontal: Boolean, direction: Int) -> Boolean,
     onGestureCallback: (scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int) -> Unit,
     onEndCallback: (focus: OffsetCompat, velocity: OffsetCompat) -> Unit,
 ) {
 
-    private var doubleTapExecuted = false
+    private var doubleTapPressed = false
+
+    private val actionGestureDetector =
+        ActionGestureDetector(object : ActionGestureDetector.OnActionListener {
+            override fun onActionDown(ev: MotionEvent) {
+                if (ev.pointerCount == 1) {
+                    doubleTapPressed = false
+                }
+                onActionDownCallback?.invoke(ev)
+            }
+
+            override fun onActionUp(ev: MotionEvent) {
+                if (ev.pointerCount == 1 && doubleTapPressed) {
+                    doubleTapPressed = false
+                    onDoubleTapUpCallback(ev)
+                }
+                onActionUpCallback?.invoke(ev)
+            }
+
+            override fun onActionCancel(ev: MotionEvent) {
+                onActionCancelCallback?.invoke(ev)
+            }
+        })
 
     private val tapGestureDetector =
         GestureDetector(view.context, object : SimpleOnGestureListener() {
@@ -51,14 +73,12 @@ internal class UnifiedGestureDetector(
             }
 
             override fun onLongPress(e: MotionEvent) {
-                if (!doubleTapExecuted) {
-                    onLongPressCallback(e)
-                }
+                onLongPressCallback(e)
             }
 
             override fun onDoubleTap(e: MotionEvent): Boolean {
-                doubleTapExecuted = true
-                return onDoubleTapCallback(e)
+                doubleTapPressed = true
+                return onDoubleTapPressCallback(e)
             }
         })
 
@@ -67,38 +87,18 @@ internal class UnifiedGestureDetector(
             override fun onGesture(
                 scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int
             ) {
-                if (!doubleTapExecuted) {
-                    onGestureCallback(scaleFactor, focus, panChange, pointCount)
-                }
+                onGestureCallback(scaleFactor, focus, panChange, pointCount)
             }
 
             override fun onEnd(focus: OffsetCompat, velocity: OffsetCompat) {
-                if (!doubleTapExecuted) {
-                    onEndCallback(focus, velocity)
-                }
+                onEndCallback(focus, velocity)
             }
-        }).apply {
-            onActionListener = object : OnActionListener {
-                override fun onActionDown(ev: MotionEvent) {
-                    onActionDownCallback?.invoke(ev)
-                }
-
-                override fun onActionUp(ev: MotionEvent) {
-                    onActionUpCallback?.invoke(ev)
-                }
-
-                override fun onActionCancel(ev: MotionEvent) {
-                    onActionCancelCallback?.invoke(ev)
-                }
-            }
-        }
+        })
 
     fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_DOWN && event.pointerCount == 1) {
-            doubleTapExecuted = false
-        }
-        val scaleAndDragConsumed = scaleDragGestureDetector.onTouchEvent(event)
+        val actionConsumed = actionGestureDetector.onTouchEvent(event)
         val tapConsumed = tapGestureDetector.onTouchEvent(event)
-        return scaleAndDragConsumed || tapConsumed
+        val scaleAndDragConsumed = scaleDragGestureDetector.onTouchEvent(event)
+        return actionConsumed || tapConsumed || scaleAndDragConsumed
     }
 }

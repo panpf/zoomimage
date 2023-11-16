@@ -141,12 +141,6 @@ class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmen
             )
             add(
                 SwitchMenuFlow(
-                    title = "One Finger Scale",
-                    data = settingsService.oneFingerScale,
-                )
-            )
-            add(
-                SwitchMenuFlow(
                     title = "Slower Scale Animation",
                     data = settingsService.slowerScaleAnimation,
                 )

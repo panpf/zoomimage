@@ -37,10 +37,8 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
-import com.github.panpf.zoomimage.view.zoom.heartbeat
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
-import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
@@ -82,10 +80,6 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 }
                 settingsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScaleState.value = it
-                }
-                settingsService.oneFingerScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
-                    oneFingerScaleSpecState.value =
-                        if (it) OneFingerScaleSpec.heartbeat(zoomable) else null
                 }
                 settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScaleState.value = it

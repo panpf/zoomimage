@@ -8,7 +8,7 @@
 
 ### 特点
 
-* 支持[单指长按后上下滑动缩放](#单指缩放)
+* 支持[单指双击上下滑动缩放](#单指缩放)
   、双指捏合缩放、[双击循环缩放](#双击缩放)以及通过 [scale()](#scale) 方法缩放到指定的倍数
 * [支持橡皮筋效果](#橡皮筋效果).
   手势连续缩放时（单指/双指缩放）超过最大或最小范围时可以继续缩放，但有阻尼效果，松手后会回弹到最大或最小缩放倍数
@@ -172,8 +172,9 @@ state.zoomable.getNextStepScale()
 
 ### 单指缩放
 
-ZoomImage 支持单指缩放图像，开启后单指按住屏幕触发长按后上下滑动即可缩放图像。此功能默认关闭，你可以通过
-`oneFingerScaleSpec` 属性开启它
+ZoomImage
+支持单指缩放图像，双击后不松手上下滑动即可缩放图像。此功能默认开启，你可以通过 [禁用手势](#禁用手势)
+给你关闭它
 
 示例：
 
@@ -181,17 +182,8 @@ ZoomImage 支持单指缩放图像，开启后单指按住屏幕触发长按后�
 val state: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    // 开启，但长按行为触发后没有触觉反馈
-    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
-
-    // 开启，并且长按行为触发后会有类似心跳的动画效果
-    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.heartbeat(state.zoomable)
-
-    // 开启，并且长按行为触发后会有震动反馈
-    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.vibration(context)
-
-    // 关闭
-    state.zoomable.oneFingerScaleSpec = null
+    // 关闭单指缩放手势
+    state.zoomable.disabledGestureType = GestureType.ONE_FINGER_SCALE
 }
 
 SketchZoomAsyncImage(

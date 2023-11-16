@@ -53,7 +53,6 @@ class ZoomImageOptionsState {
     val animateScale = MutableStateFlow(true)
     val rubberBandScale = MutableStateFlow(true)
     val threeStepScale = MutableStateFlow(false)
-    val oneFingerScale = MutableStateFlow(false)
     val slowerScaleAnimation = MutableStateFlow(false)
     val scalesCalculator = MutableStateFlow("Dynamic")
     val scalesMultiple = MutableStateFlow(ScalesCalculator.Multiple.toString())
@@ -87,7 +86,6 @@ fun ZoomImageOptionsDialog(
     val animateScale by state.animateScale.collectAsState()
     val rubberBandScale by state.rubberBandScale.collectAsState()
     val threeStepScale by state.threeStepScale.collectAsState()
-    val oneFingerScale by state.oneFingerScale.collectAsState()
     val slowerScaleAnimation by state.slowerScaleAnimation.collectAsState()
     val scalesCalculator by state.scalesCalculator.collectAsState()
     val scalesMultiple by state.scalesMultiple.collectAsState()
@@ -167,10 +165,6 @@ fun ZoomImageOptionsDialog(
                 }
                 SwitchMenu("Three Step Scale", threeStepScale) {
                     state.threeStepScale.value = !state.threeStepScale.value
-//                    onDismissRequest()
-                }
-                SwitchMenu("One Finger Scale", oneFingerScale) {
-                    state.oneFingerScale.value = !state.oneFingerScale.value
 //                    onDismissRequest()
                 }
                 SwitchMenu("Slower Scale Animation", slowerScaleAnimation) {

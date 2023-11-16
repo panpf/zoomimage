@@ -15,7 +15,6 @@ object MySettings {
     val animateScale = MutableStateFlow(true)
     val rubberBandScale = MutableStateFlow(true)
     val threeStepScale = MutableStateFlow(false)
-    val oneFingerScale = MutableStateFlow(false)
     val slowerScaleAnimation = MutableStateFlow(false)
     val scalesCalculator = MutableStateFlow("Dynamic")
     val scalesMultiple = MutableStateFlow(ScalesCalculator.Multiple.toString())

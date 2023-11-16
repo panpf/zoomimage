@@ -12,6 +12,8 @@ zoom:
   time.
 * fix: Fixed a bug where the View version's double-tap event, long-press event, and two-finger scale
   event would be triggered at the same time
+* change: The one-finger zoom gesture has been changed to double-click and then drag up and down,
+  and is now enabled by default
 
 subsampling:
 

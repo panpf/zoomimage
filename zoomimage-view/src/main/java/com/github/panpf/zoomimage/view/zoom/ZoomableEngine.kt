@@ -146,9 +146,9 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     val rubberBandScaleState = MutableStateFlow(true)
 
     /**
-     * One finger long press and slide up and down to scale the configuration
+     * One finger double-click and slide up and down to scale the configuration
      */
-    val oneFingerScaleSpecState = MutableStateFlow<OneFingerScaleSpec?>(null)
+    val oneFingerScaleSpecState = MutableStateFlow(OneFingerScaleSpec.Default)
 
     /**
      * The animation configuration for the zoom animation

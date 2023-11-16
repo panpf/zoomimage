@@ -55,8 +55,6 @@ internal class ScaleDragGestureDetector(
     private var lastFocus: OffsetCompat? = null
     private var pointCount = 0
 
-    var onActionListener: OnActionListener? = null
-
     init {
         val configuration = ViewConfiguration.get(view.context)
         minimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
@@ -65,7 +63,7 @@ internal class ScaleDragGestureDetector(
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 val scaleFactor =
                     detector.scaleFactor.takeIf { !isNaN(it) && !isInfinite(it) } ?: return false
-                if (scaleFactor >= 0) {
+                if (pointCount > 1 && scaleFactor >= 0) {
                     val lastFocus = this@ScaleDragGestureDetector.lastFocus ?: OffsetCompat(
                         detector.focusX,
                         detector.focusY
@@ -130,7 +128,6 @@ internal class ScaleDragGestureDetector(
                 velocityTracker?.addMovement(ev)
                 // Avoid changing from two fingers to one finger, lastTouchX and lastTouchY mutations, causing the image to pan instantly
                 firstTouch = null
-                onActionListener?.onActionDown(ev)
                 lastFocus = null
             }
 
@@ -199,7 +196,6 @@ internal class ScaleDragGestureDetector(
                 // Recycle Velocity Tracker
                 velocityTracker?.recycle()
                 velocityTracker = null
-                onActionListener?.onActionCancel(ev)
 
                 val focus = lastFocus
                 if (focus != null) {
@@ -225,7 +221,6 @@ internal class ScaleDragGestureDetector(
                 // Recycle Velocity Tracker
                 velocityTracker?.recycle()
                 velocityTracker = null
-                onActionListener?.onActionUp(ev)
 
                 val focus = lastFocus
                 if (focus != null) {
@@ -236,12 +231,6 @@ internal class ScaleDragGestureDetector(
 
         activePointerIndex =
             ev.findPointerIndex(if (activePointerId != INVALID_POINTER_ID) activePointerId else 0)
-    }
-
-    interface OnActionListener {
-        fun onActionDown(ev: MotionEvent)
-        fun onActionUp(ev: MotionEvent)
-        fun onActionCancel(ev: MotionEvent)
     }
 
     interface OnGestureListener {

@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.compose.zoom
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +31,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTransformGestures
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
@@ -56,7 +56,9 @@ fun Modifier.zoomable(
     val updatedOnTap by rememberUpdatedState(newValue = onTap)
     val updatedOnLongPress by rememberUpdatedState(newValue = onLongPress)
     val coroutineScope = rememberCoroutineScope()
-    var lastLongPressPoint by remember { mutableStateOf<Offset?>(null) }
+    var doubleTapPoint by remember { mutableStateOf<Offset?>(null) }
+    var doubleTapPressed by remember { mutableStateOf(false) }
+    var oneFingerScaleExecuted by remember { mutableStateOf(false) }
     var lastPointCount by remember { mutableIntStateOf(0) }
 
     this
@@ -67,32 +69,37 @@ fun Modifier.zoomable(
             }
         }
         .pointerInput(zoomable) {
-            detectTapGestures(
+            detectPowerfulTapGestures(
                 onPress = {
-                    if (zoomable.oneFingerScaleSpec != null) {
-                        lastLongPressPoint = null
-                        lastPointCount = 0
+                    doubleTapPoint = null
+                    doubleTapPressed = false
+                    oneFingerScaleExecuted = false
+                    lastPointCount = 0
+                    coroutineScope.launch {
+                        zoomable.stopAllAnimation("onPress")
                     }
-                    zoomable.stopAllAnimation("onPress")
                 },
                 onTap = {
                     updatedOnTap?.invoke(it)
                 },
                 onLongPress = {
-                    val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
-                    if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE) && oneFingerScaleSpec != null) {
-                        lastLongPressPoint = it
-                        coroutineScope.launch {
-                            oneFingerScaleSpec.hapticFeedback.perform()
-                        }
-                    } else {
-                        updatedOnLongPress?.invoke(it)
-                    }
+                    updatedOnLongPress?.invoke(it)
+
+                    // Not letting go after double-clicking will trigger a long press, so single-finger zooming should no longer be triggered.
+                    doubleTapPoint = null
+                    doubleTapPressed = false
                 },
-                onDoubleTap = { touchPoint ->
-                    if (zoomable.isSupportGestureType(GestureType.DOUBLE_TAP_SCALE)) {
+                onDoubleTapPress = { touchPoint ->
+                    doubleTapPoint = touchPoint
+                    doubleTapPressed = true
+                },
+                onDoubleTapUp = { touchPoint ->
+                    doubleTapPoint = null
+                    doubleTapPressed = false
+                    if (zoomable.isSupportGestureType(GestureType.DOUBLE_TAP_SCALE) && !oneFingerScaleExecuted) {
                         coroutineScope.launch {
-                            val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
+                            val centroidContentPoint =
+                                zoomable.touchPointToContentPoint(touchPoint)
                             zoomable.switchScale(centroidContentPoint, animated = true)
                         }
                     }
@@ -103,27 +110,27 @@ fun Modifier.zoomable(
             detectPowerfulTransformGestures(
                 panZoomLock = true,
                 canDrag = { horizontal: Boolean, direction: Int ->
-                    val longPressPoint = lastLongPressPoint
+                    val doubleTapPoint1 = doubleTapPoint
                     val allowDrag = zoomable.isSupportGestureType(GestureType.DRAG)
                     val canScroll = zoomable.canScroll(horizontal, direction)
                     val allowOneFingerScale =
                         zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE)
-                    val oneFingerAlready = longPressPoint != null
+                    val oneFingerAlready = doubleTapPoint1 != null
                     (allowDrag && canScroll) || (allowOneFingerScale && oneFingerAlready)
                 },
                 onGesture = { centroid: Offset, pan: Offset, zoom: Float, rotation: Float, pointCount ->
                     coroutineScope.launch {
                         zoomable.continuousTransformType = ContinuousTransformType.GESTURE
-
                         lastPointCount = pointCount
-                        val longPressPoint = lastLongPressPoint
+                        val doubleTapPoint1 = doubleTapPoint
                         val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
-                        if (pointCount == 1 && longPressPoint != null && oneFingerScaleSpec != null) {
+                        if (pointCount == 1 && doubleTapPoint1 != null && doubleTapPressed) {
                             if (zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE)) {
+                                oneFingerScaleExecuted = true
                                 val scale =
                                     oneFingerScaleSpec.panToScaleTransformer.transform(pan.y)
                                 zoomable.gestureTransform(
-                                    centroid = longPressPoint,
+                                    centroid = doubleTapPoint1,
                                     panChange = Offset.Zero,
                                     zoomChange = scale,
                                     rotationChange = 0f
@@ -147,10 +154,11 @@ fun Modifier.zoomable(
                     if (zoomable.isSupportGestureType(GestureType.DRAG)) {
                         coroutineScope.launch {
                             val pointCount = lastPointCount
-                            val longPressedPoint = lastLongPressPoint
-                            val oneFingerScaleSpec = zoomable.oneFingerScaleSpec
-                            if (pointCount == 1 && longPressedPoint != null && oneFingerScaleSpec != null) {
-                                zoomable.rollbackScale(longPressedPoint)
+                            val doubleTapPoint1 = doubleTapPoint
+                            if (pointCount == 1 && doubleTapPoint1 != null
+                                && zoomable.isSupportGestureType(GestureType.ONE_FINGER_SCALE)
+                            ) {
+                                zoomable.rollbackScale(doubleTapPoint1)
                             } else if (!zoomable.rollbackScale(centroid)) {
                                 if (!zoomable.fling(velocity, density)) {
                                     zoomable.continuousTransformType = ContinuousTransformType.NONE

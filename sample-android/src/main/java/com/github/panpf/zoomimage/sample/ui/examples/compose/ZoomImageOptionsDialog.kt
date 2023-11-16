@@ -22,7 +22,6 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.animateScale, settingsService.animateScale)
         BindStateAndFlow(state.rubberBandScale, settingsService.rubberBandScale)
         BindStateAndFlow(state.threeStepScale, settingsService.threeStepScale)
-        BindStateAndFlow(state.oneFingerScale, settingsService.oneFingerScale)
         BindStateAndFlow(state.slowerScaleAnimation, settingsService.slowerScaleAnimation)
         BindStateAndFlow(state.scalesCalculator, settingsService.scalesCalculator)
         BindStateAndFlow(state.scalesMultiple, settingsService.scalesMultiple)

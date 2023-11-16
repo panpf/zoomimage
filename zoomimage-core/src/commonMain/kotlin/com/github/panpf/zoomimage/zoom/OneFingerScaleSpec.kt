@@ -17,10 +17,9 @@
 package com.github.panpf.zoomimage.zoom
 
 /**
- * One finger long press and slide up and down to scale the configuration of the image
+ * One finger double-click and slide up and down to scale the configuration of the image
  */
 data class OneFingerScaleSpec(
-    val hapticFeedback: HapticFeedback = HapticFeedback.None,
     val panToScaleTransformer: PanToScaleTransformer = PanToScaleTransformer.Default
 ) {
 
@@ -30,20 +29,6 @@ data class OneFingerScaleSpec(
          */
         val Default = OneFingerScaleSpec()
     }
-}
-
-interface HapticFeedback {
-
-    companion object {
-
-        val None = object : HapticFeedback {
-            override suspend fun perform() {
-
-            }
-        }
-    }
-
-    suspend fun perform()
 }
 
 interface PanToScaleTransformer {

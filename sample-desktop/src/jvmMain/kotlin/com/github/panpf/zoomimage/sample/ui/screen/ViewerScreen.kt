@@ -29,7 +29,6 @@ import com.github.panpf.zoomimage.compose.subsampling.fromResource
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.heartbeat
 import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.compose.widget.rememberMyDialogState
@@ -41,7 +40,6 @@ import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.zoom.OneFingerScaleSpec
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.coroutines.CoroutineScope
@@ -59,7 +57,6 @@ fun ViewerScreen(navigation: Navigation, imageResource: ImageResource) {
         val contentScaleName by MySettings.contentScaleName.collectAsState()
         val alignmentName by MySettings.alignmentName.collectAsState()
         val threeStepScale by MySettings.threeStepScale.collectAsState()
-        val oneFingerScale by MySettings.oneFingerScale.collectAsState()
         val rubberBandScale by MySettings.rubberBandScale.collectAsState()
         val readModeEnabled by MySettings.readModeEnabled.collectAsState()
         val readModeAcceptedBoth by MySettings.readModeAcceptedBoth.collectAsState()
@@ -112,10 +109,6 @@ fun ViewerScreen(navigation: Navigation, imageResource: ImageResource) {
         val zoomState = rememberZoomState(rememberZoomImageLogger(level = logLevel)).apply {
             LaunchedEffect(threeStepScale) {
                 zoomable.threeStepScale = threeStepScale
-            }
-            LaunchedEffect(oneFingerScale) {
-                zoomable.oneFingerScaleSpec = if (oneFingerScale)
-                    OneFingerScaleSpec.heartbeat(zoomable) else null
             }
             LaunchedEffect(rubberBandScale) {
                 zoomable.rubberBandScale = rubberBandScale

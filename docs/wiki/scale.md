@@ -195,10 +195,9 @@ state.zoomable.getNextStepScale()
 
 ### One Finger Scale
 
-ZoomImage supports one-finger scale the image, and after turning on, one finger long press on the
-screen triggers the long press behavior and then swipe up and down to scale
-the image. This feature is turned off by default and you can pass The `oneFingerScaleSpec`
-property turns it on
+ZoomImage supports scaling images with one finger. Double-click and slide up and down without
+releasing your hand to scaling the image. This feature is enabled by default, you can turn it off
+by [Disabled gestures](#disabled-gestures)
 
 example：
 
@@ -206,17 +205,8 @@ example：
 val state: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    // Turn on, but no haptic feedback after the long-press behavior triggers
-    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.Default
-
-    // Turn on, and there will be a heartbeat-like animation effect after the long press behavior is triggered.
-    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.heartbeat(state.zoomable)
-
-    // Turn on, and there will be vibration feedback after the long-press behavior is triggered
-    state.zoomable.oneFingerScaleSpec = OneFingerScaleSpec.vibration(context)
-
-    // Closed
-    state.zoomable.oneFingerScaleSpec = null
+    // Turn off one-finger scale gesture
+    state.zoomable.disabledGestureType = GestureType.ONE_FINGER_SCALE
 }
 
 SketchZoomAsyncImage(

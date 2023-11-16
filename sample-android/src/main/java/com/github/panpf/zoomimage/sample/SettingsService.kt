@@ -53,9 +53,6 @@ class SettingsService(val context: Context) {
     val threeStepScale by lazy {
         BooleanMmkvData(mmkv, "threeStepScale", false)
     }
-    val oneFingerScale by lazy {
-        BooleanMmkvData(mmkv, "oneFingerScale", false)
-    }
     val slowerScaleAnimation by lazy {
         BooleanMmkvData(mmkv, "slowerScaleAnimation", false)
     }
