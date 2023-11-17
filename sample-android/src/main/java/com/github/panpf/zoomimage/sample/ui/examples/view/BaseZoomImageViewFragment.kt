@@ -35,6 +35,8 @@ import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.toShortString
+import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
+import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -58,12 +60,11 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         val zoomImageView = getZoomImageView(binding)
         val common = getCommonBinding(binding)
         zoomImageView.apply {
-            setOnClickListener {
-                showShortToast("Click")
+            onViewTapListener = OnViewTapListener { _, offset ->
+                showShortToast("Click (${offset.toShortString()})")
             }
-            setOnLongClickListener {
-                showShortToast("Long click")
-                true
+            onViewLongPressListener = OnViewLongPressListener { _, offset ->
+                showShortToast("Long click (${offset.toShortString()})")
             }
             settingsService.logLevel.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 logger.level = Logger.level(it)

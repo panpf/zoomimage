@@ -26,6 +26,7 @@ import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
+import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
@@ -46,6 +47,13 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
         savedInstanceState: Bundle?
     ) {
         binding.photoView.apply {
+            setOnViewTapListener { _, x, y ->
+                showShortToast("Click (${x.format(2)}x${y.format(2)})")
+            }
+            setOnLongClickListener {
+                showShortToast("Long click")
+                true
+            }
             settingsService.scaleType.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 scaleType = ImageView.ScaleType.valueOf(it)
             }

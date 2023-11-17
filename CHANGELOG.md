@@ -14,6 +14,8 @@ zoom:
   event would be triggered at the same time
 * change: The one-finger zoom gesture has been changed to double-click and then drag up and down,
   and is now enabled by default
+* change: The x, y parameters of OnViewTapListener and OnViewLongPressListener are combined into one
+  OffsetCompat
 
 subsampling:
 

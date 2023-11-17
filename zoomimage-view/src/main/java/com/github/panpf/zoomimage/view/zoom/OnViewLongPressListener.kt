@@ -17,7 +17,8 @@
 package com.github.panpf.zoomimage.view.zoom
 
 import android.view.View
+import com.github.panpf.zoomimage.util.OffsetCompat
 
 fun interface OnViewLongPressListener {
-    fun onViewLongPress(view: View, x: Float, y: Float)
+    fun onViewLongPress(view: View, offset: OffsetCompat)
 }

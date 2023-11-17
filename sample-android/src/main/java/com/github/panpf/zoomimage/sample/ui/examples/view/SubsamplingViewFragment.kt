@@ -34,6 +34,7 @@ import com.github.panpf.sketch.request.DownloadData
 import com.github.panpf.sketch.request.DownloadRequest
 import com.github.panpf.sketch.request.DownloadResult
 import com.github.panpf.sketch.sketch
+import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.sample.databinding.SubsamplingViewFragmentBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
 import com.github.panpf.zoomimage.sample.util.format
@@ -50,6 +51,13 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
         savedInstanceState: Bundle?
     ) {
         binding.subsamplingView.apply {
+            setOnClickListener {
+                showShortToast("Click")
+            }
+            setOnLongClickListener {
+                showShortToast("Long click")
+                true
+            }
             setOnStateChangedListener(object : OnStateChangedListener {
                 override fun onScaleChanged(newScale: Float, origin: Int) {
                     updateInfo(binding)

@@ -54,7 +54,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
             onSingleTapConfirmedCallback = { e: MotionEvent ->
                 val onViewTapListener = onViewTapListener
                 if (onViewTapListener != null) {
-                    onViewTapListener.onViewTap(view, e.x, e.y)
+                    onViewTapListener.onViewTap(view, OffsetCompat(x = e.x, y = e.y))
                     true
                 } else {
                     view.performClick()
@@ -67,7 +67,10 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 if (panChangeCount.x < touchSlop && panChangeCount.y < touchSlop) {
                     val onViewLongPressListener = onViewLongPressListener
                     if (onViewLongPressListener != null) {
-                        onViewLongPressListener.onViewLongPress(view, e.x, e.y)
+                        onViewLongPressListener.onViewLongPress(
+                            view,
+                            OffsetCompat(x = e.x, y = e.y)
+                        )
                     } else {
                         view.performLongClick()
                     }

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.request.ImageRequest
+import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.compose.valueOf
@@ -64,6 +65,12 @@ fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
                 .fillMaxSize()
                 .background(Color.Black),
             state = rememberZoomableImageState(zoomableState),
+            onClick = {
+                context.showShortToast("Click (${it.toShortString()})")
+            },
+            onLongClick = {
+                context.showShortToast("Long click (${it.toShortString()})")
+            }
         )
 
         Text(

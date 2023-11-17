@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -18,8 +17,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.sketch
+import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
@@ -68,10 +69,10 @@ fun ZoomImageSample(sketchImageUri: String) {
                     state = state,
                     scrollBar = scrollBar,
                     onTap = {
-                        Toast.makeText(context, "Click", Toast.LENGTH_SHORT).show()
+                        context.showShortToast("Click (${it.toShortString()})")
                     },
                     onLongPress = {
-                        Toast.makeText(context, "Long click", Toast.LENGTH_SHORT).show()
+                        context.showShortToast("Long click (${it.toShortString()})")
                     }
                 )
             }

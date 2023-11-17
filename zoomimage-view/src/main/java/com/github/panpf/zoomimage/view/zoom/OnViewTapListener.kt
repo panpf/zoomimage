@@ -17,7 +17,8 @@
 package com.github.panpf.zoomimage.view.zoom
 
 import android.view.View
+import com.github.panpf.zoomimage.util.OffsetCompat
 
 fun interface OnViewTapListener {
-    fun onViewTap(view: View, x: Float, y: Float)
+    fun onViewTap(view: View, offset: OffsetCompat)
 }
