@@ -6,20 +6,20 @@ Translations: [简体中文](CHANGELOG_zh.md)
 
 zoom:
 
-* improve: Improve the calculateTiles() function, now the right and bottom of the last cell are
-  always `width-1` and `height -1`
 * fix: Now the one-finger scale and long press callbacks will no longer be triggered at the same
   time.
 * fix: Fixed a bug where the View version's double-tap event, long-press event, and two-finger scale
   event would be triggered at the same time
+* fix: Fixed the bug that when the Compose version of the component is enlarged in the Pager and
+  triggers the Pager's sliding at the edge position, sliding back will interrupt the Pager's
+  sliding.
 * change: The one-finger zoom gesture has been changed to double-click and then drag up and down,
   and is now enabled by default
 * change: The x, y parameters of OnViewTapListener and OnViewLongPressListener are combined into one
   OffsetCompat
+* improve: Improve the calculateTiles() function, now the right and bottom of the last cell are
+  always `width-1` and `height -1`
 * improve: Improve gesture
-* fix: Fixed the bug that when the Compose version of the component is enlarged in the Pager and
-  triggers the Pager's sliding at the edge position, sliding back will interrupt the Pager's
-  sliding.
 
 subsampling:
 
