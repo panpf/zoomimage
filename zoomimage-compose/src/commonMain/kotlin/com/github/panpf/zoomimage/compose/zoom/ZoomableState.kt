@@ -173,7 +173,7 @@ class ZoomableState(logger: Logger) {
     var rubberBandScale: Boolean by mutableStateOf(true)
 
     /**
-     * One finger double-click and slide up and down to scale the configuration
+     * One finger double-click and hold the screen and slide up and down to scale the configuration
      */
     var oneFingerScaleSpec: OneFingerScaleSpec by mutableStateOf(OneFingerScaleSpec.Default)
 

@@ -9,7 +9,8 @@
 Translations: [简体中文](README_zh.md)
 
 Library for zoom images, supported Android View, Compose and Compose Multiplatform; supported
-double-click zoom, gesture zoom, single-finger drag, inertial sliding, positioning, rotation,
+double-click zoom, One or two fingers gesture zoom, single-finger drag, inertial sliding,
+positioning, rotation,
 super-large image subsampling and other functions.
 
 https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e155f4ef
@@ -27,8 +28,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
   on image size and container size
 * `Scaling damping`. When manually scaled beyond the maximum or minimum zoom factor, there is a
   damped rubber band effect
-* `One-finger scale`. Press and hold the screen to trigger a long press and swipe up and down to
-  scale the image
+* `One-finger scale`. Double-tap and hold the screen and slide up or down to zoom the image
 * `Scroll bar`. Supports displaying horizontal and vertical scroll bars to clarify the current
   scroll position
 * `Read Mode`. When a long image is displayed in reading mode, the initial state automatically fills
@@ -52,10 +52,10 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 | Scroll Bar            |     ✅     |      ❌      |      ❌      |                ❌                 |
 | Read Mode             |     ✅     |      ❌      |      ❌      |                ❌                 |
 | Subsampling           |     ✅     |      ✅      |      ❌      |                ✅                 |
-| One-finger scale      |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Image Loader          |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Dynamic scale factor  |     ✅     |      ❌      |      ❌      |                ❌                 |
 | Subsampling animation |     ✅     |      ❌      |      ❌      |                ❌                 |
+| One-finger scale      |     ✅     |      ✅      |      ✅      |                ✅                 |
+| Dynamic scale factor  |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Image Loader          |     ✅     |      ✅      |      ❌      |                ❌                 |
 | Rich interfaces       |     ✅     |      ❌      |      ✅      |                ✅                 |
 
 ## Import

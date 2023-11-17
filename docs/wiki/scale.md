@@ -195,8 +195,8 @@ state.zoomable.getNextStepScale()
 
 ### One Finger Scale
 
-ZoomImage supports scaling images with one finger. Double-click and slide up and down without
-releasing your hand to scaling the image. This feature is enabled by default, you can turn it off
+ZoomImage supports scaling images with one finger. Double-click and hold the screen and slide up or
+down to zoom the image. This feature is enabled by default, you can turn it off
 by [Disabled gestures](#disabled-gestures)
 
 example：
