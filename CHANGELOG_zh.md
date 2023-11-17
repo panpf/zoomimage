@@ -11,6 +11,7 @@ zoom:
 * fix: 修复 View 版本双击事件和长按事件以及双指缩放事件会同时触发的 bug
 * change: 单指缩放手势改为双击后上下拖动，并且现在默认开启
 * change: OnViewTapListener 和 OnViewLongPressListener 的 x, y 参数合并成一个 OffsetCompat
+* improve: 改进手势
 
 subsampling:
 

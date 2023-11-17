@@ -955,7 +955,7 @@ class ZoomableState(logger: Logger) {
         return@coroutineScope true
     }
 
-    fun isSupportGestureType(@GestureType gestureType: Int): Boolean =
+    fun checkSupportGestureType(@GestureType gestureType: Int): Boolean =
         disabledGestureType.and(gestureType) == 0
 
     private fun limitUserScale(targetUserScale: Float): Float {

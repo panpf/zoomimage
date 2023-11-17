@@ -877,35 +877,6 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         updateUserTransform(limitedTargetUserTransform)
     }
 
-//    internal fun drag(panChange: OffsetCompat) {
-//        containerSizeState.value.takeIf { it.isNotEmpty() } ?: return
-//        contentSizeState.value.takeIf { it.isNotEmpty() } ?: return
-//        val currentUserTransform = userTransformState.value
-//
-//        val currentUserScale = currentUserTransform.scale.scaleX
-//        val currentUserOffset = currentUserTransform.offset
-//        val targetUserOffset = currentUserOffset + panChange
-//        val limitedTargetUserOffset = limitUserOffset(targetUserOffset, currentUserScale)
-//        val limitedTargetUserTransform = currentUserTransform.copy(offset = limitedTargetUserOffset)
-//        logger.d {
-//            val targetAddUserOffset = targetUserOffset - currentUserOffset
-//            val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
-//            "drag. " +
-//                    "panChange=${panChange.toShortString()}, " +
-//                    "targetUserOffset=${targetUserOffset.toShortString()}, " +
-//                    "limitedTargetUserOffset=${limitedTargetUserOffset.toShortString()}, " +
-//                    "addUserOffset=${targetAddUserOffset.toShortString()} -> ${limitedTargetAddOffset.toShortString()}, " +
-//                    "userTransform=${currentUserTransform.toShortString()} -> ${limitedTargetUserTransform.toShortString()}"
-//        }
-//
-//        updateUserTransform(
-//            targetUserTransform = limitedTargetUserTransform,
-//            newContinuousTransformType = null,
-//            animated = false,
-//            caller = "transform"
-//        )
-//    }
-
     internal fun fling(velocity: OffsetCompat): Boolean {
         val containerSize = containerSizeState.value.takeIf { it.isNotEmpty() } ?: return false
         val contentSize = contentSizeState.value.takeIf { it.isNotEmpty() } ?: return false
@@ -958,7 +929,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         return true
     }
 
-    fun isSupportGestureType(@GestureType gestureType: Int): Boolean =
+    fun checkSupportGestureType(@GestureType gestureType: Int): Boolean =
         disabledGestureTypeState.value.and(gestureType) == 0
 
     private fun limitUserScale(targetUserScale: Float): Float {

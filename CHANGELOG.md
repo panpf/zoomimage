@@ -16,6 +16,7 @@ zoom:
   and is now enabled by default
 * change: The x, y parameters of OnViewTapListener and OnViewLongPressListener are combined into one
   OffsetCompat
+* improve: Improve gesture
 
 subsampling:
 
