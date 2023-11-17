@@ -66,8 +66,9 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
         var lockedToPanZoom = false
         var lastCentroid: Offset? = null
         val velocityTracker = VelocityTracker()
-
+        var notInterceptEventsUntilUp: Boolean
         awaitFirstDown(requireUnconsumed = false)
+        notInterceptEventsUntilUp = false
         do {
             val event = awaitPointerEvent()
             val canceled = event.changes.fastAny { it.isConsumed }
@@ -93,11 +94,16 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
                     }
                     if (zoomMotion > touchSlop ||
                         rotationMotion > touchSlop ||
-                        (panMotion > touchSlop && canDragged) ||
+                        (!notInterceptEventsUntilUp && panMotion > touchSlop && canDragged) ||
                         event.changes.size > 1 // Avoid triggering Pager's swipe at the smallest zoom factor and multi-finger touch
                     ) {
                         pastTouchSlop = true
                         lockedToPanZoom = panZoomLock && rotationMotion < touchSlop
+                    }
+
+                    // Once you decide to give up the event, you can no longer consume the event until the end. This is very necessary when compatibility with Pager
+                    if (!pastTouchSlop && !notInterceptEventsUntilUp && panMotion > touchSlop && !canDragged) {
+                        notInterceptEventsUntilUp = true
                     }
                 }
 

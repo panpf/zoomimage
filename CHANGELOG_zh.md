@@ -12,6 +12,8 @@ zoom:
 * change: 单指缩放手势改为双击后上下拖动，并且现在默认开启
 * change: OnViewTapListener 和 OnViewLongPressListener 的 x, y 参数合并成一个 OffsetCompat
 * improve: 改进手势
+* fix: 修复 Compose 版的组件在 Pager 中放大并且在边缘位置触发 Pager 的滑动后往回滑动会打断 Pager
+  的滑动的 bug
 
 subsampling:
 

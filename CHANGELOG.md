@@ -17,6 +17,9 @@ zoom:
 * change: The x, y parameters of OnViewTapListener and OnViewLongPressListener are combined into one
   OffsetCompat
 * improve: Improve gesture
+* fix: Fixed the bug that when the Compose version of the component is enlarged in the Pager and
+  triggers the Pager's sliding at the edge position, sliding back will interrupt the Pager's
+  sliding.
 
 subsampling:
 
