@@ -18,11 +18,11 @@ package com.github.panpf.zoomimage.compose.internal
 
 import androidx.compose.runtime.MutableState
 
-fun <T> MutableState<T>.convert(convertor: (T) -> T): MutableState<T> {
+internal fun <T> MutableState<T>.convert(convertor: (T) -> T): MutableState<T> {
     return ConvertorMutableState(this, convertor)
 }
 
-class ConvertorMutableState<T>(
+internal class ConvertorMutableState<T>(
     private val state: MutableState<T>,
     private val convertor: (T) -> T
 ) : MutableState<T> {

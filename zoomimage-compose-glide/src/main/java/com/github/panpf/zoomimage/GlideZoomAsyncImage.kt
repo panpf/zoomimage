@@ -159,7 +159,7 @@ fun GlideZoomAsyncImage(
         contentScale = ContentScale.None,
         alpha = alpha,
         colorFilter = colorFilter,
-        noClipContent = true,
+        clipToBounds = false,
         loading = loading,
         failure = failure,
         transition = transition,

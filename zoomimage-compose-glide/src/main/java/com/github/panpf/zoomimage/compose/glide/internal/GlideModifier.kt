@@ -76,7 +76,7 @@ internal fun Modifier.glideNode(
   contentScale: ContentScale? = null,
   alpha: Float? = null,
   colorFilter: ColorFilter? = null,
-  noClipContent: Boolean = false,
+  clipToBounds: Boolean = true,
   transitionFactory: Transition.Factory? = null,
   requestListener: RequestListener? = null,
   draw: Boolean? = null,
@@ -89,7 +89,7 @@ internal fun Modifier.glideNode(
     alignment ?: Alignment.Center,
     alpha,
     colorFilter,
-    noClipContent,
+    clipToBounds,
     requestListener,
     draw,
     transitionFactory,
@@ -113,7 +113,7 @@ internal data class GlideNodeElement constructor(
   private val alignment: Alignment,
   private val alpha: Float?,
   private val colorFilter: ColorFilter?,
-  private val noClipContent: Boolean,
+  private val clipToBounds: Boolean,
   private val requestListener: RequestListener?,
   private val draw: Boolean?,
   private val transitionFactory: Transition.Factory?,
@@ -133,7 +133,7 @@ internal data class GlideNodeElement constructor(
       alignment,
       alpha,
       colorFilter,
-      noClipContent,
+      clipToBounds,
       requestListener,
       draw,
       transitionFactory,
@@ -174,7 +174,7 @@ internal class GlideNode : DrawModifierNode, LayoutModifierNode, SemanticsModifi
   private lateinit var resolvableGlideSize: ResolvableGlideSize
   private var alpha: Float = DefaultAlpha
   private var colorFilter: ColorFilter? = null
-  private var noClipContent: Boolean? = null
+  private var clipToBounds: Boolean? = null
   private var transitionFactory: Transition.Factory = DoNotTransition.Factory
   private var draw: Boolean = true
   private var requestListener: RequestListener? = null
@@ -225,7 +225,7 @@ internal class GlideNode : DrawModifierNode, LayoutModifierNode, SemanticsModifi
     alignment: Alignment,
     alpha: Float?,
     colorFilter: ColorFilter?,
-    noClipContent: Boolean,
+    clipToBounds: Boolean,
     requestListener: RequestListener?,
     draw: Boolean?,
     transitionFactory: Transition.Factory?,
@@ -247,7 +247,7 @@ internal class GlideNode : DrawModifierNode, LayoutModifierNode, SemanticsModifi
     this.alignment = alignment
     this.alpha = alpha ?: DefaultAlpha
     this.colorFilter = colorFilter
-    this.noClipContent = noClipContent
+    this.clipToBounds = clipToBounds
     this.requestListener = requestListener
     this.draw = draw ?: true
     this.transitionFactory = transitionFactory ?: DoNotTransition.Factory
@@ -328,15 +328,15 @@ internal class GlideNode : DrawModifierNode, LayoutModifierNode, SemanticsModifi
       )
     }
 
-    if (noClipContent == true) {
-      translate(currentPositionAndSize.position.x, currentPositionAndSize.position.y) {
-        drawOne.invoke(this, currentPositionAndSize.size)
-      }
-    } else {
+    if (clipToBounds == true) {
       clipRect {
         translate(currentPositionAndSize.position.x, currentPositionAndSize.position.y) {
           drawOne.invoke(this, currentPositionAndSize.size)
         }
+      }
+    } else {
+      translate(currentPositionAndSize.position.x, currentPositionAndSize.position.y) {
+        drawOne.invoke(this, currentPositionAndSize.size)
       }
     }
     return currentPositionAndSize

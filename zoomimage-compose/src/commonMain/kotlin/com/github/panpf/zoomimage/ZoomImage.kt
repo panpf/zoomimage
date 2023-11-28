@@ -31,7 +31,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.internal.NoClipContentImage
+import com.github.panpf.zoomimage.compose.internal.MyImage
 import com.github.panpf.zoomimage.compose.internal.round
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
@@ -123,13 +123,14 @@ fun ZoomImage(
             }
         }
 
-        NoClipContentImage(
+        MyImage(
             painter = painter,
             contentDescription = contentDescription,
             alignment = Alignment.TopStart,
             contentScale = ContentScale.None,
             alpha = alpha,
             colorFilter = colorFilter,
+            clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
                 .zoomScrollBar(state.zoomable, scrollBar)

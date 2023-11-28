@@ -219,7 +219,7 @@ fun CoilZoomAsyncImage(
         alpha = alpha,
         colorFilter = colorFilter,
         filterQuality = filterQuality,
-        noClipContent = true,
+        clipToBounds = false,
         modifier = modifier
             .zoomScrollBar(state.zoomable, scrollBar)
             .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)

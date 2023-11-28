@@ -92,7 +92,7 @@ public fun GlideImage(
   contentScale: ContentScale = ContentScale.Fit,
   alpha: Float = DefaultAlpha,
   colorFilter: ColorFilter? = null,
-  noClipContent: Boolean = false,
+  clipToBounds: Boolean = true,
   // TODO(judds): Consider using separate GlideImage* methods instead of sealed classes.
   // See http://shortn/_x79pjkMZIH for an internal discussion.
   loading: Placeholder? = null,
@@ -147,7 +147,7 @@ public fun GlideImage(
           contentScale,
           alpha,
           colorFilter,
-          noClipContent,
+          clipToBounds,
           transition,
           loadingPlaceholder = loading?.maybePainter(),
           errorPlaceholder = failure?.maybePainter(),

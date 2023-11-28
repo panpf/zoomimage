@@ -57,9 +57,10 @@ import kotlinx.coroutines.flow.mapNotNull
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
+ * @param clipToBounds Optional controls whether content that is out of scope should be cropped
  */
 @Composable
-fun AsyncImage(
+internal fun AsyncImage(
     model: Any?,
     contentDescription: String?,
     imageLoader: ImageLoader,
@@ -71,7 +72,7 @@ fun AsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    noClipContent: Boolean = false,
+    clipToBounds: Boolean = true,
 ) {
     // Create and execute the image request.
     val request = updateRequest(requestOf(model), contentScale)
@@ -93,7 +94,7 @@ fun AsyncImage(
         contentScale = contentScale,
         alpha = alpha,
         colorFilter = colorFilter,
-        noClipContent = noClipContent
+        clipToBounds = clipToBounds
     )
 }
 
@@ -107,11 +108,11 @@ internal fun Content(
     contentScale: ContentScale,
     alpha: Float,
     colorFilter: ColorFilter?,
-    noClipContent: Boolean = false,
+    clipToBounds: Boolean = true,
 ) = Layout(
     modifier = modifier
         .contentDescription(contentDescription)
-        .let { if (!noClipContent) it.clipToBounds() else it }
+        .let { if (clipToBounds) it.clipToBounds() else it }
         .then(
             ContentPainterModifier(
                 painter = painter,

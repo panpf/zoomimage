@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.compose.internal
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
@@ -36,7 +37,7 @@ import androidx.compose.ui.semantics.semantics
  * parameter can be provided to adjust sizing or draw additional content (ex. background)
  *
  * **NOTE** a Painter might not have an intrinsic size, so if no LayoutModifier is provided
- * as part of the Modifier chain this might size the [NoClipContentImage] composable to a width and height
+ * as part of the Modifier chain this might size the [MyImage] composable to a width and height
  * of zero and will not draw any content. This can happen for Painter implementations that
  * always attempt to fill the bounds like [ColorPainter]
  *
@@ -56,16 +57,18 @@ import androidx.compose.ui.semantics.semantics
  * @param alpha Optional opacity to be applied to the [Painter] when it is rendered onscreen
  * the default renders the [Painter] completely opaque
  * @param colorFilter Optional colorFilter to apply for the [Painter] when it is rendered onscreen
+ * @param clipToBounds Optional controls whether content that is out of scope should be cropped
  */
 @Composable
-fun NoClipContentImage(
+internal fun MyImage(
     painter: Painter,
     contentDescription: String?,
     modifier: Modifier = Modifier,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null
+    colorFilter: ColorFilter? = null,
+    clipToBounds: Boolean = true,
 ) {
     val semantics = if (contentDescription != null) {
         Modifier.semantics {
@@ -80,9 +83,9 @@ fun NoClipContentImage(
     // constraint with zero
     Layout(
         {},
-//        modifier.then(semantics).clipToBounds().paint(
         modifier
             .then(semantics)
+            .let { if (clipToBounds) it.clipToBounds() else it }
             .paint(
                 painter,
                 alignment = alignment,
