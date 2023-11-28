@@ -10,6 +10,8 @@ other:
 * new: Added `zoomimage-compose-coil-base` and `zoomimage-compose-sketch-core` modules, which depend
   on the non-singleton modules of Coil and Sketch respectively.
 * change: Now only the `zoomimage-core` module generates BuildConfig
+* fix: Fixed a bug that caused the `zoomimage-compose-glide` module to crash due to no configuration
+  confusion.
 
 ## 1.0.0-beta07
 

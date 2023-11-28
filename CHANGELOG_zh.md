@@ -10,6 +10,7 @@ other:
 * new: 新增 `zoomimage-compose-coil-base` 和 `zoomimage-compose-sketch-core` 模块，分别依赖了 Coil 和
   Sketch 的非单例模块
 * change: 现在只有 `zoomimage-core` 模块生成 BuildConfig
+* fix: 修复 `zoomimage-compose-glide` 模块没有配置混淆导致崩溃的 bug
 
 ## 1.0.0-beta07
 

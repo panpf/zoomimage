@@ -20,6 +20,7 @@ package com.bumptech.glide.load.engine
 
 import android.graphics.Bitmap
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.Key
 import com.bumptech.glide.load.engine.cache.DiskCache
 import com.bumptech.glide.load.engine.cache.MemoryCache
@@ -29,7 +30,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.SingleRequest
 import java.io.File
 
-fun getDiskCache(glide: Glide): DiskCache? {
+internal fun getDiskCache(glide: Glide): DiskCache? {
     return try {
         val engine = glide.javaClass.getDeclaredField("engine")
             .apply { isAccessible = true }
@@ -53,6 +54,18 @@ val SingleRequest<*>.internalModel: Any?
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+val RequestBuilder<*>.internalModel: Any?
+    get() {
+        return try {
+            this.javaClass.getDeclaredField("model").apply {
+                isAccessible = true
+            }.get(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
         }
     }
 

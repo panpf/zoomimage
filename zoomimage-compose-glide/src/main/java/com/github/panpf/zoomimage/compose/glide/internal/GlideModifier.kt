@@ -54,6 +54,7 @@ import com.bumptech.glide.integration.ktx.Resource
 import com.bumptech.glide.integration.ktx.Status
 import com.bumptech.glide.integration.ktx.flowResolvable
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.internalModel
 import com.bumptech.glide.util.Preconditions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

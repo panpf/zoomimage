@@ -33,4 +33,7 @@
     java.lang.Object model;
     com.bumptech.glide.request.BaseRequestOptions requestOptions;
 }
+-keepclassmembers class com.bumptech.glide.RequestBuilder {
+    java.lang.Object model;
+}
 # ####################### for GlideExtensions - end #######################
