@@ -2,7 +2,13 @@
 
 翻译：[English](CHANGELOG.md)
 
-## 1.0.0-beta07-SNAPSHOT
+## 1.0.0-beta08-SNAPSHOT
+
+other:
+
+* depend: 升级 Sketch 3.3.0-beta02
+
+## 1.0.0-beta07
 
 zoom:
 

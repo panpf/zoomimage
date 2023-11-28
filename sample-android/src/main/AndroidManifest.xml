@@ -37,6 +37,7 @@
         coil.compose.base,
         com.github.panpf.zoomimage.view.coil,
         com.github.panpf.sketch.compose,
+        com.github.panpf.sketch.compose.core,
         com.github.panpf.zoomimage.core.coil,
         com.github.panpf.zoomimage.compose.coil,
         com.github.panpf.zoomimage.compose.sketch,

@@ -43,8 +43,8 @@ import com.github.panpf.sketch.request.ProgressListener
 import com.github.panpf.sketch.sketch
 import com.github.panpf.sketch.stateimage.internal.SketchStateDrawable
 import com.github.panpf.sketch.util.SketchUtils
-import com.github.panpf.sketch.util.findLastSketchDrawable
-import com.github.panpf.sketch.util.getLastChildDrawable
+import com.github.panpf.sketch.util.findLeafChildDrawable
+import com.github.panpf.sketch.util.findLeafSketchDrawable
 import com.github.panpf.sketch.viewability.ViewAbility
 import com.github.panpf.sketch.viewability.ViewAbilityContainer
 import com.github.panpf.sketch.viewability.ViewAbilityManager
@@ -126,7 +126,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
     }
 
     private fun isDisableMemoryCache(drawable: Drawable?): Boolean {
-        val sketchDrawable = drawable?.findLastSketchDrawable()
+        val sketchDrawable = drawable?.findLeafSketchDrawable()
         val requestKey = sketchDrawable?.requestKey
         val displayResult = SketchUtils.getResult(this)
         return displayResult != null
@@ -136,7 +136,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
     }
 
     private fun isDisallowReuseBitmap(drawable: Drawable?): Boolean {
-        val sketchDrawable = drawable?.findLastSketchDrawable()
+        val sketchDrawable = drawable?.findLeafSketchDrawable()
         val requestKey = sketchDrawable?.requestKey
         val displayResult = SketchUtils.getResult(this)
         return displayResult != null
@@ -146,7 +146,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
     }
 
     private fun isIgnoreExifOrientation(drawable: Drawable?): Boolean {
-        val sketchDrawable = drawable?.findLastSketchDrawable()
+        val sketchDrawable = drawable?.findLeafSketchDrawable()
         val requestKey = sketchDrawable?.requestKey
         val displayResult = SketchUtils.getResult(this)
         return displayResult != null
@@ -157,11 +157,11 @@ open class SketchZoomImageView @JvmOverloads constructor(
 
     private fun newImageSource(drawable: Drawable?): ImageSource? {
         drawable ?: return null
-        if (drawable.getLastChildDrawable() is SketchStateDrawable) {
+        if (drawable.findLeafChildDrawable() is SketchStateDrawable) {
             logger.d { "SketchZoomImageView. Can't use Subsampling, drawable is SketchStateDrawable" }
             return null
         }
-        val sketchDrawable = drawable.findLastSketchDrawable()
+        val sketchDrawable = drawable.findLeafSketchDrawable()
         if (sketchDrawable == null) {
             logger.d { "SketchZoomImageView. Can't use Subsampling, drawable is not SketchDrawable" }
             return null
@@ -323,10 +323,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
 
         super.onRestoreInstanceState(state.superState)
         viewAbilityManager?.onRestoreInstanceState(state.abilityListStateBundle)
-    }
-
-    override fun submitRequest(request: DisplayRequest) {
-        context.sketch.enqueue(request)
     }
 
     class SavedState : BaseSavedState {

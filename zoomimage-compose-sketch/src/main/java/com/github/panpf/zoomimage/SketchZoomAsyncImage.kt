@@ -37,13 +37,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
+import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.compose.AsyncImagePainter.State
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.sketch.internal.AsyncImage
 import com.github.panpf.zoomimage.compose.sketch.internal.onStateOf
 import com.github.panpf.zoomimage.compose.sketch.internal.transformOf
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
@@ -363,7 +363,7 @@ fun SketchZoomAsyncImage(
         alpha = alpha,
         colorFilter = colorFilter,
         filterQuality = filterQuality,
-        noClipContent = true,
+        clipToBounds = false,
         modifier = modifier
             .zoomScrollBar(state.zoomable, scrollBar)
             .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
