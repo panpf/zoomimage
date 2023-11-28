@@ -1,9 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,31 +51,21 @@ fun ZoomImageSample(sketchImageUri: String) {
 
         val drawablePainter1 = drawablePainter
         if (drawablePainter1 != null) {
-            var visible by remember { mutableStateOf(false) }
-            AnimatedVisibility(
-                visible = visible,
-                enter = fadeIn(tween()),
-                exit = fadeOut(tween())
-            ) {
-                ZoomImage(
-                    painter = drawablePainter1,
-                    contentDescription = "view image",
-                    contentScale = contentScale,
-                    alignment = alignment,
-                    modifier = Modifier.fillMaxSize(),
-                    state = state,
-                    scrollBar = scrollBar,
-                    onTap = {
-                        context.showShortToast("Click (${it.toShortString()})")
-                    },
-                    onLongPress = {
-                        context.showShortToast("Long click (${it.toShortString()})")
-                    }
-                )
-            }
-            LaunchedEffect(Unit) {
-                visible = true
-            }
+            ZoomImage(
+                painter = drawablePainter1,
+                contentDescription = "view image",
+                contentScale = contentScale,
+                alignment = alignment,
+                modifier = Modifier.fillMaxSize(),
+                state = state,
+                scrollBar = scrollBar,
+                onTap = {
+                    context.showShortToast("Click (${it.toShortString()})")
+                },
+                onLongPress = {
+                    context.showShortToast("Long click (${it.toShortString()})")
+                }
+            )
         }
     }
 }

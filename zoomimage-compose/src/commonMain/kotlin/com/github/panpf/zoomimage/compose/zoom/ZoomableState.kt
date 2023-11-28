@@ -341,14 +341,7 @@ class ZoomableState(logger: Logger) {
      */
     suspend fun reset(caller: String) = coroutineScope {
         stopAllAnimation("reset:$caller")
-        nowReset(caller)
-    }
 
-    /**
-     * Reset [transform] and [minScale], [mediumScale], [maxScale], automatically called when [containerSize],
-     * [contentSize], [contentOriginSize], [contentScale], [alignment], [rotate], [scalesCalculator], [readMode] changes
-     */
-    fun nowReset(caller: String) {
         val containerSize = containerSize
         val contentSize = contentSize
         val contentOriginSize = contentOriginSize
@@ -386,7 +379,7 @@ class ZoomableState(logger: Logger) {
         )
         if (paramsChanges == 0) {
             logger.d { "reset:$caller. All parameters unchanged" }
-            return
+            return@coroutineScope
         }
 
         val newInitialZoom = calculateInitialZoom(
@@ -471,15 +464,15 @@ class ZoomableState(logger: Logger) {
         baseTransform = newBaseTransform.toPlatform()
         updateUserTransform(newUserTransform.toPlatform())
 
-        this.lastInitialUserTransform = newInitialZoom.userTransform.toPlatform()
-        this.lastContainerSize = containerSize
-        this.lastContentSize = contentSize
-        this.lastContentOriginSize = contentOriginSize
-        this.lastContentScale = contentScale
-        this.lastAlignment = alignment
-        this.lastReadMode = readMode
-        this.lastRotation = rotation
-        this.lastScalesCalculator = scalesCalculator
+        this@ZoomableState.lastInitialUserTransform = newInitialZoom.userTransform.toPlatform()
+        this@ZoomableState.lastContainerSize = containerSize
+        this@ZoomableState.lastContentSize = contentSize
+        this@ZoomableState.lastContentOriginSize = contentOriginSize
+        this@ZoomableState.lastContentScale = contentScale
+        this@ZoomableState.lastAlignment = alignment
+        this@ZoomableState.lastReadMode = readMode
+        this@ZoomableState.lastRotation = rotation
+        this@ZoomableState.lastScalesCalculator = scalesCalculator
     }
 
     /**

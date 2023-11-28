@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -38,6 +39,8 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zooming
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -97,6 +100,7 @@ fun ZoomImage(
     state.zoomable.contentSize = remember(painter.intrinsicSize) {
         painter.intrinsicSize.round()
     }
+    val immediateCoroutineScope = rememberCoroutineScope{Dispatchers.Main.immediate}
 
     BoxWithConstraints(modifier = modifier) {
         /*
@@ -114,7 +118,9 @@ fun ZoomImage(
         }
         if (newContainerSize != oldContainerSize) {
             state.zoomable.containerSize = newContainerSize
-            state.zoomable.nowReset("initialize")
+            immediateCoroutineScope.launch {
+                state.zoomable.reset("initialize")
+            }
         }
 
         NoClipContentImage(
