@@ -9,6 +9,7 @@ other:
 * depend: 升级 Sketch 3.3.0-beta02
 * new: 新增 `zoomimage-compose-coil-base` 和 `zoomimage-compose-sketch-core` 模块，分别依赖了 Coil 和
   Sketch 的非单例模块
+* change: 现在只有 `zoomimage-core` 模块生成 BuildConfig
 
 ## 1.0.0-beta07
 

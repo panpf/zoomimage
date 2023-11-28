@@ -10,14 +10,9 @@ android {
     defaultConfig {
         minSdk = property("minSdk").toString().toInt()
 
-        buildConfigField("String", "VERSION_NAME", "\"${property("versionName").toString()}\"")
-        buildConfigField("int", "VERSION_CODE", property("versionCode").toString())
         consumerProguardFiles("proguard-rules.pro")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    buildFeatures {
-        buildConfig = true
     }
     buildTypes {
         release {

@@ -9,6 +9,7 @@ other:
 * depend: Upgrade Sketch 3.3.0-beta02
 * new: Added `zoomimage-compose-coil-base` and `zoomimage-compose-sketch-core` modules, which depend
   on the non-singleton modules of Coil and Sketch respectively.
+* change: Now only the `zoomimage-core` module generates BuildConfig
 
 ## 1.0.0-beta07
 
