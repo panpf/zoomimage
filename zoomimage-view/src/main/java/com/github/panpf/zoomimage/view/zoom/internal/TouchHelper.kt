@@ -26,6 +26,9 @@ import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
@@ -35,6 +38,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
     private var doubleTapPressPoint: OffsetCompat? = null
     private var oneFingerScaleExecuted = false
     private var panDistance = OffsetCompat.Zero
+    private var coroutineScope = CoroutineScope(Dispatchers.Main)
 
     var onViewTapListener: OnViewTapListener? = null
     var onViewLongPressListener: OnViewLongPressListener? = null
@@ -47,7 +51,9 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 doubleTapPressPoint = null
                 oneFingerScaleExecuted = false
                 panDistance = OffsetCompat.Zero
-                zoomable.stopAllAnimation("onActionDown")
+                coroutineScope.launch(Dispatchers.Main) {
+                    zoomable.stopAllAnimation("onActionDown")
+                }
             },
             onSingleTapConfirmedCallback = { e: MotionEvent ->
                 val onViewTapListener = onViewTapListener
@@ -86,7 +92,9 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 if (supportDoubleTapScale && !oneFingerScaleExecuted && !longPressExecuted) {
                     val touchPoint = OffsetCompat(x = e.x, y = e.y)
                     val centroidContentPoint = zoomable.touchPointToContentPoint(touchPoint)
-                    zoomable.switchScale(centroidContentPoint, animated = true)
+                    coroutineScope.launch {
+                        zoomable.switchScale(centroidContentPoint, animated = true)
+                    }
                 }
                 true
             },
@@ -99,86 +107,91 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                 (supportDrag && canScroll) || (supportOneFingerScale && doubleTapPressPoint != null)
             },
             onGestureCallback = { scaleFactor: Float, focus: OffsetCompat, panChange: OffsetCompat, pointCount: Int ->
-                panDistance += panChange.let { OffsetCompat(x = abs(it.x), y = abs(it.y)) }
-                val longPressExecuted = longPressExecuted
-                val doubleTapPressPoint = doubleTapPressPoint
-                val supportOneFingerScale =
-                    zoomable.checkSupportGestureType(GestureType.ONE_FINGER_SCALE)
-                val supportTwoFingerScale =
-                    zoomable.checkSupportGestureType(GestureType.TWO_FINGER_SCALE)
-                val supportDrag = zoomable.checkSupportGestureType(GestureType.DRAG)
-                zoomable.logger.v {
-                    "zoomable. onGesture. " +
-                            "longPressExecuted=$longPressExecuted, " +
-                            "pointCount=$pointCount, " +
-                            "doubleTapPressPoint=$doubleTapPressPoint, " +
-                            "supportOneFingerScale=$supportOneFingerScale, " +
-                            "supportTwoFingerScale=$supportTwoFingerScale, " +
-                            "supportDrag=$supportDrag"
-                }
-                if (longPressExecuted) return@UnifiedGestureDetector
-                if (supportOneFingerScale && pointCount == 1 && doubleTapPressPoint != null) {
-                    oneFingerScaleExecuted = true
-                    val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
-                    val scale = oneFingerScaleSpec.panToScaleTransformer.transform(panChange.y)
-                    zoomable._continuousTransformTypeState.value = ContinuousTransformType.GESTURE
-                    zoomable.gestureTransform(
-                        centroid = doubleTapPressPoint,
-                        panChange = OffsetCompat.Zero,
-                        zoomChange = scale,
-                        rotationChange = 0f
-                    )
-                } else {
-                    oneFingerScaleExecuted = false
-                    if (supportTwoFingerScale || supportDrag) {
-                        val finalPan = if (supportDrag) panChange else OffsetCompat.Zero
-                        val finalZoom = if (supportTwoFingerScale) scaleFactor else 1f
+                coroutineScope.launch {
+                    panDistance += panChange.let { OffsetCompat(x = abs(it.x), y = abs(it.y)) }
+                    val longPressExecuted = longPressExecuted
+                    val doubleTapPressPoint = doubleTapPressPoint
+                    val supportOneFingerScale =
+                        zoomable.checkSupportGestureType(GestureType.ONE_FINGER_SCALE)
+                    val supportTwoFingerScale =
+                        zoomable.checkSupportGestureType(GestureType.TWO_FINGER_SCALE)
+                    val supportDrag = zoomable.checkSupportGestureType(GestureType.DRAG)
+                    zoomable.logger.v {
+                        "zoomable. onGesture. " +
+                                "longPressExecuted=$longPressExecuted, " +
+                                "pointCount=$pointCount, " +
+                                "doubleTapPressPoint=$doubleTapPressPoint, " +
+                                "supportOneFingerScale=$supportOneFingerScale, " +
+                                "supportTwoFingerScale=$supportTwoFingerScale, " +
+                                "supportDrag=$supportDrag"
+                    }
+                    if (longPressExecuted) return@launch
+                    if (supportOneFingerScale && pointCount == 1 && doubleTapPressPoint != null) {
+                        oneFingerScaleExecuted = true
+                        val oneFingerScaleSpec = zoomable.oneFingerScaleSpecState.value
+                        val scale = oneFingerScaleSpec.panToScaleTransformer.transform(panChange.y)
                         zoomable._continuousTransformTypeState.value =
                             ContinuousTransformType.GESTURE
                         zoomable.gestureTransform(
-                            centroid = focus,
-                            panChange = finalPan,
-                            zoomChange = finalZoom,
-                            rotationChange = 0f,
+                            centroid = doubleTapPressPoint,
+                            panChange = OffsetCompat.Zero,
+                            zoomChange = scale,
+                            rotationChange = 0f
                         )
+                    } else {
+                        oneFingerScaleExecuted = false
+                        if (supportTwoFingerScale || supportDrag) {
+                            val finalPan = if (supportDrag) panChange else OffsetCompat.Zero
+                            val finalZoom = if (supportTwoFingerScale) scaleFactor else 1f
+                            zoomable._continuousTransformTypeState.value =
+                                ContinuousTransformType.GESTURE
+                            zoomable.gestureTransform(
+                                centroid = focus,
+                                panChange = finalPan,
+                                zoomChange = finalZoom,
+                                rotationChange = 0f,
+                            )
+                        }
                     }
                 }
             },
             onEndCallback = { focus, velocity ->
-                val longPressExecuted = longPressExecuted
-                val doubleTapPressPoint = doubleTapPressPoint
-                val oneFingerScaleExecuted = oneFingerScaleExecuted
-                val supportOneFingerScale =
-                    zoomable.checkSupportGestureType(GestureType.ONE_FINGER_SCALE)
-                val supportTwoFingerScale =
-                    zoomable.checkSupportGestureType(GestureType.TWO_FINGER_SCALE)
-                val supportDrag =
-                    zoomable.checkSupportGestureType(GestureType.DRAG)
-                zoomable.logger.v {
-                    "zoomable. onEnd. " +
-                            "focus=${focus.toShortString()}, " +
-                            "velocity=${velocity.toShortString()}, " +
-                            "longPressExecuted=$longPressExecuted, " +
-                            "doubleTapPressPoint=$doubleTapPressPoint, " +
-                            "oneFingerScaleExecuted=$oneFingerScaleExecuted, " +
-                            "supportOneFingerScale=$supportOneFingerScale, " +
-                            "supportTwoFingerScale=$supportTwoFingerScale, " +
-                            "supportDrag=$supportDrag"
-                }
-                if (longPressExecuted) return@UnifiedGestureDetector
-                if (supportOneFingerScale && oneFingerScaleExecuted && doubleTapPressPoint != null) {
-                    if (!zoomable.rollbackScale(doubleTapPressPoint)) {
-                        zoomable._continuousTransformTypeState.value = GestureType.NONE
+                coroutineScope.launch {
+                    val longPressExecuted = longPressExecuted
+                    val doubleTapPressPoint = doubleTapPressPoint
+                    val oneFingerScaleExecuted = oneFingerScaleExecuted
+                    val supportOneFingerScale =
+                        zoomable.checkSupportGestureType(GestureType.ONE_FINGER_SCALE)
+                    val supportTwoFingerScale =
+                        zoomable.checkSupportGestureType(GestureType.TWO_FINGER_SCALE)
+                    val supportDrag =
+                        zoomable.checkSupportGestureType(GestureType.DRAG)
+                    zoomable.logger.v {
+                        "zoomable. onEnd. " +
+                                "focus=${focus.toShortString()}, " +
+                                "velocity=${velocity.toShortString()}, " +
+                                "longPressExecuted=$longPressExecuted, " +
+                                "doubleTapPressPoint=$doubleTapPressPoint, " +
+                                "oneFingerScaleExecuted=$oneFingerScaleExecuted, " +
+                                "supportOneFingerScale=$supportOneFingerScale, " +
+                                "supportTwoFingerScale=$supportTwoFingerScale, " +
+                                "supportDrag=$supportDrag"
                     }
-                } else {
-                    val rollbackScaleExecuted =
-                        supportTwoFingerScale && zoomable.rollbackScale(focus)
-                    var flingExecuted = false
-                    if (!rollbackScaleExecuted) {
-                        flingExecuted = supportDrag && zoomable.fling(velocity)
-                    }
-                    if ((supportTwoFingerScale || supportDrag) && (!rollbackScaleExecuted && !flingExecuted)) {
-                        zoomable._continuousTransformTypeState.value = GestureType.NONE
+                    if (longPressExecuted) return@launch
+                    if (supportOneFingerScale && oneFingerScaleExecuted && doubleTapPressPoint != null) {
+                        if (!zoomable.rollbackScale(doubleTapPressPoint)) {
+                            zoomable._continuousTransformTypeState.value = GestureType.NONE
+                        }
+                    } else {
+                        val rollbackScaleExecuted =
+                            supportTwoFingerScale && zoomable.rollbackScale(focus)
+                        var flingExecuted = false
+                        if (!rollbackScaleExecuted) {
+                            flingExecuted = supportDrag && zoomable.fling(velocity)
+                        }
+                        if ((supportTwoFingerScale || supportDrag) && (!rollbackScaleExecuted && !flingExecuted)) {
+                            zoomable._continuousTransformTypeState.value = GestureType.NONE
+                        }
                     }
                 }
             },

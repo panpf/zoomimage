@@ -6,12 +6,13 @@ Translations: [简体中文](CHANGELOG_zh.md)
 
 other:
 
-* depend: Upgrade Sketch 3.3.0-beta02
-* new: Added `zoomimage-compose-coil-base` and `zoomimage-compose-sketch-core` modules, which depend
-  on the non-singleton modules of Coil and Sketch respectively.
-* change: Now only the `zoomimage-core` module generates BuildConfig
 * fix: Fixed a bug that caused the `zoomimage-compose-glide` module to crash due to no configuration
   confusion.
+* change: Now only the `zoomimage-core` module generates BuildConfig
+* change: ZoomableEngine's scale(), rotate() and other methods add the suspend modifier
+* new: Added `zoomimage-compose-coil-base` and `zoomimage-compose-sketch-core` modules, which depend
+  on the non-singleton modules of Coil and Sketch respectively.
+* depend: Upgrade Sketch 3.3.0-beta02
 
 ## 1.0.0-beta07
 

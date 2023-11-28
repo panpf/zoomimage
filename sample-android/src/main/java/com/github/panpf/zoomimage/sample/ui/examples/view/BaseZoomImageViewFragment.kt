@@ -16,12 +16,12 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
-import com.github.panpf.zoomimage.sample.common.R as CommonR
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.animation.Animation
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.tools4a.view.ktx.animTranslate
@@ -45,7 +45,9 @@ import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import com.github.panpf.zoomimage.sample.common.R as CommonR
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
     BindingFragment<VIEW_BINDING>() {
@@ -186,13 +188,17 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         common.zoomImageViewTileMap.setZoomImageView(zoomImageView)
 
         common.zoomImageViewRotate.setOnClickListener {
-            zoomImageView.zoomable.rotate(zoomImageView.zoomable.transformState.value.rotation.roundToInt() + 90)
+            viewLifecycleOwner.lifecycleScope.launch {
+                zoomImageView.zoomable.rotate(zoomImageView.zoomable.transformState.value.rotation.roundToInt() + 90)
+            }
         }
 
         common.zoomImageViewZoom.apply {
             setOnClickListener {
-                val nextStepScale = zoomImageView.zoomable.getNextStepScale()
-                zoomImageView.zoomable.scale(nextStepScale, animated = true)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val nextStepScale = zoomImageView.zoomable.getNextStepScale()
+                    zoomImageView.zoomable.scale(nextStepScale, animated = true)
+                }
             }
             zoomImageView.zoomable.transformState
                 .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
@@ -248,7 +254,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 }
             addOnChangeListener { _, value, _ ->
                 if (!changing) {
-                    zoomImageView.zoomable.scale(targetScale = value, animated = true)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        zoomImageView.zoomable.scale(targetScale = value, animated = true)
+                    }
                 }
             }
         }
@@ -296,17 +304,17 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
         }
 
         common.zoomImageViewZoomOut.setOnClickListener {
-            zoomImageView.zoomable.scale(
-                targetScale = zoomImageView.zoomable.transformState.value.scaleX - 0.5f,
-                animated = true
-            )
+            viewLifecycleOwner.lifecycleScope.launch {
+                val targetScale = zoomImageView.zoomable.transformState.value.scaleX - 0.5f
+                zoomImageView.zoomable.scale(targetScale = targetScale, animated = true)
+            }
         }
 
         common.zoomImageViewZoomIn.setOnClickListener {
-            zoomImageView.zoomable.scale(
-                targetScale = zoomImageView.zoomable.transformState.value.scaleX + 0.5f,
-                animated = true
-            )
+            viewLifecycleOwner.lifecycleScope.launch {
+                val targetScale = zoomImageView.zoomable.transformState.value.scaleX + 0.5f
+                zoomImageView.zoomable.scale(targetScale = targetScale, animated = true)
+            }
         }
 
         zoomImageView.zoomable.transformState
