@@ -16,17 +16,11 @@
 
 package com.github.panpf.zoomimage
 
-import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
@@ -34,26 +28,13 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntSize
-import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.CachePolicy
-import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.compose.AsyncImagePainter.State
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.sketch.internal.onStateOf
-import com.github.panpf.zoomimage.compose.sketch.internal.transformOf
-import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.zoom.zoom
-import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.sketch.SketchImageSource
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
-import kotlin.math.roundToInt
 
 
 /**
@@ -116,22 +97,30 @@ fun SketchZoomAsyncImage(
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) = SketchZoomAsyncImage(
-    request = DisplayRequest(LocalContext.current, imageUri),
-    contentDescription = contentDescription,
-    modifier = modifier,
-    transform = transformOf(placeholder, error, uriEmpty),
-    onState = onStateOf(onLoading, onSuccess, onError),
-    alignment = alignment,
-    contentScale = contentScale,
-    alpha = alpha,
-    colorFilter = colorFilter,
-    filterQuality = filterQuality,
-    state = state,
-    scrollBar = scrollBar,
-    onLongPress = onLongPress,
-    onTap = onTap,
-)
+) {
+    val sketch = LocalContext.current.sketch
+    SketchZoomAsyncImage(
+        imageUri = imageUri,
+        contentDescription = contentDescription,
+        sketch = sketch,
+        modifier = modifier,
+        placeholder = placeholder,
+        error = error,
+        uriEmpty = uriEmpty,
+        onLoading = onLoading,
+        onSuccess = onSuccess,
+        onError = onError,
+        alignment = alignment,
+        contentScale = contentScale,
+        alpha = alpha,
+        colorFilter = colorFilter,
+        filterQuality = filterQuality,
+        state = state,
+        scrollBar = scrollBar,
+        onLongPress = onLongPress,
+        onTap = onTap,
+    )
+}
 
 /**
  * An image component that integrates the Sketch image loading framework that zoom and subsampling huge images
@@ -196,22 +185,30 @@ fun SketchZoomAsyncImage(
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) = SketchZoomAsyncImage(
-    request = request,
-    contentDescription = contentDescription,
-    modifier = modifier,
-    transform = transformOf(placeholder, error, uriEmpty),
-    onState = onStateOf(onLoading, onSuccess, onError),
-    alignment = alignment,
-    contentScale = contentScale,
-    alpha = alpha,
-    colorFilter = colorFilter,
-    filterQuality = filterQuality,
-    state = state,
-    scrollBar = scrollBar,
-    onLongPress = onLongPress,
-    onTap = onTap,
-)
+) {
+    val sketch = LocalContext.current.sketch
+    SketchZoomAsyncImage(
+        request = request,
+        contentDescription = contentDescription,
+        sketch = sketch,
+        modifier = modifier,
+        placeholder = placeholder,
+        error = error,
+        uriEmpty = uriEmpty,
+        onLoading = onLoading,
+        onSuccess = onSuccess,
+        onError = onError,
+        alignment = alignment,
+        contentScale = contentScale,
+        alpha = alpha,
+        colorFilter = colorFilter,
+        filterQuality = filterQuality,
+        state = state,
+        scrollBar = scrollBar,
+        onLongPress = onLongPress,
+        onTap = onTap,
+    )
+}
 
 /**
  * An image component that integrates the Sketch image loading framework that zoom and subsampling huge images
@@ -266,22 +263,26 @@ fun SketchZoomAsyncImage(
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) = SketchZoomAsyncImage(
-    request = DisplayRequest(LocalContext.current, imageUri),
-    contentDescription = contentDescription,
-    modifier = modifier,
-    transform = transform,
-    onState = onState,
-    alignment = alignment,
-    contentScale = contentScale,
-    alpha = alpha,
-    colorFilter = colorFilter,
-    filterQuality = filterQuality,
-    state = state,
-    scrollBar = scrollBar,
-    onLongPress = onLongPress,
-    onTap = onTap,
-)
+) {
+    val sketch = LocalContext.current.sketch
+    SketchZoomAsyncImage(
+        imageUri = imageUri,
+        contentDescription = contentDescription,
+        sketch = sketch,
+        modifier = modifier,
+        transform = transform,
+        onState = onState,
+        alignment = alignment,
+        contentScale = contentScale,
+        alpha = alpha,
+        colorFilter = colorFilter,
+        filterQuality = filterQuality,
+        state = state,
+        scrollBar = scrollBar,
+        onLongPress = onLongPress,
+        onTap = onTap,
+    )
+}
 
 
 /**
@@ -324,6 +325,7 @@ fun SketchZoomAsyncImage(
  * @param onTap Called when the user taps the image
  */
 @Composable
+@NonRestartableComposable
 fun SketchZoomAsyncImage(
     request: DisplayRequest,
     contentDescription: String?,
@@ -340,76 +342,22 @@ fun SketchZoomAsyncImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    state.zoomable.contentScale = contentScale
-    state.zoomable.alignment = alignment
-
-    val context = LocalContext.current
-    val sketch by remember { mutableStateOf(context.sketch) }
-    LaunchedEffect(Unit) {
-        state.subsampling.tileBitmapPool = SketchTileBitmapPool(sketch, "SketchZoomAsyncImage")
-        state.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
-    }
-
-    AsyncImage(
+    val sketch = LocalContext.current.sketch
+    SketchZoomAsyncImage(
         request = request,
         contentDescription = contentDescription,
+        sketch = sketch,
+        modifier = modifier,
         transform = transform,
-        onState = { loadState ->
-            onState(context, sketch, state, request, loadState)
-            onState?.invoke(loadState)
-        },
-        alignment = Alignment.TopStart,
-        contentScale = ContentScale.None,
+        onState = onState,
+        alignment = alignment,
+        contentScale = contentScale,
         alpha = alpha,
         colorFilter = colorFilter,
         filterQuality = filterQuality,
-        clipToBounds = false,
-        modifier = modifier
-            .zoomScrollBar(state.zoomable, scrollBar)
-            .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(state.zoomable, state.subsampling),
+        state = state,
+        scrollBar = scrollBar,
+        onLongPress = onLongPress,
+        onTap = onTap,
     )
 }
-
-private fun onState(
-    context: Context,
-    sketch: Sketch,
-    state: ZoomState,
-    request: DisplayRequest,
-    loadState: State,
-) {
-    state.zoomable.logger.d { "SketchZoomAsyncImage. onState. state=${loadState.name}. uri='${request.uriString}'" }
-    val zoomableState = state.zoomable
-    val subsamplingState = state.subsampling
-    val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()?.takeIf { it.isNotEmpty() }
-    zoomableState.contentSize = painterSize ?: IntSize.Zero
-
-    when (loadState) {
-        is State.Success -> {
-            subsamplingState.ignoreExifOrientation = request.ignoreExifOrientation
-            subsamplingState.disabledTileBitmapCache =
-                request.memoryCachePolicy != CachePolicy.ENABLED
-            subsamplingState.disabledTileBitmapReuse = request.disallowReuseBitmap
-            val imageSource = SketchImageSource(context, sketch, request.uriString)
-            subsamplingState.setImageSource(imageSource)
-        }
-
-        else -> {
-            subsamplingState.setImageSource(null)
-        }
-    }
-}
-
-private val State.name: String
-    get() = when (this) {
-        is State.Loading -> "Loading"
-        is State.Success -> "Success"
-        is State.Error -> "Error"
-        is State.Empty -> "Empty"
-    }
-
-private fun Size.roundToIntSize(): IntSize {
-    return IntSize(width.roundToInt(), height.roundToInt())
-}
-
-private fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0

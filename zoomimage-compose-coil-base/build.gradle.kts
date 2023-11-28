@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoomimage.compose.sketch"
+    namespace = "com.github.panpf.zoomimage.compose.coil.base"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
@@ -57,8 +57,8 @@ android {
 
 dependencies {
     api(project(":zoomimage-compose"))
-    api(project(":zoomimage-compose-sketch-core"))
-    api(libs.panpf.sketch3.compose)
+    api(project(":zoomimage-core-coil"))
+    api(libs.coil.compose.base)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

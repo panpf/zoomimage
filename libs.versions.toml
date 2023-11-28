@@ -96,6 +96,7 @@ google-material = { module = "com.google.android.material:material", version.ref
 panpf-assemblyadapter4 = { module = "io.github.panpf.assemblyadapter4:assemblyadapter", version.ref = "panpf-assemblyadapter4" }
 panpf-sketch3 = { module = "io.github.panpf.sketch3:sketch", version.ref = "panpf-sketch3" }
 panpf-sketch3-compose = { module = "io.github.panpf.sketch3:sketch-compose", version.ref = "panpf-sketch3" }
+panpf-sketch3-compose-core = { module = "io.github.panpf.sketch3:sketch-compose-core", version.ref = "panpf-sketch3" }
 panpf-sketch3-extensions = { module = "io.github.panpf.sketch3:sketch-extensions", version.ref = "panpf-sketch3" }
 panpf-sketch3-viewability = { module = "io.github.panpf.sketch3:sketch-viewability", version.ref = "panpf-sketch3" }
 panpf-tools4j = { module = "io.github.panpf.tools4j:tools4j-ktx", version.ref = "panpf-tools4j" }
@@ -112,6 +113,7 @@ subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil-compose-base = { module = "io.coil-kt:coil-compose-base", version.ref = "coil" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
