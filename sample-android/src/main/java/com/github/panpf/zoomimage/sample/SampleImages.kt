@@ -170,7 +170,7 @@ object SampleImages {
         val QMSHT = SampleImage(
             name = "QMSHT",
             fileName = "sample_long_qmsht.jpg",
-            uri = newResourceUri(R.raw.sample_long_qmsht),
+            uri = newResourceUri(com.github.panpf.zoomimage.resources.R.raw.sample_long_qmsht),
             size = Size(30000, 926)
         )
         val ALL = listOf(QMSHT)

@@ -95,6 +95,7 @@ dependencies {
     implementation(project(":zoomimage-view-glide"))
     implementation(project(":zoomimage-view-picasso"))
     implementation(project(":zoomimage-view-sketch"))
+    implementation(project(":zoomimage-resources"))
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.appcompat)

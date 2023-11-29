@@ -31,7 +31,7 @@ class AndroidImageSourceTest {
     fun testResourceImageSource() {
         val context = InstrumentationRegistry.getInstrumentation().context
 
-        val drawableId = com.github.panpf.zoomimage.core.test.R.raw.sample_anim
+        val drawableId = com.github.panpf.zoomimage.resources.R.raw.sample_anim
         ResourceImageSource(context, drawableId).apply {
             Assert.assertEquals("android.resources://resource?resId=$drawableId", key)
             Assert.assertEquals("ResourceImageSource($drawableId)", toString())

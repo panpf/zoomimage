@@ -54,7 +54,7 @@ fun decodeAndCreateTileDecoder(
     }
 
     if (imageInfo == null) {
-        val message = imageInfoResult.exceptionOrNull()!!.message.orEmpty()
+        val message = imageInfoResult.exceptionOrNull()!!.toString()
         return Result.failure(CreateTileDecoderException(-1, false, message, null))
     }
     if (imageInfo.width <= 0 || imageInfo.height <= 0) {
@@ -83,7 +83,7 @@ fun decodeAndCreateTileDecoder(
     )
     val createDecoderException = result.exceptionOrNull()
     if (createDecoderException != null) {
-        val message = createDecoderException.message.orEmpty()
+        val message = createDecoderException.toString()
         return Result.failure(CreateTileDecoderException(-5, false, message, imageInfo))
     }
     return Result.success(result.getOrThrow())

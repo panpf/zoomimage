@@ -36,6 +36,7 @@ kotlin {
                 implementation(libs.androidx.test.ext.junit)
                 implementation(libs.androidx.test.runner)
                 implementation(libs.androidx.test.rules)
+                implementation(project(":zoomimage-resources"))
             }
         }
 
@@ -57,6 +58,12 @@ kotlin {
             dependencies {
                 api(libs.kotlinx.coroutines.swing)
                 api("com.drewnoakes:metadata-extractor:2.18.0")
+            }
+        }
+
+        named("desktopTest") {
+            dependencies {
+                implementation(project(":zoomimage-resources"))
             }
         }
     }
