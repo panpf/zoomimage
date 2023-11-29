@@ -141,3 +141,7 @@ internal fun Long.formatFileSize(
         format.format(value).toString() + suffix
     }
 }
+
+@Suppress("USELESS_ELVIS")
+internal val Bitmap.configOrNull: Bitmap.Config?
+    get() = config ?: null
