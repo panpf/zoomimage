@@ -77,7 +77,7 @@ internal actual fun ImageSource.decodeImageInfo(): Result<ImageInfo> {
         return Result.failure(e)
     }
     val size = IntSizeCompat(options.outWidth, options.outHeight)
-    val imageInfo = ImageInfo(size, options.outMimeType)
+    val imageInfo = ImageInfo(size, options.outMimeType.orEmpty())
     return Result.success(imageInfo)
 }
 
