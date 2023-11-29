@@ -66,7 +66,7 @@ android {
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
-        minSdk = property("minSdk21").toString().toInt()
+        minSdk = property("minSdk").toString().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

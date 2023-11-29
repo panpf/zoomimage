@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+## 1.0.0-beta09-SNAPSHOT
+
+* change: `zoomimage-core` 模块 minSdk 从 21 改为 16
+
 ## 1.0.0-beta08
 
 * fix: 修复 `zoomimage-compose-glide` 模块没有配置混淆导致崩溃的 bug

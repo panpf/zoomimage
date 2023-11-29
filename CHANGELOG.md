@@ -2,6 +2,10 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## 1.0.0-beta09-SNAPSHOT
+
+* change: `zoomimage-core` module minSdk changed from 21 to 16
+
 ## 1.0.0-beta08
 
 other:
