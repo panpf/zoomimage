@@ -7,7 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
@@ -47,10 +47,10 @@ fun NavigationContainer(navigation: Navigation) {
         val previousIdx = initialState.index
         val currentIdx = targetState.index
         if (currentIdx == 0 && previousIdx == 0) {
-            fadeIn() with fadeOut(tween(delayMillis = 150))
+            fadeIn() togetherWith fadeOut(tween(delayMillis = 150))
         } else {
             val multiplier = if (previousIdx < currentIdx) 1 else -1
-            slideInHorizontally { w -> multiplier * w } with
+            slideInHorizontally { w -> multiplier * w } togetherWith
                     slideOutHorizontally { w -> multiplier * -1 * w }
         }
     }) { (index, page) ->

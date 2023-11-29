@@ -8,5 +8,4 @@
     app:scrollBarColor="#FF0000"
     app:scrollBarMargin="20dp"
     app:scrollBarSize="10dp"
-    app:animateScale="false"
-    app:srcCompat="@drawable/sample_dog" />
+    app:animateScale="false" />

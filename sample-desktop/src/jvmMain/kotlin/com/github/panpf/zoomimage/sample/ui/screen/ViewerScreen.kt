@@ -51,7 +51,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
-fun ViewerScreen(navigation: Navigation, imageResource: ImageResource) {
+fun ViewerScreen(
+    @Suppress("UNUSED_PARAMETER") navigation: Navigation,
+    imageResource: ImageResource
+) {
     val supportIgnoreExifOrientation = true
     Box(Modifier.fillMaxSize()) {
         val contentScaleName by MySettings.contentScaleName.collectAsState()

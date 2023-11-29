@@ -78,8 +78,8 @@ class PhotoAlbumComposeFragment : AppBarFragment() {
                 ) { index ->
                     val photo = pagingItems.peek(index)
                     zoomImageType.drawListContent(
-                        sketchImageUri = photo?.uri.orEmpty(),
-                        modifier = Modifier
+                        photo?.uri.orEmpty(),
+                        Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f)
                             .clickable {
