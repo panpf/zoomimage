@@ -2,8 +2,9 @@
 
 翻译：[English](CHANGELOG.md)
 
-## 1.0.0-beta09-SNAPSHOT
+## 1.0.0-beta09
 
+* fix: 修复在 Android 解码不支持的图片格式时因为 BitmapFactory.Options.outMimeType 为 null 导致的崩溃问题
 * change: `zoomimage-core` 模块 minSdk 从 21 改为 16
 
 ## 1.0.0-beta08

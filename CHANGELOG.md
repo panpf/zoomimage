@@ -2,8 +2,10 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## 1.0.0-beta09-SNAPSHOT
+## 1.0.0-beta09
 
+* fix: Fixed a crash caused by BitmapFactory.Options.outMimeType being null when Android decodes
+  unsupported image formats
 * change: `zoomimage-core` module minSdk changed from 21 to 16
 
 ## 1.0.0-beta08
