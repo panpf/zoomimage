@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## 1.0.0-beta08-SNAPSHOT
+## 1.0.0-beta08
 
 * fix: 修复 `zoomimage-compose-glide` 模块没有配置混淆导致崩溃的 bug
 * change: 现在只有 `zoomimage-core` 模块生成 BuildConfig

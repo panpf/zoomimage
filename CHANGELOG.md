@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## 1.0.0-beta08-SNAPSHOT
+## 1.0.0-beta08
 
 other:
 
