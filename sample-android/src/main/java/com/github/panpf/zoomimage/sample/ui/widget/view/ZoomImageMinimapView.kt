@@ -221,11 +221,13 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         val realX = (x * widthScale).roundToInt()
         val realY = (y * heightScale).roundToInt()
 
-        zoomView.zoomable.locate(
-            contentPoint = IntOffsetCompat(x = realX, y = realY),
-            targetScale = zoomView.zoomable.transformState.value.scaleX
-                .coerceAtLeast(zoomView.zoomable.mediumScaleState.value),
-            animated = true
-        )
+        coroutineScope.launch {
+            zoomView.zoomable.locate(
+                contentPoint = IntOffsetCompat(x = realX, y = realY),
+                targetScale = zoomView.zoomable.transformState.value.scaleX
+                    .coerceAtLeast(zoomView.zoomable.mediumScaleState.value),
+                animated = true
+            )
+        }
     }
 }
