@@ -130,6 +130,8 @@ dependencies {
     implementation(libs.panpf.sketch3.compose)
     implementation(libs.telephoto.coil)
 
+    debugImplementation(libs.leakcanary)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)

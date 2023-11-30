@@ -48,6 +48,7 @@ glide = "4.15.1"
 glide-ktx = "1.0.0-beta01"
 picasso = "2.8"
 mavenpublish = "0.25.3"
+leakcanary = "2.12"
 
 [libraries]
 
@@ -117,6 +118,7 @@ coil-compose-base = { module = "io.coil-kt:coil-compose-base", version.ref = "co
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "android-plugin" }
