@@ -4,9 +4,10 @@
 
 ## new
 
-* depend: 升级 Sketch 3.3.0-beta03
-* improve: composed 迁移到 Modifier.Node
 * fix: 修复 ZoomImage 无法显示滚动条的 bug
+* fix: 修复 SketchZoomAsyncImage 和 CoilZoomAsyncImage 再遇到没有大小的 Drawable 时会崩溃的 bug
+* improve: composed 迁移到 Modifier.Node
+* depend: 升级 Sketch 3.3.0-beta03
 
 ## 1.0.0-beta09
 

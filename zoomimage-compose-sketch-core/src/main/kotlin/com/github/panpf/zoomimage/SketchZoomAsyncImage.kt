@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
@@ -388,7 +389,11 @@ private fun onState(
     state.zoomable.logger.d { "SketchZoomAsyncImage. onState. state=${loadState.name}. uri='${request.uriString}'" }
     val zoomableState = state.zoomable
     val subsamplingState = state.subsampling
-    val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()?.takeIf { it.isNotEmpty() }
+    val painterSize = loadState.painter
+        ?.intrinsicSize
+        ?.takeIf { it.isSpecified }
+        ?.roundToIntSize()
+        ?.takeIf { it.isNotEmpty() }
     zoomableState.contentSize = painterSize ?: IntSize.Zero
 
     when (loadState) {

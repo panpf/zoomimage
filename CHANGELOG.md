@@ -4,9 +4,10 @@ Translations: [简体中文](CHANGELOG_zh.md)
 
 ## new
 
-* depend: Upgrade Sketch 3.3.0-beta03
-* improve: composed migrated to Modifier.Node
 * fix: Fixed a bug where ZoomImage could not display scrollbars
+* fix: Fixed a bug where SketchZoomAsyncImage and CoilZoomAsyncImage would crash when they encountered a drawable without size
+* improve: composed migrated to Modifier.Node
+* depend: Upgrade Sketch 3.3.0-beta03
 
 ## 1.0.0-beta09
 

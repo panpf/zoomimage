@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
@@ -252,7 +253,11 @@ private fun onState(
     loadState: State,
 ) {
     state.zoomable.logger.d { "CoilZoomAsyncImage. onState. state=${loadState.name}. data='${request.data}'" }
-    val painterSize = loadState.painter?.intrinsicSize?.roundToIntSize()?.takeIf { it.isNotEmpty() }
+    val painterSize = loadState.painter
+        ?.intrinsicSize
+        ?.takeIf { it.isSpecified }
+        ?.roundToIntSize()
+        ?.takeIf { it.isNotEmpty() }
     state.zoomable.contentSize = painterSize ?: IntSize.Zero
 
     when (loadState) {
