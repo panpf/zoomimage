@@ -2,6 +2,10 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+* depend: Upgrade Sketch 3.3.0-beta03
+
 ## 1.0.0-beta09
 
 * fix: Fixed a crash caused by BitmapFactory.Options.outMimeType being null when Android decodes

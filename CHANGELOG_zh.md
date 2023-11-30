@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+* depend: 升级 Sketch 3.3.0-beta03
+
 ## 1.0.0-beta09
 
 * fix: 修复在 Android 解码不支持的图片格式时因为 BitmapFactory.Options.outMimeType 为 null 导致的崩溃问题
