@@ -25,6 +25,9 @@ internal class ViewLifecycleOwner(view: View) : LifecycleOwner {
 
     private val lifecycleRegistry = LifecycleRegistry(this)
 
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
+
     init {
         view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
@@ -46,7 +49,4 @@ internal class ViewLifecycleOwner(view: View) : LifecycleOwner {
             lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
         }
     }
-
-    override val lifecycle: Lifecycle
-        get() = lifecycleRegistry
 }
