@@ -70,7 +70,7 @@ class SubsamplingEngine constructor(
 
     val logger: Logger = logger.newLogger(module = "SubsamplingEngine@${logger.toHexString()}")
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
@@ -329,9 +329,18 @@ class SubsamplingEngine constructor(
         }
 
         coroutineScope.launch {
-            readyState.collect {
+            readyState.collect { ready ->
                 val imageInfo = imageInfoState.value
-                val imageSize = if (it && imageInfo != null) imageInfo.size else IntSizeCompat.Zero
+                val imageSize = if (ready && imageInfo != null)
+                    imageInfo.size else IntSizeCompat.Zero
+                zoomableEngine.contentOriginSizeState.value = imageSize
+            }
+        }
+        coroutineScope.launch {
+            imageInfoState.collect { imageInfo ->
+                val ready = readyState.value
+                val imageSize = if (ready && imageInfo != null)
+                    imageInfo.size else IntSizeCompat.Zero
                 zoomableEngine.contentOriginSizeState.value = imageSize
             }
         }

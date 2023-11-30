@@ -283,38 +283,39 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                 reset("containerSizeChanged")
             }
         }
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
         coroutineScope.launch(Dispatchers.Main.immediate) {
             contentSizeState.collect {
                 reset("contentSizeChanged")
             }
         }
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
         coroutineScope.launch(Dispatchers.Main.immediate) {
             contentOriginSizeState.collect {
                 reset("contentOriginSizeChanged")
             }
         }
-
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             contentScaleState.collect {
                 reset("contentScaleChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             alignmentState.collect {
                 reset("alignmentChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             readModeState.collect {
                 reset("readModeChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             scalesCalculatorState.collect {
                 reset("scalesCalculatorChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             limitOffsetWithinBaseVisibleRectState.collect {
                 reset("limitOffsetWithinBaseVisibleRectChanged")
             }

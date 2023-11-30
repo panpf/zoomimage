@@ -302,37 +302,39 @@ class ZoomableState(logger: Logger) {
                 reset("containerSizeChanged")
             }
         }
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { contentSize }.collect {
                 reset("contentSizeChanged")
             }
         }
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { contentOriginSize }.collect {
                 reset("contentOriginSizeChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             snapshotFlow { contentScale }.collect {
                 reset("contentScaleChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             snapshotFlow { alignment }.collect {
                 reset("alignmentChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             snapshotFlow { readMode }.collect {
                 reset("readModeChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             snapshotFlow { scalesCalculator }.collect {
                 reset("scalesCalculatorChanged")
             }
         }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
+        coroutineScope.launch {
             snapshotFlow { limitOffsetWithinBaseVisibleRect }.collect {
                 reset("limitOffsetWithinBaseVisibleRectChanged")
             }

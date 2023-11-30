@@ -97,7 +97,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingState@${logger.toHexString()}")
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
@@ -347,9 +347,18 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         }
 
         LaunchedEffect(Unit) {
-            snapshotFlow { ready }.collect {
+            snapshotFlow { ready }.collect { ready ->
                 val imageInfo = imageInfo
-                val imageSize = if (it && imageInfo != null) imageInfo.size else IntSizeCompat.Zero
+                val imageSize = if (ready && imageInfo != null)
+                    imageInfo.size else IntSizeCompat.Zero
+                zoomableState.contentOriginSize = imageSize.toPlatform()
+            }
+        }
+        LaunchedEffect(Unit) {
+            snapshotFlow { imageInfo }.collect { imageInfo ->
+                val ready = ready
+                val imageSize = if (ready && imageInfo != null)
+                    imageInfo.size else IntSizeCompat.Zero
                 zoomableState.contentOriginSize = imageSize.toPlatform()
             }
         }
@@ -397,7 +406,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         }
 
         val ignoreExifOrientation = ignoreExifOrientation
-        lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
+        lastResetTileDecoderJob = coroutineScope.launch {
             val result = withContext(Dispatchers.IO) {
                 decodeAndCreateTileDecoder(
                     logger = logger,

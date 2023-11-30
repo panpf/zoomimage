@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -39,8 +38,6 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.compose.zoom.zooming
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -100,28 +97,20 @@ fun ZoomImage(
     state.zoomable.contentSize = remember(painter.intrinsicSize) {
         painter.intrinsicSize.round()
     }
-    val immediateCoroutineScope = rememberCoroutineScope { Dispatchers.Main.immediate }
 
     BoxWithConstraints(modifier = modifier) {
         /*
-         * Here use BoxWithConstraints and then actively set containerSize and call nowReset(),
+         * Here use BoxWithConstraints and then actively set containerSize,
          * In order to prepare the transform in advance, so that when the position of the image needs to be adjusted,
          * the position change will not be seen by the user
          */
-        val oldContainerSize = state.zoomable.containerSize
         val density = LocalDensity.current
-        val newContainerSize = remember(maxWidth, maxHeight) {
-            IntSize(
-                width = with(density) { maxWidth.toPx() }.roundToInt(),
-                height = with(density) { maxHeight.toPx() }.roundToInt()
-            )
+        val newContainerSize = remember(density, maxWidth, maxHeight) {
+            val width = with(density) { maxWidth.toPx() }.roundToInt()
+            val height = with(density) { maxHeight.toPx() }.roundToInt()
+            IntSize(width = width, height = height)
         }
-        if (newContainerSize != oldContainerSize) {
-            state.zoomable.containerSize = newContainerSize
-            immediateCoroutineScope.launch {
-                state.zoomable.reset("initialize")
-            }
-        }
+        state.zoomable.containerSize = newContainerSize
 
         MyImage(
             painter = painter,

@@ -92,6 +92,7 @@ internal class ZoomScrollBarNode(
         if (lastContentVisibleRect != contentVisibleRect) {
             lastContentVisibleRect = contentVisibleRect
             lastDelayJob?.cancel()
+            // Alpha required reset immediately, so must be immediate
             lastDelayJob = coroutineScope.launch(Dispatchers.Main.immediate) {
                 alphaAnimatable.snapTo(targetValue = 1f)
                 delay(800)
