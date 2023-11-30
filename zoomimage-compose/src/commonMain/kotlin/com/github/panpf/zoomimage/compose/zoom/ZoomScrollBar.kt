@@ -19,226 +19,134 @@ package com.github.panpf.zoomimage.compose.zoom
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.platform.LocalDensity
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
+import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.invalidateDraw
+import androidx.compose.ui.unit.IntRect
+import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.rotate
 import com.github.panpf.zoomimage.compose.internal.rotateInSpace
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 fun Modifier.zoomScrollBar(
     zoomable: ZoomableState,
-    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
-): Modifier = composed {
-    if (scrollBarSpec == null) {
-        return@composed this
-    }
-    val contentSize = zoomable.contentSize
-    val contentVisibleRect = zoomable.contentVisibleRect
-    val rotation = zoomable.transform.rotation
-    val density = LocalDensity.current
-    val sizePx = remember(scrollBarSpec.size) { with(density) { scrollBarSpec.size.toPx() } }
-    val marginPx = remember(scrollBarSpec.margin) { with(density) { scrollBarSpec.margin.toPx() } }
-    val cornerRadius = remember(sizePx) { CornerRadius(sizePx / 2f, sizePx / 2f) }
-    val alphaAnimatable = remember { Animatable(1f) }
-    LaunchedEffect(contentVisibleRect) {
-        alphaAnimatable.snapTo(targetValue = 1f)
-        delay(800)
-        alphaAnimatable.animateTo(
-            targetValue = 0f,
-            animationSpec = TweenSpec(300, easing = LinearOutSlowInEasing)
+    scrollBarSpec: ScrollBarSpec = ScrollBarSpec.Default
+): Modifier = this
+    .then(ZoomScrollBarElement(zoomable, scrollBarSpec))
+
+internal data class ZoomScrollBarElement(
+    val zoomable: ZoomableState,
+    val scrollBarSpec: ScrollBarSpec,
+) : ModifierNodeElement<ZoomScrollBarNode>() {
+
+    override fun create(): ZoomScrollBarNode {
+        return ZoomScrollBarNode(
+            zoomable = zoomable,
+            scrollBarSpec = scrollBarSpec,
         )
     }
-    if (contentSize.isNotEmpty() && !contentVisibleRect.isEmpty) {
-        this.drawWithContent {
-            drawContent()
 
-            val alpha = alphaAnimatable.value
-            val rotatedContentVisibleRect = contentVisibleRect
-                .rotateInSpace(contentSize, rotation.roundToInt())
-            val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
-
-            @Suppress("UnnecessaryVariable")
-            val scrollBarSize = sizePx
-            val drawSize = this.size
-            if (rotatedContentVisibleRect.width < rotatedContentSize.width) {
-                val widthScale = (drawSize.width - marginPx * 4) / rotatedContentSize.width
-                drawRoundRect(
-                    color = scrollBarSpec.color,
-                    topLeft = Offset(
-                        x = (marginPx * 2) + (rotatedContentVisibleRect.left * widthScale),
-                        y = drawSize.height - marginPx - scrollBarSize
-                    ),
-                    size = Size(
-                        width = rotatedContentVisibleRect.width * widthScale,
-                        height = scrollBarSize
-                    ),
-                    cornerRadius = cornerRadius,
-                    style = Fill,
-                    alpha = alpha
-                )
-            }
-            if (rotatedContentVisibleRect.height < rotatedContentSize.height) {
-                val heightScale = (drawSize.height - marginPx * 4) / rotatedContentSize.height
-                drawRoundRect(
-                    color = scrollBarSpec.color,
-                    topLeft = Offset(
-                        x = drawSize.width - marginPx - scrollBarSize,
-                        y = (marginPx * 2) + (rotatedContentVisibleRect.top * heightScale)
-                    ),
-                    size = Size(
-                        width = scrollBarSize,
-                        height = rotatedContentVisibleRect.height * heightScale
-                    ),
-                    cornerRadius = cornerRadius,
-                    style = Fill,
-                    alpha = alpha
-                )
-            }
-        }
-    } else {
-        this
+    override fun update(node: ZoomScrollBarNode) {
+        node.update(
+            zoomable = zoomable,
+            scrollBarSpec = scrollBarSpec,
+        )
     }
 }
 
-//fun Modifier.zoomScrollBar(
-//    zoomable: ZoomableState,
-//    scrollBarSpec: ScrollBarSpec? = ScrollBarSpec.Default
-//): Modifier = if (scrollBarSpec != null) {
-//    this.then(ZoomScrollBarElement(zoomable, scrollBarSpec))
-//} else {
-//    this
-//}
-//
-//internal data class ZoomScrollBarElement(
-//    val zoomable: ZoomableState,
-//    val scrollBarSpec: ScrollBarSpec,
-//) : ModifierNodeElement<ZoomScrollBarNode>() {
-//
-//    override fun create(): ZoomScrollBarNode {
-//        return ZoomScrollBarNode(
-//            zoomable = zoomable,
-//            scrollBarSpec = scrollBarSpec,
-//        )
-//    }
-//
-//    override fun update(node: ZoomScrollBarNode) {
-//        node.update(
-//            zoomable = zoomable,
-//            scrollBarSpec = scrollBarSpec,
-//        )
-//    }
-//}
-//
-//internal class ZoomScrollBarNode(
-//    var zoomable: ZoomableState,
-//    var scrollBarSpec: ScrollBarSpec,
-//) : Modifier.Node(), DrawModifierNode {
-//
-//    private val alphaAnimatable = Animatable(1f)
-//    private var lastContentVisibleRect: IntRect? = null
-//    private var lastDelayJob: Job? = null
-//
-//    fun update(
-//        zoomable: ZoomableState,
-//        scrollBarSpec: ScrollBarSpec,
-//    ) {
-//        this.zoomable = zoomable
-//        this.scrollBarSpec = scrollBarSpec
-//        invalidateDraw()
-//    }
-//
-//    override fun ContentDrawScope.draw() {
-//        drawContent()
-//
-//        val contentSize = zoomable.contentSize
-//        val contentVisibleRect = zoomable.contentVisibleRect
-//        if (contentSize.isEmpty() || contentVisibleRect.isEmpty) return
-//
-//        if (lastContentVisibleRect != contentVisibleRect) {
-//            zoomable.logger.d {
-//                "ZoomScrollBarNode: contentVisibleRect changed: $lastContentVisibleRect -> $contentVisibleRect"
-//            }
-//            lastDelayJob?.cancel()
-//            lastContentVisibleRect = contentVisibleRect
-//            coroutineScope.launch(Dispatchers.Main.immediate) {
-//                alphaAnimatable.snapTo(targetValue = 1f)
-//            }
-//            lastDelayJob = coroutineScope.launch {
-//                delay(800)
-//                zoomable.logger.d {
-//                    "ZoomScrollBarNode: animateTo"
-//                }
-//                alphaAnimatable.animateTo(
-//                    targetValue = 0f,
-//                    animationSpec = TweenSpec(300, easing = LinearOutSlowInEasing)
-//                )
-//            }
-//        }
-//
-//        val rotation = zoomable.transform.rotation
-//        val density = zoomable.density!!
-//        val sizePx = with(density) { scrollBarSpec.size.toPx() }
-//        val marginPx = with(density) { scrollBarSpec.margin.toPx() }
-//        val cornerRadius = CornerRadius(sizePx / 2f, sizePx / 2f)
-//
-//        val alpha = alphaAnimatable.value
-//        val rotatedContentVisibleRect = contentVisibleRect
-//            .rotateInSpace(contentSize, rotation.roundToInt())
-//        val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
-//
-//        @Suppress("UnnecessaryVariable")
-//        val scrollBarSize = sizePx
-//        val drawSize = this.size
-//        val drawHorScrollBar = rotatedContentVisibleRect.width < rotatedContentSize.width
-//        val drawVerScrollBar = rotatedContentVisibleRect.height < rotatedContentSize.height
-//
-//        zoomable.logger.d {
-//            "ZoomScrollBarNode: draw. alpha=${alpha}, drawHorScrollBar=$drawHorScrollBar, drawVerScrollBar=$drawVerScrollBar"
-//        }
-//
-//        if (drawHorScrollBar) {
-//            val widthScale = (drawSize.width - marginPx * 4) / rotatedContentSize.width
-//            drawRoundRect(
-//                color = scrollBarSpec.color,
-//                topLeft = Offset(
-//                    x = (marginPx * 2) + (rotatedContentVisibleRect.left * widthScale),
-//                    y = drawSize.height - marginPx - scrollBarSize
-//                ),
-//                size = Size(
-//                    width = rotatedContentVisibleRect.width * widthScale,
-//                    height = scrollBarSize
-//                ),
-//                cornerRadius = cornerRadius,
-//                style = Fill,
-//                alpha = alpha
-//            )
-//        }
-//        if (drawVerScrollBar) {
-//            val heightScale = (drawSize.height - marginPx * 4) / rotatedContentSize.height
-//            drawRoundRect(
-//                color = scrollBarSpec.color,
-//                topLeft = Offset(
-//                    x = drawSize.width - marginPx - scrollBarSize,
-//                    y = (marginPx * 2) + (rotatedContentVisibleRect.top * heightScale)
-//                ),
-//                size = Size(
-//                    width = scrollBarSize,
-//                    height = rotatedContentVisibleRect.height * heightScale
-//                ),
-//                cornerRadius = cornerRadius,
-//                style = Fill,
-//                alpha = alpha
-//            )
-//        }
-//    }
-//}
+internal class ZoomScrollBarNode(
+    var zoomable: ZoomableState,
+    var scrollBarSpec: ScrollBarSpec,
+) : Modifier.Node(), DrawModifierNode {
+
+    private val alphaAnimatable = Animatable(1f)
+    private var lastContentVisibleRect: IntRect? = null
+    private var lastDelayJob: Job? = null
+
+    fun update(
+        zoomable: ZoomableState,
+        scrollBarSpec: ScrollBarSpec,
+    ) {
+        this.zoomable = zoomable
+        this.scrollBarSpec = scrollBarSpec
+        invalidateDraw()
+    }
+
+    override fun ContentDrawScope.draw() {
+        drawContent()
+
+        val contentSize = zoomable.contentSize
+        val contentVisibleRect = zoomable.contentVisibleRect
+        if (contentSize.isEmpty() || contentVisibleRect.isEmpty) return
+
+        if (lastContentVisibleRect != contentVisibleRect) {
+            lastContentVisibleRect = contentVisibleRect
+            lastDelayJob?.cancel()
+            lastDelayJob = coroutineScope.launch(Dispatchers.Main.immediate) {
+                alphaAnimatable.snapTo(targetValue = 1f)
+                delay(800)
+                alphaAnimatable.animateTo(
+                    targetValue = 0f,
+                    animationSpec = TweenSpec(300, easing = LinearOutSlowInEasing)
+                )
+            }
+        }
+
+        val rotation = zoomable.transform.rotation
+        val density = zoomable.density!!
+        val scrollBarSize = with(density) { scrollBarSpec.size.toPx() }
+        val marginPx = with(density) { scrollBarSpec.margin.toPx() }
+        val cornerRadius = CornerRadius(scrollBarSize / 2f, scrollBarSize / 2f)
+        val alpha = alphaAnimatable.value
+        val rotatedContentVisibleRect = contentVisibleRect
+            .rotateInSpace(contentSize, rotation.roundToInt())
+        val rotatedContentSize = contentSize.rotate(rotation.roundToInt())
+        val drawSize = this.size
+        val drawHorScrollBar = rotatedContentVisibleRect.width < rotatedContentSize.width
+        val drawVerScrollBar = rotatedContentVisibleRect.height < rotatedContentSize.height
+        if (drawHorScrollBar) {
+            val widthScale = (drawSize.width - marginPx * 4) / rotatedContentSize.width
+            drawRoundRect(
+                color = scrollBarSpec.color,
+                topLeft = Offset(
+                    x = (marginPx * 2) + (rotatedContentVisibleRect.left * widthScale),
+                    y = drawSize.height - marginPx - scrollBarSize
+                ),
+                size = Size(
+                    width = rotatedContentVisibleRect.width * widthScale,
+                    height = scrollBarSize
+                ),
+                cornerRadius = cornerRadius,
+                style = Fill,
+                alpha = alpha
+            )
+        }
+        if (drawVerScrollBar) {
+            val heightScale = (drawSize.height - marginPx * 4) / rotatedContentSize.height
+            drawRoundRect(
+                color = scrollBarSpec.color,
+                topLeft = Offset(
+                    x = drawSize.width - marginPx - scrollBarSize,
+                    y = (marginPx * 2) + (rotatedContentVisibleRect.top * heightScale)
+                ),
+                size = Size(
+                    width = scrollBarSize,
+                    height = rotatedContentVisibleRect.height * heightScale
+                ),
+                cornerRadius = cornerRadius,
+                style = Fill,
+                alpha = alpha
+            )
+        }
+    }
+}

@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
 import com.github.panpf.zoomimage.compose.internal.format
@@ -44,6 +45,7 @@ fun Modifier.zoomable(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = this
+    .onSizeChanged { zoomable.containerSize = it }
     .then(ZoomableElement(zoomable, onLongPress, onTap))
 
 fun Modifier.zooming(

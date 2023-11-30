@@ -100,7 +100,7 @@ fun ZoomImage(
     state.zoomable.contentSize = remember(painter.intrinsicSize) {
         painter.intrinsicSize.round()
     }
-    val immediateCoroutineScope = rememberCoroutineScope{Dispatchers.Main.immediate}
+    val immediateCoroutineScope = rememberCoroutineScope { Dispatchers.Main.immediate }
 
     BoxWithConstraints(modifier = modifier) {
         /*
@@ -133,7 +133,7 @@ fun ZoomImage(
             clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
-                .zoomScrollBar(state.zoomable, scrollBar)
+                .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
                 .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap),
         )
 

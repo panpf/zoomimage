@@ -221,7 +221,7 @@ fun CoilZoomAsyncImage(
         filterQuality = filterQuality,
         clipToBounds = false,
         modifier = modifier
-            .zoomScrollBar(state.zoomable, scrollBar)
+            .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
             .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
             .subsampling(state.zoomable, state.subsampling),
     )
