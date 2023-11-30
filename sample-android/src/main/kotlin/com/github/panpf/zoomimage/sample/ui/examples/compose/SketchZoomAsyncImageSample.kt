@@ -21,8 +21,25 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         val context = LocalContext.current
         SketchZoomAsyncImage(
             request = DisplayRequest(context, sketchImageUri) {
+//                placeholder(IconStateImage(drawable.ic_image_outline, IntColor(Color.BLACK)))
+//                placeholder(R.mipmap.ic_launcher)
+//                placeholder(ThumbnailMemoryCacheStateImage())
+                // todo Test placeholder
                 ignoreExifOrientation(ignoreExifOrientation)
                 crossfade()
+//                addTransformations(object : Transformation {
+//                    override val key: String
+//                        get() = "DelayTransformation"
+//
+//                    override suspend fun transform(
+//                        sketch: Sketch,
+//                        requestContext: RequestContext,
+//                        input: Bitmap
+//                    ): TransformResult? {
+//                        delay(10000)
+//                        return null
+//                    }
+//                })
             },
             contentDescription = "view image",
             contentScale = contentScale,
