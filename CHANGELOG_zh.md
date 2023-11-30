@@ -6,6 +6,7 @@
 
 * depend: 升级 Sketch 3.3.0-beta03
 * improve: composed 迁移到 Modifier.Node
+* fix: 修复 ZoomImage 无法显示滚动条的 bug
 
 ## 1.0.0-beta09
 

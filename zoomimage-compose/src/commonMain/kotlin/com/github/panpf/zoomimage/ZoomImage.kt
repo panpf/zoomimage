@@ -63,7 +63,7 @@ import kotlin.math.roundToInt
  * @param contentDescription text used by accessibility services to describe what this image
  * represents. This should always be provided unless this image is used for decorative purposes,
  * and does not represent a meaningful action that a user can take. This text should be
- * localized, such as by using [androidx.compose.ui.res.stringResource] or similar
+ * localized, such as by using androidx.compose.ui.res.stringResource or similar
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content (ex.
  * background)
  * @param alignment Optional alignment parameter used to place the [Painter] in the given
@@ -122,7 +122,6 @@ fun ZoomImage(
             clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
-                .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
                 .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap),
         )
 
@@ -137,5 +136,13 @@ fun ZoomImage(
                 .zooming(state.zoomable)
                 .subsampling(state.zoomable, state.subsampling)
         )
+
+        if (scrollBar != null) {
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .zoomScrollBar(state.zoomable, scrollBar)
+            )
+        }
     }
 }
