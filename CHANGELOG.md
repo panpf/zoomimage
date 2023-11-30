@@ -5,6 +5,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 ## new
 
 * depend: Upgrade Sketch 3.3.0-beta03
+* improve: composed migrated to Modifier.Node
 
 ## 1.0.0-beta09
 

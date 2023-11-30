@@ -5,6 +5,7 @@
 ## new
 
 * depend: 升级 Sketch 3.3.0-beta03
+* improve: composed 迁移到 Modifier.Node
 
 ## 1.0.0-beta09
 

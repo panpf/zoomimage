@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
@@ -103,6 +104,9 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
     val zoomableState = remember(logger) {
         ZoomableState(logger)
     }
+    if (zoomableState.density == null) {
+        zoomableState.density = LocalDensity.current
+    }
     return zoomableState
 }
 
@@ -119,6 +123,8 @@ class ZoomableState(logger: Logger) {
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var lastInitialUserTransform: Transform = Transform.Origin
     private var rotation: Int by mutableIntStateOf(0)
+
+    var density: Density? = null
 
     /**
      * The size of the container that holds the content, this is usually the size of the ZoomImage component
@@ -898,7 +904,7 @@ class ZoomableState(logger: Logger) {
         updateUserTransform(limitedTargetUserTransform)
     }
 
-    internal suspend fun fling(velocity: Velocity, density: Density): Boolean = coroutineScope {
+    internal suspend fun fling(velocity: Velocity): Boolean = coroutineScope {
         containerSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         contentSize.takeIf { it.isNotEmpty() } ?: return@coroutineScope false
         val currentUserTransform = userTransform
@@ -920,7 +926,7 @@ class ZoomableState(logger: Logger) {
                         .convertFromVector(AnimationVector(velocity.x, velocity.y))
                     flingAnimatable.animateDecay(
                         initialVelocity = initialVelocity,
-                        animationSpec = splineBasedDecay(density)
+                        animationSpec = splineBasedDecay(density!!)
                     ) {
                         val currentUserTransform2 = this@ZoomableState.userTransform
                         val targetUserOffset = this.value
