@@ -75,7 +75,6 @@ class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
 
     private fun setImage(binding: PhotoViewFragmentBinding) {
         binding.photoView.displayImage(args.imageUri) {
-            lifecycle(viewLifecycleOwner.lifecycle)
             crossfade()
             listener(
                 onStart = {

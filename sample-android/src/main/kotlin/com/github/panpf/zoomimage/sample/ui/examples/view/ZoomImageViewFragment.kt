@@ -79,7 +79,6 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
         binding.zoomImageViewImage.apply {
             viewLifecycleOwner.lifecycleScope.launch {
                 val request = DisplayRequest(requireContext(), sketchImageUri) {
-                    lifecycle(viewLifecycleOwner.lifecycle)
                     downloadCachePolicy(CachePolicy.ENABLED)
                     ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
                 }
@@ -100,7 +99,6 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
 
     override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
         zoomImageMinimapView.displayImage(sketchImageUri) {
-            lifecycle(viewLifecycleOwner.lifecycle)
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)

@@ -16,5 +16,5 @@
 
 package com.github.panpf.zoomimage.compose.subsampling
 
-actual fun isCloseAntiAliasForDrawTile(): Boolean =
-    true  // Can prevent gaps between tiles after zooming in
+// Can prevent gaps between tiles after zooming in
+actual fun isCloseAntiAliasForDrawTile(): Boolean = true

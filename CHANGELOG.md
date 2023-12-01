@@ -5,7 +5,10 @@ Translations: [简体中文](CHANGELOG_zh.md)
 ## new
 
 * fix: Fixed a bug where ZoomImage could not display scrollbars
-* fix: Fixed a bug where SketchZoomAsyncImage and CoilZoomAsyncImage would crash when they encountered a drawable without size
+* fix: Fixed a bug where SketchZoomAsyncImage and CoilZoomAsyncImage would crash when they
+  encountered a drawable without size
+* fix: Fixed the bug where placeholder would be accidentally shrunk when placeholder and result
+  transitioned between SketchZoomAsyncImage and CoilZoomAsyncImage.
 * improve: composed migrated to Modifier.Node
 * depend: Upgrade Sketch 3.3.0-beta03
 

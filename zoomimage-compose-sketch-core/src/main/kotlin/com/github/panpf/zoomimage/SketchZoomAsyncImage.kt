@@ -35,12 +35,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
-import com.github.panpf.sketch.compose.AsyncImage
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.compose.AsyncImagePainter.State
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
+import com.github.panpf.zoomimage.compose.sketch.internal.BaseZoomAsyncImage
 import com.github.panpf.zoomimage.compose.sketch.internal.onStateOf
 import com.github.panpf.zoomimage.compose.sketch.internal.transformOf
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
@@ -357,7 +357,7 @@ fun SketchZoomAsyncImage(
         state.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
     }
 
-    AsyncImage(
+    BaseZoomAsyncImage(
         request = request,
         contentDescription = contentDescription,
         sketch = sketch,
@@ -366,12 +366,10 @@ fun SketchZoomAsyncImage(
             onState(context, sketch, state, request, loadState)
             onState?.invoke(loadState)
         },
-        alignment = Alignment.TopStart,
-        contentScale = ContentScale.None,
+        contentScale = contentScale,
         alpha = alpha,
         colorFilter = colorFilter,
         filterQuality = filterQuality,
-        clipToBounds = false,
         modifier = modifier
             .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
             .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)

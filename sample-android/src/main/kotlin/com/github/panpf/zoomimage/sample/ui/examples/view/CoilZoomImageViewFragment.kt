@@ -53,6 +53,11 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
             lifecycle(viewLifecycleOwner.lifecycle)
             precision(coil.size.Precision.INEXACT)
             crossfade(true)
+//            val imageLoader = Coil.imageLoader(context)
+//            if (coilData != null) {
+//                val key = imageLoader.components.key(coilData, Options(context))
+//                placeholderMemoryCacheKey(key)
+//            }
             listener(
                 onStart = { onCallStart() },
                 onSuccess = { _, _ -> onCallSuccess() },

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import coil.request.ImageRequest
 import com.github.panpf.sketch.fetch.newResourceUri
@@ -22,12 +23,20 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
         supportIgnoreExifOrientation = false
     ) { contentScale, alignment, state: ZoomState, _, scrollBar ->
         val context = LocalContext.current
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
         val coilData =
             remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
         CoilZoomAsyncImage(
             model = ImageRequest.Builder(LocalContext.current).apply {
+                lifecycle(lifecycle)
+                precision(coil.size.Precision.INEXACT)
                 data(coilData)
                 crossfade(true)
+//                val imageLoader = Coil.imageLoader(context)
+//                if (coilData != null) {
+//                    val key = imageLoader.components.key(coilData, Options(context))
+//                    placeholderMemoryCacheKey(key)
+//                }
             }.build(),
             contentDescription = "view image",
             contentScale = contentScale,

@@ -116,7 +116,6 @@ class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>(
                 binding.subsamplingViewProgress.isVisible = true
                 binding.subsamplingViewErrorLayout.isVisible = false
                 val request = DownloadRequest(requireContext(), args.imageUri) {
-                    lifecycle(viewLifecycleOwner.lifecycle)
                     depth(NETWORK)
                 }
                 val result = requireContext().sketch.execute(request)

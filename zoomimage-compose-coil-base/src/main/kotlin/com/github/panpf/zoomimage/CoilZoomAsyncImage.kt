@@ -40,7 +40,7 @@ import coil.request.ImageRequest
 import com.github.panpf.zoomimage.coil.CoilImageSource
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.coil.internal.AsyncImage
+import com.github.panpf.zoomimage.compose.coil.internal.BaseZoomAsyncImage
 import com.github.panpf.zoomimage.compose.coil.internal.ConstraintsSizeResolver
 import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
 import com.github.panpf.zoomimage.compose.coil.internal.requestOf
@@ -206,7 +206,7 @@ fun CoilZoomAsyncImage(
     }
 
     val request = updateRequest(requestOf(model), contentScale)
-    AsyncImage(
+    BaseZoomAsyncImage(
         model = request,
         contentDescription = contentDescription,
         imageLoader = imageLoader,
@@ -215,12 +215,10 @@ fun CoilZoomAsyncImage(
             onState(imageLoader, state, request, loadState)
             onState?.invoke(loadState)
         },
-        alignment = Alignment.TopStart,
-        contentScale = ContentScale.None,
+        contentScale = contentScale,
         alpha = alpha,
         colorFilter = colorFilter,
         filterQuality = filterQuality,
-        clipToBounds = false,
         modifier = modifier
             .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
             .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)

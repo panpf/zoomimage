@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.stateimage.ThumbnailMemoryCacheStateImage
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.sample.R
@@ -21,25 +22,9 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         val context = LocalContext.current
         SketchZoomAsyncImage(
             request = DisplayRequest(context, sketchImageUri) {
-//                placeholder(IconStateImage(drawable.ic_image_outline, IntColor(Color.BLACK)))
-//                placeholder(R.mipmap.ic_launcher)
-//                placeholder(ThumbnailMemoryCacheStateImage())
-                // todo Test placeholder
+                placeholder(ThumbnailMemoryCacheStateImage())
+                crossfade(fadeStart = false)
                 ignoreExifOrientation(ignoreExifOrientation)
-                crossfade()
-//                addTransformations(object : Transformation {
-//                    override val key: String
-//                        get() = "DelayTransformation"
-//
-//                    override suspend fun transform(
-//                        sketch: Sketch,
-//                        requestContext: RequestContext,
-//                        input: Bitmap
-//                    ): TransformResult? {
-//                        delay(10000)
-//                        return null
-//                    }
-//                })
             },
             contentDescription = "view image",
             contentScale = contentScale,

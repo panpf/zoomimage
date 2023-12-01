@@ -1,15 +1,15 @@
-package com.github.panpf.zoomimage.compose.coil.internal
+package com.github.panpf.zoomimage.compose.sketch.internal
 
+import com.github.panpf.sketch.util.Size as SketchSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.DrawScope.Companion.DefaultFilterQuality
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
@@ -22,66 +22,45 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Constraints
-import coil.ImageLoader
-import coil.compose.AsyncImagePainter
-import coil.compose.AsyncImagePainter.State
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Dimension
-import coil.size.Size
-import coil.size.SizeResolver
+import com.github.panpf.sketch.Sketch
+import com.github.panpf.sketch.compose.AsyncImagePainter.Companion.DefaultTransform
+import com.github.panpf.sketch.compose.AsyncImagePainter.State
+import com.github.panpf.sketch.compose.internal.AsyncImageScaleDecider
+import com.github.panpf.sketch.compose.rememberAsyncImagePainter
+import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.resize.FixedScaleDecider
+import com.github.panpf.sketch.resize.SizeResolver
+import com.github.panpf.sketch.util.ifOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
 
-
 /**
- * A composable that executes an [ImageRequest] asynchronously and renders the result.
- *
- * @param model Either an [ImageRequest] or the [ImageRequest.data] value.
- * @param contentDescription Text used by accessibility services to describe what this image
- *  represents. This should always be provided unless this image is used for decorative purposes,
- *  and does not represent a meaningful action that a user can take.
- * @param imageLoader The [ImageLoader] that will be used to execute the request.
- * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param transform A callback to transform a new [State] before it's applied to the
- *  [AsyncImagePainter]. Typically this is used to modify the state's [Painter].
- * @param onState Called when the state of this painter changes.
- * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
- *  bounds defined by the width and height.
- * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
- *  used if the bounds are a different size from the intrinsic size of the [AsyncImagePainter].
- * @param alpha Optional opacity to be applied to the [AsyncImagePainter] when it is rendered
- *  onscreen.
- * @param colorFilter Optional [ColorFilter] to apply for the [AsyncImagePainter] when it is
- *  rendered onscreen.
- * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
- *  destination.
- * @param clipToBounds Optional controls whether content that is out of scope should be cropped
+ * 1. Disabled clipToBounds
+ * 2. alignment = Alignment.TopStart
+ * 3. contentScale = ContentScale.None
  */
 @Composable
-internal fun AsyncImage(
-    model: Any?,
+internal fun BaseZoomAsyncImage(
+    request: DisplayRequest,
     contentDescription: String?,
-    imageLoader: ImageLoader,
+    sketch: Sketch,
     modifier: Modifier = Modifier,
-    transform: (State) -> State = AsyncImagePainter.DefaultTransform,
+    transform: (State) -> State = DefaultTransform,
     onState: ((State) -> Unit)? = null,
-    alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    clipToBounds: Boolean = true,
+    filterQuality: FilterQuality = DefaultFilterQuality,
 ) {
     // Create and execute the image request.
-    val request = updateRequest(requestOf(model), contentScale)
+    val newRequest = updateRequest(request, contentScale)
     val painter = rememberAsyncImagePainter(
-        request, imageLoader, transform, onState, contentScale, filterQuality
+        newRequest, sketch, transform, onState, contentScale, filterQuality
     )
 
     // Draw the content without a parent composable or subcomposition.
-    val sizeResolver = request.sizeResolver
+    val sizeResolver = newRequest.resizeSizeResolver
     Content(
         modifier = if (sizeResolver is ConstraintsSizeResolver) {
             modifier.then(sizeResolver)
@@ -90,11 +69,10 @@ internal fun AsyncImage(
         },
         painter = painter,
         contentDescription = contentDescription,
-        alignment = alignment,
-        contentScale = contentScale,
+        alignment = Alignment.TopStart,
+        contentScale = ContentScale.None,
         alpha = alpha,
         colorFilter = colorFilter,
-        clipToBounds = clipToBounds
     )
 }
 
@@ -108,11 +86,10 @@ internal fun Content(
     contentScale: ContentScale,
     alpha: Float,
     colorFilter: ColorFilter?,
-    clipToBounds: Boolean = true,
 ) = Layout(
     modifier = modifier
         .contentDescription(contentDescription)
-        .let { if (clipToBounds) it.clipToBounds() else it }
+//        .clipToBounds()
         .then(
             ContentPainterModifier(
                 painter = painter,
@@ -128,14 +105,33 @@ internal fun Content(
 )
 
 @Composable
-internal fun updateRequest(request: ImageRequest, contentScale: ContentScale): ImageRequest {
-    return if (request.defined.sizeResolver == null) {
-        val sizeResolver = if (contentScale == ContentScale.None) {
-            SizeResolver(Size.ORIGINAL)
-        } else {
+internal fun updateRequest(request: DisplayRequest, contentScale: ContentScale): DisplayRequest {
+//    return if (request.defined.sizeResolver == null) {
+//        val sizeResolver = if (contentScale == ContentScale.None) {
+//            SizeResolver(SketchSize.ORIGINAL)
+//        } else {
+//            remember { ConstraintsSizeResolver() }
+//        }
+//        request.newBuilder().size(sizeResolver).build()
+//    } else {
+//        request
+//    }
+    val noSizeResolver = request.definedOptions.resizeSizeResolver == null
+    val noResetScale = request.definedOptions.resizeScaleDecider == null
+    return if (noSizeResolver || noResetScale) {
+        val sizeResolver = ifOrNull(noSizeResolver) {
             remember { ConstraintsSizeResolver() }
         }
-        request.newBuilder().size(sizeResolver).build()
+        request.newDisplayRequest {
+            // If no other size resolver is set, pauses until the layout size is positive.
+            if (noSizeResolver && sizeResolver != null) {
+                resizeSize(sizeResolver)
+            }
+            // If no other scale resolver is set, use the content scale.
+            if (noResetScale) {
+                resizeScale(AsyncImageScaleDecider(FixedScaleDecider(contentScale.toScale())))
+            }
+        }
     } else {
         request
     }
@@ -146,7 +142,8 @@ internal class ConstraintsSizeResolver : SizeResolver, LayoutModifier {
 
     private val _constraints = MutableStateFlow(ZeroConstraints)
 
-    override suspend fun size() = _constraints.mapNotNull(Constraints::toSizeOrNull).first()
+    override suspend fun size(): SketchSize =
+        _constraints.mapNotNull(Constraints::toSizeOrNull).first()
 
     override fun MeasureScope.measure(
         measurable: Measurable,
@@ -165,10 +162,13 @@ internal class ConstraintsSizeResolver : SizeResolver, LayoutModifier {
     fun setConstraints(constraints: Constraints) {
         _constraints.value = constraints
     }
+
+    // Equals and hashCode cannot be implemented because they are used in remember
 }
 
 @Stable
 private fun Modifier.contentDescription(contentDescription: String?): Modifier {
+    @Suppress("LiftReturnOrAssignment")
     if (contentDescription != null) {
         return semantics {
             this.contentDescription = contentDescription
@@ -179,11 +179,18 @@ private fun Modifier.contentDescription(contentDescription: String?): Modifier {
     }
 }
 
+//@Stable
+//private fun Constraints.toSizeOrNull() = when {
+//    isZero -> null
+//    else -> SketchSize(
+//        width = if (hasBoundedWidth) Dimension(maxWidth) else Dimension.Undefined,
+//        height = if (hasBoundedHeight) Dimension(maxHeight) else Dimension.Undefined
+//    )
+//}
+
 @Stable
 private fun Constraints.toSizeOrNull() = when {
     isZero -> null
-    else -> Size(
-        width = if (hasBoundedWidth) Dimension(maxWidth) else Dimension.Undefined,
-        height = if (hasBoundedHeight) Dimension(maxHeight) else Dimension.Undefined
-    )
+    hasBoundedWidth && hasBoundedHeight -> SketchSize(maxWidth, maxHeight)
+    else -> null
 }
