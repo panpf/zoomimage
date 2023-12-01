@@ -16,14 +16,19 @@
 
 package com.github.panpf.zoomimage.compose.zoom
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.currentValueOf
+import androidx.compose.ui.platform.LocalDensity
 import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.zoom.internal.detectPowerfulTapGestures
@@ -32,6 +37,16 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
 
+/**
+ * A Modifier that can recognize gestures such as click, long press, double-click, one-finger zoom, two-finger zoom, drag, fling, etc.,
+ * and then apply the gesture changes to the component. It can be used on any composable component.
+ *
+ * Since it consumes all gestures, [Modifier.clickable] and [Modifier.combinedClickable] will not work.
+ * You can pass [onTap] and [onLongPress] parameters instead.
+ *
+ * If the zoomed content does not fill the container, you can set the size, scaling and alignment of the content through
+ * the contentSize, contentScale, and alignment properties of [ZoomableState]. This will only translate within the content area after scaling.
+ */
 fun Modifier.zoom(
     zoomable: ZoomableState,
     onLongPress: ((Offset) -> Unit)? = null,
@@ -40,6 +55,19 @@ fun Modifier.zoom(
     .zoomable(zoomable, onLongPress = onLongPress, onTap = onTap)
     .zooming(zoomable)
 
+/**
+ * A Modifier that can recognize gestures such as click, long press, double-click, one-finger zoom, two-finger zoom, drag, fling, etc.
+ * It can be used on any composable component.
+ *
+ * It stores the changes caused by the gesture into [ZoomableState].transform. You need to read the transform and then
+ * apply it to the component through graphicsLayer. You can also use the [zooming] Modifier directly.
+ *
+ * Since it consumes all gestures, [Modifier.clickable] and [Modifier.combinedClickable] will not work.
+ * You can pass [onTap] and [onLongPress] parameters instead.
+ *
+ * If the zoomed content does not fill the container, you can set the size, scaling and alignment of the content through
+ * the contentSize, contentScale, and alignment properties of [ZoomableState]. This will only translate within the content area after scaling.
+ */
 fun Modifier.zoomable(
     zoomable: ZoomableState,
     onLongPress: ((Offset) -> Unit)? = null,
@@ -48,6 +76,9 @@ fun Modifier.zoomable(
     .onSizeChanged { zoomable.containerSize = it }
     .then(ZoomableElement(zoomable, onLongPress, onTap))
 
+/**
+ * A Modifier that applies changes in [ZoomableState].transform to the component. It can be used on any composable component.
+ */
 fun Modifier.zooming(
     zoomable: ZoomableState
 ): Modifier = this
@@ -95,7 +126,7 @@ internal class ZoomableNode(
     var zoomable: ZoomableState,
     var onLongPress: ((Offset) -> Unit)? = null,
     var onTap: ((Offset) -> Unit)? = null,
-) : DelegatingNode() {
+) : DelegatingNode(), CompositionLocalConsumerModifierNode {
 
     private var longPressExecuted = false
     private var doubleTapPressPoint: Offset? = null
@@ -228,7 +259,8 @@ internal class ZoomableNode(
                             supportTwoFingerScale && zoomable.rollbackScale(centroid)
                         var flingExecuted = false
                         if (!rollbackScaleExecuted) {
-                            flingExecuted = supportDrag && zoomable.fling(velocity)
+                            val density = currentValueOf(LocalDensity)
+                            flingExecuted = supportDrag && zoomable.fling(velocity, density)
                         }
                         if ((supportTwoFingerScale || supportDrag) && (!rollbackScaleExecuted && !flingExecuted)) {
                             zoomable.continuousTransformType = GestureType.NONE

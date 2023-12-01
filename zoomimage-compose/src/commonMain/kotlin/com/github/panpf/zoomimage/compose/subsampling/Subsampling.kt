@@ -23,9 +23,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.invalidateDraw
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
@@ -38,8 +41,14 @@ import com.github.panpf.zoomimage.subsampling.TileState
 import kotlin.math.round
 import kotlin.math.roundToInt
 
+/**
+ * Whether to turn off anti-aliasing when drawing Tiles
+ */
 expect fun isCloseAntiAliasForDrawTile(): Boolean
 
+/**
+ * A Modifier that draws the Tiles of [SubsamplingState] for the component.
+ */
 fun Modifier.subsampling(
     zoomable: ZoomableState,
     subsampling: SubsamplingState,
@@ -69,7 +78,7 @@ internal data class SubsamplingDrawTilesElement(
 internal class SubsamplingDrawTilesNode(
     var zoomable: ZoomableState,
     var subsampling: SubsamplingState,
-) : Modifier.Node(), DrawModifierNode {
+) : Modifier.Node(), DrawModifierNode, CompositionLocalConsumerModifierNode {
 
     private val tilePaint = Paint().apply {
         isAntiAlias = !isCloseAntiAliasForDrawTile()
@@ -112,7 +121,8 @@ internal class SubsamplingDrawTilesNode(
             }
         }
 
-        boundsPaint.strokeWidth = 0.5f * zoomable.density!!.density
+        val density = currentValueOf(LocalDensity)
+        boundsPaint.strokeWidth = 0.5f * density.density
         foregroundTiles.forEach { tileSnapshot ->
             if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
                 insideLoadCount++

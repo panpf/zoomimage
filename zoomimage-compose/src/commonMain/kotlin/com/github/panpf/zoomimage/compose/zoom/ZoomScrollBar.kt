@@ -25,9 +25,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.invalidateDraw
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntRect
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.rotate
@@ -38,6 +41,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+/**
+ * A scroll bar Modifier that displays the scroll state of [ZoomableState] for the component.
+ * The [scrollBarSpec] parameter configures the size, color, margins and other properties of the scroll bar.
+ */
 fun Modifier.zoomScrollBar(
     zoomable: ZoomableState,
     scrollBarSpec: ScrollBarSpec = ScrollBarSpec.Default
@@ -67,7 +74,7 @@ internal data class ZoomScrollBarElement(
 internal class ZoomScrollBarNode(
     var zoomable: ZoomableState,
     var scrollBarSpec: ScrollBarSpec,
-) : Modifier.Node(), DrawModifierNode {
+) : Modifier.Node(), DrawModifierNode, CompositionLocalConsumerModifierNode {
 
     private val alphaAnimatable = Animatable(1f)
     private var lastContentVisibleRect: IntRect? = null
@@ -104,7 +111,7 @@ internal class ZoomScrollBarNode(
         }
 
         val rotation = zoomable.transform.rotation
-        val density = zoomable.density!!
+        val density = currentValueOf(LocalDensity)
         val scrollBarSize = with(density) { scrollBarSpec.size.toPx() }
         val marginPx = with(density) { scrollBarSpec.margin.toPx() }
         val cornerRadius = CornerRadius(scrollBarSize / 2f, scrollBarSize / 2f)
