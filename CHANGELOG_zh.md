@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.0.0-beta10
 
 * fix: 修复 ZoomImage 无法显示滚动条的 bug
 * fix: 修复 SketchZoomAsyncImage 和 CoilZoomAsyncImage 在遇到没有大小的 Drawable 时会崩溃的 bug
