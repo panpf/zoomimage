@@ -9,7 +9,7 @@
 * fix: 修复 SketchZoomAsyncImage 和 CoilZoomAsyncImage 在 placeholder 和 result 过渡时 placeholder
   会被意外的缩小的 bug
 * improve: composed 迁移到 Modifier.Node
-* depend: 升级 Sketch 3.3.0-beta03
+* depend: 升级 Sketch 3.3.0-beta04
 
 ## 1.0.0-beta09
 
