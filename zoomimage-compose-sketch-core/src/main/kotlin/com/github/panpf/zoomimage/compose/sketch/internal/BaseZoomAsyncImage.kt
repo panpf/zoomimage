@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.mapNotNull
  * 3. contentScale = ContentScale.None
  */
 @Composable
+// todo Adapt Sketch’s new AsyncImage and display progress and status on the demo page
 internal fun BaseZoomAsyncImage(
     request: DisplayRequest,
     contentDescription: String?,

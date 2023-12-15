@@ -64,7 +64,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
@@ -178,6 +177,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
                     override var stopped: Boolean
                         get() = this@SubsamplingState.stopped
                         set(value) {
+                            // todo Delay the execution for a while. When exiting the page, it will always become blurry before exiting. The experience is not very good.
                             this@SubsamplingState.stopped = value
                             coroutineScope.launch {
                                 refreshTilesFlow.emit(if (value) "stopped" else "started")
@@ -265,6 +265,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
 
     @Composable
     internal fun initial() {
+        // todo Create coroutineScope and start listening when onRemember. Cancel coroutineScope when onForgotten
         LaunchedEffect(Unit) {
             snapshotFlow { preferredTileSize }.collect {
                 resetTileManager("preferredTileSizeChanged")
