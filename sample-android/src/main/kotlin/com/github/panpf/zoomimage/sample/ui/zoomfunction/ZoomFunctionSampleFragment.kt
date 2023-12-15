@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
-import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
+import com.github.panpf.zoomimage.sample.ui.base.compose.BaseAppBarComposeFragment
 import com.github.panpf.zoomimage.util.Logger
 
-class ZoomFunctionSampleFragment : AppBarFragment() {
+class ZoomFunctionSampleFragment : BaseAppBarComposeFragment() {
 
     override fun getTitle(): String {
         return "Modifier.zoom()"

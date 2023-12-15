@@ -57,7 +57,7 @@ import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.plus
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
+import com.github.panpf.zoomimage.sample.ui.base.compose.BaseAppBarComposeFragment
 import com.github.panpf.zoomimage.sample.ui.common.compose.AutoSizeText
 import com.github.panpf.zoomimage.sample.ui.util.compose.ScaleFactor
 import com.github.panpf.zoomimage.sample.ui.util.compose.name
@@ -70,7 +70,7 @@ import com.github.panpf.zoomimage.zoom.calculateBaseTransform
 import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import kotlin.math.min
 
-class GraphicsLayerFragment : AppBarFragment() {
+class GraphicsLayerFragment : BaseAppBarComposeFragment() {
 
     override fun getTitle(): String {
         return "graphicsLayer"

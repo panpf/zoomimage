@@ -32,13 +32,13 @@ import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.RefreshRecyclerFragmentBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
 import com.github.panpf.zoomimage.sample.ui.photoalbum.PhotoAlbumViewModel
 import kotlinx.coroutines.launch
 
-class PhotoAlbumViewFragment : ToolbarBindingFragment<RefreshRecyclerFragmentBinding>() {
+class PhotoAlbumViewFragment : BaseToolbarBindingFragment<RefreshRecyclerFragmentBinding>() {
 
     private val photoAlbumViewModel by viewModels<PhotoAlbumViewModel>()
     private val args by navArgs<PhotoAlbumViewFragmentArgs>()

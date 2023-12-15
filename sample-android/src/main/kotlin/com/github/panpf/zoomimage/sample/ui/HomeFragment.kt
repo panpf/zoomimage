@@ -13,14 +13,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.zoomimage.sample.databinding.HomeFragmentBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.LinkItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
 import com.github.panpf.zoomimage.sample.ui.model.Link
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class HomeFragment : ToolbarBindingFragment<HomeFragmentBinding>() {
+class HomeFragment : BaseToolbarBindingFragment<HomeFragmentBinding>() {
 
     private var pendingStartLink: Link? = null
     private val permissionLauncher =

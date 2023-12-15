@@ -36,13 +36,13 @@ import com.github.panpf.sketch.request.DownloadResult
 import com.github.panpf.sketch.sketch
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.sample.databinding.SubsamplingViewFragmentBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import kotlinx.coroutines.launch
 
-class SubsamplingViewFragment : BindingFragment<SubsamplingViewFragmentBinding>() {
+class SubsamplingViewFragment : BaseBindingFragment<SubsamplingViewFragmentBinding>() {
 
     private val args by navArgs<SubsamplingViewFragmentArgs>()
 

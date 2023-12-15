@@ -20,10 +20,10 @@ import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import com.github.panpf.zoomimage.sample.databinding.DropdownMenuItemBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
 class DropdownMenuItemFactory(private val activity: Activity) :
-    MyBindingItemFactory<DropdownMenu, DropdownMenuItemBinding>(DropdownMenu::class) {
+    BaseBindingItemFactory<DropdownMenu, DropdownMenuItemBinding>(DropdownMenu::class) {
 
     override fun initItem(
         context: Context,

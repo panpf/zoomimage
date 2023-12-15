@@ -19,34 +19,38 @@ package com.github.panpf.zoomimage.sample.ui.util.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.BindingActivity
-import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
-import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
-import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
-import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingActivity
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.util.getSuperGenericParam
 
-fun BindingActivity<*>.createViewBinding(
+/*
+ * You need to keep the following 'BaseBinding*' classes unchanged in the 'proguard-rules.pro' configuration
+ */
+
+fun BaseBindingActivity<*>.createViewBinding(
     inflater: LayoutInflater,
     parent: ViewGroup?
 ): ViewBinding = createViewBinding(this::class.java, inflater, parent)
 
-fun BindingDialogFragment<*>.createViewBinding(
+fun BaseBindingDialogFragment<*>.createViewBinding(
     inflater: LayoutInflater,
     parent: ViewGroup?
 ): ViewBinding = createViewBinding(this::class.java, inflater, parent)
 
-fun BindingFragment<*>.createViewBinding(
+fun BaseBindingFragment<*>.createViewBinding(
     inflater: LayoutInflater,
     parent: ViewGroup?
 ): ViewBinding = createViewBinding(this::class.java, inflater, parent)
 
-fun ToolbarBindingFragment<*>.createViewBinding(
+fun BaseToolbarBindingFragment<*>.createViewBinding(
     inflater: LayoutInflater,
     parent: ViewGroup?
 ): ViewBinding = createViewBinding(this::class.java, inflater, parent)
 
-fun MyBindingItemFactory<*, *>.createViewBinding(
+fun BaseBindingItemFactory<*, *>.createViewBinding(
     inflater: LayoutInflater,
     parent: ViewGroup?
 ): ViewBinding = createViewBinding(this::class.java, inflater, parent)

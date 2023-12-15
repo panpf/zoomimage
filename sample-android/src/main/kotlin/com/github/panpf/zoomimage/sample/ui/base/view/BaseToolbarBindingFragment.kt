@@ -32,7 +32,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.util.view.createViewBinding
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class ToolbarBindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
+abstract class BaseToolbarBindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
 
     protected var toolbar: Toolbar? = null
     protected var binding: VIEW_BINDING? = null
@@ -52,8 +52,8 @@ abstract class ToolbarBindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
         val binding = createViewBinding(inflater, contentContainer) as VIEW_BINDING
         contentContainer.addView(binding.root)
 
-        this@ToolbarBindingFragment.toolbar = toolbar
-        this@ToolbarBindingFragment.binding = binding
+        this@BaseToolbarBindingFragment.toolbar = toolbar
+        this@BaseToolbarBindingFragment.binding = binding
     }
 
     @Suppress("DEPRECATION")

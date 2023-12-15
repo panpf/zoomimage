@@ -27,7 +27,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.zoomimage.sample.ui.util.view.createViewBinding
 
-abstract class BindingActivity<VIEW_BINDING : ViewBinding> : AppCompatActivity() {
+abstract class BaseBindingActivity<VIEW_BINDING : ViewBinding> : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

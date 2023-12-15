@@ -27,7 +27,7 @@ import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.RecyclerFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
-import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenuItemFactory
@@ -44,7 +44,7 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.name
 
-class ZoomImageViewOptionsDialogFragment : BindingDialogFragment<RecyclerFragmentBinding>() {
+class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<RecyclerFragmentBinding>() {
 
     private val args by navArgs<ZoomImageViewOptionsDialogFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }

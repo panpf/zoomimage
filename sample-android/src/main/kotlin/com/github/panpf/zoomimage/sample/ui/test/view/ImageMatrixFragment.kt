@@ -14,7 +14,7 @@ import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.databinding.ImageMatrixFragmentBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.ui.util.view.getRotation
 import com.github.panpf.zoomimage.sample.ui.util.view.getScale
@@ -33,7 +33,7 @@ import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.zoom.calculateBaseTransform
 import kotlin.math.min
 
-class ImageMatrixFragment : ToolbarBindingFragment<ImageMatrixFragmentBinding>() {
+class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBinding>() {
 
     //    private val matrix = Matrix()
     private val scaleStep = 0.2f

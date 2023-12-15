@@ -21,14 +21,15 @@ import androidx.navigation.fragment.navArgs
 import com.github.panpf.tools4j.io.ktx.formatCompactFileSize
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewInfoDialogBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.toShortString
 import kotlin.math.roundToInt
 
-class ZoomImageViewInfoDialogFragment : BindingDialogFragment<ZoomImageViewInfoDialogBinding>() {
+class ZoomImageViewInfoDialogFragment :
+    BaseBindingDialogFragment<ZoomImageViewInfoDialogBinding>() {
 
     private val args by navArgs<ZoomImageViewInfoDialogFragmentArgs>()
 

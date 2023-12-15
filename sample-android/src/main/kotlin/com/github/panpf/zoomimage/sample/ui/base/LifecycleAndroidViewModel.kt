@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.sample.ui.base.view
+package com.github.panpf.zoomimage.sample.ui.base
 
 import android.annotation.SuppressLint
 import android.app.Application

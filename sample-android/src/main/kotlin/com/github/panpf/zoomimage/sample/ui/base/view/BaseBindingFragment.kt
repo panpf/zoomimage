@@ -25,7 +25,7 @@ import androidx.viewbinding.ViewBinding
 import com.github.panpf.zoomimage.sample.ui.util.view.createViewBinding
 import com.github.panpf.zoomimage.sample.ui.util.view.getWindowBackground
 
-abstract class BindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
+abstract class BaseBindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
 
     private var binding: VIEW_BINDING? = null
 
@@ -35,7 +35,7 @@ abstract class BindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = (createViewBinding(inflater, container) as VIEW_BINDING).apply {
-        this@BindingFragment.binding = this
+        this@BaseBindingFragment.binding = this
         if (root.background == null) {
             root.setBackgroundColor(inflater.context.getWindowBackground())
         }

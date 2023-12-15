@@ -41,7 +41,7 @@ import com.github.panpf.tools4a.dimen.ktx.px2dp
 import com.github.panpf.tools4a.display.ktx.getStatusBarHeight
 import com.github.panpf.zoomimage.sample.ui.base.compose.theme.MyTheme
 
-abstract class ComposeFragment : Fragment() {
+abstract class BaseComposeFragment : Fragment() {
 
     final override fun onCreateView(
         inflater: LayoutInflater,

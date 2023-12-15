@@ -18,10 +18,10 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
 import android.content.Context
 import com.github.panpf.zoomimage.sample.databinding.MenuDividerItemBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
 class MenuDividerItemFactory :
-    MyBindingItemFactory<MenuDivider, MenuDividerItemBinding>(MenuDivider::class) {
+    BaseBindingItemFactory<MenuDivider, MenuDividerItemBinding>(MenuDivider::class) {
 
     override fun initItem(
         context: Context,

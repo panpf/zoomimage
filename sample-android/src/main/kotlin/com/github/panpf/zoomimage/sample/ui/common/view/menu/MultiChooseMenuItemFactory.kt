@@ -20,10 +20,10 @@ import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import com.github.panpf.zoomimage.sample.databinding.MultiChooseMenuItemBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
 class MultiChooseMenuItemFactory(private val activity: Activity) :
-    MyBindingItemFactory<MultiChooseMenu, MultiChooseMenuItemBinding>(MultiChooseMenu::class) {
+    BaseBindingItemFactory<MultiChooseMenu, MultiChooseMenuItemBinding>(MultiChooseMenu::class) {
 
     override fun initItem(
         context: Context,

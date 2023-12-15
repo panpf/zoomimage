@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.util.view.createViewBinding
 import kotlin.math.roundToInt
 
-abstract class BindingDialogFragment<VIEW_BINDING : ViewBinding> : DialogFragment() {
+abstract class BaseBindingDialogFragment<VIEW_BINDING : ViewBinding> : DialogFragment() {
 
     private var binding: VIEW_BINDING? = null
     private var dialogWidthRatio: Float = 0.8f
@@ -47,7 +47,7 @@ abstract class BindingDialogFragment<VIEW_BINDING : ViewBinding> : DialogFragmen
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = (createViewBinding(inflater, container) as VIEW_BINDING).apply {
-        this@BindingDialogFragment.binding = this
+        this@BaseBindingDialogFragment.binding = this
     }.root
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

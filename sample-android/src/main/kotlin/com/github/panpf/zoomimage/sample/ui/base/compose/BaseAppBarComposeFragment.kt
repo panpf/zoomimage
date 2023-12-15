@@ -49,7 +49,7 @@ import com.github.panpf.tools4a.display.ktx.getStatusBarHeight
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.base.compose.theme.MyTheme
 
-abstract class AppBarFragment : Fragment() {
+abstract class BaseAppBarComposeFragment : Fragment() {
 
     final override fun onCreateView(
         inflater: LayoutInflater,

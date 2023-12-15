@@ -30,12 +30,12 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R.color
 import com.github.panpf.zoomimage.sample.R.dimen
-import com.github.panpf.zoomimage.sample.ui.base.compose.AppBarFragment
+import com.github.panpf.zoomimage.sample.ui.base.compose.BaseAppBarComposeFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
 import com.github.panpf.zoomimage.sample.ui.photoalbum.PhotoAlbumViewModel
 
-class PhotoAlbumComposeFragment : AppBarFragment() {
+class PhotoAlbumComposeFragment : BaseAppBarComposeFragment() {
 
     private val photoAlbumViewModel by viewModels<PhotoAlbumViewModel>()
     private val args by navArgs<PhotoAlbumComposeFragmentArgs>()

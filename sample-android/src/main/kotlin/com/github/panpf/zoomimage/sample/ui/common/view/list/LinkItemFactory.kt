@@ -18,10 +18,10 @@ package com.github.panpf.zoomimage.sample.ui.common.view.list
 
 import android.content.Context
 import com.github.panpf.zoomimage.sample.databinding.LinkItemBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.model.Link
 
-class LinkItemFactory : MyBindingItemFactory<Link, LinkItemBinding>(Link::class) {
+class LinkItemFactory : BaseBindingItemFactory<Link, LinkItemBinding>(Link::class) {
 
     override fun initItem(
         context: Context,

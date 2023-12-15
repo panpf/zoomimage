@@ -29,16 +29,16 @@
 # App
 
 # ################### for createViewBinding - start ###################
--keep class com.github.panpf.zoomimage.sample.ui.base.view.BindingActivity
--keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.BindingActivity
--keep class com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
--keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.BindingDialogFragment
--keep class com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
--keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
--keep class com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
--keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
--keep class com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
--keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
+-keep class com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingActivity
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingActivity
+-keep class com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
+-keep class com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
+-keep class com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
+-keep class com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
+-keep class * extends com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 -keep class * implements androidx.viewbinding.ViewBinding{
     public *;
 }

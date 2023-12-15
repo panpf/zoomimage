@@ -33,11 +33,11 @@ package com.github.panpf.zoomimage.sample.ui.common.view.list
 
 import android.content.Context
 import com.github.panpf.zoomimage.sample.databinding.ListSeparatorItemBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.model.ListSeparator
 
 class ListSeparatorItemFactory :
-    MyBindingItemFactory<ListSeparator, ListSeparatorItemBinding>(ListSeparator::class) {
+    BaseBindingItemFactory<ListSeparator, ListSeparatorItemBinding>(ListSeparator::class) {
 
     override fun initItem(
         context: Context,

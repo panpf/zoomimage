@@ -29,7 +29,7 @@ import com.github.panpf.sketch.displayImage
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
-import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
@@ -38,7 +38,7 @@ import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class PhotoViewFragment : BindingFragment<PhotoViewFragmentBinding>() {
+class PhotoViewFragment : BaseBindingFragment<PhotoViewFragmentBinding>() {
 
     private val args by navArgs<PhotoViewFragmentArgs>()
 

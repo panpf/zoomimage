@@ -24,7 +24,7 @@ import com.github.panpf.assemblyadapter.BindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.util.view.createViewBinding
 import kotlin.reflect.KClass
 
-abstract class MyBindingItemFactory<DATA : Any, VIEW_BINDING : ViewBinding>(dataClass: KClass<DATA>) :
+abstract class BaseBindingItemFactory<DATA : Any, VIEW_BINDING : ViewBinding>(dataClass: KClass<DATA>) :
     BindingItemFactory<DATA, VIEW_BINDING>(dataClass) {
 
     @Suppress("UNCHECKED_CAST")

@@ -39,7 +39,7 @@ fun Class<*>.getSuperGenericParam(index: Int): Class<*> {
         }
     }
     return target
-        ?: throw IllegalArgumentException("The parent class of '$this' must have a generic parameter")
+        ?: throw IllegalArgumentException("'$this' or its parent classes  must have a generic parameter")
 }
 
 /**
@@ -64,5 +64,5 @@ fun Class<*>.getSuperGenericParam(expectedSuperClass: Class<*>): Class<*> {
         }
     }
     return target
-        ?: throw IllegalArgumentException("The parent class of '$this' must have a generic parameter implemented from '${expectedSuperClass}'")
+        ?: throw IllegalArgumentException("'$this' or its parent classes must have a generic parameter implemented from '${expectedSuperClass}'")
 }

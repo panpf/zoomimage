@@ -26,13 +26,13 @@ import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.PhotoSlideshowFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
-import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 
-class PhotoSlideshowViewFragment : ToolbarBindingFragment<PhotoSlideshowFragmentBinding>() {
+class PhotoSlideshowViewFragment : BaseToolbarBindingFragment<PhotoSlideshowFragmentBinding>() {
 
     private val args by navArgs<PhotoSlideshowViewFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }

@@ -18,10 +18,10 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
 import android.content.Context
 import com.github.panpf.zoomimage.sample.databinding.SwitchMenuItemBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
 class SwitchMenuItemFactory :
-    MyBindingItemFactory<SwitchMenu, SwitchMenuItemBinding>(SwitchMenu::class) {
+    BaseBindingItemFactory<SwitchMenu, SwitchMenuItemBinding>(SwitchMenu::class) {
 
     override fun initItem(
         context: Context,

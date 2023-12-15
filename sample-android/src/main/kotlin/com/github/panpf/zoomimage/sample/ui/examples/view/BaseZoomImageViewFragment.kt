@@ -28,7 +28,7 @@ import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
 import com.github.panpf.zoomimage.sample.settingsService
-import com.github.panpf.zoomimage.sample.ui.base.view.BindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
@@ -50,7 +50,7 @@ import kotlin.math.roundToInt
 import com.github.panpf.zoomimage.sample.common.R as CommonR
 
 abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
-    BindingFragment<VIEW_BINDING>() {
+    BaseBindingFragment<VIEW_BINDING>() {
 
     abstract val sketchImageUri: String
 

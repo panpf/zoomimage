@@ -28,11 +28,11 @@ import com.github.panpf.tools4a.display.ktx.getScreenWidth
 import com.github.panpf.tools4k.lang.asOrNull
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.PhotoItemBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.MyBindingItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
 
 abstract class BasePhotoGridItemFactory :
-    MyBindingItemFactory<Photo, PhotoItemBinding>(Photo::class) {
+    BaseBindingItemFactory<Photo, PhotoItemBinding>(Photo::class) {
 
     private var itemSize: Int? = null
 

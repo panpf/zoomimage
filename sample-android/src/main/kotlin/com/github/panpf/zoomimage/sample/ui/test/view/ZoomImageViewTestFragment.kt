@@ -5,9 +5,9 @@ import androidx.appcompat.widget.Toolbar
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.zoomimage.sample.SampleImages
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewTestFragmentBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 
-class ZoomImageViewTestFragment : ToolbarBindingFragment<ZoomImageViewTestFragmentBinding>() {
+class ZoomImageViewTestFragment : BaseToolbarBindingFragment<ZoomImageViewTestFragmentBinding>() {
 
     override fun onViewCreated(
         toolbar: Toolbar,

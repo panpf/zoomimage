@@ -12,7 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.TabPagerFragmentBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.ToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
@@ -20,7 +20,7 @@ import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 
-class ViewExifOrientationTestFragment : ToolbarBindingFragment<TabPagerFragmentBinding>() {
+class ViewExifOrientationTestFragment : BaseToolbarBindingFragment<TabPagerFragmentBinding>() {
 
     private val exifOrientationTestContentViewModel by viewModels<ExifOrientationTestContentViewModel>()
 
