@@ -24,21 +24,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-
-        // Enable Compose Compiler Report
-        freeCompilerArgs = freeCompilerArgs.plus(
-            arrayOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + project.buildDir.absolutePath + "/compose_metrics"
-            )
-        )
-        // Enable Compose Compiler Metrics
-        freeCompilerArgs = freeCompilerArgs.plus(
-            arrayOf(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + project.buildDir.absolutePath + "/compose_metrics"
-            )
-        )
     }
 }
 
