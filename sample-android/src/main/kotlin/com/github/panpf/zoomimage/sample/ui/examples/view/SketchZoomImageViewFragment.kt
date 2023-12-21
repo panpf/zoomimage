@@ -23,6 +23,7 @@ import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.stateimage.ThumbnailMemoryCacheStateImage
+import com.github.panpf.sketch.viewability.showSectorProgressIndicator
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.SketchZoomImageViewFragmentBinding
 import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
@@ -55,6 +56,8 @@ class SketchZoomImageViewFragment :
         settingsService.ignoreExifOrientation.sharedFlow.collectWithLifecycle(viewLifecycleOwner) {
             loadData(binding, binding.common, sketchImageUri)
         }
+
+        binding.sketchZoomImageViewImage.showSectorProgressIndicator()
     }
 
     override fun loadImage(
@@ -67,6 +70,7 @@ class SketchZoomImageViewFragment :
             placeholder(ThumbnailMemoryCacheStateImage())
             crossfade(fadeStart = false)
             ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
+            // todo use requestState
             listener(
                 onStart = { onCallStart() },
                 onSuccess = { _, _ -> onCallSuccess() },

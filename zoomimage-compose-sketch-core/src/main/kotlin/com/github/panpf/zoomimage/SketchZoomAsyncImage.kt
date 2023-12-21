@@ -31,18 +31,22 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.compose.AsyncImagePainter
-import com.github.panpf.sketch.compose.AsyncImagePainter.State
+import com.github.panpf.sketch.compose.AsyncImageState
+import com.github.panpf.sketch.compose.PainterState
+import com.github.panpf.sketch.compose.internal.AsyncImageContent
+import com.github.panpf.sketch.compose.internal.onPainterStateOf
+import com.github.panpf.sketch.compose.internal.transformOf
+import com.github.panpf.sketch.compose.rememberAsyncImagePainter
+import com.github.panpf.sketch.compose.rememberAsyncImageState
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.sketch.internal.BaseZoomAsyncImage
-import com.github.panpf.zoomimage.compose.sketch.internal.onStateOf
-import com.github.panpf.zoomimage.compose.sketch.internal.transformOf
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -100,12 +104,13 @@ fun SketchZoomAsyncImage(
     contentDescription: String?,
     sketch: Sketch,
     modifier: Modifier = Modifier,
+    imageState: AsyncImageState = rememberAsyncImageState(),
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
-    onLoading: ((State.Loading) -> Unit)? = null,
-    onSuccess: ((State.Success) -> Unit)? = null,
-    onError: ((State.Error) -> Unit)? = null,
+    onLoading: ((PainterState.Loading) -> Unit)? = null,
+    onSuccess: ((PainterState.Success) -> Unit)? = null,
+    onError: ((PainterState.Error) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -120,8 +125,9 @@ fun SketchZoomAsyncImage(
     contentDescription = contentDescription,
     sketch = sketch,
     modifier = modifier,
+    imageState = imageState,
     transform = transformOf(placeholder, error, uriEmpty),
-    onState = onStateOf(onLoading, onSuccess, onError),
+    onPainterState = onPainterStateOf(onLoading, onSuccess, onError),
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,
@@ -183,12 +189,13 @@ fun SketchZoomAsyncImage(
     contentDescription: String?,
     sketch: Sketch,
     modifier: Modifier = Modifier,
+    imageState: AsyncImageState = rememberAsyncImageState(),
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
-    onLoading: ((State.Loading) -> Unit)? = null,
-    onSuccess: ((State.Success) -> Unit)? = null,
-    onError: ((State.Error) -> Unit)? = null,
+    onLoading: ((PainterState.Loading) -> Unit)? = null,
+    onSuccess: ((PainterState.Success) -> Unit)? = null,
+    onError: ((PainterState.Error) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -203,8 +210,9 @@ fun SketchZoomAsyncImage(
     contentDescription = contentDescription,
     sketch = sketch,
     modifier = modifier,
+    imageState = imageState,
     transform = transformOf(placeholder, error, uriEmpty),
-    onState = onStateOf(onLoading, onSuccess, onError),
+    onPainterState = onPainterStateOf(onLoading, onSuccess, onError),
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,
@@ -235,9 +243,9 @@ fun SketchZoomAsyncImage(
  *  represents. This should always be provided unless this image is used for decorative purposes,
  *  and does not represent a meaningful action that a user can take.
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param transform A callback to transform a new [State] before it's applied to the
+ * @param transform A callback to transform a new [PainterState] before it's applied to the
  *  [AsyncImagePainter]. Typically this is used to modify the state's [Painter].
- * @param onState Called when the state of this painter changes.
+ * @param onPainterState Called when the state of this painter changes.
  * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
  *  bounds defined by the width and height.
  * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
@@ -260,8 +268,9 @@ fun SketchZoomAsyncImage(
     contentDescription: String?,
     sketch: Sketch,
     modifier: Modifier = Modifier,
-    transform: (State) -> State = AsyncImagePainter.DefaultTransform,
-    onState: ((State) -> Unit)? = null,
+    imageState: AsyncImageState = rememberAsyncImageState(),
+    transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
+    onPainterState: ((PainterState) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -276,8 +285,9 @@ fun SketchZoomAsyncImage(
     contentDescription = contentDescription,
     sketch = sketch,
     modifier = modifier,
+    imageState = imageState,
     transform = transform,
-    onState = onState,
+    onPainterState = onPainterState,
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,
@@ -288,7 +298,6 @@ fun SketchZoomAsyncImage(
     onLongPress = onLongPress,
     onTap = onTap,
 )
-
 
 /**
  * An image component that integrates the Sketch image loading framework that zoom and subsampling huge images
@@ -312,9 +321,9 @@ fun SketchZoomAsyncImage(
  *  represents. This should always be provided unless this image is used for decorative purposes,
  *  and does not represent a meaningful action that a user can take.
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param transform A callback to transform a new [State] before it's applied to the
+ * @param transform A callback to transform a new [PainterState] before it's applied to the
  *  [AsyncImagePainter]. Typically this is used to modify the state's [Painter].
- * @param onState Called when the state of this painter changes.
+ * @param onPainterState Called when the state of this painter changes.
  * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
  *  bounds defined by the width and height.
  * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
@@ -336,8 +345,9 @@ fun SketchZoomAsyncImage(
     contentDescription: String?,
     sketch: Sketch,
     modifier: Modifier = Modifier,
-    transform: (State) -> State = AsyncImagePainter.DefaultTransform,
-    onState: ((State) -> Unit)? = null,
+    imageState: AsyncImageState = rememberAsyncImageState(),
+    transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
+    onPainterState: ((PainterState) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -361,10 +371,11 @@ fun SketchZoomAsyncImage(
         request = request,
         contentDescription = contentDescription,
         sketch = sketch,
+        state = imageState,
         transform = transform,
-        onState = { loadState ->
-            onState(context, sketch, state, request, loadState)
-            onState?.invoke(loadState)
+        onPainterState = { loadState ->
+            onPainterState(context, sketch, state, request, loadState)
+            onPainterState?.invoke(loadState)
         },
         contentScale = contentScale,
         alpha = alpha,
@@ -377,14 +388,14 @@ fun SketchZoomAsyncImage(
     )
 }
 
-private fun onState(
+private fun onPainterState(
     context: Context,
     sketch: Sketch,
     state: ZoomState,
     request: DisplayRequest,
-    loadState: State,
+    loadState: PainterState,
 ) {
-    state.zoomable.logger.d { "SketchZoomAsyncImage. onState. state=${loadState.name}. uri='${request.uriString}'" }
+    state.zoomable.logger.d { "SketchZoomAsyncImage. onPainterState. state=${loadState.name}. uri='${request.uriString}'" }
     val zoomableState = state.zoomable
     val subsamplingState = state.subsampling
     val painterSize = loadState.painter
@@ -395,7 +406,7 @@ private fun onState(
     zoomableState.contentSize = painterSize ?: IntSize.Zero
 
     when (loadState) {
-        is State.Success -> {
+        is PainterState.Success -> {
             subsamplingState.ignoreExifOrientation = request.ignoreExifOrientation
             subsamplingState.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
@@ -410,12 +421,12 @@ private fun onState(
     }
 }
 
-private val State.name: String
+private val PainterState.name: String
     get() = when (this) {
-        is State.Loading -> "Loading"
-        is State.Success -> "Success"
-        is State.Error -> "Error"
-        is State.Empty -> "Empty"
+        is PainterState.Loading -> "Loading"
+        is PainterState.Success -> "Success"
+        is PainterState.Error -> "Error"
+        is PainterState.Empty -> "Empty"
     }
 
 private fun Size.roundToIntSize(): IntSize {
@@ -423,3 +434,42 @@ private fun Size.roundToIntSize(): IntSize {
 }
 
 private fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0
+
+/**
+ * 1. Disabled clipToBounds
+ * 2. alignment = Alignment.TopStart
+ * 3. contentScale = ContentScale.None
+ */
+@Composable
+private fun BaseZoomAsyncImage(
+    request: DisplayRequest,
+    contentDescription: String?,
+    sketch: Sketch,
+    modifier: Modifier = Modifier,
+    state: AsyncImageState = rememberAsyncImageState(),
+    transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
+    onPainterState: ((PainterState) -> Unit)? = null,
+    contentScale: ContentScale = ContentScale.Fit,
+    alpha: Float = DefaultAlpha,
+    colorFilter: ColorFilter? = null,
+    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+) {
+    val painter = rememberAsyncImagePainter(
+        request, sketch, state, transform, onPainterState, contentScale, filterQuality
+    )
+    AsyncImageContent(
+        modifier = modifier.onSizeChanged { size ->
+            // Ensure images are prepared before content is drawn when in-memory cache exists
+            state.setSize(size)
+        },
+        painter = painter,
+        contentDescription = contentDescription,
+        alignment = Alignment.TopStart,
+        contentScale = ContentScale.None,
+        alpha = alpha,
+        colorFilter = colorFilter,
+        clipToBounds = false,
+    )
+}
+
+// todo Run compiler report

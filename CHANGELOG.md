@@ -2,6 +2,10 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+* depend: Upgrade sketch 3.3.-beta05
+
 ## 1.0.0-beta10
 
 * fix: Fixed a bug where ZoomImage could not display scrollbars

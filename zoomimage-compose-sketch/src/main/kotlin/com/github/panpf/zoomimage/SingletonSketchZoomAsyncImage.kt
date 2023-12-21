@@ -29,7 +29,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.github.panpf.sketch.compose.AsyncImagePainter
-import com.github.panpf.sketch.compose.AsyncImagePainter.State
+import com.github.panpf.sketch.compose.AsyncImageState
+import com.github.panpf.sketch.compose.PainterState
+import com.github.panpf.sketch.compose.rememberAsyncImageState
 import com.github.panpf.sketch.request.DisplayRequest
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.compose.ZoomState
@@ -82,12 +84,13 @@ fun SketchZoomAsyncImage(
     imageUri: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    imageState: AsyncImageState = rememberAsyncImageState(),
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
-    onLoading: ((State.Loading) -> Unit)? = null,
-    onSuccess: ((State.Success) -> Unit)? = null,
-    onError: ((State.Error) -> Unit)? = null,
+    onLoading: ((PainterState.Loading) -> Unit)? = null,
+    onSuccess: ((PainterState.Success) -> Unit)? = null,
+    onError: ((PainterState.Error) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -97,30 +100,28 @@ fun SketchZoomAsyncImage(
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) {
-    val sketch = LocalContext.current.sketch
-    SketchZoomAsyncImage(
-        imageUri = imageUri,
-        contentDescription = contentDescription,
-        sketch = sketch,
-        modifier = modifier,
-        placeholder = placeholder,
-        error = error,
-        uriEmpty = uriEmpty,
-        onLoading = onLoading,
-        onSuccess = onSuccess,
-        onError = onError,
-        alignment = alignment,
-        contentScale = contentScale,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        filterQuality = filterQuality,
-        state = state,
-        scrollBar = scrollBar,
-        onLongPress = onLongPress,
-        onTap = onTap,
-    )
-}
+) = SketchZoomAsyncImage(
+    imageUri = imageUri,
+    contentDescription = contentDescription,
+    sketch = LocalContext.current.sketch,
+    modifier = modifier,
+    imageState = imageState,
+    placeholder = placeholder,
+    error = error,
+    uriEmpty = uriEmpty,
+    onLoading = onLoading,
+    onSuccess = onSuccess,
+    onError = onError,
+    alignment = alignment,
+    contentScale = contentScale,
+    alpha = alpha,
+    colorFilter = colorFilter,
+    filterQuality = filterQuality,
+    state = state,
+    scrollBar = scrollBar,
+    onLongPress = onLongPress,
+    onTap = onTap,
+)
 
 /**
  * An image component that integrates the Sketch image loading framework that zoom and subsampling huge images
@@ -170,12 +171,13 @@ fun SketchZoomAsyncImage(
     request: DisplayRequest,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    imageState: AsyncImageState = rememberAsyncImageState(),
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
-    onLoading: ((State.Loading) -> Unit)? = null,
-    onSuccess: ((State.Success) -> Unit)? = null,
-    onError: ((State.Error) -> Unit)? = null,
+    onLoading: ((PainterState.Loading) -> Unit)? = null,
+    onSuccess: ((PainterState.Success) -> Unit)? = null,
+    onError: ((PainterState.Error) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -185,30 +187,28 @@ fun SketchZoomAsyncImage(
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) {
-    val sketch = LocalContext.current.sketch
-    SketchZoomAsyncImage(
-        request = request,
-        contentDescription = contentDescription,
-        sketch = sketch,
-        modifier = modifier,
-        placeholder = placeholder,
-        error = error,
-        uriEmpty = uriEmpty,
-        onLoading = onLoading,
-        onSuccess = onSuccess,
-        onError = onError,
-        alignment = alignment,
-        contentScale = contentScale,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        filterQuality = filterQuality,
-        state = state,
-        scrollBar = scrollBar,
-        onLongPress = onLongPress,
-        onTap = onTap,
-    )
-}
+) = SketchZoomAsyncImage(
+    request = request,
+    contentDescription = contentDescription,
+    sketch = LocalContext.current.sketch,
+    modifier = modifier,
+    imageState = imageState,
+    placeholder = placeholder,
+    error = error,
+    uriEmpty = uriEmpty,
+    onLoading = onLoading,
+    onSuccess = onSuccess,
+    onError = onError,
+    alignment = alignment,
+    contentScale = contentScale,
+    alpha = alpha,
+    colorFilter = colorFilter,
+    filterQuality = filterQuality,
+    state = state,
+    scrollBar = scrollBar,
+    onLongPress = onLongPress,
+    onTap = onTap,
+)
 
 /**
  * An image component that integrates the Sketch image loading framework that zoom and subsampling huge images
@@ -228,9 +228,9 @@ fun SketchZoomAsyncImage(
  *  represents. This should always be provided unless this image is used for decorative purposes,
  *  and does not represent a meaningful action that a user can take.
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param transform A callback to transform a new [State] before it's applied to the
+ * @param transform A callback to transform a new [PainterState] before it's applied to the
  *  [AsyncImagePainter]. Typically this is used to modify the state's [Painter].
- * @param onState Called when the state of this painter changes.
+ * @param onPainterState Called when the painterState changes.
  * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
  *  bounds defined by the width and height.
  * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
@@ -252,8 +252,9 @@ fun SketchZoomAsyncImage(
     imageUri: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    transform: (State) -> State = AsyncImagePainter.DefaultTransform,
-    onState: ((State) -> Unit)? = null,
+    imageState: AsyncImageState = rememberAsyncImageState(),
+    transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
+    onPainterState: ((PainterState) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -263,26 +264,24 @@ fun SketchZoomAsyncImage(
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) {
-    val sketch = LocalContext.current.sketch
-    SketchZoomAsyncImage(
-        imageUri = imageUri,
-        contentDescription = contentDescription,
-        sketch = sketch,
-        modifier = modifier,
-        transform = transform,
-        onState = onState,
-        alignment = alignment,
-        contentScale = contentScale,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        filterQuality = filterQuality,
-        state = state,
-        scrollBar = scrollBar,
-        onLongPress = onLongPress,
-        onTap = onTap,
-    )
-}
+) = SketchZoomAsyncImage(
+    imageUri = imageUri,
+    contentDescription = contentDescription,
+    sketch = LocalContext.current.sketch,
+    modifier = modifier,
+    imageState = imageState,
+    transform = transform,
+    onPainterState = onPainterState,
+    alignment = alignment,
+    contentScale = contentScale,
+    alpha = alpha,
+    colorFilter = colorFilter,
+    filterQuality = filterQuality,
+    state = state,
+    scrollBar = scrollBar,
+    onLongPress = onLongPress,
+    onTap = onTap,
+)
 
 
 /**
@@ -306,9 +305,9 @@ fun SketchZoomAsyncImage(
  *  represents. This should always be provided unless this image is used for decorative purposes,
  *  and does not represent a meaningful action that a user can take.
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param transform A callback to transform a new [State] before it's applied to the
+ * @param transform A callback to transform a new [PainterState] before it's applied to the
  *  [AsyncImagePainter]. Typically this is used to modify the state's [Painter].
- * @param onState Called when the state of this painter changes.
+ * @param onPainterState Called when the painterState changes.
  * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
  *  bounds defined by the width and height.
  * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
@@ -330,8 +329,9 @@ fun SketchZoomAsyncImage(
     request: DisplayRequest,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    transform: (State) -> State = AsyncImagePainter.DefaultTransform,
-    onState: ((State) -> Unit)? = null,
+    imageState: AsyncImageState = rememberAsyncImageState(),
+    transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
+    onPainterState: ((PainterState) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -341,23 +341,21 @@ fun SketchZoomAsyncImage(
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
-) {
-    val sketch = LocalContext.current.sketch
-    SketchZoomAsyncImage(
-        request = request,
-        contentDescription = contentDescription,
-        sketch = sketch,
-        modifier = modifier,
-        transform = transform,
-        onState = onState,
-        alignment = alignment,
-        contentScale = contentScale,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        filterQuality = filterQuality,
-        state = state,
-        scrollBar = scrollBar,
-        onLongPress = onLongPress,
-        onTap = onTap,
-    )
-}
+) = SketchZoomAsyncImage(
+    request = request,
+    contentDescription = contentDescription,
+    sketch = LocalContext.current.sketch,
+    modifier = modifier,
+    imageState = imageState,
+    transform = transform,
+    onPainterState = onPainterState,
+    alignment = alignment,
+    contentScale = contentScale,
+    alpha = alpha,
+    colorFilter = colorFilter,
+    filterQuality = filterQuality,
+    state = state,
+    scrollBar = scrollBar,
+    onLongPress = onLongPress,
+    onTap = onTap,
+)
