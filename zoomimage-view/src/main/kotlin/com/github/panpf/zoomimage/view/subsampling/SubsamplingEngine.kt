@@ -148,8 +148,10 @@ class SubsamplingEngine constructor(
                     override var stopped: Boolean
                         get() = this@SubsamplingEngine.stoppedState.value
                         set(value) {
-                            // TODO Delay the execution for a while. When exiting the page, it will always become blurry before exiting. The experience is not very good.
                             this@SubsamplingEngine.stoppedState.value = value
+                            if (value) {
+                                tileManager?.clean("stopped")
+                            }
                             coroutineScope.launch {
                                 refreshTilesFlow.emit(if (value) "stopped" else "started")
                             }
@@ -383,7 +385,6 @@ class SubsamplingEngine constructor(
         val tileManager = tileManager ?: return
         if (stoppedState.value) {
             logger.d { "refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
-            tileManager.clean("refreshTiles:stopped")
             return
         }
         tileManager.refreshTiles(

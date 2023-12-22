@@ -17,16 +17,44 @@
 package com.github.panpf.zoomimage.compose.internal
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SnapshotMutationPolicy
+import androidx.compose.runtime.snapshots.SnapshotMutableState
 
 internal fun <T> MutableState<T>.convert(convertor: (T) -> T): MutableState<T> {
-    return ConvertorMutableState(this, convertor)
+    return if (this is SnapshotMutableState) {
+        ConvertorSnapshotMutableState(this, convertor)
+    } else {
+        ConvertorMutableState(this, convertor)
+    }
 }
 
-// TODO If state is SnapshotMutableState, it must also be here, otherwise the snapshot function may be lost.
 internal class ConvertorMutableState<T>(
     private val state: MutableState<T>,
     private val convertor: (T) -> T
 ) : MutableState<T> {
+
+    override var value: T
+        get() = convertor(state.value)
+        set(value) {
+            state.value = value
+        }
+
+    override fun component1(): T {
+        return state.component1()
+    }
+
+    override fun component2(): (T) -> Unit {
+        return state.component2()
+    }
+}
+
+internal class ConvertorSnapshotMutableState<T>(
+    private val state: SnapshotMutableState<T>,
+    private val convertor: (T) -> T
+) : SnapshotMutableState<T> {
+
+    override val policy: SnapshotMutationPolicy<T>
+        get() = state.policy
 
     override var value: T
         get() = convertor(state.value)
