@@ -12,6 +12,7 @@ other:
 
 * depend: Upgrade sketch 3.3.-beta05
 * change: Rename `zoomimage-compose-coil-base` module to `zoomimage-compose-coil-core
+* improve: GlideZoomAsyncImage and GlideZoomImageView now support GlideUrl
 
 ## 1.0.0-beta10
 

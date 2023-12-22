@@ -27,16 +27,18 @@ import java.io.InputStream
 
 class GlideHttpImageSource(
     private val glide: Glide,
-    private val imageUri: String,
+    private val glideUrl: GlideUrl
 ) : ImageSource {
 
-    override val key: String = imageUri
+    constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
+
+    override val key: String = glideUrl.cacheKey
 
     @WorkerThread
     override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
         val diskCache =
             getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
-        val file = diskCache.get(GlideUrl(imageUri))
+        val file = diskCache.get(glideUrl)
             ?: throw FileNotFoundException("Cache file is null")
         FileInputStream(file)
     }
@@ -46,17 +48,17 @@ class GlideHttpImageSource(
         if (javaClass != other?.javaClass) return false
         other as GlideHttpImageSource
         if (glide != other.glide) return false
-        if (imageUri != other.imageUri) return false
+        if (glideUrl != other.glideUrl) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = glide.hashCode()
-        result = 31 * result + imageUri.hashCode()
+        result = 31 * result + glideUrl.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "GlideHttpImageSource('$imageUri')"
+        return "GlideHttpImageSource('$glideUrl')"
     }
 }

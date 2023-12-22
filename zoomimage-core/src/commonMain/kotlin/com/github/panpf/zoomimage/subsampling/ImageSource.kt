@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.subsampling
 
 import androidx.annotation.WorkerThread
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -47,6 +48,40 @@ interface ImageSource {
         fun fromFile(file: File): FileImageSource {
             return FileImageSource(file)
         }
+
+        /**
+         * Create an image source from a ByteArray.
+         */
+        fun fromByteArray(byteArray: ByteArray): ByteArrayImageSource {
+            return ByteArrayImageSource(byteArray)
+        }
+    }
+}
+
+class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
+
+    override val key: String = byteArray.toString()
+
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+        ByteArrayInputStream(byteArray)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as ByteArrayImageSource
+        if (byteArray != other.byteArray) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = byteArray.hashCode()
+        result = 31 * result + key.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "ByteArrayImageSource('$byteArray')"
     }
 }
 
