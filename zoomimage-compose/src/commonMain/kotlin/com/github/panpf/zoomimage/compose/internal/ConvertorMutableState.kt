@@ -22,7 +22,7 @@ internal fun <T> MutableState<T>.convert(convertor: (T) -> T): MutableState<T> {
     return ConvertorMutableState(this, convertor)
 }
 
-// todo If state is SnapshotMutableState, it must also be here, otherwise the snapshot function may be lost.
+// TODO If state is SnapshotMutableState, it must also be here, otherwise the snapshot function may be lost.
 internal class ConvertorMutableState<T>(
     private val state: MutableState<T>,
     private val convertor: (T) -> T

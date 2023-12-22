@@ -104,7 +104,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     /**
      * The size of the content, this is usually the size of the thumbnail Drawable, setup by the [ZoomImageView] component
      */
-    // todo contentSize can like the state version, return containerSize when empty
+    // TODO contentSize can like the state version, return containerSize when empty
     val contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
 
     /**

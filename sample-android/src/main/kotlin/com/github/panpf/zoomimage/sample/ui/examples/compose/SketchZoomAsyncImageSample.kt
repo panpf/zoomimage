@@ -50,7 +50,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
                 context.showShortToast("Long click (${it.toShortString()})")
             }
         )
-        // todo show state by AsyncImageState
+        // TODO show state by AsyncImageState
     }
 }
 

@@ -70,7 +70,7 @@ class SketchZoomImageViewFragment :
             placeholder(ThumbnailMemoryCacheStateImage())
             crossfade(fadeStart = false)
             ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
-            // todo use requestState
+            // TODO use requestState
             listener(
                 onStart = { onCallStart() },
                 onSuccess = { _, _ -> onCallSuccess() },
