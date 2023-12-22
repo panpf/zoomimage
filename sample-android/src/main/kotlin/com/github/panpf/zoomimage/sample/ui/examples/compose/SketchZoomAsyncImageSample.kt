@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -28,29 +29,35 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         val imageState = rememberAsyncImageState()
         val progressPainter =
             rememberDrawableProgressPainter(drawable = remember { SectorProgressDrawable() })
-        SketchZoomAsyncImage(
-            request = DisplayRequest(context, sketchImageUri) {
-                placeholder(ThumbnailMemoryCacheStateImage())
-                crossfade(fadeStart = false)
-                ignoreExifOrientation(ignoreExifOrientation)
-            },
-            contentDescription = "view image",
-            contentScale = contentScale,
-            alignment = alignment,
-            modifier = Modifier
-                .fillMaxSize()
-                .progressIndicator(imageState, progressPainter),
-            imageState = imageState,
-            state = state,
-            scrollBar = scrollBar,
-            onTap = {
-                context.showShortToast("Click (${it.toShortString()})")
-            },
-            onLongPress = {
-                context.showShortToast("Long click (${it.toShortString()})")
-            }
-        )
-        // TODO show state by AsyncImageState
+        Box(modifier = Modifier.fillMaxSize()) {
+            SketchZoomAsyncImage(
+                request = DisplayRequest(context, sketchImageUri) {
+                    placeholder(ThumbnailMemoryCacheStateImage())
+                    crossfade(fadeStart = false)
+                    ignoreExifOrientation(ignoreExifOrientation)
+                },
+                contentDescription = "view image",
+                contentScale = contentScale,
+                alignment = alignment,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .progressIndicator(imageState, progressPainter),
+                imageState = imageState,
+                state = state,
+                scrollBar = scrollBar,
+                onTap = {
+                    context.showShortToast("Click (${it.toShortString()})")
+                },
+                onLongPress = {
+                    context.showShortToast("Long click (${it.toShortString()})")
+                }
+            )
+
+            LoadState(
+                modifier = Modifier.align(androidx.compose.ui.Alignment.Center),
+                imageState = imageState
+            )
+        }
     }
 }
 
