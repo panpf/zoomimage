@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.panpf.zoomimage.compose.coil.base"
+    namespace = "com.github.panpf.zoomimage.compose.coil.core"
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {

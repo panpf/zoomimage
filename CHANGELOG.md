@@ -5,6 +5,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 ## new
 
 * depend: Upgrade sketch 3.3.-beta05
+* change: Rename `zoomimage-compose-coil-base` module to `zoomimage-compose-coil-core
 
 ## 1.0.0-beta10
 

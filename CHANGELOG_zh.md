@@ -5,6 +5,7 @@
 ## new
 
 * depend: 升级 sketch 3.3.-beta05
+* change: 重命名 `zoomimage-compose-coil-base` 模块为 `zoomimage-compose-coil-core`
 
 ## 1.0.0-beta10
 
