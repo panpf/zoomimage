@@ -471,5 +471,3 @@ private fun BaseZoomAsyncImage(
         clipToBounds = false,
     )
 }
-
-// TODO Run compiler report
