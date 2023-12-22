@@ -10,7 +10,7 @@ zoom:
 
 other:
 
-* depend: 升级 sketch 3.3.-beta05
+* depend: 升级 sketch 3.3.-beta06
 * change: 重命名 `zoomimage-compose-coil-base` 模块为 `zoomimage-compose-coil-core`
 * improve: GlideZoomAsyncImage 和 GlideZoomImageView 现在支持 GlideUrl
 
