@@ -4,6 +4,12 @@ Translations: [简体中文](CHANGELOG_zh.md)
 
 ## new
 
+zoom:
+
+* change: ZoomableEngine's contentSizeState property now uses containerSizeState when it is empty
+
+other:
+
 * depend: Upgrade sketch 3.3.-beta05
 * change: Rename `zoomimage-compose-coil-base` module to `zoomimage-compose-coil-core
 

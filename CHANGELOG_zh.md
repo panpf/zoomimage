@@ -4,6 +4,12 @@
 
 ## new
 
+zoom:
+
+* change: ZoomableEngine 的 contentSizeState 属性现在为空时会使用 containerSizeState
+
+other:
+
 * depend: 升级 sketch 3.3.-beta05
 * change: 重命名 `zoomimage-compose-coil-base` 模块为 `zoomimage-compose-coil-core`
 
