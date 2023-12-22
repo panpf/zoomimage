@@ -84,7 +84,6 @@ fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): Subsam
             stoppedController = defaultStopAutoController
         }
     }
-    subsamplingState.initial()
     return subsamplingState
 }
 
@@ -110,6 +109,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     private val refreshTilesFlow = MutableSharedFlow<String>()
     private var preferredTileSize: IntSize by mutableStateOf(IntSize.Zero)
     private var contentSize: IntSize by mutableStateOf(IntSize.Zero)
+    private var rememberedCount = 0
 
     var imageKey: String? = null
 
@@ -177,7 +177,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
                     override var stopped: Boolean
                         get() = this@SubsamplingState.stopped
                         set(value) {
-                            // todo Delay the execution for a while. When exiting the page, it will always become blurry before exiting. The experience is not very good.
+                            // TODO Delay the execution for a while. When exiting the page, it will always become blurry before exiting. The experience is not very good.
                             this@SubsamplingState.stopped = value
                             coroutineScope.launch {
                                 refreshTilesFlow.emit(if (value) "stopped" else "started")
@@ -243,6 +243,59 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     var tileGridSizeMap: Map<Int, IntOffset> by mutableStateOf(emptyMap())
         private set
 
+    init {
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { preferredTileSize }.collect {
+                resetTileManager("preferredTileSizeChanged")
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { contentSize }.collect {
+                resetTileDecoder("contentSizeChanged")
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { ignoreExifOrientation }.collect {
+                resetTileDecoder("ignoreExifOrientationChanged")
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { tileBitmapCache }.collect {
+                tileBitmapCacheSpec.tileBitmapCache = it
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { disabledTileBitmapCache }.collect {
+                tileBitmapCacheSpec.disabled = it
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { tileBitmapPool }.collect {
+                tileBitmapReuseSpec.tileBitmapPool = it
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { disabledTileBitmapReuse }.collect {
+                tileBitmapReuseSpec.disabled = it
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { pausedContinuousTransformType }.collect {
+                tileManager?.pausedContinuousTransformType = it
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { disabledBackgroundTiles }.collect {
+                tileManager?.disabledBackgroundTiles = it
+            }
+        }
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { tileAnimationSpec }.collect {
+                tileManager?.tileAnimationSpec = it
+            }
+        }
+    }
+
 
     /* ********************************* Interact with consumers ******************************** */
 
@@ -262,61 +315,6 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
 
 
     /* *************************************** Internal ***************************************** */
-
-    @Composable
-    internal fun initial() {
-        // todo Create coroutineScope and start listening when onRemember. Cancel coroutineScope when onForgotten
-        LaunchedEffect(Unit) {
-            snapshotFlow { preferredTileSize }.collect {
-                resetTileManager("preferredTileSizeChanged")
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { contentSize }.collect {
-                resetTileDecoder("contentSizeChanged")
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { ignoreExifOrientation }.collect {
-                resetTileDecoder("ignoreExifOrientationChanged")
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { tileBitmapCache }.collect {
-                tileBitmapCacheSpec.tileBitmapCache = it
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { disabledTileBitmapCache }.collect {
-                tileBitmapCacheSpec.disabled = it
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { tileBitmapPool }.collect {
-                tileBitmapReuseSpec.tileBitmapPool = it
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { disabledTileBitmapReuse }.collect {
-                tileBitmapReuseSpec.disabled = it
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { pausedContinuousTransformType }.collect {
-                tileManager?.pausedContinuousTransformType = it
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { disabledBackgroundTiles }.collect {
-                tileManager?.disabledBackgroundTiles = it
-            }
-        }
-        LaunchedEffect(Unit) {
-            snapshotFlow { tileAnimationSpec }.collect {
-                tileManager?.tileAnimationSpec = it
-            }
-        }
-    }
 
     @Composable
     @OptIn(FlowPreview::class)
@@ -530,16 +528,21 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     }
 
     override fun onRemembered() {
+        // Since SubsamplingState is annotated with @Stable, onRemembered will be executed multiple times,
+        // but we only need execute it once
+        rememberedCount++
     }
 
+    override fun onAbandoned() = onForgotten()
     override fun onForgotten() {
-        destroy("onForgotten")
-        stoppedController?.onDestroy()
-    }
-
-    override fun onAbandoned() {
-        destroy("onAbandoned")
-        stoppedController?.onDestroy()
+        // Since SubsamplingState is annotated with @Stable, onForgotten will be executed multiple times,
+        // but we only need execute it once
+        if (rememberedCount <= 0) return
+        rememberedCount--
+        if (rememberedCount == 0) {
+            destroy("onForgotten")
+            stoppedController?.onDestroy()
+        }
     }
 
     private fun refreshReadyState(caller: String) {

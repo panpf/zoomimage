@@ -289,7 +289,6 @@ class ZoomableState(logger: Logger) {
     private var lastReadMode: ReadMode? = readMode
     private var lastScalesCalculator: ScalesCalculator = scalesCalculator
 
-    // todo Create coroutineScope and start listening when onRemember. Cancel coroutineScope when onForgotten
     init {
         // Must be immediate, otherwise the user will see the image move quickly from the top to the center
         coroutineScope.launch(Dispatchers.Main.immediate) {

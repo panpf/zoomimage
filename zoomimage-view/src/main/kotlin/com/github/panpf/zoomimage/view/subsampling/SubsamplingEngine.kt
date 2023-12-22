@@ -217,7 +217,6 @@ class SubsamplingEngine constructor(
 
 
     init {
-        // todo Create coroutineScope and start listening when onViewAttachedToWindow. Cancel coroutineScope when onViewDetachedFromWindow
         view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 reset("onViewAttachedToWindow")

@@ -278,7 +278,6 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             }
         })
 
-        // todo Create coroutineScope and start listening when onViewAttachedToWindow. Cancel coroutineScope when onViewDetachedFromWindow
         // Must be immediate, otherwise the user will see the image move quickly from the top to the center
         coroutineScope.launch(Dispatchers.Main.immediate) {
             containerSizeState.collect {
