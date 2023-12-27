@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -29,10 +30,10 @@ import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
-import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
@@ -43,40 +44,32 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBinding>() {
+class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
 
     private val args by navArgs<ZoomImageViewFragmentArgs>()
 
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override fun getCommonBinding(binding: ZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
-        return binding.common
-    }
-
-    override fun getZoomImageView(binding: ZoomImageViewFragmentBinding): ZoomImageView {
-        return binding.zoomImageViewImage
+    override fun createZoomImageView(context: Context): ZoomImageView {
+        return ZoomImageView(context)
     }
 
     override fun onViewCreated(
-        binding: ZoomImageViewFragmentBinding,
+        binding: FragmentZoomViewBinding,
+        zoomView: ZoomImageView,
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(binding, savedInstanceState)
 
         settingsService.ignoreExifOrientation.sharedFlow.collectWithLifecycle(viewLifecycleOwner) {
-            loadData(binding, binding.common, sketchImageUri)
+            loadData()
         }
     }
 
-    override fun loadImage(
-        binding: ZoomImageViewFragmentBinding,
-        onCallStart: () -> Unit,
-        onCallSuccess: () -> Unit,
-        onCallError: () -> Unit
-    ) {
-        onCallStart()
-        binding.zoomImageViewImage.apply {
+    override fun loadImage(zoomView: ZoomImageView, stateView: StateView) {
+        stateView.loading()
+        zoomView.apply {
             viewLifecycleOwner.lifecycleScope.launch {
                 val request = DisplayRequest(requireContext(), sketchImageUri) {
                     downloadCachePolicy(CachePolicy.ENABLED)
@@ -87,18 +80,23 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
                     setImageDrawable(result.drawable)
                     subsampling.ignoreExifOrientationState.value =
                         settingsService.ignoreExifOrientation.value
-                    subsampling.setImageSource(newImageSource(binding, sketchImageUri))
-                    onCallSuccess()
-                } else {
+                    subsampling.setImageSource(newImageSource(zoomView, sketchImageUri))
+                    stateView.gone()
+                } else if (result is DisplayResult.Error) {
                     subsampling.setImageSource(null)
-                    onCallError()
+                    stateView.error {
+                        message(result.throwable)
+                        retryAction {
+                            loadData()
+                        }
+                    }
                 }
             }
         }
     }
 
-    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
-        zoomImageMinimapView.displayImage(sketchImageUri) {
+    override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        minimapView.displayImage(sketchImageUri) {
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
@@ -107,7 +105,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
     }
 
     private suspend fun newImageSource(
-        binding: ZoomImageViewFragmentBinding,
+        zoomView: ZoomImageView,
         sketchImageUri: String
     ): ImageSource? = when {
         sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
@@ -131,7 +129,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
             if (resId != null) {
                 ImageSource.fromResource(requireContext().resources, resId)
             } else {
-                binding.zoomImageViewImage.logger.w {
+                zoomView.logger.w {
                     "ZoomImageViewFragment. Can't use Subsampling, invalid resource uri: '$sketchImageUri'"
                 }
                 null
@@ -151,7 +149,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageViewFragmentBin
         }
 
         else -> {
-            binding.zoomImageViewImage.logger.w {
+            zoomView.logger.w {
                 "ZoomImageViewFragment. Can't use Subsampling, unsupported uri: '$sketchImageUri'"
             }
             null

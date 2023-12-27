@@ -31,14 +31,14 @@ import com.github.panpf.assemblyadapter.recycler.paging.AssemblyPagingDataAdapte
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.databinding.RefreshRecyclerFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerRefreshBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
 import com.github.panpf.zoomimage.sample.ui.photoalbum.PhotoAlbumViewModel
 import kotlinx.coroutines.launch
 
-class PhotoAlbumViewFragment : BaseToolbarBindingFragment<RefreshRecyclerFragmentBinding>() {
+class PhotoAlbumViewFragment : BaseToolbarBindingFragment<FragmentRecyclerRefreshBinding>() {
 
     private val photoAlbumViewModel by viewModels<PhotoAlbumViewModel>()
     private val args by navArgs<PhotoAlbumViewFragmentArgs>()
@@ -46,7 +46,7 @@ class PhotoAlbumViewFragment : BaseToolbarBindingFragment<RefreshRecyclerFragmen
 
     override fun onViewCreated(
         toolbar: Toolbar,
-        binding: RefreshRecyclerFragmentBinding,
+        binding: FragmentRecyclerRefreshBinding,
         savedInstanceState: Bundle?
     ) {
         toolbar.apply {
@@ -69,7 +69,7 @@ class PhotoAlbumViewFragment : BaseToolbarBindingFragment<RefreshRecyclerFragmen
             }
         }
 
-        binding.recyclerRefresh.apply {
+        binding.refresh.apply {
             setOnRefreshListener {
                 pagingAdapter.refresh()
             }
@@ -80,7 +80,7 @@ class PhotoAlbumViewFragment : BaseToolbarBindingFragment<RefreshRecyclerFragmen
             }
         }
 
-        binding.recyclerRecycler.apply {
+        binding.recycler.apply {
             layoutManager =
                 requireContext().newAssemblyGridLayoutManager(3, GridLayoutManager.VERTICAL)
             val itemDecoration = requireContext().newAssemblyGridDividerItemDecoration {
@@ -93,8 +93,8 @@ class PhotoAlbumViewFragment : BaseToolbarBindingFragment<RefreshRecyclerFragmen
         }
     }
 
-    private fun startImageDetail(binding: RefreshRecyclerFragmentBinding, position: Int) {
-        val currentList = binding.recyclerRecycler
+    private fun startImageDetail(binding: FragmentRecyclerRefreshBinding, position: Int) {
+        val currentList = binding.recycler
             .adapter!!.asOrThrow<AssemblyPagingDataAdapter<Photo>>()
             .currentList
         val startPosition = (position - 50).coerceAtLeast(0)
@@ -104,7 +104,7 @@ class PhotoAlbumViewFragment : BaseToolbarBindingFragment<RefreshRecyclerFragmen
             currentList[it]?.uri
         }
         findNavController().navigate(
-            NavMainDirections.actionGlobalPhotoSlideshowViewFragment(
+            NavMainDirections.actionGlobalPhotoPagerViewFragment(
                 zoomViewType = args.zoomViewType,
                 imageUris = imageList.joinToString(separator = ","),
                 position = position,

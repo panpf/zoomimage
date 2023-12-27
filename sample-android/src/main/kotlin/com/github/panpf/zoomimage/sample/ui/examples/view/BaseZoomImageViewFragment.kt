@@ -16,21 +16,24 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
+import com.github.panpf.zoomimage.sample.common.R as CommonR
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.view.ViewGroup
 import android.view.animation.Animation
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.viewbinding.ViewBinding
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
+import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
@@ -47,20 +50,39 @@ import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import com.github.panpf.zoomimage.sample.common.R as CommonR
 
-abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
-    BaseBindingFragment<VIEW_BINDING>() {
+abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
+    BaseBindingFragment<FragmentZoomViewBinding>() {
 
     abstract val sketchImageUri: String
 
-    abstract fun getZoomImageView(binding: VIEW_BINDING): ZoomImageView
+    private var zoomView: ZOOM_VIEW? = null
+    private var binding: FragmentZoomViewBinding? = null
 
-    abstract fun getCommonBinding(binding: VIEW_BINDING): ZoomImageViewCommonFragmentBinding
+    abstract fun createZoomImageView(context: Context): ZOOM_VIEW
 
-    override fun onViewCreated(binding: VIEW_BINDING, savedInstanceState: Bundle?) {
-        val zoomImageView = getZoomImageView(binding)
-        val common = getCommonBinding(binding)
+    open fun onViewCreated(
+        binding: FragmentZoomViewBinding,
+        zoomView: ZOOM_VIEW,
+        savedInstanceState: Bundle?
+    ) {
+
+    }
+
+    final override fun onViewCreated(
+        binding: FragmentZoomViewBinding,
+        savedInstanceState: Bundle?
+    ) {
+        val zoomImageView = createZoomImageView(binding.root.context)
+        this.zoomView = zoomImageView
+        this.binding = binding
+        binding.contentLayout.addView(
+            zoomImageView,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
         zoomImageView.apply {
             onViewTapListener = OnViewTapListener { _, offset ->
                 showShortToast("Click (${offset.toShortString()})")
@@ -181,19 +203,15 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }
         }
 
-        common.zoomImageViewErrorRetryButton.setOnClickListener {
-            loadData(binding, common, sketchImageUri)
-        }
+        binding.minimapView.setZoomImageView(zoomImageView)
 
-        common.zoomImageViewTileMap.setZoomImageView(zoomImageView)
-
-        common.zoomImageViewRotate.setOnClickListener {
+        binding.rotate.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 zoomImageView.zoomable.rotate(zoomImageView.zoomable.transformState.value.rotation.roundToInt() + 90)
             }
         }
 
-        common.zoomImageViewZoom.apply {
+        binding.zoom.apply {
             setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     val nextStepScale = zoomImageView.zoomable.getNextStepScale()
@@ -212,7 +230,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                 }
         }
 
-        common.zoomImageViewInfo.setOnClickListener {
+        binding.info.setOnClickListener {
             ZoomImageViewInfoDialogFragment().apply {
                 arguments = ZoomImageViewInfoDialogFragment
                     .buildArgs(zoomImageView, sketchImageUri)
@@ -220,7 +238,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }.show(childFragmentManager, null)
         }
 
-        common.zoomImageViewLinearScaleSlider.apply {
+        binding.linearScaleSlider.apply {
             var changing = false
             listOf(
                 zoomImageView.zoomable.minScaleState,
@@ -261,22 +279,22 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }
         }
 
-        common.zoomImageViewMoveKeyboard.moveFlow.collectWithLifecycle(viewLifecycleOwner) {
+        binding.moveKeyboard.moveFlow.collectWithLifecycle(viewLifecycleOwner) {
             val offset = zoomImageView.zoomable.transformState.value.offset
             zoomImageView.zoomable.offset(offset + it * -1f)
         }
 
-        common.zoomImageViewMore.apply {
-            common.zoomImageViewExtraLayout.isVisible = false
+        binding.more.apply {
+            binding.extraLayout.isVisible = false
 
             setOnClickListener {
                 if (zoomImageView.zoomable.minScaleState.value >= zoomImageView.zoomable.maxScaleState.value) {
                     return@setOnClickListener
                 }
-                if (common.zoomImageViewExtraLayout.isVisible) {
-                    common.zoomImageViewExtraLayout.animTranslate(
+                if (binding.extraLayout.isVisible) {
+                    binding.extraLayout.animTranslate(
                         fromXDelta = 0f,
-                        toXDelta = common.zoomImageViewExtraLayout.width.toFloat(),
+                        toXDelta = binding.extraLayout.width.toFloat(),
                         fromYDelta = 0f,
                         toYDelta = 0f,
                         listener = object : Animation.AnimationListener {
@@ -284,7 +302,7 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                             }
 
                             override fun onAnimationEnd(animation: Animation?) {
-                                common.zoomImageViewExtraLayout.isVisible = false
+                                binding.extraLayout.isVisible = false
                             }
 
                             override fun onAnimationRepeat(animation: Animation?) {
@@ -292,9 +310,9 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
                         }
                     )
                 } else {
-                    common.zoomImageViewExtraLayout.isVisible = true
-                    common.zoomImageViewExtraLayout.animTranslate(
-                        fromXDelta = common.zoomImageViewExtraLayout.width.toFloat(),
+                    binding.extraLayout.isVisible = true
+                    binding.extraLayout.animTranslate(
+                        fromXDelta = binding.extraLayout.width.toFloat(),
                         toXDelta = 0f,
                         fromYDelta = 0f,
                         toYDelta = 0f,
@@ -303,14 +321,14 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
             }
         }
 
-        common.zoomImageViewZoomOut.setOnClickListener {
+        binding.zoomOut.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 val targetScale = zoomImageView.zoomable.transformState.value.scaleX - 0.5f
                 zoomImageView.zoomable.scale(targetScale = targetScale, animated = true)
             }
         }
 
-        common.zoomImageViewZoomIn.setOnClickListener {
+        binding.zoomIn.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 val targetScale = zoomImageView.zoomable.transformState.value.scaleX + 0.5f
                 zoomImageView.zoomable.scale(targetScale = targetScale, animated = true)
@@ -319,63 +337,49 @@ abstract class BaseZoomImageViewFragment<VIEW_BINDING : ViewBinding> :
 
         zoomImageView.zoomable.transformState
             .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
-                updateInfo(zoomImageView, common)
+                updateInfo(zoomImageView, binding)
             }
 
-        loadData(binding, common, sketchImageUri)
+        loadData()
     }
 
-    protected fun loadData(
-        binding: VIEW_BINDING,
-        common: ZoomImageViewCommonFragmentBinding,
+    protected fun loadData() {
+        loadData(binding!!, zoomView!!, sketchImageUri)
+    }
+
+    private fun loadData(
+        binding: FragmentZoomViewBinding,
+        zoomView: ZOOM_VIEW,
         sketchImageUri: String
     ) {
-        loadImage(
-            binding = binding,
-            onCallStart = {
-                common.zoomImageViewProgress.isVisible = true
-                common.zoomImageViewErrorLayout.isVisible = false
-            },
-            onCallSuccess = {
-                common.zoomImageViewProgress.isVisible = false
-                common.zoomImageViewErrorLayout.isVisible = false
-            },
-            onCallError = {
-                common.zoomImageViewProgress.isVisible = false
-                common.zoomImageViewErrorLayout.isVisible = true
-            },
-        )
-        loadMinimap(common.zoomImageViewTileMap, sketchImageUri)
+        loadImage(zoomView, binding.stateView)
+        loadMinimap(binding.minimapView, sketchImageUri)
     }
 
-    abstract fun loadImage(
-        binding: VIEW_BINDING,
-        onCallStart: () -> Unit,
-        onCallSuccess: () -> Unit,
-        onCallError: () -> Unit
-    )
+    abstract fun loadImage(zoomView: ZOOM_VIEW, stateView: StateView)
 
     abstract fun loadMinimap(
-        zoomImageMinimapView: ZoomImageMinimapView,
+        minimapView: ZoomImageMinimapView,
         sketchImageUri: String
     )
 
     @SuppressLint("SetTextI18n")
     private fun updateInfo(
         zoomImageView: ZoomImageView,
-        common: ZoomImageViewCommonFragmentBinding
+        binding: FragmentZoomViewBinding
     ) {
-        common.zoomImageViewInfoHeaderText.text = """
+        binding.infoHeaderText.text = """
                 scale: 
                 offset: 
                 rotation: 
             """.trimIndent()
-        common.zoomImageViewInfoContentText.text = zoomImageView.zoomable.transformState.value.run {
-            """
+        binding.infoContentText.text =
+            zoomImageView.zoomable.transformState.value.run {
+                """
                 ${scale.toShortString()}
                 ${offset.toShortString()}
                 ${rotation.roundToInt()}
             """.trimIndent()
-        }
+            }
     }
 }

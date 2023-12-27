@@ -19,35 +19,35 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
-import com.github.panpf.zoomimage.sample.databinding.DropdownMenuItemBinding
+import com.github.panpf.zoomimage.sample.databinding.ListItemMenuDropdownBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
 class DropdownMenuItemFactory(private val activity: Activity) :
-    BaseBindingItemFactory<DropdownMenu, DropdownMenuItemBinding>(DropdownMenu::class) {
+    BaseBindingItemFactory<DropdownMenu, ListItemMenuDropdownBinding>(DropdownMenu::class) {
 
     override fun initItem(
         context: Context,
-        binding: DropdownMenuItemBinding,
-        item: BindingItem<DropdownMenu, DropdownMenuItemBinding>
+        binding: ListItemMenuDropdownBinding,
+        item: BindingItem<DropdownMenu, ListItemMenuDropdownBinding>
     ) {
         binding.root.setOnClickListener {
             val data = item.dataOrThrow
             showDialog(data) {
-                binding.dropdownMenuItemInfoText.text = data.getValue()
+                binding.infoText.text = data.getValue()
             }
         }
     }
 
     override fun bindItemData(
         context: Context,
-        binding: DropdownMenuItemBinding,
-        item: BindingItem<DropdownMenu, DropdownMenuItemBinding>,
+        binding: ListItemMenuDropdownBinding,
+        item: BindingItem<DropdownMenu, ListItemMenuDropdownBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
         data: DropdownMenu
     ) {
-        binding.dropdownMenuItemTitleText.text = data.title
-        binding.dropdownMenuItemInfoText.text = data.getValue()
+        binding.titleText.text = data.title
+        binding.infoText.text = data.getValue()
     }
 
     private fun showDialog(data: DropdownMenu, after: () -> Unit) {

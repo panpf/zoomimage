@@ -16,40 +16,31 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import coil.load
 import coil.size.Precision.INEXACT
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.CoilZoomImageViewFragmentBinding
-import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
+import com.github.panpf.zoomimage.CoilZoomImageView
+import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
-class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFragmentBinding>() {
+class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>() {
 
     private val args by navArgs<CoilZoomImageViewFragmentArgs>()
 
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override fun getCommonBinding(binding: CoilZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
-        return binding.common
+    override fun createZoomImageView(context: Context): CoilZoomImageView {
+        return CoilZoomImageView(context)
     }
 
-    override fun getZoomImageView(binding: CoilZoomImageViewFragmentBinding): ZoomImageView {
-        return binding.coilZoomImageViewImage
-    }
-
-    override fun loadImage(
-        binding: CoilZoomImageViewFragmentBinding,
-        onCallStart: () -> Unit,
-        onCallSuccess: () -> Unit,
-        onCallError: () -> Unit
-    ) {
+    override fun loadImage(zoomView: CoilZoomImageView, stateView: StateView) {
         val model = sketchUri2CoilModel(requireContext(), args.imageUri)
-        binding.coilZoomImageViewImage.load(model) {
+        zoomView.load(model) {
             lifecycle(viewLifecycleOwner.lifecycle)
             precision(coil.size.Precision.INEXACT)
             crossfade(true)
@@ -59,16 +50,23 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageViewFra
 //                placeholderMemoryCacheKey(key)
 //            }
             listener(
-                onStart = { onCallStart() },
-                onSuccess = { _, _ -> onCallSuccess() },
-                onError = { _, _ -> onCallError() },
+                onStart = { stateView.loading() },
+                onSuccess = { _, _ -> stateView.gone() },
+                onError = { _, result ->
+                    stateView.error {
+                        message(result.throwable)
+                        retryAction {
+                            loadData()
+                        }
+                    }
+                },
             )
         }
     }
 
-    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
+    override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
         val model = sketchUri2CoilModel(requireContext(), args.imageUri)
-        zoomImageMinimapView.load(model) {
+        minimapView.load(model) {
             lifecycle(viewLifecycleOwner.lifecycle)
             crossfade(true)
             size(600, 600)

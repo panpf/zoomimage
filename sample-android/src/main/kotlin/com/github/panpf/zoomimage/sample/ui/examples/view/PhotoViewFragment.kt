@@ -20,14 +20,13 @@ import android.annotation.SuppressLint
 import android.graphics.Matrix
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.tools4a.toast.ktx.showShortToast
-import com.github.panpf.zoomimage.sample.databinding.PhotoViewFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoViewBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
@@ -38,12 +37,12 @@ import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class PhotoViewFragment : BaseBindingFragment<PhotoViewFragmentBinding>() {
+class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
 
     private val args by navArgs<PhotoViewFragmentArgs>()
 
     override fun onViewCreated(
-        binding: PhotoViewFragmentBinding,
+        binding: FragmentPhotoViewBinding,
         savedInstanceState: Bundle?
     ) {
         binding.photoView.apply {
@@ -64,43 +63,41 @@ class PhotoViewFragment : BaseBindingFragment<PhotoViewFragmentBinding>() {
                 updateInfo(binding)
             }
         }
+
         updateInfo(binding)
-
-        binding.photoViewErrorRetryButton.setOnClickListener {
-            setImage(binding)
-        }
-
         setImage(binding)
     }
 
-    private fun setImage(binding: PhotoViewFragmentBinding) {
+    private fun setImage(binding: FragmentPhotoViewBinding) {
         binding.photoView.displayImage(args.imageUri) {
             crossfade()
             listener(
                 onStart = {
-                    binding.photoViewProgress.isVisible = true
-                    binding.photoViewErrorLayout.isVisible = false
+                    binding.stateView.loading()
                 },
                 onSuccess = { _, _ ->
-                    binding.photoViewProgress.isVisible = false
-                    binding.photoViewErrorLayout.isVisible = false
+                    binding.stateView.gone()
                 },
-                onError = { _, _ ->
-                    binding.photoViewProgress.isVisible = false
-                    binding.photoViewErrorLayout.isVisible = true
+                onError = { _, result ->
+                    binding.stateView.error {
+                        message(result.throwable)
+                        retryAction {
+                            setImage(binding)
+                        }
+                    }
                 },
             )
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateInfo(binding: PhotoViewFragmentBinding) {
-        binding.photoViewInfoHeaderText.text = """
+    private fun updateInfo(binding: FragmentPhotoViewBinding) {
+        binding.infoHeaderText.text = """
                 scale: 
                 offset: 
                 visible: 
             """.trimIndent()
-        binding.photoViewInfoContentText.text = binding.photoView.run {
+        binding.infoText.text = binding.photoView.run {
             val scales = floatArrayOf(minimumScale, mediumScale, maximumScale)
                 .joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
             """

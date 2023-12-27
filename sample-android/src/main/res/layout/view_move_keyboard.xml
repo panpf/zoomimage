@@ -7,7 +7,6 @@
     tools:background="@android:color/black">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/moveKeyboardViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_move_keyboard"
@@ -15,7 +14,7 @@
         tools:layout_width="100dp">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/moveKeyboardViewThumb"
+            android:id="@+id/thumb"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/bg_move_keyboard_thumb"

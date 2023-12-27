@@ -17,26 +17,26 @@
 package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
 import android.content.Context
-import com.github.panpf.zoomimage.sample.databinding.SwitchMenuItemBinding
+import com.github.panpf.zoomimage.sample.databinding.ListItemMenuSwitchBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
 class SwitchMenuItemFactory :
-    BaseBindingItemFactory<SwitchMenu, SwitchMenuItemBinding>(SwitchMenu::class) {
+    BaseBindingItemFactory<SwitchMenu, ListItemMenuSwitchBinding>(SwitchMenu::class) {
 
     override fun initItem(
         context: Context,
-        binding: SwitchMenuItemBinding,
-        item: BindingItem<SwitchMenu, SwitchMenuItemBinding>
+        binding: ListItemMenuSwitchBinding,
+        item: BindingItem<SwitchMenu, ListItemMenuSwitchBinding>
     ) {
         binding.root.setOnClickListener {
-            binding.switchMenuItemSwitch.isChecked = !binding.switchMenuItemSwitch.isChecked
+            binding.switchView.isChecked = !binding.switchView.isChecked
         }
         binding.root.setOnLongClickListener {
             val data = item.dataOrThrow
             data.onLongClick?.invoke()
             true
         }
-        binding.switchMenuItemSwitch.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchView.setOnCheckedChangeListener { _, isChecked ->
             val data = item.dataOrThrow
             if (data.isChecked != isChecked) {
                 data.isChecked = isChecked
@@ -46,17 +46,17 @@ class SwitchMenuItemFactory :
 
     override fun bindItemData(
         context: Context,
-        binding: SwitchMenuItemBinding,
-        item: BindingItem<SwitchMenu, SwitchMenuItemBinding>,
+        binding: ListItemMenuSwitchBinding,
+        item: BindingItem<SwitchMenu, ListItemMenuSwitchBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
         data: SwitchMenu
     ) {
         binding.root.isEnabled = !data.disabled
-        binding.switchMenuItemTitleText.isEnabled = !data.disabled
-        binding.switchMenuItemSwitch.isEnabled = !data.disabled
+        binding.titleText.isEnabled = !data.disabled
+        binding.switchView.isEnabled = !data.disabled
 
-        binding.switchMenuItemTitleText.text = data.title
-        binding.switchMenuItemSwitch.isChecked = if (data.disabled) false else data.isChecked
+        binding.titleText.text = data.title
+        binding.switchView.isChecked = if (data.disabled) false else data.isChecked
     }
 }

@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -25,48 +26,28 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.GlideZoomImageView
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.databinding.GlideZoomImageViewFragmentBinding
-import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
+import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
-class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewFragmentBinding>() {
+class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>() {
 
     private val args by navArgs<GlideZoomImageViewFragmentArgs>()
 
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override fun getCommonBinding(binding: GlideZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
-        return binding.common
+    override fun createZoomImageView(context: Context): GlideZoomImageView {
+        return GlideZoomImageView(context)
     }
 
-    override fun getZoomImageView(binding: GlideZoomImageViewFragmentBinding): ZoomImageView {
-        return binding.glideZoomImageViewImage
-    }
-
-    override fun loadImage(
-        binding: GlideZoomImageViewFragmentBinding,
-        onCallStart: () -> Unit,
-        onCallSuccess: () -> Unit,
-        onCallError: () -> Unit
-    ) {
-        onCallStart()
+    override fun loadImage(zoomView: GlideZoomImageView, stateView: StateView) {
+        stateView.loading()
         Glide.with(this@GlideZoomImageViewFragment)
             .load(sketchUri2GlideModel(args.imageUri))
             .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    onCallError()
-                    return false
-                }
-
                 override fun onResourceReady(
                     resource: Drawable,
                     model: Any,
@@ -74,20 +55,34 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageViewF
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    onCallSuccess()
+                    stateView.gone()
+                    return false
+                }
+
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    stateView.error {
+                        retryAction {
+                            loadData()
+                        }
+                    }
                     return false
                 }
             })
-            .into(binding.glideZoomImageViewImage)
+            .into(zoomView)
     }
 
-    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
-        Glide.with(zoomImageMinimapView.context)
+    override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        Glide.with(minimapView.context)
             .load(sketchUri2GlideModel(sketchImageUri))
             .placeholder(R.drawable.im_placeholder)
             .error(R.drawable.im_error)
             .override(600, 600)
-            .into(zoomImageMinimapView)
+            .into(minimapView)
     }
 
     class ItemFactory : FragmentItemFactory<String>(String::class) {

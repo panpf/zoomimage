@@ -20,7 +20,7 @@ import android.os.Bundle
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.tools4j.io.ktx.formatCompactFileSize
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewInfoDialogBinding
+import com.github.panpf.zoomimage.sample.databinding.DialogZoomInfoBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.util.round
@@ -29,20 +29,20 @@ import com.github.panpf.zoomimage.zoom.toShortString
 import kotlin.math.roundToInt
 
 class ZoomImageViewInfoDialogFragment :
-    BaseBindingDialogFragment<ZoomImageViewInfoDialogBinding>() {
+    BaseBindingDialogFragment<DialogZoomInfoBinding>() {
 
     private val args by navArgs<ZoomImageViewInfoDialogFragmentArgs>()
 
     override fun onViewCreated(
-        binding: ZoomImageViewInfoDialogBinding,
+        binding: DialogZoomInfoBinding,
         savedInstanceState: Bundle?
     ) {
-        binding.imageInfoUriText.text = args.imageUri
-        binding.imageInfoBaseInfoText.text = args.baseInfo
-        binding.imageInfoScaleText.text = args.scaleInfo
-        binding.imageInfoOffsetText.text = args.offsetInfo
-        binding.imageInfoDisplayAndVisibleText.text = args.displayAndVisibleInfo
-        binding.imageInfoTilesText.text = args.tilesInfo
+        binding.imageUriText.text = args.imageUri
+        binding.baseInfoText.text = args.baseInfo
+        binding.scaleInfoText.text = args.scaleInfo
+        binding.offsetInfoText.text = args.offsetInfo
+        binding.displayAndVisibleInfoText.text = args.displayAndVisibleInfo
+        binding.tilesInfoText.text = args.tilesInfo
     }
 
     companion object {

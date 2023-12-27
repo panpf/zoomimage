@@ -13,7 +13,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
 import com.github.panpf.tools4k.lang.asOrThrow
-import com.github.panpf.zoomimage.sample.databinding.ImageMatrixFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentTestImageMatrixBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.ui.util.view.getRotation
@@ -33,7 +33,7 @@ import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.zoom.calculateBaseTransform
 import kotlin.math.min
 
-class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBinding>() {
+class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBinding>() {
 
     //    private val matrix = Matrix()
     private val scaleStep = 0.2f
@@ -51,7 +51,7 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBindin
 
     override fun onViewCreated(
         toolbar: Toolbar,
-        binding: ImageMatrixFragmentBinding,
+        binding: FragmentTestImageMatrixBinding,
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(toolbar, binding, savedInstanceState)
@@ -61,10 +61,10 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBindin
         binding.root.parent.asOrThrow<ViewGroup>().parent.asOrThrow<ViewGroup>().clipChildren =
             false
 
-        binding.imageMatrixFragmentImageView.apply {
+        binding.imageView.apply {
         }
 
-        binding.imageMatrixFragmentHorizontalButton.apply {
+        binding.horizontalButton.apply {
             val setName = {
                 text = if (horImage) "Ver" else "Hor"
             }
@@ -76,7 +76,7 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBindin
             setName()
         }
 
-        binding.imageMatrixFragmentScaleTypeButton.apply {
+        binding.scaleTypeButton.apply {
             val setName = {
                 text = scaleType.name
             }
@@ -93,61 +93,61 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBindin
             setName()
         }
 
-        binding.imageMatrixFragmentResetButton.setOnClickListener {
+        binding.resetButton.setOnClickListener {
             rotation = 0
             userTransform = TransformCompat.Origin
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentScalePlusButton.setOnClickListener {
+        binding.scalePlusButton.setOnClickListener {
             val currentScale = userTransform.scaleX
             val targetScale = currentScale + scaleStep
             userTransform = userTransform.copy(scale = ScaleFactorCompat(targetScale))
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentScaleMinusButton.setOnClickListener {
+        binding.scaleMinusButton.setOnClickListener {
             val currentScale = userTransform.scaleX
             val targetScale = currentScale - scaleStep
             userTransform = userTransform.copy(scale = ScaleFactorCompat(targetScale))
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentOffsetUpButton.setOnClickListener {
+        binding.offsetUpButton.setOnClickListener {
             val addOffset = OffsetCompat(0f, -offsetStep.toFloat())
             userTransform = userTransform.copy(offset = userTransform.offset + addOffset)
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentOffsetDownButton.setOnClickListener {
+        binding.offsetDownButton.setOnClickListener {
             val addOffset = OffsetCompat(0f, offsetStep.toFloat())
             userTransform = userTransform.copy(offset = userTransform.offset + addOffset)
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentOffsetRightButton.setOnClickListener {
+        binding.offsetRightButton.setOnClickListener {
             val addOffset = OffsetCompat(offsetStep.toFloat(), 0f)
             userTransform = userTransform.copy(offset = userTransform.offset + addOffset)
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentOffsetLeftButton.setOnClickListener {
+        binding.offsetLeftButton.setOnClickListener {
             val addOffset = OffsetCompat(-offsetStep.toFloat(), 0f)
             userTransform = userTransform.copy(offset = userTransform.offset + addOffset)
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentRotatePlusButton.setOnClickListener {
+        binding.rotatePlusButton.setOnClickListener {
             rotation = (rotation + rotateStep) % 360
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentRotateMinusButton.setOnClickListener {
+        binding.rotateMinusButton.setOnClickListener {
             rotation = (rotation - rotateStep) % 360
             updateMatrix(binding)
         }
 
-        binding.imageMatrixFragmentImageView.apply {
+        binding.imageView.apply {
             addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
                 if (viewSize.width != v.width || viewSize.height != v.height) {
                     viewSize = IntSizeCompat(v.width, v.height)
@@ -166,8 +166,8 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBindin
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateMatrix(binding: ImageMatrixFragmentBinding) {
-        val drawable = binding.imageMatrixFragmentImageView.drawable
+    private fun updateMatrix(binding: FragmentTestImageMatrixBinding) {
+        val drawable = binding.imageView.drawable
         val drawableSize = drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) }
             ?: IntSizeCompat.Zero
 
@@ -201,21 +201,21 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBindin
             postConcat(userMatrix)
         }
 
-        binding.imageMatrixFragmentImageView.imageMatrix = displayMatrix
+        binding.imageView.imageMatrix = displayMatrix
         updateValues(binding)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateValues(binding: ImageMatrixFragmentBinding) {
-        val matrix = binding.imageMatrixFragmentImageView.imageMatrix
+    private fun updateValues(binding: FragmentTestImageMatrixBinding) {
+        val matrix = binding.imageView.imageMatrix
         val scaleString = matrix.getScale().scaleX.format(2)
         val translationString = matrix.getTranslation().round().toShortString()
         val rotationString = matrix.getRotation().toString()
-        binding.imageMatrixFragmentTransformValueText.text =
+        binding.transformValueText.text =
             "scale: ${scaleString}, offset: ${translationString}, rotation: $rotationString"
 
         val displayRect = RectF()
-        val drawable = binding.imageMatrixFragmentImageView.drawable
+        val drawable = binding.imageView.drawable
         if (drawable != null) {
             displayRect.set(
                 /* left = */ 0f,
@@ -225,23 +225,23 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<ImageMatrixFragmentBindin
             )
         }
         matrix.mapRect(displayRect)
-        binding.imageMatrixFragmentDisplayValueText.text =
+        binding.displayValueText.text =
             "display: ${displayRect.toRect().toVeryShortString()}"
         val contentSize = drawable?.let { IntSizeCompat(it.intrinsicWidth, it.intrinsicHeight) }
             ?: IntSizeCompat.Zero
         val containerSize = viewSize
-        binding.imageMatrixFragmentSizeValueText.text =
+        binding.sizeValueText.text =
             "container: ${containerSize.toShortString()}, content: ${contentSize.toShortString()}"
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun updateImage(binding: ImageMatrixFragmentBinding) {
+    private fun updateImage(binding: FragmentTestImageMatrixBinding) {
         val imageUri = if (horImage) {
             newAssetUri("sample_elephant.jpg")
         } else {
             newAssetUri("sample_cat.jpg")
         }
-        binding.imageMatrixFragmentImageView.displayImage(imageUri) {
+        binding.imageView.displayImage(imageUri) {
             val resources = requireContext().resources
             val maxSize =
                 min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) / 4

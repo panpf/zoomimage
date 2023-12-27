@@ -14,14 +14,14 @@
         android:layout_marginRight="20dp">
 
         <TextView
-            android:id="@+id/listSeparatorItemTitleText"
+            android:id="@+id/titleText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
+            android:textColor="@color/text_body"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/text_body"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,6 @@
             tools:text="我是小尾巴" />
 
         <View
-            android:id="@+id/listSeparatorItemDividerView"
             android:layout_width="0dp"
             android:layout_height="0.5dp"
             android:background="@color/text_title"

@@ -17,24 +17,24 @@
 package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
 import android.content.Context
-import com.github.panpf.zoomimage.sample.databinding.MenuDividerItemBinding
+import com.github.panpf.zoomimage.sample.databinding.ListItemMenuDividerBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
 class MenuDividerItemFactory :
-    BaseBindingItemFactory<MenuDivider, MenuDividerItemBinding>(MenuDivider::class) {
+    BaseBindingItemFactory<MenuDivider, ListItemMenuDividerBinding>(MenuDivider::class) {
 
     override fun initItem(
         context: Context,
-        binding: MenuDividerItemBinding,
-        item: BindingItem<MenuDivider, MenuDividerItemBinding>
+        binding: ListItemMenuDividerBinding,
+        item: BindingItem<MenuDivider, ListItemMenuDividerBinding>
     ) {
 
     }
 
     override fun bindItemData(
         context: Context,
-        binding: MenuDividerItemBinding,
-        item: BindingItem<MenuDivider, MenuDividerItemBinding>,
+        binding: ListItemMenuDividerBinding,
+        item: BindingItem<MenuDivider, ListItemMenuDividerBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
         data: MenuDivider

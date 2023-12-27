@@ -7,7 +7,7 @@
     android:background="?android:windowBackground">
 
     <LinearLayout
-        android:id="@+id/toolbarToolbarGroup"
+        android:id="@+id/toolbarLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
@@ -17,13 +17,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <View
-            android:id="@+id/toolbarStatusBarBgView"
+            android:id="@+id/statusBarBgView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             tools:layout_height="20dp" />
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbarToolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:subtitleTextColor="@color/colorOnPrimary"
@@ -33,7 +33,7 @@
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/toolbarContent"
+        android:id="@+id/content"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="vertical"
@@ -41,6 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarToolbarGroup"
+        app:layout_constraintTop_toBottomOf="@id/toolbarLayout"
         app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

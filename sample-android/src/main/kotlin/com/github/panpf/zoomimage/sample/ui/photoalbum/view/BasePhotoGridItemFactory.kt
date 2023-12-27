@@ -27,12 +27,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.panpf.tools4a.display.ktx.getScreenWidth
 import com.github.panpf.tools4k.lang.asOrNull
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.databinding.PhotoItemBinding
+import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
 
 abstract class BasePhotoGridItemFactory :
-    BaseBindingItemFactory<Photo, PhotoItemBinding>(Photo::class) {
+    BaseBindingItemFactory<Photo, GridItemPhotoBinding>(Photo::class) {
 
     private var itemSize: Int? = null
 
@@ -40,7 +40,7 @@ abstract class BasePhotoGridItemFactory :
         context: Context,
         inflater: LayoutInflater,
         parent: ViewGroup
-    ): PhotoItemBinding {
+    ): GridItemPhotoBinding {
         if (itemSize == null && parent is RecyclerView) {
             val screenWidth = context.getScreenWidth()
             val gridDivider = context.resources.getDimensionPixelSize(R.dimen.grid_divider)
@@ -52,27 +52,27 @@ abstract class BasePhotoGridItemFactory :
 
     final override fun initItem(
         context: Context,
-        binding: PhotoItemBinding,
-        item: BindingItem<Photo, PhotoItemBinding>
+        binding: GridItemPhotoBinding,
+        item: BindingItem<Photo, GridItemPhotoBinding>
     ) {
 
     }
 
     final override fun bindItemData(
         context: Context,
-        binding: PhotoItemBinding,
-        item: BindingItem<Photo, PhotoItemBinding>,
+        binding: GridItemPhotoBinding,
+        item: BindingItem<Photo, GridItemPhotoBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
         data: Photo
     ) {
-        binding.photoItemImage.apply {
+        binding.image.apply {
             updateLayoutParams<LayoutParams> {
                 val itemSize = itemSize!!
                 width = itemSize
                 height = itemSize
             }
-            displayImage(binding.photoItemImage, data.uri)
+            displayImage(binding.image, data.uri)
         }
     }
 

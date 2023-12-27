@@ -31,7 +31,7 @@ class SketchPhotoGridItemFactory : BasePhotoGridItemFactory() {
             placeholder(IconStateImage(R.drawable.ic_image_outline) {
                 resColorBackground(R.color.placeholder_bg)
             })
-            error(IconStateImage(R.drawable.ic_error) {
+            error(IconStateImage(R.drawable.ic_error_baseline) {
                 resColorBackground(R.color.placeholder_bg)
             })
             crossfade()

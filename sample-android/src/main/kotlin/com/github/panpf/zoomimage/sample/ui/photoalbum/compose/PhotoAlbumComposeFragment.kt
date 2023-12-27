@@ -105,7 +105,7 @@ class PhotoAlbumComposeFragment : BaseAppBarComposeFragment() {
             pagingItems.peek(it)?.uri
         }
         findNavController().navigate(
-            NavMainDirections.actionGlobalPhotoSlideshowComposeFragment(
+            NavMainDirections.actionGlobalPhotoPagerComposeFragment(
                 zoomImageType = args.zoomImageType,
                 imageUris = imageList.joinToString(separator = ","),
                 position = position,

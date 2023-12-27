@@ -9,7 +9,7 @@
     android:paddingRight="20dp">
 
     <TextView
-        android:id="@+id/multiChooseMenuItemTitleText"
+        android:id="@+id/titleText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
@@ -21,7 +21,7 @@
         tools:text="显示按下状态显示按" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/multiChooseMenuItemInfoText"
+        android:id="@+id/infoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"

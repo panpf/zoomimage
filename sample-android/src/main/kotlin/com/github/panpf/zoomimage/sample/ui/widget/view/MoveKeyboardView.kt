@@ -39,7 +39,7 @@ class MoveKeyboardView @JvmOverloads constructor(
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_move_keyboard, this, true)
-        thumbView = findViewById(R.id.moveKeyboardViewThumb)
+        thumbView = findViewById(R.id.thumb)
         dragHelper = ViewDragHelper.create(thumbView.parent as ViewGroup, MyCallback(this))
     }
 
@@ -109,7 +109,7 @@ class MoveKeyboardView @JvmOverloads constructor(
     private class MyCallback(val view: MoveKeyboardView) : ViewDragHelper.Callback() {
 
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-            return child.id == R.id.moveKeyboardViewThumb
+            return child.id == R.id.thumb
         }
 
         override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {

@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabPagerTabLayout"
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorPrimary"
@@ -19,7 +19,7 @@
         app:tabTextColor="@color/colorOnPrimary" />
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/tabPagerPager"
+        android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

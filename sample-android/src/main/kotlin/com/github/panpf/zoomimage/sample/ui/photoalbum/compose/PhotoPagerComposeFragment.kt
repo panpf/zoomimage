@@ -36,9 +36,9 @@ import com.github.panpf.zoomimage.sample.ui.base.compose.BaseAppBarComposeFragme
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 import com.github.panpf.zoomimage.sample.ui.examples.compose.rememberZoomImageOptionsState
 
-class PhotoSlideshowComposeFragment : BaseAppBarComposeFragment() {
+class PhotoPagerComposeFragment : BaseAppBarComposeFragment() {
 
-    private val args by navArgs<PhotoSlideshowComposeFragmentArgs>()
+    private val args by navArgs<PhotoPagerComposeFragmentArgs>()
     private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
     private val optionDialogShowViewModel by viewModels<OptionsDialogShowViewModel>()
 

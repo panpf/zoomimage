@@ -24,7 +24,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.databinding.PhotoSlideshowFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
@@ -32,15 +32,15 @@ import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDi
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 
-class PhotoSlideshowViewFragment : BaseToolbarBindingFragment<PhotoSlideshowFragmentBinding>() {
+class PhotoPagerViewFragment : BaseToolbarBindingFragment<FragmentPhotoPagerBinding>() {
 
-    private val args by navArgs<PhotoSlideshowViewFragmentArgs>()
+    private val args by navArgs<PhotoPagerViewFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(
         toolbar: Toolbar,
-        binding: PhotoSlideshowFragmentBinding,
+        binding: FragmentPhotoPagerBinding,
         savedInstanceState: Bundle?
     ) {
         toolbar.title = zoomViewType.title
@@ -74,26 +74,26 @@ class PhotoSlideshowViewFragment : BaseToolbarBindingFragment<PhotoSlideshowFrag
         }
 
         val imageUrlList = args.imageUris.split(",")
-        binding.photoSlideshowPager.apply {
+        binding.pager.apply {
             offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
             settingsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
                 orientation =
                     if (it) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL
             }
             adapter = AssemblyFragmentStateAdapter(
-                fragment = this@PhotoSlideshowViewFragment,
+                fragment = this@PhotoPagerViewFragment,
                 itemFactoryList = listOf(zoomViewType.createPageItemFactory()),
                 initDataList = imageUrlList
             )
             setCurrentItem(args.position - args.startPosition, false)
         }
 
-        binding.photoSlideshowCurrentPage.apply {
+        binding.pageNumberText.apply {
             val updateCurrentPageNumber: () -> Unit = {
-                val pageNumber = args.startPosition + binding.photoSlideshowPager.currentItem + 1
+                val pageNumber = args.startPosition + binding.pager.currentItem + 1
                 text = "$pageNumber\n·\n${args.totalCount}"
             }
-            binding.photoSlideshowPager.registerOnPageChangeCallback(object :
+            binding.pager.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     updateCurrentPageNumber()

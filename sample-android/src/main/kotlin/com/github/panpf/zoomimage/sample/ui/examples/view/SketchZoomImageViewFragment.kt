@@ -16,8 +16,8 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
+import android.content.Context
 import android.os.Bundle
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.navArgs
@@ -27,73 +27,67 @@ import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.stateimage.ThumbnailMemoryCacheStateImage
 import com.github.panpf.sketch.viewability.showSectorProgressIndicator
-import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.SketchZoomImageViewFragmentBinding
-import com.github.panpf.zoomimage.sample.databinding.ZoomImageViewCommonFragmentBinding
+import com.github.panpf.zoomimage.SketchZoomImageView
+import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
+import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 
 class SketchZoomImageViewFragment :
-    BaseZoomImageViewFragment<SketchZoomImageViewFragmentBinding>() {
+    BaseZoomImageViewFragment<SketchZoomImageView>() {
 
     private val args by navArgs<SketchZoomImageViewFragmentArgs>()
 
     override val sketchImageUri: String
         get() = args.imageUri
 
-    override fun getCommonBinding(binding: SketchZoomImageViewFragmentBinding): ZoomImageViewCommonFragmentBinding {
-        return binding.common
-    }
-
-    override fun getZoomImageView(binding: SketchZoomImageViewFragmentBinding): ZoomImageView {
-        return binding.sketchZoomImageViewImage
+    override fun createZoomImageView(context: Context): SketchZoomImageView {
+        return SketchZoomImageView(context)
     }
 
     override fun onViewCreated(
-        binding: SketchZoomImageViewFragmentBinding,
+        binding: FragmentZoomViewBinding,
+        zoomView: SketchZoomImageView,
         savedInstanceState: Bundle?
     ) {
-
         settingsService.ignoreExifOrientation.sharedFlow.collectWithLifecycle(viewLifecycleOwner) {
-            loadData(binding, binding.common, sketchImageUri)
+            loadData()
         }
 
-        binding.sketchZoomImageViewImage.showSectorProgressIndicator()
+        zoomView.showSectorProgressIndicator()
 
-        binding.sketchZoomImageViewImage.requestState.loadState
+        zoomView.requestState.loadState
             .repeatCollectWithLifecycle(
                 owner = viewLifecycleOwner,
                 state = Lifecycle.State.STARTED
             ) {
                 if (it is LoadState.Error) {
-                    binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewErrorLayout.isVisible = true
+                    binding.stateView.error {
+                        message(it.result.throwable)
+                        retryAction {
+                            loadData()
+                        }
+                    }
                 } else {
-                    binding.common.zoomImageViewProgress.isVisible = false
-                    binding.common.zoomImageViewErrorLayout.isVisible = false
+                    binding.stateView.gone()
                 }
             }
 
         super.onViewCreated(binding, savedInstanceState)
     }
 
-    override fun loadImage(
-        binding: SketchZoomImageViewFragmentBinding,
-        onCallStart: () -> Unit,    // Use requestState instead
-        onCallSuccess: () -> Unit,    // Use requestState instead
-        onCallError: () -> Unit    // Use requestState instead
-    ) {
-        binding.sketchZoomImageViewImage.displayImage(args.imageUri) {
+    override fun loadImage(zoomView: SketchZoomImageView, stateView: StateView) {
+        zoomView.displayImage(args.imageUri) {
             placeholder(ThumbnailMemoryCacheStateImage())
             crossfade(fadeStart = false)
             ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
         }
     }
 
-    override fun loadMinimap(zoomImageMinimapView: ZoomImageMinimapView, sketchImageUri: String) {
-        zoomImageMinimapView.displayImage(sketchImageUri) {
+    override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        minimapView.displayImage(sketchImageUri) {
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)

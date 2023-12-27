@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.databinding.RecyclerFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerBinding
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
@@ -44,14 +44,14 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.name
 
-class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<RecyclerFragmentBinding>() {
+class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
 
     private val args by navArgs<ZoomImageViewOptionsDialogFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
 
-    override fun onViewCreated(binding: RecyclerFragmentBinding, savedInstanceState: Bundle?) {
+    override fun onViewCreated(binding: FragmentRecyclerBinding, savedInstanceState: Bundle?) {
         val dataList = buildList()
-        binding.recyclerRecycler.apply {
+        binding.recycler.apply {
             val screenHeightPixels = context.getDisplayMetrics().heightPixels
             val menuItemHeight = context.resources.getDimension(R.dimen.menu_item_height)
             val dialogMaxHeight = screenHeightPixels * 0.8f
@@ -188,7 +188,8 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<RecyclerFra
                     onSelected = { which, isChecked ->
                         val checkedList =
                             gestureTypes.map { it and settingsService.disabledGestureType.value.toInt() != 0 }
-                        val newCheckedList = checkedList.toMutableList().apply { set(which, isChecked) }
+                        val newCheckedList =
+                            checkedList.toMutableList().apply { set(which, isChecked) }
                         val newDisabledGestureTypeType =
                             newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
                                 if (checked) gestureTypes[index] else null
@@ -242,7 +243,8 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<RecyclerFra
                     onSelected = { which, isChecked ->
                         val checkedList =
                             continuousTransformTypes.map { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 }
-                        val newCheckedList = checkedList.toMutableList().apply { set(which, isChecked) }
+                        val newCheckedList =
+                            checkedList.toMutableList().apply { set(which, isChecked) }
                         val newContinuousTransformType =
                             newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
                                 if (checked) continuousTransformTypes[index] else null

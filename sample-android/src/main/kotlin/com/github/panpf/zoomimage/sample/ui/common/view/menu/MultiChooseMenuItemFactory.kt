@@ -19,21 +19,21 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
-import com.github.panpf.zoomimage.sample.databinding.MultiChooseMenuItemBinding
+import com.github.panpf.zoomimage.sample.databinding.ListItemMenuMultiChooseBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
 class MultiChooseMenuItemFactory(private val activity: Activity) :
-    BaseBindingItemFactory<MultiChooseMenu, MultiChooseMenuItemBinding>(MultiChooseMenu::class) {
+    BaseBindingItemFactory<MultiChooseMenu, ListItemMenuMultiChooseBinding>(MultiChooseMenu::class) {
 
     override fun initItem(
         context: Context,
-        binding: MultiChooseMenuItemBinding,
-        item: BindingItem<MultiChooseMenu, MultiChooseMenuItemBinding>
+        binding: ListItemMenuMultiChooseBinding,
+        item: BindingItem<MultiChooseMenu, ListItemMenuMultiChooseBinding>
     ) {
         binding.root.setOnClickListener {
             val data = item.dataOrThrow
             showDialog(data) {
-                binding.multiChooseMenuItemInfoText.text =
+                binding.infoText.text =
                     data.getCheckedList().count { it }.toString()
             }
         }
@@ -41,14 +41,14 @@ class MultiChooseMenuItemFactory(private val activity: Activity) :
 
     override fun bindItemData(
         context: Context,
-        binding: MultiChooseMenuItemBinding,
-        item: BindingItem<MultiChooseMenu, MultiChooseMenuItemBinding>,
+        binding: ListItemMenuMultiChooseBinding,
+        item: BindingItem<MultiChooseMenu, ListItemMenuMultiChooseBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
         data: MultiChooseMenu
     ) {
-        binding.multiChooseMenuItemTitleText.text = data.title
-        binding.multiChooseMenuItemInfoText.text = data.getCheckedList().count { it }.toString()
+        binding.titleText.text = data.title
+        binding.infoText.text = data.getCheckedList().count { it }.toString()
     }
 
     private fun showDialog(data: MultiChooseMenu, after: () -> Unit) {

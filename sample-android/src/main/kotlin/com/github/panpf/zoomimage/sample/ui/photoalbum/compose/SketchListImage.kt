@@ -22,7 +22,7 @@ fun SketchListImage(sketchImageUri: String, modifier: Modifier) {
             placeholder(IconStateImage(drawable.ic_image_outline) {
                 resColorBackground(color.placeholder_bg)
             })
-            error(IconStateImage(drawable.ic_error) {
+            error(IconStateImage(drawable.ic_error_baseline) {
                 resColorBackground(color.placeholder_bg)
             })
             crossfade()

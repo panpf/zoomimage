@@ -17,12 +17,12 @@
 package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
 import androidx.core.net.toUri
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -35,19 +35,19 @@ import com.github.panpf.sketch.request.DownloadRequest
 import com.github.panpf.sketch.request.DownloadResult
 import com.github.panpf.sketch.sketch
 import com.github.panpf.tools4a.toast.ktx.showShortToast
-import com.github.panpf.zoomimage.sample.databinding.SubsamplingViewFragmentBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentSubsamplingViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import kotlinx.coroutines.launch
 
-class SubsamplingViewFragment : BaseBindingFragment<SubsamplingViewFragmentBinding>() {
+class SubsamplingViewFragment : BaseBindingFragment<FragmentSubsamplingViewBinding>() {
 
     private val args by navArgs<SubsamplingViewFragmentArgs>()
 
     override fun onViewCreated(
-        binding: SubsamplingViewFragmentBinding,
+        binding: FragmentSubsamplingViewBinding,
         savedInstanceState: Bundle?
     ) {
         binding.subsamplingView.apply {
@@ -68,19 +68,12 @@ class SubsamplingViewFragment : BaseBindingFragment<SubsamplingViewFragmentBindi
                 }
             })
         }
+
         updateInfo(binding)
-
-        binding.subsamplingViewProgress.isVisible = false
-        binding.subsamplingViewErrorLayout.isVisible = false
-
-        binding.subsamplingViewErrorRetryButton.setOnClickListener {
-            setImage(binding)
-        }
-
         setImage(binding)
     }
 
-    private fun setImage(binding: SubsamplingViewFragmentBinding) {
+    private fun setImage(binding: FragmentSubsamplingViewBinding) {
         viewLifecycleOwner.lifecycleScope.launch {
             val imageSource = newImageSource(binding, args.imageUri)
             if (imageSource != null) {
@@ -90,7 +83,7 @@ class SubsamplingViewFragment : BaseBindingFragment<SubsamplingViewFragmentBindi
     }
 
     private suspend fun newImageSource(
-        binding: SubsamplingViewFragmentBinding,
+        binding: FragmentSubsamplingViewBinding,
         sketchImageUri: String
     ): ImageSource? {
         return when {
@@ -113,36 +106,38 @@ class SubsamplingViewFragment : BaseBindingFragment<SubsamplingViewFragmentBindi
             }
 
             sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
-                binding.subsamplingViewProgress.isVisible = true
-                binding.subsamplingViewErrorLayout.isVisible = false
+                binding.stateView.loading()
                 val request = DownloadRequest(requireContext(), args.imageUri) {
                     depth(NETWORK)
                 }
-                val result = requireContext().sketch.execute(request)
-                if (result is DownloadResult.Success) {
-                    val data = result.data.data
-                    if (data is DownloadData.DiskCacheData) {
-                        binding.subsamplingViewProgress.isVisible = false
-                        binding.subsamplingViewErrorLayout.isVisible = false
-                        ImageSource.uri(data.snapshot.file.toUri())
-                    } else {
-                        binding.subsamplingViewProgress.isVisible = false
-                        binding.subsamplingViewErrorLayout.isVisible = true
-                        Log.e(
-                            "ZoomImageViewFragment",
-                            "newImageSource failed, data is byte array. uri: '$sketchImageUri'"
-                        )
+                when (val result = requireContext().sketch.execute(request)) {
+                    is DownloadResult.Success -> {
+                        val data = result.data.data
+                        binding.stateView.gone()
+                        when (data) {
+                            is DownloadData.DiskCacheData -> ImageSource.uri(data.snapshot.file.toUri())
+
+                            is DownloadData.ByteArrayData -> ImageSource.bitmap(
+                                BitmapFactory.decodeByteArray(data.bytes, 0, data.bytes.size)
+                            )
+
+                            else -> throw IllegalArgumentException("")
+                        }
+                    }
+
+                    is DownloadResult.Error -> {
+                        binding.stateView.error {
+                            message(result.throwable)
+                            retryAction {
+                                setImage(binding)
+                            }
+                        }
                         null
                     }
-                } else {
-                    binding.subsamplingViewProgress.isVisible = false
-                    binding.subsamplingViewErrorLayout.isVisible = true
-                    val errorMessage = (result as DownloadResult.Error).throwable.toString()
-                    Log.e(
-                        "ZoomImageViewFragment",
-                        "newImageSource failed, image download failed: $errorMessage. uri: '$sketchImageUri'"
-                    )
-                    null
+
+                    else -> {
+                        throw IllegalArgumentException("")
+                    }
                 }
             }
 
@@ -153,13 +148,13 @@ class SubsamplingViewFragment : BaseBindingFragment<SubsamplingViewFragmentBindi
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateInfo(binding: SubsamplingViewFragmentBinding) {
-        binding.subsamplingViewInfoHeaderText.text = """
+    private fun updateInfo(binding: FragmentSubsamplingViewBinding) {
+        binding.infoHeaderText.text = """
                 scale: 
                 space: 
                 center: 
             """.trimIndent()
-        binding.subsamplingViewInfoContentText.text = binding.subsamplingView.run {
+        binding.infoText.text = binding.subsamplingView.run {
             """
                 ${scale.format(2)} in (${minScale.format(2)},${maxScale.format(2)})
                 ${RectF().apply { getPanRemaining(this) }.toVeryShortString()}
