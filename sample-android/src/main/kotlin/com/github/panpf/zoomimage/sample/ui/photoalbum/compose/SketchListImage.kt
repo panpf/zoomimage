@@ -10,7 +10,6 @@ import com.github.panpf.sketch.resize.LongImageClipPrecisionDecider
 import com.github.panpf.sketch.resize.LongImageScaleDecider
 import com.github.panpf.sketch.resize.Precision.SAME_ASPECT_RATIO
 import com.github.panpf.sketch.stateimage.IconStateImage
-import com.github.panpf.sketch.stateimage.ResColor
 import com.github.panpf.zoomimage.sample.R.color
 import com.github.panpf.zoomimage.sample.R.drawable
 import com.github.panpf.zoomimage.sample.settingsService
@@ -20,18 +19,12 @@ fun SketchListImage(sketchImageUri: String, modifier: Modifier) {
     val context = LocalContext.current
     AsyncImage(
         request = DisplayRequest(context, sketchImageUri) {
-            placeholder(
-                IconStateImage(
-                    drawable.ic_image_outline,
-                    ResColor(color.placeholder_bg)
-                )
-            )
-            error(
-                IconStateImage(
-                    drawable.ic_error,
-                    ResColor(color.placeholder_bg)
-                )
-            )
+            placeholder(IconStateImage(drawable.ic_image_outline) {
+                resColorBackground(color.placeholder_bg)
+            })
+            error(IconStateImage(drawable.ic_error) {
+                resColorBackground(color.placeholder_bg)
+            })
             crossfade()
             resizeApplyToDrawable()
             ignoreExifOrientation(context.settingsService.ignoreExifOrientation.value)

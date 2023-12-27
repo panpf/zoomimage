@@ -22,16 +22,18 @@ import com.github.panpf.sketch.resize.LongImageClipPrecisionDecider
 import com.github.panpf.sketch.resize.LongImageScaleDecider
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.stateimage.IconStateImage
-import com.github.panpf.sketch.stateimage.ResColor
 import com.github.panpf.zoomimage.sample.R
 
 class SketchPhotoGridItemFactory : BasePhotoGridItemFactory() {
 
     override fun displayImage(imageView: ImageView, sketchImageUri: String) {
         imageView.displayImage(sketchImageUri) {
-            val bgColor = ResColor(R.color.placeholder_bg)
-            placeholder(IconStateImage(R.drawable.ic_image_outline, bgColor))
-            error(IconStateImage(R.drawable.ic_error, bgColor))
+            placeholder(IconStateImage(R.drawable.ic_image_outline) {
+                resColorBackground(R.color.placeholder_bg)
+            })
+            error(IconStateImage(R.drawable.ic_error) {
+                resColorBackground(R.color.placeholder_bg)
+            })
             crossfade()
             resizeApplyToDrawable()
             resizePrecision(LongImageClipPrecisionDecider(Precision.SAME_ASPECT_RATIO))
