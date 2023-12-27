@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/windowBackgroundDark">
+    android:background="@android:color/black">
 
     <FrameLayout
         android:id="@+id/contentLayout"
@@ -86,7 +86,7 @@
                         android:background="@drawable/bg_arrow"
                         android:padding="3dp"
                         app:srcCompat="@drawable/ic_zoom_out"
-                        app:tint="@color/colorOnPrimary" />
+                        app:tint="@color/md_theme_onPrimary" />
 
                     <View
                         android:layout_width="0dp"
@@ -100,7 +100,7 @@
                         android:background="@drawable/bg_arrow"
                         android:padding="3dp"
                         app:srcCompat="@drawable/ic_zoom_in"
-                        app:tint="@color/colorOnPrimary" />
+                        app:tint="@color/md_theme_onPrimary" />
                 </LinearLayout>
 
                 <com.google.android.material.slider.Slider

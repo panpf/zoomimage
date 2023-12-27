@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.test.compose
 
-import com.github.panpf.zoomimage.sample.common.R as CommonR
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,16 +15,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,6 +69,7 @@ import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.calculateBaseTransform
 import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import kotlin.math.min
+import com.github.panpf.zoomimage.sample.common.R as CommonR
 
 class GraphicsLayerFragment : BaseAppBarComposeFragment() {
 
@@ -120,7 +121,7 @@ private fun GraphicsLayerSample() {
 
     var contentScale by remember { mutableStateOf(ContentScale.Fit) }
     var alignment by remember { mutableStateOf(Alignment.Center) }
-    var rotation by remember { mutableStateOf(0) }
+    var rotation by remember { mutableIntStateOf(0) }
 
     val baseTransform by remember {
         derivedStateOf {
@@ -469,12 +470,15 @@ private fun GraphicsLayerSample() {
                                         .padding(horizontal = 14.dp)
                                 )
                             }
-                            DropdownMenuItem(onClick = {
-                                contentScale = newContentScale
-                                contentScaleMenuExpanded = false
-                            }) {
-                                Text(text = newContentScale.name)
-                            }
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = newContentScale.name)
+                                },
+                                onClick = {
+                                    contentScale = newContentScale
+                                    contentScaleMenuExpanded = false
+                                }
+                            )
                         }
                     }
                 }
@@ -504,12 +508,15 @@ private fun GraphicsLayerSample() {
                                         .padding(horizontal = 14.dp)
                                 )
                             }
-                            DropdownMenuItem(onClick = {
-                                alignment = newAlignment
-                                alignmentMenuExpanded = false
-                            }) {
-                                Text(text = newAlignment.name)
-                            }
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = newAlignment.name)
+                                },
+                                onClick = {
+                                    alignment = newAlignment
+                                    alignmentMenuExpanded = false
+                                }
+                            )
                         }
                     }
                 }

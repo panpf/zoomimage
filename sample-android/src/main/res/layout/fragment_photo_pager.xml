@@ -22,6 +22,6 @@
         android:paddingTop="12dp"
         android:paddingRight="8dp"
         android:paddingBottom="12dp"
-        android:textColor="@color/white"
+        android:textColor="@color/md_theme_onTertiary"
         tools:text="99\n·\n100" />
 </FrameLayout>

@@ -54,8 +54,6 @@ class PhotoAlbumViewFragment : BaseToolbarBindingFragment<FragmentRecyclerRefres
             subtitle = zoomViewType.title
         }
 
-        binding.root.setBackgroundResource(R.color.windowBackgroundDark)
-
         val pagingAdapter = AssemblyPagingDataAdapter<Photo>(listOf(
             zoomViewType.createListItemFactory()
                 .setOnItemClickListener { _, _, _, absoluteAdapterPosition, _ ->

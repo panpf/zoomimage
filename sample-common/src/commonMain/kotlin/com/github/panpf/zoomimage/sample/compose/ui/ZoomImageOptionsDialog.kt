@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -153,7 +153,7 @@ fun ZoomImageOptionsDialog(
             }
 
             if (my) {
-                Divider(Modifier.padding(horizontal = 20.dp))
+                Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                 SwitchMenu("Animate Scale", animateScale) {
                     state.animateScale.value = !state.animateScale.value
@@ -225,7 +225,7 @@ fun ZoomImageOptionsDialog(
 //                    onDismissRequest()
                 }
 
-                Divider(Modifier.padding(horizontal = 20.dp))
+                Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                 SwitchMenu(
                     "Limit Offset Within Base Visible Rect",
@@ -236,7 +236,7 @@ fun ZoomImageOptionsDialog(
 //                    onDismissRequest()
                 }
 
-                Divider(Modifier.padding(horizontal = 20.dp))
+                Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                 SwitchMenu("Read Mode", readModeEnabled) {
                     state.readModeEnabled.value = !state.readModeEnabled.value
@@ -247,7 +247,7 @@ fun ZoomImageOptionsDialog(
 //                    onDismissRequest()
                 }
 
-                Divider(Modifier.padding(horizontal = 20.dp))
+                Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                 val continuousTransformTypes = remember {
                     listOf(
@@ -301,14 +301,14 @@ fun ZoomImageOptionsDialog(
 //                    onDismissRequest()
                 }
 
-                Divider(Modifier.padding(horizontal = 20.dp))
+                Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                 SwitchMenu("Scroll Bar", scrollBarEnabled) {
                     state.scrollBarEnabled.value = !state.scrollBarEnabled.value
 //                    onDismissRequest()
                 }
 
-                Divider(Modifier.padding(horizontal = 20.dp))
+                Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                 val logLevelNames = remember {
                     listOf(
@@ -348,13 +348,9 @@ fun SwitchMenu(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = name, modifier = Modifier.weight(1f), fontSize = 12.sp)
-        val colorScheme = MaterialTheme.colorScheme
         Switch(
             checked = value,
             onCheckedChange = null,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = colorScheme.primary,
-            )
         )
     }
 }

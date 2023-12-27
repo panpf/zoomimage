@@ -102,7 +102,7 @@
                     app:layout_constraintCircleAngle="0"
                     app:layout_constraintCircleRadius="40dp"
                     app:srcCompat="@drawable/ic_arrow_up"
-                    app:tint="@color/white"
+                    app:tint="@android:color/white"
                     tools:ignore="MissingConstraints" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -115,7 +115,7 @@
                     app:layout_constraintCircleAngle="180"
                     app:layout_constraintCircleRadius="40dp"
                     app:srcCompat="@drawable/ic_arrow_down"
-                    app:tint="@color/white"
+                    app:tint="@android:color/white"
                     tools:ignore="MissingConstraints" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -128,7 +128,7 @@
                     app:layout_constraintCircleAngle="270"
                     app:layout_constraintCircleRadius="40dp"
                     app:srcCompat="@drawable/ic_arrow_left"
-                    app:tint="@color/white"
+                    app:tint="@android:color/white"
                     tools:ignore="MissingConstraints" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -141,7 +141,7 @@
                     app:layout_constraintCircleAngle="90"
                     app:layout_constraintCircleRadius="40dp"
                     app:srcCompat="@drawable/ic_arrow_right"
-                    app:tint="@color/white"
+                    app:tint="@android:color/white"
                     tools:ignore="MissingConstraints" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -165,7 +165,7 @@
                         android:background="@drawable/bg_arrow"
                         android:padding="10dp"
                         app:srcCompat="@drawable/ic_zoom_out"
-                        app:tint="@color/white" />
+                        app:tint="@android:color/white" />
 
                     <View
                         android:layout_width="20dp"
@@ -178,7 +178,7 @@
                         android:background="@drawable/bg_arrow"
                         android:padding="10dp"
                         app:srcCompat="@drawable/ic_zoom_in"
-                        app:tint="@color/white" />
+                        app:tint="@android:color/white" />
                 </LinearLayout>
 
                 <View
@@ -198,7 +198,7 @@
                         android:background="@drawable/bg_arrow"
                         android:padding="10dp"
                         app:srcCompat="@drawable/ic_rotate_left"
-                        app:tint="@color/white" />
+                        app:tint="@android:color/white" />
 
                     <View
                         android:layout_width="20dp"
@@ -211,7 +211,7 @@
                         android:background="@drawable/bg_arrow"
                         android:padding="10dp"
                         app:srcCompat="@drawable/ic_rotate_right"
-                        app:tint="@color/white" />
+                        app:tint="@android:color/white" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

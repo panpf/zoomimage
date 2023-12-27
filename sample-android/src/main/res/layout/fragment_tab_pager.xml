@@ -9,14 +9,14 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/md_theme_primary"
         app:tabGravity="center"
         app:tabIndicatorAnimationMode="elastic"
-        app:tabIndicatorColor="@color/colorOnPrimary"
+        app:tabIndicatorColor="@color/md_theme_onPrimary"
         app:tabIndicatorFullWidth="false"
         app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/colorOnPrimary"
-        app:tabTextColor="@color/colorOnPrimary" />
+        app:tabSelectedTextColor="@color/md_theme_onPrimary"
+        app:tabTextColor="@color/md_theme_onPrimary" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"

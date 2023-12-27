@@ -36,7 +36,7 @@ kotlin {
             dependencies {
                 api(project(":zoomimage-compose"))
                 api(compose.foundation)
-                api(compose.material)
+//                api(compose.material)
                 api(compose.material3)
                 api(compose.ui)
                 api(compose.preview)

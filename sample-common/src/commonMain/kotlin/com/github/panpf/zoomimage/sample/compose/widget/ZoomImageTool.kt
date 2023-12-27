@@ -216,7 +216,7 @@ private fun ButtonPad(
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val coroutineScope = rememberCoroutineScope()
-    Row(Modifier.background(colorScheme.tertiary.copy(alpha = 0.8f), RoundedCornerShape(50))) {
+    Row(Modifier.background(colorScheme.tertiary, RoundedCornerShape(50))) {
         IconButton(
             onClick = {
                 coroutineScope.launch {

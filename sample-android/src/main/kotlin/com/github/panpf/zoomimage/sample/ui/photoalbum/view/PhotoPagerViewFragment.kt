@@ -17,6 +17,9 @@
 package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar

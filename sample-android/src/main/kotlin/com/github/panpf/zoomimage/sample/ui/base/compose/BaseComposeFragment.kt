@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.github.panpf.tools4a.dimen.ktx.px2dp
 import com.github.panpf.tools4a.display.ktx.getStatusBarHeight
-import com.github.panpf.zoomimage.sample.ui.base.compose.theme.MyTheme
+import com.github.panpf.zoomimage.sample.ui.base.compose.theme.AppTheme
 
 abstract class BaseComposeFragment : Fragment() {
 
@@ -73,7 +73,7 @@ private fun MyScaffold3(
     val statusBarHeight = remember {
         context.getStatusBarHeight().px2dp.dp
     }
-    MyTheme {
+    AppTheme {
         Surface {
             Column(modifier = Modifier.fillMaxSize()) {
                 val colorScheme = MaterialTheme.colorScheme

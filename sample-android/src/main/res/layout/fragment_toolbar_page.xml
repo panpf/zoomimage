@@ -10,7 +10,7 @@
         android:id="@+id/toolbarLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/md_theme_primary"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,9 +26,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:subtitleTextColor="@color/colorOnPrimary"
+            app:subtitleTextColor="@color/md_theme_onPrimary"
             app:title="@string/app_name"
-            app:titleTextColor="@color/colorOnPrimary"
+            app:titleTextColor="@color/md_theme_onPrimary"
             tools:subtitle="@string/app_name" />
     </LinearLayout>
 
