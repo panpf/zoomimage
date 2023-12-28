@@ -387,19 +387,18 @@ class Logger(
         logger.pipeline.flush()
     }
 
-    private fun assembleMessage(msg: String): String {
-        return if (showThreadName) {
-            val threadName = getThreadName()
-            if (module?.isNotEmpty() == true) {
-                "$threadName - $module. $msg"
-            } else {
-                "$threadName - $msg"
-            }
-        } else if (module?.isNotEmpty() == true) {
-            "$module. $msg"
-        } else {
-            msg
+    private fun assembleMessage(msg: String): String = buildString {
+        if (showThreadName) {
+            append(getThreadName())
+            if (isNotEmpty()) append(" - ")
         }
+
+        if (module?.isNotEmpty() == true) {
+            append(module)
+            if (isNotEmpty()) append(". ")
+        }
+
+        append(msg)
     }
 
     private fun getThreadName(): String? {
