@@ -65,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end|right"
                 android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical">
 
@@ -116,6 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end|right"
                 android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/bg_bottom_toolbar">
 
