@@ -1,8 +1,9 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -13,6 +14,7 @@ import com.github.panpf.sketch.compose.rememberAsyncImageState
 import com.github.panpf.sketch.drawable.SectorProgressDrawable
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.sketch.stateimage.ThumbnailMemoryCacheStateImage
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
@@ -29,35 +31,37 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
         val imageState = rememberAsyncImageState()
         val progressPainter =
             rememberDrawableProgressPainter(drawable = remember { SectorProgressDrawable() })
-        Box(modifier = Modifier.fillMaxSize()) {
-            SketchZoomAsyncImage(
-                request = DisplayRequest(context, sketchImageUri) {
-                    placeholder(ThumbnailMemoryCacheStateImage())
-                    crossfade(fadeStart = false)
-                    ignoreExifOrientation(ignoreExifOrientation)
-                },
-                contentDescription = "view image",
-                contentScale = contentScale,
-                alignment = alignment,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .progressIndicator(imageState, progressPainter),
-                imageState = imageState,
-                state = state,
-                scrollBar = scrollBar,
-                onTap = {
-                    context.showShortToast("Click (${it.toShortString()})")
-                },
-                onLongPress = {
-                    context.showShortToast("Long click (${it.toShortString()})")
-                }
-            )
+        SketchZoomAsyncImage(
+            request = DisplayRequest(context, sketchImageUri) {
+                placeholder(ThumbnailMemoryCacheStateImage())
+                crossfade(fadeStart = false)
+                ignoreExifOrientation(ignoreExifOrientation)
+            },
+            contentDescription = "view image",
+            contentScale = contentScale,
+            alignment = alignment,
+            modifier = Modifier
+                .fillMaxSize()
+                .progressIndicator(imageState, progressPainter),
+            imageState = imageState,
+            state = state,
+            scrollBar = scrollBar,
+            onTap = {
+                context.showShortToast("Click (${it.toShortString()})")
+            },
+            onLongPress = {
+                context.showShortToast("Long click (${it.toShortString()})")
+            }
+        )
 
-            LoadState(
-                modifier = Modifier.align(androidx.compose.ui.Alignment.Center),
-                imageState = imageState
-            )
+        val myLoadState by remember {
+            derivedStateOf {
+                if (imageState.loadState is LoadState.Error) {
+                    MyLoadState.Error { imageState.restart() }
+                } else MyLoadState.None
+            }
         }
+        LoadState(loadState = myLoadState)
     }
 }
 

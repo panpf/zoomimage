@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.sketch.sketch
 import com.github.panpf.tools4a.toast.ktx.showShortToast
@@ -38,11 +39,19 @@ fun ZoomImageSample(sketchImageUri: String) {
             state.subsampling.ignoreExifOrientation = ignoreExifOrientation
         }
 
+        var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.None) }
         var drawablePainter: DrawablePainter? by remember { mutableStateOf(null) }
         LaunchedEffect(sketchImageUri, ignoreExifOrientation) {
-            val drawable = DisplayRequest(context, sketchImageUri) {
+            myLoadState = MyLoadState.Loading
+            val displayResult = DisplayRequest(context, sketchImageUri) {
                 ignoreExifOrientation(ignoreExifOrientation)
-            }.execute().drawable
+            }.execute()
+            myLoadState = if (displayResult is DisplayResult.Success) {
+                MyLoadState.None
+            } else {
+                MyLoadState.Error()
+            }
+            val drawable = displayResult.drawable
             drawablePainter = drawable?.let { DrawablePainter(it) }
 
             val imageSource = SketchImageSource(context, context.sketch, sketchImageUri)
@@ -67,6 +76,8 @@ fun ZoomImageSample(sketchImageUri: String) {
                 }
             )
         }
+
+        LoadState(loadState = myLoadState)
     }
 }
 

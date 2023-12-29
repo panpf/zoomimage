@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.base.compose.theme
+package com.github.panpf.zoomimage.sample.compose.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

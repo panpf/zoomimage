@@ -2,12 +2,16 @@ package com.github.panpf.zoomimage.sample.ui.examples.compose
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
-import coil.request.ImageRequest
+import coil.request.ImageRequest.Builder
+import coil.size.Precision.INEXACT
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
@@ -22,22 +26,31 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
         sketchImageUri = sketchImageUri,
         supportIgnoreExifOrientation = false
     ) { contentScale, alignment, state: ZoomState, _, scrollBar ->
+        var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.None) }
         val context = LocalContext.current
         val lifecycle = LocalLifecycleOwner.current.lifecycle
-        val coilData =
-            remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
-        CoilZoomAsyncImage(
-            model = ImageRequest.Builder(LocalContext.current).apply {
+        val request = remember(key1 = sketchImageUri) {
+            val model = sketchUri2CoilModel(context, sketchImageUri)
+            Builder(context).apply {
                 lifecycle(lifecycle)
-                precision(coil.size.Precision.INEXACT)
-                data(coilData)
+                precision(INEXACT)
+                data(model)
                 crossfade(true)
-//                val imageLoader = Coil.imageLoader(context)
-//                if (coilData != null) {
-//                    val key = imageLoader.components.key(coilData, Options(context))
-//                    placeholderMemoryCacheKey(key)
-//                }
-            }.build(),
+                listener(
+                    onStart = {
+                        myLoadState = MyLoadState.Loading
+                    },
+                    onError = { _, _ ->
+                        myLoadState = MyLoadState.Error()
+                    },
+                    onSuccess = { _, _ ->
+                        myLoadState = MyLoadState.None
+                    }
+                )
+            }.build()
+        }
+        CoilZoomAsyncImage(
+            model = request,
             contentDescription = "view image",
             contentScale = contentScale,
             alignment = alignment,
@@ -51,6 +64,8 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
                 context.showShortToast("Long click (${it.toShortString()})")
             }
         )
+
+        LoadState(loadState = myLoadState)
     }
 }
 

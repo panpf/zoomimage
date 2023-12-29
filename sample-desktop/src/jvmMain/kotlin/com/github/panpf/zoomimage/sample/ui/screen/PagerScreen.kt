@@ -156,7 +156,7 @@ private fun PageNumber(modifier: Modifier = Modifier, number: Int, total: Int) {
         modifier = Modifier
             .padding(20.dp) // margin
             .background(
-                color = colors.tertiary.copy(alpha = 0.7f),
+                color = colors.tertiary,
                 shape = RoundedCornerShape(50)
             )
             .padding(horizontal = 8.dp, vertical = 12.dp)
