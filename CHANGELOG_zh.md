@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+## v1.0.0-rc01
+
+other:
+
+* depend: 升级 sketch 3.3.0-rc02
+
 ## v1.0.0-beta11
 
 zoom:

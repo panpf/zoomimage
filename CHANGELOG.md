@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## v1.0.0-rc01
+
+other:
+
+* depend: Upgrade sketch 3.3.0-rc02
+
 ## v1.0.0-beta11
 
 zoom:
