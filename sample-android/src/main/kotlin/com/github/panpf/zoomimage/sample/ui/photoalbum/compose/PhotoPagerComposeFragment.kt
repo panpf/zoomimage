@@ -53,7 +53,7 @@ class PhotoPagerComposeFragment : BaseAppBarComposeFragment() {
     @Composable
     override fun RowScope.DrawActions() {
         val context = LocalContext.current
-        val horizontalLayout by context.settingsService.horizontalPagerLayout.stateFlow
+        val horizontalLayout by context.settingsService.horizontalPagerLayout
             .collectAsState(initial = true)
         IconButton(onClick = {
             context.settingsService.horizontalPagerLayout.value = !horizontalLayout
@@ -75,7 +75,7 @@ class PhotoPagerComposeFragment : BaseAppBarComposeFragment() {
     @Composable
     override fun DrawContent() {
         val context = LocalContext.current
-        val horizontalLayout by context.settingsService.horizontalPagerLayout.stateFlow
+        val horizontalLayout by context.settingsService.horizontalPagerLayout
             .collectAsState(initial = true)
         val imageUrlList = remember { args.imageUris.split(",") }
         val pagerState = rememberPagerState(initialPage = args.position - args.startPosition) {

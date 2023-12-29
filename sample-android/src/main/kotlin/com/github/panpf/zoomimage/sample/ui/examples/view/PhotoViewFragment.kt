@@ -53,7 +53,7 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
                 showShortToast("Long click")
                 true
             }
-            settingsService.scaleType.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+            settingsService.scaleType.collectWithLifecycle(viewLifecycleOwner) {
                 scaleType = ImageView.ScaleType.valueOf(it)
             }
             setOnScaleChangeListener { _, _, _ ->

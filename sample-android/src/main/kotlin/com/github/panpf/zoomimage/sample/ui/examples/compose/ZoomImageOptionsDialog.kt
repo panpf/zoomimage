@@ -7,7 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.github.panpf.zoomimage.sample.compose.ui.ZoomImageOptionsState
 import com.github.panpf.zoomimage.sample.settingsService
-import com.github.panpf.zoomimage.sample.util.BaseMmkvData
+import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -54,7 +54,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
 }
 
 @Composable
-private fun <T> BindStateAndFlow(state: MutableStateFlow<T>, mmkvData: BaseMmkvData<T>) {
+private fun <T> BindStateAndFlow(state: MutableStateFlow<T>, mmkvData: SettingsStateFlow<T>) {
     LaunchedEffect(state) {
         state.value = mmkvData.value
         state.collect {

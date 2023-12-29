@@ -18,91 +18,86 @@ package com.github.panpf.zoomimage.sample
 
 import android.content.Context
 import android.widget.ImageView.ScaleType.FIT_CENTER
-import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
-import com.github.panpf.zoomimage.sample.util.StringMmkvData
+import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
-import com.tencent.mmkv.MMKV
 
 class SettingsService(val context: Context) {
 
-    private val mmkv = MMKV.defaultMMKV()
+    private val preferences = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
 
     val horizontalPagerLayout by lazy {
-        BooleanMmkvData(mmkv, "horizontalPagerLayout", true)
+        SettingsStateFlow("horizontalPagerLayout", true, preferences)
     }
 
     val scaleType by lazy {
-        StringMmkvData(mmkv, "scaleType", FIT_CENTER.name)
+        SettingsStateFlow("scaleType", FIT_CENTER.name, preferences)
     }
 
     val contentScale by lazy {
-        StringMmkvData(mmkv, "contentScale", "Fit")
+        SettingsStateFlow("contentScale", "Fit", preferences)
     }
     val alignment by lazy {
-        StringMmkvData(mmkv, "alignment", "Center")
+        SettingsStateFlow("alignment", "Center", preferences)
     }
 
     val animateScale by lazy {
-        BooleanMmkvData(mmkv, "animateScale", true)
+        SettingsStateFlow("animateScale", true, preferences)
     }
     val rubberBandScale by lazy {
-        BooleanMmkvData(mmkv, "rubberBandScale", true)
+        SettingsStateFlow("rubberBandScale", true, preferences)
     }
     val threeStepScale by lazy {
-        BooleanMmkvData(mmkv, "threeStepScale", false)
+        SettingsStateFlow("threeStepScale", false, preferences)
     }
     val slowerScaleAnimation by lazy {
-        BooleanMmkvData(mmkv, "slowerScaleAnimation", false)
+        SettingsStateFlow("slowerScaleAnimation", false, preferences)
     }
     val scalesCalculator by lazy {
-        StringMmkvData(mmkv, "scalesCalculator", "Dynamic")
+        SettingsStateFlow("scalesCalculator", "Dynamic", preferences)
     }
     val scalesMultiple by lazy {
-        StringMmkvData(mmkv, "scalesMultiple", ScalesCalculator.Multiple.toString())
+        SettingsStateFlow("scalesMultiple", ScalesCalculator.Multiple.toString(), preferences)
     }
     val disabledGestureType by lazy {
-        StringMmkvData(mmkv, "disabledGestureType", "0")
+        SettingsStateFlow("disabledGestureType", "0", preferences)
     }
 
     val limitOffsetWithinBaseVisibleRect by lazy {
-        BooleanMmkvData(mmkv, "limitOffsetWithinBaseVisibleRect", false)
+        SettingsStateFlow("limitOffsetWithinBaseVisibleRect", false, preferences)
     }
 
     val readModeEnabled by lazy {
-        BooleanMmkvData(mmkv, "readModeEnabled", true)
+        SettingsStateFlow("readModeEnabled", true, preferences)
     }
     val readModeAcceptedBoth by lazy {
-        BooleanMmkvData(mmkv, "readModeAcceptedBoth", true)
+        SettingsStateFlow("readModeAcceptedBoth", true, preferences)
     }
 
     val pausedContinuousTransformType by lazy {
-        StringMmkvData(
-            mmkv,
-            "pausedContinuousTransformType",
-            TileManager.DefaultPausedContinuousTransformType.toString()
-        )
+        val initialize = TileManager.DefaultPausedContinuousTransformType.toString()
+        SettingsStateFlow("pausedContinuousTransformType", initialize, preferences)
     }
     val disabledBackgroundTiles by lazy {
-        BooleanMmkvData(mmkv, "disabledBackgroundTiles", false)
+        SettingsStateFlow("disabledBackgroundTiles", false, preferences)
     }
     val ignoreExifOrientation by lazy {
-        BooleanMmkvData(mmkv, "ignoreExifOrientation", false)
+        SettingsStateFlow("ignoreExifOrientation", false, preferences)
     }
     val showTileBounds by lazy {
-        BooleanMmkvData(mmkv, "showTileBounds", false)
+        SettingsStateFlow("showTileBounds", false, preferences)
     }
     val tileAnimation by lazy {
-        BooleanMmkvData(mmkv, "tileAnimation", true)
+        SettingsStateFlow("tileAnimation", true, preferences)
     }
 
     val scrollBarEnabled by lazy {
-        BooleanMmkvData(mmkv, "scrollBarEnabled", true)
+        SettingsStateFlow("scrollBarEnabled", true, preferences)
     }
 
     val logLevel by lazy {
-        StringMmkvData(mmkv, "logLevel", defaultLogLevel())
+        SettingsStateFlow("logLevel", defaultLogLevel(), preferences)
     }
 
     companion object {

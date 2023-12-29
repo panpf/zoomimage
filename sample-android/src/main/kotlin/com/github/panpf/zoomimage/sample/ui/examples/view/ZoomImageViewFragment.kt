@@ -35,6 +35,7 @@ import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
+import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.fromContent
@@ -62,9 +63,10 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
     ) {
         super.onViewCreated(binding, savedInstanceState)
 
-        settingsService.ignoreExifOrientation.sharedFlow.collectWithLifecycle(viewLifecycleOwner) {
-            loadData()
-        }
+        settingsService.ignoreExifOrientation.ignoreFirst()
+            .collectWithLifecycle(viewLifecycleOwner) {
+                loadData()
+            }
     }
 
     override fun loadImage(zoomView: ZoomImageView, stateView: StateView) {

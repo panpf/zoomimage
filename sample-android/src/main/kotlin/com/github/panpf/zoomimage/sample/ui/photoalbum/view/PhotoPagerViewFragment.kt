@@ -17,9 +17,6 @@
 package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
@@ -55,7 +52,7 @@ class PhotoPagerViewFragment : BaseToolbarBindingFragment<FragmentPhotoPagerBind
                     !settingsService.horizontalPagerLayout.value
                 true
             }
-            settingsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+            settingsService.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
                 val meuIcon = if (it) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
                 setIcon(meuIcon)
             }
@@ -79,7 +76,7 @@ class PhotoPagerViewFragment : BaseToolbarBindingFragment<FragmentPhotoPagerBind
         val imageUrlList = args.imageUris.split(",")
         binding.pager.apply {
             offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
-            settingsService.horizontalPagerLayout.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+            settingsService.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
                 orientation =
                     if (it) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL
             }

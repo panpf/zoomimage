@@ -96,7 +96,6 @@ dependencies {
     implementation(libs.panpf.tools4k)
     implementation(libs.panpf.sketch3.extensions.view)
     implementation(libs.panpf.sketch3.extensions.compose)
-    implementation(libs.mmkv)
     implementation(libs.subsamplingscaleimageview)
     implementation(libs.photoview)
     implementation(libs.androidx.constraintlayout.compose)

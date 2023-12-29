@@ -90,26 +90,26 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             onViewLongPressListener = OnViewLongPressListener { _, offset ->
                 showShortToast("Long click (${offset.toShortString()})")
             }
-            settingsService.logLevel.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+            settingsService.logLevel.collectWithLifecycle(viewLifecycleOwner) {
                 logger.level = Logger.level(it)
             }
-            settingsService.scrollBarEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+            settingsService.scrollBarEnabled.collectWithLifecycle(viewLifecycleOwner) {
                 scrollBar = if (it) ScrollBarSpec.Default else null
             }
             zoomable.apply {
-                settingsService.contentScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.contentScale.collectWithLifecycle(viewLifecycleOwner) {
                     contentScaleState.value = ContentScaleCompat.valueOf(it)
                 }
-                settingsService.alignment.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.alignment.collectWithLifecycle(viewLifecycleOwner) {
                     alignmentState.value = AlignmentCompat.valueOf(it)
                 }
-                settingsService.threeStepScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.threeStepScale.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScaleState.value = it
                 }
-                settingsService.rubberBandScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.rubberBandScale.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScaleState.value = it
                 }
-                settingsService.scalesMultiple.stateFlow
+                settingsService.scalesMultiple
                     .collectWithLifecycle(viewLifecycleOwner) {
                         val scalesMultiple = settingsService.scalesMultiple.value.toFloat()
                         val scalesCalculatorName = settingsService.scalesCalculator.value
@@ -119,7 +119,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                             ScalesCalculator.fixed(scalesMultiple)
                         }
                     }
-                settingsService.scalesCalculator.stateFlow
+                settingsService.scalesCalculator
                     .collectWithLifecycle(viewLifecycleOwner) {
                         val scalesMultiple = settingsService.scalesMultiple.value.toFloat()
                         val scalesCalculatorName = settingsService.scalesCalculator.value
@@ -129,11 +129,11 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                             ScalesCalculator.fixed(scalesMultiple)
                         }
                     }
-                settingsService.limitOffsetWithinBaseVisibleRect.stateFlow
+                settingsService.limitOffsetWithinBaseVisibleRect
                     .collectWithLifecycle(viewLifecycleOwner) {
                         limitOffsetWithinBaseVisibleRectState.value = it
                     }
-                settingsService.readModeEnabled.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.readModeEnabled.collectWithLifecycle(viewLifecycleOwner) {
                     val sizeType = if (settingsService.readModeAcceptedBoth.value) {
                         ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
                     } else if (settingsService.horizontalPagerLayout.value) {
@@ -144,7 +144,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     readModeState.value =
                         if (settingsService.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
-                settingsService.readModeAcceptedBoth.stateFlow.collectWithLifecycle(
+                settingsService.readModeAcceptedBoth.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
                     val sizeType = if (settingsService.readModeAcceptedBoth.value) {
@@ -157,7 +157,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     readModeState.value =
                         if (settingsService.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
-                settingsService.animateScale.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.animateScale.collectWithLifecycle(viewLifecycleOwner) {
                     val durationMillis = if (settingsService.animateScale.value) {
                         (if (settingsService.slowerScaleAnimation.value) 3000 else 300)
                     } else {
@@ -166,7 +166,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     animationSpecState.value =
                         ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
-                settingsService.slowerScaleAnimation.stateFlow.collectWithLifecycle(
+                settingsService.slowerScaleAnimation.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
                     val durationMillis = if (settingsService.animateScale.value) {
@@ -177,25 +177,25 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     animationSpecState.value =
                         ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
-                settingsService.disabledGestureType.stateFlow
+                settingsService.disabledGestureType
                     .collectWithLifecycle(viewLifecycleOwner) {
                         disabledGestureTypeState.value = it.toInt()
                     }
             }
             subsampling.apply {
-                settingsService.showTileBounds.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.showTileBounds.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBoundsState.value = it
                 }
-                settingsService.tileAnimation.stateFlow.collectWithLifecycle(viewLifecycleOwner) {
+                settingsService.tileAnimation.collectWithLifecycle(viewLifecycleOwner) {
                     tileAnimationSpecState.value =
                         if (it) TileAnimationSpec.Default else TileAnimationSpec.None
                 }
-                settingsService.pausedContinuousTransformType.stateFlow.collectWithLifecycle(
+                settingsService.pausedContinuousTransformType.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
                     pausedContinuousTransformTypeState.value = it.toInt()
                 }
-                settingsService.disabledBackgroundTiles.stateFlow.collectWithLifecycle(
+                settingsService.disabledBackgroundTiles.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
                     disabledBackgroundTilesState.value = it

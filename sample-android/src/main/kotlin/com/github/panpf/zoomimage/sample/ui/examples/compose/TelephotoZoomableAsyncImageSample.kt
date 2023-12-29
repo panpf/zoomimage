@@ -35,8 +35,8 @@ import me.saket.telephoto.zoomable.rememberZoomableState
 fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
     val context = LocalContext.current
     val settingsService = remember { context.settingsService }
-    val contentScaleName by settingsService.contentScale.stateFlow.collectAsState()
-    val alignmentName by settingsService.alignment.stateFlow.collectAsState()
+    val contentScaleName by settingsService.contentScale.collectAsState()
+    val alignmentName by settingsService.alignment.collectAsState()
     val contentScale = remember(contentScaleName) { ContentScale.valueOf(contentScaleName) }
     val alignment = remember(alignmentName) { Alignment.valueOf(alignmentName) }
     val coilData =

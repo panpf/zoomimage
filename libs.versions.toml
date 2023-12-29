@@ -40,7 +40,6 @@ panpf-tools4k = "1.0.0"
 # other
 junit = "4.13.2"
 telephoto = "0.6.2"
-mmkv = "1.2.13"
 subsamplingscaleimageview = "3.10.0"
 photoview = "2.3.0"
 coil = "2.4.0"
@@ -110,7 +109,6 @@ panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "pan
 junit = { module = "junit:junit", version.ref = "junit" }
 telephoto = { module = "me.saket.telephoto:zoomable", version.ref = "telephoto" }
 telephoto-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
-mmkv = { module = "com.tencent:mmkv", version.ref = "mmkv" }
 subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
@@ -132,4 +130,3 @@ androidx-navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotli
 mavenpublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenpublish" }
 
 [bundles]
-

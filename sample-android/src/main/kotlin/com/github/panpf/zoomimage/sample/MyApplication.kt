@@ -20,7 +20,6 @@ import com.github.panpf.sketch.util.Logger.Level.INFO
 import com.github.panpf.zoomimage.sample.util.getMaxAvailableMemoryCacheBytes
 import com.squareup.picasso.LruCache
 import com.squareup.picasso.Picasso
-import com.tencent.mmkv.MMKV
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.HttpsURLConnection
@@ -34,8 +33,6 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
     @SuppressLint("VisibleForTests")
     override fun onCreate() {
         super.onCreate()
-        MMKV.initialize(this)
-
         handleSSLHandshake()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

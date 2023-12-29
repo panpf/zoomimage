@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
-import com.github.panpf.zoomimage.sample.util.BooleanMmkvData
+import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 
 interface SwitchMenu {
     val title: String
@@ -27,7 +27,7 @@ interface SwitchMenu {
 
 class SwitchMenuFlow constructor(
     override val title: String,
-    private val data: BooleanMmkvData,
+    private val data: SettingsStateFlow<Boolean>,
     override val disabled: Boolean = false,
     private val reverse: Boolean = false,
     override val onLongClick: (() -> Unit)? = null,
