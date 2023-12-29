@@ -725,7 +725,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
     /* *************************************** Internal ***************************************** */
 
     override fun onRemembered() {
-        // Since SubsamplingState is annotated with @Stable, onRemembered will be executed multiple times,
+        // Since ZoomableState is annotated with @Stable, onRemembered will be executed multiple times,
         // but we only need execute it once
         rememberedCount++
         if (rememberedCount != 1) return
@@ -780,7 +780,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
 
     override fun onAbandoned() = onForgotten()
     override fun onForgotten() {
-        // Since SubsamplingState is annotated with @Stable, onForgotten will be executed multiple times,
+        // Since ZoomableState is annotated with @Stable, onForgotten will be executed multiple times,
         // but we only need execute it once
         if (rememberedCount <= 0) return
         rememberedCount--
