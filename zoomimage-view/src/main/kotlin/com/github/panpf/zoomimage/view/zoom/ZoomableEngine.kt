@@ -41,6 +41,7 @@ import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.convert
 import com.github.panpf.zoomimage.view.internal.format
+import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
 import com.github.panpf.zoomimage.view.internal.toHexString
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
@@ -76,6 +77,7 @@ import com.github.panpf.zoomimage.zoom.touchPointToContentPoint
 import com.github.panpf.zoomimage.zoom.transformAboutEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -90,7 +92,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     val logger: Logger = logger.newLogger(module = "ZoomableEngine@${logger.toHexString()}")
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var coroutineScope: CoroutineScope? = null
     private var lastScaleAnimatable: FloatAnimatable? = null
     private var lastFlingAnimatable: FlingAnimatable? = null
     private var lastInitialUserTransform: TransformCompat = TransformCompat.Origin
@@ -270,57 +272,15 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
     init {
         view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
+                onAttachToWindow()
             }
 
             override fun onViewDetachedFromWindow(v: View) {
-                coroutineScope.launch {
-                    stopAllAnimation("onViewDetachedFromWindow")
-                }
+                onDetachFromWindow()
             }
         })
-
-        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            containerSizeState.collect {
-                reset("containerSizeChanged")
-            }
-        }
-        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            contentSizeState.collect {
-                reset("contentSizeChanged")
-            }
-        }
-        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            contentOriginSizeState.collect {
-                reset("contentOriginSizeChanged")
-            }
-        }
-        coroutineScope.launch {
-            contentScaleState.collect {
-                reset("contentScaleChanged")
-            }
-        }
-        coroutineScope.launch {
-            alignmentState.collect {
-                reset("alignmentChanged")
-            }
-        }
-        coroutineScope.launch {
-            readModeState.collect {
-                reset("readModeChanged")
-            }
-        }
-        coroutineScope.launch {
-            scalesCalculatorState.collect {
-                reset("scalesCalculatorChanged")
-            }
-        }
-        coroutineScope.launch {
-            limitOffsetWithinBaseVisibleRectState.collect {
-                reset("limitOffsetWithinBaseVisibleRectChanged")
-            }
+        if (view.isAttachedToWindowCompat) {
+            onAttachToWindow()
         }
     }
 
@@ -762,6 +722,63 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
     /* *************************************** Internal ***************************************** */
 
+    private fun onAttachToWindow() {
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        this.coroutineScope = coroutineScope
+
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            containerSizeState.collect {
+                reset("containerSizeChanged")
+            }
+        }
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            contentSizeState.collect {
+                reset("contentSizeChanged")
+            }
+        }
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            contentOriginSizeState.collect {
+                reset("contentOriginSizeChanged")
+            }
+        }
+        coroutineScope.launch {
+            contentScaleState.collect {
+                reset("contentScaleChanged")
+            }
+        }
+        coroutineScope.launch {
+            alignmentState.collect {
+                reset("alignmentChanged")
+            }
+        }
+        coroutineScope.launch {
+            readModeState.collect {
+                reset("readModeChanged")
+            }
+        }
+        coroutineScope.launch {
+            scalesCalculatorState.collect {
+                reset("scalesCalculatorChanged")
+            }
+        }
+        coroutineScope.launch {
+            limitOffsetWithinBaseVisibleRectState.collect {
+                reset("limitOffsetWithinBaseVisibleRectChanged")
+            }
+        }
+    }
+
+    private fun onDetachFromWindow() {
+        val coroutineScope = this.coroutineScope
+        if (coroutineScope != null) {
+            coroutineScope.cancel("onDetachFromWindow")
+            this.coroutineScope = null
+        }
+    }
+
     @Suppress("RedundantSuspendModifier")
     internal suspend fun stopAllAnimation(caller: String) {
         val lastScaleAnimatable = lastScaleAnimatable
@@ -824,7 +841,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                         )
                         val nowScale = this@ZoomableEngine.transformState.value.scaleX
                         val addScale = frameScale / nowScale
-                        coroutineScope.launch {
+                        coroutineScope?.launch {
                             gestureTransform(
                                 centroid = centroid,
                                 panChange = OffsetCompat.Zero,
@@ -1096,4 +1113,17 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             userOffset = userTransform.offset,
         )
     }
+
+    override fun toString(): String =
+        "ZoomableEngine(" +
+                "containerSize=${containerSizeState.value.toShortString()}, " +
+                "contentSize=${contentSizeState.value.toShortString()}, " +
+                "contentOriginSize=${contentOriginSizeState.value.toShortString()}, " +
+                "contentScale=${contentScaleState.value.name}, " +
+                "alignment=${alignmentState.value.name}, " +
+                "minScale=${minScaleState.value.format(4)}, " +
+                "mediumScale=${mediumScaleState.value.format(4)}, " +
+                "maxScale=${maxScaleState.value.format(4)}, " +
+                "transform=${transformState.value.toShortString()}" +
+                ")"
 }

@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.compose.subsampling
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -62,7 +61,6 @@ import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -77,10 +75,13 @@ import kotlin.math.roundToInt
  * Creates and remember a [SubsamplingState] that can be used to subsampling of the content.
  */
 @Composable
-fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): SubsamplingState {
+fun rememberSubsamplingState(
+    logger: Logger = rememberZoomImageLogger(),
+    zoomableState: ZoomableState
+): SubsamplingState {
     val defaultStopAutoController = defaultStoppedController()
-    val subsamplingState = remember(logger) {
-        SubsamplingState(logger).apply {
+    val subsamplingState = remember(logger, zoomableState) {
+        SubsamplingState(logger, zoomableState).apply {
             stoppedController = defaultStopAutoController
         }
     }
@@ -91,11 +92,12 @@ fun rememberSubsamplingState(logger: Logger = rememberZoomImageLogger()): Subsam
  * A state object that can be used to subsampling of the content.
  */
 @Stable
-class SubsamplingState constructor(logger: Logger) : RememberObserver {
+class SubsamplingState constructor(logger: Logger, private val zoomableState: ZoomableState) :
+    RememberObserver {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingState@${logger.toHexString()}")
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var coroutineScope: CoroutineScope? = null
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
@@ -181,7 +183,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
                             if (value) {
                                 tileManager?.clean("stopped")
                             }
-                            coroutineScope.launch {
+                            coroutineScope?.launch {
                                 refreshTilesFlow.emit(if (value) "stopped" else "started")
                             }
                         }
@@ -245,7 +247,36 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
     var tileGridSizeMap: Map<Int, IntOffset> by mutableStateOf(emptyMap())
         private set
 
-    init {
+
+    /* ********************************* Interact with consumers ******************************** */
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    fun setImageSource(imageSource: ImageSource?): Boolean {
+        if (this.imageSource == imageSource) return false
+        logger.d { "setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
+        clean("setImageSource")
+        this.imageSource = imageSource
+        imageKey = imageSource?.key
+        if (rememberedCount > 0) {
+            resetTileDecoder("setImageSource")
+        }
+        return true
+    }
+
+
+    /* *************************************** Internal ***************************************** */
+
+    override fun onRemembered() {
+        // Since SubsamplingState is annotated with @Stable, onRemembered will be executed multiple times,
+        // but we only need execute it once
+        rememberedCount++
+        if (rememberedCount != 1) return
+
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        this.coroutineScope = coroutineScope
+
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { preferredTileSize }.collect {
                 resetTileManager("preferredTileSizeChanged")
@@ -296,32 +327,8 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
                 tileManager?.tileAnimationSpec = it
             }
         }
-    }
 
-
-    /* ********************************* Interact with consumers ******************************** */
-
-    /**
-     * Set up an image source from which image tile are loaded
-     */
-    fun setImageSource(imageSource: ImageSource?): Boolean {
-        if (this.imageSource == imageSource) return false
-        logger.d { "setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
-        cleanTileManager("setImageSource")
-        cleanTileDecoder("setImageSource")
-        this.imageSource = imageSource
-        imageKey = imageSource?.key
-        resetTileDecoder("setImageSource")
-        return true
-    }
-
-
-    /* *************************************** Internal ***************************************** */
-
-    @Composable
-    @OptIn(FlowPreview::class)
-    internal fun bindZoomableState(zoomableState: ZoomableState) {
-        LaunchedEffect(Unit) {
+        coroutineScope.launch {
             // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
             // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
             snapshotFlow { zoomableState.containerSize }.debounce(80).collect {
@@ -341,13 +348,13 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
                 }
             }
         }
-        LaunchedEffect(Unit) {
+        coroutineScope.launch {
             snapshotFlow { zoomableState.contentSize }.collect {
                 contentSize = it
             }
         }
 
-        LaunchedEffect(Unit) {
+        coroutineScope.launch {
             snapshotFlow { ready }.collect { ready ->
                 val imageInfo = imageInfo
                 val imageSize = if (ready && imageInfo != null)
@@ -355,7 +362,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
                 zoomableState.contentOriginSize = imageSize.toPlatform()
             }
         }
-        LaunchedEffect(Unit) {
+        coroutineScope.launch {
             snapshotFlow { imageInfo }.collect { imageInfo ->
                 val ready = ready
                 val imageSize = if (ready && imageInfo != null)
@@ -364,30 +371,57 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
             }
         }
 
-        val refreshTiles: (caller: String) -> Unit = { caller ->
-            refreshTiles(
-                contentVisibleRect = zoomableState.contentVisibleRect,
-                scale = zoomableState.transform.scaleX,
-                rotation = zoomableState.transform.rotation.roundToInt(),
-                continuousTransformType = zoomableState.continuousTransformType,
-                caller = caller
-            )
-        }
-        LaunchedEffect(Unit) {
+        coroutineScope.launch {
             refreshTilesFlow.collect {
-                refreshTiles(it)
+                refreshTiles(
+                    contentVisibleRect = zoomableState.contentVisibleRect,
+                    scale = zoomableState.transform.scaleX,
+                    rotation = zoomableState.transform.rotation.roundToInt(),
+                    continuousTransformType = zoomableState.continuousTransformType,
+                    caller = it
+                )
             }
         }
-        LaunchedEffect(Unit) {
+        coroutineScope.launch {
             snapshotFlow { zoomableState.transform }.collect {
-                refreshTiles("transformChanged")
+                refreshTiles(
+                    contentVisibleRect = zoomableState.contentVisibleRect,
+                    scale = zoomableState.transform.scaleX,
+                    rotation = zoomableState.transform.rotation.roundToInt(),
+                    continuousTransformType = zoomableState.continuousTransformType,
+                    caller = "transformChanged"
+                )
             }
         }
-        LaunchedEffect(Unit) {
+        coroutineScope.launch {
             snapshotFlow { zoomableState.continuousTransformType }.collect {
-                refreshTiles("continuousTransformTypeChanged")
+                refreshTiles(
+                    contentVisibleRect = zoomableState.contentVisibleRect,
+                    scale = zoomableState.transform.scaleX,
+                    rotation = zoomableState.transform.rotation.roundToInt(),
+                    continuousTransformType = zoomableState.continuousTransformType,
+                    caller = "continuousTransformTypeChanged"
+                )
             }
         }
+    }
+
+    override fun onAbandoned() = onForgotten()
+    override fun onForgotten() {
+        // Since SubsamplingState is annotated with @Stable, onForgotten will be executed multiple times,
+        // but we only need execute it once
+        if (rememberedCount <= 0) return
+        rememberedCount--
+        if (rememberedCount != 0) return
+
+        val coroutineScope = this.coroutineScope
+        if (coroutineScope != null) {
+            coroutineScope.cancel("onForgotten")
+            this.coroutineScope = null
+        }
+
+        clean("onForgotten")
+        stoppedController?.onDestroy()
     }
 
     private fun resetTileDecoder(caller: String) {
@@ -407,7 +441,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         }
 
         val ignoreExifOrientation = ignoreExifOrientation
-        lastResetTileDecoderJob = coroutineScope.launch {
+        lastResetTileDecoderJob = coroutineScope?.launch {
             val result = withContext(Dispatchers.IO) {
                 decodeAndCreateTileDecoder(
                     logger = logger,
@@ -528,29 +562,11 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         )
     }
 
-    override fun onRemembered() {
-        // Since SubsamplingState is annotated with @Stable, onRemembered will be executed multiple times,
-        // but we only need execute it once
-        rememberedCount++
-    }
-
-    override fun onAbandoned() = onForgotten()
-    override fun onForgotten() {
-        // Since SubsamplingState is annotated with @Stable, onForgotten will be executed multiple times,
-        // but we only need execute it once
-        if (rememberedCount <= 0) return
-        rememberedCount--
-        if (rememberedCount == 0) {
-            destroy("onForgotten")
-            stoppedController?.onDestroy()
-        }
-    }
-
     private fun refreshReadyState(caller: String) {
         val newReady = imageInfo != null && tileDecoder != null && tileManager != null
         logger.d { "refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
         ready = newReady
-        coroutineScope.launch {
+        coroutineScope?.launch {
             refreshTilesFlow.emit("refreshReadyState:$caller")
         }
     }
@@ -587,7 +603,7 @@ class SubsamplingState constructor(logger: Logger) : RememberObserver {
         }
     }
 
-    private fun destroy(caller: String) {
+    private fun clean(@Suppress("SameParameterValue") caller: String) {
         cleanTileManager("destroy:$caller")
         cleanTileDecoder("destroy:$caller")
     }

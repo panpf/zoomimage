@@ -143,9 +143,8 @@ open class ZoomImageView @JvmOverloads constructor(
         touchHelper = TouchHelper(this, zoomableEngine)
 
         /* SubsamplingEngine */
-        val subsamplingEngine = SubsamplingEngine(logger, this).apply {
+        val subsamplingEngine = SubsamplingEngine(logger, zoomableEngine, this).apply {
             this@ZoomImageView._subsamplingEngine = this
-            bindZoomEngine(zoomableEngine)
             post {
                 val view = this@ZoomImageView
                 if (view.isAttachedToWindowCompat) {

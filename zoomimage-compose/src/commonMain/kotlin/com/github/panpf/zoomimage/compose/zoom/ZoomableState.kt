@@ -24,6 +24,7 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -110,15 +111,16 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
  * A state object that can be used to control the scale, pan, rotation of the content.
  */
 @Stable
-class ZoomableState(logger: Logger) {
+class ZoomableState(logger: Logger) : RememberObserver {
 
     val logger: Logger = logger.newLogger(module = "ZoomableState@${logger.toHexString()}")
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var coroutineScope: CoroutineScope? = null
     private var lastScaleAnimatable: Animatable<*, *>? = null
     private var lastFlingAnimatable: Animatable<*, *>? = null
     private var lastInitialUserTransform: Transform = Transform.Origin
     private var rotation: Int by mutableIntStateOf(0)
+    private var rememberedCount = 0
 
     /**
      * The size of the container that holds the content, this is usually the size of the ZoomImage component
@@ -289,51 +291,6 @@ class ZoomableState(logger: Logger) {
     private var lastReadMode: ReadMode? = readMode
     private var lastScalesCalculator: ScalesCalculator = scalesCalculator
 
-    init {
-        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { containerSize }.collect {
-                reset("containerSizeChanged")
-            }
-        }
-        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { contentSize }.collect {
-                reset("contentSizeChanged")
-            }
-        }
-        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { contentOriginSize }.collect {
-                reset("contentOriginSizeChanged")
-            }
-        }
-        coroutineScope.launch {
-            snapshotFlow { contentScale }.collect {
-                reset("contentScaleChanged")
-            }
-        }
-        coroutineScope.launch {
-            snapshotFlow { alignment }.collect {
-                reset("alignmentChanged")
-            }
-        }
-        coroutineScope.launch {
-            snapshotFlow { readMode }.collect {
-                reset("readModeChanged")
-            }
-        }
-        coroutineScope.launch {
-            snapshotFlow { scalesCalculator }.collect {
-                reset("scalesCalculatorChanged")
-            }
-        }
-        coroutineScope.launch {
-            snapshotFlow { limitOffsetWithinBaseVisibleRect }.collect {
-                reset("limitOffsetWithinBaseVisibleRectChanged")
-            }
-        }
-    }
 
     /* ********************************* Interact with consumers ******************************** */
 
@@ -733,15 +690,6 @@ class ZoomableState(logger: Logger) {
     }
 
     /**
-     * If true is returned, scrolling can continue on the specified axis and direction
-     *
-     * @param horizontal Whether to scroll horizontally
-     * @param direction positive means scroll to the right or scroll down, negative means scroll to the left or scroll up
-     */
-    fun canScroll(horizontal: Boolean, direction: Int): Boolean =
-        canScrollByEdge(scrollEdge, horizontal, direction)
-
-    /**
      * Converts touch points on the screen to points on content
      */
     fun touchPointToContentPoint(touchPoint: Offset): IntOffset {
@@ -764,8 +712,86 @@ class ZoomableState(logger: Logger) {
         return contentPoint.round()
     }
 
+    /**
+     * If true is returned, scrolling can continue on the specified axis and direction
+     *
+     * @param horizontal Whether to scroll horizontally
+     * @param direction positive means scroll to the right or scroll down, negative means scroll to the left or scroll up
+     */
+    fun canScroll(horizontal: Boolean, direction: Int): Boolean =
+        canScrollByEdge(scrollEdge, horizontal, direction)
+
 
     /* *************************************** Internal ***************************************** */
+
+    override fun onRemembered() {
+        // Since SubsamplingState is annotated with @Stable, onRemembered will be executed multiple times,
+        // but we only need execute it once
+        rememberedCount++
+        if (rememberedCount != 1) return
+
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        this.coroutineScope = coroutineScope
+
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { containerSize }.collect {
+                reset("containerSizeChanged")
+            }
+        }
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { contentSize }.collect {
+                reset("contentSizeChanged")
+            }
+        }
+        // Must be immediate, otherwise the user will see the image move quickly from the top to the center
+        coroutineScope.launch(Dispatchers.Main.immediate) {
+            snapshotFlow { contentOriginSize }.collect {
+                reset("contentOriginSizeChanged")
+            }
+        }
+        coroutineScope.launch {
+            snapshotFlow { contentScale }.collect {
+                reset("contentScaleChanged")
+            }
+        }
+        coroutineScope.launch {
+            snapshotFlow { alignment }.collect {
+                reset("alignmentChanged")
+            }
+        }
+        coroutineScope.launch {
+            snapshotFlow { readMode }.collect {
+                reset("readModeChanged")
+            }
+        }
+        coroutineScope.launch {
+            snapshotFlow { scalesCalculator }.collect {
+                reset("scalesCalculatorChanged")
+            }
+        }
+        coroutineScope.launch {
+            snapshotFlow { limitOffsetWithinBaseVisibleRect }.collect {
+                reset("limitOffsetWithinBaseVisibleRectChanged")
+            }
+        }
+    }
+
+    override fun onAbandoned() = onForgotten()
+    override fun onForgotten() {
+        // Since SubsamplingState is annotated with @Stable, onForgotten will be executed multiple times,
+        // but we only need execute it once
+        if (rememberedCount <= 0) return
+        rememberedCount--
+        if (rememberedCount != 0) return
+
+        val coroutineScope = this.coroutineScope
+        if (coroutineScope != null) {
+            coroutineScope.cancel("onForgotten")
+            this.coroutineScope = null
+        }
+    }
 
     /**
      * Stop all animations immediately
@@ -831,7 +857,7 @@ class ZoomableState(logger: Logger) {
                     )
                     val nowScale = this@ZoomableState.transform.scaleX
                     val addScale = frameScale / nowScale
-                    coroutineScope.launch {
+                    coroutineScope?.launch {
                         gestureTransform(
                             centroid = finalCentroid,
                             panChange = Offset.Zero,

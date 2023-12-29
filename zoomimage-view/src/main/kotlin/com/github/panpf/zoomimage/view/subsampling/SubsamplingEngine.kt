@@ -48,7 +48,6 @@ import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -65,12 +64,13 @@ import kotlin.math.roundToInt
  */
 class SubsamplingEngine constructor(
     logger: Logger,
+    private val zoomableEngine: ZoomableEngine,
     private val view: View,
 ) {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingEngine@${logger.toHexString()}")
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var coroutineScope: CoroutineScope? = null
     private var imageSource: ImageSource? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
@@ -152,7 +152,7 @@ class SubsamplingEngine constructor(
                             if (value) {
                                 tileManager?.clean("stopped")
                             }
-                            coroutineScope.launch {
+                            coroutineScope?.launch {
                                 refreshTilesFlow.emit(if (value) "stopped" else "started")
                             }
                         }
@@ -221,13 +221,41 @@ class SubsamplingEngine constructor(
     init {
         view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
-                reset("onViewAttachedToWindow")
+                onAttachToWindow()
             }
 
             override fun onViewDetachedFromWindow(v: View) {
-                clean("onViewDetachedFromWindow")
+                onDetachFromWindow()
             }
         })
+        if (view.isAttachedToWindowCompat) {
+            onAttachToWindow()
+        }
+    }
+
+    /* ********************************* Interact with consumers ******************************** */
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    fun setImageSource(imageSource: ImageSource?): Boolean {
+        if (this.imageSource == imageSource) return false
+        logger.d { "setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
+        clean("setImageSource")
+        this.imageSource = imageSource
+        imageKey = imageSource?.key
+        if (view.isAttachedToWindowCompat) {
+            resetTileDecoder("setImageSource")
+        }
+        return true
+    }
+
+
+    /* *************************************** Internal ***************************************** */
+
+    private fun onAttachToWindow() {
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        this.coroutineScope = coroutineScope
 
         coroutineScope.launch {
             preferredTileSizeState.collect {
@@ -279,31 +307,7 @@ class SubsamplingEngine constructor(
                 tileManager?.disabledBackgroundTiles = it
             }
         }
-    }
 
-    /* ********************************* Interact with consumers ******************************** */
-
-    /**
-     * Set up an image source from which image tile are loaded
-     */
-    fun setImageSource(imageSource: ImageSource?): Boolean {
-        if (this.imageSource == imageSource) return false
-        logger.d { "setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
-        cleanTileManager("setImageSource")
-        cleanTileDecoder("setImageSource")
-        this.imageSource = imageSource
-        imageKey = imageSource?.key
-        if (view.isAttachedToWindowCompat) {
-            reset("setImageSource")
-        }
-        return true
-    }
-
-
-    /* *************************************** Internal ***************************************** */
-
-    @OptIn(FlowPreview::class)
-    internal fun bindZoomEngine(zoomableEngine: ZoomableEngine) {
         coroutineScope.launch {
             // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
             // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
@@ -348,52 +352,49 @@ class SubsamplingEngine constructor(
             }
         }
 
-        val refreshTiles: (caller: String) -> Unit = { caller ->
-            val transform = zoomableEngine.transformState.value
-            refreshTiles(
-                contentVisibleRect = zoomableEngine.contentVisibleRectState.value,
-                scale = transform.scaleX,
-                rotation = transform.rotation.roundToInt(),
-                continuousTransformType = zoomableEngine.continuousTransformTypeState.value,
-                caller = caller
-            )
-        }
         coroutineScope.launch {
             refreshTilesFlow.collect {
-                refreshTiles(it)
+                refreshTiles(
+                    contentVisibleRect = zoomableEngine.contentVisibleRectState.value,
+                    scale = zoomableEngine.transformState.value.scaleX,
+                    rotation = zoomableEngine.transformState.value.rotation.roundToInt(),
+                    continuousTransformType = zoomableEngine.continuousTransformTypeState.value,
+                    caller = it
+                )
             }
         }
         coroutineScope.launch {
             zoomableEngine.transformState.collect {
-                refreshTiles("transformChanged")
+                refreshTiles(
+                    contentVisibleRect = zoomableEngine.contentVisibleRectState.value,
+                    scale = zoomableEngine.transformState.value.scaleX,
+                    rotation = zoomableEngine.transformState.value.rotation.roundToInt(),
+                    continuousTransformType = zoomableEngine.continuousTransformTypeState.value,
+                    caller = "transformChanged"
+                )
             }
         }
         coroutineScope.launch {
             zoomableEngine.continuousTransformTypeState.collect {
-                refreshTiles("continuousTransformTypeChanged")
+                refreshTiles(
+                    contentVisibleRect = zoomableEngine.contentVisibleRectState.value,
+                    scale = zoomableEngine.transformState.value.scaleX,
+                    rotation = zoomableEngine.transformState.value.rotation.roundToInt(),
+                    continuousTransformType = zoomableEngine.continuousTransformTypeState.value,
+                    caller = "continuousTransformTypeChanged"
+                )
             }
         }
     }
 
-    private fun refreshTiles(
-        contentVisibleRect: IntRectCompat,
-        scale: Float,
-        rotation: Int,
-        @ContinuousTransformType continuousTransformType: Int,
-        caller: String,
-    ) {
-        val tileManager = tileManager ?: return
-        if (stoppedState.value) {
-            logger.d { "refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
-            return
+    private fun onDetachFromWindow() {
+        val coroutineScope = this.coroutineScope
+        if (coroutineScope != null) {
+            coroutineScope.cancel("onDetachFromWindow")
+            this.coroutineScope = null
         }
-        tileManager.refreshTiles(
-            scale = scale,
-            contentVisibleRect = contentVisibleRect,
-            rotation = rotation,
-            continuousTransformType = continuousTransformType,
-            caller = caller
-        )
+
+        clean("onViewDetachedFromWindow")
     }
 
     private fun resetTileDecoder(caller: String) {
@@ -413,7 +414,7 @@ class SubsamplingEngine constructor(
         }
 
         val ignoreExifOrientation = ignoreExifOrientationState.value
-        lastResetTileDecoderJob = coroutineScope.launch(Dispatchers.Main) {
+        lastResetTileDecoderJob = coroutineScope?.launch(Dispatchers.Main) {
             val result = withContext(Dispatchers.IO) {
                 decodeAndCreateTileDecoder(
                     logger = logger,
@@ -513,6 +514,36 @@ class SubsamplingEngine constructor(
         refreshReadyState("resetTileManager:$caller")
     }
 
+    private fun refreshTiles(
+        contentVisibleRect: IntRectCompat,
+        scale: Float,
+        rotation: Int,
+        @ContinuousTransformType continuousTransformType: Int,
+        caller: String,
+    ) {
+        val tileManager = tileManager ?: return
+        if (stoppedState.value) {
+            logger.d { "refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
+            return
+        }
+        tileManager.refreshTiles(
+            scale = scale,
+            contentVisibleRect = contentVisibleRect,
+            rotation = rotation,
+            continuousTransformType = continuousTransformType,
+            caller = caller
+        )
+    }
+
+    private fun refreshReadyState(caller: String) {
+        val newReady = imageInfoState.value != null && tileManager != null && tileDecoder != null
+        logger.d { "refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
+        _readyState.value = newReady
+        coroutineScope?.launch {
+            refreshTilesFlow.emit("refreshReadyState:$caller")
+        }
+    }
+
     private fun cleanTileDecoder(caller: String) {
         val lastResetTileDecoderJob = this@SubsamplingEngine.lastResetTileDecoderJob
         if (lastResetTileDecoderJob != null) {
@@ -543,20 +574,6 @@ class SubsamplingEngine constructor(
             _imageLoadRectState.value = IntRectCompat.Zero
             refreshReadyState("cleanTileManager:$caller")
         }
-    }
-
-    private fun refreshReadyState(caller: String) {
-        val newReady = imageInfoState.value != null && tileManager != null && tileDecoder != null
-        logger.d { "refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
-        _readyState.value = newReady
-        coroutineScope.launch {
-            refreshTilesFlow.emit("refreshReadyState:$caller")
-        }
-    }
-
-    private fun reset(caller: String) {
-        clean("reset:$caller")
-        resetTileDecoder("destroy:$caller")
     }
 
     private fun clean(caller: String) {
