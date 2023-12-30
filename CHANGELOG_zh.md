@@ -2,11 +2,11 @@
 
 翻译：[English](CHANGELOG.md)
 
-## v1.0.0-rc01
+## new
 
 other:
 
-* depend: 升级 sketch 3.3.0-rc02
+* depend: 升级 sketch 3.3.0 stable
 
 ## v1.0.0-beta11
 

@@ -2,11 +2,11 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## v1.0.0-rc01
+## new
 
 other:
 
-* depend: Upgrade sketch 3.3.0-rc02
+* depend: Upgrade sketch 3.3.0 stable
 
 ## v1.0.0-beta11
 
