@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+## 1.0.0
+
+初始稳定版发行
+
 ## v1.0.0-rc01
 
 zoom:
