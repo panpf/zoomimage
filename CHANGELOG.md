@@ -2,7 +2,12 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## v1.0.0-rc01
+
+zoom:
+
+* improve: Improved ZoomableState, ZoomableEngine, SubsamplingState and SubsamplingEngine, now they
+  all start working when remembered or attached to a window
 
 other:
 

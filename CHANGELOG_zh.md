@@ -2,7 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## v1.0.0-rc01
+
+zoom:
+
+* improve: 改进 ZoomableState、ZoomableEngine、SubsamplingState 和
+  SubsamplingEngine，现在它们都是在被记住或附到窗口时才会开始工作
 
 other:
 
