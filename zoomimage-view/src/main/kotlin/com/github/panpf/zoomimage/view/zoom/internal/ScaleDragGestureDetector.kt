@@ -56,6 +56,7 @@ internal class ScaleDragGestureDetector(
     private var pointCount = 0
 
     init {
+        // TODO Seamless switching from single-finger drag gesture (drag the finger without lifting, then press the second finger) to two-finger zoom gesture causing the picture to suddenly jump due to focus change
         val configuration = ViewConfiguration.get(view.context)
         minimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
         touchSlop = configuration.scaledTouchSlop.toFloat()
