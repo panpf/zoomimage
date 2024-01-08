@@ -47,3 +47,4 @@ include(":zoomimage-view-coil")
 include(":zoomimage-view-glide")
 include(":zoomimage-view-picasso")
 include(":zoomimage-view-sketch")
+// TODO Supports iOS and web, subsampling function may not be provided temporarily
