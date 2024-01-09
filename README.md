@@ -58,6 +58,15 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 | Image Loader          |     ✅     |      ✅      |      ❌      |                ❌                 |
 | Rich interfaces       |     ✅     |      ❌      |      ✅      |                ✅                 |
 
+## Multiplatform support
+
+| Platform/Function | Zoom | Subsampling | Integrated Image Loader |
+|:------------------|:----:|:-----------:|:-----------------------:|
+| Android           |  ✅   |      ✅      |            ✅            |
+| Desktop           |  ✅   |      ✅      |            ❌            |
+| iOS               |  🚧  |     🚧      |           🚧            |
+| Web               |  🚧  |     🚧      |           🚧            |
+
 ## Import
 
 `Published to mavenCentral`
