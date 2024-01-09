@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+* fix: Fixed the bug that the image of ZoomImageView would jump when you do not release your hand
+  after dragging with one finger and then press another finger to perform a two-finger zoom
+  gesture. [#12](https://github.com/panpf/zoomimage/issues/12)
+
 ## v1.0.0
 
 Initial stable release
