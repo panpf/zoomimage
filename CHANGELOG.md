@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## v1.0.1
 
 * fix: Fixed the bug that the image of ZoomImageView would jump when you do not release your hand
   after dragging with one finger and then press another finger to perform a two-finger zoom
