@@ -43,7 +43,7 @@ kotlin {
         named("commonMain") {
             dependencies {
                 api(libs.androidx.annotation)
-                api(libs.kotlinx.coroutines.core.jvm)
+                api(libs.kotlinx.coroutines.core)
             }
         }
         named("commonTest") {
