@@ -179,10 +179,8 @@ open class ZoomImageView @JvmOverloads constructor(
 
     /**************************************** Internal ********************************************/
 
-    @SuppressLint("Recycle")
     private fun parseAttrs(attrs: AttributeSet?) {
         val array = context.obtainStyledAttributes(attrs, styleable.ZoomImageView)
-        @Suppress("ConvertTryFinallyToUseCall")
         try {
             if (array.hasValue(styleable.ZoomImageView_contentScale)) {
                 val contentScaleCode = array.getInt(styleable.ZoomImageView_contentScale, -1)
@@ -301,7 +299,7 @@ open class ZoomImageView @JvmOverloads constructor(
                 }
             }
         } finally {
-            array.close()
+            array.recycle()
         }
     }
 

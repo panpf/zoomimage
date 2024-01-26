@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+* fix: 修复 ZoomImageView 在 API 30 及以下版本因 TypedArray.close() 方法崩溃的 bug
+
 ## v1.0.1
 
 * fix: 修复 ZoomImageView 在单指拖动后不松手再按下一根手指执行双指缩放手势时图像会跳动的

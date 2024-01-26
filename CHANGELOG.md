@@ -2,6 +2,11 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+* fix: Fix the bug that ZoomImageView crashes due to the TypedArray.close() method in API 30 and
+  below versions
+
 ## v1.0.1
 
 * fix: Fixed the bug that the image of ZoomImageView would jump when you do not release your hand
