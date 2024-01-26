@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## v1.0.2-SNAPSHOT
 
 * fix: 修复 ZoomImageView 在 API 30 及以下版本因 TypedArray.close() 方法崩溃的 bug
 
