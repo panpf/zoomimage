@@ -20,12 +20,8 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import com.github.panpf.zoomimage.picasso.PicassoHttpImageSource
 import com.github.panpf.zoomimage.picasso.PicassoTileBitmapCache
-import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.fromAsset
-import com.github.panpf.zoomimage.subsampling.fromContent
-import com.github.panpf.zoomimage.subsampling.fromResource
+import com.github.panpf.zoomimage.picasso.newPicassoImageSource
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
@@ -152,7 +148,11 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             override fun onSuccess() {
                 _subsamplingEngine?.disabledTileBitmapCacheState?.value =
                     checkMemoryCacheDisabled(creator.internalMemoryPolicy)
-                _subsamplingEngine?.setImageSource(newImageSource(uri))
+                val imageSource = newPicassoImageSource(context, uri)
+                if (imageSource == null) {
+                    logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported uri: '$uri'" }
+                }
+                _subsamplingEngine?.setImageSource(imageSource)
                 callback?.onSuccess()
             }
 
@@ -166,38 +166,5 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         _subsamplingEngine?.disabledTileBitmapCacheState?.value = false
-    }
-
-    private fun newImageSource(uri: Uri?): ImageSource? {
-        uri ?: return null
-        val uriString: String = uri.toString()
-        return when {
-            uriString.startsWith("http://") || uriString.startsWith("https://") -> {
-                PicassoHttpImageSource(Picasso.get(), uri)
-            }
-
-            uriString.startsWith("content://") -> {
-                ImageSource.fromContent(context, uri)
-            }
-
-            uriString.startsWith("file:///android_asset/") -> {
-                val assetFileName = uriString.replace("file:///android_asset/", "")
-                ImageSource.fromAsset(context, assetFileName)
-            }
-
-            uriString.startsWith("file://") -> {
-                ImageSource.fromFile(File(uriString.replace("file://", "")))
-            }
-
-            uriString.startsWith("android.resource://") -> {
-                val resId = uriString.replace("android.resource://", "").toIntOrNull()
-                resId?.let { ImageSource.fromResource(context, it) }
-            }
-
-            else -> {
-                logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported uri: '$uri'" }
-                null
-            }
-        }
     }
 }

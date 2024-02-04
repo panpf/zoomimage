@@ -9,6 +9,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * fix: Fix the bug that GlideZoomAsyncImage and GlideZoomImageView do not support 'file:
   ///android_asset/' and 'file:///sdcard/sample.jpeg' type
   model. [#16](https://github.com/panpf/zoomimage/issues/16)
+* improve: Improved support for Picasso
 
 ## v1.0.1
 

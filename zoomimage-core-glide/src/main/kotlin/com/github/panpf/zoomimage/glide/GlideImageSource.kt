@@ -18,13 +18,18 @@ package com.github.panpf.zoomimage.glide
 
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.WorkerThread
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.getDiskCache
 import com.bumptech.glide.load.model.GlideUrl
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.fromContent
 import com.github.panpf.zoomimage.subsampling.fromResource
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.InputStream
 import java.net.URL
 
 
@@ -95,5 +100,43 @@ fun newGlideImageSource(context: Context, model: Any?): ImageSource? {
         else -> {
             null
         }
+    }
+}
+
+class GlideHttpImageSource(
+    private val glide: Glide,
+    private val glideUrl: GlideUrl
+) : ImageSource {
+
+    constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
+
+    override val key: String = glideUrl.cacheKey
+
+    @WorkerThread
+    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+        val diskCache =
+            getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
+        val file = diskCache.get(glideUrl)
+            ?: throw FileNotFoundException("Cache file is null")
+        FileInputStream(file)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as GlideHttpImageSource
+        if (glide != other.glide) return false
+        if (glideUrl != other.glideUrl) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = glide.hashCode()
+        result = 31 * result + glideUrl.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "GlideHttpImageSource('$glideUrl')"
     }
 }

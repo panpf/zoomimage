@@ -8,6 +8,7 @@
   bug. [#15](https://github.com/panpf/zoomimage/issues/15)
 * fix: 修复 GlideZoomAsyncImage 和 GlideZoomImageView 不支持 'file:///android_asset/' 和 'file:
   ///sdcard/sample.jpeg' 类型 model 的 bug. [#16](https://github.com/panpf/zoomimage/issues/16)
+* improve: 改进对 Picasso 的支持
 
 ## v1.0.1
 
