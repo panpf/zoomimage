@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## v1.0.2-SNAPSHOT
+## v1.0.2
 
 * fix: Fix the bug that ZoomImageView crashes due to the TypedArray.close() method in API 30 and
   below versions. [#15](https://github.com/panpf/zoomimage/issues/15)
