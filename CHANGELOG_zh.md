@@ -4,7 +4,10 @@
 
 ## v1.0.2-SNAPSHOT
 
-* fix: 修复 ZoomImageView 在 API 30 及以下版本因 TypedArray.close() 方法崩溃的 bug
+* fix: 修复 ZoomImageView 在 API 30 及以下版本因 TypedArray.close() 方法崩溃的
+  bug. [#15](https://github.com/panpf/zoomimage/issues/15)
+* fix: 修复 GlideZoomAsyncImage 和 GlideZoomImageView 不支持 'file:///android_asset/' 和 'file:
+  ///sdcard/sample.jpeg' 类型 model 的 bug. [#16](https://github.com/panpf/zoomimage/issues/16)
 
 ## v1.0.1
 

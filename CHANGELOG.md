@@ -5,7 +5,10 @@ Translations: [简体中文](CHANGELOG_zh.md)
 ## v1.0.2-SNAPSHOT
 
 * fix: Fix the bug that ZoomImageView crashes due to the TypedArray.close() method in API 30 and
-  below versions
+  below versions. [#15](https://github.com/panpf/zoomimage/issues/15)
+* fix: Fix the bug that GlideZoomAsyncImage and GlideZoomImageView do not support 'file:
+  ///android_asset/' and 'file:///sdcard/sample.jpeg' type
+  model. [#16](https://github.com/panpf/zoomimage/issues/16)
 
 ## v1.0.1
 

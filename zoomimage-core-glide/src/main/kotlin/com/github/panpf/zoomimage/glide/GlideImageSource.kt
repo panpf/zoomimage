@@ -42,6 +42,10 @@ fun newGlideImageSource(context: Context, model: Any?): ImageSource? {
             GlideHttpImageSource(Glide.get(context), model)
         }
 
+        model is Uri && (model.scheme == "http" || model.scheme == "https") -> {
+            GlideHttpImageSource(Glide.get(context), model.toString())
+        }
+
         model is String && model.startsWith("content://") -> {
             ImageSource.fromContent(context, Uri.parse(model))
         }
@@ -51,13 +55,29 @@ fun newGlideImageSource(context: Context, model: Any?): ImageSource? {
         }
 
         model is String && model.startsWith("file:///android_asset/") -> {
-            val assetFileName = Uri.parse(model).path.orEmpty()
-            ImageSource.fromAsset(context, assetFileName)
+            val assetFileName = Uri.parse(model).pathSegments
+                .takeIf { it.size > 1 }
+                ?.let { it.subList(1, it.size) }
+                ?.joinToString(separator = "/")
+            assetFileName?.let { ImageSource.fromAsset(context, it) }
         }
 
-        model is Uri && model.scheme == "file" && model.authority == "android_asset" -> {
-            val assetFileName = model.path.orEmpty()
-            ImageSource.fromAsset(context, assetFileName)
+        model is Uri && model.scheme == "file" && model.pathSegments.firstOrNull() == "android_asset" -> {
+            val assetFileName = model.pathSegments
+                .takeIf { it.size > 1 }
+                ?.let { it.subList(1, it.size) }
+                ?.joinToString(separator = "/")
+            assetFileName?.let { ImageSource.fromAsset(context, it) }
+        }
+
+        model is String && model.startsWith("file://") -> {
+            val filePath = Uri.parse(model).path
+            filePath?.let { ImageSource.fromFile(File(filePath)) }
+        }
+
+        model is Uri && model.scheme == "file" -> {
+            val filePath = model.path
+            filePath?.let { ImageSource.fromFile(File(filePath)) }
         }
 
         model is File -> {
