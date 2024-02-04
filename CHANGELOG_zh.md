@@ -9,6 +9,7 @@
 * fix: 修复 GlideZoomAsyncImage 和 GlideZoomImageView 不支持 'file:///android_asset/' 和 'file:
   ///sdcard/sample.jpeg' 类型 model 的 bug. [#16](https://github.com/panpf/zoomimage/issues/16)
 * improve: 改进对 Picasso 的支持
+* improve: 改进 ScalesCalculator.dynamic()，现在阅读模式可用时 mediumScale 始终是阅读模式的初始缩放倍数
 
 ## v1.0.1
 

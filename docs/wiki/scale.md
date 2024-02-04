@@ -68,38 +68,29 @@ mediumScale, and maxScale:
 [ScalesCalculator] is specially used to calculate mediumScale and maxScale. ZoomImage has two
 built-in [ScalesCalculator]:
 
-* [ScalesCalculator].Dynamic：
-    * maxScale is always `mediumScale * multiple`, mediumScale is dynamically calculated according
-      to containerSize, contentSize, contentOriginSize, and the calculation rule is the largest of
-      the following values:
-        * minMediumScale：The minimum intermediate zoom factor, calculated as:
-          ```kotlin
-          minScale * multiple
-          ```
-        * fillContainerScale：The zoom multiplier when the container is completely full, similar to
-          ContentScale.Crop, is calculated as:
-          ```kotlin
-          max(
-              containerSize.width / contentSize.width.toFloat(), 
-              containerSize.height / contentSize.height.toFloat()
-          )
-          ```
-        * originScale：Scale contentSize to a multiple of contentOriginSize, calculated as:
-          ```kotlin
-          max(
-              contentOriginSize.width / contentSize.width.toFloat(), 
-              contentOriginSize.height / contentSize.height.toFloat()
-          )
-          ```
-        * In addition, when initialScale is greater than minScale and the difference between
-          initialScale and mediumScale is less than mediumScale multiplied by differencePercentage,
-          initialScale is used as mediumScale. initialScale is usually determined by ReadMode
-* [ScalesCalculator].Fixed：
-    * maxScale is always `mediumScale * multiple`
-    * The mediumScale calculation rule is used if initialScale is greater than minScale
-      initialScale, otherwise use 'minScale * multiple'
+> * minMediumScale = `minScale * multiple`
+> * fillContainerScale = `max(containerSize.width / contentSize.width.toFloat(),
+    containerSize.height / contentSize.height.toFloat())`
+> * contentOriginScale = `max(contentOriginSize.width / contentSize.width.toFloat(),
+    contentOriginSize.height / contentSize.height.toFloat())`
+> * initialScale usually calculated by ReadMode
+> * multiple default value is 3f
 
-> The default value for multiple is 3f, differencePercentage is 0.3f
+* [ScalesCalculator].Dynamic：
+    * mediumScale calculation rules are as follows:
+        * If contentScale is FillBounds, it is always minMediumScale
+        * Always initialScale if initialScale is greater than minScale
+        * Otherwise, take the largest among minMediumScale, fillContainerScale, and
+          contentOriginScale.
+    * maxScale calculation rules are as follows:
+        * If contentScale is FillBounds, it is always `mediumScale * multiple`
+        * Otherwise, take the largest among `mediumScale * multiple`, contentOriginScale
+* [ScalesCalculator].Fixed：
+    * mediumScale calculation rules are as follows:
+        * If contentScale is FillBounds, it is always minMediumScale
+        * Always initialScale if initialScale is greater than minScale
+        * Otherwise always minMediumScale
+    * maxScale is always `mediumScale * multiple`
 
 scalesCalculator defaults to [ScalesCalculator]. Dynamic, which you can modify into a Fixed or
 custom implementation

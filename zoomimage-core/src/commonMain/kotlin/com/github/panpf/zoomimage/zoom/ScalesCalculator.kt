@@ -19,10 +19,7 @@ package com.github.panpf.zoomimage.zoom
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.internal.format
 import com.github.panpf.zoomimage.util.isNotEmpty
-import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.DifferencePercentage
 import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.Multiple
-import kotlin.math.abs
-import kotlin.math.max
 
 /**
  * Used to calculate mediumScale and maxScale
@@ -48,11 +45,6 @@ interface ScalesCalculator {
         const val Multiple = 3f
 
         /**
-         * Participate in calculating mediumScale. If initialScale is greater than minScale and the difference between initialScale and mediumScale is less than mediumScale multiplied by differencePercentage, initialScale is used as the mediumScale
-         */
-        const val DifferencePercentage = 0.3f
-
-        /**
          * Dynamic scales calculator based on content size, content raw size, and container size
          */
         val Dynamic = DynamicScalesCalculator()
@@ -65,10 +57,8 @@ interface ScalesCalculator {
         /**
          * Creates a [DynamicScalesCalculator] and specified [multiple]
          */
-        fun dynamic(
-            multiple: Float = Multiple,
-            differencePercentage: Float = DifferencePercentage
-        ): DynamicScalesCalculator = DynamicScalesCalculator(multiple, differencePercentage)
+        fun dynamic(multiple: Float = Multiple): DynamicScalesCalculator =
+            DynamicScalesCalculator(multiple)
 
         /**
          * Creates a [FixedScalesCalculator] and specified [multiple]
@@ -77,7 +67,14 @@ interface ScalesCalculator {
             FixedScalesCalculator(multiple)
     }
 
-    data class Result(val mediumScale: Float, val maxScale: Float)
+    data class Result(val minScale: Float, val mediumScale: Float, val maxScale: Float) {
+        override fun toString(): String {
+            return "Result(" +
+                    "minScale=${minScale.format(2)}, " +
+                    "mediumScale=${mediumScale.format(2)}, " +
+                    "maxScale=${maxScale.format(2)})"
+        }
+    }
 }
 
 /**
@@ -89,11 +86,6 @@ data class DynamicScalesCalculator(
      * `maxScale = mediumScale * multiple`
      */
     val multiple: Float = Multiple,
-
-    /**
-     * Participate in calculating mediumScale. If initialScale is greater than minScale and the difference between initialScale and mediumScale is less than mediumScale multiplied by differencePercentage, initialScale is used as the mediumScale
-     */
-    val differencePercentage: Float = DifferencePercentage,
 ) : ScalesCalculator {
 
     override fun calculate(
@@ -105,43 +97,41 @@ data class DynamicScalesCalculator(
         initialScale: Float,
     ): ScalesCalculator.Result {
         val minMediumScale = minScale * multiple
-        val coarseMediumScale = if (contentScale != ContentScaleCompat.FillBounds) {
-            // The width and height of content fill the container at the same time
-            val fillContainerScale = max(
-                containerSize.width / contentSize.width.toFloat(),
-                containerSize.height / contentSize.height.toFloat()
-            )
-            // Enlarge content to the same size as its original
+        val mediumScale: Float
+        val maxScale: Float
+        if (contentScale == ContentScaleCompat.FillBounds) {
+            mediumScale = minMediumScale
+            maxScale = mediumScale * multiple
+        } else {
+            // Enlarge content to the same proportions as original size
             val contentOriginScale = if (contentOriginSize.isNotEmpty()) {
                 // Sometimes there will be a slight difference in the original scaling ratio of width and height, so take the larger one
                 val widthScale = contentOriginSize.width / contentSize.width.toFloat()
                 val heightScale = contentOriginSize.height / contentSize.height.toFloat()
-                max(widthScale, heightScale)
+                maxOf(widthScale, heightScale)
             } else {
                 1.0f
             }
-            floatArrayOf(minMediumScale, fillContainerScale, contentOriginScale).maxOrNull()!!
-        } else {
-            minMediumScale
+            mediumScale = if (initialScale > minScale) {
+                initialScale    // initialScale is usually determined by the ReadMode, so initialScale takes precedence
+            } else {
+                // The width and height of content fill the container at the same time
+                val widthScale = containerSize.width / contentSize.width.toFloat()
+                val heightScale = containerSize.height / contentSize.height.toFloat()
+                val fillContainerScale = maxOf(widthScale, heightScale)
+                maxOf(minMediumScale, fillContainerScale, contentOriginScale)
+            }
+            maxScale = maxOf(mediumScale * multiple, contentOriginScale)
         }
-
-        // initialScale is usually determined by the ReadMode, so initialScale takes precedence
-        val mediumScale = if (
-            initialScale > minScale
-            && abs(initialScale - coarseMediumScale) <= coarseMediumScale * differencePercentage
-        ) {
-            initialScale
-        } else {
-            coarseMediumScale
-        }
-
-        val maxScale = mediumScale * multiple
-        return ScalesCalculator.Result(mediumScale = mediumScale, maxScale = maxScale)
+        return ScalesCalculator.Result(
+            minScale = minScale,
+            mediumScale = mediumScale,
+            maxScale = maxScale
+        )
     }
 
     override fun toString(): String {
-        return "DynamicScalesCalculator(" +
-                "multiple=${multiple.format(2)},differencePercentage=${differencePercentage.format(2)})"
+        return "DynamicScalesCalculator(multiple=${multiple.format(2)})"
     }
 }
 
@@ -166,13 +156,19 @@ data class FixedScalesCalculator(
         initialScale: Float,
     ): ScalesCalculator.Result {
         // initialScale is usually determined by the ReadMode, so initialScale takes precedence
-        val mediumScale = if (initialScale > minScale) {
+        val mediumScale = if (contentScale == ContentScaleCompat.FillBounds) {
+            minScale * multiple
+        } else if (initialScale > minScale) {
             initialScale
         } else {
             minScale * multiple
         }
         val maxScale = mediumScale * multiple
-        return ScalesCalculator.Result(mediumScale = mediumScale, maxScale = maxScale)
+        return ScalesCalculator.Result(
+            minScale = minScale,
+            mediumScale = mediumScale,
+            maxScale = maxScale
+        )
     }
 
     override fun toString(): String {

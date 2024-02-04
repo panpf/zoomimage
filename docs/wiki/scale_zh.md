@@ -52,36 +52,28 @@ ZoomImage 在缩放的过程中始终受 minScale、mediumScale、maxScale 三�
 
 [ScalesCalculator] 专门用来计算 mediumScale 和 maxScale，ZoomImage 有两个内置的 [ScalesCalculator]：
 
-* [ScalesCalculator].Dynamic：
-    * maxScale 始终是 `mediumScale * multiple`，mediumScale 则是根据
-      containerSize、contentSize、contentOriginSize 动态的计算，计算规则是在以下几个值中取最大的：
-        * minMediumScale：最小中间缩放倍数，计算公式为：
-          ```kotlin
-          minScale * multiple
-          ```
-        * fillContainerScale：完全充满容器时的缩放倍数，效果类似 ContentScale.Crop，计算公式为：
-          ```kotlin
-          max(
-              containerSize.width / contentSize.width.toFloat(), 
-              containerSize.height / contentSize.height.toFloat()
-          )
-          ```
-        * originScale：将 contentSize 缩放到 contentOriginSize 的倍数，计算公式为：
-          ```kotlin
-          max(
-              contentOriginSize.width / contentSize.width.toFloat(), 
-              contentOriginSize.height / contentSize.height.toFloat()
-          )
-          ```
-        * 另外当 initialScale 大于 minScale 并且 initialScale 和 mediumScale 的差值小于 mediumScale
-          乘以 differencePercentage 时用将 initialScale 作为 mediumScale。initialScale 通常由
-          ReadMode 决定
-* [ScalesCalculator].Fixed：
-    * maxScale 始终是 `mediumScale * multiple`
-    * mediumScale 计算规则是如果 initialScale 大于 minScale 则用
-      initialScale，否则用 `minScale * multiple`
+> * minMediumScale = `minScale * multiple`
+> * fillContainerScale = `max(containerSize.width / contentSize.width.toFloat(),
+    containerSize.height / contentSize.height.toFloat())`
+> * contentOriginScale = `max(contentOriginSize.width / contentSize.width.toFloat(),
+    contentOriginSize.height / contentSize.height.toFloat())`
+> * initialScale 通常由 ReadMode 计算
+> * multiple 默认值为 3f
 
-> multiple 默认值为 3f，differencePercentage 默认值为 0.3f
+* [ScalesCalculator].Dynamic：
+    * mediumScale 计算规则如下：
+        * 如果 contentScale 是 FillBounds，则始终是 minMediumScale
+        * 如果 initialScale 大于 minScale 则始终是 initialScale
+        * 否则在 minMediumScale、fillContainerScale、contentOriginScale 当中取最大的
+    * maxScale 计算规则如下：
+        * 如果 contentScale 是 FillBounds，则始终是 `mediumScale * multiple`
+        * 否则在 `mediumScale * multiple`, contentOriginScale 当中取最大的
+* [ScalesCalculator].Fixed：
+    * mediumScale 计算规则如下：
+        * 如果 contentScale 是 FillBounds，则始终是 minMediumScale
+        * 如果 initialScale 大于 minScale 则始终是 initialScale
+        * 否则始终是 minMediumScale
+    * maxScale 始终是 `mediumScale * multiple`
 
 scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改为 Fixed 或自定义的实现
 

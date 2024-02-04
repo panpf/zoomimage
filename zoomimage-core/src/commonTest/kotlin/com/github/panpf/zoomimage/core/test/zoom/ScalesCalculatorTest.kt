@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.core.test.zoom
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import com.github.panpf.zoomimage.zoom.ScalesCalculator.Result
@@ -39,11 +40,19 @@ class ScalesCalculatorTest {
                 contentSize = IntSizeCompat(100, 50),
                 contentOriginSize = IntSizeCompat(100, 50),
                 contentScale = ContentScaleCompat.Fit,
+                minScale = null,
+                initialScale = null,
+                multiple = 3f,
+                expectedResult = Result(10f, mediumScale = 30f, maxScale = 90f).toString(),
+            ),
+            TestItem(
+                contentSize = IntSizeCompat(100, 50),
+                contentOriginSize = IntSizeCompat(100, 50),
+                contentScale = ContentScaleCompat.Fit,
                 minScale = 0.5f,
                 initialScale = 0.5f,
                 multiple = 3f,
-                differencePercentage = 0.3f,
-                expectedResult = Result(mediumScale = 1.5f, maxScale = 4.5f),
+                expectedResult = Result(0.5f, mediumScale = 1.5f, maxScale = 4.5f).toString(),
             ),
             TestItem(
                 contentSize = IntSizeCompat(100, 50),
@@ -52,8 +61,7 @@ class ScalesCalculatorTest {
                 minScale = 0.5f,
                 initialScale = 0.5f,
                 multiple = 4f,
-                differencePercentage = 2f,
-                expectedResult = Result(mediumScale = 2.0f, maxScale = 8.0f),
+                expectedResult = Result(0.5f, mediumScale = 2.0f, maxScale = 8.0f).toString(),
             ),
             TestItem(
                 contentSize = IntSizeCompat(100, 50),
@@ -62,19 +70,35 @@ class ScalesCalculatorTest {
                 minScale = 0.5f,
                 initialScale = 2.5f,
                 multiple = 4f,
-                differencePercentage = 2f,
-                expectedResult = Result(mediumScale = 2.5f, maxScale = 10f),
+                expectedResult = Result(0.5f, mediumScale = 2.5f, maxScale = 10f).toString(),
+            ),
+            TestItem(
+                contentSize = IntSizeCompat(100, 50),
+                contentOriginSize = IntSizeCompat(100, 50),
+                contentScale = ContentScaleCompat.FillBounds,
+                minScale = 0.5f,
+                initialScale = 2.5f,
+                multiple = 4f,
+                expectedResult = Result(0.5f, mediumScale = 2.0f, maxScale = 8f).toString(),
             ),
         ).forEachIndexed { index, item ->
+            val minScale = item.minScale ?: item.contentScale.computeScaleFactor(
+                srcSize = item.contentSize.toSize(),
+                dstSize = containerSize.toSize()
+            ).scaleX
             val result = ScalesCalculator.fixed(item.multiple).calculate(
                 containerSize = containerSize,
                 contentSize = item.contentSize,
                 contentOriginSize = item.contentOriginSize,
                 contentScale = item.contentScale,
-                minScale = item.minScale,
-                initialScale = item.initialScale
+                minScale = minScale,
+                initialScale = item.initialScale ?: 0f
+            ).toString()
+            Assert.assertEquals(
+                /* message = */ "index: $index, item=$item",
+                /* expected = */ item.expectedResult,
+                /* actual = */ result
             )
-            Assert.assertEquals("index: $index, item=$item", item.expectedResult, result)
         }
     }
 
@@ -82,114 +106,109 @@ class ScalesCalculatorTest {
     fun testDynamic() {
         ScalesCalculator.Dynamic.also {
             Assert.assertEquals(3f, it.multiple)
-            Assert.assertEquals(0.3f, it.differencePercentage)
         }
 
         ScalesCalculator.dynamic().also {
             Assert.assertEquals(3f, it.multiple)
-            Assert.assertEquals(0.3f, it.differencePercentage)
         }
 
-        ScalesCalculator.dynamic(multiple = 4f, differencePercentage = 0.2f).also {
+        ScalesCalculator.dynamic(multiple = 4f).also {
             Assert.assertEquals(4f, it.multiple)
-            Assert.assertEquals(0.2f, it.differencePercentage)
         }
 
-        ScalesCalculator.dynamic(multiple = 5f, differencePercentage = 0.1f).also {
+        ScalesCalculator.dynamic(multiple = 5f).also {
             Assert.assertEquals(5f, it.multiple)
-            Assert.assertEquals(0.1f, it.differencePercentage)
         }
 
         val containerSize = IntSizeCompat(1000, 1000)
         listOf(
-            // minMediumScale win
-            TestItem(
-                contentSize = IntSizeCompat(800, 900),
-                contentOriginSize = IntSizeCompat(800, 900),
-                contentScale = ContentScaleCompat.Fit,
-                minScale = 0.5f,
-                initialScale = 0.5f,
-                multiple = 3f,
-                differencePercentage = 0.3f,
-                expectedResult = Result(mediumScale = 1.5f, maxScale = 4.5f),
-            ),
-            // fillContainerScale win
-            TestItem(
-                contentSize = IntSizeCompat(100, 50),
-                contentOriginSize = IntSizeCompat(100, 50),
-                contentScale = ContentScaleCompat.Fit,
-                minScale = 0.5f,
-                initialScale = 0.5f,
-                multiple = 3f,
-                differencePercentage = 0.3f,
-                expectedResult = Result(mediumScale = 20f, maxScale = 60f),
-            ),
-            // minMediumScale win because multiple
-            TestItem(
-                contentSize = IntSizeCompat(100, 50),
-                contentOriginSize = IntSizeCompat(100, 50),
-                contentScale = ContentScaleCompat.Fit,
-                minScale = 0.5f,
-                initialScale = 0.5f,
-                multiple = 50f,
-                differencePercentage = 0.3f,
-                expectedResult = Result(mediumScale = 25f, maxScale = 1250f),
-            ),
-            // contentOriginScale win
             TestItem(
                 contentSize = IntSizeCompat(100, 50),
                 contentOriginSize = IntSizeCompat(4000, 2000),
                 contentScale = ContentScaleCompat.Fit,
-                minScale = 0.5f,
-                initialScale = 0.5f,
+                minScale = null,
+                initialScale = null,
                 multiple = 3f,
-                differencePercentage = 0.3f,
-                expectedResult = Result(mediumScale = 40f, maxScale = 120f),
+                expectedResult = Result(10f, mediumScale = 40f, maxScale = 120f).toString(),
             ),
-            // FillBounds win base contentOriginScale win
+            // contentScale
             TestItem(
                 contentSize = IntSizeCompat(100, 50),
                 contentOriginSize = IntSizeCompat(4000, 2000),
                 contentScale = ContentScaleCompat.FillBounds,
-                minScale = 0.5f,
-                initialScale = 0.5f,
+                minScale = null,
+                initialScale = null,
                 multiple = 3f,
-                differencePercentage = 0.3f,
-                expectedResult = Result(mediumScale = 1.5f, maxScale = 4.5f),
+                expectedResult = Result(10f, mediumScale = 30f, maxScale = 90f).toString(),
             ),
-            // initialScale win
+            // minScale
             TestItem(
                 contentSize = IntSizeCompat(100, 50),
                 contentOriginSize = IntSizeCompat(4000, 2000),
                 contentScale = ContentScaleCompat.Fit,
-                minScale = 0.5f,
-                initialScale = 30f,
+                minScale = 20f,
+                initialScale = null,
                 multiple = 3f,
-                differencePercentage = 0.3f,
-                expectedResult = Result(mediumScale = 30f, maxScale = 90f),
+                expectedResult = Result(20f, mediumScale = 60f, maxScale = 180f).toString(),
             ),
-            // initialScale fail because difference
+            // initialScale initialScale < minScale
             TestItem(
                 contentSize = IntSizeCompat(100, 50),
                 contentOriginSize = IntSizeCompat(4000, 2000),
                 contentScale = ContentScaleCompat.Fit,
-                minScale = 0.5f,
-                initialScale = 30f,
+                minScale = null,
+                initialScale = 5f,
                 multiple = 3f,
-                differencePercentage = 0.1f,
-                expectedResult = Result(mediumScale = 40f, maxScale = 120f),
+                expectedResult = Result(10f, mediumScale = 40f, maxScale = 120f).toString(),
+            ),
+            // initialScale initialScale > minScale and initialScale * multiple < contentOriginScale
+            TestItem(
+                contentSize = IntSizeCompat(100, 50),
+                contentOriginSize = IntSizeCompat(4000, 2000),
+                contentScale = ContentScaleCompat.Fit,
+                minScale = 2f,
+                initialScale = 5f,
+                multiple = 3f,
+                expectedResult = Result(2f, mediumScale = 5f, maxScale = 40f).toString(),
+            ),
+            // initialScale initialScale > minScale and initialScale * multiple > contentOriginScale
+            TestItem(
+                contentSize = IntSizeCompat(100, 50),
+                contentOriginSize = IntSizeCompat(4000, 2000),
+                contentScale = ContentScaleCompat.Fit,
+                minScale = 2f,
+                initialScale = 15f,
+                multiple = 3f,
+                expectedResult = Result(2f, mediumScale = 15f, maxScale = 45f).toString(),
+            ),
+            // multiple
+            TestItem(
+                contentSize = IntSizeCompat(100, 50),
+                contentOriginSize = IntSizeCompat(4000, 2000),
+                contentScale = ContentScaleCompat.Fit,
+                minScale = null,
+                initialScale = null,
+                multiple = 5f,
+                expectedResult = Result(10f, mediumScale = 50f, maxScale = 250f).toString(),
             ),
         ).forEachIndexed { index, item ->
-            val result =
-                ScalesCalculator.dynamic(item.multiple, item.differencePercentage).calculate(
-                    containerSize = containerSize,
-                    contentSize = item.contentSize,
-                    contentOriginSize = item.contentOriginSize,
-                    contentScale = item.contentScale,
-                    minScale = item.minScale,
-                    initialScale = item.initialScale
-                )
-            Assert.assertEquals("index: $index, item=$item", item.expectedResult, result)
+            val minScale = item.minScale ?: item.contentScale.computeScaleFactor(
+                srcSize = item.contentSize.toSize(),
+                dstSize = containerSize.toSize()
+            ).scaleX
+            val result = ScalesCalculator.dynamic(item.multiple).calculate(
+                containerSize = containerSize,
+                contentSize = item.contentSize,
+                contentOriginSize = item.contentOriginSize,
+                contentScale = item.contentScale,
+                minScale = minScale,
+                initialScale = item.initialScale ?: 0f
+            ).toString()
+            Assert.assertEquals(
+                /* message = */ "index: $index, item=$item",
+                /* expected = */ item.expectedResult,
+                /* actual = */ result
+            )
         }
     }
 
@@ -197,14 +216,13 @@ class ScalesCalculatorTest {
         val contentSize: IntSizeCompat,
         val contentOriginSize: IntSizeCompat,
         val contentScale: ContentScaleCompat,
-        val minScale: Float,
-        val initialScale: Float,
+        val minScale: Float?,
+        val initialScale: Float?,
         val multiple: Float = ScalesCalculator.Multiple,
-        val differencePercentage: Float = multiple / 2,
-        val expectedResult: Result,
+        val expectedResult: String,
     ) {
         override fun toString(): String {
-            return "TestItem(contentSize=$contentSize, contentOriginSize=$contentOriginSize, contentScale=${contentScale.name}, minScale=$minScale, initialScale=$initialScale, multiple=$multiple, differencePercentage=$differencePercentage, expectedResult=$expectedResult)"
+            return "TestItem(contentSize=$contentSize, contentOriginSize=$contentOriginSize, contentScale=${contentScale.name}, minScale=$minScale, initialScale=$initialScale, multiple=$multiple, expectedResult=$expectedResult)"
         }
     }
 }

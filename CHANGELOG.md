@@ -10,6 +10,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
   ///android_asset/' and 'file:///sdcard/sample.jpeg' type
   model. [#16](https://github.com/panpf/zoomimage/issues/16)
 * improve: Improved support for Picasso
+* improve: Improved ScalesCalculator.dynamic(), now when reading mode is available mediumScale is
+  always the initial scaling multiplier of reading mode
 
 ## v1.0.1
 
