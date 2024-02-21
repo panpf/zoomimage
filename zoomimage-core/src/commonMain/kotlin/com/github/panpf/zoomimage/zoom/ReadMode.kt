@@ -119,8 +119,7 @@ data class ReadMode(
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-            other as LongImageDecider
+            if (other !is LongImageDecider) return false
             if (sameDirectionMultiple != other.sameDirectionMultiple) return false
             if (notSameDirectionMultiple != other.notSameDirectionMultiple) return false
             return true

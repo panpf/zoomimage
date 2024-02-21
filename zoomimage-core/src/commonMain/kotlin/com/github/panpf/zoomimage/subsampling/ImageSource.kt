@@ -68,8 +68,7 @@ class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as ByteArrayImageSource
+        if (other !is ByteArrayImageSource) return false
         if (byteArray != other.byteArray) return false
         return true
     }
@@ -95,8 +94,7 @@ class FileImageSource(val file: File) : ImageSource {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as FileImageSource
+        if (other !is FileImageSource) return false
         if (file != other.file) return false
         return true
     }

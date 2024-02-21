@@ -58,8 +58,7 @@ class CoilImageSource(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as CoilImageSource
+        if (other !is CoilImageSource) return false
         if (imageLoader != other.imageLoader) return false
         if (request.data != other.request.data) return false
         return true

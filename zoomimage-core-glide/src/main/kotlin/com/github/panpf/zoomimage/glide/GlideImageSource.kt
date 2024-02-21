@@ -123,8 +123,7 @@ class GlideHttpImageSource(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as GlideHttpImageSource
+        if (other !is GlideHttpImageSource) return false
         if (glide != other.glide) return false
         if (glideUrl != other.glideUrl) return false
         return true

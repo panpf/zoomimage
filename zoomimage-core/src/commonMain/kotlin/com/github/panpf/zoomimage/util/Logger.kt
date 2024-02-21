@@ -423,8 +423,7 @@ class Logger(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as Logger
+        if (other !is Logger) return false
         if (tag != other.tag) return false
         if (module != other.module) return false
         if (showThreadName != other.showThreadName) return false

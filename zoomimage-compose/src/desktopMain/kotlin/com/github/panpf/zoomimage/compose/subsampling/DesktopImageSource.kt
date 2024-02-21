@@ -46,8 +46,7 @@ class ResourceImageSource(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as ResourceImageSource
+        if (other !is ResourceImageSource) return false
         if (resourcesLoader != other.resourcesLoader) return false
         if (resourcePath != other.resourcePath) return false
         return true

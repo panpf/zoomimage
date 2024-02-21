@@ -107,8 +107,7 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as PicassoHttpImageSource
+        if (other !is PicassoHttpImageSource) return false
         if (picasso != other.picasso) return false
         if (uri != other.uri) return false
         return true

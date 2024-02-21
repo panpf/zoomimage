@@ -70,8 +70,7 @@ class AssetImageSource(val context: Context, val assetFileName: String) : ImageS
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as AssetImageSource
+        if (other !is AssetImageSource) return false
         if (context != other.context) return false
         if (assetFileName != other.assetFileName) return false
         return true
@@ -99,8 +98,7 @@ class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as ContentImageSource
+        if (other !is ContentImageSource) return false
         if (context != other.context) return false
         if (uri != other.uri) return false
         return true
@@ -135,8 +133,7 @@ class ResourceImageSource(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as ResourceImageSource
+        if (other !is ResourceImageSource) return false
         if (resources != other.resources) return false
         if (resId != other.resId) return false
         return true
