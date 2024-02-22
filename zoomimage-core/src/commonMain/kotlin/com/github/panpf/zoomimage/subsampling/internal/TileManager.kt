@@ -400,6 +400,7 @@ class TileManager constructor(
                 "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tileDecoder.exifOrientation}_${tile.sampleSize}"
             val cachedValue = tileBitmapCacheHelper.get(memoryCacheKey)
             if (cachedValue != null) {
+                // TODO Retrieve from memory without converting
                 val convertedTileBitmap: TileBitmap =
                     tileBitmapConvertor?.convert(cachedValue) ?: cachedValue
                 tile.setTileBitmap(convertedTileBitmap, fromCache = true)
@@ -446,6 +447,7 @@ class TileManager constructor(
                     }
 
                     isActive -> {
+                        // TODO Convert and then put into memory cache
                         val cacheTileBitmap: TileBitmap = tileBitmapCacheHelper.put(
                             key = memoryCacheKey,
                             tileBitmap = tileBitmap,
