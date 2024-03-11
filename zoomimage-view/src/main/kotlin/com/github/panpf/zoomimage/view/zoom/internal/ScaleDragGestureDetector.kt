@@ -63,6 +63,7 @@ internal class ScaleDragGestureDetector(
         touchSlop = configuration.scaledTouchSlop.toFloat()
         scaleDetector = ScaleGestureDetector(view.context, object : OnScaleGestureListener {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
+                // TODO When you zoom in with two fingers, you need to slide a certain distance to trigger it.
                 val scaleFactor = detector.scaleFactor
                     .takeIf { !isNaN(it) && !isInfinite(it) }
                     ?: return false
