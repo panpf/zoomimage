@@ -27,7 +27,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.jetbrains.compose.compiler.get()
     }
     signingConfigs {
         create("sample") {

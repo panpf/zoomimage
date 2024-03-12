@@ -56,9 +56,7 @@ kotlin {
 }
 
 compose {
-    val compilerDependencyDeclaration =
-        libs.androidx.compose.compiler.get().run { "$module:$version" }
-    kotlinCompilerPlugin.set(compilerDependencyDeclaration)
+    kotlinCompilerPlugin = libs.jetbrains.compose.compiler.get().toString()
 }
 
 android {
