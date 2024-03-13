@@ -55,6 +55,7 @@ open class AbsStateZoomImageView @JvmOverloads constructor(
         val listenerList = (myListeners?.toMutableList() ?: mutableListOf()).apply {
             if (superListener != null) add(superListener)
         }.toList()
+        // TODO PairListener reference Sketch 4.0
         return Listeners(listenerList)
     }
 
