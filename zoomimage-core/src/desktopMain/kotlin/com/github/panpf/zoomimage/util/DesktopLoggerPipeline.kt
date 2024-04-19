@@ -29,7 +29,7 @@ class JvmLogPipeline : Logger.Pipeline {
     override fun log(level: Int, tag: String, msg: String, tr: Throwable?) {
         if (tr != null) {
             val trString = stackTraceToString(tr)
-            println("${Logger.levelName(level)}. $tag. $msg. $trString")
+            println("${Logger.levelName(level)}. $tag. $msg. \n$trString")
         } else {
             println("${Logger.levelName(level)}. $tag. $msg")
         }
