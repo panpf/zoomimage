@@ -42,7 +42,7 @@ junit = "4.13.2"
 telephoto = "0.6.2"
 subsamplingscaleimageview = "3.10.0"
 photoview = "2.3.0"
-coil = "2.4.0"
+coil = "3.0.0-alpha06"
 glide = "4.15.1"
 glide-ktx = "1.0.0-beta01"
 picasso = "2.8"
@@ -111,9 +111,9 @@ telephoto = { module = "me.saket.telephoto:zoomable", version.ref = "telephoto" 
 telephoto-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
 subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-coil-compose-base = { module = "io.coil-kt:coil-compose-base", version.ref = "coil" }
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }

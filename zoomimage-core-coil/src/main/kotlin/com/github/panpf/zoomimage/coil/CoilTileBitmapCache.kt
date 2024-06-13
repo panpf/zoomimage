@@ -16,8 +16,10 @@
 
 package com.github.panpf.zoomimage.coil
 
-import coil.ImageLoader
-import coil.memory.MemoryCache
+import coil3.ImageLoader
+import coil3.annotation.ExperimentalCoilApi
+import coil3.asCoilImage
+import coil3.memory.MemoryCache
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -32,6 +34,7 @@ class CoilTileBitmapCache(private val imageLoader: ImageLoader) : TileBitmapCach
             ?.let { CoilTileBitmap(key, it) }
     }
 
+    @OptIn(ExperimentalCoilApi::class)
     override fun put(
         key: String,
         tileBitmap: TileBitmap,
@@ -40,7 +43,7 @@ class CoilTileBitmapCache(private val imageLoader: ImageLoader) : TileBitmapCach
         disallowReuseBitmap: Boolean
     ): CacheTileBitmap? {
         val bitmap = (tileBitmap as AndroidTileBitmap).bitmap ?: return null
-        val newCacheValue = MemoryCache.Value(bitmap)
+        val newCacheValue = MemoryCache.Value(bitmap.asCoilImage())
         val memoryCache = imageLoader.memoryCache ?: return null
         memoryCache[MemoryCache.Key(key)] = newCacheValue
         return CoilTileBitmap(key, newCacheValue)

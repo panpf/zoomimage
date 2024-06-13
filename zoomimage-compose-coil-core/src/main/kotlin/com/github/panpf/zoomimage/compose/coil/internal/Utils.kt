@@ -24,10 +24,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
-import coil.compose.AsyncImagePainter
-import coil.request.ImageRequest
-import coil.request.NullRequestDataException
-import coil.size.Scale
+import coil3.compose.AsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.NullRequestDataException
+import coil3.size.Scale
 import kotlin.math.roundToInt
 
 

@@ -17,12 +17,12 @@
 package com.github.panpf.zoomimage.coil
 
 import androidx.annotation.WorkerThread
-import coil.ImageLoader
-import coil.fetch.SourceResult
-import coil.request.CachePolicy.DISABLED
-import coil.request.CachePolicy.ENABLED
-import coil.request.ImageRequest
-import coil.request.Options
+import coil3.ImageLoader
+import coil3.fetch.SourceFetchResult
+import coil3.request.CachePolicy.DISABLED
+import coil3.request.CachePolicy.ENABLED
+import coil3.request.ImageRequest
+import coil3.request.Options
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.runBlocking
 import java.io.InputStream
@@ -50,7 +50,7 @@ class CoilImageSource(
         val fetchResult = runBlocking {
             fetcher.fetch()
         }
-        if (fetchResult !is SourceResult) {
+        if (fetchResult !is SourceFetchResult) {
             return Result.failure(IllegalStateException("FetchResult is not SourceResult. data='${request.data}'"))
         }
         fetchResult.source.source().inputStream()

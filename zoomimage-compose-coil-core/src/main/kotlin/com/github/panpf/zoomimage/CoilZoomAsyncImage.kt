@@ -48,11 +48,11 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntSize
-import coil.ImageLoader
-import coil.compose.AsyncImagePainter
-import coil.compose.AsyncImagePainter.State
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.ImageLoader
+import coil3.compose.AsyncImagePainter
+import coil3.compose.AsyncImagePainter.State
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.github.panpf.zoomimage.coil.CoilImageSource
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.compose.ZoomState

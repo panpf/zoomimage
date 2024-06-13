@@ -23,11 +23,12 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
-import coil.drawable.CrossfadeDrawable
-import coil.imageLoader
-import coil.request.CachePolicy
-import coil.request.SuccessResult
-import coil.util.CoilUtils
+import coil3.annotation.ExperimentalCoilApi
+import coil3.imageLoader
+import coil3.request.CachePolicy
+import coil3.request.SuccessResult
+import coil3.transition.CrossfadeDrawable
+import coil3.util.CoilUtils
 import com.github.panpf.zoomimage.coil.CoilImageSource
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -92,8 +93,9 @@ open class CoilZoomImageView @JvmOverloads constructor(
         return result.request.memoryCachePolicy != CachePolicy.ENABLED
     }
 
+    @OptIn(ExperimentalCoilApi::class)
     private fun newImageSource(result: SuccessResult): ImageSource? {
-        val lastChildDrawable = result.drawable.getLastChildDrawable()
+        val lastChildDrawable = result.image.asDrawable(resources).getLastChildDrawable()
         if (lastChildDrawable !is BitmapDrawable) {
             logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is not BitmapDrawable" }
             return null

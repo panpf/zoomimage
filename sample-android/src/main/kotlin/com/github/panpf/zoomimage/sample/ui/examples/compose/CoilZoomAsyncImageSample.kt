@@ -10,8 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
-import coil.request.ImageRequest.Builder
-import coil.size.Precision.INEXACT
+import coil3.request.ImageRequest.Builder
+import coil3.request.crossfade
+import coil3.request.lifecycle
+import coil3.size.Precision.INEXACT
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.CoilZoomAsyncImage

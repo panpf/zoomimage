@@ -17,7 +17,9 @@
 package com.github.panpf.zoomimage.coil
 
 import android.graphics.Bitmap
-import coil.memory.MemoryCache
+import coil3.BitmapImage
+import coil3.annotation.ExperimentalCoilApi
+import coil3.memory.MemoryCache
 import com.github.panpf.zoomimage.coil.internal.toHexString
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
 
@@ -26,8 +28,9 @@ class CoilTileBitmap(
     private val cacheValue: MemoryCache.Value
 ) : AndroidCacheTileBitmap {
 
+    @OptIn(ExperimentalCoilApi::class)
     override val bitmap: Bitmap
-        get() = cacheValue.bitmap
+        get() = (cacheValue.image as BitmapImage).bitmap
 
     override val width: Int = bitmap.width
 
