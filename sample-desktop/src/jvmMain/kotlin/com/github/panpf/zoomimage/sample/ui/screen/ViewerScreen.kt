@@ -22,6 +22,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
@@ -150,10 +151,6 @@ fun ViewerScreen(
                     if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
             }
         }
-        LaunchedEffect(Unit) {
-            val imageSource = ImageSource.fromResource(imageResource.resourcePath)
-            zoomState.subsampling.setImageSource(imageSource)
-        }
 
         var lastMoveJob by remember { mutableStateOf<Job?>(null) }
         LaunchedEffect(Unit) {
@@ -192,9 +189,9 @@ fun ViewerScreen(
             }
         }
 
-        ZoomImage(
+        CoilZoomAsyncImage(
+            model = imageResource.resourcePath,
             modifier = Modifier.fillMaxSize(),
-            painter = painterResource(imageResource.thumbnailResourcePath),
             contentScale = contentScale,
             alignment = alignment,
             contentDescription = "Viewer",

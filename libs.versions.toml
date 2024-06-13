@@ -1,14 +1,14 @@
 [versions]
 
 # kotlin
-kotlin = "1.9.0"
+kotlin = "1.9.24"
 kotlinx-coroutines = "1.7.3"
 
 # compose
-jetbrains-compose = "1.5.0"
-androidx-compose = "1.5.0"
-androidx-compose-compiler = "1.5.0"
-androidx-compose-material3 = "1.1.2"
+jetbrains-compose = "1.6.11"
+androidx-compose = "1.6.7"
+androidx-compose-compiler = "1.5.14"
+androidx-compose-material3 = "1.2.1"
 
 # android
 android-plugin = "8.2.0"

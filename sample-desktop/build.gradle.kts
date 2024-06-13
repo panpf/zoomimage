@@ -19,6 +19,7 @@ kotlin {
                 implementation(project(":sample-common"))
                 implementation(project(":zoomimage-resources"))
                 implementation(compose.desktop.currentOs)
+                implementation(project(":zoomimage-compose-coil"))
 //                implementation("io.github.qdsfdhvh:image-loader:1.6.8")
 //                implementation("media.kamel:kamel-image:0.8.2")
 //                implementation("io.ktor:ktor-client-java:2.3.5")    // for kamel-image
