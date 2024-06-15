@@ -22,9 +22,9 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.flip
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
-import java.awt.Graphics2D
-import java.awt.geom.AffineTransform
-import java.awt.image.BufferedImage
+import org.jetbrains.skia.Bitmap
+import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.Image
 import kotlin.math.abs
 
 /**
@@ -114,82 +114,79 @@ class DesktopExifOrientation(val exifOrientation: Int) : ExifOrientation {
         reverse: Boolean,
         bitmapReuseHelper: TileBitmapReuseHelper?,
     ): TileBitmap {
-        val bufferedImage = (tileBitmap as DesktopTileBitmap).bufferedImage
+        val bitmap = (tileBitmap as DesktopTileBitmap).bitmap
 
-        val bufferedImage2: BufferedImage
-        val bufferedImage3: BufferedImage
+        val bitmap2: Bitmap
+        val bitmap3: Bitmap
         val isRotated = abs(rotationDegrees % 360) != 0
         if (!reverse) {
-            bufferedImage2 = if (isFlipped) {
-                flipImage(bufferedImage, vertical = false)
+            bitmap2 = if (isFlipped) {
+                flipImage(bitmap, vertical = false)
             } else {
-                bufferedImage
+                bitmap
             }
-            bufferedImage3 = if (isRotated) {
-                rotateImage(bufferedImage2, rotationDegrees)
+            bitmap3 = if (isRotated) {
+                rotateImage(bitmap2, rotationDegrees)
             } else {
-                bufferedImage2
+                bitmap2
             }
         } else {
-            bufferedImage2 = if (isRotated) {
-                rotateImage(bufferedImage, -rotationDegrees)
+            bitmap2 = if (isRotated) {
+                rotateImage(bitmap, -rotationDegrees)
             } else {
-                bufferedImage
+                bitmap
             }
-            bufferedImage3 = if (isFlipped) {
-                flipImage(bufferedImage2, vertical = false)
+            bitmap3 = if (isFlipped) {
+                flipImage(bitmap2, vertical = false)
             } else {
-                bufferedImage2
+                bitmap2
             }
         }
-        return DesktopTileBitmap(bufferedImage3)
+        return DesktopTileBitmap(bitmap3)
     }
 
     private fun flipImage(
-        source: BufferedImage,
+        source: Bitmap,
         @Suppress("SameParameterValue") vertical: Boolean = false
-    ): BufferedImage {
-        val flipped = BufferedImage(source.width, source.height, source.type)
-        val graphics = flipped.createGraphics()
-        val transform = if (!vertical) {
-            AffineTransform.getTranslateInstance(source.width.toDouble(), 0.0)
-        } else {
-            AffineTransform.getTranslateInstance(0.0, source.height.toDouble())
-        }.apply {
-            val flip = if (!vertical) {
-                AffineTransform.getScaleInstance(-1.0, 1.0)
-            } else {
-                AffineTransform.getScaleInstance(1.0, -1.0)
-            }
-            concatenate(flip)
+    ): Bitmap {
+        val flipped = Bitmap().apply {
+            allocPixels(source.imageInfo)
         }
-        graphics.transform = transform
-        graphics.drawImage(source, 0, 0, null)
-        graphics.dispose()
+        Canvas(flipped).use { canvas ->
+            if (!vertical) {
+                canvas.translate(source.width.toFloat(), 0f)
+                canvas.scale(-1f, 1f)
+            } else {
+                canvas.translate(0f, source.height.toFloat())
+                canvas.scale(1f, -1f)
+            }
+            canvas.drawImage(Image.makeFromBitmap(source), 0f, 0f)
+        }
+
         return flipped
     }
 
-    private fun rotateImage(source: BufferedImage, degree: Int): BufferedImage {
+    private fun rotateImage(source: Bitmap, degree: Int): Bitmap {
         val sourceSize = IntSizeCompat(source.width, source.height)
         val newSize = sourceSize.rotate(degree)
-        val type = source.colorModel.transparency
-        val newImage = BufferedImage(newSize.width, newSize.height, type)
-        val graphics: Graphics2D = newImage.createGraphics()
-//        graphics.setRenderingHint(
-//            RenderingHints.KEY_INTERPOLATION,
-//            RenderingHints.VALUE_INTERPOLATION_BILINEAR
-//        )
-        graphics.translate(
-            /* tx = */ (newSize.width - sourceSize.width) / 2.0,
-            /* ty = */ (newSize.height - sourceSize.height) / 2.0
-        )
-        graphics.rotate(
-            /* theta = */ Math.toRadians(degree.toDouble()),
-            /* x = */ (sourceSize.width / 2).toDouble(),
-            /* y = */ (sourceSize.height / 2).toDouble()
-        )
-        graphics.drawImage(source, 0, 0, null)
-        graphics.dispose()
+        val newImage = Bitmap().apply {
+            allocPixels(
+                source.imageInfo.withWidthHeight(newSize.width, newSize.height)
+            )
+        }
+
+        Canvas(newImage).use { canvas ->
+            canvas.translate(
+                /* tx = */ (newSize.width - sourceSize.width) / 2f,
+                /* ty = */ (newSize.height - sourceSize.height) / 2f
+            )
+            canvas.rotate(
+                /* degrees = */ degree.toFloat(),
+                /* x = */ (sourceSize.width / 2).toFloat(),
+                /* y = */ (sourceSize.height / 2).toFloat()
+            )
+            canvas.drawImage(Image.makeFromBitmap(source), 0f, 0f)
+        }
         return newImage
     }
 

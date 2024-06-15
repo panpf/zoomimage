@@ -197,7 +197,7 @@ class DesktopExifOrientationTest {
             val appliedBitmap = exifOrientation.applyToTileBitmap(
                 DesktopTileBitmap(image),
                 reverse = false
-            ).let { it as DesktopTileBitmap }.bufferedImage
+            ).let { it as DesktopTileBitmap }.bitmap
             if (change) {
                 Assert.assertNotEquals(
                     message,
@@ -208,7 +208,7 @@ class DesktopExifOrientationTest {
                 val reversedBitmap = exifOrientation.applyToTileBitmap(
                     DesktopTileBitmap(appliedBitmap),
                     reverse = true
-                ).let { it as DesktopTileBitmap }.bufferedImage
+                ).let { it as DesktopTileBitmap }.bitmap
                 Assert.assertEquals(
                     message,
                     produceFingerPrint(image),

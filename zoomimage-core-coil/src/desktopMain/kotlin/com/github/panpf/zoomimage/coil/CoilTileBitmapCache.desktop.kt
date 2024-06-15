@@ -9,7 +9,6 @@ import com.github.panpf.zoomimage.subsampling.DesktopTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
-import org.jetbrains.skiko.toBitmap
 
 actual class CoilTileBitmapCache actual constructor(
     private val imageLoader: ImageLoader
@@ -28,8 +27,8 @@ actual class CoilTileBitmapCache actual constructor(
         imageInfo: ImageInfo,
         disallowReuseBitmap: Boolean
     ): CacheTileBitmap? {
-        val bitmap = (tileBitmap as DesktopTileBitmap).bufferedImage ?: return null
-        val newCacheValue = MemoryCache.Value(bitmap.toBitmap().asCoilImage())
+        val bitmap = (tileBitmap as DesktopTileBitmap).bitmap ?: return null
+        val newCacheValue = MemoryCache.Value(bitmap.asCoilImage())
         val memoryCache = imageLoader.memoryCache ?: return null
         memoryCache[MemoryCache.Key(key)] = newCacheValue
         return CoilTileBitmap(key, newCacheValue)

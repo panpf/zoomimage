@@ -44,7 +44,7 @@ class DesktopTileDecoderTest {
             bitmap = tileDecoder
                 .decode(IntRectCompat(100, 200, 300, 300), 1)!!
                 .let { it as DesktopTileBitmap }
-                .bufferedImage
+                .bitmap
             bitmap.apply {
                 Assert.assertEquals(200, width)
                 Assert.assertEquals(100, height)
@@ -53,7 +53,7 @@ class DesktopTileDecoderTest {
             val bitmap1 = tileDecoder
                 .decode(IntRectCompat(100, 200, 300, 300), 4)!!
                 .let { it as DesktopTileBitmap }
-                .bufferedImage
+                .bitmap
             bitmap1.apply {
                 Assert.assertEquals(50, width)
                 Assert.assertEquals(25, height)
@@ -83,7 +83,7 @@ class DesktopTileDecoderTest {
             bitmap2 = tileDecoder2
                 .decode(IntRectCompat(100, 200, 300, 300), 1)!!
                 .let { it as DesktopTileBitmap }
-                .bufferedImage
+                .bitmap
             bitmap2.apply {
                 Assert.assertEquals(200, width)
                 Assert.assertEquals(100, height)
@@ -115,7 +115,7 @@ class DesktopTileDecoderTest {
             bitmap3 = tileDecoder3
                 .decode(IntRectCompat(100, 200, 300, 300), 1)!!
                 .let { it as DesktopTileBitmap }
-                .bufferedImage
+                .bitmap
             bitmap3.apply {
                 Assert.assertEquals(200, width)
                 Assert.assertEquals(100, height)

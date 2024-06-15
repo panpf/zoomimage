@@ -17,30 +17,31 @@
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.util.internal.toHexString
-import java.awt.image.BufferedImage
+import org.jetbrains.skia.Bitmap
 
-fun DesktopTileBitmap(bufferedImage: BufferedImage): DesktopTileBitmap {
-    return DesktopTileBitmapImpl(bufferedImage)
+fun DesktopTileBitmap(bitmap: Bitmap): DesktopTileBitmap {
+    return DesktopTileBitmapImpl(bitmap)
 }
 
 interface DesktopTileBitmap : TileBitmap {
-    val bufferedImage: BufferedImage
+    val bitmap: Bitmap
 }
 
-private class DesktopTileBitmapImpl(override val bufferedImage: BufferedImage) :
+private class DesktopTileBitmapImpl(override val bitmap: Bitmap) :
     DesktopTileBitmap {
 
-    override val width: Int = bufferedImage.width
+    override val width: Int = bitmap.width
 
-    override val height: Int = bufferedImage.height
+    override val height: Int = bitmap.height
 
-    override val byteCount: Int = width * height * (bufferedImage.colorModel.pixelSize / 8)
+    override val byteCount: Int = bitmap.computeByteSize()
 
     override val isRecycled: Boolean = false
 
-    override fun recycle() {}
+    override fun recycle() {
+    }
 
     override fun toString(): String {
-        return "DesktopTileBitmap(size=${width}x${height},colorModel='${bufferedImage.colorModel}',@${bufferedImage.toHexString()})"
+        return "DesktopTileBitmap(size=${width}x${height},byteCount='${byteCount}',@${bitmap.toHexString()})"
     }
 }

@@ -25,6 +25,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.internal.quietClose
+import org.jetbrains.skiko.toBitmap
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.io.Closeable
@@ -55,7 +56,11 @@ class DesktopTileDecoder constructor(
         val bitmap = useDecoder { decoder ->
             decodeRegion(decoder, srcRect, sampleSize)
         } ?: return null
-        return applyExifOrientation(DesktopTileBitmap(bitmap))
+        val skBitmap = bitmap.toBitmap()
+
+        bitmap.flush()
+
+        return applyExifOrientation(DesktopTileBitmap(skBitmap))
     }
 
     override fun destroy(caller: String) {

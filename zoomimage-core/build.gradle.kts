@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.org.jetbrains.kotlin.multiplatform)
     alias(libs.plugins.com.android.library)
+    alias(libs.plugins.org.jetbrains.compose)
 }
 
 kotlin {
@@ -58,6 +59,8 @@ kotlin {
             dependencies {
                 api(libs.kotlinx.coroutines.swing)
                 api("com.drewnoakes:metadata-extractor:2.18.0")
+
+                implementation(compose.foundation)
             }
         }
 
