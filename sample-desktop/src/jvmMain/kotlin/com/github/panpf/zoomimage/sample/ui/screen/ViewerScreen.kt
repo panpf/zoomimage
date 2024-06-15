@@ -21,6 +21,7 @@ import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.ResourceLoader
 import androidx.compose.ui.res.painterResource
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.ZoomImage
@@ -190,7 +191,7 @@ fun ViewerScreen(
         }
 
         CoilZoomAsyncImage(
-            model = imageResource.resourcePath,
+            model = ResourceLoader.Default.load(imageResource.resourcePath).readAllBytes(),
             modifier = Modifier.fillMaxSize(),
             contentScale = contentScale,
             alignment = alignment,
