@@ -15,6 +15,8 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.skia.Bitmap
+import org.jetbrains.skiko.toBufferedImage
 import org.junit.Assert
 import org.junit.Test
 import java.awt.image.BufferedImage
@@ -39,7 +41,7 @@ class DesktopTileDecoderTest {
             imageInfo = imageInfo,
             exifOrientation = exifOrientation,
         )
-        val bitmap: BufferedImage
+        val bitmap: Bitmap
         try {
             bitmap = tileDecoder
                 .decode(IntRectCompat(100, 200, 300, 300), 1)!!
@@ -78,7 +80,7 @@ class DesktopTileDecoderTest {
             imageInfo = imageInfo2,
             exifOrientation = exifOrientation2,
         )
-        val bitmap2: BufferedImage
+        val bitmap2: Bitmap
         try {
             bitmap2 = tileDecoder2
                 .decode(IntRectCompat(100, 200, 300, 300), 1)!!
@@ -93,8 +95,8 @@ class DesktopTileDecoderTest {
                 tileDecoder2.destroy("test")
             }
         }
-        val bitmapFinger = produceFingerPrint(bitmap)
-        val bitmap2Finger = produceFingerPrint(bitmap2)
+        val bitmapFinger = produceFingerPrint(bitmap.toBufferedImage())
+        val bitmap2Finger = produceFingerPrint(bitmap2.toBufferedImage())
         val hanming2 = hammingDistance(bitmapFinger, bitmap2Finger)
         Assert.assertTrue(hanming2 <= 2)
 
@@ -110,7 +112,7 @@ class DesktopTileDecoderTest {
             imageInfo = imageInfo3,
             exifOrientation = exifOrientation3,
         )
-        val bitmap3: BufferedImage
+        val bitmap3: Bitmap
         try {
             bitmap3 = tileDecoder3
                 .decode(IntRectCompat(100, 200, 300, 300), 1)!!
@@ -125,7 +127,7 @@ class DesktopTileDecoderTest {
                 tileDecoder3.destroy("test")
             }
         }
-        val bitmap3Finger = produceFingerPrint(bitmap3)
+        val bitmap3Finger = produceFingerPrint(bitmap3.toBufferedImage())
         val hanming3 = hammingDistance(bitmapFinger, bitmap3Finger)
         Assert.assertTrue(hanming3 > 2)
     }

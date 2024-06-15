@@ -60,7 +60,7 @@ kotlin {
                 api(libs.kotlinx.coroutines.swing)
                 api("com.drewnoakes:metadata-extractor:2.18.0")
 
-                implementation(compose.foundation)
+                implementation(compose.desktop.currentOs)
             }
         }
 

@@ -7,6 +7,8 @@ import com.github.panpf.zoomimage.subsampling.DesktopTileBitmap
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import org.jetbrains.skiko.toBitmap
+import org.jetbrains.skiko.toBufferedImage
 import org.junit.Assert
 import org.junit.Test
 
@@ -195,14 +197,14 @@ class DesktopExifOrientationTest {
             val message = "exifOrientationInt=${exifOrientation.name()}"
 
             val appliedBitmap = exifOrientation.applyToTileBitmap(
-                DesktopTileBitmap(image),
+                DesktopTileBitmap(image.toBitmap()),
                 reverse = false
             ).let { it as DesktopTileBitmap }.bitmap
             if (change) {
                 Assert.assertNotEquals(
                     message,
                     produceFingerPrint(image),
-                    produceFingerPrint(appliedBitmap),
+                    produceFingerPrint(appliedBitmap.toBufferedImage()),
                 )
 
                 val reversedBitmap = exifOrientation.applyToTileBitmap(
@@ -212,13 +214,13 @@ class DesktopExifOrientationTest {
                 Assert.assertEquals(
                     message,
                     produceFingerPrint(image),
-                    produceFingerPrint(reversedBitmap),
+                    produceFingerPrint(reversedBitmap.toBufferedImage()),
                 )
             } else {
                 Assert.assertEquals(
                     message,
                     produceFingerPrint(image),
-                    produceFingerPrint(appliedBitmap),
+                    produceFingerPrint(appliedBitmap.toBufferedImage()),
                 )
             }
         }

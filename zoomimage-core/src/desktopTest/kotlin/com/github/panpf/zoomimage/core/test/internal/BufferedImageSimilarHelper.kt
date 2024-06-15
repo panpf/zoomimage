@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.core.test.internal
 import androidx.annotation.IntRange
 import java.awt.Image
 import java.awt.image.BufferedImage
+import java.awt.image.Raster
 
 /**
  * copy from https://github.com/zangliguang/ImageSimilar/blob/master/app/src/main/java/tool/ImageHelper.java
@@ -76,7 +77,12 @@ fun hammingDistance(sourceImageFingerPrint: String, otherImageFingerPrint: Strin
  * 创建缩略图
  */
 private fun createThumbnail(source: BufferedImage, width: Int, height: Int): BufferedImage {
-    val image = BufferedImage(width, height, source.type)
+    val image = BufferedImage(
+        source.colorModel,
+        source.raster.createCompatibleWritableRaster(width, height),
+        source.isAlphaPremultiplied,
+        null
+    )
     val graphics = image.createGraphics()
     val img = source.getScaledInstance(width, height, Image.SCALE_DEFAULT)
     graphics.drawImage(img, 0, 0, null)
