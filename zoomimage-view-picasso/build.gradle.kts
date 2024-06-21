@@ -25,8 +25,5 @@ dependencies {
     api(projects.zoomimageView)
     api(projects.zoomimageCorePicasso)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(projects.internal.testUtils)
 }

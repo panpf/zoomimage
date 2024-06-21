@@ -42,6 +42,7 @@ class SketchTileBitmapCache constructor(
         imageInfo: com.github.panpf.zoomimage.subsampling.ImageInfo,
         disallowReuseBitmap: Boolean
     ): CacheTileBitmap? {
+        // TODO sketch 4 supports SkiaTileBitmap
         val bitmap = (tileBitmap as AndroidTileBitmap).bitmap ?: return null
         val newCountBitmap = CountBitmap(
             cacheKey = key,

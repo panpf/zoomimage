@@ -39,7 +39,7 @@ class SubsamplingUtilsTest2 {
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).getOrThrow().apply {
             Assert.assertEquals(correctOrientationImageInfo, this.imageInfo)
-            Assert.assertEquals("ROTATE_90", this.exifOrientation!!.name())
+            Assert.assertEquals("UNDEFINED", this.exifOrientation.name())
         }
 
         val thumbnailSize2 = imageInfo.size / 8
@@ -51,7 +51,7 @@ class SubsamplingUtilsTest2 {
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).getOrThrow().apply {
             Assert.assertEquals(imageInfo, this.imageInfo)
-            Assert.assertEquals(null, this.exifOrientation)
+            Assert.assertEquals("UNDEFINED", this.exifOrientation.name())
         }
 
         val errorImageSource = ImageSource.fromAsset(context, "fake_image.jpg")

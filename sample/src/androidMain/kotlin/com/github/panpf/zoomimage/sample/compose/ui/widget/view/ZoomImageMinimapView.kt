@@ -103,6 +103,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                     tileSnapshot.state == TileState.STATE_LOADING -> Color.YELLOW
                     tileSnapshot.state == TileState.STATE_NONE -> Color.GRAY
                     else -> Color.RED
+                    // TODO Distinguish between dataFrom cache or local
                 }
                 tileBoundsPaint.color = boundsColor
                 canvas.drawRect(tileDrawRect, tileBoundsPaint)

@@ -74,15 +74,10 @@ kotlin {
         }
 
         commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.junit)
-            implementation(libs.panpf.tools4j.test)
+            implementation(projects.internal.testUtils)
         }
         androidInstrumentedTest.dependencies {
-            implementation(libs.androidx.test.ext.junit)
-            implementation(libs.androidx.test.runner)
-            implementation(libs.androidx.test.rules)
-            implementation(libs.androidx.compose.ui.test.junit4)
+            implementation(projects.internal.testUtils)
         }
     }
 }

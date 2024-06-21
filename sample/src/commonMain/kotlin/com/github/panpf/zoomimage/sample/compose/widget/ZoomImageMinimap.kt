@@ -182,6 +182,7 @@ private fun ContentDrawScope.drawTilesBounds(
             tileSnapshot.state == TileState.STATE_LOADED -> 0xFF00FF00
             tileSnapshot.state == TileState.STATE_LOADING -> 0xFFFFFF00
             else -> 0xFFFF0000
+            // TODO Distinguish between dataFrom cache or local
         }
         drawRect(
             color = Color(boundsColor),

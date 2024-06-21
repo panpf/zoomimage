@@ -17,10 +17,12 @@ kotlin {
             api(compose.ui)
             api(compose.uiTooling.replace("ui-tooling", "ui-util"))
         }
+
         commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.junit)
-            implementation(libs.panpf.tools4j.test)
+            implementation(projects.internal.testUtils)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(projects.internal.testUtils)
         }
     }
 }

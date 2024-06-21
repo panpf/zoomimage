@@ -71,3 +71,24 @@ fun ExifOrientation.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
     val newSize = applyToSize(imageInfo.size)
     return imageInfo.copy(size = newSize)
 }
+
+data object EmptyExifOrientation : ExifOrientation {
+
+    override fun applyToSize(size: IntSizeCompat, reverse: Boolean): IntSizeCompat = size
+
+    override fun applyToRect(
+        srcRect: IntRectCompat,
+        imageSize: IntSizeCompat,
+        reverse: Boolean
+    ): IntRectCompat = srcRect
+
+    override fun applyToTileBitmap(
+        tileBitmap: TileBitmap,
+        reverse: Boolean,
+        bitmapReuseHelper: TileBitmapReuseHelper?,
+    ): TileBitmap = tileBitmap
+
+    override fun name(): String = "UNDEFINED"
+
+    override fun toString(): String = "EmptyExifOrientation"
+}

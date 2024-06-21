@@ -21,7 +21,7 @@ buildscript {
         classpath(libs.gradlePlugin.kotlin)
         classpath(libs.gradlePlugin.kotlinSerialization)
         classpath(libs.gradlePlugin.kotlinComposeCompiler)
-//        classpath(libs.gradlePlugin.kotlinxAtomicfu)
+        classpath(libs.gradlePlugin.kotlinxAtomicfu)
         classpath(libs.gradlePlugin.mavenPublish)
     }
 }

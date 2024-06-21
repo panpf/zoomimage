@@ -18,23 +18,85 @@ package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.annotation.MainThread
 import com.github.panpf.zoomimage.annotation.WorkerThread
+import com.github.panpf.zoomimage.subsampling.EmptyExifOrientation
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.Logger
+import java.util.LinkedList
 
 /**
  * Decode the tile bitmap of the image
+ *
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecoderTest]
  */
-interface TileDecoder {
+class TileDecoder(
+    private val logger: Logger,
+    private val imageSource: ImageSource,
+    val imageInfo: ImageInfo,
+    private val rootDecodeHelper: DecodeHelper,
+) {
 
-    val imageInfo: ImageInfo
+    val exifOrientation: ExifOrientation = EmptyExifOrientation
 
-    val exifOrientation: ExifOrientation?
+    private var destroyed = false
+    private val decoderPool = LinkedList<DecodeHelper>()
+
+    init {
+        decoderPool.push(rootDecodeHelper)
+    }
 
     @WorkerThread
-    fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap?
+    fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
+        if (destroyed) return null
+        val tileBitmap = useDecoder { decoder ->
+            decoder.decodeRegion(srcRect, sampleSize)
+        } ?: return null
+        return tileBitmap
+    }
+
+    @WorkerThread
+    private fun useDecoder(block: (decoder: DecodeHelper) -> TileBitmap?): TileBitmap? {
+        synchronized(decoderPool) {
+            if (destroyed) {
+                return null
+            }
+        }
+
+        var bitmapRegionDecoder: DecodeHelper? = synchronized(decoderPool) {
+            decoderPool.poll()
+        }
+        if (bitmapRegionDecoder == null) {
+            bitmapRegionDecoder = rootDecodeHelper.copy()
+        }
+
+        val tileBitmap = block(bitmapRegionDecoder)
+
+        synchronized(decoderPool) {
+            if (destroyed) {
+                bitmapRegionDecoder.close()
+            } else {
+                decoderPool.add(bitmapRegionDecoder)
+            }
+        }
+
+        return tileBitmap
+    }
 
     @MainThread
-    fun destroy(caller: String)
+    fun destroy(caller: String) {
+        if (destroyed) return
+        destroyed = true
+        synchronized(decoderPool) {
+            decoderPool.forEach { it.close() }
+            decoderPool.clear()
+        }
+        logger.d { "destroyDecoder:$caller. '${imageSource.key}'" }
+    }
+
+    override fun toString(): String {
+        return "TileDecoder(imageSource='${imageSource.key}', imageInfo=$imageInfo, exifOrientation=$exifOrientation)"
+    }
 }

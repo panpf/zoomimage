@@ -10,11 +10,12 @@ import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
-import com.github.panpf.zoomimage.subsampling.internal.AndroidTileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
+import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.calculateImageLoadRect
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
+import com.github.panpf.zoomimage.subsampling.internal.createDecodeHelper
 import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -509,7 +510,7 @@ class TileManagerTest {
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
         val tileDecoder =
-            AndroidTileDecoder(logger, imageSource, imageInfo, null, tileBitmapReuseHelper)
+            TileDecoder(logger, imageSource, imageInfo, createDecodeHelper(imageSource)!!)
         val backgroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val foregroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val sampleSizeChangedList = mutableListOf<Int>()

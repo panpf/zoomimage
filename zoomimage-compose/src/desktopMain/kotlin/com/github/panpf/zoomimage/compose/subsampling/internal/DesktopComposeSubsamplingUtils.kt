@@ -18,9 +18,6 @@ package com.github.panpf.zoomimage.compose.subsampling.internal
 
 import androidx.compose.runtime.Composable
 import com.github.panpf.zoomimage.subsampling.StoppedController
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
 
 @Composable
 actual fun defaultStoppedController(): StoppedController? = null
-
-actual fun createTileBitmapConvertor(): TileBitmapConvertor? = DesktopToComposeTileBitmapConvertor()

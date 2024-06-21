@@ -22,9 +22,10 @@ package com.github.panpf.zoomimage.subsampling
 interface TileBitmap {
     val width: Int
     val height: Int
-    val byteCount: Int
+    val byteCount: Int  // TODO Long
     fun recycle()
     val isRecycled: Boolean
+    // TODO val bitmapFrom: Local、Memory_cache
 }
 
 /**

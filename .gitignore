@@ -10,3 +10,4 @@ captures/
 local.properties
 
 *.jks
+webpack.config.d/

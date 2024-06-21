@@ -36,3 +36,4 @@ include(":zoomimage-view-sketch")
  */
 include(":sample")
 include(":internal:images")
+include(":internal:test-utils")
