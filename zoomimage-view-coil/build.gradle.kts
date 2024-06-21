@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.com.android.library)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -8,7 +8,7 @@ android {
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
-        minSdk = property("minSdk21").toString().toInt()
+        minSdk = property("minSdk").toString().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,8 +22,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-view"))
-    api(project(":zoomimage-core-coil"))
+    api(projects.zoomimageView)
+    api(projects.zoomimageCoreCoil)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

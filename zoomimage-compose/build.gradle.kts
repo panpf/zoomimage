@@ -1,70 +1,26 @@
 plugins {
-    alias(libs.plugins.org.jetbrains.kotlin.multiplatform)
-    alias(libs.plugins.org.jetbrains.compose)
-    alias(libs.plugins.com.android.library)
+    id("org.jetbrains.kotlin.multiplatform")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.compose")
+    id("com.android.library")
 }
 
-group = property("GROUP").toString()
-version = property("versionName").toString()
+addAllMultiplatformTargets(MultiplatformTargets.Android, MultiplatformTargets.Desktop)
+
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose")
 
 kotlin {
-    androidTarget {
-        publishLibraryVariants("release")
-        compilations.configureEach {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
-    jvm("desktop") {
-        compilations.configureEach {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
     sourceSets {
-        named("androidMain") {
-            dependencies {
-            }
+        commonMain.dependencies {
+            api(projects.zoomimageCore)
+            api(compose.foundation)
+            api(compose.ui)
+            api(compose.uiTooling.replace("ui-tooling", "ui-util"))
         }
-
-        named("commonMain") {
-            dependencies {
-                api(project(":zoomimage-core"))
-                api(compose.foundation)
-                api(compose.ui)
-                api(compose.uiTooling.replace("ui-tooling", "ui-util"))
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.junit)
+            implementation(libs.panpf.tools4j.test)
         }
-        named("commonTest") {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.junit)
-                implementation(libs.panpf.tools4j.test)
-            }
-        }
-    }
-}
-
-compose {
-    kotlinCompilerPlugin = libs.jetbrains.compose.compiler.get().toString()
-}
-
-android {
-    namespace = "com.github.panpf.zoomimage.compose"
-    compileSdk = property("compileSdk").toString().toInt()
-
-    defaultConfig {
-        minSdk = property("minSdk21").toString().toInt()
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }

@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
-import androidx.annotation.WorkerThread
 import com.drew.imaging.ImageMetadataReader
+import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.DesktopExifOrientation
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -15,7 +15,6 @@ import javax.imageio.stream.ImageInputStream
 
 
 @WorkerThread
-@Suppress("FoldInitializerAndIfToElvis")
 internal actual fun ImageSource.decodeExifOrientation(): Result<ExifOrientation> {
     val inputStreamResult = openInputStream()
     if (inputStreamResult.isFailure) {

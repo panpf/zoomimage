@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.subsampling
 
-import androidx.annotation.IntDef
+import com.github.panpf.zoomimage.annotation.IntDef
 
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(

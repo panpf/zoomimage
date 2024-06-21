@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import androidx.annotation.WorkerThread
+import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.DesktopTileBitmap
 import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo

@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.zoom
 
-import androidx.annotation.IntDef
+import com.github.panpf.zoomimage.annotation.IntDef
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.FLING
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.GESTURE
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.LOCATE
@@ -26,7 +26,13 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.SCALE
 
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(NONE, SCALE, OFFSET, LOCATE, GESTURE, FLING)
-@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Target(
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.FIELD,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
 annotation class ContinuousTransformType {
     companion object {
         const val NONE = 0

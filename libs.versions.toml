@@ -1,79 +1,62 @@
 [versions]
-
-# kotlin
-kotlin = "1.9.0"
-kotlinx-coroutines = "1.7.3"
-
-# compose
-jetbrains-compose = "1.5.0"
-jetbrains-compose-compiler = "1.5.0"
-androidx-compose = "1.5.0"
-androidx-compose-material3 = "1.1.2"
-
-# android
-android-plugin = "8.2.0"
-androidx-annotation = "1.6.0"
-androidx-core = "1.10.1"
-androidx-exifinterface = "1.3.6"
-androidx-lifecycle = "2.6.1"
+android-plugin = "8.5.0"
+androidx-annotation = "1.8.0"
+androidx-appcompat = "1.7.0"
+androidx-constraintlayout-compose = "1.0.1"
+androidx-core = "1.13.1"
+androidx-compose = "1.6.7"   # sync with jetbrains compose
+androidx-compose-material3 = "1.2.1"   # sync with jetbrains compose
+androidx-exifinterface = "1.3.7"
+androidx-lifecycle = "2.8.2"
 androidx-multidex = "2.0.1"
-androidx-navigation = "2.7.0"
-androidx-paging = "3.2.1"
+androidx-navigation = "2.7.7"
+androidx-paging = "3.3.0"
 androidx-swiperefreshlayout = "1.1.0"
 androidx-test-ext-junit = "1.1.5"
 androidx-test-runner = "1.5.2"
 androidx-test-rules = "1.5.0"
-androidx-appcompat = "1.6.1"
-androidx-constraintlayout-compose = "1.0.1"
 
-# google
-google-accompanist = "0.30.1"
-google-material = "1.9.0"
+coil = "2.4.0"
 
-# panpf
+glide = "4.15.1"
+glide-ktx = "1.0.0-beta01"
+
+jetbrains-compose = "1.6.11"
+junit = "4.13.2"
+
+kotlin = "2.0.0"
+kotlinx-coroutines = "1.8.1"
+
+leakcanary = "2.14"
+mavenpublish = "0.28.0"
+
+google-accompanist = "0.34.0"
+google-material = "1.12.0"
+
 panpf-assemblyadapter4 = "4.1.0"
-panpf-sketch3 = "3.3.0"
+panpf-sketch3 = "3.3.2"
 panpf-tools4a = "1.0.0"
 panpf-tools4j = "1.0.0"
 panpf-tools4k = "1.0.0"
 
-# other
-junit = "4.13.2"
-telephoto = "0.6.2"
-subsamplingscaleimageview = "3.10.0"
-photoview = "2.3.0"
-coil = "2.4.0"
-glide = "4.15.1"
-glide-ktx = "1.0.0-beta01"
 picasso = "2.8"
-mavenpublish = "0.25.3"
-leakcanary = "2.12"
+photoview = "2.3.0"
+subsamplingscaleimageview = "3.10.0"
+telephoto = "0.6.2"
 
 [libraries]
+gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "android-plugin" }
+gradlePlugin-androidxNavigationSafeArgs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "androidx-navigation" }
+gradlePlugin-jetbrainsCompose = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "jetbrains-compose" }
+gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradlePlugin-kotlinComposeCompiler = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+gradlePlugin-kotlinSerialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+#gradlePlugin-kotlinxAtomicfu = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "kotlinx-atomicfu" }
+gradlePlugin-mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenpublish" }
 
-# kotlin
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
-
-# compose
-#androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "androidx-compose-compiler" }
-jetbrains-compose-compiler = { module = "org.jetbrains.compose.compiler:compiler", version.ref = "jetbrains-compose-compiler" }
-androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "androidx-compose" }
-androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
-androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "androidx-compose" }
-androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
-androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
-androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
-androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidx-compose" }
-androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose" }
-androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose" }
-androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose" }
-
-# android
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout-compose" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "androidx-exifinterface" }
 androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "androidx-lifecycle" }
@@ -87,13 +70,36 @@ androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefre
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
-androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout-compose" }
 
-# google
+androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "androidx-compose" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "androidx-compose" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidx-compose" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose" }
+androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose" }
+
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil-compose-base = { module = "io.coil-kt:coil-compose-base", version.ref = "coil" }
+
 google-drawablepainer = { module = "com.google.accompanist:accompanist-drawablepainter", version.ref = "google-accompanist" }
 google-material = { module = "com.google.android.material:material", version.ref = "google-material" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx" }
 
-# panpf
+junit = { module = "junit:junit", version.ref = "junit" }
+
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+
 panpf-assemblyadapter4 = { module = "io.github.panpf.assemblyadapter4:assemblyadapter", version.ref = "panpf-assemblyadapter4" }
 panpf-sketch3 = { module = "io.github.panpf.sketch3:sketch", version.ref = "panpf-sketch3" }
 panpf-sketch3-compose = { module = "io.github.panpf.sketch3:sketch-compose", version.ref = "panpf-sketch3" }
@@ -106,28 +112,9 @@ panpf-tools4j-test = { module = "io.github.panpf.tools4j:tools4j-test-ktx", vers
 panpf-tools4a = { module = "io.github.panpf.tools4a:tools4a-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "panpf-tools4k" }
 
-# other
-junit = { module = "junit:junit", version.ref = "junit" }
+photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
+picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+
+subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
 telephoto = { module = "me.saket.telephoto:zoomable", version.ref = "telephoto" }
 telephoto-coil = { module = "me.saket.telephoto:zoomable-image-coil", version.ref = "telephoto" }
-subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
-photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-coil-compose-base = { module = "io.coil-kt:coil-compose-base", version.ref = "coil" }
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx" }
-picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
-
-[plugins]
-com-android-application = { id = "com.android.application", version.ref = "android-plugin" }
-com-android-library = { id = "com.android.library", version.ref = "android-plugin" }
-org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-org-jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
-org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-androidx-navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "androidx-navigation" }
-mavenpublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenpublish" }
-
-[bundles]

@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.util
 
-import androidx.annotation.IntDef
 import com.github.panpf.zoomimage.util.internal.toHexString
 
 expect fun createLogPipeline(): Logger.Pipeline
@@ -441,8 +440,8 @@ class Logger(
         return "Logger(tag='$tag', module=$module, showThreadName=$showThreadName, level=$level, pipeline=$pipeline)"
     }
 
+    // TODO enum
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(VERBOSE, DEBUG, INFO, WARN, ERROR, ASSERT)
     @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD)
     annotation class Level
 

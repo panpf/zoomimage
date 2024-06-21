@@ -1,93 +1,52 @@
 plugins {
-    alias(libs.plugins.org.jetbrains.kotlin.multiplatform)
-    alias(libs.plugins.com.android.library)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.multiplatform")
 }
+
+addAllMultiplatformTargets(MultiplatformTargets.Android, MultiplatformTargets.Desktop)
 
 kotlin {
-    androidTarget {
-        publishLibraryVariants("release")
-        compilations.configureEach {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
-    jvm("desktop") {
-        compilations.configureEach {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
     sourceSets {
-        named("androidMain") {
-            dependencies {
-                api(libs.kotlinx.coroutines.android)
-                api(libs.androidx.exifinterface)
-                api(libs.androidx.lifecycle.common)
-            }
+        commonMain.dependencies {
+            api(libs.kotlinx.coroutines.core)
         }
-        named("androidInstrumentedTest") {
-            dependencies {
-                implementation(libs.junit)
-                implementation(libs.panpf.tools4j.test)
-                implementation(libs.androidx.test.ext.junit)
-                implementation(libs.androidx.test.runner)
-                implementation(libs.androidx.test.rules)
-                implementation(project(":zoomimage-resources"))
-            }
+        androidMain.dependencies {
+            api(libs.androidx.annotation)
+            api(libs.androidx.exifinterface)
+            api(libs.androidx.lifecycle.common)
+            api(libs.kotlinx.coroutines.android)
         }
 
-        named("commonMain") {
-            dependencies {
-                api(libs.androidx.annotation)
-                api(libs.kotlinx.coroutines.core)
-            }
-        }
-        named("commonTest") {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.junit)
-                implementation(libs.panpf.tools4j.test)
-            }
+        desktopMain.dependencies {
+            api(libs.kotlinx.coroutines.swing)
+            api("com.drewnoakes:metadata-extractor:2.18.0")
         }
 
-        named("desktopMain") {
-            dependencies {
-                api(libs.kotlinx.coroutines.swing)
-                api("com.drewnoakes:metadata-extractor:2.18.0")
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
-
-        named("desktopTest") {
-            dependencies {
-                implementation(project(":zoomimage-resources"))
-            }
+        jvmCommonTest.dependencies {
+            implementation(libs.junit)
+            implementation(libs.panpf.tools4j.test)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(libs.androidx.test.ext.junit)
+            implementation(libs.androidx.test.runner)
+            implementation(libs.androidx.test.rules)
+            implementation(projects.internal.images)
+        }
+        desktopTest.dependencies {
+            implementation(projects.internal.images)
         }
     }
 }
 
-android {
-    namespace = "com.github.panpf.zoomimage.core"
-    compileSdk = property("compileSdk").toString().toInt()
-
-    defaultConfig {
-        minSdk = property("minSdk").toString().toInt()
-
-        buildConfigField("String", "VERSION_NAME", "\"${property("versionName").toString()}\"")
-        buildConfigField("int", "VERSION_CODE", property("versionCode").toString())
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.core") {
     buildFeatures {
         buildConfig = true
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+    defaultConfig {
+        buildConfigField("String", "VERSION_NAME", "\"${project.versionName}\"")
+        buildConfigField("int", "VERSION_CODE", project.versionCode.toString())
     }
 }

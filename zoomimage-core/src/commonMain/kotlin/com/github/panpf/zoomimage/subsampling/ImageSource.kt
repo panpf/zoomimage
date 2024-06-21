@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling
 
-import androidx.annotation.WorkerThread
+import com.github.panpf.zoomimage.annotation.WorkerThread
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream

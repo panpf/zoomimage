@@ -1,25 +1,8 @@
-pluginManagement {
-    repositories {
-//        maven { setUrl("https://maven.aliyun.com/repository/public") }  // central、jcenter
-//        maven { setUrl("https://maven.aliyun.com/repository/google") }  // google
-//        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }    // central、google、jcenter
-        gradlePluginPortal()
-        mavenCentral()
-        google()
-    }
-}
+// After turning on TYPESAFE_PROJECT_ACCESSORS, the root directory name and sketch module name cannot be the same.
+rootProject.name = "zoomimage"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-//        maven { setUrl("https://maven.aliyun.com/repository/public") }  // central、jcenter
-//        maven { setUrl("https://maven.aliyun.com/repository/google") }  // google
-//        maven { setUrl("https://repo.huaweicloud.com/repository/maven/") }    // central、google、jcenter
-        mavenCentral()
-        google()
-        maven { setUrl("https://www.jitpack.io") }
-//        maven { setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots") }
-//        mavenLocal()
-    }
     versionCatalogs {
         create("libs") {
             from(files("libs.versions.toml"))
@@ -27,9 +10,9 @@ dependencyResolutionManagement {
     }
 }
 
-include(":sample-android")
-include(":sample-common")
-include(":sample-desktop")
+/*
+ * Release
+ */
 include(":zoomimage-compose")
 include(":zoomimage-compose-coil")
 include(":zoomimage-compose-coil-core")
@@ -41,10 +24,15 @@ include(":zoomimage-core-coil")
 include(":zoomimage-core-glide")
 include(":zoomimage-core-picasso")
 include(":zoomimage-core-sketch")
-include(":zoomimage-resources")
 include(":zoomimage-view")
 include(":zoomimage-view-coil")
 include(":zoomimage-view-glide")
 include(":zoomimage-view-picasso")
 include(":zoomimage-view-sketch")
-// TODO Supports iOS and web, subsampling function may not be provided temporarily
+
+
+/*
+ * Private
+ */
+include(":sample")
+include(":internal:images")

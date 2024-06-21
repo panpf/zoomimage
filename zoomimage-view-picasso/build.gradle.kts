@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.com.android.library)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -22,8 +22,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-view"))
-    api(project(":zoomimage-core-picasso"))
+    api(projects.zoomimageView)
+    api(projects.zoomimageCorePicasso)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

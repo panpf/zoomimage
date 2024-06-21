@@ -1,6 +1,7 @@
 plugins {
-    alias(libs.plugins.com.android.library)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -8,15 +9,12 @@ android {
     compileSdk = property("compileSdk").toString().toInt()
 
     defaultConfig {
-        minSdk = property("minSdk21").toString().toInt()
+        minSdk = property("minSdk").toString().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.jetbrains.compose.compiler.get()
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -28,8 +26,8 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-compose"))
-    api(project(":zoomimage-core-sketch"))
+    api(projects.zoomimageCompose)
+    api(projects.zoomimageCoreSketch)
     api(libs.panpf.sketch3.compose.core)
 
     debugImplementation(libs.androidx.compose.ui.tooling)

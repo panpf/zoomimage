@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.com.android.library)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -22,7 +22,7 @@ android {
 }
 
 dependencies {
-    api(project(":zoomimage-core"))
+    api(projects.zoomimageCore)
     api(libs.androidx.appcompat)
     api(libs.androidx.core.ktx)
     api(libs.androidx.lifecycle.runtime.ktx)
