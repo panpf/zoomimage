@@ -16,23 +16,13 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.annotation.WorkerThread
-import com.github.panpf.zoomimage.subsampling.ExifOrientation
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.util.Logger
 
 internal expect fun createDecodeHelper(imageSource: ImageSource): DecodeHelper?
 
-@WorkerThread
-internal expect fun ImageSource.decodeExifOrientation(): Result<ExifOrientation>
-
-@WorkerThread
-internal expect fun ImageSource.decodeImageInfo(): Result<ImageInfo>
-
-internal expect fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean
-
+// TODO delete
 expect fun createTileBitmapReuseHelper(
     logger: Logger,
     tileBitmapReuseSpec: TileBitmapReuseSpec,

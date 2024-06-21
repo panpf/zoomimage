@@ -28,24 +28,18 @@ import com.google.accompanist.drawablepainter.DrawablePainter
 fun ZoomImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-        supportIgnoreExifOrientation = true
-    ) { contentScale, alignment, state, ignoreExifOrientation, scrollBar ->
+    ) { contentScale, alignment, state, scrollBar ->
         val context = LocalContext.current
         LaunchedEffect(Unit) {
             state.subsampling.tileBitmapPool = SketchTileBitmapPool(context.sketch, "ZoomImage")
             state.subsampling.tileBitmapCache = SketchTileBitmapCache(context.sketch, "ZoomImage")
         }
-        LaunchedEffect(ignoreExifOrientation) {
-            state.subsampling.ignoreExifOrientation = ignoreExifOrientation
-        }
 
         var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.None) }
         var drawablePainter: DrawablePainter? by remember { mutableStateOf(null) }
-        LaunchedEffect(sketchImageUri, ignoreExifOrientation) {
+        LaunchedEffect(sketchImageUri) {
             myLoadState = MyLoadState.Loading
-            val displayResult = DisplayRequest(context, sketchImageUri) {
-                ignoreExifOrientation(ignoreExifOrientation)
-            }.execute()
+            val displayResult = DisplayRequest(context, sketchImageUri).execute()
             myLoadState = if (displayResult is DisplayResult.Success) {
                 MyLoadState.None
             } else {

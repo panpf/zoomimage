@@ -397,7 +397,7 @@ class TileManager constructor(
         logger.d("loadTile. started. $tile. '${imageSource.key}'")
         tile.loadJob = coroutineScope.async {
             val memoryCacheKey =
-                "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tileDecoder.exifOrientation}_${tile.sampleSize}"
+                "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.sampleSize}"
             val cachedValue = tileBitmapCacheHelper.get(memoryCacheKey)
             if (cachedValue != null) {
                 // TODO Retrieve from memory without converting

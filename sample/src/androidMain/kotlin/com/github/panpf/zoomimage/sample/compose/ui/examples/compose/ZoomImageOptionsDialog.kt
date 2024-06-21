@@ -42,7 +42,6 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
             settingsService.pausedContinuousTransformType
         )
         BindStateAndFlow(state.disabledBackgroundTiles, settingsService.disabledBackgroundTiles)
-        BindStateAndFlow(state.ignoreExifOrientation, settingsService.ignoreExifOrientation)
         BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
         BindStateAndFlow(state.tileAnimation, settingsService.tileAnimation)
 

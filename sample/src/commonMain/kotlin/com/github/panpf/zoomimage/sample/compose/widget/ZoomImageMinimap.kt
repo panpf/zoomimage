@@ -51,7 +51,6 @@ import kotlin.math.roundToInt
 expect fun ZoomImageMinimapContent(
     imageUri: String,
     modifier: Modifier,
-    ignoreExifOrientation: Boolean
 )
 
 @Composable
@@ -61,7 +60,6 @@ fun ZoomImageMinimap(
     subsamplingState: SubsamplingState,
     modifier: Modifier = Modifier,
     alignment: Alignment = Alignment.BottomStart,
-    ignoreExifOrientation: Boolean = false,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val contentSize = zoomableState.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
@@ -134,7 +132,7 @@ fun ZoomImageMinimap(
                         }
                     )
                 }
-            ZoomImageMinimapContent(imageUri, imageModifier, ignoreExifOrientation)
+            ZoomImageMinimapContent(imageUri, imageModifier)
         }
     }
 }

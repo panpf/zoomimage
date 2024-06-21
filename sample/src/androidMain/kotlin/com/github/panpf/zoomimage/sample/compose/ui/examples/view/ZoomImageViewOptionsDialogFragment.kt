@@ -264,13 +264,6 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
             )
             add(
                 SwitchMenuFlow(
-                    title = "Ignore Exif Orientation",
-                    data = settingsService.ignoreExifOrientation,
-                    disabled = !zoomViewType.supportIgnoreExifOrientation,
-                )
-            )
-            add(
-                SwitchMenuFlow(
                     title = "Show Tile Bounds",
                     data = settingsService.showTileBounds,
                 )

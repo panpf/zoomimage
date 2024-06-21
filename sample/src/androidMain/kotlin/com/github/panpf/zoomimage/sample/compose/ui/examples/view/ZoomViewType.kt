@@ -13,14 +13,12 @@ enum class ZoomViewType(
     val createListItemFactory: () -> ItemFactory<Photo>,
     val createPageItemFactory: () -> FragmentItemFactory<String>,
     val my: Boolean,
-    val supportIgnoreExifOrientation: Boolean,
 ) {
     ZoomImageView(
         title = "ZoomImageView",
         createListItemFactory = { SketchPhotoGridItemFactory() },
         createPageItemFactory = { ZoomImageViewFragment.ItemFactory() },
         my = true,
-        supportIgnoreExifOrientation = true,
     ),
 
     SketchZoomImageView(
@@ -28,7 +26,6 @@ enum class ZoomViewType(
         createListItemFactory = { SketchPhotoGridItemFactory() },
         createPageItemFactory = { SketchZoomImageViewFragment.ItemFactory() },
         my = true,
-        supportIgnoreExifOrientation = true,
     ),
 
     CoilZoomImageView(
@@ -36,7 +33,6 @@ enum class ZoomViewType(
         createListItemFactory = { CoilPhotoGridItemFactory() },
         createPageItemFactory = { CoilZoomImageViewFragment.ItemFactory() },
         my = true,
-        supportIgnoreExifOrientation = false,
     ),
 
     GlideZoomImageView(
@@ -44,7 +40,6 @@ enum class ZoomViewType(
         createListItemFactory = { GlidePhotoGridItemFactory() },
         createPageItemFactory = { GlideZoomImageViewFragment.ItemFactory() },
         my = true,
-        supportIgnoreExifOrientation = false,
     ),
 
     PicassoZoomImageView(
@@ -52,7 +47,6 @@ enum class ZoomViewType(
         createListItemFactory = { PicassoPhotoGridItemFactory() },
         createPageItemFactory = { PicassoZoomImageViewFragment.ItemFactory() },
         my = true,
-        supportIgnoreExifOrientation = false,
     ),
 
     PhotoView(
@@ -60,7 +54,6 @@ enum class ZoomViewType(
         createListItemFactory = { SketchPhotoGridItemFactory() },
         createPageItemFactory = { PhotoViewFragment.ItemFactory() },
         my = false,
-        supportIgnoreExifOrientation = false,
     ),
 
     SubsamplingScaleImageView(
@@ -68,6 +61,5 @@ enum class ZoomViewType(
         createListItemFactory = { SketchPhotoGridItemFactory() },
         createPageItemFactory = { SubsamplingViewFragment.ItemFactory() },
         my = false,
-        supportIgnoreExifOrientation = false,
     ),
 }

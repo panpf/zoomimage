@@ -61,7 +61,6 @@ class ComposeExifOrientationTestFragment : BaseAppBarComposeFragment() {
         if (showingOptionsDialog) {
             ZoomImageOptionsDialog(
                 my = ZoomImageType.MyZoomImage.my,
-                supportIgnoreExifOrientation = ZoomImageType.MyZoomImage.supportIgnoreExifOrientation,
                 state = rememberZoomImageOptionsState()
             ) {
                 optionDialogShowViewModel.toggleOptionDialogShow()

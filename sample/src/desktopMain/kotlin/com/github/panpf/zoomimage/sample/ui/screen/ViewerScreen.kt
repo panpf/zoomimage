@@ -55,7 +55,6 @@ fun ViewerScreen(
     @Suppress("UNUSED_PARAMETER") navigation: Navigation,
     imageResource: ImageResource
 ) {
-    val supportIgnoreExifOrientation = true
     Box(Modifier.fillMaxSize()) {
         val contentScaleName by MySettings.contentScaleName.collectAsState()
         val alignmentName by MySettings.alignmentName.collectAsState()
@@ -73,7 +72,6 @@ fun ViewerScreen(
         val pausedContinuousTransformType by MySettings.pausedContinuousTransformType.collectAsState()
         val disabledGestureType by MySettings.disabledGestureType.collectAsState()
         val disabledBackgroundTiles by MySettings.disabledBackgroundTiles.collectAsState()
-        val ignoreExifOrientation by MySettings.ignoreExifOrientation.collectAsState()
         val showTileBounds by MySettings.showTileBounds.collectAsState()
         val tileAnimation by MySettings.tileAnimation.collectAsState()
 //        val horizontalLayout by MySettings.horizontalPagerLayout.collectAsState(initial = true)
@@ -136,11 +134,6 @@ fun ViewerScreen(
             }
             LaunchedEffect(disabledBackgroundTiles) {
                 subsampling.disabledBackgroundTiles = disabledBackgroundTiles
-            }
-            if (supportIgnoreExifOrientation) {
-                LaunchedEffect(ignoreExifOrientation) {
-                    subsampling.ignoreExifOrientation = ignoreExifOrientation
-                }
             }
             LaunchedEffect(showTileBounds) {
                 subsampling.showTileBounds = showTileBounds

@@ -40,7 +40,6 @@
         <attr name="scrollBarSize" format="dimension|reference" />
         <attr name="scrollBarMargin" format="dimension|reference" />
         <attr name="showTileBounds" format="boolean" />
-        <attr name="ignoreExifOrientation" format="boolean" />
         <attr name="readMode" format="enum">
             <enum name="both" value="0" />
             <enum name="horizontal" value="1" />

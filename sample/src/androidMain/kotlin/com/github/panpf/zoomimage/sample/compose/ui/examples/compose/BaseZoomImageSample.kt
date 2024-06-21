@@ -33,12 +33,10 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator
 @Composable
 fun BaseZoomImageSample(
     sketchImageUri: String,
-    supportIgnoreExifOrientation: Boolean,
     content: @Composable BoxScope.(
         contentScale: ContentScale,
         alignment: Alignment,
         state: ZoomState,
-        ignoreExifOrientation: Boolean,
         scrollBar: ScrollBarSpec?,
     ) -> Unit
 ) {
@@ -60,7 +58,6 @@ fun BaseZoomImageSample(
     val pausedContinuousTransformType by settingsService.pausedContinuousTransformType.collectAsState()
     val disabledGestureType by settingsService.disabledGestureType.collectAsState()
     val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.collectAsState()
-    val ignoreExifOrientation by settingsService.ignoreExifOrientation.collectAsState()
     val showTileBounds by settingsService.showTileBounds.collectAsState()
     val tileAnimation by settingsService.tileAnimation.collectAsState()
     val horizontalLayout by settingsService.horizontalPagerLayout.collectAsState(initial = true)
@@ -122,11 +119,6 @@ fun BaseZoomImageSample(
         LaunchedEffect(disabledBackgroundTiles) {
             subsampling.disabledBackgroundTiles = disabledBackgroundTiles
         }
-        if (supportIgnoreExifOrientation) {
-            LaunchedEffect(ignoreExifOrientation) {
-                subsampling.ignoreExifOrientation = ignoreExifOrientation
-            }
-        }
         LaunchedEffect(showTileBounds) {
             subsampling.showTileBounds = showTileBounds
         }
@@ -146,7 +138,6 @@ fun BaseZoomImageSample(
             contentScale,
             alignment,
             zoomState,
-            supportIgnoreExifOrientation && ignoreExifOrientation,
             if (scrollBarEnabled) ScrollBarSpec.Default else null
         )
 
@@ -154,7 +145,6 @@ fun BaseZoomImageSample(
             imageUri = sketchImageUri,
             zoomableState = zoomState.zoomable,
             subsamplingState = zoomState.subsampling,
-            ignoreExifOrientation = supportIgnoreExifOrientation && ignoreExifOrientation,
         )
 
         ZoomImageTool(

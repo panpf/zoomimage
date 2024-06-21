@@ -68,25 +68,7 @@ zoomImageView.subsampling.setImageSource(imageSource)
 
 ### Exif Orientation
 
-ZoomImage 默认会读取图片的 Exif Orientation 信息，然后旋转图片，如果你不想让 ZoomImage 读取 Exif
-Orientation 信息，可以修改 `ignoreExifOrientation` 参数为 true
-
-示例：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-LaunchEffect(Unit) {
-    state.subsampling.ignoreExifOrientation = true
-}
-
-SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
+ZoomImage 默认会读取图片的 Exif Orientation 信息，然后旋转图片，你不能禁用它
 
 ### 图块动画
 

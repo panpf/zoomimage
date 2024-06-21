@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.view.subsampling
 
 import android.view.View
-import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.StoppedController
@@ -88,11 +87,6 @@ class SubsamplingEngine constructor(
 
 
     /* *********************************** Configurable properties ****************************** */
-
-    /**
-     * If true, the Exif rotation information for the image is ignored
-     */
-    val ignoreExifOrientationState = MutableStateFlow(false)
 
     /**
      * Set up the TileBitmap memory cache container
@@ -169,7 +163,6 @@ class SubsamplingEngine constructor(
     /* *********************************** Information properties ******************************* */
 
     private val _imageInfoState = MutableStateFlow<ImageInfo?>(null)
-    private val _exifOrientation = MutableStateFlow<ExifOrientation?>(null)
     private val _readyState = MutableStateFlow(false)
     private val _foregroundTilesState = MutableStateFlow<List<TileSnapshot>>(emptyList())
     private val _backgroundTilesState = MutableStateFlow<List<TileSnapshot>>(emptyList())
@@ -181,11 +174,6 @@ class SubsamplingEngine constructor(
      * The information of the image, including width, height, format, etc
      */
     val imageInfoState: StateFlow<ImageInfo?> = _imageInfoState
-
-    /**
-     * The exif information of the image
-     */
-    val exifOrientationState: StateFlow<ExifOrientation?> = _exifOrientation
 
     /**
      * Whether the image is ready for subsampling
@@ -265,11 +253,6 @@ class SubsamplingEngine constructor(
         coroutineScope.launch {
             contentSizeState.collect {
                 resetTileDecoder("contentSizeChanged")
-            }
-        }
-        coroutineScope.launch {
-            ignoreExifOrientationState.collect {
-                resetTileDecoder("ignoreExifOrientationChanged")
             }
         }
         coroutineScope.launch {
@@ -413,14 +396,12 @@ class SubsamplingEngine constructor(
             return
         }
 
-        val ignoreExifOrientation = ignoreExifOrientationState.value
         lastResetTileDecoderJob = coroutineScope?.launch(Dispatchers.Main) {
             val result = withContext(Dispatchers.IO) {
                 decodeAndCreateTileDecoder(
                     logger = logger,
                     imageSource = imageSource,
                     thumbnailSize = contentSize,
-                    ignoreExifOrientation = ignoreExifOrientation,
                     tileBitmapReuseHelper = tileBitmapReuseHelper,
                 )
             }
@@ -429,13 +410,11 @@ class SubsamplingEngine constructor(
                 logger.d {
                     "resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
-                            "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo=${newTileDecoder.imageInfo.toShortString()}. " +
                             "'${imageKey}'"
                 }
                 this@SubsamplingEngine.tileDecoder = newTileDecoder
                 this@SubsamplingEngine._imageInfoState.value = newTileDecoder.imageInfo
-                this@SubsamplingEngine._exifOrientation.value = newTileDecoder.exifOrientation
                 resetTileManager(caller)
             } else {
                 val exception = result.exceptionOrNull()!! as CreateTileDecoderException
@@ -445,7 +424,6 @@ class SubsamplingEngine constructor(
                 logger.log(level) {
                     "resetTileDecoder:$caller. $type, ${exception.message}. " +
                             "contentSize: ${contentSize.toShortString()}, " +
-                            "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo: ${exception.imageInfo?.toShortString()}. " +
                             "'${imageKey}'"
                 }
@@ -558,7 +536,6 @@ class SubsamplingEngine constructor(
             refreshReadyState("cleanTileDecoder:$caller")
         }
         _imageInfoState.value = null
-        _exifOrientation.value = null
     }
 
     private fun cleanTileManager(caller: String) {

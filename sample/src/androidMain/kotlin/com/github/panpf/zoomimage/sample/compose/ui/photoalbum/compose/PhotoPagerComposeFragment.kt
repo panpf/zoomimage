@@ -110,7 +110,6 @@ class PhotoPagerComposeFragment : BaseAppBarComposeFragment() {
         if (showingOptionsDialog) {
             ZoomImageOptionsDialog(
                 my = zoomImageType.my,
-                supportIgnoreExifOrientation = zoomImageType.supportIgnoreExifOrientation,
                 state = rememberZoomImageOptionsState()
             ) {
                 optionDialogShowViewModel.toggleOptionDialogShow()

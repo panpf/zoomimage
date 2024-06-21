@@ -10,12 +10,10 @@ import com.github.panpf.sketch.request.DisplayRequest
 actual fun ZoomImageMinimapContent(
     imageUri: String,
     modifier: Modifier,
-    ignoreExifOrientation: Boolean
 ) {
     AsyncImage(
         request = DisplayRequest(LocalContext.current, imageUri) {
             crossfade()
-            ignoreExifOrientation(ignoreExifOrientation)
         },
         contentDescription = "Minimap",
         modifier = modifier

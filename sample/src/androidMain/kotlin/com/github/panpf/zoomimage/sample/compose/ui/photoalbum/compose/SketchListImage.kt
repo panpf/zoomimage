@@ -12,7 +12,6 @@ import com.github.panpf.sketch.resize.Precision.SAME_ASPECT_RATIO
 import com.github.panpf.sketch.stateimage.IconStateImage
 import com.github.panpf.zoomimage.sample.R.color
 import com.github.panpf.zoomimage.sample.R.drawable
-import com.github.panpf.zoomimage.sample.settingsService
 
 @Composable
 fun SketchListImage(sketchImageUri: String, modifier: Modifier) {
@@ -27,7 +26,6 @@ fun SketchListImage(sketchImageUri: String, modifier: Modifier) {
             })
             crossfade()
             resizeApplyToDrawable()
-            ignoreExifOrientation(context.settingsService.ignoreExifOrientation.value)
             resizePrecision(LongImageClipPrecisionDecider(SAME_ASPECT_RATIO))
             resizeScale(LongImageScaleDecider())
         },

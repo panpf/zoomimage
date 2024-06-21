@@ -21,7 +21,7 @@ private fun ZoomImageOptionsDialogPreview() {
     val state = remember {
         ZoomImageOptionsState()
     }
-    ZoomImageOptionsDialog(my = true, supportIgnoreExifOrientation = true, state) {
+    ZoomImageOptionsDialog(my = true, state) {
 
     }
 }

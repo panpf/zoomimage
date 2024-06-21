@@ -29,7 +29,6 @@ object MySettings {
         MutableStateFlow(TileManager.DefaultPausedContinuousTransformType.toString())
     val disabledGestureType = MutableStateFlow(0.toString())
     val disabledBackgroundTiles = MutableStateFlow(false)
-    val ignoreExifOrientation = MutableStateFlow(false)
 
     val scrollBarEnabled = MutableStateFlow(true)
     val logLevel = MutableStateFlow(Logger.levelName(Logger.DEBUG))

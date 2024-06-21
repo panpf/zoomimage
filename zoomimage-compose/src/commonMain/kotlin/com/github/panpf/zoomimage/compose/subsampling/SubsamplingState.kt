@@ -37,7 +37,6 @@ import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.internal.createTileBitmapConvertor
 import com.github.panpf.zoomimage.compose.subsampling.internal.defaultStoppedController
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.StoppedController
@@ -117,11 +116,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
 
 
     /* *********************************** Configurable properties ****************************** */
-
-    /**
-     * If true, the Exif rotation information for the image is ignored
-     */
-    var ignoreExifOrientation: Boolean by mutableStateOf(false)
 
     /**
      * Set up the TileBitmap memory cache container
@@ -206,12 +200,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
         private set
 
     /**
-     * The exif information of the image
-     */
-    var exifOrientation: ExifOrientation? by mutableStateOf(null)
-        private set
-
-    /**
      * Whether the image is ready for subsampling
      */
     var ready: Boolean by mutableStateOf(false)
@@ -285,11 +273,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
         coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { contentSize }.collect {
                 resetTileDecoder("contentSizeChanged")
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { ignoreExifOrientation }.collect {
-                resetTileDecoder("ignoreExifOrientationChanged")
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
@@ -440,14 +423,12 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
             return
         }
 
-        val ignoreExifOrientation = ignoreExifOrientation
         lastResetTileDecoderJob = coroutineScope?.launch {
             val result = withContext(Dispatchers.IO) {
                 decodeAndCreateTileDecoder(
                     logger = logger,
                     imageSource = imageSource,
                     thumbnailSize = contentSize.toCompat(),
-                    ignoreExifOrientation = ignoreExifOrientation,
                     tileBitmapReuseHelper = tileBitmapReuseHelper,
                 )
             }
@@ -456,13 +437,11 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
                 logger.d {
                     "resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
-                            "ignoreExifOrientation=${ignoreExifOrientation}. " +
                             "imageInfo=${newTileDecoder.imageInfo.toShortString()}. " +
                             "'${imageKey}'"
                 }
                 this@SubsamplingState.tileDecoder = newTileDecoder
                 this@SubsamplingState.imageInfo = newTileDecoder.imageInfo
-                this@SubsamplingState.exifOrientation = newTileDecoder.exifOrientation
                 resetTileManager(caller)
             } else {
                 val exception = result.exceptionOrNull()!! as CreateTileDecoderException
@@ -472,8 +451,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
                 logger.log(level) {
                     "resetTileDecoder:$caller. $type, ${exception.message}. " +
                             "contentSize: ${contentSize.toShortString()}, " +
-                            "ignoreExifOrientation=${ignoreExifOrientation}. " +
-                            "imageInfo: ${exception.imageInfo?.toShortString()}. " +
                             "'${imageKey}'"
                 }
             }
@@ -585,7 +562,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
             refreshReadyState("cleanTileDecoder:$caller")
         }
         imageInfo = null
-        exifOrientation = null
     }
 
     private fun cleanTileManager(caller: String) {

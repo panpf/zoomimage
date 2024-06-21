@@ -3,17 +3,16 @@ package com.github.panpf.zoomimage.core.test.subsampling.internal
 import android.os.Build
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
-import com.github.panpf.zoomimage.subsampling.ExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.internal.calculateSampledBitmapSizeForRegion
 import com.github.panpf.zoomimage.subsampling.internal.checkSupportSubsamplingByMimeType
-import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
-import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
 import com.github.panpf.zoomimage.subsampling.internal.isSrcRectError
 import com.github.panpf.zoomimage.subsampling.internal.isSupportInBitmapForRegion
+import com.github.panpf.zoomimage.test.decodeExifOrientation
+import com.github.panpf.zoomimage.test.decodeImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import org.junit.Assert
 import org.junit.Test
@@ -25,14 +24,14 @@ class DecodesAndroidTest {
         val context = InstrumentationRegistry.getInstrumentation().context
 
         listOf(
-            "sample_dog.jpg" to ExifOrientation.ORIENTATION_NORMAL,
-            "sample_exif_girl_rotate_90.jpg" to ExifOrientation.ORIENTATION_ROTATE_90,
+            "sample_dog.jpg" to AndroidExifOrientation.ORIENTATION_NORMAL,
+            "sample_exif_girl_rotate_90.jpg" to AndroidExifOrientation.ORIENTATION_ROTATE_90,
         ).forEach { (assetPath, excepted) ->
             Assert.assertEquals(
                 "assetPath=$assetPath, excepted=$excepted",
                 excepted,
                 ImageSource.fromAsset(context, assetPath).decodeExifOrientation()
-                    .getOrThrow().let { it as AndroidExifOrientation }.exifOrientation
+                    .getOrThrow().exifOrientation
             )
         }
     }

@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -67,7 +65,6 @@ class ZoomImageOptionsState {
         MutableStateFlow(TileManager.DefaultPausedContinuousTransformType.toString())
     val disabledGestureType = MutableStateFlow(0.toString())
     val disabledBackgroundTiles = MutableStateFlow(false)
-    val ignoreExifOrientation = MutableStateFlow(false)
 
     val scrollBarEnabled = MutableStateFlow(true)
     val logLevel = MutableStateFlow(Logger.levelName(Logger.DEBUG))
@@ -76,7 +73,6 @@ class ZoomImageOptionsState {
 @Composable
 fun ZoomImageOptionsDialog(
     my: Boolean,
-    supportIgnoreExifOrientation: Boolean,
     state: ZoomImageOptionsState,
     onDismissRequest: () -> Unit
 ) {
@@ -105,7 +101,6 @@ fun ZoomImageOptionsDialog(
         pausedContinuousTransformTypeString.toInt()
     }
     val disabledBackgroundTiles by state.disabledBackgroundTiles.collectAsState()
-    val ignoreExifOrientation by state.ignoreExifOrientation.collectAsState()
 
     val scrollBarEnabled by state.scrollBarEnabled.collectAsState()
     val logLevel by state.logLevel.collectAsState()
@@ -285,12 +280,6 @@ fun ZoomImageOptionsDialog(
                 SwitchMenu("Disabled Background Tiles", disabledBackgroundTiles) {
                     state.disabledBackgroundTiles.value = !state.disabledBackgroundTiles.value
 //                    onDismissRequest()
-                }
-                if (supportIgnoreExifOrientation) {
-                    SwitchMenu("Ignore Exif Orientation", ignoreExifOrientation) {
-                        state.ignoreExifOrientation.value = !state.ignoreExifOrientation.value
-//                    onDismissRequest()
-                    }
                 }
                 SwitchMenu("Show Tile Bounds", showTileBounds) {
                     state.showTileBounds.value = !state.showTileBounds.value

@@ -93,8 +93,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 isDisableMemoryCache(result.drawable)
             _subsamplingEngine?.disabledTileBitmapReuseState?.value =
                 isDisallowReuseBitmap(result.drawable)
-            _subsamplingEngine?.ignoreExifOrientationState?.value =
-                isIgnoreExifOrientation(result.drawable)
             _subsamplingEngine?.setImageSource(newImageSource(result.drawable))
         }
     }
@@ -117,16 +115,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 && displayResult is DisplayResult.Success
                 && displayResult.requestKey == requestKey
                 && displayResult.request.disallowReuseBitmap
-    }
-
-    private fun isIgnoreExifOrientation(drawable: Drawable?): Boolean {
-        val sketchDrawable = drawable?.findLeafSketchDrawable()
-        val requestKey = sketchDrawable?.requestKey
-        val displayResult = SketchUtils.getResult(this)
-        return displayResult != null
-                && displayResult is DisplayResult.Success
-                && displayResult.requestKey == requestKey
-                && displayResult.request.ignoreExifOrientation
     }
 
     private fun newImageSource(drawable: Drawable?): ImageSource? {

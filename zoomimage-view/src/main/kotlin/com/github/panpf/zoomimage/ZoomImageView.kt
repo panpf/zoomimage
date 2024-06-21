@@ -282,12 +282,6 @@ open class ZoomImageView @JvmOverloads constructor(
                 null
             }
 
-            if (array.hasValue(styleable.ZoomImageView_ignoreExifOrientation)) {
-                val ignoreExifOrientation =
-                    array.getBoolean(styleable.ZoomImageView_ignoreExifOrientation, false)
-                subsampling.ignoreExifOrientationState.value = ignoreExifOrientation
-            }
-
             if (array.hasValue(styleable.ZoomImageView_readMode)) {
                 val readModeCode = array.getInt(styleable.ZoomImageView_readMode, -1)
                 zoomable.readModeState.value = when (readModeCode) {

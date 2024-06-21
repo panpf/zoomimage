@@ -18,9 +18,6 @@ package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.annotation.MainThread
 import com.github.panpf.zoomimage.annotation.WorkerThread
-import com.github.panpf.zoomimage.subsampling.EmptyExifOrientation
-import com.github.panpf.zoomimage.subsampling.ExifOrientation
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -30,19 +27,18 @@ import java.util.LinkedList
 /**
  * Decode the tile bitmap of the image
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecoderTest]
+ * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.TileDecoderTest]
  */
-class TileDecoder(
+class TileDecoder constructor(
     private val logger: Logger,
     private val imageSource: ImageSource,
-    val imageInfo: ImageInfo,
     private val rootDecodeHelper: DecodeHelper,
 ) {
 
-    val exifOrientation: ExifOrientation = EmptyExifOrientation
-
     private var destroyed = false
     private val decoderPool = LinkedList<DecodeHelper>()
+
+    val imageInfo by lazy { rootDecodeHelper.imageInfo }
 
     init {
         decoderPool.push(rootDecodeHelper)
@@ -97,6 +93,6 @@ class TileDecoder(
     }
 
     override fun toString(): String {
-        return "TileDecoder(imageSource='${imageSource.key}', imageInfo=$imageInfo, exifOrientation=$exifOrientation)"
+        return "TileDecoder('${imageSource.key}')"
     }
 }

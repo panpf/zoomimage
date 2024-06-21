@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.applyToImageInfo
@@ -9,8 +8,8 @@ import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
-import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
-import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
+import com.github.panpf.zoomimage.test.decodeExifOrientation
+import com.github.panpf.zoomimage.test.decodeImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import org.junit.Assert
@@ -27,7 +26,7 @@ class SubsamplingUtilsTest2 {
 
         val imageSource = ImageSource.fromAsset(context, "sample_exif_girl_rotate_90.jpg")
         val exifOrientation =
-            imageSource.decodeExifOrientation().getOrThrow().let { it as AndroidExifOrientation }
+            imageSource.decodeExifOrientation().getOrThrow()
         val imageInfo = imageSource.decodeImageInfo().getOrThrow()
         val correctOrientationImageInfo = exifOrientation.applyToImageInfo(imageInfo)
         val thumbnailSize = correctOrientationImageInfo.size / 8
@@ -35,11 +34,9 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = thumbnailSize,
-            ignoreExifOrientation = false,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).getOrThrow().apply {
             Assert.assertEquals(correctOrientationImageInfo, this.imageInfo)
-            Assert.assertEquals("UNDEFINED", this.exifOrientation.name())
         }
 
         val thumbnailSize2 = imageInfo.size / 8
@@ -47,11 +44,9 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = thumbnailSize2,
-            ignoreExifOrientation = true,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).getOrThrow().apply {
             Assert.assertEquals(imageInfo, this.imageInfo)
-            Assert.assertEquals("UNDEFINED", this.exifOrientation.name())
         }
 
         val errorImageSource = ImageSource.fromAsset(context, "fake_image.jpg")
@@ -59,7 +54,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = errorImageSource,
             thumbnailSize = thumbnailSize,
-            ignoreExifOrientation = false,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             Assert.assertEquals(-1, this.code)
@@ -73,7 +67,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = gifImageSource,
             thumbnailSize = thumbnailSize,
-            ignoreExifOrientation = false,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             Assert.assertEquals(-3, this.code)
@@ -90,7 +83,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = errorThumbnailSize,
-            ignoreExifOrientation = false,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             Assert.assertEquals(-4, this.code)
@@ -112,7 +104,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = errorThumbnailSize2,
-            ignoreExifOrientation = false,
             tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             Assert.assertEquals(-5, this.code)

@@ -82,9 +82,6 @@ class SettingsService(val context: Context) {
     val disabledBackgroundTiles by lazy {
         SettingsStateFlow("disabledBackgroundTiles", false, preferences)
     }
-    val ignoreExifOrientation by lazy {
-        SettingsStateFlow("ignoreExifOrientation", false, preferences)
-    }
     val showTileBounds by lazy {
         SettingsStateFlow("showTileBounds", false, preferences)
     }

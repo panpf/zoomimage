@@ -32,7 +32,7 @@ import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
 import kotlin.math.abs
 
-class AndroidExifOrientation constructor(val exifOrientation: Int) : ExifOrientation {
+class AndroidExifOrientation constructor(val exifOrientation: Int) {
 
     /**
      * Returns if the current image orientation is flipped.
@@ -78,25 +78,24 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) : ExifOrienta
             else -> 0
         }
 
-//    @Suppress("unused")
-//    val translation: Int =
-//        when (exifOrientation) {
-//            ExifInterface.ORIENTATION_FLIP_HORIZONTAL,
-//            ExifInterface.ORIENTATION_FLIP_VERTICAL,
-//            ExifInterface.ORIENTATION_TRANSPOSE,
-//            ExifInterface.ORIENTATION_TRANSVERSE -> -1
-//
-//            else -> 1
-//        }
+    val translation: Int =
+        when (exifOrientation) {
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL,
+            ExifInterface.ORIENTATION_FLIP_VERTICAL,
+            ExifInterface.ORIENTATION_TRANSPOSE,
+            ExifInterface.ORIENTATION_TRANSVERSE -> -1
 
-    override fun applyToSize(size: IntSizeCompat, reverse: Boolean): IntSizeCompat {
+            else -> 1
+        }
+
+    fun applyToSize(size: IntSizeCompat, reverse: Boolean = false): IntSizeCompat {
         return size.rotate(if (!reverse) rotationDegrees else -rotationDegrees)
     }
 
-    override fun applyToRect(
+    fun applyToRect(
         srcRect: IntRectCompat,
         imageSize: IntSizeCompat,
-        reverse: Boolean
+        reverse: Boolean = false
     ): IntRectCompat {
         val isRotated = abs(rotationDegrees % 360) != 0
         return if (!reverse) {
@@ -111,10 +110,10 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) : ExifOrienta
         }
     }
 
-    override fun applyToTileBitmap(
+    fun applyToTileBitmap(
         tileBitmap: TileBitmap,
-        reverse: Boolean,
-        bitmapReuseHelper: TileBitmapReuseHelper?,
+        reverse: Boolean = false,
+        bitmapReuseHelper: TileBitmapReuseHelper? = null
     ): TileBitmap {
         val isRotated = abs(rotationDegrees % 360) != 0
         if (!isFlipped && !isRotated) {
@@ -160,7 +159,7 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) : ExifOrienta
         return AndroidTileBitmap(outBitmap)
     }
 
-    override fun name(): String {
+    fun name(): String {
         return when (exifOrientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> "ROTATE_90"
             ExifInterface.ORIENTATION_TRANSPOSE -> "TRANSPOSE"
@@ -178,4 +177,53 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) : ExifOrienta
     override fun toString(): String {
         return "AndroidExifOrientation(${name()})"
     }
+
+    companion object {
+        // Constants used for the Orientation Exif tag.
+        const val ORIENTATION_UNDEFINED = 0
+        const val ORIENTATION_NORMAL = 1
+
+        /**
+         * Indicates the image is left right reversed mirror.
+         */
+        const val ORIENTATION_FLIP_HORIZONTAL = 2
+
+        /**
+         * Indicates the image is rotated by 180 degree clockwise.
+         */
+        const val ORIENTATION_ROTATE_180 = 3
+
+        /**
+         * Indicates the image is upside down mirror, it can also be represented by flip
+         * horizontally firstly and rotate 180 degree clockwise.
+         */
+        const val ORIENTATION_FLIP_VERTICAL = 4
+
+        /**
+         * Indicates the image is flipped about top-left <--> bottom-right axis, it can also be
+         * represented by flip horizontally firstly and rotate 270 degree clockwise.
+         */
+        const val ORIENTATION_TRANSPOSE = 5
+
+        /**
+         * Indicates the image is rotated by 90 degree clockwise.
+         */
+        const val ORIENTATION_ROTATE_90 = 6
+
+        /**
+         * Indicates the image is flipped about top-right <--> bottom-left axis, it can also be
+         * represented by flip horizontally firstly and rotate 90 degree clockwise.
+         */
+        const val ORIENTATION_TRANSVERSE = 7
+
+        /**
+         * Indicates the image is rotated by 270 degree clockwise.
+         */
+        const val ORIENTATION_ROTATE_270 = 8
+    }
+}
+
+fun AndroidExifOrientation.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
+    val newSize = applyToSize(imageInfo.size)
+    return imageInfo.copy(size = newSize)
 }

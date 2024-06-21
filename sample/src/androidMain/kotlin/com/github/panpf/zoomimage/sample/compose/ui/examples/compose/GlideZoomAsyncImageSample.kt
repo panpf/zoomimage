@@ -28,8 +28,7 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 fun GlideZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-        supportIgnoreExifOrientation = false
-    ) { contentScale, alignment, state, _, scrollBar ->
+    ) { contentScale, alignment, state, scrollBar ->
         var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.Loading) }
         val context = LocalContext.current
         val glideData =

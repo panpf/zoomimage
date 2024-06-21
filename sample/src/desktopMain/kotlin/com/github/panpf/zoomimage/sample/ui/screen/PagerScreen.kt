@@ -136,7 +136,6 @@ fun SlideshowScreen(
         if (showSettingsDialog) {
             ZoomImageOptionsDialog(
                 my = true,
-                supportIgnoreExifOrientation = true,
                 state = rememberZoomImageOptionsState()
             ) {
                 showSettingsDialog = false

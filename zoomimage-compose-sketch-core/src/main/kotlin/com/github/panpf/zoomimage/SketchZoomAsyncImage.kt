@@ -407,7 +407,6 @@ private fun onPainterState(
 
     when (loadState) {
         is PainterState.Success -> {
-            subsamplingState.ignoreExifOrientation = request.ignoreExifOrientation
             subsamplingState.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
             subsamplingState.disabledTileBitmapReuse = request.disallowReuseBitmap

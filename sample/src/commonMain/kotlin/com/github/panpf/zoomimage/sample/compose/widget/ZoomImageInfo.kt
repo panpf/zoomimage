@@ -34,7 +34,6 @@ fun ZoomImageInfo(
             containerSize: ${zoomable.containerSize.let { "${it.width}x${it.height}" }}
             contentSize: ${zoomable.contentSize.let { "${it.width}x${it.height}" }}
             contentOriginSize: ${imageInfo?.let { "${it.width}x${it.height}" }}
-            exifOrientation: ${subsampling.exifOrientation?.name()}
             rotation: ${zoomable.transform.rotation.roundToInt()}
         """.trimIndent()
     }

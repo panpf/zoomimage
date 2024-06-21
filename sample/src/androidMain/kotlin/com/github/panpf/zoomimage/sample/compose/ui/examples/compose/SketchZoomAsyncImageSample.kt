@@ -25,8 +25,7 @@ import com.github.panpf.zoomimage.sample.ui.util.compose.toShortString
 fun SketchZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-        supportIgnoreExifOrientation = true
-    ) { contentScale, alignment, state, ignoreExifOrientation, scrollBar ->
+    ) { contentScale, alignment, state, scrollBar ->
         val context = LocalContext.current
         val imageState = rememberAsyncImageState()
         val progressPainter =
@@ -35,7 +34,6 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             request = DisplayRequest(context, sketchImageUri) {
                 placeholder(ThumbnailMemoryCacheStateImage())
                 crossfade(fadeStart = false)
-                ignoreExifOrientation(ignoreExifOrientation)
             },
             contentDescription = "view image",
             contentScale = contentScale,

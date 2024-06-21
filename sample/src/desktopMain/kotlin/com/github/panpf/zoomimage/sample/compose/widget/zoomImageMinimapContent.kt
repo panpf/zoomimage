@@ -9,7 +9,6 @@ import androidx.compose.ui.res.painterResource
 actual fun ZoomImageMinimapContent(
     imageUri: String,
     modifier: Modifier,
-    ignoreExifOrientation: Boolean
 ) {
     Image(
         painter = painterResource(imageUri),

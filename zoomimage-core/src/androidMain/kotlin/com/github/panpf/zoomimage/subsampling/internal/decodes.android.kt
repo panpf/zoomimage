@@ -17,14 +17,10 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import android.annotation.SuppressLint
-import android.graphics.BitmapFactory
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
-import com.github.panpf.zoomimage.subsampling.ExifOrientation
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -57,54 +53,6 @@ internal fun ImageSource.decodeExifOrientationValue(): Result<Int> {
         return Result.failure(e)
     }
     return Result.success(exifOrientation)
-}
-
-/**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadExifOrientation]
- */
-@WorkerThread
-internal actual fun ImageSource.decodeExifOrientation(): Result<ExifOrientation> {
-    val inputStreamResult = openInputStream()
-    if (inputStreamResult.isFailure) {
-        return Result.failure(inputStreamResult.exceptionOrNull()!!)
-    }
-    val inputStream = inputStreamResult.getOrNull()!!
-    val exifOrientation = try {
-        inputStream.use {
-            ExifInterface(it).getAttributeInt(
-                /* tag = */ ExifInterface.TAG_ORIENTATION,
-                /* defaultValue = */ ExifInterface.ORIENTATION_UNDEFINED
-            )
-        }
-    } catch (e: Exception) {
-        return Result.failure(e)
-    }
-    return Result.success(AndroidExifOrientation(exifOrientation))
-}
-
-/**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadImageInfo]
- */
-@WorkerThread
-internal actual fun ImageSource.decodeImageInfo(): Result<ImageInfo> {
-    val inputStreamResult = openInputStream()
-    if (inputStreamResult.isFailure) {
-        return Result.failure(inputStreamResult.exceptionOrNull()!!)
-    }
-    val inputStream = inputStreamResult.getOrNull()!!
-    val options = try {
-        inputStream.use {
-            val options = BitmapFactory.Options()
-            options.inJustDecodeBounds = true
-            BitmapFactory.decodeStream(it, null, options)
-            options
-        }
-    } catch (e: Exception) {
-        return Result.failure(e)
-    }
-    val size = IntSizeCompat(options.outWidth, options.outHeight)
-    val imageInfo = ImageInfo(size, options.outMimeType.orEmpty())
-    return Result.success(imageInfo)
 }
 
 /**
@@ -180,7 +128,7 @@ internal fun isSrcRectError(throwable: Throwable): Boolean =
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSupportBitmapRegionDecoder]
  */
 @SuppressLint("ObsoleteSdkInt")
-internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
+internal fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
     "image/jpeg".equals(mimeType, true)
             || "image/png".equals(mimeType, true)
             || "image/webp".equals(mimeType, true)

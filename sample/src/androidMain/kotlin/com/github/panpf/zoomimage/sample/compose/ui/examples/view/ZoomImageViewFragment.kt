@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.content.Context
 import android.net.Uri
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -30,12 +29,8 @@ import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
-import com.github.panpf.zoomimage.sample.settingsService
-import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.fromContent
@@ -56,32 +51,16 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
         return ZoomImageView(context)
     }
 
-    override fun onViewCreated(
-        binding: FragmentZoomViewBinding,
-        zoomView: ZoomImageView,
-        savedInstanceState: Bundle?
-    ) {
-        super.onViewCreated(binding, savedInstanceState)
-
-        settingsService.ignoreExifOrientation.ignoreFirst()
-            .collectWithLifecycle(viewLifecycleOwner) {
-                loadData()
-            }
-    }
-
     override fun loadImage(zoomView: ZoomImageView, stateView: StateView) {
         stateView.loading()
         zoomView.apply {
             viewLifecycleOwner.lifecycleScope.launch {
                 val request = DisplayRequest(requireContext(), sketchImageUri) {
                     downloadCachePolicy(CachePolicy.ENABLED)
-                    ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
                 }
                 val result = requireContext().sketch.execute(request)
                 if (result is DisplayResult.Success) {
                     setImageDrawable(result.drawable)
-                    subsampling.ignoreExifOrientationState.value =
-                        settingsService.ignoreExifOrientation.value
                     subsampling.setImageSource(newImageSource(zoomView, sketchImageUri))
                     stateView.gone()
                 } else if (result is DisplayResult.Error) {
@@ -102,7 +81,6 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
-            ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
         }
     }
 

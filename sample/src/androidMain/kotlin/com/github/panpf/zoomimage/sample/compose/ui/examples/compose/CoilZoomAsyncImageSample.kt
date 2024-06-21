@@ -24,8 +24,7 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 fun CoilZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-        supportIgnoreExifOrientation = false
-    ) { contentScale, alignment, state: ZoomState, _, scrollBar ->
+    ) { contentScale, alignment, state: ZoomState, scrollBar ->
         var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.None) }
         val context = LocalContext.current
         val lifecycle = LocalLifecycleOwner.current.lifecycle

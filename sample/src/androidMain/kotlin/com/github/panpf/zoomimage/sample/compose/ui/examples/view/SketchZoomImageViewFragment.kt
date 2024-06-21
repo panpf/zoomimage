@@ -29,12 +29,9 @@ import com.github.panpf.sketch.stateimage.ThumbnailMemoryCacheStateImage
 import com.github.panpf.sketch.viewability.showSectorProgressIndicator
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
-import com.github.panpf.zoomimage.sample.settingsService
-import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.ignoreFirst
 
 class SketchZoomImageViewFragment :
     BaseZoomImageViewFragment<SketchZoomImageView>() {
@@ -53,11 +50,6 @@ class SketchZoomImageViewFragment :
         zoomView: SketchZoomImageView,
         savedInstanceState: Bundle?
     ) {
-        settingsService.ignoreExifOrientation.ignoreFirst()
-            .collectWithLifecycle(viewLifecycleOwner) {
-                loadData()
-            }
-
         zoomView.showSectorProgressIndicator()
 
         zoomView.requestState.loadState
@@ -84,7 +76,6 @@ class SketchZoomImageViewFragment :
         zoomView.displayImage(args.imageUri) {
             placeholder(ThumbnailMemoryCacheStateImage())
             crossfade(fadeStart = false)
-            ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
         }
     }
 
@@ -93,7 +84,6 @@ class SketchZoomImageViewFragment :
             crossfade()
             resizeSize(600, 600)
             resizePrecision(Precision.LESS_PIXELS)
-            ignoreExifOrientation(settingsService.ignoreExifOrientation.value)
         }
     }
 

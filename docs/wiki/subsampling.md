@@ -81,25 +81,7 @@ zoomImageView.subsampling.setImageSource(imageSource)
 ### Exif Orientation
 
 By default, ZoomImage will read the Exif Orientation information of the image, and then rotate the
-image, if you do not want ZoomImage to read the Exif Orientation information, you can modify the
-`ignoreExifOrientation` parameter to true
-
-example：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-LaunchEffect(Unit) {
-    state.subsampling.ignoreExifOrientation = true
-}
-
-SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
+image, you can't disable it
 
 ### Tile Animation
 

@@ -38,7 +38,6 @@ fun decodeAndCreateTileDecoder(
     logger: Logger,
     imageSource: ImageSource,
     thumbnailSize: IntSizeCompat,
-    ignoreExifOrientation: Boolean,
     tileBitmapReuseHelper: TileBitmapReuseHelper?,
 ): Result<TileDecoder> {
     val decodeHelper = createDecodeHelper(imageSource)
@@ -72,7 +71,7 @@ fun decodeAndCreateTileDecoder(
         val message = "The thumbnail aspect ratio is different with the original image"
         return Result.failure(CreateTileDecoderException(-5, false, message, imageInfo))
     }
-    return Result.success(TileDecoder(logger, imageSource, imageInfo, decodeHelper))
+    return Result.success(TileDecoder(logger, imageSource, decodeHelper))
 }
 
 /**
