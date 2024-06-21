@@ -45,6 +45,8 @@ kotlin {
             dependencies {
                 api(libs.androidx.annotation)
                 api(libs.kotlinx.coroutines.core)
+
+                implementation(compose.runtime)
             }
         }
         named("commonTest") {
@@ -70,6 +72,12 @@ kotlin {
             }
         }
     }
+}
+
+compose {
+    val compilerDependencyDeclaration =
+        libs.androidx.compose.compiler.get().run { "$module:$version" }
+    kotlinCompilerPlugin.set(compilerDependencyDeclaration)
 }
 
 android {
