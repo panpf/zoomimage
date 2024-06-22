@@ -17,9 +17,11 @@
 package com.github.panpf.zoomimage.view.subsampling
 
 import android.view.View
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.State.STARTED
+import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.StoppedController
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
@@ -76,6 +78,17 @@ class SubsamplingEngine constructor(
     private val refreshTilesFlow = MutableSharedFlow<String>()
     private val preferredTileSizeState = MutableStateFlow(IntSizeCompat.Zero)
     private val contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
+    private val stoppedLifecycleObserver = LifecycleEventObserver { _, _ ->
+        val lifecycle = lifecycle ?: return@LifecycleEventObserver
+        val stopped = !lifecycle.currentState.isAtLeast(STARTED)
+        this@SubsamplingEngine.stoppedState.value = stopped
+        if (stopped) {
+            tileManager?.clean("stopped")
+        }
+        coroutineScope?.launch {
+            refreshTilesFlow.emit(if (stopped) "stopped" else "started")
+        }
+    }
 
     var imageKey: String? = null
 
@@ -117,24 +130,14 @@ class SubsamplingEngine constructor(
     /**
      * The stopped property controller, which can automatically stop and restart with the help of Lifecycle
      */
-    var stoppedController: StoppedController? = null
+    var lifecycle: Lifecycle? = null
         set(value) {
             if (field != value) {
-                field?.onDestroy()
+                field?.removeObserver(stoppedLifecycleObserver)
                 field = value
-                value?.bindStoppedWrapper(object : StoppedController.StoppedWrapper {
-                    override var stopped: Boolean
-                        get() = this@SubsamplingEngine.stoppedState.value
-                        set(value) {
-                            this@SubsamplingEngine.stoppedState.value = value
-                            if (value) {
-                                tileManager?.clean("stopped")
-                            }
-                            coroutineScope?.launch {
-                                refreshTilesFlow.emit(if (value) "stopped" else "started")
-                            }
-                        }
-                })
+                if (view.isAttachedToWindowCompat) {
+                    value?.addObserver(stoppedLifecycleObserver)
+                }
             }
         }
 
@@ -342,6 +345,8 @@ class SubsamplingEngine constructor(
                 )
             }
         }
+
+        lifecycle?.addObserver(stoppedLifecycleObserver)
     }
 
     private fun onDetachFromWindow() {
@@ -352,6 +357,7 @@ class SubsamplingEngine constructor(
         }
 
         clean("onViewDetachedFromWindow")
+        lifecycle?.removeObserver(stoppedLifecycleObserver)
     }
 
     private fun resetTileDecoder(caller: String) {

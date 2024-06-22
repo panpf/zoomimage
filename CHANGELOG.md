@@ -7,6 +7,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: Remove ignoreExifOrientation attribute
 * change: Remove disabledTileBitmapReuse and TileBitmapPool attributes
 * change: Non-Android platforms now use Skia to decode images
+* change: Use Jetbrains Lifecycle instead of StoppedController
 
 ## v1.0.2
 

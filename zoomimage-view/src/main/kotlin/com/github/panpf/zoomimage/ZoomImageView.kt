@@ -39,7 +39,6 @@ import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import com.github.panpf.zoomimage.view.subsampling.internal.TileDrawHelper
-import com.github.panpf.zoomimage.view.subsampling.internal.ViewLifecycleStoppedController
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
@@ -151,7 +150,7 @@ open class ZoomImageView @JvmOverloads constructor(
                     val lifecycle =
                         view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
                     if (lifecycle != null) {
-                        stoppedController = ViewLifecycleStoppedController(view, lifecycle)
+                        this.lifecycle = lifecycle
                     }
                 }
             }

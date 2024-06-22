@@ -25,9 +25,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.State.STARTED
+import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toHexString
@@ -35,11 +39,9 @@ import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.internal.createTileBitmapConvertor
-import com.github.panpf.zoomimage.compose.subsampling.internal.defaultStoppedController
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.StoppedController
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
@@ -75,11 +77,9 @@ fun rememberSubsamplingState(
     logger: Logger = rememberZoomImageLogger(),
     zoomableState: ZoomableState
 ): SubsamplingState {
-    val defaultStopAutoController = defaultStoppedController()
-    val subsamplingState = remember(logger, zoomableState) {
-        SubsamplingState(logger, zoomableState).apply {
-            stoppedController = defaultStopAutoController
-        }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val subsamplingState = remember(logger, zoomableState, lifecycle) {
+        SubsamplingState(logger, zoomableState, lifecycle)
     }
     return subsamplingState
 }
@@ -88,8 +88,11 @@ fun rememberSubsamplingState(
  * A state object that can be used to subsampling of the content.
  */
 @Stable
-class SubsamplingState constructor(logger: Logger, private val zoomableState: ZoomableState) :
-    RememberObserver {
+class SubsamplingState constructor(
+    logger: Logger,
+    private val zoomableState: ZoomableState,
+    private val lifecycle: Lifecycle
+) : RememberObserver {
 
     val logger: Logger = logger.newLogger(module = "SubsamplingState@${logger.toHexString()}")
 
@@ -105,6 +108,17 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
     private var preferredTileSize: IntSize by mutableStateOf(IntSize.Zero)
     private var contentSize: IntSize by mutableStateOf(IntSize.Zero)
     private var rememberedCount = 0
+    private val stoppedLifecycleObserver = LifecycleEventObserver { _, _ ->
+        val stopped = !lifecycle.currentState.isAtLeast(STARTED)
+        this@SubsamplingState.stopped = stopped
+        if (stopped) {
+            tileManager?.clean("stopped")
+        }
+        coroutineScope?.launch {
+            refreshTilesFlow.emit(if (stopped) "stopped" else "started")
+        }
+    }
+
 
     var imageKey: String? = null
 
@@ -144,30 +158,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
      * If true, subsampling stops and free loaded tiles, which are reloaded after restart
      */
     var stopped by mutableStateOf(false)
-
-    /**
-     * The stopped property controller, which can automatically stop and restart with the help of Lifecycle
-     */
-    var stoppedController: StoppedController? = null
-        set(value) {
-            if (field != value) {
-                field?.onDestroy()
-                field = value
-                value?.bindStoppedWrapper(object : StoppedController.StoppedWrapper {
-                    override var stopped: Boolean
-                        get() = this@SubsamplingState.stopped
-                        set(value) {
-                            this@SubsamplingState.stopped = value
-                            if (value) {
-                                tileManager?.clean("stopped")
-                            }
-                            coroutineScope?.launch {
-                                refreshTilesFlow.emit(if (value) "stopped" else "started")
-                            }
-                        }
-                })
-            }
-        }
 
     /**
      * If true, the bounds of each tile is displayed
@@ -361,6 +351,8 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
                 )
             }
         }
+
+        lifecycle.addObserver(stoppedLifecycleObserver)
     }
 
     override fun onAbandoned() = onForgotten()
@@ -378,7 +370,7 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
         }
 
         clean("onForgotten")
-        stoppedController?.onDestroy()
+        lifecycle.removeObserver(stoppedLifecycleObserver)
     }
 
     private fun resetTileDecoder(caller: String) {

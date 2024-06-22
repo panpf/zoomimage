@@ -24,6 +24,8 @@ google-accompanist = "0.34.0"
 google-material = "1.12.0"
 
 jetbrains-compose = "1.6.11"
+jetbrains-lifecycle = "2.8.0"
+
 junit = "4.13.2"
 
 kotlin = "2.0.0"
@@ -92,6 +94,8 @@ google-drawablepainer = { module = "com.google.accompanist:accompanist-drawablep
 google-material = { module = "com.google.android.material:material", version.ref = "google-material" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx" }
+
+jetbrains-lifecycle-common = { module = "org.jetbrains.androidx.lifecycle:lifecycle-common", version.ref = "jetbrains-lifecycle" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 

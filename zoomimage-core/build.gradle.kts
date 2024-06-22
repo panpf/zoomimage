@@ -19,18 +19,18 @@ androidLibrary(nameSpace = "com.github.panpf.zoomimage.core") {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(libs.jetbrains.lifecycle.common)
             api(libs.kotlinx.coroutines.core)
             api(libs.okio)
         }
         androidMain.dependencies {
             api(libs.androidx.annotation)
             api(libs.androidx.exifinterface)
-            api(libs.androidx.lifecycle.common)
             api(libs.kotlinx.coroutines.android)
         }
         desktopMain.dependencies {
             api(libs.kotlinx.coroutines.swing)
-            api("com.drewnoakes:metadata-extractor:2.18.0")
+            api("com.drewnoakes:metadata-extractor:2.18.0") // TODO delete
         }
         nonAndroidMain.dependencies {
             api(libs.skiko)

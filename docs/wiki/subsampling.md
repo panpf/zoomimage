@@ -174,32 +174,8 @@ SketchZoomAsyncImage(
 By default, ZoomImage automatically fetches the most recent Lifecycle and listens to its state,
 pausing or resuming subsampling at the Lifecycle stop or start
 
-If it is in a fragment, it will automatically get the Fragment's Lifecycle, no need to actively set
-it, compose and view can be used. Behind the dependence
-The LocalLifecycleOwner API for compos, and the View.findViewTreeLifecycleOwner() API in the
-Lifecycle KTX package
-
-If in a special operating environment, the above API cannot obtain Lifecycle or the Lifecycle
-obtained by default does not meet the requirements, you can also use `stoppedController` property
-sets your Lifecycle
-
-example：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-val lifecycle: Lifecycle = ...
-LaunchedEffect(lifecycle) {
-    state.subsampling.stoppedController = LifecycleStoppedController(lifecycle)
-}
-
-SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
+Get the latest Lifecycle in View through View.findViewTreeLifecycleOwner() API; in Compose, get
+Lifecycle through LocalLifecycleOwner.current API
 
 ### Background tiles
 

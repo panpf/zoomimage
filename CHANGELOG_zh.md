@@ -7,6 +7,7 @@
 * change: 移除 ignoreExifOrientation 属性
 * change: 移除 disabledTileBitmapReuse 和 TileBitmapPool 属性
 * change: 非安卓平台现在使用 Skia 解码图片
+* change: 用 Jetbrains Lifecycle 代替 StoppedController
 
 ## v1.0.2
 

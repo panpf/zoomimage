@@ -155,29 +155,8 @@ SketchZoomAsyncImage(
 
 ZoomImage 默认会自动获取最近的 Lifecycle 然后监听它的状态，在 Lifecycle stop 或 start 时停止或重启子采样
 
-如果是在 Fragment 中就会自动获取到 Fragment 的 Lifecycle，无需主动设置，compose 和 view 都可以。背后依赖的是
-compos 的 LocalLifecycleOwner API 和 Lifecycle KTX 包中的 View.findViewTreeLifecycleOwner() API
-
-如果是在特殊的运行环境中，上述 API 无法获取到 Lifecycle 或者默认获取的 Lifecycle 不满足要求，你还还可以通过
-`stoppedController` 属性设置你的 Lifecycle
-
-示例：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-val lifecycle: Lifecycle = ...
-LaunchedEffect(lifecycle) {
-    state.subsampling.stoppedController = LifecycleStoppedController(lifecycle)
-}
-
-SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
+在 View 中通过 View.findViewTreeLifecycleOwner() API 获取到最近的 Lifecycle；在 Compose 通过
+LocalLifecycleOwner.current API 获取 Lifecycle
 
 ### 背景图块
 

@@ -16,19 +16,6 @@
 
 package com.github.panpf.zoomimage.compose.subsampling.internal
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import com.github.panpf.zoomimage.subsampling.LifecycleStoppedController
-import com.github.panpf.zoomimage.subsampling.StoppedController
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
-
-@Composable
-actual fun defaultStoppedController(): StoppedController? {
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    return remember(lifecycle) {
-        LifecycleStoppedController(lifecycle)
-    }
-}
 
 actual fun createTileBitmapConvertor(): TileBitmapConvertor? = AndroidToComposeTileBitmapConvertor()
