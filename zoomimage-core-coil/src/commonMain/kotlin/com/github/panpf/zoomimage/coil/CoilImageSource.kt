@@ -42,8 +42,10 @@ class CoilImageSource(
                 diskCachePolicy = ENABLED,
                 networkCachePolicy = DISABLED   // Do not download image, by default go here The image have been downloaded
             )
-            imageLoader.components.newFetcher(request.data, options, imageLoader)?.first
-                ?: return Result.failure(IllegalStateException("Fetcher not found. data='${request.data}'"))
+            val mappedData = imageLoader.components.map(request.data, options)
+
+            imageLoader.components.newFetcher(mappedData, options, imageLoader)?.first
+                ?: return Result.failure(IllegalStateException("Fetcher not found. mappedData='${mappedData}'"))
         } catch (e: Exception) {
             return Result.failure(e)
         }
