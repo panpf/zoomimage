@@ -30,7 +30,6 @@ kotlin {
         }
         desktopMain.dependencies {
             api(libs.kotlinx.coroutines.swing)
-            api("com.drewnoakes:metadata-extractor:2.18.0") // TODO delete
         }
         nonAndroidMain.dependencies {
             api(libs.skiko)
