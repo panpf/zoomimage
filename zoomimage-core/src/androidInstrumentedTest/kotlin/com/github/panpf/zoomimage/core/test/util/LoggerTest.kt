@@ -32,35 +32,6 @@ class LoggerTest {
     }
 
     @Test
-    fun testShowThreadName() {
-        val threadName = getThreadName()
-        val listPipeline = ListPipeline()
-
-        val logger = Logger(tag = "MyTag").apply {
-            pipeline = listPipeline
-        }
-        Assert.assertEquals(false, logger.showThreadName)
-        logger.i("Hello")
-        Assert.assertEquals("INFO-MyTag-Hello", listPipeline.logs[0])
-
-        val logger2 = Logger(tag = "MyTag2", showThreadName = true).apply {
-            listPipeline.logs.clear()
-            pipeline = listPipeline
-        }
-        Assert.assertEquals(true, logger2.showThreadName)
-        logger2.i("Hello2")
-        Assert.assertEquals("INFO-MyTag2-${threadName} - Hello2", listPipeline.logs[0])
-
-        val logger3 = logger.newLogger(showThreadName = true).apply {
-            listPipeline.logs.clear()
-            pipeline = listPipeline
-        }
-        Assert.assertEquals(true, logger3.showThreadName)
-        logger3.i("Hello3")
-        Assert.assertEquals("INFO-MyTag-${threadName} - Hello3", listPipeline.logs[0])
-    }
-
-    @Test
     fun testLevel() {
         val logger1 = Logger(tag = "MyTag")
         Assert.assertEquals(Logger.INFO, logger1.level)

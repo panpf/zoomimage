@@ -16,11 +16,10 @@
 
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.util.internal.format
-import com.github.panpf.zoomimage.util.internal.lerp
 import com.github.panpf.zoomimage.util.internal.packFloats
 import com.github.panpf.zoomimage.util.internal.unpackFloat1
 import com.github.panpf.zoomimage.util.internal.unpackFloat2
+import kotlin.jvm.JvmInline
 
 /**
  * Constructs a [ScaleFactorCompat] from the given x and y scale values
@@ -63,10 +62,8 @@ value class ScaleFactorCompat internal constructor(@PublishedApi internal val pa
             return unpackFloat2(packedValue)
         }
 
-    @Suppress("NOTHING_TO_INLINE")
     inline operator fun component1(): Float = scaleX
 
-    @Suppress("NOTHING_TO_INLINE")
     inline operator fun component2(): Float = scaleY
 
     /**

@@ -4,7 +4,7 @@ plugins {
     id("kotlinx-atomicfu")
 }
 
-addAllMultiplatformTargets(MultiplatformTargets.Android, MultiplatformTargets.Desktop)
+addAllMultiplatformTargets()
 
 androidLibrary(nameSpace = "com.github.panpf.zoomimage.core") {
     buildFeatures {
@@ -20,6 +20,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(libs.jetbrains.lifecycle.common)
+            api(libs.kotlin.stdlib)
             api(libs.kotlinx.coroutines.core)
             api(libs.okio)
         }

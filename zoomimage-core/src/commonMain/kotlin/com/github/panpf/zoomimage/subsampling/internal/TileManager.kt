@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
@@ -27,7 +28,8 @@ import com.github.panpf.zoomimage.subsampling.toSnapshot
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.format
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineDispatcher
@@ -42,7 +44,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.LinkedList
 
 /**
  * Manage the loading and release of tiles
@@ -69,7 +70,7 @@ class TileManager constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val decodeDispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(2)
+    private val decodeDispatcher: CoroutineDispatcher = ioCoroutineDispatcher().limitedParallelism(2)
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var lastScale: Float? = null
     private var lastSampleSize: Int = 0
@@ -102,7 +103,7 @@ class TileManager constructor(
     /**
      * Tile Map with sample size from largest to smallest
      */
-    val sortedTileGridMap: Map<Int, List<Tile>>
+    val sortedTileGridMap: List<SamplingTiles>
 
     /**
      * The sample size of the image
@@ -144,7 +145,7 @@ class TileManager constructor(
         sortedTileGridMap = calculateTileGridMap(
             imageSize = imageInfo.size,
             preferredTileSize = preferredTileSize,
-        ).filterKeys { it <= maxSampleSize }
+        ).filter { it.sampleSize <= maxSampleSize }
     }
 
     /**
@@ -193,7 +194,7 @@ class TileManager constructor(
         /*
          * When the following detection fails, subsampling is no longer needed, so empty the existing tile
          */
-        val foregroundTiles = sortedTileGridMap[newSampleSize]
+        val foregroundTiles = sortedTileGridMap.find { it.sampleSize == newSampleSize}?.tiles
         if (foregroundTiles == null || foregroundTiles.size == 1) {
             logger.d {
                 "refreshTiles:$caller. interrupted, foregroundTiles is null or size is 1. " +
@@ -238,7 +239,9 @@ class TileManager constructor(
         var expectFreeCount = 0
         var actualFreeCount = 0
         val lastSampleSize = lastSampleSize
-        sortedTileGridMap.entries.forEach { (eachSampleSize, eachTiles) ->
+        sortedTileGridMap.forEach {
+            val eachSampleSize = it.sampleSize
+            val eachTiles = it.tiles
             if (eachSampleSize == newSampleSize) {
                 eachTiles.forEach { foregroundTile ->
                     if (foregroundTile.srcRect.overlaps(newImageLoadRect)) {
@@ -366,8 +369,8 @@ class TileManager constructor(
         val sampleSize = sampleSize
         if (sampleSize != 0) {
             var freeCount = 0
-            sortedTileGridMap.values.forEach { tileList ->
-                freeCount += freeTiles(tileList, skipNotify = true)
+            sortedTileGridMap.forEach {
+                freeCount += freeTiles(it.tiles, skipNotify = true)
             }
             logger.d { "cleanTiles:$caller. freeCount=$freeCount. '${imageSource.key}" }
             if (freeCount > 0) {
@@ -528,7 +531,7 @@ class TileManager constructor(
             while (running && isActive) {
                 val sampleSize = sampleSize
                 val imageLoadRect = imageLoadRect
-                val foregroundTileSnapshots = LinkedList<TileSnapshot>()
+                val foregroundTileSnapshots = mutableListOf<TileSnapshot>()
                 var foregroundLoadAllCompleted = true
                 var foregroundAnimationAllFinished = true
                 var foregroundInsideCount = 0
@@ -536,7 +539,7 @@ class TileManager constructor(
                 var foregroundLoadedCount = 0
                 var foregroundLoadingCount = 0
                 var foregroundAnimatingCount = 0
-                val foregroundTiles = sortedTileGridMap[sampleSize]
+                val foregroundTiles = sortedTileGridMap.find { it.sampleSize == sampleSize}?.tiles
                 val foregroundTileCount = foregroundTiles?.size ?: 0
                 foregroundTiles?.forEach { foregroundTile ->
                     val animationState = foregroundTile.animationState
@@ -570,11 +573,11 @@ class TileManager constructor(
                  */
                 var backgroundTileCount = 0
                 var backgroundFreeCount = 0
-                val backgroundTileSnapshots = LinkedList<TileSnapshot>()
+                val backgroundTileSnapshots = mutableListOf<TileSnapshot>()
                 val currentSampleSize = sampleSize
                 val lastSampleSize = lastSampleSize
                 val disabledBackgroundTiles = disabledBackgroundTiles
-                sortedTileGridMap.entries.forEach { (eachSampleSize, eachTiles) ->
+                sortedTileGridMap.forEach { (eachSampleSize, eachTiles) ->
                     if (eachSampleSize != currentSampleSize) {
                         if (!disabledBackgroundTiles
                             && isBackground(lastSampleSize, currentSampleSize, eachSampleSize)

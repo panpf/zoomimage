@@ -23,6 +23,7 @@ android {
 
 dependencies {
     api(projects.zoomimageCore)
+    api(libs.kotlin.stdlib)
     api(libs.androidx.appcompat)
     api(libs.androidx.core.ktx)
     api(libs.androidx.lifecycle.runtime.ktx)

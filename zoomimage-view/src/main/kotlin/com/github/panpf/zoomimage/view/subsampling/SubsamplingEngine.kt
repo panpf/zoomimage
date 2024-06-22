@@ -456,8 +456,9 @@ class SubsamplingEngine constructor(
             disabledBackgroundTiles = this@SubsamplingEngine.disabledBackgroundTilesState.value
             tileAnimationSpec = this@SubsamplingEngine.tileAnimationSpecState.value
         }
-        _tileGridSizeMapState.value = tileManager.sortedTileGridMap.mapValues { entry ->
-            entry.value.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
+        _tileGridSizeMapState.value = tileManager.sortedTileGridMap.associate { entry ->
+            entry.sampleSize to entry.tiles.last().coordinate
+                .let { IntOffsetCompat(it.x + 1, it.y + 1) }
         }
         logger.d {
             "resetTileManager:$caller. success. " +

@@ -17,9 +17,9 @@
 package com.github.panpf.zoomimage.zoom
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isNotEmpty
-import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.Multiple
+import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.MULTIPLE
 
 /**
  * Used to calculate mediumScale and maxScale
@@ -42,7 +42,7 @@ interface ScalesCalculator {
          * The default multiplier between the scales, because by default `mediumScale = minScale * multiple`,
          * `maxScale = mediumScale * multiple`
          */
-        const val Multiple = 3f
+        const val MULTIPLE = 3f
 
         /**
          * Dynamic scales calculator based on content size, content raw size, and container size
@@ -57,13 +57,13 @@ interface ScalesCalculator {
         /**
          * Creates a [DynamicScalesCalculator] and specified [multiple]
          */
-        fun dynamic(multiple: Float = Multiple): DynamicScalesCalculator =
+        fun dynamic(multiple: Float = MULTIPLE): DynamicScalesCalculator =
             DynamicScalesCalculator(multiple)
 
         /**
          * Creates a [FixedScalesCalculator] and specified [multiple]
          */
-        fun fixed(multiple: Float = Multiple): FixedScalesCalculator =
+        fun fixed(multiple: Float = MULTIPLE): FixedScalesCalculator =
             FixedScalesCalculator(multiple)
     }
 
@@ -85,7 +85,7 @@ data class DynamicScalesCalculator(
      * The multiplier between the scales, because by default `mediumScale = minScale * multiple`,
      * `maxScale = mediumScale * multiple`
      */
-    val multiple: Float = Multiple,
+    val multiple: Float = MULTIPLE,
 ) : ScalesCalculator {
 
     override fun calculate(
@@ -144,7 +144,7 @@ data class FixedScalesCalculator(
      * The multiplier between the scales, because by default `mediumScale = minScale * multiple`,
      * `maxScale = mediumScale * multiple`
      */
-    val multiple: Float = Multiple
+    val multiple: Float = MULTIPLE
 ) : ScalesCalculator {
 
     override fun calculate(

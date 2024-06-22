@@ -16,11 +16,10 @@
 
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.util.internal.format
-import com.github.panpf.zoomimage.util.internal.lerp
 import com.github.panpf.zoomimage.util.internal.packFloats
 import com.github.panpf.zoomimage.util.internal.unpackFloat1
 import com.github.panpf.zoomimage.util.internal.unpackFloat2
+import kotlin.jvm.JvmInline
 import kotlin.math.roundToInt
 
 /**
@@ -58,10 +57,8 @@ value class TransformOriginCompat internal constructor(@PublishedApi internal va
     val pivotFractionY: Float
         get() = unpackFloat2(packedValue)
 
-    @Suppress("NOTHING_TO_INLINE")
     inline operator fun component1(): Float = pivotFractionX
 
-    @Suppress("NOTHING_TO_INLINE")
     inline operator fun component2(): Float = pivotFractionY
 
     /**

@@ -19,27 +19,26 @@ package com.github.panpf.zoomimage.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.Logger.Level
+import com.github.panpf.zoomimage.util.Logger.Pipeline
 
 /**
  * Creates and remember a [Logger]
  *
  * @param tag The tag of the log
  * @param module The module of the log
- * @param showThreadName Whether to show the thread name in the log
  */
 @Composable
 fun rememberZoomImageLogger(
     tag: String = "ZoomImage",
     module: String? = null,
-    showThreadName: Boolean = false,
-    @Logger.Level level: Int? = null,
-    pipeline: Logger.Pipeline? = null,
+    @Level level: Int? = null,
+    pipeline: Pipeline? = null,
 ): Logger {
-    val logger = remember(tag, module, showThreadName) {
+    val logger = remember(tag, module) {
         Logger(
             tag = tag,
             module = module,
-            showThreadName = showThreadName,
             level = level,
             pipeline = pipeline,
         )

@@ -16,12 +16,10 @@
 
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.util.internal.format
-import com.github.panpf.zoomimage.util.internal.lerp
 import com.github.panpf.zoomimage.util.internal.packFloats
-import com.github.panpf.zoomimage.util.internal.toStringAsFixed
 import com.github.panpf.zoomimage.util.internal.unpackFloat1
 import com.github.panpf.zoomimage.util.internal.unpackFloat2
+import kotlin.jvm.JvmInline
 import kotlin.math.sqrt
 
 /**

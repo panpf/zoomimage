@@ -18,7 +18,7 @@ package com.github.panpf.zoomimage.zoom
 
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
-import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.times
 import kotlin.math.max
 

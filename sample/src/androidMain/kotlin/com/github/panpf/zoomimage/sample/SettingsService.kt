@@ -58,7 +58,7 @@ class SettingsService(val context: Context) {
         SettingsStateFlow("scalesCalculator", "Dynamic", preferences)
     }
     val scalesMultiple by lazy {
-        SettingsStateFlow("scalesMultiple", ScalesCalculator.Multiple.toString(), preferences)
+        SettingsStateFlow("scalesMultiple", ScalesCalculator.MULTIPLE.toString(), preferences)
     }
     val disabledGestureType by lazy {
         SettingsStateFlow("disabledGestureType", "0", preferences)

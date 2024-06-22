@@ -16,10 +16,11 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
+import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.limitTo
 import kotlin.math.ceil
@@ -156,8 +157,8 @@ internal fun calculateTiles(
 internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
     preferredTileSize: IntSizeCompat,
-): Map<Int, List<Tile>> {
-    val tileMap = HashMap<Int, List<Tile>>()
+): List<SamplingTiles> {
+    val tileMap = mutableListOf<SamplingTiles>()
     val maxGridSize = calculateMaxGridSize(imageSize, singleDirectionMaxTiles = 50)
     var sampleSize = 1
     do {
@@ -168,10 +169,10 @@ internal fun calculateTileGridMap(
             maxGridSize = maxGridSize
         )
         val tiles = calculateTiles(imageSize, gridSize, sampleSize)
-        tileMap[sampleSize] = tiles
+        tileMap.add(SamplingTiles(sampleSize, tiles))
         sampleSize *= 2
     } while (gridSize.x * gridSize.y > 1)
-    return tileMap.toSortedMap { o1, o2 -> (o1 - o2) * -1 }
+    return tileMap.sortedWith { o1, o2 -> (o1.sampleSize - o2.sampleSize) * -1 }
 }
 
 /**

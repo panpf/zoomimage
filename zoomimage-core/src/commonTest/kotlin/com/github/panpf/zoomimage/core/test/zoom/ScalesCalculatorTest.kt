@@ -13,7 +13,7 @@ class ScalesCalculatorTest {
 
     @Test
     fun testMultiple() {
-        Assert.assertEquals(3f, ScalesCalculator.Multiple, 0f)
+        Assert.assertEquals(3f, ScalesCalculator.MULTIPLE, 0f)
     }
 
     @Test
@@ -218,7 +218,7 @@ class ScalesCalculatorTest {
         val contentScale: ContentScaleCompat,
         val minScale: Float?,
         val initialScale: Float?,
-        val multiple: Float = ScalesCalculator.Multiple,
+        val multiple: Float = ScalesCalculator.MULTIPLE,
         val expectedResult: String,
     ) {
         override fun toString(): String {

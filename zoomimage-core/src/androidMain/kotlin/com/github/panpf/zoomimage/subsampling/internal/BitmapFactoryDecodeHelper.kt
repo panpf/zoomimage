@@ -14,6 +14,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import okio.buffer
 
 /**
  * Not thread safe
@@ -51,23 +52,24 @@ class BitmapFactoryDecodeHelper(
     }
 
     private fun getOrCreateDecoder(): BitmapRegionDecoder {
-        return decoder ?: imageSource.openInputStream().getOrThrow().buffered().use {
-            if (VERSION.SDK_INT >= VERSION_CODES.S) {
-                BitmapRegionDecoder.newInstance(it)!!
-            } else {
-                @Suppress("DEPRECATION")
-                BitmapRegionDecoder.newInstance(it, false)!!
+        return decoder ?: imageSource.openSource().getOrThrow().buffer().inputStream().buffered()
+            .use {
+                if (VERSION.SDK_INT >= VERSION_CODES.S) {
+                    BitmapRegionDecoder.newInstance(it)!!
+                } else {
+                    @Suppress("DEPRECATION")
+                    BitmapRegionDecoder.newInstance(it, false)!!
+                }
+            }.apply {
+                this@BitmapFactoryDecodeHelper.decoder = this
             }
-        }.apply {
-            this@BitmapFactoryDecodeHelper.decoder = this
-        }
     }
 
     private fun decodeImageInfo(): ImageInfo {
         val boundOptions = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
         }
-        imageSource.openInputStream().getOrThrow().use {
+        imageSource.openSource().getOrThrow().buffer().inputStream().use {
             BitmapFactory.decodeStream(it, null, boundOptions)
         }
         val mimeType = boundOptions.outMimeType.orEmpty()

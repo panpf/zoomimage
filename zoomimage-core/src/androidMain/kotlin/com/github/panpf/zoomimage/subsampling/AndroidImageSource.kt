@@ -21,8 +21,9 @@ import android.content.res.Resources
 import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
+import okio.Source
+import okio.source
 import java.io.FileNotFoundException
-import java.io.InputStream
 
 
 /**
@@ -64,8 +65,8 @@ class AssetImageSource(val context: Context, val assetFileName: String) : ImageS
 
     override val key: String = "asset://$assetFileName"
 
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
-        context.assets.open(assetFileName)
+    override fun openSource(): Result<Source> = kotlin.runCatching {
+        context.assets.open(assetFileName).source()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -91,8 +92,8 @@ class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
 
     override val key: String = uri.toString()
 
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
-        context.contentResolver.openInputStream(uri)
+    override fun openSource(): Result<Source> = kotlin.runCatching {
+        context.contentResolver.openInputStream(uri)?.source()
             ?: throw FileNotFoundException("Unable to open stream. uri='$uri'")
     }
 
@@ -127,8 +128,8 @@ class ResourceImageSource(
 
     override val key: String = "android.resources://resource?resId=$resId"
 
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
-        resources.openRawResource(resId)
+    override fun openSource(): Result<Source> = kotlin.runCatching {
+        resources.openRawResource(resId).source()
     }
 
     override fun equals(other: Any?): Boolean {

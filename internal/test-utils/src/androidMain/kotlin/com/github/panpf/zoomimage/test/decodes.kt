@@ -10,7 +10,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 
 @WorkerThread
 fun ImageSource.decodeExifOrientation(): Result<AndroidExifOrientation> {
-    val inputStreamResult = openInputStream()
+    val inputStreamResult = openSource()
     if (inputStreamResult.isFailure) {
         return Result.failure(inputStreamResult.exceptionOrNull()!!)
     }
@@ -33,7 +33,7 @@ fun ImageSource.decodeExifOrientation(): Result<AndroidExifOrientation> {
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadImageInfo]
  */
 fun ImageSource.decodeImageInfo(): Result<ImageInfo> {
-    val inputStreamResult = openInputStream()
+    val inputStreamResult = openSource()
     if (inputStreamResult.isFailure) {
         return Result.failure(inputStreamResult.exceptionOrNull()!!)
     }

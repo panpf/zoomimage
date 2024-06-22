@@ -34,6 +34,7 @@ import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.fromContent
+import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

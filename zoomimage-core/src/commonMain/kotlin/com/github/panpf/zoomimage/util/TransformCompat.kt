@@ -16,9 +16,6 @@
 
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.util.internal.format
-import com.github.panpf.zoomimage.util.internal.lerp
-
 /**
  * A simple version of a 2D transformation that includes scale, pan, and rotation
  *

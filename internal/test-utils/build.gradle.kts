@@ -4,7 +4,7 @@ plugins {
     id("kotlinx-atomicfu")
 }
 
-addAllMultiplatformTargets(MultiplatformTargets.Android, MultiplatformTargets.Desktop)
+addAllMultiplatformTargets()
 androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.utils")
 
 kotlin {

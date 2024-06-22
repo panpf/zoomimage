@@ -8,6 +8,11 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: Remove disabledTileBitmapReuse and TileBitmapPool attributes
 * change: Non-Android platforms now use Skia to decode images
 * change: Use Jetbrains Lifecycle instead of StoppedController
+* change: ImageSource now uses okio's Source instead of InputStream
+* change: ImageSource.fromResource() on desktop platform changed to fromKotlinResource()
+* change: ImageSource.fromFile(File) is now a JVM platform-specific extension function
+* remove: Remove the showThreadName parameter of Logger
+* new: New ImageSource.fromKotlinResource() function on ios platform
 
 ## v1.0.2
 

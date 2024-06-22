@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.core.test.util.internal
 
-import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.format
 import org.junit.Assert
 import org.junit.Test
 

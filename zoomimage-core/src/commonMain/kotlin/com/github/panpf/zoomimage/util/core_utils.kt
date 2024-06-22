@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.util.internal
+package com.github.panpf.zoomimage.util
 
-import java.io.Closeable
-import java.math.BigDecimal
-import java.math.RoundingMode
+import okio.Closeable
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -27,11 +26,12 @@ internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
         this
     } else {
-        BigDecimal(toDouble()).setScale(newScale, RoundingMode.HALF_UP).toFloat()
+        val multiplier = 10.0.pow(newScale)
+        (round(this * multiplier) / multiplier).toFloat()
     }
 }
 
-internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
+internal fun Any.toHexString(): String = this.hashCode().toString(16)
 
 // Copy from androidx/compose/ui/geometry/GeometryUtils.kt
 // File of internal utility methods used for the geometry library

@@ -8,6 +8,11 @@
 * change: 移除 disabledTileBitmapReuse 和 TileBitmapPool 属性
 * change: 非安卓平台现在使用 Skia 解码图片
 * change: 用 Jetbrains Lifecycle 代替 StoppedController
+* change: ImageSource 现在使用 okio 的 Source 代替 InputStream
+* change: 桌面平台的 ImageSource.fromResource() 改为 fromKotlinResource()
+* change: ImageSource.fromFile(File) 现在是 JVM 平台专属的扩展函数
+* remove: 移除 Logger 的 showThreadName 参数
+* new: ios 平台新增 ImageSource.fromKotlinResource() 函数
 
 ## v1.0.2
 

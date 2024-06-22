@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.subsampling.fromResource
+import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -144,7 +144,7 @@ fun ViewerScreen(
             }
         }
         LaunchedEffect(Unit) {
-            val imageSource = ImageSource.fromResource(imageResource.resourcePath)
+            val imageSource = ImageSource.fromKotlinResource(imageResource.resourcePath)
             zoomState.subsampling.setImageSource(imageSource)
         }
 

@@ -25,7 +25,7 @@ import coil.request.ImageRequest
 import coil.request.Options
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.runBlocking
-import java.io.InputStream
+import okio.Source
 
 class CoilImageSource(
     private val imageLoader: ImageLoader,
@@ -35,7 +35,7 @@ class CoilImageSource(
     override val key: String = request.data.toString()
 
     @WorkerThread
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+    override fun openSource(): Result<Source> = kotlin.runCatching {
         val fetcher = try {
             val options = Options(
                 context = request.context,
@@ -53,7 +53,7 @@ class CoilImageSource(
         if (fetchResult !is SourceResult) {
             return Result.failure(IllegalStateException("FetchResult is not SourceResult. data='${request.data}'"))
         }
-        fetchResult.source.source().inputStream()
+        fetchResult.source.source()
     }
 
     override fun equals(other: Any?): Boolean {

@@ -25,7 +25,8 @@ import com.github.panpf.sketch.request.Depth
 import com.github.panpf.sketch.request.LoadRequest
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.runBlocking
-import java.io.InputStream
+import okio.Source
+import okio.source
 
 class SketchImageSource(
     private val context: Context,
@@ -36,7 +37,7 @@ class SketchImageSource(
     override val key: String = imageUri
 
     @WorkerThread
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+    override fun openSource(): Result<Source> = kotlin.runCatching {
         val request = LoadRequest(context, imageUri) {
             downloadCachePolicy(CachePolicy.ENABLED)
             depth(Depth.LOCAL)   // Do not download image, by default go here The image have been downloaded
@@ -55,7 +56,7 @@ class SketchImageSource(
         if (dataSource !is BasedStreamDataSource) {
             return Result.failure(IllegalStateException("DataSource is not BasedStreamDataSource. imageUri='$imageUri'"))
         }
-        dataSource.newInputStream()
+        dataSource.newInputStream().source()
     }
 
     override fun equals(other: Any?): Boolean {

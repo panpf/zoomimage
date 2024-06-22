@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.util.internal.lerp
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min

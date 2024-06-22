@@ -52,7 +52,7 @@ class ZoomImageOptionsState {
     val threeStepScale = MutableStateFlow(false)
     val slowerScaleAnimation = MutableStateFlow(false)
     val scalesCalculator = MutableStateFlow("Dynamic")
-    val scalesMultiple = MutableStateFlow(ScalesCalculator.Multiple.toString())
+    val scalesMultiple = MutableStateFlow(ScalesCalculator.MULTIPLE.toString())
     val limitOffsetWithinBaseVisibleRect = MutableStateFlow(false)
 
     val readModeEnabled = MutableStateFlow(true)

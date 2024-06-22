@@ -23,6 +23,7 @@ import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import okio.buffer
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -35,11 +36,11 @@ internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper? 
  */
 @WorkerThread
 internal fun ImageSource.decodeExifOrientationValue(): Result<Int> {
-    val inputStreamResult = openInputStream()
+    val inputStreamResult = openSource()
     if (inputStreamResult.isFailure) {
         return Result.failure(inputStreamResult.exceptionOrNull()!!)
     }
-    val inputStream = inputStreamResult.getOrNull()!!
+    val inputStream = inputStreamResult.getOrNull()!!.buffer().inputStream()
     val exifOrientation = try {
         inputStream.use {
             ExifInterface(it).getAttributeInt(

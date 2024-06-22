@@ -16,8 +16,6 @@
 
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.util.internal.toHexString
-
 expect fun createLogPipeline(): Logger.Pipeline
 
 /**
@@ -37,11 +35,6 @@ class Logger(
     val module: String? = null,
 
     /**
-     * Whether to show the name of the current thread in the log
-     */
-    val showThreadName: Boolean = false,
-
-    /**
      * Initial Level
      */
     @Level
@@ -57,8 +50,6 @@ class Logger(
      */
     private val rootLogger: Logger? = null,
 ) {
-
-    private val threadNameLocal by lazy { ThreadLocal<String>() }
 
     /**
      * The level of the log. The level of the root logger will be modified directly
@@ -118,11 +109,9 @@ class Logger(
      */
     fun newLogger(
         module: String? = this.module,
-        showThreadName: Boolean = this.showThreadName
     ): Logger = Logger(
         tag = tag,
         module = module,
-        showThreadName = showThreadName,
         rootLogger = rootLogger ?: this
     )
 
@@ -387,11 +376,6 @@ class Logger(
     }
 
     private fun assembleMessage(msg: String): String = buildString {
-        if (showThreadName) {
-            append(getThreadName())
-            if (isNotEmpty()) append(" - ")
-        }
-
         if (module?.isNotEmpty() == true) {
             append(module)
             if (isNotEmpty()) append(". ")
@@ -400,44 +384,22 @@ class Logger(
         append(msg)
     }
 
-    private fun getThreadName(): String? {
-        val threadName = threadNameLocal.get()
-        return if (threadName == null) {
-            val name = Thread.currentThread().name.let {
-                // kotlin coroutine thread name 'DefaultDispatcher-worker-1' change to 'worker1'
-                if (it.startsWith("DefaultDispatcher-worker-")) {
-                    "worker${it.substring("DefaultDispatcher-worker-".length)}"
-                } else if (it.startsWith("Thread-")) {
-                    "Thread${it.substring("Thread-".length)}"
-                } else {
-                    it
-                }
-            }
-            threadNameLocal.set(name)
-            name
-        } else {
-            threadName
-        }
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Logger) return false
         if (tag != other.tag) return false
         if (module != other.module) return false
-        if (showThreadName != other.showThreadName) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = tag.hashCode()
         result = 31 * result + (module?.hashCode() ?: 0)
-        result = 31 * result + showThreadName.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "Logger(tag='$tag', module=$module, showThreadName=$showThreadName, level=$level, pipeline=$pipeline)"
+        return "Logger(tag='$tag', module=$module, level=$level, pipeline=$pipeline)"
     }
 
     // TODO enum

@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-@file:Suppress("NOTHING_TO_INLINE")
-
 package com.github.panpf.zoomimage.util
 
-import com.github.panpf.zoomimage.util.internal.lerp
 import com.github.panpf.zoomimage.util.internal.packInts
 import com.github.panpf.zoomimage.util.internal.unpackInt1
 import com.github.panpf.zoomimage.util.internal.unpackInt2
+import kotlin.jvm.JvmInline
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

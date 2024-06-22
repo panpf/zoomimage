@@ -25,11 +25,13 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.fromContent
+import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
+import okio.Source
+import okio.source
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
-import java.io.InputStream
 import java.net.URL
 
 
@@ -113,12 +115,12 @@ class GlideHttpImageSource(
     override val key: String = glideUrl.cacheKey
 
     @WorkerThread
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+    override fun openSource(): Result<Source> = kotlin.runCatching {
         val diskCache =
             getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
         val file = diskCache.get(glideUrl)
             ?: throw FileNotFoundException("Cache file is null")
-        FileInputStream(file)
+        FileInputStream(file).source()
     }
 
     override fun equals(other: Any?): Boolean {

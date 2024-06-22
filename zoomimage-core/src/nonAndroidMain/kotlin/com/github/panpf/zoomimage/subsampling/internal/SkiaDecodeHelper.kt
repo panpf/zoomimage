@@ -6,6 +6,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SkiaTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
+import okio.buffer
 import okio.use
 import org.jetbrains.skia.Codec
 import org.jetbrains.skia.Data
@@ -17,7 +18,7 @@ import org.jetbrains.skia.impl.use
 class SkiaDecodeHelper(
     private val imageSource: ImageSource,
     private val bytesLazy: Lazy<ByteArray> = lazy {
-        imageSource.openInputStream().getOrThrow().use { it.readBytes() }
+        imageSource.openSource().getOrThrow().buffer().use { it.readByteArray() }
     },
     private val initialImageInfo: ImageInfo? = null
 ) : DecodeHelper {

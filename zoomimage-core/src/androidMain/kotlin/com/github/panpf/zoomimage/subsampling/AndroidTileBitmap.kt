@@ -17,7 +17,7 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.util.internal.toHexString
+import com.github.panpf.zoomimage.util.toHexString
 
 fun AndroidTileBitmap(bitmap: Bitmap): AndroidTileBitmap {
     return AndroidTileBitmapImpl(bitmap)

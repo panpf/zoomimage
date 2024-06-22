@@ -28,7 +28,7 @@ import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.center
 import com.github.panpf.zoomimage.util.div
-import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.limitTo

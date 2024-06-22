@@ -17,13 +17,13 @@ class AndroidImageSourceTest {
         AssetImageSource(context, "sample_cat.jpg").apply {
             Assert.assertEquals("asset://sample_cat.jpg", key)
             Assert.assertEquals("AssetImageSource('sample_cat.jpg')", toString())
-            openInputStream().getOrThrow().close()
+            openSource().getOrThrow().close()
         }
 
         AssetImageSource(context, "sample_dog.jpg").apply {
             Assert.assertEquals("asset://sample_dog.jpg", key)
             Assert.assertEquals("AssetImageSource('sample_dog.jpg')", toString())
-            openInputStream().getOrThrow().close()
+            openSource().getOrThrow().close()
         }
     }
 
@@ -35,7 +35,7 @@ class AndroidImageSourceTest {
         ResourceImageSource(context, drawableId).apply {
             Assert.assertEquals("android.resources://resource?resId=$drawableId", key)
             Assert.assertEquals("ResourceImageSource($drawableId)", toString())
-            openInputStream().getOrThrow().close()
+            openSource().getOrThrow().close()
         }
     }
 

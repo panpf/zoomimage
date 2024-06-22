@@ -23,6 +23,7 @@ import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.Job
+import kotlin.time.TimeSource
 
 /**
  * A tile of the image, store the region, sample multiplier, Bitmap, load status, and other information of the tile
@@ -106,7 +107,7 @@ class Tile constructor(
 
     class AnimationState {
 
-        private var startTime = System.currentTimeMillis()
+        private var startTime = TimeSource.Monotonic.markNow()
         private var progress: Float = 1f
             set(value) {
                 if (value != field) {
@@ -122,8 +123,7 @@ class Tile constructor(
 
         fun calculate(duration: Long): Boolean {
             progress = if (duration > 0) {
-                val currentTimeMillis = System.currentTimeMillis()
-                val elapsedTime = currentTimeMillis - startTime
+                val elapsedTime = startTime.elapsedNow().inWholeMilliseconds
                 if (elapsedTime >= duration) 1f else elapsedTime / duration.toFloat()
             } else {
                 1f
@@ -132,14 +132,14 @@ class Tile constructor(
         }
 
         fun restart() {
-            startTime = System.currentTimeMillis()
+            startTime = TimeSource.Monotonic.markNow()
             progress = 0f
             alpha = 0
         }
 
         fun stop() {
             if (running) {
-                startTime = 0
+                startTime = TimeSource.Monotonic.markNow()
                 progress = 1f
                 alpha = 255
             }

@@ -22,7 +22,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
-import java.util.LinkedList
+import kotlinx.atomicfu.locks.synchronized
 
 /**
  * Decode the tile bitmap of the image
@@ -36,12 +36,12 @@ class TileDecoder constructor(
 ) {
 
     private var destroyed = false
-    private val decoderPool = LinkedList<DecodeHelper>()
+    private val decoderPool = mutableListOf<DecodeHelper>()
 
     val imageInfo by lazy { rootDecodeHelper.imageInfo }
 
     init {
-        decoderPool.push(rootDecodeHelper)
+        decoderPool.add(rootDecodeHelper)
     }
 
     @WorkerThread
@@ -62,7 +62,7 @@ class TileDecoder constructor(
         }
 
         var bitmapRegionDecoder: DecodeHelper? = synchronized(decoderPool) {
-            decoderPool.poll()
+            if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
         }
         if (bitmapRegionDecoder == null) {
             bitmapRegionDecoder = rootDecodeHelper.copy()

@@ -19,10 +19,11 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.util.internal.format
+import com.github.panpf.zoomimage.util.format
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
 import kotlin.math.abs
@@ -91,19 +92,35 @@ class CreateTileDecoderException(
     val code: Int, val skipped: Boolean, message: String, val imageInfo: ImageInfo?
 ) : Exception(message)
 
+///**
+// * Returns a string consisting of sample size, number of tiles, and grid size
+// *
+// * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testToIntroString]
+// */
+//fun Map<Int, List<Tile>>.toIntroString(): String {
+//    return entries.joinToString(
+//        prefix = "[",
+//        postfix = "]",
+//        separator = ","
+//    ) { (sampleSize, tiles) ->
+//        val gridSize = tiles.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
+//        "${sampleSize}:${tiles.size}:${gridSize.toShortString()}"
+//    }
+//}
+
 /**
  * Returns a string consisting of sample size, number of tiles, and grid size
  *
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testToIntroString]
  */
-fun Map<Int, List<Tile>>.toIntroString(): String {
-    return entries.joinToString(
+fun List<SamplingTiles>.toIntroString(): String {
+    return joinToString(
         prefix = "[",
         postfix = "]",
         separator = ","
-    ) { (sampleSize, tiles) ->
-        val gridSize = tiles.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
-        "${sampleSize}:${tiles.size}:${gridSize.toShortString()}"
+    ) {
+        val gridSize = it.tiles.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
+        "${it.sampleSize}:${it.tiles.size}:${gridSize.toShortString()}"
     }
 }
 

@@ -27,9 +27,11 @@ import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.downloader
 import okhttp3.CacheControl
 import okhttp3.Response
+import okio.Path.Companion.toOkioPath
+import okio.Source
+import okio.source
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
 
 fun newPicassoImageSource(context: Context, uri: Uri?): ImageSource? {
     uri ?: return null
@@ -52,7 +54,7 @@ fun newPicassoImageSource(context: Context, uri: Uri?): ImageSource? {
 
         uri.scheme == "file" -> {
             val filePath = uri.path
-            filePath?.let { ImageSource.fromFile(File(filePath)) }
+            filePath?.let { ImageSource.fromFile(File(filePath).toOkioPath()) }
         }
 
         uri.scheme == "android.resource" -> {
@@ -71,7 +73,7 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
 
     override val key: String = uri.toString()
 
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
+    override fun openSource(): Result<Source> = kotlin.runCatching {
         val downloaderRequest = okhttp3.Request.Builder()
             .url(uri.toString())
             .cacheControl(CacheControl.FORCE_CACHE) // Do not download image, by default go here The image have been downloaded
@@ -102,7 +104,7 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
             body.close()
             throw IOException("Received response with 0 content-length header. uri='$uri'")
         }
-        body.source().inputStream()
+        body.source().inputStream().source()
     }
 
     override fun equals(other: Any?): Boolean {

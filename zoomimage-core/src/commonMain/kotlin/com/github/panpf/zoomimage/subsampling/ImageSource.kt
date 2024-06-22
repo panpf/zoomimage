@@ -17,10 +17,11 @@
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.annotation.WorkerThread
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
+import com.github.panpf.zoomimage.util.defaultFileSystem
+import okio.Buffer
+import okio.Path
+import okio.Path.Companion.toPath
+import okio.Source
 
 /**
  * Image source for subsampling.
@@ -38,15 +39,22 @@ interface ImageSource {
      * Open an input stream for the image.
      */
     @WorkerThread
-    fun openInputStream(): Result<InputStream>
+    fun openSource(): Result<Source>
 
     companion object {
 
         /**
-         * Create an image source from a file.
+         * Create an image source from a path.
          */
-        fun fromFile(file: File): FileImageSource {
-            return FileImageSource(file)
+        fun fromFile(path: Path): FileImageSource {
+            return FileImageSource(path)
+        }
+
+        /**
+         * Create an image source from a file path.
+         */
+        fun fromFile(path: String): FileImageSource {
+            return FileImageSource(path.toPath())
         }
 
         /**
@@ -62,14 +70,14 @@ class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
 
     override val key: String = byteArray.toString()
 
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
-        ByteArrayInputStream(byteArray)
+    override fun openSource(): Result<Source> = kotlin.runCatching {
+        Buffer().write(byteArray)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ByteArrayImageSource) return false
-        if (byteArray != other.byteArray) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
         return true
     }
 
@@ -84,28 +92,30 @@ class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
     }
 }
 
-class FileImageSource(val file: File) : ImageSource {
+class FileImageSource(val path: Path) : ImageSource {
 
-    override val key: String = file.path
+    override val key: String = path.toString()
 
-    override fun openInputStream(): Result<InputStream> = kotlin.runCatching {
-        FileInputStream(file)
+    override fun openSource(): Result<Source> = kotlin.runCatching {
+        defaultFileSystem().source(path)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is FileImageSource) return false
-        if (file != other.file) return false
+        if (path != other.path) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = file.hashCode()
+        var result = path.hashCode()
         result = 31 * result + key.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "FileImageSource('$file')"
+        return "FileImageSource('$path')"
     }
 }
+
+// TODO ComposeResourceImageSource
