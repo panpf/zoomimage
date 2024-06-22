@@ -3,8 +3,6 @@ package com.github.panpf.zoomimage.sample.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import com.github.panpf.zoomimage.sample.compose.ui.theme.DarkColors
-import com.github.panpf.zoomimage.sample.compose.ui.theme.LightColors
 
 @Composable
 fun AppTheme(

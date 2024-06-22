@@ -1,20 +1,23 @@
-package com.github.panpf.zoomimage.sample.ui.screen
+package com.github.panpf.zoomimage.sample.ui.examples.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsState
-import com.github.panpf.zoomimage.sample.MySettings
+import com.github.panpf.zoomimage.sample.settingsService
+import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
     val state = remember { ZoomImageOptionsState() }
+
     if (!LocalInspectionMode.current) {
-        val settingsService = MySettings
-        BindStateAndFlow(state.contentScaleName, settingsService.contentScaleName)
-        BindStateAndFlow(state.alignmentName, settingsService.alignmentName)
+        val settingsService = LocalContext.current.settingsService
+        BindStateAndFlow(state.contentScaleName, settingsService.contentScale)
+        BindStateAndFlow(state.alignmentName, settingsService.alignment)
 
         BindStateAndFlow(state.animateScale, settingsService.animateScale)
         BindStateAndFlow(state.rubberBandScale, settingsService.rubberBandScale)
@@ -45,15 +48,16 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
         BindStateAndFlow(state.scrollBarEnabled, settingsService.scrollBarEnabled)
         BindStateAndFlow(state.logLevel, settingsService.logLevel)
     }
+
     return state
 }
 
 @Composable
-private fun <T> BindStateAndFlow(state: MutableStateFlow<T>, other: MutableStateFlow<T>) {
-    LaunchedEffect(state, other) {
-        state.value = other.value
+private fun <T> BindStateAndFlow(state: MutableStateFlow<T>, mmkvData: SettingsStateFlow<T>) {
+    LaunchedEffect(state) {
+        state.value = mmkvData.value
         state.collect {
-            other.value = it
+            mmkvData.value = it
         }
     }
 }

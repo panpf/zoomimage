@@ -1,3 +1,5 @@
+package com.github.panpf.zoomimage.sample
+
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -28,18 +30,3 @@ fun main() = application {
         }
     }
 }
-
-
-// Kamel 始终加载原图，不支持子采样，所以无法使用
-//    val desktopConfig = remember {
-//        KamelConfig {
-//            takeFrom(KamelConfig.Default)
-//            // Available only on Desktop.
-//            resourcesFetcher()
-//            // Available only on Desktop.
-//            // An alternative svg decoder
-//            batikSvgDecoder()
-//        }
-//    }
-//    CompositionLocalProvider(LocalKamelConfig provides desktopConfig) {
-//    }

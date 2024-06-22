@@ -29,10 +29,10 @@ import com.github.panpf.zoomimage.compose.subsampling.fromResource
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageMinimap
-import com.github.panpf.zoomimage.sample.compose.widget.ZoomImageTool
-import com.github.panpf.zoomimage.sample.compose.widget.rememberMyDialogState
-import com.github.panpf.zoomimage.sample.ui.MySettings
+import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
+import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
+import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.MySettings
 import com.github.panpf.zoomimage.sample.ui.model.ImageResource
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.util.EventBus
