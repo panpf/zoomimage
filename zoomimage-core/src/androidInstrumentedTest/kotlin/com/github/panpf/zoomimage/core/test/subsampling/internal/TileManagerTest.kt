@@ -5,11 +5,9 @@ import com.github.panpf.zoomimage.core.test.internal.useApply
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
-import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.subsampling.fromAsset
-import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
@@ -504,8 +502,6 @@ class TileManagerTest {
         private val imageSource = ImageSource.fromAsset(context, assetName)
         val imageInfo = imageSource.decodeImageInfo().getOrThrow()
         private val tileBitmapCacheHelper = TileBitmapCacheHelper(logger, TileBitmapCacheSpec())
-        private val tileBitmapReuseHelper =
-            AndroidTileBitmapReuseHelper(logger, TileBitmapReuseSpec())
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
@@ -519,7 +515,6 @@ class TileManagerTest {
             tileDecoder = tileDecoder,
             tileBitmapConvertor = null,
             tileBitmapCacheHelper = tileBitmapCacheHelper,
-            tileBitmapReuseHelper = tileBitmapReuseHelper,
             imageSource = imageSource,
             imageInfo = imageInfo,
             preferredTileSize = preferredTileSize,

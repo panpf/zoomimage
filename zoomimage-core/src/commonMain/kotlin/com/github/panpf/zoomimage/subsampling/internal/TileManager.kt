@@ -54,7 +54,6 @@ class TileManager constructor(
     private val tileDecoder: TileDecoder,
     private val tileBitmapConvertor: TileBitmapConvertor?,
     private val tileBitmapCacheHelper: TileBitmapCacheHelper,
-    private val tileBitmapReuseHelper: TileBitmapReuseHelper?,
     private val imageSource: ImageSource,
     private val imageInfo: ImageInfo,
     private val contentSize: IntSizeCompat,
@@ -438,11 +437,7 @@ class TileManager constructor(
                         tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
                         logger.e("loadTile. failed, size is different. $tile. $tileBitmap. '${imageSource.key}'")
-                        if (tileBitmapReuseHelper != null) {
-                            tileBitmapReuseHelper.freeTileBitmap(tileBitmap, "loadTile:jobCanceled")
-                        } else {
-                            tileBitmap.recycle()
-                        }
+                        tileBitmap.recycle()
                         updateTileSnapshotList("loadTile:failed")
                     }
 
@@ -453,7 +448,6 @@ class TileManager constructor(
                             tileBitmap = tileBitmap,
                             imageUrl = imageSource.key,
                             imageInfo = imageInfo,
-                            disableReuseBitmap = tileBitmapReuseHelper?.spec?.disabled ?: true,
                         ) ?: tileBitmap
                         val convertedTileBitmap: TileBitmap =
                             tileBitmapConvertor?.convert(cacheTileBitmap) ?: cacheTileBitmap
@@ -469,11 +463,7 @@ class TileManager constructor(
                         }
                         tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
-                        if (tileBitmapReuseHelper != null) {
-                            tileBitmapReuseHelper.freeTileBitmap(tileBitmap, "loadTile:jobCanceled")
-                        } else {
-                            tileBitmap.recycle()
-                        }
+                        tileBitmap.recycle()
                         updateTileSnapshotList("loadTile:canceled")
                     }
                 }

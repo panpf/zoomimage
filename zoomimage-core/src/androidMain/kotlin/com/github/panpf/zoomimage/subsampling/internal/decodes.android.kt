@@ -22,9 +22,7 @@ import android.os.Build.VERSION_CODES
 import androidx.annotation.WorkerThread
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.Logger
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -134,8 +132,3 @@ internal fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
             || "image/webp".equals(mimeType, true)
             || ("image/heic".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
             || ("image/heif".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
-
-actual fun createTileBitmapReuseHelper(
-    logger: Logger,
-    tileBitmapReuseSpec: TileBitmapReuseSpec,
-): TileBitmapReuseHelper? = AndroidTileBitmapReuseHelper(logger, tileBitmapReuseSpec)

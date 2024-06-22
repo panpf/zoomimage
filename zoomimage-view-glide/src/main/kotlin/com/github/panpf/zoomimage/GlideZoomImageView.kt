@@ -24,7 +24,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.internalModel
 import com.bumptech.glide.load.engine.internalRequestOptions
 import com.bumptech.glide.request.SingleRequest
-import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
 import com.github.panpf.zoomimage.glide.newGlideImageSource
 
@@ -49,7 +48,6 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     init {
         val glide = Glide.get(context)
-        _subsamplingEngine?.tileBitmapPoolState?.value = GlideTileBitmapPool(glide)
         _subsamplingEngine?.tileBitmapCacheState?.value = GlideTileBitmapCache(glide)
     }
 

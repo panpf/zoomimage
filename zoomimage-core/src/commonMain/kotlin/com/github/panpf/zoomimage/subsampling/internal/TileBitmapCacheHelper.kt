@@ -45,13 +45,12 @@ class TileBitmapCacheHelper constructor(
         tileBitmap: TileBitmap,
         imageUrl: String,
         imageInfo: ImageInfo,
-        disableReuseBitmap: Boolean
     ): CacheTileBitmap? {
         val disabled = tileBitmapCacheSpec.disabled
         val tileMemoryCache = tileBitmapCacheSpec.tileBitmapCache
         if (disabled || tileMemoryCache == null) {
             return null
         }
-        return tileMemoryCache.put(key, tileBitmap, imageUrl, imageInfo, disableReuseBitmap)
+        return tileMemoryCache.put(key, tileBitmap, imageUrl, imageInfo, false)
     }
 }

@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+* change: Remove ignoreExifOrientation attribute
+* change: Remove disabledTileBitmapReuse and TileBitmapPool attributes
+* change: Non-Android platforms now use Skia to decode images
+
 ## v1.0.2
 
 * fix: Fix the bug that ZoomImageView crashes due to the TypedArray.close() method in API 30 and

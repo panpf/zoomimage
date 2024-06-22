@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+* change: 移除 ignoreExifOrientation 属性
+* change: 移除 disabledTileBitmapReuse 和 TileBitmapPool 属性
+* change: 非安卓平台现在使用 Skia 解码图片
+
 ## v1.0.2
 
 * fix: 修复 ZoomImageView 在 API 30 及以下版本因 TypedArray.close() 方法崩溃的

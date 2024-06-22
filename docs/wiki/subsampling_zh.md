@@ -20,7 +20,6 @@
 * [暂停加载图块](#暂停加载图块). 连续变换时暂停加载图块，提高性能
 * [不可见时停止加载图块](#停止加载图块). 监听 Lifecycle，在 stop 时停止加载图块并释放已加载的图块，提高性能
 * [内存缓存](#内存缓存). 避免重复解码，提高性能
-* [重用 Bitmap](#重用-bitmap). 避免重复创建 Bitmap，减少内存抖动，提高性能
 * [可访问属性](#可访问属性). 可以读取采样大小、图片信息、图块列表等信息
 
 ### 前置条件
@@ -252,56 +251,6 @@ ZoomImage(
 )
 ```
 
-### 重用 Bitmap
-
-> 仅支持 Android
-
-子采样功能支持重用 Bitmap，可以使用已经存在的 Bitmap 解码新的图块，这样可以减少创建 Bitmap，减少内存抖动，提高性能
-
-因为只有 Sketch 和 Glide 有 BitmapPool，所以只有集成了这两个图片加载库的组件无需任何额外的工作即可使用重用
-Bitmap 功能，其它组件需要先实现自己的 [TileBitmapPool] 然后设置 `tileBitmapPool` 属性才能使用重用
-Bitmap 功能
-
-示例：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-LaunchEffect(Unit) {
-    state.subsampling.tileBitmapPool = MyTileBitmapPool()
-}
-
-ZoomImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
-
-设置了 tileBitmapPool 属性后就开启了重用 Bitmap 功能，还可以在不修改 tileBitmapPool 属性的情况下通过
-`disabledTileBitmapReuse` 属性控制重用 Bitmap
-
-示例：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-LaunchEffect(Unit) {
-    // 禁止重用 Bitmap
-    state.subsampling.disabledTileBitmapReuse = true
-    // 允许重用 Bitmap
-    state.subsampling.disabledTileBitmapReuse = false
-}
-
-ZoomImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
-
 ### 可访问属性
 
 ```kotlin
@@ -336,8 +285,6 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
 [ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
-
-[TileBitmapPool]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapPool.kt
 
 [TileBitmapCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapCache.kt
 

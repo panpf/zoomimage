@@ -53,7 +53,6 @@ import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
 import kotlin.math.roundToInt
 
 
@@ -363,7 +362,6 @@ fun SketchZoomAsyncImage(
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        state.subsampling.tileBitmapPool = SketchTileBitmapPool(sketch, "SketchZoomAsyncImage")
         state.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
     }
 
@@ -409,7 +407,6 @@ private fun onPainterState(
         is PainterState.Success -> {
             subsamplingState.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            subsamplingState.disabledTileBitmapReuse = request.disallowReuseBitmap
             val imageSource = SketchImageSource(context, sketch, request.uriString)
             subsamplingState.setImageSource(imageSource)
         }

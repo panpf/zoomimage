@@ -5,21 +5,14 @@ import com.github.panpf.zoomimage.SkiaCanvas
 import com.github.panpf.zoomimage.SkiaImage
 import com.github.panpf.zoomimage.SkiaRect
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.toSkiaRect
 import kotlin.math.ceil
 
 internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper? {
     return SkiaDecodeHelper(imageSource)
 }
-
-actual fun createTileBitmapReuseHelper(
-    logger: Logger,
-    tileBitmapReuseSpec: TileBitmapReuseSpec,
-): TileBitmapReuseHelper? = null
 
 internal fun SkiaImage.decodeRegion(srcRect: IntRectCompat, sampleSize: Int): SkiaBitmap {
     val bitmapSize =

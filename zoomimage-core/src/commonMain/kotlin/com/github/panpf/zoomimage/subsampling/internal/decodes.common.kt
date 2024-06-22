@@ -17,13 +17,5 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
-import com.github.panpf.zoomimage.util.Logger
 
 internal expect fun createDecodeHelper(imageSource: ImageSource): DecodeHelper?
-
-// TODO delete
-expect fun createTileBitmapReuseHelper(
-    logger: Logger,
-    tileBitmapReuseSpec: TileBitmapReuseSpec,
-): TileBitmapReuseHelper?

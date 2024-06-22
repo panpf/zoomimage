@@ -22,8 +22,6 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.internal.safeConfig
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -113,7 +111,6 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) {
     fun applyToTileBitmap(
         tileBitmap: TileBitmap,
         reverse: Boolean = false,
-        bitmapReuseHelper: TileBitmapReuseHelper? = null
     ): TileBitmap {
         val isRotated = abs(rotationDegrees % 360) != 0
         if (!isFlipped && !isRotated) {
@@ -121,9 +118,6 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) {
         }
 
         val bitmap = (tileBitmap as AndroidTileBitmap).bitmap!!
-        val androidBitmapReuseHelper =
-            if (bitmapReuseHelper != null && bitmapReuseHelper is AndroidTileBitmapReuseHelper)
-                bitmapReuseHelper else null
 
         val matrix = Matrix().apply {
             if (!reverse) {
@@ -149,9 +143,7 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) {
         val config = bitmap.safeConfig
         val newWidth = newRect.width().toInt()
         val newHeight = newRect.height().toInt()
-        val outBitmap = androidBitmapReuseHelper
-            ?.getOrCreate(newWidth, newHeight, config, "applyFlipAndRotation")
-            ?: Bitmap.createBitmap(newWidth, newHeight, config)
+        val outBitmap = Bitmap.createBitmap(newWidth, newHeight, config)
 
         val canvas = Canvas(outBitmap)
         val paint = Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG)

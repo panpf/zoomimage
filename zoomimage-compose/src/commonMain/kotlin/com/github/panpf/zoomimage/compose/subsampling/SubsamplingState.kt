@@ -43,8 +43,6 @@ import com.github.panpf.zoomimage.subsampling.StoppedController
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
-import com.github.panpf.zoomimage.subsampling.TileBitmapPool
-import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
@@ -52,7 +50,6 @@ import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformType
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
-import com.github.panpf.zoomimage.subsampling.internal.createTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -102,10 +99,7 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
     private var tileDecoder: TileDecoder? = null
     private var lastResetTileDecoderJob: Job? = null
     private val tileBitmapCacheSpec = TileBitmapCacheSpec()
-    private val tileBitmapReuseSpec = TileBitmapReuseSpec()
     private val tileBitmapCacheHelper = TileBitmapCacheHelper(this.logger, tileBitmapCacheSpec)
-    private val tileBitmapReuseHelper =
-        createTileBitmapReuseHelper(this.logger, tileBitmapReuseSpec)
     private val tileBitmapConvertor = createTileBitmapConvertor()
     private val refreshTilesFlow = MutableSharedFlow<String>()
     private var preferredTileSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -126,16 +120,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
      * If true, disabled TileBitmap memory cache
      */
     var disabledTileBitmapCache: Boolean by mutableStateOf(false)
-
-    /**
-     * Set up a shared TileBitmap pool for the tile
-     */
-    var tileBitmapPool: TileBitmapPool? by mutableStateOf(null)
-
-    /**
-     * If true, TileBitmap reuse is disabled
-     */
-    var disabledTileBitmapReuse: Boolean by mutableStateOf(false)
 
     /**
      * The animation spec for tile animation
@@ -286,16 +270,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { tileBitmapPool }.collect {
-                tileBitmapReuseSpec.tileBitmapPool = it
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { disabledTileBitmapReuse }.collect {
-                tileBitmapReuseSpec.disabled = it
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main.immediate) {
             snapshotFlow { pausedContinuousTransformType }.collect {
                 tileManager?.pausedContinuousTransformType = it
             }
@@ -429,7 +403,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
                     logger = logger,
                     imageSource = imageSource,
                     thumbnailSize = contentSize.toCompat(),
-                    tileBitmapReuseHelper = tileBitmapReuseHelper,
                 )
             }
             val newTileDecoder = result.getOrNull()
@@ -486,7 +459,6 @@ class SubsamplingState constructor(logger: Logger, private val zoomableState: Zo
             contentSize = contentSize.toCompat(),
             preferredTileSize = preferredTileSize.toCompat(),
             tileBitmapCacheHelper = tileBitmapCacheHelper,
-            tileBitmapReuseHelper = tileBitmapReuseHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
                 backgroundTiles = manager.backgroundTiles

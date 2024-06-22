@@ -32,7 +32,6 @@ import com.github.panpf.sketch.util.findLeafSketchDrawable
 import com.github.panpf.zoomimage.internal.AbsStateZoomImageView
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 /**
@@ -55,8 +54,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
 ) : AbsStateZoomImageView(context, attrs, defStyle) {
 
     init {
-        _subsamplingEngine?.tileBitmapPoolState?.value =
-            SketchTileBitmapPool(context.sketch, "SketchZoomImageView")
         _subsamplingEngine?.tileBitmapCacheState?.value =
             SketchTileBitmapCache(context.sketch, "SketchZoomImageView")
     }
@@ -91,8 +88,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
             }
             _subsamplingEngine?.disabledTileBitmapCacheState?.value =
                 isDisableMemoryCache(result.drawable)
-            _subsamplingEngine?.disabledTileBitmapReuseState?.value =
-                isDisallowReuseBitmap(result.drawable)
             _subsamplingEngine?.setImageSource(newImageSource(result.drawable))
         }
     }
@@ -105,16 +100,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
                 && displayResult is DisplayResult.Success
                 && displayResult.requestKey == requestKey
                 && displayResult.request.memoryCachePolicy != CachePolicy.ENABLED
-    }
-
-    private fun isDisallowReuseBitmap(drawable: Drawable?): Boolean {
-        val sketchDrawable = drawable?.findLeafSketchDrawable()
-        val requestKey = sketchDrawable?.requestKey
-        val displayResult = SketchUtils.getResult(this)
-        return displayResult != null
-                && displayResult is DisplayResult.Success
-                && displayResult.requestKey == requestKey
-                && displayResult.request.disallowReuseBitmap
     }
 
     private fun newImageSource(drawable: Drawable?): ImageSource? {

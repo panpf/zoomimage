@@ -49,7 +49,6 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
-import com.github.panpf.zoomimage.glide.GlideTileBitmapPool
 import com.github.panpf.zoomimage.glide.newGlideImageSource
 
 
@@ -148,7 +147,6 @@ fun GlideZoomAsyncImage(
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         val glide = Glide.get(context)
-        state.subsampling.tileBitmapPool = GlideTileBitmapPool(glide)
         state.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
     }
 

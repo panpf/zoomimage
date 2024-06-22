@@ -2,10 +2,8 @@ package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.TileBitmapReuseSpec
 import com.github.panpf.zoomimage.subsampling.applyToImageInfo
 import com.github.panpf.zoomimage.subsampling.fromAsset
-import com.github.panpf.zoomimage.subsampling.internal.AndroidTileBitmapReuseHelper
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.test.decodeExifOrientation
@@ -22,7 +20,6 @@ class SubsamplingUtilsTest2 {
     fun testDecodeAndCreateTileDecoder() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val logger = Logger("MyTest")
-        val tileBitmapReuseHelper = AndroidTileBitmapReuseHelper(logger, TileBitmapReuseSpec())
 
         val imageSource = ImageSource.fromAsset(context, "sample_exif_girl_rotate_90.jpg")
         val exifOrientation =
@@ -34,7 +31,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = thumbnailSize,
-            tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).getOrThrow().apply {
             Assert.assertEquals(correctOrientationImageInfo, this.imageInfo)
         }
@@ -44,7 +40,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = thumbnailSize2,
-            tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).getOrThrow().apply {
             Assert.assertEquals(imageInfo, this.imageInfo)
         }
@@ -54,7 +49,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = errorImageSource,
             thumbnailSize = thumbnailSize,
-            tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             Assert.assertEquals(-1, this.code)
             Assert.assertEquals(false, this.skipped)
@@ -67,7 +61,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = gifImageSource,
             thumbnailSize = thumbnailSize,
-            tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             Assert.assertEquals(-3, this.code)
             Assert.assertEquals(true, this.skipped)
@@ -83,7 +76,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = errorThumbnailSize,
-            tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             Assert.assertEquals(-4, this.code)
             Assert.assertEquals(true, this.skipped)
@@ -104,7 +96,6 @@ class SubsamplingUtilsTest2 {
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = errorThumbnailSize2,
-            tileBitmapReuseHelper = tileBitmapReuseHelper,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             Assert.assertEquals(-5, this.code)
             Assert.assertEquals(false, this.skipped)

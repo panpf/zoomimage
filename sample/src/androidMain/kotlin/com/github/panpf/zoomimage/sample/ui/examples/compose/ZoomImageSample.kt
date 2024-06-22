@@ -21,7 +21,6 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapPool
 import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable
@@ -31,7 +30,6 @@ fun ZoomImageSample(sketchImageUri: String) {
     ) { contentScale, alignment, state, scrollBar ->
         val context = LocalContext.current
         LaunchedEffect(Unit) {
-            state.subsampling.tileBitmapPool = SketchTileBitmapPool(context.sketch, "ZoomImage")
             state.subsampling.tileBitmapCache = SketchTileBitmapCache(context.sketch, "ZoomImage")
         }
 

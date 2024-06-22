@@ -27,8 +27,6 @@ so that it can display a clear picture when zooming without crashing the app
 * [Stop load tiles](#stop-load-tiles). Listen to Lifecycle, stop loading tiles and release loaded
   tiles at stop to improve performance
 * [Memory cache](#memory-cache). Avoid repeated decoding and improve performance
-* [Reuse Bitmap](#reuse-bitmap). Avoid repeated creation of Bitmap, reduce memory jitter, and
-  improve performance
 * [Public Properties](#public-properties). Can read sampling size, picture
   information, tile list and other information
 
@@ -282,61 +280,6 @@ ZoomImage(
 )
 ```
 
-### Reuse Bitmap
-
-> Only Android is supported
-
-The subsampling feature supports the reuse of Bitmaps, and new fragments can be decoded using
-existing Bitmaps, which reduces the creation of Bitmaps, reduces memory jitter, and improves
-performance
-
-Because only Sketch and Glide have BitmapPool, only components that integrate these two image
-loading libraries can be reused without any additional work
-Bitmap functionality, other components need to implement their own [TileBitmapPool] and then set the
-`tileBitmapPool` property to use memory reuse
-Bitmap functionality
-
-example：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-LaunchEffect(Unit) {
-    state.subsampling.tileBitmapPool = MyTileBitmapPool()
-}
-
-ZoomImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
-
-After setting the tileBitmapPool property, the memory reuse Bitmap function is turned on, and it can
-also be passed without modifying the tileBitmapPool property
-The `disabledTileBitmapReuse` property controls the reuse of Bitmap
-
-example：
-
-```kotlin
-val state: ZoomState by rememberZoomState()
-
-LaunchEffect(Unit) {
-    // Disabled reuse of Bitmaps
-    state.subsampling.disabledTileBitmapReuse = true
-    // Allows reuse of Bitmap
-    state.subsampling.disabledTileBitmapReuse = false
-}
-
-ZoomImage(
-    imageUri = "http://sample.com/sample.jpg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    state = state,
-)
-```
-
 ### Public Properties
 
 ```kotlin
@@ -375,8 +318,6 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
 [ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
-
-[TileBitmapPool]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapPool.kt
 
 [TileBitmapCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapCache.kt
 

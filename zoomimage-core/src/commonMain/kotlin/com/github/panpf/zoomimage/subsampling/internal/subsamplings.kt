@@ -38,7 +38,6 @@ fun decodeAndCreateTileDecoder(
     logger: Logger,
     imageSource: ImageSource,
     thumbnailSize: IntSizeCompat,
-    tileBitmapReuseHelper: TileBitmapReuseHelper?,
 ): Result<TileDecoder> {
     val decodeHelper = createDecodeHelper(imageSource)
     if (decodeHelper == null) {
