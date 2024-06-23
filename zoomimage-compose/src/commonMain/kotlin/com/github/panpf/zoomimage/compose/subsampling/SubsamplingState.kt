@@ -38,7 +38,6 @@ import com.github.panpf.zoomimage.compose.internal.toHexString
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
-import com.github.panpf.zoomimage.compose.subsampling.internal.createTileBitmapConvertor
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -48,6 +47,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
+import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformType
@@ -549,3 +549,5 @@ class SubsamplingState constructor(
         cleanTileDecoder("destroy:$caller")
     }
 }
+
+expect fun createTileBitmapConvertor(): TileBitmapConvertor?

@@ -16,8 +16,8 @@
 
 package com.github.panpf.zoomimage.view.internal
 
-import java.math.BigDecimal
-import java.math.RoundingMode
+import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -25,11 +25,12 @@ internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
         this
     } else {
-        BigDecimal(toDouble()).setScale(newScale, RoundingMode.HALF_UP).toFloat()
+        val multiplier = 10.0.pow(newScale)
+        (round(this * multiplier) / multiplier).toFloat()
     }
 }
 
-internal fun Any.toHexString(): String = Integer.toHexString(this.hashCode())
+internal fun Any.toHexString(): String = this.hashCode().toString(16)
 
 internal fun Float.isSafe(): Boolean {
     return !isNaN() && !isInfinite()

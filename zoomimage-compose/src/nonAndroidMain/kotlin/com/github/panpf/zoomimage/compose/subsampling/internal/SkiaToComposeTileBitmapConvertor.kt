@@ -20,9 +20,6 @@ import androidx.compose.ui.graphics.asComposeImageBitmap
 import com.github.panpf.zoomimage.subsampling.SkiaTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class SkiaToComposeTileBitmapConvertor : TileBitmapConvertor {
 

@@ -84,6 +84,7 @@ public typealias RequestBuilderTransform<T> = (RequestBuilder<T>) -> RequestBuil
 // to RequestBuilder (though thumbnail() may make that a challenge).
 @ExperimentalGlideComposeApi
 @Composable
+// TODO update glide v1.0.0-beta01
 public fun GlideImage(
   model: Any?,
   contentDescription: String?,
