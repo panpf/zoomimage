@@ -5,7 +5,7 @@ plugins {
     id("com.android.library")
 }
 
-addAllMultiplatformTargets(MultiplatformTargets.Android, MultiplatformTargets.Desktop)
+addAllMultiplatformTargets()
 
 androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose")
 
