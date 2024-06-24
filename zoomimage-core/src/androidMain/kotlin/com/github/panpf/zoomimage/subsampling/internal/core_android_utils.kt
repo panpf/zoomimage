@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.subsampling.internal
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Looper
+import com.github.panpf.zoomimage.util.toHexString
 
 
 internal fun requiredMainThread() {
@@ -35,8 +36,7 @@ internal fun requiredWorkThread() {
 
 internal fun Bitmap.toShortString(): String = "(${width}x${height},$config)"
 
-internal fun Bitmap.toHexShortString(): String =
-    "(${width}x${height},$config,@${Integer.toHexString(hashCode())})"
+internal fun Bitmap.toLogString(): String = "Bitmap@${toHexString()}(${width}x${height},$config)"
 
 @Suppress("USELESS_ELVIS")
 internal val Bitmap.safeConfig: Bitmap.Config

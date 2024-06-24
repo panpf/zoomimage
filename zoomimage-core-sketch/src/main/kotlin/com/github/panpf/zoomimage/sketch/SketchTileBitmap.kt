@@ -18,13 +18,15 @@ package com.github.panpf.zoomimage.sketch
 
 import android.graphics.Bitmap
 import com.github.panpf.sketch.cache.MemoryCache
-import com.github.panpf.zoomimage.sketch.internal.toHexString
+import com.github.panpf.zoomimage.sketch.internal.toLogString
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 
 class SketchTileBitmap constructor(
     override val key: String,
     private val cacheValue: MemoryCache.Value,
     private val caller: String,
+    override val bitmapFrom: BitmapFrom,
 ) : AndroidCacheTileBitmap {
 
     override val bitmap: Bitmap?
@@ -40,7 +42,7 @@ class SketchTileBitmap constructor(
         get() = bitmap?.isRecycled ?: true
 
     private val toString =
-        "SketchTileBitmap(size=${width}x${height},config=${bitmap!!.config},@${bitmap!!.toHexString()})"
+        "SketchTileBitmap(bitmap=${bitmap!!.toLogString()}, key=$key, bitmapFrom=$bitmapFrom)"
 
     override fun recycle() {
         bitmap?.recycle()

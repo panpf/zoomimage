@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.picasso
 
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
@@ -28,7 +29,7 @@ class PicassoTileBitmapCache(private val picasso: Picasso) : TileBitmapCache {
 
     override fun get(key: String): CacheTileBitmap? {
         val bitmap = picasso.cache[key] ?: return null
-        return PicassoTileBitmap(key, bitmap)
+        return PicassoTileBitmap(key, bitmap, BitmapFrom.MEMORY_CACHE)
     }
 
     override fun put(
@@ -40,6 +41,6 @@ class PicassoTileBitmapCache(private val picasso: Picasso) : TileBitmapCache {
     ): CacheTileBitmap? {
         val bitmap = (tileBitmap as AndroidTileBitmap).bitmap ?: return null
         picasso.cache.set(key, bitmap)
-        return PicassoTileBitmap(key, bitmap)
+        return PicassoTileBitmap(key, bitmap, tileBitmap.bitmapFrom)
     }
 }

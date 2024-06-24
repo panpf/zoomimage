@@ -9,6 +9,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
@@ -46,7 +47,7 @@ class BitmapFactoryDecodeHelper(
             .applyToRect(region, imageInfo.size, reverse = true)
         val bitmap = decoder.decodeRegion(originalRegion.toAndroidRect(), options)
             ?: throw Exception("Invalid image. region decode return null")
-        val tileBitmap = AndroidTileBitmap(bitmap)
+        val tileBitmap = AndroidTileBitmap(bitmap, BitmapFrom.LOCAL)
         val correctedImage = exifOrientationHelper.applyToTileBitmap(tileBitmap)
         return correctedImage
     }

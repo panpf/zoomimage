@@ -9,7 +9,7 @@ import com.github.panpf.zoomimage.subsampling.internal.isAndSupportHardware
 import com.github.panpf.zoomimage.subsampling.internal.requiredMainThread
 import com.github.panpf.zoomimage.subsampling.internal.requiredWorkThread
 import com.github.panpf.zoomimage.subsampling.internal.safeConfig
-import com.github.panpf.zoomimage.subsampling.internal.toHexShortString
+import com.github.panpf.zoomimage.subsampling.internal.toLogString
 import com.github.panpf.zoomimage.subsampling.internal.toShortString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -72,14 +72,14 @@ class AndroidCorePlatformUtils {
         Bitmap.createBitmap(110, 210, Bitmap.Config.ARGB_8888).apply {
             Assert.assertEquals(
                 "(110x210,ARGB_8888,@${Integer.toHexString(this.hashCode())})",
-                this.toHexShortString()
+                this.toLogString()
             )
         }
 
         Bitmap.createBitmap(210, 110, Bitmap.Config.RGB_565).apply {
             Assert.assertEquals(
                 "(210x110,RGB_565,@${Integer.toHexString(this.hashCode())})",
-                this.toHexShortString()
+                this.toLogString()
             )
         }
     }

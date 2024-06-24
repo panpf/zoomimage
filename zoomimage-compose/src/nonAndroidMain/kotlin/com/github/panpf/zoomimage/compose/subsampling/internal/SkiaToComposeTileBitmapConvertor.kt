@@ -28,7 +28,8 @@ class SkiaToComposeTileBitmapConvertor : TileBitmapConvertor {
         val imageBitmap = desktopTileBitmap.bitmap.asComposeImageBitmap()
         return SkiaComposeTileBitmap(
             imageBitmap = imageBitmap,
-            bitmapByteCount = tileBitmap.byteCount
+            bitmapByteCount = tileBitmap.byteCount,
+            bitmapFrom = tileBitmap.bitmapFrom
         )
     }
 }

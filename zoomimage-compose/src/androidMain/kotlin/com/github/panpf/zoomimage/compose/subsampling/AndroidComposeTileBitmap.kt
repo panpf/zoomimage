@@ -20,10 +20,12 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 
 class AndroidComposeTileBitmap constructor(
     private val androidTileBitmap: AndroidTileBitmap,
+    override val bitmapFrom: BitmapFrom
 ) : ComposeTileBitmap {
 
     override val imageBitmap: ImageBitmap = androidTileBitmap.bitmap!!.asImageBitmap()
@@ -45,12 +47,13 @@ class AndroidComposeTileBitmap constructor(
     }
 
     override fun toString(): String {
-        return "AndroidComposeTileBitmap($androidTileBitmap)"
+        return "AndroidComposeTileBitmap(bitmap=$androidTileBitmap, bitmapFrom=$bitmapFrom)"
     }
 }
 
 class AndroidCacheComposeTileBitmap constructor(
     private val androidTileBitmap: AndroidCacheTileBitmap,
+    override val bitmapFrom: BitmapFrom
 ) : ComposeTileBitmap, CacheTileBitmap {
 
     override val imageBitmap: ImageBitmap = androidTileBitmap.bitmap!!.asImageBitmap()
@@ -79,6 +82,6 @@ class AndroidCacheComposeTileBitmap constructor(
     }
 
     override fun toString(): String {
-        return "AndroidCacheComposeTileBitmap($androidTileBitmap)"
+        return "AndroidCacheComposeTileBitmap(bitmap=$androidTileBitmap, bitmapFrom=$bitmapFrom)"
     }
 }

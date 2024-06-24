@@ -21,6 +21,7 @@ import com.github.panpf.sketch.cache.CountBitmap
 import com.github.panpf.sketch.cache.MemoryCache
 import com.github.panpf.sketch.decode.ImageInfo
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
@@ -32,7 +33,12 @@ class SketchTileBitmapCache constructor(
 
     override fun get(key: String): CacheTileBitmap? {
         val cache = sketch.memoryCache[key] ?: return null
-        return SketchTileBitmap(key = key, cacheValue = cache, caller = caller)
+        return SketchTileBitmap(
+            key = key,
+            cacheValue = cache,
+            caller = caller,
+            BitmapFrom.MEMORY_CACHE
+        )
     }
 
     override fun put(
@@ -67,6 +73,6 @@ class SketchTileBitmapCache constructor(
         if (!sketch.memoryCache.put(key, newCacheValue)) {
             return null
         }
-        return SketchTileBitmap(key, newCacheValue, caller)
+        return SketchTileBitmap(key, newCacheValue, caller, tileBitmap.bitmapFrom)
     }
 }

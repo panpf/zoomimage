@@ -17,10 +17,10 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.util.toHexString
+import com.github.panpf.zoomimage.subsampling.internal.toLogString
 
-fun AndroidTileBitmap(bitmap: Bitmap): AndroidTileBitmap {
-    return AndroidTileBitmapImpl(bitmap)
+fun AndroidTileBitmap(bitmap: Bitmap, bitmapFrom: BitmapFrom): AndroidTileBitmap {
+    return AndroidTileBitmapImpl(bitmap, bitmapFrom)
 }
 
 interface AndroidTileBitmap : TileBitmap {
@@ -29,7 +29,10 @@ interface AndroidTileBitmap : TileBitmap {
 
 interface AndroidCacheTileBitmap : AndroidTileBitmap, CacheTileBitmap
 
-private class AndroidTileBitmapImpl(override val bitmap: Bitmap) : AndroidTileBitmap {
+private class AndroidTileBitmapImpl(
+    override val bitmap: Bitmap,
+    override val bitmapFrom: BitmapFrom
+) : AndroidTileBitmap {
 
     override val width: Int = bitmap.width
 
@@ -45,6 +48,6 @@ private class AndroidTileBitmapImpl(override val bitmap: Bitmap) : AndroidTileBi
     }
 
     override fun toString(): String {
-        return "AndroidTileBitmap(size=${width}x${height},config=${bitmap.config},@${bitmap.toHexString()})"
+        return "AndroidTileBitmap(bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
     }
 }

@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.internal.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -109,6 +110,9 @@ class TileTest {
 
         override val isRecycled: Boolean
             get() = true
+
+        override val bitmapFrom: BitmapFrom
+            get() = BitmapFrom.LOCAL
 
         override fun recycle() {}
 

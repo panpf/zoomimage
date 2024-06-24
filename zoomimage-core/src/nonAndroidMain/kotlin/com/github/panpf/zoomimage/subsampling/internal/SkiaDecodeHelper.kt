@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.SkiaImage
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SkiaTileBitmap
@@ -36,7 +37,7 @@ class SkiaDecodeHelper(
     override fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap {
         val skiaImage = getOrCreateDecoder()
         val skiaBitmap = skiaImage.decodeRegion(region, sampleSize)
-        return SkiaTileBitmap(skiaBitmap)
+        return SkiaTileBitmap(skiaBitmap, BitmapFrom.LOCAL)
     }
 
     private fun getOrCreateDecoder(): SkiaImage {

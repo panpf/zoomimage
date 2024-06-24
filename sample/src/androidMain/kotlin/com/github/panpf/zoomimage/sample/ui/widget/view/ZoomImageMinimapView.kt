@@ -35,7 +35,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.subsampling.TileState
+import com.github.panpf.zoomimage.subsampling.tileColor
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
@@ -96,15 +96,11 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                         ceil((tileSrcRect.bottom / heightTargetScale) - strokeHalfWidth).toInt()
                     )
                 }
-                val bitmapNoRecycled = tileSnapshot.tileBitmap?.isRecycled == false
-                val boundsColor = when {
-                    !load -> Color.parseColor("#00BFFF")
-                    bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.GREEN
-                    tileSnapshot.state == TileState.STATE_LOADING -> Color.YELLOW
-                    tileSnapshot.state == TileState.STATE_NONE -> Color.GRAY
-                    else -> Color.RED
-                    // TODO Distinguish between dataFrom cache or local
-                }
+                val boundsColor = tileColor(
+                    state = tileSnapshot.state,
+                    bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom,
+                    withinLoadArea = load
+                )
                 tileBoundsPaint.color = boundsColor
                 canvas.drawRect(tileDrawRect, tileBoundsPaint)
             }

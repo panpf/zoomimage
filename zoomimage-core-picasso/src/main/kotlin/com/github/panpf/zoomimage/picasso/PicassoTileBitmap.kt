@@ -17,12 +17,14 @@
 package com.github.panpf.zoomimage.picasso
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.picasso.internal.toHexString
+import com.github.panpf.zoomimage.picasso.internal.toLogString
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 
 class PicassoTileBitmap(
     override val key: String,
-    private val cacheValue: Bitmap
+    private val cacheValue: Bitmap,
+    override val bitmapFrom: BitmapFrom
 ) : AndroidCacheTileBitmap {
 
     override val bitmap: Bitmap
@@ -44,6 +46,6 @@ class PicassoTileBitmap(
     override fun setIsDisplayed(displayed: Boolean) {}
 
     override fun toString(): String {
-        return "PicassoTileBitmap(size=${width}x${height},config=${bitmap.config},@${bitmap.toHexString()})"
+        return "PicassoTileBitmap(bitmap=${bitmap.toLogString()}, key=$key, bitmapFrom=$bitmapFrom)"
     }
 }

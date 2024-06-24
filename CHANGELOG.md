@@ -13,6 +13,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: ImageSource.fromFile(File) is now a JVM platform-specific extension function
 * remove: Remove the showThreadName parameter of Logger
 * new: New ImageSource.fromKotlinResource() function on ios platform
+* new: TileBitmap adds bitmapFrom attribute
 
 ## v1.0.2
 

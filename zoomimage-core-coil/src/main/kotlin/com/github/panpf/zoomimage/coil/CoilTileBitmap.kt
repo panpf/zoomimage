@@ -18,12 +18,14 @@ package com.github.panpf.zoomimage.coil
 
 import android.graphics.Bitmap
 import coil.memory.MemoryCache
-import com.github.panpf.zoomimage.coil.internal.toHexString
+import com.github.panpf.zoomimage.coil.internal.toLogString
 import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 
 class CoilTileBitmap(
     override val key: String,
-    private val cacheValue: MemoryCache.Value
+    private val cacheValue: MemoryCache.Value,
+    override val bitmapFrom: BitmapFrom,
 ) : AndroidCacheTileBitmap {
 
     override val bitmap: Bitmap
@@ -45,6 +47,6 @@ class CoilTileBitmap(
     override fun setIsDisplayed(displayed: Boolean) {}
 
     override fun toString(): String {
-        return "CoilTileBitmap(size=${width}x${height},config=${bitmap.config},@${bitmap.toHexString()})"
+        return "CoilTileBitmap(bitmap=${bitmap.toLogString()}, key=$key, bitmapFrom=$bitmapFrom)"
     }
 }

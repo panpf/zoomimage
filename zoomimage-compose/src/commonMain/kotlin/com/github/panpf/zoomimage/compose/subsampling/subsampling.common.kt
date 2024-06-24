@@ -37,7 +37,7 @@ import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.subsampling.TileState
+import com.github.panpf.zoomimage.subsampling.tileColor
 import kotlin.math.round
 import kotlin.math.roundToInt
 
@@ -198,14 +198,20 @@ internal class SubsamplingDrawTilesNode(
             bottom = round(tileSnapshot.srcRect.bottom / heightScale)
         )
 
-        val bitmapNoRecycled = tileSnapshot.tileBitmap?.isRecycled == false
-        val boundsColor = when {
-            bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.Green
-            tileSnapshot.state == TileState.STATE_LOADING -> Color.Yellow
-            tileSnapshot.state == TileState.STATE_NONE -> Color.Gray
-            else -> Color.Red
-        }
-        boundsPaint.color = boundsColor
+
+        val boundsColor = tileColor(
+            state = tileSnapshot.state,
+            bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom,
+            withinLoadArea = null
+        )
+//        val bitmapNoRecycled = tileSnapshot.tileBitmap?.isRecycled == false
+//        val boundsColor = when {
+//            bitmapNoRecycled && tileSnapshot.state == TileState.STATE_LOADED -> Color.Green
+//            tileSnapshot.state == TileState.STATE_LOADING -> Color.Yellow
+//            tileSnapshot.state == TileState.STATE_NONE -> Color.Gray
+//            else -> Color.Red
+//        }
+        boundsPaint.color = Color(boundsColor)
 
         canvas.drawRect(rect = tileDrawRect, paint = boundsPaint)
     }

@@ -22,6 +22,7 @@ import com.bumptech.glide.load.engine.GlideEngine
 import com.bumptech.glide.load.engine.createGlideEngine
 import com.bumptech.glide.load.engine.newEngineKey
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
@@ -37,7 +38,7 @@ class GlideTileBitmapCache(private val glide: Glide) : TileBitmapCache {
     override fun get(key: String): CacheTileBitmap? {
         val engineKey = newEngineKey(key)
         val resource = glideEngine?.loadFromMemory(key = engineKey, isMemoryCacheable = true)
-        return resource?.let { GlideTileBitmap(key, it) }
+        return resource?.let { GlideTileBitmap(key, it, BitmapFrom.MEMORY_CACHE) }
     }
 
     @Suppress("INACCESSIBLE_TYPE")
@@ -51,6 +52,6 @@ class GlideTileBitmapCache(private val glide: Glide) : TileBitmapCache {
         val bitmap = (tileBitmap as AndroidTileBitmap).bitmap ?: return null
         val engineKey = newEngineKey(key)
         val resource = glideEngine?.put(bitmap, engineKey) ?: return null
-        return GlideTileBitmap(key, EngineResourceWrapper(resource))
+        return GlideTileBitmap(key, EngineResourceWrapper(resource), tileBitmap.bitmapFrom)
     }
 }

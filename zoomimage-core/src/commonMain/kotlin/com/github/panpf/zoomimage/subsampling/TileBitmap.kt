@@ -25,7 +25,12 @@ interface TileBitmap {
     val byteCount: Int  // TODO Long
     fun recycle()
     val isRecycled: Boolean
-    // TODO val bitmapFrom: Local、Memory_cache
+    val bitmapFrom: BitmapFrom
+}
+
+enum class BitmapFrom {
+    LOCAL,
+    MEMORY_CACHE
 }
 
 /**

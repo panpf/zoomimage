@@ -28,9 +28,9 @@ class AndroidToComposeTileBitmapConvertor : TileBitmapConvertor {
     override suspend fun convert(tileBitmap: TileBitmap): TileBitmap {
         val androidTileBitmap = tileBitmap as AndroidTileBitmap
         return if (androidTileBitmap is AndroidCacheTileBitmap) {
-            AndroidCacheComposeTileBitmap(androidTileBitmap)
+            AndroidCacheComposeTileBitmap(androidTileBitmap, tileBitmap.bitmapFrom)
         } else {
-            AndroidComposeTileBitmap(androidTileBitmap)
+            AndroidComposeTileBitmap(androidTileBitmap, tileBitmap.bitmapFrom)
         }
     }
 }

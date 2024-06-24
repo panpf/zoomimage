@@ -130,6 +130,7 @@ fun ZoomImage(
         // a drawing failure will occur, resulting in the loss of all component content.
         // Therefore, if the subsampling tile is drawn on a separate component, when a problem occurs, the user will only see that the problem area is unclear, rather than the entire component content being lost.
         // issue: https://github.com/JetBrains/compose-multiplatform/issues/3904
+        // TODO fixed in 1.6.0-dev1419
         Box(
             Modifier
                 .matchParentSize()
