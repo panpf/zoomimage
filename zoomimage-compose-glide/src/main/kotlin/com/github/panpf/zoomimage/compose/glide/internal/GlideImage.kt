@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
+import com.github.panpf.zoomimage.compose.glide.internal.RequestState.Success
 
 /** Mutates and returns the given [RequestBuilder] to apply relevant options. */
 public typealias RequestBuilderTransform<T> = (RequestBuilder<T>) -> RequestBuilder<T>
@@ -84,7 +85,6 @@ public typealias RequestBuilderTransform<T> = (RequestBuilder<T>) -> RequestBuil
 // to RequestBuilder (though thumbnail() may make that a challenge).
 @ExperimentalGlideComposeApi
 @Composable
-// TODO update glide v1.0.0-beta01
 public fun GlideImage(
   model: Any?,
   contentDescription: String?,
