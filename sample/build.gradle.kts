@@ -17,21 +17,20 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.zoomimageCompose)
-            api(compose.foundation)
-            api(compose.material3)
-            api(compose.ui)
-            api(compose.preview)
-            api(compose.uiTooling.replace("ui-tooling", "ui-util"))
-            api(libs.telephoto)
-            api(libs.panpf.tools4j)
+            implementation(projects.zoomimageCompose)
+            implementation(projects.zoomimageComposeSketch)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.preview)
+            implementation(compose.uiTooling.replace("ui-tooling", "ui-util"))
+            implementation(libs.telephoto)
+            implementation(libs.panpf.tools4j)
+            implementation(libs.panpf.sketch4.extensions.compose)
         }
         androidMain.dependencies {
-            api(libs.panpf.sketch3.compose)
-
             implementation(projects.zoomimageComposeCoil)
             implementation(projects.zoomimageComposeGlide)
-            implementation(projects.zoomimageComposeSketch)
             implementation(projects.zoomimageViewCoil)
             implementation(projects.zoomimageViewGlide)
             implementation(projects.zoomimageViewPicasso)
@@ -50,8 +49,8 @@ kotlin {
             implementation(libs.panpf.tools4a)
             implementation(libs.panpf.tools4j)
             implementation(libs.panpf.tools4k)
-            implementation(libs.panpf.sketch3.extensions.view)
-            implementation(libs.panpf.sketch3.extensions.compose)
+            implementation(libs.panpf.sketch4.view)
+            implementation(libs.panpf.sketch4.extensions.view)
             implementation(libs.subsamplingscaleimageview)
             implementation(libs.photoview)
             implementation(libs.androidx.constraintlayout.compose)
@@ -65,7 +64,6 @@ kotlin {
             implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.paging.compose)
-            implementation(libs.panpf.sketch3.compose)
             implementation(libs.telephoto.coil)
         }
         desktopMain.dependencies {

@@ -30,20 +30,18 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.Keep
-import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.sketch.request.DisplayResult
+import com.github.panpf.sketch.ability.ViewAbility
+import com.github.panpf.sketch.ability.ViewAbilityContainer
+import com.github.panpf.sketch.ability.ViewAbilityManager
+import com.github.panpf.sketch.ability.internal.RealViewAbilityManager
 import com.github.panpf.sketch.request.Listener
 import com.github.panpf.sketch.request.ProgressListener
-import com.github.panpf.sketch.viewability.ViewAbility
-import com.github.panpf.sketch.viewability.ViewAbilityContainer
-import com.github.panpf.sketch.viewability.ViewAbilityManager
-import com.github.panpf.sketch.viewability.internal.RealViewAbilityManager
 import com.github.panpf.zoomimage.ZoomImageView
 
 /**
  * ImageView base class that supports [ViewAbility]
  */
-open class AbsAbilityZoomImageView @JvmOverloads constructor(
+abstract class AbsAbilityZoomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
@@ -185,11 +183,11 @@ open class AbsAbilityZoomImageView @JvmOverloads constructor(
         return viewAbilityManager?.getImageMatrix() ?: super.getImageMatrix()
     }
 
-    override fun getDisplayListener(): Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error>? {
+    override fun getListener(): Listener? {
         return viewAbilityManager?.getRequestListener()
     }
 
-    override fun getDisplayProgressListener(): ProgressListener<DisplayRequest>? {
+    override fun getProgressListener(): ProgressListener? {
         return viewAbilityManager?.getRequestProgressListener()
     }
 

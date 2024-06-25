@@ -22,11 +22,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.sketch.asDrawableOrThrow
 import com.github.panpf.sketch.cache.CachePolicy
-import com.github.panpf.sketch.displayImage
-import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.sketch.request.DisplayResult
+import com.github.panpf.sketch.loadImage
+import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.resize.Precision
+import com.github.panpf.sketch.resize.internal.ViewSizeResolver
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
@@ -56,15 +58,16 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
         stateView.loading()
         zoomView.apply {
             viewLifecycleOwner.lifecycleScope.launch {
-                val request = DisplayRequest(requireContext(), sketchImageUri) {
+                val request = ImageRequest(requireContext(), sketchImageUri) {
                     downloadCachePolicy(CachePolicy.ENABLED)
+                    size(ViewSizeResolver(zoomView))    // TODO Sketch4 alpha03 version is not needed.
                 }
                 val result = requireContext().sketch.execute(request)
-                if (result is DisplayResult.Success) {
-                    setImageDrawable(result.drawable)
+                if (result is ImageResult.Success) {
+                    setImageDrawable(result.image.asDrawableOrThrow())
                     subsampling.setImageSource(newImageSource(zoomView, sketchImageUri))
                     stateView.gone()
-                } else if (result is DisplayResult.Error) {
+                } else if (result is ImageResult.Error) {
                     subsampling.setImageSource(null)
                     stateView.error {
                         message(result.throwable)
@@ -78,10 +81,10 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
     }
 
     override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
-        minimapView.displayImage(sketchImageUri) {
+        minimapView.loadImage(sketchImageUri) {
             crossfade()
-            resizeSize(600, 600)
-            resizePrecision(Precision.LESS_PIXELS)
+            size(600, 600)
+            precision(Precision.LESS_PIXELS)
         }
     }
 
@@ -92,10 +95,11 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
         sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
             val cache = withContext(Dispatchers.IO) {
                 kotlin.runCatching {
-                    requireContext().sketch.downloadCache[sketchImageUri]
+                    requireContext().sketch.downloadCache.openSnapshot(sketchImageUri)
+                        ?.use { it.data }
                 }
             }.getOrNull()
-            cache?.let { ImageSource.fromFile(it.file) }
+            cache?.let { ImageSource.fromFile(it) }
         }
 
         sketchImageUri.startsWith("asset://") -> {

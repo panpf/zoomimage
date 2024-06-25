@@ -3,8 +3,8 @@ package com.github.panpf.zoomimage.sample.ui.widget
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.github.panpf.sketch.compose.AsyncImage
-import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.AsyncImage
+import com.github.panpf.sketch.request.ImageRequest
 
 @Composable
 actual fun ZoomImageMinimapContent(
@@ -12,7 +12,7 @@ actual fun ZoomImageMinimapContent(
     modifier: Modifier,
 ) {
     AsyncImage(
-        request = DisplayRequest(LocalContext.current, imageUri) {
+        request = ImageRequest(LocalContext.current, imageUri) {
             crossfade()
         },
         contentDescription = "Minimap",

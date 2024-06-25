@@ -1,37 +1,33 @@
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-android {
-    namespace = "com.github.panpf.zoomimage.compose.sketch.core"
-    compileSdk = property("compileSdk").toString().toInt()
+addAllMultiplatformTargets()
 
-    defaultConfig {
-        minSdk = property("minSdk").toString().toInt()
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.sketch.core")
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    buildFeatures {
-        compose = true
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            api(projects.zoomimageCompose)
+            api(projects.zoomimageCoreSketch)
+            api(libs.panpf.sketch4.compose.core)
+        }
+
+        commonTest.dependencies {
+            implementation(projects.internal.testUtils)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(projects.internal.testUtils)
+        }
     }
 }
 
-dependencies {
-    api(projects.zoomimageCompose)
-    api(projects.zoomimageCoreSketch)
-    api(libs.panpf.sketch3.compose.core)
-
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    androidTestImplementation(projects.internal.testUtils)
+android {
+    dependencies {
+        debugImplementation(libs.androidx.compose.ui.tooling)
+        debugImplementation(libs.androidx.compose.ui.test.manifest)
+    }
 }

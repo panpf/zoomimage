@@ -35,7 +35,7 @@ internal class GlideTileBitmap(
 
     override val height: Int = bitmap.height
 
-    override val byteCount: Int = bitmap.byteCount
+    override val byteCount: Long = bitmap.byteCount.toLong()
 
     override val isRecycled: Boolean
         get() = bitmap.isRecycled

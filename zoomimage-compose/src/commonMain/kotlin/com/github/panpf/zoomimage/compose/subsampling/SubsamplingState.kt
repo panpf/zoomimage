@@ -56,7 +56,6 @@ import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecode
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +64,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -391,23 +389,22 @@ class SubsamplingState constructor(
         }
 
         lastResetTileDecoderJob = coroutineScope?.launch {
-            val result = withContext(ioCoroutineDispatcher()) {
-                decodeAndCreateTileDecoder(
-                    logger = logger,
-                    imageSource = imageSource,
-                    thumbnailSize = contentSize.toCompat(),
-                )
-            }
+            val result = decodeAndCreateTileDecoder(
+                logger = logger,
+                imageSource = imageSource,
+                thumbnailSize = contentSize.toCompat(),
+            )
             val newTileDecoder = result.getOrNull()
             if (newTileDecoder != null) {
+                val imageInfo = newTileDecoder.getImageInfo()
                 logger.d {
                     "resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
-                            "imageInfo=${newTileDecoder.imageInfo.toShortString()}. " +
+                            "imageInfo=${imageInfo.toShortString()}. " +
                             "'${imageKey}'"
                 }
                 this@SubsamplingState.tileDecoder = newTileDecoder
-                this@SubsamplingState.imageInfo = newTileDecoder.imageInfo
+                this@SubsamplingState.imageInfo = imageInfo
                 resetTileManager(caller)
             } else {
                 val exception = result.exceptionOrNull()!! as CreateTileDecoderException

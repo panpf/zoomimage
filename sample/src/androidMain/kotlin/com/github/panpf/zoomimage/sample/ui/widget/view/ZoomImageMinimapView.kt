@@ -33,6 +33,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
+import com.github.panpf.sketch.util.Size
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.subsampling.tileColor
@@ -184,7 +185,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
             (drawableWidth >= drawableHeight && containerWidth >= containerHeight) ||
                     (drawableWidth < drawableHeight && containerWidth < containerHeight)
         val isLongImage = DefaultLongImageDecider()
-            .isLongImage(drawableWidth, drawableHeight, containerWidth, containerHeight)
+            .isLongImage(Size(drawableWidth, drawableHeight), Size(containerWidth, containerHeight))
         val maxPercentage = if (isLongImage) 0.6f else if (sameDirection) 0.3f else 0.4f
         val maxWidth = containerWidth * maxPercentage
         val maxHeight = containerHeight * maxPercentage

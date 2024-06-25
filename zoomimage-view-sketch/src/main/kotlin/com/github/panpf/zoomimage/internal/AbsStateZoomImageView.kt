@@ -18,14 +18,14 @@ package com.github.panpf.zoomimage.internal
 
 import android.content.Context
 import android.util.AttributeSet
-import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.sketch.request.DisplayRequestState
-import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.request.ImageOptions
 import com.github.panpf.sketch.request.ImageOptionsProvider
 import com.github.panpf.sketch.request.Listener
 import com.github.panpf.sketch.request.ProgressListener
+import com.github.panpf.sketch.request.RequestState
 import com.github.panpf.sketch.request.internal.Listeners
+import com.github.panpf.sketch.request.internal.PairListener
+import com.github.panpf.sketch.request.internal.PairProgressListener
 import com.github.panpf.sketch.request.internal.ProgressListeners
 
 open class AbsStateZoomImageView @JvmOverloads constructor(
@@ -34,62 +34,63 @@ open class AbsStateZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : AbsAbilityZoomImageView(context, attrs, defStyle), ImageOptionsProvider {
 
-    override var displayImageOptions: ImageOptions? = null
-    private var displayListenerList: MutableList<Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error>>? =
-        null
-    private var displayProgressListenerList: MutableList<ProgressListener<DisplayRequest>>? = null
+    override var imageOptions: ImageOptions? = null
+    private var listeners: Listeners? = null
+    private var progressListeners: ProgressListeners? = null
 
-    val requestState = DisplayRequestState()
+    override val requestState = RequestState()
 
     init {
-        registerDisplayListener(requestState)
+        @Suppress("LeakingThis")
+        registerListener(requestState)
+        registerProgressListener(requestState)
     }
 
-    override fun getDisplayListener(): Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error>? {
-        val myListeners = displayListenerList?.takeIf { it.isNotEmpty() }
-        val superListener = super.getDisplayListener()
-        if (myListeners == null && superListener == null) {
-            return null
-        }
-
-        val listenerList = (myListeners?.toMutableList() ?: mutableListOf()).apply {
-            if (superListener != null) add(superListener)
-        }.toList()
-        // TODO PairListener reference Sketch 4.0
-        return Listeners(listenerList)
-    }
-
-    override fun getDisplayProgressListener(): ProgressListener<DisplayRequest>? {
-        val myProgressListeners = displayProgressListenerList?.takeIf { it.isNotEmpty() }
-        val superProgressListener = super.getDisplayProgressListener()
-        if (myProgressListeners == null && superProgressListener == null) {
-            return null
-        }
-
-        val progressListenerList = (myProgressListeners?.toMutableList() ?: mutableListOf()).apply {
-            if (superProgressListener != null) add(superProgressListener)
-        }.toList()
-        return ProgressListeners(progressListenerList)
-    }
-
-    fun registerDisplayListener(listener: Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error>) {
-        this.displayListenerList = (this.displayListenerList ?: mutableListOf()).apply {
-            add(listener)
+    override fun getListener(): Listener? {
+        val myListener = listeners
+        val superListener = super.getListener()
+        return if (myListener != null && superListener != null) {
+            PairListener(first = myListener, second = superListener)
+        } else {
+            myListener ?: superListener
         }
     }
 
-    fun unregisterDisplayListener(listener: Listener<DisplayRequest, DisplayResult.Success, DisplayResult.Error>) {
-        this.displayListenerList?.remove(listener)
+    override fun getProgressListener(): ProgressListener? {
+        val myProgressListener = progressListeners
+        val superProgressListener = super.getProgressListener()
+        return if (myProgressListener != null && superProgressListener != null) {
+            PairProgressListener(first = myProgressListener, second = superProgressListener)
+        } else {
+            myProgressListener ?: superProgressListener
+        }
     }
 
-    fun registerDisplayProgressListener(listener: ProgressListener<DisplayRequest>) {
-        this.displayProgressListenerList =
-            (this.displayProgressListenerList ?: mutableListOf()).apply {
-                add(listener)
-            }
+    fun registerListener(listener: Listener) {
+        listeners = (listeners?.list?.toMutableList() ?: mutableListOf())
+            .apply { add(listener) }
+            .takeIf { it.isNotEmpty() }
+            ?.let { Listeners(it.toList()) }
     }
 
-    fun unregisterDisplayProgressListener(listener: ProgressListener<DisplayRequest>) {
-        this.displayProgressListenerList?.remove(listener)
+    fun unregisterListener(listener: Listener) {
+        listeners = listeners?.list?.toMutableList()
+            ?.apply { remove(listener) }
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { Listeners(it.toList()) }
+    }
+
+    fun registerProgressListener(listener: ProgressListener) {
+        progressListeners = (progressListeners?.list?.toMutableList() ?: mutableListOf())
+            .apply { add(listener) }
+            .takeIf { it.isNotEmpty() }
+            ?.let { ProgressListeners(it.toList()) }
+    }
+
+    fun unregisterProgressListener(listener: ProgressListener) {
+        progressListeners = progressListeners?.list?.toMutableList()
+            ?.apply { remove(listener) }
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { ProgressListeners(it.toList()) }
     }
 }

@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.glide
 
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.WorkerThread
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getDiskCache
 import com.bumptech.glide.load.model.GlideUrl
@@ -27,6 +26,8 @@ import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.fromContent
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okio.Source
 import okio.source
 import java.io.File
@@ -114,13 +115,14 @@ class GlideHttpImageSource(
 
     override val key: String = glideUrl.cacheKey
 
-    @WorkerThread
-    override fun openSource(): Result<Source> = kotlin.runCatching {
-        val diskCache =
-            getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
-        val file = diskCache.get(glideUrl)
-            ?: throw FileNotFoundException("Cache file is null")
-        FileInputStream(file).source()
+    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
+        kotlin.runCatching {
+            val diskCache =
+                getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
+            val file = diskCache.get(glideUrl)
+                ?: throw FileNotFoundException("Cache file is null")
+            FileInputStream(file).source()
+        }
     }
 
     override fun equals(other: Any?): Boolean {

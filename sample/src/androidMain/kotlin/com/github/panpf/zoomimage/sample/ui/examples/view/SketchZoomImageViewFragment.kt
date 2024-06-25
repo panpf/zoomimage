@@ -22,11 +22,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.sketch.displayImage
+import com.github.panpf.sketch.ability.showSectorProgressIndicator
+import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.sketch.resize.Precision
-import com.github.panpf.sketch.stateimage.ThumbnailMemoryCacheStateImage
-import com.github.panpf.sketch.viewability.showSectorProgressIndicator
+import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
@@ -73,17 +73,17 @@ class SketchZoomImageViewFragment :
     }
 
     override fun loadImage(zoomView: SketchZoomImageView, stateView: StateView) {
-        zoomView.displayImage(args.imageUri) {
+        zoomView.loadImage(args.imageUri) {
             placeholder(ThumbnailMemoryCacheStateImage())
             crossfade(fadeStart = false)
         }
     }
 
     override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
-        minimapView.displayImage(sketchImageUri) {
+        minimapView.loadImage(sketchImageUri) {
             crossfade()
-            resizeSize(600, 600)
-            resizePrecision(Precision.LESS_PIXELS)
+            size(600, 600)
+            precision(Precision.LESS_PIXELS)
         }
     }
 

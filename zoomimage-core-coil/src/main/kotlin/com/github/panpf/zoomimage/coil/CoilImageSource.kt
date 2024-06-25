@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.coil
 
-import androidx.annotation.WorkerThread
 import coil.ImageLoader
 import coil.fetch.SourceResult
 import coil.request.CachePolicy.DISABLED
@@ -24,7 +23,8 @@ import coil.request.CachePolicy.ENABLED
 import coil.request.ImageRequest
 import coil.request.Options
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import kotlinx.coroutines.runBlocking
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okio.Source
 
 class CoilImageSource(
@@ -34,26 +34,22 @@ class CoilImageSource(
 
     override val key: String = request.data.toString()
 
-    @WorkerThread
-    override fun openSource(): Result<Source> = kotlin.runCatching {
-        val fetcher = try {
+    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
+        kotlin.runCatching {
             val options = Options(
                 context = request.context,
                 diskCachePolicy = ENABLED,
                 networkCachePolicy = DISABLED   // Do not download image, by default go here The image have been downloaded
             )
-            imageLoader.components.newFetcher(request.data, options, imageLoader)?.first
-                ?: return Result.failure(IllegalStateException("Fetcher not found. data='${request.data}'"))
-        } catch (e: Exception) {
-            return Result.failure(e)
+            val fetcher =
+                imageLoader.components.newFetcher(request.data, options, imageLoader)?.first
+                    ?: throw IllegalStateException("Fetcher not found. data='${request.data}'")
+            val fetchResult = fetcher.fetch()
+            if (fetchResult !is SourceResult) {
+                throw IllegalStateException("FetchResult is not SourceResult. data='${request.data}'")
+            }
+            fetchResult.source.source()
         }
-        val fetchResult = runBlocking {
-            fetcher.fetch()
-        }
-        if (fetchResult !is SourceResult) {
-            return Result.failure(IllegalStateException("FetchResult is not SourceResult. data='${request.data}'"))
-        }
-        fetchResult.source.source()
     }
 
     override fun equals(other: Any?): Boolean {

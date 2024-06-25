@@ -28,7 +28,7 @@ class AndroidComposeTileBitmap constructor(
     override val bitmapFrom: BitmapFrom
 ) : ComposeTileBitmap {
 
-    override val imageBitmap: ImageBitmap = androidTileBitmap.bitmap!!.asImageBitmap()
+    override val bitmap: ImageBitmap = androidTileBitmap.bitmap!!.asImageBitmap()
 
     override val width: Int
         get() = androidTileBitmap.width
@@ -36,7 +36,7 @@ class AndroidComposeTileBitmap constructor(
     override val height: Int
         get() = androidTileBitmap.height
 
-    override val byteCount: Int
+    override val byteCount: Long
         get() = androidTileBitmap.byteCount
 
     override val isRecycled: Boolean
@@ -56,7 +56,7 @@ class AndroidCacheComposeTileBitmap constructor(
     override val bitmapFrom: BitmapFrom
 ) : ComposeTileBitmap, CacheTileBitmap {
 
-    override val imageBitmap: ImageBitmap = androidTileBitmap.bitmap!!.asImageBitmap()
+    override val bitmap: ImageBitmap = androidTileBitmap.bitmap!!.asImageBitmap()
 
     override val key: String
         get() = androidTileBitmap.key
@@ -71,7 +71,7 @@ class AndroidCacheComposeTileBitmap constructor(
     override val height: Int
         get() = androidTileBitmap.height
 
-    override val byteCount: Int
+    override val byteCount: Long
         get() = androidTileBitmap.byteCount
 
     override val isRecycled: Boolean

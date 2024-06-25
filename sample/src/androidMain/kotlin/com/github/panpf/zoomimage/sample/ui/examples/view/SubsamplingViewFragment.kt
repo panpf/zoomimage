@@ -29,14 +29,13 @@ import androidx.navigation.fragment.navArgs
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.sketch.request.Depth.NETWORK
-import com.github.panpf.sketch.request.DownloadData
-import com.github.panpf.sketch.request.DownloadRequest
-import com.github.panpf.sketch.request.DownloadResult
 import com.github.panpf.sketch.sketch
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.sample.databinding.FragmentSubsamplingViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.util.DownloadData
+import com.github.panpf.zoomimage.sample.ui.util.DownloadResult
+import com.github.panpf.zoomimage.sample.ui.util.download
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
@@ -107,17 +106,15 @@ class SubsamplingViewFragment : BaseBindingFragment<FragmentSubsamplingViewBindi
 
             sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
                 binding.stateView.loading()
-                val request = DownloadRequest(requireContext(), args.imageUri) {
-                    depth(NETWORK)
-                }
-                when (val result = requireContext().sketch.execute(request)) {
+                val result = binding.subsamplingView.context.sketch.download(args.imageUri)
+                when (result) {
                     is DownloadResult.Success -> {
-                        val data = result.data.data
+                        val data = result.data
                         binding.stateView.gone()
                         when (data) {
-                            is DownloadData.DiskCacheData -> ImageSource.uri(data.snapshot.file.toUri())
+                            is DownloadData.Cache -> ImageSource.uri(data.path.toFile().toUri())
 
-                            is DownloadData.ByteArrayData -> ImageSource.bitmap(
+                            is DownloadData.Bytes -> ImageSource.bitmap(
                                 BitmapFactory.decodeByteArray(data.bytes, 0, data.bytes.size)
                             )
 

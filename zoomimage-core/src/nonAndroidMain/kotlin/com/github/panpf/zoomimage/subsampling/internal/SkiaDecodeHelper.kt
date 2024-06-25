@@ -7,6 +7,8 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SkiaTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.use
 import org.jetbrains.skia.Codec
@@ -18,42 +20,64 @@ import org.jetbrains.skia.impl.use
  */
 class SkiaDecodeHelper(
     private val imageSource: ImageSource,
-    private val bytesLazy: Lazy<ByteArray> = lazy {
-        imageSource.openSource().getOrThrow().buffer().use { it.readByteArray() }
-    },
-    private val initialImageInfo: ImageInfo? = null
+    initialBytes: ByteArray? = null,
+    initialImageInfo: ImageInfo? = null
 ) : DecodeHelper {
 
-    override val imageInfo: ImageInfo by lazy { initialImageInfo ?: readImageInfo() }
-    override val supportRegion: Boolean = true
+    private var _bytes: ByteArray? = initialBytes
+    private var _imageInfo: ImageInfo? = initialImageInfo
+    private var _skiaImage: SkiaImage? = null
 
-    private val bytes by bytesLazy
-    private var skiaImage: SkiaImage? = null
+    override suspend fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap =
+        withContext(ioCoroutineDispatcher()) {
+            val skiaImage = getSkiaImage()
+            val skiaBitmap = skiaImage.decodeRegion(region, sampleSize)
+            SkiaTileBitmap(skiaBitmap, BitmapFrom.LOCAL)
+        }
 
-    override fun copy(): DecodeHelper {
-        return SkiaDecodeHelper(imageSource, bytesLazy, imageInfo)
-    }
-
-    override fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap {
-        val skiaImage = getOrCreateDecoder()
-        val skiaBitmap = skiaImage.decodeRegion(region, sampleSize)
-        return SkiaTileBitmap(skiaBitmap, BitmapFrom.LOCAL)
-    }
-
-    private fun getOrCreateDecoder(): SkiaImage {
-        // SkiaImage.makeFromEncoded(bytes) will parse exif orientation and does not support closing
-        return skiaImage ?: SkiaImage.makeFromEncoded(bytes).apply {
-            this@SkiaDecodeHelper.skiaImage = this
+    private suspend fun getBytes(): ByteArray {
+        val bytes = _bytes
+        if (bytes != null) {
+            return bytes
+        }
+        return withContext(ioCoroutineDispatcher()) {
+            imageSource.openSource().getOrThrow().buffer().use { it.readByteArray() }
+                .apply {
+                    _bytes = this
+                }
         }
     }
 
-    private fun readImageInfo(): ImageInfo {
+    override suspend fun getImageInfo(): ImageInfo {
+        return _imageInfo ?: readImageInfo().apply {
+            _imageInfo = this
+        }
+    }
+
+    override suspend fun supportRegion(): Boolean = true
+
+    private suspend fun getSkiaImage(): SkiaImage {
+        val skiaImage = _skiaImage
+        if (skiaImage != null) {
+            return skiaImage
+        }
+        val bytes = getBytes()
+        // SkiaImage.makeFromEncoded(bytes) will parse exif orientation and does not support closing
+        return withContext(ioCoroutineDispatcher()) {
+            SkiaImage.makeFromEncoded(bytes).apply {
+                this@SkiaDecodeHelper._skiaImage = this
+            }
+        }
+    }
+
+    private suspend fun readImageInfo(): ImageInfo = withContext(ioCoroutineDispatcher()) {
+        val bytes = getBytes()
         val encodedImageFormat = Codec.makeFromData(Data.makeFromBytes(bytes)).use {
             it.encodedImageFormat
         }
         val mimeType = "image/${encodedImageFormat.name.lowercase()}"
-        val skiaImage = getOrCreateDecoder()
-        return ImageInfo(
+        val skiaImage = getSkiaImage()
+        ImageInfo(
             width = skiaImage.width,
             height = skiaImage.height,
             mimeType = mimeType,
@@ -61,10 +85,14 @@ class SkiaDecodeHelper(
     }
 
     override fun close() {
-        skiaImage?.close()
+        _skiaImage?.close()
+    }
+
+    override fun copy(): DecodeHelper {
+        return SkiaDecodeHelper(imageSource, _bytes, _imageInfo)
     }
 
     override fun toString(): String {
-        return "SkiaDecodeHelper(imageSource=$imageSource, imageInfo=$imageInfo, supportRegion=$supportRegion)"
+        return "SkiaDecodeHelper(imageSource=$imageSource)"
     }
 }

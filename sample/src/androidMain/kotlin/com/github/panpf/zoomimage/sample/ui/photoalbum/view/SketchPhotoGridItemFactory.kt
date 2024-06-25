@@ -17,27 +17,33 @@
 package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.widget.ImageView
-import com.github.panpf.sketch.displayImage
+import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.resize.LongImageClipPrecisionDecider
-import com.github.panpf.sketch.resize.LongImageScaleDecider
+import com.github.panpf.sketch.resize.LongImageStartCropScaleDecider
 import com.github.panpf.sketch.resize.Precision
-import com.github.panpf.sketch.stateimage.IconStateImage
+import com.github.panpf.sketch.state.IconDrawableStateImage
 import com.github.panpf.zoomimage.sample.R
 
 class SketchPhotoGridItemFactory : BasePhotoGridItemFactory() {
 
     override fun displayImage(imageView: ImageView, sketchImageUri: String) {
-        imageView.displayImage(sketchImageUri) {
-            placeholder(IconStateImage(R.drawable.ic_image_outline) {
-                resColorBackground(R.color.placeholder_bg)
-            })
-            error(IconStateImage(R.drawable.ic_error_baseline) {
-                resColorBackground(R.color.placeholder_bg)
-            })
+        imageView.loadImage(sketchImageUri) {
+            placeholder(
+                IconDrawableStateImage(
+                    icon = R.drawable.ic_image_outline,
+                    background = R.color.placeholder_bg
+                )
+            )
+            error(
+                IconDrawableStateImage(
+                    icon = R.drawable.ic_error_baseline,
+                    background = R.color.placeholder_bg
+                )
+            )
             crossfade()
-            resizeApplyToDrawable()
-            resizePrecision(LongImageClipPrecisionDecider(Precision.SAME_ASPECT_RATIO))
-            resizeScale(LongImageScaleDecider())
+            resizeOnDraw()
+            precision(LongImageClipPrecisionDecider(Precision.SAME_ASPECT_RATIO))
+            scale(LongImageStartCropScaleDecider())
         }
     }
 }

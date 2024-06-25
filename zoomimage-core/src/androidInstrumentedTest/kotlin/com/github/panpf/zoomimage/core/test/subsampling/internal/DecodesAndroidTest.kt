@@ -14,13 +14,14 @@ import com.github.panpf.zoomimage.subsampling.internal.isSupportInBitmapForRegio
 import com.github.panpf.zoomimage.test.decodeExifOrientation
 import com.github.panpf.zoomimage.test.decodeImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Test
 
 class DecodesAndroidTest {
 
     @Test
-    fun testReadExifOrientation() {
+    fun testReadExifOrientation() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
 
         listOf(
@@ -31,13 +32,13 @@ class DecodesAndroidTest {
                 "assetPath=$assetPath, excepted=$excepted",
                 excepted,
                 ImageSource.fromAsset(context, assetPath).decodeExifOrientation()
-                    .getOrThrow().exifOrientation
+                    .getOrThrow()
             )
         }
     }
 
     @Test
-    fun testReadImageInfo() {
+    fun testReadImageInfo() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
 
         listOf(

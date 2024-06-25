@@ -18,11 +18,14 @@ package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.annotation.MainThread
 import com.github.panpf.zoomimage.annotation.WorkerThread
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import kotlinx.atomicfu.locks.synchronized
+import kotlinx.coroutines.withContext
 
 /**
  * Decode the tile bitmap of the image
@@ -38,14 +41,16 @@ class TileDecoder constructor(
     private var destroyed = false
     private val decoderPool = mutableListOf<DecodeHelper>()
 
-    val imageInfo by lazy { rootDecodeHelper.imageInfo }
-
     init {
         decoderPool.add(rootDecodeHelper)
     }
 
+    suspend fun getImageInfo(): ImageInfo {
+        return rootDecodeHelper.getImageInfo()
+    }
+
     @WorkerThread
-    fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
+    suspend fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
         if (destroyed) return null
         val tileBitmap = useDecoder { decoder ->
             decoder.decodeRegion(srcRect, sampleSize)
@@ -54,32 +59,33 @@ class TileDecoder constructor(
     }
 
     @WorkerThread
-    private fun useDecoder(block: (decoder: DecodeHelper) -> TileBitmap?): TileBitmap? {
-        synchronized(decoderPool) {
-            if (destroyed) {
-                return null
+    private suspend fun useDecoder(block: suspend (decoder: DecodeHelper) -> TileBitmap?): TileBitmap? =
+        withContext(ioCoroutineDispatcher()) {
+            synchronized(decoderPool) {
+                if (destroyed) {
+                    return@withContext null
+                }
             }
-        }
 
-        var bitmapRegionDecoder: DecodeHelper? = synchronized(decoderPool) {
-            if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
-        }
-        if (bitmapRegionDecoder == null) {
-            bitmapRegionDecoder = rootDecodeHelper.copy()
-        }
-
-        val tileBitmap = block(bitmapRegionDecoder)
-
-        synchronized(decoderPool) {
-            if (destroyed) {
-                bitmapRegionDecoder.close()
-            } else {
-                decoderPool.add(bitmapRegionDecoder)
+            var bitmapRegionDecoder: DecodeHelper? = synchronized(decoderPool) {
+                if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
             }
-        }
+            if (bitmapRegionDecoder == null) {
+                bitmapRegionDecoder = rootDecodeHelper.copy()
+            }
 
-        return tileBitmap
-    }
+            val tileBitmap = block(bitmapRegionDecoder)
+
+            synchronized(decoderPool) {
+                if (destroyed) {
+                    bitmapRegionDecoder.close()
+                } else {
+                    decoderPool.add(bitmapRegionDecoder)
+                }
+            }
+
+            tileBitmap
+        }
 
     @MainThread
     fun destroy(caller: String) {

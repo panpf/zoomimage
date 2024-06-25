@@ -8,20 +8,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.panpf.sketch.fetch.newResourceUri
-import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.sketch.request.DisplayResult
+import com.github.panpf.sketch.painter.asPainter
+import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.sketch.sketch
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.ZoomImage
+import com.github.panpf.zoomimage.compose.sketch.createTileBitmapCache
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sketch.SketchImageSource
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
-import com.google.accompanist.drawablepainter.DrawablePainter
 
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
@@ -30,30 +31,35 @@ fun ZoomImageSample(sketchImageUri: String) {
     ) { contentScale, alignment, state, scrollBar ->
         val context = LocalContext.current
         LaunchedEffect(Unit) {
-            state.subsampling.tileBitmapCache = SketchTileBitmapCache(context.sketch, "ZoomImage")
+            state.subsampling.tileBitmapCache = createTileBitmapCache(context.sketch)
         }
 
         var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.None) }
-        var drawablePainter: DrawablePainter? by remember { mutableStateOf(null) }
+        var imagePainter: Painter? by remember { mutableStateOf(null) }
         LaunchedEffect(sketchImageUri) {
             myLoadState = MyLoadState.Loading
-            val displayResult = DisplayRequest(context, sketchImageUri).execute()
-            myLoadState = if (displayResult is DisplayResult.Success) {
+            val displayResult = ImageRequest(context, sketchImageUri) {
+                val displayMetrics = context.resources.displayMetrics
+                size(
+                    displayMetrics.widthPixels,
+                    displayMetrics.heightPixels
+                )    // TODO Sketch4 alpha03 version is not needed.
+            }.execute()
+            myLoadState = if (displayResult is ImageResult.Success) {
                 MyLoadState.None
             } else {
                 MyLoadState.Error()
             }
-            val drawable = displayResult.drawable
-            drawablePainter = drawable?.let { DrawablePainter(it) }
+            imagePainter = displayResult.image?.asPainter()
 
             val imageSource = SketchImageSource(context, context.sketch, sketchImageUri)
             state.subsampling.setImageSource(imageSource)
         }
 
-        val drawablePainter1 = drawablePainter
-        if (drawablePainter1 != null) {
+        val imagePainter1 = imagePainter
+        if (imagePainter1 != null) {
             ZoomImage(
-                painter = drawablePainter1,
+                painter = imagePainter1,
                 contentDescription = "view image",
                 contentScale = contentScale,
                 alignment = alignment,

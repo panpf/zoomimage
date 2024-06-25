@@ -15,6 +15,8 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okio.buffer
 
 /**
@@ -22,51 +24,70 @@ import okio.buffer
  */
 class BitmapFactoryDecodeHelper(
     private val imageSource: ImageSource,
-    private val initialImageInfo: ImageInfo? = null
+    initialImageInfo: ImageInfo? = null
 ) : DecodeHelper {
 
-    override val imageInfo: ImageInfo by lazy { initialImageInfo ?: decodeImageInfo() }
-    override val supportRegion: Boolean by lazy { checkSupportSubsamplingByMimeType(imageInfo.mimeType) }
+    private var _imageInfo: ImageInfo? = initialImageInfo
+    private var _exifOrientationHelper: AndroidExifOrientation? = null
+    private var _decoder: BitmapRegionDecoder? = null
 
-    private val exifOrientation: Int by lazy {
-        imageSource.decodeExifOrientationValue().getOrThrow()
-    }
-    private val exifOrientationHelper by lazy { AndroidExifOrientation(exifOrientation) }
-    private var decoder: BitmapRegionDecoder? = null
-
-    override fun copy(): DecodeHelper {
-        return BitmapFactoryDecodeHelper(imageSource, imageInfo)
-    }
-
-    override fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap {
-        val options = BitmapFactory.Options().apply {
-            inSampleSize = sampleSize
-        }
-        val decoder = getOrCreateDecoder()
-        val originalRegion = exifOrientationHelper
-            .applyToRect(region, imageInfo.size, reverse = true)
-        val bitmap = decoder.decodeRegion(originalRegion.toAndroidRect(), options)
-            ?: throw Exception("Invalid image. region decode return null")
-        val tileBitmap = AndroidTileBitmap(bitmap, BitmapFrom.LOCAL)
-        val correctedImage = exifOrientationHelper.applyToTileBitmap(tileBitmap)
-        return correctedImage
-    }
-
-    private fun getOrCreateDecoder(): BitmapRegionDecoder {
-        return decoder ?: imageSource.openSource().getOrThrow().buffer().inputStream().buffered()
-            .use {
-                if (VERSION.SDK_INT >= VERSION_CODES.S) {
-                    BitmapRegionDecoder.newInstance(it)!!
-                } else {
-                    @Suppress("DEPRECATION")
-                    BitmapRegionDecoder.newInstance(it, false)!!
-                }
-            }.apply {
-                this@BitmapFactoryDecodeHelper.decoder = this
+    override suspend fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap =
+        withContext(ioCoroutineDispatcher()) {
+            val options = BitmapFactory.Options().apply {
+                inSampleSize = sampleSize
             }
+            val imageInfo = getImageInfo()
+            val exifOrientationHelper = getExifOrientation()
+            val originalRegion = exifOrientationHelper
+                .applyToRect(region, imageInfo.size, reverse = true)
+            val decoder = getOrCreateDecoder()
+            val bitmap = decoder.decodeRegion(originalRegion.toAndroidRect(), options)
+                ?: throw Exception("Invalid image. region decode return null")
+            val tileBitmap = AndroidTileBitmap(bitmap, BitmapFrom.LOCAL)
+            val correctedImage = exifOrientationHelper.applyToTileBitmap(tileBitmap)
+            correctedImage
+        }
+
+    override suspend fun getImageInfo(): ImageInfo {
+        return _imageInfo ?: decodeImageInfo().apply {
+            _imageInfo = this
+        }
     }
 
-    private fun decodeImageInfo(): ImageInfo {
+    private suspend fun getExifOrientation(): AndroidExifOrientation {
+        return _exifOrientationHelper ?: AndroidExifOrientation(
+            imageSource.decodeExifOrientation().getOrThrow()
+        ).apply {
+            _exifOrientationHelper = this
+        }
+    }
+
+    override suspend fun supportRegion(): Boolean {
+        val imageInfo = getImageInfo()
+        return checkSupportSubsamplingByMimeType(imageInfo.mimeType)
+    }
+
+    private suspend fun getOrCreateDecoder(): BitmapRegionDecoder {
+        val decoder = _decoder
+        if (decoder != null) {
+            return decoder
+        }
+        return withContext(ioCoroutineDispatcher()) {
+            imageSource.openSource().getOrThrow().buffer().inputStream().buffered()
+                .use {
+                    if (VERSION.SDK_INT >= VERSION_CODES.S) {
+                        BitmapRegionDecoder.newInstance(it)!!
+                    } else {
+                        @Suppress("DEPRECATION")
+                        BitmapRegionDecoder.newInstance(it, false)!!
+                    }
+                }.apply {
+                    this@BitmapFactoryDecodeHelper._decoder = this
+                }
+        }
+    }
+
+    private suspend fun decodeImageInfo(): ImageInfo = withContext(ioCoroutineDispatcher()) {
         val boundOptions = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
         }
@@ -76,12 +97,17 @@ class BitmapFactoryDecodeHelper(
         val mimeType = boundOptions.outMimeType.orEmpty()
         val imageSize =
             IntSizeCompat(width = boundOptions.outWidth, height = boundOptions.outHeight)
+        val exifOrientationHelper = getExifOrientation()
         val correctedImageSize = exifOrientationHelper.applyToSize(imageSize)
-        return ImageInfo(size = correctedImageSize, mimeType = mimeType)
+        ImageInfo(size = correctedImageSize, mimeType = mimeType)
     }
 
     override fun close() {
-        decoder?.recycle()
+        _decoder?.recycle()
+    }
+
+    override fun copy(): DecodeHelper {
+        return BitmapFactoryDecodeHelper(imageSource, _imageInfo)
     }
 
     override fun toString(): String {

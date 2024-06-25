@@ -1,7 +1,9 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
+import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.core.test.internal.useApply
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
@@ -23,6 +25,7 @@ import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Test
 import java.io.Closeable
@@ -38,8 +41,9 @@ class TileManagerTest {
     }
 
     @Test
-    fun testPausedContinuousTransformType() {
-        TileManagerHolder().useApply {
+    fun testPausedContinuousTransformType() = runTest {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        TileManagerHolder(context).useApply {
             Assert.assertEquals(
                 TileManager.DefaultPausedContinuousTransformType,
                 tileManager.pausedContinuousTransformType
@@ -161,8 +165,9 @@ class TileManagerTest {
     }
 
     @Test
-    fun testDisabledBackgroundTiles() {
-        TileManagerHolder().useApply {
+    fun testDisabledBackgroundTiles() = runTest {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        TileManagerHolder(context).useApply {
             Assert.assertEquals(false, tileManager.disabledBackgroundTiles)
             Assert.assertEquals(0, tileManager.sampleSize)
             Assert.assertEquals(emptyList<TileSnapshot>(), tileManager.backgroundTiles)
@@ -228,8 +233,9 @@ class TileManagerTest {
     }
 
     @Test
-    fun testTileAnimationSpec() {
-        TileManagerHolder().useApply {
+    fun testTileAnimationSpec() = runTest {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        TileManagerHolder(context).useApply {
             Assert.assertEquals(TileAnimationSpec.Default, tileManager.tileAnimationSpec)
 
             Assert.assertTrue(foregroundTilesChangedList.size == 0)
@@ -261,8 +267,9 @@ class TileManagerTest {
     }
 
     @Test
-    fun testSortedTileGridMap() {
-        TileManagerHolder().useApply {
+    fun testSortedTileGridMap() = runTest {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        TileManagerHolder(context).useApply {
             Assert.assertEquals(
                 "[16:1:1x1,8:2:1x2,4:4:1x4,2:7:1x7,1:26:2x13]",
                 tileManager.sortedTileGridMap.toIntroString()
@@ -271,8 +278,9 @@ class TileManagerTest {
     }
 
     @Test
-    fun testSampleSize() {
-        TileManagerHolder().useApply {
+    fun testSampleSize() = runTest {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        TileManagerHolder(context).useApply {
             listOf(
                 1f to 0,
                 3f to 8,
@@ -287,8 +295,9 @@ class TileManagerTest {
     }
 
     @Test
-    fun testImageLoadRect() {
-        TileManagerHolder().useApply {
+    fun testImageLoadRect() = runTest {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        TileManagerHolder(context).useApply {
             val widthSpace = contentSize.width / 4
             val heightSpace = contentSize.height / 4
             val contentVisibleRect1 = IntRectCompat(
@@ -340,9 +349,10 @@ class TileManagerTest {
     }
 
     @Test
-    fun testRefreshTiles() {
-        // rotation
-        TileManagerHolder().useApply {
+    fun testRefreshTiles() = runTest {
+        // rotation =
+        val context = InstrumentationRegistry.getInstrumentation().context
+        TileManagerHolder(context).useApply {
             listOf(-90, 0, 90, 180, 270, 360, 450)
                 .forEach { rotation ->
                     Assert.assertEquals(
@@ -362,7 +372,7 @@ class TileManagerTest {
         }
 
         // scale and contentVisibleRect
-        TileManagerHolder("sample_huge_card.jpg").useApply {
+        TileManagerHolder(context, "sample_huge_card.jpg").useApply {
             val tileManager = tileManager
             val contentSize = contentSize
             Assert.assertEquals(0, tileManager.sampleSize)
@@ -470,8 +480,9 @@ class TileManagerTest {
     }
 
     @Test
-    fun testClean() {
-        TileManagerHolder().useApply {
+    fun testClean() = runTest {
+        val context = InstrumentationRegistry.getInstrumentation().context
+        TileManagerHolder(context).useApply {
             Assert.assertEquals(0, refreshTiles(scale = 3f))
             Thread.sleep(1000)
             Assert.assertTrue(tileManager.foregroundTiles.all { it.state == TileState.STATE_LOADED })
@@ -494,13 +505,20 @@ class TileManagerTest {
         }
     }
 
-    private class TileManagerHolder(assetName: String = "sample_long_comic.jpg") : Closeable {
-        private val context = InstrumentationRegistry.getInstrumentation().context
+    private suspend fun TileManagerHolder(
+        context: Context,
+        assetName: String = "sample_long_comic.jpg"
+    ): TileManagerHolder {
+        val imageSource = ImageSource.fromAsset(context, assetName)
+        val imageInfo = imageSource.decodeImageInfo().getOrThrow()
+        return TileManagerHolder(imageSource, imageInfo)
+    }
+
+    private class TileManagerHolder(val imageSource: ImageSource, val imageInfo: ImageInfo) :
+        Closeable {
         private val logger = Logger("Test").apply {
             level = Logger.DEBUG
         }
-        private val imageSource = ImageSource.fromAsset(context, assetName)
-        val imageInfo = imageSource.decodeImageInfo().getOrThrow()
         private val tileBitmapCacheHelper = TileBitmapCacheHelper(logger, TileBitmapCacheSpec())
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)

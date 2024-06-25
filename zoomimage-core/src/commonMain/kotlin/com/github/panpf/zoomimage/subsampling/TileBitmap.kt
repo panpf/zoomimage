@@ -22,7 +22,7 @@ package com.github.panpf.zoomimage.subsampling
 interface TileBitmap {
     val width: Int
     val height: Int
-    val byteCount: Int  // TODO Long
+    val byteCount: Long
     fun recycle()
     val isRecycled: Boolean
     val bitmapFrom: BitmapFrom
@@ -41,10 +41,10 @@ interface CacheTileBitmap : TileBitmap {
     /**
      * Cache key
      */
-    val key: String
+    val key: String // TODO delete
 
     /**
      * TileBitmap displays callbacks when the state changes
      */
-    fun setIsDisplayed(displayed: Boolean)
+    fun setIsDisplayed(displayed: Boolean)  // TODO Merge to TileBitmap
 }

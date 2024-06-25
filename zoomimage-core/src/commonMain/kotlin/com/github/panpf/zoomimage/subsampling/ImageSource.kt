@@ -18,6 +18,8 @@ package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.util.defaultFileSystem
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okio.Buffer
 import okio.Path
 import okio.Path.Companion.toPath
@@ -39,7 +41,7 @@ interface ImageSource {
      * Open an input stream for the image.
      */
     @WorkerThread
-    fun openSource(): Result<Source>
+    suspend fun openSource(): Result<Source>
 
     companion object {
 
@@ -70,7 +72,7 @@ class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
 
     override val key: String = byteArray.toString()
 
-    override fun openSource(): Result<Source> = kotlin.runCatching {
+    override suspend fun openSource(): Result<Source> = kotlin.runCatching {
         Buffer().write(byteArray)
     }
 
@@ -96,8 +98,10 @@ class FileImageSource(val path: Path) : ImageSource {
 
     override val key: String = path.toString()
 
-    override fun openSource(): Result<Source> = kotlin.runCatching {
-        defaultFileSystem().source(path)
+    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
+        kotlin.runCatching {
+            defaultFileSystem().source(path)
+        }
     }
 
     override fun equals(other: Any?): Boolean {

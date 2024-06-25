@@ -24,7 +24,7 @@ interface TileBitmapCache {
     /**
      * Get the cache of the key
      */
-    fun get(key: String): CacheTileBitmap?
+    fun get(key: String): TileBitmap?
 
     /**
      * Put the cache of the key
@@ -35,5 +35,5 @@ interface TileBitmapCache {
         imageUrl: String,
         imageInfo: ImageInfo,
         disallowReuseBitmap: Boolean
-    ): CacheTileBitmap?
+    ): TileBitmap?
 }

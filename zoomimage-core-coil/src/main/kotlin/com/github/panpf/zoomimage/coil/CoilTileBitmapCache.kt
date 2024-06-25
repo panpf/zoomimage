@@ -20,17 +20,16 @@ import coil.ImageLoader
 import coil.memory.MemoryCache
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
-import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
 class CoilTileBitmapCache(private val imageLoader: ImageLoader) : TileBitmapCache {
 
-    override fun get(key: String): CacheTileBitmap? {
+    override fun get(key: String): TileBitmap? {
         return imageLoader.memoryCache
             ?.get(MemoryCache.Key(key))
-            ?.let { CoilTileBitmap(key, it, BitmapFrom.MEMORY_CACHE) }
+            ?.let { AndroidTileBitmap(it.bitmap, BitmapFrom.MEMORY_CACHE) }
     }
 
     override fun put(
@@ -39,11 +38,11 @@ class CoilTileBitmapCache(private val imageLoader: ImageLoader) : TileBitmapCach
         imageUrl: String,
         imageInfo: ImageInfo,
         disallowReuseBitmap: Boolean
-    ): CacheTileBitmap? {
-        val bitmap = (tileBitmap as AndroidTileBitmap).bitmap ?: return null
-        val newCacheValue = MemoryCache.Value(bitmap)
-        val memoryCache = imageLoader.memoryCache ?: return null
-        memoryCache[MemoryCache.Key(key)] = newCacheValue
-        return CoilTileBitmap(key, newCacheValue, tileBitmap.bitmapFrom)
+    ): TileBitmap? {
+        tileBitmap as AndroidTileBitmap
+        val bitmap = tileBitmap.bitmap!!
+        val memoryCache = imageLoader.memoryCache
+        memoryCache?.set(MemoryCache.Key(key), MemoryCache.Value(bitmap))
+        return null
     }
 }

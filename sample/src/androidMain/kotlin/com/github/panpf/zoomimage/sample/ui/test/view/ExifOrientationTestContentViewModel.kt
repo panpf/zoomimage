@@ -22,9 +22,10 @@ import android.graphics.BitmapFactory
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.panpf.sketch.decode.internal.ExifOrientationHelper
+import com.github.panpf.sketch.asSketchImage
+import com.github.panpf.sketch.decode.internal.AndroidExifOrientationHelper
 import com.github.panpf.sketch.decode.internal.calculateSampleSize
-import com.github.panpf.sketch.sketch
+import com.github.panpf.sketch.getBitmapOrThrow
 import com.github.panpf.sketch.util.Size
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -98,11 +99,10 @@ class ExifOrientationTestContentViewModel(private val application: Application) 
         sourceBitmap: Bitmap,
         orientation: Int
     ) {
-        val newBitmap = ExifOrientationHelper(orientation).addToBitmap(
-            inBitmap = sourceBitmap,
-            bitmapPool = application.sketch.bitmapPool,
-            disallowReuseBitmap = false
-        ) ?: sourceBitmap
+        val newBitmap = AndroidExifOrientationHelper(orientation)
+            .applyToImage(image = sourceBitmap.asSketchImage(), reverse = true)
+            ?.getBitmapOrThrow()
+            ?: sourceBitmap
         FileOutputStream(file).use {
             newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
         }

@@ -1,29 +1,24 @@
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
-android {
-    namespace = "com.github.panpf.zoomimage.core.sketch"
-    compileSdk = property("compileSdk").toString().toInt()
+addAllMultiplatformTargets()
 
-    defaultConfig {
-        minSdk = property("minSdk").toString().toInt()
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.core.sketch")
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            api(projects.zoomimageCore)
+            api(libs.panpf.sketch4.core)
+        }
+
+        commonTest.dependencies {
+            implementation(projects.internal.testUtils)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(projects.internal.testUtils)
+        }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
-dependencies {
-    api(projects.zoomimageCore)
-    api(libs.panpf.sketch3)
-
-    androidTestImplementation(projects.internal.testUtils)
 }

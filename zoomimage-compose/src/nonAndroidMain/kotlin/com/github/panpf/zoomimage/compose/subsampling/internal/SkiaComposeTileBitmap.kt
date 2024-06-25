@@ -20,22 +20,22 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 
 class SkiaComposeTileBitmap constructor(
-    override val imageBitmap: ImageBitmap,
-    bitmapByteCount: Int,
+    override val bitmap: ImageBitmap,
+    bitmapByteCount: Long,
     override val bitmapFrom: BitmapFrom,
 ) : com.github.panpf.zoomimage.compose.subsampling.ComposeTileBitmap {
 
-    override val width: Int = imageBitmap.width
+    override val width: Int = bitmap.width
 
-    override val height: Int = imageBitmap.height
+    override val height: Int = bitmap.height
 
-    override val byteCount: Int = bitmapByteCount
+    override val byteCount: Long = bitmapByteCount
 
     override val isRecycled: Boolean = false
 
     override fun recycle() {}
 
     override fun toString(): String {
-        return "SkiaComposeTileBitmap(bitmap=${imageBitmap.toHexShortString()}, bitmapFrom=$bitmapFrom)"
+        return "SkiaComposeTileBitmap(bitmap=${bitmap.toHexShortString()}, bitmapFrom=$bitmapFrom)"
     }
 }

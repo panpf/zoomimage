@@ -11,12 +11,11 @@ import coil.util.DebugLogger
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.load.engine.cache.LruResourceCache
+import com.github.panpf.sketch.PlatformContext
+import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.SketchFactory
-import com.github.panpf.sketch.cache.internal.LruMemoryCache
+import com.github.panpf.sketch.cache.LruMemoryCache
 import com.github.panpf.sketch.util.Logger
-import com.github.panpf.sketch.util.Logger.Level.DEBUG
-import com.github.panpf.sketch.util.Logger.Level.INFO
 import com.github.panpf.zoomimage.sample.util.getMaxAvailableMemoryCacheBytes
 import com.squareup.picasso.LruCache
 import com.squareup.picasso.Picasso
@@ -28,7 +27,7 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
 
-class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
+class MyApplication : MultiDexApplication(), SingletonSketch.Factory, ImageLoaderFactory {
 
     @SuppressLint("VisibleForTests")
     override fun onCreate() {
@@ -50,15 +49,15 @@ class MyApplication : MultiDexApplication(), SketchFactory, ImageLoaderFactory {
         )
     }
 
-    override fun createSketch(): Sketch {
+    override fun createSketch(context: PlatformContext): Sketch {
         return Sketch.Builder(this)
-            .logger(Logger(if (BuildConfig.DEBUG) DEBUG else INFO))
+            .logger(level = if (BuildConfig.DEBUG) Logger.Level.Debug else Logger.Level.Info)
             .memoryCache(LruMemoryCache(maxSize = getMemoryCacheMaxSize()))
             .build()
     }
 
     private fun getMemoryCacheMaxSize(): Long {
-        // 集成了四个图片加载器所以要把内存缓存分成四份
+        // Four image loaders are integrated, so the memory cache must be divided into four parts.
         val imageLoaderCount = 4
         return getMaxAvailableMemoryCacheBytes() / imageLoaderCount
     }

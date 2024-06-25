@@ -25,14 +25,12 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import com.github.panpf.sketch.compose.AsyncImagePainter
-import com.github.panpf.sketch.compose.AsyncImageState
-import com.github.panpf.sketch.compose.PainterState
-import com.github.panpf.sketch.compose.rememberAsyncImageState
-import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.AsyncImagePainter
+import com.github.panpf.sketch.AsyncImageState
+import com.github.panpf.sketch.rememberAsyncImageState
+import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
@@ -46,23 +44,17 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     imageUri = "http://sample.com/sample.jpg",
+ *     uri = "http://sample.com/sample.jpg",
  *     contentDescription = "view image",
  *     modifier = Modifier.fillMaxSize(),
  * )
  * ```
  *
- * @param imageUri [DisplayRequest.uriString] value.
+ * @param uri [ImageRequest.uri] value.
  * @param contentDescription Text used by accessibility services to describe what this image
  *  represents. This should always be provided unless this image is used for decorative purposes,
  *  and does not represent a meaningful action that a user can take.
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param placeholder A [Painter] that is displayed while the image is loading.
- * @param error A [Painter] that is displayed when the image request is unsuccessful.
- * @param uriEmpty A [Painter] that is displayed when the request's [DisplayRequest.uriString] is empty.
- * @param onLoading Called when the image request begins loading.
- * @param onSuccess Called when the image request completes successfully.
- * @param onError Called when the image request completes unsuccessfully.
  * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
  *  bounds defined by the width and height.
  * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
@@ -81,16 +73,10 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 @Composable
 @NonRestartableComposable
 fun SketchZoomAsyncImage(
-    imageUri: String?,
+    uri: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
     imageState: AsyncImageState = rememberAsyncImageState(),
-    placeholder: Painter? = null,
-    error: Painter? = null,
-    uriEmpty: Painter? = error,
-    onLoading: ((PainterState.Loading) -> Unit)? = null,
-    onSuccess: ((PainterState.Success) -> Unit)? = null,
-    onError: ((PainterState.Error) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -101,17 +87,11 @@ fun SketchZoomAsyncImage(
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) = SketchZoomAsyncImage(
-    imageUri = imageUri,
+    uri = uri,
     contentDescription = contentDescription,
     sketch = LocalContext.current.sketch,
     modifier = modifier,
     imageState = imageState,
-    placeholder = placeholder,
-    error = error,
-    uriEmpty = uriEmpty,
-    onLoading = onLoading,
-    onSuccess = onSuccess,
-    onError = onError,
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,
@@ -130,8 +110,8 @@ fun SketchZoomAsyncImage(
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     request = DisplayRequest(LocalContext.current, "http://sample.com/sample.jpg") {
- *         placeholder(R.drawable.placeholder)
+ *     request = ComposableImageRequest("http://sample.com/sample.jpg") {
+ *         placeholder(Res.drawable.placeholder)
  *         crossfade()
  *     },
  *     contentDescription = "view image",
@@ -139,17 +119,11 @@ fun SketchZoomAsyncImage(
  * )
  * ```
  *
- * @param request [DisplayRequest].
+ * @param request [ImageRequest].
  * @param contentDescription Text used by accessibility services to describe what this image
  *  represents. This should always be provided unless this image is used for decorative purposes,
  *  and does not represent a meaningful action that a user can take.
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param placeholder A [Painter] that is displayed while the image is loading.
- * @param error A [Painter] that is displayed when the image request is unsuccessful.
- * @param uriEmpty A [Painter] that is displayed when the request's [DisplayRequest.uriString] is null.
- * @param onLoading Called when the image request begins loading.
- * @param onSuccess Called when the image request completes successfully.
- * @param onError Called when the image request completes unsuccessfully.
  * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
  *  bounds defined by the width and height.
  * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
@@ -168,16 +142,10 @@ fun SketchZoomAsyncImage(
 @Composable
 @NonRestartableComposable
 fun SketchZoomAsyncImage(
-    request: DisplayRequest,
+    request: ImageRequest,
     contentDescription: String?,
     modifier: Modifier = Modifier,
     imageState: AsyncImageState = rememberAsyncImageState(),
-    placeholder: Painter? = null,
-    error: Painter? = null,
-    uriEmpty: Painter? = error,
-    onLoading: ((PainterState.Loading) -> Unit)? = null,
-    onSuccess: ((PainterState.Success) -> Unit)? = null,
-    onError: ((PainterState.Error) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
@@ -193,162 +161,6 @@ fun SketchZoomAsyncImage(
     sketch = LocalContext.current.sketch,
     modifier = modifier,
     imageState = imageState,
-    placeholder = placeholder,
-    error = error,
-    uriEmpty = uriEmpty,
-    onLoading = onLoading,
-    onSuccess = onSuccess,
-    onError = onError,
-    alignment = alignment,
-    contentScale = contentScale,
-    alpha = alpha,
-    colorFilter = colorFilter,
-    filterQuality = filterQuality,
-    state = state,
-    scrollBar = scrollBar,
-    onLongPress = onLongPress,
-    onTap = onTap,
-)
-
-/**
- * An image component that integrates the Sketch image loading framework that zoom and subsampling huge images
- *
- * Example usages:
- *
- * ```kotlin
- * SketchZoomAsyncImage(
- *     imageUri = "http://sample.com/sample.jpg",
- *     contentDescription = "view image",
- *     modifier = Modifier.fillMaxSize(),
- * )
- * ```
- *
- * @param imageUri [DisplayRequest.uriString] value.
- * @param contentDescription Text used by accessibility services to describe what this image
- *  represents. This should always be provided unless this image is used for decorative purposes,
- *  and does not represent a meaningful action that a user can take.
- * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param transform A callback to transform a new [PainterState] before it's applied to the
- *  [AsyncImagePainter]. Typically this is used to modify the state's [Painter].
- * @param onPainterState Called when the painterState changes.
- * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
- *  bounds defined by the width and height.
- * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
- *  used if the bounds are a different size from the intrinsic size of the [AsyncImagePainter].
- * @param alpha Optional opacity to be applied to the [AsyncImagePainter] when it is rendered
- *  onscreen.
- * @param colorFilter Optional [ColorFilter] to apply for the [AsyncImagePainter] when it is
- *  rendered onscreen.
- * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
- *  destination.
- * @param state The state to control zoom
- * @param scrollBar Controls whether scroll bars are displayed and their style
- * @param onLongPress Called when the user long presses the image
- * @param onTap Called when the user taps the image
- */
-@Composable
-@NonRestartableComposable
-fun SketchZoomAsyncImage(
-    imageUri: String?,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    imageState: AsyncImageState = rememberAsyncImageState(),
-    transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
-    onPainterState: ((PainterState) -> Unit)? = null,
-    alignment: Alignment = Alignment.Center,
-    contentScale: ContentScale = ContentScale.Fit,
-    alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
-    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
-    onLongPress: ((Offset) -> Unit)? = null,
-    onTap: ((Offset) -> Unit)? = null,
-) = SketchZoomAsyncImage(
-    imageUri = imageUri,
-    contentDescription = contentDescription,
-    sketch = LocalContext.current.sketch,
-    modifier = modifier,
-    imageState = imageState,
-    transform = transform,
-    onPainterState = onPainterState,
-    alignment = alignment,
-    contentScale = contentScale,
-    alpha = alpha,
-    colorFilter = colorFilter,
-    filterQuality = filterQuality,
-    state = state,
-    scrollBar = scrollBar,
-    onLongPress = onLongPress,
-    onTap = onTap,
-)
-
-
-/**
- * An image component that integrates the Sketch image loading framework that zoom and subsampling huge images
- *
- * Example usages:
- *
- * ```kotlin
- * SketchZoomAsyncImage(
- *     request = DisplayRequest(LocalContext.current, "http://sample.com/sample.jpg") {
- *         placeholder(R.drawable.placeholder)
- *         crossfade()
- *     },
- *     contentDescription = "view image",
- *     modifier = Modifier.fillMaxSize(),
- * )
- * ```
- *
- * @param request [DisplayRequest].
- * @param contentDescription Text used by accessibility services to describe what this image
- *  represents. This should always be provided unless this image is used for decorative purposes,
- *  and does not represent a meaningful action that a user can take.
- * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param transform A callback to transform a new [PainterState] before it's applied to the
- *  [AsyncImagePainter]. Typically this is used to modify the state's [Painter].
- * @param onPainterState Called when the painterState changes.
- * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
- *  bounds defined by the width and height.
- * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
- *  used if the bounds are a different size from the intrinsic size of the [AsyncImagePainter].
- * @param alpha Optional opacity to be applied to the [AsyncImagePainter] when it is rendered
- *  onscreen.
- * @param colorFilter Optional [ColorFilter] to apply for the [AsyncImagePainter] when it is
- *  rendered onscreen.
- * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
- *  destination.
- * @param state The state to control zoom
- * @param scrollBar Controls whether scroll bars are displayed and their style
- * @param onLongPress Called when the user long presses the image
- * @param onTap Called when the user taps the image
- */
-@Composable
-@NonRestartableComposable
-fun SketchZoomAsyncImage(
-    request: DisplayRequest,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    imageState: AsyncImageState = rememberAsyncImageState(),
-    transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
-    onPainterState: ((PainterState) -> Unit)? = null,
-    alignment: Alignment = Alignment.Center,
-    contentScale: ContentScale = ContentScale.Fit,
-    alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
-    scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
-    onLongPress: ((Offset) -> Unit)? = null,
-    onTap: ((Offset) -> Unit)? = null,
-) = SketchZoomAsyncImage(
-    request = request,
-    contentDescription = contentDescription,
-    sketch = LocalContext.current.sketch,
-    modifier = modifier,
-    imageState = imageState,
-    transform = transform,
-    onPainterState = onPainterState,
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,

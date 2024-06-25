@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
@@ -31,7 +30,7 @@ class TileBitmapCacheHelper constructor(
     private val tileBitmapCacheSpec: TileBitmapCacheSpec
 ) {
 
-    fun get(key: String): CacheTileBitmap? {
+    fun get(key: String): TileBitmap? {
         val disabled = tileBitmapCacheSpec.disabled
         val tileMemoryCache = tileBitmapCacheSpec.tileBitmapCache
         if (disabled || tileMemoryCache == null) {
@@ -45,7 +44,7 @@ class TileBitmapCacheHelper constructor(
         tileBitmap: TileBitmap,
         imageUrl: String,
         imageInfo: ImageInfo,
-    ): CacheTileBitmap? {
+    ): TileBitmap? {
         val disabled = tileBitmapCacheSpec.disabled
         val tileMemoryCache = tileBitmapCacheSpec.tileBitmapCache
         if (disabled || tileMemoryCache == null) {

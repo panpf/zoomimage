@@ -24,7 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.sketch.displayImage
+import com.github.panpf.sketch.loadImage
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoViewBinding
 import com.github.panpf.zoomimage.sample.settingsService
@@ -69,9 +69,9 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
     }
 
     private fun setImage(binding: FragmentPhotoViewBinding) {
-        binding.photoView.displayImage(args.imageUri) {
+        binding.photoView.loadImage(args.imageUri) {
             crossfade()
-            listener(
+            registerListener(
                 onStart = {
                     binding.stateView.loading()
                 },

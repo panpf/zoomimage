@@ -23,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
@@ -968,3 +969,6 @@ internal val Alignment.isBottom: Boolean
     get() = this == Alignment.BottomStart
             || this == Alignment.BottomCenter
             || this == Alignment.BottomEnd
+
+fun ImageBitmap.toLogString(): String =
+    "ImageBitmap@${hashCode().toString(16)}(${width.toFloat()}x${height.toFloat()},$config)"

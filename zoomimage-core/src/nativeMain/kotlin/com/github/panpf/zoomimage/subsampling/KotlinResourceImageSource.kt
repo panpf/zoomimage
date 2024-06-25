@@ -17,6 +17,8 @@
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.util.defaultFileSystem
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okio.Path.Companion.toPath
 import okio.Source
 import platform.Foundation.NSBundle
@@ -36,10 +38,12 @@ class KotlinResourceImageSource(
 
     override val key: String = resourcePath
 
-    override fun openSource(): Result<Source> = kotlin.runCatching {
-        val resourcePath = NSBundle.mainBundle.resourcePath!!.toPath()
-        val filePath = resourcePath.resolve("compose-resources").resolve(resourcePath)
-        defaultFileSystem().source(filePath)
+    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
+        kotlin.runCatching {
+            val resourcePath = NSBundle.mainBundle.resourcePath!!.toPath()
+            val filePath = resourcePath.resolve("compose-resources").resolve(resourcePath)
+            defaultFileSystem().source(filePath)
+        }
     }
 
     override fun equals(other: Any?): Boolean {

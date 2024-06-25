@@ -1,8 +1,10 @@
 package com.github.panpf.zoomimage.sample.util
 
-import android.graphics.Bitmap
 import androidx.core.graphics.scale
+import com.github.panpf.sketch.Image
 import com.github.panpf.sketch.Sketch
+import com.github.panpf.sketch.asSketchImage
+import com.github.panpf.sketch.getBitmapOrThrow
 import com.github.panpf.sketch.request.internal.RequestContext
 import com.github.panpf.sketch.transform.TransformResult
 import com.github.panpf.sketch.transform.Transformation
@@ -16,14 +18,15 @@ class BitmapScaleTransformation(val maxSize: Int) : Transformation {
     override suspend fun transform(
         sketch: Sketch,
         requestContext: RequestContext,
-        input: Bitmap
+        input: Image
     ): TransformResult {
+        val bitmap = input.getBitmapOrThrow()
         val scale = min(maxSize / input.width.toFloat(), maxSize / input.height.toFloat())
-        val scaledBitmap = input.scale(
-            (input.width * scale).roundToInt(),
-            (input.height * scale).roundToInt(),
+        val scaledBitmap = bitmap.scale(
+            (bitmap.width * scale).roundToInt(),
+            (bitmap.height * scale).roundToInt(),
             true
         )
-        return TransformResult(scaledBitmap, key)
+        return TransformResult(scaledBitmap.asSketchImage(), key)
     }
 }

@@ -14,6 +14,8 @@
 * remove: 移除 Logger 的 showThreadName 参数
 * new: ios 平台新增 ImageSource.fromKotlinResource() 函数
 * new: TileBitmap 增加 bitmapFrom 属性
+* change: zoomimage-view-sketch 和 zoomimage-compose-sketch 模块升级到 sketch4，同时新增
+  zoomimage-view-sketch3 和 zoomimage-compose-sketch3 模块继续支持 sketch3
 
 ## v1.0.2
 

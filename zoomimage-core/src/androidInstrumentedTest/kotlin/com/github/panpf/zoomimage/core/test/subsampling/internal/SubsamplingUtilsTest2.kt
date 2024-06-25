@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.core.test.subsampling.internal
 
 import androidx.test.platform.app.InstrumentationRegistry
+import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.applyToImageInfo
 import com.github.panpf.zoomimage.subsampling.fromAsset
@@ -10,6 +11,7 @@ import com.github.panpf.zoomimage.test.decodeExifOrientation
 import com.github.panpf.zoomimage.test.decodeImageInfo
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Test
 import kotlin.math.roundToInt
@@ -17,7 +19,7 @@ import kotlin.math.roundToInt
 class SubsamplingUtilsTest2 {
 
     @Test
-    fun testDecodeAndCreateTileDecoder() {
+    fun testDecodeAndCreateTileDecoder() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val logger = Logger("MyTest")
 
@@ -25,14 +27,15 @@ class SubsamplingUtilsTest2 {
         val exifOrientation =
             imageSource.decodeExifOrientation().getOrThrow()
         val imageInfo = imageSource.decodeImageInfo().getOrThrow()
-        val correctOrientationImageInfo = exifOrientation.applyToImageInfo(imageInfo)
+        val correctOrientationImageInfo =
+            AndroidExifOrientation(exifOrientation).applyToImageInfo(imageInfo)
         val thumbnailSize = correctOrientationImageInfo.size / 8
         decodeAndCreateTileDecoder(
             logger = logger,
             imageSource = imageSource,
             thumbnailSize = thumbnailSize,
         ).getOrThrow().apply {
-            Assert.assertEquals(correctOrientationImageInfo, this.imageInfo)
+            Assert.assertEquals(correctOrientationImageInfo, this.getImageInfo())
         }
 
         val thumbnailSize2 = imageInfo.size / 8
@@ -41,7 +44,7 @@ class SubsamplingUtilsTest2 {
             imageSource = imageSource,
             thumbnailSize = thumbnailSize2,
         ).getOrThrow().apply {
-            Assert.assertEquals(imageInfo, this.imageInfo)
+            Assert.assertEquals(imageInfo, this.getImageInfo())
         }
 
         val errorImageSource = ImageSource.fromAsset(context, "fake_image.jpg")

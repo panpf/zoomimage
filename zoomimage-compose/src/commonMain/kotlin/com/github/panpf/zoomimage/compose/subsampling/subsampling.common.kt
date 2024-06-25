@@ -155,7 +155,7 @@ internal class SubsamplingDrawTilesNode(
         tilePaint: Paint
     ): Boolean {
         val tileBitmap = tileSnapshot.tileBitmap?.takeIf { !it.isRecycled } ?: return false
-        val imageBitmap = (tileBitmap as ComposeTileBitmap).imageBitmap
+        val imageBitmap = (tileBitmap as ComposeTileBitmap).bitmap
 
         val widthScale: Float = imageInfo.width / (contentSize.width.toFloat())
         val heightScale: Float = imageInfo.height / (contentSize.height.toFloat())

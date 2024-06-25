@@ -53,7 +53,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -377,23 +376,22 @@ class SubsamplingEngine constructor(
         }
 
         lastResetTileDecoderJob = coroutineScope?.launch(Dispatchers.Main) {
-            val result = withContext(Dispatchers.IO) {
-                decodeAndCreateTileDecoder(
-                    logger = logger,
-                    imageSource = imageSource,
-                    thumbnailSize = contentSize,
-                )
-            }
+            val result = decodeAndCreateTileDecoder(
+                logger = logger,
+                imageSource = imageSource,
+                thumbnailSize = contentSize,
+            )
             val newTileDecoder = result.getOrNull()
             if (newTileDecoder != null) {
+                val imageInfo = newTileDecoder.getImageInfo()
                 logger.d {
                     "resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
-                            "imageInfo=${newTileDecoder.imageInfo.toShortString()}. " +
+                            "imageInfo=${imageInfo.toShortString()}. " +
                             "'${imageKey}'"
                 }
                 this@SubsamplingEngine.tileDecoder = newTileDecoder
-                this@SubsamplingEngine._imageInfoState.value = newTileDecoder.imageInfo
+                this@SubsamplingEngine._imageInfoState.value = imageInfo
                 resetTileManager(caller)
             } else {
                 val exception = result.exceptionOrNull()!! as CreateTileDecoderException

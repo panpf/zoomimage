@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.util
 
-import android.graphics.Bitmap
+import com.github.panpf.sketch.Image
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.request.ImageRequest
@@ -24,7 +24,7 @@ private data class DelayTransformation(val delay: Long) : Transformation {
     override suspend fun transform(
         sketch: Sketch,
         requestContext: RequestContext,
-        input: Bitmap
+        input: Image
     ): TransformResult? {
         delay(delay)
         return null

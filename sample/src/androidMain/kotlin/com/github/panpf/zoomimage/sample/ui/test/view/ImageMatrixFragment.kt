@@ -10,8 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.toRect
 import androidx.core.view.updateLayoutParams
-import com.github.panpf.sketch.displayImage
 import com.github.panpf.sketch.fetch.newAssetUri
+import com.github.panpf.sketch.loadImage
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.databinding.FragmentTestImageMatrixBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
@@ -241,12 +241,12 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
         } else {
             newAssetUri("sample_cat.jpg")
         }
-        binding.imageView.displayImage(imageUri) {
+        binding.imageView.loadImage(imageUri) {
             val resources = requireContext().resources
             val maxSize =
                 min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) / 4
             addTransformations(BitmapScaleTransformation(maxSize))
-            listener(
+            registerListener(
                 onSuccess = { _, _ ->
                     updateMatrix(binding)
                 },

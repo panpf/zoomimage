@@ -25,7 +25,7 @@ class SkiaTileBitmap(val bitmap: SkiaBitmap, override val bitmapFrom: BitmapFrom
 
     override val height: Int = bitmap.height
 
-    override val byteCount: Int = (bitmap.rowBytes * bitmap.height)
+    override val byteCount: Long = ((bitmap.rowBytes * bitmap.height).toLong())
 
     override val isRecycled: Boolean = false
 

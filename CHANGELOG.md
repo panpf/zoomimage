@@ -14,6 +14,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * remove: Remove the showThreadName parameter of Logger
 * new: New ImageSource.fromKotlinResource() function on ios platform
 * new: TileBitmap adds bitmapFrom attribute
+* change: zoomimage-view-sketch and zoomimage-compose-sketch modules upgraded to sketch4, while
+  adding zoomimage-view-sketch3 and zoomimage-compose-sketch3 modules to continue to support sketch3
 
 ## v1.0.2
 

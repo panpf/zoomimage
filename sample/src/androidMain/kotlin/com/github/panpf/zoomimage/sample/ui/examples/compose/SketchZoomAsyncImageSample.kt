@@ -8,14 +8,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import com.github.panpf.sketch.compose.ability.progressIndicator
-import com.github.panpf.sketch.compose.ability.rememberDrawableProgressPainter
-import com.github.panpf.sketch.compose.rememberAsyncImageState
-import com.github.panpf.sketch.drawable.SectorProgressDrawable
+import com.github.panpf.sketch.ability.progressIndicator
 import com.github.panpf.sketch.fetch.newResourceUri
-import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.painter.rememberSectorProgressPainter
+import com.github.panpf.sketch.rememberAsyncImageState
+import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.sketch.request.LoadState
-import com.github.panpf.sketch.stateimage.ThumbnailMemoryCacheStateImage
+import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.sample.R
@@ -28,10 +27,8 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
     ) { contentScale, alignment, state, scrollBar ->
         val context = LocalContext.current
         val imageState = rememberAsyncImageState()
-        val progressPainter =
-            rememberDrawableProgressPainter(drawable = remember { SectorProgressDrawable() })
         SketchZoomAsyncImage(
-            request = DisplayRequest(context, sketchImageUri) {
+            request = ComposableImageRequest(sketchImageUri) {
                 placeholder(ThumbnailMemoryCacheStateImage())
                 crossfade(fadeStart = false)
             },
@@ -40,7 +37,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             alignment = alignment,
             modifier = Modifier
                 .fillMaxSize()
-                .progressIndicator(imageState, progressPainter),
+                .progressIndicator(imageState, rememberSectorProgressPainter()),
             imageState = imageState,
             state = state,
             scrollBar = scrollBar,

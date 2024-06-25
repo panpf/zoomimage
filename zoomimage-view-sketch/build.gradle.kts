@@ -24,7 +24,8 @@ android {
 dependencies {
     api(projects.zoomimageView)
     api(projects.zoomimageCoreSketch)
-    api(libs.panpf.sketch3.viewability)
+    api(libs.panpf.sketch4.extensions.viewability)
+    api(libs.panpf.sketch4.view.core)
 
     androidTestImplementation(projects.internal.testUtils)
 }

@@ -9,11 +9,11 @@ import okio.Closeable
 
 interface DecodeHelper : Closeable {
 
-    val imageInfo: ImageInfo
+    suspend fun getImageInfo(): ImageInfo
 
-    val supportRegion: Boolean
+    suspend fun supportRegion(): Boolean
 
-    fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap
+    suspend fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap
 
     fun copy(): DecodeHelper
 }

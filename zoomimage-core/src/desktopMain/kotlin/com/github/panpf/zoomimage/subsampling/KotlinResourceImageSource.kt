@@ -17,6 +17,8 @@
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.util.ClassLoaderResourceLoader
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okio.Source
 import okio.source
 
@@ -35,8 +37,10 @@ class KotlinResourceImageSource(
 
     override val key: String = resourcePath
 
-    override fun openSource(): Result<Source> = kotlin.runCatching {
-        return Result.success(ClassLoaderResourceLoader.Default.load(resourcePath).source())
+    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
+        kotlin.runCatching {
+            ClassLoaderResourceLoader.Default.load(resourcePath).source()
+        }
     }
 
     override fun equals(other: Any?): Boolean {

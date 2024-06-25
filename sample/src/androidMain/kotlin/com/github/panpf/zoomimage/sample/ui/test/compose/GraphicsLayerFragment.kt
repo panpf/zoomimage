@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.test.compose
 
+import com.github.panpf.zoomimage.sample.R as CommonR
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -49,9 +50,9 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.fetch.newAssetUri
-import com.github.panpf.sketch.request.DisplayRequest
+import com.github.panpf.sketch.rememberAsyncImagePainter
+import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.Transform
@@ -60,16 +61,15 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.base.compose.BaseAppBarComposeFragment
 import com.github.panpf.zoomimage.sample.ui.common.compose.AutoSizeText
 import com.github.panpf.zoomimage.sample.ui.util.ScaleFactor
+import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.ui.util.name
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
-import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.calculateBaseTransform
 import com.github.panpf.zoomimage.zoom.calculateContentDisplayRect
 import kotlin.math.min
-import com.github.panpf.zoomimage.sample.R as CommonR
 
 class GraphicsLayerFragment : BaseAppBarComposeFragment() {
 
@@ -109,13 +109,13 @@ private fun GraphicsLayerSample() {
             }
         }
     }
-    val painter = rememberAsyncImagePainter(request = DisplayRequest(context, imageUri) {
+    val painter = rememberAsyncImagePainter(request = ImageRequest(context, imageUri) {
         val resources = context.resources
         val maxSize =
             min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) / 4
         addTransformations(BitmapScaleTransformation(maxSize))
-        listener(onSuccess = { _, result ->
-            contentSize = IntSize(result.drawable.intrinsicWidth, result.drawable.intrinsicHeight)
+        registerListener(onSuccess = { _, result ->
+            contentSize = IntSize(result.image.width, result.image.height)
         })
     })
 

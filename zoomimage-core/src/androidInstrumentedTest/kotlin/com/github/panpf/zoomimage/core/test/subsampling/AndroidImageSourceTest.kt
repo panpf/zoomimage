@@ -5,13 +5,14 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.panpf.zoomimage.subsampling.AssetImageSource
 import com.github.panpf.zoomimage.subsampling.ContentImageSource
 import com.github.panpf.zoomimage.subsampling.ResourceImageSource
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Test
 
 class AndroidImageSourceTest {
 
     @Test
-    fun testAssetImageSource() {
+    fun testAssetImageSource() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
 
         AssetImageSource(context, "sample_cat.jpg").apply {
@@ -28,7 +29,7 @@ class AndroidImageSourceTest {
     }
 
     @Test
-    fun testResourceImageSource() {
+    fun testResourceImageSource() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
 
         val drawableId = com.github.panpf.zoomimage.images.R.raw.sample_anim
@@ -43,7 +44,8 @@ class AndroidImageSourceTest {
     fun testContentImageSource() {
         val context = InstrumentationRegistry.getInstrumentation().context
 
-        val uri = Uri.parse("content://com.github.panpf.zoomimage.core.test.fileprovider/sample_anim.gif")
+        val uri =
+            Uri.parse("content://com.github.panpf.zoomimage.core.test.fileprovider/sample_anim.gif")
         ContentImageSource(context, uri).apply {
             Assert.assertEquals(uri.toString(), key)
             Assert.assertEquals("ContentImageSource('$uri')", toString())
