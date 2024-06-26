@@ -1,4 +1,3 @@
-// After turning on TYPESAFE_PROJECT_ACCESSORS, the root directory name and sketch module name cannot be the same.
 rootProject.name = "zoomimage"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
