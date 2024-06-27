@@ -148,7 +148,7 @@ ZoomImage(
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
+sketchZoomImageView.loadImage("http://sample.com/sample.jpg")
 ```
 
 ## 文档

@@ -164,7 +164,7 @@ usage [Get Started](docs/wiki/getstarted.md)
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.displayImage("http://sample.com/sample.jpg")
+sketchZoomImageView.loadImage("http://sample.com/sample.jpg")
 ```
 
 ## Document

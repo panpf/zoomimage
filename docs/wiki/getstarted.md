@@ -141,7 +141,7 @@ ZoomImage(
 
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.displayImage("http://sample.com/sample.jpg") {
+sketchZoomImageView.loadImage("http://sample.com/sample.jpg") {
     placeholder(R.drawable.placeholder)
     crossfade()
 }

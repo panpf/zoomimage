@@ -72,9 +72,9 @@ abstract class BasePhotoGridItemFactory :
                 width = itemSize
                 height = itemSize
             }
-            displayImage(binding.image, data.uri)
+            loadImage(binding.image, data.uri)
         }
     }
 
-    abstract fun displayImage(imageView: ImageView, sketchImageUri: String)
+    abstract fun loadImage(imageView: ImageView, sketchImageUri: String)
 }

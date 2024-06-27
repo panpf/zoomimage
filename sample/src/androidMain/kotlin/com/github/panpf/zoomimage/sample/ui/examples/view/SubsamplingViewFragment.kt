@@ -29,13 +29,12 @@ import androidx.navigation.fragment.navArgs
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.sketch
+import com.github.panpf.sketch.util.DownloadData
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.sample.databinding.FragmentSubsamplingViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.util.DownloadData
-import com.github.panpf.zoomimage.sample.ui.util.DownloadResult
-import com.github.panpf.zoomimage.sample.ui.util.download
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
@@ -106,35 +105,34 @@ class SubsamplingViewFragment : BaseBindingFragment<FragmentSubsamplingViewBindi
 
             sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
                 binding.stateView.loading()
-                val result = binding.subsamplingView.context.sketch.download(args.imageUri)
-                when (result) {
-                    is DownloadResult.Success -> {
-                        val data = result.data
-                        binding.stateView.gone()
-                        when (data) {
-                            is DownloadData.Cache -> ImageSource.uri(data.path.toFile().toUri())
+                val context = binding.subsamplingView.context
+                val result = context.sketch.executeDownload(ImageRequest(context, args.imageUri))
+                val data = result.getOrNull()
+                if (data != null) {
+                    binding.stateView.gone()
+                    when (data) {
+                        is DownloadData.Cache -> {
+                            ImageSource.uri(data.path.toFile().toUri())
+                        }
 
-                            is DownloadData.Bytes -> ImageSource.bitmap(
+                        is DownloadData.Bytes -> {
+                            val bitmap =
                                 BitmapFactory.decodeByteArray(data.bytes, 0, data.bytes.size)
-                            )
+                            ImageSource.bitmap(bitmap)
+                        }
 
-                            else -> throw IllegalArgumentException("")
+                        else -> {
+                            throw IllegalArgumentException("Unsupported DownloadData type: ${data::class}")
                         }
                     }
-
-                    is DownloadResult.Error -> {
-                        binding.stateView.error {
-                            message(result.throwable)
-                            retryAction {
-                                setImage(binding)
-                            }
+                } else {
+                    binding.stateView.error {
+                        message(result.exceptionOrNull())
+                        retryAction {
+                            setImage(binding)
                         }
-                        null
                     }
-
-                    else -> {
-                        throw IllegalArgumentException("")
-                    }
+                    null
                 }
             }
 

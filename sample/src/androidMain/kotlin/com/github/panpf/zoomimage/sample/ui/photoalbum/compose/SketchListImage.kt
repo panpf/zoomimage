@@ -6,8 +6,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ImageRequest
-import com.github.panpf.sketch.resize.LongImageClipPrecisionDecider
-import com.github.panpf.sketch.resize.LongImageStartCropScaleDecider
+import com.github.panpf.sketch.resize.LongImagePrecisionDecider
+import com.github.panpf.sketch.resize.LongImageScaleDecider
 import com.github.panpf.sketch.resize.Precision.SAME_ASPECT_RATIO
 import com.github.panpf.sketch.state.IconDrawableStateImage
 import com.github.panpf.zoomimage.sample.R.color
@@ -32,8 +32,8 @@ fun SketchListImage(sketchImageUri: String, modifier: Modifier) {
             )
             crossfade()
             resizeOnDraw()
-            precision(LongImageClipPrecisionDecider(SAME_ASPECT_RATIO))
-            scale(LongImageStartCropScaleDecider())
+            precision(LongImagePrecisionDecider(SAME_ASPECT_RATIO))
+            scale(LongImageScaleDecider())
         },
         modifier = modifier,
         contentScale = ContentScale.Crop,

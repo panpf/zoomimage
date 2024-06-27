@@ -23,12 +23,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.asDrawableOrThrow
-import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.resize.Precision
-import com.github.panpf.sketch.resize.internal.ViewSizeResolver
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
@@ -58,10 +56,7 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
         stateView.loading()
         zoomView.apply {
             viewLifecycleOwner.lifecycleScope.launch {
-                val request = ImageRequest(requireContext(), sketchImageUri) {
-                    downloadCachePolicy(CachePolicy.ENABLED)
-                    size(ViewSizeResolver(zoomView))    // TODO Sketch4 alpha03 version is not needed.
-                }
+                val request = ImageRequest(requireContext(), sketchImageUri)
                 val result = requireContext().sketch.execute(request)
                 if (result is ImageResult.Success) {
                     setImageDrawable(result.image.asDrawableOrThrow())

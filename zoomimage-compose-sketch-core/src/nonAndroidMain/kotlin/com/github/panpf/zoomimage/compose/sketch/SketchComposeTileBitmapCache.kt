@@ -3,7 +3,7 @@ package com.github.panpf.zoomimage.compose.sketch
 import com.github.panpf.sketch.ComposeBitmapImage
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.asSketchImage
-import com.github.panpf.sketch.cache.ComposeBitmapValue
+import com.github.panpf.sketch.cache.ComposeBitmapImageValue
 import com.github.panpf.zoomimage.compose.subsampling.ComposeTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.TileBitmap
@@ -15,7 +15,7 @@ class SketchComposeTileBitmapCache constructor(
 
     override fun get(key: String): TileBitmap? {
         val cacheValue = sketch.memoryCache[key] ?: return null
-        cacheValue as ComposeBitmapValue
+        cacheValue as ComposeBitmapImageValue
         val composeBitmapImage = cacheValue.image as ComposeBitmapImage
         val bitmap = composeBitmapImage.bitmap
         return ComposeTileBitmap(bitmap, BitmapFrom.MEMORY_CACHE)
@@ -31,7 +31,7 @@ class SketchComposeTileBitmapCache constructor(
         tileBitmap as ComposeTileBitmap
         val bitmap = tileBitmap.bitmap
         val cacheValue =
-            ComposeBitmapValue(bitmap.asSketchImage() as ComposeBitmapImage, extras = null)
+            ComposeBitmapImageValue(bitmap.asSketchImage(), extras = null)
         sketch.memoryCache.put(key, cacheValue)
         return null
     }

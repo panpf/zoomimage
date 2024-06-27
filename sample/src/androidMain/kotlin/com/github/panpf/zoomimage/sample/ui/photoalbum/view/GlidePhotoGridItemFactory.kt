@@ -24,7 +24,7 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 class GlidePhotoGridItemFactory : BasePhotoGridItemFactory() {
 
-    override fun displayImage(imageView: ImageView, sketchImageUri: String) {
+    override fun loadImage(imageView: ImageView, sketchImageUri: String) {
         Glide.with(imageView.context)
             .load(sketchUri2GlideModel(sketchImageUri))
             .placeholder(R.drawable.im_placeholder)

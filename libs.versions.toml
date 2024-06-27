@@ -38,7 +38,7 @@ okio = "3.9.0"
 
 panpf-assemblyadapter4 = "4.1.0"
 panpf-sketch3 = "3.3.2"
-panpf-sketch4 = "4.0.0-alpha01"
+panpf-sketch4 = "4.0.0-alpha03"
 panpf-tools4a = "1.0.0"
 panpf-tools4j = "1.0.0"
 panpf-tools4k = "1.0.0"

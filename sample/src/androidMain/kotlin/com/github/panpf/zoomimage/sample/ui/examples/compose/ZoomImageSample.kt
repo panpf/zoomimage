@@ -38,19 +38,13 @@ fun ZoomImageSample(sketchImageUri: String) {
         var imagePainter: Painter? by remember { mutableStateOf(null) }
         LaunchedEffect(sketchImageUri) {
             myLoadState = MyLoadState.Loading
-            val displayResult = ImageRequest(context, sketchImageUri) {
-                val displayMetrics = context.resources.displayMetrics
-                size(
-                    displayMetrics.widthPixels,
-                    displayMetrics.heightPixels
-                )    // TODO Sketch4 alpha03 version is not needed.
-            }.execute()
-            myLoadState = if (displayResult is ImageResult.Success) {
+            val imageResult = ImageRequest(context, sketchImageUri).execute()
+            myLoadState = if (imageResult is ImageResult.Success) {
                 MyLoadState.None
             } else {
                 MyLoadState.Error()
             }
-            imagePainter = displayResult.image?.asPainter()
+            imagePainter = imageResult.image?.asPainter()
 
             val imageSource = SketchImageSource(context, context.sketch, sketchImageUri)
             state.subsampling.setImageSource(imageSource)

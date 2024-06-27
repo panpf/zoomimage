@@ -18,15 +18,15 @@ package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.widget.ImageView
 import com.github.panpf.sketch.loadImage
-import com.github.panpf.sketch.resize.LongImageClipPrecisionDecider
-import com.github.panpf.sketch.resize.LongImageStartCropScaleDecider
+import com.github.panpf.sketch.resize.LongImagePrecisionDecider
+import com.github.panpf.sketch.resize.LongImageScaleDecider
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.state.IconDrawableStateImage
 import com.github.panpf.zoomimage.sample.R
 
 class SketchPhotoGridItemFactory : BasePhotoGridItemFactory() {
 
-    override fun displayImage(imageView: ImageView, sketchImageUri: String) {
+    override fun loadImage(imageView: ImageView, sketchImageUri: String) {
         imageView.loadImage(sketchImageUri) {
             placeholder(
                 IconDrawableStateImage(
@@ -42,8 +42,8 @@ class SketchPhotoGridItemFactory : BasePhotoGridItemFactory() {
             )
             crossfade()
             resizeOnDraw()
-            precision(LongImageClipPrecisionDecider(Precision.SAME_ASPECT_RATIO))
-            scale(LongImageStartCropScaleDecider())
+            precision(LongImagePrecisionDecider(Precision.SAME_ASPECT_RATIO))
+            scale(LongImageScaleDecider())
         }
     }
 }

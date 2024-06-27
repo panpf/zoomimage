@@ -29,7 +29,7 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
 class CoilPhotoGridItemFactory : BasePhotoGridItemFactory() {
 
-    override fun displayImage(imageView: ImageView, sketchImageUri: String) {
+    override fun loadImage(imageView: ImageView, sketchImageUri: String) {
         imageView.load(sketchUri2CoilModel(imageView.context, sketchImageUri)) {
             placeholder(
                 iconDrawable(

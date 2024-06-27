@@ -24,7 +24,7 @@ import com.squareup.picasso.Picasso
 
 class PicassoPhotoGridItemFactory : BasePhotoGridItemFactory() {
 
-    override fun displayImage(imageView: ImageView, sketchImageUri: String) {
+    override fun loadImage(imageView: ImageView, sketchImageUri: String) {
         Picasso.get()
             .let {
                 when {
