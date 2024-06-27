@@ -19,7 +19,11 @@ package com.github.panpf.zoomimage.subsampling
 import com.github.panpf.zoomimage.SkiaBitmap
 import com.github.panpf.zoomimage.toLogString
 
-class SkiaTileBitmap(val bitmap: SkiaBitmap, override val bitmapFrom: BitmapFrom) : TileBitmap {
+class SkiaTileBitmap(
+    val bitmap: SkiaBitmap,
+    override val key: String,
+    override val bitmapFrom: BitmapFrom,
+) : TileBitmap {
 
     override val width: Int = bitmap.width
 
@@ -29,9 +33,13 @@ class SkiaTileBitmap(val bitmap: SkiaBitmap, override val bitmapFrom: BitmapFrom
 
     override val isRecycled: Boolean = false
 
+    override fun setIsDisplayed(displayed: Boolean) {
+
+    }
+
     override fun recycle() {}
 
     override fun toString(): String {
-        return "SkiaTileBitmap(bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
+        return "SkiaTileBitmap(key='$key', bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
     }
 }

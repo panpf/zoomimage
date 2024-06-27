@@ -33,10 +33,10 @@ class SketchTileBitmapCache constructor(
     override fun get(key: String): TileBitmap? {
         val cache = sketch.memoryCache[key] ?: return null
         return SketchTileBitmap(
-            key = key,
             cacheValue = cache,
+            key = key,
+            bitmapFrom = BitmapFrom.MEMORY_CACHE,
             caller = caller,
-            BitmapFrom.MEMORY_CACHE
         )
     }
 
@@ -71,6 +71,6 @@ class SketchTileBitmapCache constructor(
         if (!sketch.memoryCache.put(key, newCacheValue)) {
             return null
         }
-        return SketchTileBitmap(key, newCacheValue, caller, tileBitmap.bitmapFrom)
+        return SketchTileBitmap(newCacheValue, key, tileBitmap.bitmapFrom, caller)
     }
 }

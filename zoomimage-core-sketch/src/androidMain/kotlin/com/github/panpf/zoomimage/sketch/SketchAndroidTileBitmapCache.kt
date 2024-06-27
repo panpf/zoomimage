@@ -31,7 +31,7 @@ class SketchAndroidTileBitmapCache constructor(
     override fun get(key: String): TileBitmap? {
         val cacheValue = sketch.memoryCache[key] ?: return null
         cacheValue as AndroidBitmapImageValue
-        return AndroidTileBitmap(cacheValue.image.bitmap, BitmapFrom.MEMORY_CACHE)
+        return AndroidTileBitmap(cacheValue.image.bitmap, key, BitmapFrom.MEMORY_CACHE)
     }
 
     override fun put(

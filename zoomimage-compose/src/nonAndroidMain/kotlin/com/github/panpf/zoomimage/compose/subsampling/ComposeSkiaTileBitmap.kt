@@ -17,43 +17,41 @@
 package com.github.panpf.zoomimage.compose.subsampling
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.github.panpf.zoomimage.compose.internal.toLogString
+import androidx.compose.ui.graphics.asComposeImageBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
-import com.github.panpf.zoomimage.subsampling.TileBitmap
+import com.github.panpf.zoomimage.subsampling.SkiaTileBitmap
 
-fun ComposeTileBitmap(
-    bitmap: ImageBitmap,
-    key: String,
-    bitmapFrom: BitmapFrom
-): ComposeTileBitmap = ComposeTileBitmapImpl(bitmap, key, bitmapFrom)
-
-interface ComposeTileBitmap : TileBitmap {
-    val bitmap: ImageBitmap
-}
-
-private class ComposeTileBitmapImpl(
-    override val bitmap: ImageBitmap,
-    override val key: String,
-    override val bitmapFrom: BitmapFrom,
+class ComposeSkiaTileBitmap constructor(
+    private val tileBitmap: SkiaTileBitmap,
 ) : ComposeTileBitmap {
 
-    override val width: Int = bitmap.width
+    override val key: String = tileBitmap.key
 
-    override val height: Int = bitmap.height
+    override val bitmapFrom: BitmapFrom = tileBitmap.bitmapFrom
 
-    override val byteCount: Long = 4L * width * height
+    override val bitmap: ImageBitmap = tileBitmap.bitmap.asComposeImageBitmap()
 
-    override val isRecycled: Boolean = false
+    override val width: Int
+        get() = tileBitmap.width
+
+    override val height: Int
+        get() = tileBitmap.height
+
+    override val byteCount: Long
+        get() = tileBitmap.byteCount
+
+    override val isRecycled: Boolean
+        get() = tileBitmap.isRecycled
 
     override fun setIsDisplayed(displayed: Boolean) {
-
+        tileBitmap.setIsDisplayed(displayed)
     }
 
     override fun recycle() {
-
+        tileBitmap.recycle()
     }
 
     override fun toString(): String {
-        return "ComposeTileBitmap(key='$key', bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
+        return "ComposeSkiaTileBitmap($tileBitmap)"
     }
 }

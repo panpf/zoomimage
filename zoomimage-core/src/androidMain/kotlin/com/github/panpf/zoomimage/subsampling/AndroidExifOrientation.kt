@@ -148,7 +148,7 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) {
         val canvas = Canvas(outBitmap)
         val paint = Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG)
         canvas.drawBitmap(bitmap, matrix, paint)
-        return AndroidTileBitmap(outBitmap, tileBitmap.bitmapFrom)
+        return AndroidTileBitmap(outBitmap, tileBitmap.key, tileBitmap.bitmapFrom)
     }
 
     fun name(): String {

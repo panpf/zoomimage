@@ -19,14 +19,14 @@ package com.github.panpf.zoomimage.glide
 import android.graphics.Bitmap
 import com.bumptech.glide.load.engine.EngineResourceWrapper
 import com.github.panpf.zoomimage.glide.internal.toLogString
-import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
+import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 
 internal class GlideTileBitmap(
-    override val key: String,
     private val resource: EngineResourceWrapper,
+    override val key: String,
     override val bitmapFrom: BitmapFrom,
-) : AndroidCacheTileBitmap {
+) : AndroidTileBitmap {
 
     override val bitmap: Bitmap
         get() = resource.bitmap

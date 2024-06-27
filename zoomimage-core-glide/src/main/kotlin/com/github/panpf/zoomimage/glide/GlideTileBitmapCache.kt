@@ -37,7 +37,7 @@ class GlideTileBitmapCache(private val glide: Glide) : TileBitmapCache {
     override fun get(key: String): TileBitmap? {
         val engineKey = newEngineKey(key)
         val resource = glideEngine?.loadFromMemory(key = engineKey, isMemoryCacheable = true)
-        return resource?.let { GlideTileBitmap(key, it, BitmapFrom.MEMORY_CACHE) }
+        return resource?.let { GlideTileBitmap(it, key, BitmapFrom.MEMORY_CACHE) }
     }
 
     @Suppress("INACCESSIBLE_TYPE")
@@ -47,12 +47,12 @@ class GlideTileBitmapCache(private val glide: Glide) : TileBitmapCache {
         imageUrl: String,
         imageInfo: ImageInfo,
         disallowReuseBitmap: Boolean
-    ): TileBitmap {
-        val glideEngine = glideEngine ?: return tileBitmap
-        val androidTileBitmap = tileBitmap as AndroidTileBitmap
-        val bitmap = androidTileBitmap.bitmap!!
+    ): TileBitmap? {
+        val glideEngine = glideEngine ?: return null
+        tileBitmap as AndroidTileBitmap
+        val bitmap = tileBitmap.bitmap!!
         val engineKey = newEngineKey(key)
         val resource = glideEngine.put(bitmap, engineKey)
-        return GlideTileBitmap(key, EngineResourceWrapper(resource), tileBitmap.bitmapFrom)
+        return GlideTileBitmap(EngineResourceWrapper(resource), key, tileBitmap.bitmapFrom)
     }
 }

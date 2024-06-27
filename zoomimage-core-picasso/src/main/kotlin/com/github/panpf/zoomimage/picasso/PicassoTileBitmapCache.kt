@@ -28,7 +28,7 @@ class PicassoTileBitmapCache(private val picasso: Picasso) : TileBitmapCache {
 
     override fun get(key: String): TileBitmap? {
         val bitmap = picasso.cache[key] ?: return null
-        return AndroidTileBitmap(bitmap, BitmapFrom.MEMORY_CACHE)
+        return AndroidTileBitmap(bitmap, key, BitmapFrom.MEMORY_CACHE)
     }
 
     override fun put(
@@ -38,8 +38,8 @@ class PicassoTileBitmapCache(private val picasso: Picasso) : TileBitmapCache {
         imageInfo: ImageInfo,
         disallowReuseBitmap: Boolean
     ): TileBitmap? {
-        val androidTileBitmap = tileBitmap as AndroidTileBitmap
-        val bitmap = androidTileBitmap.bitmap!!
+        tileBitmap as AndroidTileBitmap
+        val bitmap = tileBitmap.bitmap!!
         picasso.cache.set(key, bitmap)
         return null
     }

@@ -31,7 +31,11 @@ class BitmapFactoryDecodeHelper(
     private var _exifOrientationHelper: AndroidExifOrientation? = null
     private var _decoder: BitmapRegionDecoder? = null
 
-    override suspend fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap =
+    override suspend fun decodeRegion(
+        key: String,
+        region: IntRectCompat,
+        sampleSize: Int
+    ): TileBitmap =
         withContext(ioCoroutineDispatcher()) {
             val options = BitmapFactory.Options().apply {
                 inSampleSize = sampleSize
@@ -43,7 +47,7 @@ class BitmapFactoryDecodeHelper(
             val decoder = getOrCreateDecoder()
             val bitmap = decoder.decodeRegion(originalRegion.toAndroidRect(), options)
                 ?: throw Exception("Invalid image. region decode return null")
-            val tileBitmap = AndroidTileBitmap(bitmap, BitmapFrom.LOCAL)
+            val tileBitmap = AndroidTileBitmap(bitmap, key, BitmapFrom.LOCAL)
             val correctedImage = exifOrientationHelper.applyToTileBitmap(tileBitmap)
             correctedImage
         }

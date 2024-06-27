@@ -28,11 +28,15 @@ class SkiaDecodeHelper(
     private var _imageInfo: ImageInfo? = initialImageInfo
     private var _skiaImage: SkiaImage? = null
 
-    override suspend fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap =
+    override suspend fun decodeRegion(
+        key: String,
+        region: IntRectCompat,
+        sampleSize: Int
+    ): TileBitmap =
         withContext(ioCoroutineDispatcher()) {
             val skiaImage = getSkiaImage()
             val skiaBitmap = skiaImage.decodeRegion(region, sampleSize)
-            SkiaTileBitmap(skiaBitmap, BitmapFrom.LOCAL)
+            SkiaTileBitmap(skiaBitmap, key, BitmapFrom.LOCAL)
         }
 
     private suspend fun getBytes(): ByteArray {

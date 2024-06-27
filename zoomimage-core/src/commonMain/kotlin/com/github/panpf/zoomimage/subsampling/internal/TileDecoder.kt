@@ -50,10 +50,10 @@ class TileDecoder constructor(
     }
 
     @WorkerThread
-    suspend fun decode(srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
+    suspend fun decode(key: String, srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
         if (destroyed) return null
         val tileBitmap = useDecoder { decoder ->
-            decoder.decodeRegion(srcRect, sampleSize)
+            decoder.decodeRegion(key, srcRect, sampleSize)
         } ?: return null
         return tileBitmap
     }

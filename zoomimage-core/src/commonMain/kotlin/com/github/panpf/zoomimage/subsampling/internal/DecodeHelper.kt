@@ -13,7 +13,7 @@ interface DecodeHelper : Closeable {
 
     suspend fun supportRegion(): Boolean
 
-    suspend fun decodeRegion(region: IntRectCompat, sampleSize: Int): TileBitmap
+    suspend fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileBitmap
 
     fun copy(): DecodeHelper
 }

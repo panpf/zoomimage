@@ -16,7 +16,7 @@
 
 package com.github.panpf.zoomimage.compose.subsampling.internal
 
-import androidx.compose.ui.graphics.asComposeImageBitmap
+import com.github.panpf.zoomimage.compose.subsampling.ComposeSkiaTileBitmap
 import com.github.panpf.zoomimage.subsampling.SkiaTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
@@ -24,12 +24,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
 class SkiaToComposeTileBitmapConvertor : TileBitmapConvertor {
 
     override suspend fun convert(tileBitmap: TileBitmap): TileBitmap {
-        val desktopTileBitmap = tileBitmap as SkiaTileBitmap
-        val imageBitmap = desktopTileBitmap.bitmap.asComposeImageBitmap()
-        return SkiaComposeTileBitmap(
-            bitmap = imageBitmap,
-            bitmapByteCount = tileBitmap.byteCount,
-            bitmapFrom = tileBitmap.bitmapFrom
-        )
+        val skiaTileBitmap = tileBitmap as SkiaTileBitmap
+        return ComposeSkiaTileBitmap(skiaTileBitmap)
     }
 }

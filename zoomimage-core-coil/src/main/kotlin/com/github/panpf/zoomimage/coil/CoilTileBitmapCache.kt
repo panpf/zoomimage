@@ -29,7 +29,7 @@ class CoilTileBitmapCache(private val imageLoader: ImageLoader) : TileBitmapCach
     override fun get(key: String): TileBitmap? {
         return imageLoader.memoryCache
             ?.get(MemoryCache.Key(key))
-            ?.let { AndroidTileBitmap(it.bitmap, BitmapFrom.MEMORY_CACHE) }
+            ?.let { AndroidTileBitmap(it.bitmap, key, BitmapFrom.MEMORY_CACHE) }
     }
 
     override fun put(

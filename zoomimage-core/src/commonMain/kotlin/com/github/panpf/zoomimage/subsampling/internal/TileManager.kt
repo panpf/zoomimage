@@ -398,11 +398,10 @@ class TileManager constructor(
 
         logger.d("loadTile. started. $tile. '${imageSource.key}'")
         tile.loadJob = coroutineScope.async {
-            val memoryCacheKey =
+            val tileKey =
                 "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.sampleSize}"
-            val cachedValue = tileBitmapCacheHelper.get(memoryCacheKey)
+            val cachedValue = tileBitmapCacheHelper.get(tileKey)
             if (cachedValue != null) {
-                // TODO Retrieve from memory without converting
                 val convertedTileBitmap: TileBitmap =
                     tileBitmapConvertor?.convert(cachedValue) ?: cachedValue
                 tile.setTileBitmap(convertedTileBitmap, fromCache = true)
@@ -416,7 +415,7 @@ class TileManager constructor(
 
                 val decodeResult = withContext(decodeDispatcher) {
                     kotlin.runCatching {
-                        tileDecoder.decode(tile.srcRect, tile.sampleSize)
+                        tileDecoder.decode(tileKey, tile.srcRect, tile.sampleSize)
                     }
                 }
 
@@ -445,9 +444,8 @@ class TileManager constructor(
                     }
 
                     isActive -> {
-                        // TODO Convert and then put into memory cache
                         val cacheTileBitmap: TileBitmap = tileBitmapCacheHelper.put(
-                            key = memoryCacheKey,
+                            key = tileKey,
                             tileBitmap = tileBitmap,
                             imageUrl = imageSource.key,
                             imageInfo = imageInfo,

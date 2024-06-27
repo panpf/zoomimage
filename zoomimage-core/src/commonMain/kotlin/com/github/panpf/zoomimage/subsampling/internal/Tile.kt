@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.CacheTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -65,13 +64,9 @@ class Tile constructor(
     fun setTileBitmap(tileBitmap: TileBitmap?, fromCache: Boolean) {
         val oldTileBitmap = this.tileBitmap
         if (tileBitmap == oldTileBitmap) return
-        if (oldTileBitmap is CacheTileBitmap) {
-            oldTileBitmap.setIsDisplayed(false)
-        }
+        oldTileBitmap?.setIsDisplayed(false)
         this.tileBitmap = tileBitmap
-        if (tileBitmap is CacheTileBitmap) {
-            tileBitmap.setIsDisplayed(true)
-        }
+        tileBitmap?.setIsDisplayed(true)
         if (tileBitmap != null && !fromCache) {
             animationState.restart()
         } else {

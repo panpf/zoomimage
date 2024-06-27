@@ -20,31 +20,17 @@ package com.github.panpf.zoomimage.subsampling
  * Tile bitmap interface, you need to implement it to customize tile bitmap
  */
 interface TileBitmap {
+    val key: String
     val width: Int
     val height: Int
     val byteCount: Long
-    fun recycle()
     val isRecycled: Boolean
     val bitmapFrom: BitmapFrom
+    fun setIsDisplayed(displayed: Boolean)
+    fun recycle()
 }
 
 enum class BitmapFrom {
     LOCAL,
     MEMORY_CACHE
-}
-
-/**
- * Tile bitmap interface, you need to implement it to customize tile bitmap
- */
-interface CacheTileBitmap : TileBitmap {
-
-    /**
-     * Cache key
-     */
-    val key: String // TODO delete
-
-    /**
-     * TileBitmap displays callbacks when the state changes
-     */
-    fun setIsDisplayed(displayed: Boolean)  // TODO Merge to TileBitmap
 }

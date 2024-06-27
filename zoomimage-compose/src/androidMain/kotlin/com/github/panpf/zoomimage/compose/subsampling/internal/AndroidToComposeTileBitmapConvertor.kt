@@ -16,9 +16,7 @@
 
 package com.github.panpf.zoomimage.compose.subsampling.internal
 
-import com.github.panpf.zoomimage.compose.subsampling.AndroidCacheComposeTileBitmap
-import com.github.panpf.zoomimage.compose.subsampling.AndroidComposeTileBitmap
-import com.github.panpf.zoomimage.subsampling.AndroidCacheTileBitmap
+import com.github.panpf.zoomimage.compose.subsampling.ComposeAndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
@@ -27,10 +25,6 @@ class AndroidToComposeTileBitmapConvertor : TileBitmapConvertor {
 
     override suspend fun convert(tileBitmap: TileBitmap): TileBitmap {
         val androidTileBitmap = tileBitmap as AndroidTileBitmap
-        return if (androidTileBitmap is AndroidCacheTileBitmap) {
-            AndroidCacheComposeTileBitmap(androidTileBitmap, tileBitmap.bitmapFrom)
-        } else {
-            AndroidComposeTileBitmap(androidTileBitmap, tileBitmap.bitmapFrom)
-        }
+        return ComposeAndroidTileBitmap(androidTileBitmap)
     }
 }

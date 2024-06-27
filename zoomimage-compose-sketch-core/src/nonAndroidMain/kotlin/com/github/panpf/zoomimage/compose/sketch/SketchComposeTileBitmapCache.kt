@@ -18,7 +18,7 @@ class SketchComposeTileBitmapCache constructor(
         cacheValue as ComposeBitmapImageValue
         val composeBitmapImage = cacheValue.image as ComposeBitmapImage
         val bitmap = composeBitmapImage.bitmap
-        return ComposeTileBitmap(bitmap, BitmapFrom.MEMORY_CACHE)
+        return ComposeTileBitmap(bitmap, key, BitmapFrom.MEMORY_CACHE)
     }
 
     override fun put(

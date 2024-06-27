@@ -19,19 +19,20 @@ package com.github.panpf.zoomimage.subsampling
 import android.graphics.Bitmap
 import com.github.panpf.zoomimage.subsampling.internal.toLogString
 
-fun AndroidTileBitmap(bitmap: Bitmap, bitmapFrom: BitmapFrom): AndroidTileBitmap {
-    return AndroidTileBitmapImpl(bitmap, bitmapFrom)
-}
+fun AndroidTileBitmap(
+    bitmap: Bitmap,
+    key: String,
+    bitmapFrom: BitmapFrom
+): AndroidTileBitmap = AndroidTileBitmapImpl(bitmap, key, bitmapFrom)
 
 interface AndroidTileBitmap : TileBitmap {
     val bitmap: Bitmap?
 }
 
-interface AndroidCacheTileBitmap : AndroidTileBitmap, CacheTileBitmap
-
 private class AndroidTileBitmapImpl(
     override val bitmap: Bitmap,
-    override val bitmapFrom: BitmapFrom
+    override val key: String,
+    override val bitmapFrom: BitmapFrom,
 ) : AndroidTileBitmap {
 
     override val width: Int = bitmap.width
@@ -43,11 +44,15 @@ private class AndroidTileBitmapImpl(
     override val isRecycled: Boolean
         get() = bitmap.isRecycled
 
+    override fun setIsDisplayed(displayed: Boolean) {
+
+    }
+
     override fun recycle() {
         bitmap.recycle()
     }
 
     override fun toString(): String {
-        return "AndroidTileBitmap(bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
+        return "AndroidTileBitmap(key='$key', bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
     }
 }
