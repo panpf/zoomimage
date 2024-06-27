@@ -22,23 +22,26 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import com.github.panpf.sketch.LocalPlatformContext
+import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.subsampling.fromKotlinResource
+import com.github.panpf.zoomimage.compose.sketch.SketchSkiaTileBitmapCache
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
-import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
-import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.MySettings
 import com.github.panpf.zoomimage.sample.ui.model.ImageResource
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.util.EventBus
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
+import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
+import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
+import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -142,6 +145,8 @@ fun ViewerScreen(
                 subsampling.tileAnimationSpec =
                     if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
             }
+            val sketch = SingletonSketch.get(LocalPlatformContext.current)
+            subsampling.tileBitmapCache = SketchSkiaTileBitmapCache(sketch)
         }
         LaunchedEffect(Unit) {
             val imageSource = ImageSource.fromKotlinResource(imageResource.resourcePath)
