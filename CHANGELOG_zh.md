@@ -16,6 +16,8 @@
 * new: TileBitmap 增加 bitmapFrom 属性
 * change: zoomimage-view-sketch 和 zoomimage-compose-sketch 模块升级到 sketch4，同时新增
   zoomimage-view-sketch3 和 zoomimage-compose-sketch3 模块继续支持 sketch3
+* change: zoomimage-view-coil 和 zoomimage-compose-coil 模块升级到 coil3，同时新增
+  zoomimage-view-coil2 和 zoomimage-compose-coil2 模块继续支持 coil2
 
 ## v1.0.2
 

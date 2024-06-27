@@ -23,13 +23,14 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
 import androidx.core.view.ViewCompat
-import coil.drawable.CrossfadeDrawable
-import coil.imageLoader
-import coil.request.CachePolicy
-import coil.request.SuccessResult
-import coil.util.CoilUtils
+import coil3.ImageLoader
+import coil3.request.CachePolicy
+import coil3.request.SuccessResult
+import coil3.transition.CrossfadeDrawable
+import coil3.util.CoilUtils
 import com.github.panpf.zoomimage.coil.CoilImageSource
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
+import com.github.panpf.zoomimage.internal.getImageLoader
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 /**
@@ -50,10 +51,6 @@ open class CoilZoomImageView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
-
-    init {
-        _subsamplingEngine?.tileBitmapCacheState?.value = CoilTileBitmapCache(context.imageLoader)
-    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -83,8 +80,18 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 logger.d { "CoilZoomImageView. Can't use Subsampling, result is not Success" }
                 return@post
             }
-            _subsamplingEngine?.disabledTileBitmapCacheState?.value = isDisallowMemoryCache(result)
-            _subsamplingEngine?.setImageSource(newImageSource(result))
+            val imageLoader = CoilUtils.getImageLoader(this@CoilZoomImageView)
+            if (imageLoader == null) {
+                logger.d { "CoilZoomImageView. Can't use Subsampling, ImageLoader is null" }
+                return@post
+            }
+            _subsamplingEngine?.apply {
+                if (tileBitmapCacheState.value == null) {
+                    tileBitmapCacheState.value = CoilTileBitmapCache(imageLoader)
+                }
+                disabledTileBitmapCacheState.value = isDisallowMemoryCache(result)
+                setImageSource(newImageSource(imageLoader, result))
+            }
         }
     }
 
@@ -92,8 +99,13 @@ open class CoilZoomImageView @JvmOverloads constructor(
         return result.request.memoryCachePolicy != CachePolicy.ENABLED
     }
 
-    private fun newImageSource(result: SuccessResult): ImageSource? {
-        val lastChildDrawable = result.drawable.getLastChildDrawable()
+    private fun newImageSource(imageLoader: ImageLoader, result: SuccessResult): ImageSource? {
+        val drawable = drawable
+        if (drawable == null) {
+            logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is null" }
+            return null
+        }
+        val lastChildDrawable = drawable.getLastChildDrawable()
         if (lastChildDrawable !is BitmapDrawable) {
             logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is not BitmapDrawable" }
             return null
@@ -102,7 +114,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
             logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is Animatable" }
             return null
         }
-        return CoilImageSource(context.imageLoader, result.request)
+        return CoilImageSource(imageLoader, result.request)
     }
 
     private fun Drawable.getLastChildDrawable(): Drawable? {

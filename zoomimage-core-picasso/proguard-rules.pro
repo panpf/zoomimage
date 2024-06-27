@@ -20,8 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# ####################### for PicassoExtensions - start #######################
+# ####################### for picassos - start #######################
 -keepclassmembers class com.squareup.picasso.RequestCreator {
     int memoryPolicy;
 }
-# ####################### for PicassoExtensions - end #######################
+# ####################### for picassos - end #######################

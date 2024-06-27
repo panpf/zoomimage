@@ -7,9 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -20,15 +24,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.request.ImageRequest
-import com.github.panpf.tools4a.toast.ktx.showShortToast
+import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.request.execute
+import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
-import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
+import com.github.panpf.zoomimage.sketch.SketchImageSource
+import kotlinx.coroutines.runBlocking
+import me.saket.telephoto.subsamplingimage.SubSamplingImage
+import me.saket.telephoto.subsamplingimage.SubSamplingImageSource
+import me.saket.telephoto.subsamplingimage.rememberSubSamplingImageState
 import me.saket.telephoto.zoomable.ZoomSpec
-import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
-import me.saket.telephoto.zoomable.rememberZoomableImageState
 import me.saket.telephoto.zoomable.rememberZoomableState
 
 @Composable
@@ -39,11 +46,19 @@ fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
     val alignmentName by settingsService.alignment.collectAsState()
     val contentScale = remember(contentScaleName) { ContentScale.valueOf(contentScaleName) }
     val alignment = remember(alignmentName) { Alignment.valueOf(alignmentName) }
-    val coilData =
-        remember(key1 = sketchImageUri) { sketchUri2CoilModel(context, sketchImageUri) }
     val zoomableState = rememberZoomableState(
         zoomSpec = ZoomSpec(maxZoomFactor = 8f)
     )
+    LaunchedEffect(Unit) {
+        snapshotFlow { contentScale }.collect {
+            zoomableState.contentScale = it
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { alignment }.collect {
+            zoomableState.contentAlignment = it
+        }
+    }
     val info = remember(zoomableState.contentTransformation) {
         zoomableState.contentTransformation.run {
             """
@@ -53,25 +68,29 @@ fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
         }
     }
     Box(modifier = Modifier.fillMaxSize()) {
-        ZoomableAsyncImage(
-            model = ImageRequest.Builder(LocalContext.current).apply {
-                data(coilData)
-                crossfade(true)
-            }.build(),
-            contentDescription = "",
-            contentScale = contentScale,
-            alignment = alignment,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black),
-            state = rememberZoomableImageState(zoomableState),
-            onClick = {
-                context.showShortToast("Click (${it.toShortString()})")
-            },
-            onLongClick = {
-                context.showShortToast("Long click (${it.toShortString()})")
-            }
-        )
+        var subSamplingImageSource by remember { mutableStateOf<SubSamplingImageSource?>(null) }
+        LaunchedEffect(sketchImageUri) {
+            ImageRequest(context, sketchImageUri).execute()
+            val imageSource = SketchImageSource(context, context.sketch, sketchImageUri)
+            subSamplingImageSource =
+                SubSamplingImageSource.rawSource({ runBlocking { imageSource.openSource() }.getOrThrow() })
+        }
+        val subSamplingImageSource1 = subSamplingImageSource
+        if (subSamplingImageSource1 != null) {
+            SubSamplingImage(
+                state = rememberSubSamplingImageState(subSamplingImageSource1, zoomableState),
+                contentDescription = "",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black),
+//            onClick = {
+//                context.showShortToast("Click (${it.toShortString()})")
+//            },
+//            onLongClick = {
+//                context.showShortToast("Long click (${it.toShortString()})")
+//            }
+            )
+        }
 
         Text(
             text = info,

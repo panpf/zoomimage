@@ -16,12 +16,12 @@
 
 package com.github.panpf.zoomimage.coil
 
-import coil.ImageLoader
-import coil.fetch.SourceResult
-import coil.request.CachePolicy.DISABLED
-import coil.request.CachePolicy.ENABLED
-import coil.request.ImageRequest
-import coil.request.Options
+import coil3.ImageLoader
+import coil3.fetch.SourceFetchResult
+import coil3.request.CachePolicy.DISABLED
+import coil3.request.CachePolicy.ENABLED
+import coil3.request.ImageRequest
+import coil3.request.Options
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -41,11 +41,12 @@ class CoilImageSource(
                 diskCachePolicy = ENABLED,
                 networkCachePolicy = DISABLED   // Do not download image, by default go here The image have been downloaded
             )
+            val mappedData = imageLoader.components.map(request.data, options)
             val fetcher =
-                imageLoader.components.newFetcher(request.data, options, imageLoader)?.first
+                imageLoader.components.newFetcher(mappedData, options, imageLoader)?.first
                     ?: throw IllegalStateException("Fetcher not found. data='${request.data}'")
             val fetchResult = fetcher.fetch()
-            if (fetchResult !is SourceResult) {
+            if (fetchResult !is SourceFetchResult) {
                 throw IllegalStateException("FetchResult is not SourceResult. data='${request.data}'")
             }
             fetchResult.source.source()

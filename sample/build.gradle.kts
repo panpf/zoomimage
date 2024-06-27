@@ -24,7 +24,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.preview)
             implementation(compose.uiTooling.replace("ui-tooling", "ui-util"))
-            implementation(libs.telephoto)
+            implementation(libs.telephoto.subsampling)
             implementation(libs.panpf.tools4j)
             implementation(libs.panpf.sketch4.extensions.compose)
         }
@@ -64,7 +64,6 @@ kotlin {
             implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.paging.compose)
-            implementation(libs.telephoto.coil)
         }
         desktopMain.dependencies {
             implementation(projects.internal.images)

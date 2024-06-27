@@ -19,8 +19,8 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import coil.load
-import coil.size.Precision.INEXACT
+import coil3.load
+import coil3.request.crossfade
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.CoilZoomImageView
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
@@ -41,8 +41,7 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
     override fun loadImage(zoomView: CoilZoomImageView, stateView: StateView) {
         val model = sketchUri2CoilModel(requireContext(), args.imageUri)
         zoomView.load(model) {
-            lifecycle(viewLifecycleOwner.lifecycle)
-            precision(coil.size.Precision.INEXACT)
+            precision(coil3.size.Precision.INEXACT)
             crossfade(true)
 //            val imageLoader = Coil.imageLoader(context)
 //            if (coilData != null) {
@@ -67,10 +66,9 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
     override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
         val model = sketchUri2CoilModel(requireContext(), args.imageUri)
         minimapView.load(model) {
-            lifecycle(viewLifecycleOwner.lifecycle)
             crossfade(true)
             size(600, 600)
-            precision(INEXACT)
+            precision(coil3.size.Precision.INEXACT)
         }
     }
 

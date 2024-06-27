@@ -2,7 +2,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
 }
-
+// TODO multiplatform
 android {
     namespace = "com.github.panpf.zoomimage.core.coil"
     compileSdk = property("compileSdk").toString().toInt()
@@ -23,7 +23,7 @@ android {
 
 dependencies {
     api(projects.zoomimageCore)
-    api(libs.coil)
+    api(libs.coil.core)
 
     androidTestImplementation(projects.internal.testUtils)
 }

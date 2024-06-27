@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.multidex.MultiDexApplication
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.memory.MemoryCache
-import coil.util.DebugLogger
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.memory.MemoryCache
+import coil3.util.DebugLogger
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.load.engine.cache.LruResourceCache
@@ -27,7 +27,7 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
 
-class MyApplication : MultiDexApplication(), SingletonSketch.Factory, ImageLoaderFactory {
+class MyApplication : MultiDexApplication(), SingletonSketch.Factory, SingletonImageLoader.Factory {
 
     @SuppressLint("VisibleForTests")
     override fun onCreate() {
@@ -62,12 +62,12 @@ class MyApplication : MultiDexApplication(), SingletonSketch.Factory, ImageLoade
         return getMaxAvailableMemoryCacheBytes() / imageLoaderCount
     }
 
-    override fun newImageLoader(): ImageLoader {
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
         return ImageLoader.Builder(this)
             .logger(DebugLogger())
             .memoryCache(
-                MemoryCache.Builder(this).apply {
-                    maxSizeBytes(getMemoryCacheMaxSize().toInt())
+                MemoryCache.Builder().apply {
+                    maxSizeBytes(getMemoryCacheMaxSize())
                 }.build()
             )
             .build()

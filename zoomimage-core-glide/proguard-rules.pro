@@ -20,7 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# ####################### for GlideExtensions - start #######################
+# ####################### for glides - start #######################
 -keepclassmembers class com.bumptech.glide.Glide {
     com.bumptech.glide.load.engine.Engine engine;
 }
@@ -36,4 +36,4 @@
 -keepclassmembers class com.bumptech.glide.RequestBuilder {
     java.lang.Object model;
 }
-# ####################### for GlideExtensions - end #######################
+# ####################### for glides - end #######################

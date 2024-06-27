@@ -16,15 +16,12 @@
 
 package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
-import android.content.Context
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import androidx.annotation.DrawableRes
-import androidx.core.content.res.ResourcesCompat
-import coil.load
-import com.github.panpf.sketch.drawable.IconDrawable
+import coil3.load
+import coil3.request.error
+import coil3.request.placeholder
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.ui.photoalbum.compose.iconDrawable
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
 class CoilPhotoGridItemFactory : BasePhotoGridItemFactory() {
@@ -38,15 +35,14 @@ class CoilPhotoGridItemFactory : BasePhotoGridItemFactory() {
                     R.color.placeholder_bg
                 )
             )
-            error(R.drawable.im_error)
-            crossfade(true)
+            error(
+                iconDrawable(
+                    imageView.context,
+                    R.drawable.ic_error_baseline,
+                    R.color.placeholder_bg
+                )
+            )
+//            crossfade(true) // TODO There is a bug
         }
     }
-}
-
-fun iconDrawable(context: Context, @DrawableRes icon: Int, bg: Int): Drawable {
-    return IconDrawable(
-        icon = ResourcesCompat.getDrawable(context.resources, icon, null)!!,
-        background = ColorDrawable(ResourcesCompat.getColor(context.resources, bg, null)),
-    )
 }

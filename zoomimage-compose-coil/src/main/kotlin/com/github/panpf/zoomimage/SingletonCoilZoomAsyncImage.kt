@@ -44,10 +44,10 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import coil.compose.AsyncImagePainter
-import coil.compose.AsyncImagePainter.State
-import coil.imageLoader
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.compose.AsyncImagePainter.State
+import coil3.imageLoader
+import coil3.request.ImageRequest
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
