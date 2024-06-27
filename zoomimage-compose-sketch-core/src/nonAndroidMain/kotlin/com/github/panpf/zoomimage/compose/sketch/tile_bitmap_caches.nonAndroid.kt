@@ -4,4 +4,4 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
 actual fun createTileBitmapCache(sketch: Sketch): TileBitmapCache =
-    SketchComposeTileBitmapCache(sketch)
+    SketchSkiaTileBitmapCache(sketch)
