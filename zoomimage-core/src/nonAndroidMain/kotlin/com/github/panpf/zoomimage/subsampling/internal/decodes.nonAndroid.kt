@@ -32,7 +32,7 @@ internal fun SkiaImage.decodeRegion(srcRect: IntRectCompat, sampleSize: Int): Sk
 /**
  * Calculate the size of the sampled Bitmap, support for BitmapFactory or ImageDecoder
  */
-fun calculateSampledBitmapSize(
+internal fun calculateSampledBitmapSize(
     imageSize: IntSizeCompat,
     sampleSize: Int,
     mimeType: String? = null

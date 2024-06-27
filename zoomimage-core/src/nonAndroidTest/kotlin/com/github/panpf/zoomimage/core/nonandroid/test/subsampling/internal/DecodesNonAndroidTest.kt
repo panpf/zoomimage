@@ -1,10 +1,7 @@
-package com.github.panpf.zoomimage.core.test.subsampling.internal
+package com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal
 
-class DesktopTileDecodeUtilsTest {
-
-
+class DecodesNonAndroidTest {
     // TODO test
-
 //    @Test
 //    fun testReadExifOrientation() {
 //        listOf(

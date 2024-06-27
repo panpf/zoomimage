@@ -18,7 +18,7 @@ import org.jetbrains.skia.impl.use
 /**
  * Not thread safe
  */
-class SkiaDecodeHelper(
+internal class SkiaDecodeHelper(
     private val imageSource: ImageSource,
     initialBytes: ByteArray? = null,
     initialImageInfo: ImageInfo? = null

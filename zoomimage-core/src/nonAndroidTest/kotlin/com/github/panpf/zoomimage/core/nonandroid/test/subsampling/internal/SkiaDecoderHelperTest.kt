@@ -1,6 +1,6 @@
-package com.github.panpf.zoomimage.core.test.subsampling.internal
+package com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal
 
-class DesktopTileDecoderTest {
+class SkiaDecoderHelperTest {
     // TODO test
 //    @Test
 //    fun test() {
