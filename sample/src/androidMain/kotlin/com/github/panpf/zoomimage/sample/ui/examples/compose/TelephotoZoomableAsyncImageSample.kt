@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,12 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.panpf.sketch.getBitmapOrNull
 import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.sample.settingsService
@@ -38,6 +43,7 @@ import me.saket.telephoto.subsamplingimage.rememberSubSamplingImageState
 import me.saket.telephoto.zoomable.ZoomSpec
 import me.saket.telephoto.zoomable.rememberZoomableState
 
+// TODO delete
 @Composable
 fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
     val context = LocalContext.current
@@ -67,28 +73,47 @@ fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
             """.trimIndent()
         }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        var loading by remember { mutableStateOf(false) }
         var subSamplingImageSource by remember { mutableStateOf<SubSamplingImageSource?>(null) }
+        var errorMessage by remember { mutableStateOf<String?>(null) }
         LaunchedEffect(sketchImageUri) {
-            ImageRequest(context, sketchImageUri).execute()
-            val imageSource = SketchImageSource(context, context.sketch, sketchImageUri)
-            subSamplingImageSource =
-                SubSamplingImageSource.rawSource({ runBlocking { imageSource.openSource() }.getOrThrow() })
+            loading = true
+            val imageResult = ImageRequest(context, sketchImageUri).execute()
+            if (imageResult is ImageResult.Success) {
+                val preview = imageResult.image.getBitmapOrNull()?.asImageBitmap()
+                val imageSource = SketchImageSource(context, context.sketch, sketchImageUri)
+                subSamplingImageSource = SubSamplingImageSource.rawSource(
+                    source = { runBlocking { imageSource.openSource() }.getOrThrow() },
+                    preview = preview
+                )
+            } else {
+                errorMessage = (imageResult as ImageResult.Error).throwable.message
+            }
+            loading = false
         }
         val subSamplingImageSource1 = subSamplingImageSource
-        if (subSamplingImageSource1 != null) {
+        if (loading) {
+            CircularProgressIndicator(Modifier.size(50.dp).align(Alignment.Center))
+        } else if (subSamplingImageSource1 != null) {
             SubSamplingImage(
                 state = rememberSubSamplingImageState(subSamplingImageSource1, zoomableState),
                 contentDescription = "",
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black),
+                    .fillMaxSize(),
 //            onClick = {
 //                context.showShortToast("Click (${it.toShortString()})")
 //            },
 //            onLongClick = {
 //                context.showShortToast("Long click (${it.toShortString()})")
 //            }
+            )
+        } else {
+            Text(
+                text = errorMessage ?: "Load image failed",
+                color = Color.White,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(10.dp).align(Alignment.Center)
             )
         }
 
