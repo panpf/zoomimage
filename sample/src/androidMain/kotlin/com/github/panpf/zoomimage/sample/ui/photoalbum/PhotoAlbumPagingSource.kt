@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.sample.ui.photoalbum
 
 import android.content.Context
-import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -49,21 +48,21 @@ class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, P
             kotlin.runCatching {
                 val cursor = context.contentResolver.query(
                     /* uri = */
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    Media.EXTERNAL_CONTENT_URI,
                     /* projection = */
                     arrayOf(
-                        MediaStore.Images.Media.TITLE,
-                        MediaStore.Images.Media.DATA,
-                        MediaStore.Images.Media.SIZE,
-                        MediaStore.Images.Media.DATE_TAKEN,
-                        MediaStore.Images.Media.MIME_TYPE
+                        Media.TITLE,
+                        Media.DATA,
+                        Media.SIZE,
+                        Media.DATE_TAKEN,
+                        Media.MIME_TYPE
                     ),
                     /* selection = */
                     null,
                     /* selectionArgs = */
                     null,
                     /* sortOrder = */
-                    MediaStore.Images.Media.DATE_TAKEN + " DESC" + " limit " + startPosition + "," + pageSize
+                    Media.DATE_TAKEN + " DESC" + " limit " + startPosition + "," + pageSize
                 )
                 val list = ArrayList<Photo>(cursor?.count ?: 0)
                 cursor?.use {

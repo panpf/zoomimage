@@ -18,7 +18,7 @@ package com.githb.panpf.zoomimage.images
 import com.github.panpf.sketch.decode.internal.ExifOrientationHelper
 import com.github.panpf.sketch.util.Size
 
-object Images {
+object ResourceImages {
 
     val cat: ResourceImageFile = ResourceImageFile("cat.jpg", "CAT", Size(1100, 1650))
     val dog: ResourceImageFile = ResourceImageFile("dog.jpg", "DOG", Size(1100, 733))

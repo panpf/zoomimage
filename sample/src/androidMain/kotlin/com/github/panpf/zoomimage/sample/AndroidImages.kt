@@ -17,9 +17,9 @@
 package com.github.panpf.zoomimage.sample
 
 import android.content.Context
+import com.githb.panpf.zoomimage.images.AndroidResourceImages
 import com.githb.panpf.zoomimage.images.ContentImages
 import com.githb.panpf.zoomimage.images.HttpImages
-import com.githb.panpf.zoomimage.images.Images
 import com.githb.panpf.zoomimage.images.LocalImages
 import com.githb.panpf.zoomimage.images.ResourceImages
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ object AndroidImages {
         if (!assetsDir.exists()) {
             assetsDir.mkdirs()
         }
-        Images.values.forEach {
+        ResourceImages.values.forEach {
             val file = File(assetsDir, it.resourceName)
             if (!file.exists()) {
                 context.assets.open(it.resourceName).use { inputStream ->
@@ -46,13 +46,13 @@ object AndroidImages {
     }
 
     val MIXING_PHOTO_ALBUM = listOf(
-        Images.cat,
-        Images.dog,
-        Images.longEnd,
-        Images.longWhale,
-        Images.anim,
+        ResourceImages.cat,
+        ResourceImages.dog,
+        ResourceImages.longEnd,
+        ResourceImages.longWhale,
+        ResourceImages.anim,
         ContentImages.hugeChina,
-        ResourceImages.hugeCard,
+        AndroidResourceImages.hugeCard,
         LocalImages.hugeLongQmsht,
         HttpImages.hugeLongComic,
     )

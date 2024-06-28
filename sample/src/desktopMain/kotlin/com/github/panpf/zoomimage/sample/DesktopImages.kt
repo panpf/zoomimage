@@ -1,19 +1,19 @@
 package com.github.panpf.zoomimage.sample
 
 import com.githb.panpf.zoomimage.images.HttpImages
-import com.githb.panpf.zoomimage.images.Images
+import com.githb.panpf.zoomimage.images.ResourceImages
 
 object DesktopImages {
 
     val MIXING_PHOTO_ALBUM = listOf(
-        Images.cat,
-        Images.dog,
-        Images.longEnd,
-        Images.longWhale,
-        Images.anim,
-        Images.hugeChina,
-        Images.hugeCard,
-        Images.hugeLongQmsht,
+        ResourceImages.cat,
+        ResourceImages.dog,
+        ResourceImages.longEnd,
+        ResourceImages.longWhale,
+        ResourceImages.anim,
+        ResourceImages.hugeChina,
+        ResourceImages.hugeCard,
+        ResourceImages.hugeLongQmsht,
         HttpImages.hugeLongComic,
     )
 
