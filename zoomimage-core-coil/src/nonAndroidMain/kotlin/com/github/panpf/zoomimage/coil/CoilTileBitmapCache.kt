@@ -32,14 +32,14 @@ actual class CoilTileBitmapCache actual constructor(
 ) : TileBitmapCache {
 
     @OptIn(ExperimentalCoilApi::class)
-    override fun get(key: String): TileBitmap? {
+    actual override fun get(key: String): TileBitmap? {
         val cacheValue = imageLoader.memoryCache?.get(MemoryCache.Key(key)) ?: return null
         val image = cacheValue.image as BitmapImage
         return SkiaTileBitmap(image.bitmap, key, BitmapFrom.MEMORY_CACHE)
     }
 
     @OptIn(ExperimentalCoilApi::class)
-    override fun put(
+    actual override fun put(
         key: String,
         tileBitmap: TileBitmap,
         imageUrl: String,

@@ -17,8 +17,19 @@
 package com.github.panpf.zoomimage.sketch
 
 import com.github.panpf.sketch.Sketch
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
 expect class SketchTileBitmapCache : TileBitmapCache {
     constructor(sketch: Sketch)
+
+    override fun get(key: String): TileBitmap?
+
+    override fun put(
+        key: String,
+        tileBitmap: TileBitmap,
+        imageUrl: String,
+        imageInfo: com.github.panpf.zoomimage.subsampling.ImageInfo,
+        disallowReuseBitmap: Boolean
+    ): TileBitmap?
 }

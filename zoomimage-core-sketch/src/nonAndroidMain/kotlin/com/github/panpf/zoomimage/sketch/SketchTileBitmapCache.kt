@@ -27,7 +27,7 @@ actual class SketchTileBitmapCache actual constructor(
     private val sketch: Sketch,
 ) : TileBitmapCache {
 
-    override fun get(key: String): TileBitmap? {
+    actual override fun get(key: String): TileBitmap? {
         val cacheValue = sketch.memoryCache[key] ?: return null
         cacheValue as SkiaBitmapImageValue
         val skiaBitmapImage = cacheValue.image
@@ -35,7 +35,7 @@ actual class SketchTileBitmapCache actual constructor(
         return SkiaTileBitmap(skiaBitmap, key, BitmapFrom.MEMORY_CACHE)
     }
 
-    override fun put(
+    actual override fun put(
         key: String,
         tileBitmap: TileBitmap,
         imageUrl: String,

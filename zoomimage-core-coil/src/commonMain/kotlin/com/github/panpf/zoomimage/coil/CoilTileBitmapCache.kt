@@ -17,8 +17,19 @@
 package com.github.panpf.zoomimage.coil
 
 import coil3.ImageLoader
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
 expect class CoilTileBitmapCache : TileBitmapCache {
     constructor(imageLoader: ImageLoader)
+
+    override fun get(key: String): TileBitmap?
+
+    override fun put(
+        key: String,
+        tileBitmap: TileBitmap,
+        imageUrl: String,
+        imageInfo: com.github.panpf.zoomimage.subsampling.ImageInfo,
+        disallowReuseBitmap: Boolean
+    ): TileBitmap?
 }
