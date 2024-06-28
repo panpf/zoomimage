@@ -4,24 +4,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-android {
-    namespace = "com.github.panpf.zoomimage.compose.coil2"
-    compileSdk = property("compileSdk").toString().toInt()
-
-    defaultConfig {
-        minSdk = property("minSdk").toString().toInt()
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.coil2") {
     buildFeatures {
         compose = true
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 

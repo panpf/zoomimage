@@ -3,23 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-android {
-    namespace = "com.github.panpf.zoomimage.core.glide"
-    compileSdk = property("compileSdk").toString().toInt()
-
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.core.glide") {
     defaultConfig {
-        minSdk = property("minSdk").toString().toInt()
-
         consumerProguardFiles("proguard-rules.pro")
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 
