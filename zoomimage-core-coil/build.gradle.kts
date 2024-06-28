@@ -1,29 +1,24 @@
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-}
-// TODO multiplatform
-android {
-    namespace = "com.github.panpf.zoomimage.core.coil"
-    compileSdk = property("compileSdk").toString().toInt()
-
-    defaultConfig {
-        minSdk = property("minSdk").toString().toInt()
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
-dependencies {
-    api(projects.zoomimageCore)
-    api(libs.coil.core)
+addAllMultiplatformTargets()
 
-    androidTestImplementation(projects.internal.testUtils)
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.core.coil")
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            api(projects.zoomimageCore)
+            api(libs.coil.core)
+        }
+
+        commonTest.dependencies {
+            implementation(projects.internal.testUtils)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(projects.internal.testUtils)
+        }
+    }
 }
