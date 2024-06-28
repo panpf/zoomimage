@@ -50,7 +50,7 @@ class ComposeExifOrientationTestFragment : BaseAppBarComposeFragment() {
                         data.first
                     },
                     contentFactory = { data, _ ->
-                        ZoomImageSample(sketchImageUri = data.second.toString())
+                        ZoomImageSample(sketchImageUri = data.second)
                     }
                 )
             }.toTypedArray()

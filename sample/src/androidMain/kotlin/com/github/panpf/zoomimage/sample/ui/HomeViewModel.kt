@@ -2,22 +2,18 @@ package com.github.panpf.zoomimage.sample.ui
 
 import android.Manifest
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.panpf.zoomimage.sample.AndroidImages
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.NavMainDirections
-import com.github.panpf.zoomimage.sample.SampleImages.Asset
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.model.Link
 import com.github.panpf.zoomimage.sample.ui.model.ListSeparator
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -26,27 +22,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            exportAssetImages(application)
+            AndroidImages.saveToExternalFilesDir(application)
             _data.value = buildData()
-        }
-    }
-
-    private suspend fun exportAssetImages(context: Context) {
-        withContext(Dispatchers.IO) {
-            val assetsDir = File((context.getExternalFilesDir(null) ?: context.filesDir), "assets")
-            if (!assetsDir.exists()) {
-                assetsDir.mkdirs()
-            }
-            Asset.ALL.forEach {
-                val file = File(assetsDir, it.fileName)
-                if (!file.exists()) {
-                    context.assets.open(it.fileName).use { inputStream ->
-                        file.outputStream().use { outputStream ->
-                            inputStream.copyTo(outputStream)
-                        }
-                    }
-                }
-            }
         }
     }
 

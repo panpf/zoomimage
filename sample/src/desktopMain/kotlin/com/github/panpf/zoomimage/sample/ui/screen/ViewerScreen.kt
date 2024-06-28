@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
@@ -21,17 +20,17 @@ import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import com.githb.panpf.zoomimage.images.ImageFile
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.SingletonSketch
-import com.github.panpf.zoomimage.ZoomImage
+import com.github.panpf.sketch.request.ComposableImageRequest
+import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.sample.MySettings
-import com.github.panpf.zoomimage.sample.ui.model.ImageResource
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.util.EventBus
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
@@ -39,9 +38,7 @@ import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
-import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.subsampling.fromKotlinResource
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ReadMode
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -51,12 +48,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun ViewerScreen(
     @Suppress("UNUSED_PARAMETER") navigation: Navigation,
-    imageResource: ImageResource
+    imageFile: ImageFile
 ) {
     Box(Modifier.fillMaxSize()) {
         val contentScaleName by MySettings.contentScaleName.collectAsState()
@@ -148,10 +144,6 @@ fun ViewerScreen(
             val sketch = SingletonSketch.get(LocalPlatformContext.current)
             subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
         }
-        LaunchedEffect(Unit) {
-            val imageSource = ImageSource.fromKotlinResource(imageResource.resourcePath)
-            zoomState.subsampling.setImageSource(imageSource)
-        }
 
         var lastMoveJob by remember { mutableStateOf<Job?>(null) }
         LaunchedEffect(Unit) {
@@ -190,9 +182,11 @@ fun ViewerScreen(
             }
         }
 
-        ZoomImage(
+        SketchZoomAsyncImage(
+            request = ComposableImageRequest(imageFile.uri) {
+                sizeMultiplier(1.5f)
+            },
             modifier = Modifier.fillMaxSize(),
-            painter = painterResource(imageResource.thumbnailResourcePath),
             contentScale = contentScale,
             alignment = alignment,
             contentDescription = "Viewer",
@@ -201,14 +195,14 @@ fun ViewerScreen(
         )
 
         ZoomImageMinimap(
-            imageUri = imageResource.thumbnailResourcePath,
+            imageUri = imageFile.uri,
             zoomableState = zoomState.zoomable,
             subsamplingState = zoomState.subsampling,
         )
 
         val infoDialogState = rememberMyDialogState()
         ZoomImageTool(
-            imageUri = imageResource.thumbnailResourcePath,
+            imageUri = imageFile.uri,
             zoomableState = zoomState.zoomable,
             subsamplingState = zoomState.subsampling,
             infoDialogState = infoDialogState,

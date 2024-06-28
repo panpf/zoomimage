@@ -2,8 +2,8 @@ package com.github.panpf.zoomimage.sample.ui.test.view
 
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
+import com.githb.panpf.zoomimage.images.Images
 import com.github.panpf.sketch.loadImage
-import com.github.panpf.zoomimage.sample.SampleImages
 import com.github.panpf.zoomimage.sample.databinding.FragmentTestZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 
@@ -17,7 +17,7 @@ class ZoomImageViewTestFragment : BaseToolbarBindingFragment<FragmentTestZoomVie
         super.onViewCreated(toolbar, binding, savedInstanceState)
         toolbar.title = "ZoomImageView"
 
-        binding.zoomImageView.loadImage(SampleImages.Asset.WORLD.uri)
+        binding.zoomImageView.loadImage(Images.hugeChina.uri)
     }
 }
 

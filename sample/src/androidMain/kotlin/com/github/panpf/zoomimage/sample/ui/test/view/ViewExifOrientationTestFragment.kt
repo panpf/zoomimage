@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.sample.ui.test.view
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
-import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +51,7 @@ class ViewExifOrientationTestFragment : BaseToolbarBindingFragment<FragmentTabPa
                         adapter = AssemblyFragmentStateAdapter(
                             fragment = this@ViewExifOrientationTestFragment,
                             itemFactoryList = listOf(ZoomImageViewFragment.ItemFactory()),
-                            initDataList = sampleImages.map { it.second.toUri().toString() }
+                            initDataList = sampleImages.map { it.second }
                         )
                     }
                     TabLayoutMediator(

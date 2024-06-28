@@ -78,6 +78,10 @@ kotlin {
     }
 }
 
+compose.resources {
+    packageOfResClass = "com.github.panpf.zoomimage.sample.resources"
+}
+
 compose.desktop {
     application {
         mainClass = "com.github.panpf.zoomimage.sample.MainKt"
@@ -152,3 +156,22 @@ androidApplication(nameSpace = "com.github.panpf.zoomimage.sample") {
         debugImplementation(libs.androidx.compose.ui.test.manifest)
     }
 }
+
+// https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-images-resources.html
+// The current 1.6.1 version only supports the use of compose resources in the commonMain source set of the Feiku module.
+// The files of the images module can only be added to the js module in this way.
+// TODO After supporting js and wasmJs, open this configuration
+//tasks.register<Copy>("copyImagesToJsProcessedResources") {
+//    from(project(":internal:images").file("files"))
+//    into(project(":sample").file("build/processedResources/js/main/files"))
+//}
+//tasks.named("jsProcessResources") {
+//    dependsOn("copyImagesToJsProcessedResources")
+//}
+//tasks.register<Copy>("copyImagesToWasmJsProcessedResources") {
+//    from(project(":internal:images").file("files"))
+//    into(project(":sample").file("build/processedResources/wasmJs/main/files"))
+//}
+//tasks.named("wasmJsProcessResources") {
+//    dependsOn("copyImagesToWasmJsProcessedResources")
+//}

@@ -22,7 +22,7 @@ import android.provider.MediaStore.Images.Media
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.github.panpf.tools4k.coroutines.withToIO
-import com.github.panpf.zoomimage.sample.SampleImages
+import com.github.panpf.zoomimage.sample.AndroidImages
 
 class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, Photo>() {
 
@@ -41,7 +41,7 @@ class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, P
     }
 
     private suspend fun readAssetPhotos(): List<Photo> = withToIO {
-        SampleImages.MIXING_PHOTO_ALBUM.map { Photo(it.uri) }
+        AndroidImages.MIXING_PHOTO_ALBUM.map { Photo(it.uri) }
     }
 
     private suspend fun readLocalPhotos(startPosition: Int, pageSize: Int): Result<List<Photo>> =

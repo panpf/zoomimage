@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui
 
 import androidx.compose.runtime.Composable
-import com.github.panpf.zoomimage.sample.ui.model.ImageResource
+import com.githb.panpf.zoomimage.images.ImageFile
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.screen.GalleryScreen
 import com.github.panpf.zoomimage.sample.ui.screen.MainScreen
@@ -28,11 +28,11 @@ sealed interface Page {
         }
     }
 
-    data class Slideshow(val imageResources: List<ImageResource>, val currentIndex: Int) : Page {
+    data class Slideshow(val imageFiles: List<ImageFile>, val currentIndex: Int) : Page {
 
         @Composable
         override fun content(navigation: Navigation, index: Int) {
-            SlideshowScreen(navigation, imageResources, currentIndex)
+            SlideshowScreen(navigation, imageFiles, currentIndex)
         }
     }
 }

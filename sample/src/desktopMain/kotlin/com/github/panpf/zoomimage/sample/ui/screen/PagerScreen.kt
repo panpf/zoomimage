@@ -37,8 +37,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.githb.panpf.zoomimage.images.ImageFile
 import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsDialog
-import com.github.panpf.zoomimage.sample.ui.model.ImageResource
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.screen.base.ToolbarIcon
 import com.github.panpf.zoomimage.sample.ui.screen.base.ToolbarScreen
@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 @Preview
 fun SlideshowScreen(
     navigation: Navigation,
-    imageResources: List<ImageResource>,
+    imageFiles: List<ImageFile>,
     initialIndex: Int
 ) {
     var showSettingsDialog by remember { mutableStateOf(false) }
@@ -65,14 +65,14 @@ fun SlideshowScreen(
         }
     ) {
         val pagerState = rememberPagerState(initialPage = initialIndex) {
-            imageResources.size
+            imageFiles.size
         }
         HorizontalPager(
             state = pagerState,
             beyondBoundsPageCount = 0,
             modifier = Modifier.fillMaxSize()
         ) { index ->
-            ViewerScreen(navigation, imageResources[index])
+            ViewerScreen(navigation, imageFiles[index])
         }
 
         val coroutineScope = rememberCoroutineScope()
@@ -129,7 +129,7 @@ fun SlideshowScreen(
 
         PageNumber(
             number = pagerState.currentPage + 1,
-            total = imageResources.size,
+            total = imageFiles.size,
             modifier = Modifier.align(Alignment.TopEnd)
         )
 
