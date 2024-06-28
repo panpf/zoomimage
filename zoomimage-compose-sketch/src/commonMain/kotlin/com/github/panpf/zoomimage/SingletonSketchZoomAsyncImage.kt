@@ -26,12 +26,12 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import com.github.panpf.sketch.AsyncImagePainter
 import com.github.panpf.sketch.AsyncImageState
+import com.github.panpf.sketch.LocalPlatformContext
+import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
-import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
@@ -89,7 +89,7 @@ fun SketchZoomAsyncImage(
 ) = SketchZoomAsyncImage(
     uri = uri,
     contentDescription = contentDescription,
-    sketch = LocalContext.current.sketch,
+    sketch = SingletonSketch.get(LocalPlatformContext.current),
     modifier = modifier,
     imageState = imageState,
     alignment = alignment,
@@ -158,7 +158,7 @@ fun SketchZoomAsyncImage(
 ) = SketchZoomAsyncImage(
     request = request,
     contentDescription = contentDescription,
-    sketch = LocalContext.current.sketch,
+    sketch = SingletonSketch.get(LocalPlatformContext.current),
     modifier = modifier,
     imageState = imageState,
     alignment = alignment,

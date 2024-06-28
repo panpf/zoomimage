@@ -46,6 +46,7 @@ import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -508,7 +509,10 @@ class SubsamplingEngine constructor(
         val tileDecoder = this@SubsamplingEngine.tileDecoder
         if (tileDecoder != null) {
             logger.d { "cleanTileDecoder:$caller. '${imageKey}'" }
-            tileDecoder.destroy("cleanTileDecoder:$caller")
+            @Suppress("OPT_IN_USAGE")
+            GlobalScope.launch {
+                tileDecoder.destroy("cleanTileDecoder:$caller")
+            }
             this@SubsamplingEngine.tileDecoder = null
             refreshReadyState("cleanTileDecoder:$caller")
         }

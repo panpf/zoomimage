@@ -24,6 +24,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.withContext
 
@@ -40,6 +41,7 @@ class TileDecoder constructor(
 
     private var destroyed = false
     private val decoderPool = mutableListOf<DecodeHelper>()
+    private val poolSyncLock = SynchronizedObject()
 
     init {
         decoderPool.add(rootDecodeHelper)
@@ -51,7 +53,6 @@ class TileDecoder constructor(
 
     @WorkerThread
     suspend fun decode(key: String, srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
-        if (destroyed) return null
         val tileBitmap = useDecoder { decoder ->
             decoder.decodeRegion(key, srcRect, sampleSize)
         } ?: return null
@@ -59,15 +60,12 @@ class TileDecoder constructor(
     }
 
     @WorkerThread
-    private suspend fun useDecoder(block: suspend (decoder: DecodeHelper) -> TileBitmap?): TileBitmap? =
-        withContext(ioCoroutineDispatcher()) {
-            synchronized(decoderPool) {
-                if (destroyed) {
-                    return@withContext null
-                }
-            }
-
-            var bitmapRegionDecoder: DecodeHelper? = synchronized(decoderPool) {
+    private suspend fun useDecoder(
+        block: suspend (decoder: DecodeHelper) -> TileBitmap?
+    ): TileBitmap? = withContext(ioCoroutineDispatcher()) {
+        val destroyed = synchronized(poolSyncLock) { destroyed }
+        if (destroyed) {
+            var bitmapRegionDecoder: DecodeHelper? = synchronized(poolSyncLock) {
                 if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
             }
             if (bitmapRegionDecoder == null) {
@@ -76,7 +74,7 @@ class TileDecoder constructor(
 
             val tileBitmap = block(bitmapRegionDecoder)
 
-            synchronized(decoderPool) {
+            synchronized(poolSyncLock) {
                 if (destroyed) {
                     bitmapRegionDecoder.close()
                 } else {
@@ -85,17 +83,24 @@ class TileDecoder constructor(
             }
 
             tileBitmap
+        } else {
+            null
         }
+    }
 
     @MainThread
-    fun destroy(caller: String) {
-        if (destroyed) return
-        destroyed = true
-        synchronized(decoderPool) {
-            decoderPool.forEach { it.close() }
-            decoderPool.clear()
+    suspend fun destroy(caller: String) {
+        withContext(ioCoroutineDispatcher()) {
+            val destroyed = synchronized(poolSyncLock) { this@TileDecoder.destroyed }
+            if (!destroyed) {
+                this@TileDecoder.destroyed = true
+                synchronized(poolSyncLock) {
+                    decoderPool.forEach { it.close() }
+                    decoderPool.clear()
+                }
+                logger.d { "destroyDecoder:$caller. '${imageSource.key}'" }
+            }
         }
-        logger.d { "destroyDecoder:$caller. '${imageSource.key}'" }
     }
 
     override fun toString(): String {
