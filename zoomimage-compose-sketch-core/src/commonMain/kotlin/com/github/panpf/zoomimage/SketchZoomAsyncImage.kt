@@ -45,12 +45,12 @@ import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.sketch.createTileBitmapCache
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import kotlin.math.roundToInt
 
 
@@ -181,7 +181,7 @@ fun SketchZoomAsyncImage(
 
     val context = LocalPlatformContext.current
     LaunchedEffect(Unit) {
-        state.subsampling.tileBitmapCache = createTileBitmapCache(sketch)
+        state.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
     }
     LaunchedEffect(Unit) {
         snapshotFlow { imageState.painterState }.collect {

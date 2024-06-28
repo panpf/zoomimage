@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose.sketch
+package com.github.panpf.zoomimage.sketch
 
 import com.github.panpf.sketch.SkiaBitmapImage
 import com.github.panpf.sketch.cache.MemoryCache

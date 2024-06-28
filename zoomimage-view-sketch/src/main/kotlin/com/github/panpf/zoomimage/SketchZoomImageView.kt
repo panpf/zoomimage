@@ -28,7 +28,7 @@ import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLeafChildDrawable
 import com.github.panpf.zoomimage.internal.AbsStateZoomImageView
-import com.github.panpf.zoomimage.sketch.SketchAndroidTileBitmapCache
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 
 /**
@@ -86,7 +86,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
 
             _subsamplingEngine?.apply {
                 if (tileBitmapCacheState.value == null) {
-                    tileBitmapCacheState.value = SketchAndroidTileBitmapCache(sketch)
+                    tileBitmapCacheState.value = SketchTileBitmapCache(sketch)
                 }
                 disabledTileBitmapCacheState.value =
                     result.request.memoryCachePolicy != CachePolicy.ENABLED

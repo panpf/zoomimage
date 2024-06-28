@@ -27,7 +27,6 @@ import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
-import com.github.panpf.zoomimage.compose.sketch.SketchSkiaTileBitmapCache
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -39,6 +38,7 @@ import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.fromKotlinResource
@@ -146,7 +146,7 @@ fun ViewerScreen(
                     if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
             }
             val sketch = SingletonSketch.get(LocalPlatformContext.current)
-            subsampling.tileBitmapCache = SketchSkiaTileBitmapCache(sketch)
+            subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
         }
         LaunchedEffect(Unit) {
             val imageSource = ImageSource.fromKotlinResource(imageResource.resourcePath)

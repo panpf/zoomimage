@@ -19,10 +19,10 @@ import com.github.panpf.sketch.request.execute
 import com.github.panpf.sketch.sketch
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.ZoomImage
-import com.github.panpf.zoomimage.compose.sketch.createTileBitmapCache
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sketch.SketchImageSource
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
@@ -31,7 +31,7 @@ fun ZoomImageSample(sketchImageUri: String) {
     ) { contentScale, alignment, state, scrollBar ->
         val context = LocalContext.current
         LaunchedEffect(Unit) {
-            state.subsampling.tileBitmapCache = createTileBitmapCache(context.sketch)
+            state.subsampling.tileBitmapCache = SketchTileBitmapCache(context.sketch)
         }
 
         var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.None) }
