@@ -46,7 +46,6 @@ class GlideTileBitmapCache(private val glide: Glide) : TileBitmapCache {
         tileBitmap: TileBitmap,
         imageUrl: String,
         imageInfo: ImageInfo,
-        disallowReuseBitmap: Boolean
     ): TileBitmap? {
         val glideEngine = glideEngine ?: return null
         tileBitmap as AndroidTileBitmap

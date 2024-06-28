@@ -18,6 +18,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
   adding zoomimage-view-sketch3 and zoomimage-compose-sketch3 modules to continue to support sketch3
 * change: zoomimage-view-coil and zoomimage-compose-coil modules are upgraded to coil3, and new
   The zoomimage-view-coil2 and zoomimage-compose-coil2 modules continue to support coil2
+* remove: Remove the disallowReuseBitmap parameter of the put() method of TileBitmapCache
 
 ## v1.0.2
 

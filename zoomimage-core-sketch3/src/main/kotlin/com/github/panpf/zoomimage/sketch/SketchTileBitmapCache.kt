@@ -45,14 +45,13 @@ class SketchTileBitmapCache constructor(
         tileBitmap: TileBitmap,
         imageUrl: String,
         imageInfo: com.github.panpf.zoomimage.subsampling.ImageInfo,
-        disallowReuseBitmap: Boolean
     ): TileBitmap? {
         val bitmap = (tileBitmap as AndroidTileBitmap).bitmap ?: return null
         val newCountBitmap = CountBitmap(
             cacheKey = key,
             originBitmap = bitmap,
             bitmapPool = sketch.bitmapPool,
-            disallowReuseBitmap = disallowReuseBitmap,
+            disallowReuseBitmap = false,
         )
         val newCacheValue = MemoryCache.Value(
             countBitmap = newCountBitmap,

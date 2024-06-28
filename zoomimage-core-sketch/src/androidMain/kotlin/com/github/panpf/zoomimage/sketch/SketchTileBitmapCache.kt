@@ -21,6 +21,7 @@ import com.github.panpf.sketch.asSketchImage
 import com.github.panpf.sketch.cache.AndroidBitmapImageValue
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
@@ -38,8 +39,7 @@ actual class SketchTileBitmapCache actual constructor(
         key: String,
         tileBitmap: TileBitmap,
         imageUrl: String,
-        imageInfo: com.github.panpf.zoomimage.subsampling.ImageInfo,
-        disallowReuseBitmap: Boolean
+        imageInfo: ImageInfo,
     ): TileBitmap? {
         tileBitmap as AndroidTileBitmap
         val bitmap = tileBitmap.bitmap!!

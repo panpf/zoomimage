@@ -44,7 +44,6 @@ actual class CoilTileBitmapCache actual constructor(
         tileBitmap: TileBitmap,
         imageUrl: String,
         imageInfo: ImageInfo,
-        disallowReuseBitmap: Boolean
     ): TileBitmap? {
         tileBitmap as SkiaTileBitmap
         val bitmap = tileBitmap.bitmap

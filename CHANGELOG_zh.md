@@ -18,6 +18,7 @@
   zoomimage-view-sketch3 和 zoomimage-compose-sketch3 模块继续支持 sketch3
 * change: zoomimage-view-coil 和 zoomimage-compose-coil 模块升级到 coil3，同时新增
   zoomimage-view-coil2 和 zoomimage-compose-coil2 模块继续支持 coil2
+* remove: 移除 TileBitmapCache 的 put() 方法的 disallowReuseBitmap 参数
 
 ## v1.0.2
 

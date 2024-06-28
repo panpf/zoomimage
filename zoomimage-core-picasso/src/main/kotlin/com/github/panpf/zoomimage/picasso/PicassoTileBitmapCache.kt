@@ -36,7 +36,6 @@ class PicassoTileBitmapCache(private val picasso: Picasso) : TileBitmapCache {
         tileBitmap: TileBitmap,
         imageUrl: String,
         imageInfo: ImageInfo,
-        disallowReuseBitmap: Boolean
     ): TileBitmap? {
         tileBitmap as AndroidTileBitmap
         val bitmap = tileBitmap.bitmap!!

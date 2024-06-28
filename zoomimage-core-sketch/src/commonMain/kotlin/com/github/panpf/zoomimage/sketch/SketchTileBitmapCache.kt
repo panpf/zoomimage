@@ -17,11 +17,11 @@
 package com.github.panpf.zoomimage.sketch
 
 import com.github.panpf.sketch.Sketch
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
-expect class SketchTileBitmapCache : TileBitmapCache {
-    constructor(sketch: Sketch)
+expect class SketchTileBitmapCache(sketch: Sketch) : TileBitmapCache {
 
     override fun get(key: String): TileBitmap?
 
@@ -29,7 +29,6 @@ expect class SketchTileBitmapCache : TileBitmapCache {
         key: String,
         tileBitmap: TileBitmap,
         imageUrl: String,
-        imageInfo: com.github.panpf.zoomimage.subsampling.ImageInfo,
-        disallowReuseBitmap: Boolean
+        imageInfo: ImageInfo,
     ): TileBitmap?
 }
