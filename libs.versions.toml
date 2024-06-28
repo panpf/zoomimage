@@ -34,7 +34,7 @@ kotlinx-atomicfu = "0.24.0" # sync with kotlin version
 kotlinx-coroutines = "1.8.1"
 
 leakcanary = "2.14"
-mavenpublish = "0.28.0"
+mavenpublish = "0.29.0"
 okio = "3.9.0"
 
 panpf-assemblyadapter4 = "4.1.0"
