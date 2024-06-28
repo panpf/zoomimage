@@ -3,15 +3,11 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.view.coil2") {
-    defaultConfig {
-        consumerProguardFiles("proguard-rules.pro")
-    }
-}
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.view.coil2")
 
 dependencies {
-    api(projects.zoomimageView)
-    api(projects.zoomimageCoreCoil2)
+    api(projects.zoomimageViewCoil2Core)
+    api(libs.coil2)
 
     androidTestImplementation(projects.internal.testUtils)
 }

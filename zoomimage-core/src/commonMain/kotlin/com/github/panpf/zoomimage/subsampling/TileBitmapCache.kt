@@ -34,6 +34,6 @@ interface TileBitmapCache {
         tileBitmap: TileBitmap,
         imageUrl: String,
         imageInfo: ImageInfo,
-        disallowReuseBitmap: Boolean
+        disallowReuseBitmap: Boolean    // TODO remove
     ): TileBitmap?
 }

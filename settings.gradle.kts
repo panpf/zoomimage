@@ -33,12 +33,16 @@ include(":zoomimage-core-picasso")
 include(":zoomimage-core-sketch")
 include(":zoomimage-core-sketch3")
 include(":zoomimage-view")
-include(":zoomimage-view-coil")   // TODO add zoomimage-view-coil-core
-include(":zoomimage-view-coil2")   // TODO add zoomimage-view-coil2-core
+include(":zoomimage-view-coil")
+include(":zoomimage-view-coil2")
+include(":zoomimage-view-coil2-core")
+include(":zoomimage-view-coil-core")
 include(":zoomimage-view-glide")
 include(":zoomimage-view-picasso")
-include(":zoomimage-view-sketch")   // TODO add zoomimage-view-sketch-core
-include(":zoomimage-view-sketch3")   // TODO add zoomimage-view-sketch3-core
+include(":zoomimage-view-sketch")
+include(":zoomimage-view-sketch3")
+include(":zoomimage-view-sketch3-core")
+include(":zoomimage-view-sketch-core")
 
 
 /*

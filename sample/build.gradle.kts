@@ -49,7 +49,6 @@ kotlin {
             implementation(libs.panpf.tools4a)
             implementation(libs.panpf.tools4j)
             implementation(libs.panpf.tools4k)
-            implementation(libs.panpf.sketch4.view)
             implementation(libs.panpf.sketch4.extensions.view)
             implementation(libs.subsamplingscaleimageview)
             implementation(libs.photoview)

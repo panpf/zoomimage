@@ -6,9 +6,8 @@ plugins {
 androidLibrary(nameSpace = "com.github.panpf.zoomimage.view.sketch3")
 
 dependencies {
-    api(projects.zoomimageView)
-    api(projects.zoomimageCoreSketch3)
-    api(libs.panpf.sketch3.viewability)
+    api(projects.zoomimageViewSketch3Core)
+    api(libs.panpf.sketch3)
 
     androidTestImplementation(projects.internal.testUtils)
 }
