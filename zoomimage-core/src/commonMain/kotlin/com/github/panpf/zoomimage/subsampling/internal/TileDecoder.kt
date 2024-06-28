@@ -64,7 +64,7 @@ class TileDecoder constructor(
         block: suspend (decoder: DecodeHelper) -> TileBitmap?
     ): TileBitmap? = withContext(ioCoroutineDispatcher()) {
         val destroyed = synchronized(poolSyncLock) { destroyed }
-        if (destroyed) {
+        if (!destroyed) {
             var bitmapRegionDecoder: DecodeHelper? = synchronized(poolSyncLock) {
                 if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
             }
@@ -75,10 +75,10 @@ class TileDecoder constructor(
             val tileBitmap = block(bitmapRegionDecoder)
 
             synchronized(poolSyncLock) {
-                if (destroyed) {
-                    bitmapRegionDecoder.close()
-                } else {
+                if (!destroyed) {
                     decoderPool.add(bitmapRegionDecoder)
+                } else {
+                    bitmapRegionDecoder.close()
                 }
             }
 
