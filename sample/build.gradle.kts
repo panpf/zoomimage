@@ -46,7 +46,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.multidex)
             implementation(libs.androidx.navigation.fragment)
             implementation(libs.androidx.navigation.ui)
             implementation(libs.androidx.swiperefreshlayout)

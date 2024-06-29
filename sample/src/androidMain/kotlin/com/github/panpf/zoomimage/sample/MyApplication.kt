@@ -1,9 +1,9 @@
 package com.github.panpf.zoomimage.sample
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.os.Build
 import android.util.Log
-import androidx.multidex.MultiDexApplication
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.memory.MemoryCache
@@ -30,7 +30,7 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
 
-class MyApplication : MultiDexApplication(), SingletonSketch.Factory, SingletonImageLoader.Factory {
+class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoader.Factory {
 
     @SuppressLint("VisibleForTests")
     override fun onCreate() {
