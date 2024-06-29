@@ -15,6 +15,9 @@ import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.LruMemoryCache
+import com.github.panpf.sketch.decode.supportAnimatedGif
+import com.github.panpf.sketch.decode.supportMovieGif
+import com.github.panpf.sketch.fetch.supportComposeResources
 import com.github.panpf.sketch.util.Logger
 import com.github.panpf.zoomimage.sample.util.getMaxAvailableMemoryCacheBytes
 import com.squareup.picasso.LruCache
@@ -50,10 +53,18 @@ class MyApplication : MultiDexApplication(), SingletonSketch.Factory, SingletonI
     }
 
     override fun createSketch(context: PlatformContext): Sketch {
-        return Sketch.Builder(this)
-            .logger(level = if (BuildConfig.DEBUG) Logger.Level.Debug else Logger.Level.Info)
-            .memoryCache(LruMemoryCache(maxSize = getMemoryCacheMaxSize()))
-            .build()
+        return Sketch.Builder(this).apply {
+            logger(level = if (BuildConfig.DEBUG) Logger.Level.Debug else Logger.Level.Info)
+            memoryCache(LruMemoryCache(maxSize = getMemoryCacheMaxSize()))
+            components {
+                supportComposeResources()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    supportAnimatedGif()
+                } else {
+                    supportMovieGif()
+                }
+            }
+        }.build()
     }
 
     private fun getMemoryCacheMaxSize(): Long {

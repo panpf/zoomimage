@@ -11,7 +11,7 @@ object DesktopImages {
         ResourceImages.longEnd,
         ResourceImages.longWhale,
         ResourceImages.anim,
-        ResourceImages.hugeChina,
+        ComposeResourceImages.hugeChina,
         ResourceImages.hugeCard,
         ResourceImages.hugeLongQmsht,
         HttpImages.hugeLongComic,

@@ -48,10 +48,10 @@ object AndroidImages {
     val MIXING_PHOTO_ALBUM = listOf(
         ResourceImages.cat,
         ResourceImages.dog,
-        ResourceImages.longEnd,
-        ResourceImages.longWhale,
         ResourceImages.anim,
-        ContentImages.hugeChina,
+        ResourceImages.longEnd,
+        ContentImages.longWhale,
+        ComposeResourceImages.hugeChina,
         AndroidResourceImages.hugeCard,
         LocalImages.hugeLongQmsht,
         HttpImages.hugeLongComic,

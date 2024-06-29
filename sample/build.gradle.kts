@@ -19,14 +19,18 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.zoomimageCompose)
             implementation(projects.zoomimageComposeSketch)
+            implementation(projects.internal.images)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.components.resources)
             implementation(compose.ui)
             implementation(compose.preview)
             implementation(compose.uiTooling.replace("ui-tooling", "ui-util"))
             implementation(libs.telephoto.subsampling)
             implementation(libs.panpf.tools4j)
+            implementation(libs.panpf.sketch4.animated)
             implementation(libs.panpf.sketch4.extensions.compose)
+            implementation(libs.panpf.sketch4.compose.resources)
         }
         androidMain.dependencies {
             implementation(projects.zoomimageComposeCoil)
@@ -35,7 +39,6 @@ kotlin {
             implementation(projects.zoomimageViewGlide)
             implementation(projects.zoomimageViewPicasso)
             implementation(projects.zoomimageViewSketch)
-            implementation(projects.internal.images)
             implementation(libs.kotlin.stdlib)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.appcompat)
@@ -65,7 +68,6 @@ kotlin {
             implementation(libs.androidx.paging.compose)
         }
         desktopMain.dependencies {
-            implementation(projects.internal.images)
             implementation(compose.desktop.currentOs)
         }
 
