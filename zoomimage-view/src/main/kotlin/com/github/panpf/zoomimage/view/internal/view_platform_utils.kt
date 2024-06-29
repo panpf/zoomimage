@@ -23,9 +23,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Looper
 import android.view.MotionEvent
-import android.view.View
 import android.widget.ImageView.ScaleType
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -53,9 +51,6 @@ internal fun requiredWorkThread() {
         "This method must be executed in the work thread"
     }
 }
-
-internal val View.isAttachedToWindowCompat: Boolean
-    get() = ViewCompat.isAttachedToWindow(this)
 
 internal fun getPointerIndex(action: Int): Int {
     return action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT

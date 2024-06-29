@@ -40,7 +40,6 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.internal.toHexString
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -135,7 +134,7 @@ class SubsamplingEngine constructor(
             if (field != value) {
                 field?.removeObserver(stoppedLifecycleObserver)
                 field = value
-                if (view.isAttachedToWindowCompat) {
+                if (view.isAttachedToWindow) {
                     value?.addObserver(stoppedLifecycleObserver)
                 }
             }
@@ -203,7 +202,7 @@ class SubsamplingEngine constructor(
                 onDetachFromWindow()
             }
         })
-        if (view.isAttachedToWindowCompat) {
+        if (view.isAttachedToWindow) {
             onAttachToWindow()
         }
     }
@@ -219,7 +218,7 @@ class SubsamplingEngine constructor(
         clean("setImageSource")
         this.imageSource = imageSource
         imageKey = imageSource?.key
-        if (view.isAttachedToWindowCompat) {
+        if (view.isAttachedToWindow) {
             resetTileDecoder("setImageSource")
         }
         return true

@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.view.zoom.internal
 
 import android.view.View
 import android.view.animation.Interpolator
-import androidx.core.view.ViewCompat
 
 internal class FloatAnimatable(
     private val view: View,
@@ -65,7 +64,7 @@ internal class FloatAnimatable(
         onUpdateValue(currentValue)
         running = progress < 1f
         if (running) {
-            ViewCompat.postOnAnimation(view, runnable)
+            view.postOnAnimation(runnable)
         } else {
             onEnd()
         }

@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.multiplatform")
     id("kotlinx-atomicfu")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 addAllMultiplatformTargets()

@@ -9,9 +9,9 @@ androidx-lifecycle = "2.8.2"
 androidx-navigation = "2.7.7"
 androidx-paging = "3.3.0"
 androidx-swiperefreshlayout = "1.1.0"
-androidx-test-ext-junit = "1.1.5"
-androidx-test-runner = "1.5.2"
-androidx-test-rules = "1.5.0"
+androidx-test-ext-junit = "1.2.1"
+androidx-test-runner = "1.6.1"
+androidx-test-rules = "1.6.1"
 
 coil = "3.0.0-alpha07"
 coil2 = "2.4.0"
@@ -60,10 +60,9 @@ gradlePlugin-mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plug
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout-compose" }
-androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "androidx-exifinterface" }
-androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime", version.ref = "androidx-lifecycle" }
 androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidx-navigation" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
@@ -108,8 +107,8 @@ panpf-sketch3 = { module = "io.github.panpf.sketch3:sketch", version.ref = "panp
 panpf-sketch3-compose = { module = "io.github.panpf.sketch3:sketch-compose", version.ref = "panpf-sketch3" }
 panpf-sketch3-core = { module = "io.github.panpf.sketch3:sketch-core", version.ref = "panpf-sketch3" }
 panpf-sketch3-compose-core = { module = "io.github.panpf.sketch3:sketch-compose-core", version.ref = "panpf-sketch3" }
-panpf-sketch3-extensions-view = { module = "io.github.panpf.sketch3:sketch-extensions-view", version.ref = "panpf-sketch3" }
-panpf-sketch3-extensions-compose = { module = "io.github.panpf.sketch3:sketch-extensions-compose", version.ref = "panpf-sketch3" }
+#panpf-sketch3-extensions-view = { module = "io.github.panpf.sketch3:sketch-extensions-view", version.ref = "panpf-sketch3" }
+#panpf-sketch3-extensions-compose = { module = "io.github.panpf.sketch3:sketch-extensions-compose", version.ref = "panpf-sketch3" }
 panpf-sketch3-viewability = { module = "io.github.panpf.sketch3:sketch-viewability", version.ref = "panpf-sketch3" }
 panpf-sketch4-animated = { module = "io.github.panpf.sketch4:sketch-animated", version.ref = "panpf-sketch4" }
 panpf-sketch4-core = { module = "io.github.panpf.sketch4:sketch-core", version.ref = "panpf-sketch4" }

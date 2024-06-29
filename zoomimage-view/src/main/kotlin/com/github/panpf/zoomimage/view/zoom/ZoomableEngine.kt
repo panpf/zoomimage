@@ -41,7 +41,6 @@ import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.convert
 import com.github.panpf.zoomimage.view.internal.format
-import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
 import com.github.panpf.zoomimage.view.internal.toHexString
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
@@ -279,7 +278,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                 onDetachFromWindow()
             }
         })
-        if (view.isAttachedToWindowCompat) {
+        if (view.isAttachedToWindow) {
             onAttachToWindow()
         }
     }

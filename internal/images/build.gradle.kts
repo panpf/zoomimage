@@ -1,6 +1,6 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform")
     id("com.android.library")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 addAllMultiplatformTargets()
@@ -13,8 +13,8 @@ androidLibrary(nameSpace = "com.github.panpf.zoomimage.images") {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(libs.panpf.sketch4.core)
             api(projects.zoomimageCore)
+            api(libs.panpf.sketch4.core)
         }
         desktopMain {
             resources.srcDirs("files")

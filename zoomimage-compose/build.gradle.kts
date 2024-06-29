@@ -1,8 +1,8 @@
 plugins {
+    id("com.android.library")
+    id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
-    id("org.jetbrains.compose")
-    id("com.android.library")
 }
 
 addAllMultiplatformTargets()
@@ -14,8 +14,9 @@ kotlin {
         commonMain.dependencies {
             api(projects.zoomimageCore)
             api(compose.foundation)
+            api(compose.runtime)
             api(compose.ui)
-            api(compose.uiTooling.replace("ui-tooling", "ui-util"))
+            api(compose.uiUtil)
         }
 
         commonTest.dependencies {

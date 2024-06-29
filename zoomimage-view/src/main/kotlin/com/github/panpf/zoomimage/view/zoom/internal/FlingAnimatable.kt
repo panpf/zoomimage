@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage.view.zoom.internal
 import android.graphics.Rect
 import android.view.View
 import android.widget.OverScroller
-import androidx.core.view.ViewCompat
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 
 internal class FlingAnimatable(
@@ -64,7 +63,7 @@ internal class FlingAnimatable(
     private fun frame() {
         if (scroller.computeScrollOffset()) {
             onUpdateValue(IntOffsetCompat(scroller.currX, scroller.currY))
-            ViewCompat.postOnAnimation(view, runnable)
+            view.postOnAnimation(runnable)
         } else {
             onEnd()
         }

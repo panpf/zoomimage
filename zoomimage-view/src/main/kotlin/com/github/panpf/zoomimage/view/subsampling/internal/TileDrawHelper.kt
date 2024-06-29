@@ -24,7 +24,6 @@ import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
 import android.graphics.RectF
 import android.view.View
-import androidx.core.graphics.withSave
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
@@ -91,30 +90,30 @@ class TileDrawHelper(
         var insideLoadCount = 0
         var outsideLoadCount = 0
         var realDrawCount = 0
-        canvas.withSave {
-            canvas.concat(cacheDisplayMatrix.applyTransform(transform, containerSize))
+        val checkpoint = canvas.save()
+        canvas.concat(cacheDisplayMatrix.applyTransform(transform, containerSize))
 
-            backgroundTiles.forEach { tileSnapshot ->
-                if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
-                    if (drawTile(canvas, imageInfo, contentSize, tileSnapshot)) {
-                        backgroundCount++
-                    }
-                }
-            }
-            foregroundTiles.forEach { tileSnapshot ->
-                if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
-                    insideLoadCount++
-                    if (drawTile(canvas, imageInfo, contentSize, tileSnapshot)) {
-                        realDrawCount++
-                    }
-                    if (subsamplingEngine.showTileBoundsState.value) {
-                        drawTileBounds(canvas, imageInfo, contentSize, tileSnapshot)
-                    }
-                } else {
-                    outsideLoadCount++
+        backgroundTiles.forEach { tileSnapshot ->
+            if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
+                if (drawTile(canvas, imageInfo, contentSize, tileSnapshot)) {
+                    backgroundCount++
                 }
             }
         }
+        foregroundTiles.forEach { tileSnapshot ->
+            if (tileSnapshot.srcRect.overlaps(imageLoadRect)) {
+                insideLoadCount++
+                if (drawTile(canvas, imageInfo, contentSize, tileSnapshot)) {
+                    realDrawCount++
+                }
+                if (subsamplingEngine.showTileBoundsState.value) {
+                    drawTileBounds(canvas, imageInfo, contentSize, tileSnapshot)
+                }
+            } else {
+                outsideLoadCount++
+            }
+        }
+        canvas.restoreToCount(checkpoint)
 
         logger.d {
             "drawTiles. tiles=${foregroundTiles.size}, " +

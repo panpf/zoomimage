@@ -1,5 +1,6 @@
 plugins {
     id("com.android.library")
+    id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
 }
@@ -11,7 +12,6 @@ androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.sketch")
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.zoomimageCompose)
             api(projects.zoomimageComposeSketchCore)
             api(libs.panpf.sketch4.compose)
         }

@@ -11,7 +11,6 @@ androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.coil2") {
 }
 
 dependencies {
-    api(projects.zoomimageCompose)
     api(projects.zoomimageComposeCoil2Core)
     api(libs.coil2.compose)
 

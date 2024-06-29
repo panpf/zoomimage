@@ -34,7 +34,6 @@ import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.findLifecycle
 import com.github.panpf.zoomimage.view.internal.intrinsicSize
-import com.github.panpf.zoomimage.view.internal.isAttachedToWindowCompat
 import com.github.panpf.zoomimage.view.internal.toAlignment
 import com.github.panpf.zoomimage.view.internal.toContentScale
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
@@ -146,7 +145,7 @@ open class ZoomImageView @JvmOverloads constructor(
             this@ZoomImageView._subsamplingEngine = this
             post {
                 val view = this@ZoomImageView
-                if (view.isAttachedToWindowCompat) {
+                if (view.isAttachedToWindow) {
                     val lifecycle =
                         view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
                     if (lifecycle != null) {

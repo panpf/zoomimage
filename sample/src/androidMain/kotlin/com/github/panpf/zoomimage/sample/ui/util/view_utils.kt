@@ -34,9 +34,6 @@ internal fun requiredWorkThread() {
     }
 }
 
-internal val View.isAttachedToWindowCompat: Boolean
-    get() = ViewCompat.isAttachedToWindow(this)
-
 internal fun getPointerIndex(action: Int): Int {
     return action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
 }

@@ -11,7 +11,6 @@ androidLibrary(nameSpace = "com.github.panpf.zoomimage.compose.sketch3") {
 }
 
 dependencies {
-    api(projects.zoomimageCompose)
     api(projects.zoomimageComposeSketch3Core)
     api(libs.panpf.sketch3.compose)
 

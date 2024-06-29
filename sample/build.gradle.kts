@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
-    id("androidx.navigation.safeargs.kotlin")
+    id("androidx.navigation.safeargs.kotlin")   // Must be after kotlin plugin
 }
 
 kotlin {
@@ -15,25 +15,21 @@ kotlin {
 
     jvm("desktop")
 
-    // TODO Clean up dependencies
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.zoomimageCompose)
-            implementation(projects.zoomimageComposeSketch)
             implementation(projects.internal.images)
+            implementation(projects.zoomimageCompose)
             implementation(projects.zoomimageComposeResources)
-            implementation(compose.foundation)
+            implementation(projects.zoomimageComposeSketch)
+            implementation(compose.components.resources)
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
-            implementation(compose.components.resources)
-            implementation(compose.ui)
             implementation(compose.preview)
-            implementation(compose.uiTooling.replace("ui-tooling", "ui-util"))
-            implementation(libs.telephoto.subsampling)
             implementation(libs.panpf.tools4j)
             implementation(libs.panpf.sketch4.animated)
-            implementation(libs.panpf.sketch4.extensions.compose)
             implementation(libs.panpf.sketch4.compose.resources)
+            implementation(libs.panpf.sketch4.extensions.compose)
+            implementation(libs.telephoto.subsampling)
         }
         androidMain.dependencies {
             implementation(projects.zoomimageComposeCoil)
@@ -42,24 +38,24 @@ kotlin {
             implementation(projects.zoomimageViewGlide)
             implementation(projects.zoomimageViewPicasso)
             implementation(projects.zoomimageViewSketch)
-            implementation(libs.kotlin.stdlib)
-            implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.appcompat)
-            implementation(libs.androidx.core.ktx)
+            implementation(libs.androidx.constraintlayout.compose)
+            implementation(libs.androidx.core)
+            implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.navigation.fragment)
             implementation(libs.androidx.navigation.ui)
+            implementation(libs.androidx.paging.compose)
             implementation(libs.androidx.swiperefreshlayout)
             implementation(libs.google.material)
+            implementation(libs.kotlin.stdlib)
+            implementation(libs.kotlinx.coroutines.android)
             implementation(libs.panpf.assemblyadapter4)
+            implementation(libs.panpf.sketch4.extensions.view)
             implementation(libs.panpf.tools4a)
             implementation(libs.panpf.tools4j)
             implementation(libs.panpf.tools4k)
-            implementation(libs.panpf.sketch4.extensions.view)
-            implementation(libs.subsamplingscaleimageview)
             implementation(libs.photoview)
-            implementation(libs.androidx.constraintlayout.compose)
-            implementation(libs.androidx.navigation.compose)
-            implementation(libs.androidx.paging.compose)
+            implementation(libs.subsamplingscaleimageview)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
