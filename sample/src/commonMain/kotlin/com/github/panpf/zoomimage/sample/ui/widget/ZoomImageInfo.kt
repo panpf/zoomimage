@@ -14,11 +14,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
-import com.github.panpf.tools4j.io.ktx.formatCompactFileSize
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
+import com.github.panpf.zoomimage.sample.util.formatFileSize
 import com.github.panpf.zoomimage.zoom.toShortString
 import kotlin.math.roundToInt
 
@@ -74,11 +74,11 @@ fun ZoomImageInfo(
         val foregroundTiles = subsampling.foregroundTiles
         val loadedTileCount = foregroundTiles.count { it.tileBitmap != null }
         val loadedTileBytes =
-            foregroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+            foregroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
         val backgroundTiles = subsampling.backgroundTiles
         val backgroundTilesLoadedCount = backgroundTiles.count { it.tileBitmap != null }
         val backgroundTilesLoadedBytes =
-            backgroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.toLong().formatCompactFileSize()
+            backgroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
         val tileGridSizeMapString = subsampling.tileGridSizeMap.entries
             .joinToString(prefix = "[", postfix = "]", separator = ", ") {
                 "${it.key}:${it.value.toShortString()}"

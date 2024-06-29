@@ -18,11 +18,11 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import android.os.Bundle
 import androidx.navigation.fragment.navArgs
-import com.github.panpf.tools4j.io.ktx.formatCompactFileSize
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.DialogZoomInfoBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.util.format
+import com.github.panpf.zoomimage.sample.util.formatFileSize
 import com.github.panpf.zoomimage.util.round
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.toShortString
@@ -100,13 +100,11 @@ class ZoomImageViewInfoDialogFragment :
             val foregroundTiles = subsampling.foregroundTilesState.value
             val loadedTileCount = foregroundTiles.count { it.tileBitmap != null }
             val loadedTileBytes =
-                foregroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.toLong()
-                    .formatCompactFileSize()
+                foregroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
             val backgroundTiles = subsampling.backgroundTilesState.value
             val backgroundTilesLoadedCount = backgroundTiles.count { it.tileBitmap != null }
             val backgroundTilesLoadedBytes =
-                backgroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.toLong()
-                    .formatCompactFileSize()
+                backgroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
             val tileGridSizeMapString = subsampling.tileGridSizeMapState.value.entries
                 .joinToString(prefix = "[", postfix = "]", separator = ", ") {
                     "${it.key}:${it.value.toShortString()}"

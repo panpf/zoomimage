@@ -24,8 +24,6 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
-            implementation(compose.preview)
-            implementation(libs.panpf.tools4j)
             implementation(libs.panpf.sketch4.animated)
             implementation(libs.panpf.sketch4.compose.resources)
             implementation(libs.panpf.sketch4.extensions.compose)
@@ -38,28 +36,47 @@ kotlin {
             implementation(projects.zoomimageViewGlide)
             implementation(projects.zoomimageViewPicasso)
             implementation(projects.zoomimageViewSketch)
+            implementation(compose.preview) // Only available on Android and desktop platforms
+            implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.appcompat)
+            implementation(libs.androidx.constraintlayout)
             implementation(libs.androidx.constraintlayout.compose)
             implementation(libs.androidx.core)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.lifecycle.runtime)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.navigation.fragment)
             implementation(libs.androidx.navigation.ui)
             implementation(libs.androidx.paging.compose)
+            implementation(libs.androidx.recyclerview)
             implementation(libs.androidx.swiperefreshlayout)
             implementation(libs.google.material)
-            implementation(libs.kotlin.stdlib)
-            implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.panpf.assemblyadapter4)
+            implementation(libs.panpf.assemblyadapter4.pager2)
+            implementation(libs.panpf.assemblyadapter4.recycler)
+            implementation(libs.panpf.assemblyadapter4.recycler.paging)
             implementation(libs.panpf.sketch4.extensions.view)
-            implementation(libs.panpf.tools4a)
-            implementation(libs.panpf.tools4j)
+            implementation(libs.panpf.tools4a.activity)
+            implementation(libs.panpf.tools4a.device)
+            implementation(libs.panpf.tools4a.dimen)
+            implementation(libs.panpf.tools4a.display)
+            implementation(libs.panpf.tools4a.fileprovider)
+            implementation(libs.panpf.tools4a.network)
+            implementation(libs.panpf.tools4a.toast)
+            implementation(libs.panpf.tools4a.view)
             implementation(libs.panpf.tools4k)
             implementation(libs.photoview)
             implementation(libs.subsamplingscaleimageview)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(compose.preview) // Only available on Android and desktop platforms
         }
+//        iosMain {
+//            // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
+//            // This may be a bug of kmp.
+//            resources.srcDirs("../internal/images/files")
+//        }
 
         commonTest.dependencies {
             implementation(projects.internal.testUtils)
@@ -79,7 +96,7 @@ compose.desktop {
         mainClass = "com.github.panpf.zoomimage.sample.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = property("GROUP").toString()
+            packageName = "com.github.panpf.zoomimage.sample"
             packageVersion = property("versionName").toString().let {
                 if (it.contains("-")) {
                     it.substring(0, it.indexOf("-"))
