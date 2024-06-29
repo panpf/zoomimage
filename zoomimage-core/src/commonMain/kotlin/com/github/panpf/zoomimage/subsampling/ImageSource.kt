@@ -121,5 +121,3 @@ class FileImageSource(val path: Path) : ImageSource {
         return "FileImageSource('$path')"
     }
 }
-
-// TODO ComposeResourceImageSource

@@ -15,12 +15,15 @@ kotlin {
 
     jvm("desktop")
 
+    // TODO Clean up dependencies
     sourceSets {
         commonMain.dependencies {
             implementation(projects.zoomimageCompose)
             implementation(projects.zoomimageComposeSketch)
             implementation(projects.internal.images)
+            implementation(projects.zoomimageComposeResources)
             implementation(compose.foundation)
+            implementation(compose.material)    // pull refresh
             implementation(compose.material3)
             implementation(compose.components.resources)
             implementation(compose.ui)
@@ -56,14 +59,6 @@ kotlin {
             implementation(libs.subsamplingscaleimageview)
             implementation(libs.photoview)
             implementation(libs.androidx.constraintlayout.compose)
-
-            /* compose */
-            implementation(libs.androidx.compose.animation)
-            implementation(libs.androidx.compose.foundation)
-            implementation(libs.androidx.compose.material)
-            implementation(libs.androidx.compose.material3)
-            implementation(libs.androidx.compose.ui)
-            implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.paging.compose)
         }
@@ -154,8 +149,6 @@ androidApplication(nameSpace = "com.github.panpf.zoomimage.sample") {
 
     dependencies {
         debugImplementation(libs.leakcanary)
-        debugImplementation(libs.androidx.compose.ui.tooling)
-        debugImplementation(libs.androidx.compose.ui.test.manifest)
     }
 }
 

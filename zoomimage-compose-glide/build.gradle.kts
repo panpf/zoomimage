@@ -16,8 +16,5 @@ dependencies {
     api(libs.glide.ktx)
     api(libs.google.drawablepainer)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
     androidTestImplementation(projects.internal.testUtils)
 }

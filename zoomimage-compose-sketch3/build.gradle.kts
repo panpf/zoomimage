@@ -15,8 +15,5 @@ dependencies {
     api(projects.zoomimageComposeSketch3Core)
     api(libs.panpf.sketch3.compose)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
     androidTestImplementation(projects.internal.testUtils)
 }

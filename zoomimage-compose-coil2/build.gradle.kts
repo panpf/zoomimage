@@ -15,8 +15,5 @@ dependencies {
     api(projects.zoomimageComposeCoil2Core)
     api(libs.coil2.compose)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
     androidTestImplementation(projects.internal.testUtils)
 }
