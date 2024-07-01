@@ -26,7 +26,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
-import com.github.panpf.zoomimage.sample.ui.icGamepadPainter
+import com.github.panpf.zoomimage.sample.resources.Res
+import com.github.panpf.zoomimage.sample.resources.ic_gamepad
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun rememberMoveKeyboardState(stepInterval: Long = 8): MoveKeyboardState {
@@ -180,7 +182,7 @@ fun MoveKeyboard(state: MoveKeyboardState, modifier: Modifier = Modifier.fillMax
                 }
         ) {
             Icon(
-                painter = icGamepadPainter(),
+                painter = painterResource(Res.drawable.ic_gamepad),
                 contentDescription = "GamePad",
                 modifier = Modifier
                     .align(Alignment.Center)

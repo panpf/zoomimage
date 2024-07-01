@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.github.panpf.zoomimage.sample.resources.Res
+import com.github.panpf.zoomimage.sample.resources.ic_expand_more
 import com.github.panpf.zoomimage.sample.ui.util.name
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.util.Logger
@@ -42,6 +44,7 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.compose.resources.painterResource
 
 class ZoomImageOptionsState {
     val contentScaleName = MutableStateFlow(ContentScale.Fit.name)
@@ -365,7 +368,7 @@ fun MyDropdownMenu(
             Text(text = name, modifier = Modifier.weight(1f), fontSize = 12.sp)
             Text(text = value, fontSize = 10.sp)
             Icon(
-                painter = icExpandMorePainter(),
+                painter = painterResource(Res.drawable.ic_expand_more),
                 contentDescription = "more"
             )
         }
@@ -434,7 +437,7 @@ fun MyMultiChooseMenu(
                 textAlign = TextAlign.End,
             )
             Icon(
-                painter = icExpandMorePainter(),
+                painter = painterResource(Res.drawable.ic_expand_more),
                 contentDescription = "more"
             )
         }

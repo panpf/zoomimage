@@ -44,13 +44,15 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.sample.ui.icInfoPainter
-import com.github.panpf.zoomimage.sample.ui.icMoreVertPainter
-import com.github.panpf.zoomimage.sample.ui.icRotateRightPainter
-import com.github.panpf.zoomimage.sample.ui.icZoomInPainter
-import com.github.panpf.zoomimage.sample.ui.icZoomOutPainter
+import com.github.panpf.zoomimage.sample.resources.Res
+import com.github.panpf.zoomimage.sample.resources.ic_info
+import com.github.panpf.zoomimage.sample.resources.ic_more_vert
+import com.github.panpf.zoomimage.sample.resources.ic_rotate_right
+import com.github.panpf.zoomimage.sample.resources.ic_zoom_in
+import com.github.panpf.zoomimage.sample.resources.ic_zoom_out
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
 
 @Composable
@@ -147,7 +149,7 @@ fun ZoomImageTool(
                             modifier = Modifier.size(30.dp)
                         ) {
                             Icon(
-                                painter = icZoomOutPainter(),
+                                painter = painterResource(Res.drawable.ic_zoom_out),
                                 contentDescription = "zoom out",
                             )
                         }
@@ -170,7 +172,7 @@ fun ZoomImageTool(
                             modifier = Modifier.size(30.dp)
                         ) {
                             Icon(
-                                painter = icZoomInPainter(),
+                                painter = painterResource(Res.drawable.ic_zoom_in),
                                 contentDescription = "zoom in",
                             )
                         }
@@ -226,7 +228,7 @@ private fun ButtonPad(
             modifier = Modifier.size(40.dp)
         ) {
             Icon(
-                painter = icRotateRightPainter(),
+                painter = painterResource(Res.drawable.ic_rotate_right),
                 contentDescription = "Rotate",
                 tint = colorScheme.onTertiary
             )
@@ -245,11 +247,19 @@ private fun ButtonPad(
                     zoomableState.getNextStepScale() > zoomableState.transform.scaleX
                 }
             }
-            val icon = if (zoomIn)
-                icZoomInPainter() to "zoom in" else icZoomOutPainter() to "zoom out"
+            val description = if (zoomIn) {
+                "zoom in"
+            } else {
+                "zoom out"
+            }
+            val icon = if (zoomIn) {
+                painterResource(Res.drawable.ic_zoom_in)
+            } else {
+                painterResource(Res.drawable.ic_zoom_out)
+            }
             Icon(
-                painter = icon.first,
-                contentDescription = icon.second,
+                painter = icon,
+                contentDescription = description,
                 tint = colorScheme.onTertiary
             )
         }
@@ -259,7 +269,7 @@ private fun ButtonPad(
             modifier = Modifier.size(40.dp)
         ) {
             Icon(
-                painter = icInfoPainter(),
+                painter = painterResource(Res.drawable.ic_info),
                 contentDescription = "Info",
                 tint = colorScheme.onTertiary
             )
@@ -270,7 +280,7 @@ private fun ButtonPad(
             modifier = Modifier.size(40.dp)
         ) {
             Icon(
-                painter = icMoreVertPainter(),
+                painter = painterResource(Res.drawable.ic_more_vert),
                 contentDescription = "More",
                 tint = colorScheme.onTertiary
             )
