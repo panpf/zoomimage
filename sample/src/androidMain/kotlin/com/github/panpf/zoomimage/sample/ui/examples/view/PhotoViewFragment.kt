@@ -26,8 +26,8 @@ import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.tools4a.toast.ktx.showShortToast
+import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoViewBinding
-import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
@@ -53,7 +53,7 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
                 showShortToast("Long click")
                 true
             }
-            settingsService.scaleType.collectWithLifecycle(viewLifecycleOwner) {
+            requireContext().appSettings.scaleType.collectWithLifecycle(viewLifecycleOwner) {
                 scaleType = ImageView.ScaleType.valueOf(it)
             }
             setOnScaleChangeListener { _, _, _ ->

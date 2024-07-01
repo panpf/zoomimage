@@ -1,11 +1,14 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     id("com.android.application")
+    id("kotlinx-atomicfu")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.compose")
-    id("androidx.navigation.safeargs.kotlin")   // Must be after kotlin plugin
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("androidx.navigation.safeargs.kotlin")      // Must be after kotlin plugin
 }
 
 kotlin {
@@ -14,6 +17,44 @@ kotlin {
     androidTarget()
 
     jvm("desktop")
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+    }
+
+    js {
+        moduleName = "composeApp"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "composeApp.js"
+            }
+        }
+        binaries.executable()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "composeApp"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "composeApp.js"
+//                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+//                    static = (static ?: mutableListOf()).apply {
+//                        // Serve sources to debug inside browser
+//                        add(project.projectDir.path)
+//                    }
+//                }
+            }
+        }
+        binaries.executable()
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -24,10 +65,18 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
+            implementation(libs.coil.svg)
+            implementation(libs.coil.gif)
+            implementation(libs.ktor.client.contentNegotiation)
+            implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.panpf.sketch4.animated)
             implementation(libs.panpf.sketch4.compose.resources)
             implementation(libs.panpf.sketch4.extensions.compose)
-            implementation(libs.telephoto.subsampling)
+            implementation(libs.panpf.sketch4.http.ktor)
+            implementation(libs.panpf.sketch4.svg)
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.screenModel)
+            implementation(libs.voyager.transitions)
         }
         androidMain.dependencies {
             implementation(projects.zoomimageComposeCoil)
@@ -37,6 +86,7 @@ kotlin {
             implementation(projects.zoomimageViewPicasso)
             implementation(projects.zoomimageViewSketch)
             implementation(compose.preview) // Only available on Android and desktop platforms
+            implementation(libs.kotlinx.serialization.json)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.constraintlayout)
@@ -48,7 +98,6 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.navigation.fragment)
             implementation(libs.androidx.navigation.ui)
-            implementation(libs.androidx.paging.compose)
             implementation(libs.androidx.recyclerview)
             implementation(libs.androidx.swiperefreshlayout)
             implementation(libs.google.material)
@@ -72,11 +121,23 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(compose.preview) // Only available on Android and desktop platforms
         }
-//        iosMain {
-//            // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
-//            // This may be a bug of kmp.
-//            resources.srcDirs("../internal/images/files")
-//        }
+        jvmCommonMain.dependencies {
+            implementation(libs.telephoto.subsampling)
+        }
+        iosMain {
+            // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
+            // This may be a bug of kmp.
+            resources.srcDirs("../internal/images/files")
+        }
+        nonJsCommonMain.dependencies {
+            implementation(libs.androidx.datastore.core.okio)
+            implementation(libs.androidx.datastore.preferences.core)
+            implementation(libs.cashapp.paging.compose.common)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.contentNegotiation.wasm)
+            implementation(libs.ktor.serialization.kotlinxJson.wasm)
+        }
 
         commonTest.dependencies {
             implementation(projects.internal.testUtils)
@@ -164,21 +225,43 @@ androidApplication(nameSpace = "com.github.panpf.zoomimage.sample") {
     }
 }
 
+// https://youtrack.jetbrains.com/issue/KT-56025
+afterEvaluate {
+    tasks {
+        val configureJs: Task.() -> Unit = {
+            dependsOn(named("jsDevelopmentExecutableCompileSync"))
+            dependsOn(named("jsProductionExecutableCompileSync"))
+            dependsOn(named("jsTestTestDevelopmentExecutableCompileSync"))
+        }
+        named("jsBrowserProductionWebpack").configure(configureJs)
+    }
+}
+// https://youtrack.jetbrains.com/issue/KT-56025
+afterEvaluate {
+    tasks {
+        val configureWasmJs: Task.() -> Unit = {
+            dependsOn(named("wasmJsDevelopmentExecutableCompileSync"))
+            dependsOn(named("wasmJsProductionExecutableCompileSync"))
+            dependsOn(named("wasmJsTestTestDevelopmentExecutableCompileSync"))
+        }
+        named("wasmJsBrowserProductionWebpack").configure(configureWasmJs)
+    }
+}
+
 // https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-images-resources.html
 // The current 1.6.1 version only supports the use of compose resources in the commonMain source set of the Feiku module.
 // The files of the images module can only be added to the js module in this way.
-// TODO After supporting js and wasmJs, open this configuration
-//tasks.register<Copy>("copyImagesToJsProcessedResources") {
-//    from(project(":internal:images").file("files"))
-//    into(project(":sample").file("build/processedResources/js/main/files"))
-//}
-//tasks.named("jsProcessResources") {
-//    dependsOn("copyImagesToJsProcessedResources")
-//}
-//tasks.register<Copy>("copyImagesToWasmJsProcessedResources") {
-//    from(project(":internal:images").file("files"))
-//    into(project(":sample").file("build/processedResources/wasmJs/main/files"))
-//}
-//tasks.named("wasmJsProcessResources") {
-//    dependsOn("copyImagesToWasmJsProcessedResources")
-//}
+tasks.register<Copy>("copyImagesToJsProcessedResources") {
+    from(project(":internal:images").file("files"))
+    into(project(":sample").file("build/processedResources/js/main/files"))
+}
+tasks.named("jsProcessResources") {
+    dependsOn("copyImagesToJsProcessedResources")
+}
+tasks.register<Copy>("copyImagesToWasmJsProcessedResources") {
+    from(project(":internal:images").file("files"))
+    into(project(":sample").file("build/processedResources/wasmJs/main/files"))
+}
+tasks.named("wasmJsProcessResources") {
+    dependsOn("copyImagesToWasmJsProcessedResources")
+}

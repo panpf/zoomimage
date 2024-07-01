@@ -6,15 +6,17 @@ androidx-appcompat = "1.7.0"
 androidx-constraintlayout = "2.1.4"
 androidx-constraintlayout-compose = "1.0.1"
 androidx-core = "1.13.1"
+androidx-datastore = "1.1.1"
 androidx-exifinterface = "1.3.7"
 androidx-lifecycle = "2.8.2"
 androidx-navigation = "2.7.7"
 androidx-recyclerview = "1.3.2"
-androidx-paging = "3.3.0"
 androidx-swiperefreshlayout = "1.1.0"
 androidx-test-ext-junit = "1.2.1"
 androidx-test-runner = "1.6.1"
 androidx-test-rules = "1.6.1"
+
+cashapp-paging = "3.3.0-alpha02-0.5.1"
 
 coil = "3.0.0-alpha07"
 coil2 = "2.4.0"
@@ -32,6 +34,9 @@ junit = "4.13.2"
 kotlin = "2.0.0"
 kotlinx-atomicfu = "0.24.0" # sync with kotlin version
 kotlinx-coroutines = "1.8.1"
+kotlinx-serialization-json = "1.7.0"
+ktor = "2.3.11"
+ktor-wasm = "3.0.0-wasm2"   # TODO Currently only versions with the '-wasm2' suffix support wasm
 
 leakcanary = "2.14"
 mavenpublish = "0.29.0"
@@ -49,6 +54,7 @@ photoview = "2.3.0"
 skiko = "0.8.4"    # sync with compose version
 subsamplingscaleimageview = "3.10.0"
 telephoto = "0.11.2"
+voyager = "1.1.0-alpha03"
 
 [libraries]
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "android-plugin" }
@@ -66,6 +72,8 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidx-constraintlayout" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout-compose" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-datastore-core-okio = { group = "androidx.datastore", name = "datastore-core-okio", version.ref = "androidx-datastore" }
+androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "androidx-datastore" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "androidx-exifinterface" }
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
@@ -74,16 +82,19 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidx-navigation" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "androidx-recyclerview" }
-androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "androidx-swiperefreshlayout" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
 
+cashapp-paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "cashapp-paging" }
+
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
+coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
+coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
 
 coil2 = { module = "io.coil-kt:coil", version.ref = "coil2" }
 coil2-base = { module = "io.coil-kt:coil-base", version.ref = "coil2" }
@@ -106,6 +117,19 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+#ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-contentNegotiation-wasm = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor-wasm" }
+#ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+#ktor-client-core-wasm = { module = "io.ktor:ktor-client-core", version.ref = "ktor-wasm" }
+#ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
+#ktor-client-ios = { module = "io.ktor:ktor-client-ios", version.ref = "ktor" }
+#ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
+#ktor-client-logging={ module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+#ktor-client-wasmJs = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor-wasm" }
+ktor-serialization-kotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-serialization-kotlinxJson-wasm = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor-wasm" }
 
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
@@ -125,11 +149,13 @@ panpf-sketch4-core = { module = "io.github.panpf.sketch4:sketch-core", version.r
 panpf-sketch4-compose = { module = "io.github.panpf.sketch4:sketch-compose", version.ref = "panpf-sketch4" }
 panpf-sketch4-compose-core = { module = "io.github.panpf.sketch4:sketch-compose-core", version.ref = "panpf-sketch4" }
 panpf-sketch4-compose-resources = { module = "io.github.panpf.sketch4:sketch-compose-resources", version.ref = "panpf-sketch4" }
+panpf-sketch4-extensions-compose = { module = "io.github.panpf.sketch4:sketch-extensions-compose", version.ref = "panpf-sketch4" }
+panpf-sketch4-extensions-view = { module = "io.github.panpf.sketch4:sketch-extensions-view", version.ref = "panpf-sketch4" }
+panpf-sketch4-extensions-viewability = { module = "io.github.panpf.sketch4:sketch-extensions-viewability", version.ref = "panpf-sketch4" }
+panpf-sketch4-http-ktor = { module = "io.github.panpf.sketch4:sketch-http-ktor", version.ref = "panpf-sketch4" }
+panpf-sketch4-svg = { module = "io.github.panpf.sketch4:sketch-svg", version.ref = "panpf-sketch4" }
 panpf-sketch4-view = { module = "io.github.panpf.sketch4:sketch-view", version.ref = "panpf-sketch4" }
 panpf-sketch4-view-core = { module = "io.github.panpf.sketch4:sketch-view-core", version.ref = "panpf-sketch4" }
-panpf-sketch4-extensions-view = { module = "io.github.panpf.sketch4:sketch-extensions-view", version.ref = "panpf-sketch4" }
-panpf-sketch4-extensions-compose = { module = "io.github.panpf.sketch4:sketch-extensions-compose", version.ref = "panpf-sketch4" }
-panpf-sketch4-extensions-viewability = { module = "io.github.panpf.sketch4:sketch-extensions-viewability", version.ref = "panpf-sketch4" }
 panpf-tools4a-activity = { module = "io.github.panpf.tools4a:tools4a-activity-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-device = { module = "io.github.panpf.tools4a:tools4a-device-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-dimen = { module = "io.github.panpf.tools4a:tools4a-dimen-ktx", version.ref = "panpf-tools4a" }
@@ -149,3 +175,13 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 subsamplingscaleimageview = { module = "com.davemorrissey.labs:subsampling-scale-image-view-androidx", version.ref = "subsamplingscaleimageview" }
 telephoto-subsampling = { module = "me.saket.telephoto:sub-sampling-image", version.ref = "telephoto" }
+
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+#voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+#voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+#voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
+#voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
+#voyager-kodein = { module = "cafe.adriel.voyager:voyager-kodein", version.ref = "voyager" }
+#voyager-rxjava = { module = "cafe.adriel.voyager:voyager-rxjava", version.ref = "voyager" }

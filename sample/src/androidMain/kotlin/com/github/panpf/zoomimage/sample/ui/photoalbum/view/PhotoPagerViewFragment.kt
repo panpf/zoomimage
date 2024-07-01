@@ -24,8 +24,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
-import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
@@ -45,14 +45,15 @@ class PhotoPagerViewFragment : BaseToolbarBindingFragment<FragmentPhotoPagerBind
     ) {
         toolbar.title = zoomViewType.title
 
+        val appSettings = requireContext().appSettings
         toolbar.menu.add("Layout").apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             setOnMenuItemClickListener {
-                settingsService.horizontalPagerLayout.value =
-                    !settingsService.horizontalPagerLayout.value
+                appSettings.horizontalPagerLayout.value =
+                    !appSettings.horizontalPagerLayout.value
                 true
             }
-            settingsService.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
+            appSettings.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
                 val meuIcon = if (it) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
                 setIcon(meuIcon)
             }
@@ -76,7 +77,7 @@ class PhotoPagerViewFragment : BaseToolbarBindingFragment<FragmentPhotoPagerBind
         val imageUrlList = args.imageUris.split(",")
         binding.pager.apply {
             offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
-            settingsService.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
+            appSettings.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
                 orientation =
                     if (it) ViewPager2.ORIENTATION_HORIZONTAL else ViewPager2.ORIENTATION_VERTICAL
             }

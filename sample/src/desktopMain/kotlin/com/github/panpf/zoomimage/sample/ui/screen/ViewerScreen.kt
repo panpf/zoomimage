@@ -30,9 +30,9 @@ import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.sample.MySettings
+import com.github.panpf.zoomimage.sample.EventBus
+import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
-import com.github.panpf.zoomimage.sample.ui.util.EventBus
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
@@ -55,25 +55,26 @@ fun ViewerScreen(
     imageFile: ImageFile
 ) {
     Box(Modifier.fillMaxSize()) {
-        val contentScaleName by MySettings.contentScaleName.collectAsState()
-        val alignmentName by MySettings.alignmentName.collectAsState()
-        val threeStepScale by MySettings.threeStepScale.collectAsState()
-        val rubberBandScale by MySettings.rubberBandScale.collectAsState()
-        val readModeEnabled by MySettings.readModeEnabled.collectAsState()
-        val readModeAcceptedBoth by MySettings.readModeAcceptedBoth.collectAsState()
-        val scrollBarEnabled by MySettings.scrollBarEnabled.collectAsState()
-        val logLevelName by MySettings.logLevel.collectAsState()
-        val animateScale by MySettings.animateScale.collectAsState()
-        val slowerScaleAnimation by MySettings.slowerScaleAnimation.collectAsState()
-        val limitOffsetWithinBaseVisibleRect by MySettings.limitOffsetWithinBaseVisibleRect.collectAsState()
-        val scalesCalculatorName by MySettings.scalesCalculator.collectAsState()
-        val scalesMultipleString by MySettings.scalesMultiple.collectAsState()
-        val pausedContinuousTransformType by MySettings.pausedContinuousTransformType.collectAsState()
-        val disabledGestureType by MySettings.disabledGestureType.collectAsState()
-        val disabledBackgroundTiles by MySettings.disabledBackgroundTiles.collectAsState()
-        val showTileBounds by MySettings.showTileBounds.collectAsState()
-        val tileAnimation by MySettings.tileAnimation.collectAsState()
-//        val horizontalLayout by MySettings.horizontalPagerLayout.collectAsState(initial = true)
+        val appSettings = LocalPlatformContext.current.appSettings
+        val contentScaleName by appSettings.contentScale.collectAsState()
+        val alignmentName by appSettings.alignment.collectAsState()
+        val threeStepScale by appSettings.threeStepScale.collectAsState()
+        val rubberBandScale by appSettings.rubberBandScale.collectAsState()
+        val readModeEnabled by appSettings.readModeEnabled.collectAsState()
+        val readModeAcceptedBoth by appSettings.readModeAcceptedBoth.collectAsState()
+        val scrollBarEnabled by appSettings.scrollBarEnabled.collectAsState()
+        val logLevelName by appSettings.logLevel.collectAsState()
+        val animateScale by appSettings.animateScale.collectAsState()
+        val slowerScaleAnimation by appSettings.slowerScaleAnimation.collectAsState()
+        val limitOffsetWithinBaseVisibleRect by appSettings.limitOffsetWithinBaseVisibleRect.collectAsState()
+        val scalesCalculatorName by appSettings.scalesCalculator.collectAsState()
+        val scalesMultipleString by appSettings.scalesMultiple.collectAsState()
+        val pausedContinuousTransformType by appSettings.pausedContinuousTransformType.collectAsState()
+        val disabledGestureType by appSettings.disabledGestureType.collectAsState()
+        val disabledBackgroundTiles by appSettings.disabledBackgroundTiles.collectAsState()
+        val showTileBounds by appSettings.showTileBounds.collectAsState()
+        val tileAnimation by appSettings.tileAnimation.collectAsState()
+//        val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
 
         val scalesCalculator by remember {
             derivedStateOf {

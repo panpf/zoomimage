@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsState
-import com.github.panpf.zoomimage.sample.settingsService
+import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -15,7 +15,7 @@ fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
     val state = remember { ZoomImageOptionsState() }
 
     if (!LocalInspectionMode.current) {
-        val settingsService = LocalContext.current.settingsService
+        val settingsService = LocalContext.current.appSettings
         BindStateAndFlow(state.contentScaleName, settingsService.contentScale)
         BindStateAndFlow(state.alignmentName, settingsService.alignment)
 

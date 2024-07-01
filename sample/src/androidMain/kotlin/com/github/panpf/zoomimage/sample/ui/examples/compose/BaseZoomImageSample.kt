@@ -23,7 +23,7 @@ import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
-import com.github.panpf.zoomimage.sample.settingsService
+import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
@@ -41,7 +41,7 @@ fun BaseZoomImageSample(
     ) -> Unit
 ) {
     val context = LocalContext.current
-    val settingsService = remember { context.settingsService }
+    val settingsService = remember { context.appSettings }
     val contentScaleName by settingsService.contentScale.collectAsState()
     val alignmentName by settingsService.alignment.collectAsState()
     val threeStepScale by settingsService.threeStepScale.collectAsState()

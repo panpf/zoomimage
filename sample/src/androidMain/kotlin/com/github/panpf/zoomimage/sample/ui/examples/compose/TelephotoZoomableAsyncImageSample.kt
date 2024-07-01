@@ -32,7 +32,7 @@ import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.sketch.sketch
-import com.github.panpf.zoomimage.sample.settingsService
+import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.sketch.SketchImageSource
@@ -47,7 +47,7 @@ import me.saket.telephoto.zoomable.rememberZoomableState
 @Composable
 fun TelephotoZoomableAsyncImageSample(sketchImageUri: String) {
     val context = LocalContext.current
-    val settingsService = remember { context.settingsService }
+    val settingsService = remember { context.appSettings }
     val contentScaleName by settingsService.contentScale.collectAsState()
     val alignmentName by settingsService.alignment.collectAsState()
     val contentScale = remember(contentScaleName) { ContentScale.valueOf(contentScaleName) }

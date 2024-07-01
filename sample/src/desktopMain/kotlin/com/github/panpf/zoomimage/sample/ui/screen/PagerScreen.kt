@@ -38,11 +38,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.githb.panpf.zoomimage.images.ImageFile
+import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.screen.base.ToolbarIcon
 import com.github.panpf.zoomimage.sample.ui.screen.base.ToolbarScreen
-import com.github.panpf.zoomimage.sample.ui.util.EventBus
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)

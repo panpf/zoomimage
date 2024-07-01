@@ -25,8 +25,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerBinding
-import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenu
@@ -76,6 +76,8 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
     }
 
     private fun buildList(): List<Any> = buildList {
+        val appSettings = requireContext().appSettings
+
         if (zoomViewType.my) {
             val contentScales = listOf(
                 ContentScaleCompat.Fit,
@@ -90,9 +92,9 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                 DropdownMenu(
                     title = "Content Scale",
                     values = contentScales.map { it.name },
-                    getValue = { settingsService.contentScale.value },
+                    getValue = { appSettings.contentScale.value },
                     onSelected = { _, value ->
-                        settingsService.contentScale.value = value
+                        appSettings.contentScale.value = value
                     }
                 )
             )
@@ -112,9 +114,9 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                 DropdownMenu(
                     title = "Alignment",
                     values = alignments.map { it.name },
-                    getValue = { settingsService.alignment.value },
+                    getValue = { appSettings.alignment.value },
                     onSelected = { _, value ->
-                        settingsService.alignment.value = value
+                        appSettings.alignment.value = value
                     }
                 )
             )
@@ -124,25 +126,25 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
             add(
                 SwitchMenuFlow(
                     title = "Animate Scale",
-                    data = settingsService.animateScale,
+                    data = appSettings.animateScale,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Rubber Band Scale",
-                    data = settingsService.rubberBandScale,
+                    data = appSettings.rubberBandScale,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Three Step Scale",
-                    data = settingsService.threeStepScale,
+                    data = appSettings.threeStepScale,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Slower Scale Animation",
-                    data = settingsService.slowerScaleAnimation,
+                    data = appSettings.slowerScaleAnimation,
                 )
             )
             val scalesCalculators = listOf("Dynamic", "Fixed")
@@ -150,9 +152,9 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                 DropdownMenu(
                     title = "Scales Calculator",
                     values = scalesCalculators,
-                    getValue = { settingsService.scalesCalculator.value },
+                    getValue = { appSettings.scalesCalculator.value },
                     onSelected = { _, value ->
-                        settingsService.scalesCalculator.value = value
+                        appSettings.scalesCalculator.value = value
                     }
                 )
             )
@@ -167,9 +169,9 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                 DropdownMenu(
                     title = "Scales Multiple",
                     values = scalesMultiples,
-                    getValue = { settingsService.scalesMultiple.value },
+                    getValue = { appSettings.scalesMultiple.value },
                     onSelected = { _, value ->
-                        settingsService.scalesMultiple.value = value
+                        appSettings.scalesMultiple.value = value
                     }
                 )
             )
@@ -184,10 +186,10 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                 MultiChooseMenu(
                     title = "Disabled Gesture Type",
                     values = gestureTypes.map { GestureType.name(it) },
-                    getCheckedList = { gestureTypes.map { it and settingsService.disabledGestureType.value.toInt() != 0 } },
+                    getCheckedList = { gestureTypes.map { it and appSettings.disabledGestureType.value.toInt() != 0 } },
                     onSelected = { which, isChecked ->
                         val checkedList =
-                            gestureTypes.map { it and settingsService.disabledGestureType.value.toInt() != 0 }
+                            gestureTypes.map { it and appSettings.disabledGestureType.value.toInt() != 0 }
                         val newCheckedList =
                             checkedList.toMutableList().apply { set(which, isChecked) }
                         val newDisabledGestureTypeType =
@@ -196,7 +198,7 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                             }.fold(0) { acc, gestureType ->
                                 acc or gestureType
                             }
-                        settingsService.disabledGestureType.value =
+                        appSettings.disabledGestureType.value =
                             newDisabledGestureTypeType.toString()
                     }
                 )
@@ -207,7 +209,7 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
             add(
                 SwitchMenuFlow(
                     title = "Limit Offset Within Base Visible Rect",
-                    data = settingsService.limitOffsetWithinBaseVisibleRect,
+                    data = appSettings.limitOffsetWithinBaseVisibleRect,
                 )
             )
 
@@ -216,13 +218,13 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
             add(
                 SwitchMenuFlow(
                     title = "Read Mode",
-                    data = settingsService.readModeEnabled,
+                    data = appSettings.readModeEnabled,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Read Mode - Both",
-                    data = settingsService.readModeAcceptedBoth,
+                    data = appSettings.readModeAcceptedBoth,
                 )
             )
 
@@ -239,10 +241,10 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                 MultiChooseMenu(
                     title = "Paused Continuous Transform Type",
                     values = continuousTransformTypes.map { ContinuousTransformType.name(it) },
-                    getCheckedList = { continuousTransformTypes.map { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 } },
+                    getCheckedList = { continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value.toInt() != 0 } },
                     onSelected = { which, isChecked ->
                         val checkedList =
-                            continuousTransformTypes.map { it and settingsService.pausedContinuousTransformType.value.toInt() != 0 }
+                            continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value.toInt() != 0 }
                         val newCheckedList =
                             checkedList.toMutableList().apply { set(which, isChecked) }
                         val newContinuousTransformType =
@@ -251,7 +253,7 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                             }.fold(0) { acc, continuousTransformType ->
                                 acc or continuousTransformType
                             }
-                        settingsService.pausedContinuousTransformType.value =
+                        appSettings.pausedContinuousTransformType.value =
                             newContinuousTransformType.toString()
                     }
                 )
@@ -259,19 +261,19 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
             add(
                 SwitchMenuFlow(
                     title = "Disabled Background Tiles",
-                    data = settingsService.disabledBackgroundTiles,
+                    data = appSettings.disabledBackgroundTiles,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Show Tile Bounds",
-                    data = settingsService.showTileBounds,
+                    data = appSettings.showTileBounds,
                 )
             )
             add(
                 SwitchMenuFlow(
                     title = "Tile Animation",
-                    data = settingsService.tileAnimation,
+                    data = appSettings.tileAnimation,
                 )
             )
 
@@ -280,7 +282,7 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
             add(
                 SwitchMenuFlow(
                     title = "Scroll Bar",
-                    data = settingsService.scrollBarEnabled,
+                    data = appSettings.scrollBarEnabled,
                 )
             )
 
@@ -297,9 +299,9 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                         Logger.ERROR,
                         Logger.ASSERT,
                     ).map { Logger.levelName(it) },
-                    getValue = { settingsService.logLevel.value },
+                    getValue = { appSettings.logLevel.value },
                     onSelected = { _, value ->
-                        settingsService.logLevel.value = value
+                        appSettings.logLevel.value = value
                     }
                 )
             )
@@ -309,9 +311,9 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                     title = "Scale Type",
                     values = ScaleType.values()
                         .filter { it != MATRIX }.map { it.name },
-                    getValue = { settingsService.scaleType.value },
+                    getValue = { appSettings.scaleType.value },
                     onSelected = { _, value ->
-                        settingsService.scaleType.value = value
+                        appSettings.scaleType.value = value
                     }
                 )
             )

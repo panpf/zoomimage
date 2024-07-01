@@ -28,8 +28,8 @@ import androidx.lifecycle.lifecycleScope
 import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
-import com.github.panpf.zoomimage.sample.settingsService
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
@@ -90,112 +90,113 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             onViewLongPressListener = OnViewLongPressListener { _, offset ->
                 showShortToast("Long click (${offset.toShortString()})")
             }
-            settingsService.logLevel.collectWithLifecycle(viewLifecycleOwner) {
+            val appSettings = requireContext().appSettings
+            appSettings.logLevel.collectWithLifecycle(viewLifecycleOwner) {
                 logger.level = Logger.level(it)
             }
-            settingsService.scrollBarEnabled.collectWithLifecycle(viewLifecycleOwner) {
+            appSettings.scrollBarEnabled.collectWithLifecycle(viewLifecycleOwner) {
                 scrollBar = if (it) ScrollBarSpec.Default else null
             }
             zoomable.apply {
-                settingsService.contentScale.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.contentScale.collectWithLifecycle(viewLifecycleOwner) {
                     contentScaleState.value = ContentScaleCompat.valueOf(it)
                 }
-                settingsService.alignment.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.alignment.collectWithLifecycle(viewLifecycleOwner) {
                     alignmentState.value = AlignmentCompat.valueOf(it)
                 }
-                settingsService.threeStepScale.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.threeStepScale.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScaleState.value = it
                 }
-                settingsService.rubberBandScale.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.rubberBandScale.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScaleState.value = it
                 }
-                settingsService.scalesMultiple
+                appSettings.scalesMultiple
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        val scalesMultiple = settingsService.scalesMultiple.value.toFloat()
-                        val scalesCalculatorName = settingsService.scalesCalculator.value
+                        val scalesMultiple = appSettings.scalesMultiple.value.toFloat()
+                        val scalesCalculatorName = appSettings.scalesCalculator.value
                         scalesCalculatorState.value = if (scalesCalculatorName == "Dynamic") {
                             ScalesCalculator.dynamic(scalesMultiple)
                         } else {
                             ScalesCalculator.fixed(scalesMultiple)
                         }
                     }
-                settingsService.scalesCalculator
+                appSettings.scalesCalculator
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        val scalesMultiple = settingsService.scalesMultiple.value.toFloat()
-                        val scalesCalculatorName = settingsService.scalesCalculator.value
+                        val scalesMultiple = appSettings.scalesMultiple.value.toFloat()
+                        val scalesCalculatorName = appSettings.scalesCalculator.value
                         scalesCalculatorState.value = if (scalesCalculatorName == "Dynamic") {
                             ScalesCalculator.dynamic(scalesMultiple)
                         } else {
                             ScalesCalculator.fixed(scalesMultiple)
                         }
                     }
-                settingsService.limitOffsetWithinBaseVisibleRect
+                appSettings.limitOffsetWithinBaseVisibleRect
                     .collectWithLifecycle(viewLifecycleOwner) {
                         limitOffsetWithinBaseVisibleRectState.value = it
                     }
-                settingsService.readModeEnabled.collectWithLifecycle(viewLifecycleOwner) {
-                    val sizeType = if (settingsService.readModeAcceptedBoth.value) {
+                appSettings.readModeEnabled.collectWithLifecycle(viewLifecycleOwner) {
+                    val sizeType = if (appSettings.readModeAcceptedBoth.value) {
                         ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
-                    } else if (settingsService.horizontalPagerLayout.value) {
+                    } else if (appSettings.horizontalPagerLayout.value) {
                         ReadMode.SIZE_TYPE_HORIZONTAL
                     } else {
                         ReadMode.SIZE_TYPE_VERTICAL
                     }
                     readModeState.value =
-                        if (settingsService.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
+                        if (appSettings.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
-                settingsService.readModeAcceptedBoth.collectWithLifecycle(
+                appSettings.readModeAcceptedBoth.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
-                    val sizeType = if (settingsService.readModeAcceptedBoth.value) {
+                    val sizeType = if (appSettings.readModeAcceptedBoth.value) {
                         ReadMode.SIZE_TYPE_HORIZONTAL or ReadMode.SIZE_TYPE_VERTICAL
-                    } else if (settingsService.horizontalPagerLayout.value) {
+                    } else if (appSettings.horizontalPagerLayout.value) {
                         ReadMode.SIZE_TYPE_VERTICAL
                     } else {
                         ReadMode.SIZE_TYPE_HORIZONTAL
                     }
                     readModeState.value =
-                        if (settingsService.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
+                        if (appSettings.readModeEnabled.value) ReadMode(sizeType = sizeType) else null
                 }
-                settingsService.animateScale.collectWithLifecycle(viewLifecycleOwner) {
-                    val durationMillis = if (settingsService.animateScale.value) {
-                        (if (settingsService.slowerScaleAnimation.value) 3000 else 300)
+                appSettings.animateScale.collectWithLifecycle(viewLifecycleOwner) {
+                    val durationMillis = if (appSettings.animateScale.value) {
+                        (if (appSettings.slowerScaleAnimation.value) 3000 else 300)
                     } else {
                         0
                     }
                     animationSpecState.value =
                         ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
-                settingsService.slowerScaleAnimation.collectWithLifecycle(
+                appSettings.slowerScaleAnimation.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
-                    val durationMillis = if (settingsService.animateScale.value) {
-                        (if (settingsService.slowerScaleAnimation.value) 3000 else 300)
+                    val durationMillis = if (appSettings.animateScale.value) {
+                        (if (appSettings.slowerScaleAnimation.value) 3000 else 300)
                     } else {
                         0
                     }
                     animationSpecState.value =
                         ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
-                settingsService.disabledGestureType
+                appSettings.disabledGestureType
                     .collectWithLifecycle(viewLifecycleOwner) {
                         disabledGestureTypeState.value = it.toInt()
                     }
             }
             subsampling.apply {
-                settingsService.showTileBounds.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.showTileBounds.collectWithLifecycle(viewLifecycleOwner) {
                     showTileBoundsState.value = it
                 }
-                settingsService.tileAnimation.collectWithLifecycle(viewLifecycleOwner) {
+                appSettings.tileAnimation.collectWithLifecycle(viewLifecycleOwner) {
                     tileAnimationSpecState.value =
                         if (it) TileAnimationSpec.Default else TileAnimationSpec.None
                 }
-                settingsService.pausedContinuousTransformType.collectWithLifecycle(
+                appSettings.pausedContinuousTransformType.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
                     pausedContinuousTransformTypeState.value = it.toInt()
                 }
-                settingsService.disabledBackgroundTiles.collectWithLifecycle(
+                appSettings.disabledBackgroundTiles.collectWithLifecycle(
                     viewLifecycleOwner
                 ) {
                     disabledBackgroundTilesState.value = it

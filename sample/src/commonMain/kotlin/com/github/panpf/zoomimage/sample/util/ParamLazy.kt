@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2022 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.github.panpf.zoomimage.sample.util
+
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 
 class ParamLazy<P, R>(private val callback: Callback<P, R>) {
 
-    @Volatile
     private var instance: R? = null
+    private val lock = SynchronizedObject()
 
     fun get(p: P): R {
-        synchronized(this) {
-            val tempInstance = instance
-            if (tempInstance != null) return tempInstance
-            synchronized(this) {
-                val tempInstance2 = instance
-                if (tempInstance2 != null) return tempInstance2
-                val newInstance = callback.createInstantiate(p)
-                instance = newInstance
-                return newInstance
+        return synchronized(lock) {
+            instance ?: synchronized(lock) {
+                instance ?: callback.createInstantiate(p).apply {
+                    instance = this
+                }
             }
         }
     }

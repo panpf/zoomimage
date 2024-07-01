@@ -16,8 +16,8 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.ui.Page
-import com.github.panpf.zoomimage.sample.ui.util.EventBus
 
 @Composable
 fun rememberNavigation(initialPage: Page): Navigation {
