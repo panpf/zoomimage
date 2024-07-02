@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
+import com.github.panpf.sketch.AsyncImage
+import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -46,12 +48,6 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.roundToInt
-
-@Composable
-expect fun ZoomImageMinimapContent(
-    imageUri: String,
-    modifier: Modifier,
-)
 
 @Composable
 fun ZoomImageMinimap(
@@ -132,7 +128,14 @@ fun ZoomImageMinimap(
                         }
                     )
                 }
-            ZoomImageMinimapContent(imageUri, imageModifier)
+
+            AsyncImage(
+                request = ComposableImageRequest(imageUri) {
+                    crossfade()
+                },
+                contentDescription = "Minimap",
+                modifier = imageModifier
+            )
         }
     }
 }

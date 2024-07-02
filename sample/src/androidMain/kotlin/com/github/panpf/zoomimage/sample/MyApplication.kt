@@ -14,12 +14,6 @@ import com.bumptech.glide.load.engine.cache.LruResourceCache
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.LruMemoryCache
-import com.github.panpf.sketch.decode.supportAnimatedGif
-import com.github.panpf.sketch.decode.supportMovieGif
-import com.github.panpf.sketch.fetch.supportComposeResources
-import com.github.panpf.sketch.util.Logger
-import com.github.panpf.zoomimage.sample.util.getMaxAvailableMemoryCacheBytes
 import com.squareup.picasso.LruCache
 import com.squareup.picasso.Picasso
 import java.security.SecureRandom
@@ -40,37 +34,20 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Picasso.setSingletonInstance(Picasso.Builder(this).apply {
                 loggingEnabled(true)
-                memoryCache(LruCache(getMemoryCacheMaxSize().toInt()))
+                memoryCache(LruCache(getMemoryCacheMaxSize(this@MyApplication).toInt()))
             }.build())
         }
 
         Glide.init(
             this,
             GlideBuilder()
-                .setMemoryCache(LruResourceCache(getMemoryCacheMaxSize()))
+                .setMemoryCache(LruResourceCache(getMemoryCacheMaxSize(this@MyApplication)))
                 .setLogLevel(Log.DEBUG)
         )
     }
 
     override fun createSketch(context: PlatformContext): Sketch {
-        return Sketch.Builder(this).apply {
-            logger(level = if (BuildConfig.DEBUG) Logger.Level.Debug else Logger.Level.Info)
-            memoryCache(LruMemoryCache(maxSize = getMemoryCacheMaxSize()))
-            components {
-                supportComposeResources()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    supportAnimatedGif()
-                } else {
-                    supportMovieGif()
-                }
-            }
-        }.build()
-    }
-
-    private fun getMemoryCacheMaxSize(): Long {
-        // Four image loaders are integrated, so the memory cache must be divided into four parts.
-        val imageLoaderCount = 4
-        return getMaxAvailableMemoryCacheBytes() / imageLoaderCount
+        return newSketch(context)
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
@@ -78,7 +55,7 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
             .logger(DebugLogger())
             .memoryCache(
                 MemoryCache.Builder().apply {
-                    maxSizeBytes(getMemoryCacheMaxSize())
+                    maxSizeBytes(getMemoryCacheMaxSize(this@MyApplication))
                 }.build()
             )
             .build()

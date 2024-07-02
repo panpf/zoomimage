@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.examples.compose
+package com.github.panpf.zoomimage.sample.ui.gallery
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,17 +14,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
+import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
-import com.github.panpf.zoomimage.sample.appSettings
-import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ReadMode
@@ -40,8 +40,7 @@ fun BaseZoomImageSample(
         scrollBar: ScrollBarSpec?,
     ) -> Unit
 ) {
-    val context = LocalContext.current
-    val settingsService = remember { context.appSettings }
+    val settingsService = LocalPlatformContext.current.appSettings
     val contentScaleName by settingsService.contentScale.collectAsState()
     val alignmentName by settingsService.alignment.collectAsState()
     val threeStepScale by settingsService.threeStepScale.collectAsState()

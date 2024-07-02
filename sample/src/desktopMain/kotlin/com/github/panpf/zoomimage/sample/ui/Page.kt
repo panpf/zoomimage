@@ -2,10 +2,10 @@ package com.github.panpf.zoomimage.sample.ui
 
 import androidx.compose.runtime.Composable
 import com.githb.panpf.zoomimage.images.ImageFile
+import com.github.panpf.zoomimage.sample.ui.screen.SlideshowScreen
 import com.github.panpf.zoomimage.sample.ui.navigation.Navigation
 import com.github.panpf.zoomimage.sample.ui.screen.GalleryScreen
 import com.github.panpf.zoomimage.sample.ui.screen.MainScreen
-import com.github.panpf.zoomimage.sample.ui.screen.SlideshowScreen
 
 sealed interface Page {
 

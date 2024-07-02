@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import kotlin.time.TimeSource
 
 @Composable
 fun rememberMoveKeyboardState(stepInterval: Long = 8): MoveKeyboardState {
@@ -106,10 +107,9 @@ class MoveKeyboardState(
             y = (gamePadOffset.y / ySpace) * maxStep.y
         )
         lastJob = coroutineScope.launch {
-            val startTime = System.currentTimeMillis()
+            val startTime = TimeSource.Monotonic.markNow()
             while (isActive) {
-                val currentTime = System.currentTimeMillis()
-                val time = currentTime - startTime
+                val time = startTime.elapsedNow().inWholeMilliseconds
                 val scale = when {
                     time < 2000 -> 1f
                     time < 4000 -> 2f

@@ -54,7 +54,7 @@ class PhotoPagerViewFragment : BaseToolbarBindingFragment<FragmentPhotoPagerBind
                 true
             }
             appSettings.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
-                val meuIcon = if (it) R.drawable.ic_swap_vert else R.drawable.ic_swap_horiz
+                val meuIcon = if (it) R.drawable.ic_swap_ver else R.drawable.ic_swap_hor
                 setIcon(meuIcon)
             }
         }

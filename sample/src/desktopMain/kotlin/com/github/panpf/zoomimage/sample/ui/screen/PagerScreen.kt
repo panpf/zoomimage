@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.screen
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +46,6 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-@Preview
 fun SlideshowScreen(
     navigation: Navigation,
     imageFiles: List<ImageFile>,

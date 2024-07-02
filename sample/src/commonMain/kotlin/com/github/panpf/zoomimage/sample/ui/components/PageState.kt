@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.examples.compose
+package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,21 +16,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.resources.Res
+import com.github.panpf.zoomimage.sample.resources.ic_error_baseline
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun LoadState(loadState: MyLoadState) {
+fun PageState(state: MyPageState) {
     Box(Modifier.fillMaxSize()) {
-        if (loadState is MyLoadState.Loading) {
+        if (state is MyPageState.Loading) {
             CircularProgressIndicator(
                 Modifier
                     .align(Alignment.Center)
                     .size(50.dp)
             )
-        } else if (loadState is MyLoadState.Error) {
+        } else if (state is MyPageState.Error) {
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -40,7 +40,7 @@ fun LoadState(loadState: MyLoadState) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_error_baseline),
+                    painter = painterResource(Res.drawable.ic_error_baseline),
                     contentDescription = "icon",
                     tint = Color.White
                 )
@@ -48,10 +48,10 @@ fun LoadState(loadState: MyLoadState) {
                 Spacer(modifier = Modifier.size(6.dp))
                 Text(text = "Display failure", color = Color.White)
 
-                if (loadState.retry != null) {
+                if (state.retry != null) {
                     Spacer(modifier = Modifier.size(24.dp))
                     Button(
-                        onClick = { loadState.retry.invoke() },
+                        onClick = { state.retry.invoke() },
                         shape = RoundedCornerShape(50)
                     ) {
                         Text(text = "Retry")
@@ -62,20 +62,8 @@ fun LoadState(loadState: MyLoadState) {
     }
 }
 
-sealed interface MyLoadState {
-    data object None : MyLoadState
-    data object Loading : MyLoadState
-    data class Error(val retry: (() -> Unit)? = null) : MyLoadState
-}
-
-@Preview
-@Composable
-fun LoadStatePreview1() {
-    LoadState(MyLoadState.Loading)
-}
-
-@Preview
-@Composable
-fun LoadStatePreview2() {
-    LoadState(MyLoadState.Error {})
+sealed interface MyPageState {
+    data object None : MyPageState
+    data object Loading : MyPageState
+    data class Error(val retry: (() -> Unit)? = null) : MyPageState
 }

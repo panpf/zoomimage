@@ -28,9 +28,8 @@ actual fun Screen.LocalPhotoPage() {
         animatedPlaceholder = false,
         gridCellsMinSize = gridCellsMinSize,
         onClick = { photos, _, index ->
-//            val params = buildPhotoPagerParams(photos, index)
-//            navigator.push(PhotoPagerScreen(params))
-            // TODO skip detail pager
+            val params = buildPhotoPagerParams(photos, index)
+            navigator.push(PhotoPagerScreen(params))
         },
     )
 }

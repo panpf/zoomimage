@@ -19,9 +19,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,7 +67,7 @@ fun ZoomImageTool(
 ) {
     val coroutineScope = rememberCoroutineScope()
     Box(modifier = Modifier.fillMaxSize()) {
-        Row(Modifier.padding(20.dp)) {
+        Row(Modifier.padding(20.dp).padding(top = 80.dp)) {
             val headerInfo = remember {
                 """
                     scale: 
@@ -146,7 +149,11 @@ fun ZoomImageTool(
                                     )
                                 }
                             },
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(30.dp),
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = colorScheme.tertiary,
+                                contentColor = colorScheme.onTertiary,
+                            )
                         ) {
                             Icon(
                                 painter = painterResource(Res.drawable.ic_zoom_out),
@@ -169,7 +176,11 @@ fun ZoomImageTool(
                                     )
                                 }
                             },
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(30.dp),
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = colorScheme.tertiary,
+                                contentColor = colorScheme.onTertiary,
+                            )
                         ) {
                             Icon(
                                 painter = painterResource(Res.drawable.ic_zoom_in),
@@ -189,6 +200,10 @@ fun ZoomImageTool(
                             }
                         },
                         steps = 8,
+                        colors = SliderDefaults.colors(
+                            thumbColor = colorScheme.onTertiary,
+                            activeTrackColor = colorScheme.tertiary,
+                        ),
                     )
 
                     Spacer(modifier = Modifier.size(6.dp))

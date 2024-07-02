@@ -1,24 +1,14 @@
-package com.github.panpf.zoomimage.sample.ui
+package com.github.panpf.zoomimage.sample.ui.preview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import com.github.panpf.zoomimage.sample.ui.MyDropdownMenu
 import com.github.panpf.zoomimage.sample.ui.MyMultiChooseMenu
 import com.github.panpf.zoomimage.sample.ui.SwitchMenu
 import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsState
 
-
-@Composable
-actual fun getSettingsDialogHeight(): Dp {
-    return with(LocalDensity.current) {
-        (LocalContext.current.resources.displayMetrics.heightPixels * 0.8f).toInt().toDp()
-    }
-}
 
 @Composable
 @Preview
