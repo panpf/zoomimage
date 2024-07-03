@@ -25,14 +25,14 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.tools4a.display.ktx.getStatusBarHeight
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.ui.base.BaseFragment
 import com.github.panpf.zoomimage.sample.ui.util.createViewBinding
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class BaseToolbarBindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
+abstract class BaseToolbarBindingFragment<VIEW_BINDING : ViewBinding> : BaseFragment() {
 
     protected var toolbar: Toolbar? = null
     protected var binding: VIEW_BINDING? = null

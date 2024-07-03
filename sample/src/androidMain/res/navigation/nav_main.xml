@@ -2,13 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_main"
-    app:startDestination="@id/homeFragment">
-    <!--    app:startDestination="@id/zoomImageTestFragment">-->
+    app:startDestination="@id/viewHomeFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.HomeFragment" />
-
+        android:id="@+id/viewHomeFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.gallery.ViewHomeFragment"
+        android:label="ViewHomeFragment" />
 
     <fragment
         android:id="@+id/photoAlbumViewFragment"

@@ -15,12 +15,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.panpf.sketch.fetch.newResourceUri
-import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.GlideZoomAsyncImage
 import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.ui.examples.compose.MyLoadState.None
-import com.github.panpf.zoomimage.sample.ui.util.toShortString
+import com.github.panpf.zoomimage.sample.ui.components.MyPageState
+import com.github.panpf.zoomimage.sample.ui.components.PageState
+import com.github.panpf.zoomimage.sample.ui.gallery.BaseZoomImageSample
 import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -28,8 +28,8 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 fun GlideZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-    ) { contentScale, alignment, state, scrollBar ->
-        var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.Loading) }
+    ) { contentScale, alignment, state, scrollBar, onLongClick ->
+        var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.Loading) }
         val context = LocalContext.current
         val glideData =
             remember(key1 = sketchImageUri) { sketchUri2GlideModel(sketchImageUri) }
@@ -41,11 +41,8 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
             modifier = Modifier.fillMaxSize(),
             state = state,
             scrollBar = scrollBar,
-            onTap = {
-                context.showShortToast("Click (${it.toShortString()})")
-            },
             onLongPress = {
-                context.showShortToast("Long click (${it.toShortString()})")
+                onLongClick.invoke()
             },
             requestBuilderTransform = {
                 it.addListener(object : RequestListener<Drawable> {
@@ -56,7 +53,7 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
                         target: Target<Drawable>,
                         isFirstResource: Boolean
                     ): Boolean {
-                        myLoadState = MyLoadState.Error()
+                        myLoadState = MyPageState.Error()
                         return false
                     }
 
@@ -67,14 +64,14 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        myLoadState = None
+                        myLoadState = MyPageState.None
                         return false
                     }
                 })
             }
         )
 
-        LoadState(loadState = myLoadState)
+        PageState(state = myLoadState)
     }
 }
 

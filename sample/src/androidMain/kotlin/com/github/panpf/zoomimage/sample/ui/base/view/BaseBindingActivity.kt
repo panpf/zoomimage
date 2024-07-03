@@ -23,11 +23,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
+import com.github.panpf.zoomimage.sample.ui.base.BaseActivity
 import com.github.panpf.zoomimage.sample.ui.util.createViewBinding
 
-abstract class BaseBindingActivity<VIEW_BINDING : ViewBinding> : AppCompatActivity() {
+abstract class BaseBindingActivity<VIEW_BINDING : ViewBinding> : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

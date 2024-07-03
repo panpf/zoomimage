@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2022 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.github.panpf.zoomimage.sample.ui.base
 
-package com.github.panpf.zoomimage.sample.ui.photoalbum
+import androidx.appcompat.app.AppCompatActivity
 
-import com.github.panpf.assemblyadapter.recycler.DiffKey
+abstract class BaseActivity : AppCompatActivity() {
 
-data class Photo constructor(
-    val uri: String,
-) : DiffKey {
+    private var resumeCount = 0
 
-    override val diffKey: String = uri
+    override fun onResume() {
+        super.onResume()
+
+        resumeCount++
+        if (resumeCount == 1) {
+            onFirstResume()
+        }
+    }
+
+    protected open fun onFirstResume() {
+
+    }
 }

@@ -13,19 +13,20 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.crossfade
 import coil3.size.Precision.INEXACT
 import com.github.panpf.sketch.fetch.newResourceUri
-import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.ui.util.toShortString
+import com.github.panpf.zoomimage.sample.ui.components.MyPageState
+import com.github.panpf.zoomimage.sample.ui.components.PageState
+import com.github.panpf.zoomimage.sample.ui.gallery.BaseZoomImageSample
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
 @Composable
 fun CoilZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-    ) { contentScale, alignment, state: ZoomState, scrollBar ->
-        var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.None) }
+    ) { contentScale, alignment, state: ZoomState, scrollBar, onLongClick ->
+        var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         val context = LocalContext.current
         val request = remember(key1 = sketchImageUri) {
             val model = sketchUri2CoilModel(context, sketchImageUri)
@@ -35,13 +36,13 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
                 crossfade(true)
                 listener(
                     onStart = {
-                        myLoadState = MyLoadState.Loading
+                        myLoadState = MyPageState.Loading
                     },
                     onError = { _, _ ->
-                        myLoadState = MyLoadState.Error()
+                        myLoadState = MyPageState.Error()
                     },
                     onSuccess = { _, _ ->
-                        myLoadState = MyLoadState.None
+                        myLoadState = MyPageState.None
                     }
                 )
             }.build()
@@ -54,15 +55,12 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
             modifier = Modifier.fillMaxSize(),
             state = state,
             scrollBar = scrollBar,
-            onTap = {
-                context.showShortToast("Click (${it.toShortString()}")
-            },
             onLongPress = {
-                context.showShortToast("Long click (${it.toShortString()})")
+                onLongClick.invoke()
             }
         )
 
-        LoadState(loadState = myLoadState)
+        PageState(state = myLoadState)
     }
 }
 

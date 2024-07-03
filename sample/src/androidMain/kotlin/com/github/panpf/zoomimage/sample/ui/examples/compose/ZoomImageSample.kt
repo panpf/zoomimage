@@ -17,10 +17,11 @@ import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.sketch.sketch
-import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.ui.util.toShortString
+import com.github.panpf.zoomimage.sample.ui.components.MyPageState
+import com.github.panpf.zoomimage.sample.ui.components.PageState
+import com.github.panpf.zoomimage.sample.ui.gallery.BaseZoomImageSample
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 
@@ -28,21 +29,21 @@ import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 fun ZoomImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-    ) { contentScale, alignment, state, scrollBar ->
+    ) { contentScale, alignment, state, scrollBar, onLongClick ->
         val context = LocalContext.current
         LaunchedEffect(Unit) {
             state.subsampling.tileBitmapCache = SketchTileBitmapCache(context.sketch)
         }
 
-        var myLoadState by remember { mutableStateOf<MyLoadState>(MyLoadState.None) }
+        var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         var imagePainter: Painter? by remember { mutableStateOf(null) }
         LaunchedEffect(sketchImageUri) {
-            myLoadState = MyLoadState.Loading
+            myLoadState = MyPageState.Loading
             val imageResult = ImageRequest(context, sketchImageUri).execute()
             myLoadState = if (imageResult is ImageResult.Success) {
-                MyLoadState.None
+                MyPageState.None
             } else {
-                MyLoadState.Error()
+                MyPageState.Error()
             }
             imagePainter = imageResult.image?.asPainter()
 
@@ -60,16 +61,13 @@ fun ZoomImageSample(sketchImageUri: String) {
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 scrollBar = scrollBar,
-                onTap = {
-                    context.showShortToast("Click (${it.toShortString()})")
-                },
                 onLongPress = {
-                    context.showShortToast("Long click (${it.toShortString()})")
+                    onLongClick.invoke()
                 }
             )
         }
 
-        LoadState(loadState = myLoadState)
+        PageState(state = myLoadState)
     }
 }
 

@@ -7,18 +7,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -27,6 +34,8 @@ import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_debug
+import com.github.panpf.zoomimage.sample.resources.ic_layout_grid
+import com.github.panpf.zoomimage.sample.resources.ic_layout_grid_staggered
 import com.github.panpf.zoomimage.sample.resources.ic_pexels
 import com.github.panpf.zoomimage.sample.resources.ic_phone
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
@@ -88,8 +97,29 @@ object HomeScreen : BaseScreen() {
                         homeTabs[pageIndex].content.invoke(this@HomeScreen)
                     }
 
-                    // TODO menu bar
-//                    MainMenu(modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp))
+                    val staggeredGridMode by appSettings.staggeredGridMode.collectAsState()
+                    val staggeredGridModeIcon = if (!staggeredGridMode) {
+                        painterResource(Res.drawable.ic_layout_grid_staggered)
+                    } else {
+                        painterResource(Res.drawable.ic_layout_grid)
+                    }
+                    IconButton(
+                        onClick = { appSettings.staggeredGridMode.value = !staggeredGridMode },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(20.dp)
+                            .size(50.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = colorScheme.tertiaryContainer,
+                            contentColor = colorScheme.onTertiaryContainer,
+                        )
+                    ) {
+                        Icon(
+                            painter = staggeredGridModeIcon,
+                            contentDescription = null,
+                            tint = colorScheme.onTertiaryContainer
+                        )
+                    }
                 }
 
                 NavigationBar(Modifier.fillMaxWidth()) {

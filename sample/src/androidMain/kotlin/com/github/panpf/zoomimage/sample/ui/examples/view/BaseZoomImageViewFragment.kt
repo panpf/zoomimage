@@ -25,7 +25,6 @@ import android.view.animation.Animation
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.github.panpf.tools4a.toast.ktx.showShortToast
 import com.github.panpf.tools4a.view.ktx.animTranslate
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.appSettings
@@ -39,7 +38,6 @@ import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
-import com.github.panpf.zoomimage.view.zoom.OnViewTapListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -57,7 +55,6 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     abstract val sketchImageUri: String
 
     private var zoomView: ZOOM_VIEW? = null
-    private var binding: FragmentZoomViewBinding? = null
 
     abstract fun createZoomImageView(context: Context): ZOOM_VIEW
 
@@ -75,7 +72,6 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     ) {
         val zoomImageView = createZoomImageView(binding.root.context)
         this.zoomView = zoomImageView
-        this.binding = binding
         binding.contentLayout.addView(
             zoomImageView,
             ViewGroup.LayoutParams(
@@ -84,13 +80,13 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             )
         )
         zoomImageView.apply {
-            onViewTapListener = OnViewTapListener { _, offset ->
-                showShortToast("Click (${offset.toShortString()})")
+            onViewLongPressListener = OnViewLongPressListener { _, _ ->
+                ZoomImageViewInfoDialogFragment().apply {
+                    arguments = ZoomImageViewInfoDialogFragment
+                        .buildArgs(zoomImageView, sketchImageUri)
+                        .toBundle()
+                }.show(childFragmentManager, null)
             }
-            onViewLongPressListener = OnViewLongPressListener { _, offset ->
-                showShortToast("Long click (${offset.toShortString()})")
-            }
-            val appSettings = requireContext().appSettings
             appSettings.logLevel.collectWithLifecycle(viewLifecycleOwner) {
                 logger.level = Logger.level(it)
             }

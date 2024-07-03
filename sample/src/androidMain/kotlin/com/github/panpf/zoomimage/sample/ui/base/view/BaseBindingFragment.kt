@@ -20,14 +20,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.github.panpf.zoomimage.sample.ui.base.BaseFragment
 import com.github.panpf.zoomimage.sample.ui.util.createViewBinding
-import com.github.panpf.zoomimage.sample.ui.util.getWindowBackground
 
-abstract class BaseBindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
+abstract class BaseBindingFragment<VIEW_BINDING : ViewBinding> : BaseFragment() {
 
-    private var binding: VIEW_BINDING? = null
+    protected var binding: VIEW_BINDING? = null
 
     @Suppress("UNCHECKED_CAST")
     final override fun onCreateView(
@@ -36,9 +35,6 @@ abstract class BaseBindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
         savedInstanceState: Bundle?
     ): View = (createViewBinding(inflater, container) as VIEW_BINDING).apply {
         this@BaseBindingFragment.binding = this
-        if (root.background == null) {
-            root.setBackgroundColor(inflater.context.getWindowBackground())
-        }
     }.root
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,6 +43,18 @@ abstract class BaseBindingFragment<VIEW_BINDING : ViewBinding> : Fragment() {
     }
 
     abstract fun onViewCreated(binding: VIEW_BINDING, savedInstanceState: Bundle?)
+
+    final override fun getStatusBarInsetsView(): View? {
+        return getStatusBarInsetsView(binding!!) ?: super.getStatusBarInsetsView()
+    }
+
+    open fun getStatusBarInsetsView(binding: VIEW_BINDING): View? = null
+
+    final override fun getNavigationBarInsetsView(): View? {
+        return getNavigationBarInsetsView(binding!!) ?: super.getNavigationBarInsetsView()
+    }
+
+    open fun getNavigationBarInsetsView(binding: VIEW_BINDING): View? = null
 
     override fun onDestroyView() {
         this.binding = null

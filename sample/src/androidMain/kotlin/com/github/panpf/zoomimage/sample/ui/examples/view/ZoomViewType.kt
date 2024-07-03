@@ -2,7 +2,7 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 
 import com.github.panpf.assemblyadapter.ItemFactory
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
+import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo2
 import com.github.panpf.zoomimage.sample.ui.photoalbum.view.CoilPhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.photoalbum.view.GlidePhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.photoalbum.view.PicassoPhotoGridItemFactory
@@ -10,7 +10,7 @@ import com.github.panpf.zoomimage.sample.ui.photoalbum.view.SketchPhotoGridItemF
 
 enum class ZoomViewType(
     val title: String,
-    val createListItemFactory: () -> ItemFactory<Photo>,
+    val createListItemFactory: () -> ItemFactory<Photo2>,
     val createPageItemFactory: () -> FragmentItemFactory<String>,
     val my: Boolean,
 ) {

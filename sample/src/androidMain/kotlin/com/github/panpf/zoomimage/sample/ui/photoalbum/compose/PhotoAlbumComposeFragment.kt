@@ -1,6 +1,9 @@
 package com.github.panpf.zoomimage.sample.ui.photoalbum.compose
 
-import androidx.compose.foundation.background
+//import androidx.compose.material.ExperimentalMaterialApi
+//import androidx.compose.material.pullrefresh.PullRefreshIndicator
+//import androidx.compose.material.pullrefresh.pullRefresh
+//import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,37 +16,29 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-//import androidx.compose.material.ExperimentalMaterialApi
-//import androidx.compose.material.pullrefresh.PullRefreshIndicator
-//import androidx.compose.material.pullrefresh.pullRefresh
-//import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState.Loading
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.github.panpf.zoomimage.sample.NavMainDirections
-import com.github.panpf.zoomimage.sample.R.color
 import com.github.panpf.zoomimage.sample.R.dimen
 import com.github.panpf.zoomimage.sample.ui.base.compose.BaseAppBarComposeFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
-import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
+import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo2
 import com.github.panpf.zoomimage.sample.ui.photoalbum.PhotoAlbumViewModel
 
 class PhotoAlbumComposeFragment : BaseAppBarComposeFragment() {
 
     private val photoAlbumViewModel by viewModels<PhotoAlbumViewModel>()
-    private val args by navArgs<PhotoAlbumComposeFragmentArgs>()
-    private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
+//    private val args by navArgs<PhotoAlbumComposeFragmentArgs>()
+
+    //    private val zoomImageType by lazy { ZoomImageType.valueOf(args.zoomImageType) }
+    private val zoomImageType = ZoomImageType.SketchZoomAsyncImage
 
     override fun getTitle(): String {
         return "Compose"
@@ -96,7 +91,7 @@ class PhotoAlbumComposeFragment : BaseAppBarComposeFragment() {
         }
     }
 
-    private fun startImageDetail(pagingItems: LazyPagingItems<Photo>, position: Int) {
+    private fun startImageDetail(pagingItems: LazyPagingItems<Photo2>, position: Int) {
         val startPosition = (position - 50).coerceAtLeast(0)
         val totalCount = pagingItems.itemCount
         val endPosition = (position + 50).coerceAtMost(totalCount - 1)
@@ -105,7 +100,8 @@ class PhotoAlbumComposeFragment : BaseAppBarComposeFragment() {
         }
         findNavController().navigate(
             NavMainDirections.actionGlobalPhotoPagerComposeFragment(
-                zoomImageType = args.zoomImageType,
+//                zoomImageType = args.zoomImageType,
+                zoomImageType = ZoomImageType.SketchZoomAsyncImage.name,
                 imageUris = imageList.joinToString(separator = ","),
                 position = position,
                 startPosition = startPosition,

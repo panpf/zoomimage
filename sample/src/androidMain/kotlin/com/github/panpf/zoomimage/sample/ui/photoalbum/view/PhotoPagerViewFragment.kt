@@ -18,59 +18,51 @@ package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
 
-class PhotoPagerViewFragment : BaseToolbarBindingFragment<FragmentPhotoPagerBinding>() {
+class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
 
     private val args by navArgs<PhotoPagerViewFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(
-        toolbar: Toolbar,
         binding: FragmentPhotoPagerBinding,
         savedInstanceState: Bundle?
     ) {
-        toolbar.title = zoomViewType.title
+        binding.backImage.setOnClickListener {
+            findNavController().popBackStack()
+        }
 
-        val appSettings = requireContext().appSettings
-        toolbar.menu.add("Layout").apply {
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            setOnMenuItemClickListener {
-                appSettings.horizontalPagerLayout.value =
-                    !appSettings.horizontalPagerLayout.value
-                true
-            }
+        binding.orientationImage.apply {
             appSettings.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
                 val meuIcon = if (it) R.drawable.ic_swap_ver else R.drawable.ic_swap_hor
-                setIcon(meuIcon)
+                setImageResource(meuIcon)
+            }
+            setOnClickListener {
+                appSettings.horizontalPagerLayout.value =
+                    !appSettings.horizontalPagerLayout.value
             }
         }
 
         if (zoomViewType != ZoomViewType.SubsamplingScaleImageView) {
-            toolbar.menu.add("Options").apply {
-                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                setOnMenuItemClickListener {
-                    ZoomImageViewOptionsDialogFragment().apply {
-                        arguments = ZoomImageViewOptionsDialogFragmentArgs(
-                            zoomViewType = args.zoomViewType,
-                        ).toBundle()
-                    }.show(childFragmentManager, null)
-                    true
-                }
-                setIcon(R.drawable.ic_settings)
+            binding.settingsImage.setOnClickListener {
+                ZoomImageViewOptionsDialogFragment().apply {
+                    arguments = ZoomImageViewOptionsDialogFragmentArgs(
+                        zoomViewType = args.zoomViewType,
+                    ).toBundle()
+                }.show(childFragmentManager, null)
             }
         }
 

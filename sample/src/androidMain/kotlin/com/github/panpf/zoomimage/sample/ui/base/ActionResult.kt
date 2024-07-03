@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.model
+package com.github.panpf.zoomimage.sample.ui.base
 
-enum class PhotoGridMode {
-    SQUARE, STAGGERED
+sealed interface ActionResult {
+
+    companion object {
+        fun success(message: String? = null): ActionResult = Success(message)
+        fun error(message: String): ActionResult = Error(message)
+    }
+
+    class Success(val message: String? = null) : ActionResult
+    class Error(val message: String) : ActionResult
 }

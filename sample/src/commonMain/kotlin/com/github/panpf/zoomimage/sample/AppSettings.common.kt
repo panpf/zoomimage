@@ -17,10 +17,8 @@
 package com.github.panpf.zoomimage.sample
 
 import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.zoomimage.sample.ui.model.PhotoGridMode
 import com.github.panpf.zoomimage.sample.util.ParamLazy
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
-import com.github.panpf.zoomimage.sample.util.enumSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.intSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.stringSettingsStateFlow
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
@@ -47,12 +45,11 @@ class AppSettings(val context: PlatformContext) {
     val horizontalPagerLayout by lazy {
         booleanSettingsStateFlow(context, "horizontalPagerLayout", true)
     }
-    val photoGridMode by lazy {
-        enumSettingsStateFlow(
+    val staggeredGridMode by lazy {
+        booleanSettingsStateFlow(
             context = context,
-            key = "photoGridMode",
-            initialize = PhotoGridMode.SQUARE,
-            convert = { PhotoGridMode.valueOf(it) },
+            key = "staggeredGridMode",
+            initialize = false,
         )
     }
 

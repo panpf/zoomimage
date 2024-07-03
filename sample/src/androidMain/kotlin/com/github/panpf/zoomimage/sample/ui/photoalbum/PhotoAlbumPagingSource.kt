@@ -23,11 +23,11 @@ import androidx.paging.PagingState
 import com.github.panpf.tools4k.coroutines.withToIO
 import com.github.panpf.zoomimage.sample.AndroidImages
 
-class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, Photo>() {
+class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, Photo2>() {
 
-    override fun getRefreshKey(state: PagingState<Int, Photo>): Int = 0
+    override fun getRefreshKey(state: PagingState<Int, Photo2>): Int = 0
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo2> {
         val startPosition = params.key ?: 0
         val pageSize = params.loadSize
 
@@ -39,11 +39,11 @@ class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, P
         return LoadResult.Page(photos, null, nextKey)
     }
 
-    private suspend fun readAssetPhotos(): List<Photo> = withToIO {
-        AndroidImages.MIXING_PHOTO_ALBUM.map { Photo(it.uri) }
+    private suspend fun readAssetPhotos(): List<Photo2> = withToIO {
+        AndroidImages.MIXING_PHOTO_ALBUM.map { Photo2(it.uri) }
     }
 
-    private suspend fun readLocalPhotos(startPosition: Int, pageSize: Int): Result<List<Photo>> =
+    private suspend fun readLocalPhotos(startPosition: Int, pageSize: Int): Result<List<Photo2>> =
         withToIO {
             kotlin.runCatching {
                 val cursor = context.contentResolver.query(
@@ -64,10 +64,20 @@ class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, P
                     /* sortOrder = */
                     Media.DATE_TAKEN + " DESC" + " limit " + startPosition + "," + pageSize
                 )
-                val list = ArrayList<Photo>(cursor?.count ?: 0)
+                val list = ArrayList<Photo2>(cursor?.count ?: 0)
                 cursor?.use {
                     while (cursor.moveToNext()) {
-                        list.add(Photo("file://${cursor.getString(cursor.getColumnIndexOrThrow(Media.DATA))}"))
+                        list.add(
+                            Photo2(
+                                "file://${
+                                    cursor.getString(
+                                        cursor.getColumnIndexOrThrow(
+                                            Media.DATA
+                                        )
+                                    )
+                                }"
+                            )
+                        )
                     }
                 }
                 list

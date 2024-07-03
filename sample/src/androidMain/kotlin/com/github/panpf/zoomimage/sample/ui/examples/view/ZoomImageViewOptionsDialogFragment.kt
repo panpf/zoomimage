@@ -76,8 +76,6 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
     }
 
     private fun buildList(): List<Any> = buildList {
-        val appSettings = requireContext().appSettings
-
         if (zoomViewType.my) {
             val contentScales = listOf(
                 ContentScaleCompat.Fit,

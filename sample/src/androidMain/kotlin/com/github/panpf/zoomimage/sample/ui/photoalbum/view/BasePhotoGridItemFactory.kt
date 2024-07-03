@@ -29,10 +29,10 @@ import com.github.panpf.tools4k.lang.asOrNull
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
-import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo
+import com.github.panpf.zoomimage.sample.ui.photoalbum.Photo2
 
 abstract class BasePhotoGridItemFactory :
-    BaseBindingItemFactory<Photo, GridItemPhotoBinding>(Photo::class) {
+    BaseBindingItemFactory<Photo2, GridItemPhotoBinding>(Photo2::class) {
 
     private var itemSize: Int? = null
 
@@ -53,7 +53,7 @@ abstract class BasePhotoGridItemFactory :
     final override fun initItem(
         context: Context,
         binding: GridItemPhotoBinding,
-        item: BindingItem<Photo, GridItemPhotoBinding>
+        item: BindingItem<Photo2, GridItemPhotoBinding>
     ) {
 
     }
@@ -61,10 +61,10 @@ abstract class BasePhotoGridItemFactory :
     final override fun bindItemData(
         context: Context,
         binding: GridItemPhotoBinding,
-        item: BindingItem<Photo, GridItemPhotoBinding>,
+        item: BindingItem<Photo2, GridItemPhotoBinding>,
         bindingAdapterPosition: Int,
         absoluteAdapterPosition: Int,
-        data: Photo
+        data: Photo2
     ) {
         binding.image.apply {
             updateLayoutParams<LayoutParams> {

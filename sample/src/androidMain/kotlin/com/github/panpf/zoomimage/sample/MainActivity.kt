@@ -1,12 +1,16 @@
 package com.github.panpf.zoomimage.sample
 
 import android.os.Bundle
-import com.github.panpf.zoomimage.sample.databinding.ActivityMainBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingActivity
+import androidx.appcompat.app.AppCompatActivity
+import com.github.panpf.zoomimage.sample.ui.MainFragment
 
-class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
+class MainActivity : AppCompatActivity() {
 
-    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(android.R.id.content, MainFragment())
+            .commit()
     }
 }

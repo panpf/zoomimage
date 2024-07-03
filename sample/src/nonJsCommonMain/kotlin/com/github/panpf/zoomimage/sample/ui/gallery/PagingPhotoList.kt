@@ -35,14 +35,12 @@ import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.ui.common.list.PagingAppendState
 import com.github.panpf.zoomimage.sample.ui.components.VerticalScrollbarCompat
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sample.ui.model.PhotoGridMode
 import kotlinx.coroutines.flow.Flow
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
 fun PagingPhotoList(
     photoPagingFlow: Flow<PagingData<Photo>>,
-    animatedPlaceholder: Boolean,
     modifier: Modifier = Modifier,
     gridCellsMinSize: Dp = 100.dp,
     onClick: (items: List<Photo>, photo: Photo, index: Int) -> Unit,
@@ -60,18 +58,16 @@ fun PagingPhotoList(
             .fillMaxSize()
             .pullRefresh(pullRefreshState)
     ) {
-        val photoGridMode by appSettings.photoGridMode.collectAsState()
-        if (photoGridMode == PhotoGridMode.SQUARE) {
-            PhotoSquareGrid(
+        val staggeredGridMode by appSettings.staggeredGridMode.collectAsState()
+        if (staggeredGridMode) {
+            PhotoStaggeredGrid(
                 pagingItems = pagingItems,
-                animatedPlaceholder = animatedPlaceholder,
                 gridCellsMinSize = gridCellsMinSize,
                 onClick = onClick,
             )
         } else {
-            PhotoStaggeredGrid(
+            PhotoSquareGrid(
                 pagingItems = pagingItems,
-                animatedPlaceholder = animatedPlaceholder,
                 gridCellsMinSize = gridCellsMinSize,
                 onClick = onClick,
             )
@@ -88,7 +84,6 @@ fun PagingPhotoList(
 @Composable
 private fun PhotoSquareGrid(
     pagingItems: LazyPagingItems<Photo>,
-    animatedPlaceholder: Boolean,
     gridCellsMinSize: Dp,
     onClick: (items: List<Photo>, photo: Photo, index: Int) -> Unit,
 ) {
@@ -144,7 +139,6 @@ private fun PhotoSquareGrid(
 @Composable
 private fun PhotoStaggeredGrid(
     pagingItems: LazyPagingItems<Photo>,
-    animatedPlaceholder: Boolean,
     gridCellsMinSize: Dp,
     onClick: (items: List<Photo>, photo: Photo, index: Int) -> Unit,
 ) {

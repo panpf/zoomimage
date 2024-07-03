@@ -25,7 +25,6 @@ actual fun Screen.LocalPhotoPage() {
     }
     PagingPhotoList(
         photoPagingFlow = screenModel.pagingFlow,
-        animatedPlaceholder = false,
         gridCellsMinSize = gridCellsMinSize,
         onClick = { photos, _, index ->
             val params = buildPhotoPagerParams(photos, index)
