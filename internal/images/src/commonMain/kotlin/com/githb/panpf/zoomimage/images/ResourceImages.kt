@@ -58,7 +58,7 @@ object ResourceImages {
     val exifRotate90: ResourceImageFile = ResourceImageFile(
         "exif_rotate_90.jpg",
         "ROTATE_90",
-        Size(1080, 6400),
+        Size(6400, 1080),
         ExifOrientationHelper.ROTATE_90
     )
     val exifRotate180: ResourceImageFile = ResourceImageFile(
@@ -70,19 +70,19 @@ object ResourceImages {
     val exifRotate270: ResourceImageFile = ResourceImageFile(
         "exif_rotate_270.jpg",
         "ROTATE_270",
-        Size(1080, 6400),
+        Size(6400, 1080),
         ExifOrientationHelper.ROTATE_270
     )
     val exifTranspose: ResourceImageFile = ResourceImageFile(
         "exif_transpose.jpg",
         "TRANSPOSE",
-        Size(1080, 6400),
+        Size(6400, 1080),
         ExifOrientationHelper.TRANSPOSE
     )
     val exifTransverse: ResourceImageFile = ResourceImageFile(
         "exif_transverse.jpg",
         "TRANSVERSE",
-        Size(1080, 6400),
+        Size(6400, 1080),
         ExifOrientationHelper.TRANSVERSE
     )
     val exifs = arrayOf(

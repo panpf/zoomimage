@@ -20,25 +20,12 @@ import app.cash.paging.PagingSourceLoadParams
 import app.cash.paging.PagingSourceLoadResult
 import app.cash.paging.PagingState
 import app.cash.paging.createPagingSourceLoadResultPage
-import com.githb.panpf.zoomimage.images.ImageFile
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.decode.ImageInfo
+import com.github.panpf.zoomimage.sample.data.builtinImages
+import com.github.panpf.zoomimage.sample.data.localImages
+import com.github.panpf.zoomimage.sample.data.readImageInfoOrNull
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-
-expect fun builtinImages(): List<ImageFile>
-
-expect suspend fun readPhotosFromPhotoAlbum(
-    context: PlatformContext,
-    startPosition: Int,
-    pageSize: Int
-): List<String>
-
-expect suspend fun readImageInfoOrNull(
-    context: PlatformContext,
-    sketch: Sketch,
-    uri: String,
-): ImageInfo?
 
 class LocalPhotoListPagingSource(
     val context: PlatformContext,
@@ -64,7 +51,7 @@ class LocalPhotoListPagingSource(
             val fromPhotoAlbumPhotos = if (fromBuiltInPhotos.size < pageSize) {
                 val photoAlbumStartPosition = 0
                 val photoAlbumPageSize = pageSize - fromBuiltInPhotos.size
-                readPhotosFromPhotoAlbum(context, photoAlbumStartPosition, photoAlbumPageSize)
+                localImages(context, photoAlbumStartPosition, photoAlbumPageSize)
             } else {
                 emptyList()
             }
@@ -73,8 +60,7 @@ class LocalPhotoListPagingSource(
             }
         } else {
             val photoAlbumStartPosition = startPosition - builtInPhotos.size
-            val photoAlbumPageSize = pageSize
-            readPhotosFromPhotoAlbum(context, photoAlbumStartPosition, photoAlbumPageSize)
+            localImages(context, photoAlbumStartPosition, pageSize)
         }.map { uri -> uriToPhoto(uri) }
         val nextKey = if (photos.isNotEmpty()) startPosition + pageSize else null
         val filteredPhotos = photos.filter { keySet.add(it.originalUrl) }

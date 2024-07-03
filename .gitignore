@@ -1,13 +1,42 @@
-*.iml
-.gradle
-.idea/
-.kotlin/
-.DS_Store
-build/
-captures/
-.externalNativeBuild
-.cxx
+# built application files
+#*.apk
+*.ap_
+proguard_logs/
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# Local configuration file (sdk path, etc)
 local.properties
 
+# Eclipse project files
+#.classpath
+#.project
+#.settings/
+bin/
+gen/
+
+# Idea files
+.idea/
+*.iml
+
+# Gradle files
+.gradle/
+build/
+
+# Mac files
+.DS_Store
+
+captures/
+*.hprof
+
 *.jks
+
+kotlin-js-store/yarn.lock
 webpack.config.d/
+
+.kotlin/
+.run/iosSample.run.xml

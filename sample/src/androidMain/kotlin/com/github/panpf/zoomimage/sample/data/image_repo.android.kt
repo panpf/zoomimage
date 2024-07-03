@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.gallery
+package com.github.panpf.zoomimage.sample.data
 
 import android.graphics.RectF
 import android.provider.MediaStore.Images.Media
@@ -36,10 +36,10 @@ actual fun builtinImages(): List<ImageFile> {
         AndroidResourceImages.hugeCard,
         LocalImages.hugeLongQmsht,
         HttpImages.hugeLongComic,
-    )
+    ).plus(ResourceImages.exifs)
 }
 
-actual suspend fun readPhotosFromPhotoAlbum(
+actual suspend fun localImages(
     context: PlatformContext,
     startPosition: Int,
     pageSize: Int

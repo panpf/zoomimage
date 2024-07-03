@@ -66,8 +66,8 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.material)    // pull refresh
             implementation(compose.material3)
-            implementation(libs.coil.svg)
-            implementation(libs.coil.gif)
+//            implementation(libs.coil.svg)
+//            implementation(libs.coil.gif)
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.panpf.sketch4.animated)
