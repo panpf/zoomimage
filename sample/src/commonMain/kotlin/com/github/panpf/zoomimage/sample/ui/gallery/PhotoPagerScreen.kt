@@ -84,7 +84,7 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    SketchZoomAsyncImageSample(params.photos[index].detailPreviewUrl)
+                    SketchZoomAsyncImageSample(params.photos[index].originalUrl)
                 }
             } else {
                 VerticalPager(
@@ -92,7 +92,7 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    SketchZoomAsyncImageSample(params.photos[index].detailPreviewUrl)
+                    SketchZoomAsyncImageSample(params.photos[index].originalUrl)
                 }
             }
 
