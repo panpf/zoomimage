@@ -27,10 +27,10 @@ import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 
-private val appSettingsServiceLazy = ParamLazy<PlatformContext, AppSettings> { AppSettings(it) }
+private val appSettingsLazy = ParamLazy<PlatformContext, AppSettings> { AppSettings(it) }
 
 val PlatformContext.appSettings: AppSettings
-    get() = appSettingsServiceLazy.get(this)
+    get() = appSettingsLazy.get(this)
 
 expect fun isDebugMode(): Boolean
 

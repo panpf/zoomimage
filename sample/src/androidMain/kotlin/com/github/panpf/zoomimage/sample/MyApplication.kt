@@ -84,7 +84,7 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
                 }
             })
             val sc = SSLContext.getInstance("TLS")
-            // trustAllCerts信任所有的证书
+            // trustAllCerts trust all certificates
             sc.init(null, trustAllCerts, SecureRandom())
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.socketFactory)
             HttpsURLConnection.setDefaultHostnameVerifier { _, _ -> true }
