@@ -20,7 +20,7 @@ import com.github.panpf.zoomimage.sample.ui.components.PageState
 fun SketchZoomAsyncImageSample(sketchImageUri: String) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-    ) { contentScale, alignment, state, scrollBar ->
+    ) { contentScale, alignment, state, scrollBar, onLongClick ->
         val imageState = rememberAsyncImageState()
         SketchZoomAsyncImage(
             request = ComposableImageRequest(sketchImageUri) {
@@ -36,6 +36,7 @@ fun SketchZoomAsyncImageSample(sketchImageUri: String) {
             imageState = imageState,
             state = state,
             scrollBar = scrollBar,
+            onLongPress = { onLongClick.invoke() }
         )
 
         val myPageState by remember {

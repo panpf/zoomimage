@@ -25,6 +25,10 @@ fun rememberMyDialogState(showing: Boolean = false): MyDialogState =
 
 class MyDialogState(showing: Boolean = false) {
     var showing by mutableStateOf(showing)
+
+    fun show() {
+        showing = true
+    }
 }
 
 @Composable

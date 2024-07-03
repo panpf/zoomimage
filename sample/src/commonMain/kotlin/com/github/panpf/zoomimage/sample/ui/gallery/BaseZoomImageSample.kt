@@ -22,6 +22,8 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
+import com.github.panpf.zoomimage.sample.ui.widget.MyDialog
+import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageInfo
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageTool
 import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
@@ -38,6 +40,7 @@ fun BaseZoomImageSample(
         alignment: Alignment,
         state: ZoomState,
         scrollBar: ScrollBarSpec?,
+        onLongClick: () -> Unit
     ) -> Unit
 ) {
     val settingsService = LocalPlatformContext.current.appSettings
@@ -138,7 +141,7 @@ fun BaseZoomImageSample(
             alignment,
             zoomState,
             if (scrollBarEnabled) ScrollBarSpec.Default else null
-        )
+        ) { infoDialogState.show() }
 
         ZoomImageMinimap(
             imageUri = sketchImageUri,
@@ -152,5 +155,13 @@ fun BaseZoomImageSample(
             infoDialogState = infoDialogState,
             imageUri = sketchImageUri,
         )
+
+        MyDialog(state = infoDialogState) {
+            ZoomImageInfo(
+                imageUri = sketchImageUri,
+                zoomable = zoomState.zoomable,
+                subsampling = zoomState.subsampling
+            )
+        }
     }
 }

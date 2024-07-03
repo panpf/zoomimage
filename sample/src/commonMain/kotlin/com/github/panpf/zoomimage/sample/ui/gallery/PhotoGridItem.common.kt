@@ -124,9 +124,8 @@ fun PhotoGridItem(
     }
 
     if (photoInfoImageResult != null) {
-//        PhotoInfoDialog(photoInfoImageResult) {
-//            photoInfoImageResult = null
-//        }
-        // TODO long image info
+        PhotoInfoDialog(photoInfoImageResult) {
+            photoInfoImageResult = null
+        }
     }
 }

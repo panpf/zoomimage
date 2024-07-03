@@ -214,14 +214,6 @@ fun ZoomImageTool(
                 moreShow = !moreShow
             }
         }
-
-        MyDialog(state = infoDialogState) {
-            ZoomImageInfo(
-                imageUri = imageUri,
-                zoomable = zoomableState,
-                subsampling = subsamplingState
-            )
-        }
     }
 }
 
