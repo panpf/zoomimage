@@ -29,9 +29,9 @@ fun PhotoPalette(colorScheme: ColorScheme): PhotoPalette {
 
 
 data class PhotoPalette(
-    val palette: SimplePalette?,
-    val primaryColor: Int,
-    val primaryContainerColor: Int
+    private val palette: SimplePalette?,
+    private val primaryColor: Int,
+    private val primaryContainerColor: Int
 ) {
 
     val containerColor: Color by lazy {

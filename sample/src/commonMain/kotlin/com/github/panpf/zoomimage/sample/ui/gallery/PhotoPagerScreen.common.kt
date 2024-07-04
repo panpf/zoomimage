@@ -140,8 +140,8 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
         imageUri: String,
         photoPaletteState: MutableState<PhotoPalette>,
     ) {
-        val imageState = rememberAsyncImageState()
         val colorScheme = MaterialTheme.colorScheme
+        val imageState = rememberAsyncImageState()
         LaunchedEffect(Unit) {
             snapshotFlow { imageState.result }.collect {
                 if (it is ImageResult.Success) {
