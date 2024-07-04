@@ -168,6 +168,7 @@ class TileManager constructor(
         @ContinuousTransformType continuousTransformType: Int,
         caller: String,
     ): Int {
+        // TODO Tile changes due to scaling, always use transition animation
         /*
          * If the following detections fail, simply skip the refresh and keep the current state
          */
