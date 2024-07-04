@@ -13,8 +13,6 @@ actual fun VerticalScrollbarCompat(
 ) {
     VerticalScrollbar(
         modifier = modifier,
-        adapter = rememberScrollbarAdapter(
-            scrollState = gridState
-        )
+        adapter = rememberScrollbarAdapter(scrollState = gridState)
     )
 }
