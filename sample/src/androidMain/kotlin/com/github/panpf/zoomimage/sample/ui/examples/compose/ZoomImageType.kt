@@ -1,7 +1,9 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.gallery.SketchZoomAsyncImageSample
 import com.github.panpf.zoomimage.sample.ui.photoalbum.compose.CoilListImage
 import com.github.panpf.zoomimage.sample.ui.photoalbum.compose.GlideListImage
@@ -33,7 +35,10 @@ enum class ZoomImageType(
             SketchListImage(sketchImageUri, modifier)
         },
         drawContent = { sketchImageUri ->
-            SketchZoomAsyncImageSample(sketchImageUri)
+            SketchZoomAsyncImageSample(
+                sketchImageUri = sketchImageUri,
+                photoPaletteState = mutableStateOf(PhotoPalette(null, 0xFFFFFF, 0xFFFFFF))
+            )
         },
         my = true,
     ),

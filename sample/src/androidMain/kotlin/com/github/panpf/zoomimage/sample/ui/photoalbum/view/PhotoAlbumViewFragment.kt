@@ -20,15 +20,12 @@ import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.panpf.assemblyadapter.recycler.divider.Divider
 import com.github.panpf.assemblyadapter.recycler.divider.newAssemblyGridDividerItemDecoration
 import com.github.panpf.assemblyadapter.recycler.newAssemblyGridLayoutManager
 import com.github.panpf.assemblyadapter.recycler.paging.AssemblyPagingDataAdapter
-import com.github.panpf.tools4k.lang.asOrThrow
-import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerRefreshBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
@@ -94,24 +91,24 @@ class PhotoAlbumViewFragment : BaseToolbarBindingFragment<FragmentRecyclerRefres
     }
 
     private fun startImageDetail(binding: FragmentRecyclerRefreshBinding, position: Int) {
-        val currentList = binding.recycler
-            .adapter!!.asOrThrow<AssemblyPagingDataAdapter<Photo2>>()
-            .currentList
-        val startPosition = (position - 50).coerceAtLeast(0)
-        val totalCount = currentList.size
-        val endPosition = (position + 50).coerceAtMost(totalCount - 1)
-        val imageList = (startPosition..endPosition).map {
-            currentList[it]?.uri
-        }
-        findNavController().navigate(
-            NavMainDirections.actionGlobalPhotoPagerViewFragment(
-//                zoomViewType = args.zoomViewType,
-                zoomViewType = ZoomViewType.SketchZoomImageView.name,
-                imageUris = imageList.joinToString(separator = ","),
-                position = position,
-                startPosition = startPosition,
-                totalCount = totalCount
-            ),
-        )
+//        val currentList = binding.recycler
+//            .adapter!!.asOrThrow<AssemblyPagingDataAdapter<Photo2>>()
+//            .currentList
+//        val startPosition = (position - 50).coerceAtLeast(0)
+//        val totalCount = currentList.size
+//        val endPosition = (position + 50).coerceAtMost(totalCount - 1)
+//        val imageList = (startPosition..endPosition).map {
+//            currentList[it]?.uri
+//        }
+//        findNavController().navigate(
+//            NavMainDirections.actionGlobalPhotoPagerViewFragment(
+////                zoomViewType = args.zoomViewType,
+//                zoomViewType = ZoomViewType.SketchZoomImageView.name,
+//                imageUris = imageList.joinToString(separator = ","),
+//                position = position,
+//                startPosition = startPosition,
+//                totalCount = totalCount
+//            ),
+//        )
     }
 }

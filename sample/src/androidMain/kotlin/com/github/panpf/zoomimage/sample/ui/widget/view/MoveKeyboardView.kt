@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
 import com.github.panpf.tools4k.lang.asOrThrow
@@ -27,7 +28,7 @@ class MoveKeyboardView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
-    private val thumbView: View
+    val thumbView: ImageView
     private val dragHelper: ViewDragHelper
     private var gamePadOffset = OffsetCompat(0f, 0f)
     private val coroutineScope = CoroutineScope(Dispatchers.Main)

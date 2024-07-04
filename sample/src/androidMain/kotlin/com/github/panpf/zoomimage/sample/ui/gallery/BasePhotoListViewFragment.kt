@@ -36,6 +36,8 @@ import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 abstract class BasePhotoListViewFragment :
     BaseBindingFragment<FragmentRecyclerRefreshBinding>() {
@@ -184,17 +186,18 @@ abstract class BasePhotoListViewFragment :
             .adapter!!.asOrThrow<ConcatAdapter>()
             .adapters.first().asOrThrow<AssemblyPagingDataAdapter<Photo>>()
             .currentList
-        val startPosition = (position - 50).coerceAtLeast(0)
         val totalCount = items.size
-        val endPosition = (position + 50).coerceAtMost(items.size - 1)
-        val imageList = (startPosition..endPosition).map {
-            items[it]?.originalUrl
-        }
+        val startPosition = (position - 100).coerceAtLeast(0)
+        val endPosition = (position + 100).coerceAtMost(items.size - 1)
+        val imageList = items.asSequence()
+            .filterNotNull()
+            .filterIndexed { index, _ -> index in startPosition..endPosition }
+            .toList()
         findNavController().navigate(
             NavMainDirections.actionGlobalPhotoPagerViewFragment(
 //                zoomViewType = args.zoomViewType,
                 zoomViewType = ZoomViewType.SketchZoomImageView.name,
-                imageUris = imageList.joinToString(separator = ","),
+                photos = Json.encodeToString(imageList),
                 position = position,
                 startPosition = startPosition,
                 totalCount = totalCount

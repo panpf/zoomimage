@@ -2,6 +2,7 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -13,13 +14,18 @@ import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
+import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 
 @Composable
-fun SketchZoomAsyncImageSample(sketchImageUri: String) {
+fun SketchZoomAsyncImageSample(
+    sketchImageUri: String,
+    photoPaletteState: MutableState<PhotoPalette>,
+) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
+        photoPaletteState
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         val imageState = rememberAsyncImageState()
         SketchZoomAsyncImage(

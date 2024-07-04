@@ -19,6 +19,8 @@ package com.github.panpf.zoomimage.sample.ui.examples.view
 import com.github.panpf.zoomimage.sample.R as CommonR
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -27,10 +29,13 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.panpf.tools4a.view.ktx.animTranslate
+import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
+import com.github.panpf.zoomimage.sample.ui.base.parentViewModels
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
@@ -56,6 +61,12 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     abstract val sketchImageUri: String
 
     private var zoomView: ZOOM_VIEW? = null
+    private val photoPaletteViewModel by parentViewModels<PhotoPaletteViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        screenMode = false
+    }
 
     abstract fun createZoomImageView(context: Context): ZOOM_VIEW
 
@@ -341,6 +352,31 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
             .repeatCollectWithLifecycle(viewLifecycleOwner, Lifecycle.State.STARTED) {
                 updateInfo(zoomImageView, binding)
             }
+
+        photoPaletteViewModel.photoPaletteState.repeatCollectWithLifecycle(
+            owner = viewLifecycleOwner,
+            state = Lifecycle.State.STARTED
+        ) { photoPalette ->
+            listOf(
+                binding.zoomOut,
+                binding.zoomIn,
+                binding.bottomToolbar
+            ).forEach {
+                it.background.asOrThrow<GradientDrawable>().setColor(photoPalette.containerColorInt)
+            }
+            zoomImageView.scrollBar = if (appSettings.scrollBarEnabled.value) {
+                ScrollBarSpec.Default.copy(photoPalette.containerColorInt)
+            } else {
+                null
+            }
+            binding.linearScaleSlider.thumbTintList =
+                ColorStateList.valueOf(photoPalette.accentColorInt)
+            binding.linearScaleSlider.trackTintList =
+                ColorStateList.valueOf(photoPalette.containerColorInt)
+            binding.linearScaleSlider.tickTintList =
+                ColorStateList.valueOf(photoPalette.contentColorInt)
+            binding.moveKeyboard.thumbView.drawable.setTint(photoPalette.containerColorInt)
+        }
 
         loadData()
     }

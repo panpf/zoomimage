@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.getValue
@@ -148,7 +149,11 @@ class MoveKeyboardState(
 }
 
 @Composable
-fun MoveKeyboard(state: MoveKeyboardState, modifier: Modifier = Modifier.fillMaxWidth()) {
+fun MoveKeyboard(
+    state: MoveKeyboardState,
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    iconTint: Color = LocalContentColor.current
+) {
     val brush = remember {
         Brush.radialGradient(
             listOf(
@@ -184,6 +189,7 @@ fun MoveKeyboard(state: MoveKeyboardState, modifier: Modifier = Modifier.fillMax
             Icon(
                 painter = painterResource(Res.drawable.ic_gamepad),
                 contentDescription = "GamePad",
+                tint = iconTint,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxSize(0.7f)

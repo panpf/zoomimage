@@ -21,10 +21,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -32,25 +33,38 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PlatformContext
+import com.github.panpf.sketch.cache.CachePolicy.DISABLED
+import com.github.panpf.sketch.rememberAsyncImageState
+import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.request.ImageResult
+import com.github.panpf.sketch.resize.Precision.SMALLER_SIZE
+import com.github.panpf.sketch.transform.BlurTransformation
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
+import com.github.panpf.zoomimage.sample.image.PhotoPalette
+import com.github.panpf.zoomimage.sample.image.simplePalette
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_down
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_left
@@ -62,6 +76,7 @@ import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
 import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.rememberZoomImageOptionsState
+import com.github.panpf.zoomimage.sample.ui.util.isEmpty
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -76,15 +91,18 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
     @Composable
     override fun DrawContent() {
         Box(Modifier.fillMaxSize()) {
-            val context = LocalPlatformContext.current
-            val appSettings = context.appSettings
-
-            // TODO background
+            val appSettings = LocalPlatformContext.current.appSettings
 
             val initialPage = remember { params.initialPosition - params.startPosition }
             val pagerState = rememberPagerState(initialPage = initialPage) {
                 params.photos.size
             }
+
+            val uri = params.photos[pagerState.currentPage].listThumbnailUrl
+            val colorScheme = MaterialTheme.colorScheme
+            val photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
+            PagerBackground(uri, photoPaletteState)
+
             val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
             if (horizontalLayout) {
                 HorizontalPager(
@@ -92,7 +110,11 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    SketchZoomAsyncImageSample(params.photos[index].originalUrl)
+                    val sketchImageUri = params.photos[index].originalUrl
+                    SketchZoomAsyncImageSample(
+                        sketchImageUri = sketchImageUri,
+                        photoPaletteState = photoPaletteState
+                    )
                 }
             } else {
                 VerticalPager(
@@ -100,19 +122,87 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    SketchZoomAsyncImageSample(params.photos[index].originalUrl)
+                    val sketchImageUri = params.photos[index].originalUrl
+                    SketchZoomAsyncImageSample(
+                        sketchImageUri = sketchImageUri,
+                        photoPaletteState = photoPaletteState
+                    )
                 }
             }
 
-            Headers(horizontalLayout, pagerState)
+            Headers(pagerState, horizontalLayout, photoPaletteState)
+            TurnPageIndicator(pagerState, photoPaletteState)
+        }
+    }
 
-            TurnPageIndicator(pagerState)
+    @Composable
+    fun PagerBackground(
+        imageUri: String,
+        photoPaletteState: MutableState<PhotoPalette>,
+    ) {
+        val imageState = rememberAsyncImageState()
+        val colorScheme = MaterialTheme.colorScheme
+        LaunchedEffect(Unit) {
+            snapshotFlow { imageState.result }.collect {
+                if (it is ImageResult.Success) {
+                    photoPaletteState.value =
+                        PhotoPalette(it.simplePalette, colorScheme = colorScheme)
+                }
+            }
+        }
+        var imageSize by remember { mutableStateOf(IntSize.Zero) }
+        Box(
+            modifier = Modifier.fillMaxSize().onSizeChanged {
+                imageSize = IntSize(it.width / 4, it.height / 4)
+            }
+        ) {
+            val context = LocalPlatformContext.current
+            val request by remember(imageUri) {
+                derivedStateOf {
+                    if (imageSize.isEmpty()) {
+                        null
+                    } else {
+                        ImageRequest(context, imageUri) {
+                            resize(
+                                width = imageSize.width,
+                                height = imageSize.height,
+                                precision = SMALLER_SIZE
+                            )
+                            addTransformations(
+                                BlurTransformation(radius = 20, maskColor = 0x63000000)
+                            )
+                            memoryCachePolicy(DISABLED)
+                            resultCachePolicy(DISABLED)
+                            disallowAnimatedImage()
+                            crossfade(alwaysUse = true, durationMillis = 400)
+                            resizeOnDraw()
+                            components {
+                                addDecodeInterceptor(PaletteDecodeInterceptor())
+                            }
+                        }
+                    }
+                }
+            }
+            val request1 = request
+            if (request1 != null) {
+                AsyncImage(
+                    request = request1,
+                    state = imageState,
+                    contentDescription = "Background",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 
     @Composable
     @OptIn(ExperimentalFoundationApi::class)
-    fun Headers(horizontalLayout: Boolean, pagerState: PagerState) {
+    fun Headers(
+        pagerState: PagerState,
+        horizontalLayout: Boolean,
+        photoPaletteState: MutableState<PhotoPalette>
+    ) {
         val context = LocalPlatformContext.current
         val density = LocalDensity.current
         val appSettings = context.appSettings
@@ -120,14 +210,15 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
             val toolbarTopMargin = getTopMargin(context)
             with(density) { toolbarTopMargin.toDp() }
         }
+        val photoPalette by photoPaletteState
         Box(modifier = Modifier.fillMaxSize().padding(top = toolbarTopMarginDp)) {
             Column(modifier = Modifier.padding(20.dp)) {
                 val navigator = LocalNavigator.current!!
                 IconButton(
                     onClick = { navigator.pop() },
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = colorScheme.tertiary,
-                        contentColor = colorScheme.onTertiary
+                        containerColor = photoPalette.containerColor,
+                        contentColor = photoPalette.contentColor
                     )
                 ) {
                     Icon(
@@ -147,8 +238,8 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                 IconButton(
                     onClick = { appSettings.horizontalPagerLayout.value = !horizontalLayout },
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = colorScheme.tertiary,
-                        contentColor = colorScheme.onTertiary
+                        containerColor = photoPalette.containerColor,
+                        contentColor = photoPalette.contentColor
                     )
                 ) {
                     val icon = if (horizontalLayout) {
@@ -169,7 +260,7 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                     Modifier
                         .width(40.dp)
                         .background(
-                            color = colorScheme.tertiary,
+                            color = photoPalette.containerColor,
                             shape = RoundedCornerShape(50)
                         )
                         .padding(vertical = 20.dp),
@@ -193,7 +284,7 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                     Text(
                         text = numberText,
                         textAlign = TextAlign.Center,
-                        color = colorScheme.onTertiary,
+                        color = photoPalette.contentColor,
                         style = TextStyle(lineHeight = 12.sp),
                     )
                 }
@@ -204,8 +295,8 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                 IconButton(
                     onClick = { showSettingsDialog = true },
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = colorScheme.tertiary,
-                        contentColor = colorScheme.onTertiary
+                        containerColor = photoPalette.containerColor,
+                        contentColor = photoPalette.contentColor
                     )
                 ) {
                     Icon(
@@ -228,7 +319,10 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
 
     @Composable
     @OptIn(ExperimentalFoundationApi::class)
-    fun BoxScope.TurnPageIndicator(pagerState: PagerState) {
+    fun BoxScope.TurnPageIndicator(
+        pagerState: PagerState,
+        photoPaletteState: MutableState<PhotoPalette>
+    ) {
         if (runtimePlatformInstance.isMobile()) return
         val turnPage = remember { MutableSharedFlow<Boolean>() }
         val coroutineScope = rememberCoroutineScope()
@@ -260,13 +354,14 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
             .clip(CircleShape)
         val appSettings = LocalPlatformContext.current.appSettings
         val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
+        val photoPalette by photoPaletteState
         if (horizontalLayout) {
             IconButton(
                 onClick = { coroutineScope.launch { turnPage.emit(false) } },
                 modifier = turnPageIconModifier.align(Alignment.CenterStart),
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Black.copy(0.5f),
-                    contentColor = Color.White
+                    containerColor = photoPalette.containerColor,
+                    contentColor = photoPalette.contentColor
                 ),
             ) {
                 Icon(
@@ -278,8 +373,8 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                 onClick = { coroutineScope.launch { turnPage.emit(true) } },
                 modifier = turnPageIconModifier.align(Alignment.CenterEnd),
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Black.copy(0.5f),
-                    contentColor = Color.White
+                    containerColor = photoPalette.containerColor,
+                    contentColor = photoPalette.contentColor
                 ),
             ) {
                 Icon(
@@ -292,8 +387,8 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                 onClick = { coroutineScope.launch { turnPage.emit(false) } },
                 modifier = turnPageIconModifier.align(Alignment.TopCenter),
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Black.copy(0.5f),
-                    contentColor = Color.White
+                    containerColor = photoPalette.containerColor,
+                    contentColor = photoPalette.contentColor
                 ),
             ) {
                 Icon(
@@ -305,8 +400,8 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                 onClick = { coroutineScope.launch { turnPage.emit(true) } },
                 modifier = turnPageIconModifier.align(Alignment.BottomCenter),
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Black.copy(0.5f),
-                    contentColor = Color.White
+                    containerColor = photoPalette.containerColor,
+                    contentColor = photoPalette.contentColor
                 ),
             ) {
                 Icon(

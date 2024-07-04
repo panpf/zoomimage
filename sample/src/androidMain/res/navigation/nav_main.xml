@@ -33,7 +33,7 @@
             app:argType="string"
             app:nullable="false" />
         <argument
-            android:name="imageUris"
+            android:name="photos"
             app:argType="string"
             app:nullable="false" />
         <argument

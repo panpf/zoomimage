@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.examples.compose
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +20,7 @@ import com.github.panpf.sketch.request.execute
 import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.gallery.BaseZoomImageSample
@@ -27,8 +29,10 @@ import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 
 @Composable
 fun ZoomImageSample(sketchImageUri: String) {
+    val colorScheme = MaterialTheme.colorScheme
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
+        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         val context = LocalContext.current
         LaunchedEffect(Unit) {

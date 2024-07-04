@@ -17,32 +17,54 @@
 package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
+import androidx.core.graphics.ColorUtils
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle.State
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
+import com.github.panpf.sketch.loadImage
+import com.github.panpf.sketch.request.LoadState
+import com.github.panpf.sketch.resize.Precision.LESS_PIXELS
+import com.github.panpf.sketch.transform.BlurTransformation
+import com.github.panpf.tools4a.display.ktx.getScreenSize
+import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
+import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
+import com.github.panpf.zoomimage.sample.image.PhotoPalette
+import com.github.panpf.zoomimage.sample.image.simplePalette
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
+import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
+import kotlinx.serialization.json.Json
 
 class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
 
     private val args by navArgs<PhotoPagerViewFragmentArgs>()
+    private val photoList by lazy {
+        Json.decodeFromString<List<Photo>>(args.photos)
+    }
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
+    private val photoPaletteViewModel by viewModels<PhotoPaletteViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lightStatusAndNavigationBar = false
     }
 
-    override fun getStatusBarInsetsView(binding: FragmentPhotoPagerBinding): View? {
+    override fun getStatusBarInsetsView(binding: FragmentPhotoPagerBinding): View {
         return binding.statusBarInsetsLayout
     }
 
@@ -53,6 +75,21 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
     ) {
         binding.backImage.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        binding.bgImage.requestState.loadState.repeatCollectWithLifecycle(
+            viewLifecycleOwner,
+            State.STARTED
+        ) {
+            if (it is LoadState.Success) {
+                photoPaletteViewModel.setPhotoPalette(
+                    PhotoPalette(
+                        palette = it.result.simplePalette,
+                        primaryColor = resources.getColor(R.color.md_theme_primary),
+                        primaryContainerColor = resources.getColor(R.color.md_theme_primaryContainer)
+                    )
+                )
+            }
         }
 
         binding.orientationImage.apply {
@@ -76,7 +113,6 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
             }
         }
 
-        val imageUrlList = args.imageUris.split(",")
         binding.pager.apply {
             offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
             appSettings.horizontalPagerLayout.collectWithLifecycle(viewLifecycleOwner) {
@@ -86,9 +122,20 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@PhotoPagerViewFragment,
                 itemFactoryList = listOf(zoomViewType.createPageItemFactory()),
-                initDataList = imageUrlList
+                initDataList = photoList.map { it.originalUrl }
             )
-            setCurrentItem(args.position - args.startPosition, false)
+
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    val imageUrl = photoList[position].listThumbnailUrl
+                    loadBgImage(binding, imageUrl)
+                }
+            })
+
+            post {
+                setCurrentItem(args.position - args.startPosition, false)
+            }
         }
 
         binding.pageNumberText.apply {
@@ -103,6 +150,43 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
                 }
             })
             updateCurrentPageNumber()
+        }
+
+        photoPaletteViewModel.photoPaletteState.repeatCollectWithLifecycle(
+            owner = viewLifecycleOwner,
+            state = State.STARTED
+        ) { photoPalette ->
+            listOf(
+                binding.backImage,
+                binding.orientationImage,
+                binding.settingsImage,
+                binding.pageNumberText
+            ).forEach {
+                it.background.asOrThrow<GradientDrawable>().setColor(photoPalette.containerColorInt)
+            }
+        }
+    }
+
+    private fun loadBgImage(binding: FragmentPhotoPagerBinding, imageUrl: String) {
+        binding.bgImage.loadImage(imageUrl) {
+            val screenSize = requireContext().getScreenSize()
+            resize(
+                width = screenSize.x / 4,
+                height = screenSize.y / 4,
+                precision = LESS_PIXELS
+            )
+            addTransformations(
+                BlurTransformation(
+                    radius = 20,
+                    maskColor = ColorUtils.setAlphaComponent(Color.BLACK, 100)
+                )
+            )
+            disallowAnimatedImage()
+            crossfade(alwaysUse = true, durationMillis = 400)
+            resizeOnDraw()
+            components {
+                addDecodeInterceptor(PaletteDecodeInterceptor())
+            }
         }
     }
 }
