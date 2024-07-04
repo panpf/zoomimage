@@ -32,7 +32,7 @@ import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.model.PhotoDiffCallback
 import com.github.panpf.zoomimage.sample.ui.photoalbum.view.NewSketchPhotoGridItemFactory
-import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
+import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch

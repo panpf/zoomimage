@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.sample.ui.photoalbum.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
@@ -29,12 +30,21 @@ import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
-import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 
 class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
 
     private val args by navArgs<PhotoPagerViewFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lightStatusAndNavigationBar = false
+    }
+
+    override fun getStatusBarInsetsView(binding: FragmentPhotoPagerBinding): View? {
+        return binding.statusBarInsetsLayout
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(

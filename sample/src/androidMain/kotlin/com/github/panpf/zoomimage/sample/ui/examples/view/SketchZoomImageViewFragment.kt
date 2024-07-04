@@ -29,9 +29,9 @@ import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
-import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
+import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 
 class SketchZoomImageViewFragment :
     BaseZoomImageViewFragment<SketchZoomImageView>() {

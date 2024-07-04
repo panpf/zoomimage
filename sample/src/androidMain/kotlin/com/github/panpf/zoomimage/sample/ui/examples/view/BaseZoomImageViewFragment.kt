@@ -20,6 +20,7 @@ import com.github.panpf.zoomimage.sample.R as CommonR
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import androidx.core.view.isVisible
@@ -30,10 +31,10 @@ import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.util.collectWithLifecycle
-import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.sample.ui.widget.view.StateView
 import com.github.panpf.zoomimage.sample.ui.widget.view.ZoomImageMinimapView
+import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
+import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.toShortString
@@ -64,6 +65,10 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
         savedInstanceState: Bundle?
     ) {
 
+    }
+
+    override fun getNavigationBarInsetsView(binding: FragmentZoomViewBinding): View {
+        return binding.toolsLayout
     }
 
     final override fun onViewCreated(

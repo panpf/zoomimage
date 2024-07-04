@@ -25,7 +25,7 @@ import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentViewHomeBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.test.TestHomeFragment
-import com.github.panpf.zoomimage.sample.ui.util.repeatCollectWithLifecycle
+import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 
 class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
 

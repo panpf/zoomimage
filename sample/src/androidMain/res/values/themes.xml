@@ -1,6 +1,7 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
 
-    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Material3Theme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
@@ -27,20 +28,7 @@
         <item name="colorOnSurfaceInverse">@color/md_theme_inverseOnSurface</item>
         <item name="colorSurfaceInverse">@color/md_theme_inverseSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_inversePrimary</item>
-
-        <item name="android:statusBarColor" tools:targetApi="21">?attr/colorPrimary</item>
     </style>
-    
-<!--    <style name="Theme.ZoomImage" parent="Theme.Material3.Light.NoActionBar">-->
-<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
-<!--        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>-->
-<!--        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>-->
-<!--        <item name="colorSecondary">@color/colorSecondary</item>-->
-<!--        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>-->
-<!--        <item name="colorOnSecondary">@color/colorOnSecondary</item>-->
-<!--        <item name="colorTertiary">@color/colorTertiary</item>-->
-<!--        <item name="colorOnTertiary">@color/colorOnTertiary</item>-->
-<!--        <item name="android:statusBarColor" tools:targetApi="21">?attr/colorPrimary</item>-->
-<!--        <item name="android:windowBackground">@color/windowBackground</item>-->
-<!--    </style>-->
+
+    <style name="AppTheme" parent="Material3Theme"></style>
 </resources>

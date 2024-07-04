@@ -41,12 +41,14 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.github.panpf.sketch.LocalPlatformContext
+import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.resources.Res
@@ -66,13 +68,19 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
+expect fun getTopMargin(context: PlatformContext): Int
+
 class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun DrawContent() {
         Box(Modifier.fillMaxSize()) {
-            val appSettings = LocalPlatformContext.current.appSettings
+            val context = LocalPlatformContext.current
+            val appSettings = context.appSettings
+
+            // TODO background
+
             val initialPage = remember { params.initialPosition - params.startPosition }
             val pagerState = rememberPagerState(initialPage = initialPage) {
                 params.photos.size
@@ -96,6 +104,23 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                 }
             }
 
+            Headers(horizontalLayout, pagerState)
+
+            TurnPageIndicator(pagerState)
+        }
+    }
+
+    @Composable
+    @OptIn(ExperimentalFoundationApi::class)
+    fun Headers(horizontalLayout: Boolean, pagerState: PagerState) {
+        val context = LocalPlatformContext.current
+        val density = LocalDensity.current
+        val appSettings = context.appSettings
+        val toolbarTopMarginDp = remember {
+            val toolbarTopMargin = getTopMargin(context)
+            with(density) { toolbarTopMargin.toDp() }
+        }
+        Box(modifier = Modifier.fillMaxSize().padding(top = toolbarTopMarginDp)) {
             Column(modifier = Modifier.padding(20.dp)) {
                 val navigator = LocalNavigator.current!!
                 IconButton(
@@ -198,99 +223,97 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                     }
                 }
             }
-
-            TurnPageIndicator(pagerState)
         }
     }
-}
 
-@Composable
-@OptIn(ExperimentalFoundationApi::class)
-fun BoxScope.TurnPageIndicator(pagerState: PagerState) {
-    if (runtimePlatformInstance.isMobile()) return
-    val turnPage = remember { MutableSharedFlow<Boolean>() }
-    val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
-        EventBus.keyEvent.collect { keyEvent ->
-            if (keyEvent.type == KeyEventType.KeyUp && !keyEvent.isMetaPressed) {
-                when (keyEvent.key) {
-                    Key.PageUp, Key.DirectionLeft -> turnPage.emit(true)
-                    Key.PageDown, Key.DirectionRight -> turnPage.emit(false)
+    @Composable
+    @OptIn(ExperimentalFoundationApi::class)
+    fun BoxScope.TurnPageIndicator(pagerState: PagerState) {
+        if (runtimePlatformInstance.isMobile()) return
+        val turnPage = remember { MutableSharedFlow<Boolean>() }
+        val coroutineScope = rememberCoroutineScope()
+        LaunchedEffect(Unit) {
+            EventBus.keyEvent.collect { keyEvent ->
+                if (keyEvent.type == KeyEventType.KeyUp && !keyEvent.isMetaPressed) {
+                    when (keyEvent.key) {
+                        Key.PageUp, Key.DirectionLeft -> turnPage.emit(true)
+                        Key.PageDown, Key.DirectionRight -> turnPage.emit(false)
+                    }
                 }
             }
         }
-    }
-    LaunchedEffect(Unit) {
-        turnPage.collect {
-            if (it) {
-                val nextPageIndex = (pagerState.currentPage + 1) % pagerState.pageCount
-                pagerState.animateScrollToPage(nextPageIndex)
-            } else {
-                val nextPageIndex =
-                    (pagerState.currentPage - 1).let { if (it < 0) pagerState.pageCount + it else it }
-                pagerState.animateScrollToPage(nextPageIndex)
+        LaunchedEffect(Unit) {
+            turnPage.collect { previousPage ->
+                if (previousPage) {
+                    val nextPageIndex = (pagerState.currentPage + 1) % pagerState.pageCount
+                    pagerState.animateScrollToPage(nextPageIndex)
+                } else {
+                    val nextPageIndex =
+                        (pagerState.currentPage - 1).let { if (it < 0) pagerState.pageCount + it else it }
+                    pagerState.animateScrollToPage(nextPageIndex)
+                }
             }
         }
-    }
-    val turnPageIconModifier = Modifier
-        .padding(20.dp)
-        .size(50.dp)
-        .clip(CircleShape)
-    val appSettings = LocalPlatformContext.current.appSettings
-    val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
-    if (horizontalLayout) {
-        IconButton(
-            onClick = { coroutineScope.launch { turnPage.emit(false) } },
-            modifier = turnPageIconModifier.align(Alignment.CenterStart),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Black.copy(0.5f),
-                contentColor = Color.White
-            ),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_left),
-                contentDescription = "Previous",
-            )
-        }
-        IconButton(
-            onClick = { coroutineScope.launch { turnPage.emit(true) } },
-            modifier = turnPageIconModifier.align(Alignment.CenterEnd),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Black.copy(0.5f),
-                contentColor = Color.White
-            ),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_right),
-                contentDescription = "Next",
-            )
-        }
-    } else {
-        IconButton(
-            onClick = { coroutineScope.launch { turnPage.emit(false) } },
-            modifier = turnPageIconModifier.align(Alignment.TopCenter),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Black.copy(0.5f),
-                contentColor = Color.White
-            ),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_up),
-                contentDescription = "Previous",
-            )
-        }
-        IconButton(
-            onClick = { coroutineScope.launch { turnPage.emit(true) } },
-            modifier = turnPageIconModifier.align(Alignment.BottomCenter),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Black.copy(0.5f),
-                contentColor = Color.White
-            ),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_down),
-                contentDescription = "Next",
-            )
+        val turnPageIconModifier = Modifier
+            .padding(20.dp)
+            .size(50.dp)
+            .clip(CircleShape)
+        val appSettings = LocalPlatformContext.current.appSettings
+        val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
+        if (horizontalLayout) {
+            IconButton(
+                onClick = { coroutineScope.launch { turnPage.emit(false) } },
+                modifier = turnPageIconModifier.align(Alignment.CenterStart),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Black.copy(0.5f),
+                    contentColor = Color.White
+                ),
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_arrow_left),
+                    contentDescription = "Previous",
+                )
+            }
+            IconButton(
+                onClick = { coroutineScope.launch { turnPage.emit(true) } },
+                modifier = turnPageIconModifier.align(Alignment.CenterEnd),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Black.copy(0.5f),
+                    contentColor = Color.White
+                ),
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_arrow_right),
+                    contentDescription = "Next",
+                )
+            }
+        } else {
+            IconButton(
+                onClick = { coroutineScope.launch { turnPage.emit(false) } },
+                modifier = turnPageIconModifier.align(Alignment.TopCenter),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Black.copy(0.5f),
+                    contentColor = Color.White
+                ),
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_arrow_up),
+                    contentDescription = "Previous",
+                )
+            }
+            IconButton(
+                onClick = { coroutineScope.launch { turnPage.emit(true) } },
+                modifier = turnPageIconModifier.align(Alignment.BottomCenter),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Black.copy(0.5f),
+                    contentColor = Color.White
+                ),
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_arrow_down),
+                    contentDescription = "Next",
+                )
+            }
         }
     }
 }

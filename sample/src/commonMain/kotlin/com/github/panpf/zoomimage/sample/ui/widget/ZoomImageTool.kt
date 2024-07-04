@@ -14,18 +14,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -38,13 +38,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.round
-import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.sample.resources.Res
@@ -53,7 +48,6 @@ import com.github.panpf.zoomimage.sample.resources.ic_more_vert
 import com.github.panpf.zoomimage.sample.resources.ic_rotate_right
 import com.github.panpf.zoomimage.sample.resources.ic_zoom_in
 import com.github.panpf.zoomimage.sample.resources.ic_zoom_out
-import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
@@ -66,44 +60,12 @@ fun ZoomImageTool(
     imageUri: String,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    Box(modifier = Modifier.fillMaxSize()) {
-        Row(Modifier.padding(20.dp).padding(top = 80.dp)) {
-            val headerInfo = remember {
-                """
-                    scale: 
-                    offset: 
-                    rotation: 
-                """.trimIndent()
-            }
-            Text(
-                text = headerInfo,
-                color = Color.White,
-                fontSize = 13.sp,
-                lineHeight = 16.sp,
-                style = LocalTextStyle.current.copy(
-                    shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                ),
-                overflow = TextOverflow.Ellipsis,
-            )
-            val transformInfo = remember(zoomableState.transform) {
-                val transform = zoomableState.transform
-                """
-                    ${transform.scale.toShortString()}
-                    ${transform.offset.round().toShortString()}
-                    ${transform.rotation.roundToInt()}
-                """.trimIndent()
-            }
-            Text(
-                text = transformInfo,
-                color = Color.White,
-                fontSize = 13.sp,
-                lineHeight = 16.sp,
-                style = LocalTextStyle.current.copy(
-                    shadow = Shadow(offset = Offset(0f, 0f), blurRadius = 10f),
-                ),
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+    Box(modifier = Modifier.fillMaxSize().windowInsetsPadding(NavigationBarDefaults.windowInsets)) {
+        ZoomImageMinimap(
+            imageUri = imageUri,
+            zoomableState = zoomableState,
+            subsamplingState = subsamplingState,
+        )
 
         Column(
             modifier = Modifier

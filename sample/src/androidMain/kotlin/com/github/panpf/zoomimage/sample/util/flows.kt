@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.util
+package com.github.panpf.zoomimage.sample.util
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 
-fun <T> Flow<T>.collectWithLifecycle(owner: LifecycleOwner, collector: FlowCollector<T>) {
-    owner.lifecycleScope.launch {
+fun <T> Flow<T>.collectWithLifecycle(owner: LifecycleOwner, collector: FlowCollector<T>): Job {
+    return owner.lifecycleScope.launch {
         collect(collector)
     }
 }
@@ -20,8 +20,8 @@ fun <T> Flow<T>.repeatCollectWithLifecycle(
     owner: LifecycleOwner,
     state: Lifecycle.State,
     collector: FlowCollector<T>
-) {
-    owner.lifecycleScope.launch {
+): Job {
+    return owner.lifecycleScope.launch {
         owner.repeatOnLifecycle(state) {
             collect(collector)
         }
