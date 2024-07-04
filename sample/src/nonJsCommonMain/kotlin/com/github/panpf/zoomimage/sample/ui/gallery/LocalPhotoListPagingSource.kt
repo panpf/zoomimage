@@ -33,16 +33,21 @@ class LocalPhotoListPagingSource(
 ) : PagingSource<Int, Photo>() {
 
     private val keySet = HashSet<String>()  // Compose LazyVerticalGrid does not allow a key repeat
-    private val builtInPhotos: List<String> by lazy {
-        builtinImages().map { it.uri }
-    }
+    private var _builtInPhotos: List<String>? = null
 
     override fun getRefreshKey(state: PagingState<Int, Photo>): Int = 0
+
+    private suspend fun getBuiltInPhotos(): List<String> {
+        return _builtInPhotos ?: builtinImages(context).map { it.uri }.also {
+            _builtInPhotos = it
+        }
+    }
 
     override suspend fun load(params: PagingSourceLoadParams<Int>): PagingSourceLoadResult<Int, Photo> {
         val startPosition = params.key ?: 0
         val pageSize = params.loadSize
 
+        val builtInPhotos = getBuiltInPhotos()
         val photos = if (startPosition < builtInPhotos.size) {
             val fromBuiltInPhotos = builtInPhotos.subList(
                 fromIndex = startPosition,

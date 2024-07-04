@@ -1,8 +1,47 @@
 package com.githb.panpf.zoomimage.images
 
-object ContentImages {
+import android.content.Context
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
 
-    private const val path =
+class ContentImages private constructor() {
+
+    companion object {
+
+        private var instance: ContentImages? = null
+
+        suspend fun with(context: Context): ContentImages {
+            saveToExternalFilesDir(context)
+            return instance ?: synchronized(this) {
+                instance ?: ContentImages().also { instance = it }
+            }
+        }
+
+        suspend fun saveToExternalFilesDir(context: Context) = withContext(Dispatchers.IO) {
+            val assetsDir = File((context.getExternalFilesDir(null) ?: context.filesDir), "assets")
+            if (!assetsDir.exists()) {
+                assetsDir.mkdirs()
+            }
+            ResourceImages.values.forEach {
+                val file = File(assetsDir, it.resourceName)
+                if (!file.exists()) {
+                    try {
+                        context.assets.open(it.resourceName).use { inputStream ->
+                            file.outputStream().use { outputStream ->
+                                inputStream.copyTo(outputStream)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        file.delete()
+                    }
+                }
+            }
+        }
+    }
+
+    private val path =
         "content://com.github.panpf.zoomimage.sample.fileprovider/asset_images/"
 
     val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("asset://", path)) }

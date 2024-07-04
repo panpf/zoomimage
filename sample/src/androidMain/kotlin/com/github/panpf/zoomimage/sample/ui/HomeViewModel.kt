@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.panpf.zoomimage.sample.AndroidImages
 import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
@@ -22,7 +21,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            AndroidImages.saveToExternalFilesDir(application)
             _data.value = buildData()
         }
     }

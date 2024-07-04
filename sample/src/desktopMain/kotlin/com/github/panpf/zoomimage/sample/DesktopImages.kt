@@ -4,7 +4,7 @@ import com.githb.panpf.zoomimage.images.HttpImages
 import com.githb.panpf.zoomimage.images.ResourceImages
 
 object DesktopImages {
-
+    // TODO remove
     val MIXING_PHOTO_ALBUM = listOf(
         ResourceImages.cat,
         ResourceImages.dog,

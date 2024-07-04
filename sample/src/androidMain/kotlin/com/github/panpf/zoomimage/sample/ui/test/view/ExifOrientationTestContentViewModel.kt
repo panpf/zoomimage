@@ -32,7 +32,7 @@ class ExifOrientationTestContentViewModel(private val application: Application) 
 
     init {
         viewModelScope.launch {
-            _showContentState.value = LocalImages.exifs.map { it.name to it.uri }
+            _showContentState.value = LocalImages.with(application).exifs.map { it.name to it.uri }
         }
     }
 }

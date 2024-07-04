@@ -7,7 +7,7 @@ import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.ComposeResourceImages
 import java.io.File
 
-actual fun builtinImages(): List<ImageFile> {
+actual suspend fun builtinImages(context: PlatformContext): List<ImageFile> {
     return listOf(
         ResourceImages.cat,
         ResourceImages.dog,

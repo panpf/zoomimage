@@ -25,16 +25,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.buffer
 
-actual fun builtinImages(): List<ImageFile> {
+actual suspend fun builtinImages(context: PlatformContext): List<ImageFile> {
     return listOf(
         ResourceImages.cat,
         ResourceImages.dog,
         ResourceImages.anim,
         ResourceImages.longEnd,
-        ContentImages.longWhale,
+        ContentImages.with(context).longWhale,
         ComposeResourceImages.hugeChina,
         AndroidResourceImages.hugeCard,
-        LocalImages.hugeLongQmsht,
+        LocalImages.with(context).hugeLongQmsht,
         HttpImages.hugeLongComic,
     ).plus(ResourceImages.exifs)
 }

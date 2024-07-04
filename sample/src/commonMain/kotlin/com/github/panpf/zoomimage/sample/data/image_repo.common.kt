@@ -6,7 +6,7 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.decode.ImageInfo
 
 
-expect fun builtinImages(): List<ImageFile>
+expect suspend fun builtinImages(context: PlatformContext): List<ImageFile>
 
 expect suspend fun localImages(
     context: PlatformContext,
