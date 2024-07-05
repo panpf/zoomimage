@@ -40,9 +40,9 @@ import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
 import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.simplePalette
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragment
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment
-import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
 import com.github.panpf.zoomimage.sample.ui.model.Photo
@@ -105,8 +105,8 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
 
         if (zoomViewType != ZoomViewType.SubsamplingScaleImageView) {
             binding.settingsImage.setOnClickListener {
-                ZoomImageViewOptionsDialogFragment().apply {
-                    arguments = ZoomImageViewOptionsDialogFragmentArgs(
+                AppSettingsDialogFragment().apply {
+                    arguments = AppSettingsDialogFragmentArgs(
                         zoomViewType = args.zoomViewType,
                     ).toBundle()
                 }.show(childFragmentManager, null)

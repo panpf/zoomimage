@@ -16,7 +16,10 @@
 
 package com.github.panpf.zoomimage.sample
 
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.sketch.PlatformContext
+import com.github.panpf.zoomimage.sample.ui.util.name
 import com.github.panpf.zoomimage.sample.util.ParamLazy
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.intSettingsStateFlow
@@ -58,10 +61,10 @@ class AppSettings(val context: PlatformContext) {
     }
 
     val contentScale by lazy {
-        stringSettingsStateFlow(context, "contentScale", "Fit")
+        stringSettingsStateFlow(context, "contentScale", ContentScale.Fit.name)
     }
     val alignment by lazy {
-        stringSettingsStateFlow(context, "alignment", "Center")
+        stringSettingsStateFlow(context, "alignment", Alignment.Center.name)
     }
 
     val animateScale by lazy {
@@ -83,7 +86,7 @@ class AppSettings(val context: PlatformContext) {
         stringSettingsStateFlow(context, "scalesMultiple", ScalesCalculator.MULTIPLE.toString())
     }
     val disabledGestureType by lazy {
-        stringSettingsStateFlow(context, "disabledGestureType", "0")
+        intSettingsStateFlow(context, "disabledGestureTypeInt", 0)
     }
 
     val limitOffsetWithinBaseVisibleRect by lazy {
@@ -98,8 +101,8 @@ class AppSettings(val context: PlatformContext) {
     }
 
     val pausedContinuousTransformType by lazy {
-        val initialize = TileManager.DefaultPausedContinuousTransformType.toString()
-        stringSettingsStateFlow(context, "pausedContinuousTransformType", initialize)
+        val initialize = TileManager.DefaultPausedContinuousTransformType
+        intSettingsStateFlow(context, "pausedContinuousTransformTypeInt", initialize)
     }
     val disabledBackgroundTiles by lazy {
         booleanSettingsStateFlow(context, "disabledBackgroundTiles", false)

@@ -122,8 +122,8 @@
 
 
     <fragment
-        android:id="@+id/zoomImageViewOptionsDialogFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewOptionsDialogFragment">
+        android:id="@+id/appSettingsDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragment">
         <argument
             android:name="zoomViewType"
             app:argType="string"

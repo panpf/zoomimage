@@ -1,11 +1,16 @@
 package com.github.panpf.zoomimage.sample.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -20,18 +25,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -46,130 +52,21 @@ import com.github.panpf.zoomimage.sample.resources.ic_expand_more
 import com.github.panpf.zoomimage.sample.ui.util.name
 import com.github.panpf.zoomimage.sample.ui.util.windowSize
 import com.github.panpf.zoomimage.sample.util.RuntimePlatform
-import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
-import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
-import com.github.panpf.zoomimage.zoom.ScalesCalculator
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-
-class AppSettingsDialogState {
-    val contentScaleName = MutableStateFlow(ContentScale.Fit.name)
-    val alignmentName = MutableStateFlow(Alignment.Center.name)
-
-    val animateScale = MutableStateFlow(true)
-    val rubberBandScale = MutableStateFlow(true)
-    val threeStepScale = MutableStateFlow(false)
-    val slowerScaleAnimation = MutableStateFlow(false)
-    val scalesCalculator = MutableStateFlow("Dynamic")
-    val scalesMultiple = MutableStateFlow(ScalesCalculator.MULTIPLE.toString())
-    val limitOffsetWithinBaseVisibleRect = MutableStateFlow(false)
-
-    val readModeEnabled = MutableStateFlow(true)
-    val readModeAcceptedBoth = MutableStateFlow(true)
-
-    val showTileBounds = MutableStateFlow(false)
-    val tileAnimation = MutableStateFlow(true)
-    val pausedContinuousTransformType =
-        MutableStateFlow(TileManager.DefaultPausedContinuousTransformType.toString())
-    val disabledGestureType = MutableStateFlow(0.toString())
-    val disabledBackgroundTiles = MutableStateFlow(false)
-
-    val scrollBarEnabled = MutableStateFlow(true)
-    val logLevel = MutableStateFlow(Logger.levelName(Logger.DEBUG))
-}
-
-@Composable
-fun rememberAppSettingsDialogState(): AppSettingsDialogState {
-    val state = remember { AppSettingsDialogState() }
-
-    if (!LocalInspectionMode.current) {
-        val settingsService = LocalPlatformContext.current.appSettings
-        BindStateAndFlow(state.contentScaleName, settingsService.contentScale)
-        BindStateAndFlow(state.alignmentName, settingsService.alignment)
-
-        BindStateAndFlow(state.animateScale, settingsService.animateScale)
-        BindStateAndFlow(state.rubberBandScale, settingsService.rubberBandScale)
-        BindStateAndFlow(state.threeStepScale, settingsService.threeStepScale)
-        BindStateAndFlow(state.slowerScaleAnimation, settingsService.slowerScaleAnimation)
-        BindStateAndFlow(state.scalesCalculator, settingsService.scalesCalculator)
-        BindStateAndFlow(state.scalesMultiple, settingsService.scalesMultiple)
-        BindStateAndFlow(
-            state.limitOffsetWithinBaseVisibleRect,
-            settingsService.limitOffsetWithinBaseVisibleRect
-        )
-
-        BindStateAndFlow(state.readModeEnabled, settingsService.readModeEnabled)
-        BindStateAndFlow(state.readModeAcceptedBoth, settingsService.readModeAcceptedBoth)
-
-        BindStateAndFlow(
-            state.disabledGestureType,
-            settingsService.disabledGestureType
-        )
-        BindStateAndFlow(
-            state.pausedContinuousTransformType,
-            settingsService.pausedContinuousTransformType
-        )
-        BindStateAndFlow(state.disabledBackgroundTiles, settingsService.disabledBackgroundTiles)
-        BindStateAndFlow(state.showTileBounds, settingsService.showTileBounds)
-        BindStateAndFlow(state.tileAnimation, settingsService.tileAnimation)
-
-        BindStateAndFlow(state.scrollBarEnabled, settingsService.scrollBarEnabled)
-        BindStateAndFlow(state.logLevel, settingsService.logLevel)
-    }
-
-    return state
-}
-
-@Composable
-private fun <T> BindStateAndFlow(state: MutableStateFlow<T>, mmkvData: SettingsStateFlow<T>) {
-    LaunchedEffect(state) {
-        state.value = mmkvData.value
-        state.collect {
-            mmkvData.value = it
-        }
-    }
-}
 
 @Composable
 fun AppSettingsDialog(
     my: Boolean,
-    state: AppSettingsDialogState,
     onDismissRequest: () -> Unit
 ) {
-    val contentScaleName by state.contentScaleName.collectAsState()
-    val alignmentName by state.alignmentName.collectAsState()
-
-    val animateScale by state.animateScale.collectAsState()
-    val rubberBandScale by state.rubberBandScale.collectAsState()
-    val threeStepScale by state.threeStepScale.collectAsState()
-    val slowerScaleAnimation by state.slowerScaleAnimation.collectAsState()
-    val scalesCalculator by state.scalesCalculator.collectAsState()
-    val scalesMultiple by state.scalesMultiple.collectAsState()
-    val limitOffsetWithinBaseVisibleRect by state.limitOffsetWithinBaseVisibleRect.collectAsState()
-
-    val readModeEnabled by state.readModeEnabled.collectAsState()
-    val readModeAcceptedBoth by state.readModeAcceptedBoth.collectAsState()
-
-    val showTileBounds by state.showTileBounds.collectAsState()
-    val tileAnimation by state.tileAnimation.collectAsState()
-    val disabledGestureTypeString by state.disabledGestureType.collectAsState()
-    val disabledGestureType = remember(disabledGestureTypeString) {
-        disabledGestureTypeString.toInt()
-    }
-    val pausedContinuousTransformTypeString by state.pausedContinuousTransformType.collectAsState()
-    val pausedContinuousTransformType = remember(pausedContinuousTransformTypeString) {
-        pausedContinuousTransformTypeString.toInt()
-    }
-    val disabledBackgroundTiles by state.disabledBackgroundTiles.collectAsState()
-
-    val scrollBarEnabled by state.scrollBarEnabled.collectAsState()
-    val logLevel by state.logLevel.collectAsState()
-
-    Dialog(onDismissRequest, DialogProperties()) {
+    Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties()) {
         Surface(
             Modifier
                 .fillMaxWidth()
@@ -181,7 +78,9 @@ fun AppSettingsDialog(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                val contentScales = remember {
+                val appSettings = LocalPlatformContext.current.appSettings
+
+                val contentScaleValues = remember {
                     listOf(
                         ContentScale.Fit,
                         ContentScale.Crop,
@@ -192,12 +91,13 @@ fun AppSettingsDialog(
                         ContentScale.None,
                     ).map { it.name }
                 }
-                MyDropdownMenu("ContentScale", contentScaleName, contentScales) {
-                    state.contentScaleName.value = it
-//                onDismissRequest()
-                }
-
-                val alignments = remember {
+                DropdownSettingItem(
+                    title = "ContentScale",
+                    desc = null,
+                    values = contentScaleValues,
+                    state = appSettings.contentScale,
+                )
+                val alignmentValues = remember {
                     listOf(
                         Alignment.TopStart,
                         Alignment.TopCenter,
@@ -210,71 +110,77 @@ fun AppSettingsDialog(
                         Alignment.BottomEnd,
                     ).map { it.name }
                 }
-                MyDropdownMenu("Alignment", alignmentName, alignments) {
-                    state.alignmentName.value = it
-//                onDismissRequest()
+                DropdownSettingItem(
+                    title = "Alignment",
+                    desc = null,
+                    values = alignmentValues,
+                    state = appSettings.alignment,
+                )
+
+                DividerSettingItem()
+
+                SwitchSettingItem(
+                    title = "Animate Scale",
+                    desc = null,
+                    state = appSettings.animateScale,
+                )
+                SwitchSettingItem(
+                    title = "Rubber Band Scale",
+                    desc = null,
+                    state = appSettings.rubberBandScale,
+                )
+                SwitchSettingItem(
+                    title = "Three Step Scale",
+                    desc = null,
+                    state = appSettings.threeStepScale,
+                )
+                SwitchSettingItem(
+                    title = "Slower Scale Animation",
+                    desc = null,
+                    state = appSettings.slowerScaleAnimation,
+                )
+                DropdownSettingItem(
+                    title = "Scales Calculator",
+                    desc = null,
+                    values = listOf("Dynamic", "Fixed"),
+                    state = appSettings.scalesCalculator,
+                )
+                val scalesMultipleValues = remember {
+                    listOf(
+                        2.0f.toString(),
+                        2.5f.toString(),
+                        3.0f.toString(),
+                        3.5f.toString(),
+                        4.0f.toString(),
+                    )
                 }
+                DropdownSettingItem(
+                    title = "Scales Multiple",
+                    desc = null,
+                    values = scalesMultipleValues,
+                    state = appSettings.scalesMultiple,
+                )
 
-                if (my) {
-                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
-
-                    SwitchMenu("Animate Scale", animateScale) {
-                        state.animateScale.value = !state.animateScale.value
-//                    onDismissRequest()
-                    }
-                    SwitchMenu("Rubber Band Scale", rubberBandScale) {
-                        state.rubberBandScale.value = !state.rubberBandScale.value
-//                    onDismissRequest()
-                    }
-                    SwitchMenu("Three Step Scale", threeStepScale) {
-                        state.threeStepScale.value = !state.threeStepScale.value
-//                    onDismissRequest()
-                    }
-                    SwitchMenu("Slower Scale Animation", slowerScaleAnimation) {
-                        state.slowerScaleAnimation.value = !state.slowerScaleAnimation.value
-//                    onDismissRequest()
-                    }
-
-                    val scalesCalculators = remember {
-                        listOf("Dynamic", "Fixed")
-                    }
-                    MyDropdownMenu("Scales Calculator", scalesCalculator, scalesCalculators) {
-                        state.scalesCalculator.value = it
-//                    onDismissRequest()
-                    }
-
-                    val scalesMultiples = remember {
-                        listOf(
-                            2.0f.toString(),
-                            2.5f.toString(),
-                            3.0f.toString(),
-                            3.5f.toString(),
-                            4.0f.toString(),
-                        )
-                    }
-                    MyDropdownMenu("Scales Multiple", scalesMultiple, scalesMultiples) {
-                        state.scalesMultiple.value = it
-//                    onDismissRequest()
-                    }
-                    val gestureTypes = remember {
-                        listOf(
-                            GestureType.DRAG,
-                            GestureType.TWO_FINGER_SCALE,
-                            GestureType.ONE_FINGER_SCALE,
-                            GestureType.DOUBLE_TAP_SCALE,
-                        )
-                    }
-                    val gestureTypeStrings = remember {
-                        gestureTypes.map { GestureType.name(it) }
-                    }
-                    val disabledGestureTypeCheckedList = remember(disabledGestureType) {
-                        gestureTypes.map { it and disabledGestureType != 0 }
-                    }
-                    MyMultiChooseMenu(
-                        name = "Disabled Gesture Type",
-                        values = gestureTypeStrings,
-                        checkedList = disabledGestureTypeCheckedList,
-                    ) { which, isChecked ->
+                val gestureTypes = remember {
+                    listOf(
+                        GestureType.DRAG,
+                        GestureType.TWO_FINGER_SCALE,
+                        GestureType.ONE_FINGER_SCALE,
+                        GestureType.DOUBLE_TAP_SCALE,
+                    )
+                }
+                val gestureTypeStrings = remember {
+                    gestureTypes.map { GestureType.name(it) }
+                }
+                val disabledGestureType by appSettings.disabledGestureType.collectAsState()
+                val disabledGestureTypeCheckedList = remember(disabledGestureType) {
+                    gestureTypes.map { it and disabledGestureType != 0 }
+                }
+                MultiChooseSettingItem(
+                    title = "Disabled Gesture Type",
+                    values = gestureTypeStrings,
+                    checkedList = disabledGestureTypeCheckedList,
+                    onSelected = { which, isChecked ->
                         val newCheckedList = disabledGestureTypeCheckedList.toMutableList()
                             .apply { set(which, isChecked) }
                         val newDisabledGestureType =
@@ -283,56 +189,55 @@ fun AppSettingsDialog(
                             }.fold(0) { acc, disabledGestureType ->
                                 acc or disabledGestureType
                             }
-                        state.disabledGestureType.value =
-                            newDisabledGestureType.toString()
-//                    onDismissRequest()
+                        appSettings.disabledGestureType.value = newDisabledGestureType
                     }
+                )
 
-                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                DividerSettingItem()
 
-                    SwitchMenu(
-                        "Limit Offset Within Base Visible Rect",
-                        limitOffsetWithinBaseVisibleRect
-                    ) {
-                        state.limitOffsetWithinBaseVisibleRect.value =
-                            !state.limitOffsetWithinBaseVisibleRect.value
-//                    onDismissRequest()
+                SwitchSettingItem(
+                    title = "Limit Offset Within Base Visible Rect",
+                    desc = null,
+                    state = appSettings.limitOffsetWithinBaseVisibleRect,
+                )
+
+                DividerSettingItem()
+
+                SwitchSettingItem(
+                    title = "Read Mode",
+                    desc = null,
+                    state = appSettings.readModeEnabled,
+                )
+                SwitchSettingItem(
+                    title = "Read Mode - Both",
+                    desc = null,
+                    state = appSettings.readModeAcceptedBoth,
+                )
+
+                DividerSettingItem()
+
+                val continuousTransformTypes = remember {
+                    listOf(
+                        ContinuousTransformType.SCALE,
+                        ContinuousTransformType.OFFSET,
+                        ContinuousTransformType.LOCATE,
+                        ContinuousTransformType.GESTURE,
+                        ContinuousTransformType.FLING,
+                    )
+                }
+                val continuousTransformTypeStrings = remember {
+                    continuousTransformTypes.map { ContinuousTransformType.name(it) }
+                }
+                val pausedContinuousTransformType by appSettings.pausedContinuousTransformType.collectAsState()
+                val pausedContinuousTransformTypeCheckedList =
+                    remember(pausedContinuousTransformType) {
+                        continuousTransformTypes.map { it and pausedContinuousTransformType != 0 }
                     }
-
-                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
-
-                    SwitchMenu("Read Mode", readModeEnabled) {
-                        state.readModeEnabled.value = !state.readModeEnabled.value
-//                    onDismissRequest()
-                    }
-                    SwitchMenu("Read Mode - Both", readModeAcceptedBoth) {
-                        state.readModeAcceptedBoth.value = !state.readModeAcceptedBoth.value
-//                    onDismissRequest()
-                    }
-
-                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
-
-                    val continuousTransformTypes = remember {
-                        listOf(
-                            ContinuousTransformType.SCALE,
-                            ContinuousTransformType.OFFSET,
-                            ContinuousTransformType.LOCATE,
-                            ContinuousTransformType.GESTURE,
-                            ContinuousTransformType.FLING,
-                        )
-                    }
-                    val continuousTransformTypeStrings = remember {
-                        continuousTransformTypes.map { ContinuousTransformType.name(it) }
-                    }
-                    val pausedContinuousTransformTypeCheckedList =
-                        remember(pausedContinuousTransformType) {
-                            continuousTransformTypes.map { it and pausedContinuousTransformType != 0 }
-                        }
-                    MyMultiChooseMenu(
-                        name = "Paused Continuous Transform Type",
-                        values = continuousTransformTypeStrings,
-                        checkedList = pausedContinuousTransformTypeCheckedList,
-                    ) { which, isChecked ->
+                MultiChooseSettingItem(
+                    title = "Paused Continuous Transform Type",
+                    values = continuousTransformTypeStrings,
+                    checkedList = pausedContinuousTransformTypeCheckedList,
+                    onSelected = { which, isChecked ->
                         val newCheckedList =
                             pausedContinuousTransformTypeCheckedList.toMutableList()
                                 .apply { set(which, isChecked) }
@@ -342,47 +247,52 @@ fun AppSettingsDialog(
                             }.fold(0) { acc, continuousTransformType ->
                                 acc or continuousTransformType
                             }
-                        state.pausedContinuousTransformType.value =
-                            newContinuousTransformType.toString()
-//                    onDismissRequest()
+                        appSettings.pausedContinuousTransformType.value = newContinuousTransformType
                     }
-                    SwitchMenu("Disabled Background Tiles", disabledBackgroundTiles) {
-                        state.disabledBackgroundTiles.value = !state.disabledBackgroundTiles.value
-//                    onDismissRequest()
-                    }
-                    SwitchMenu("Show Tile Bounds", showTileBounds) {
-                        state.showTileBounds.value = !state.showTileBounds.value
-//                    onDismissRequest()
-                    }
-                    SwitchMenu("Tile Animation", tileAnimation) {
-                        state.tileAnimation.value = !state.tileAnimation.value
-//                    onDismissRequest()
-                    }
+                )
 
-                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                SwitchSettingItem(
+                    title = "Disabled Background Tiles",
+                    desc = null,
+                    state = appSettings.disabledBackgroundTiles,
+                )
+                SwitchSettingItem(
+                    title = "Show Tile Bounds",
+                    desc = null,
+                    state = appSettings.showTileBounds,
+                )
+                SwitchSettingItem(
+                    title = "Tile Animation",
+                    desc = null,
+                    state = appSettings.tileAnimation,
+                )
 
-                    SwitchMenu("Scroll Bar", scrollBarEnabled) {
-                        state.scrollBarEnabled.value = !state.scrollBarEnabled.value
-//                    onDismissRequest()
-                    }
+                DividerSettingItem()
 
-                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                SwitchSettingItem(
+                    title = "Scroll Bar",
+                    desc = null,
+                    state = appSettings.scrollBarEnabled,
+                )
 
-                    val logLevelNames = remember {
-                        listOf(
-                            Logger.VERBOSE,
-                            Logger.DEBUG,
-                            Logger.INFO,
-                            Logger.WARN,
-                            Logger.ERROR,
-                            Logger.ASSERT,
-                        ).map { Logger.levelName(it) }
-                    }
-                    MyDropdownMenu("Log Level", logLevel, logLevelNames) {
-                        state.logLevel.value = it
-//                    onDismissRequest()
-                    }
+                DividerSettingItem()
+
+                val logLevelValues = remember {
+                    listOf(
+                        Logger.VERBOSE,
+                        Logger.DEBUG,
+                        Logger.INFO,
+                        Logger.WARN,
+                        Logger.ERROR,
+                        Logger.ASSERT,
+                    ).map { Logger.levelName(it) }
                 }
+                DropdownSettingItem(
+                    title = "Log Level",
+                    desc = null,
+                    values = logLevelValues,
+                    state = appSettings.logLevel,
+                )
             }
         }
     }
@@ -391,60 +301,152 @@ fun AppSettingsDialog(
 val menuItemHeight = 50.dp
 
 @Composable
-fun SwitchMenu(
-    name: String,
-    value: Boolean,
-    onToggled: (value: Boolean) -> Unit
+fun DividerSettingItem(
+    title: String? = null,
+    enabledState: Flow<Boolean>? = null,
 ) {
+    if (enabledState != null) {
+        val enabled by enabledState.collectAsState(false)
+        if (enabled) return
+    }
+
+    Column(Modifier.fillMaxWidth()) {
+        if (title != null) {
+            Text(
+                text = title,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(
+                    top = 20.dp,
+                    bottom = 10.dp,
+                    start = 20.dp,
+                    end = 20.dp
+                )
+            )
+        }
+        HorizontalDivider(
+            Modifier.fillMaxWidth()
+                .height(0.5.dp)
+                .padding(horizontal = 20.dp)
+        )
+    }
+}
+
+@Composable
+fun SwitchSettingItem(
+    title: String,
+    state: MutableStateFlow<Boolean>,
+    desc: String? = null,
+    onLongClick: (() -> Unit)? = null,
+    enabledState: Flow<Boolean>? = null,
+) {
+    if (enabledState != null) {
+        val enabled by enabledState.collectAsState(false)
+        if (enabled) return
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(menuItemHeight)
-            .clickable {
-                onToggled(!value)
+            .heightIn(min = menuItemHeight)
+            .pointerInput(state) {
+                detectTapGestures(
+                    onTap = { state.value = !state.value },
+                    onLongPress = { onLongClick?.invoke() },
+                )
             }
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = name, modifier = Modifier.weight(1f), fontSize = 12.sp)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 16.sp,
+            )
+            if (desc != null) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = desc,
+                    fontSize = 12.sp,
+                    lineHeight = 14.sp,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        val checked by state.collectAsState()
         Switch(
-            checked = value,
+            checked = checked,
             onCheckedChange = null,
         )
     }
 }
 
 @Composable
-fun MyDropdownMenu(
-    name: String,
-    value: String,
-    values: List<String>,
-    onSelected: (value: String) -> Unit
+fun <T> DropdownSettingItem(
+    title: String,
+    values: List<T>,
+    state: MutableStateFlow<T>,
+    desc: String? = null,
+    enabledState: Flow<Boolean>? = null,
+    onItemClick: (suspend (T) -> Unit)? = null,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    Column(modifier = Modifier.fillMaxWidth()) {
+    if (enabledState != null) {
+        val enabled by enabledState.collectAsState(false)
+        if (enabled) return
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+    Box(modifier = Modifier.fillMaxWidth()) {
+        var expanded by remember { mutableStateOf(false) }
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(menuItemHeight)
-                .clickable {
-                    expanded = !expanded
-                }
-                .padding(horizontal = 20.dp),
+                .heightIn(min = menuItemHeight)
+                .clickable { expanded = true }
+                .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = name, modifier = Modifier.weight(1f), fontSize = 12.sp)
-            Text(text = value, fontSize = 10.sp)
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 16.sp,
+                )
+                if (desc != null) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = desc,
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+            val value by state.collectAsState()
+            Text(text = value.toString(), fontSize = 10.sp)
             Icon(
                 painter = painterResource(Res.drawable.ic_expand_more),
                 contentDescription = "more"
             )
         }
+
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = {
-                expanded = !expanded
-            },
+            modifier = Modifier.align(Alignment.CenterEnd),
+            onDismissRequest = { expanded = false },
         ) {
             values.forEachIndexed { index, value ->
                 if (index > 0) {
@@ -455,12 +457,13 @@ fun MyDropdownMenu(
                     )
                 }
                 DropdownMenuItem(
-                    text = {
-                        Text(text = value)
-                    },
+                    text = { Text(text = value.toString()) },
                     onClick = {
-                        expanded = !expanded
-                        onSelected(value)
+                        state.value = value
+                        expanded = false
+                        coroutineScope.launch {
+                            onItemClick?.invoke(value)
+                        }
                     }
                 )
             }
@@ -469,12 +472,18 @@ fun MyDropdownMenu(
 }
 
 @Composable
-fun MyMultiChooseMenu(
-    name: String,
+fun MultiChooseSettingItem(
+    title: String,
     values: List<String>,
     checkedList: List<Boolean>,
-    onSelected: (which: Int, isChecked: Boolean) -> Unit
+    onSelected: (which: Int, isChecked: Boolean) -> Unit,
+    enabledState: Flow<Boolean>? = null,
 ) {
+    if (enabledState != null) {
+        val enabled by enabledState.collectAsState(false)
+        if (enabled) return
+    }
+
     var expanded by remember { mutableStateOf(false) }
     val checkedCount = remember(key1 = checkedList) {
         checkedList.count { it }.toString()
@@ -491,11 +500,13 @@ fun MyMultiChooseMenu(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = name,
+                text = title,
                 modifier = Modifier.weight(1f),
-                fontSize = 12.sp,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 14.sp,
+                lineHeight = 16.sp,
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = checkedCount,

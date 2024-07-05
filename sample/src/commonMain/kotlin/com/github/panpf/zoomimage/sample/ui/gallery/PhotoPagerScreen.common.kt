@@ -63,7 +63,6 @@ import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
 import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
-import com.github.panpf.zoomimage.sample.ui.rememberAppSettingsDialogState
 import com.github.panpf.zoomimage.sample.ui.util.isEmpty
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
@@ -295,10 +294,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     )
                 }
                 if (showSettingsDialog) {
-                    AppSettingsDialog(
-                        my = true,
-                        state = rememberAppSettingsDialogState()
-                    ) {
+                    AppSettingsDialog(my = true) {
                         showSettingsDialog = false
                     }
                 }

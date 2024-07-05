@@ -164,10 +164,10 @@ fun BaseZoomImageSample(
             zoomable.readMode = readMode
         }
         LaunchedEffect(disabledGestureType) {
-            zoomable.disabledGestureType = disabledGestureType.toInt()
+            zoomable.disabledGestureType = disabledGestureType
         }
         LaunchedEffect(pausedContinuousTransformType) {
-            subsampling.pausedContinuousTransformType = pausedContinuousTransformType.toInt()
+            subsampling.pausedContinuousTransformType = pausedContinuousTransformType
         }
         LaunchedEffect(disabledBackgroundTiles) {
             subsampling.disabledBackgroundTiles = disabledBackgroundTiles

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.sample.ui.examples.view
+package com.github.panpf.zoomimage.sample.ui
 
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
@@ -37,6 +37,7 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
@@ -44,9 +45,9 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import com.github.panpf.zoomimage.zoom.GestureType
 import com.github.panpf.zoomimage.zoom.name
 
-class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
+class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
 
-    private val args by navArgs<ZoomImageViewOptionsDialogFragmentArgs>()
+    private val args by navArgs<AppSettingsDialogFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
 
     override fun onViewCreated(binding: FragmentRecyclerBinding, savedInstanceState: Bundle?) {
@@ -184,10 +185,10 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                 MultiChooseMenu(
                     title = "Disabled Gesture Type",
                     values = gestureTypes.map { GestureType.name(it) },
-                    getCheckedList = { gestureTypes.map { it and appSettings.disabledGestureType.value.toInt() != 0 } },
+                    getCheckedList = { gestureTypes.map { it and appSettings.disabledGestureType.value != 0 } },
                     onSelected = { which, isChecked ->
                         val checkedList =
-                            gestureTypes.map { it and appSettings.disabledGestureType.value.toInt() != 0 }
+                            gestureTypes.map { it and appSettings.disabledGestureType.value != 0 }
                         val newCheckedList =
                             checkedList.toMutableList().apply { set(which, isChecked) }
                         val newDisabledGestureTypeType =
@@ -196,8 +197,7 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                             }.fold(0) { acc, gestureType ->
                                 acc or gestureType
                             }
-                        appSettings.disabledGestureType.value =
-                            newDisabledGestureTypeType.toString()
+                        appSettings.disabledGestureType.value = newDisabledGestureTypeType
                     }
                 )
             )
@@ -239,10 +239,10 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                 MultiChooseMenu(
                     title = "Paused Continuous Transform Type",
                     values = continuousTransformTypes.map { ContinuousTransformType.name(it) },
-                    getCheckedList = { continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value.toInt() != 0 } },
+                    getCheckedList = { continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value != 0 } },
                     onSelected = { which, isChecked ->
                         val checkedList =
-                            continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value.toInt() != 0 }
+                            continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value != 0 }
                         val newCheckedList =
                             checkedList.toMutableList().apply { set(which, isChecked) }
                         val newContinuousTransformType =
@@ -251,8 +251,7 @@ class ZoomImageViewOptionsDialogFragment : BaseBindingDialogFragment<FragmentRec
                             }.fold(0) { acc, continuousTransformType ->
                                 acc or continuousTransformType
                             }
-                        appSettings.pausedContinuousTransformType.value =
-                            newContinuousTransformType.toString()
+                        appSettings.pausedContinuousTransformType.value = newContinuousTransformType
                     }
                 )
             )
