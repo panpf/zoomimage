@@ -9,7 +9,7 @@ import androidx.core.net.toUri
 import java.io.File
 
 
-internal fun sketchUri2CoilModel(context: Context, sketchImageUri: String): Any? {
+actual fun sketchUri2CoilModel(context: Context, sketchImageUri: String): Any? {
     return when {
         sketchImageUri.startsWith("asset://") -> {
             sketchImageUri.replace("asset://", "file://filled/android_asset/").toUri()

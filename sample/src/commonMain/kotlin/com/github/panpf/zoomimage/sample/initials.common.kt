@@ -1,5 +1,7 @@
 package com.github.panpf.zoomimage.sample
 
+import coil3.ImageLoader
+import coil3.util.DebugLogger
 import com.github.panpf.sketch.ComponentRegistry
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
@@ -51,3 +53,8 @@ fun newSketch(context: PlatformContext): Sketch {
 
 expect fun Sketch.Builder.platformSketchInitial(context: PlatformContext)
 expect fun platformSketchComponents(context: PlatformContext): ComponentRegistry?
+
+fun newCoil(context: coil3.PlatformContext): ImageLoader {
+    // TODO support kotlin.resource and compose.resource
+    return ImageLoader.Builder(context).logger(DebugLogger()).build()
+}

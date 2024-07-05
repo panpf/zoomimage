@@ -3,8 +3,10 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -103,17 +105,15 @@ private fun PhotoSquareGrid(
                 key = { "${pagingItems.peek(it)?.originalUrl}:${it}" },
                 contentType = { 1 }
             ) { index ->
-                val item = pagingItems[index]
-                item?.let {
-                    PhotoGridItem(
-                        index = index,
-                        photo = it,
-                        staggeredGridMode = false,
-                        onClick = { photo, index ->
-                            onClick(pagingItems.itemSnapshotList.items, photo, index)
-                        },
-                    )
-                }
+                val photo = pagingItems[index]!!
+                PhotoGridItem(
+                    index = index,
+                    photo = photo,
+                    modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+                    onClick = { photo1, index1 ->
+                        onClick(pagingItems.itemSnapshotList.items, photo1, index1)
+                    },
+                )
             }
 
             if (pagingItems.itemCount > 0) {
@@ -158,17 +158,25 @@ private fun PhotoStaggeredGrid(
                 key = { "${pagingItems.peek(it)?.originalUrl}:${it}" },
                 contentType = { 1 }
             ) { index ->
-                val item = pagingItems[index]
-                item?.let {
-                    PhotoGridItem(
-                        index = index,
-                        photo = it,
-                        staggeredGridMode = true,
-                        onClick = { photo, index ->
-                            onClick(pagingItems.itemSnapshotList.items, photo, index)
+                val photo = pagingItems[index]!!
+                PhotoGridItem(
+                    index = index,
+                    photo = photo,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .let {
+                            val photoWidth = photo.width ?: 0
+                            val photoHeight = photo.height ?: 0
+                            if (photoWidth > 0 && photoHeight > 0) {
+                                it.aspectRatio(photoWidth.toFloat() / photoHeight)
+                            } else {
+                                it.aspectRatio(1f)
+                            }
                         },
-                    )
-                }
+                    onClick = { photo1, index1 ->
+                        onClick(pagingItems.itemSnapshotList.items, photo1, index1)
+                    },
+                )
             }
 
             if (pagingItems.itemCount > 0) {

@@ -14,6 +14,7 @@ import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.security.SecureRandom
@@ -42,12 +43,12 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
             GlideBuilder().setLogLevel(Log.DEBUG)
         )
 
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.Main) {
             appSettings.viewImageLoader.ignoreFirst().collect {
                 onToggleImageLoader(it)
             }
         }
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.Main) {
             appSettings.composeImageLoader.ignoreFirst().collect {
                 onToggleImageLoader(it)
             }
@@ -59,7 +60,7 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
-        return ImageLoader.Builder(this).logger(DebugLogger()).build()
+        return newCoil(context)
     }
 
     private fun handleSSLHandshake() {

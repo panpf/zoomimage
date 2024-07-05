@@ -3,8 +3,10 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -150,10 +152,11 @@ private fun PhotoSquareGrid(
                 contentType = { 1 }
             ) { index ->
                 val item = photos[index]
+
                 PhotoGridItem(
                     index = index,
                     photo = item,
-                    staggeredGridMode = false,
+                    modifier = Modifier.fillMaxWidth().aspectRatio(1f),
                     onClick = { photo, index1 ->
                         onClick(photos, photo, index1)
                     },
@@ -203,13 +206,23 @@ private fun PhotoStaggeredGrid(
                 key = { "${photos[it].originalUrl}:${it}" },
                 contentType = { 1 }
             ) { index ->
-                val item = photos[index]
+                val photo = photos[index]
                 PhotoGridItem(
                     index = index,
-                    photo = item,
-                    staggeredGridMode = true,
-                    onClick = { photo, index1 ->
-                        onClick(photos, photo, index1)
+                    photo = photo,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .let {
+                            val photoWidth = photo.width ?: 0
+                            val photoHeight = photo.height ?: 0
+                            if (photoWidth > 0 && photoHeight > 0) {
+                                it.aspectRatio(photoWidth.toFloat() / photoHeight)
+                            } else {
+                                it.aspectRatio(1f)
+                            }
+                        },
+                    onClick = { photo1, index1 ->
+                        onClick(photos, photo1, index1)
                     },
                 )
             }
