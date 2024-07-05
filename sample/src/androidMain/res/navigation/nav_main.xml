@@ -209,7 +209,7 @@
 
     <fragment
         android:id="@+id/viewExifOrientationTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.view.ViewExifOrientationTestFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.test.view.ExifOrientationTestFragment" />
     <action
         android:id="@+id/action_global_viewExifOrientationTestFragment"
         app:destination="@id/viewExifOrientationTestFragment"
@@ -253,7 +253,7 @@
 
     <fragment
         android:id="@+id/graphicsLayerFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.compose.GraphicsLayerFragment" />
+        android:name="com.github.panpf.zoomimage.sample.ui.test.GraphicsLayerTestScreen" />
     <action
         android:id="@+id/action_global_graphicsLayerFragment"
         app:destination="@id/graphicsLayerFragment"

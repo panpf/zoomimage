@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -24,7 +26,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 @Composable
 fun ToolbarScaffold(
     title: String,
-    content: @Composable BoxScope.() -> Unit
+    ignoreNavigationBarInsets: Boolean = false,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val navigator = LocalNavigator.current!!
     Column(Modifier.fillMaxSize()) {
@@ -34,9 +37,10 @@ fun ToolbarScaffold(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                 )
-            }, navigationIcon = {
+            },
+            navigationIcon = {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(50.dp)
@@ -45,7 +49,12 @@ fun ToolbarScaffold(
                 )
             }
         )
-        Box(Modifier.fillMaxWidth().weight(1f)) {
+        val insetModifier = if (!ignoreNavigationBarInsets) {
+            Modifier.windowInsetsPadding(NavigationBarDefaults.windowInsets)
+        } else {
+            Modifier
+        }
+        Box(Modifier.fillMaxWidth().weight(1f).then(insetModifier)) {
             content()
         }
     }

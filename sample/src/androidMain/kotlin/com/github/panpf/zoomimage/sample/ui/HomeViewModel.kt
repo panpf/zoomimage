@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.panpf.zoomimage.sample.BuildConfig
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
@@ -112,43 +111,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 navDirections = NavMainDirections.actionGlobalPhotoAlbumViewFragment(ZoomViewType.SubsamplingScaleImageView.name),
                 permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ),
-
-            ListSeparator("Test"),
-            Link(
-                title = "ZoomImage Test",
-                navDirections = NavMainDirections.actionGlobalZoomImageTestFragment(),
-                minSdk = 21
-            ),
-            Link(
-                title = "ZoomImage Exif Orientation Test",
-                navDirections = NavMainDirections.actionGlobalComposeExifOrientationTestFragment(),
-                minSdk = 21
-            ),
-            Link(
-                title = "ZoomImageView Test",
-                navDirections = NavMainDirections.actionGlobalZoomImageViewTestFragment(),
-            ),
-            Link(
-                title = "ZoomImageView Exif Orientation Test",
-                navDirections = NavMainDirections.actionGlobalViewExifOrientationTestFragment(),
-            ),
-            Link(
-                title = "ImageMatrix Test",
-                navDirections = NavMainDirections.actionGlobalImageMatrixFragment(),
-            ),
-            Link(
-                title = "Compose graphicsLayer Test",
-                navDirections = NavMainDirections.actionGlobalGraphicsLayerFragment(),
-                minSdk = 21,
-            ),
-
-            ListSeparator("Other"),
-            Link(
-                title = "v${BuildConfig.VERSION_NAME} · ${BuildConfig.BUILD_TYPE}",
-                navDirections = null,
-            ),
-
-            // TODO ImageSource Test
         )
     }
 }

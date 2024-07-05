@@ -22,7 +22,18 @@ import android.content.res.Resources.Theme
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntSize
 import androidx.core.content.res.ResourcesCompat
+
+@Composable
+actual fun windowSize(): IntSize {
+    val context = LocalContext.current
+    return context.resources.displayMetrics.let { displayMetrics ->
+        IntSize(displayMetrics.widthPixels, displayMetrics.heightPixels)
+    }
+}
 
 internal fun Resources.getDrawableCompat(@DrawableRes id: Int, theme: Theme? = null): Drawable {
     return checkNotNull(ResourcesCompat.getDrawable(this, id, theme)) {

@@ -30,7 +30,7 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
     val colorScheme = MaterialTheme.colorScheme
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-        photoPaletteState = remember { mutableStateOf(PhotoPalette(null, 0xFFFFFF, 0xFFFFFF)) }
+        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.Loading) }
         val glideData =

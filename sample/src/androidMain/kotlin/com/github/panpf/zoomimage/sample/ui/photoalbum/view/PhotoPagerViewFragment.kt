@@ -86,7 +86,7 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
                     PhotoPalette(
                         palette = it.result.simplePalette,
                         primaryColor = resources.getColor(R.color.md_theme_primary),
-                        primaryContainerColor = resources.getColor(R.color.md_theme_primaryContainer)
+                        tertiaryColor = resources.getColor(R.color.md_theme_tertiary)
                     )
                 )
             }

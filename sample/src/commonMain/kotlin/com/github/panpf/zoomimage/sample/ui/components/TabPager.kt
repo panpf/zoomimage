@@ -1,6 +1,7 @@
-package com.github.panpf.zoomimage.sample.ui.common.compose
+package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.github.panpf.zoomimage.sample.util.isMobile
+import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import kotlinx.coroutines.launch
 
 data class PagerItem<T>(
@@ -32,10 +35,8 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
     Column(modifier = Modifier.fillMaxSize()) {
         ScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
+                TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.pagerTabIndicatorOffset3(pagerState, tabPositions),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -57,16 +58,24 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
                 }
             }
         }
-        HorizontalPager(
-            state = pagerState,
-            userScrollEnabled = true,
-            beyondBoundsPageCount = 0,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-        ) { index ->
-            val item = pagerItems[index]
-            item.contentFactory(item.data, index)
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = true,
+                beyondBoundsPageCount = 0,
+                modifier = Modifier.fillMaxSize()
+            ) { index ->
+                val item = pagerItems[index]
+                item.contentFactory(item.data, index)
+            }
+
+            if (!runtimePlatformInstance.isMobile()) {
+                TurnPageIndicator(pagerState)
+            }
         }
     }
 }

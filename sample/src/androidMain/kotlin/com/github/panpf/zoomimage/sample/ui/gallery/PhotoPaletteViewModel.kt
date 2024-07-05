@@ -28,7 +28,7 @@ class PhotoPaletteViewModel(application: Application) : AndroidViewModel(applica
         PhotoPalette(
             palette = null,
             primaryColor = getPrimaryColor(),
-            primaryContainerColor = getPrimaryContainerColor()
+            tertiaryColor = getTertiaryColor()
         )
     )
     val photoPaletteState: StateFlow<PhotoPalette> = _photoPaletteState
@@ -41,7 +41,7 @@ class PhotoPaletteViewModel(application: Application) : AndroidViewModel(applica
         return (getApplication() as Application).resources.getColor(R.color.md_theme_primary)
     }
 
-    private fun getPrimaryContainerColor(): Int {
-        return (getApplication() as Application).resources.getColor(R.color.md_theme_primaryContainer)
+    private fun getTertiaryColor(): Int {
+        return (getApplication() as Application).resources.getColor(R.color.md_theme_tertiary)
     }
 }

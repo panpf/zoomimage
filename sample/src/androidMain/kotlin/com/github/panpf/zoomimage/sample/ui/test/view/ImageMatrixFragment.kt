@@ -10,16 +10,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.toRect
 import androidx.core.view.updateLayoutParams
-import com.github.panpf.sketch.fetch.newAssetUri
+import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.databinding.FragmentTestImageMatrixBinding
+import com.github.panpf.zoomimage.sample.image.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.ui.util.computeImageViewSize
 import com.github.panpf.zoomimage.sample.ui.util.getRotation
 import com.github.panpf.zoomimage.sample.ui.util.getScale
 import com.github.panpf.zoomimage.sample.ui.util.getTranslation
-import com.github.panpf.zoomimage.sample.util.BitmapScaleTransformation
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.util.IntSizeCompat
@@ -35,7 +35,6 @@ import kotlin.math.min
 
 class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBinding>() {
 
-    //    private val matrix = Matrix()
     private val scaleStep = 0.2f
     private val offsetStep = 50
     private val rotateStep = 90
@@ -234,13 +233,8 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
             "container: ${containerSize.toShortString()}, content: ${contentSize.toShortString()}"
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateImage(binding: FragmentTestImageMatrixBinding) {
-        val imageUri = if (horImage) {
-            newAssetUri("sample_elephant.jpg")
-        } else {
-            newAssetUri("sample_cat.jpg")
-        }
+        val imageUri = if (horImage) ResourceImages.longEnd.uri else ResourceImages.longWhale.uri
         binding.imageView.loadImage(imageUri) {
             val resources = requireContext().resources
             val maxSize =

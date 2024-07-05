@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.github.panpf.sketch.LocalPlatformContext
-import com.github.panpf.sketch.util.screenSize
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_expand_more
 import com.github.panpf.zoomimage.sample.ui.util.name
+import com.github.panpf.zoomimage.sample.ui.util.windowSize
 import com.github.panpf.zoomimage.sample.util.RuntimePlatform
 import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
@@ -549,10 +549,10 @@ fun getSettingsDialogHeight(): Dp {
         600.dp
     } else {
         val density = LocalDensity.current
-        val context = LocalPlatformContext.current
+        val windowSize = windowSize()
         remember {
             with(density) {
-                (context.screenSize().height * 0.8f).toInt().toDp()
+                (windowSize.height * 0.8f).toInt().toDp()
             }
         }
     }

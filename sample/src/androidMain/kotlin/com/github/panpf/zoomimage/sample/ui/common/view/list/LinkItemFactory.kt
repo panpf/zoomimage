@@ -38,6 +38,6 @@ class LinkItemFactory : BaseBindingItemFactory<Link, ListItemLinkBinding>(Link::
         absoluteAdapterPosition: Int,
         data: Link
     ) {
-        binding.titleText.text = data.title
+        binding.linkTitleText.text = data.title
     }
 }

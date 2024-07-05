@@ -41,16 +41,10 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun TestPage() {
     val testItems = remember {
-        listOf<TestItem>(
-            // TODO test items
-//            TestItem("AnimatablePlaceholder", AnimatablePlaceholderTestScreen()),
-//            TestItem("Decoder", DecoderTestScreen()),
-//            TestItem("DisplayInsanity", DisplayInsanityTestScreen()),
-//            TestItem("ExifOrientation", ExifOrientationTestScreen()),
-//            TestItem("Fetcher", FetcherTestScreen()),
-//            TestItem("ProgressIndicator", ProgressIndicatorTestScreen()),
-//            TestItem("Transformation", TransformationTestScreen()),
-//            TestItem("Temp", TempTestScreen()),
+        listOf(
+            TestItem("Exif Orientation", ExifOrientationTestScreen()),
+            TestItem("Graphics Layer", GraphicsLayerTestScreen()),
+            // TODO ImageSource Test
         )
     }
     val gridState = rememberLazyGridState()

@@ -8,7 +8,7 @@ fun PhotoPalette(palette: SimplePalette): PhotoPalette {
     return PhotoPalette(
         palette = palette,
         primaryColor = 0xFFFFFF,
-        primaryContainerColor = 0xFFFFFF
+        tertiaryColor = 0xFFFFFF
     )
 }
 
@@ -16,7 +16,7 @@ fun PhotoPalette(palette: SimplePalette?, colorScheme: ColorScheme): PhotoPalett
     return PhotoPalette(
         palette = palette,
         primaryColor = colorScheme.primary.toArgb(),
-        primaryContainerColor = colorScheme.primaryContainer.toArgb()
+        tertiaryColor = colorScheme.tertiary.toArgb()
     )
 }
 
@@ -27,11 +27,19 @@ fun PhotoPalette(colorScheme: ColorScheme): PhotoPalette {
     )
 }
 
+fun PhotoPalette(primaryColor: Int, tertiaryColor: Int): PhotoPalette {
+    return PhotoPalette(
+        palette = null,
+        primaryColor = primaryColor,
+        tertiaryColor = tertiaryColor,
+    )
+}
 
-data class PhotoPalette(
+
+data class PhotoPalette constructor(
     private val palette: SimplePalette?,
     private val primaryColor: Int,
-    private val primaryContainerColor: Int
+    private val tertiaryColor: Int
 ) {
 
     val containerColor: Color by lazy {
@@ -48,7 +56,7 @@ data class PhotoPalette(
         if (preferredSwatch != null) {
             Color(preferredSwatch.rgb).copy(0.6f)
         } else {
-            Color(primaryContainerColor).copy(0.6f)
+            Color(primaryColor).copy(0.6f)
         }
     }
 
@@ -68,7 +76,7 @@ data class PhotoPalette(
         if (preferredSwatch != null) {
             Color(preferredSwatch.rgb).copy(0.6f)
         } else {
-            Color(primaryColor).copy(0.6f)
+            Color(tertiaryColor).copy(0.6f)
         }
     }
 

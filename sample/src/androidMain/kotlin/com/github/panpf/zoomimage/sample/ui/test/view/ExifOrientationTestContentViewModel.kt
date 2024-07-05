@@ -19,12 +19,12 @@ package com.github.panpf.zoomimage.sample.ui.test.view
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.githb.panpf.zoomimage.images.LocalImages
+import com.githb.panpf.zoomimage.images.ResourceImages
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ExifOrientationTestContentViewModel(private val application: Application) :
+class ExifOrientationTestContentViewModel(application: Application) :
     AndroidViewModel(application) {
 
     private val _showContentState = MutableStateFlow<List<Pair<String, String>>>(emptyList())
@@ -32,7 +32,7 @@ class ExifOrientationTestContentViewModel(private val application: Application) 
 
     init {
         viewModelScope.launch {
-            _showContentState.value = LocalImages.with(application).exifs.map { it.name to it.uri }
+            _showContentState.value = ResourceImages.exifs.map { it.name to it.uri }
         }
     }
 }

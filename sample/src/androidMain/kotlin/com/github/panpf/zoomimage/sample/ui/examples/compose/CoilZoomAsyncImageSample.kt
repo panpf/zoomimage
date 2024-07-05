@@ -28,7 +28,7 @@ fun CoilZoomAsyncImageSample(sketchImageUri: String) {
     val colorScheme = MaterialTheme.colorScheme
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-        photoPaletteState = remember { mutableStateOf(PhotoPalette(null, 0xFFFFFF, 0xFFFFFF)) }
+        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
     ) { contentScale, alignment, state: ZoomState, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         val context = LocalContext.current
