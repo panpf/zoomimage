@@ -21,7 +21,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
-import com.github.panpf.zoomimage.sample.ui.gallery.BaseZoomImageSample
+import com.github.panpf.zoomimage.sample.ui.examples.BaseZoomImageSample
 import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 @OptIn(ExperimentalGlideComposeApi::class)

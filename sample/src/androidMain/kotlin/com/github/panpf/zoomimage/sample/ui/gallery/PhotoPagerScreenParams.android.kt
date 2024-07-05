@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Parcelize
 @Serializable
-actual class PhotoPagerParams actual constructor(
+actual class PhotoPagerScreenParams actual constructor(
     actual val photos: List<Photo>,
     actual val startPosition: Int,
     actual val initialPosition: Int

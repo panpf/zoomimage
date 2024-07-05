@@ -1,22 +1,22 @@
 package com.github.panpf.zoomimage.sample.ui.preview
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.tooling.preview.Preview
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogState
 import com.github.panpf.zoomimage.sample.ui.MyDropdownMenu
 import com.github.panpf.zoomimage.sample.ui.MyMultiChooseMenu
 import com.github.panpf.zoomimage.sample.ui.SwitchMenu
-import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsDialog
-import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsState
 
 
-@Composable
 @Preview
-private fun ZoomImageOptionsDialogPreview() {
+@Composable
+private fun AppSettingsDialogPreview() {
     val state = remember {
-        ZoomImageOptionsState()
+        AppSettingsDialogState()
     }
-    ZoomImageOptionsDialog(my = true, state) {
+    AppSettingsDialog(my = true, state) {
 
     }
 }

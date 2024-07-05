@@ -9,7 +9,7 @@ import com.github.panpf.zoomimage.sample.ui.gridCellsMinSize
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 @Composable
-actual fun Screen.LocalPhotoPage() {
+actual fun Screen.LocalPhotoListPage() {
     val navigator = LocalNavigator.current!!
     val context = LocalPlatformContext.current
     PhotoList(
@@ -35,7 +35,7 @@ actual fun Screen.LocalPhotoPage() {
             currentPageStart + loadedPhotoSize
         },
         onClick = { photos1, _, index ->
-            val params = buildPhotoPagerParams(photos1, index)
+            val params = buildPhotoPagerScreenParams(photos1, index)
             navigator.push(PhotoPagerScreen(params))
         }
     )

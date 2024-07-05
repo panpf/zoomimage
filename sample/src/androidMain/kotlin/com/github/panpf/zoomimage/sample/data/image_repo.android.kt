@@ -20,7 +20,6 @@ import com.github.panpf.sketch.decode.internal.readImageInfoWithBitmapFactoryOrT
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.source.DataSource
 import com.github.panpf.tools4k.coroutines.withToIO
-import com.github.panpf.zoomimage.sample.ComposeResourceImages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.buffer

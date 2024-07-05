@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import com.github.panpf.sketch.fetch.newComposeResourceUri
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
-import com.github.panpf.zoomimage.sample.ui.gallery.SketchZoomAsyncImageSample
+import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
 
 
 @Preview

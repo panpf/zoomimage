@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.panpf.zoomimage.sample.ui.components.Background
+import com.github.panpf.zoomimage.sample.ui.components.rememberTextPainter
 
 @Composable
 fun rememberMimeTypeLogoMap(): Map<String, Painter> {

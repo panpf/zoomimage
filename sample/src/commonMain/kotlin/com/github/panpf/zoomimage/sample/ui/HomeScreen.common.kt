@@ -39,8 +39,8 @@ import com.github.panpf.zoomimage.sample.resources.ic_layout_grid_staggered
 import com.github.panpf.zoomimage.sample.resources.ic_pexels
 import com.github.panpf.zoomimage.sample.resources.ic_phone
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
-import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoPage
-import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoPage
+import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListPage
+import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListPage
 import com.github.panpf.zoomimage.sample.ui.test.TestPage
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
@@ -58,8 +58,8 @@ enum class HomeTab(
     val icon: DrawableResource,
     val content: @Composable Screen.() -> Unit
 ) {
-    LOCAL("Local", Res.drawable.ic_phone, { LocalPhotoPage() }),
-    PEXELS("Pexels", Res.drawable.ic_pexels, { PexelsPhotoPage() }),
+    LOCAL("Local", Res.drawable.ic_phone, { LocalPhotoListPage() }),
+    PEXELS("Pexels", Res.drawable.ic_pexels, { PexelsPhotoListPage() }),
     TEST("Test", Res.drawable.ic_debug, { TestPage() }),
 }
 

@@ -20,7 +20,6 @@ import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
-import com.github.panpf.zoomimage.sample.ui.gallery.BaseZoomImageSample
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 

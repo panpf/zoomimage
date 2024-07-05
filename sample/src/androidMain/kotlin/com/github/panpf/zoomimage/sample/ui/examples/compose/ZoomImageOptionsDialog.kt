@@ -5,14 +5,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsState
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogState
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
-    val state = remember { ZoomImageOptionsState() }
+fun rememberZoomImageOptionsState(): AppSettingsDialogState {
+    val state = remember { AppSettingsDialogState() }
 
     if (!LocalInspectionMode.current) {
         val settingsService = LocalContext.current.appSettings

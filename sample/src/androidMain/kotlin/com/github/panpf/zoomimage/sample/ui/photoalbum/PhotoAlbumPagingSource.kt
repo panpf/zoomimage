@@ -26,7 +26,7 @@ import com.githb.panpf.zoomimage.images.HttpImages
 import com.githb.panpf.zoomimage.images.LocalImages
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.tools4k.coroutines.withToIO
-import com.github.panpf.zoomimage.sample.ComposeResourceImages
+import com.github.panpf.zoomimage.sample.data.ComposeResourceImages
 
 class PhotoAlbumPagingSource(private val context: Context) : PagingSource<Int, Photo2>() {
 

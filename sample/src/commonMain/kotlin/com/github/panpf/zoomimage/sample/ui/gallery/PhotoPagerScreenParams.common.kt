@@ -4,7 +4,7 @@ import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.serialization.Serializable
 
 @Serializable
-expect class PhotoPagerParams {
+expect class PhotoPagerScreenParams {
 
     val photos: List<Photo>
     val startPosition: Int
@@ -17,15 +17,15 @@ expect class PhotoPagerParams {
     )
 }
 
-fun buildPhotoPagerParams(
+fun buildPhotoPagerScreenParams(
     items: List<Photo>, position: Int
-): PhotoPagerParams {
+): PhotoPagerScreenParams {
     val startPosition = (position - 100).coerceAtLeast(0)
     val endPosition = (position + 100).coerceAtMost(items.size - 1)
     val photos = items.asSequence()
         .filterIndexed { index, _ -> index in startPosition..endPosition }
         .toList()
-    return PhotoPagerParams(
+    return PhotoPagerScreenParams(
         photos = photos,
         startPosition = startPosition,
         initialPosition = position

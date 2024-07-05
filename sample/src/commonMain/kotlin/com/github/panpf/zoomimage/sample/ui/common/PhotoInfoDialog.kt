@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.gallery
+package com.github.panpf.zoomimage.sample.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

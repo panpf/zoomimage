@@ -12,9 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -56,7 +56,7 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.painterResource
 
-class ZoomImageOptionsState {
+class AppSettingsDialogState {
     val contentScaleName = MutableStateFlow(ContentScale.Fit.name)
     val alignmentName = MutableStateFlow(Alignment.Center.name)
 
@@ -83,8 +83,8 @@ class ZoomImageOptionsState {
 }
 
 @Composable
-fun rememberZoomImageOptionsState(): ZoomImageOptionsState {
-    val state = remember { ZoomImageOptionsState() }
+fun rememberAppSettingsDialogState(): AppSettingsDialogState {
+    val state = remember { AppSettingsDialogState() }
 
     if (!LocalInspectionMode.current) {
         val settingsService = LocalPlatformContext.current.appSettings
@@ -135,9 +135,9 @@ private fun <T> BindStateAndFlow(state: MutableStateFlow<T>, mmkvData: SettingsS
 }
 
 @Composable
-fun ZoomImageOptionsDialog(
+fun AppSettingsDialog(
     my: Boolean,
-    state: ZoomImageOptionsState,
+    state: AppSettingsDialogState,
     onDismissRequest: () -> Unit
 ) {
     val contentScaleName by state.contentScaleName.collectAsState()
@@ -216,7 +216,7 @@ fun ZoomImageOptionsDialog(
                 }
 
                 if (my) {
-                    Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                     SwitchMenu("Animate Scale", animateScale) {
                         state.animateScale.value = !state.animateScale.value
@@ -288,7 +288,7 @@ fun ZoomImageOptionsDialog(
 //                    onDismissRequest()
                     }
 
-                    Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                     SwitchMenu(
                         "Limit Offset Within Base Visible Rect",
@@ -299,7 +299,7 @@ fun ZoomImageOptionsDialog(
 //                    onDismissRequest()
                     }
 
-                    Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                     SwitchMenu("Read Mode", readModeEnabled) {
                         state.readModeEnabled.value = !state.readModeEnabled.value
@@ -310,7 +310,7 @@ fun ZoomImageOptionsDialog(
 //                    onDismissRequest()
                     }
 
-                    Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                     val continuousTransformTypes = remember {
                         listOf(
@@ -359,14 +359,14 @@ fun ZoomImageOptionsDialog(
 //                    onDismissRequest()
                     }
 
-                    Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                     SwitchMenu("Scroll Bar", scrollBarEnabled) {
                         state.scrollBarEnabled.value = !state.scrollBarEnabled.value
 //                    onDismissRequest()
                     }
 
-                    Divider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
 
                     val logLevelNames = remember {
                         listOf(
@@ -448,7 +448,7 @@ fun MyDropdownMenu(
         ) {
             values.forEachIndexed { index, value ->
                 if (index > 0) {
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 14.dp)
@@ -517,7 +517,7 @@ fun MyMultiChooseMenu(
         ) {
             values.forEachIndexed { index, value ->
                 if (index > 0) {
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 14.dp)

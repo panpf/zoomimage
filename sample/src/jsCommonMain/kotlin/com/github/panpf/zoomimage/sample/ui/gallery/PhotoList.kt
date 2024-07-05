@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.ability.bindPauseLoadWhenScrolling
 import com.github.panpf.zoomimage.sample.appSettings
-import com.github.panpf.zoomimage.sample.ui.common.list.AppendState
+import com.github.panpf.zoomimage.sample.ui.components.AppendState
 import com.github.panpf.zoomimage.sample.ui.components.VerticalScrollbarCompat
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.collectLatest

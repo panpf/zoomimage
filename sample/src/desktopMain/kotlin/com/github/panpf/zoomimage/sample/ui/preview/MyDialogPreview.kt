@@ -5,8 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_gamepad
-import com.github.panpf.zoomimage.sample.ui.widget.MyDialog
-import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.ui.components.MyDialog
+import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import org.jetbrains.compose.resources.painterResource
 
 @Preview

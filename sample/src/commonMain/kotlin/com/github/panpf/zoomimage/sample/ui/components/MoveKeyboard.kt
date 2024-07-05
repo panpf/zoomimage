@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.widget
+package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background

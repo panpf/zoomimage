@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.util
+package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding

@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.gallery
+package com.github.panpf.zoomimage.sample.ui.examples
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable

@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
-import com.github.panpf.zoomimage.sample.ui.gallery.ZoomImageTool
-import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.ui.examples.ZoomImageTool
 
 @Preview
 @Composable

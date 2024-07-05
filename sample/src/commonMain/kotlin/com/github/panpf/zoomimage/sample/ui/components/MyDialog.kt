@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.widget
+package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope

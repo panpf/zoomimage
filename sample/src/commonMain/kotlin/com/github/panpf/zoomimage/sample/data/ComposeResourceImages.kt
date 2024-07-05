@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample
+package com.github.panpf.zoomimage.sample.data
 
 import com.githb.panpf.zoomimage.images.ImageFile
 import com.github.panpf.sketch.fetch.newComposeResourceUri

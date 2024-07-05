@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.gallery
+package com.github.panpf.zoomimage.sample.ui.examples
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -65,15 +65,15 @@ import com.github.panpf.zoomimage.sample.resources.ic_more_vert
 import com.github.panpf.zoomimage.sample.resources.ic_rotate_right
 import com.github.panpf.zoomimage.sample.resources.ic_zoom_in
 import com.github.panpf.zoomimage.sample.resources.ic_zoom_out
+import com.github.panpf.zoomimage.sample.ui.components.MoveKeyboard
+import com.github.panpf.zoomimage.sample.ui.components.MyDialog
+import com.github.panpf.zoomimage.sample.ui.components.MyDialogState
+import com.github.panpf.zoomimage.sample.ui.components.ZoomImageInfo
+import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimap
+import com.github.panpf.zoomimage.sample.ui.components.rememberMoveKeyboardState
+import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
-import com.github.panpf.zoomimage.sample.ui.widget.MoveKeyboard
-import com.github.panpf.zoomimage.sample.ui.widget.MyDialog
-import com.github.panpf.zoomimage.sample.ui.widget.MyDialogState
-import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageInfo
-import com.github.panpf.zoomimage.sample.ui.widget.ZoomImageMinimap
-import com.github.panpf.zoomimage.sample.ui.widget.rememberMoveKeyboardState
-import com.github.panpf.zoomimage.sample.ui.widget.rememberMyDialogState
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ReadMode

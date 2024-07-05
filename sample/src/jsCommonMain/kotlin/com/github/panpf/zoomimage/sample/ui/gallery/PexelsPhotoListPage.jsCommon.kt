@@ -10,7 +10,7 @@ import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsPhoto
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 @Composable
-actual fun Screen.PexelsPhotoPage() {
+actual fun Screen.PexelsPhotoListPage() {
     val navigator = LocalNavigator.current!!
     PhotoList(
         initialPageStart = 1,
@@ -29,7 +29,7 @@ actual fun Screen.PexelsPhotoPage() {
         },
         gridCellsMinSize = 150.dp,
         onClick = { photos1, _, index ->
-            val params = buildPhotoPagerParams(photos1, index)
+            val params = buildPhotoPagerScreenParams(photos1, index)
             navigator.push(PhotoPagerScreen(params))
         }
     )

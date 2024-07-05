@@ -5,6 +5,7 @@ import app.cash.paging.LoadState
 import app.cash.paging.LoadStateError
 import app.cash.paging.LoadStateLoading
 import app.cash.paging.LoadStateNotLoading
+import com.github.panpf.zoomimage.sample.ui.components.AppendState
 
 @Composable
 fun PagingAppendState(loadState: LoadState, onClick: () -> Unit) {

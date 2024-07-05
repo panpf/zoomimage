@@ -59,10 +59,11 @@ import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_settings
 import com.github.panpf.zoomimage.sample.resources.ic_swap_hor
 import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
-import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsDialog
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
-import com.github.panpf.zoomimage.sample.ui.rememberZoomImageOptionsState
+import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
+import com.github.panpf.zoomimage.sample.ui.rememberAppSettingsDialogState
 import com.github.panpf.zoomimage.sample.ui.util.isEmpty
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
@@ -70,7 +71,7 @@ import org.jetbrains.compose.resources.painterResource
 
 expect fun getTopMargin(context: PlatformContext): Int
 
-class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
+class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen() {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
@@ -294,9 +295,9 @@ class PhotoPagerScreen(private val params: PhotoPagerParams) : BaseScreen() {
                     )
                 }
                 if (showSettingsDialog) {
-                    ZoomImageOptionsDialog(
+                    AppSettingsDialog(
                         my = true,
-                        state = rememberZoomImageOptionsState()
+                        state = rememberAppSettingsDialogState()
                     ) {
                         showSettingsDialog = false
                     }

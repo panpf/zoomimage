@@ -28,6 +28,7 @@ import com.github.panpf.sketch.state.rememberIconPainterStateImage
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_image_broken_outline
 import com.github.panpf.zoomimage.sample.resources.ic_image_outline
+import com.github.panpf.zoomimage.sample.ui.common.PhotoInfoDialog
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.rememberMimeTypeLogoMap
 

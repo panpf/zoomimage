@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.common.list
+package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

@@ -4,7 +4,6 @@ import com.githb.panpf.zoomimage.images.HttpImages
 import com.githb.panpf.zoomimage.images.ImageFile
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.zoomimage.sample.ComposeResourceImages
 import java.io.File
 
 actual suspend fun builtinImages(context: PlatformContext): List<ImageFile> {

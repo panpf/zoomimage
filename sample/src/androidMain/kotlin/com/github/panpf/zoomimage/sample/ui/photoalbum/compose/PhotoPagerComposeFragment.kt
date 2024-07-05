@@ -20,7 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
-import com.github.panpf.zoomimage.sample.ui.ZoomImageOptionsDialog
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
 import com.github.panpf.zoomimage.sample.ui.base.compose.BaseAppBarComposeFragment
 import com.github.panpf.zoomimage.sample.ui.examples.compose.ZoomImageType
 import com.github.panpf.zoomimage.sample.ui.examples.compose.rememberZoomImageOptionsState
@@ -97,7 +97,7 @@ class PhotoPagerComposeFragment : BaseAppBarComposeFragment() {
 
         val showingOptionsDialog by optionDialogShowViewModel.showStateFlow.collectAsState(initial = false)
         if (showingOptionsDialog) {
-            ZoomImageOptionsDialog(
+            AppSettingsDialog(
                 my = zoomImageType.my,
                 state = rememberZoomImageOptionsState()
             ) {

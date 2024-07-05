@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.ui.widget
+package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
+import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.formatFileSize
 import com.github.panpf.zoomimage.zoom.toShortString
 import kotlin.math.roundToInt
