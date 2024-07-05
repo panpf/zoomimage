@@ -3,17 +3,19 @@
 package com.github.panpf.zoomimage.sample.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +42,7 @@ import com.github.panpf.zoomimage.sample.resources.ic_layout_grid
 import com.github.panpf.zoomimage.sample.resources.ic_layout_grid_staggered
 import com.github.panpf.zoomimage.sample.resources.ic_pexels
 import com.github.panpf.zoomimage.sample.resources.ic_phone
+import com.github.panpf.zoomimage.sample.resources.ic_settings
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListPage
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListPage
@@ -97,29 +102,11 @@ object HomeScreen : BaseScreen() {
                         homeTabs[pageIndex].content.invoke(this@HomeScreen)
                     }
 
-                    val staggeredGridMode by appSettings.staggeredGridMode.collectAsState()
-                    val staggeredGridModeIcon = if (!staggeredGridMode) {
-                        painterResource(Res.drawable.ic_layout_grid_staggered)
-                    } else {
-                        painterResource(Res.drawable.ic_layout_grid)
-                    }
-                    IconButton(
-                        onClick = { appSettings.staggeredGridMode.value = !staggeredGridMode },
+                    BottomToolbar(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(20.dp)
-                            .size(50.dp),
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = colorScheme.tertiaryContainer,
-                            contentColor = colorScheme.onTertiaryContainer,
-                        )
-                    ) {
-                        Icon(
-                            painter = staggeredGridModeIcon,
-                            contentDescription = null,
-                            tint = colorScheme.onTertiaryContainer
-                        )
-                    }
+                    )
                 }
 
                 NavigationBar(Modifier.fillMaxWidth()) {
@@ -137,6 +124,51 @@ object HomeScreen : BaseScreen() {
                             onClick = { coroutineScope.launch { pagerState.scrollToPage(index) } }
                         )
                     }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun BottomToolbar(modifier: Modifier) {
+        val context = LocalPlatformContext.current
+        val appSettings = context.appSettings
+        Row(
+            modifier
+                .background(colorScheme.tertiaryContainer, RoundedCornerShape(50))
+                .padding(horizontal = 10.dp)
+        ) {
+            val staggeredGridMode by appSettings.staggeredGridMode.collectAsState()
+            val staggeredGridModeIcon = if (!staggeredGridMode) {
+                painterResource(Res.drawable.ic_layout_grid_staggered)
+            } else {
+                painterResource(Res.drawable.ic_layout_grid)
+            }
+            IconButton(
+                onClick = { appSettings.staggeredGridMode.value = !staggeredGridMode },
+                modifier = Modifier.size(40.dp),
+            ) {
+                Icon(
+                    painter = staggeredGridModeIcon,
+                    contentDescription = null,
+                    tint = colorScheme.onTertiaryContainer
+                )
+            }
+
+            var showSettingsDialog by remember { mutableStateOf(false) }
+            IconButton(
+                onClick = { showSettingsDialog = true },
+                modifier = Modifier.size(40.dp),
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_settings),
+                    contentDescription = null,
+                    tint = colorScheme.onTertiaryContainer
+                )
+            }
+            if (showSettingsDialog) {
+                AppSettingsDialog(my = true) {
+                    showSettingsDialog = false
                 }
             }
         }

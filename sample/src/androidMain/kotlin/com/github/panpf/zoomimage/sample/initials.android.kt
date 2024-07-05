@@ -4,7 +4,6 @@ import android.os.Build
 import com.github.panpf.sketch.ComponentRegistry
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.LruMemoryCache
 import com.github.panpf.sketch.decode.supportAnimatedGif
 import com.github.panpf.sketch.decode.supportAnimatedWebp
 import com.github.panpf.sketch.decode.supportMovieGif
@@ -18,7 +17,7 @@ fun getMemoryCacheMaxSize(context: PlatformContext): Long {
 }
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
-    memoryCache(LruMemoryCache(maxSize = getMemoryCacheMaxSize(context)))
+
 }
 
 actual fun platformSketchComponents(context: PlatformContext): ComponentRegistry? {

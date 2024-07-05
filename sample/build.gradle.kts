@@ -61,6 +61,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.internal.images)
             implementation(projects.zoomimageCompose)
+            implementation(projects.zoomimageComposeCoil)
             implementation(projects.zoomimageComposeResources)
             implementation(projects.zoomimageComposeSketch)
             implementation(compose.components.resources)
@@ -80,7 +81,6 @@ kotlin {
             implementation(libs.voyager.transitions)
         }
         androidMain.dependencies {
-            implementation(projects.zoomimageComposeCoil)
             implementation(projects.zoomimageComposeGlide)
             implementation(projects.zoomimageViewCoil)
             implementation(projects.zoomimageViewGlide)

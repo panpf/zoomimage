@@ -47,6 +47,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.composeImageLoaders
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_expand_more
 import com.github.panpf.zoomimage.sample.ui.util.name
@@ -80,6 +81,17 @@ fun AppSettingsDialog(
             ) {
                 val appSettings = LocalPlatformContext.current.appSettings
 
+                // TODO Differentiate sources and display different setting items
+
+                DropdownSettingItem(
+                    title = "Image Loader",
+                    desc = null,
+                    values = composeImageLoaders,
+                    state = appSettings.composeImageLoader,
+                )
+
+                DividerSettingItem()
+
                 val contentScaleValues = remember {
                     listOf(
                         ContentScale.Fit,
@@ -92,7 +104,7 @@ fun AppSettingsDialog(
                     ).map { it.name }
                 }
                 DropdownSettingItem(
-                    title = "ContentScale",
+                    title = "Content Scale",
                     desc = null,
                     values = contentScaleValues,
                     state = appSettings.contentScale,

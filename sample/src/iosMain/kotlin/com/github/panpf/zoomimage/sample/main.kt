@@ -14,4 +14,5 @@ fun MainViewController(): UIViewController {
 
 private fun initials() {
     SingletonSketch.setSafe { newSketch(it) }
+    cleanImageLoaderMemoryCache()
 }

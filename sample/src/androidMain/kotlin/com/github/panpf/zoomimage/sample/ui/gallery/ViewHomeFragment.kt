@@ -23,7 +23,10 @@ import com.github.panpf.assemblyadapter.pager2.ArrayFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentViewHomeBinding
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragment
+import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.test.TestHomeFragment
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 
@@ -53,6 +56,14 @@ class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
             setOnClickListener {
                 appSettings.staggeredGridMode.value = !appSettings.staggeredGridMode.value
             }
+        }
+
+        binding.settings.setOnClickListener {
+            AppSettingsDialogFragment().apply {
+                arguments = AppSettingsDialogFragmentArgs(
+                    zoomViewType = ZoomViewType.SketchZoomImageView.name,
+                ).toBundle()
+            }.show(childFragmentManager, null)
         }
 
         binding.composePageIconLayout.setOnClickListener {

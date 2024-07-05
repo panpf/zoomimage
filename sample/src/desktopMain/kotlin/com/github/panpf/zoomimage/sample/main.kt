@@ -33,4 +33,5 @@ fun main() {
 
 private fun initials() {
     SingletonSketch.setSafe { newSketch(it) }
+    cleanImageLoaderMemoryCache()
 }

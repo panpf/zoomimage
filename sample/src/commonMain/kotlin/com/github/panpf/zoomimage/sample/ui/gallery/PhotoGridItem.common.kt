@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,9 +14,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.github.panpf.sketch.AsyncImage
-import com.github.panpf.sketch.SubcomposeAsyncImage
 import com.github.panpf.sketch.ability.mimeTypeLogo
-import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.sketch.request.ImageResult
@@ -89,40 +86,15 @@ fun PhotoGridItem(
         resizeOnDraw()
         sizeMultiplier(2f)  // To get a clearer thumbnail
     }
-    when (index % 3) {
-        0 -> {
-            AsyncImage(
-                request = request,
-                state = imageState,
-                modifier = modifier,
-                contentScale = ContentScale.Crop,
-                contentDescription = "photo",
-            )
-        }
 
-        1 -> {
-            SubcomposeAsyncImage(
-                request = request,
-                state = imageState,
-                modifier = modifier,
-                contentScale = ContentScale.Crop,
-                contentDescription = "photo",
-            )
-        }
-
-        else -> {
-            Image(
-                painter = rememberAsyncImagePainter(
-                    request = request,
-                    state = imageState,
-                    contentScale = ContentScale.Crop
-                ),
-                modifier = modifier,
-                contentScale = ContentScale.Crop,
-                contentDescription = "photo"
-            )
-        }
-    }
+    // TODO Use the corresponding component according to the image loader configuration
+    AsyncImage(
+        request = request,
+        state = imageState,
+        modifier = modifier,
+        contentScale = ContentScale.Crop,
+        contentDescription = "photo",
+    )
 
     if (photoInfoImageResult != null) {
         PhotoInfoDialog(photoInfoImageResult) {

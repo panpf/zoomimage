@@ -38,6 +38,7 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenuItem
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
+import com.github.panpf.zoomimage.sample.viewImageLoaders
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
@@ -77,6 +78,20 @@ class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBind
     }
 
     private fun buildList(): List<Any> = buildList {
+        // TODO Differentiate sources and display different setting items
+        add(
+            DropdownMenu(
+                title = "Image Loader",
+                values = viewImageLoaders,
+                getValue = { appSettings.viewImageLoader.value },
+                onSelected = { _, value ->
+                    appSettings.viewImageLoader.value = value
+                }
+            )
+        )
+
+        add(MenuDivider())
+
         if (zoomViewType.my) {
             val contentScales = listOf(
                 ContentScaleCompat.Fit,

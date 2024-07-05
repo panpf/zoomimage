@@ -9,3 +9,7 @@ val View.appSettings: AppSettings
     get() = this.context.appSettings
 
 actual fun isDebugMode(): Boolean = BuildConfig.DEBUG
+
+actual val composeImageLoaders: List<String> = listOf("Sketch", "Coil", "Glide")
+
+val viewImageLoaders: List<String> = listOf("Sketch", "Coil", "Glide", "Picasso")

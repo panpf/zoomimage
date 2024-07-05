@@ -35,11 +35,21 @@ val PlatformContext.appSettings: AppSettings
 
 expect fun isDebugMode(): Boolean
 
+expect val composeImageLoaders: List<String>
+
 class AppSettings(val context: PlatformContext) {
 
     // Only for Android
     val composePage by lazy {
         booleanSettingsStateFlow(context, "composePage", true)
+    }
+
+    val composeImageLoader by lazy {
+        stringSettingsStateFlow(context, "composeImageLoader", "Sketch")
+    }
+
+    val viewImageLoader by lazy {
+        stringSettingsStateFlow(context, "viewImageLoader", "Sketch")
     }
 
     val currentPageIndex by lazy {

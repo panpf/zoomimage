@@ -121,6 +121,7 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
             }
             adapter = AssemblyFragmentStateAdapter(
                 fragment = this@PhotoPagerViewFragment,
+                // TODO Use the corresponding component according to the image loader configuration
                 itemFactoryList = listOf(zoomViewType.createPageItemFactory()),
                 initDataList = photoList.map { it.originalUrl }
             )

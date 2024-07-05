@@ -17,4 +17,5 @@ fun main() = onWasmReady {
 
 private fun initials() {
     SingletonSketch.setSafe { newSketch(it) }
+    cleanImageLoaderMemoryCache()
 }

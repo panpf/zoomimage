@@ -123,6 +123,7 @@ abstract class BasePhotoListViewFragment :
     private fun newPagingAdapter(binding: FragmentRecyclerRefreshBinding): PagingDataAdapter<*, *> {
         return AssemblyPagingDataAdapter(
             itemFactoryList = listOf(
+                // TODO Use the corresponding component according to the image loader configuration
                 NewSketchPhotoGridItemFactory()
                     .setOnViewClickListener(R.id.image) { _, _, _, absoluteAdapterPosition, _ ->
                         startPhotoPager(binding, absoluteAdapterPosition)

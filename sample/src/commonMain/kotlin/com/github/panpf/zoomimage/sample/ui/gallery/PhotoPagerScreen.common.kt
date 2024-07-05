@@ -95,6 +95,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
+                    // TODO Use the corresponding component according to the image loader configuration
                     val sketchImageUri = params.photos[index].originalUrl
                     SketchZoomAsyncImageSample(
                         sketchImageUri = sketchImageUri,
@@ -107,6 +108,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
+                    // TODO Use the corresponding component according to the image loader configuration
                     val sketchImageUri = params.photos[index].originalUrl
                     SketchZoomAsyncImageSample(
                         sketchImageUri = sketchImageUri,

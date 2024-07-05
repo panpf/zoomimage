@@ -389,7 +389,11 @@ private fun ButtonPad(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val photoPalette by photoPaletteState
-    Row(Modifier.background(photoPalette.containerColor, RoundedCornerShape(50))) {
+    Row(
+        Modifier
+            .background(photoPalette.containerColor, RoundedCornerShape(50))
+            .padding(horizontal = 10.dp)
+    ) {
         IconButton(
             onClick = {
                 coroutineScope.launch {
