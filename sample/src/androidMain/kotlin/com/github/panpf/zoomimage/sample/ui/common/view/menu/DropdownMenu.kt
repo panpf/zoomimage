@@ -18,6 +18,7 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 
 class DropdownMenu(
     val title: String,
+    val desc: String?,
     val values: List<String>,
     val getValue: () -> String,
     val onSelected: (which: Int, value: String) -> Unit

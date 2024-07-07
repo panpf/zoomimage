@@ -6,7 +6,6 @@ import android.os.Build
 import android.util.Log
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
-import coil3.util.DebugLogger
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.github.panpf.sketch.PlatformContext
@@ -95,12 +94,14 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
         }
     }
 
-    private fun onToggleImageLoader(newImageLoader: String) {
-        Log.d("ZoomImage", "Switch image loader to $newImageLoader")
-        viewImageLoaders.plus(composeImageLoaders).distinct().forEach {
-            if (it != newImageLoader) {
-                when (newImageLoader) {
-                    "Sketch" -> {
+    private fun onToggleImageLoader(newImageLoaderName: String) {
+        Log.d("ZoomImage", "Switch image loader to $newImageLoaderName")
+        val viewImageLoaderNames = viewImageLoaders.asSequence().map { it.name }
+        val composeImageLoaderNames = composeImageLoaders.asSequence().map { it.name }
+        viewImageLoaderNames.plus(composeImageLoaderNames).distinct().forEach { imageLoaderName ->
+            if (imageLoaderName != newImageLoaderName) {
+                when (imageLoaderName) {
+                    "Sketch", "Basic" -> {
                         SingletonSketch.get(this).memoryCache.clear()
                     }
 
@@ -124,9 +125,9 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
                         }
                     }
 
-                    else -> throw IllegalArgumentException("Unknown image loader: $newImageLoader")
+                    else -> throw IllegalArgumentException("Unknown image loader: $newImageLoaderName")
                 }
-                Log.d("ZoomImage", "Clean $it memory cache")
+                Log.d("ZoomImage", "Clean $imageLoaderName memory cache")
             }
         }
     }

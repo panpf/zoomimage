@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.sample.ui.common.view.menu
 import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import com.github.panpf.zoomimage.sample.databinding.ListItemMenuDropdownBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingItemFactory
 
@@ -47,7 +48,10 @@ class DropdownMenuItemFactory(private val activity: Activity) :
         data: DropdownMenu
     ) {
         binding.titleText.text = data.title
+        binding.descText.text = data.desc
         binding.infoText.text = data.getValue()
+
+        binding.descText.isVisible = data.desc != null
     }
 
     private fun showDialog(data: DropdownMenu, after: () -> Unit) {

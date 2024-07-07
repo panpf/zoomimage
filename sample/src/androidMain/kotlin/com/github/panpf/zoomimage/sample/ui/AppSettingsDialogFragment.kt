@@ -20,6 +20,9 @@ import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import android.widget.ImageView.ScaleType.MATRIX
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle.State
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
@@ -38,6 +41,7 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenuItem
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
+import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.sample.viewImageLoaders
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -50,285 +54,36 @@ class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBind
 
     private val args by navArgs<AppSettingsDialogFragmentArgs>()
     private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
+    private val appSettingsViewModel by viewModels<AppSettingsViewModel>()
 
     override fun onViewCreated(binding: FragmentRecyclerBinding, savedInstanceState: Bundle?) {
-        val dataList = buildList()
+        val recyclerAdapter = AssemblyRecyclerAdapter(
+            itemFactoryList = listOf(
+                SwitchMenuItemFactory(),
+                DropdownMenuItemFactory(requireActivity()),
+                MultiChooseMenuItemFactory(requireActivity()),
+                ListSeparatorItemFactory(),
+                MenuDividerItemFactory(),
+            ),
+            initDataList = emptyList<Any>()
+        )
+
         binding.recycler.apply {
-            val screenHeightPixels = context.getDisplayMetrics().heightPixels
-            val menuItemHeight = context.resources.getDimension(R.dimen.menu_item_height)
+            layoutManager = LinearLayoutManager(context)
+            adapter = recyclerAdapter
+        }
+
+        appSettingsViewModel.data.repeatCollectWithLifecycle(viewLifecycleOwner, State.CREATED) { dataList ->
+            recyclerAdapter.submitList(dataList)
+
+            val screenHeightPixels = requireContext().getDisplayMetrics().heightPixels
+            val menuItemHeight = requireContext().resources.getDimension(R.dimen.menu_item_height)
             val dialogMaxHeight = screenHeightPixels * 0.8f
             if (dataList.size * menuItemHeight > dialogMaxHeight) {
-                updateLayoutParams {
+                binding.recycler.updateLayoutParams {
                     height = dialogMaxHeight.toInt()
                 }
             }
-
-            layoutManager = LinearLayoutManager(context)
-            adapter = AssemblyRecyclerAdapter(
-                itemFactoryList = listOf(
-                    SwitchMenuItemFactory(),
-                    DropdownMenuItemFactory(requireActivity()),
-                    MultiChooseMenuItemFactory(requireActivity()),
-                    ListSeparatorItemFactory(),
-                    MenuDividerItemFactory(),
-                ),
-                initDataList = dataList
-            )
-        }
-    }
-
-    private fun buildList(): List<Any> = buildList {
-        // TODO Differentiate sources and display different setting items
-        add(
-            DropdownMenu(
-                title = "Image Loader",
-                values = viewImageLoaders,
-                getValue = { appSettings.viewImageLoader.value },
-                onSelected = { _, value ->
-                    appSettings.viewImageLoader.value = value
-                }
-            )
-        )
-
-        add(MenuDivider())
-
-        if (zoomViewType.my) {
-            val contentScales = listOf(
-                ContentScaleCompat.Fit,
-                ContentScaleCompat.Crop,
-                ContentScaleCompat.Inside,
-                ContentScaleCompat.FillWidth,
-                ContentScaleCompat.FillHeight,
-                ContentScaleCompat.FillBounds,
-                ContentScaleCompat.None,
-            )
-            add(
-                DropdownMenu(
-                    title = "Content Scale",
-                    values = contentScales.map { it.name },
-                    getValue = { appSettings.contentScale.value },
-                    onSelected = { _, value ->
-                        appSettings.contentScale.value = value
-                    }
-                )
-            )
-
-            val alignments = listOf(
-                AlignmentCompat.TopStart,
-                AlignmentCompat.TopCenter,
-                AlignmentCompat.TopEnd,
-                AlignmentCompat.CenterStart,
-                AlignmentCompat.Center,
-                AlignmentCompat.CenterEnd,
-                AlignmentCompat.BottomStart,
-                AlignmentCompat.BottomCenter,
-                AlignmentCompat.BottomEnd,
-            )
-            add(
-                DropdownMenu(
-                    title = "Alignment",
-                    values = alignments.map { it.name },
-                    getValue = { appSettings.alignment.value },
-                    onSelected = { _, value ->
-                        appSettings.alignment.value = value
-                    }
-                )
-            )
-
-            add(MenuDivider())
-
-            add(
-                SwitchMenuFlow(
-                    title = "Animate Scale",
-                    data = appSettings.animateScale,
-                )
-            )
-            add(
-                SwitchMenuFlow(
-                    title = "Rubber Band Scale",
-                    data = appSettings.rubberBandScale,
-                )
-            )
-            add(
-                SwitchMenuFlow(
-                    title = "Three Step Scale",
-                    data = appSettings.threeStepScale,
-                )
-            )
-            add(
-                SwitchMenuFlow(
-                    title = "Slower Scale Animation",
-                    data = appSettings.slowerScaleAnimation,
-                )
-            )
-            val scalesCalculators = listOf("Dynamic", "Fixed")
-            add(
-                DropdownMenu(
-                    title = "Scales Calculator",
-                    values = scalesCalculators,
-                    getValue = { appSettings.scalesCalculator.value },
-                    onSelected = { _, value ->
-                        appSettings.scalesCalculator.value = value
-                    }
-                )
-            )
-            val scalesMultiples = listOf(
-                2.0f.toString(),
-                2.5f.toString(),
-                3.0f.toString(),
-                3.5f.toString(),
-                4.0f.toString(),
-            )
-            add(
-                DropdownMenu(
-                    title = "Scales Multiple",
-                    values = scalesMultiples,
-                    getValue = { appSettings.scalesMultiple.value },
-                    onSelected = { _, value ->
-                        appSettings.scalesMultiple.value = value
-                    }
-                )
-            )
-
-            val gestureTypes = listOf(
-                GestureType.DRAG,
-                GestureType.TWO_FINGER_SCALE,
-                GestureType.ONE_FINGER_SCALE,
-                GestureType.DOUBLE_TAP_SCALE,
-            )
-            add(
-                MultiChooseMenu(
-                    title = "Disabled Gesture Type",
-                    values = gestureTypes.map { GestureType.name(it) },
-                    getCheckedList = { gestureTypes.map { it and appSettings.disabledGestureType.value != 0 } },
-                    onSelected = { which, isChecked ->
-                        val checkedList =
-                            gestureTypes.map { it and appSettings.disabledGestureType.value != 0 }
-                        val newCheckedList =
-                            checkedList.toMutableList().apply { set(which, isChecked) }
-                        val newDisabledGestureTypeType =
-                            newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
-                                if (checked) gestureTypes[index] else null
-                            }.fold(0) { acc, gestureType ->
-                                acc or gestureType
-                            }
-                        appSettings.disabledGestureType.value = newDisabledGestureTypeType
-                    }
-                )
-            )
-
-            add(MenuDivider())
-
-            add(
-                SwitchMenuFlow(
-                    title = "Limit Offset Within Base Visible Rect",
-                    data = appSettings.limitOffsetWithinBaseVisibleRect,
-                )
-            )
-
-            add(MenuDivider())
-
-            add(
-                SwitchMenuFlow(
-                    title = "Read Mode",
-                    data = appSettings.readModeEnabled,
-                )
-            )
-            add(
-                SwitchMenuFlow(
-                    title = "Read Mode - Both",
-                    data = appSettings.readModeAcceptedBoth,
-                )
-            )
-
-            add(MenuDivider())
-
-            val continuousTransformTypes = listOf(
-                ContinuousTransformType.SCALE,
-                ContinuousTransformType.OFFSET,
-                ContinuousTransformType.LOCATE,
-                ContinuousTransformType.GESTURE,
-                ContinuousTransformType.FLING,
-            )
-            add(
-                MultiChooseMenu(
-                    title = "Paused Continuous Transform Type",
-                    values = continuousTransformTypes.map { ContinuousTransformType.name(it) },
-                    getCheckedList = { continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value != 0 } },
-                    onSelected = { which, isChecked ->
-                        val checkedList =
-                            continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value != 0 }
-                        val newCheckedList =
-                            checkedList.toMutableList().apply { set(which, isChecked) }
-                        val newContinuousTransformType =
-                            newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
-                                if (checked) continuousTransformTypes[index] else null
-                            }.fold(0) { acc, continuousTransformType ->
-                                acc or continuousTransformType
-                            }
-                        appSettings.pausedContinuousTransformType.value = newContinuousTransformType
-                    }
-                )
-            )
-            add(
-                SwitchMenuFlow(
-                    title = "Disabled Background Tiles",
-                    data = appSettings.disabledBackgroundTiles,
-                )
-            )
-            add(
-                SwitchMenuFlow(
-                    title = "Show Tile Bounds",
-                    data = appSettings.showTileBounds,
-                )
-            )
-            add(
-                SwitchMenuFlow(
-                    title = "Tile Animation",
-                    data = appSettings.tileAnimation,
-                )
-            )
-
-            add(MenuDivider())
-
-            add(
-                SwitchMenuFlow(
-                    title = "Scroll Bar",
-                    data = appSettings.scrollBarEnabled,
-                )
-            )
-
-            add(MenuDivider())
-
-            add(
-                DropdownMenu(
-                    title = "Log Level",
-                    values = listOf(
-                        Logger.VERBOSE,
-                        Logger.DEBUG,
-                        Logger.INFO,
-                        Logger.WARN,
-                        Logger.ERROR,
-                        Logger.ASSERT,
-                    ).map { Logger.levelName(it) },
-                    getValue = { appSettings.logLevel.value },
-                    onSelected = { _, value ->
-                        appSettings.logLevel.value = value
-                    }
-                )
-            )
-        } else {
-            add(
-                DropdownMenu(
-                    title = "Scale Type",
-                    values = ScaleType.values()
-                        .filter { it != MATRIX }.map { it.name },
-                    getValue = { appSettings.scaleType.value },
-                    onSelected = { _, value ->
-                        appSettings.scaleType.value = value
-                    }
-                )
-            )
         }
     }
 }

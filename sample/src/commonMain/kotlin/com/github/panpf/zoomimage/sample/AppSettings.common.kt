@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.ui.util.name
+import com.github.panpf.zoomimage.sample.util.ImageLoaderSettingItem
 import com.github.panpf.zoomimage.sample.util.ParamLazy
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.intSettingsStateFlow
@@ -35,7 +36,7 @@ val PlatformContext.appSettings: AppSettings
 
 expect fun isDebugMode(): Boolean
 
-expect val composeImageLoaders: List<String>
+expect val composeImageLoaders: List<ImageLoaderSettingItem>
 
 class AppSettings(val context: PlatformContext) {
 
@@ -45,7 +46,7 @@ class AppSettings(val context: PlatformContext) {
     }
 
     val composeImageLoader by lazy {
-        stringSettingsStateFlow(context, "composeImageLoader", "Sketch")
+        stringSettingsStateFlow(context, "composeImageLoader", composeImageLoaders.first().name)
     }
 
     val viewImageLoader by lazy {

@@ -26,6 +26,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,10 +84,17 @@ fun AppSettingsDialog(
 
                 // TODO Differentiate sources and display different setting items
 
+                val imageLoaderValues = remember { composeImageLoaders.map { it.name } }
+                val imageLoaderName by appSettings.composeImageLoader.collectAsState()
+                val imageLoaderDesc by remember {
+                    derivedStateOf {
+                        composeImageLoaders.find { it.name == imageLoaderName }?.desc
+                    }
+                }
                 DropdownSettingItem(
                     title = "Image Loader",
-                    desc = null,
-                    values = composeImageLoaders,
+                    desc = imageLoaderDesc,
+                    values = imageLoaderValues,
                     state = appSettings.composeImageLoader,
                 )
 
