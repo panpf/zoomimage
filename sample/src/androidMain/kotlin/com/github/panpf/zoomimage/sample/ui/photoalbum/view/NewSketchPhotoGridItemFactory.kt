@@ -44,6 +44,7 @@ class NewSketchPhotoGridItemFactory : NewBasePhotoGridItemFactory() {
             resizeOnDraw()
             precision(LongImagePrecisionDecider(Precision.SAME_ASPECT_RATIO))
             scale(LongImageScaleDecider())
+            // TODO long click image info
         }
     }
 }

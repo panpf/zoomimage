@@ -27,6 +27,7 @@ fun CoilPhotoGridItem(
     coil3.compose.AsyncImage(
         model = ImageRequest.Builder(context).apply {
             data(coilModel)
+            // TODO placeholder、error
             crossfade(true)
         }.build(),
         modifier = modifier

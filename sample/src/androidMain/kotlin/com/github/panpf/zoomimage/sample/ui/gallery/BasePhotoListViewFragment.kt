@@ -31,7 +31,12 @@ import com.github.panpf.zoomimage.sample.ui.common.view.list.MyLoadStateAdapter
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.model.PhotoDiffCallback
+import com.github.panpf.zoomimage.sample.ui.photoalbum.view.NewBasePhotoGridItemFactory
+import com.github.panpf.zoomimage.sample.ui.photoalbum.view.NewCoilPhotoGridItemFactory
+import com.github.panpf.zoomimage.sample.ui.photoalbum.view.NewGlidePhotoGridItemFactory
+import com.github.panpf.zoomimage.sample.ui.photoalbum.view.NewPicassoPhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.photoalbum.view.NewSketchPhotoGridItemFactory
+import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -70,15 +75,25 @@ abstract class BasePhotoListViewFragment :
                     }
                     addItemDecoration(itemDecoration)
 
-                    val pagingAdapter = newPagingAdapter(binding)
-                    val loadStateAdapter = MyLoadStateAdapter().apply {
-                        noDisplayLoadStateWhenPagingEmpty(pagingAdapter)
-                    }
-                    adapter = pagingAdapter.withLoadStateFooter(loadStateAdapter)
-
-                    bindRefreshAndAdapter(binding, pagingAdapter)
+                    resetAdapter(binding)
                 }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            appSettings.viewImageLoader.ignoreFirst().collect {
+                resetAdapter(binding)
+            }
+        }
+    }
+
+    private fun resetAdapter(binding: FragmentRecyclerRefreshBinding) {
+        val pagingAdapter = newPagingAdapter(binding)
+        val loadStateAdapter = MyLoadStateAdapter().apply {
+            noDisplayLoadStateWhenPagingEmpty(pagingAdapter)
+        }
+        binding.recycler.adapter = pagingAdapter.withLoadStateFooter(loadStateAdapter)
+
+        bindRefreshAndAdapter(binding, pagingAdapter)
     }
 
     private fun newLayoutManagerAndItemDecoration(staggeredGridMode: Boolean): Pair<RecyclerView.LayoutManager, RecyclerView.ItemDecoration> {
@@ -123,8 +138,7 @@ abstract class BasePhotoListViewFragment :
     private fun newPagingAdapter(binding: FragmentRecyclerRefreshBinding): PagingDataAdapter<*, *> {
         return AssemblyPagingDataAdapter(
             itemFactoryList = listOf(
-                // TODO Use the corresponding component according to the image loader configuration
-                NewSketchPhotoGridItemFactory()
+                newPhotoGridItemFactory()
                     .setOnViewClickListener(R.id.image) { _, _, _, absoluteAdapterPosition, _ ->
                         startPhotoPager(binding, absoluteAdapterPosition)
                     }
@@ -137,6 +151,16 @@ abstract class BasePhotoListViewFragment :
                     submitData(it)
                 }
             }
+        }
+    }
+
+    private fun newPhotoGridItemFactory(): NewBasePhotoGridItemFactory {
+        return when (val viewImageLoader = appSettings.viewImageLoader.value) {
+            "Sketch", "Basic" -> NewSketchPhotoGridItemFactory()
+            "Coil" -> NewCoilPhotoGridItemFactory()
+            "Glide" -> NewGlidePhotoGridItemFactory()
+            "Picasso" -> NewPicassoPhotoGridItemFactory()
+            else -> throw IllegalArgumentException("Unknown viewImageLoader: $viewImageLoader")
         }
     }
 
