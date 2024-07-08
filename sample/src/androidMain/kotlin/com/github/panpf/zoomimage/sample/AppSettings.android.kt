@@ -62,11 +62,6 @@ fun getViewImageLoaderIcon(context: Context, viewImageLoader: String): Drawable 
         "Coil" -> ResourcesCompat.getDrawable(resources, R.drawable.logo_coil, null)!!
         "Glide" -> ResourcesCompat.getDrawable(resources, R.drawable.logo_glide, null)!!
         "Picasso" -> ResourcesCompat.getDrawable(resources, R.drawable.logo_square, null)!!
-            .apply {
-                val color = ResourcesCompat.getColor(resources, R.color.md_theme_onBackground, null)
-                setTint(color)
-            }
-
         "Basic" -> ResourcesCompat.getDrawable(resources, R.drawable.logo_basic, null)!!
         else -> throw IllegalArgumentException("Unsupported composeImageLoader: $viewImageLoader")
     }
