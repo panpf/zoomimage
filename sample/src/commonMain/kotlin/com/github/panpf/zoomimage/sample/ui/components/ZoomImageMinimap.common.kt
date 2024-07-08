@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -29,8 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
-import com.github.panpf.sketch.AsyncImage
-import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
@@ -55,7 +54,6 @@ fun ZoomImageMinimap(
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState,
     modifier: Modifier = Modifier,
-    alignment: Alignment = Alignment.BottomStart,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val contentSize = zoomableState.contentSize.takeIf { it.isNotEmpty() } ?: IntSize.Zero
@@ -72,14 +70,10 @@ fun ZoomImageMinimap(
             val imageSize =
                 subsamplingState.imageInfo?.size?.toPlatform() ?: IntSize.Zero
             val imageModifier = Modifier
-                .align(alignment)
+                .align(Alignment.BottomStart)
                 .size(
-                    width = viewSize.width
-                        .toFloat()
-                        .toDp(),
-                    height = viewSize.height
-                        .toFloat()
-                        .toDp()
+                    width = viewSize.width.toFloat().toDp(),
+                    height = viewSize.height.toFloat().toDp()
                 )
                 .clipToBounds()
                 .drawWithContent {
@@ -129,17 +123,15 @@ fun ZoomImageMinimap(
                     )
                 }
 
-            // TODO Use the corresponding component according to the image loader configuration
-            AsyncImage(
-                request = ComposableImageRequest(imageUri) {
-                    crossfade()
-                },
-                contentDescription = "Minimap",
-                modifier = imageModifier
-            )
+            Box(modifier = imageModifier) {
+                ZoomImageMinimapContent(imageUri)
+            }
         }
     }
 }
+
+@Composable
+expect fun ZoomImageMinimapContent(sketchImageUri: String)
 
 private fun computeViewSize(contentSize: IntSize, containerSize: IntSize): IntSize {
     if (contentSize.isEmpty()) return IntSize.Zero

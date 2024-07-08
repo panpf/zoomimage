@@ -15,13 +15,13 @@ actual val composeImageLoaders: List<ImageLoaderSettingItem> = listOf(
     ImageLoaderSettingItem("Sketch", "List: AsyncImage(Sketch)\nDetail: SketchZoomAsyncImage"),
     ImageLoaderSettingItem("Coil", "List: AsyncImage(Coil)\nDetail: CoilZoomAsyncImage"),
     ImageLoaderSettingItem("Glide", "List: GlideImage\nDetail: GlideZoomAsyncImage"),
-    ImageLoaderSettingItem("Basic", "List: Image + Sketch\nDetail: ZoomAsyncImage"),
+    ImageLoaderSettingItem("Basic", "List: Image+Sketch\nDetail: ZoomImage+Sketch"),
 )
 
 val viewImageLoaders: List<ImageLoaderSettingItem> = listOf(
-    ImageLoaderSettingItem("Sketch", "List: Sketch+ImageView\nDetail: SketchZoomImageView"),
-    ImageLoaderSettingItem("Coil", "List: Coil+ImageView\nDetail: CoilZoomImageView"),
-    ImageLoaderSettingItem("Glide", "List: Glide+ImageView\nDetail: GlideZoomImageView"),
-    ImageLoaderSettingItem("Picasso", "List: Picasso+ImageView\nDetail: PicassoZoomImageView"),
-    ImageLoaderSettingItem("Basic", "List: Sketch+ImageView\nDetail: ZoomImageView"),
+    ImageLoaderSettingItem("Sketch", "List: ImageView+Sketch\nDetail: SketchZoomImageView"),
+    ImageLoaderSettingItem("Coil", "List: ImageView+Coil\nDetail: CoilZoomImageView"),
+    ImageLoaderSettingItem("Glide", "List: ImageView+Glide\nDetail: GlideZoomImageView"),
+    ImageLoaderSettingItem("Picasso", "List: ImageView+Picasso\nDetail: PicassoZoomImageView"),
+    ImageLoaderSettingItem("Basic", "List: ImageView+Sketch\nDetail: ZoomImageView+Sketch"),
 )
