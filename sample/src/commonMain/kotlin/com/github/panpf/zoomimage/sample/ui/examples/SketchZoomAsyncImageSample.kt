@@ -25,7 +25,7 @@ fun SketchZoomAsyncImageSample(
 ) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-        photoPaletteState
+        photoPaletteState = photoPaletteState
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         val imageState = rememberAsyncImageState()
         SketchZoomAsyncImage(

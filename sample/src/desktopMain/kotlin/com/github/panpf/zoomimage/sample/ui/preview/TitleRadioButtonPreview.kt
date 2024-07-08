@@ -12,7 +12,7 @@ import com.github.panpf.zoomimage.sample.ui.components.TitleRadioButton
 
 @Preview
 @Composable
-private fun TitleRadioButtonPreview() {
+fun TitleRadioButtonPreview() {
     Column {
         Row {
             TitleRadioButton(true, title = "横图", onClick = {})

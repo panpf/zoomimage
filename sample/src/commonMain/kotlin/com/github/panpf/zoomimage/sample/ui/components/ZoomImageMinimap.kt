@@ -129,6 +129,7 @@ fun ZoomImageMinimap(
                     )
                 }
 
+            // TODO Use the corresponding component according to the image loader configuration
             AsyncImage(
                 request = ComposableImageRequest(imageUri) {
                     crossfade()

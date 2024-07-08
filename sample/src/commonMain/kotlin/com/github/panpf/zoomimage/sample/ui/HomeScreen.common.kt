@@ -160,6 +160,7 @@ object HomeScreen : BaseScreen() {
                 onClick = { showSettingsDialog = true },
                 modifier = Modifier.size(40.dp),
             ) {
+                // TODO Displays icons for each image loader
                 Icon(
                     painter = painterResource(Res.drawable.ic_settings),
                     contentDescription = null,

@@ -1,9 +1,11 @@
 package com.github.panpf.zoomimage.sample.ui.examples
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.LocalPlatformContext
@@ -27,7 +29,6 @@ fun CoilPhotoGridItem(
     coil3.compose.AsyncImage(
         model = ImageRequest.Builder(context).apply {
             data(coilModel)
-            // TODO placeholder、error
             crossfade(true)
         }.build(),
         modifier = modifier
@@ -42,6 +43,8 @@ fun CoilPhotoGridItem(
 //                    }
                 )
             },
+        placeholder = ColorPainter(MaterialTheme.colorScheme.primaryContainer),
+        error = ColorPainter(MaterialTheme.colorScheme.errorContainer),
         contentScale = ContentScale.Crop,
         contentDescription = "photo",
     )

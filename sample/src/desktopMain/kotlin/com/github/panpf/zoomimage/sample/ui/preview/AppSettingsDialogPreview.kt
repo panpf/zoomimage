@@ -7,7 +7,7 @@ import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
 
 @Preview
 @Composable
-private fun AppSettingsDialogPreview() {
+fun AppSettingsDialogPreview() {
     AppSettingsDialog(my = true) {
 
     }

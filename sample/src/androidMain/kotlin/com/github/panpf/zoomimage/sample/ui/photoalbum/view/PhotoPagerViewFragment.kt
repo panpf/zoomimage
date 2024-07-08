@@ -169,6 +169,7 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
     }
 
     private fun loadBgImage(binding: FragmentPhotoPagerBinding, imageUrl: String) {
+        // TODO Use the corresponding component according to the image loader configuration
         binding.bgImage.loadImage(imageUrl) {
             val screenSize = requireContext().getScreenSize()
             resize(

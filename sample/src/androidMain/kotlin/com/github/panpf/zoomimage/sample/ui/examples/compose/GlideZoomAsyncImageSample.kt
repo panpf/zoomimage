@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,11 +27,13 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun GlideZoomAsyncImageSample(sketchImageUri: String) {
-    val colorScheme = MaterialTheme.colorScheme
+fun GlideZoomAsyncImageSample(
+    sketchImageUri: String,
+    photoPaletteState: MutableState<PhotoPalette>
+) {
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
-        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
+        photoPaletteState = photoPaletteState
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.Loading) }
         val glideData =
@@ -79,6 +82,12 @@ fun GlideZoomAsyncImageSample(sketchImageUri: String) {
 
 @Preview
 @Composable
-private fun CoilZoomAsyncImageSamplePreview() {
-    CoilZoomAsyncImageSample(newResourceUri(R.drawable.im_placeholder))
+private fun GlideZoomAsyncImageSamplePreview() {
+    val colorScheme = MaterialTheme.colorScheme
+    GlideZoomAsyncImageSample(
+        sketchImageUri = newResourceUri(drawableResId = R.drawable.im_placeholder),
+        photoPaletteState = remember {
+            mutableStateOf(PhotoPalette(colorScheme))
+        }
+    )
 }

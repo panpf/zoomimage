@@ -62,7 +62,6 @@ import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
 import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
-import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
 import com.github.panpf.zoomimage.sample.ui.util.isEmpty
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
@@ -95,9 +94,8 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    // TODO Use the corresponding component according to the image loader configuration
                     val sketchImageUri = params.photos[index].originalUrl
-                    SketchZoomAsyncImageSample(
+                    PhotoDetail(
                         sketchImageUri = sketchImageUri,
                         photoPaletteState = photoPaletteState
                     )
@@ -108,9 +106,8 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    // TODO Use the corresponding component according to the image loader configuration
                     val sketchImageUri = params.photos[index].originalUrl
-                    SketchZoomAsyncImageSample(
+                    PhotoDetail(
                         sketchImageUri = sketchImageUri,
                         photoPaletteState = photoPaletteState
                     )
@@ -175,6 +172,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
             }
             val request1 = request
             if (request1 != null) {
+                // TODO Use the corresponding component according to the image loader configuration
                 AsyncImage(
                     request = request1,
                     state = imageState,
