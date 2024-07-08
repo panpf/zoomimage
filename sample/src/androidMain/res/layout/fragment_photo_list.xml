@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/recyclerFragment_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_container_oval_tertiary"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/layoutImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="10dp"
+            app:srcCompat="@drawable/ic_layout_grid"
+            app:tint="@color/md_theme_onBackground" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageLoader"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="10dp"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+            app:srcCompat="@drawable/logo_sketch" />
+    </LinearLayout>
+
+    <com.github.panpf.zoomimage.sample.ui.widget.view.StateView
+        android:id="@+id/state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

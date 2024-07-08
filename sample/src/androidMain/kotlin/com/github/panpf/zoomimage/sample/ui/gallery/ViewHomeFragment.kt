@@ -46,31 +46,6 @@ class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
     override fun onViewCreated(binding: FragmentViewHomeBinding, savedInstanceState: Bundle?) {
         binding.toolbar.subtitle = "View"
 
-        binding.layoutImage.apply {
-            val appSettings = context.appSettings
-            appSettings.staggeredGridMode
-                .repeatCollectWithLifecycle(viewLifecycleOwner, State.STARTED) {
-                    val iconResId =
-                        if (it) R.drawable.ic_layout_grid else R.drawable.ic_layout_grid_staggered
-                    setImageResource(iconResId)
-                }
-            setOnClickListener {
-                appSettings.staggeredGridMode.value = !appSettings.staggeredGridMode.value
-            }
-        }
-
-        binding.imageLoader.apply {
-            setOnClickListener {
-                SwitchImageLoaderDialogFragment().show(childFragmentManager, null)
-            }
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                appSettings.viewImageLoader.collect { viewImageLoaderName ->
-                    setImageDrawable(getViewImageLoaderIcon(requireContext(), viewImageLoaderName))
-                }
-            }
-        }
-
         binding.composePageIconLayout.setOnClickListener {
             appSettings.composePage.value = true
         }

@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
@@ -24,7 +25,9 @@ import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
-import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerRefreshBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoListBinding
+import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
+import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.LoadStateItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.list.MyLoadStateAdapter
@@ -45,7 +48,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 abstract class BasePhotoListViewFragment :
-    BaseBindingFragment<FragmentRecyclerRefreshBinding>() {
+    BaseBindingFragment<FragmentPhotoListBinding>() {
 
     abstract val animatedPlaceholder: Boolean
     abstract val photoPagingFlow: Flow<PagingData<Photo>>
@@ -55,9 +58,34 @@ abstract class BasePhotoListViewFragment :
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(
-        binding: FragmentRecyclerRefreshBinding,
+        binding: FragmentPhotoListBinding,
         savedInstanceState: Bundle?
     ) {
+        binding.layoutImage.apply {
+            val appSettings = context.appSettings
+            appSettings.staggeredGridMode
+                .repeatCollectWithLifecycle(viewLifecycleOwner, State.STARTED) {
+                    val iconResId =
+                        if (it) R.drawable.ic_layout_grid else R.drawable.ic_layout_grid_staggered
+                    setImageResource(iconResId)
+                }
+            setOnClickListener {
+                appSettings.staggeredGridMode.value = !appSettings.staggeredGridMode.value
+            }
+        }
+
+        binding.imageLoader.apply {
+            setOnClickListener {
+                SwitchImageLoaderDialogFragment().show(childFragmentManager, null)
+            }
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                appSettings.viewImageLoader.collect { viewImageLoaderName ->
+                    setImageDrawable(getViewImageLoaderIcon(requireContext(), viewImageLoaderName))
+                }
+            }
+        }
+
         binding.recycler.apply {
             setPadding(0, 0, 0, 80.dp2px)
             clipToPadding = false
@@ -86,7 +114,7 @@ abstract class BasePhotoListViewFragment :
         }
     }
 
-    private fun resetAdapter(binding: FragmentRecyclerRefreshBinding) {
+    private fun resetAdapter(binding: FragmentPhotoListBinding) {
         val pagingAdapter = newPagingAdapter(binding)
         val loadStateAdapter = MyLoadStateAdapter().apply {
             noDisplayLoadStateWhenPagingEmpty(pagingAdapter)
@@ -135,7 +163,7 @@ abstract class BasePhotoListViewFragment :
         return layoutManager to itemDecoration
     }
 
-    private fun newPagingAdapter(binding: FragmentRecyclerRefreshBinding): PagingDataAdapter<*, *> {
+    private fun newPagingAdapter(binding: FragmentPhotoListBinding): PagingDataAdapter<*, *> {
         return AssemblyPagingDataAdapter(
             itemFactoryList = listOf(
                 newPhotoGridItemFactory()
@@ -165,7 +193,7 @@ abstract class BasePhotoListViewFragment :
     }
 
     private fun bindRefreshAndAdapter(
-        binding: FragmentRecyclerRefreshBinding,
+        binding: FragmentPhotoListBinding,
         pagingAdapter: PagingDataAdapter<*, *>
     ) {
         binding.refresh.setOnRefreshListener {
@@ -206,7 +234,7 @@ abstract class BasePhotoListViewFragment :
             }
     }
 
-    private fun startPhotoPager(binding: FragmentRecyclerRefreshBinding, position: Int) {
+    private fun startPhotoPager(binding: FragmentPhotoListBinding, position: Int) {
         val items = binding.recycler
             .adapter!!.asOrThrow<ConcatAdapter>()
             .adapters.first().asOrThrow<AssemblyPagingDataAdapter<Photo>>()

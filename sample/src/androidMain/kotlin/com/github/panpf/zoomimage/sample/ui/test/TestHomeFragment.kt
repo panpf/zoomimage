@@ -12,13 +12,13 @@ import com.github.panpf.assemblyadapter.recycler.divider.AssemblyGridDividerItem
 import com.github.panpf.assemblyadapter.recycler.divider.Divider
 import com.github.panpf.tools4a.dimen.ktx.dp2px
 import com.github.panpf.zoomimage.sample.NavMainDirections
-import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerBinding
+import com.github.panpf.zoomimage.sample.databinding.FragmentTestHomeBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.GridSeparatorItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.view.list.LinkItemFactory
 import com.github.panpf.zoomimage.sample.ui.model.Link
 
-class TestHomeFragment : BaseBindingFragment<FragmentRecyclerBinding>() {
+class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
 
     private var pendingStartLink: Link? = null
     private val permissionLauncher =
@@ -29,7 +29,7 @@ class TestHomeFragment : BaseBindingFragment<FragmentRecyclerBinding>() {
         }
 
     override fun onViewCreated(
-        binding: FragmentRecyclerBinding,
+        binding: FragmentTestHomeBinding,
         savedInstanceState: Bundle?
     ) {
         binding.recycler.apply {
@@ -38,7 +38,6 @@ class TestHomeFragment : BaseBindingFragment<FragmentRecyclerBinding>() {
 
             layoutManager = AssemblyGridLayoutManager.Builder(requireContext(), 2).apply {
                 itemSpanByItemFactory(
-                    ProjectInfoItemFactory::class to ItemSpan.fullSpan(),
                     GridSeparatorItemFactory::class to ItemSpan.fullSpan(),
                 )
             }.build()
@@ -47,7 +46,6 @@ class TestHomeFragment : BaseBindingFragment<FragmentRecyclerBinding>() {
                     LinkItemFactory().setOnItemClickListener { _, _, _, _, data ->
                         startLink(data)
                     },
-                    ProjectInfoItemFactory(),
                     GridSeparatorItemFactory(),
                 ),
                 initDataList = pageList()
@@ -82,7 +80,6 @@ class TestHomeFragment : BaseBindingFragment<FragmentRecyclerBinding>() {
             minSdk = 21,
         ),
         // TODO ImageSource Test
-        "ProjectInfo"
     )
 
     private fun startLink(data: Link) {

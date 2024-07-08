@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,28 +51,25 @@ fun TestPage() {
         ).plus(platformTestItems())
     }
     val gridState = rememberLazyGridState()
-    LazyVerticalGrid(
-        modifier = Modifier.fillMaxSize(),
-        columns = GridCells.Fixed(if (runtimePlatformInstance.isMobile()) 2 else 4),
-        state = gridState,
-        contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 96.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        items(
-            count = testItems.size,
-            key = { testItems[it].title },
-            contentType = { 1 },
-        ) { index ->
-            TestGridItem(testItems[index])
-        }
-        item(
-            key = "ProjectInfo",
-            span = { GridItemSpan(this.maxLineSpan) },
-            contentType = 2
+    Column(modifier = Modifier.fillMaxSize()) {
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            columns = GridCells.Fixed(if (runtimePlatformInstance.isMobile()) 2 else 4),
+            state = gridState,
+            contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 96.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            ProjectInfoItem()
+            items(
+                count = testItems.size,
+                key = { testItems[it].title },
+                contentType = { 1 },
+            ) { index ->
+                TestGridItem(testItems[index])
+            }
         }
+
+        ProjectInfoItem()
     }
 }
 
@@ -107,8 +104,9 @@ fun ProjectInfoItem() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 14.dp, horizontal = 16.dp)
             .clip(RoundedCornerShape(20.dp))
-            .background(colorScheme.primaryContainer)
+            .background(colorScheme.tertiaryContainer)
             .padding(16.dp),
     ) {
         Icon(

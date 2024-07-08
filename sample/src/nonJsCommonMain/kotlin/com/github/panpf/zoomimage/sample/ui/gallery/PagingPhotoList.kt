@@ -80,6 +80,12 @@ fun PagingPhotoList(
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter)
         )
+
+        BottomToolbar(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(20.dp)
+        )
     }
 }
 
