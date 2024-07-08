@@ -52,6 +52,7 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
                 onToggleImageLoader(it)
             }
         }
+        // TODO clean memory cache when compose page switch
     }
 
     override fun createSketch(context: PlatformContext): Sketch {

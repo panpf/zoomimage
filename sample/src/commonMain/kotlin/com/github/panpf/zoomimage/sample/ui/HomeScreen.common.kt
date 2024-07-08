@@ -160,10 +160,10 @@ object HomeScreen : BaseScreen() {
                 )
             }
 
-            var showSettingsDialog by remember { mutableStateOf(false) }
+            var showSwitchImageLoaderDialog by remember { mutableStateOf(false) }
             Box(
                 modifier = Modifier.size(40.dp).clip(CircleShape)
-                    .clickable { showSettingsDialog = true },
+                    .clickable { showSwitchImageLoaderDialog = true },
             ) {
                 val imageLoaderName by appSettings.composeImageLoader.collectAsState()
                 val imageLoaderIcon = getComposeImageLoaderIcon(imageLoaderName)
@@ -174,10 +174,9 @@ object HomeScreen : BaseScreen() {
                     modifier = Modifier.size(24.dp).clip(CircleShape).align(Alignment.Center),
                 )
             }
-            if (showSettingsDialog) {
-                // TODO ImageLoader switch
-                AppSettingsDialog(my = true) {
-                    showSettingsDialog = false
+            if (showSwitchImageLoaderDialog) {
+                SwitchImageLoaderDialog {
+                    showSwitchImageLoaderDialog = false
                 }
             }
         }

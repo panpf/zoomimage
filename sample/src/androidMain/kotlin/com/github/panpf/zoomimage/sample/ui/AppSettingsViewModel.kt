@@ -24,7 +24,6 @@ import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDivider
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
-import com.github.panpf.zoomimage.sample.viewImageLoaders
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
@@ -53,20 +52,6 @@ class AppSettingsViewModel(
 
     private fun buildData(): List<Any> = buildList {
         // TODO Differentiate sources and display different setting items
-        add(
-            DropdownMenu(
-                title = "Image Loader",
-                desc = viewImageLoaders.find { it.name == appSettings.viewImageLoader.value }?.desc,
-                values = viewImageLoaders.map { it.name },
-                getValue = { appSettings.viewImageLoader.value },
-                onSelected = { _, value ->
-                    appSettings.viewImageLoader.value = value
-                }
-            )
-        )
-
-        add(MenuDivider())
-
 //        if (zoomViewType.my) {
 //
 //        } else {

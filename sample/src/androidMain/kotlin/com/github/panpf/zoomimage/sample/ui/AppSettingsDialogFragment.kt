@@ -17,38 +17,23 @@
 package com.github.panpf.zoomimage.sample.ui
 
 import android.os.Bundle
-import android.widget.ImageView.ScaleType
-import android.widget.ImageView.ScaleType.MATRIX
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerBinding
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
 import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenuItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDivider
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDividerItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenu
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenuItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
-import com.github.panpf.zoomimage.sample.viewImageLoaders
-import com.github.panpf.zoomimage.util.Logger
-import com.github.panpf.zoomimage.zoom.AlignmentCompat
-import com.github.panpf.zoomimage.zoom.ContentScaleCompat
-import com.github.panpf.zoomimage.zoom.ContinuousTransformType
-import com.github.panpf.zoomimage.zoom.GestureType
-import com.github.panpf.zoomimage.zoom.name
 
 class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
 
@@ -73,7 +58,10 @@ class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBind
             adapter = recyclerAdapter
         }
 
-        appSettingsViewModel.data.repeatCollectWithLifecycle(viewLifecycleOwner, State.CREATED) { dataList ->
+        appSettingsViewModel.data.repeatCollectWithLifecycle(
+            viewLifecycleOwner,
+            State.CREATED
+        ) { dataList ->
             recyclerAdapter.submitList(dataList)
 
             val screenHeightPixels = requireContext().getDisplayMetrics().heightPixels

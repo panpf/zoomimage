@@ -1,7 +1,9 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -33,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -52,6 +56,7 @@ import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.resize.Precision.SMALLER_SIZE
 import com.github.panpf.sketch.transform.BlurTransformation
 import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
 import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.simplePalette
@@ -60,6 +65,7 @@ import com.github.panpf.zoomimage.sample.resources.ic_settings
 import com.github.panpf.zoomimage.sample.resources.ic_swap_hor
 import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
 import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
+import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
 import com.github.panpf.zoomimage.sample.ui.util.isEmpty
@@ -251,7 +257,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                             color = photoPalette.containerColor,
                             shape = RoundedCornerShape(50)
                         )
-                        .padding(vertical = 20.dp),
+                        .padding(vertical = 14.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     val number by remember {
@@ -279,7 +285,30 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
 
                 Spacer(modifier = Modifier.size(10.dp))
 
-                // TODO ImageLoader switch
+                var showSwitchImageLoaderDialog by remember { mutableStateOf(false) }
+                Box(
+                    modifier = Modifier.size(40.dp)
+                        .clip(CircleShape)
+                        .background(photoPalette.containerColor)
+                        .clickable { showSwitchImageLoaderDialog = true },
+                ) {
+                    val imageLoaderName by appSettings.composeImageLoader.collectAsState()
+                    val imageLoaderIcon = getComposeImageLoaderIcon(imageLoaderName)
+                    Image(
+                        painter = imageLoaderIcon,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(24.dp).clip(CircleShape).align(Alignment.Center),
+                    )
+                }
+                if (showSwitchImageLoaderDialog) {
+                    SwitchImageLoaderDialog {
+                        showSwitchImageLoaderDialog = false
+                    }
+                }
+
+                Spacer(modifier = Modifier.size(10.dp))
+
                 var showSettingsDialog by remember { mutableStateOf(false) }
                 IconButton(
                     onClick = { showSettingsDialog = true },

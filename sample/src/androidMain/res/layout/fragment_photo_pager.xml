@@ -62,14 +62,36 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_circle_tertiary"
                 android:gravity="center"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@id/orientationImage"
                 app:layout_constraintTop_toBottomOf="@id/orientationImage"
                 tools:ignore="RtlHardcoded"
                 tools:text="@string/pager_number_ver" />
+
+            <FrameLayout
+                android:id="@+id/imageLoaderLayout"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_circle_tertiary"
+                app:layout_constraintStart_toStartOf="@id/orientationImage"
+                app:layout_constraintTop_toBottomOf="@id/pageNumberText">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imageLoaderImage"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_circle_tertiary"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="@id/orientationImage"
+                    app:layout_constraintTop_toBottomOf="@id/pageNumberText"
+                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                    app:srcCompat="@drawable/logo_sketch" />
+            </FrameLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/settingsImage"
@@ -79,7 +101,7 @@
                 android:background="@drawable/bg_circle_tertiary"
                 android:padding="8dp"
                 app:layout_constraintStart_toStartOf="@id/orientationImage"
-                app:layout_constraintTop_toBottomOf="@id/pageNumberText"
+                app:layout_constraintTop_toBottomOf="@id/imageLoaderLayout"
                 app:srcCompat="@drawable/ic_settings"
                 app:tint="@android:color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>

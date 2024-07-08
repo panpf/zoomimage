@@ -7,13 +7,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.logo_basic
 import com.github.panpf.zoomimage.sample.resources.logo_coil
 import com.github.panpf.zoomimage.sample.resources.logo_glide
 import com.github.panpf.zoomimage.sample.resources.logo_sketch
 import com.github.panpf.zoomimage.sample.util.ImageLoaderSettingItem
+import com.github.panpf.zoomimage.sample.util.ParamLazy
 import org.jetbrains.compose.resources.painterResource
+
+private val appSettingsLazy = ParamLazy<PlatformContext, AppSettings> { AppSettings(it) }
+
+actual val PlatformContext.appSettings: AppSettings
+    get() = appSettingsLazy.get(this)
 
 val Fragment.appSettings: AppSettings
     get() = this.requireContext().appSettings
@@ -23,10 +30,10 @@ val View.appSettings: AppSettings
 actual fun isDebugMode(): Boolean = BuildConfig.DEBUG
 
 actual val composeImageLoaders: List<ImageLoaderSettingItem> = listOf(
-    ImageLoaderSettingItem("Sketch", "List: AsyncImage(Sketch)\nDetail: SketchZoomAsyncImage"),
-    ImageLoaderSettingItem("Coil", "List: AsyncImage(Coil)\nDetail: CoilZoomAsyncImage"),
+    ImageLoaderSettingItem("Sketch", "List: AsyncImage (Sketch)\nDetail: SketchZoomAsyncImage"),
+    ImageLoaderSettingItem("Coil", "List: AsyncImage (Coil)\nDetail: CoilZoomAsyncImage"),
     ImageLoaderSettingItem("Glide", "List: GlideImage\nDetail: GlideZoomAsyncImage"),
-    ImageLoaderSettingItem("Basic", "List: Image+Sketch\nDetail: ZoomImage+Sketch"),
+    ImageLoaderSettingItem("Basic", "List: Image + Sketch\nDetail: ZoomImage + Sketch"),
 )
 
 @Composable
@@ -41,11 +48,11 @@ actual fun getComposeImageLoaderIcon(composeImageLoader: String): Painter {
 }
 
 val viewImageLoaders: List<ImageLoaderSettingItem> = listOf(
-    ImageLoaderSettingItem("Sketch", "List: ImageView+Sketch\nDetail: SketchZoomImageView"),
-    ImageLoaderSettingItem("Coil", "List: ImageView+Coil\nDetail: CoilZoomImageView"),
-    ImageLoaderSettingItem("Glide", "List: ImageView+Glide\nDetail: GlideZoomImageView"),
-    ImageLoaderSettingItem("Picasso", "List: ImageView+Picasso\nDetail: PicassoZoomImageView"),
-    ImageLoaderSettingItem("Basic", "List: ImageView+Sketch\nDetail: ZoomImageView+Sketch"),
+    ImageLoaderSettingItem("Sketch", "List: ImageView + Sketch\nDetail: SketchZoomImageView"),
+    ImageLoaderSettingItem("Coil", "List: ImageView + Coil\nDetail: CoilZoomImageView"),
+    ImageLoaderSettingItem("Glide", "List: ImageView + Glide\nDetail: GlideZoomImageView"),
+    ImageLoaderSettingItem("Picasso", "List: ImageView + Picasso\nDetail: PicassoZoomImageView"),
+    ImageLoaderSettingItem("Basic", "List: ImageView + Sketch\nDetail: ZoomImageView + Sketch"),
 )
 
 fun getViewImageLoaderIcon(context: Context, viewImageLoader: String): Drawable {

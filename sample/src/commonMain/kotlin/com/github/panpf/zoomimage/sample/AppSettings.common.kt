@@ -23,7 +23,6 @@ import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.ui.util.name
 import com.github.panpf.zoomimage.sample.util.ImageLoaderSettingItem
-import com.github.panpf.zoomimage.sample.util.ParamLazy
 import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.intSettingsStateFlow
 import com.github.panpf.zoomimage.sample.util.stringSettingsStateFlow
@@ -31,10 +30,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 
-private val appSettingsLazy = ParamLazy<PlatformContext, AppSettings> { AppSettings(it) }
-
-val PlatformContext.appSettings: AppSettings
-    get() = appSettingsLazy.get(this)
+expect val PlatformContext.appSettings: AppSettings
 
 expect fun isDebugMode(): Boolean
 

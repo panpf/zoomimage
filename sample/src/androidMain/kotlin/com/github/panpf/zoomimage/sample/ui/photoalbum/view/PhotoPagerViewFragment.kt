@@ -39,11 +39,13 @@ import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoPagerBinding
+import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
 import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.simplePalette
 import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragmentArgs
+import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.BasicZoomImageViewFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.CoilZoomImageViewFragment
@@ -111,8 +113,19 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
             }
         }
 
+        binding.imageLoaderLayout.setOnClickListener {
+            SwitchImageLoaderDialogFragment().show(childFragmentManager, null)
+        }
+
+        binding.imageLoaderImage.apply {
+            viewLifecycleOwner.lifecycleScope.launch {
+                appSettings.viewImageLoader.collect { viewImageLoaderName ->
+                    setImageDrawable(getViewImageLoaderIcon(requireContext(), viewImageLoaderName))
+                }
+            }
+        }
+
         if (zoomViewType != ZoomViewType.SubsamplingScaleImageView) {
-            // TODO ImageLoader switch
             binding.settingsImage.setOnClickListener {
                 AppSettingsDialogFragment().apply {
                     arguments = AppSettingsDialogFragmentArgs(
@@ -173,6 +186,7 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
             listOf(
                 binding.backImage,
                 binding.orientationImage,
+                binding.imageLoaderLayout,
                 binding.settingsImage,
                 binding.pageNumberText
             ).forEach {
