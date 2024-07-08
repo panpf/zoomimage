@@ -5,5 +5,5 @@
     <string name="load_end">THE END</string>
     <string name="load_error">LOAD ERROR</string>
 
-    <string name="pager_number_ver">%d\n·\n%d</string>
+    <string name="pager_number">%d/%d</string>
 </resources>

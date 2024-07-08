@@ -44,41 +44,41 @@
                 app:srcCompat="@drawable/ic_arrow_back"
                 app:tint="@android:color/white" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/orientationImage"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/bg_circle_tertiary"
-                android:padding="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_swap_ver"
-                app:tint="@android:color/white" />
-
             <TextView
                 android:id="@+id/pageNumberText"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
                 android:background="@drawable/bg_circle_tertiary"
                 android:gravity="center"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@id/orientationImage"
-                app:layout_constraintTop_toBottomOf="@id/orientationImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="RtlHardcoded"
-                tools:text="@string/pager_number_ver" />
+                tools:text="@string/pager_number" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/settingsImage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bg_circle_tertiary"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@id/pageNumberText"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_settings"
+                app:tint="@android:color/white" />
 
             <FrameLayout
                 android:id="@+id/imageLoaderLayout"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/bg_circle_tertiary"
-                app:layout_constraintStart_toStartOf="@id/orientationImage"
-                app:layout_constraintTop_toBottomOf="@id/pageNumberText">
+                app:layout_constraintEnd_toStartOf="@id/settingsImage"
+                app:layout_constraintTop_toTopOf="@id/settingsImage">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imageLoaderImage"
@@ -94,15 +94,15 @@
             </FrameLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/settingsImage"
+                android:id="@+id/orientationImage"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/bg_circle_tertiary"
                 android:padding="8dp"
-                app:layout_constraintStart_toStartOf="@id/orientationImage"
-                app:layout_constraintTop_toBottomOf="@id/imageLoaderLayout"
-                app:srcCompat="@drawable/ic_settings"
+                app:layout_constraintEnd_toStartOf="@id/imageLoaderLayout"
+                app:layout_constraintTop_toTopOf="@id/settingsImage"
+                app:srcCompat="@drawable/ic_swap_ver"
                 app:tint="@android:color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

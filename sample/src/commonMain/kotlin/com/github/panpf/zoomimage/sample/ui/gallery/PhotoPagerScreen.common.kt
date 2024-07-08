@@ -5,12 +5,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
@@ -206,7 +206,10 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
         }
         val photoPalette by photoPaletteState
         Box(modifier = Modifier.fillMaxSize().padding(top = toolbarTopMarginDp)) {
-            Column(modifier = Modifier.padding(20.dp)) {
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 val navigator = LocalNavigator.current!!
                 IconButton(
                     onClick = { navigator.pop() },
@@ -221,14 +224,9 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                         modifier = Modifier.size(40.dp).padding(8.dp),
                     )
                 }
-            }
 
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                Spacer(Modifier.weight(1f))
+
                 IconButton(
                     onClick = { appSettings.horizontalPagerLayout.value = !horizontalLayout },
                     colors = IconButtonDefaults.iconButtonColors(
@@ -245,41 +243,6 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                         painter = icon,
                         contentDescription = "orientation",
                         modifier = Modifier.size(40.dp).padding(8.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.size(10.dp))
-
-                Box(
-                    Modifier
-                        .width(40.dp)
-                        .background(
-                            color = photoPalette.containerColor,
-                            shape = RoundedCornerShape(50)
-                        )
-                        .padding(vertical = 14.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val number by remember {
-                        derivedStateOf {
-                            (pagerState.currentPage + 1).coerceAtMost(999)
-                        }
-                    }
-                    val numberCount by remember {
-                        derivedStateOf {
-                            (params.startPosition + params.photos.size).coerceAtMost(999)
-                        }
-                    }
-                    val numberText by remember {
-                        derivedStateOf {
-                            "${number}\n·\n$numberCount"
-                        }
-                    }
-                    Text(
-                        text = numberText,
-                        textAlign = TextAlign.Center,
-                        color = photoPalette.contentColor,
-                        style = TextStyle(lineHeight = 12.sp),
                     )
                 }
 
@@ -327,6 +290,41 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     AppSettingsDialog(my = true) {
                         showSettingsDialog = false
                     }
+                }
+
+                Spacer(modifier = Modifier.size(10.dp))
+
+                Box(
+                    Modifier
+                        .height(40.dp)
+                        .background(
+                            color = photoPalette.containerColor,
+                            shape = RoundedCornerShape(50)
+                        )
+                        .padding(horizontal = 14.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val number by remember {
+                        derivedStateOf {
+                            (pagerState.currentPage + 1).coerceAtMost(999)
+                        }
+                    }
+                    val numberCount by remember {
+                        derivedStateOf {
+                            (params.startPosition + params.photos.size).coerceAtMost(999)
+                        }
+                    }
+                    val numberText by remember {
+                        derivedStateOf {
+                            "${number}/$numberCount"
+                        }
+                    }
+                    Text(
+                        text = numberText,
+                        textAlign = TextAlign.Center,
+                        color = photoPalette.contentColor,
+                        style = TextStyle(lineHeight = 12.sp),
+                    )
                 }
             }
         }

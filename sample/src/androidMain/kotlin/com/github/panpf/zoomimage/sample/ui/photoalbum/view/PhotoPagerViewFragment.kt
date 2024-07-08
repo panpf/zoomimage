@@ -168,7 +168,7 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
         binding.pageNumberText.apply {
             val updateCurrentPageNumber: () -> Unit = {
                 val pageNumber = args.startPosition + binding.pager.currentItem + 1
-                text = "$pageNumber\n·\n${args.totalCount}"
+                text = resources.getString(R.string.pager_number, pageNumber, args.totalCount)
             }
             binding.pager.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
