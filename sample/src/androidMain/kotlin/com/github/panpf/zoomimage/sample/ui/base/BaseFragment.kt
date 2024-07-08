@@ -22,7 +22,7 @@ import android.view.View
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.github.panpf.tools4a.toast.ktx.showLongToast
-import com.github.panpf.zoomimage.sample.ui.theme.getWindowBackgroundColor
+import com.github.panpf.zoomimage.sample.ui.util.getWindowBackgroundColor
 import com.github.panpf.zoomimage.sample.ui.util.isDarkTheme
 import com.google.android.material.internal.EdgeToEdgeUtils
 import com.google.android.material.internal.ViewUtils

@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.ImageLoaderItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.BaseBindingDialogFragment
+import com.github.panpf.zoomimage.sample.ui.common.menu.ImageLoaderItemFactory
 import com.github.panpf.zoomimage.sample.viewImageLoaders
 
 class SwitchImageLoaderDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {

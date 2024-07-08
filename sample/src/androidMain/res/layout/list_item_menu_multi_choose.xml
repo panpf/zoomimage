@@ -19,7 +19,7 @@
         android:maxLines="2"
         android:textSize="14sp"
         android:textStyle="bold"
-        tools:text="显示按下状态显示按" />
+        tools:text="Display pressed state Display pressed" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/infoText"
@@ -32,5 +32,5 @@
         app:drawableEndCompat="@drawable/ic_expand_more"
         app:drawableRightCompat="@drawable/ic_expand_more"
         app:drawableTint="@android:color/secondary_text_light"
-        tools:text="已用96M" />
+        tools:text="96M used" />
 </LinearLayout>

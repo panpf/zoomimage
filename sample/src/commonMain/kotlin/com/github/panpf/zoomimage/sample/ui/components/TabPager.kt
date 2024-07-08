@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -16,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
@@ -38,13 +38,13 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
             indicator = { tabPositions ->
                 TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.pagerTabIndicatorOffset3(pagerState, tabPositions),
-                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         ) {
             pagerItems.forEachIndexed { index, item ->
                 Tab(
                     selected = index == pagerState.currentPage,
+                    unselectedContentColor = Color.Unspecified,
                     onClick = {
                         coroutineScope.launch {
                             pagerState.scrollToPage(index)

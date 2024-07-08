@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <!-- 需要包一层，要不然在 StaggeredGridLayoutManager 里尺寸会有偏差 -->
+    <!-- It needs to be wrapped with one layer, otherwise there will be deviation in the size in StaggeredGridLayoutManager -->
 
     <ImageView
         android:id="@+id/image"

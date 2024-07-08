@@ -26,19 +26,16 @@ import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.FragmentRecyclerBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingDialogFragment
-import com.github.panpf.zoomimage.sample.ui.common.view.list.ListSeparatorItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenuItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDividerItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenuItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuItemFactory
-import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
+import com.github.panpf.zoomimage.sample.ui.base.BaseBindingDialogFragment
+import com.github.panpf.zoomimage.sample.ui.common.list.ListSeparatorItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.menu.DropdownMenuItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.menu.MenuDividerItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.menu.MultiChooseMenuItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.menu.SwitchMenuItemFactory
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 
 class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
 
-    private val args by navArgs<AppSettingsDialogFragmentArgs>()
-    private val zoomViewType by lazy { ZoomViewType.valueOf(args.zoomViewType) }
     private val appSettingsViewModel by viewModels<AppSettingsViewModel>()
 
     override fun onViewCreated(binding: FragmentRecyclerBinding, savedInstanceState: Bundle?) {

@@ -43,7 +43,7 @@
             app:srcCompat="@drawable/logo_sketch" />
     </LinearLayout>
 
-    <com.github.panpf.zoomimage.sample.ui.widget.view.StateView
+    <com.github.panpf.zoomimage.sample.ui.components.StateView
         android:id="@+id/state"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

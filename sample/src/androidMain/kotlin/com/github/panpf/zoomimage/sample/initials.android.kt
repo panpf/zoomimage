@@ -7,14 +7,7 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.decode.supportAnimatedGif
 import com.github.panpf.sketch.decode.supportAnimatedWebp
 import com.github.panpf.sketch.decode.supportMovieGif
-import com.github.panpf.zoomimage.sample.util.getMaxAvailableMemoryCacheBytes
 
-
-fun getMemoryCacheMaxSize(context: PlatformContext): Long {
-    // Four image loaders are integrated, so the memory cache must be divided into four parts.
-    val imageLoaderCount = 4
-    return context.getMaxAvailableMemoryCacheBytes() / imageLoaderCount
-}
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
 

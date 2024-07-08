@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toStartOf="@id/infoText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="显示按下状态显示按" />
+        tools:text="Display pressed state Display pressed" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/descText"
@@ -51,5 +51,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="已用96M" />
+        tools:text="96M used" />
 </androidx.constraintlayout.widget.ConstraintLayout>

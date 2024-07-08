@@ -2,8 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:layout_height="match_parent">
 
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/subsamplingView"
@@ -41,7 +40,7 @@
             tools:text="draw：\nvisible: \nscales: " />
     </LinearLayout>
 
-    <com.github.panpf.zoomimage.sample.ui.widget.view.StateView
+    <com.github.panpf.zoomimage.sample.ui.components.StateView
         android:id="@+id/stateView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

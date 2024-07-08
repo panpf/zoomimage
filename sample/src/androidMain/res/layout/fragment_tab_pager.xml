@@ -12,11 +12,8 @@
         android:background="@null"
         app:tabGravity="center"
         app:tabIndicatorAnimationMode="elastic"
-        app:tabIndicatorColor="?colorPrimary"
         app:tabIndicatorFullWidth="false"
-        app:tabMode="scrollable"
-        app:tabSelectedTextColor="?colorPrimary"
-        app:tabTextColor="?android:textColorPrimary" />
+        app:tabMode="scrollable"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"

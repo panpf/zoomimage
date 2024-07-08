@@ -20,10 +20,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.panpf.zoomimage.sample.appSettings
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.DropdownMenu
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.MenuDivider
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.MultiChooseMenu
-import com.github.panpf.zoomimage.sample.ui.common.view.menu.SwitchMenuFlow
+import com.github.panpf.zoomimage.sample.ui.common.menu.DropdownMenu
+import com.github.panpf.zoomimage.sample.ui.common.menu.MenuDivider
+import com.github.panpf.zoomimage.sample.ui.common.menu.MultiChooseMenu
+import com.github.panpf.zoomimage.sample.ui.common.menu.SwitchMenuFlow
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat

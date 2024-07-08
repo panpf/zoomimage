@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -99,7 +98,7 @@ class TelephotoTestScreen : BaseScreen() {
             """.trimIndent()
             }
         }
-        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        Box(modifier = Modifier.fillMaxSize()) {
             var loading by remember { mutableStateOf(false) }
             var subSamplingImageSource by remember { mutableStateOf<SubSamplingImageSource?>(null) }
             var errorMessage by remember { mutableStateOf<String?>(null) }

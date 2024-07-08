@@ -33,7 +33,6 @@ fun <I, O> Fragment.registerForActivityResult(
     }
 }
 
-@Suppress("UnnecessaryVariable")
 object WithDataActivityResultContracts {
 
     abstract class WithDataActivityResultContract<I, O> : ActivityResultContract<I, O>(),

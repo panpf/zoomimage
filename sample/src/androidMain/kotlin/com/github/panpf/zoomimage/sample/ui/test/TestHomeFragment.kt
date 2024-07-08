@@ -13,9 +13,9 @@ import com.github.panpf.assemblyadapter.recycler.divider.Divider
 import com.github.panpf.tools4a.dimen.ktx.dp2px
 import com.github.panpf.zoomimage.sample.NavMainDirections
 import com.github.panpf.zoomimage.sample.databinding.FragmentTestHomeBinding
-import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.common.view.list.GridSeparatorItemFactory
-import com.github.panpf.zoomimage.sample.ui.common.view.list.LinkItemFactory
+import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.common.list.GridSeparatorItemFactory
+import com.github.panpf.zoomimage.sample.ui.common.list.LinkItemFactory
 import com.github.panpf.zoomimage.sample.ui.model.Link
 
 class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {

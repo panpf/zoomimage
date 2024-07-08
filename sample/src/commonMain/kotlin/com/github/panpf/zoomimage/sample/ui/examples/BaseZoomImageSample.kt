@@ -182,11 +182,7 @@ fun BaseZoomImageSample(
     }
     val infoDialogState = rememberMyDialogState()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         content(
             contentScale,
             alignment,

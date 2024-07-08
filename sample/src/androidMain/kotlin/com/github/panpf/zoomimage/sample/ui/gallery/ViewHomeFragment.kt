@@ -17,25 +17,19 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.Lifecycle.State
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.ArrayFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentViewHomeBinding
-import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
-import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
-import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.test.TestHomeFragment
-import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
-import kotlinx.coroutines.launch
 
 class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
 
     private val fragmentMap = mapOf(
-        "Local" to LocalPhotoListViewFragment(),
-        "Pexels" to PexelsPhotoListViewFragment(),
+        "Local" to LocalPhotoListFragment(),
+        "Pexels" to PexelsPhotoListFragment(),
         "Test" to TestHomeFragment(),
     )
 

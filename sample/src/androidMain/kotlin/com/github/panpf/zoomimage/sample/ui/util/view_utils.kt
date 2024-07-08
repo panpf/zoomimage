@@ -5,9 +5,7 @@ import android.graphics.Matrix
 import android.graphics.Rect
 import android.os.Looper
 import android.view.MotionEvent
-import android.view.View
 import android.widget.ImageView.ScaleType
-import androidx.core.view.ViewCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
