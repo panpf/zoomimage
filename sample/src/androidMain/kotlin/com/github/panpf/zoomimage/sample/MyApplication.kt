@@ -52,7 +52,16 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
                 onToggleImageLoader(it)
             }
         }
-        // TODO clean memory cache when compose page switch
+        GlobalScope.launch(Dispatchers.Main) {
+            appSettings.composePage.ignoreFirst().collect {
+                val newImageLoaderName = if (it) {
+                    appSettings.composeImageLoader.value
+                } else {
+                    appSettings.viewImageLoader.value
+                }
+                onToggleImageLoader(newImageLoaderName)
+            }
+        }
     }
 
     override fun createSketch(context: PlatformContext): Sketch {
