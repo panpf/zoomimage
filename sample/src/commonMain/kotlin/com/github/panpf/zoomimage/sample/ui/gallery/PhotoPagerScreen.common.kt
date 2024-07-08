@@ -279,6 +279,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
 
                 Spacer(modifier = Modifier.size(10.dp))
 
+                // TODO ImageLoader switch
                 var showSettingsDialog by remember { mutableStateOf(false) }
                 IconButton(
                     onClick = { showSettingsDialog = true },

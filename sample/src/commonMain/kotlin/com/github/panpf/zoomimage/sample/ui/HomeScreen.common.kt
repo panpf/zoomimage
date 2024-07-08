@@ -3,7 +3,9 @@
 package com.github.panpf.zoomimage.sample.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,18 +34,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.sample.appSettings
+import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_debug
 import com.github.panpf.zoomimage.sample.resources.ic_layout_grid
 import com.github.panpf.zoomimage.sample.resources.ic_layout_grid_staggered
 import com.github.panpf.zoomimage.sample.resources.ic_pexels
 import com.github.panpf.zoomimage.sample.resources.ic_phone
-import com.github.panpf.zoomimage.sample.resources.ic_settings
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListPage
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListPage
@@ -156,18 +161,21 @@ object HomeScreen : BaseScreen() {
             }
 
             var showSettingsDialog by remember { mutableStateOf(false) }
-            IconButton(
-                onClick = { showSettingsDialog = true },
-                modifier = Modifier.size(40.dp),
+            Box(
+                modifier = Modifier.size(40.dp).clip(CircleShape)
+                    .clickable { showSettingsDialog = true },
             ) {
-                // TODO Displays icons for each image loader
-                Icon(
-                    painter = painterResource(Res.drawable.ic_settings),
+                val imageLoaderName by appSettings.composeImageLoader.collectAsState()
+                val imageLoaderIcon = getComposeImageLoaderIcon(imageLoaderName)
+                Image(
+                    painter = imageLoaderIcon,
                     contentDescription = null,
-                    tint = colorScheme.onTertiaryContainer
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(24.dp).clip(CircleShape).align(Alignment.Center),
                 )
             }
             if (showSettingsDialog) {
+                // TODO ImageLoader switch
                 AppSettingsDialog(my = true) {
                     showSettingsDialog = false
                 }

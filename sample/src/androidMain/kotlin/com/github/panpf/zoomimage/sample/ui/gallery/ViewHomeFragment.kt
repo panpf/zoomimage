@@ -18,17 +18,20 @@ package com.github.panpf.zoomimage.sample.ui.gallery
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle.State
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager2.ArrayFragmentStateAdapter
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentViewHomeBinding
+import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
 import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragmentArgs
 import com.github.panpf.zoomimage.sample.ui.base.view.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.view.ZoomViewType
 import com.github.panpf.zoomimage.sample.ui.test.TestHomeFragment
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
+import kotlinx.coroutines.launch
 
 class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
 
@@ -58,12 +61,21 @@ class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
             }
         }
 
-        binding.settings.setOnClickListener {
-            AppSettingsDialogFragment().apply {
-                arguments = AppSettingsDialogFragmentArgs(
-                    zoomViewType = ZoomViewType.SketchZoomImageView.name,
-                ).toBundle()
-            }.show(childFragmentManager, null)
+        binding.imageLoader.apply {
+            setOnClickListener {
+                // TODO ImageLoader switch
+                AppSettingsDialogFragment().apply {
+                    arguments = AppSettingsDialogFragmentArgs(
+                        zoomViewType = ZoomViewType.SketchZoomImageView.name,
+                    ).toBundle()
+                }.show(childFragmentManager, null)
+            }
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                appSettings.viewImageLoader.collect { viewImageLoaderName ->
+                    setImageDrawable(getViewImageLoaderIcon(requireContext(), viewImageLoaderName))
+                }
+            }
         }
 
         binding.composePageIconLayout.setOnClickListener {

@@ -60,13 +60,13 @@
             app:srcCompat="@drawable/ic_layout_grid"
             app:tint="@color/md_theme_onBackground" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/settings"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageLoader"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="10dp"
-            app:srcCompat="@drawable/ic_settings"
-            app:tint="@color/md_theme_onBackground" />
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+            app:srcCompat="@drawable/logo_sketch" />
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

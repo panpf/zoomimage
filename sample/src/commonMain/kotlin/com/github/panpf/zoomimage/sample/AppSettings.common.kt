@@ -16,7 +16,9 @@
 
 package com.github.panpf.zoomimage.sample
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.zoomimage.sample.ui.util.name
@@ -37,6 +39,9 @@ val PlatformContext.appSettings: AppSettings
 expect fun isDebugMode(): Boolean
 
 expect val composeImageLoaders: List<ImageLoaderSettingItem>
+
+@Composable
+expect fun getComposeImageLoaderIcon(composeImageLoader: String): Painter
 
 class AppSettings(val context: PlatformContext) {
 

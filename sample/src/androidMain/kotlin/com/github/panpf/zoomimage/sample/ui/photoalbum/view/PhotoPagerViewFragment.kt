@@ -112,6 +112,7 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
         }
 
         if (zoomViewType != ZoomViewType.SubsamplingScaleImageView) {
+            // TODO ImageLoader switch
             binding.settingsImage.setOnClickListener {
                 AppSettingsDialogFragment().apply {
                     arguments = AppSettingsDialogFragmentArgs(
