@@ -138,6 +138,12 @@ fun ZoomImage(
                 .subsampling(state.zoomable, state.subsampling)
         )
 
+        // TODO Mouse wheel zoom
+        // TODO Ctrl plus down arrow key to step zoom
+        // TODO Shift plus arrow key to zoom slowly
+        // TODO Arrow key to move, Short press to move, long press to move continuously
+        // TODO Hold the wheel to move
+
         if (scrollBar != null) {
             Box(
                 Modifier
