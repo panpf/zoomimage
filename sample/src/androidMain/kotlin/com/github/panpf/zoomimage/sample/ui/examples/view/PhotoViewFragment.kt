@@ -46,13 +46,6 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
         savedInstanceState: Bundle?
     ) {
         binding.photoView.apply {
-            setOnViewTapListener { _, x, y ->
-                showShortToast("Click (${x.format(2)}x${y.format(2)})")
-            }
-            setOnLongClickListener {
-                showShortToast("Long click")
-                true
-            }
             appSettings.scaleType.collectWithLifecycle(viewLifecycleOwner) {
                 scaleType = ImageView.ScaleType.valueOf(it)
             }

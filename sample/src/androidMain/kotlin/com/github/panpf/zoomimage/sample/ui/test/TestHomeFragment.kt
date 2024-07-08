@@ -71,6 +71,16 @@ class TestHomeFragment : BaseBindingFragment<FragmentRecyclerBinding>() {
             title = "Image Matrix",
             navDirections = NavMainDirections.actionGlobalImageMatrixFragment(),
         ),
+        Link(
+            title = "PhotoView",
+            navDirections = NavMainDirections.actionGlobalPhotoViewTestFragment(),
+            minSdk = 21,
+        ),
+        Link(
+            title = "SubsamplingScaleImageView",
+            navDirections = NavMainDirections.actionGlobalSubsamplingScaleTestFragment(),
+            minSdk = 21,
+        ),
         // TODO ImageSource Test
         "ProjectInfo"
     )

@@ -49,13 +49,6 @@ class SubsamplingViewFragment : BaseBindingFragment<FragmentSubsamplingViewBindi
         savedInstanceState: Bundle?
     ) {
         binding.subsamplingView.apply {
-            setOnClickListener {
-                showShortToast("Click")
-            }
-            setOnLongClickListener {
-                showShortToast("Long click")
-                true
-            }
             setOnStateChangedListener(object : OnStateChangedListener {
                 override fun onScaleChanged(newScale: Float, origin: Int) {
                     updateInfo(binding)

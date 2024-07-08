@@ -38,14 +38,17 @@ import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import org.jetbrains.compose.resources.painterResource
 
+expect fun platformTestItems(): List<TestItem>
+
 @Composable
 fun TestPage() {
     val testItems = remember {
         listOf(
             TestItem("Exif Orientation", ExifOrientationTestScreen()),
             TestItem("Graphics Layer", GraphicsLayerTestScreen()),
+            TestItem("Modifier.zoom()", ModifierZoomTestScreen()),
             // TODO ImageSource Test
-        )
+        ).plus(platformTestItems())
     }
     val gridState = rememberLazyGridState()
     LazyVerticalGrid(
