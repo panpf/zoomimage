@@ -41,9 +41,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
+class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
 
-    private val args by navArgs<ZoomImageViewFragmentArgs>()
+    private val args by navArgs<BasicZoomImageViewFragmentArgs>()
 
     override val sketchImageUri: String
         get() = args.imageUri
@@ -142,8 +142,8 @@ class ZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
             data: String
-        ): Fragment = ZoomImageViewFragment().apply {
-            arguments = ZoomImageViewFragmentArgs(data).toBundle()
+        ): Fragment = BasicZoomImageViewFragment().apply {
+            arguments = BasicZoomImageViewFragmentArgs(data).toBundle()
         }
     }
 }

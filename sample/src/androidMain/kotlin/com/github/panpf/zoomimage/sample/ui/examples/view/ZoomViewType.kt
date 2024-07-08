@@ -17,7 +17,7 @@ enum class ZoomViewType(
     ZoomImageView(
         title = "ZoomImageView",
         createListItemFactory = { SketchPhotoGridItemFactory() },
-        createPageItemFactory = { ZoomImageViewFragment.ItemFactory() },
+        createPageItemFactory = { BasicZoomImageViewFragment.ItemFactory() },
         my = true,
     ),
 

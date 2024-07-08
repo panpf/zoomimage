@@ -60,7 +60,7 @@
 
     <fragment
         android:id="@+id/zoomImageViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.ZoomImageViewFragment">
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.view.BasicZoomImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
