@@ -123,9 +123,6 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(compose.preview) // Only available on Android and desktop platforms
         }
-        jvmCommonMain.dependencies {
-            implementation(libs.telephoto.subsampling)
-        }
         iosMain {
             // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
             // This may be a bug of kmp.
