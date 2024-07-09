@@ -37,7 +37,7 @@ fun newSketch(context: PlatformContext): Sketch {
             }
         }
 
-        // To be able to print the Sketch initialization log
+        // For print the Sketch initialization log
         logger(level = if (appSettings.debugLog.value) Logger.Level.Debug else Logger.Level.Info)
 
         platformSketchInitial(context)
@@ -55,6 +55,10 @@ expect fun Sketch.Builder.platformSketchInitial(context: PlatformContext)
 expect fun platformSketchComponents(context: PlatformContext): ComponentRegistry?
 
 fun newCoil(context: coil3.PlatformContext): ImageLoader {
-    // TODO support kotlin.resource and compose.resource
-    return ImageLoader.Builder(context).logger(DebugLogger()).build()
+    return ImageLoader.Builder(context).apply {
+        platformCoilInitial(context)
+        logger(DebugLogger())
+    }.build()
 }
+
+expect fun ImageLoader.Builder.platformCoilInitial(context: coil3.PlatformContext)

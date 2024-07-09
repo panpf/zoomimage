@@ -69,6 +69,7 @@ kotlin {
             implementation(compose.material3)
 //            implementation(libs.coil.svg)
 //            implementation(libs.coil.gif)
+            implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.contentNegotiation)
             implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.panpf.sketch4.animated)
