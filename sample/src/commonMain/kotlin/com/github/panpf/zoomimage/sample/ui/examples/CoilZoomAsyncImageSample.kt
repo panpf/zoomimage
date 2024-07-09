@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest.Builder
 import coil3.request.crossfade
-import coil3.size.Precision.INEXACT
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -33,7 +32,6 @@ fun CoilZoomAsyncImageSample(
         val request = remember(key1 = sketchImageUri) {
             val model = sketchUri2CoilModel(context, sketchImageUri)
             Builder(context).apply {
-                precision(INEXACT)
                 data(model)
                 crossfade(true)
                 listener(

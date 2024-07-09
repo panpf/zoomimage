@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.toRect
 import androidx.core.view.updateLayoutParams
 import com.githb.panpf.zoomimage.images.ResourceImages
+import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.databinding.FragmentTestImageMatrixBinding
@@ -236,6 +237,7 @@ class ImageMatrixFragment : BaseToolbarBindingFragment<FragmentTestImageMatrixBi
     private fun updateImage(binding: FragmentTestImageMatrixBinding) {
         val imageUri = if (horImage) ResourceImages.longEnd.uri else ResourceImages.longWhale.uri
         binding.imageView.loadImage(imageUri) {
+            memoryCachePolicy(CachePolicy.DISABLED)
             val resources = requireContext().resources
             val maxSize =
                 min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) / 4

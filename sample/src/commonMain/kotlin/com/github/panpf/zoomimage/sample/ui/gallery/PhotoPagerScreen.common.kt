@@ -25,7 +25,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -33,33 +32,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.sketch.cache.CachePolicy.DISABLED
-import com.github.panpf.sketch.rememberAsyncImageState
-import com.github.panpf.sketch.request.ImageRequest
-import com.github.panpf.sketch.request.ImageResult
-import com.github.panpf.sketch.resize.Precision.SMALLER_SIZE
-import com.github.panpf.sketch.transform.BlurTransformation
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
-import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
-import com.github.panpf.zoomimage.sample.image.simplePalette
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_settings
 import com.github.panpf.zoomimage.sample.resources.ic_swap_hor
@@ -68,7 +55,6 @@ import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
-import com.github.panpf.zoomimage.sample.ui.util.isEmpty
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import org.jetbrains.compose.resources.painterResource
@@ -91,7 +77,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
             val uri = params.photos[pagerState.currentPage].listThumbnailUrl
             val colorScheme = MaterialTheme.colorScheme
             val photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
-            PagerBackground(uri, photoPaletteState)
+            PhotoPagerBackground(uri, photoPaletteState)
 
             val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
             if (horizontalLayout) {
@@ -124,68 +110,6 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
 
             if (!runtimePlatformInstance.isMobile()) {
                 TurnPageIndicator(pagerState, photoPaletteState)
-            }
-        }
-    }
-
-    @Composable
-    fun PagerBackground(
-        imageUri: String,
-        photoPaletteState: MutableState<PhotoPalette>,
-    ) {
-        val colorScheme = MaterialTheme.colorScheme
-        val imageState = rememberAsyncImageState()
-        LaunchedEffect(Unit) {
-            snapshotFlow { imageState.result }.collect {
-                if (it is ImageResult.Success) {
-                    photoPaletteState.value =
-                        PhotoPalette(it.simplePalette, colorScheme = colorScheme)
-                }
-            }
-        }
-        var imageSize by remember { mutableStateOf(IntSize.Zero) }
-        Box(
-            modifier = Modifier.fillMaxSize().onSizeChanged {
-                imageSize = IntSize(it.width / 4, it.height / 4)
-            }
-        ) {
-            val context = LocalPlatformContext.current
-            val request by remember(imageUri) {
-                derivedStateOf {
-                    if (imageSize.isEmpty()) {
-                        null
-                    } else {
-                        ImageRequest(context, imageUri) {
-                            resize(
-                                width = imageSize.width,
-                                height = imageSize.height,
-                                precision = SMALLER_SIZE
-                            )
-                            addTransformations(
-                                BlurTransformation(radius = 20, maskColor = 0x63000000)
-                            )
-                            memoryCachePolicy(DISABLED)
-                            resultCachePolicy(DISABLED)
-                            disallowAnimatedImage()
-                            crossfade(alwaysUse = true, durationMillis = 400)
-                            resizeOnDraw()
-                            components {
-                                addDecodeInterceptor(PaletteDecodeInterceptor())
-                            }
-                        }
-                    }
-                }
-            }
-            val request1 = request
-            if (request1 != null) {
-                // TODO Use the corresponding component according to the image loader configuration
-                AsyncImage(
-                    request = request1,
-                    state = imageState,
-                    contentDescription = "Background",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
             }
         }
     }

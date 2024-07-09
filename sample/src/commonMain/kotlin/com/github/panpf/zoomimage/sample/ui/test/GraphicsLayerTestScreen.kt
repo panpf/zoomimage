@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.LocalPlatformContext
+import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ComposableImageRequest
@@ -115,6 +116,7 @@ class GraphicsLayerTestScreen : BaseScreen() {
             }
             val painter =
                 rememberAsyncImagePainter(request = ComposableImageRequest(context, imageUri) {
+                    memoryCachePolicy(CachePolicy.DISABLED)
                     val windowSize = windowSize()
                     val maxSize = min(windowSize.width, windowSize.height) / 4
                     addTransformations(BitmapScaleTransformation(maxSize))
