@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
@@ -44,12 +43,11 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
             pagerItems.forEachIndexed { index, item ->
                 Tab(
                     selected = index == pagerState.currentPage,
-                    unselectedContentColor = Color.Unspecified,
                     onClick = {
                         coroutineScope.launch {
                             pagerState.scrollToPage(index)
                         }
-                    }
+                    },
                 ) {
                     Text(
                         text = item.titleFactory(item.data),
