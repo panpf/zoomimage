@@ -22,10 +22,14 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
+import com.github.panpf.sketch.fetch.ComposeResourceUriFetcher
 import com.github.panpf.zoomimage.PicassoZoomImageView
+import com.github.panpf.zoomimage.picasso.PicassoDataToImageSource
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
+import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
@@ -38,7 +42,9 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
         get() = args.imageUri
 
     override fun createZoomImageView(context: Context): PicassoZoomImageView {
-        return PicassoZoomImageView(context)
+        return PicassoZoomImageView(context).apply {
+            registerDataToImageSource(PicassoComposeResourceToImageSource())
+        }
     }
 
     override fun loadImage(zoomView: PicassoZoomImageView, stateView: StateView) {
@@ -124,6 +130,18 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
             data: String
         ): Fragment = PicassoZoomImageViewFragment().apply {
             arguments = PicassoZoomImageViewFragmentArgs(data).toBundle()
+        }
+    }
+
+    class PicassoComposeResourceToImageSource : PicassoDataToImageSource {
+        override fun dataToImageSource(data: Any): ImageSource? {
+            if (data is Uri
+                && data.scheme.equals(ComposeResourceUriFetcher.SCHEME, ignoreCase = true)
+            ) {
+                val resourcePath = "${data.authority.orEmpty()}${data.path.orEmpty()}"
+                return ComposeResourceImageSource(resourcePath)
+            }
+            return null
         }
     }
 }

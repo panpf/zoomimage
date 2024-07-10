@@ -11,6 +11,7 @@ import com.bumptech.glide.GlideBuilder
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
+import com.github.panpf.zoomimage.sample.image.PicassoComposeResourceRequestHandler
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
@@ -31,9 +32,9 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
         super.onCreate()
         handleSSLHandshake()
 
-        // TODO support compose.resource
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Picasso.setSingletonInstance(Picasso.Builder(this).apply {
+                addRequestHandler(PicassoComposeResourceRequestHandler())
                 loggingEnabled(true)
             }.build())
         }
