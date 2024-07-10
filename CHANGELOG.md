@@ -19,6 +19,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: zoomimage-view-coil and zoomimage-compose-coil modules are upgraded to coil3, and new
   The zoomimage-view-coil2 and zoomimage-compose-coil2 modules continue to support coil2
 * remove: Remove the disallowReuseBitmap parameter of the put() method of TileBitmapCache
+* new: GlideZoomAsyncImage, GlideZoomImageView, and PicassoZoomImageView support extended
+  ImageSource
 
 ## v1.0.2
 

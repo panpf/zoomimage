@@ -48,8 +48,10 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.glide.GlideModelToImageSource
+import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
-import com.github.panpf.zoomimage.glide.newGlideImageSource
+import kotlinx.collections.immutable.ImmutableList
 
 
 /**
@@ -130,6 +132,7 @@ fun GlideZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     state: ZoomState = rememberZoomState(),
+    modelToImageSources: ImmutableList<GlideModelToImageSource>? = null,
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -164,7 +167,15 @@ fun GlideZoomAsyncImage(
         requestBuilderTransform = { requestBuilder ->
             requestBuilderTransform(requestBuilder)
                 .centerInside()
-                .addListener(ResetListener(context, state, requestBuilder, model))
+                .addListener(
+                    ResetListener(
+                        context = context,
+                        state = state,
+                        modelToImageSources = modelToImageSources,
+                        requestBuilder = requestBuilder,
+                        model = model
+                    )
+                )
         },
         modifier = modifier
             .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
@@ -176,6 +187,7 @@ fun GlideZoomAsyncImage(
 private class ResetListener(
     private val context: Context,
     private val state: ZoomState,
+    private val modelToImageSources: ImmutableList<GlideModelToImageSource>?,
     private val requestBuilder: RequestBuilder<Drawable>,
     private val model: Any?,
 ) : RequestListener<Drawable> {
@@ -210,11 +222,16 @@ private class ResetListener(
 
         val imageSource = if (resource != null) {
             state.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
-            newGlideImageSource(context, model).apply {
-                if (this == null) {
-                    state.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
+            val convertors = (modelToImageSources ?: emptyList()).toMutableList()
+                .apply {
+                    add(GlideModelToImageSourceImpl(context))
                 }
+            val imageSource = if (model != null)
+                convertors.firstNotNullOfOrNull { it.dataToImageSource(model) } else null
+            if (imageSource == null) {
+                state.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
             }
+            imageSource
         } else {
             null
         }

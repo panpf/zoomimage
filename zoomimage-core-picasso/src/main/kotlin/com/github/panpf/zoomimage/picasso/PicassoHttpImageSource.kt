@@ -16,12 +16,8 @@
 
 package com.github.panpf.zoomimage.picasso
 
-import android.content.Context
 import android.net.Uri
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.fromAsset
-import com.github.panpf.zoomimage.subsampling.fromContent
-import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Picasso.LoadedFrom
@@ -29,47 +25,9 @@ import com.squareup.picasso.downloader
 import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
 import okhttp3.Response
-import okio.Path.Companion.toOkioPath
 import okio.Source
 import okio.source
-import java.io.File
 import java.io.IOException
-
-fun newPicassoImageSource(context: Context, uri: Uri?): ImageSource? {
-    uri ?: return null
-    return when {
-        uri.scheme == "http" || uri.scheme == "https" -> {
-            PicassoHttpImageSource(Picasso.get(), uri)
-        }
-
-        uri.scheme == "content" -> {
-            ImageSource.fromContent(context, uri)
-        }
-
-        uri.scheme == "file" && uri.pathSegments.firstOrNull() == "android_asset" -> {
-            val assetFileName = uri.pathSegments
-                .takeIf { it.size > 1 }
-                ?.let { it.subList(1, it.size) }
-                ?.joinToString(separator = "/")
-            assetFileName?.let { ImageSource.fromAsset(context, it) }
-        }
-
-        uri.scheme == "file" -> {
-            val filePath = uri.path
-            filePath?.let { ImageSource.fromFile(File(filePath).toOkioPath()) }
-        }
-
-        uri.scheme == "android.resource" -> {
-            val resId = uri.authority?.toIntOrNull()
-            resId?.let { ImageSource.fromResource(context, it) }
-        }
-
-        else -> {
-            null
-        }
-    }
-}
-
 
 class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
 

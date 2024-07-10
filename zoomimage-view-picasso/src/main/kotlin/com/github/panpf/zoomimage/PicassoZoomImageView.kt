@@ -20,8 +20,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
+import com.github.panpf.zoomimage.picasso.PicassoDataToImageSource
+import com.github.panpf.zoomimage.picasso.PicassoDataToImageSourceImpl
 import com.github.panpf.zoomimage.picasso.PicassoTileBitmapCache
-import com.github.panpf.zoomimage.picasso.newPicassoImageSource
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
@@ -49,6 +50,9 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
+    private val convertors =
+        mutableListOf<PicassoDataToImageSource>(PicassoDataToImageSourceImpl(context))
+
     init {
         _subsamplingEngine?.tileBitmapCacheState?.value = PicassoTileBitmapCache(Picasso.get())
     }
@@ -75,7 +79,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     ) {
         val creator = Picasso.get().load(file)
         config?.invoke(creator)
-        loadImage(Uri.fromFile(file), callback, creator)
+        loadImage(data = Uri.fromFile(file), callback, creator)
     }
 
     /**
@@ -94,7 +98,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     ) {
         val creator = Picasso.get().load(resourceId)
         config?.invoke(creator)
-        loadImage(Uri.parse("android.resource://$resourceId"), callback, creator)
+        loadImage(data = resourceId, callback, creator)
     }
 
     /**
@@ -116,7 +120,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     ) {
         val creator = Picasso.get().load(uri)
         config?.invoke(creator)
-        loadImage(uri, callback, creator)
+        loadImage(data = uri, callback, creator)
     }
 
     /**
@@ -140,17 +144,22 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     ) {
         val creator = Picasso.get().load(path)
         config?.invoke(creator)
-        loadImage(path?.let { Uri.parse(it) }, callback, creator)
+        loadImage(data = path?.let { Uri.parse(it) }, callback, creator)
     }
 
-    private fun loadImage(uri: Uri?, callback: Callback?, creator: RequestCreator) {
+    private fun loadImage(
+        data: Any?,
+        callback: Callback?,
+        creator: RequestCreator
+    ) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
                 _subsamplingEngine?.disabledTileBitmapCacheState?.value =
                     checkMemoryCacheDisabled(creator.internalMemoryPolicy)
-                val imageSource = newPicassoImageSource(context, uri)
+                val imageSource = if (data != null)
+                    convertors.firstNotNullOfOrNull { it.dataToImageSource(data) } else null
                 if (imageSource == null) {
-                    logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported uri: '$uri'" }
+                    logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported data: '$data'" }
                 }
                 _subsamplingEngine?.setImageSource(imageSource)
                 callback?.onSuccess()
@@ -166,5 +175,13 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         _subsamplingEngine?.disabledTileBitmapCacheState?.value = false
+    }
+
+    fun registerDataToImageSource(convertor: PicassoDataToImageSource) {
+        convertors.add(0, convertor)
+    }
+
+    fun unregisterDataToImageSource(convertor: PicassoDataToImageSource) {
+        convertors.remove(convertor)
     }
 }

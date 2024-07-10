@@ -24,8 +24,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.internalModel
 import com.bumptech.glide.load.engine.internalRequestOptions
 import com.bumptech.glide.request.SingleRequest
+import com.github.panpf.zoomimage.glide.GlideModelToImageSource
+import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
-import com.github.panpf.zoomimage.glide.newGlideImageSource
 
 /**
  * An ImageView that integrates the Glide image loading framework that zoom and subsampling huge images
@@ -45,6 +46,9 @@ open class GlideZoomImageView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
+
+    private val convertors =
+        mutableListOf<GlideModelToImageSource>(GlideModelToImageSourceImpl(context))
 
     init {
         val glide = Glide.get(context)
@@ -85,7 +89,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
             }
             _subsamplingEngine?.disabledTileBitmapCacheState?.value = isDisableMemoryCache(request)
             val model = request.internalModel
-            val imageSource = newGlideImageSource(context, model)
+            val imageSource = if (model != null)
+                convertors.firstNotNullOfOrNull { it.dataToImageSource(model) } else null
             if (imageSource == null) {
                 logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
             }
@@ -96,5 +101,13 @@ open class GlideZoomImageView @JvmOverloads constructor(
     private fun isDisableMemoryCache(request: SingleRequest<*>): Boolean {
         val requestOptions = request.internalRequestOptions
         return !requestOptions.isMemoryCacheable
+    }
+
+    fun registerModelToImageSource(convertor: GlideModelToImageSource) {
+        convertors.add(0, convertor)
+    }
+
+    fun unregisterModelToImageSource(convertor: GlideModelToImageSource) {
+        convertors.remove(convertor)
     }
 }
