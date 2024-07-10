@@ -10,14 +10,14 @@
         android:label="ViewHomeFragment" />
 
     <fragment
-        android:id="@+id/photoPagerViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.gallery.PhotoPagerViewFragment">
+        android:id="@+id/photoPagerFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.gallery.PhotoPagerFragment">
         <argument
             android:name="photos"
             app:argType="string"
             app:nullable="false" />
         <argument
-            android:name="position"
+            android:name="totalCount"
             app:argType="integer"
             app:nullable="false" />
         <argument
@@ -25,18 +25,17 @@
             app:argType="integer"
             app:nullable="false" />
         <argument
-            android:name="totalCount"
+            android:name="initialPosition"
             app:argType="integer"
             app:nullable="false" />
     </fragment>
     <action
-        android:id="@+id/action_global_photoPagerViewFragment"
-        app:destination="@id/photoPagerViewFragment"
+        android:id="@+id/action_global_photoPagerFragment"
+        app:destination="@id/photoPagerFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
-
 
     <fragment
         android:id="@+id/zoomImageViewFragment"
@@ -64,6 +63,7 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
+
     <fragment
         android:id="@+id/glideZoomImageViewFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.examples.GlideZoomImageViewFragment">
@@ -92,14 +92,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/subsamplingViewFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.examples.SubsamplingViewFragment">
+        android:id="@+id/subsamplingScaleImageViewFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.examples.SubsamplingScaleImageViewFragment">
         <argument
             android:name="imageUri"
             app:argType="string"
             app:nullable="false" />
     </fragment>
-
 
     <fragment
         android:id="@+id/appSettingsDialogFragment"
@@ -135,11 +134,11 @@
     </fragment>
 
     <fragment
-        android:id="@+id/viewExifOrientationTestFragment"
+        android:id="@+id/exifOrientationTestFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.test.ExifOrientationTestFragment" />
     <action
-        android:id="@+id/action_global_viewExifOrientationTestFragment"
-        app:destination="@id/viewExifOrientationTestFragment"
+        android:id="@+id/action_global_exifOrientationTestFragment"
+        app:destination="@id/exifOrientationTestFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
@@ -168,11 +167,11 @@
         app:popExitAnim="@anim/nav_pop_exit" />
 
     <fragment
-        android:id="@+id/subsamplingScaleTestFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.test.SubsamplingScaleTestFragment" />
+        android:id="@+id/subsamplingScaleImageViewTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.SubsamplingScaleImageViewTestFragment" />
     <action
-        android:id="@+id/action_global_subsamplingScaleTestFragment"
-        app:destination="@id/subsamplingScaleTestFragment"
+        android:id="@+id/action_global_subsamplingScaleImageViewTestFragment"
+        app:destination="@id/subsamplingScaleImageViewTestFragment"
         app:enterAnim="@anim/nav_enter"
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"

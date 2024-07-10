@@ -31,13 +31,13 @@ import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.common.list.LoadStateItemFactory
 import com.github.panpf.zoomimage.sample.ui.common.list.MyLoadStateAdapter
-import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sample.ui.model.PhotoDiffCallback
 import com.github.panpf.zoomimage.sample.ui.examples.BasePhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.examples.CoilPhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.examples.GlidePhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.examples.PicassoPhotoGridItemFactory
 import com.github.panpf.zoomimage.sample.ui.examples.SketchPhotoGridItemFactory
+import com.github.panpf.zoomimage.sample.ui.model.Photo
+import com.github.panpf.zoomimage.sample.ui.model.PhotoDiffCallback
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.Job
@@ -240,16 +240,17 @@ abstract class BasePhotoListFragment : BaseBindingFragment<FragmentPhotoListBind
         val totalCount = items.size
         val startPosition = (position - 100).coerceAtLeast(0)
         val endPosition = (position + 100).coerceAtMost(items.size - 1)
-        val imageList = items.asSequence()
+        val photos = items.asSequence()
             .filterNotNull()
             .filterIndexed { index, _ -> index in startPosition..endPosition }
             .toList()
+        val photosJsonString = Json.encodeToString(photos)
         findNavController().navigate(
-            NavMainDirections.actionGlobalPhotoPagerViewFragment(
-                photos = Json.encodeToString(imageList),
-                position = position,
+            NavMainDirections.actionGlobalPhotoPagerFragment(
+                photos = photosJsonString,
+                totalCount = totalCount,
                 startPosition = startPosition,
-                totalCount = totalCount
+                initialPosition = position,
             ),
         )
     }

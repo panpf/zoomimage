@@ -22,6 +22,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
@@ -59,9 +60,9 @@ import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
-class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
+class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
 
-    private val args by navArgs<PhotoPagerViewFragmentArgs>()
+    private val args by navArgs<PhotoPagerFragmentArgs>()
     private val photoList by lazy {
         Json.decodeFromString<List<Photo>>(args.photos)
     }
@@ -93,8 +94,12 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
                 photoPaletteViewModel.setPhotoPalette(
                     PhotoPalette(
                         palette = it.result.simplePalette,
-                        primaryColor = resources.getColor(R.color.md_theme_primary),
-                        tertiaryColor = resources.getColor(R.color.md_theme_tertiary)
+                        primaryColor = ResourcesCompat.getColor(
+                            resources, R.color.md_theme_primary, null
+                        ),
+                        tertiaryColor = ResourcesCompat.getColor(
+                            resources, R.color.md_theme_tertiary, null
+                        ),
                     )
                 )
             }
@@ -137,7 +142,7 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
             viewLifecycleOwner.lifecycleScope.launch {
                 appSettings.viewImageLoader.collect {
                     adapter = AssemblyFragmentStateAdapter(
-                        fragment = this@PhotoPagerViewFragment,
+                        fragment = this@PhotoPagerFragment,
                         itemFactoryList = listOf(newPhotoDetailItemFactory(requireContext())),
                         initDataList = photoList.map { it.originalUrl }
                     )
@@ -147,13 +152,13 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    val imageUrl = photoList[position].listThumbnailUrl
-                    loadBgImage(binding, imageUrl)
+                    val imageUri = photoList[position].listThumbnailUrl
+                    loadBgImage(binding, imageUri)
                 }
             })
 
             post {
-                setCurrentItem(args.position - args.startPosition, false)
+                setCurrentItem(args.initialPosition - args.startPosition, false)
             }
         }
 
@@ -187,24 +192,24 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
         }
     }
 
-    private fun loadBgImage(binding: FragmentPhotoPagerBinding, imageUrl: String) {
+    private fun loadBgImage(binding: FragmentPhotoPagerBinding, imageUri: String) {
         when (val imageLoaderName = appSettings.viewImageLoader.value) {
-            "Sketch" -> loadBgImageBySketch(binding, imageUrl)
+            "Sketch" -> loadBgImageBySketch(binding, imageUri)
             // Because it is not easy to implement blurring and calculating Palette in other image loaders, I used Sketch instead, but cannot use memory cache.
-            "Coil" -> loadBgImageBySketch(binding, imageUrl, CachePolicy.DISABLED)
-            "Glide" -> loadBgImageBySketch(binding, imageUrl, CachePolicy.DISABLED)
-            "Picasso" -> loadBgImageBySketch(binding, imageUrl, CachePolicy.DISABLED)
-            "Basic" -> loadBgImageBySketch(binding, imageUrl)
+            "Coil" -> loadBgImageBySketch(binding, imageUri, CachePolicy.DISABLED)
+            "Glide" -> loadBgImageBySketch(binding, imageUri, CachePolicy.DISABLED)
+            "Picasso" -> loadBgImageBySketch(binding, imageUri, CachePolicy.DISABLED)
+            "Basic" -> loadBgImageBySketch(binding, imageUri)
             else -> throw IllegalArgumentException("Unknown imageLoaderName: $imageLoaderName")
         }
     }
 
     private fun loadBgImageBySketch(
         binding: FragmentPhotoPagerBinding,
-        imageUrl: String,
+        imageUri: String,
         memoryCachePolicy: CachePolicy = CachePolicy.ENABLED
     ) {
-        binding.bgImage.loadImage(imageUrl) {
+        binding.bgImage.loadImage(imageUri) {
             val screenSize = requireContext().getScreenSize()
             resize(
                 width = screenSize.x / 4,

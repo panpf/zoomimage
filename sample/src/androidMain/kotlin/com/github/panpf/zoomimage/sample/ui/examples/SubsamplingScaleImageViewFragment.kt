@@ -39,9 +39,14 @@ import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import kotlinx.coroutines.launch
 
-class SubsamplingViewFragment : BaseBindingFragment<FragmentSubsamplingViewBinding>() {
+class SubsamplingScaleImageViewFragment : BaseBindingFragment<FragmentSubsamplingViewBinding>() {
 
-    private val args by navArgs<SubsamplingViewFragmentArgs>()
+    private val args by navArgs<SubsamplingScaleImageViewFragmentArgs>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        screenMode = false
+    }
 
     override fun onViewCreated(
         binding: FragmentSubsamplingViewBinding,
@@ -156,8 +161,8 @@ class SubsamplingViewFragment : BaseBindingFragment<FragmentSubsamplingViewBindi
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
             data: String
-        ): Fragment = SubsamplingViewFragment().apply {
-            arguments = SubsamplingViewFragmentArgs(data).toBundle()
+        ): Fragment = SubsamplingScaleImageViewFragment().apply {
+            arguments = SubsamplingScaleImageViewFragmentArgs(data).toBundle()
         }
     }
 }

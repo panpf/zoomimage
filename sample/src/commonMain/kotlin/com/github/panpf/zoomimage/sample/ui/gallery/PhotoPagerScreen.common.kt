@@ -228,19 +228,10 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                         .padding(horizontal = 14.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    val number by remember {
-                        derivedStateOf {
-                            (pagerState.currentPage + 1).coerceAtMost(999)
-                        }
-                    }
-                    val numberCount by remember {
-                        derivedStateOf {
-                            (params.startPosition + params.photos.size).coerceAtMost(999)
-                        }
-                    }
                     val numberText by remember {
                         derivedStateOf {
-                            "${number}/$numberCount"
+                            val number = params.startPosition + pagerState.currentPage + 1
+                            "${number}/${params.totalCount}"
                         }
                     }
                     Text(

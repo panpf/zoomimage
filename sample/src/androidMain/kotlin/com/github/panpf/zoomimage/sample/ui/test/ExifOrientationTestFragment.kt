@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
@@ -20,6 +21,7 @@ class ExifOrientationTestFragment : BaseToolbarBindingFragment<FragmentTabPagerB
         val exifImages = ResourceImages.exifs
 
         binding.pager.apply {
+            setBackgroundColor(Color.BLACK)
             offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = AssemblyFragmentStateAdapter(

@@ -1,9 +1,14 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
@@ -16,7 +21,7 @@ class ExifOrientationTestScreen : BaseScreen() {
 
     @Composable
     override fun DrawContent() {
-        ToolbarScaffold("ExifOrientation", ignoreNavigationBarInsets = true) {
+        ToolbarScaffold("Exif Orientation", ignoreNavigationBarInsets = true) {
             val colorScheme = MaterialTheme.colorScheme
             val pagerItems = remember {
                 ResourceImages.exifs.map { imageFile ->
@@ -33,7 +38,9 @@ class ExifOrientationTestScreen : BaseScreen() {
                     )
                 }.toTypedArray()
             }
-            HorizontalTabPager(pagerItems = pagerItems)
+            Box(Modifier.fillMaxSize().background(Color.Black)) {
+                HorizontalTabPager(pagerItems = pagerItems)
+            }
         }
     }
 }

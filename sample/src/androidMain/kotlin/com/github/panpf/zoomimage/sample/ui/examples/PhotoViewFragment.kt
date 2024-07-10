@@ -40,6 +40,11 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
 
     private val args by navArgs<PhotoViewFragmentArgs>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        screenMode = false
+    }
+
     override fun onViewCreated(
         binding: FragmentPhotoViewBinding,
         savedInstanceState: Bundle?

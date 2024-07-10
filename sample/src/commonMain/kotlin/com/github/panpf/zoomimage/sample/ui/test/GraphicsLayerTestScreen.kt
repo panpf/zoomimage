@@ -88,7 +88,7 @@ class GraphicsLayerTestScreen : BaseScreen() {
 
     @Composable
     override fun DrawContent() {
-        ToolbarScaffold("GraphicsLayer") {
+        ToolbarScaffold("Graphics Layer") {
             val context = LocalPlatformContext.current
 
             var horImage by remember { mutableStateOf(true) }
