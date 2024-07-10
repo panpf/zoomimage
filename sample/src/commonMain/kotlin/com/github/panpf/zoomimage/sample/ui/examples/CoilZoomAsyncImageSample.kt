@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest.Builder
 import coil3.request.crossfade
+import coil3.size.Precision
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -34,6 +35,7 @@ fun CoilZoomAsyncImageSample(
             Builder(context).apply {
                 data(model)
                 crossfade(true)
+                precision(Precision.EXACT)
                 listener(
                     onStart = {
                         myLoadState = MyPageState.Loading

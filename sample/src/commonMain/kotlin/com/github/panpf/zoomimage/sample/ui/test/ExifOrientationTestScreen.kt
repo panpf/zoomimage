@@ -26,16 +26,9 @@ class ExifOrientationTestScreen : BaseScreen() {
                             data.name
                         },
                         contentFactory = { data, _ ->
-                            PhotoDetail(
-                                sketchImageUri = data.uri,
-                                photoPaletteState = remember {
-                                    mutableStateOf(
-                                        PhotoPalette(
-                                            colorScheme
-                                        )
-                                    )
-                                }
-                            )
+                            val photoPaletteState =
+                                remember { mutableStateOf(PhotoPalette(colorScheme)) }
+                            PhotoDetail(data.uri, photoPaletteState)
                         }
                     )
                 }.toTypedArray()

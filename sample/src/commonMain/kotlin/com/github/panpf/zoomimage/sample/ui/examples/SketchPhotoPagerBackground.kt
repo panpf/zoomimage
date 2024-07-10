@@ -9,6 +9,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.sketch.AsyncImage
+import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.sketch.request.ImageResult
@@ -23,6 +24,7 @@ import com.github.panpf.zoomimage.sample.ui.util.windowSize
 fun SketchPagerBackground(
     sketchImageUri: String,
     photoPaletteState: MutableState<PhotoPalette>,
+    memoryCachePolicy: CachePolicy = CachePolicy.ENABLED,
 ) {
     val imageState = rememberAsyncImageState()
 
@@ -47,6 +49,7 @@ fun SketchPagerBackground(
                 BlurTransformation(radius = 20, maskColor = 0x63000000)
             )
             disallowAnimatedImage()
+            memoryCachePolicy(memoryCachePolicy)
             crossfade(alwaysUse = true, durationMillis = 400)
             resizeOnDraw()
             components {

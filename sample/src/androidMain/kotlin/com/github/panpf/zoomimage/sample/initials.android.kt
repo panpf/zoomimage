@@ -8,7 +8,6 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.decode.supportAnimatedGif
 import com.github.panpf.sketch.decode.supportAnimatedWebp
 import com.github.panpf.sketch.decode.supportMovieGif
-import com.github.panpf.zoomimage.sample.image.CoilBlurInterceptor
 import com.github.panpf.zoomimage.sample.util.CoilComposeResourceUriFetcher
 
 
@@ -31,13 +30,6 @@ actual fun platformSketchComponents(context: PlatformContext): ComponentRegistry
 
 actual fun ImageLoader.Builder.platformCoilInitial(context: coil3.PlatformContext) {
     components {
-        add(
-            CoilBlurInterceptor(
-                Sketch.Builder(context).build(),
-                radius = 20,
-                maskColor = 0x63000000
-            )
-        )
         add(CoilComposeResourceUriFetcher.Factory())
     }
 }

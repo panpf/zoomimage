@@ -17,6 +17,7 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -30,6 +31,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.assemblyadapter.pager2.AssemblyFragmentStateAdapter
+import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.sketch.resize.Precision.LESS_PIXELS
@@ -136,7 +138,7 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
                 appSettings.viewImageLoader.collect {
                     adapter = AssemblyFragmentStateAdapter(
                         fragment = this@PhotoPagerViewFragment,
-                        itemFactoryList = listOf(newPhotoDetailItemFactory()),
+                        itemFactoryList = listOf(newPhotoDetailItemFactory(requireContext())),
                         initDataList = photoList.map { it.originalUrl }
                     )
                 }
@@ -185,19 +187,23 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
         }
     }
 
-    private fun newPhotoDetailItemFactory(): FragmentItemFactory<String> {
-        return when (val imageLoaderName = appSettings.viewImageLoader.value) {
-            "Sketch" -> SketchZoomImageViewFragment.ItemFactory()
-            "Coil" -> CoilZoomImageViewFragment.ItemFactory()
-            "Glide" -> GlideZoomImageViewFragment.ItemFactory()
-            "Picasso" -> PicassoZoomImageViewFragment.ItemFactory()
-            "Basic" -> BasicZoomImageViewFragment.ItemFactory()
+    private fun loadBgImage(binding: FragmentPhotoPagerBinding, imageUrl: String) {
+        when (val imageLoaderName = appSettings.viewImageLoader.value) {
+            "Sketch" -> loadBgImageBySketch(binding, imageUrl)
+            // Because it is not easy to implement blurring and calculating Palette in other image loaders, I used Sketch instead, but cannot use memory cache.
+            "Coil" -> loadBgImageBySketch(binding, imageUrl, CachePolicy.DISABLED)
+            "Glide" -> loadBgImageBySketch(binding, imageUrl, CachePolicy.DISABLED)
+            "Picasso" -> loadBgImageBySketch(binding, imageUrl, CachePolicy.DISABLED)
+            "Basic" -> loadBgImageBySketch(binding, imageUrl)
             else -> throw IllegalArgumentException("Unknown imageLoaderName: $imageLoaderName")
         }
     }
 
-    private fun loadBgImage(binding: FragmentPhotoPagerBinding, imageUrl: String) {
-        // TODO Use the corresponding component according to the image loader configuration
+    private fun loadBgImageBySketch(
+        binding: FragmentPhotoPagerBinding,
+        imageUrl: String,
+        memoryCachePolicy: CachePolicy = CachePolicy.ENABLED
+    ) {
         binding.bgImage.loadImage(imageUrl) {
             val screenSize = requireContext().getScreenSize()
             resize(
@@ -212,11 +218,23 @@ class PhotoPagerViewFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() 
                 )
             )
             disallowAnimatedImage()
+            memoryCachePolicy(memoryCachePolicy)
             crossfade(alwaysUse = true, durationMillis = 400)
             resizeOnDraw()
             components {
                 addDecodeInterceptor(PaletteDecodeInterceptor())
             }
         }
+    }
+}
+
+fun newPhotoDetailItemFactory(context: Context): FragmentItemFactory<String> {
+    return when (val imageLoaderName = context.appSettings.viewImageLoader.value) {
+        "Sketch" -> SketchZoomImageViewFragment.ItemFactory()
+        "Coil" -> CoilZoomImageViewFragment.ItemFactory()
+        "Glide" -> GlideZoomImageViewFragment.ItemFactory()
+        "Picasso" -> PicassoZoomImageViewFragment.ItemFactory()
+        "Basic" -> BasicZoomImageViewFragment.ItemFactory()
+        else -> throw IllegalArgumentException("Unknown imageLoaderName: $imageLoaderName")
     }
 }
