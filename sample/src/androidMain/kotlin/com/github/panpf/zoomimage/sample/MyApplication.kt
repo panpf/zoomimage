@@ -31,12 +31,14 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
         super.onCreate()
         handleSSLHandshake()
 
+        // TODO support compose.resource
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Picasso.setSingletonInstance(Picasso.Builder(this).apply {
                 loggingEnabled(true)
             }.build())
         }
 
+        // TODO support compose.resource
         Glide.init(
             this,
             GlideBuilder().setLogLevel(Log.DEBUG)
@@ -54,12 +56,12 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
         }
         GlobalScope.launch(Dispatchers.Main) {
             appSettings.composePage.ignoreFirst().collect {
-                val newImageLoaderName = if (it) {
+                val newImageLoader = if (it) {
                     appSettings.composeImageLoader.value
                 } else {
                     appSettings.viewImageLoader.value
                 }
-                onToggleImageLoader(newImageLoaderName)
+                onToggleImageLoader(newImageLoader)
             }
         }
     }
@@ -104,40 +106,31 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
         }
     }
 
-    private fun onToggleImageLoader(newImageLoaderName: String) {
-        Log.d("ZoomImage", "Switch image loader to $newImageLoaderName")
-        val viewImageLoaderNames = viewImageLoaders.asSequence().map { it.name }
-        val composeImageLoaderNames = composeImageLoaders.asSequence().map { it.name }
-        viewImageLoaderNames.plus(composeImageLoaderNames).distinct().forEach { imageLoaderName ->
-            if (imageLoaderName != newImageLoaderName) {
-                when (imageLoaderName) {
-                    "Sketch", "Basic" -> {
-                        SingletonSketch.get(this).memoryCache.clear()
-                    }
+    private fun onToggleImageLoader(newImageLoader: String) {
+        Log.d("ZoomImage", "Switch image loader to $newImageLoader")
 
-                    "Coil" -> {
-                        SingletonImageLoader.get(this).memoryCache?.clear()
-                    }
-
-                    "Glide" -> {
-                        Glide.get(this).clearMemory()
-                    }
-
-                    "Picasso" -> {
-                        val picasso = Picasso.get()
-                        try {
-                            val cacheField = Picasso::class.java.getDeclaredField("cache")
-                            cacheField.isAccessible = true
-                            val cache = cacheField.get(picasso) as? com.squareup.picasso.Cache
-                            cache?.clear()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-
-                    else -> throw IllegalArgumentException("Unknown image loader: $newImageLoaderName")
-                }
-                Log.d("ZoomImage", "Clean $imageLoaderName memory cache")
+        if (newImageLoader != "Sketch" && newImageLoader != "Basic") {
+            Log.d("ZoomImage", "Clean Sketch memory cache")
+            SingletonSketch.get(this).memoryCache.clear()
+        }
+        if (newImageLoader != "Coil") {
+            Log.d("ZoomImage", "Clean Coil memory cache")
+            SingletonImageLoader.get(this).memoryCache?.clear()
+        }
+        if (newImageLoader != "Glide") {
+            Log.d("ZoomImage", "Clean Glide memory cache")
+            Glide.get(this).clearMemory()
+        }
+        if (newImageLoader != "Picasso") {
+            Log.d("ZoomImage", "Clean Picasso memory cache")
+            val picasso = Picasso.get()
+            try {
+                val cacheField = Picasso::class.java.getDeclaredField("cache")
+                cacheField.isAccessible = true
+                val cache = cacheField.get(picasso) as? com.squareup.picasso.Cache
+                cache?.clear()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
