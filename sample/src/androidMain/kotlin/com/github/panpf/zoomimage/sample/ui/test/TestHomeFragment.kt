@@ -61,6 +61,11 @@ class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
 
     private fun pageList(): List<Any> = listOf(
         Link(
+            title = "ImageSource",
+            navDirections = NavMainDirections.actionGlobalImageSourceTestFragment(),
+            minSdk = 21
+        ),
+        Link(
             title = "Exif Orientation",
             navDirections = NavMainDirections.actionGlobalExifOrientationTestFragment(),
             minSdk = 21
@@ -79,7 +84,6 @@ class TestHomeFragment : BaseBindingFragment<FragmentTestHomeBinding>() {
             navDirections = NavMainDirections.actionGlobalSubsamplingScaleImageViewTestFragment(),
             minSdk = 21,
         ),
-        // TODO ImageSource Test
     )
 
     private fun startLink(data: Link) {

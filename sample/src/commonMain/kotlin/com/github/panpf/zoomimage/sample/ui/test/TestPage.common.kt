@@ -44,10 +44,10 @@ expect fun platformTestItems(): List<TestItem>
 fun TestPage() {
     val testItems = remember {
         listOf(
+            TestItem("ImageSource", ImageSourceTestScreen()),
             TestItem("Exif Orientation", ExifOrientationTestScreen()),
             TestItem("Graphics Layer", GraphicsLayerTestScreen()),
             TestItem("Modifier.zoom()", ModifierZoomTestScreen()),
-            // TODO ImageSource Test
         ).plus(platformTestItems())
     }
     val gridState = rememberLazyGridState()

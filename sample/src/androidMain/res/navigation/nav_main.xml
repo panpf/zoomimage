@@ -172,4 +172,24 @@
         app:exitAnim="@anim/nav_exit"
         app:popEnterAnim="@anim/nav_pop_enter"
         app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/imageSourceTestFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.ImageSourceTestFragment" />
+    <action
+        android:id="@+id/action_global_imageSourceTestFragment"
+        app:destination="@id/imageSourceTestFragment"
+        app:enterAnim="@anim/nav_enter"
+        app:exitAnim="@anim/nav_exit"
+        app:popEnterAnim="@anim/nav_pop_enter"
+        app:popExitAnim="@anim/nav_pop_exit" />
+
+    <fragment
+        android:id="@+id/imageSourceFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.test.ImageSourceFragment">
+        <argument
+            android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
 </navigation>

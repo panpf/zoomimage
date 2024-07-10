@@ -20,7 +20,7 @@ import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
-import com.github.panpf.zoomimage.sketch.SketchImageSource
+import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 
 @Composable
@@ -47,7 +47,11 @@ fun BasicZoomImageSample(sketchImageUri: String, photoPaletteState: MutableState
             }
             imagePainter = imageResult.image?.asPainter()
 
-            val imageSource = SketchImageSource(context, sketch, sketchImageUri)
+            val imageSource = sketchImageUriToZoomImageImageSource(
+                sketch = sketch,
+                imageUri = sketchImageUri,
+                http2ByteArray = false
+            )
             state.subsampling.setImageSource(imageSource)
         }
 

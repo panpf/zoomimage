@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.sample.ui.examples
+package com.github.panpf.zoomimage.sample.ui.test
 
 import android.content.Context
 import androidx.fragment.app.Fragment
@@ -30,12 +30,12 @@ import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
+import com.github.panpf.zoomimage.sample.ui.examples.BaseZoomImageViewFragment
 import kotlinx.coroutines.launch
 
-class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
+class ImageSourceFragment : BaseZoomImageViewFragment<ZoomImageView>() {
 
-    private val args by navArgs<BasicZoomImageViewFragmentArgs>()
+    private val args by navArgs<ImageSourceFragmentArgs>()
 
     override val sketchImageUri: String
         get() = args.imageUri
@@ -53,10 +53,11 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
                 val result = sketch.execute(request)
                 if (result is ImageResult.Success) {
                     setImageDrawable(result.image.asDrawableOrThrow())
+
                     val imageSource = sketchImageUriToZoomImageImageSource(
                         sketch = sketch,
                         imageUri = sketchImageUri,
-                        http2ByteArray = false
+                        http2ByteArray = true
                     )
                     subsampling.setImageSource(imageSource)
                     stateView.gone()
@@ -87,8 +88,8 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
             data: String
-        ): Fragment = BasicZoomImageViewFragment().apply {
-            arguments = BasicZoomImageViewFragmentArgs(data).toBundle()
+        ): Fragment = ImageSourceFragment().apply {
+            arguments = ImageSourceFragmentArgs(data).toBundle()
         }
     }
 }
