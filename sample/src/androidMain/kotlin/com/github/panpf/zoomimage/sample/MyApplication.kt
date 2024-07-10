@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage.sample
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.os.Build
 import android.util.Log
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
@@ -32,29 +31,29 @@ class MyApplication : Application(), SingletonSketch.Factory, SingletonImageLoad
         super.onCreate()
         handleSSLHandshake()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Picasso.setSingletonInstance(Picasso.Builder(this).apply {
-                addRequestHandler(PicassoComposeResourceRequestHandler())
-                loggingEnabled(true)
-            }.build())
-        }
+        Picasso.setSingletonInstance(Picasso.Builder(this).apply {
+            addRequestHandler(PicassoComposeResourceRequestHandler())
+            loggingEnabled(true)
+        }.build())
 
-        // TODO support compose.resource
         Glide.init(
             this,
             GlideBuilder().setLogLevel(Log.DEBUG)
         )
 
+        @Suppress("OPT_IN_USAGE")
         GlobalScope.launch(Dispatchers.Main) {
             appSettings.viewImageLoader.ignoreFirst().collect {
                 onToggleImageLoader(it)
             }
         }
+        @Suppress("OPT_IN_USAGE")
         GlobalScope.launch(Dispatchers.Main) {
             appSettings.composeImageLoader.ignoreFirst().collect {
                 onToggleImageLoader(it)
             }
         }
+        @Suppress("OPT_IN_USAGE")
         GlobalScope.launch(Dispatchers.Main) {
             appSettings.composePage.ignoreFirst().collect {
                 val newImageLoader = if (it) {

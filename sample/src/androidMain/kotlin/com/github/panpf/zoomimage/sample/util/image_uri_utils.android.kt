@@ -46,6 +46,11 @@ fun sketchUri2GlideModel(sketchImageUri: String): Any {
                 ?: throw IllegalArgumentException("Can't use Subsampling, invalid resource uri: '$sketchImageUri'")
         }
 
+        sketchImageUri.startsWith("compose.resource://") -> {
+            val resourceName = sketchImageUri.toUri().lastPathSegment
+            "file:///android_asset/$resourceName"
+        }
+
         else -> sketchImageUri
     }
 }
