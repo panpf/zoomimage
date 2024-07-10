@@ -49,7 +49,7 @@ class LocalImages private constructor() {
         }
     }
 
-    private val path = "file://${FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("zoomimage-files")}"
+    private val path = "file://${FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("zoomimage-files")}/"
 
     val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
     val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
