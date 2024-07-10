@@ -101,10 +101,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/appSettingsDialogFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragment"/>
-
-    <fragment
         android:id="@+id/zoomImageViewInfoDialogFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.gallery.ZoomImageViewInfoDialogFragment">
         <argument

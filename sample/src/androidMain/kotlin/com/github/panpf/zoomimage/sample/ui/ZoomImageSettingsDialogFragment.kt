@@ -20,7 +20,6 @@ import android.os.Bundle
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.panpf.assemblyadapter.recycler.AssemblyRecyclerAdapter
 import com.github.panpf.tools4a.display.ktx.getDisplayMetrics
@@ -34,9 +33,9 @@ import com.github.panpf.zoomimage.sample.ui.common.menu.MultiChooseMenuItemFacto
 import com.github.panpf.zoomimage.sample.ui.common.menu.SwitchMenuItemFactory
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 
-class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
+class ZoomImageSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBinding>() {
 
-    private val appSettingsViewModel by viewModels<AppSettingsViewModel>()
+    private val zoomImageSettingsViewModel by viewModels<ZoomImageSettingsViewModel>()
 
     override fun onViewCreated(binding: FragmentRecyclerBinding, savedInstanceState: Bundle?) {
         val recyclerAdapter = AssemblyRecyclerAdapter(
@@ -55,7 +54,7 @@ class AppSettingsDialogFragment : BaseBindingDialogFragment<FragmentRecyclerBind
             adapter = recyclerAdapter
         }
 
-        appSettingsViewModel.data.repeatCollectWithLifecycle(
+        zoomImageSettingsViewModel.data.repeatCollectWithLifecycle(
             viewLifecycleOwner,
             State.CREATED
         ) { dataList ->

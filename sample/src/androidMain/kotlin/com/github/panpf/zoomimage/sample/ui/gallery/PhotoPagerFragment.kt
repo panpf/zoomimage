@@ -46,8 +46,8 @@ import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
 import com.github.panpf.zoomimage.sample.image.PaletteDecodeInterceptor
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.image.simplePalette
-import com.github.panpf.zoomimage.sample.ui.AppSettingsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialogFragment
+import com.github.panpf.zoomimage.sample.ui.ZoomImageSettingsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.ui.examples.BasicZoomImageViewFragment
 import com.github.panpf.zoomimage.sample.ui.examples.CoilZoomImageViewFragment
@@ -129,7 +129,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
         }
 
         binding.settingsImage.setOnClickListener {
-            AppSettingsDialogFragment().show(childFragmentManager, null)
+            ZoomImageSettingsDialogFragment().show(childFragmentManager, null)
         }
 
         binding.pager.apply {

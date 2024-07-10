@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AppSettingsViewModel(
+class ZoomImageSettingsViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
 
@@ -51,23 +51,6 @@ class AppSettingsViewModel(
     }
 
     private fun buildData(): List<Any> = buildList {
-        // TODO Differentiate sources and display different setting items
-//        if (zoomViewType.my) {
-//
-//        } else {
-//            add(
-//                DropdownMenu(
-//                    title = "Scale Type",
-//                    values = ScaleType.values()
-//                        .filter { it != MATRIX }.map { it.name },
-//                    getValue = { appSettings.scaleType.value },
-//                    onSelected = { _, value ->
-//                        appSettings.scaleType.value = value
-//                    }
-//                )
-//            )
-//        }
-
         val contentScales = listOf(
             ContentScaleCompat.Fit,
             ContentScaleCompat.Crop,

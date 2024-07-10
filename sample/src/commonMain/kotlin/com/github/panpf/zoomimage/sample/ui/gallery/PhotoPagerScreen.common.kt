@@ -51,7 +51,6 @@ import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_settings
 import com.github.panpf.zoomimage.sample.resources.ic_swap_hor
 import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
-import com.github.panpf.zoomimage.sample.ui.AppSettingsDialog
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
@@ -211,7 +210,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     )
                 }
                 if (showSettingsDialog) {
-                    AppSettingsDialog(my = true) {
+                    ZoomImageSettingsDialog {
                         showSettingsDialog = false
                     }
                 }

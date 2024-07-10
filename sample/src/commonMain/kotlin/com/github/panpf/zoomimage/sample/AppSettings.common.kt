@@ -50,6 +50,7 @@ class AppSettings(val context: PlatformContext) {
         stringSettingsStateFlow(context, "composeImageLoader", composeImageLoaders.first().name)
     }
 
+    // Only for Android
     val viewImageLoader by lazy {
         stringSettingsStateFlow(context, "viewImageLoader", "Sketch")
     }
@@ -66,10 +67,6 @@ class AppSettings(val context: PlatformContext) {
             key = "staggeredGridMode",
             initialize = false,
         )
-    }
-
-    val scaleType by lazy {
-        stringSettingsStateFlow(context, "scaleType", "FIT_CENTER")
     }
 
     val contentScale by lazy {

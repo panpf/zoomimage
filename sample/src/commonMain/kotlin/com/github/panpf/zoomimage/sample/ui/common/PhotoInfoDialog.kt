@@ -20,7 +20,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.size
-import com.github.panpf.zoomimage.sample.ui.getSettingsDialogHeight
+import com.github.panpf.zoomimage.sample.ui.util.getSettingsDialogHeight
 
 @Composable
 fun PhotoInfoDialog(imageResult: ImageResult?, onDismissRequest: () -> Unit) {

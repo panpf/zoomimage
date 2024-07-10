@@ -19,16 +19,13 @@ package com.github.panpf.zoomimage.sample.ui.examples
 import android.annotation.SuppressLint
 import android.graphics.Matrix
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.loadImage
-import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentPhotoViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
 import com.github.panpf.zoomimage.util.OffsetCompat
@@ -50,9 +47,6 @@ class PhotoViewFragment : BaseBindingFragment<FragmentPhotoViewBinding>() {
         savedInstanceState: Bundle?
     ) {
         binding.photoView.apply {
-            appSettings.scaleType.collectWithLifecycle(viewLifecycleOwner) {
-                scaleType = ImageView.ScaleType.valueOf(it)
-            }
             setOnScaleChangeListener { _, _, _ ->
                 updateInfo(binding)
             }
