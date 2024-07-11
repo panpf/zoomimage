@@ -38,14 +38,15 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 ## Multiplatform support
 
-| Function/Platform  | Android | iOS | Desktop | Web |
-|:-------------------|:-------:|:---:|:-------:|:---:|
-| Zoom               |    ✅    |  ✅  |    ✅    |  ✅  |
-| Subsampling        |    ✅    |  ✅  |    ✅    |  ✅  |
-| Integrated Sketch  |    ✅    |  ✅  |    ✅    |  ✅  |
-| Integrated Coil    |    ✅    |  ✅  |    ✅    |  ✅  |
-| Integrated Glide   |    ✅    |  ❌  |    ❌    |  ❌  |
-| Integrated Picasso |    ✅    |  ❌  |    ❌    |  ❌  |
+| Function/Platform    | Android | iOS | Desktop | Web |
+|:---------------------|:-------:|:---:|:-------:|:---:|
+| Zoom                 |    ✅    |  ✅  |    ✅    |  ✅  |
+| Subsampling          |    ✅    |  ✅  |    ✅    |  ✅  |
+| Exif Orientation     |    ✅    |  ✅  |    ✅    |  ✅  |
+| Integrated [Sketch]  |    ✅    |  ✅  |    ✅    |  ✅  |
+| Integrated [Coil]    |    ✅    |  ✅  |    ✅    |  ✅  |
+| Integrated [Glide]   |    ✅    |  ❌  |    ❌    |  ❌  |
+| Integrated [Picasso] |    ✅    |  ❌  |    ❌    |  ❌  |
 
 ## Download
 
@@ -132,26 +133,26 @@ Compose Multiplatform：
 // Use basic ZoomImage components
 val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(Unit) {
-  val resUri = Res.getUri("files/huge_china.jpeg")
-  zoomState.subsampling.setImageSource(ImageSource.fromResource(resUri))
+    val resUri = Res.getUri("files/huge_china.jpeg")
+    zoomState.subsampling.setImageSource(ImageSource.fromResource(resUri))
 }
 ZoomImage(
-  painter = painterResource(Res.drawable.huge_china_thumbnail),
-  contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    painter = painterResource(Res.drawable.huge_china_thumbnail),
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
 )
 
 // Use SketchZoomAsyncImage component
 SketchZoomAsyncImage(
-  uri = "http://sample.com/huge_china.jpeg",
-  contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
+    uri = "http://sample.com/huge_china.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
 )
 
 // Use CoilZoomAsyncImage component
 CoilZoomAsyncImage(
-  model = "http://sample.com/huge_china.jpeg",
+    model = "http://sample.com/huge_china.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -166,7 +167,7 @@ Only Android Compose：
 ```kotlin
 // Use GlideZoomAsyncImage component
 GlideZoomAsyncImage(
-  model = "http://sample.com/huge_china.jpeg",
+    model = "http://sample.com/huge_china.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -195,8 +196,8 @@ sketchZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
 // Use CoilZoomImageView component
 val glideZoomImageView = CoilZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
-  .load("http://sample.com/huge_china.jpeg")
-  .into(glideZoomImageView)
+    .load("http://sample.com/huge_china.jpeg")
+    .into(glideZoomImageView)
 
 // Use PicassoZoomImageView component
 val picassoZoomImageView = PicassoZoomImageView(context)
@@ -208,14 +209,13 @@ picassoZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
 * [Get Started](docs/wiki/getstarted.md)
 * [Scale: scale, double-click scale, duration setting](docs/wiki/scale.md)
 * [Offset: Move to the specified position](docs/wiki/offset.md)
-* [Locate: Locate anywhere in the image and keeping it in the center of the screen](docs/wiki/locate.md)
+* [Locate: Locate anywhere in the image](docs/wiki/locate.md)
 * [Rotate: Rotate the image](docs/wiki/rotate.md)
 * [Read Mode: Long images initially fill the screen for easy reading](docs/wiki/readmode.md)
 * [Click: Receive click events](docs/wiki/click.md)
 * [Subsampling: Subsampling the display of huge image to avoid OOM](docs/wiki/subsampling.md)
-* [Scroll Bar: Displays horizontal and vertical scroll bars to clarify the current scroll position](docs/wiki/scrollbar.md)
+* [Scroll Bar: Displays horizontal and vertical scroll bars](docs/wiki/scrollbar.md)
 * [Log: Modify log level and output pipeline](docs/wiki/log.md)
-* [Compose Multiplatform: Use on desktop platform](docs/wiki/multiplatform.md)
 
 ## Samples
 
@@ -250,8 +250,9 @@ Please review the [CHANGELOG](CHANGELOG.md) file
 
 The following are my other open source projects. If you are interested, you can learn about them:
 
-* [sketch](https://github.com/panpf/sketch): A powerful and comprehensive image loader on Android,
-  based entirely on coroutines, with support for GIFs, video thumbnails, and Compose
+* [sketch](https://github.com/panpf/sketch): Sketch is an image loading library designed for Compose
+  Multiplatform and Android View. It is powerful and rich in functions. In addition to basic
+  functions, it also supports GIF, SVG, video thumbnails, Exif Orientation, etc.
 * [assembly-adapter](https://github.com/panpf/assembly-adapter): A library on Android that provides
   multi-type Item implementations for various adapters. Incidentally, it also provides the most
   powerful divider for RecyclerView.
@@ -285,3 +286,11 @@ Apache 2.0. See the [LICENSE](LICENSE.txt) file for details.
 [PhotoView]: https://github.com/Baseflow/PhotoView
 
 [Subsampling<br/>ScaleImageView]: https://github.com/davemorrissey/subsampling-scale-image-view
+
+[Sketch]: https://github.com/panpf/sketch
+
+[Coil]: https://github.com/coil-kt/coil
+
+[Glide]: https://github.com/bumptech/glide
+
+[Picasso]: https://github.com/square/picasso

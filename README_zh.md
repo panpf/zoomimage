@@ -27,14 +27,15 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 ### 多平台支持
 
-| 功能/ 平台     | Android | iOS | Desktop | Web |
-|:-----------|:-------:|:---:|:-------:|:---:|
-| 缩放         |    ✅    |  ✅  |    ✅    |  ✅  |
-| 子采样        |    ✅    |  ✅  |    ✅    |  ✅  |
-| 集成 Sketch  |    ✅    |  ✅  |    ✅    |  ✅  |
-| 集成 Coil    |    ✅    |  ✅  |    ✅    |  ✅  |
-| 集成 Glide   |    ✅    |  ❌  |    ❌    |  ❌  |
-| 集成 Picasso |    ✅    |  ❌  |    ❌    |  ❌  |
+| 功能/平台            | Android | iOS | Desktop | Web |
+|:-----------------|:-------:|:---:|:-------:|:---:|
+| 缩放               |    ✅    |  ✅  |    ✅    |  ✅  |
+| 子采样              |    ✅    |  ✅  |    ✅    |  ✅  |
+| Exif Orientation |    ✅    |  ✅  |    ✅    |  ✅  |
+| 集成 [Sketch]      |    ✅    |  ✅  |    ✅    |  ✅  |
+| 集成 [Coil]        |    ✅    |  ✅  |    ✅    |  ✅  |
+| 集成 [Glide]       |    ✅    |  ❌  |    ❌    |  ❌  |
+| 集成 [Picasso]     |    ✅    |  ❌  |    ❌    |  ❌  |
 
 ## 下载
 
@@ -118,26 +119,26 @@ Compose Multiplatform：
 // 使用基础的 ZoomImage 组件
 val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(Unit) {
-  val resUri = Res.getUri("files/huge_china.jpeg")
-  zoomState.subsampling.setImageSource(ImageSource.fromResource(resUri))
+    val resUri = Res.getUri("files/huge_china.jpeg")
+    zoomState.subsampling.setImageSource(ImageSource.fromResource(resUri))
 }
 ZoomImage(
-  painter = painterResource(Res.drawable.huge_china_thumbnail),
-  contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    painter = painterResource(Res.drawable.huge_china_thumbnail),
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
 )
 
 // 使用 SketchZoomAsyncImage 组件
 SketchZoomAsyncImage(
-  uri = "http://sample.com/huge_china.jpeg",
-  contentDescription = "view image",
-  modifier = Modifier.fillMaxSize(),
+    uri = "http://sample.com/huge_china.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
 )
 
 // 使用 CoilZoomAsyncImage 组件
 CoilZoomAsyncImage(
-  model = "http://sample.com/huge_china.jpeg",
+    model = "http://sample.com/huge_china.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -152,7 +153,7 @@ Only Android Compose：
 ```kotlin
 // 使用 GlideZoomAsyncImage 组件
 GlideZoomAsyncImage(
-  model = "http://sample.com/huge_china.jpeg",
+    model = "http://sample.com/huge_china.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -180,8 +181,8 @@ sketchZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
 // 使用 CoilZoomImageView 组件
 val glideZoomImageView = CoilZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
-  .load("http://sample.com/huge_china.jpeg")
-  .into(glideZoomImageView)
+    .load("http://sample.com/huge_china.jpeg")
+    .into(glideZoomImageView)
 
 // 使用 PicassoZoomImageView 组件
 val picassoZoomImageView = PicassoZoomImageView(context)
@@ -193,14 +194,13 @@ picassoZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
 * [开始使用](docs/wiki/getstarted_zh.md)
 * [Scale: 缩放、双击缩放、时长设置](docs/wiki/scale_zh.md)
 * [Offset: 移动到指定位置](docs/wiki/offset_zh.md)
-* [Locate: 定位到图片的任意位置并保持在屏幕中央](docs/wiki/locate_zh.md)
+* [Locate: 定位到图片的任意位置](docs/wiki/locate_zh.md)
 * [Rotate: 旋转图片](docs/wiki/rotate_zh.md)
 * [Read Mode: 长图初始时充满屏幕，方便阅读](docs/wiki/readmode_zh.md)
 * [Click: 接收点击事件](docs/wiki/click_zh.md)
 * [Subsampling: 对超大图进行子采样显示，避免 OOM](docs/wiki/subsampling_zh.md)
-* [Scroll Bar: 显示水平和垂直滚动条，明确当前滚动位置](docs/wiki/scrollbar_zh.md)
+* [Scroll Bar: 显示水平和垂直滚动条](docs/wiki/scrollbar_zh.md)
 * [Log: 修改日志等级以及输出管道](docs/wiki/log_zh.md)
-* [Compose Multiplatform: 在桌面平台使用](docs/wiki/multiplatform_zh.md)
 
 ## 示例
 
@@ -233,8 +233,8 @@ picassoZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
 
 以下是我的其它开源项目，感兴趣的可以了解一下：
 
-* [sketch](https://github.com/panpf/sketch)：Android 上的一个强大且全面的图片加载器，完全基于协程，还支持
-  GIF、视频缩略图以及 Compose
+* [sketch](https://github.com/panpf/sketch)：Sketch 是一个为 Compose Multiplatform 和 Android View
+  设计的图像加载库。它功能强大且丰富，除了基本功能外，还支持GIF、SVG、视频缩略图、Exif Orientation 等。
 * [assembly-adapter](https://github.com/panpf/assembly-adapter)：Android 上的一个为各种 Adapter 提供多类型
   Item 实现的库。还顺带为 RecyclerView 提供了最强大的 divider。
 * [sticky-item-decoration](https://github.com/panpf/stickyitemdecoration)：RecyclerView 黏性 item 实现
@@ -266,3 +266,11 @@ Apache 2.0. 有关详细信息，请参阅 [LICENSE](LICENSE.txt) 文件.
 [PhotoView]: https://github.com/Baseflow/PhotoView
 
 [Subsampling<br/>ScaleImageView]: https://github.com/davemorrissey/subsampling-scale-image-view
+
+[Sketch]: https://github.com/panpf/sketch
+
+[Coil]: https://github.com/coil-kt/coil
+
+[Glide]: https://github.com/bumptech/glide
+
+[Picasso]: https://github.com/square/picasso
