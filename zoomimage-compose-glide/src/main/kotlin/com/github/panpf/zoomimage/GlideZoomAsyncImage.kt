@@ -116,7 +116,7 @@ import kotlinx.collections.immutable.ImmutableList
  * opposed to resource id or [Drawable]), this [Placeholder] will not be used unless the `error`
  * [RequestBuilder] also fails. This parameter does not override error [RequestBuilder]s, only error
  * resource ids and/or [Drawable]s.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -131,7 +131,7 @@ fun GlideZoomAsyncImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     modelToImageSources: ImmutableList<GlideModelToImageSource>? = null,
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
@@ -144,13 +144,13 @@ fun GlideZoomAsyncImage(
     // TODO(judds): Consider defaulting to load the model here instead of always doing so below.
     requestBuilderTransform: RequestBuilderTransform<Drawable> = { it },
 ) {
-    state.zoomable.contentScale = contentScale
-    state.zoomable.alignment = alignment
+    zoomState.zoomable.contentScale = contentScale
+    zoomState.zoomable.alignment = alignment
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         val glide = Glide.get(context)
-        state.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
+        zoomState.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
     }
 
     GlideImage(
@@ -170,7 +170,7 @@ fun GlideZoomAsyncImage(
                 .addListener(
                     ResetListener(
                         context = context,
-                        state = state,
+                        zoomState = zoomState,
                         modelToImageSources = modelToImageSources,
                         requestBuilder = requestBuilder,
                         model = model
@@ -178,15 +178,15 @@ fun GlideZoomAsyncImage(
                 )
         },
         modifier = modifier
-            .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
-            .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(state.zoomable, state.subsampling),
+            .let { if (scrollBar != null) it.zoomScrollBar(zoomState.zoomable, scrollBar) else it }
+            .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+            .subsampling(zoomState.zoomable, zoomState.subsampling),
     )
 }
 
 private class ResetListener(
     private val context: Context,
-    private val state: ZoomState,
+    private val zoomState: ZoomState,
     private val modelToImageSources: ImmutableList<GlideModelToImageSource>?,
     private val requestBuilder: RequestBuilder<Drawable>,
     private val model: Any?,
@@ -197,7 +197,7 @@ private class ResetListener(
         target: Target<Drawable>,
         isFirstResource: Boolean
     ): Boolean {
-        state.zoomable.logger.d { "GlideZoomAsyncImage. onLoadFailed. model='$model'" }
+        zoomState.zoomable.logger.d { "GlideZoomAsyncImage. onLoadFailed. model='$model'" }
         reset(resource = null)
         return false
     }
@@ -209,7 +209,7 @@ private class ResetListener(
         dataSource: DataSource,
         isFirstResource: Boolean
     ): Boolean {
-        state.zoomable.logger.d { "GlideZoomAsyncImage. onResourceReady. model='$model', resource=$resource" }
+        zoomState.zoomable.logger.d { "GlideZoomAsyncImage. onResourceReady. model='$model', resource=$resource" }
         reset(resource = resource)
         return false
     }
@@ -218,10 +218,10 @@ private class ResetListener(
         val drawableSize = resource
             ?.let { IntSize(it.intrinsicWidth, it.intrinsicHeight) }
             ?.takeIf { it.isNotEmpty() }
-        state.zoomable.contentSize = drawableSize ?: IntSize.Zero
+        zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
         val imageSource = if (resource != null) {
-            state.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
+            zoomState.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
             val convertors = (modelToImageSources ?: emptyList()).toMutableList()
                 .apply {
                     add(GlideModelToImageSourceImpl(context))
@@ -229,13 +229,13 @@ private class ResetListener(
             val imageSource = if (model != null)
                 convertors.firstNotNullOfOrNull { it.dataToImageSource(model) } else null
             if (imageSource == null) {
-                state.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
+                zoomState.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
             }
             imageSource
         } else {
             null
         }
-        state.subsampling.setImageSource(imageSource)
+        zoomState.subsampling.setImageSource(imageSource)
     }
 }
 

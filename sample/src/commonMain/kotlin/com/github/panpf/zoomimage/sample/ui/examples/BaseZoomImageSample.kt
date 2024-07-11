@@ -94,7 +94,7 @@ fun BaseZoomImageSample(
     content: @Composable BoxScope.(
         contentScale: ContentScale,
         alignment: Alignment,
-        state: ZoomState,
+        zoomState: ZoomState,
         scrollBar: ScrollBarSpec?,
         onLongClick: () -> Unit
     ) -> Unit

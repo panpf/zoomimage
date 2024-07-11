@@ -20,17 +20,17 @@ ZoomImage 的运行机制。
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.logger.level = Logger.DEBUG
+    zoomState.logger.level = Logger.DEBUG
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -42,15 +42,15 @@ SketchZoomAsyncImage(
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
-state.logger.pipeline = MyLoggerPipeline()
+zoomState.logger.pipeline = MyLoggerPipeline()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 

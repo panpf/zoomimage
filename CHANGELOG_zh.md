@@ -20,6 +20,8 @@
   zoomimage-view-coil2 和 zoomimage-compose-coil2 模块继续支持 coil2
 * remove: 移除 TileBitmapCache 的 put() 方法的 disallowReuseBitmap 参数
 * new: GlideZoomAsyncImage、GlideZoomImageView、PicassoZoomImageView 支持扩展 ImageSource
+* change: ZoomImage、SketchZoomAsyncImage、CoilZoomAsyncImage、GlideZoomAsyncImage
+  等函数的 `state: ZoomState` 参数的名字改为 `zoomState: ZoomState`
 
 ## v1.0.2
 

@@ -22,17 +22,17 @@ it to expand the output range of the log
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.logger.level = Logger.DEBUG
+    zoomState.logger.level = Logger.DEBUG
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -45,15 +45,15 @@ console, you can modify it to output logs elsewhere
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
-state.logger.pipeline = MyLoggerPipeline()
+zoomState.logger.pipeline = MyLoggerPipeline()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 

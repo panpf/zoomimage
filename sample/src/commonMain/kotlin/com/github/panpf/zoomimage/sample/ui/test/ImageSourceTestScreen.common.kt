@@ -94,11 +94,11 @@ class ImageSourceTestScreen : BaseScreen() {
         BaseZoomImageSample(
             sketchImageUri = sketchImageUri,
             photoPaletteState = photoPaletteState
-        ) { contentScale, alignment, state, scrollBar, onLongClick ->
+        ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
             val context = LocalPlatformContext.current
             val sketch = SingletonSketch.get(context)
             LaunchedEffect(Unit) {
-                state.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
+                zoomState.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
             }
 
             var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
@@ -121,7 +121,7 @@ class ImageSourceTestScreen : BaseScreen() {
                     imageUri = sketchImageUri,
                     http2ByteArray = true
                 )
-                state.subsampling.setImageSource(imageSource)
+                zoomState.subsampling.setImageSource(imageSource)
             }
 
             val imagePainter1 = imagePainter
@@ -132,7 +132,7 @@ class ImageSourceTestScreen : BaseScreen() {
                     contentScale = contentScale,
                     alignment = alignment,
                     modifier = Modifier.fillMaxSize(),
-                    state = state,
+                    zoomState = zoomState,
                     scrollBar = scrollBar,
                     onLongPress = {
                         onLongClick.invoke()

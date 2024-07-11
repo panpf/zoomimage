@@ -17,9 +17,9 @@ import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.FileDataSource
 import com.github.panpf.sketch.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.sample.data.ComposeResourceImages
+import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
-import com.github.panpf.zoomimage.subsampling.fromComposeResource
 import com.github.panpf.zoomimage.subsampling.fromContent
 import com.github.panpf.zoomimage.subsampling.fromResource
 import kotlinx.coroutines.withContext
@@ -84,7 +84,7 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
         }
 
         is ComposeResourceUriFetcher -> {
-            ImageSource.fromComposeResource(fetcher.resourcePath)
+            ComposeResourceImageSource(fetcher.resourcePath)
         }
 
         else -> null

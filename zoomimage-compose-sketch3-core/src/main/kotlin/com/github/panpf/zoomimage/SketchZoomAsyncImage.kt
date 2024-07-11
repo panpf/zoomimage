@@ -91,7 +91,7 @@ import kotlin.math.roundToInt
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -103,7 +103,7 @@ fun SketchZoomAsyncImage(
     contentDescription: String?,
     sketch: Sketch,
     modifier: Modifier = Modifier,
-    imageState: AsyncImageState = rememberAsyncImageState(),
+    state: AsyncImageState = rememberAsyncImageState(),
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
@@ -115,7 +115,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -124,7 +124,7 @@ fun SketchZoomAsyncImage(
     contentDescription = contentDescription,
     sketch = sketch,
     modifier = modifier,
-    imageState = imageState,
+    state = state,
     transform = transformOf(placeholder, error, uriEmpty),
     onPainterState = onPainterStateOf(onLoading, onSuccess, onError),
     alignment = alignment,
@@ -132,7 +132,7 @@ fun SketchZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
-    state = state,
+    zoomState = zoomState,
     scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
@@ -176,7 +176,7 @@ fun SketchZoomAsyncImage(
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -188,7 +188,7 @@ fun SketchZoomAsyncImage(
     contentDescription: String?,
     sketch: Sketch,
     modifier: Modifier = Modifier,
-    imageState: AsyncImageState = rememberAsyncImageState(),
+    state: AsyncImageState = rememberAsyncImageState(),
     placeholder: Painter? = null,
     error: Painter? = null,
     uriEmpty: Painter? = error,
@@ -200,7 +200,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -209,7 +209,7 @@ fun SketchZoomAsyncImage(
     contentDescription = contentDescription,
     sketch = sketch,
     modifier = modifier,
-    imageState = imageState,
+    state = state,
     transform = transformOf(placeholder, error, uriEmpty),
     onPainterState = onPainterStateOf(onLoading, onSuccess, onError),
     alignment = alignment,
@@ -217,7 +217,7 @@ fun SketchZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
-    state = state,
+    zoomState = zoomState,
     scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
@@ -255,7 +255,7 @@ fun SketchZoomAsyncImage(
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -267,7 +267,7 @@ fun SketchZoomAsyncImage(
     contentDescription: String?,
     sketch: Sketch,
     modifier: Modifier = Modifier,
-    imageState: AsyncImageState = rememberAsyncImageState(),
+    state: AsyncImageState = rememberAsyncImageState(),
     transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
     onPainterState: ((PainterState) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
@@ -275,7 +275,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -284,7 +284,7 @@ fun SketchZoomAsyncImage(
     contentDescription = contentDescription,
     sketch = sketch,
     modifier = modifier,
-    imageState = imageState,
+    state = state,
     transform = transform,
     onPainterState = onPainterState,
     alignment = alignment,
@@ -292,7 +292,7 @@ fun SketchZoomAsyncImage(
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
-    state = state,
+    zoomState = zoomState,
     scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
@@ -333,7 +333,7 @@ fun SketchZoomAsyncImage(
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -344,7 +344,7 @@ fun SketchZoomAsyncImage(
     contentDescription: String?,
     sketch: Sketch,
     modifier: Modifier = Modifier,
-    imageState: AsyncImageState = rememberAsyncImageState(),
+    state: AsyncImageState = rememberAsyncImageState(),
     transform: (PainterState) -> PainterState = AsyncImageState.DefaultTransform,
     onPainterState: ((PainterState) -> Unit)? = null,
     alignment: Alignment = Alignment.Center,
@@ -352,27 +352,28 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    state.zoomable.contentScale = contentScale
-    state.zoomable.alignment = alignment
+    zoomState.zoomable.contentScale = contentScale
+    zoomState.zoomable.alignment = alignment
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        state.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
+        zoomState.subsampling.tileBitmapCache =
+            SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
     }
 
     BaseZoomAsyncImage(
         request = request,
         contentDescription = contentDescription,
         sketch = sketch,
-        state = imageState,
+        state = state,
         transform = transform,
         onPainterState = { loadState ->
-            onPainterState(context, sketch, state, request, loadState)
+            onPainterState(context, sketch, zoomState, request, loadState)
             onPainterState?.invoke(loadState)
         },
         contentScale = contentScale,
@@ -380,22 +381,22 @@ fun SketchZoomAsyncImage(
         colorFilter = colorFilter,
         filterQuality = filterQuality,
         modifier = modifier
-            .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
-            .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(state.zoomable, state.subsampling),
+            .let { if (scrollBar != null) it.zoomScrollBar(zoomState.zoomable, scrollBar) else it }
+            .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+            .subsampling(zoomState.zoomable, zoomState.subsampling),
     )
 }
 
 private fun onPainterState(
     context: Context,
     sketch: Sketch,
-    state: ZoomState,
+    zoomState: ZoomState,
     request: DisplayRequest,
     loadState: PainterState,
 ) {
-    state.zoomable.logger.d { "SketchZoomAsyncImage. onPainterState. state=${loadState.name}. uri='${request.uriString}'" }
-    val zoomableState = state.zoomable
-    val subsamplingState = state.subsampling
+    zoomState.zoomable.logger.d { "SketchZoomAsyncImage. onPainterState. state=${loadState.name}. uri='${request.uriString}'" }
+    val zoomableState = zoomState.zoomable
+    val subsamplingState = zoomState.subsampling
     val painterSize = loadState.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }

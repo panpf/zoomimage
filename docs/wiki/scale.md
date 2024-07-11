@@ -98,19 +98,19 @@ custom implementation
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.zoomable.scalesCalculator = ScalesCalculator.Fixed
+    zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
     // or
-    state.zoomable.scalesCalculator = MyScalesCalculator()
+    zoomState.zoomable.scalesCalculator = MyScalesCalculator()
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -125,17 +125,17 @@ property to true
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.zoomable.threeStepScale = true
+    zoomState.zoomable.threeStepScale = true
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -153,20 +153,20 @@ needed The method toggles the zoom factor, which has two parameters:
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-            state.zoomable.switchScale(animated = true)
+            zoomState.zoomable.switchScale(animated = true)
         }
     }
 ) {
@@ -179,9 +179,9 @@ You can also call the `getNextStepScale()` method to get the next scale multipli
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
-state.zoomable.getNextStepScale()
+zoomState.zoomable.getNextStepScale()
 ```
 
 ### One Finger Scale
@@ -193,18 +193,18 @@ by [Disabled gestures](#disabled-gestures)
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // Turn off one-finger scale gesture
-    state.zoomable.disabledGestureType = GestureType.ONE_FINGER_SCALE
+    zoomState.zoomable.disabledGestureType = GestureType.ONE_FINGER_SCALE
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -224,21 +224,21 @@ parameters:
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetScale = state.zoomable.transform.scaleX + 0.2f
-            state.zoomable.scale(targetScale = targetScale, animated = true)
+            val targetScale = zoomState.zoomable.transform.scaleX + 0.2f
+            zoomState.zoomable.scale(targetScale = targetScale, animated = true)
         }
     }
 ) {
@@ -248,8 +248,8 @@ Button(
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetScale = state.zoomable.transform.scaleX - 0.2f
-            state.zoomable.scale(targetScale = targetScale, animated = true)
+            val targetScale = zoomState.zoomable.transform.scaleX - 0.2f
+            zoomState.zoomable.scale(targetScale = targetScale, animated = true)
         }
     }
 ) {
@@ -266,17 +266,17 @@ ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指�
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.zoomable.rubberBandScale = false
+    zoomState.zoomable.rubberBandScale = false
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -288,24 +288,24 @@ zoom animation
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.animationSpec = ZoomAnimationSpec(
+    zoomState.animationSpec = ZoomAnimationSpec(
         durationMillis = 500,
         easing = LinearOutSlowInEasing,
         initialVelocity = 10f
     )
 
     // Or modify some parameters based on the default values
-    state.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
+    zoomState.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -317,11 +317,11 @@ which are enabled by default, and you can disable them through the `disabledGest
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // Turn off all scale gestures and keep only the drag gesture
-    state.zoomable.disabledGestureType =
+    zoomState.zoomable.disabledGestureType =
         GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
 }
 
@@ -329,7 +329,7 @@ SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -374,9 +374,9 @@ Box(
 
 ```kotlin
 // compose
-val state: ZoomState by rememberZoomState()
-SketchZoomAsyncImage(state = state)
-val zoomable: ZoomableState = state.zoomable
+val zoomState: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(zoomState = zoomState)
+val zoomable: ZoomableState = zoomState.zoomable
 
 // view
 val sketchZoomImageView = SketchZoomImageView(context)

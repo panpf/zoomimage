@@ -21,13 +21,13 @@ parameters:
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
@@ -35,9 +35,9 @@ Button(
     onClick = {
         // Locate to the center of the content and zoom to mediumScale if the current zoom factor is less than MediumScale
         coroutineScope.launch {
-            state.zoomable.locate(
-                contentPoint = state.zoomable.contentSize.center,
-                targetScale = state.zoomable.transform.scaleX.coerceAtLeast(state.zoomable.mediumScale),
+            zoomState.zoomable.locate(
+                contentPoint = zoomState.zoomable.contentSize.center,
+                targetScale = zoomState.zoomable.transform.scaleX.coerceAtLeast(zoomState.zoomable.mediumScale),
                 animated = true,
             )
         }

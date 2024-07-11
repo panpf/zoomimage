@@ -80,19 +80,19 @@ scalesCalculator 默认值为 [ScalesCalculator].Dynamic，你可以将它修改
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.zoomable.scalesCalculator = ScalesCalculator.Fixed
+    zoomState.zoomable.scalesCalculator = ScalesCalculator.Fixed
     // 或
-    state.zoomable.scalesCalculator = MyScalesCalculator()
+    zoomState.zoomable.scalesCalculator = MyScalesCalculator()
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -105,17 +105,17 @@ SketchZoomAsyncImage(
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.zoomable.threeStepScale = true
+    zoomState.zoomable.threeStepScale = true
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -131,20 +131,20 @@ SketchZoomAsyncImage(
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-            state.zoomable.switchScale(animated = true)
+            zoomState.zoomable.switchScale(animated = true)
         }
     }
 ) {
@@ -157,9 +157,9 @@ Button(
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
-state.zoomable.getNextStepScale()
+zoomState.zoomable.getNextStepScale()
 ```
 
 ### 单指缩放
@@ -170,18 +170,18 @@ ZoomImage 支持单指缩放图像，双击后按住屏幕上下滑动即可缩�
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // 关闭单指缩放手势
-    state.zoomable.disabledGestureType = GestureType.ONE_FINGER_SCALE
+    zoomState.zoomable.disabledGestureType = GestureType.ONE_FINGER_SCALE
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -199,21 +199,21 @@ ZoomImage 提供了 scale() 方法用来缩放图像到指定的倍数，它有�
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetScale = state.zoomable.transform.scaleX + 0.2f
-            state.zoomable.scale(targetScale = targetScale, animated = true)
+            val targetScale = zoomState.zoomable.transform.scaleX + 0.2f
+            zoomState.zoomable.scale(targetScale = targetScale, animated = true)
         }
     }
 ) {
@@ -223,8 +223,8 @@ Button(
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetScale = state.zoomable.transform.scaleX - 0.2f
-            state.zoomable.scale(targetScale = targetScale, animated = true)
+            val targetScale = zoomState.zoomable.transform.scaleX - 0.2f
+            zoomState.zoomable.scale(targetScale = targetScale, animated = true)
         }
     }
 ) {
@@ -241,17 +241,17 @@ ZoomImage 会将缩放倍数限制在 `minScale` 和 `maxScale`之间，单指�
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.zoomable.rubberBandScale = false
+    zoomState.zoomable.rubberBandScale = false
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -262,24 +262,24 @@ ZoomImage 提供了 `animationSpec` 参数用来修改缩放动画的时长、Ea
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.animationSpec = ZoomAnimationSpec(
+    zoomState.animationSpec = ZoomAnimationSpec(
         durationMillis = 500,
         easing = LinearOutSlowInEasing,
         initialVelocity = 10f
     )
 
     // 或者在默认值的基础上修改部分参数
-    state.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
+    zoomState.animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 500)
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -291,11 +291,11 @@ ZoomImage 支持双击缩放、双指缩放、单指缩放、拖动等手势，�
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // 关闭所有缩放手势，只保留拖动手势
-    state.zoomable.disabledGestureType =
+    zoomState.zoomable.disabledGestureType =
         GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
 }
 
@@ -303,7 +303,7 @@ SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -347,9 +347,9 @@ Box(
 
 ```kotlin
 // compose
-val state: ZoomState by rememberZoomState()
-SketchZoomAsyncImage(state = state)
-val zoomable: ZoomableState = state.zoomable
+val zoomState: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(zoomState = zoomState)
+val zoomable: ZoomableState = zoomState.zoomable
 
 // view
 val sketchZoomImageView = SketchZoomImageView(context)

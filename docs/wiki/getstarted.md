@@ -110,30 +110,30 @@ GlideZoomAsyncImage(
 /* 
  * android
  */
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 val context = LocalContext.current
 LaunchedEffect(Unit) {
-    state.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
+  zoomState.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
 }
 ZoomImage(
     painter = painterResource(R.drawable.huge_image_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 
 /* 
  * desktop
  */
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(Unit) {
-    state.subsampling.setImageSource(ImageSource.fromResource("huge_image.jpeg"))
+  zoomState.subsampling.setImageSource(ImageSource.fromResource("huge_image.jpeg"))
 }
 ZoomImage(
     painter = painterResource("huge_image_thumbnail.jpeg"),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -180,15 +180,15 @@ example：
 
 ```kotlin
 // compose
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
-val zoomable: ZoomableState = state.zoomable
-val subsampling: SubsamplingState = state.subsampling
+val zoomable: ZoomableState = zoomState.zoomable
+val subsampling: SubsamplingState = zoomState.subsampling
 
 // view
 val sketchZoomImageView = SketchZoomImageView(context)
@@ -203,10 +203,10 @@ and other functions, please refer to the documentation at the end of the page*
 
 ```kotlin
 // compose
-val state: ZoomState by rememberZoomState()
-SketchZoomAsyncImage(state = state)
-val zoomable: ZoomableState = state.zoomable
-val subsampling: SubsamplingState = state.subsampling
+val zoomState: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(zoomState = zoomState)
+val zoomable: ZoomableState = zoomState.zoomable
+val subsampling: SubsamplingState = zoomState.subsampling
 
 // view
 val sketchZoomImageView = SketchZoomImageView(context)

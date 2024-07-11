@@ -15,21 +15,21 @@ ZoomImage 提供了 `rotate()` 方法用来旋转图像到指定角度，它有�
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetRotation = state.zoomable.transform.rotation.roundToInt() + 90
-            state.zoomable.rotate(targetRotation = targetRotation)
+            val targetRotation = zoomState.zoomable.transform.rotation.roundToInt() + 90
+            zoomState.zoomable.rotate(targetRotation = targetRotation)
         }
     }
 ) {
@@ -39,8 +39,8 @@ Button(
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetRotation = state.zoomable.transform.rotation.roundToInt() - 90
-            state.zoomable.rotate(targetRotation = targetRotation)
+            val targetRotation = zoomState.zoomable.transform.rotation.roundToInt() - 90
+            zoomState.zoomable.rotate(targetRotation = targetRotation)
         }
     }
 ) {
@@ -52,9 +52,9 @@ Button(
 
 ```kotlin
 // compose
-val state: ZoomState by rememberZoomState()
-SketchZoomAsyncImage(state = state)
-val zoomable: ZoomableState = state.zoomable
+val zoomState: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(zoomState = zoomState)
+val zoomable: ZoomableState = zoomState.zoomable
 
 // view
 val sketchZoomImageView = SketchZoomImageView(context)

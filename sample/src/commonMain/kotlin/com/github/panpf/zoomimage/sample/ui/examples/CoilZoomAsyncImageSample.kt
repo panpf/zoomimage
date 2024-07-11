@@ -27,7 +27,7 @@ fun CoilZoomAsyncImageSample(
     BaseZoomImageSample(
         sketchImageUri = sketchImageUri,
         photoPaletteState = photoPaletteState
-    ) { contentScale, alignment, state: ZoomState, scrollBar, onLongClick ->
+    ) { contentScale, alignment, zoomState: ZoomState, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         val context = LocalPlatformContext.current
         val request = remember(key1 = sketchImageUri) {
@@ -55,7 +55,7 @@ fun CoilZoomAsyncImageSample(
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),
-            state = state,
+            zoomState = zoomState,
             scrollBar = scrollBar,
             onLongPress = {
                 onLongClick.invoke()

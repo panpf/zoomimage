@@ -51,18 +51,18 @@ additional call to the `setImageSource(ImageSource)` method to use the subsampli
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 val context = LocalContext.current
 LaunchedEffect(Unit) {
-    state.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
+  zoomState.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
 }
 
 ZoomImage(
     painter = painterResource(R.drawable.huge_image_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -91,21 +91,21 @@ interval
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // Turn off animations
-    state.subsampling.tileAnimationSpec = TileAnimationSpec.None
+  zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
 
     // Modify the duration and refresh interval of the animation
-    state.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+  zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -124,14 +124,14 @@ The 'FLING' two types load tiles in real time, which you can configure via the
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // All continuous transform types load tiles in real time
-    state.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
+  zoomState.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
 
     // All continuous transform types pause loading of tiles
-    state.subsampling.pausedContinuousTransformType =
+  zoomState.subsampling.pausedContinuousTransformType =
         TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 }
 
@@ -139,7 +139,7 @@ SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -152,20 +152,20 @@ the `stopped` attribute
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // stop
-    state.subsampling.stopped = true
+  zoomState.subsampling.stopped = true
     // restart
-    state.subsampling.stopped = false
+  zoomState.subsampling.stopped = false
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -191,17 +191,17 @@ it
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.subsampling.disabledBackgroundTiles = true
+  zoomState.subsampling.disabledBackgroundTiles = true
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -218,17 +218,17 @@ their own first
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.subsampling.tileBitmapCache = MyTileBitmapCache()
+  zoomState.subsampling.tileBitmapCache = MyTileBitmapCache()
 }
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -239,20 +239,20 @@ The `disabledTileBitmapCache` property controls the use of the memory cache feat
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // Disable memory caching
-    state.subsampling.disabledTileBitmapCache = true
+  zoomState.subsampling.disabledTileBitmapCache = true
     // Memory caching is allowed
-    state.subsampling.disabledTileBitmapCache = false
+  zoomState.subsampling.disabledTileBitmapCache = false
 }
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -260,9 +260,9 @@ ZoomImage(
 
 ```kotlin
 // compose
-val state: ZoomState by rememberZoomState()
-SketchZoomAsyncImage(state = state)
-val subsampling: SubsamplingState = state.subsampling
+val zoomState: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(zoomState = zoomState)
+val subsampling: SubsamplingState = zoomState.subsampling
 
 // view
 val sketchZoomImageView = SketchZoomImageView(context)

@@ -22,21 +22,21 @@ two parameters:
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetOffset = state.zoomable.transform.offset + Offset(x = 100, y = 200)
-            state.zoomable.offset(targetOffset = targetOffset, animated = true)
+          val targetOffset = zoomState.zoomable.transform.offset + Offset(x = 100, y = 200)
+          zoomState.zoomable.offset(targetOffset = targetOffset, animated = true)
         }
     }
 ) {
@@ -46,8 +46,8 @@ Button(
 Button(
     onClick = {
         coroutineScope.launch {
-            val targetOffset = state.zoomable.transform.offset - Offset(x = 100, y = 200)
-            state.zoomable.offset(targetScale = targetScale, animated = true)
+          val targetOffset = zoomState.zoomable.transform.offset - Offset(x = 100, y = 200)
+          zoomState.zoomable.offset(targetScale = targetScale, animated = true)
         }
     }
 ) {
@@ -69,17 +69,17 @@ limitOffsetWithinBaseVisibleRect parameter to true to achieve this
 example：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.limitOffsetWithinBaseVisibleRect = true
+  zoomState.limitOffsetWithinBaseVisibleRect = true
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+  zoomState = zoomState,
 )
 ```
 
@@ -87,9 +87,9 @@ SketchZoomAsyncImage(
 
 ```kotlin
 // compose
-val state: ZoomState by rememberZoomState()
-SketchZoomAsyncImage(state = state)
-val zoomable: ZoomableState = state.zoomable
+val zoomState: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(zoomState = zoomState)
+val zoomable: ZoomableState = zoomState.zoomable
 
 // view
 val sketchZoomImageView = SketchZoomImageView(context)

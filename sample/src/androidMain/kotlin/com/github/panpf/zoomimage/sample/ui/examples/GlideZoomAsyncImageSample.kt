@@ -43,7 +43,7 @@ fun GlideZoomAsyncImageSample(
             contentScale = contentScale,
             alignment = alignment,
             modifier = Modifier.fillMaxSize(),
-            state = state,
+            zoomState = state,
             scrollBar = scrollBar,
             onLongPress = {
                 onLongClick.invoke()

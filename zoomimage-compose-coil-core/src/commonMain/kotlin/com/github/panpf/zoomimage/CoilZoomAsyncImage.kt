@@ -109,7 +109,7 @@ import kotlin.math.roundToInt
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -132,7 +132,7 @@ fun CoilZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -148,7 +148,7 @@ fun CoilZoomAsyncImage(
     colorFilter = colorFilter,
     filterQuality = filterQuality,
     imageLoader = imageLoader,
-    state = state,
+    zoomState = zoomState,
     scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
@@ -191,7 +191,7 @@ fun CoilZoomAsyncImage(
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -209,16 +209,16 @@ fun CoilZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    state.zoomable.contentScale = contentScale
-    state.zoomable.alignment = alignment
+    zoomState.zoomable.contentScale = contentScale
+    zoomState.zoomable.alignment = alignment
 
     LaunchedEffect(Unit) {
-        state.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
+        zoomState.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
     }
 
     val request = updateRequest(requestOf(model), contentScale)
@@ -228,7 +228,7 @@ fun CoilZoomAsyncImage(
         imageLoader = imageLoader,
         transform = transform,
         onState = { loadState ->
-            onState(imageLoader, state, request, loadState)
+            onState(imageLoader, zoomState, request, loadState)
             onState?.invoke(loadState)
         },
         contentScale = contentScale,
@@ -236,9 +236,9 @@ fun CoilZoomAsyncImage(
         colorFilter = colorFilter,
         filterQuality = filterQuality,
         modifier = modifier
-            .let { if (scrollBar != null) it.zoomScrollBar(state.zoomable, scrollBar) else it }
-            .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(state.zoomable, state.subsampling),
+            .let { if (scrollBar != null) it.zoomScrollBar(zoomState.zoomable, scrollBar) else it }
+            .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+            .subsampling(zoomState.zoomable, zoomState.subsampling),
     )
 }
 
@@ -262,27 +262,27 @@ internal fun updateRequest(request: ImageRequest, contentScale: ContentScale): I
 
 private fun onState(
     imageLoader: ImageLoader,
-    state: ZoomState,
+    zoomState: ZoomState,
     request: ImageRequest,
     loadState: State,
 ) {
-    state.zoomable.logger.d { "CoilZoomAsyncImage. onState. state=${loadState.name}. data='${request.data}'" }
+    zoomState.zoomable.logger.d { "CoilZoomAsyncImage. onState. state=${loadState.name}. data='${request.data}'" }
     val painterSize = loadState.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }
         ?.roundToIntSize()
         ?.takeIf { it.isNotEmpty() }
-    state.zoomable.contentSize = painterSize ?: IntSize.Zero
+    zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
     when (loadState) {
         is State.Success -> {
-            state.subsampling.disabledTileBitmapCache =
+            zoomState.subsampling.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            state.subsampling.setImageSource(CoilImageSource(imageLoader, request))
+            zoomState.subsampling.setImageSource(CoilImageSource(imageLoader, request))
         }
 
         else -> {
-            state.subsampling.setImageSource(null)
+            zoomState.subsampling.setImageSource(null)
         }
     }
 }

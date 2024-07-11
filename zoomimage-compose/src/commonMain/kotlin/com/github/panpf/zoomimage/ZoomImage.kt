@@ -73,7 +73,7 @@ import kotlin.math.roundToInt
  * @param alpha Optional opacity to be applied to the [Painter] when it is rendered onscreen
  * the default renders the [Painter] completely opaque
  * @param colorFilter Optional colorFilter to apply for the [Painter] when it is rendered onscreen
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -87,14 +87,14 @@ fun ZoomImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ) {
-    state.zoomable.contentScale = contentScale
-    state.zoomable.alignment = alignment
-    state.zoomable.contentSize = remember(painter.intrinsicSize) {
+    zoomState.zoomable.contentScale = contentScale
+    zoomState.zoomable.alignment = alignment
+    zoomState.zoomable.contentSize = remember(painter.intrinsicSize) {
         painter.intrinsicSize.round()
     }
 
@@ -110,7 +110,7 @@ fun ZoomImage(
             val height = with(density) { maxHeight.toPx() }.roundToInt()
             IntSize(width = width, height = height)
         }
-        state.zoomable.containerSize = newContainerSize
+        zoomState.zoomable.containerSize = newContainerSize
 
         MyImage(
             painter = painter,
@@ -122,7 +122,7 @@ fun ZoomImage(
             clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
-                .zoom(state.zoomable, onLongPress = onLongPress, onTap = onTap),
+                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap),
         )
 
         // Why are subsampling tiles drawn on separate components?
@@ -134,8 +134,8 @@ fun ZoomImage(
         Box(
             Modifier
                 .matchParentSize()
-                .zooming(state.zoomable)
-                .subsampling(state.zoomable, state.subsampling)
+                .zooming(zoomState.zoomable)
+                .subsampling(zoomState.zoomable, zoomState.subsampling)
         )
 
         // TODO Mouse wheel zoom
@@ -148,7 +148,7 @@ fun ZoomImage(
             Box(
                 Modifier
                     .matchParentSize()
-                    .zoomScrollBar(state.zoomable, scrollBar)
+                    .zoomScrollBar(zoomState.zoomable, scrollBar)
             )
         }
     }

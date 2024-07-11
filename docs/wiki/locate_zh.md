@@ -17,13 +17,13 @@ ZoomImage 提供改了 `locate()` 方法用来定位到图像的指定位置，�
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
@@ -31,9 +31,9 @@ Button(
     onClick = {
         // 定位到 content 的中心，如果当前缩放倍数小于 mediumScale，就缩放到 mediumScale
         coroutineScope.launch {
-            state.zoomable.locate(
-                contentPoint = state.zoomable.contentSize.center,
-                targetScale = state.zoomable.transform.scaleX.coerceAtLeast(state.zoomable.mediumScale),
+            zoomState.zoomable.locate(
+                contentPoint = zoomState.zoomable.contentSize.center,
+                targetScale = zoomState.zoomable.transform.scaleX.coerceAtLeast(zoomState.zoomable.mediumScale),
                 animated = true,
             )
         }

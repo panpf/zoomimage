@@ -18,17 +18,17 @@ content of the long text image
 ### Enabled Read Mode
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.zoomable.readmode = ReadMode.Default
+    zoomState.zoomable.readmode = ReadMode.Default
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 

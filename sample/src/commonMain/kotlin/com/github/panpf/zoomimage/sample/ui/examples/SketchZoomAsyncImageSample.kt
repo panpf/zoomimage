@@ -39,8 +39,8 @@ fun SketchZoomAsyncImageSample(
             modifier = Modifier
                 .fillMaxSize()
                 .progressIndicator(imageState, rememberSectorProgressPainter()),
-            imageState = imageState,
-            state = state,
+            state = imageState,
+            zoomState = state,
             scrollBar = scrollBar,
             onLongPress = { onLongClick.invoke() }
         )

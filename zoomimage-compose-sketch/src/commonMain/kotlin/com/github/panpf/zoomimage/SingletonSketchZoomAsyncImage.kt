@@ -65,7 +65,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -76,13 +76,13 @@ fun SketchZoomAsyncImage(
     uri: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    imageState: AsyncImageState = rememberAsyncImageState(),
+    state: AsyncImageState = rememberAsyncImageState(),
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -91,13 +91,13 @@ fun SketchZoomAsyncImage(
     contentDescription = contentDescription,
     sketch = SingletonSketch.get(LocalPlatformContext.current),
     modifier = modifier,
-    imageState = imageState,
+    state = state,
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
-    state = state,
+    zoomState = zoomState,
     scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,
@@ -134,7 +134,7 @@ fun SketchZoomAsyncImage(
  *  rendered onscreen.
  * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
  *  destination.
- * @param state The state to control zoom
+ * @param zoomState The state to control zoom
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
@@ -145,13 +145,13 @@ fun SketchZoomAsyncImage(
     request: ImageRequest,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    imageState: AsyncImageState = rememberAsyncImageState(),
+    state: AsyncImageState = rememberAsyncImageState(),
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    state: ZoomState = rememberZoomState(),
+    zoomState: ZoomState = rememberZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -160,13 +160,13 @@ fun SketchZoomAsyncImage(
     contentDescription = contentDescription,
     sketch = SingletonSketch.get(LocalPlatformContext.current),
     modifier = modifier,
-    imageState = imageState,
+    state = state,
     alignment = alignment,
     contentScale = contentScale,
     alpha = alpha,
     colorFilter = colorFilter,
     filterQuality = filterQuality,
-    state = state,
+    zoomState = zoomState,
     scrollBar = scrollBar,
     onLongPress = onLongPress,
     onTap = onTap,

@@ -40,18 +40,18 @@
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 val context = LocalContext.current
 LaunchedEffect(Unit) {
-    state.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
+    zoomState.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
 }
 
 ZoomImage(
     painter = painterResource(R.drawable.huge_image_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -77,21 +77,21 @@ ZoomImage 在显示 Tile 的时候支持透明度动画，默认开启动画，�
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // 关闭动画
-    state.subsampling.tileAnimationSpec = TileAnimationSpec.None
+    zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
 
     // 修改动画的持续时间和刷新间隔
-    state.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+    zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -107,14 +107,14 @@ ZoomImage 在兼顾性能和体验的情况默认配置是 `SCALE`, `OFFSET`, `L
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // 所有连续变换类型都实时加载图块
-    state.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
+    zoomState.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
 
     // 所有连续变换类型都暂停加载图块
-    state.subsampling.pausedContinuousTransformType =
+    zoomState.subsampling.pausedContinuousTransformType =
         TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 }
 
@@ -122,7 +122,7 @@ SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -134,20 +134,20 @@ ZoomImage 支持停止子采样，停止后会释放已加载的图块并不再�
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // stop
-    state.subsampling.stopped = true
+    zoomState.subsampling.stopped = true
     // restart
-    state.subsampling.stopped = false
+    zoomState.subsampling.stopped = false
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -169,17 +169,17 @@ ZoomImage 通过背景图块实现了在切换 sampleSize 时随着 sampleSize
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.subsampling.disabledBackgroundTiles = true
+    zoomState.subsampling.disabledBackgroundTiles = true
 }
 
 SketchZoomAsyncImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -193,17 +193,17 @@ SketchZoomAsyncImage(
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
-    state.subsampling.tileBitmapCache = MyTileBitmapCache()
+    zoomState.subsampling.tileBitmapCache = MyTileBitmapCache()
 }
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -213,20 +213,20 @@ ZoomImage(
 示例：
 
 ```kotlin
-val state: ZoomState by rememberZoomState()
+val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // 禁用内存缓存
-    state.subsampling.disabledTileBitmapCache = true
+    zoomState.subsampling.disabledTileBitmapCache = true
     // 允许使用内存缓存
-    state.subsampling.disabledTileBitmapCache = false
+    zoomState.subsampling.disabledTileBitmapCache = false
 }
 
 ZoomImage(
     imageUri = "http://sample.com/sample.jpg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-    state = state,
+    zoomState = zoomState,
 )
 ```
 
@@ -234,9 +234,9 @@ ZoomImage(
 
 ```kotlin
 // compose
-val state: ZoomState by rememberZoomState()
-SketchZoomAsyncImage(state = state)
-val subsampling: SubsamplingState = state.subsampling
+val zoomState: ZoomState by rememberZoomState()
+SketchZoomAsyncImage(zoomState = zoomState)
+val subsampling: SubsamplingState = zoomState.subsampling
 
 // view
 val sketchZoomImageView = SketchZoomImageView(context)

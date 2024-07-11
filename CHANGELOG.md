@@ -21,6 +21,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * remove: Remove the disallowReuseBitmap parameter of the put() method of TileBitmapCache
 * new: GlideZoomAsyncImage, GlideZoomImageView, and PicassoZoomImageView support extended
   ImageSource
+* change: The name of the `state: ZoomState` parameter of ZoomImage, SketchZoomAsyncImage,
+  CoilZoomAsyncImage, GlideZoomAsyncImage and other functions is changed to `zoomState: ZoomState`
 
 ## v1.0.2
 
