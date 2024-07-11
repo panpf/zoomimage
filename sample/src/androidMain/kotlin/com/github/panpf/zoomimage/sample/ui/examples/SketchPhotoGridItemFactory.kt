@@ -16,15 +16,40 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples
 
+import android.content.Context
 import android.widget.ImageView
+import androidx.fragment.app.FragmentManager
+import com.github.panpf.sketch.imageResult
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.resize.LongImagePrecisionDecider
 import com.github.panpf.sketch.resize.LongImageScaleDecider
 import com.github.panpf.sketch.resize.Precision
 import com.github.panpf.sketch.state.IconDrawableStateImage
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
+import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 
-class SketchPhotoGridItemFactory : BasePhotoGridItemFactory() {
+class SketchPhotoGridItemFactory(val fragmentManager: FragmentManager) :
+    BasePhotoGridItemFactory() {
+
+    override fun initItem(
+        context: Context,
+        binding: GridItemPhotoBinding,
+        item: BindingItem<Photo, GridItemPhotoBinding>
+    ) {
+        super.initItem(context, binding, item)
+        binding.image.setOnLongClickListener {
+            val result = binding.image.imageResult
+            if (result != null) {
+                InfoItemsDialogFragment().apply {
+                    val infoItems = buildImageInfos(result)
+                    arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
+                }.show(fragmentManager, null)
+            }
+            true
+        }
+    }
 
     override fun loadImage(imageView: ImageView, sketchImageUri: String) {
         imageView.loadImage(sketchImageUri) {
@@ -44,7 +69,6 @@ class SketchPhotoGridItemFactory : BasePhotoGridItemFactory() {
             resizeOnDraw()
             precision(LongImagePrecisionDecider(Precision.SAME_ASPECT_RATIO))
             scale(LongImageScaleDecider())
-            // TODO long click image info
         }
     }
 }

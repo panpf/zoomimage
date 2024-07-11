@@ -31,12 +31,6 @@ fun GlidePhotoGridItem(
             .pointerInput(photo, index) {
                 detectTapGestures(
                     onTap = { onClick(photo, index) },
-//                    onLongPress = {
-//                        val imageResult = imageState.result
-//                        if (imageResult != null) {
-//                            photoInfoImageResult = imageResult
-//                        }
-//                    }
                 )
             },
         contentScale = ContentScale.Crop,
@@ -46,11 +40,4 @@ fun GlidePhotoGridItem(
         it.placeholder(R.drawable.im_placeholder)
             .error(R.drawable.im_error)
     }
-
-    // TODO info dialog
-//    if (photoInfoImageResult != null) {
-//        PhotoInfoDialog(photoInfoImageResult) {
-//            photoInfoImageResult = null
-//        }
-//    }
 }

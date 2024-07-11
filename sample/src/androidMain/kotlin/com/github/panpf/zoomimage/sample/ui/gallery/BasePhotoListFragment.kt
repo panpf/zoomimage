@@ -182,8 +182,8 @@ abstract class BasePhotoListFragment : BaseBindingFragment<FragmentPhotoListBind
 
     private fun newPhotoGridItemFactory(): BasePhotoGridItemFactory {
         return when (val viewImageLoader = appSettings.viewImageLoader.value) {
-            "Sketch", "Basic" -> SketchPhotoGridItemFactory()
-            "Coil" -> CoilPhotoGridItemFactory()
+            "Sketch", "Basic" -> SketchPhotoGridItemFactory(childFragmentManager)
+            "Coil" -> CoilPhotoGridItemFactory(childFragmentManager)
             "Glide" -> GlidePhotoGridItemFactory()
             "Picasso" -> PicassoPhotoGridItemFactory()
             else -> throw IllegalArgumentException("Unknown viewImageLoader: $viewImageLoader")

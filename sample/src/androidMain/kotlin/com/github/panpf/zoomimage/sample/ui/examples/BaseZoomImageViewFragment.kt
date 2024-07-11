@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples
 
+import com.github.panpf.zoomimage.sample.R as CommonR
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -33,11 +34,12 @@ import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
-import com.github.panpf.zoomimage.sample.ui.gallery.ZoomImageViewInfoDialogFragment
-import com.github.panpf.zoomimage.sample.ui.util.parentViewModels
+import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
+import com.github.panpf.zoomimage.sample.ui.components.buildZoomImageViewInfos
+import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPaletteViewModel
+import com.github.panpf.zoomimage.sample.ui.util.parentViewModels
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
@@ -54,7 +56,6 @@ import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import com.github.panpf.zoomimage.sample.R as CommonR
 
 abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     BaseBindingFragment<FragmentZoomViewBinding>() {
@@ -98,12 +99,9 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
         )
         zoomImageView.apply {
             onViewLongPressListener = OnViewLongPressListener { _, _ ->
-                ZoomImageViewInfoDialogFragment().apply {
-                    arguments = ZoomImageViewInfoDialogFragment.buildArgs(
-                        zoomImageView,
-                        sketchImageUri
-                    )
-                        .toBundle()
+                InfoItemsDialogFragment().apply {
+                    val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
+                    arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
                 }.show(childFragmentManager, null)
             }
             appSettings.logLevel.collectWithLifecycle(viewLifecycleOwner) {
@@ -244,9 +242,9 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
         }
 
         binding.info.setOnClickListener {
-            ZoomImageViewInfoDialogFragment().apply {
-                arguments = ZoomImageViewInfoDialogFragment.buildArgs(zoomImageView, sketchImageUri)
-                    .toBundle()
+            InfoItemsDialogFragment().apply {
+                val infoItems = buildZoomImageViewInfos(zoomImageView, sketchImageUri)
+                arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
             }.show(childFragmentManager, null)
         }
 

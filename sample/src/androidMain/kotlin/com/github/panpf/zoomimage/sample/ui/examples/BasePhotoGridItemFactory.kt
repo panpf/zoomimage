@@ -67,7 +67,7 @@ abstract class BasePhotoGridItemFactory :
         return super.createItemViewBinding(context, inflater, parent)
     }
 
-    final override fun initItem(
+    override fun initItem(
         context: Context,
         binding: GridItemPhotoBinding,
         item: BindingItem<Photo, GridItemPhotoBinding>

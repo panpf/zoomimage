@@ -31,6 +31,5 @@ class GlidePhotoGridItemFactory : BasePhotoGridItemFactory() {
             .error(R.drawable.im_error)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
-        // TODO long click image info
     }
 }

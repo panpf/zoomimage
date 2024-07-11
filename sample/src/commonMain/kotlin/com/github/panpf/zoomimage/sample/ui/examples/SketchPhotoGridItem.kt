@@ -24,8 +24,8 @@ import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.composableError
 import com.github.panpf.sketch.resize.LongImagePrecisionDecider
 import com.github.panpf.sketch.resize.LongImageScaleDecider
-import com.github.panpf.sketch.size
 import com.github.panpf.sketch.state.rememberIconPainterStateImage
+import com.github.panpf.zoomimage.sample.image.realSize
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_image_broken_outline
 import com.github.panpf.zoomimage.sample.resources.ic_image_outline
@@ -103,35 +103,35 @@ fun SketchPhotoGridItem(
     }
 }
 
-fun buildImageInfos(imageResult: ImageResult): List<InfoItem> = buildList {
-    add(InfoItem(title = null, content = imageResult.request.uri))
+fun buildImageInfos(result: ImageResult): List<InfoItem> = buildList {
+    add(InfoItem(title = null, content = result.request.uri))
 
-    if (imageResult is ImageResult.Success) {
-        val optionsInfo = imageResult.cacheKey
-            .replace(imageResult.request.uri, "")
+    if (result is ImageResult.Success) {
+        val optionsInfo = result.cacheKey
+            .replace(result.request.uri, "")
             .let { if (it.startsWith("?")) it.substring(1) else it }
             .split("&")
             .filter { it.trim().isNotEmpty() }
             .joinToString(separator = "\n")
         add(InfoItem(title = "Options: ", content = optionsInfo))
 
-        val sourceImageInfo = imageResult.imageInfo.run {
+        val sourceImageInfo = result.imageInfo.run {
             "${width}x${height}, $mimeType"
         }
         add(InfoItem(title = "Source Image: ", content = sourceImageInfo))
 
-        add(InfoItem(title = "Result Image: ", content = "${imageResult.image.size}"))
+        add(InfoItem(title = "Result Image: ", content = "${result.image.realSize}"))
 
-        val dataFromInfo = imageResult.dataFrom.name
+        val dataFromInfo = result.dataFrom.name
         add(InfoItem(title = "Data From: ", content = dataFromInfo))
 
-        val transformedInfo = imageResult.transformeds
+        val transformedInfo = result.transformeds
             ?.joinToString(separator = "\n") { transformed ->
                 transformed.replace("Transformed", "")
             }
         add(InfoItem(title = "Transformeds: ", content = transformedInfo.orEmpty()))
-    } else if (imageResult is ImageResult.Error) {
-        val throwableString = imageResult.throwable.toString()
+    } else if (result is ImageResult.Error) {
+        val throwableString = result.throwable.toString()
         add(InfoItem(title = "Throwable: ", content = throwableString))
     }
 }

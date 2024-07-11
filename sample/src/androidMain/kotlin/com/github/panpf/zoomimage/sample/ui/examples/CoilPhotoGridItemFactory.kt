@@ -16,14 +16,38 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples
 
+import android.content.Context
 import android.widget.ImageView
+import androidx.fragment.app.FragmentManager
 import coil3.load
 import coil3.request.error
 import coil3.request.placeholder
+import coil3.result
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
+import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
-class CoilPhotoGridItemFactory : BasePhotoGridItemFactory() {
+class CoilPhotoGridItemFactory(val fragmentManager: FragmentManager) : BasePhotoGridItemFactory() {
+
+    override fun initItem(
+        context: Context,
+        binding: GridItemPhotoBinding,
+        item: BindingItem<Photo, GridItemPhotoBinding>
+    ) {
+        super.initItem(context, binding, item)
+        binding.image.setOnLongClickListener {
+            val result = binding.image.result
+            if (result != null) {
+                InfoItemsDialogFragment().apply {
+                    val infoItems = buildImageInfos(result)
+                    arguments = InfoItemsDialogFragment.buildArgs(infoItems).toBundle()
+                }.show(fragmentManager, null)
+            }
+            true
+        }
+    }
 
     override fun loadImage(imageView: ImageView, sketchImageUri: String) {
         imageView.load(sketchUri2CoilModel(imageView.context, sketchImageUri)) {
@@ -31,6 +55,5 @@ class CoilPhotoGridItemFactory : BasePhotoGridItemFactory() {
             error(R.drawable.im_error)
 //            crossfade(true) // TODO There is a bug
         }
-        // TODO long click image info
     }
 }

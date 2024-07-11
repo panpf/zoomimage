@@ -47,6 +47,5 @@ class PicassoPhotoGridItemFactory : BasePhotoGridItemFactory() {
             .fit()
             .centerInside()
             .into(imageView)
-        // TODO long click image info
     }
 }

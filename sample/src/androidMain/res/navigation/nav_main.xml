@@ -101,35 +101,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/zoomImageViewInfoDialogFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.gallery.ZoomImageViewInfoDialogFragment">
-        <argument
-            android:name="imageUri"
-            app:argType="string"
-            app:nullable="false" />
-        <argument
-            android:name="baseInfo"
-            app:argType="string"
-            app:nullable="false" />
-        <argument
-            android:name="scaleInfo"
-            app:argType="string"
-            app:nullable="false" />
-        <argument
-            android:name="offsetInfo"
-            app:argType="string"
-            app:nullable="false" />
-        <argument
-            android:name="displayAndVisibleInfo"
-            app:argType="string"
-            app:nullable="false" />
-        <argument
-            android:name="tilesInfo"
-            app:argType="string"
-            app:nullable="false" />
-    </fragment>
-
-    <fragment
         android:id="@+id/exifOrientationTestFragment"
         android:name="com.github.panpf.zoomimage.sample.ui.test.ExifOrientationTestFragment" />
     <action
@@ -189,6 +160,15 @@
         android:name="com.github.panpf.zoomimage.sample.ui.test.ImageSourceFragment">
         <argument
             android:name="imageUri"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/infoItemsDialogFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment">
+        <argument
+            android:name="infoItems"
             app:argType="string"
             app:nullable="false" />
     </fragment>
