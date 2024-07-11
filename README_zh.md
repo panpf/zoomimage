@@ -77,7 +77,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION
 
 > [!TIP]
 > 为什么没有 picasso 版本的 compose ZoomImage 组件？因为 Picasso 官方已经说明不会提供对 compose
-> 的支持（[原文在此](https://github.com/square/picasso/issues/2203#issuecomment-826444442)）
+> 的支持（[原文在此][picasso_compose_post]）
 
 Android View：
 
@@ -274,3 +274,5 @@ Apache 2.0. 有关详细信息，请参阅 [LICENSE](LICENSE.txt) 文件.
 [Glide]: https://github.com/bumptech/glide
 
 [Picasso]: https://github.com/square/picasso
+
+[picasso_compose_post]: https://github.com/square/picasso/issues/2203#issuecomment-826444442
