@@ -1,5 +1,7 @@
 package com.githb.panpf.zoomimage.images
 
+import com.github.panpf.sketch.PlatformContext
+import com.github.panpf.sketch.util.appCacheDirectory
 import com.github.panpf.zoomimage.subsampling.KotlinResourceImageSource
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
@@ -26,7 +28,7 @@ class LocalImages private constructor() {
 
         suspend fun saveToExternalFilesDir() = withContext(Dispatchers.IO) {
             val fileSystem = FileSystem.SYSTEM
-            val outDir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("zoomimage-files")
+            val outDir = PlatformContext.INSTANCE.appCacheDirectory()!!.resolve("zoomimage-files")
             if (!fileSystem.exists(outDir)) {
                 fileSystem.createDirectory(outDir)
             }
@@ -49,7 +51,8 @@ class LocalImages private constructor() {
         }
     }
 
-    private val path = "file://${FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("zoomimage-files")}/"
+    private val path =
+        "file://${PlatformContext.INSTANCE.appCacheDirectory()!!.resolve("zoomimage-files")}/"
 
     val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
     val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }

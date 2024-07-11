@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
 import com.githb.panpf.zoomimage.images.HttpImages
-import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.fetch.ComposeResourceUriFetcher
 import com.github.panpf.sketch.fetch.Fetcher
@@ -10,6 +9,7 @@ import com.github.panpf.sketch.fetch.HttpUriFetcher
 import com.github.panpf.sketch.source.ByteArrayDataSource
 import com.github.panpf.sketch.source.FileDataSource
 import com.github.panpf.sketch.util.ioCoroutineDispatcher
+import com.github.panpf.zoomimage.sample.data.ComposeResourceImages
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromComposeResource
 import kotlinx.coroutines.withContext
@@ -19,7 +19,7 @@ import okio.use
 actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>> {
     return listOf(
         "BYTES" to HttpImages.hugeLongComic.uri,
-        "RES_COMPOSE" to ResourceImages.hugeChina.uri,
+        "RES_COMPOSE" to ComposeResourceImages.hugeChina.uri,
     )
 }
 
