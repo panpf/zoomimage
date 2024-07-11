@@ -1,12 +1,8 @@
 package com.github.panpf.zoomimage.sample.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.github.panpf.zoomimage.sample.ui.util.getSettingsDialogHeight
 
 
 @Composable
@@ -26,6 +23,8 @@ fun rememberMyDialogState(showing: Boolean = false): MyDialogState =
 class MyDialogState(showing: Boolean = false) {
     var showing by mutableStateOf(showing)
 
+    var contentReady = true
+
     fun show() {
         showing = true
     }
@@ -34,24 +33,22 @@ class MyDialogState(showing: Boolean = false) {
 @Composable
 fun MyDialog(
     state: MyDialogState,
-    content: @Composable() (ColumnScope.() -> Unit)
+    content: @Composable () -> Unit
 ) {
     if (state.showing) {
-        Dialog(onDismissRequest = { state.showing = false }) {
-            Surface(
-                Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-            ) {
-                Column(
+        if (state.contentReady) {
+            Dialog(onDismissRequest = { state.showing = false }) {
+                Surface(
                     Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
-                        .verticalScroll(rememberScrollState())
+                        .heightIn(max = getSettingsDialogHeight())
+                        .clip(RoundedCornerShape(20.dp))
                 ) {
                     content()
                 }
             }
+        } else {
+            state.showing = false
         }
     }
 }

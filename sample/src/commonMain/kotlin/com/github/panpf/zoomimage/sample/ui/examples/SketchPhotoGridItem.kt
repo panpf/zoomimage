@@ -1,12 +1,17 @@
 package com.github.panpf.zoomimage.sample.ui.examples
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -19,13 +24,18 @@ import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.composableError
 import com.github.panpf.sketch.resize.LongImagePrecisionDecider
 import com.github.panpf.sketch.resize.LongImageScaleDecider
+import com.github.panpf.sketch.size
 import com.github.panpf.sketch.state.rememberIconPainterStateImage
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_image_broken_outline
 import com.github.panpf.zoomimage.sample.resources.ic_image_outline
-import com.github.panpf.zoomimage.sample.ui.common.PhotoInfoDialog
+import com.github.panpf.zoomimage.sample.ui.components.InfoItems
+import com.github.panpf.zoomimage.sample.ui.components.MyDialog
+import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
+import com.github.panpf.zoomimage.sample.ui.model.InfoItem
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.rememberMimeTypeLogoMap
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun SketchPhotoGridItem(
@@ -34,8 +44,7 @@ fun SketchPhotoGridItem(
     modifier: Modifier,
     onClick: (photo: Photo, index: Int) -> Unit,
 ) {
-    var photoInfoImageResult by remember { mutableStateOf<ImageResult?>(null) }
-
+    val dialogState = rememberMyDialogState()
     val imageState = rememberAsyncImageState()
     val mimeTypeLogoMap = rememberMimeTypeLogoMap()
 
@@ -69,12 +78,7 @@ fun SketchPhotoGridItem(
             .pointerInput(photo, index) {
                 detectTapGestures(
                     onTap = { onClick(photo, index) },
-                    onLongPress = {
-                        val imageResult = imageState.result
-                        if (imageResult != null) {
-                            photoInfoImageResult = imageResult
-                        }
-                    }
+                    onLongPress = { dialogState.show() }
                 )
             }
             .mimeTypeLogo(imageState, mimeTypeLogoMap, margin = 4.dp),
@@ -82,9 +86,52 @@ fun SketchPhotoGridItem(
         contentDescription = "photo",
     )
 
-    if (photoInfoImageResult != null) {
-        PhotoInfoDialog(photoInfoImageResult) {
-            photoInfoImageResult = null
+    MyDialog(dialogState) {
+        val infoItems by remember {
+            derivedStateOf {
+                imageState.result?.let { buildImageInfos(it) }?.toImmutableList()
+            }
         }
+        val infoItems1 = infoItems
+        if (infoItems1 != null) {
+            InfoItems(infoItems1)
+        } else {
+            Box(Modifier.fillMaxSize().padding(20.dp)) {
+                CircularProgressIndicator(Modifier.size(40.dp).align(Alignment.Center))
+            }
+        }
+    }
+}
+
+fun buildImageInfos(imageResult: ImageResult): List<InfoItem> = buildList {
+    add(InfoItem(title = null, content = imageResult.request.uri))
+
+    if (imageResult is ImageResult.Success) {
+        val optionsInfo = imageResult.cacheKey
+            .replace(imageResult.request.uri, "")
+            .let { if (it.startsWith("?")) it.substring(1) else it }
+            .split("&")
+            .filter { it.trim().isNotEmpty() }
+            .joinToString(separator = "\n")
+        add(InfoItem(title = "Options: ", content = optionsInfo))
+
+        val sourceImageInfo = imageResult.imageInfo.run {
+            "${width}x${height}, $mimeType"
+        }
+        add(InfoItem(title = "Source Image: ", content = sourceImageInfo))
+
+        add(InfoItem(title = "Result Image: ", content = "${imageResult.image.size}"))
+
+        val dataFromInfo = imageResult.dataFrom.name
+        add(InfoItem(title = "Data From: ", content = dataFromInfo))
+
+        val transformedInfo = imageResult.transformeds
+            ?.joinToString(separator = "\n") { transformed ->
+                transformed.replace("Transformed", "")
+            }
+        add(InfoItem(title = "Transformeds: ", content = transformedInfo.orEmpty()))
+    } else if (imageResult is ImageResult.Error) {
+        val throwableString = imageResult.throwable.toString()
+        add(InfoItem(title = "Throwable: ", content = throwableString))
     }
 }
