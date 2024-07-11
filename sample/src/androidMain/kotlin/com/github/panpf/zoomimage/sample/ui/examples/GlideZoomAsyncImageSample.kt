@@ -22,21 +22,21 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun GlideZoomAsyncImageSample(
-    sketchImageUri: String,
+    photo: Photo,
     photoPaletteState: MutableState<PhotoPalette>
 ) {
     BaseZoomImageSample(
-        sketchImageUri = sketchImageUri,
+        photo = photo,
         photoPaletteState = photoPaletteState
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.Loading) }
-        val glideData =
-            remember(key1 = sketchImageUri) { sketchUri2GlideModel(sketchImageUri) }
+        val glideData = remember(key1 = photo) { sketchUri2GlideModel(photo.originalUrl) }
         GlideZoomAsyncImage(
             model = glideData,
             contentDescription = "view image",
@@ -83,8 +83,12 @@ fun GlideZoomAsyncImageSample(
 @Composable
 private fun GlideZoomAsyncImageSamplePreview() {
     val colorScheme = MaterialTheme.colorScheme
+    val photo = remember {
+        val sketchImageUri = newResourceUri(drawableResId = R.drawable.im_placeholder)
+        Photo(sketchImageUri)
+    }
     GlideZoomAsyncImageSample(
-        sketchImageUri = newResourceUri(drawableResId = R.drawable.im_placeholder),
+        photo = photo,
         photoPaletteState = remember {
             mutableStateOf(PhotoPalette(colorScheme))
         }

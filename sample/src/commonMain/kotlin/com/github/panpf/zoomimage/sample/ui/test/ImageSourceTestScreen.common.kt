@@ -19,10 +19,12 @@ import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
+import com.github.panpf.sketch.cache.CachePolicy.DISABLED
 import com.github.panpf.sketch.fetch.Fetcher
 import com.github.panpf.sketch.painter.asPainter
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
+import com.github.panpf.sketch.request.ImageResult.Success
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -30,9 +32,13 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.components.HorizontalTabPager
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
+import com.github.panpf.zoomimage.sample.ui.components.MyPageState.Error
+import com.github.panpf.zoomimage.sample.ui.components.MyPageState.Loading
+import com.github.panpf.zoomimage.sample.ui.components.MyPageState.None
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.components.PagerItem
 import com.github.panpf.zoomimage.sample.ui.examples.BaseZoomImageSample
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
@@ -92,7 +98,7 @@ class ImageSourceTestScreen : BaseScreen() {
     @Composable
     fun ImageSourceSample(sketchImageUri: String, photoPaletteState: MutableState<PhotoPalette>) {
         BaseZoomImageSample(
-            sketchImageUri = sketchImageUri,
+            photo = Photo(sketchImageUri),
             photoPaletteState = photoPaletteState
         ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
             val context = LocalPlatformContext.current
@@ -101,18 +107,18 @@ class ImageSourceTestScreen : BaseScreen() {
                 zoomState.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
             }
 
-            var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
+            var myLoadState by remember { mutableStateOf<MyPageState>(None) }
             var imagePainter: Painter? by remember { mutableStateOf(null) }
             LaunchedEffect(sketchImageUri) {
-                myLoadState = MyPageState.Loading
+                myLoadState = Loading
                 val imageRequest = ImageRequest(context, sketchImageUri) {
-                    memoryCachePolicy(CachePolicy.DISABLED)
+                    memoryCachePolicy(DISABLED)
                 }
                 val imageResult = imageRequest.execute()
-                myLoadState = if (imageResult is ImageResult.Success) {
-                    MyPageState.None
+                myLoadState = if (imageResult is Success) {
+                    None
                 } else {
-                    MyPageState.Error()
+                    Error()
                 }
                 imagePainter = imageResult.image?.asPainter()
 

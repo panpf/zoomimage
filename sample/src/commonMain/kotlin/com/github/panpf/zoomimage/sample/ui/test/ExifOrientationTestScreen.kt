@@ -16,6 +16,7 @@ import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
 import com.github.panpf.zoomimage.sample.ui.components.HorizontalTabPager
 import com.github.panpf.zoomimage.sample.ui.components.PagerItem
 import com.github.panpf.zoomimage.sample.ui.gallery.PhotoDetail
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 class ExifOrientationTestScreen : BaseScreen() {
 
@@ -33,7 +34,7 @@ class ExifOrientationTestScreen : BaseScreen() {
                         contentFactory = { data, _ ->
                             val photoPaletteState =
                                 remember { mutableStateOf(PhotoPalette(colorScheme)) }
-                            PhotoDetail(data.uri, photoPaletteState)
+                            PhotoDetail(Photo(data.uri), photoPaletteState)
                         }
                     )
                 }.toTypedArray()

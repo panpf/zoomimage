@@ -73,6 +73,7 @@ import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.components.rememberMoveKeyboardState
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.model.InfoItem
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
 import com.github.panpf.zoomimage.sample.ui.util.valueOf
 import com.github.panpf.zoomimage.sample.util.format
@@ -89,7 +90,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun BaseZoomImageSample(
-    sketchImageUri: String,
+    photo: Photo,
     photoPaletteState: MutableState<PhotoPalette>,
     content: @Composable BoxScope.(
         contentScale: ContentScale,
@@ -234,7 +235,7 @@ fun BaseZoomImageSample(
         }
 
         ZoomImageTool(
-            imageUri = sketchImageUri,
+            photo = photo,
             zoomableState = zoomState.zoomable,
             subsamplingState = zoomState.subsampling,
             infoDialogState = infoDialogState,
@@ -242,7 +243,7 @@ fun BaseZoomImageSample(
         )
 
         ZoomImageInfoDialog(
-            imageUri = sketchImageUri,
+            photo = photo,
             zoomable = zoomState.zoomable,
             subsampling = zoomState.subsampling,
             dialogState = infoDialogState
@@ -252,7 +253,7 @@ fun BaseZoomImageSample(
 
 @Composable
 fun ZoomImageTool(
-    imageUri: String,
+    photo: Photo,
     zoomableState: ZoomableState,
     subsamplingState: SubsamplingState,
     infoDialogState: MyDialogState,
@@ -261,7 +262,7 @@ fun ZoomImageTool(
     val coroutineScope = rememberCoroutineScope()
     Box(modifier = Modifier.fillMaxSize().windowInsetsPadding(NavigationBarDefaults.windowInsets)) {
         ZoomImageMinimap(
-            imageUri = imageUri,
+            imageUri = photo.listThumbnailUrl,
             zoomableState = zoomableState,
             subsamplingState = subsamplingState,
         )
@@ -465,7 +466,7 @@ private fun ButtonPad(
 
 @Composable
 fun ZoomImageInfoDialog(
-    imageUri: String,
+    photo: Photo,
     zoomable: ZoomableState,
     subsampling: SubsamplingState,
     dialogState: MyDialogState,
@@ -474,7 +475,7 @@ fun ZoomImageInfoDialog(
         val items by remember {
             derivedStateOf {
                 buildList {
-                    add(InfoItem(null, imageUri))
+                    add(InfoItem(null, photo.originalUrl))
 
                     val imageInfo = subsampling.imageInfo
                     val baseInfo = """

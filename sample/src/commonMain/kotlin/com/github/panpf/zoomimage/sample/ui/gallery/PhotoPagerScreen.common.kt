@@ -73,10 +73,10 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                 params.photos.size
             }
 
-            val uri = params.photos[pagerState.currentPage].listThumbnailUrl
+            val photo = params.photos[pagerState.currentPage]
             val colorScheme = MaterialTheme.colorScheme
             val photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
-            PhotoPagerBackground(uri, photoPaletteState)
+            PhotoPagerBackground(photo.listThumbnailUrl, photoPaletteState)
 
             val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
             if (horizontalLayout) {
@@ -85,9 +85,9 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    val sketchImageUri = params.photos[index].originalUrl
+                    val photo1 = params.photos[index]
                     PhotoDetail(
-                        sketchImageUri = sketchImageUri,
+                        photo = photo1,
                         photoPaletteState = photoPaletteState
                     )
                 }
@@ -97,9 +97,9 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    val sketchImageUri = params.photos[index].originalUrl
+                    val photo1 = params.photos[index]
                     PhotoDetail(
-                        sketchImageUri = sketchImageUri,
+                        photo = photo1,
                         photoPaletteState = photoPaletteState
                     )
                 }

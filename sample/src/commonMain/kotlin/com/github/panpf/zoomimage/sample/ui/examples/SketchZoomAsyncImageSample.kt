@@ -17,20 +17,21 @@ import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 @Composable
 fun SketchZoomAsyncImageSample(
-    sketchImageUri: String,
+    photo: Photo,
     photoPaletteState: MutableState<PhotoPalette>,
 ) {
     BaseZoomImageSample(
-        sketchImageUri = sketchImageUri,
+        photo = photo,
         photoPaletteState = photoPaletteState
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         val imageState = rememberAsyncImageState()
         SketchZoomAsyncImage(
-            request = ComposableImageRequest(sketchImageUri) {
-                placeholder(ThumbnailMemoryCacheStateImage())
+            request = ComposableImageRequest(photo.originalUrl) {
+                placeholder(ThumbnailMemoryCacheStateImage(photo.listThumbnailUrl))
                 crossfade(fadeStart = false)
             },
             contentDescription = "view image",

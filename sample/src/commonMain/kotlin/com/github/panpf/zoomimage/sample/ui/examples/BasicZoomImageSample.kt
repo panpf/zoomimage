@@ -20,13 +20,14 @@ import com.github.panpf.zoomimage.ZoomImage
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 
 @Composable
-fun BasicZoomImageSample(sketchImageUri: String, photoPaletteState: MutableState<PhotoPalette>) {
+fun BasicZoomImageSample(photo: Photo, photoPaletteState: MutableState<PhotoPalette>) {
     BaseZoomImageSample(
-        sketchImageUri = sketchImageUri,
+        photo = photo,
         photoPaletteState = photoPaletteState
     ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         val context = LocalPlatformContext.current
@@ -37,9 +38,9 @@ fun BasicZoomImageSample(sketchImageUri: String, photoPaletteState: MutableState
 
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         var imagePainter: Painter? by remember { mutableStateOf(null) }
-        LaunchedEffect(sketchImageUri) {
+        LaunchedEffect(photo) {
             myLoadState = MyPageState.Loading
-            val imageResult = ImageRequest(context, sketchImageUri).execute()
+            val imageResult = ImageRequest(context, photo.originalUrl).execute()
             myLoadState = if (imageResult is ImageResult.Success) {
                 MyPageState.None
             } else {
@@ -49,7 +50,7 @@ fun BasicZoomImageSample(sketchImageUri: String, photoPaletteState: MutableState
 
             val imageSource = sketchImageUriToZoomImageImageSource(
                 sketch = sketch,
-                imageUri = sketchImageUri,
+                imageUri = photo.originalUrl,
                 http2ByteArray = false
             )
             zoomState.subsampling.setImageSource(imageSource)

@@ -18,6 +18,15 @@ package com.github.panpf.zoomimage.sample.ui.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+fun Photo(uri: String): Photo = Photo(
+    originalUrl = uri,
+    mediumUrl = uri,
+    thumbnailUrl = uri,
+    width = null,
+    height = null,
+    index = null,
+)
+
 @Serializable
 expect class Photo {
 

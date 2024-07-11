@@ -17,21 +17,22 @@ import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
 @Composable
 fun CoilZoomAsyncImageSample(
-    sketchImageUri: String,
+    photo: Photo,
     photoPaletteState: MutableState<PhotoPalette>
 ) {
     BaseZoomImageSample(
-        sketchImageUri = sketchImageUri,
+        photo = photo,
         photoPaletteState = photoPaletteState
     ) { contentScale, alignment, zoomState: ZoomState, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         val context = LocalPlatformContext.current
-        val request = remember(key1 = sketchImageUri) {
-            val model = sketchUri2CoilModel(context, sketchImageUri)
+        val request = remember(key1 = photo) {
+            val model = sketchUri2CoilModel(context, photo.originalUrl)
             Builder(context).apply {
                 data(model)
                 crossfade(true)
