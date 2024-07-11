@@ -211,6 +211,25 @@ picassoZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
 
 请查看 [CHANGELOG](CHANGELOG_zh.md) 文件
 
+## 运行示例 App
+
+准备环境：
+
+1. Android Studio: Koala+ (2024.1.1+)
+2. JDK: 17+
+3. 使用 [kdoctor] 检查运行环境，并按照提示安装需要的软件
+4. Android Studio 安装 `Kotlin Multiplatform` 和 `Compose Multiplatform IDE Support` 插件
+
+运行示例 App：
+
+1. 克隆项目并使用 Android Studio 打开
+2. `.run` 目录下已经添加了各个平台的运行配置，同步完成后直接在 Android Studio
+   顶部运行配置下拉框中选择对应平台的运行配置然后点击运行即可
+3. ios 平台的运行配置需要你根据模版手动创建，如下：
+    1. 拷贝 `.run/iosSample.run.template.xml` 文件，并去掉 `.template` 后缀，`.ignore`
+       文件中已经配置了忽略 `iosSample.run.xml`
+    2. 在顶部运行配置下拉框点击 `Edit Configurations` 选择 `iosSample` 然后配置 `Execute target` 即可
+
 ## 同类库对比
 
 | Function/Library      | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
@@ -276,3 +295,5 @@ Apache 2.0. 有关详细信息，请参阅 [LICENSE](LICENSE.txt) 文件.
 [Picasso]: https://github.com/square/picasso
 
 [picasso_compose_post]: https://github.com/square/picasso/issues/2203#issuecomment-826444442
+
+[kdoctor]: https://github.com/Kotlin/kdoctor

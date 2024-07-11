@@ -222,9 +222,32 @@ the [examples](sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui
 directory, or you can go to [release](https://github.com/panpf/zoomimage/releases) page download
 App experience
 
-## Changelog
+## Change Log
 
 Please review the [CHANGELOG](CHANGELOG.md) file
+
+## Run Sample App
+
+Prepare the environment:
+
+1. Android Studio: Koala+ (2024.1.1+)
+2. JDK: 17+
+3. Use [kdoctor] to check the running environment and follow the prompts to install the required
+   software
+4. Android Studio installs the `Kotlin Multiplatform` and `Compose Multiplatform IDE Support`plugins
+
+Run the sample app:
+
+1. Clone the project and open it using Android Studio
+2. The running configurations of each platform have been added to the `.run` directory. After
+   synchronization is completed, directly select the running configuration of the corresponding
+   platform in the running configuration drop-down box at the top of Android Studio and click Run.
+3. The running configuration of the ios platform requires you to manually create it according to the
+   template, as follows:
+    1. Copy the `.run/iosSample.run.template.xml` file and remove the `.template` suffix.
+       The `.ignore` file has been configured to ignore `iosSample.run.xml`
+    2. Click `Edit Configurations` in the run configuration drop-down box at the top,
+       select `iosSample` and then configure `Execute target`
 
 ## Comparison of similar libraries
 
@@ -294,3 +317,5 @@ Apache 2.0. See the [LICENSE](LICENSE.txt) file for details.
 [Picasso]: https://github.com/square/picasso
 
 [picasso_compose_post]: https://github.com/square/picasso/issues/2203#issuecomment-826444442
+
+[kdoctor]: https://github.com/Kotlin/kdoctor
