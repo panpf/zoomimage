@@ -88,9 +88,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION
 
 > [!TIP]
 > Why is there no picasso version of the compose ZoomImage component? Because Picasso has officially
-> stated that it will not provide support for
->
-compose ([Original post here](https://github.com/square/picasso/issues/2203#issuecomment-826444442))
+> stated that it will not provide support for compose ([Original post here](https://github.com/square/picasso/issues/2203#issuecomment-826444442))
 
 Android View:
 
