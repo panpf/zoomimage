@@ -267,13 +267,13 @@ class ZoomImageSettingsViewModel(
                 title = "Log Level",
                 desc = null,
                 values = listOf(
-                    Logger.VERBOSE,
-                    Logger.DEBUG,
-                    Logger.INFO,
-                    Logger.WARN,
-                    Logger.ERROR,
-                    Logger.ASSERT,
-                ).map { Logger.levelName(it) },
+                    Logger.Level.Verbose,
+                    Logger.Level.Debug,
+                    Logger.Level.Info,
+                    Logger.Level.Warn,
+                    Logger.Level.Error,
+                    Logger.Level.Assert,
+                ).map { it.name },
                 getValue = { appSettings.logLevel.value },
                 onSelected = { _, value ->
                     appSettings.logLevel.value = value

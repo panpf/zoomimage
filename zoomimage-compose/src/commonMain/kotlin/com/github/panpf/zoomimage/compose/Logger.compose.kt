@@ -32,7 +32,7 @@ import com.github.panpf.zoomimage.util.Logger.Pipeline
 fun rememberZoomImageLogger(
     tag: String = "ZoomImage",
     module: String? = null,
-    @Level level: Int? = null,
+    level: Level? = null,
     pipeline: Pipeline? = null,
 ): Logger {
     val logger = remember(tag, module) {

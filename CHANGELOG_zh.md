@@ -22,6 +22,7 @@
 * new: GlideZoomAsyncImage、GlideZoomImageView、PicassoZoomImageView 支持扩展 ImageSource
 * change: ZoomImage、SketchZoomAsyncImage、CoilZoomAsyncImage、GlideZoomAsyncImage
   等函数的 `state: ZoomState` 参数的名字改为 `zoomState: ZoomState`
+* change: Logger.DEBUG 改为 Logger.Level.Debug
 
 ## v1.0.2
 

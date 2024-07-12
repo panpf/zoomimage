@@ -23,6 +23,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
   ImageSource
 * change: The name of the `state: ZoomState` parameter of ZoomImage, SketchZoomAsyncImage,
   CoilZoomAsyncImage, GlideZoomAsyncImage and other functions is changed to `zoomState: ZoomState`
+* change: Logger.DEBUG change to Logger.Level.Debug
 
 ## v1.0.2
 

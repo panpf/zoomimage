@@ -272,13 +272,13 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
 
                 val logLevelValues = remember {
                     listOf(
-                        Logger.VERBOSE,
-                        Logger.DEBUG,
-                        Logger.INFO,
-                        Logger.WARN,
-                        Logger.ERROR,
-                        Logger.ASSERT,
-                    ).map { Logger.levelName(it) }
+                        Logger.Level.Verbose,
+                        Logger.Level.Debug,
+                        Logger.Level.Info,
+                        Logger.Level.Warn,
+                        Logger.Level.Error,
+                        Logger.Level.Assert,
+                    ).map { it.name }
                 }
                 DropdownSettingItem(
                     title = "Log Level",

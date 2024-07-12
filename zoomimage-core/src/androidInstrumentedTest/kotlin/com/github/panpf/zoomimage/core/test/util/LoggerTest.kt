@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.core.test.util
 
-import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.util.Logger
 import org.junit.Assert
 import org.junit.Test
@@ -34,49 +33,49 @@ class LoggerTest {
     @Test
     fun testLevel() {
         val logger1 = Logger(tag = "MyTag")
-        Assert.assertEquals(Logger.INFO, logger1.level)
+        Assert.assertEquals(Logger.Level.Info, logger1.level)
 
         val logger2 = Logger(tag = "MyTag2").apply {
-            level = Logger.DEBUG
+            level = Logger.Level.Debug
         }
-        Assert.assertEquals(Logger.DEBUG, logger2.level)
+        Assert.assertEquals(Logger.Level.Debug, logger2.level)
 
         /*
          * rootLogger
          */
         val logger11 = logger1.newLogger()
         val logger111 = logger1.newLogger()
-        Assert.assertEquals(Logger.INFO, logger1.level)
-        Assert.assertEquals(Logger.INFO, logger11.level)
-        Assert.assertEquals(Logger.INFO, logger111.level)
+        Assert.assertEquals(Logger.Level.Info, logger1.level)
+        Assert.assertEquals(Logger.Level.Info, logger11.level)
+        Assert.assertEquals(Logger.Level.Info, logger111.level)
 
-        logger1.level = Logger.ERROR
-        Assert.assertEquals(Logger.ERROR, logger1.level)
-        Assert.assertEquals(Logger.ERROR, logger11.level)
-        Assert.assertEquals(Logger.ERROR, logger111.level)
+        logger1.level = Logger.Level.Error
+        Assert.assertEquals(Logger.Level.Error, logger1.level)
+        Assert.assertEquals(Logger.Level.Error, logger11.level)
+        Assert.assertEquals(Logger.Level.Error, logger111.level)
 
-        logger11.level = Logger.WARN
-        Assert.assertEquals(Logger.WARN, logger1.level)
-        Assert.assertEquals(Logger.WARN, logger11.level)
-        Assert.assertEquals(Logger.WARN, logger111.level)
+        logger11.level = Logger.Level.Warn
+        Assert.assertEquals(Logger.Level.Warn, logger1.level)
+        Assert.assertEquals(Logger.Level.Warn, logger11.level)
+        Assert.assertEquals(Logger.Level.Warn, logger111.level)
 
-        logger111.level = Logger.VERBOSE
-        Assert.assertEquals(Logger.VERBOSE, logger1.level)
-        Assert.assertEquals(Logger.VERBOSE, logger11.level)
-        Assert.assertEquals(Logger.VERBOSE, logger111.level)
+        logger111.level = Logger.Level.Verbose
+        Assert.assertEquals(Logger.Level.Verbose, logger1.level)
+        Assert.assertEquals(Logger.Level.Verbose, logger11.level)
+        Assert.assertEquals(Logger.Level.Verbose, logger111.level)
 
 
         val listPipeline = ListPipeline()
         logger1.pipeline = listPipeline
 
-        logger1.level = Logger.VERBOSE
+        logger1.level = Logger.Level.Verbose
         listPipeline.logs.clear()
         logger1.v("Hello")
         logger1.d("Hello")
         logger1.i("Hello")
         logger1.w("Hello")
         logger1.e("Hello")
-        logger1.log(Logger.ASSERT, "Hello")
+        logger1.log(Logger.Level.Assert, "Hello")
         Assert.assertEquals(
             listOf(
                 "VERBOSE-MyTag-Hello",
@@ -89,14 +88,14 @@ class LoggerTest {
             listPipeline.logs
         )
 
-        logger1.level = Logger.DEBUG
+        logger1.level = Logger.Level.Debug
         listPipeline.logs.clear()
         logger1.v("Hello")
         logger1.d("Hello")
         logger1.i("Hello")
         logger1.w("Hello")
         logger1.e("Hello")
-        logger1.log(Logger.ASSERT, "Hello")
+        logger1.log(Logger.Level.Assert, "Hello")
         Assert.assertEquals(
             listOf(
                 "DEBUG-MyTag-Hello",
@@ -108,14 +107,14 @@ class LoggerTest {
             listPipeline.logs
         )
 
-        logger1.level = Logger.INFO
+        logger1.level = Logger.Level.Info
         listPipeline.logs.clear()
         logger1.v("Hello")
         logger1.d("Hello")
         logger1.i("Hello")
         logger1.w("Hello")
         logger1.e("Hello")
-        logger1.log(Logger.ASSERT, "Hello")
+        logger1.log(Logger.Level.Assert, "Hello")
         Assert.assertEquals(
             listOf(
                 "INFO-MyTag-Hello",
@@ -126,14 +125,14 @@ class LoggerTest {
             listPipeline.logs
         )
 
-        logger1.level = Logger.WARN
+        logger1.level = Logger.Level.Warn
         listPipeline.logs.clear()
         logger1.v("Hello")
         logger1.d("Hello")
         logger1.i("Hello")
         logger1.w("Hello")
         logger1.e("Hello")
-        logger1.log(Logger.ASSERT, "Hello")
+        logger1.log(Logger.Level.Assert, "Hello")
         Assert.assertEquals(
             listOf(
                 "WARN-MyTag-Hello",
@@ -143,14 +142,14 @@ class LoggerTest {
             listPipeline.logs
         )
 
-        logger1.level = Logger.ERROR
+        logger1.level = Logger.Level.Error
         listPipeline.logs.clear()
         logger1.v("Hello")
         logger1.d("Hello")
         logger1.i("Hello")
         logger1.w("Hello")
         logger1.e("Hello")
-        logger1.log(Logger.ASSERT, "Hello")
+        logger1.log(Logger.Level.Assert, "Hello")
         Assert.assertEquals(
             listOf(
                 "ERROR-MyTag-Hello",
@@ -159,14 +158,14 @@ class LoggerTest {
             listPipeline.logs
         )
 
-        logger1.level = Logger.ASSERT
+        logger1.level = Logger.Level.Assert
         listPipeline.logs.clear()
         logger1.v("Hello")
         logger1.d("Hello")
         logger1.i("Hello")
         logger1.w("Hello")
         logger1.e("Hello")
-        logger1.log(Logger.ASSERT, "Hello")
+        logger1.log(Logger.Level.Assert, "Hello")
         Assert.assertEquals(
             listOf("ASSERT-MyTag-Hello"),
             listPipeline.logs
@@ -180,7 +179,7 @@ class LoggerTest {
 
         val logger = Logger("MyTag").apply {
             pipeline = listPipeline
-            level = Logger.VERBOSE
+            level = Logger.Level.Verbose
         }
 
         listPipeline.logs.clear()
@@ -259,10 +258,10 @@ class LoggerTest {
         )
 
         listPipeline.logs.clear()
-        logger.log(Logger.ASSERT, "Hello")
-        logger.log(Logger.ASSERT) { "Hello2" }
-        logger.log(Logger.ASSERT, exception, "Hello")
-        logger.log(Logger.ASSERT, exception) { "Hello2" }
+        logger.log(Logger.Level.Assert, "Hello")
+        logger.log(Logger.Level.Assert) { "Hello2" }
+        logger.log(Logger.Level.Assert, exception, "Hello")
+        logger.log(Logger.Level.Assert, exception) { "Hello2" }
         Assert.assertEquals(
             listOf(
                 "ASSERT-MyTag-Hello",
@@ -314,37 +313,15 @@ class LoggerTest {
         }
     }
 
-    @Test
-    fun testLevelName() {
-        Assert.assertEquals("VERBOSE", Logger.levelName(Logger.VERBOSE))
-        Assert.assertEquals("DEBUG", Logger.levelName(Logger.DEBUG))
-        Assert.assertEquals("INFO", Logger.levelName(Logger.INFO))
-        Assert.assertEquals("WARN", Logger.levelName(Logger.WARN))
-        Assert.assertEquals("ERROR", Logger.levelName(Logger.ERROR))
-        Assert.assertEquals("ASSERT", Logger.levelName(Logger.ASSERT))
-        Assert.assertEquals("UNKNOWN", Logger.levelName(8))
-        Assert.assertEquals("UNKNOWN", Logger.levelName(1))
-
-        Assert.assertEquals(Logger.VERBOSE, Logger.level("VERBOSE"))
-        Assert.assertEquals(Logger.DEBUG, Logger.level("DEBUG"))
-        Assert.assertEquals(Logger.INFO, Logger.level("INFO"))
-        Assert.assertEquals(Logger.WARN, Logger.level("WARN"))
-        Assert.assertEquals(Logger.ERROR, Logger.level("ERROR"))
-        Assert.assertEquals(Logger.ASSERT, Logger.level("ASSERT"))
-        assertThrow(IllegalArgumentException::class) {
-            Logger.level("UNKNOWN")
-        }
-    }
-
     private class ListPipeline : Logger.Pipeline {
 
         var logs = mutableListOf<String>()
 
-        override fun log(level: Int, tag: String, msg: String, tr: Throwable?) {
+        override fun log(level: Logger.Level, tag: String, msg: String, tr: Throwable?) {
             val finalMsg = if (tr != null) {
-                "${Logger.levelName(level)}-$tag-$msg-$tr"
+                "${level}-$tag-$msg-$tr"
             } else {
-                "${Logger.levelName(level)}-$tag-$msg"
+                "${level}-$tag-$msg"
             }
             logs.add(finalMsg)
         }

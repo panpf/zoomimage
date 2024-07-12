@@ -105,7 +105,7 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 }.show(childFragmentManager, null)
             }
             appSettings.logLevel.collectWithLifecycle(viewLifecycleOwner) {
-                logger.level = Logger.level(it)
+                logger.level = Logger.Level.valueOf(it)
             }
             appSettings.scrollBarEnabled.collectWithLifecycle(viewLifecycleOwner) {
                 scrollBar = if (it) ScrollBarSpec.Default else null

@@ -517,7 +517,7 @@ class TileManagerTest {
     private class TileManagerHolder(val imageSource: ImageSource, val imageInfo: ImageInfo) :
         Closeable {
         private val logger = Logger("Test").apply {
-            level = Logger.DEBUG
+            level = Logger.Level.Debug
         }
         private val tileBitmapCacheHelper = TileBitmapCacheHelper(logger, TileBitmapCacheSpec())
         val containerSize = IntSizeCompat(1080, 1920)

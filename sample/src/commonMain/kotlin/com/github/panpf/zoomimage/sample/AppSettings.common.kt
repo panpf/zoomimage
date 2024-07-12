@@ -128,15 +128,11 @@ class AppSettings(val context: PlatformContext) {
     }
 
     val logLevel by lazy {
-        stringSettingsStateFlow(context, "logLevel", defaultLogLevel())
+        val initialize = if (isDebugMode()) Logger.Level.Debug.name else Logger.Level.Info.name
+        stringSettingsStateFlow(context, "logLevel3", initialize)
     }
 
     val debugLog by lazy {
         booleanSettingsStateFlow(context, "debugLog", isDebugMode())
-    }
-
-    companion object {
-        fun defaultLogLevel(): String =
-            Logger.levelName(if (isDebugMode()) Logger.DEBUG else Logger.INFO)
     }
 }

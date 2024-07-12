@@ -149,7 +149,7 @@ fun BaseZoomImageSample(
             if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
         }
     }
-    val logLevel by remember { derivedStateOf { Logger.level(logLevelName) } }
+    val logLevel by remember { derivedStateOf { Logger.Level.valueOf(logLevelName) } }
     val zoomState = rememberZoomState(rememberZoomImageLogger(level = logLevel)).apply {
         LaunchedEffect(threeStepScale) {
             zoomable.threeStepScale = threeStepScale

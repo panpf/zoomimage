@@ -410,7 +410,7 @@ class SubsamplingState constructor(
             } else {
                 val exception = result.exceptionOrNull()!! as CreateTileDecoderException
                 this@SubsamplingState.imageInfo = exception.imageInfo
-                val level = if (exception.skipped) Logger.DEBUG else Logger.ERROR
+                val level = if (exception.skipped) Logger.Level.Debug else Logger.Level.Error
                 val type = if (exception.skipped) "skipped" else "error"
                 logger.log(level) {
                     "resetTileDecoder:$caller. $type, ${exception.message}. " +
