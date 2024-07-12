@@ -45,8 +45,6 @@ import com.github.panpf.sketch.compose.internal.transformOf
 import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.compose.rememberAsyncImageState
 import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -115,7 +113,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomState: ZoomState = rememberZoomState(),
+    zoomState: SketchZoomState = rememberSketchZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -200,7 +198,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomState: ZoomState = rememberZoomState(),
+    zoomState: SketchZoomState = rememberSketchZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -275,7 +273,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomState: ZoomState = rememberZoomState(),
+    zoomState: SketchZoomState = rememberSketchZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -352,7 +350,7 @@ fun SketchZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomState: ZoomState = rememberZoomState(),
+    zoomState: SketchZoomState = rememberSketchZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -390,7 +388,7 @@ fun SketchZoomAsyncImage(
 private fun onPainterState(
     context: Context,
     sketch: Sketch,
-    zoomState: ZoomState,
+    zoomState: SketchZoomState,
     request: DisplayRequest,
     loadState: PainterState,
 ) {

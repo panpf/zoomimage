@@ -184,4 +184,6 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     fun unregisterDataToImageSource(convertor: PicassoDataToImageSource) {
         convertors.remove(convertor)
     }
+
+    override fun getLogTag(): String? = "PicassoZoomImageView"
 }

@@ -25,6 +25,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
   CoilZoomAsyncImage, GlideZoomAsyncImage and other functions is changed to `zoomState: ZoomState`
 * change: Logger.DEBUG change to Logger.Level.Debug
 * remove: Remove the module attribute of Logger
+* change: Now each component's log tag is separate
 
 ## v1.0.2
 

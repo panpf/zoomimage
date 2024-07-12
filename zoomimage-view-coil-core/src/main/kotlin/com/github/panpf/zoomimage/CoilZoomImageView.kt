@@ -131,4 +131,6 @@ open class CoilZoomImageView @JvmOverloads constructor(
             else -> drawable
         }
     }
+
+    override fun getLogTag(): String? = "CoilZoomImageView"
 }

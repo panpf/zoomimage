@@ -41,7 +41,7 @@ fun rememberZoomState(logger: Logger = rememberZoomImageLogger()): ZoomState {
  * Used to control the state of scaling, translation, rotation, and subsampling
  */
 @Stable
-class ZoomState(
+open class ZoomState(
     /**
      * Used to print log
      */
@@ -57,6 +57,26 @@ class ZoomState(
      */
     val subsampling: SubsamplingState,
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as ZoomState
+
+        if (logger != other.logger) return false
+        if (zoomable != other.zoomable) return false
+        if (subsampling != other.subsampling) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = logger.hashCode()
+        result = 31 * result + zoomable.hashCode()
+        result = 31 * result + subsampling.hashCode()
+        return result
+    }
 
     override fun toString(): String {
         return "ZoomState(logger=${logger}, zoomable=${zoomable}, subsampling=${subsampling})"

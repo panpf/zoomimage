@@ -18,6 +18,7 @@ import com.bumptech.glide.request.target.Target
 import com.github.panpf.sketch.fetch.newResourceUri
 import com.github.panpf.zoomimage.GlideZoomAsyncImage
 import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
+import com.github.panpf.zoomimage.rememberGlideZoomState
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
@@ -33,7 +34,8 @@ fun GlideZoomAsyncImageSample(
 ) {
     BaseZoomImageSample(
         photo = photo,
-        photoPaletteState = photoPaletteState
+        photoPaletteState = photoPaletteState,
+        createZoomState = { rememberGlideZoomState() }
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.Loading) }
         val glideData = remember(key1 = photo) { sketchUri2GlideModel(photo.originalUrl) }

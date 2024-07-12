@@ -17,6 +17,7 @@ import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.zoomimage.ZoomImage
+import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
@@ -28,7 +29,8 @@ import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 fun BasicZoomImageSample(photo: Photo, photoPaletteState: MutableState<PhotoPalette>) {
     BaseZoomImageSample(
         photo = photo,
-        photoPaletteState = photoPaletteState
+        photoPaletteState = photoPaletteState,
+        createZoomState = { rememberZoomState() }
     ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         val context = LocalPlatformContext.current
         val sketch = SingletonSketch.get(context)

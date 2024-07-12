@@ -80,7 +80,7 @@ open class ZoomImageView @JvmOverloads constructor(
     private var wrappedScaleType: ScaleType
     private var scrollBarHelper: ScrollBarHelper? = null
 
-    val logger = Logger(tag = "ZoomImageView")
+    val logger = Logger(tag = getLogTag() ?: "ZoomImageView")
 
     /**
      * Control the ability to zoom, pan, rotate
@@ -175,6 +175,8 @@ open class ZoomImageView @JvmOverloads constructor(
 
 
     /**************************************** Internal ********************************************/
+
+    open fun getLogTag(): String? = null
 
     private fun parseAttrs(attrs: AttributeSet?) {
         val array = context.obtainStyledAttributes(attrs, styleable.ZoomImageView)

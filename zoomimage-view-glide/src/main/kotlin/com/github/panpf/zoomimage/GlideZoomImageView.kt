@@ -110,4 +110,6 @@ open class GlideZoomImageView @JvmOverloads constructor(
     fun unregisterModelToImageSource(convertor: GlideModelToImageSource) {
         convertors.remove(convertor)
     }
+
+    override fun getLogTag(): String? = "GlideZoomImageView"
 }

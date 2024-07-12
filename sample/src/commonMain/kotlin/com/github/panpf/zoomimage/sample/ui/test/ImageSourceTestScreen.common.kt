@@ -18,15 +18,14 @@ import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.cache.CachePolicy.DISABLED
 import com.github.panpf.sketch.fetch.Fetcher
 import com.github.panpf.sketch.painter.asPainter
 import com.github.panpf.sketch.request.ImageRequest
-import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.ImageResult.Success
 import com.github.panpf.sketch.request.execute
 import com.github.panpf.zoomimage.ZoomImage
+import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
@@ -99,7 +98,8 @@ class ImageSourceTestScreen : BaseScreen() {
     fun ImageSourceSample(sketchImageUri: String, photoPaletteState: MutableState<PhotoPalette>) {
         BaseZoomImageSample(
             photo = Photo(sketchImageUri),
-            photoPaletteState = photoPaletteState
+            photoPaletteState = photoPaletteState,
+            createZoomState = { rememberZoomState() }
         ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
             val context = LocalPlatformContext.current
             val sketch = SingletonSketch.get(context)

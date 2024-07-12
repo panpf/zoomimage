@@ -24,6 +24,7 @@
   等函数的 `state: ZoomState` 参数的名字改为 `zoomState: ZoomState`
 * change: Logger.DEBUG 改为 Logger.Level.Debug
 * remove: 移除 Logger 的 module 属性
+* change: 现在每个组件的日志的 tag 都是单独的
 
 ## v1.0.2
 

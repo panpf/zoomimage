@@ -13,7 +13,7 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.crossfade
 import coil3.size.Precision
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
-import com.github.panpf.zoomimage.compose.ZoomState
+import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
@@ -27,8 +27,9 @@ fun CoilZoomAsyncImageSample(
 ) {
     BaseZoomImageSample(
         photo = photo,
-        photoPaletteState = photoPaletteState
-    ) { contentScale, alignment, zoomState: ZoomState, scrollBar, onLongClick ->
+        photoPaletteState = photoPaletteState,
+        createZoomState = { rememberCoilZoomState() }
+    ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         val context = LocalPlatformContext.current
         val request = remember(key1 = photo) {

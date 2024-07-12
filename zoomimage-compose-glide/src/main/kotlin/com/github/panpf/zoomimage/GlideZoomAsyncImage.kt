@@ -37,13 +37,11 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
 import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
 import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
 import com.github.panpf.zoomimage.compose.glide.internal.Transition
-import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -131,7 +129,7 @@ fun GlideZoomAsyncImage(
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
-    zoomState: ZoomState = rememberZoomState(),
+    zoomState: GlideZoomState = rememberGlideZoomState(),
     modelToImageSources: ImmutableList<GlideModelToImageSource>? = null,
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
@@ -186,7 +184,7 @@ fun GlideZoomAsyncImage(
 
 private class ResetListener(
     private val context: Context,
-    private val zoomState: ZoomState,
+    private val zoomState: GlideZoomState,
     private val modelToImageSources: ImmutableList<GlideModelToImageSource>?,
     private val requestBuilder: RequestBuilder<Drawable>,
     private val model: Any?,

@@ -108,4 +108,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
         }
         return SketchImageSource(context, sketch, result.request.uri)
     }
+
+    override fun getLogTag(): String? = "SketchZoomImageView"
 }

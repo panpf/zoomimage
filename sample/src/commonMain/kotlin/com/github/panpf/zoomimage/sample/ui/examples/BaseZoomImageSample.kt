@@ -51,8 +51,6 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
-import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
@@ -89,13 +87,14 @@ import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
 
 @Composable
-fun BaseZoomImageSample(
+fun <T : ZoomState> BaseZoomImageSample(
     photo: Photo,
     photoPaletteState: MutableState<PhotoPalette>,
+    createZoomState: @Composable () -> T,
     content: @Composable BoxScope.(
         contentScale: ContentScale,
         alignment: Alignment,
-        zoomState: ZoomState,
+        zoomState: T,
         scrollBar: ScrollBarSpec?,
         onLongClick: () -> Unit
     ) -> Unit
@@ -150,7 +149,10 @@ fun BaseZoomImageSample(
         }
     }
     val logLevel by remember { derivedStateOf { Logger.Level.valueOf(logLevelName) } }
-    val zoomState = rememberZoomState(rememberZoomImageLogger(level = logLevel)).apply {
+    val zoomState = createZoomState().apply {
+        LaunchedEffect(logLevel) {
+            logger.level = logLevel
+        }
         LaunchedEffect(threeStepScale) {
             zoomable.threeStepScale = threeStepScale
         }

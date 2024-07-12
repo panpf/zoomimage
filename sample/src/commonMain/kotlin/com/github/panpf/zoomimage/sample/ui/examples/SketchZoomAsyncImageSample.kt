@@ -14,6 +14,7 @@ import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
+import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
@@ -26,8 +27,9 @@ fun SketchZoomAsyncImageSample(
 ) {
     BaseZoomImageSample(
         photo = photo,
-        photoPaletteState = photoPaletteState
-    ) { contentScale, alignment, state, scrollBar, onLongClick ->
+        photoPaletteState = photoPaletteState,
+        createZoomState = { rememberSketchZoomState() }
+    ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         val imageState = rememberAsyncImageState()
         SketchZoomAsyncImage(
             request = ComposableImageRequest(photo.originalUrl) {
@@ -41,7 +43,7 @@ fun SketchZoomAsyncImageSample(
                 .fillMaxSize()
                 .progressIndicator(imageState, rememberSectorProgressPainter()),
             state = imageState,
-            zoomState = state,
+            zoomState = zoomState,
             scrollBar = scrollBar,
             onLongPress = { onLongClick.invoke() }
         )

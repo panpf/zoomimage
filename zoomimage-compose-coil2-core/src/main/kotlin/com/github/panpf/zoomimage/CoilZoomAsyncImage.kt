@@ -55,14 +55,12 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.github.panpf.zoomimage.coil.CoilImageSource
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
-import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.coil.internal.BaseZoomAsyncImage
 import com.github.panpf.zoomimage.compose.coil.internal.ConstraintsSizeResolver
 import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
 import com.github.panpf.zoomimage.compose.coil.internal.requestOf
 import com.github.panpf.zoomimage.compose.coil.internal.toScale
 import com.github.panpf.zoomimage.compose.coil.internal.transformOf
-import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -132,7 +130,7 @@ fun CoilZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomState: ZoomState = rememberZoomState(),
+    zoomState: CoilZoomState = rememberCoilZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -209,7 +207,7 @@ fun CoilZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    zoomState: ZoomState = rememberZoomState(),
+    zoomState: CoilZoomState = rememberCoilZoomState(),
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -262,7 +260,7 @@ internal fun updateRequest(request: ImageRequest, contentScale: ContentScale): I
 
 private fun onState(
     imageLoader: ImageLoader,
-    zoomState: ZoomState,
+    zoomState: CoilZoomState,
     request: ImageRequest,
     loadState: State,
 ) {
