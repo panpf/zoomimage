@@ -2,6 +2,7 @@
 
 翻译：[English](offset.md)
 
+> [!TIP]
 > * 以下示例优先用 Compose 版本的组件来演示
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
@@ -21,7 +22,7 @@ ZoomImage 提供了 `offset()` 方法用来移动图像到指定位置，它有�
 val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -70,7 +71,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -90,6 +91,7 @@ val sketchZoomImageView = SketchZoomImageView(context)
 val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 ```
 
+> [!TIP]
 > * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
 * `zoomable.transform.offset: Offset`: 当前偏移量（baseTransform.offset + userTransform.offset）
@@ -102,7 +104,7 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 * compose 版本的相关属性是用 State 包装的，在 Composable 函数中直接读取它即可实现监听
 * view 的相关属性是用 StateFlow 包装，调用其 collect 函数即可实现监听
 
-[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 

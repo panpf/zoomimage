@@ -1,7 +1,8 @@
 ## Scale
 
-Translations: [简体中文](scale_zh.md)
+Translations: [简体中文](zoom_zh.md)
 
+> [!TIP]
 > * The following example takes precedence over the Compose version component for demonstration
 > * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
 > * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
@@ -68,6 +69,7 @@ mediumScale, and maxScale:
 [ScalesCalculator] is specially used to calculate mediumScale and maxScale. ZoomImage has two
 built-in [ScalesCalculator]:
 
+> [!TIP]
 > * minMediumScale = `minScale * multiple`
 > * fillContainerScale = `max(containerSize.width / contentSize.width.toFloat(),
     containerSize.height / contentSize.height.toFloat())`
@@ -107,7 +109,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -132,7 +134,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -148,6 +150,7 @@ needed The method toggles the zoom factor, which has two parameters:
   currently visible area
 * `animated: Boolean = false`: Whether to use animation, the default is false
 
+> [!TIP]
 > Note: centroidContentPoint must be a point on content
 
 example：
@@ -156,7 +159,7 @@ example：
 val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -201,7 +204,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -219,6 +222,7 @@ parameters:
   the default is the center of the currently visible area of the content
 * `animated: Boolean = false`: Whether to use animation, the default is false
 
+> [!TIP]
 > Note: centroidContentPoint must be a point on content
 
 example：
@@ -227,7 +231,7 @@ example：
 val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -273,7 +277,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -302,7 +306,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -326,7 +330,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -383,6 +387,7 @@ val sketchZoomImageView = SketchZoomImageView(context)
 val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 ```
 
+> [!TIP]
 > Note: The relevant properties of the view version are wrapped in StateFlow, so its name is
 > suffixed with State compared to the compose version
 
@@ -406,7 +411,7 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 * The relevant properties of the view are wrapped in StateFlow, and its collect function can be
   called to implement the listening
 
-[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 

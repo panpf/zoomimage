@@ -43,7 +43,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 `${LAST_VERSION}`: [![Download][version_icon]][version_link] (不包含 'v')
 
-Compose Multiplatform：
+Compose multiplatform：
 
 ```kotlin
 // 提供适配了 Sketch 图片加载器的 SketchZoomAsyncImage 组件（推荐使用）
@@ -68,7 +68,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-resources:${LAST_VER
 > [!TIP]
 > 根据你用的图片加载器或需求任选其一即可
 
-Only Android Compose：
+Only android compose：
 
 ```kotlin
 // 提供适配了 Glide 图片加载器的 GlideZoomAsyncImage 组件
@@ -79,7 +79,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION
 > 为什么没有 picasso 版本的 compose ZoomImage 组件？因为 Picasso 官方已经说明不会提供对 compose
 > 的支持（[原文在此][picasso_compose_post]）
 
-Android View：
+Android view：
 
 ```kotlin
 // 提供适配了 Sketch 图片加载器的 SketchZoomImageView 组件（推荐使用）
@@ -113,17 +113,17 @@ ZoomImage 自己的混淆已经包含在了 aar 中，但你可能还需要为�
 
 ## 快速上手
 
-Compose Multiplatform：
+Compose multiplatform：
 
 ```kotlin
 // 使用基础的 ZoomImage 组件
 val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(Unit) {
-    val resUri = Res.getUri("files/huge_china.jpeg")
-    zoomState.subsampling.setImageSource(ImageSource.fromResource(resUri))
+    val resUri = Res.getUri("files/huge_world.jpeg")
+    zoomState.subsampling.setImageSource(ImageSource.fromComposeResource(resUri))
 }
 ZoomImage(
-    painter = painterResource(Res.drawable.huge_china_thumbnail),
+    painter = painterResource(Res.drawable.huge_world_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -131,14 +131,14 @@ ZoomImage(
 
 // 使用 SketchZoomAsyncImage 组件
 SketchZoomAsyncImage(
-    uri = "http://sample.com/huge_china.jpeg",
+    uri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
 
 // 使用 CoilZoomAsyncImage 组件
 CoilZoomAsyncImage(
-    model = "http://sample.com/huge_china.jpeg",
+    model = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -148,12 +148,12 @@ CoilZoomAsyncImage(
 > SketchZoomAsyncImage 和 CoilZoomAsyncImage 的用法和它们原本的 AsyncImage
 > 一样，只是多了一个 `zoomState: ZoomState` 参数
 
-Only Android Compose：
+Only android compose：
 
 ```kotlin
 // 使用 GlideZoomAsyncImage 组件
 GlideZoomAsyncImage(
-    model = "http://sample.com/huge_china.jpeg",
+    model = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -162,37 +162,37 @@ GlideZoomAsyncImage(
 > [!TIP]
 > GlideZoomAsyncImage 的用法和它原本的 GlideImage 一样，只是多了一个 `zoomState: ZoomState` 参数
 
-Android View：
+Android view：
 
 ```kotlin
 // 使用基础的 ZoomImageView 组件
 val zoomImageView = ZoomImageView(context)
-zoomImageView.setImageResource(R.drawable.huge_china_thumbnail)
-zoomImageView.subsampling.setImageSource(ImageSource.resource(R.raw.huge_china))
+zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
+zoomImageView.subsampling.setImageSource(ImageSource.resource(R.raw.huge_world))
 
-// 使用 GlideZoomAsyncImage 组件
+// 使用 SketchZoomAsyncImage 组件
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
+sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
 
 // 使用 CoilZoomImageView 组件
 val coilZoomImageView = CoilZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
+sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
 
-// 使用 CoilZoomImageView 组件
-val glideZoomImageView = CoilZoomImageView(context)
+// 使用 GlideZoomImageView 组件
+val glideZoomImageView = GlideZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
-    .load("http://sample.com/huge_china.jpeg")
+    .load("http://sample.com/huge_world.jpeg")
     .into(glideZoomImageView)
 
 // 使用 PicassoZoomImageView 组件
 val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
+picassoZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
 ```
 
 ## 文档
 
 * [开始使用](docs/wiki/getstarted_zh.md)
-* [Scale: 缩放、双击缩放、时长设置](docs/wiki/scale_zh.md)
+* [Zoom: 缩放、双击缩放、时长设置](docs/wiki/zoom_zh.md)
 * [Offset: 移动到指定位置](docs/wiki/offset_zh.md)
 * [Locate: 定位到图片的任意位置](docs/wiki/locate_zh.md)
 * [Rotate: 旋转图片](docs/wiki/rotate_zh.md)

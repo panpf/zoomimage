@@ -54,7 +54,7 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 
 `${LAST_VERSION}`: [![Download][version_icon]][version_link] (Not included 'v')
 
-Compose Multiplatform:
+Compose multiplatform:
 
 ```kotlin
 // Provides the SketchZoomAsyncImage component adapted to the Sketch image loader (recommended)
@@ -79,7 +79,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-resources:${LAST_VER
 > [!TIP]
 > Just choose one according to the image loader you use or your needs.
 
-Only Android Compose:
+Only android compose:
 
 ```kotlin
 // Provides the GlideZoomAsyncImage component adapted to the Glide image loader
@@ -90,7 +90,7 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION
 > Why is there no picasso version of the compose ZoomImage component? Because Picasso has officially
 > stated that it will not provide support for compose ([Original post here][picasso_compose_post])
 
-Android View:
+Android view:
 
 ```kotlin
 // Provides the SketchZoomImageView component adapted to the Sketch image loader (recommended)
@@ -125,17 +125,17 @@ configuration for other libraries that depend indirectly
 
 ## Quickly Started
 
-Compose Multiplatform：
+Compose multiplatform:
 
 ```kotlin
 // Use basic ZoomImage components
 val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(Unit) {
-    val resUri = Res.getUri("files/huge_china.jpeg")
-    zoomState.subsampling.setImageSource(ImageSource.fromResource(resUri))
+    val resUri = Res.getUri("files/huge_world.jpeg")
+    zoomState.subsampling.setImageSource(ImageSource.fromComposeResource(resUri))
 }
 ZoomImage(
-    painter = painterResource(Res.drawable.huge_china_thumbnail),
+    painter = painterResource(Res.drawable.huge_world_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -143,14 +143,14 @@ ZoomImage(
 
 // Use SketchZoomAsyncImage component
 SketchZoomAsyncImage(
-    uri = "http://sample.com/huge_china.jpeg",
+    uri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
 
 // Use CoilZoomAsyncImage component
 CoilZoomAsyncImage(
-    model = "http://sample.com/huge_china.jpeg",
+    model = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -160,12 +160,12 @@ CoilZoomAsyncImage(
 > The usage of SketchZoomAsyncImage and CoilZoomAsyncImage is the same as their original AsyncImage,
 > except that there is an additional `zoomState: ZoomState` parameter
 
-Only Android Compose：
+Only android compose:
 
 ```kotlin
 // Use GlideZoomAsyncImage component
 GlideZoomAsyncImage(
-    model = "http://sample.com/huge_china.jpeg",
+    model = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -175,37 +175,37 @@ GlideZoomAsyncImage(
 > The usage of GlideZoomAsyncImage is the same as its original GlideImage, except that there is an
 > additional `zoomState: ZoomState` parameter
 
-Android View：
+Android view:
 
 ```kotlin
 // Use basis ZoomImageView component
 val zoomImageView = ZoomImageView(context)
-zoomImageView.setImageResource(R.drawable.huge_china_thumbnail)
-zoomImageView.subsampling.setImageSource(ImageSource.resource(R.raw.huge_china))
+zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
+zoomImageView.subsampling.setImageSource(ImageSource.resource(R.raw.huge_world))
 
-// Use GlideZoomAsyncImage component
+// Use SketchZoomAsyncImage component
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
+sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
 
 // Use CoilZoomImageView component
 val coilZoomImageView = CoilZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
+sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
 
-// Use CoilZoomImageView component
-val glideZoomImageView = CoilZoomImageView(context)
+// Use GlideZoomImageView component
+val glideZoomImageView = GlideZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
-    .load("http://sample.com/huge_china.jpeg")
+    .load("http://sample.com/huge_world.jpeg")
     .into(glideZoomImageView)
 
 // Use PicassoZoomImageView component
 val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageView.loadImage("http://sample.com/huge_china.jpeg")
+picassoZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
 ```
 
 ## Document
 
 * [Get Started](docs/wiki/getstarted.md)
-* [Scale: scale, double-click scale, duration setting](docs/wiki/scale.md)
+* [Zoom: scale, double-click scale, duration setting](docs/wiki/zoom.md)
 * [Offset: Move to the specified position](docs/wiki/offset.md)
 * [Locate: Locate anywhere in the image](docs/wiki/locate.md)
 * [Rotate: Rotate the image](docs/wiki/rotate.md)

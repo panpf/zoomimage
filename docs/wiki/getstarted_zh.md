@@ -2,171 +2,128 @@
 
 翻译：[English](getstarted.md)
 
-> * 以下示例优先用 Compose 版本的组件来演示
-> * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
-> * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
-
-### 组件
+## 组件
 
 ZoomImage 库包含了多个组件可供选择，你可以根据自己的需求选择合适的组件。
 
-*不同的组件需要导入不同的依赖，请参考 [README](../../README_zh.md) 导入对应的依赖*
+Compose multiplatform：
 
-compose android：
+* [SketchZoomAsyncImage]：集成了 [Sketch]
+  图片加载库，支持网络图片和子采样。示例：[SketchZoomAsyncImageSample]。`推荐使用`
+* [CoilZoomAsyncImage]：集成了 [Coil]
+  图片加载库，支持网络图片和子采样。示例：[CoilZoomAsyncImageSample]
+* [ZoomImage]
+  ：基础的缩放组件，未集成图片加载库，不支持网络图片，需要调用 `subsampling.setImageResource()`
+  方法以支持子采样。示例：[ZoomImageSample]
 
-* [SketchZoomAsyncImage]：`推荐使用`
-    * 集成了 [Sketch] 图片加载库的缩放 Image 组件，用法和 [Sketch] 的 [AsyncImage][SketchAsyncImage]
-      组件一样
-    * 已支持网络图片和子采样，无需做任何额外的工作
-    * 参考示例 [SketchZoomAsyncImageSample]
-* [CoilZoomAsyncImage]：
-    * 集成了 [Coil] 图片加载库的缩放 Image 组件，用法和 [Coil] 的 [AsyncImage][CoilAsyncImage] 组件一样
-    * 已支持网络图片和子采样，无需做任何额外的工作
-    * 参考示例 [CoilZoomAsyncImageSample]
-* [GlideZoomAsyncImage]：
-    * 集成了 [Glide] 图片加载库的缩放 Image 组件，用法和 [Glide] 的 [GlideImage] 组件一样
-    * 已支持网络图片和子采样，无需做任何额外的工作
-    * 参考示例 [GlideZoomAsyncImageSample]
+Only android compose：
 
-compose multiplatform：
+* [GlideZoomAsyncImage]：集成了 [Glide]
+  图片加载库，支持网络图片和子采样。示例：[GlideZoomAsyncImageSample]
 
-* [ZoomImage]：
-    * 最基础的缩放 Image 组件，未集成图片加载库
-    * 还需要做额外的工作以支持网络图片和子采样
-    * 参考示例 [ZoomImageSample]
+Android view：
 
-view：
+* [SketchZoomImageView]：集成了 [Sketch]
+  图片加载库，支持网络图片和子采样。示例：[SketchZoomImageViewFragment]。`推荐使用`
+* [CoilZoomImageView]：集成了 [Coil]
+  图片加载库，支持网络图片和子采样。示例：[CoilZoomImageViewFragment]
+* [GlideZoomImageView]：集成了 [Glide]
+  图片加载库，支持网络图片和子采样。示例：[GlideZoomImageViewFragment]
+* [PicassoZoomImageView]：集成了 [Picasso]
+  图片加载库，支持网络图片和子采样。示例：[PicassoZoomImageViewFragment]
+* [ZoomImageView]
+  ：基础的缩放组件，未集成图片加载库，不支持网络图片，需要调用 `subsampling.setImageResource()`
+  方法以支持子采样。示例：[ZoomImageViewFragment]
 
-* [SketchZoomImageView]：`推荐使用`
-    * 集成了 [Sketch] 图片加载库的缩放 ImageView
-    * 已适配 [Sketch] 支持子采样，无需做任何额外的工作
-    * 参考示例 [SketchZoomImageViewFragment]
-* [CoilZoomImageView]：
-    * 集成了 [Coil] 图片加载库的缩放 ImageView
-    * 已适配 [Coil] 支持子采样，无需做任何额外的工作
-    * 参考示例 [CoilZoomImageViewFragment]
-* [GlideZoomImageView]：
-    * 集成了 [Glide] 图片加载库的缩放 ImageView
-    * 已适配 [Glide] 支持子采样，无需做任何额外的工作
-    * 参考示例 [GlideZoomImageViewFragment]
-* [PicassoZoomImageView]：
-    * 集成了 [Picasso] 图片加载库的缩放 ImageView
-    * 已适配 [Picasso] 支持子采样，无需做任何额外的工作
-    * 参考示例 [PicassoZoomImageViewFragment]
-* [ZoomImageView]：
-    * 最基础的缩放 ImageView，未集成图片加载库
-    * 还需要做额外的工作以支持网络图片和子采样
-    * 参考示例 [ZoomImageViewFragment]
+> [!TIP]
+> * 不同的组件需要导入不同的依赖，请参考 [README](../../README_zh.md#下载) 导入对应的依赖
+> * 集成了图片加载器的组件无需任何额外的工作即可支持任意来源的图片和子采样功能
+> * 未集成图片加载器的组件只能显示本地图片，以及需要额外调用
+    `subsampling.setImageSource(ImageSource)` 方法以支持子采样功能
 
-总结：
+## 示例
 
-* 集成了图片加载器的组件无需任何额外的工作即可支持任意来源的图片和子采样功能
-* 未集成图片加载器的组件只能显示本地图片，以及需要额外调用 `subsampling.setImageSource(ImageSource)`
-  方法以支持子采样功能
-
-### 示例
-
-#### compose android
+Compose multiplatform：
 
 ```kotlin
+// 使用基础的 ZoomImage 组件
+val zoomState: ZoomState by rememberZoomState()
+LaunchedEffect(Unit) {
+    val resUri = Res.getUri("files/huge_world.jpeg")
+    zoomState.subsampling.setImageSource(ImageSource.fromComposeResource(resUri))
+}
+ZoomImage(
+    painter = painterResource(Res.drawable.huge_world_thumbnail),
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+
+// 使用 SketchZoomAsyncImage 组件
 SketchZoomAsyncImage(
-    request = DisplayRequest(LocalContext.current, "http://sample.com/sample.jpg") {
-        placeholder(R.drawable.placeholder)
-        crossfade()
-    },
+    uri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
 
+// 使用 CoilZoomAsyncImage 组件
 CoilZoomAsyncImage(
-    model = ImageRequest.Builder(LocalContext.current).apply {
-        data("http://sample.com/sample.jpg")
-        placeholder(R.drawable.placeholder)
-        crossfade(true)
-    }.build(),
+    model = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
+```
 
+Only android compose：
+
+```kotlin
+// 使用 GlideZoomAsyncImage 组件
 GlideZoomAsyncImage(
-    model = "http://sample.com/sample.jpg",
+  model = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-) {
-    it.placeholder(R.drawable.placeholder)
-}
-```
-
-#### compose multiplatform
-
-```kotlin
-/* 
- * android
- */
-val zoomState: ZoomState by rememberZoomState()
-val context = LocalContext.current
-LaunchedEffect(Unit) {
-    zoomState.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
-}
-ZoomImage(
-    painter = painterResource(R.drawable.huge_image_thumbnail),
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    zoomState = zoomState,
-)
-
-/* 
- * desktop
- */
-val zoomState: ZoomState by rememberZoomState()
-LaunchedEffect(Unit) {
-    zoomState.subsampling.setImageSource(ImageSource.fromResource("huge_image.jpeg"))
-}
-ZoomImage(
-    painter = painterResource("huge_image_thumbnail.jpeg"),
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    zoomState = zoomState,
 )
 ```
 
-#### view:
+Android view：
 
 ```kotlin
+// 使用基础的 ZoomImageImage 组件
+val zoomImageView = ZoomImageView(context)
+zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
+val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
+zoomImageView.subsampling.setImageSource(imageSource)
+
+// 使用 SketchZoomImageView 组件
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/sample.jpg") {
-    placeholder(R.drawable.placeholder)
-    crossfade()
-}
+sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
 
+// 使用 CoilZoomImageView 组件
 val coilZoomImageView = CoilZoomImageView(context)
-coilZoomImageView.load("http://sample.com/sample.jpg") {
-    placeholder(R.drawable.placeholder)
-    crossfade(true)
-}
+coilZoomImageView.load("http://sample.com/huge_world.jpeg")
 
+// 使用 GlideZoomImageView 组件
 val glideZoomImageView = GlideZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
-    .load("http://sample.com/sample.jpg")
-    .placeholder(R.drawable.placeholder)
+  .load("http://sample.com/huge_world.jpeg")
     .into(glideZoomImageView)
 
+// 使用 PicassoZoomImageView 组件
 val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageViewImage.loadImage("http://sample.com/sample.jpg") {
-    placeholder(R.drawable.placeholder)
-}
-
-val zoomImageView = ZoomImageView(context)
-zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
-val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
-zoomImageView.subsampling.setImageSource(imageSource)
+picassoZoomImageViewImage.loadImage("http://sample.com/huge_world.jpeg")
 ```
 
-> PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，以便支持子采样，因此请不要直接使用官方API
-> 加载图片
+> [!TIP]
+> * PicassoZoomImageView 提供了一组专用 API 来监听加载结果并获取 URI，以便支持子采样，因此请不要直接使用官方API
+    加载图片
+> * 各个组件图片加载相关的更多使用方法请参考其原本组件的用法
 
-zoom 和子采样的 API 封装在不同的类中，compose 版本是 [ZoomableState] 和 [SubsamplingState]，view
-版本是 [ZoomableEngine] 和 [SubsamplingEngine]
+## 缩放和子采样
+
+缩放和子采样的 API 封装在不同的类中，你可以直接通过它们去控制缩放和子采样或获取相关信息，如下：
+
+* compose 版本是 [ZoomableState] 和 [SubsamplingState]
+* view 版本是 [ZoomableEngine] 和 [SubsamplingEngine]
 
 示例：
 
@@ -174,7 +131,7 @@ zoom 和子采样的 API 封装在不同的类中，compose 版本是 [ZoomableS
 // compose
 val zoomState: ZoomState by rememberZoomState()
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+  imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
   zoomState = zoomState,
@@ -188,24 +145,9 @@ val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
 val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 ```
 
-*更多缩放、偏移、旋转、子采样、阅读模式、滚动条等功能详细介绍请参考页尾的文档*
-
 ### 可访问属性
 
-```kotlin
-// compose
-val zoomState: ZoomState by rememberZoomState()
-SketchZoomAsyncImage(zoomState = zoomState)
-val zoomable: ZoomableState = zoomState.zoomable
-val subsampling: SubsamplingState = zoomState.subsampling
-
-// view
-val sketchZoomImageView = SketchZoomImageView(context)
-val zoomable: ZoomableEngine = sketchZoomImageView.zoomable
-val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
-```
-
-> * 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
+> [!TIP] 注意：view 版本的相关属性用 StateFlow 包装，所以其名字相比 compose 版本都以 State 为后缀
 
 * `zoomable.baseTransform: Transform`: 基础变换信息，包括缩放、偏移、旋转，受 contentScale、alignment
   属性以及 rotate() 方法的影响
@@ -235,71 +177,73 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 * `subsampling.imageLoadRect: IntRect`: 原图上当前实际加载的区域
 * `subsampling.tileGridSizeMap: Map<Int, IntOffset>`: 磁贴网格大小映射表
 
-#### 监听属性变化
+### 监听属性变化
 
 * compose 版本的相关属性是用 State 包装的，在 Composable 函数中直接读取它即可实现监听
 * view 的相关属性是用 StateFlow 包装，调用其 collect 函数即可实现监听
 
+> [!TIP]
+> 更多缩放、偏移、旋转、子采样、阅读模式、滚动条等功能详细介绍请参考页尾的文档链接
+
 ## 文档
 
-* [Scale: 缩放、双击缩放、时长设置](scale_zh.md)
+* [Zoom: 缩放、双击缩放、时长设置](zoom_zh.md)
 * [Offset: 移动到指定位置](offset_zh.md)
-* [Locate: 定位到图片的任意位置并保持在屏幕中央](locate_zh.md)
+* [Locate: 定位到图片的任意](locate_zh.md)
 * [Rotate: 旋转图片](rotate_zh.md)
 * [Read Mode: 长图初始时充满屏幕，方便阅读](readmode_zh.md)
 * [Click: 接收点击事件](click_zh.md)
 * [Subsampling: 对超大图进行子采样显示，避免 OOM](subsampling_zh.md)
-* [Scroll Bar: 显示水平和垂直滚动条，明确当前滚动位置](scrollbar_zh.md)
+* [Scroll Bar: 显示水平和垂直滚动条](scrollbar_zh.md)
 * [Log: 修改日志等级以及输出管道](log_zh.md)
-* [Compose Multiplatform: 在桌面平台使用](multiplatform_zh.md)
 
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
-[CoilZoomAsyncImage]: ../../zoomimage-compose-coil/src/main/java/com/github/panpf/zoomimage/CoilZoomAsyncImage.kt
+[CoilZoomAsyncImage]: ../../zoomimage-compose-coil/src/commonMain/kotlin/com/github/panpf/zoomimage/SingletonCoilZoomAsyncImage.kt
 
-[GlideZoomAsyncImage]: ../../zoomimage-compose-glide/src/main/java/com/github/panpf/zoomimage/GlideZoomAsyncImage.kt
+[GlideZoomAsyncImage]: ../../zoomimage-compose-glide/src/main/kotlin/com/github/panpf/zoomimage/GlideZoomAsyncImage.kt
 
-[SketchZoomAsyncImage]: ../../zoomimage-compose-sketch/src/main/java/com/github/panpf/zoomimage/SketchZoomAsyncImage.kt
+[SketchZoomAsyncImage]: ../../zoomimage-compose-sketch/src/commonMain/kotlin/com/github/panpf/zoomimage/SingletonSketchZoomAsyncImage.kt
 
-[ZoomImageSample]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/ZoomImageSample.kt
+[ZoomImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageSample.kt
 
-[CoilZoomAsyncImageSample]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/CoilZoomAsyncImageSample.kt
+[CoilZoomAsyncImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomAsyncImageSample.kt
 
-[GlideZoomAsyncImageSample]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/GlideZoomAsyncImageSample.kt
+[GlideZoomAsyncImageSample]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/GlideZoomAsyncImageSample.kt
 
-[SketchZoomAsyncImageSample]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/compose/SketchZoomAsyncImageSample.kt
+[SketchZoomAsyncImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/SketchZoomAsyncImageSample.kt
 
-[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
-[CoilZoomImageView]: ../../zoomimage-view-coil/src/main/java/com/github/panpf/zoomimage/CoilZoomImageView.kt
+[CoilZoomImageView]: ../../zoomimage-view-coil-core/src/main/kotlin/com/github/panpf/zoomimage/CoilZoomImageView.kt
 
-[GlideZoomImageView]: ../../zoomimage-view-glide/src/main/java/com/github/panpf/zoomimage/GlideZoomImageView.kt
+[GlideZoomImageView]: ../../zoomimage-view-glide/src/main/kotlin/com/github/panpf/zoomimage/GlideZoomImageView.kt
 
-[PicassoZoomImageView]: ../../zoomimage-view-picasso/src/main/java/com/github/panpf/zoomimage/PicassoZoomImageView.kt
+[PicassoZoomImageView]: ../../zoomimage-view-picasso/src/main/kotlin/com/github/panpf/zoomimage/PicassoZoomImageView.kt
 
-[SketchZoomImageView]: ../../zoomimage-view-sketch/src/main/java/com/github/panpf/zoomimage/SketchZoomImageView.kt
+[SketchZoomImageView]: ../../zoomimage-view-sketch-core/src/main/kotlin/com/github/panpf/zoomimage/SketchZoomImageView.kt
 
-[ZoomImageViewFragment]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/ZoomImageViewFragment.kt
+[ZoomImageViewFragment]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageViewFragment.kt
 
-[CoilZoomImageViewFragment]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/CoilZoomImageViewFragment.kt
+[CoilZoomImageViewFragment]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomImageViewFragment.kt
 
-[GlideZoomImageViewFragment]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/GlideZoomImageViewFragment.kt
+[GlideZoomImageViewFragment]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/GlideZoomImageViewFragment.kt
 
-[PicassoZoomImageViewFragment]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/PicassoZoomImageViewFragment.kt
+[PicassoZoomImageViewFragment]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/PicassoZoomImageViewFragment.kt
 
-[SketchZoomImageViewFragment]: ../../sample-android/src/main/java/com/github/panpf/zoomimage/sample/ui/examples/view/SketchZoomImageViewFragment.kt
+[SketchZoomImageViewFragment]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/SketchZoomImageViewFragment.kt
 
 [Sketch]: https://github.com/panpf/sketch
 
-[SketchAsyncImage]: https://github.com/panpf/sketch/blob/main/sketch-compose/src/main/java/com/github/panpf/sketch/compose/AsyncImage.kt
+[SketchAsyncImage]: https://github.com/panpf/sketch/blob/main/sketch-compose/src/commonMain/kotlin/com/github/panpf/sketch/compose/AsyncImage.kt
 
 [Coil]: https://github.com/coil-kt/coil
 
-[CoilAsyncImage]: https://github.com/coil-kt/coil/blob/main/coil-compose-singleton/src/main/java/coil/compose/SingletonAsyncImage.kt
+[CoilAsyncImage]: https://github.com/coil-kt/coil/blob/main/coil-compose-singleton/src/commonMain/kotlin/coil/compose/SingletonAsyncImage.kt
 
 [Glide]: https://github.com/bumptech/glide
 
-[GlideImage]: https://github.com/bumptech/glide/blob/master/integration/compose/src/main/java/com/bumptech/glide/integration/compose/GlideImage.kt
+[GlideImage]: https://github.com/bumptech/glide/blob/master/integration/compose/src/commonMain/kotlin/com/bumptech/glide/integration/compose/GlideImage.kt
 
 [Picasso]: https://github.com/square/picasso
 
@@ -307,11 +251,11 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
 
-[ZoomableEngine]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/view/zoom/ZoomableEngine.kt
+[ZoomableEngine]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/view/zoom/ZoomableEngine.kt
 
-[SubsamplingEngine]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt
+[SubsamplingEngine]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/view/subsampling/SubsamplingEngine.kt
 
-[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 

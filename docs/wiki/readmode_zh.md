@@ -2,6 +2,7 @@
 
 翻译：[English](readmode.md)
 
+> [!TIP]
 > * 以下示例优先用 Compose 版本的组件来演示
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
@@ -21,7 +22,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/sample.jpg",
+    imageUri = "http://sample.com/huge_world.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -38,10 +39,11 @@ SketchZoomAsyncImage(
 * `decider: ReadMode.Decider = ReadMode.Decider.Default`: decider 根据 contentSize 和 containerSize
   来判断是否可以使用阅读模式，默认实现是 ReadMode.LongImageDecider，仅对长图使用阅读模式
 
+> [!TIP]
 > * ReadMode 的默认配置是 ReadMode.Default
 > * 你可以实现 ReadMode.Decider 接口实现你自己的判定规则
 
-[ZoomImageView]: ../../zoomimage-view/src/main/java/com/github/panpf/zoomimage/ZoomImageView.kt
+[ZoomImageView]: ../../zoomimage-view/src/main/kotlin/com/github/panpf/zoomimage/ZoomImageView.kt
 
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
