@@ -61,7 +61,7 @@ import kotlinx.collections.immutable.ImmutableList
  *
  * ```kotlin
  * GlideZoomAsyncImage(
- *     model = "http://sample.com/sample.jpg",
+ *     model = "http://sample.com/huge_world.jpeg",
  *     contentDescription = "view image",
  *     modifier = Modifier.fillMaxSize(),
  * ) {

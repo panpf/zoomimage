@@ -46,7 +46,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     imageUri = "http://sample.com/sample.jpg",
+ *     imageUri = "http://sample.com/huge_world.jpeg",
  *     contentDescription = "view image",
  *     modifier = Modifier.fillMaxSize(),
  * )
@@ -130,7 +130,7 @@ fun SketchZoomAsyncImage(
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     request = DisplayRequest(LocalContext.current, "http://sample.com/sample.jpg") {
+ *     request = DisplayRequest(LocalContext.current, "http://sample.com/huge_world.jpeg") {
  *         placeholder(R.drawable.placeholder)
  *         crossfade()
  *     },
@@ -217,7 +217,7 @@ fun SketchZoomAsyncImage(
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     imageUri = "http://sample.com/sample.jpg",
+ *     imageUri = "http://sample.com/huge_world.jpeg",
  *     contentDescription = "view image",
  *     modifier = Modifier.fillMaxSize(),
  * )
@@ -291,7 +291,7 @@ fun SketchZoomAsyncImage(
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     request = DisplayRequest(LocalContext.current, "http://sample.com/sample.jpg") {
+ *     request = DisplayRequest(LocalContext.current, "http://sample.com/huge_world.jpeg") {
  *         placeholder(R.drawable.placeholder)
  *         crossfade()
  *     },

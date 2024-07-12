@@ -40,7 +40,7 @@ import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
  *
  * ```kotlin
  * val coilZoomImageView = CoilZoomImageView(context)
- * coilZoomImageView.load("http://sample.com/sample.jpg") {
+ * coilZoomImageView.load("http://sample.com/huge_world.jpeg") {
  *     placeholder(R.drawable.placeholder)
  *     crossfade(true)
  * }

@@ -27,9 +27,9 @@ import com.github.panpf.sketch.imageResult
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLeafChildDrawable
-import com.github.panpf.zoomimage.view.sketch.internal.AbsStateZoomImageView
-import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import com.github.panpf.zoomimage.sketch.SketchImageSource
+import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.view.sketch.internal.AbsStateZoomImageView
 
 /**
  * An ImageView that integrates the Sketch image loading framework that zoom and subsampling huge images
@@ -38,7 +38,7 @@ import com.github.panpf.zoomimage.sketch.SketchImageSource
  *
  * ```kotlin
  * val sketchZoomImageView = SketchZoomImageView(context)
- * sketchZoomImageView.loadImage("http://sample.com/sample.jpg") {
+ * sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg") {
  *     placeholder(R.drawable.placeholder)
  *     crossfade()
  * }

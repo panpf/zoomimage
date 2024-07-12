@@ -63,7 +63,7 @@ import kotlin.math.roundToInt
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     imageUri = "http://sample.com/sample.jpg",
+ *     imageUri = "http://sample.com/huge_world.jpeg",
  *     contentDescription = "view image",
  *     sketch = context.sketch,
  *     modifier = Modifier.fillMaxSize(),
@@ -145,7 +145,7 @@ fun SketchZoomAsyncImage(
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     request = DisplayRequest(LocalContext.current, "http://sample.com/sample.jpg") {
+ *     request = DisplayRequest(LocalContext.current, "http://sample.com/huge_world.jpeg") {
  *         placeholder(R.drawable.placeholder)
  *         crossfade()
  *     },
@@ -230,7 +230,7 @@ fun SketchZoomAsyncImage(
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     imageUri = "http://sample.com/sample.jpg",
+ *     imageUri = "http://sample.com/huge_world.jpeg",
  *     contentDescription = "view image",
  *     sketch = context.sketch,
  *     modifier = Modifier.fillMaxSize(),
@@ -305,7 +305,7 @@ fun SketchZoomAsyncImage(
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     request = DisplayRequest(LocalContext.current, "http://sample.com/sample.jpg") {
+ *     request = DisplayRequest(LocalContext.current, "http://sample.com/huge_world.jpeg") {
  *         placeholder(R.drawable.placeholder)
  *         crossfade()
  *     },

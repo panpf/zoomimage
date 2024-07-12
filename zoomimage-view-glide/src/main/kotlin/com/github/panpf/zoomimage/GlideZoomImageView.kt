@@ -36,7 +36,7 @@ import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
  * ```kotlin
  * val glideZoomImageView = GlideZoomImageView(context)
  * Glide.with(this@GlideZoomImageViewFragment)
- *     .load("http://sample.com/sample.jpg")
+ *     .load("http://sample.com/huge_world.jpeg")
  *     .placeholder(R.drawable.placeholder)
  *     .into(glideZoomImageView)
  * ```

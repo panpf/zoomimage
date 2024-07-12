@@ -30,8 +30,8 @@ import coil3.transition.CrossfadeDrawable
 import coil3.util.CoilUtils
 import com.github.panpf.zoomimage.coil.CoilImageSource
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
-import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
 
 /**
  * An ImageView that integrates the Coil image loading framework that zoom and subsampling huge images
@@ -40,7 +40,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
  *
  * ```kotlin
  * val coilZoomImageView = CoilZoomImageView(context)
- * coilZoomImageView.load("http://sample.com/sample.jpg") {
+ * coilZoomImageView.load("http://sample.com/huge_world.jpeg") {
  *     placeholder(R.drawable.placeholder)
  *     crossfade(true)
  * }

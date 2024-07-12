@@ -37,7 +37,7 @@ import java.io.File
  *
  * ```kotlin
  * val picassoZoomImageView = PicassoZoomImageView(context)
- * picassoZoomImageViewImage.loadImage("http://sample.com/sample.jpg") {
+ * picassoZoomImageViewImage.loadImage("http://sample.com/huge_world.jpeg") {
  *     placeholder(R.drawable.placeholder)
  * }
  * ```
