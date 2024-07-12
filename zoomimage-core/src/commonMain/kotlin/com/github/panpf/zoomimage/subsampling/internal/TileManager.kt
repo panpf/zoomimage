@@ -173,13 +173,13 @@ class TileManager constructor(
          * If the following detections fail, simply skip the refresh and keep the current state
          */
         if (rotation % 90 != 0) {
-            logger.d { "refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
+            logger.d { "TileManager. refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
             return -1
         }
         if (continuousTransformType and pausedContinuousTransformType != 0) {
             val continuousTransformTypeName = ContinuousTransformType.name(continuousTransformType)
             logger.d {
-                "refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${imageSource.key}'"
+                "TileManager. refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${imageSource.key}'"
             }
             return -2
         }
@@ -198,7 +198,7 @@ class TileManager constructor(
         val foregroundTiles = sortedTileGridMap.find { it.sampleSize == newSampleSize}?.tiles
         if (foregroundTiles == null || foregroundTiles.size == 1) {
             logger.d {
-                "refreshTiles:$caller. interrupted, foregroundTiles is null or size is 1. " +
+                "TileManager. refreshTiles:$caller. interrupted, foregroundTiles is null or size is 1. " +
                         "foregroundTilesSize=${foregroundTiles?.size ?: 0}, " +
                         "sampleSizeChanged=${sampleSizeChanged}, " +
                         "sampleSize=$oldSampleSize -> $newSampleSize, " +
@@ -217,7 +217,7 @@ class TileManager constructor(
         }
         if (newImageLoadRect.isEmpty) {
             logger.d {
-                "refreshTiles:$caller. interrupted, imageLoadRect is empty. " +
+                "TileManager. refreshTiles:$caller. interrupted, imageLoadRect is empty. " +
                         "imageLoadRect=${oldImageLoadRect.toShortString()} -> ${newImageLoadRect.toShortString()}, " +
                         "imageSize=${imageInfo.size.toShortString()}, " +
                         "contentSize=${contentSize.toShortString()}, " +
@@ -282,7 +282,7 @@ class TileManager constructor(
         }
         logger.d {
             val continuousTransformTypeName = ContinuousTransformType.name(continuousTransformType)
-            "refreshTiles:$caller. " +
+            "TileManager. refreshTiles:$caller. " +
                     "loadCount=${actualLoadCount}/${expectLoadCount}, " +
                     "freeCount=${actualFreeCount}/${expectFreeCount}. " +
                     "sampleSize=$oldSampleSize -> $newSampleSize, " +
@@ -362,7 +362,7 @@ class TileManager constructor(
     fun clean(caller: String) {
         val updateTileSnapshotListJob = updateTileSnapshotListJob
         if (updateTileSnapshotListJob != null && updateTileSnapshotListJob.isActive) {
-            logger.d { "cleanTiles:$caller. cancel updateTileSnapshotListJob. '${imageSource.key}" }
+            logger.d { "TileManager. cleanTiles:$caller. cancel updateTileSnapshotListJob. '${imageSource.key}" }
             updateTileSnapshotListJob.cancel("clean:$caller")
             this.updateTileSnapshotListJob = null
         }
@@ -373,7 +373,7 @@ class TileManager constructor(
             sortedTileGridMap.forEach {
                 freeCount += freeTiles(it.tiles, skipNotify = true)
             }
-            logger.d { "cleanTiles:$caller. freeCount=$freeCount. '${imageSource.key}" }
+            logger.d { "TileManager. cleanTiles:$caller. freeCount=$freeCount. '${imageSource.key}" }
             if (freeCount > 0) {
                 updateTileSnapshotList("clean:$caller")
             }
@@ -384,7 +384,7 @@ class TileManager constructor(
     private fun loadTile(tile: Tile): Boolean {
         if (tile.tileBitmap != null) {
             logger.d {
-                "loadTile. skipped, loaded. $tile. '${imageSource.key}'"
+                "TileManager. loadTile. skipped, loaded. $tile. '${imageSource.key}'"
             }
             return false
         }
@@ -392,12 +392,12 @@ class TileManager constructor(
         val job = tile.loadJob
         if (job?.isActive == true) {
             logger.d {
-                "loadTile. skipped, loading. $tile. '${imageSource.key}'"
+                "TileManager. loadTile. skipped, loading. $tile. '${imageSource.key}'"
             }
             return false
         }
 
-        logger.d("loadTile. started. $tile. '${imageSource.key}'")
+        logger.d("TileManager. loadTile. started. $tile. '${imageSource.key}'")
         tile.loadJob = coroutineScope.async {
             val tileKey =
                 "${imageSource.key}_tile_${tile.srcRect.toShortString()}_${tile.sampleSize}"
@@ -407,7 +407,7 @@ class TileManager constructor(
                     tileBitmapConvertor?.convert(cachedValue) ?: cachedValue
                 tile.setTileBitmap(convertedTileBitmap, fromCache = true)
                 tile.state = TileState.STATE_LOADED
-                logger.d { "loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
+                logger.d { "TileManager. loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
                 updateTileSnapshotList("loadTile:fromMemory")
             } else {
                 tile.setTileBitmap(null, fromCache = false)
@@ -425,21 +425,21 @@ class TileManager constructor(
                     decodeResult.isFailure -> {
                         tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
-                        logger.e("loadTile. failed, ${decodeResult.exceptionOrNull()?.message}. $tile. '${imageSource.key}'")
+                        logger.e("TileManager. loadTile. failed, ${decodeResult.exceptionOrNull()?.message}. $tile. '${imageSource.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     tileBitmap == null -> {
                         tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
-                        logger.e("loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
+                        logger.e("TileManager. loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     tile.sampleSize == 1 && (tile.srcRect.width != tileBitmap.width || tile.srcRect.height != tileBitmap.height) -> {
                         tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
-                        logger.e("loadTile. failed, size is different. $tile. $tileBitmap. '${imageSource.key}'")
+                        logger.e("TileManager. loadTile. failed, size is different. $tile. $tileBitmap. '${imageSource.key}'")
                         tileBitmap.recycle()
                         updateTileSnapshotList("loadTile:failed")
                     }
@@ -455,13 +455,13 @@ class TileManager constructor(
                             tileBitmapConvertor?.convert(cacheTileBitmap) ?: cacheTileBitmap
                         tile.setTileBitmap(convertedTileBitmap, fromCache = false)
                         tile.state = TileState.STATE_LOADED
-                        logger.d { "loadTile. successful. $tile. '${imageSource.key}'" }
+                        logger.d { "TileManager. loadTile. successful. $tile. '${imageSource.key}'" }
                         updateTileSnapshotList("loadTile:successful")
                     }
 
                     else -> {
                         logger.d {
-                            "loadTile. canceled. bitmap=${tileBitmap}, $tile. '${imageSource.key}'"
+                            "TileManager. loadTile. canceled. bitmap=${tileBitmap}, $tile. '${imageSource.key}'"
                         }
                         tile.setTileBitmap(null, fromCache = false)
                         tile.state = TileState.STATE_ERROR
@@ -491,7 +491,7 @@ class TileManager constructor(
 
         val tileBitmap = tile.tileBitmap
         if (tileBitmap != null) {
-            logger.d { "freeTile. $tile. '${imageSource.key}'" }
+            logger.d { "TileManager. freeTile. $tile. '${imageSource.key}'" }
             tile.setTileBitmap(null, fromCache = false)
         }
 
@@ -520,11 +520,11 @@ class TileManager constructor(
 
     private fun updateTileSnapshotList(caller: String) {
         if (updateTileSnapshotListJob?.isActive == true) {
-            logger.d { "updateTileSnapshotList:$caller. skipped, notifyTileSnapshotListJob is running. '${imageSource.key}'" }
+            logger.d { "TileManager. updateTileSnapshotList:$caller. skipped, notifyTileSnapshotListJob is running. '${imageSource.key}'" }
             return
         }
 
-        logger.d { "updateTileSnapshotList:$caller. launched. '${imageSource.key}'" }
+        logger.d { "TileManager. updateTileSnapshotList:$caller. launched. '${imageSource.key}'" }
         updateTileSnapshotListJob = coroutineScope.launch {
             var running = true
             while (running && isActive) {
@@ -603,7 +603,7 @@ class TileManager constructor(
                 }
 
                 logger.d {
-                    "updateTileSnapshotList. " +
+                    "TileManager. updateTileSnapshotList. " +
                             "sampleSize=$sampleSize, " +
                             "foregroundTileCount=$foregroundTileCount, " +
                             "foregroundInsideCount=$foregroundInsideCount, " +
@@ -625,7 +625,7 @@ class TileManager constructor(
                 }
             }
 
-            logger.d { "updateTileSnapshotList:$caller. end, running=$running, active=$isActive. '${imageSource.key}'" }
+            logger.d { "TileManager. updateTileSnapshotList:$caller. end, running=$running, active=$isActive. '${imageSource.key}'" }
         }
     }
 

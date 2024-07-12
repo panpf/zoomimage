@@ -34,7 +34,6 @@ import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.LifecycleEventObserver
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.compose.internal.toHexString
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
@@ -89,12 +88,10 @@ fun rememberSubsamplingState(
  */
 @Stable
 class SubsamplingState constructor(
-    logger: Logger,
-    private val zoomableState: ZoomableState,
-    private val lifecycle: Lifecycle
+    val logger: Logger,
+    val zoomableState: ZoomableState,
+    val lifecycle: Lifecycle
 ) : RememberObserver {
-
-    val logger: Logger = logger.newLogger(module = "SubsamplingState@${logger.toHexString()}")
 
     private var coroutineScope: CoroutineScope? = null
     private var imageSource: ImageSource? = null
@@ -217,7 +214,7 @@ class SubsamplingState constructor(
      */
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
-        logger.d { "setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
+        logger.d { "SubsamplingState. setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
         clean("setImageSource")
         this.imageSource = imageSource
         imageKey = imageSource?.key
@@ -381,7 +378,7 @@ class SubsamplingState constructor(
         val contentSize = contentSize
         if (imageSource == null || contentSize.isEmpty()) {
             logger.d {
-                "resetTileDecoder:$caller. failed. " +
+                "SubsamplingState. resetTileDecoder:$caller. failed. " +
                         "imageSource=${imageSource}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "'${imageKey}'"
@@ -399,7 +396,7 @@ class SubsamplingState constructor(
             if (newTileDecoder != null) {
                 val imageInfo = newTileDecoder.getImageInfo()
                 logger.d {
-                    "resetTileDecoder:$caller. success. " +
+                    "SubsamplingState. resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
                             "imageInfo=${imageInfo.toShortString()}. " +
                             "'${imageKey}'"
@@ -413,7 +410,7 @@ class SubsamplingState constructor(
                 val level = if (exception.skipped) Logger.Level.Debug else Logger.Level.Error
                 val type = if (exception.skipped) "skipped" else "error"
                 logger.log(level) {
-                    "resetTileDecoder:$caller. $type, ${exception.message}. " +
+                    "SubsamplingState. resetTileDecoder:$caller. $type, ${exception.message}. " +
                             "contentSize: ${contentSize.toShortString()}, " +
                             "'${imageKey}'"
                 }
@@ -432,7 +429,7 @@ class SubsamplingState constructor(
         val preferredTileSize = preferredTileSize
         if (imageSource == null || tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
             logger.d {
-                "resetTileManager:$caller. failed. " +
+                "SubsamplingState. resetTileManager:$caller. failed. " +
                         "imageSource=${imageSource}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
@@ -470,7 +467,7 @@ class SubsamplingState constructor(
             entry.sampleSize to entry.tiles.last().coordinate.let { IntOffset(it.x + 1, it.y + 1) }
         }
         logger.d {
-            "resetTileManager:$caller. success. " +
+            "SubsamplingState. resetTileManager:$caller. success. " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "preferredTileSize=${preferredTileSize.toShortString()}, " +
                     "imageInfo=${imageInfo.toShortString()}. " +
@@ -490,7 +487,7 @@ class SubsamplingState constructor(
     ) {
         val tileManager = tileManager ?: return
         if (stopped) {
-            logger.d { "refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
+            logger.d { "SubsamplingState. refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
             return
         }
         tileManager.refreshTiles(
@@ -504,7 +501,7 @@ class SubsamplingState constructor(
 
     private fun refreshReadyState(caller: String) {
         val newReady = imageInfo != null && tileDecoder != null && tileManager != null
-        logger.d { "refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
+        logger.d { "SubsamplingState. refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
         ready = newReady
         coroutineScope?.launch {
             refreshTilesFlow.emit("refreshReadyState:$caller")
@@ -519,7 +516,7 @@ class SubsamplingState constructor(
         }
         val tileDecoder = this@SubsamplingState.tileDecoder
         if (tileDecoder != null) {
-            logger.d { "cleanTileDecoder:$caller. '${imageKey}'" }
+            logger.d { "SubsamplingState. cleanTileDecoder:$caller. '${imageKey}'" }
             @Suppress("OPT_IN_USAGE")
             GlobalScope.launch {
                 tileDecoder.destroy("cleanTileDecoder:$caller")
@@ -540,7 +537,7 @@ class SubsamplingState constructor(
             backgroundTiles = emptyList()
             sampleSize = 0
             imageLoadRect = IntRect.Zero
-            logger.d { "cleanTileManager:$caller. '${imageKey}'" }
+            logger.d { "SubsamplingState. cleanTileManager:$caller. '${imageKey}'" }
             refreshReadyState("cleanTileManager:$caller")
         }
     }

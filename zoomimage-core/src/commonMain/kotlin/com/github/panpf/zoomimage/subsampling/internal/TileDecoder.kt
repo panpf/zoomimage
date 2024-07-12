@@ -98,7 +98,7 @@ class TileDecoder constructor(
                     decoderPool.forEach { it.close() }
                     decoderPool.clear()
                 }
-                logger.d { "destroyDecoder:$caller. '${imageSource.key}'" }
+                logger.d { "TileDecoder. destroyDecoder:$caller. '${imageSource.key}'" }
             }
         }
     }

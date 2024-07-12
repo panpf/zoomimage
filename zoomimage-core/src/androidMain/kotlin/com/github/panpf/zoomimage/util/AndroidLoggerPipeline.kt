@@ -18,12 +18,12 @@ package com.github.panpf.zoomimage.util
 
 import android.util.Log
 
-actual fun createLogPipeline(): Logger.Pipeline = AndroidLogPipeline()
+actual fun defaultLogPipeline(): Logger.Pipeline = AndroidLogPipeline
 
 /**
  * The pipeline of the log, which prints the log to the Android logcat
  */
-class AndroidLogPipeline : Logger.Pipeline {
+object AndroidLogPipeline : Logger.Pipeline {
 
     override fun log(level: Logger.Level, tag: String, msg: String, tr: Throwable?) {
         when (level) {

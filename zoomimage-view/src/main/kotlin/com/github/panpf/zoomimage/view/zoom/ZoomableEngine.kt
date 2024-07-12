@@ -42,7 +42,6 @@ import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.convert
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
-import com.github.panpf.zoomimage.view.internal.toHexString
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
 import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
 import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
@@ -87,9 +86,7 @@ import kotlin.math.roundToInt
 /**
  * Engines that control scale, pan, rotation
  */
-class ZoomableEngine constructor(logger: Logger, val view: View) {
-
-    val logger: Logger = logger.newLogger(module = "ZoomableEngine@${logger.toHexString()}")
+class ZoomableEngine constructor(val logger: Logger, val view: View) {
 
     private var coroutineScope: CoroutineScope? = null
     private var lastScaleAnimatable: FloatAnimatable? = null
@@ -330,7 +327,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             lastScalesCalculator = lastScalesCalculator,
         )
         if (paramsChanges == 0) {
-            logger.d { "reset:$caller. All parameters unchanged" }
+            logger.d { "ZoomableEngine. reset:$caller. All parameters unchanged" }
             return@coroutineScope
         }
 
@@ -378,7 +375,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
 
         logger.d {
             val transform = newBaseTransform + newUserTransform
-            "reset:$caller. " +
+            "ZoomableEngine. reset:$caller. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
@@ -479,7 +476,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             val limitedAddUserScale = limitedTargetUserScale - currentUserScale
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
-            "scale. " +
+            "ZoomableEngine. scale. " +
                     "targetScale=${targetScale.format(4)}, " +
                     "centroidContentPoint=${centroidContentPoint.toShortString()}, " +
                     "animated=${animated}. " +
@@ -550,7 +547,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             val currentUserOffset = currentUserTransform.offset
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
-            "offset. " +
+            "ZoomableEngine. offset. " +
                     "targetOffset=${targetOffset.toShortString()}, " +
                     "animated=${animated}. " +
                     "targetUserOffset=${targetUserOffset.toShortString()}, " +
@@ -626,7 +623,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
             val limitedTargetAddUserScaleFormatted = limitedTargetAddUserScale.format(4)
-            "locate. " +
+            "ZoomableEngine. locate. " +
                     "contentPoint=${contentPoint.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
                     "animated=${animated}. " +
@@ -783,13 +780,13 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
         val lastScaleAnimatable = lastScaleAnimatable
         if (lastScaleAnimatable?.running == true) {
             lastScaleAnimatable.stop()
-            logger.d { "stopScaleAnimation:$caller" }
+            logger.d { "ZoomableEngine. stopScaleAnimation:$caller" }
         }
 
         val lastFlingAnimatable = lastFlingAnimatable
         if (lastFlingAnimatable?.running == true) {
             lastFlingAnimatable.stop()
-            logger.d { "stopFlingAnimation:$caller" }
+            logger.d { "ZoomableEngine. stopFlingAnimation:$caller" }
         }
 
         val lastContinuousTransformType = _continuousTransformTypeState.value
@@ -819,7 +816,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             val startScale = currentScale
             val endScale = targetScale
             logger.d {
-                "rollbackScale. " +
+                "ZoomableEngine. rollbackScale. " +
                         "focus=${focus?.toShortString()}. " +
                         "startScale=${startScale.format(4)}, " +
                         "endScale=${endScale.format(4)}"
@@ -904,7 +901,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             val limitedAddUserScale = limitedTargetUserScale - currentUserScale
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
-            "transform. " +
+            "ZoomableEngine. transform. " +
                     "centroid=${centroid.toShortString()}, " +
                     "panChange=${panChange.toShortString()}, " +
                     "zoomChange=${zoomChange.format(4)}, " +
@@ -949,7 +946,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
             )
         }
         logger.d {
-            "fling. start. " +
+            "ZoomableEngine. fling. start. " +
                     "start=${startUserOffset.toShortString()}, " +
                     "bounds=${userOffsetBounds.toShortString()}, " +
                     "velocity=${velocity.toShortString()}"
@@ -964,7 +961,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                     val newUserOffset =
                         this@ZoomableEngine.userTransformState.value.copy(offset = value.toOffset())
                     logger.d {
-                        "fling. running. " +
+                        "ZoomableEngine. fling. running. " +
                                 "velocity=$velocity. " +
                                 "startUserOffset=${startUserOffset.toShortString()}, " +
                                 "currentUserOffset=${newUserOffset.toShortString()}"
@@ -1043,7 +1040,7 @@ class ZoomableEngine constructor(logger: Logger, val view: View) {
                         fraction = value
                     )
                     logger.d {
-                        "$caller. animated running. fraction=$value, transform=${userTransform.toShortString()}"
+                        "ZoomableEngine. $caller. animated running. fraction=$value, transform=${userTransform.toShortString()}"
                     }
                     this@ZoomableEngine._userTransformState.value = userTransform
                     updateTransform()

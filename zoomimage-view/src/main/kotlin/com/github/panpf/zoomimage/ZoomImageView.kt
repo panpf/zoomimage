@@ -27,7 +27,6 @@ import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.util.AndroidLogPipeline
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.R.styleable
@@ -81,7 +80,7 @@ open class ZoomImageView @JvmOverloads constructor(
     private var wrappedScaleType: ScaleType
     private var scrollBarHelper: ScrollBarHelper? = null
 
-    val logger = Logger(tag = "ZoomImageView", pipeline = AndroidLogPipeline())
+    val logger = Logger(tag = "ZoomImageView")
 
     /**
      * Control the ability to zoom, pan, rotate
@@ -346,7 +345,7 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     override fun setImageMatrix(matrix: Matrix?) {
-        logger.w("setImageMatrix() is intercepted")
+        logger.w("ZoomImageView. setImageMatrix() is intercepted")
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

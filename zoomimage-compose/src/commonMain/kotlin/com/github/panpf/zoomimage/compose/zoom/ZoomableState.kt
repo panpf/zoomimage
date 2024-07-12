@@ -53,7 +53,6 @@ import com.github.panpf.zoomimage.compose.internal.roundToPlatform
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toCompatOffset
-import com.github.panpf.zoomimage.compose.internal.toHexString
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toPlatformRect
 import com.github.panpf.zoomimage.compose.internal.toShortString
@@ -111,9 +110,7 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
  * A state object that can be used to control the scale, pan, rotation of the content.
  */
 @Stable
-class ZoomableState(logger: Logger) : RememberObserver {
-
-    val logger: Logger = logger.newLogger(module = "ZoomableState@${logger.toHexString()}")
+class ZoomableState(val logger: Logger) : RememberObserver {
 
     private var coroutineScope: CoroutineScope? = null
     private var lastScaleAnimatable: Animatable<*, *>? = null
@@ -338,7 +335,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
             lastScalesCalculator = lastScalesCalculator,
         )
         if (paramsChanges == 0) {
-            logger.d { "reset:$caller. All parameters unchanged" }
+            logger.d { "ZoomableState. reset:$caller. All parameters unchanged" }
             return@coroutineScope
         }
 
@@ -386,7 +383,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
 
         logger.d {
             val transform = newBaseTransform + newUserTransform
-            "reset:$caller. " +
+            "ZoomableState. reset:$caller. " +
                     "containerSize=${containerSize.toShortString()}, " +
                     "contentSize=${contentSize.toShortString()}, " +
                     "contentOriginSize=${contentOriginSize.toShortString()}, " +
@@ -486,7 +483,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
             val limitedAddUserScale = limitedTargetUserScale - currentUserScale
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
-            "scale. " +
+            "ZoomableState. scale. " +
                     "targetScale=${targetScale.format(4)}, " +
                     "centroidContentPoint=${centroidContentPoint.toShortString()}, " +
                     "animated=${animated}. " +
@@ -558,7 +555,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
             val currentUserOffset = currentUserTransform.offset
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
-            "offset. " +
+            "ZoomableState. offset. " +
                     "targetOffset=${targetOffset.toShortString()}, " +
                     "animated=${animated}. " +
                     "targetUserOffset=${targetUserOffset.toShortString()}, " +
@@ -632,7 +629,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddUserOffset = limitedTargetUserOffset - currentUserOffset
             val limitedTargetAddUserScaleFormatted = limitedTargetAddUserScale.format(4)
-            "locate. " +
+            "ZoomableState. locate. " +
                     "contentPoint=${contentPoint.toShortString()}, " +
                     "targetScale=${targetScale.format(4)}, " +
                     "animated=${animated}. " +
@@ -800,13 +797,13 @@ class ZoomableState(logger: Logger) : RememberObserver {
         val lastScaleAnimatable = lastScaleAnimatable
         if (lastScaleAnimatable?.isRunning == true) {
             lastScaleAnimatable.stop()
-            logger.d { "stopScaleAnimation:$caller" }
+            logger.d { "ZoomableState. stopScaleAnimation:$caller" }
         }
 
         val lastFlingAnimatable = lastFlingAnimatable
         if (lastFlingAnimatable?.isRunning == true) {
             lastFlingAnimatable.stop()
-            logger.d { "stopFlingAnimation:$caller" }
+            logger.d { "ZoomableState. stopFlingAnimation:$caller" }
         }
 
         val lastContinuousTransformType = continuousTransformType
@@ -832,7 +829,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
             val startScale = currentScale
             val endScale = targetScale
             logger.d {
-                "rollbackScale. " +
+                "ZoomableState. rollbackScale. " +
                         "centroid=${centroid?.toShortString()}. " +
                         "startScale=${startScale.format(4)}, " +
                         "endScale=${endScale.format(4)}"
@@ -912,7 +909,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
             val limitedAddUserScale = limitedTargetUserScale - currentUserScale
             val targetAddUserOffset = targetUserOffset - currentUserOffset
             val limitedTargetAddOffset = limitedTargetUserOffset - currentUserOffset
-            "transform. " +
+            "ZoomableState. transform. " +
                     "centroid=${centroid.toShortString()}, " +
                     "panChange=${panChange.toShortString()}, " +
                     "zoomChange=${zoomChange.format(4)}, " +
@@ -957,7 +954,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
                             limitUserOffset(targetUserOffset, currentUserTransform2.scaleX)
                         if (limitedTargetUserOffset != currentUserTransform2.offset) {
                             logger.d {
-                                "fling. running. " +
+                                "ZoomableState. fling. running. " +
                                         "velocity=$velocity. " +
                                         "startUserOffset=${startUserOffset.toShortString()}, " +
                                         "currentUserOffset=${limitedTargetUserOffset.toShortString()}"
@@ -1043,7 +1040,7 @@ class ZoomableState(logger: Logger) : RememberObserver {
                     fraction = value
                 )
                 logger.d {
-                    "$caller. animated running. transform=${userTransform.toShortString()}"
+                    "ZoomableState. $caller. animated running. transform=${userTransform.toShortString()}"
                 }
                 this@ZoomableState.userTransform = userTransform
                 updateTransform()

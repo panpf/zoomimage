@@ -16,12 +16,12 @@
 
 package com.github.panpf.zoomimage.util
 
-actual fun createLogPipeline(): Logger.Pipeline = PrintlnLogPipeline()
+actual fun defaultLogPipeline(): Logger.Pipeline = PrintlnLogPipeline
 
 /**
  * The pipeline of the log, which prints the log to the println
  */
-class PrintlnLogPipeline : Logger.Pipeline {
+object PrintlnLogPipeline : Logger.Pipeline {
 
     override fun log(level: Logger.Level, tag: String, msg: String, tr: Throwable?) {
         if (tr != null) {

@@ -117,7 +117,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                         zoomable.checkSupportGestureType(GestureType.TWO_FINGER_SCALE)
                     val supportDrag = zoomable.checkSupportGestureType(GestureType.DRAG)
                     zoomable.logger.v {
-                        "zoomable. onGesture. " +
+                        "ZoomableEngine. onGesture. " +
                                 "longPressExecuted=$longPressExecuted, " +
                                 "pointCount=$pointCount, " +
                                 "doubleTapPressPoint=$doubleTapPressPoint, " +
@@ -167,7 +167,7 @@ internal class TouchHelper(view: View, zoomable: ZoomableEngine) {
                     val supportDrag =
                         zoomable.checkSupportGestureType(GestureType.DRAG)
                     zoomable.logger.v {
-                        "zoomable. onEnd. " +
+                        "ZoomableEngine. onEnd. " +
                                 "focus=${focus.toShortString()}, " +
                                 "velocity=${velocity.toShortString()}, " +
                                 "longPressExecuted=$longPressExecuted, " +

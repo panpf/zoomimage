@@ -85,7 +85,7 @@ fun Modifier.zooming(
     .clipToBounds()
     .graphicsLayer {
         val transform = zoomable.transform
-        zoomable.logger.v { "graphicsLayer. transform=$transform" }
+        zoomable.logger.v { "ZoomableState. graphicsLayer. transform=$transform" }
         scaleX = transform.scaleX
         scaleY = transform.scaleY
         translationX = transform.offsetX
@@ -191,7 +191,7 @@ internal class ZoomableNode(
                         zoomable.checkSupportGestureType(GestureType.TWO_FINGER_SCALE)
                     val supportDrag = zoomable.checkSupportGestureType(GestureType.DRAG)
                     zoomable.logger.v {
-                        "zoomable. onGesture. " +
+                        "ZoomableState. zoomable. onGesture. " +
                                 "longPressExecuted=$longPressExecuted, " +
                                 "pointCount=$pointCount, " +
                                 "doubleTapPressPoint=$doubleTapPressPoint, " +
@@ -239,7 +239,7 @@ internal class ZoomableNode(
                     val supportDrag =
                         zoomable.checkSupportGestureType(GestureType.DRAG)
                     zoomable.logger.v {
-                        "zoomable. onEnd. " +
+                        "ZoomableState. zoomable. onEnd. " +
                                 "centroid=${centroid.toShortString()}, " +
                                 "velocity=${velocity.x.format(2)}x${velocity.y.format(2)}, " +
                                 "longPressExecuted=$longPressExecuted, " +

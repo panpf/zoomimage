@@ -23,6 +23,7 @@
 * change: ZoomImage、SketchZoomAsyncImage、CoilZoomAsyncImage、GlideZoomAsyncImage
   等函数的 `state: ZoomState` 参数的名字改为 `zoomState: ZoomState`
 * change: Logger.DEBUG 改为 Logger.Level.Debug
+* remove: 移除 Logger 的 module 属性
 
 ## v1.0.2
 

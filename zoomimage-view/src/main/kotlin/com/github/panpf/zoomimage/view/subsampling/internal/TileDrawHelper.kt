@@ -116,7 +116,7 @@ class TileDrawHelper(
         canvas.restoreToCount(checkpoint)
 
         logger.d {
-            "drawTiles. tiles=${foregroundTiles.size}, " +
+            "TileDrawHelper. drawTiles. tiles=${foregroundTiles.size}, " +
                     "insideLoadCount=${insideLoadCount}, " +
                     "outsideLoadCount=${outsideLoadCount}, " +
                     "realDrawCount=${realDrawCount}, " +

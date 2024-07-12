@@ -266,7 +266,9 @@ private fun onState(
     request: ImageRequest,
     loadState: State,
 ) {
-    zoomState.zoomable.logger.d { "CoilZoomAsyncImage. onState. state=${loadState.name}. data='${request.data}'" }
+    zoomState.zoomable.logger.d {
+        "CoilZoomAsyncImage. onState. state=${loadState.name}. data='${request.data}'"
+    }
     val painterSize = loadState.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }

@@ -26,22 +26,15 @@ import com.github.panpf.zoomimage.util.Logger.Pipeline
  * Creates and remember a [Logger]
  *
  * @param tag The tag of the log
- * @param module The module of the log
  */
 @Composable
 fun rememberZoomImageLogger(
     tag: String = "ZoomImage",
-    module: String? = null,
     level: Level? = null,
     pipeline: Pipeline? = null,
 ): Logger {
-    val logger = remember(tag, module) {
-        Logger(
-            tag = tag,
-            module = module,
-            level = level,
-            pipeline = pipeline,
-        )
+    val logger = remember(tag) {
+        Logger(tag = tag)
     }
     if (level != null && logger.level != level) {
         logger.level = level

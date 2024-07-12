@@ -40,7 +40,6 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
-import com.github.panpf.zoomimage.view.internal.toHexString
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.CoroutineScope
@@ -60,12 +59,10 @@ import kotlin.math.roundToInt
  * Engines that control subsampling
  */
 class SubsamplingEngine constructor(
-    logger: Logger,
-    private val zoomableEngine: ZoomableEngine,
-    private val view: View,
+    val logger: Logger,
+    val zoomableEngine: ZoomableEngine,
+    val view: View,
 ) {
-
-    val logger: Logger = logger.newLogger(module = "SubsamplingEngine@${logger.toHexString()}")
 
     private var coroutineScope: CoroutineScope? = null
     private var imageSource: ImageSource? = null
@@ -214,7 +211,7 @@ class SubsamplingEngine constructor(
      */
     fun setImageSource(imageSource: ImageSource?): Boolean {
         if (this.imageSource == imageSource) return false
-        logger.d { "setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
+        logger.d { "SubsamplingEngine. setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
         clean("setImageSource")
         this.imageSource = imageSource
         imageKey = imageSource?.key
@@ -367,7 +364,7 @@ class SubsamplingEngine constructor(
         val contentSize = contentSizeState.value
         if (imageSource == null || contentSize.isEmpty()) {
             logger.d {
-                "resetTileDecoder:$caller. failed. " +
+                "SubsamplingEngine. resetTileDecoder:$caller. failed. " +
                         "imageSource=${imageSource}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "'${imageKey}'"
@@ -385,7 +382,7 @@ class SubsamplingEngine constructor(
             if (newTileDecoder != null) {
                 val imageInfo = newTileDecoder.getImageInfo()
                 logger.d {
-                    "resetTileDecoder:$caller. success. " +
+                    "SubsamplingEngine. resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
                             "imageInfo=${imageInfo.toShortString()}. " +
                             "'${imageKey}'"
@@ -399,7 +396,7 @@ class SubsamplingEngine constructor(
                 val level = if (exception.skipped) Logger.Level.Debug else Logger.Level.Error
                 val type = if (exception.skipped) "skipped" else "error"
                 logger.log(level) {
-                    "resetTileDecoder:$caller. $type, ${exception.message}. " +
+                    "SubsamplingEngine. resetTileDecoder:$caller. $type, ${exception.message}. " +
                             "contentSize: ${contentSize.toShortString()}, " +
                             "imageInfo: ${exception.imageInfo?.toShortString()}. " +
                             "'${imageKey}'"
@@ -419,7 +416,7 @@ class SubsamplingEngine constructor(
         val contentSize = contentSizeState.value
         if (imageSource == null || tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
             logger.d {
-                "resetTileManager:$caller. failed. " +
+                "SubsamplingEngine. resetTileManager:$caller. failed. " +
                         "imageSource=${imageSource}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
@@ -459,7 +456,7 @@ class SubsamplingEngine constructor(
                 .let { IntOffsetCompat(it.x + 1, it.y + 1) }
         }
         logger.d {
-            "resetTileManager:$caller. success. " +
+            "SubsamplingEngine. resetTileManager:$caller. success. " +
                     "imageInfo=${imageInfo.toShortString()}. " +
                     "preferredTileSize=${preferredTileSize.toShortString()}, " +
                     "tileGridMap=${tileManager.sortedTileGridMap.toIntroString()}. " +
@@ -478,7 +475,7 @@ class SubsamplingEngine constructor(
     ) {
         val tileManager = tileManager ?: return
         if (stoppedState.value) {
-            logger.d { "refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
+            logger.d { "SubsamplingEngine. refreshTiles:$caller. interrupted, stopped. '${imageKey}'" }
             return
         }
         tileManager.refreshTiles(
@@ -492,7 +489,7 @@ class SubsamplingEngine constructor(
 
     private fun refreshReadyState(caller: String) {
         val newReady = imageInfoState.value != null && tileManager != null && tileDecoder != null
-        logger.d { "refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
+        logger.d { "SubsamplingEngine. refreshReadyState:$caller. ready=$newReady. '${imageKey}'" }
         _readyState.value = newReady
         coroutineScope?.launch {
             refreshTilesFlow.emit("refreshReadyState:$caller")
@@ -507,7 +504,7 @@ class SubsamplingEngine constructor(
         }
         val tileDecoder = this@SubsamplingEngine.tileDecoder
         if (tileDecoder != null) {
-            logger.d { "cleanTileDecoder:$caller. '${imageKey}'" }
+            logger.d { "SubsamplingEngine. cleanTileDecoder:$caller. '${imageKey}'" }
             @Suppress("OPT_IN_USAGE")
             GlobalScope.launch {
                 tileDecoder.destroy("cleanTileDecoder:$caller")
@@ -521,7 +518,7 @@ class SubsamplingEngine constructor(
     private fun cleanTileManager(caller: String) {
         val tileManager = this@SubsamplingEngine.tileManager
         if (tileManager != null) {
-            logger.d { "cleanTileManager:$caller. '${imageKey}'" }
+            logger.d { "SubsamplingEngine. cleanTileManager:$caller. '${imageKey}'" }
             tileManager.clean("cleanTileManager:$caller")
             this@SubsamplingEngine.tileManager = null
             _tileGridSizeMapState.value = emptyMap()

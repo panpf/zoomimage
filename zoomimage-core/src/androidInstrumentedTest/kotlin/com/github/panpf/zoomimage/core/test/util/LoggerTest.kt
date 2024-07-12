@@ -18,19 +18,6 @@ class LoggerTest {
     }
 
     @Test
-    fun testModule() {
-        Logger(tag = "MyTag").apply {
-            Assert.assertEquals(null, module)
-        }
-
-        Logger(tag = "MyTag2", module = "MyModule").apply {
-            Assert.assertEquals("MyModule", module)
-        }.newLogger(module = "MyModule2").apply {
-            Assert.assertEquals("MyModule2", module)
-        }
-    }
-
-    @Test
     fun testLevel() {
         val logger1 = Logger(tag = "MyTag")
         Assert.assertEquals(Logger.Level.Info, logger1.level)
@@ -43,8 +30,8 @@ class LoggerTest {
         /*
          * rootLogger
          */
-        val logger11 = logger1.newLogger()
-        val logger111 = logger1.newLogger()
+        val logger11 = Logger(tag = "MyTag")
+        val logger111 = Logger(tag = "MyTag")
         Assert.assertEquals(Logger.Level.Info, logger1.level)
         Assert.assertEquals(Logger.Level.Info, logger11.level)
         Assert.assertEquals(Logger.Level.Info, logger111.level)
@@ -278,7 +265,8 @@ class LoggerTest {
         val listPipeline = ListPipeline()
 
         Logger("MyTag").apply {
-            Assert.assertNotNull(pipeline.toString().takeIf { it == "AndroidLogPipeline" || it == "LogPipeline" })
+            Assert.assertNotNull(
+                pipeline.toString().takeIf { it == "AndroidLogPipeline" || it == "LogPipeline" })
 
             pipeline = listPipeline
             Assert.assertEquals("ListPipeline", pipeline.toString())
@@ -332,19 +320,6 @@ class LoggerTest {
 
         override fun toString(): String {
             return "ListPipeline"
-        }
-    }
-
-    private fun getThreadName(): String? {
-        return Thread.currentThread().name.let {
-            // kotlin coroutine thread name 'DefaultDispatcher-worker-1' change to 'worker1'
-            if (it.startsWith("DefaultDispatcher-worker-")) {
-                "worker${it.substring("DefaultDispatcher-worker-".length)}"
-            } else if (it.startsWith("Thread-")) {
-                "Thread${it.substring("Thread-".length)}"
-            } else {
-                it
-            }
         }
     }
 }
