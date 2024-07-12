@@ -39,6 +39,10 @@ class PicassoPhotoGridItemFactory : BasePhotoGridItemFactory() {
                         it.load(resId)
                     }
 
+                    sketchImageUri.startsWith("/") -> {
+                        it.load("file://$sketchImageUri")
+                    }
+
                     else -> it.load(Uri.parse(sketchImageUri))
                 }
             }

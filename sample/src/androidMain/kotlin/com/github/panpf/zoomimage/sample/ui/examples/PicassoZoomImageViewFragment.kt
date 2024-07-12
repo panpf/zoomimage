@@ -88,6 +88,14 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
                 )
             }
 
+            sketchImageUri.startsWith("/") -> {
+                zoomView.loadImage(
+                    path = "file://$sketchImageUri",
+                    callback = callback,
+                    config = config
+                )
+            }
+
             else ->
                 zoomView.loadImage(
                     uri = Uri.parse(sketchImageUri),
@@ -110,6 +118,10 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
                                 ?.toIntOrNull()
                                 ?: throw IllegalArgumentException("Can't use Subsampling, invalid resource uri: '$sketchImageUri'")
                         it.load(resId)
+                    }
+
+                    sketchImageUri.startsWith("/") -> {
+                        it.load("file://$sketchImageUri")
                     }
 
                     else -> it.load(Uri.parse(sketchImageUri))
