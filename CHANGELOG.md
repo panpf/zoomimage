@@ -2,8 +2,14 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.1.0-alpha01
 
+> [!CAUTION]
+> To support js and iOS platforms, all `remove` and `change` tag changes are destructive
+
+subsampling:
+
+* remove: Remove the disallowReuseBitmap parameter of the put() method of TileBitmapCache
 * change: Remove ignoreExifOrientation attribute
 * change: Remove disabledTileBitmapReuse and TileBitmapPool attributes
 * change: Non-Android platforms now use Skia to decode images
@@ -11,21 +17,23 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: ImageSource now uses okio's Source instead of InputStream
 * change: ImageSource.fromResource() on desktop platform changed to fromKotlinResource()
 * change: ImageSource.fromFile(File) is now a JVM platform-specific extension function
-* remove: Remove the showThreadName parameter of Logger
-* new: New ImageSource.fromKotlinResource() function on ios platform
+* new: Added support for js, wasmJs, and iOS platforms
 * new: TileBitmap adds bitmapFrom attribute
+* new: GlideZoomAsyncImage, GlideZoomImageView, and PicassoZoomImageView support extended
+  ImageSource
+
+other:
+
+* remove: Remove the showThreadName parameter of Logger
+* remove: Remove the module attribute of Logger
+* change: Logger.DEBUG change to Logger.Level.Debug
+* change: Now each component's log tag is separate
 * change: zoomimage-view-sketch and zoomimage-compose-sketch modules upgraded to sketch4, while
   adding zoomimage-view-sketch3 and zoomimage-compose-sketch3 modules to continue to support sketch3
 * change: zoomimage-view-coil and zoomimage-compose-coil modules are upgraded to coil3, and new
   The zoomimage-view-coil2 and zoomimage-compose-coil2 modules continue to support coil2
-* remove: Remove the disallowReuseBitmap parameter of the put() method of TileBitmapCache
-* new: GlideZoomAsyncImage, GlideZoomImageView, and PicassoZoomImageView support extended
-  ImageSource
 * change: The name of the `state: ZoomState` parameter of ZoomImage, SketchZoomAsyncImage,
   CoilZoomAsyncImage, GlideZoomAsyncImage and other functions is changed to `zoomState: ZoomState`
-* change: Logger.DEBUG change to Logger.Level.Debug
-* remove: Remove the module attribute of Logger
-* change: Now each component's log tag is separate
 
 ## v1.0.2
 
