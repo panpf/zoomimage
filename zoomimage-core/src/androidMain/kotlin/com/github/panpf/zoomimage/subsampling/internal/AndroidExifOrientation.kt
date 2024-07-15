@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.subsampling
+package com.github.panpf.zoomimage.subsampling.internal
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -22,13 +22,20 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
 import androidx.exifinterface.media.ExifInterface
-import com.github.panpf.zoomimage.subsampling.internal.safeConfig
+import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.flip
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
 import kotlin.math.abs
+
+fun AndroidExifOrientation.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
+    val newSize = applyToSize(imageInfo.size)
+    return imageInfo.copy(size = newSize)
+}
 
 class AndroidExifOrientation constructor(val exifOrientation: Int) {
 
@@ -213,9 +220,4 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) {
          */
         const val ORIENTATION_ROTATE_270 = 8
     }
-}
-
-fun AndroidExifOrientation.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
-    val newSize = applyToSize(imageInfo.size)
-    return imageInfo.copy(size = newSize)
 }

@@ -29,7 +29,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper? {
-    return BitmapFactoryDecodeHelper(imageSource)
+    return BitmapRegionDecoderDecodeHelper(imageSource)
 }
 
 /**

@@ -17,10 +17,6 @@
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.annotation.WorkerThread
-import com.github.panpf.zoomimage.util.defaultFileSystem
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
-import okio.Buffer
 import okio.Path
 import okio.Path.Companion.toPath
 import okio.Source
@@ -65,59 +61,5 @@ interface ImageSource {
         fun fromByteArray(byteArray: ByteArray): ByteArrayImageSource {
             return ByteArrayImageSource(byteArray)
         }
-    }
-}
-
-class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
-
-    override val key: String = byteArray.toString()
-
-    override suspend fun openSource(): Result<Source> = kotlin.runCatching {
-        Buffer().write(byteArray)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is ByteArrayImageSource) return false
-        if (!byteArray.contentEquals(other.byteArray)) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = byteArray.hashCode()
-        result = 31 * result + key.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "ByteArrayImageSource('$byteArray')"
-    }
-}
-
-class FileImageSource(val path: Path) : ImageSource {
-
-    override val key: String = path.toString()
-
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
-            defaultFileSystem().source(path)
-        }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is FileImageSource) return false
-        if (path != other.path) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = path.hashCode()
-        result = 31 * result + key.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "FileImageSource('$path')"
     }
 }

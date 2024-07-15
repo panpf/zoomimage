@@ -7,7 +7,6 @@ import android.graphics.BitmapRegionDecoder
 import android.graphics.Rect
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import com.github.panpf.zoomimage.subsampling.AndroidExifOrientation
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.ImageInfo
@@ -22,7 +21,7 @@ import okio.buffer
 /**
  * Not thread safe
  */
-class BitmapFactoryDecodeHelper(
+class BitmapRegionDecoderDecodeHelper(
     private val imageSource: ImageSource,
     initialImageInfo: ImageInfo? = null
 ) : DecodeHelper {
@@ -86,7 +85,7 @@ class BitmapFactoryDecodeHelper(
                         BitmapRegionDecoder.newInstance(it, false)!!
                     }
                 }.apply {
-                    this@BitmapFactoryDecodeHelper._decoder = this
+                    this@BitmapRegionDecoderDecodeHelper._decoder = this
                 }
         }
     }
@@ -111,7 +110,7 @@ class BitmapFactoryDecodeHelper(
     }
 
     override fun copy(): DecodeHelper {
-        return BitmapFactoryDecodeHelper(imageSource, _imageInfo)
+        return BitmapRegionDecoderDecodeHelper(imageSource, _imageInfo)
     }
 
     override fun toString(): String {
