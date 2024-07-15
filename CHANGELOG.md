@@ -2,6 +2,13 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+subsampling:
+
+* improve: Relax the aspect ratio restrictions between thumbnails and original
+  images. [#22](https://github.com/panpf/zoomimage/issues/22)
+
 ## 1.1.0-alpha01
 
 > [!CAUTION]

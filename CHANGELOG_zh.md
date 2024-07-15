@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+subsampling:
+
+* improve: 放宽缩略图和原图的宽高比限制。 [#22](https://github.com/panpf/zoomimage/issues/22)
+
 ## 1.1.0-alpha01
 
 > [!CAUTION]

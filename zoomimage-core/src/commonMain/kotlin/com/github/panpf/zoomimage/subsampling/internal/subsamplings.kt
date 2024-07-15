@@ -68,7 +68,8 @@ suspend fun decodeAndCreateTileDecoder(
     }
     if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
         decodeHelper.close()
-        val message = "The thumbnail aspect ratio is different with the original image"
+        val message =
+            "The aspect ratio of the thumbnail is too different from that of the original image. Please refer to the canUseSubsamplingByAspectRatio() function to correct the thumbnail size."
         return Result.failure(CreateTileDecoderException(-5, false, message, imageInfo))
     }
     return Result.success(TileDecoder(logger, imageSource, decodeHelper))
@@ -80,12 +81,12 @@ suspend fun decodeAndCreateTileDecoder(
 fun canUseSubsamplingByAspectRatio(
     imageSize: IntSizeCompat,
     thumbnailSize: IntSizeCompat,
-    minDifference: Float = 0.5f
+    minDifference: Float = 1f
 ): Boolean {
     if (imageSize.isEmpty() || thumbnailSize.isEmpty()) return false
     val widthScale = imageSize.width / thumbnailSize.width.toFloat()
     val heightScale = imageSize.height / thumbnailSize.height.toFloat()
-    return abs(widthScale - heightScale).format(2) <= minDifference.format(2)
+    return abs(widthScale - heightScale).format(0) <= minDifference.format(0)
 }
 
 class CreateTileDecoderException(

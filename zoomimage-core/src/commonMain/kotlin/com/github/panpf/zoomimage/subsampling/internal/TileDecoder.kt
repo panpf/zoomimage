@@ -94,11 +94,11 @@ class TileDecoder constructor(
             val destroyed = synchronized(poolSyncLock) { this@TileDecoder.destroyed }
             if (!destroyed) {
                 this@TileDecoder.destroyed = true
+                logger.d { "TileDecoder. destroyDecoder:$caller. '${imageSource.key}'" }
                 synchronized(poolSyncLock) {
                     decoderPool.forEach { it.close() }
                     decoderPool.clear()
                 }
-                logger.d { "TileDecoder. destroyDecoder:$caller. '${imageSource.key}'" }
             }
         }
     }
