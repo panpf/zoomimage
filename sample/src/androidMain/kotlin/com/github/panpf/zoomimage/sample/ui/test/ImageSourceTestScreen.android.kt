@@ -20,8 +20,11 @@ import com.github.panpf.zoomimage.sample.data.ComposeResourceImages
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
+import com.github.panpf.zoomimage.subsampling.fromByteArray
 import com.github.panpf.zoomimage.subsampling.fromContent
+import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
+import com.github.panpf.zoomimage.subsampling.toFactory
 import kotlinx.coroutines.withContext
 import okio.buffer
 
@@ -40,24 +43,24 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
     context: PlatformContext,
     fetcher: Fetcher,
     http2ByteArray: Boolean
-): ImageSource? =
+): ImageSource.Factory? =
     when (fetcher) {
         is FileUriFetcher -> {
-            ImageSource.fromFile(fetcher.path)
+            ImageSource.fromFile(fetcher.path).toFactory()
         }
 
         is AssetUriFetcher -> {
-            ImageSource.fromAsset(context, fetcher.assetFileName)
+            ImageSource.fromAsset(context, fetcher.assetFileName).toFactory()
         }
 
         is ContentUriFetcher -> {
-            ImageSource.fromContent(context, fetcher.contentUri)
+            ImageSource.fromContent(context, fetcher.contentUri).toFactory()
         }
 
         is ResourceUriFetcher -> {
             val resId = fetcher.contentUri.getQueryParameters("resId").firstOrNull()?.toIntOrNull()
             if (resId != null) {
-                ImageSource.fromResource(context, resId)
+                ImageSource.fromResource(context, resId).toFactory()
             } else {
                 null
             }
@@ -80,11 +83,11 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
                 }
             } else {
                 ImageSource.fromByteArray((dataSource as ByteArrayDataSource).data)
-            }
+            }.toFactory()
         }
 
         is ComposeResourceUriFetcher -> {
-            ComposeResourceImageSource(fetcher.resourcePath)
+            ComposeResourceImageSource.Factory(fetcher.resourcePath)
         }
 
         else -> null

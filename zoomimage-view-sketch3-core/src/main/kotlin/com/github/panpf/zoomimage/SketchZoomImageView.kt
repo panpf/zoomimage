@@ -96,7 +96,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
         }
     }
 
-    private fun newImageSource(sketch: Sketch, result: DisplayResult): SketchImageSource? {
+    private fun newImageSource(sketch: Sketch, result: DisplayResult): SketchImageSource.Factory? {
         val drawable = drawable
         if (drawable == null) {
             logger.d { "SketchZoomImageView. Can't use Subsampling, drawable is null" }
@@ -107,7 +107,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
             logger.d { "SketchZoomImageView. Can't use Subsampling, drawable is Animatable" }
             return null
         }
-        return SketchImageSource(context, sketch, result.request.uriString)
+        return SketchImageSource.Factory(context, sketch, result.request.uriString)
     }
 
     override fun getLogTag(): String? = "SketchZoomImageView"

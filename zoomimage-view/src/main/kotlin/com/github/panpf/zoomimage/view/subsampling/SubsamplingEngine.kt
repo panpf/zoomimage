@@ -38,6 +38,7 @@ import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
@@ -52,6 +53,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -65,7 +67,7 @@ class SubsamplingEngine constructor(
 ) {
 
     private var coroutineScope: CoroutineScope? = null
-    private var imageSource: ImageSource? = null
+    private var imageSourceFactory: ImageSource.Factory? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
     private val tileBitmapCacheSpec = TileBitmapCacheSpec()
@@ -209,16 +211,23 @@ class SubsamplingEngine constructor(
     /**
      * Set up an image source from which image tile are loaded
      */
-    fun setImageSource(imageSource: ImageSource?): Boolean {
-        if (this.imageSource == imageSource) return false
-        logger.d { "SubsamplingEngine. setImageSource. '${this.imageSource?.key}' -> '${imageSource?.key}'" }
+    fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
+        if (this.imageSourceFactory == imageSource) return false
+        logger.d { "SubsamplingEngine. setImageSource. '${this.imageSourceFactory?.key}' -> '${imageSource?.key}'" }
         clean("setImageSource")
-        this.imageSource = imageSource
+        this.imageSourceFactory = imageSource
         imageKey = imageSource?.key
         if (view.isAttachedToWindow) {
             resetTileDecoder("setImageSource")
         }
         return true
+    }
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    fun setImageSource(imageSource: ImageSource?): Boolean {
+        return setImageSource(imageSource?.let { ImageSource.WrapperFactory(it) })
     }
 
 
@@ -360,12 +369,12 @@ class SubsamplingEngine constructor(
         cleanTileManager("resetTileDecoder:$caller")
         cleanTileDecoder("resetTileDecoder:$caller")
 
-        val imageSource = imageSource
+        val imageSourceFactory = imageSourceFactory
         val contentSize = contentSizeState.value
-        if (imageSource == null || contentSize.isEmpty()) {
+        if (imageSourceFactory == null || contentSize.isEmpty()) {
             logger.d {
                 "SubsamplingEngine. resetTileDecoder:$caller. failed. " +
-                        "imageSource=${imageSource}, " +
+                        "imageSource=${imageSourceFactory}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "'${imageKey}'"
             }
@@ -373,11 +382,14 @@ class SubsamplingEngine constructor(
         }
 
         lastResetTileDecoderJob = coroutineScope?.launch(Dispatchers.Main) {
-            val result = decodeAndCreateTileDecoder(
-                logger = logger,
-                imageSource = imageSource,
-                thumbnailSize = contentSize,
-            )
+            val result = withContext(ioCoroutineDispatcher()) {
+                val imageSource = imageSourceFactory.create()
+                decodeAndCreateTileDecoder(
+                    logger = logger,
+                    imageSource = imageSource,
+                    thumbnailSize = contentSize,
+                )
+            }
             val newTileDecoder = result.getOrNull()
             if (newTileDecoder != null) {
                 val imageInfo = newTileDecoder.getImageInfo()
@@ -409,15 +421,13 @@ class SubsamplingEngine constructor(
     private fun resetTileManager(caller: String) {
         cleanTileManager(caller)
 
-        val imageSource = imageSource
         val tileDecoder = tileDecoder
         val imageInfo = imageInfoState.value
         val preferredTileSize = preferredTileSizeState.value
         val contentSize = contentSizeState.value
-        if (imageSource == null || tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
+        if (tileDecoder == null || imageInfo == null || preferredTileSize.isEmpty() || contentSize.isEmpty()) {
             logger.d {
                 "SubsamplingEngine. resetTileManager:$caller. failed. " +
-                        "imageSource=${imageSource}, " +
                         "contentSize=${contentSize.toShortString()}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileDecoder=${tileDecoder}, " +
@@ -430,7 +440,6 @@ class SubsamplingEngine constructor(
             logger = logger,
             tileDecoder = tileDecoder,
             tileBitmapConvertor = null,
-            imageSource = imageSource,
             preferredTileSize = preferredTileSize,
             contentSize = contentSize,
             tileBitmapCacheHelper = tileBitmapCacheHelper,
@@ -506,7 +515,7 @@ class SubsamplingEngine constructor(
         if (tileDecoder != null) {
             logger.d { "SubsamplingEngine. cleanTileDecoder:$caller. '${imageKey}'" }
             @Suppress("OPT_IN_USAGE")
-            GlobalScope.launch {
+            GlobalScope.launch(ioCoroutineDispatcher()) {
                 tileDecoder.destroy("cleanTileDecoder:$caller")
             }
             this@SubsamplingEngine.tileDecoder = null

@@ -18,11 +18,9 @@ package com.github.panpf.zoomimage.picasso
 
 import android.net.Uri
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.downloader
-import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
 import okhttp3.Response
 import okio.Source
@@ -33,40 +31,39 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
 
     override val key: String = uri.toString()
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
-            val downloaderRequest = okhttp3.Request.Builder()
-                .url(uri.toString())
-                .cacheControl(CacheControl.FORCE_CACHE) // Do not download image, by default go here The image have been downloaded
-                .build()
-            val response: Response = picasso.downloader.load(downloaderRequest)
-            val body =
-                response.body() ?: throw IOException("HTTP response body is null. uri='$uri'")
+    override fun openSource(): Source {
+        // TODO support download
+        val downloaderRequest = okhttp3.Request.Builder()
+            .url(uri.toString())
+            .cacheControl(CacheControl.FORCE_CACHE) // Do not download image, by default go here The image have been downloaded
+            .build()
+        val response: Response = picasso.downloader.load(downloaderRequest)
+        val body =
+            response.body() ?: throw IOException("HTTP response body is null. uri='$uri'")
 
-            if (!response.isSuccessful) {
-                body.close()
-                throw IOException("HTTP ${response.code()} ${response.message()}. uri='$uri'")
-            }
-
-            // Cache response is only null when the response comes fully from the network. Both completely
-            // cached and conditionally cached responses will have a non-null cache response.
-
-            // Cache response is only null when the response comes fully from the network. Both completely
-            // cached and conditionally cached responses will have a non-null cache response.
-            val loadedFrom =
-                if (response.cacheResponse() == null) LoadedFrom.NETWORK else LoadedFrom.DISK
-
-            // Sometimes response content length is zero when requests are being replayed. Haven't found
-            // root cause to this but retrying the request seems safe to do so.
-
-            // Sometimes response content length is zero when requests are being replayed. Haven't found
-            // root cause to this but retrying the request seems safe to do so.
-            if (loadedFrom == LoadedFrom.DISK && body.contentLength() == 0L) {
-                body.close()
-                throw IOException("Received response with 0 content-length header. uri='$uri'")
-            }
-            body.source().inputStream().source()
+        if (!response.isSuccessful) {
+            body.close()
+            throw IOException("HTTP ${response.code()} ${response.message()}. uri='$uri'")
         }
+
+        // Cache response is only null when the response comes fully from the network. Both completely
+        // cached and conditionally cached responses will have a non-null cache response.
+
+        // Cache response is only null when the response comes fully from the network. Both completely
+        // cached and conditionally cached responses will have a non-null cache response.
+        val loadedFrom =
+            if (response.cacheResponse() == null) LoadedFrom.NETWORK else LoadedFrom.DISK
+
+        // Sometimes response content length is zero when requests are being replayed. Haven't found
+        // root cause to this but retrying the request seems safe to do so.
+
+        // Sometimes response content length is zero when requests are being replayed. Haven't found
+        // root cause to this but retrying the request seems safe to do so.
+        if (loadedFrom == LoadedFrom.DISK && body.contentLength() == 0L) {
+            body.close()
+            throw IOException("Received response with 0 content-length header. uri='$uri'")
+        }
+        return body.source().inputStream().source()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -86,4 +83,31 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
     override fun toString(): String {
         return "PicassoHttpImageSource('$uri')"
     }
+
+//    class Factory(val picasso: Picasso, val uri: Uri) : ImageSource.Factory {
+//
+//        override val key: String = uri.toString()
+//
+//        override suspend fun create(): PicassoHttpImageSource {
+//            return PicassoHttpImageSource(picasso, uri)
+//        }
+//
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is Factory) return false
+//            if (picasso != other.picasso) return false
+//            if (uri != other.uri) return false
+//            return true
+//        }
+//
+//        override fun hashCode(): Int {
+//            var result = picasso.hashCode()
+//            result = 31 * result + uri.hashCode()
+//            return result
+//        }
+//
+//        override fun toString(): String {
+//            return "PicassoHttpImageSource.Factory('$uri')"
+//        }
+//    }
 }

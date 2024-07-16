@@ -17,8 +17,6 @@
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.util.ClassLoaderResourceLoader
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.Source
 import okio.source
 
@@ -31,16 +29,12 @@ fun ImageSource.Companion.fromKotlinResource(
     return KotlinResourceImageSource(resourcePath)
 }
 
-class KotlinResourceImageSource(
-    val resourcePath: String,
-) : ImageSource {
+class KotlinResourceImageSource(val resourcePath: String) : ImageSource {
 
     override val key: String = resourcePath
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
-            ClassLoaderResourceLoader.Default.load(resourcePath).source()
-        }
+    override fun openSource(): Source {
+        return ClassLoaderResourceLoader.Default.load(resourcePath).source()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -57,4 +51,28 @@ class KotlinResourceImageSource(
     override fun toString(): String {
         return "KotlinResourceImageSource($resourcePath)"
     }
+
+//    class Factory(val resourcePath: String) : ImageSource.Factory {
+//
+//        override val key: String = resourcePath
+//
+//        override suspend fun create(): KotlinResourceImageSource {
+//            return KotlinResourceImageSource(resourcePath)
+//        }
+//
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is Factory) return false
+//            if (resourcePath != other.resourcePath) return false
+//            return true
+//        }
+//
+//        override fun hashCode(): Int {
+//            return resourcePath.hashCode()
+//        }
+//
+//        override fun toString(): String {
+//            return "KotlinResourceImageSource.Factory($resourcePath)"
+//        }
+//    }
 }

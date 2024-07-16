@@ -10,8 +10,8 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.toSkiaRect
 import kotlin.math.ceil
 
-internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper? {
-    return SkiaDecodeHelper(imageSource)
+internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
+    return SkiaDecodeHelper.Factory().create(imageSource)
 }
 
 internal fun SkiaImage.decodeRegion(srcRect: IntRectCompat, sampleSize: Int): SkiaBitmap {

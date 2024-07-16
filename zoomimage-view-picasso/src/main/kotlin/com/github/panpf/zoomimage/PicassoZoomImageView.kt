@@ -23,6 +23,7 @@ import android.util.AttributeSet
 import com.github.panpf.zoomimage.picasso.PicassoDataToImageSource
 import com.github.panpf.zoomimage.picasso.PicassoDataToImageSourceImpl
 import com.github.panpf.zoomimage.picasso.PicassoTileBitmapCache
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
@@ -166,7 +167,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             }
 
             override fun onError(e: Exception?) {
-                _subsamplingEngine?.setImageSource(null)
+                _subsamplingEngine?.setImageSource(null as ImageSource?)
                 callback?.onError(e)
             }
         })

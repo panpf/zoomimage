@@ -32,12 +32,12 @@ import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
 import kotlin.math.abs
 
-fun AndroidExifOrientation.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
+fun ExifOrientationHelper.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
     val newSize = applyToSize(imageInfo.size)
     return imageInfo.copy(size = newSize)
 }
 
-class AndroidExifOrientation constructor(val exifOrientation: Int) {
+class ExifOrientationHelper constructor(val exifOrientation: Int) {
 
     /**
      * Returns if the current image orientation is flipped.
@@ -174,7 +174,7 @@ class AndroidExifOrientation constructor(val exifOrientation: Int) {
     }
 
     override fun toString(): String {
-        return "AndroidExifOrientation(${name()})"
+        return "ExifOrientationHelper(${name()})"
     }
 
     companion object {

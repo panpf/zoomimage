@@ -55,7 +55,6 @@ class TileManager constructor(
     private val tileDecoder: TileDecoder,
     private val tileBitmapConvertor: TileBitmapConvertor?,
     private val tileBitmapCacheHelper: TileBitmapCacheHelper,
-    private val imageSource: ImageSource,
     private val imageInfo: ImageInfo,
     private val contentSize: IntSizeCompat,
     private val preferredTileSize: IntSizeCompat,
@@ -76,6 +75,7 @@ class TileManager constructor(
     private var lastSampleSize: Int = 0
     private var lastContentVisibleRect: IntRectCompat? = null
     private var updateTileSnapshotListJob: Job? = null
+    private val imageSource: ImageSource = tileDecoder.imageSource
 
     /**
      * A continuous transform type that needs to pause loading

@@ -23,19 +23,46 @@ import coil3.request.CachePolicy.ENABLED
 import coil3.request.ImageRequest
 import coil3.request.Options
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.Source
 
 class CoilImageSource(
-    private val imageLoader: ImageLoader,
-    private val request: ImageRequest,
+    val data: Any,
+    val imageSource: coil3.decode.ImageSource
 ) : ImageSource {
 
-    override val key: String = request.data.toString()
+    override val key: String = data.toString()
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
+    override fun openSource(): Source {
+        return imageSource.source()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CoilImageSource) return false
+        if (data != other.data) return false
+        if (imageSource != other.imageSource) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = data.hashCode()
+        result = 31 * result + imageSource.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "CoilImageSource('${data}')"
+    }
+
+    class Factory(
+        val imageLoader: ImageLoader,
+        val request: ImageRequest,
+    ) : ImageSource.Factory {
+
+        override val key: String = request.data.toString()
+
+        override suspend fun create(): CoilImageSource {
+            // TODO support download
             val options = Options(
                 context = request.context,
                 diskCachePolicy = ENABLED,
@@ -49,25 +76,26 @@ class CoilImageSource(
             if (fetchResult !is SourceFetchResult) {
                 throw IllegalStateException("FetchResult is not SourceResult. data='${request.data}'")
             }
-            fetchResult.source.source()
+            val imageSource = fetchResult.source
+            return CoilImageSource(request.data, imageSource)
         }
-    }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is CoilImageSource) return false
-        if (imageLoader != other.imageLoader) return false
-        if (request.data != other.request.data) return false
-        return true
-    }
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Factory) return false
+            if (imageLoader != other.imageLoader) return false
+            if (request.data != other.request.data) return false
+            return true
+        }
 
-    override fun hashCode(): Int {
-        var result = imageLoader.hashCode()
-        result = 31 * result + request.data.hashCode()
-        return result
-    }
+        override fun hashCode(): Int {
+            var result = imageLoader.hashCode()
+            result = 31 * result + request.data.hashCode()
+            return result
+        }
 
-    override fun toString(): String {
-        return "CoilImageSource('${request.data}')"
+        override fun toString(): String {
+            return "CoilImageSource.Factory('${request.data}')"
+        }
     }
 }

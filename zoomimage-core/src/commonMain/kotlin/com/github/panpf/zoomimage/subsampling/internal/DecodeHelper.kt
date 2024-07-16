@@ -2,18 +2,25 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
+import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import okio.Closeable
 
 interface DecodeHelper : Closeable {
 
-    suspend fun getImageInfo(): ImageInfo
+    val imageInfo: ImageInfo
 
-    suspend fun supportRegion(): Boolean
+    val supportRegion: Boolean
 
-    suspend fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileBitmap
+    @WorkerThread
+    fun decodeRegion(key: String, region: IntRectCompat, sampleSize: Int): TileBitmap
 
     fun copy(): DecodeHelper
+
+    interface Factory {
+        fun create(imageSource: ImageSource): DecodeHelper
+    }
 }

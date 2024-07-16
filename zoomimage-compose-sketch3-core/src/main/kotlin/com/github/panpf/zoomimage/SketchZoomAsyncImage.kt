@@ -51,6 +51,7 @@ import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlin.math.roundToInt
 
 
@@ -406,12 +407,12 @@ private fun onPainterState(
         is PainterState.Success -> {
             subsamplingState.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            val imageSource = SketchImageSource(context, sketch, request.uriString)
+            val imageSource = SketchImageSource.Factory(context, sketch, request.uriString)
             subsamplingState.setImageSource(imageSource)
         }
 
         else -> {
-            subsamplingState.setImageSource(null)
+            subsamplingState.setImageSource(null as ImageSource?)
         }
     }
 }

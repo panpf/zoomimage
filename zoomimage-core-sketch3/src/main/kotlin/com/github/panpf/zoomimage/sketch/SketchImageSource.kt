@@ -23,21 +23,47 @@ import com.github.panpf.sketch.datasource.BasedStreamDataSource
 import com.github.panpf.sketch.request.Depth
 import com.github.panpf.sketch.request.LoadRequest
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.Source
 import okio.source
 
 class SketchImageSource(
-    private val context: Context,
-    private val sketch: Sketch,
-    private val imageUri: String,
+    val imageUri: String,
+    val dataSource: BasedStreamDataSource,
 ) : ImageSource {
 
     override val key: String = imageUri
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
+    override fun openSource(): Source {
+        return dataSource.newInputStream().source()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SketchImageSource) return false
+        if (imageUri != other.imageUri) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = imageUri.hashCode()
+        result = 31 * result + dataSource.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "SketchImageSource('$imageUri')"
+    }
+
+    class Factory(
+        val context: Context,
+        val sketch: Sketch,
+        val imageUri: String,
+    ) : ImageSource.Factory {
+
+        override val key: String = imageUri
+
+        override suspend fun create(): SketchImageSource {
+            // TODO support download
             val request = LoadRequest(context, imageUri) {
                 downloadCachePolicy(CachePolicy.ENABLED)
                 depth(Depth.LOCAL)   // Do not download image, by default go here The image have been downloaded
@@ -48,27 +74,27 @@ class SketchImageSource(
             if (dataSource !is BasedStreamDataSource) {
                 throw IllegalStateException("DataSource is not BasedStreamDataSource. imageUri='$imageUri'")
             }
-            dataSource.newInputStream().source()
+            return SketchImageSource(imageUri, dataSource)
         }
-    }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is SketchImageSource) return false
-        if (context != other.context) return false
-        if (sketch != other.sketch) return false
-        if (imageUri != other.imageUri) return false
-        return true
-    }
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Factory) return false
+            if (context != other.context) return false
+            if (sketch != other.sketch) return false
+            if (imageUri != other.imageUri) return false
+            return true
+        }
 
-    override fun hashCode(): Int {
-        var result = context.hashCode()
-        result = 31 * result + sketch.hashCode()
-        result = 31 * result + imageUri.hashCode()
-        return result
-    }
+        override fun hashCode(): Int {
+            var result = context.hashCode()
+            result = 31 * result + sketch.hashCode()
+            result = 31 * result + imageUri.hashCode()
+            return result
+        }
 
-    override fun toString(): String {
-        return "SketchImageSource('$imageUri')"
+        override fun toString(): String {
+            return "SketchImageSource('$imageUri')"
+        }
     }
 }

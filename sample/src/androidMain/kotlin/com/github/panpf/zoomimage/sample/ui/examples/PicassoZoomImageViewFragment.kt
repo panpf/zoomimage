@@ -146,12 +146,12 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
     }
 
     class PicassoComposeResourceToImageSource : PicassoDataToImageSource {
-        override fun dataToImageSource(data: Any): ImageSource? {
+        override fun dataToImageSource(data: Any): ImageSource.Factory? {
             if (data is Uri
                 && data.scheme.equals(ComposeResourceUriFetcher.SCHEME, ignoreCase = true)
             ) {
                 val resourcePath = "${data.authority.orEmpty()}${data.path.orEmpty()}"
-                return ComposeResourceImageSource(resourcePath)
+                return ComposeResourceImageSource.Factory(resourcePath)
             }
             return null
         }

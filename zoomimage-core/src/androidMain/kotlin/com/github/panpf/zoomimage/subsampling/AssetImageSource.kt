@@ -17,8 +17,6 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.content.Context
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.Source
 import okio.source
 
@@ -33,10 +31,8 @@ class AssetImageSource(val context: Context, val assetFileName: String) : ImageS
 
     override val key: String = "asset://$assetFileName"
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
-            context.assets.open(assetFileName).source()
-        }
+    override fun openSource(): Source {
+        return context.assets.open(assetFileName).source()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -56,4 +52,31 @@ class AssetImageSource(val context: Context, val assetFileName: String) : ImageS
     override fun toString(): String {
         return "AssetImageSource('$assetFileName')"
     }
+
+//    class Factory(val context: Context, val assetFileName: String) : ImageSource.Factory {
+//
+//        override val key: String = "asset://$assetFileName"
+//
+//        override suspend fun create(): AssetImageSource {
+//            return AssetImageSource(context, assetFileName)
+//        }
+//
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is Factory) return false
+//            if (context != other.context) return false
+//            if (assetFileName != other.assetFileName) return false
+//            return true
+//        }
+//
+//        override fun hashCode(): Int {
+//            var result = context.hashCode()
+//            result = 31 * result + assetFileName.hashCode()
+//            return result
+//        }
+//
+//        override fun toString(): String {
+//            return "AssetImageSource.Factory('$assetFileName')"
+//        }
+//    }
 }

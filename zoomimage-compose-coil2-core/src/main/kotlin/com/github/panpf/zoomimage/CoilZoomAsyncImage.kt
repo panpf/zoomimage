@@ -65,6 +65,7 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlin.math.roundToInt
 
 
@@ -278,11 +279,11 @@ private fun onState(
         is State.Success -> {
             zoomState.subsampling.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            zoomState.subsampling.setImageSource(CoilImageSource(imageLoader, request))
+            zoomState.subsampling.setImageSource(CoilImageSource.Factory(imageLoader, request))
         }
 
         else -> {
-            zoomState.subsampling.setImageSource(null)
+            zoomState.subsampling.setImageSource(null as ImageSource?)
         }
     }
 }

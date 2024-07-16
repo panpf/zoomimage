@@ -20,8 +20,6 @@ import android.content.Context
 import android.content.res.Resources
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.Source
 import okio.source
 
@@ -57,10 +55,8 @@ class ResourceImageSource(
 
     override val key: String = "android.resources://resource?resId=$resId"
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
-            resources.openRawResource(resId).source()
-        }
+    override fun openSource(): Source {
+        return resources.openRawResource(resId).source()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -80,4 +76,39 @@ class ResourceImageSource(
     override fun toString(): String {
         return "ResourceImageSource($resId)"
     }
+
+//    class Factory(
+//        val resources: Resources,
+//        @RawRes @DrawableRes val resId: Int
+//    ) : ImageSource.Factory {
+//
+//        constructor(
+//            context: Context,
+//            @RawRes @DrawableRes drawableId: Int
+//        ) : this(context.resources, drawableId)
+//
+//        override val key: String = "android.resources://resource?resId=$resId"
+//
+//        override suspend fun create(): ResourceImageSource {
+//            return ResourceImageSource(resources, resId)
+//        }
+//
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is Factory) return false
+//            if (resources != other.resources) return false
+//            if (resId != other.resId) return false
+//            return true
+//        }
+//
+//        override fun hashCode(): Int {
+//            var result = resources.hashCode()
+//            result = 31 * result + resId
+//            return result
+//        }
+//
+//        override fun toString(): String {
+//            return "ResourceImageSource.Factory($resId)"
+//        }
+//    }
 }

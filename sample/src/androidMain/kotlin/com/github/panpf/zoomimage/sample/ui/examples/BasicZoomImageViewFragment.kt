@@ -31,6 +31,7 @@ import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.launch
 
 class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
@@ -61,7 +62,7 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
                     subsampling.setImageSource(imageSource)
                     stateView.gone()
                 } else if (result is ImageResult.Error) {
-                    subsampling.setImageSource(null)
+                    subsampling.setImageSource(null as ImageSource?)
                     stateView.error {
                         message(result.throwable)
                         retryAction {

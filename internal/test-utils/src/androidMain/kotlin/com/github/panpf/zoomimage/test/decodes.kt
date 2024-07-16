@@ -9,8 +9,8 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 import okio.buffer
 
 @WorkerThread
-suspend fun ImageSource.decodeExifOrientation(): Result<Int> = runCatching {
-    val source = openSource().getOrThrow()
+fun ImageSource.decodeExifOrientation(): Result<Int> = runCatching {
+    val source = openSource()
     val inputStream = source.buffer().inputStream()
     val exifOrientation = inputStream.use {
         ExifInterface(it).getAttributeInt(
@@ -25,8 +25,8 @@ suspend fun ImageSource.decodeExifOrientation(): Result<Int> = runCatching {
 /**
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadImageInfo]
  */
-suspend fun ImageSource.decodeImageInfo(): Result<ImageInfo> = runCatching {
-    val source = openSource().getOrThrow()
+fun ImageSource.decodeImageInfo(): Result<ImageInfo> = runCatching {
+    val source = openSource()
     val inputStream = source.buffer().inputStream()
     val options = inputStream.use {
         val options = BitmapFactory.Options()

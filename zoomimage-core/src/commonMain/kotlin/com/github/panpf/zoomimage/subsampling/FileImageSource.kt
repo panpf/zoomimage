@@ -17,19 +17,30 @@
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.util.defaultFileSystem
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.Path
+import okio.Path.Companion.toPath
 import okio.Source
+
+/**
+ * Create an image source from a path.
+ */
+fun ImageSource.Companion.fromFile(path: Path): FileImageSource {
+    return FileImageSource(path)
+}
+
+/**
+ * Create an image source from a file path.
+ */
+fun ImageSource.Companion.fromFile(path: String): FileImageSource {
+    return FileImageSource(path.toPath())
+}
 
 class FileImageSource(val path: Path) : ImageSource {
 
     override val key: String = path.toString()
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
-            defaultFileSystem().source(path)
-        }
+    override fun openSource(): Source {
+        return defaultFileSystem().source(path)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -40,12 +51,34 @@ class FileImageSource(val path: Path) : ImageSource {
     }
 
     override fun hashCode(): Int {
-        var result = path.hashCode()
-        result = 31 * result + key.hashCode()
-        return result
+        return path.hashCode()
     }
 
     override fun toString(): String {
         return "FileImageSource('$path')"
     }
+
+//    class Factory(val path: Path) : ImageSource.Factory {
+//
+//        override val key: String = path.toString()
+//
+//        override suspend fun create(): FileImageSource {
+//            return FileImageSource(path)
+//        }
+//
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is Factory) return false
+//            if (path != other.path) return false
+//            return true
+//        }
+//
+//        override fun hashCode(): Int {
+//            return path.hashCode()
+//        }
+//
+//        override fun toString(): String {
+//            return "FileImageSource.Factory('$path')"
+//        }
+//    }
 }

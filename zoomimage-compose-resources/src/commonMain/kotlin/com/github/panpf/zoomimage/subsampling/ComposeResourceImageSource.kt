@@ -17,8 +17,8 @@ import org.jetbrains.compose.resources.readResourceBytes
  */
 fun ImageSource.Companion.fromComposeResource(
     resourcePath: String,
-): ComposeResourceImageSource {
-    return ComposeResourceImageSource(composeResourceUriToResourcePath(resourcePath))
+): ComposeResourceImageSource.Factory {
+    return ComposeResourceImageSource.Factory(composeResourceUriToResourcePath(resourcePath))
 }
 
 /**
@@ -51,20 +51,12 @@ fun composeResourceUriToResourcePath(resourcePath: String): String {
  * @param resourcePath The path of the file to read in the compose resource's directory. For example:
  * * 'composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
  */
-class ComposeResourceImageSource(
-    val resourcePath: String,
-) : ImageSource {
+class ComposeResourceImageSource(val resourcePath: String, val bytes: ByteArray) : ImageSource {
 
     override val key: String = "compose.resource://$resourcePath"
 
-    @OptIn(InternalResourceApi::class)
-    override suspend fun openSource(): Result<Source> = kotlin.runCatching {
-        val bytes = readResourceBytes(resourcePath)
-        Buffer().write(bytes)
-    }
-
-    override fun toString(): String {
-        return "ComposeResourceImageSource($resourcePath)"
+    override fun openSource(): Source {
+        return Buffer().write(bytes)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -76,5 +68,35 @@ class ComposeResourceImageSource(
 
     override fun hashCode(): Int {
         return resourcePath.hashCode()
+    }
+
+    override fun toString(): String {
+        return "ComposeResourceImageSource($resourcePath)"
+    }
+
+    class Factory(val resourcePath: String) : ImageSource.Factory {
+
+        override val key: String = "compose.resource://$resourcePath"
+
+        @OptIn(InternalResourceApi::class)
+        override suspend fun create(): ComposeResourceImageSource {
+            val bytes = readResourceBytes(resourcePath)
+            return ComposeResourceImageSource(resourcePath, bytes)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+            other as Factory
+            return resourcePath == other.resourcePath
+        }
+
+        override fun hashCode(): Int {
+            return resourcePath.hashCode()
+        }
+
+        override fun toString(): String {
+            return "ComposeResourceImageSource.Factory($resourcePath)"
+        }
     }
 }

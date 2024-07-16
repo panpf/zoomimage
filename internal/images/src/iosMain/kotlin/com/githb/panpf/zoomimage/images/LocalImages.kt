@@ -36,7 +36,7 @@ class LocalImages private constructor() {
                 val file = outDir.resolve(it.resourceName)
                 if (!fileSystem.exists(file)) {
                     try {
-                        KotlinResourceImageSource(it.resourceName).openSource().getOrThrow()
+                        KotlinResourceImageSource(it.resourceName).openSource()
                             .buffer().use { input ->
                                 fileSystem.sink(file).buffer().use { output ->
                                     output.writeAll(input)

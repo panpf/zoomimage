@@ -47,7 +47,7 @@ suspend fun sketchImageUriToZoomImageImageSource(
     sketch: Sketch,
     imageUri: String,
     http2ByteArray: Boolean = false
-): ImageSource? {
+): ImageSource.Factory? {
     val imageRequest = ImageRequest(sketch.context, imageUri)
     val fetcher = sketch.components.newFetcherOrThrow(imageRequest)
     return sketchFetcherToZoomImageImageSource(sketch.context, fetcher, http2ByteArray)
@@ -57,7 +57,7 @@ expect suspend fun sketchFetcherToZoomImageImageSource(
     context: PlatformContext,
     fetcher: Fetcher,
     http2ByteArray: Boolean = false
-): ImageSource?
+): ImageSource.Factory?
 
 class ImageSourceTestScreen : BaseScreen() {
 

@@ -17,8 +17,6 @@
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.annotation.WorkerThread
-import okio.Path
-import okio.Path.Companion.toPath
 import okio.Source
 
 /**
@@ -37,29 +35,26 @@ interface ImageSource {
      * Open an input stream for the image.
      */
     @WorkerThread
-    suspend fun openSource(): Result<Source>
+    fun openSource(): Source
 
-    companion object {
-
-        /**
-         * Create an image source from a path.
-         */
-        fun fromFile(path: Path): FileImageSource {
-            return FileImageSource(path)
-        }
+    interface Factory {
 
         /**
-         * Create an image source from a file path.
+         * Unique key for this image source.
          */
-        fun fromFile(path: String): FileImageSource {
-            return FileImageSource(path.toPath())
-        }
+        val key: String
 
-        /**
-         * Create an image source from a ByteArray.
-         */
-        fun fromByteArray(byteArray: ByteArray): ByteArrayImageSource {
-            return ByteArrayImageSource(byteArray)
-        }
+        suspend fun create(): ImageSource
+    }
+
+    companion object
+
+    class WrapperFactory(val imageSource: ImageSource) : Factory {
+
+        override val key: String = imageSource.key
+
+        override suspend fun create(): ImageSource = imageSource
     }
 }
+
+fun ImageSource.toFactory(): ImageSource.Factory = ImageSource.WrapperFactory(this)

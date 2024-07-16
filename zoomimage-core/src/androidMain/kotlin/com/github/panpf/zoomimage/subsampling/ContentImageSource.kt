@@ -18,8 +18,6 @@ package com.github.panpf.zoomimage.subsampling
 
 import android.content.Context
 import android.net.Uri
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.Source
 import okio.source
 import java.io.FileNotFoundException
@@ -35,11 +33,9 @@ class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
 
     override val key: String = uri.toString()
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
-            context.contentResolver.openInputStream(uri)?.source()
-                ?: throw FileNotFoundException("Unable to open stream. uri='$uri'")
-        }
+    override fun openSource(): Source {
+        return context.contentResolver.openInputStream(uri)?.source()
+            ?: throw FileNotFoundException("Unable to open stream. uri='$uri'")
     }
 
     override fun equals(other: Any?): Boolean {
@@ -59,4 +55,31 @@ class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
     override fun toString(): String {
         return "ContentImageSource('$uri')"
     }
+
+//    class Factory(val context: Context, val uri: Uri) : ImageSource.Factory {
+//
+//        override val key: String = uri.toString()
+//
+//        override suspend fun create(): ContentImageSource {
+//            return ContentImageSource(context, uri)
+//        }
+//
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is Factory) return false
+//            if (context != other.context) return false
+//            if (uri != other.uri) return false
+//            return true
+//        }
+//
+//        override fun hashCode(): Int {
+//            var result = context.hashCode()
+//            result = 31 * result + uri.hashCode()
+//            return result
+//        }
+//
+//        override fun toString(): String {
+//            return "ContentImageSource.Factory('$uri')"
+//        }
+//    }
 }

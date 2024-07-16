@@ -12,6 +12,9 @@ import com.github.panpf.sketch.util.ioCoroutineDispatcher
 import com.github.panpf.zoomimage.sample.data.ComposeResourceImages
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.fromByteArray
+import com.github.panpf.zoomimage.subsampling.fromFile
+import com.github.panpf.zoomimage.subsampling.toFactory
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.use
@@ -27,10 +30,10 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
     context: PlatformContext,
     fetcher: Fetcher,
     http2ByteArray: Boolean
-): ImageSource? =
+): ImageSource.Factory? =
     when (fetcher) {
         is FileUriFetcher -> {
-            ImageSource.fromFile(fetcher.path)
+            ImageSource.fromFile(fetcher.path).toFactory()
         }
 
         is HttpUriFetcher -> {
@@ -50,11 +53,11 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
                 }
             } else {
                 ImageSource.fromByteArray((dataSource as ByteArrayDataSource).data)
-            }
+            }.toFactory()
         }
 
         is ComposeResourceUriFetcher -> {
-            ComposeResourceImageSource(fetcher.resourcePath)
+            ComposeResourceImageSource.Factory(fetcher.resourcePath)
         }
 
         else -> null

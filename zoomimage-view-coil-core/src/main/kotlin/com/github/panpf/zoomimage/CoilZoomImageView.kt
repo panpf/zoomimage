@@ -99,7 +99,10 @@ open class CoilZoomImageView @JvmOverloads constructor(
         return result.request.memoryCachePolicy != CachePolicy.ENABLED
     }
 
-    private fun newImageSource(imageLoader: ImageLoader, result: SuccessResult): ImageSource? {
+    private fun newImageSource(
+        imageLoader: ImageLoader,
+        result: SuccessResult
+    ): ImageSource.Factory? {
         val drawable = drawable
         if (drawable == null) {
             logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is null" }
@@ -114,7 +117,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
             logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is Animatable" }
             return null
         }
-        return CoilImageSource(imageLoader, result.request)
+        return CoilImageSource.Factory(imageLoader, result.request)
     }
 
     private fun Drawable.getLastChildDrawable(): Drawable? {

@@ -19,12 +19,19 @@ package com.github.panpf.zoomimage.subsampling
 import okio.Buffer
 import okio.Source
 
+/**
+ * Create an image source from a ByteArray.
+ */
+fun ImageSource.Companion.fromByteArray(byteArray: ByteArray): ByteArrayImageSource {
+    return ByteArrayImageSource(byteArray)
+}
+
 class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
 
     override val key: String = byteArray.toString()
 
-    override suspend fun openSource(): Result<Source> = kotlin.runCatching {
-        Buffer().write(byteArray)
+    override fun openSource(): Source {
+        return Buffer().write(byteArray)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -35,12 +42,34 @@ class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
     }
 
     override fun hashCode(): Int {
-        var result = byteArray.hashCode()
-        result = 31 * result + key.hashCode()
-        return result
+        return byteArray.hashCode()
     }
 
     override fun toString(): String {
         return "ByteArrayImageSource('$byteArray')"
     }
+
+//    class Factory(val byteArray: ByteArray) : ImageSource.Factory {
+//
+//        override val key: String = byteArray.toString()
+//
+//        override suspend fun create(): ByteArrayImageSource {
+//            return ByteArrayImageSource(byteArray)
+//        }
+//
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is Factory) return false
+//            if (!byteArray.contentEquals(other.byteArray)) return false
+//            return true
+//        }
+//
+//        override fun hashCode(): Int {
+//            return byteArray.hashCode()
+//        }
+//
+//        override fun toString(): String {
+//            return "ByteArrayImageSource.Factory('$byteArray')"
+//        }
+//    }
 }

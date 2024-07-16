@@ -35,28 +35,19 @@ import kotlin.math.abs
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest2.testDecodeAndCreateTileDecoder]
  */
 @WorkerThread
-suspend fun decodeAndCreateTileDecoder(
+fun decodeAndCreateTileDecoder(
     logger: Logger,
     imageSource: ImageSource,
     thumbnailSize: IntSizeCompat,
 ): Result<TileDecoder> {
     val decodeHelper = createDecodeHelper(imageSource)
-    if (decodeHelper == null) {
-        val message = "Unsupported image source: ${imageSource::class}"
-        return Result.failure(CreateTileDecoderException(-1, false, message, null))
-    }
-    val imageInfo = try {
-        decodeHelper.getImageInfo()
-    } catch (e: Exception) {
-        decodeHelper.close()
-        return Result.failure(CreateTileDecoderException(-1, false, e.toString(), null))
-    }
+    val imageInfo = decodeHelper.imageInfo
     if (imageInfo.width <= 0 || imageInfo.height <= 0) {
         decodeHelper.close()
         val message = "image width or height is error: ${imageInfo.width}x${imageInfo.height}"
         return Result.failure(CreateTileDecoderException(-2, true, message, imageInfo))
     }
-    if (!decodeHelper.supportRegion()) {
+    if (!decodeHelper.supportRegion) {
         decodeHelper.close()
         val message = "Image type not support subsampling"
         return Result.failure(CreateTileDecoderException(-3, true, message, imageInfo))

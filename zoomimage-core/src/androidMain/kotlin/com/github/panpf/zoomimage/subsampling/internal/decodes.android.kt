@@ -20,35 +20,33 @@ import android.annotation.SuppressLint
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.exifinterface.media.ExifInterface
+import com.github.panpf.zoomimage.annotation.WorkerThread
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.buffer
 import kotlin.math.ceil
 import kotlin.math.floor
 
-internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper? {
-    return BitmapRegionDecoderDecodeHelper(imageSource)
+internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
+    return BitmapRegionDecoderDecodeHelper.Factory().create(imageSource)
 }
 
 /**
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadExifOrientation]
  */
-internal suspend fun ImageSource.decodeExifOrientation(): Result<Int> =
-    withContext(ioCoroutineDispatcher()) {
-        runCatching {
-            val source = openSource().getOrThrow()
-            val inputStream = source.buffer().inputStream()
-            val exifOrientation = inputStream.use {
-                ExifInterface(it).getAttributeInt(
-                    /* tag = */ ExifInterface.TAG_ORIENTATION,
-                    /* defaultValue = */ ExifInterface.ORIENTATION_UNDEFINED
-                )
-            }
-            exifOrientation
-        }
+@WorkerThread
+internal fun ImageSource.decodeExifOrientation(): Result<Int> = runCatching {
+    println("openSource: decodeExifOrientation")
+    val source = openSource()
+    val inputStream = source.buffer().inputStream()
+    val exifOrientation = inputStream.use {
+        ExifInterface(it).getAttributeInt(
+            /* tag = */ ExifInterface.TAG_ORIENTATION,
+            /* defaultValue = */ ExifInterface.ORIENTATION_UNDEFINED
+        )
     }
+    exifOrientation
+}
 
 /**
  * If true, indicates that the given mimeType can be using 'inBitmap' in BitmapRegionDecoder

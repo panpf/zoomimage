@@ -20,8 +20,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.getDiskCache
 import com.bumptech.glide.load.model.GlideUrl
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
-import kotlinx.coroutines.withContext
 import okio.Source
 import okio.source
 import java.io.FileInputStream
@@ -29,22 +27,21 @@ import java.io.FileNotFoundException
 
 
 class GlideHttpImageSource(
-    private val glide: Glide,
-    private val glideUrl: GlideUrl
+    val glide: Glide,
+    val glideUrl: GlideUrl
 ) : ImageSource {
 
     constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
 
     override val key: String = glideUrl.cacheKey
 
-    override suspend fun openSource(): Result<Source> = withContext(ioCoroutineDispatcher()) {
-        kotlin.runCatching {
-            val diskCache =
-                getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
-            val file = diskCache.get(glideUrl)
-                ?: throw FileNotFoundException("Cache file is null")
-            FileInputStream(file).source()
-        }
+    override fun openSource(): Source {
+        // TODO support download
+        val diskCache =
+            getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
+        val file = diskCache.get(glideUrl)
+            ?: throw FileNotFoundException("Cache file is null")
+        return FileInputStream(file).source()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -64,4 +61,36 @@ class GlideHttpImageSource(
     override fun toString(): String {
         return "GlideHttpImageSource('$glideUrl')"
     }
+
+//    class Factory(
+//        val glide: Glide,
+//        val glideUrl: GlideUrl
+//    ) : ImageSource.Factory {
+//
+//        override val key: String = glideUrl.cacheKey
+//
+//        constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
+//
+//        override suspend fun create(): GlideHttpImageSource {
+//            return GlideHttpImageSource(glide, glideUrl)
+//        }
+//
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is Factory) return false
+//            if (glide != other.glide) return false
+//            if (glideUrl != other.glideUrl) return false
+//            return true
+//        }
+//
+//        override fun hashCode(): Int {
+//            var result = glide.hashCode()
+//            result = 31 * result + glideUrl.hashCode()
+//            return result
+//        }
+//
+//        override fun toString(): String {
+//            return "GlideHttpImageSource.Factory('$glideUrl')"
+//        }
+//    }
 }
