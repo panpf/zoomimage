@@ -17,80 +17,143 @@
 package com.github.panpf.zoomimage.glide
 
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.Encoder
+import com.bumptech.glide.load.Options
+import com.bumptech.glide.load.data.DataFetcher
+import com.bumptech.glide.load.data.HttpUrlFetcher
+import com.bumptech.glide.load.engine.cache.DiskCache
 import com.bumptech.glide.load.engine.getDiskCache
+import com.bumptech.glide.load.model.ByteBufferEncoder
 import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.stream.HttpGlideUrlLoader
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.util.ioCoroutineDispatcher
+import kotlinx.coroutines.withContext
 import okio.Source
+import okio.buffer
 import okio.source
+import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
+import java.io.InputStream
+import java.nio.ByteBuffer
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
 class GlideHttpImageSource(
-    val glide: Glide,
-    val glideUrl: GlideUrl
+    val glideUrl: GlideUrl,
+    val openSource: () -> Source
 ) : ImageSource {
-
-    constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
 
     override val key: String = glideUrl.cacheKey
 
     override fun openSource(): Source {
-        // TODO support download
-        val diskCache =
-            getDiskCache(glide) ?: throw IllegalStateException("DiskCache is null")
-        val file = diskCache.get(glideUrl)
-            ?: throw FileNotFoundException("Cache file is null")
-        return FileInputStream(file).source()
+        return openSource.invoke()
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is GlideHttpImageSource) return false
-        if (glide != other.glide) return false
         if (glideUrl != other.glideUrl) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = glide.hashCode()
-        result = 31 * result + glideUrl.hashCode()
-        return result
+        return glideUrl.hashCode()
     }
 
     override fun toString(): String {
         return "GlideHttpImageSource('$glideUrl')"
     }
 
-//    class Factory(
-//        val glide: Glide,
-//        val glideUrl: GlideUrl
-//    ) : ImageSource.Factory {
-//
-//        override val key: String = glideUrl.cacheKey
-//
-//        constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
-//
-//        override suspend fun create(): GlideHttpImageSource {
-//            return GlideHttpImageSource(glide, glideUrl)
-//        }
-//
-//        override fun equals(other: Any?): Boolean {
-//            if (this === other) return true
-//            if (other !is Factory) return false
-//            if (glide != other.glide) return false
-//            if (glideUrl != other.glideUrl) return false
-//            return true
-//        }
-//
-//        override fun hashCode(): Int {
-//            var result = glide.hashCode()
-//            result = 31 * result + glideUrl.hashCode()
-//            return result
-//        }
-//
-//        override fun toString(): String {
-//            return "GlideHttpImageSource.Factory('$glideUrl')"
-//        }
-//    }
+    class Factory(
+        val glide: Glide,
+        val glideUrl: GlideUrl
+    ) : ImageSource.Factory {
+
+        override val key: String = glideUrl.cacheKey
+
+        constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
+
+        private val diskCache by lazy { getDiskCache(glide) }
+
+        override suspend fun create(): GlideHttpImageSource {
+            val diskCache = diskCache
+            val file = diskCache?.get(glideUrl)
+            if (file != null) {
+                return GlideHttpImageSource(glideUrl) {
+                    FileInputStream(file).source()
+                }
+            }
+
+            val data: InputStream = suspendCoroutine { continuation ->
+                val fetcher = HttpUrlFetcher(glideUrl, HttpGlideUrlLoader.TIMEOUT.defaultValue!!)
+                fetcher.loadData(
+                    /* priority = */ Priority.IMMEDIATE,
+                    /* callback = */ object : DataFetcher.DataCallback<InputStream> {
+                        override fun onDataReady(data: InputStream?) {
+                            if (data != null) {
+                                continuation.resume(Result.success(data))
+                            } else {
+                                continuation.resumeWithException(FileNotFoundException("Data is null"))
+                            }
+                        }
+
+                        override fun onLoadFailed(e: Exception) {
+                            continuation.resumeWithException(e)
+                        }
+                    }
+                )
+            }.getOrThrow()
+
+            val bytes = withContext(ioCoroutineDispatcher()) {
+                // It is impossible to accurately determine whether the current disk cache is available,
+                // so we can only read it into the memory first and then try to write it to the disk.
+                data.source().buffer().use { it.readByteArray() }.apply {
+                    diskCache?.put(
+                        /* key = */ glideUrl,
+                        /* writer = */ DataCacheWriter(
+                            encoder = ByteBufferEncoder(),
+                            data = ByteBuffer.wrap(this@apply),
+                            options = Options()
+                        )
+                    )
+                }
+            }
+            return GlideHttpImageSource(glideUrl) { bytes.inputStream().source() }
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Factory) return false
+            if (glide != other.glide) return false
+            if (glideUrl != other.glideUrl) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = glide.hashCode()
+            result = 31 * result + glideUrl.hashCode()
+            return result
+        }
+
+        override fun toString(): String {
+            return "GlideHttpImageSource.Factory('$glideUrl')"
+        }
+
+        private class DataCacheWriter<DataType>(
+            private val encoder: Encoder<DataType>,
+            private val data: DataType,
+            private val options: Options
+        ) : DiskCache.Writer {
+
+            override fun write(file: File): Boolean {
+                @Suppress("UNCHECKED_CAST")
+                return encoder.encode(data as (DataType & Any), file, options)
+            }
+        }
+    }
 }

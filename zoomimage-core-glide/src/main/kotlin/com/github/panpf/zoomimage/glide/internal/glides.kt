@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.Key
 import com.bumptech.glide.load.engine.cache.DiskCache
+import com.bumptech.glide.load.engine.cache.DiskCacheAdapter
 import com.bumptech.glide.load.engine.cache.MemoryCache
 import com.bumptech.glide.load.resource.bitmap.BitmapResource
 import com.bumptech.glide.request.BaseRequestOptions
@@ -38,7 +39,7 @@ internal fun getDiskCache(glide: Glide): DiskCache? {
         val diskCacheProvider = engine.javaClass.getDeclaredField("diskCacheProvider")
             .apply { isAccessible = true }
             .get(engine) as DecodeJob.DiskCacheProvider
-        diskCacheProvider.diskCache
+        diskCacheProvider.diskCache?.takeIf { it !is DiskCacheAdapter }
     } catch (e: Exception) {
         e.printStackTrace()
         null

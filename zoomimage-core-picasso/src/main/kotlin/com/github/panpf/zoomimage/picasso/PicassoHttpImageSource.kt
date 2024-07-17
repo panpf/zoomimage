@@ -21,7 +21,6 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.downloader
-import okhttp3.CacheControl
 import okhttp3.Response
 import okio.Source
 import okio.source
@@ -32,10 +31,8 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
     override val key: String = uri.toString()
 
     override fun openSource(): Source {
-        // TODO support download
         val downloaderRequest = okhttp3.Request.Builder()
             .url(uri.toString())
-            .cacheControl(CacheControl.FORCE_CACHE) // Do not download image, by default go here The image have been downloaded
             .build()
         val response: Response = picasso.downloader.load(downloaderRequest)
         val body =

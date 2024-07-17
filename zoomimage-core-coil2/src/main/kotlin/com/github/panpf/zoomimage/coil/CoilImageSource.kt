@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.coil
 
 import coil.ImageLoader
 import coil.fetch.SourceResult
-import coil.request.CachePolicy.DISABLED
 import coil.request.CachePolicy.ENABLED
 import coil.request.ImageRequest
 import coil.request.Options
@@ -62,11 +61,10 @@ class CoilImageSource(
         override val key: String = request.data.toString()
 
         override suspend fun create(): CoilImageSource {
-            // TODO support download
             val options = Options(
                 context = request.context,
                 diskCachePolicy = ENABLED,
-                networkCachePolicy = DISABLED   // Do not download image, by default go here The image have been downloaded
+                networkCachePolicy = ENABLED
             )
             val fetcher =
                 imageLoader.components.newFetcher(request.data, options, imageLoader)?.first

@@ -13,6 +13,8 @@ subsampling:
 * new: Added ImageSource.Factory interface for creating ImageSource
 * change: Remove the suspend modifier of ImageSource's openSource() method. If you need to suspend,
   please use ImageSource.Factory.
+* improve: SketchImageSource, CoilImageSource, GlideHttpImageSource, PicassoHttpImageSource now
+  support downloading images from the internet
 
 ## 1.1.0-alpha01
 

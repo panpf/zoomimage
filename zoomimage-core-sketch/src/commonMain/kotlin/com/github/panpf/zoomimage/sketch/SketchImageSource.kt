@@ -62,10 +62,9 @@ class SketchImageSource(
         override val key: String = imageUri
 
         override suspend fun create(): SketchImageSource {
-            // TODO support download
             val request = ImageRequest(context, imageUri) {
                 downloadCachePolicy(CachePolicy.ENABLED)
-                depth(Depth.LOCAL)   // Do not download image, by default go here The image have been downloaded
+                depth(Depth.NETWORK)
             }
             val fetcher = sketch.components.newFetcherOrThrow(request)
             val fetchResult = fetcher.fetch().getOrThrow()

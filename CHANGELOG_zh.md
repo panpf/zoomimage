@@ -12,6 +12,7 @@ subsampling:
 * new: 新增 ImageSource.Factory 接口，用于创建 ImageSource
 * change: 移除 ImageSource 的 openSource() 方法的 suspend 修饰符，需要 suspend 的话请使用
   ImageSource.Factory
+* improve: SketchImageSource、CoilImageSource、GlideHttpImageSource、PicassoHttpImageSource 现在支持从网络下载图片
 
 ## 1.1.0-alpha01
 
