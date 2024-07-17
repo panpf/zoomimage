@@ -30,7 +30,6 @@ import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.ViewGroup.LayoutParams
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.sketch.util.Size
@@ -125,7 +124,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
 
     override fun setImageDrawable(drawable: Drawable?) {
         super.setImageDrawable(drawable)
-        if (zoomView != null && ViewCompat.isAttachedToWindow(this)) {
+        if (zoomView != null && isAttachedToWindow) {
             resetViewSize("setImageDrawable")
         }
     }
@@ -147,7 +146,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
         this.zoomView = zoomView
         zoomView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             post {
-                if (drawable != null && ViewCompat.isAttachedToWindow(this)) {
+                if (drawable != null && isAttachedToWindow) {
                     resetViewSize("zoomView#addOnLayoutChangeListener")
                 }
             }

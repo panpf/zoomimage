@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.internalModel
 import com.bumptech.glide.load.engine.internalRequestOptions
@@ -64,14 +63,14 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        if (ViewCompat.isAttachedToWindow(this)) {
+        if (isAttachedToWindow) {
             resetImageSource()
         }
     }
 
     private fun resetImageSource() {
         post {
-            if (!ViewCompat.isAttachedToWindow(this)) {
+            if (!isAttachedToWindow) {
                 return@post
             }
             val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)

@@ -22,7 +22,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
-import androidx.core.view.ViewCompat
 import coil3.ImageLoader
 import coil3.request.CachePolicy
 import coil3.request.SuccessResult
@@ -61,7 +60,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        if (ViewCompat.isAttachedToWindow(this)) {
+        if (isAttachedToWindow) {
             resetImageSource()
         }
     }

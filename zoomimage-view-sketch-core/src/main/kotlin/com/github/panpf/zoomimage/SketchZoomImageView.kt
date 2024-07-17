@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import androidx.core.view.ViewCompat
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.imageResult
@@ -59,15 +58,14 @@ open class SketchZoomImageView @JvmOverloads constructor(
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
-        // TODO Remove ViewCompat
-        if (ViewCompat.isAttachedToWindow(this)) {
+        if (isAttachedToWindow) {
             resetImageSource()
         }
     }
 
     private fun resetImageSource() {
         post {
-            if (!ViewCompat.isAttachedToWindow(this)) {
+            if (!isAttachedToWindow) {
                 return@post
             }
             val result: ImageResult? = imageResult
