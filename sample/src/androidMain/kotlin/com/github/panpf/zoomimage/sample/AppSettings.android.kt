@@ -20,10 +20,11 @@ import org.jetbrains.compose.resources.painterResource
 private val appSettingsLazy = ParamLazy<PlatformContext, AppSettings> { AppSettings(it) }
 
 actual val PlatformContext.appSettings: AppSettings
-    get() = appSettingsLazy.get(this)
+    get() = appSettingsLazy.get(this.applicationContext)
 
 val Fragment.appSettings: AppSettings
     get() = this.requireContext().appSettings
+
 val View.appSettings: AppSettings
     get() = this.context.appSettings
 
