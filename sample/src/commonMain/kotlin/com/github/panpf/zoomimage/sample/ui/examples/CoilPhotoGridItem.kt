@@ -22,9 +22,7 @@ import androidx.compose.ui.unit.dp
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.request.ErrorResult
-import coil3.request.ImageRequest
 import coil3.request.SuccessResult
-import coil3.request.crossfade
 import com.github.panpf.zoomimage.sample.ui.components.InfoItems
 import com.github.panpf.zoomimage.sample.ui.components.MyDialog
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
@@ -48,10 +46,7 @@ fun CoilPhotoGridItem(
         sketchUri2CoilModel(context, sketchImageUri)
     }
     coil3.compose.AsyncImage(
-        model = ImageRequest.Builder(context).apply {
-            data(coilModel)
-            crossfade(true)
-        }.build(),
+        model = coilModel,
         modifier = modifier
             .pointerInput(photo, index) {
                 detectTapGestures(

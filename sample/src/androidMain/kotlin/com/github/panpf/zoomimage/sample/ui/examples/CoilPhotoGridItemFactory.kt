@@ -53,7 +53,7 @@ class CoilPhotoGridItemFactory(val fragmentManager: FragmentManager) : BasePhoto
         imageView.load(sketchUri2CoilModel(imageView.context, sketchImageUri)) {
             placeholder(R.drawable.im_placeholder)
             error(R.drawable.im_error)
-//            crossfade(true) // TODO There is a bug
+            // Cannot use crossfade, there is a bug
         }
     }
 }
