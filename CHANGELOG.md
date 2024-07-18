@@ -2,19 +2,19 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.1.0-alpha02
 
 subsampling:
 
-* improve: Relax the aspect ratio restrictions between thumbnails and original
-  images. [#22](https://github.com/panpf/zoomimage/issues/22)
 * fix: Fixed a bug that caused the failure of subsampling concurrency control to open ImageSource
   multiple times in a short period of time。 [#29](https://github.com/panpf/zoomimage/issues/29)
-* new: Added ImageSource.Factory interface for creating ImageSource
 * change: Remove the suspend modifier of ImageSource's openSource() method. If you need to suspend,
   please use ImageSource.Factory.
+* improve: Relax the aspect ratio restrictions between thumbnails and original
+  images. [#22](https://github.com/panpf/zoomimage/issues/22)
 * improve: SketchImageSource, CoilImageSource, GlideHttpImageSource, PicassoHttpImageSource now
   support downloading images from the internet
+* new: Added ImageSource.Factory interface for creating ImageSource
 
 ## 1.1.0-alpha01
 

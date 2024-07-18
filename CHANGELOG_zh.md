@@ -2,17 +2,17 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.1.0-alpha02
 
 subsampling:
 
-* improve: 放宽缩略图和原图的宽高比限制。 [#22](https://github.com/panpf/zoomimage/issues/22)
 * fix: 修复子采样并发控制失效导致短时间内多次打开 ImageSource 的
   bug。 [#29](https://github.com/panpf/zoomimage/issues/29)
-* new: 新增 ImageSource.Factory 接口，用于创建 ImageSource
 * change: 移除 ImageSource 的 openSource() 方法的 suspend 修饰符，需要 suspend 的话请使用
   ImageSource.Factory
+* improve: 放宽缩略图和原图的宽高比限制。 [#22](https://github.com/panpf/zoomimage/issues/22)
 * improve: SketchImageSource、CoilImageSource、GlideHttpImageSource、PicassoHttpImageSource 现在支持从网络下载图片
+* new: 新增 ImageSource.Factory 接口，用于创建 ImageSource
 
 ## 1.1.0-alpha01
 
