@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage.sample
 
 import coil3.ImageLoader
 import coil3.util.DebugLogger
-import com.github.panpf.sketch.ComponentRegistry
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.decode.supportSvg
@@ -19,22 +18,6 @@ fun newSketch(context: PlatformContext): Sketch {
         components {
             supportSvg()
             supportComposeResources()
-
-            // TODO new version use addComponents
-            platformSketchComponents(context)?.let { components ->
-                components.decodeInterceptorList.forEach {
-                    addDecodeInterceptor(it)
-                }
-                components.requestInterceptorList.forEach {
-                    addRequestInterceptor(it)
-                }
-                components.decoderFactoryList.forEach {
-                    addDecoder(it)
-                }
-                components.fetcherFactoryList.forEach {
-                    addFetcher(it)
-                }
-            }
         }
 
         // For print the Sketch initialization log
@@ -52,7 +35,6 @@ fun newSketch(context: PlatformContext): Sketch {
 }
 
 expect fun Sketch.Builder.platformSketchInitial(context: PlatformContext)
-expect fun platformSketchComponents(context: PlatformContext): ComponentRegistry?
 
 fun newCoil(context: coil3.PlatformContext): ImageLoader {
     return ImageLoader.Builder(context).apply {

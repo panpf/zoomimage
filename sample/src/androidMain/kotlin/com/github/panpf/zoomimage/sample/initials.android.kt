@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage.sample
 
 import android.os.Build
 import coil3.ImageLoader
-import com.github.panpf.sketch.ComponentRegistry
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.decode.supportAnimatedGif
@@ -12,11 +11,7 @@ import com.github.panpf.zoomimage.sample.util.CoilComposeResourceUriFetcher
 
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
-
-}
-
-actual fun platformSketchComponents(context: PlatformContext): ComponentRegistry? {
-    return ComponentRegistry.Builder().apply {
+    addComponents {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             supportAnimatedGif()
         } else {
@@ -25,7 +20,7 @@ actual fun platformSketchComponents(context: PlatformContext): ComponentRegistry
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             supportAnimatedWebp()
         }
-    }.build()
+    }
 }
 
 actual fun ImageLoader.Builder.platformCoilInitial(context: coil3.PlatformContext) {

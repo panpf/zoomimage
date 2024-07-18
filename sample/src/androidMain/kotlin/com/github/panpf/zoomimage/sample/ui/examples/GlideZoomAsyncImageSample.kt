@@ -86,7 +86,7 @@ fun GlideZoomAsyncImageSample(
 private fun GlideZoomAsyncImageSamplePreview() {
     val colorScheme = MaterialTheme.colorScheme
     val photo = remember {
-        val sketchImageUri = newResourceUri(drawableResId = R.drawable.im_placeholder)
+        val sketchImageUri = newResourceUri(resId = R.drawable.im_placeholder)
         Photo(sketchImageUri)
     }
     GlideZoomAsyncImageSample(
