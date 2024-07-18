@@ -49,18 +49,17 @@ additional work
 [ZoomImage] and [ZoomImageView] do not have an integrated image loading library and require an
 additional call to the `setImageSource(ImageSource)` method to use the subsampling function
 
-example：
+example:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
-
-val context = LocalContext.current
 LaunchedEffect(Unit) {
-  zoomState.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
+  val resUri = Res.getUri("files/huge_world.jpeg")
+  val imageSource = ImageSource.fromComposeResource(resUri)
+  zoomState.subsampling.setImageSource(imageSource)
 }
-
 ZoomImage(
-    painter = painterResource(R.drawable.huge_image_thumbnail),
+  painter = painterResource(Res.drawable.huge_world_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
   zoomState = zoomState,
@@ -71,11 +70,31 @@ view:
 
 ```kotlin
 val zoomImageView = ZoomImageView(context)
-zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
+zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
 
-val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
+val imageSource = ImageSource.fromResource(context, R.drawable.huge_world)
 zoomImageView.subsampling.setImageSource(imageSource)
 ```
+
+### ImageSource
+
+[ImageSource] is responsible for providing image data to ZoomImage for decoding. ZoomImage provides
+a variety of [ImageSource] implementations to support loading images from various sources, as
+follows:
+
+* [AssetImageSource]: Load images from Android's assets
+  directory.[ImageSource.fromAsset(context, "huge_world.jpeg")][AssetImageSource]
+* [ByteArrayImageSource]: Load images from
+  ByteArray. [ImageSource.fromByteArray(byteArray)][ByteArrayImageSource]
+* [ComposeResourceImageSource]: Load images from Compose's resource
+  directory. [ImageSource.fromComposeResource(Res.getUri("files/huge_world.jpeg"))][ComposeResourceImageSource]
+* [ContentImageSource]: Load images from Android's
+  ContentProvider. [ImageSource.fromContent(context, contentUri)][ContentImageSource]
+* [FileImageSource]: Load image from file. [ImageSource.fromFile(file)][FileImageSource]
+* [KotlinResourceImageSource]: Load images from the Kotlin resource directory on desktop or ios
+  platforms. [ImageSource.fromKotlinResource("huge_world.jpeg")][KotlinResourceImageSource]
+* [ResourceImageSource]: Load images from Android's res
+  directory. [ImageSource.fromResource(context, R.raw.huge_world)][ResourceImageSource]
 
 ### Exif Orientation
 
@@ -89,7 +108,7 @@ with a duration of 200 milliseconds and a refresh interval of 8 milliseconds. Yo
 `tileAnimationSpec` parameters to turn off animation or modify animation duration and refresh
 interval
 
-example：
+example:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
@@ -122,7 +141,7 @@ transformations that pause the loading of tiles, 'GESTURE',
 The 'FLING' two types load tiles in real time, which you can configure via the
 `pausedContinuousTransformType` property
 
-example：
+example:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
@@ -150,7 +169,7 @@ ZoomImage supports stopping subsampling, which free the loaded tile after stoppi
 are loaded, and automatically reloads the tiles after restarting, you can configure it via
 the `stopped` attribute
 
-example：
+example:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
@@ -189,7 +208,7 @@ However, this feature uses more memory, which may affect fluency on devices with
 and this feature is turned on by default, you can pass `disabledBackgroundTiles` property to close
 it
 
-example：
+example:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
@@ -216,7 +235,7 @@ additional work, while components that do not integrate the image loading librar
 their own first
 [TileBitmapCache] Then set the `tileBitmapCache` property to use the memory cache feature
 
-example：
+example:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
@@ -237,7 +256,7 @@ After setting the tileBitmapCache property, the memory caching function is turne
 passed without modifying the tileBitmapCache property
 The `disabledTileBitmapCache` property controls the use of the memory cache feature
 
-example：
+example:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
@@ -300,3 +319,19 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [TileBitmapCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapCache.kt
 
 [SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
+
+[ImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ImageSource.kt
+
+[AssetImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/AssetImageSource.kt
+
+[ByteArrayImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ByteArrayImageSource.kt
+
+[ComposeResourceImageSource]: ../../zoomimage-compose-resources/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ComposeResourceImageSource.kt
+
+[ContentImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ContentImageSource.kt
+
+[FileImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/FileImageSource.kt
+
+[KotlinResourceImageSource]: ../../zoomimage-core/src/desktopMain/kotlin/com/github/panpf/zoomimage/subsampling/KotlinResourceImageSource.kt
+
+[ResourceImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt

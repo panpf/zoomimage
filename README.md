@@ -132,7 +132,8 @@ Compose multiplatform:
 val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(Unit) {
     val resUri = Res.getUri("files/huge_world.jpeg")
-    zoomState.subsampling.setImageSource(ImageSource.fromComposeResource(resUri))
+    val imageSource = ImageSource.fromComposeResource(resUri)
+    zoomState.subsampling.setImageSource(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),

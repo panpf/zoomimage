@@ -42,14 +42,13 @@
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
-
-val context = LocalContext.current
 LaunchedEffect(Unit) {
-    zoomState.subsampling.setImageSource(ImageSource.fromResource(context, R.drawable.huge_image))
+  val resUri = Res.getUri("files/huge_world.jpeg")
+  val imageSource = ImageSource.fromComposeResource(resUri)
+  zoomState.subsampling.setImageSource(imageSource)
 }
-
 ZoomImage(
-    painter = painterResource(R.drawable.huge_image_thumbnail),
+  painter = painterResource(Res.drawable.huge_world_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -60,11 +59,29 @@ view:
 
 ```kotlin
 val zoomImageView = ZoomImageView(context)
-zoomImageView.setImageResource(R.drawable.huge_image_thumbnail)
-
-val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
+zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
+val imageSource = ImageSource.fromResource(context, R.drawable.huge_world)
 zoomImageView.subsampling.setImageSource(imageSource)
 ```
+
+### ImageSource
+
+[ImageSource] 负责为 ZoomImage 提供图片的数据用于解码，ZoomImage 提供了多种 [ImageSource]
+的实现，以支持从各种来源加载图片，如下：
+
+* [AssetImageSource]：从 Android 的 assets 目录加载图片。[ImageSource.fromAsset(context, "
+  huge_world.jpeg")][AssetImageSource]
+* [ByteArrayImageSource]：从 ByteArray
+  加载图片。[ImageSource.fromByteArray(byteArray)][ByteArrayImageSource]
+* [ComposeResourceImageSource]：从 Compose 的资源目录加载图片。[ImageSource.fromComposeResource(
+  Res.getUri("files/huge_world.jpeg"))][ComposeResourceImageSource]
+* [ContentImageSource]：从 Android 的 ContentProvider 加载图片。[ImageSource.fromContent(context,
+  contentUri)][ContentImageSource]
+* [FileImageSource]：从文件加载图片。[ImageSource.fromFile(file)][FileImageSource]
+* [KotlinResourceImageSource]：从桌面或 ios 平台的 Kotlin
+  资源目录加载图片。[ImageSource.fromKotlinResource("huge_world.jpeg")][KotlinResourceImageSource]
+* [ResourceImageSource]：从 Android 的 res 目录加载图片。[ImageSource.fromResource(context,
+  R.raw.huge_world)][ResourceImageSource]
 
 ### Exif Orientation
 
@@ -270,3 +287,19 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [TileBitmapCache]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/TileBitmapCache.kt
 
 [SubsamplingState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/subsampling/SubsamplingState.kt
+
+[ImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ImageSource.kt
+
+[AssetImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/AssetImageSource.kt
+
+[ByteArrayImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ByteArrayImageSource.kt
+
+[ComposeResourceImageSource]: ../../zoomimage-compose-resources/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/ComposeResourceImageSource.kt
+
+[ContentImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ContentImageSource.kt
+
+[FileImageSource]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/subsampling/FileImageSource.kt
+
+[KotlinResourceImageSource]: ../../zoomimage-core/src/desktopMain/kotlin/com/github/panpf/zoomimage/subsampling/KotlinResourceImageSource.kt
+
+[ResourceImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt
