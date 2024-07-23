@@ -46,10 +46,8 @@ import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
-import kotlinx.collections.immutable.ImmutableList
 
 
 /**
@@ -130,7 +128,6 @@ fun GlideZoomAsyncImage(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     zoomState: GlideZoomState = rememberGlideZoomState(),
-    modelToImageSources: ImmutableList<GlideModelToImageSource>? = null,
     scrollBar: ScrollBarSpec? = ScrollBarSpec.Default,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
@@ -169,7 +166,6 @@ fun GlideZoomAsyncImage(
                     ResetListener(
                         context = context,
                         zoomState = zoomState,
-                        modelToImageSources = modelToImageSources,
                         requestBuilder = requestBuilder,
                         model = model
                     )
@@ -185,7 +181,6 @@ fun GlideZoomAsyncImage(
 private class ResetListener(
     private val context: Context,
     private val zoomState: GlideZoomState,
-    private val modelToImageSources: ImmutableList<GlideModelToImageSource>?,
     private val requestBuilder: RequestBuilder<Drawable>,
     private val model: Any?,
 ) : RequestListener<Drawable> {
@@ -220,12 +215,9 @@ private class ResetListener(
 
         val imageSource = if (resource != null) {
             zoomState.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
-            val convertors = (modelToImageSources ?: emptyList()).toMutableList()
-                .apply {
-                    add(GlideModelToImageSourceImpl(context))
-                }
             val imageSource = if (model != null)
-                convertors.firstNotNullOfOrNull { it.dataToImageSource(model) } else null
+                zoomState.modelToImageSources.plus(GlideModelToImageSourceImpl(context))
+                    .firstNotNullOfOrNull { it.dataToImageSource(model) } else null
             if (imageSource == null) {
                 zoomState.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
             }

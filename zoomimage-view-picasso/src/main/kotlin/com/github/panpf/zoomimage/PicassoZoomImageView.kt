@@ -51,8 +51,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
 
-    private val convertors =
-        mutableListOf<PicassoDataToImageSource>(PicassoDataToImageSourceImpl(context))
+    private val convertors = mutableListOf<PicassoDataToImageSource>()
 
     init {
         _subsamplingEngine?.tileBitmapCacheState?.value = PicassoTileBitmapCache(Picasso.get())
@@ -158,7 +157,8 @@ open class PicassoZoomImageView @JvmOverloads constructor(
                 _subsamplingEngine?.disabledTileBitmapCacheState?.value =
                     checkMemoryCacheDisabled(creator.internalMemoryPolicy)
                 val imageSource = if (data != null)
-                    convertors.firstNotNullOfOrNull { it.dataToImageSource(data) } else null
+                    convertors.plus(PicassoDataToImageSourceImpl(context))
+                        .firstNotNullOfOrNull { it.dataToImageSource(data) } else null
                 if (imageSource == null) {
                     logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported data: '$data'" }
                 }

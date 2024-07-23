@@ -8,6 +8,8 @@ subsampling:
 
 * fix: Fixed the bug that coil series components cannot be subsampling starting from version
   1.1.0-alpha02. [#31](https://github.com/panpf/zoomimage/issues/31)
+* improve: GlideModeToImageSource and PicassoDataToImageSource are now priority for user
+  registration
 
 ## 1.1.0-alpha02
 

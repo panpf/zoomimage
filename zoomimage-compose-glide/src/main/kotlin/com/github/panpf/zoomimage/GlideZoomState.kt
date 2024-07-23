@@ -9,6 +9,7 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.util.Logger
 
 /**
@@ -24,5 +25,21 @@ fun rememberGlideZoomState(logger: Logger = rememberZoomImageLogger(tag = "Glide
 }
 
 @Stable
-class GlideZoomState(logger: Logger, zoomable: ZoomableState, subsampling: SubsamplingState) :
-    ZoomState(logger, zoomable, subsampling)
+class GlideZoomState(
+    logger: Logger,
+    zoomable: ZoomableState,
+    subsampling: SubsamplingState
+) : ZoomState(logger, zoomable, subsampling) {
+
+    private var _modelToImageSources = emptyList<GlideModelToImageSource>()
+    val modelToImageSources: List<GlideModelToImageSource>
+        get() = _modelToImageSources
+
+    fun registerModelToImageSource(modelToImageSource: GlideModelToImageSource) {
+        _modelToImageSources += modelToImageSource
+    }
+
+    fun unregisterModelToImageSource(modelToImageSource: GlideModelToImageSource) {
+        _modelToImageSources -= modelToImageSource
+    }
+}
