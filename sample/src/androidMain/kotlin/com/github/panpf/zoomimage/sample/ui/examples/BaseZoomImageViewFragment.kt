@@ -191,8 +191,8 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     animationSpecState.value =
                         ZoomAnimationSpec.Default.copy(durationMillis = durationMillis)
                 }
-                appSettings.disabledGestureType.collectWithLifecycle(viewLifecycleOwner) {
-                    disabledGestureTypeState.value = it
+                appSettings.disabledGestureTypes.collectWithLifecycle(viewLifecycleOwner) {
+                    disabledGestureTypesState.value = it
                 }
             }
             subsampling.apply {
@@ -203,8 +203,8 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                     tileAnimationSpecState.value =
                         if (it) TileAnimationSpec.Default else TileAnimationSpec.None
                 }
-                appSettings.pausedContinuousTransformType.collectWithLifecycle(viewLifecycleOwner) {
-                    pausedContinuousTransformTypeState.value = it
+                appSettings.pausedContinuousTransformTypes.collectWithLifecycle(viewLifecycleOwner) {
+                    pausedContinuousTransformTypesState.value = it
                 }
                 appSettings.disabledBackgroundTiles.collectWithLifecycle(
                     viewLifecycleOwner

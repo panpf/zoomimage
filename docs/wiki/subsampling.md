@@ -139,7 +139,7 @@ loading tiles, which can improve performance
 The default configuration of ZoomImage is 'SCALE', 'OFFSET', 'LOCATE' three types of continuous
 transformations that pause the loading of tiles, 'GESTURE',
 The 'FLING' two types load tiles in real time, which you can configure via the
-`pausedContinuousTransformType` property
+`pausedContinuousTransformTypes` property
 
 example:
 
@@ -148,10 +148,10 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // All continuous transform types load tiles in real time
-  zoomState.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
+  zoomState.subsampling.pausedContinuousTransformTypes = 0
 
     // All continuous transform types pause loading of tiles
-  zoomState.subsampling.pausedContinuousTransformType =
+  zoomState.subsampling.pausedContinuousTransformTypes =
         TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 }
 

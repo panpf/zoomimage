@@ -200,7 +200,7 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // Turn off one-finger scale gesture
-    zoomState.zoomable.disabledGestureType = GestureType.ONE_FINGER_SCALE
+    zoomState.zoomable.disabledGestureTypes = GestureType.ONE_FINGER_SCALE
 }
 
 SketchZoomAsyncImage(
@@ -316,7 +316,7 @@ SketchZoomAsyncImage(
 ### Disabled gestures
 
 ZoomImage supports gestures such as double-click zoom, two-finger zoom, one-finger zoom, drag, etc.,
-which are enabled by default, and you can disable them through the `disabledGestureType` property
+which are enabled by default, and you can disable them through the `disabledGestureTypes` property
 
 example：
 
@@ -325,7 +325,7 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // Turn off all scale gestures and keep only the drag gesture
-    zoomState.zoomable.disabledGestureType =
+    zoomState.zoomable.disabledGestureTypes =
         GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
 }
 

@@ -94,8 +94,8 @@ class AppSettings(val context: PlatformContext) {
     val scalesMultiple by lazy {
         stringSettingsStateFlow(context, "scalesMultiple", ScalesCalculator.MULTIPLE.toString())
     }
-    val disabledGestureType by lazy {
-        intSettingsStateFlow(context, "disabledGestureTypeInt", 0)
+    val disabledGestureTypes by lazy {
+        intSettingsStateFlow(context, "disabledGestureTypes", 0)
     }
 
     val limitOffsetWithinBaseVisibleRect by lazy {
@@ -109,9 +109,9 @@ class AppSettings(val context: PlatformContext) {
         booleanSettingsStateFlow(context, "readModeAcceptedBoth", true)
     }
 
-    val pausedContinuousTransformType by lazy {
-        val initialize = TileManager.DefaultPausedContinuousTransformType
-        intSettingsStateFlow(context, "pausedContinuousTransformTypeInt", initialize)
+    val pausedContinuousTransformTypes by lazy {
+        val initialize = TileManager.DefaultPausedContinuousTransformTypes
+        intSettingsStateFlow(context, "pausedContinuousTransformTypes", initialize)
     }
     val disabledBackgroundTiles by lazy {
         booleanSettingsStateFlow(context, "disabledBackgroundTiles", false)

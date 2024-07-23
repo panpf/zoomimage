@@ -162,10 +162,10 @@ class ZoomImageSettingsViewModel(
             MultiChooseMenu(
                 title = "Disabled Gesture Type",
                 values = gestureTypes.map { GestureType.name(it) },
-                getCheckedList = { gestureTypes.map { it and appSettings.disabledGestureType.value != 0 } },
+                getCheckedList = { gestureTypes.map { it and appSettings.disabledGestureTypes.value != 0 } },
                 onSelected = { which, isChecked ->
                     val checkedList =
-                        gestureTypes.map { it and appSettings.disabledGestureType.value != 0 }
+                        gestureTypes.map { it and appSettings.disabledGestureTypes.value != 0 }
                     val newCheckedList =
                         checkedList.toMutableList().apply { set(which, isChecked) }
                     val newDisabledGestureTypeType =
@@ -174,7 +174,7 @@ class ZoomImageSettingsViewModel(
                         }.fold(0) { acc, gestureType ->
                             acc or gestureType
                         }
-                    appSettings.disabledGestureType.value = newDisabledGestureTypeType
+                    appSettings.disabledGestureTypes.value = newDisabledGestureTypeType
                 }
             )
         )
@@ -216,10 +216,10 @@ class ZoomImageSettingsViewModel(
             MultiChooseMenu(
                 title = "Paused Continuous Transform Type",
                 values = continuousTransformTypes.map { ContinuousTransformType.name(it) },
-                getCheckedList = { continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value != 0 } },
+                getCheckedList = { continuousTransformTypes.map { it and appSettings.pausedContinuousTransformTypes.value != 0 } },
                 onSelected = { which, isChecked ->
                     val checkedList =
-                        continuousTransformTypes.map { it and appSettings.pausedContinuousTransformType.value != 0 }
+                        continuousTransformTypes.map { it and appSettings.pausedContinuousTransformTypes.value != 0 }
                     val newCheckedList =
                         checkedList.toMutableList().apply { set(which, isChecked) }
                     val newContinuousTransformType =
@@ -228,7 +228,7 @@ class ZoomImageSettingsViewModel(
                         }.fold(0) { acc, continuousTransformType ->
                             acc or continuousTransformType
                         }
-                    appSettings.pausedContinuousTransformType.value = newContinuousTransformType
+                    appSettings.pausedContinuousTransformTypes.value = newContinuousTransformType
                 }
             )
         )

@@ -191,7 +191,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
      *
      * @see com.github.panpf.zoomimage.zoom.GestureType
      */
-    var disabledGestureType: Int by mutableIntStateOf(0)
+    var disabledGestureTypes: Int by mutableIntStateOf(0)
 
 
     /* *********************************** Information properties ******************************* */
@@ -980,7 +980,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
     }
 
     internal fun checkSupportGestureType(@GestureType gestureType: Int): Boolean =
-        disabledGestureType.and(gestureType) == 0
+        disabledGestureTypes.and(gestureType) == 0
 
     private fun limitUserScale(targetUserScale: Float): Float {
         val minUserScale = minScale / baseTransform.scaleX

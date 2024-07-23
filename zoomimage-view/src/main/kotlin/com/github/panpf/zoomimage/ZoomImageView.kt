@@ -242,10 +242,11 @@ open class ZoomImageView @JvmOverloads constructor(
                 subsampling.showTileBoundsState.value = showTileBounds
             }
 
-            if (array.hasValue(styleable.ZoomImageView_pausedContinuousTransformType)) {
-                val pausedContinuousTransformType =
-                    array.getInt(styleable.ZoomImageView_pausedContinuousTransformType, 0)
-                subsampling.pausedContinuousTransformTypeState.value = pausedContinuousTransformType
+            if (array.hasValue(styleable.ZoomImageView_pausedContinuousTransformTypes)) {
+                val pausedContinuousTransformTypes =
+                    array.getInt(styleable.ZoomImageView_pausedContinuousTransformTypes, 0)
+                subsampling.pausedContinuousTransformTypesState.value =
+                    pausedContinuousTransformTypes
             }
 
             if (array.hasValue(styleable.ZoomImageView_disabledBackgroundTiles)) {

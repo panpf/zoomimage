@@ -165,9 +165,9 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
                 val gestureTypeStrings = remember {
                     gestureTypes.map { GestureType.name(it) }
                 }
-                val disabledGestureType by appSettings.disabledGestureType.collectAsState()
-                val disabledGestureTypeCheckedList = remember(disabledGestureType) {
-                    gestureTypes.map { it and disabledGestureType != 0 }
+                val disabledGestureTypes by appSettings.disabledGestureTypes.collectAsState()
+                val disabledGestureTypeCheckedList = remember(disabledGestureTypes) {
+                    gestureTypes.map { it and disabledGestureTypes != 0 }
                 }
                 MultiChooseSettingItem(
                     title = "Disabled Gesture Type",
@@ -179,10 +179,10 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
                         val newDisabledGestureType =
                             newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
                                 if (checked) gestureTypes[index] else null
-                            }.fold(0) { acc, disabledGestureType ->
-                                acc or disabledGestureType
+                            }.fold(0) { acc, gestureType ->
+                                acc or gestureType
                             }
-                        appSettings.disabledGestureType.value = newDisabledGestureType
+                        appSettings.disabledGestureTypes.value = newDisabledGestureType
                     }
                 )
 
@@ -221,10 +221,10 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
                 val continuousTransformTypeStrings = remember {
                     continuousTransformTypes.map { ContinuousTransformType.name(it) }
                 }
-                val pausedContinuousTransformType by appSettings.pausedContinuousTransformType.collectAsState()
+                val pausedContinuousTransformTypes by appSettings.pausedContinuousTransformTypes.collectAsState()
                 val pausedContinuousTransformTypeCheckedList =
-                    remember(pausedContinuousTransformType) {
-                        continuousTransformTypes.map { it and pausedContinuousTransformType != 0 }
+                    remember(pausedContinuousTransformTypes) {
+                        continuousTransformTypes.map { it and pausedContinuousTransformTypes != 0 }
                     }
                 MultiChooseSettingItem(
                     title = "Paused Continuous Transform Type",
@@ -240,7 +240,8 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
                             }.fold(0) { acc, continuousTransformType ->
                                 acc or continuousTransformType
                             }
-                        appSettings.pausedContinuousTransformType.value = newContinuousTransformType
+                        appSettings.pausedContinuousTransformTypes.value =
+                            newContinuousTransformType
                     }
                 )
 

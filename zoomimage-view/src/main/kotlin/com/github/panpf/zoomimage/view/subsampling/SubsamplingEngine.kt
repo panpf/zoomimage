@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderExceptio
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
-import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformType
+import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
@@ -111,7 +111,8 @@ class SubsamplingEngine constructor(
     /**
      * A continuous transform type that needs to pause loading
      */
-    val pausedContinuousTransformTypeState = MutableStateFlow(DefaultPausedContinuousTransformType)
+    val pausedContinuousTransformTypesState =
+        MutableStateFlow(DefaultPausedContinuousTransformTypes)
 
     /**
      * Disabling the background tile, which saves memory and improves performance, but when switching sampleSize,
@@ -263,8 +264,8 @@ class SubsamplingEngine constructor(
             }
         }
         coroutineScope.launch {
-            pausedContinuousTransformTypeState.collect {
-                tileManager?.pausedContinuousTransformType = it
+            pausedContinuousTransformTypesState.collect {
+                tileManager?.pausedContinuousTransformTypes = it
             }
         }
         coroutineScope.launch {
@@ -455,8 +456,8 @@ class SubsamplingEngine constructor(
                 _imageLoadRectState.value = manager.imageLoadRect
             }
         ).apply {
-            pausedContinuousTransformType =
-                this@SubsamplingEngine.pausedContinuousTransformTypeState.value
+            pausedContinuousTransformTypes =
+                this@SubsamplingEngine.pausedContinuousTransformTypesState.value
             disabledBackgroundTiles = this@SubsamplingEngine.disabledBackgroundTilesState.value
             tileAnimationSpec = this@SubsamplingEngine.tileAnimationSpecState.value
         }

@@ -167,7 +167,7 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
      *
      * @see com.github.panpf.zoomimage.zoom.GestureType
      */
-    var disabledGestureTypeState = MutableStateFlow(0)
+    var disabledGestureTypesState = MutableStateFlow(0)
 
     private var lastContainerSize: IntSizeCompat = containerSizeState.value
     private var lastContentSize: IntSizeCompat = contentSizeState.value
@@ -775,8 +775,7 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         }
     }
 
-    @Suppress("RedundantSuspendModifier")
-    internal suspend fun stopAllAnimation(caller: String) {
+    internal fun stopAllAnimation(caller: String) {
         val lastScaleAnimatable = lastScaleAnimatable
         if (lastScaleAnimatable?.running == true) {
             lastScaleAnimatable.stop()
@@ -986,7 +985,7 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
     }
 
     internal fun checkSupportGestureType(@GestureType gestureType: Int): Boolean =
-        disabledGestureTypeState.value.and(gestureType) == 0
+        disabledGestureTypesState.value.and(gestureType) == 0
 
     private fun limitUserScale(targetUserScale: Float): Float {
         val minUserScale = minScaleState.value / baseTransformState.value.scaleX

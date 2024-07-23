@@ -15,6 +15,15 @@ subsampling:
   destroyed. [#29](https://github.com/panpf/zoomimage/issues/29)
 * improve: Tiles loaded from memory now also animate when displayed
 
+zoom:
+
+* change: The pausedContinuousTransformType property name of SubsamplingState is changed to
+  pausedContinuousTransformTypes, and the pausedContinuousTransformTypeState property name of
+  SubsamplingEngine is changed to pausedContinuousTransformTypesState
+* change: The disabledGestureType property name of ZoomableState is changed to disabledGestureTypes,
+  and the disabledGestureTypeState property name of ZoomableEngine is changed to
+  disabledGestureTypesState
+
 ## 1.1.0-alpha02
 
 subsampling:

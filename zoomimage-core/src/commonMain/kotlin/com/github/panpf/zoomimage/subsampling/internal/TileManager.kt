@@ -64,12 +64,13 @@ class TileManager constructor(
 ) {
 
     companion object {
-        const val DefaultPausedContinuousTransformType =
+        const val DefaultPausedContinuousTransformTypes =
             ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val decodeDispatcher: CoroutineDispatcher = ioCoroutineDispatcher().limitedParallelism(2)
+    private val decodeDispatcher: CoroutineDispatcher =
+        ioCoroutineDispatcher().limitedParallelism(2)
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var lastScale: Float? = null
     private var lastSampleSize: Int = 0
@@ -80,7 +81,7 @@ class TileManager constructor(
     /**
      * A continuous transform type that needs to pause loading
      */
-    var pausedContinuousTransformType: Int = DefaultPausedContinuousTransformType
+    var pausedContinuousTransformTypes: Int = DefaultPausedContinuousTransformTypes
 
     /**
      * Disabling the background tile, which saves memory and improves performance, but when switching sampleSize,
@@ -158,7 +159,7 @@ class TileManager constructor(
      * -2: foregroundTiles is null or size is 1;
      * -3: imageLoadRect is empty;
      * -4: rotation is not a multiple of 90;
-     * -5: continuousTransformType hits pausedContinuousTransformType;
+     * -5: continuousTransformType hits pausedContinuousTransformTypes;
      */
     @MainThread
     fun refreshTiles(
@@ -175,9 +176,10 @@ class TileManager constructor(
             logger.d { "TileManager. refreshTiles:$caller. interrupted, rotation is not a multiple of 90: $rotation. '${imageSource.key}'" }
             return -1
         }
-        if (continuousTransformType and pausedContinuousTransformType != 0) {
-            val continuousTransformTypeName = ContinuousTransformType.name(continuousTransformType)
+        if (continuousTransformType and pausedContinuousTransformTypes != 0) {
             logger.d {
+                val continuousTransformTypeName =
+                    ContinuousTransformType.name(continuousTransformType)
                 "TileManager. refreshTiles:$caller. interrupted, continuousTransformType is $continuousTransformTypeName. '${imageSource.key}'"
             }
             return -2
@@ -194,7 +196,7 @@ class TileManager constructor(
         /*
          * When the following detection fails, subsampling is no longer needed, so empty the existing tile
          */
-        val foregroundTiles = sortedTileGridMap.find { it.sampleSize == newSampleSize}?.tiles
+        val foregroundTiles = sortedTileGridMap.find { it.sampleSize == newSampleSize }?.tiles
         if (foregroundTiles == null || foregroundTiles.size == 1) {
             logger.d {
                 "TileManager. refreshTiles:$caller. interrupted, foregroundTiles is null or size is 1. " +
@@ -537,7 +539,7 @@ class TileManager constructor(
                 var foregroundLoadedCount = 0
                 var foregroundLoadingCount = 0
                 var foregroundAnimatingCount = 0
-                val foregroundTiles = sortedTileGridMap.find { it.sampleSize == sampleSize}?.tiles
+                val foregroundTiles = sortedTileGridMap.find { it.sampleSize == sampleSize }?.tiles
                 val foregroundTileCount = foregroundTiles?.size ?: 0
                 foregroundTiles?.forEach { foregroundTile ->
                     val animationState = foregroundTile.animationState

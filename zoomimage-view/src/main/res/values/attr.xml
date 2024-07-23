@@ -25,7 +25,7 @@
         <attr name="rubberBandScale" format="boolean" />
         <attr name="threeStepScale" format="boolean" />
         <attr name="limitOffsetWithinBaseVisibleRect" format="boolean" />
-        <attr name="pausedContinuousTransformType" format="flags" >
+        <attr name="pausedContinuousTransformTypes" format="flags">
             <flag name="none" value="0" />
             <flag name="scale" value="1" />
             <flag name="offset" value="2" />

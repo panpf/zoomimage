@@ -13,6 +13,14 @@ subsampling:
   BitmapRegionDecoderDecodeHelper 时关闭输入流。 [#29](https://github.com/panpf/zoomimage/issues/29)
 * improve: 现在从内存中加载的图块在显示时也会有动画效果
 
+zoom:
+
+* change: SubsamplingState 的 pausedContinuousTransformType 属性名称改为
+  pausedContinuousTransformTypes，SubsamplingEngine 的 pausedContinuousTransformTypeState 属性名称改为
+  pausedContinuousTransformTypesState
+* change: ZoomableState 的 disabledGestureType 属性名称改为 disabledGestureTypes，ZoomableEngine 的
+  disabledGestureTypeState 属性名称改为 disabledGestureTypesState
+
 ## 1.1.0-alpha02
 
 subsampling:

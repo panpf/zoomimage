@@ -113,8 +113,8 @@ fun <T : ZoomState> BaseZoomImageSample(
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
     val scalesCalculatorName by settingsService.scalesCalculator.collectAsState()
     val scalesMultipleString by settingsService.scalesMultiple.collectAsState()
-    val pausedContinuousTransformType by settingsService.pausedContinuousTransformType.collectAsState()
-    val disabledGestureType by settingsService.disabledGestureType.collectAsState()
+    val pausedContinuousTransformTypes by settingsService.pausedContinuousTransformTypes.collectAsState()
+    val disabledGestureTypes by settingsService.disabledGestureTypes.collectAsState()
     val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.collectAsState()
     val showTileBounds by settingsService.showTileBounds.collectAsState()
     val tileAnimation by settingsService.tileAnimation.collectAsState()
@@ -171,11 +171,11 @@ fun <T : ZoomState> BaseZoomImageSample(
         LaunchedEffect(readMode) {
             zoomable.readMode = readMode
         }
-        LaunchedEffect(disabledGestureType) {
-            zoomable.disabledGestureType = disabledGestureType
+        LaunchedEffect(disabledGestureTypes) {
+            zoomable.disabledGestureTypes = disabledGestureTypes
         }
-        LaunchedEffect(pausedContinuousTransformType) {
-            subsampling.pausedContinuousTransformType = pausedContinuousTransformType
+        LaunchedEffect(pausedContinuousTransformTypes) {
+            subsampling.pausedContinuousTransformTypes = pausedContinuousTransformTypes
         }
         LaunchedEffect(disabledBackgroundTiles) {
             subsampling.disabledBackgroundTiles = disabledBackgroundTiles

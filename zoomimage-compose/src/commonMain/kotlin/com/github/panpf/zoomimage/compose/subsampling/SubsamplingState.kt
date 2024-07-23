@@ -49,7 +49,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
-import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformType
+import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
@@ -144,7 +144,9 @@ class SubsamplingState constructor(
      *
      * @see com.github.panpf.zoomimage.zoom.ContinuousTransformType
      */
-    var pausedContinuousTransformType: Int by mutableIntStateOf(DefaultPausedContinuousTransformType)
+    var pausedContinuousTransformTypes: Int by mutableIntStateOf(
+        DefaultPausedContinuousTransformTypes
+    )
 
     /**
      * Disabling the background tile, which saves memory and improves performance, but when switching sampleSize,
@@ -266,8 +268,8 @@ class SubsamplingState constructor(
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
-            snapshotFlow { pausedContinuousTransformType }.collect {
-                tileManager?.pausedContinuousTransformType = it
+            snapshotFlow { pausedContinuousTransformTypes }.collect {
+                tileManager?.pausedContinuousTransformTypes = it
             }
         }
         coroutineScope.launch(Dispatchers.Main.immediate) {
@@ -469,7 +471,7 @@ class SubsamplingState constructor(
                 imageLoadRect = it.imageLoadRect.toPlatform()
             }
         ).apply {
-            pausedContinuousTransformType = this@SubsamplingState.pausedContinuousTransformType
+            pausedContinuousTransformTypes = this@SubsamplingState.pausedContinuousTransformTypes
             disabledBackgroundTiles = this@SubsamplingState.disabledBackgroundTiles
             tileAnimationSpec = this@SubsamplingState.tileAnimationSpec
         }

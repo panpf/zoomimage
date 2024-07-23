@@ -177,7 +177,7 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // 关闭单指缩放手势
-    zoomState.zoomable.disabledGestureType = GestureType.ONE_FINGER_SCALE
+    zoomState.zoomable.disabledGestureTypes = GestureType.ONE_FINGER_SCALE
 }
 
 SketchZoomAsyncImage(
@@ -290,7 +290,7 @@ SketchZoomAsyncImage(
 ### 禁用手势
 
 ZoomImage 支持双击缩放、双指缩放、单指缩放、拖动等手势，这些手势除单指缩放外默认都是开启的，你可以通过
-`disabledGestureType` 属性来禁用它们
+`disabledGestureTypes` 属性来禁用它们
 
 示例：
 
@@ -299,7 +299,7 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // 关闭所有缩放手势，只保留拖动手势
-    zoomState.zoomable.disabledGestureType =
+    zoomState.zoomable.disabledGestureTypes =
         GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
 }
 

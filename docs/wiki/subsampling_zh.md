@@ -120,7 +120,7 @@ ZoomImage 将连续变换行为分为 `SCALE`, `OFFSET`, `LOCATE`, `GESTURE`, `F
 
 ZoomImage 在兼顾性能和体验的情况默认配置是 `SCALE`, `OFFSET`, `LOCATE`
 三种类型的连续变换会暂停加载图块，`GESTURE`, `FLING` 两种类型会实时加载图块，
-你可以通过 `pausedContinuousTransformType` 属性来配置它
+你可以通过 `pausedContinuousTransformTypes` 属性来配置它
 
 示例：
 
@@ -129,10 +129,10 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(Unit) {
     // 所有连续变换类型都实时加载图块
-    zoomState.subsampling.pausedContinuousTransformType = ContinuousTransformType.NONE
+  zoomState.subsampling.pausedContinuousTransformTypes = 0
 
     // 所有连续变换类型都暂停加载图块
-    zoomState.subsampling.pausedContinuousTransformType =
+  zoomState.subsampling.pausedContinuousTransformTypes =
         TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 }
 
