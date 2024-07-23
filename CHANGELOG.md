@@ -13,6 +13,7 @@ subsampling:
 * improve: Improve BitmapRegionDecoderDecodeHelper. It no longer closes the input stream. It will
   now close the input stream when BitmapRegionDecoderDecodeHelper is
   destroyed. [#29](https://github.com/panpf/zoomimage/issues/29)
+* improve: Tiles loaded from memory now also animate when displayed
 
 ## 1.1.0-alpha02
 

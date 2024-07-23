@@ -168,7 +168,6 @@ class TileManager constructor(
         @ContinuousTransformType continuousTransformType: Int,
         caller: String,
     ): Int {
-        // TODO Tile changes due to scaling, always use transition animation
         /*
          * If the following detections fail, simply skip the refresh and keep the current state
          */
@@ -405,12 +404,12 @@ class TileManager constructor(
             if (cachedValue != null) {
                 val convertedTileBitmap: TileBitmap =
                     tileBitmapConvertor?.convert(cachedValue) ?: cachedValue
-                tile.setTileBitmap(convertedTileBitmap, fromCache = true)
+                tile.setTileBitmap(convertedTileBitmap, allowAnimate = true)
                 tile.state = TileState.STATE_LOADED
                 logger.d { "TileManager. loadTile. successful, fromMemory. $tile. '${imageSource.key}'" }
                 updateTileSnapshotList("loadTile:fromMemory")
             } else {
-                tile.setTileBitmap(null, fromCache = false)
+                tile.cleanTileBitmap()
                 tile.state = TileState.STATE_LOADING
                 updateTileSnapshotList("loadTile:loading")
 
@@ -423,21 +422,21 @@ class TileManager constructor(
                 val tileBitmap = decodeResult.getOrNull()
                 when {
                     decodeResult.isFailure -> {
-                        tile.setTileBitmap(null, fromCache = false)
+                        tile.cleanTileBitmap()
                         tile.state = TileState.STATE_ERROR
                         logger.e("TileManager. loadTile. failed, ${decodeResult.exceptionOrNull()?.message}. $tile. '${imageSource.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     tileBitmap == null -> {
-                        tile.setTileBitmap(null, fromCache = false)
+                        tile.cleanTileBitmap()
                         tile.state = TileState.STATE_ERROR
                         logger.e("TileManager. loadTile. failed, bitmap null. $tile. '${imageSource.key}'")
                         updateTileSnapshotList("loadTile:failed")
                     }
 
                     tile.sampleSize == 1 && (tile.srcRect.width != tileBitmap.width || tile.srcRect.height != tileBitmap.height) -> {
-                        tile.setTileBitmap(null, fromCache = false)
+                        tile.cleanTileBitmap()
                         tile.state = TileState.STATE_ERROR
                         logger.e("TileManager. loadTile. failed, size is different. $tile. $tileBitmap. '${imageSource.key}'")
                         tileBitmap.recycle()
@@ -453,7 +452,7 @@ class TileManager constructor(
                         ) ?: tileBitmap
                         val convertedTileBitmap: TileBitmap =
                             tileBitmapConvertor?.convert(cacheTileBitmap) ?: cacheTileBitmap
-                        tile.setTileBitmap(convertedTileBitmap, fromCache = false)
+                        tile.setTileBitmap(convertedTileBitmap, allowAnimate = true)
                         tile.state = TileState.STATE_LOADED
                         logger.d { "TileManager. loadTile. successful. $tile. '${imageSource.key}'" }
                         updateTileSnapshotList("loadTile:successful")
@@ -463,7 +462,7 @@ class TileManager constructor(
                         logger.d {
                             "TileManager. loadTile. canceled. bitmap=${tileBitmap}, $tile. '${imageSource.key}'"
                         }
-                        tile.setTileBitmap(null, fromCache = false)
+                        tile.cleanTileBitmap()
                         tile.state = TileState.STATE_ERROR
                         tileBitmap.recycle()
                         updateTileSnapshotList("loadTile:canceled")
@@ -492,7 +491,7 @@ class TileManager constructor(
         val tileBitmap = tile.tileBitmap
         if (tileBitmap != null) {
             logger.d { "TileManager. freeTile. $tile. '${imageSource.key}'" }
-            tile.setTileBitmap(null, fromCache = false)
+            tile.cleanTileBitmap()
         }
 
         if (!skipNotify) {

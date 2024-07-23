@@ -27,7 +27,7 @@ class TileTest {
 
         val tileBitmap = TestTileBitmap("key")
         assertFalse(tileBitmap.displayed)
-        tile.setTileBitmap(tileBitmap, false)
+        tile.setTileBitmap(tileBitmap, allowAnimate = true)
         assertTrue(tileBitmap.displayed)
         tile.apply {
             assertNotNull(this.tileBitmap)
@@ -68,7 +68,7 @@ class TileTest {
             assertEquals(255, animationState.alpha)
         }
 
-        tile.setTileBitmap(tileBitmap, false)
+        tile.setTileBitmap(tileBitmap, allowAnimate = true)
         assertTrue(tileBitmap.displayed)
         tile.apply {
             assertNotNull(this.tileBitmap)
@@ -79,7 +79,7 @@ class TileTest {
         val tileBitmap2 = TestTileBitmap("key")
         assertTrue(tileBitmap.displayed)
         assertFalse(tileBitmap2.displayed)
-        tile.setTileBitmap(tileBitmap2, true)
+        tile.setTileBitmap(tileBitmap2, allowAnimate = false)
         assertFalse(tileBitmap.displayed)
         assertTrue(tileBitmap2.displayed)
         tile.apply {
@@ -89,7 +89,7 @@ class TileTest {
         }
 
         val tileBitmap3 = TestTileBitmap("key")
-        tile.setTileBitmap(tileBitmap3, false)
+        tile.setTileBitmap(tileBitmap3, allowAnimate = true)
         tile.apply {
             assertNotNull(this.tileBitmap)
             assertTrue(animationState.running)
@@ -97,7 +97,7 @@ class TileTest {
         }
 
         val tileBitmap4 = TestTileBitmap("key")
-        tile.setTileBitmap(tileBitmap4, true)
+        tile.setTileBitmap(tileBitmap4, allowAnimate = false)
         tile.apply {
             assertNotNull(this.tileBitmap)
             assertFalse(animationState.running)

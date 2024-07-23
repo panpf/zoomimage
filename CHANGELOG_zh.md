@@ -11,6 +11,7 @@ subsampling:
 * improve: GlideModeToImageSource 和 PicassoDataToImageSource 现在是用户注册的优先
 * improve: 改进 BitmapRegionDecoderDecodeHelper，不再关闭输入流，现在会在销毁
   BitmapRegionDecoderDecodeHelper 时关闭输入流。 [#29](https://github.com/panpf/zoomimage/issues/29)
+* improve: 现在从内存中加载的图块在显示时也会有动画效果
 
 ## 1.1.0-alpha02
 
