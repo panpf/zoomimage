@@ -2,6 +2,13 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+subsampling:
+
+* fix: 修复 coil 系列的组件从 1.1.0-alpha02 版本开始无法子采样的
+  bug。 [#31](https://github.com/panpf/zoomimage/issues/31)
+
 ## 1.1.0-alpha02
 
 subsampling:

@@ -23,6 +23,7 @@ import coil3.load
 import coil3.request.crossfade
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.CoilZoomImageView
+import com.github.panpf.zoomimage.sample.image.CoilComposeResourceToImageSource
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
@@ -35,7 +36,9 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
         get() = args.imageUri
 
     override fun createZoomImageView(context: Context): CoilZoomImageView {
-        return CoilZoomImageView(context)
+        return CoilZoomImageView(context).apply {
+            registerModelToImageSource(CoilComposeResourceToImageSource())
+        }
     }
 
     override fun loadImage(zoomView: CoilZoomImageView, stateView: StateView) {
@@ -43,11 +46,6 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
         zoomView.load(model) {
             precision(coil3.size.Precision.INEXACT)
             crossfade(true)
-//            val imageLoader = Coil.imageLoader(context)
-//            if (coilData != null) {
-//                val key = imageLoader.components.key(coilData, Options(context))
-//                placeholderMemoryCacheKey(key)
-//            }
             listener(
                 onStart = { stateView.loading() },
                 onSuccess = { _, _ -> stateView.gone() },

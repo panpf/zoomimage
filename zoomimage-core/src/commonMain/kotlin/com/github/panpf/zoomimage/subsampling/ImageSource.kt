@@ -44,6 +44,7 @@ interface ImageSource {
          */
         val key: String
 
+        @WorkerThread
         suspend fun create(): ImageSource
     }
 

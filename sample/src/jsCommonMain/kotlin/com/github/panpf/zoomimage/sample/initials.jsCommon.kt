@@ -5,7 +5,7 @@ import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.decode.supportSkiaAnimatedWebp
 import com.github.panpf.sketch.decode.supportSkiaGif
-import com.github.panpf.zoomimage.sample.util.CoilComposeResourceUriFetcher
+import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriFetcher
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
     addComponents {

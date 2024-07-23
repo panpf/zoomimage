@@ -7,7 +7,7 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.decode.supportAnimatedGif
 import com.github.panpf.sketch.decode.supportAnimatedWebp
 import com.github.panpf.sketch.decode.supportMovieGif
-import com.github.panpf.zoomimage.sample.util.CoilComposeResourceUriFetcher
+import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriFetcher
 
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {

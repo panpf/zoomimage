@@ -2,6 +2,13 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+subsampling:
+
+* fix: Fixed the bug that coil series components cannot be subsampling starting from version
+  1.1.0-alpha02. [#31](https://github.com/panpf/zoomimage/issues/31)
+
 ## 1.1.0-alpha02
 
 subsampling:

@@ -32,6 +32,7 @@
 
 package com.github.panpf.zoomimage
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
@@ -47,13 +48,14 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import coil.ImageLoader
 import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.github.panpf.zoomimage.coil.CoilImageSource
+import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.compose.coil.internal.BaseZoomAsyncImage
 import com.github.panpf.zoomimage.compose.coil.internal.ConstraintsSizeResolver
@@ -220,6 +222,7 @@ fun CoilZoomAsyncImage(
         zoomState.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
     }
 
+    val context = LocalContext.current
     val request = updateRequest(requestOf(model), contentScale)
     BaseZoomAsyncImage(
         model = request,
@@ -227,7 +230,7 @@ fun CoilZoomAsyncImage(
         imageLoader = imageLoader,
         transform = transform,
         onState = { loadState ->
-            onState(imageLoader, zoomState, request, loadState)
+            onState(context, imageLoader, zoomState, request, loadState)
             onState?.invoke(loadState)
         },
         contentScale = contentScale,
@@ -260,6 +263,7 @@ internal fun updateRequest(request: ImageRequest, contentScale: ContentScale): I
 }
 
 private fun onState(
+    context: Context,
     imageLoader: ImageLoader,
     zoomState: CoilZoomState,
     request: ImageRequest,
@@ -279,7 +283,14 @@ private fun onState(
         is State.Success -> {
             zoomState.subsampling.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            zoomState.subsampling.setImageSource(CoilImageSource.Factory(imageLoader, request))
+            val model = request.data
+            val imageSource =
+                zoomState.modelToImageSources.plus(CoilModelToImageSourceImpl(context, imageLoader))
+                    .firstNotNullOfOrNull { it.dataToImageSource(model) }
+            if (imageSource == null) {
+                zoomState.subsampling.logger.w { "CoilZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
+            }
+            zoomState.subsampling.setImageSource(imageSource)
         }
 
         else -> {

@@ -27,7 +27,8 @@ import coil.drawable.CrossfadeDrawable
 import coil.request.CachePolicy
 import coil.request.SuccessResult
 import coil.util.CoilUtils
-import com.github.panpf.zoomimage.coil.CoilImageSource
+import com.github.panpf.zoomimage.coil.CoilModelToImageSource
+import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
@@ -50,6 +51,16 @@ open class CoilZoomImageView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
+
+    private val convertors = mutableListOf<CoilModelToImageSource>()
+
+    fun registerModelToImageSource(convertor: CoilModelToImageSource) {
+        convertors.add(0, convertor)
+    }
+
+    fun unregisterModelToImageSource(convertor: CoilModelToImageSource) {
+        convertors.remove(convertor)
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -116,7 +127,13 @@ open class CoilZoomImageView @JvmOverloads constructor(
             logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is Animatable" }
             return null
         }
-        return CoilImageSource.Factory(imageLoader, result.request)
+        val model = result.request.data
+        val imageSource = convertors.plus(CoilModelToImageSourceImpl(context, imageLoader))
+            .firstNotNullOfOrNull { it.dataToImageSource(model) }
+        if (imageSource == null) {
+            logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
+        }
+        return imageSource
     }
 
     private fun Drawable.getLastChildDrawable(): Drawable? {
