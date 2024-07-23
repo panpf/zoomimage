@@ -10,9 +10,8 @@ subsampling:
   1.1.0-alpha02. [#31](https://github.com/panpf/zoomimage/issues/31)
 * improve: GlideModeToImageSource and PicassoDataToImageSource are now priority for user
   registration
-* improve: Improve BitmapRegionDecoderDecodeHelper. It no longer closes the input stream. It will
-  now close the input stream when BitmapRegionDecoderDecodeHelper is
-  destroyed. [#29](https://github.com/panpf/zoomimage/issues/29)
+* improve: Improve BitmapRegionDecoderDecodeHelper. Input streams will now only be closed on
+  destruction. [#29](https://github.com/panpf/zoomimage/issues/29)
 * improve: Tiles loaded from memory now also animate when displayed
 
 zoom:
