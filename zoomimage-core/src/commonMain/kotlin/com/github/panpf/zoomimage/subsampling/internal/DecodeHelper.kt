@@ -7,9 +7,8 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
-import okio.Closeable
 
-interface DecodeHelper : Closeable {
+interface DecodeHelper : AutoCloseable {
 
     val imageInfo: ImageInfo
 

@@ -9,6 +9,8 @@ subsampling:
 * fix: 修复 coil 系列的组件从 1.1.0-alpha02 版本开始无法子采样的
   bug。 [#31](https://github.com/panpf/zoomimage/issues/31)
 * improve: GlideModeToImageSource 和 PicassoDataToImageSource 现在是用户注册的优先
+* improve: 改进 BitmapRegionDecoderDecodeHelper，不再关闭输入流，现在会在销毁
+  BitmapRegionDecoderDecodeHelper 时关闭输入流。 [#29](https://github.com/panpf/zoomimage/issues/29)
 
 ## 1.1.0-alpha02
 

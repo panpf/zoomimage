@@ -14,6 +14,7 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import okio.buffer
 import okio.use
+import java.io.BufferedInputStream
 
 /**
  * Not thread safe
@@ -26,6 +27,7 @@ class BitmapRegionDecoderDecodeHelper(
 ) : DecodeHelper {
 
     private var _decoder: BitmapRegionDecoder? = null
+    private var _inputStream: BufferedInputStream? = null
 
     override fun decodeRegion(
         key: String,
@@ -50,21 +52,21 @@ class BitmapRegionDecoderDecodeHelper(
         if (decoder != null) {
             return decoder
         }
-        return imageSource.openSource().buffer().inputStream().buffered()
-            .use {
-                if (VERSION.SDK_INT >= VERSION_CODES.S) {
-                    BitmapRegionDecoder.newInstance(it)!!
-                } else {
-                    @Suppress("DEPRECATION")
-                    BitmapRegionDecoder.newInstance(it, false)!!
-                }
-            }.apply {
-                this@BitmapRegionDecoderDecodeHelper._decoder = this
-            }
+        val inputStream = imageSource.openSource().buffer().inputStream().buffered()
+        val newDecoder = if (VERSION.SDK_INT >= VERSION_CODES.S) {
+            BitmapRegionDecoder.newInstance(inputStream)!!
+        } else {
+            @Suppress("DEPRECATION")
+            BitmapRegionDecoder.newInstance(inputStream, false)!!
+        }
+        this._decoder = newDecoder
+        this._inputStream = inputStream
+        return newDecoder
     }
 
     override fun close() {
         _decoder?.recycle()
+        _inputStream?.close()
     }
 
     override fun copy(): DecodeHelper {
