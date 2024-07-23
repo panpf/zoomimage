@@ -20,12 +20,11 @@ import com.github.panpf.zoomimage.annotation.IntDef
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.FLING
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.GESTURE
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.LOCATE
-import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.NONE
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.OFFSET
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.SCALE
 
 @Retention(AnnotationRetention.SOURCE)
-@IntDef(NONE, SCALE, OFFSET, LOCATE, GESTURE, FLING)
+@IntDef(SCALE, OFFSET, LOCATE, GESTURE, FLING)
 @Target(
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.FIELD,
@@ -35,7 +34,6 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.SCALE
 )
 annotation class ContinuousTransformType {
     companion object {
-        const val NONE = 0
 
         /**
          * scale(), switchScale(), rollbackScale() functions
@@ -55,7 +53,8 @@ annotation class ContinuousTransformType {
         /**
          * User gestures dragging and zooming
          */
-        const val GESTURE = 8
+        const val GESTURE =
+            8   // TODO Split GESTURE_DRAG、GESTURE_ONE_FINGER_SCALE、GESTURE_TWO_FINGER_SCALE
 
         /**
          * User gesture fling
@@ -64,7 +63,6 @@ annotation class ContinuousTransformType {
 
         fun name(@ContinuousTransformType type: Int): String {
             return when (type) {
-                NONE -> "NONE"
                 SCALE -> "SCALE"
                 OFFSET -> "OFFSET"
                 LOCATE -> "LOCATE"
@@ -72,6 +70,12 @@ annotation class ContinuousTransformType {
                 FLING -> "FLING"
                 else -> "UNKNOWN"
             }
+        }
+
+        val values = listOf(SCALE, OFFSET, LOCATE, GESTURE, FLING)
+
+        fun parse(continuousTransformTypes: Int): List<Int> {
+            return values.asSequence().filter { continuousTransformTypes and it != 0 }.toList()
         }
     }
 }

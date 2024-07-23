@@ -152,12 +152,7 @@ class ZoomImageSettingsViewModel(
             )
         )
 
-        val gestureTypes = listOf(
-            GestureType.DRAG,
-            GestureType.TWO_FINGER_SCALE,
-            GestureType.ONE_FINGER_SCALE,
-            GestureType.DOUBLE_TAP_SCALE,
-        )
+        val gestureTypes = GestureType.values
         add(
             MultiChooseMenu(
                 title = "Disabled Gesture Type",
@@ -205,13 +200,7 @@ class ZoomImageSettingsViewModel(
 
         add(MenuDivider())
 
-        val continuousTransformTypes = listOf(
-            ContinuousTransformType.SCALE,
-            ContinuousTransformType.OFFSET,
-            ContinuousTransformType.LOCATE,
-            ContinuousTransformType.GESTURE,
-            ContinuousTransformType.FLING,
-        )
+        val continuousTransformTypes = ContinuousTransformType.values
         add(
             MultiChooseMenu(
                 title = "Paused Continuous Transform Type",

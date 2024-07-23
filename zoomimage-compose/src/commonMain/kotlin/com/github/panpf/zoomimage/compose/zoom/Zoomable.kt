@@ -252,7 +252,7 @@ internal class ZoomableNode(
                     if (longPressExecuted) return@launch
                     if (supportOneFingerScale && oneFingerScaleExecuted && doubleTapPressPoint != null) {
                         if (!zoomable.rollbackScale(doubleTapPressPoint)) {
-                            zoomable.continuousTransformType = GestureType.NONE
+                            zoomable.continuousTransformType = 0
                         }
                     } else {
                         val rollbackScaleExecuted =
@@ -263,7 +263,7 @@ internal class ZoomableNode(
                             flingExecuted = supportDrag && zoomable.fling(velocity, density)
                         }
                         if ((supportTwoFingerScale || supportDrag) && (!rollbackScaleExecuted && !flingExecuted)) {
-                            zoomable.continuousTransformType = GestureType.NONE
+                            zoomable.continuousTransformType = 0
                         }
                     }
                 }

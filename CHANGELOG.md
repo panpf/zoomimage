@@ -23,6 +23,7 @@ zoom:
 * change: The disabledGestureType property name of ZoomableState is changed to disabledGestureTypes,
   and the disabledGestureTypeState property name of ZoomableEngine is changed to
   disabledGestureTypesState
+* remove: Removed GestureType.NONE and ContinuousTransformType.NONE properties
 
 ## 1.1.0-alpha02
 

@@ -187,7 +187,7 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
     private val _minScaleState = MutableStateFlow(1.0f)
     private val _mediumScaleState = MutableStateFlow(1.0f)
     private val _maxScaleState = MutableStateFlow(1.0f)
-    internal val _continuousTransformTypeState = MutableStateFlow(ContinuousTransformType.NONE)
+    internal val _continuousTransformTypeState = MutableStateFlow(0)
     private val _contentBaseDisplayRectState = MutableStateFlow(IntRectCompat.Zero)
     private val _contentBaseVisibleRectState = MutableStateFlow(IntRectCompat.Zero)
     private val _contentDisplayRectState = MutableStateFlow(IntRectCompat.Zero)
@@ -789,8 +789,8 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
         }
 
         val lastContinuousTransformType = _continuousTransformTypeState.value
-        if (lastContinuousTransformType != ContinuousTransformType.NONE) {
-            _continuousTransformTypeState.value = ContinuousTransformType.NONE
+        if (lastContinuousTransformType != 0) {
+            _continuousTransformTypeState.value = 0
         }
     }
 
@@ -846,7 +846,7 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
                         }
                     },
                     onEnd = {
-                        _continuousTransformTypeState.value = ContinuousTransformType.NONE
+                        _continuousTransformTypeState.value = 0
                         continuation.resumeWith(Result.success(0))
                     }
                 )
@@ -968,7 +968,7 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
                     updateUserTransform(newUserOffset)
                 },
                 onEnd = {
-                    _continuousTransformTypeState.value = ContinuousTransformType.NONE
+                    _continuousTransformTypeState.value = 0
                     continuation.resumeWith(Result.success(0))
                 }
             )
@@ -1046,7 +1046,7 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
                 },
                 onEnd = {
                     if (newContinuousTransformType != null) {
-                        _continuousTransformTypeState.value = ContinuousTransformType.NONE
+                        _continuousTransformTypeState.value = 0
                     }
                     continuation.resumeWith(Result.success(0))
                 }

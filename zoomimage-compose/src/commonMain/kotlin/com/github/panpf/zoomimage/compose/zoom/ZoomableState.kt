@@ -240,7 +240,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
      *
      * @see ContinuousTransformType
      */
-    var continuousTransformType: Int by mutableIntStateOf(ContinuousTransformType.NONE)
+    var continuousTransformType: Int by mutableIntStateOf(0)
         internal set
 
     /**
@@ -807,8 +807,8 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         }
 
         val lastContinuousTransformType = continuousTransformType
-        if (lastContinuousTransformType != ContinuousTransformType.NONE) {
-            continuousTransformType = ContinuousTransformType.NONE
+        if (lastContinuousTransformType != 0) {
+            continuousTransformType = 0
         }
     }
 
@@ -866,7 +866,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             } catch (e: CancellationException) {
                 throw e
             } finally {
-                continuousTransformType = ContinuousTransformType.NONE
+                continuousTransformType = 0
             }
         }
         targetScale != null
@@ -966,13 +966,13 @@ class ZoomableState(val logger: Logger) : RememberObserver {
                             // SubsamplingState(line 87) relies on the fling state to refresh tiles,
                             // so you need to end the fling animation as soon as possible
                             job?.cancel("reachBounds")
-                            continuousTransformType = ContinuousTransformType.NONE
+                            continuousTransformType = 0
                         }
                     }
                 } catch (e: CancellationException) {
                     throw e
                 } finally {
-                    continuousTransformType = ContinuousTransformType.NONE
+                    continuousTransformType = 0
                 }
             }
         }
@@ -1049,7 +1049,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             throw e
         } finally {
             if (newContinuousTransformType != null) {
-                continuousTransformType = ContinuousTransformType.NONE
+                continuousTransformType = 0
             }
         }
     }

@@ -154,14 +154,7 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
                     state = appSettings.scalesMultiple,
                 )
 
-                val gestureTypes = remember {
-                    listOf(
-                        GestureType.DRAG,
-                        GestureType.TWO_FINGER_SCALE,
-                        GestureType.ONE_FINGER_SCALE,
-                        GestureType.DOUBLE_TAP_SCALE,
-                    )
-                }
+                val gestureTypes = remember { GestureType.values }
                 val gestureTypeStrings = remember {
                     gestureTypes.map { GestureType.name(it) }
                 }
@@ -209,15 +202,7 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
 
                 DividerSettingItem()
 
-                val continuousTransformTypes = remember {
-                    listOf(
-                        ContinuousTransformType.SCALE,
-                        ContinuousTransformType.OFFSET,
-                        ContinuousTransformType.LOCATE,
-                        ContinuousTransformType.GESTURE,
-                        ContinuousTransformType.FLING,
-                    )
-                }
+                val continuousTransformTypes = remember { ContinuousTransformType.values }
                 val continuousTransformTypeStrings = remember {
                     continuousTransformTypes.map { ContinuousTransformType.name(it) }
                 }
