@@ -2,7 +2,7 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.1.0-alpha03
 
 subsampling:
 
@@ -15,12 +15,12 @@ subsampling:
 
 zoom:
 
+* remove: 移除 GestureType.NONE 和 ContinuousTransformType.NONE 属性
 * change: SubsamplingState 的 pausedContinuousTransformType 属性名称改为
   pausedContinuousTransformTypes，SubsamplingEngine 的 pausedContinuousTransformTypeState 属性名称改为
   pausedContinuousTransformTypesState
 * change: ZoomableState 的 disabledGestureType 属性名称改为 disabledGestureTypes，ZoomableEngine 的
   disabledGestureTypeState 属性名称改为 disabledGestureTypesState
-* remove: 移除 GestureType.NONE 和 ContinuousTransformType.NONE 属性
 
 ## 1.1.0-alpha02
 

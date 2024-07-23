@@ -2,7 +2,7 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.1.0-alpha03
 
 subsampling:
 
@@ -17,13 +17,13 @@ subsampling:
 
 zoom:
 
+* remove: Removed GestureType.NONE and ContinuousTransformType.NONE properties
 * change: The pausedContinuousTransformType property name of SubsamplingState is changed to
   pausedContinuousTransformTypes, and the pausedContinuousTransformTypeState property name of
   SubsamplingEngine is changed to pausedContinuousTransformTypesState
 * change: The disabledGestureType property name of ZoomableState is changed to disabledGestureTypes,
   and the disabledGestureTypeState property name of ZoomableEngine is changed to
   disabledGestureTypesState
-* remove: Removed GestureType.NONE and ContinuousTransformType.NONE properties
 
 ## 1.1.0-alpha02
 
