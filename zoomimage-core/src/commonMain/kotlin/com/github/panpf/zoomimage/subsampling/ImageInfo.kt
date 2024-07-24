@@ -21,7 +21,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 /**
  * Image information
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.ImageInfoTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.ImageInfoTest]
  */
 data class ImageInfo constructor(
     /**
@@ -67,9 +67,7 @@ data class ImageInfo constructor(
         mimeType: String = this.mimeType,
     ): ImageInfo = ImageInfo(width, height, mimeType)
 
-    override fun toString(): String {
-        return "ImageInfo(size=${width}x$height, mimeType='$mimeType')"
-    }
-
     fun toShortString(): String = "(${width}x$height,'$mimeType')"
+
+    override fun toString(): String = "ImageInfo(size=${width}x$height, mimeType='$mimeType')"
 }

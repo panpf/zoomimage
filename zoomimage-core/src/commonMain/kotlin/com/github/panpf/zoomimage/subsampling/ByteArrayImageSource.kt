@@ -21,11 +21,18 @@ import okio.Source
 
 /**
  * Create an image source from a ByteArray.
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.ByteArrayImageSourceTest.testFromByteArray]
  */
 fun ImageSource.Companion.fromByteArray(byteArray: ByteArray): ByteArrayImageSource {
     return ByteArrayImageSource(byteArray)
 }
 
+/**
+ * Image source for subsampling from a ByteArray.
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.ByteArrayImageSourceTest]
+ */
 class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
 
     override val key: String = byteArray.toString()

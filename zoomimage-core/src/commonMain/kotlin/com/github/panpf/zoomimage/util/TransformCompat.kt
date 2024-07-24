@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.util
 /**
  * A simple version of a 2D transformation that includes scale, pan, and rotation
  *
- * @see [com.github.panpf.zoomimage.core.test.util.TransformCompatTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest]
  */
 data class TransformCompat(
     /**

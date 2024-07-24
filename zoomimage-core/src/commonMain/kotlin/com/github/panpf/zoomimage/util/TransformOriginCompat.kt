@@ -34,7 +34,7 @@ fun TransformOriginCompat(pivotFractionX: Float, pivotFractionY: Float): Transfo
  *
  * Copy from androidx/compose/ui/graphics/TransformOrigin.kt
  *
- * @see [com.github.panpf.zoomimage.core.test.util.TransformOriginCompatTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest]
  */
 @JvmInline
 value class TransformOriginCompat internal constructor(@PublishedApi internal val packedValue: Long) {

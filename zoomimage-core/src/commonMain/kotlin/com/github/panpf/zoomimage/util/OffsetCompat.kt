@@ -55,7 +55,7 @@ fun OffsetCompat(x: Float, y: Float) = OffsetCompat(packFloats(x, y))
  * Creates an offset. The first argument sets [x], the horizontal component,
  * and the second sets [y], the vertical component.
  *
- * @see [com.github.panpf.zoomimage.core.test.util.OffsetCompatTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest]
  */
 @JvmInline
 value class OffsetCompat internal constructor(internal val packedValue: Long) {

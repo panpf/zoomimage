@@ -33,7 +33,7 @@ fun IntOffsetCompat(x: Int, y: Int): IntOffsetCompat =
  *
  * Copy from androidx/compose/ui/unit/IntOffset.kt
  *
- * @see [com.github.panpf.zoomimage.core.test.util.IntOffsetCompatTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntOffsetCompatTest]
  */
 @JvmInline
 value class IntOffsetCompat internal constructor(@PublishedApi internal val packedValue: Long) {

@@ -21,8 +21,6 @@ import okio.Source
 
 /**
  * Image source for subsampling.
- *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.ImageSourceTest]
  */
 interface ImageSource {
 
@@ -50,12 +48,33 @@ interface ImageSource {
 
     companion object
 
+    /**
+     * @see [com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest.testWrapperFactory]
+     */
     class WrapperFactory(val imageSource: ImageSource) : Factory {
 
         override val key: String = imageSource.key
 
         override suspend fun create(): ImageSource = imageSource
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+            other as WrapperFactory
+            return imageSource == other.imageSource
+        }
+
+        override fun hashCode(): Int {
+            return imageSource.hashCode()
+        }
+
+        override fun toString(): String {
+            return "WrapperFactory($imageSource)"
+        }
     }
 }
 
+/**
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest.testToFactory]
+ */
 fun ImageSource.toFactory(): ImageSource.Factory = ImageSource.WrapperFactory(this)

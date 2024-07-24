@@ -26,7 +26,7 @@ import kotlin.math.roundToInt
  *
  * Copy from androidx/compose/ui/geometry/Rect.kt
  *
- * @see [com.github.panpf.zoomimage.core.test.util.RectCompatTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.util.RectCompatTest]
  */
 data class RectCompat(
     /**

@@ -24,7 +24,7 @@ import kotlin.math.min
 /**
  * Represents a rule to apply to scale a source rectangle to be inscribed into a destination
  *
- * @see [com.github.panpf.zoomimage.core.test.zoom.ContentScaleCompatTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.zoom.ContentScaleCompatTest]
  */
 interface ContentScaleCompat {
 

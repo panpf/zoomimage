@@ -31,7 +31,7 @@ fun ScaleFactorCompat(scaleX: Float, scaleY: Float) = ScaleFactorCompat(packFloa
 /**
  * Holds 2 dimensional scaling factors for horizontal and vertical axes
  *
- * @see [com.github.panpf.zoomimage.core.test.util.ScaleFactorCompatTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.util.ScaleFactorCompatTest]
  */
 @JvmInline
 value class ScaleFactorCompat internal constructor(@PublishedApi internal val packedValue: Long) {

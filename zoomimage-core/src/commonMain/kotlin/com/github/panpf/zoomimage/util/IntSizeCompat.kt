@@ -33,7 +33,7 @@ fun IntSizeCompat(width: Int, height: Int): IntSizeCompat = IntSizeCompat(packIn
 /**
  * A two-dimensional size class used for measuring in [Int] pixels.
  *
- * @see [com.github.panpf.zoomimage.core.test.util.IntSizeCompatTest]
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest]
  */
 @JvmInline
 value class IntSizeCompat internal constructor(@PublishedApi internal val packedValue: Long) {
