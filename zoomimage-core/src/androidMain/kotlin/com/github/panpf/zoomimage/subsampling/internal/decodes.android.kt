@@ -121,7 +121,7 @@ internal fun isSrcRectError(throwable: Throwable): Boolean =
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSupportBitmapRegionDecoder]
  */
 @SuppressLint("ObsoleteSdkInt")
-internal fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
+internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
     "image/jpeg".equals(mimeType, true)
             || "image/png".equals(mimeType, true)
             || "image/webp".equals(mimeType, true)

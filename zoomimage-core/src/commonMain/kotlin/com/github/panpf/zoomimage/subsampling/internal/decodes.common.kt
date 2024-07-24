@@ -19,3 +19,5 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.subsampling.ImageSource
 
 internal expect fun createDecodeHelper(imageSource: ImageSource): DecodeHelper
+
+internal expect fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean

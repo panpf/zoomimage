@@ -43,3 +43,6 @@ internal fun calculateSampledBitmapSize(
     val height: Int = ceil(heightValue).toInt()
     return IntSizeCompat(width, height)
 }
+
+internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
+    !"image/gif".equals(mimeType, true)

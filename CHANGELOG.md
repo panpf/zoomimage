@@ -2,6 +2,11 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+improve: Now non-Android platforms will directly ignore gif images when subsampling panpf Moments
+ago
+
 ## 1.1.0-alpha03
 
 subsampling:

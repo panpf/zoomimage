@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+improve: 现在非 Android 平台在子采样时会直接忽略 gif 图片
+
 ## 1.1.0-alpha03
 
 subsampling:

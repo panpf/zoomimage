@@ -58,10 +58,11 @@ class SkiaDecodeHelper(
             val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
             val skiaImage = SkiaImage.makeFromEncoded(bytes)
             val imageInfo = readImageInfo(bytes, skiaImage)
+            val supportRegion = checkSupportSubsamplingByMimeType(imageInfo.mimeType)
             return SkiaDecodeHelper(
                 imageSource = imageSource,
                 imageInfo = imageInfo,
-                supportRegion = true,
+                supportRegion = supportRegion,
                 bytes = bytes,
                 skiaImage = skiaImage
             )
