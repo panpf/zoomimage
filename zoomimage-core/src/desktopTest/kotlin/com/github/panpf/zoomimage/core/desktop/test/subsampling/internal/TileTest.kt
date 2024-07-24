@@ -1,12 +1,10 @@
-package com.github.panpf.zoomimage.core.common.test.subsampling.internal
+package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.internal.Tile
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -17,8 +15,12 @@ import kotlin.test.assertTrue
 class TileTest {
 
     @Test
-    fun test() = runTest {
-        val tile = Tile(IntOffsetCompat(0, 1), IntRectCompat(0, 0, 100, 100), 2)
+    fun test() {
+        val tile = Tile(
+            coordinate = IntOffsetCompat(0, 1),
+            srcRect = IntRectCompat(0, 0, 100, 100),
+            sampleSize = 2
+        )
         tile.apply {
             assertNull(tileBitmap)
             assertFalse(animationState.running)
@@ -36,7 +38,7 @@ class TileTest {
         }
         val duration = 200L
 
-        delay(50)
+        Thread.sleep(50)
         tile.animationState.calculate(duration)
         tile.apply {
             assertNotNull(this.tileBitmap)
@@ -44,7 +46,7 @@ class TileTest {
             assertEquals(67f, animationState.alpha.toFloat(), 20f)
         }
 
-        delay(50)
+        Thread.sleep(50)
         tile.animationState.calculate(duration)
         tile.apply {
             assertNotNull(this.tileBitmap)
@@ -52,7 +54,7 @@ class TileTest {
             assertEquals(127f, animationState.alpha.toFloat(), 20f)
         }
 
-        delay(50)
+        Thread.sleep(50)
         tile.animationState.calculate(duration)
         tile.apply {
             assertNotNull(this.tileBitmap)
@@ -60,7 +62,7 @@ class TileTest {
             assertEquals(194f, animationState.alpha.toFloat(), 20f)
         }
 
-        delay(50)
+        Thread.sleep(50)
         tile.animationState.calculate(duration)
         tile.apply {
             assertNotNull(this.tileBitmap)

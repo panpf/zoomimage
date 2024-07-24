@@ -30,7 +30,7 @@ import kotlin.math.abs
 /**
  * Create [TileDecoder]. If the image type is not supported or the thumbnail size is larger than the original image or the aspect ratio of the thumbnail and the original image is inconsistent, the creation will fail.
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest2.testDecodeAndCreateTileDecoder]
+ * test: desktopTest/com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.SubsamplingDesktopTest.testDecodeAndCreateTileDecoder
  */
 fun decodeAndCreateTileDecoder(
     logger: Logger,
@@ -68,7 +68,9 @@ fun decodeAndCreateTileDecoder(
 }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testCanUseSubsamplingByAspectRatio]
+ * Determine whether Subsampling can be used based on the difference between the width and height scaling factors of the original image and the thumbnail. The difference cannot exceed [maxDifference]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCanUseSubsamplingByAspectRatio]
  */
 fun canUseSubsamplingByAspectRatio(
     imageSize: IntSizeCompat,
@@ -88,7 +90,7 @@ fun canUseSubsamplingByAspectRatio(
 /**
  * Returns a string consisting of sample size, number of tiles, and grid size
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testToIntroString]
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testToIntroString]
  */
 fun List<SamplingTiles>.toIntroString(): String {
     return joinToString(
@@ -104,7 +106,7 @@ fun List<SamplingTiles>.toIntroString(): String {
 /**
  * Calculates the preferred size of the tile based on the container size, typically half the container size
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testCalculatePreferredTileSize]
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCalculatePreferredTileSize]
  */
 fun calculatePreferredTileSize(containerSize: IntSizeCompat): IntSizeCompat {
     return containerSize / 2

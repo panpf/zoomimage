@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.core.common.test.subsampling
 
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.fromFile
 import okio.Path.Companion.toPath
 import kotlin.test.Test
 import kotlin.test.assertEquals
