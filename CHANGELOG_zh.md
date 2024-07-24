@@ -5,6 +5,7 @@
 ## new
 
 improve: 现在非 Android 平台在子采样时会直接忽略 gif 图片
+improve: 现在只要缩略图的任意一边超过原图就无法使用子采样
 
 ## 1.1.0-alpha03
 

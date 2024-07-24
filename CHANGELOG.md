@@ -6,6 +6,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 
 improve: Now non-Android platforms will directly ignore gif images when subsampling panpf Moments
 ago
+improve: Now subsampling cannot be used as long as either side of the thumbnail exceeds the original
+image
 
 ## 1.1.0-alpha03
 

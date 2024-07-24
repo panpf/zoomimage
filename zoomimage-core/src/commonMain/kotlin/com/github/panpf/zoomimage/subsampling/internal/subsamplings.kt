@@ -16,8 +16,6 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.annotation.WorkerThread
-import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -34,36 +32,39 @@ import kotlin.math.abs
  *
  * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest2.testDecodeAndCreateTileDecoder]
  */
-@WorkerThread
 fun decodeAndCreateTileDecoder(
     logger: Logger,
     imageSource: ImageSource,
     thumbnailSize: IntSizeCompat,
-): Result<TileDecoder> {
-    val decodeHelper = createDecodeHelper(imageSource)
+): Result<TileDecoder> = runCatching {
+    val decodeHelper = try {
+        createDecodeHelper(imageSource)
+    } catch (e: Exception) {
+        throw CreateTileDecoderException(-1, false, e.message ?: "Create DecodeHelper failed", null)
+    }
     val imageInfo = decodeHelper.imageInfo
-    if (imageInfo.width <= 0 || imageInfo.height <= 0) {
+    if (imageInfo.size.isEmpty()) {
         decodeHelper.close()
         val message = "image width or height is error: ${imageInfo.width}x${imageInfo.height}"
-        return Result.failure(CreateTileDecoderException(-2, true, message, imageInfo))
+        throw CreateTileDecoderException(-2, true, message, imageInfo)
     }
     if (!decodeHelper.supportRegion) {
         decodeHelper.close()
         val message = "Image type not support subsampling"
-        return Result.failure(CreateTileDecoderException(-3, true, message, imageInfo))
+        throw CreateTileDecoderException(-3, true, message, imageInfo)
     }
-    if (thumbnailSize.width >= imageInfo.width && thumbnailSize.height >= imageInfo.height) {
+    if (thumbnailSize.width >= imageInfo.width || thumbnailSize.height >= imageInfo.height) {
         decodeHelper.close()
         val message = "The thumbnail size is greater than or equal to the original image"
-        return Result.failure(CreateTileDecoderException(-4, true, message, imageInfo))
+        throw CreateTileDecoderException(-4, true, message, imageInfo)
     }
     if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
         decodeHelper.close()
         val message =
             "The aspect ratio of the thumbnail is too different from that of the original image. Please refer to the canUseSubsamplingByAspectRatio() function to correct the thumbnail size."
-        return Result.failure(CreateTileDecoderException(-5, false, message, imageInfo))
+        throw CreateTileDecoderException(-5, false, message, imageInfo)
     }
-    return Result.success(TileDecoder(logger, imageSource, decodeHelper))
+    TileDecoder(logger, imageSource, decodeHelper)
 }
 
 /**
@@ -72,33 +73,17 @@ fun decodeAndCreateTileDecoder(
 fun canUseSubsamplingByAspectRatio(
     imageSize: IntSizeCompat,
     thumbnailSize: IntSizeCompat,
-    minDifference: Float = 1f
+    maxDifference: Float = 1f
 ): Boolean {
     if (imageSize.isEmpty() || thumbnailSize.isEmpty()) return false
+    if (imageSize.width < thumbnailSize.width || imageSize.height < thumbnailSize.height) return false
     val widthScale = imageSize.width / thumbnailSize.width.toFloat()
     val heightScale = imageSize.height / thumbnailSize.height.toFloat()
-    return abs(widthScale - heightScale).format(0) <= minDifference.format(0)
+    val diff = abs(widthScale - heightScale)
+    val diffFormatted = diff.format(1)
+    val minDiffFormatted = maxDifference.format(1)
+    return diffFormatted <= minDiffFormatted
 }
-
-class CreateTileDecoderException(
-    val code: Int, val skipped: Boolean, message: String, val imageInfo: ImageInfo?
-) : Exception(message)
-
-///**
-// * Returns a string consisting of sample size, number of tiles, and grid size
-// *
-// * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.SubsamplingUtilsTest.testToIntroString]
-// */
-//fun Map<Int, List<Tile>>.toIntroString(): String {
-//    return entries.joinToString(
-//        prefix = "[",
-//        postfix = "]",
-//        separator = ","
-//    ) { (sampleSize, tiles) ->
-//        val gridSize = tiles.last().coordinate.let { IntOffsetCompat(it.x + 1, it.y + 1) }
-//        "${sampleSize}:${tiles.size}:${gridSize.toShortString()}"
-//    }
-//}
 
 /**
  * Returns a string consisting of sample size, number of tiles, and grid size
