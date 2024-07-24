@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.sample.image
 import com.github.panpf.sketch.fetch.ComposeResourceUriFetcher
 import com.github.panpf.sketch.util.toUri
 import com.github.panpf.zoomimage.coil.CoilModelToImageSource
+import com.github.panpf.zoomimage.sample.util.authority
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import platform.Foundation.NSURL
@@ -27,10 +28,4 @@ actual class CoilComposeResourceToImageSource : CoilModelToImageSource {
         }
         return null
     }
-
-    val NSURL.authority: String?
-        get() {
-            val port = port
-            return if (port != null) this.host + ":" + port() else this.host
-        }
 }

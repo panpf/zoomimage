@@ -14,6 +14,7 @@ import coil3.request.ImageRequest.Builder
 import coil3.request.crossfade
 import coil3.size.Precision
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
+import com.github.panpf.zoomimage.coil.CoilModelToImageSource
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceToImageSource
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -21,6 +22,8 @@ import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
+
+expect fun platformCoilModelToImageSource(): List<CoilModelToImageSource>?
 
 @Composable
 fun CoilZoomAsyncImageSample(
@@ -34,6 +37,9 @@ fun CoilZoomAsyncImageSample(
     ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         LaunchedEffect(Unit) {
             zoomState.registerModelToImageSource(CoilComposeResourceToImageSource())
+            platformCoilModelToImageSource()?.forEach {
+                zoomState.registerModelToImageSource(it)
+            }
         }
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         val context = LocalPlatformContext.current
