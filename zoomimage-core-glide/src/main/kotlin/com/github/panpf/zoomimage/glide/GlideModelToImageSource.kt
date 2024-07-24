@@ -62,6 +62,10 @@ class GlideModelToImageSourceImpl(private val context: Context) : GlideModelToIm
                 assetFileName?.let { ImageSource.fromAsset(context, it).toFactory() }
             }
 
+            model is String && model.startsWith("/") -> {
+                ImageSource.fromFile(model).toFactory()
+            }
+
             model is String && model.startsWith("file://") -> {
                 val filePath = Uri.parse(model).path
                 filePath?.let { ImageSource.fromFile(File(filePath)).toFactory() }

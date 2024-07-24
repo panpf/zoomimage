@@ -65,6 +65,10 @@ class CoilModelToImageSourceImpl constructor(
                 ZoomImageImageSource.fromFile(model).toFactory()
             }
 
+            model is String && model.startsWith("/") -> {
+                ImageSource.fromFile(model).toFactory()
+            }
+
             model is String && model.startsWith("file://") -> {
                 val filePath = android.net.Uri.parse(model).path
                 filePath?.let { ImageSource.fromFile(File(filePath)).toFactory() }

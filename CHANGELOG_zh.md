@@ -4,8 +4,10 @@
 
 ## new
 
-improve: 现在非 Android 平台在子采样时会直接忽略 gif 图片
-improve: 现在只要缩略图的任意一边超过原图就无法使用子采样
+* improve: 现在非 Android 平台在子采样时会直接忽略 gif 图片
+* improve: 现在只要缩略图的任意一边超过原图就无法使用子采样
+* fix: 修复 coil 和 glide 系列组件不支持 '/sdcard/sample.jpeg' 类型 model 的
+  bug。 [#34](https://github.com/panpf/zoomimage/issues/34)
 
 ## 1.1.0-alpha03
 

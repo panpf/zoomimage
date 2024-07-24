@@ -25,6 +25,10 @@ actual class CoilModelToImageSourceImpl actual constructor(
                 CoilHttpImageSource.Factory(context, imageLoader, model.toString())
             }
 
+            model is String && model.startsWith("/") -> {
+                ImageSource.fromFile(model).toFactory()
+            }
+
             model is String && model.startsWith("file://") -> {
                 val filePath = model.toUri().path
                 filePath?.let { ImageSource.fromFile(filePath).toFactory() }

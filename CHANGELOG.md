@@ -4,10 +4,13 @@ Translations: [简体中文](CHANGELOG_zh.md)
 
 ## new
 
-improve: Now non-Android platforms will directly ignore gif images when subsampling panpf Moments
+* improve: Now non-Android platforms will directly ignore gif images when subsampling panpf Moments
 ago
-improve: Now subsampling cannot be used as long as either side of the thumbnail exceeds the original
+* improve: Now subsampling cannot be used as long as either side of the thumbnail exceeds the
+  original
 image
+* fix: Fix the bug that coil and glide series components do not support '/sdcard/sample.jpeg' type
+  model. [#34](https://github.com/panpf/zoomimage/issues/34)
 
 ## 1.1.0-alpha03
 
