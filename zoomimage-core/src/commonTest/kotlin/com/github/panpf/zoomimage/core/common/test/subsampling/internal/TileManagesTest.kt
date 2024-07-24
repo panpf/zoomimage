@@ -310,34 +310,37 @@ class TileManagesTest {
 
     @Test
     fun testCalculateMaxGridSize() {
-        val imageSize1 = IntSizeCompat(800, 600)
-        val singleDirectionMaxTiles1 = 10
-        val expected1 = IntOffsetCompat(10, 8)
-        val result1 = calculateMaxGridSize(imageSize1, singleDirectionMaxTiles1)
-        assertEquals(expected1, result1)
+        assertEquals(
+            expected = IntOffsetCompat(x = 10, y = 8),
+            actual = calculateMaxGridSize(IntSizeCompat(800, 600), singleDirectionMaxTiles = 10)
+        )
 
-        val imageSize2 = IntSizeCompat(600, 800)
-        val singleDirectionMaxTiles2 = 10
-        val expected2 = IntOffsetCompat(8, 10)
-        val result2 = calculateMaxGridSize(imageSize2, singleDirectionMaxTiles2)
-        assertEquals(expected2, result2)
+        assertEquals(
+            expected = IntOffsetCompat(x = 8, y = 10),
+            actual = calculateMaxGridSize(IntSizeCompat(600, 800), singleDirectionMaxTiles = 10)
+        )
 
-        val imageSize3 = IntSizeCompat(500, 500)
-        val singleDirectionMaxTiles3 = 10
-        val expected3 = IntOffsetCompat(10, 10)
-        val result3 = calculateMaxGridSize(imageSize3, singleDirectionMaxTiles3)
-        assertEquals(expected3, result3)
+        assertEquals(
+            expected = IntOffsetCompat(x = 10, y = 10),
+            actual = calculateMaxGridSize(IntSizeCompat(500, 500), singleDirectionMaxTiles = 10)
+        )
 
-        val imageSize4 = IntSizeCompat(800, 600)
-        val singleDirectionMaxTiles4 = 0
+        assertEquals(
+            expected = IntOffsetCompat(x = 50, y = 1),
+            actual = calculateMaxGridSize(IntSizeCompat(2561, 19), singleDirectionMaxTiles = 50)
+        )
+
+        assertEquals(
+            expected = IntOffsetCompat(x = 1, y = 50),
+            actual = calculateMaxGridSize(IntSizeCompat(19, 2561), singleDirectionMaxTiles = 50)
+        )
+
         assertFailsWith(IllegalArgumentException::class) {
-            calculateMaxGridSize(imageSize4, singleDirectionMaxTiles4)
+            calculateMaxGridSize(IntSizeCompat(800, 600), singleDirectionMaxTiles = 0)
         }
 
-        val imageSize5 = IntSizeCompat(800, 600)
-        val singleDirectionMaxTiles5 = -10
         assertFailsWith(IllegalArgumentException::class) {
-            calculateMaxGridSize(imageSize5, singleDirectionMaxTiles5)
+            calculateMaxGridSize(IntSizeCompat(800, 600), singleDirectionMaxTiles = -10)
         }
     }
 
