@@ -31,42 +31,42 @@ class ExifOrientationHelperTest {
     fun testName() {
         Assert.assertEquals(
             "ROTATE_90",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_90).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_ROTATE_90)
         )
         Assert.assertEquals(
             "TRANSPOSE",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSPOSE).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_TRANSPOSE)
         )
         Assert.assertEquals(
             "ROTATE_180",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_180).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_ROTATE_180)
         )
         Assert.assertEquals(
             "FLIP_VERTICAL",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_FLIP_VERTICAL).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_FLIP_VERTICAL)
         )
         Assert.assertEquals(
             "ROTATE_270",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_270).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_ROTATE_270)
         )
         Assert.assertEquals(
             "TRANSVERSE",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSVERSE).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_TRANSVERSE)
         )
         Assert.assertEquals(
             "FLIP_HORIZONTAL",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_FLIP_HORIZONTAL).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_FLIP_HORIZONTAL)
         )
         Assert.assertEquals(
             "UNDEFINED",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_UNDEFINED)
         )
         Assert.assertEquals(
             "NORMAL",
-            ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_NORMAL).name()
+            ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_NORMAL)
         )
-        Assert.assertEquals("-1", ExifOrientationHelper(-1).name())
-        Assert.assertEquals("100", ExifOrientationHelper(100).name())
+        Assert.assertEquals("-1", ExifOrientationHelper.name(-1))
+        Assert.assertEquals("100", ExifOrientationHelper.name(100))
     }
 
     @Test
@@ -143,7 +143,7 @@ class ExifOrientationHelperTest {
             100 to IntSizeCompat(100, 50),
         ).forEach { (exifOrientationInt, exceptedSize) ->
             val exifOrientation = ExifOrientationHelper(exifOrientationInt)
-            val message = "exifOrientationInt=${exifOrientation.name()}, exceptedSize=$exceptedSize"
+            val message = "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}, exceptedSize=$exceptedSize"
             val appliedSize = exifOrientation.applyToSize(size)
             Assert.assertEquals(message, exceptedSize, appliedSize)
             val reverseAppliedSize = exifOrientation.applyToSize(appliedSize, reverse = true)
@@ -169,7 +169,7 @@ class ExifOrientationHelperTest {
             100 to IntRectCompat(40, 10, 50, 30),
         ).forEach { (exifOrientationInt, exceptedRect) ->
             val exifOrientation = ExifOrientationHelper(exifOrientationInt)
-            val message = "exifOrientationInt=${exifOrientation.name()}, exceptedRect=$exceptedRect"
+            val message = "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}, exceptedRect=$exceptedRect"
             val appliedRect = exifOrientation.applyToRect(srcRect, imageSize)
             val appliedImageSize = exifOrientation.applyToSize(imageSize)
             Assert.assertEquals(message, exceptedRect, appliedRect)
@@ -200,12 +200,12 @@ class ExifOrientationHelperTest {
             100 to false,
         ).forEach { (exifOrientationInt, change) ->
             val exifOrientation = ExifOrientationHelper(exifOrientationInt)
-            val message = "exifOrientationInt=${exifOrientation.name()}"
+            val message = "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}"
 
             val appliedBitmap = exifOrientation.applyToTileBitmap(
                 tileBitmap = AndroidTileBitmap(inBitmap, "", BitmapFrom.LOCAL),
                 reverse = false
-            ).bitmap
+            ).bitmap!!
             if (change) {
                 Assert.assertNotEquals(
                     message,

@@ -28,6 +28,8 @@ import kotlin.math.roundToInt
 
 /**
  * Constructs a [SizeCompat] from the given width and height
+ *
+ * Copy from androidx/compose/ui/geometry/Size.kt
  */
 fun SizeCompat(width: Float, height: Float) = SizeCompat(packFloats(width, height))
 
@@ -37,8 +39,6 @@ fun SizeCompat(width: Float, height: Float) = SizeCompat(packFloats(width, heigh
  * You can think of this as an [SizeCompat] from the origin.
  *
  * Copy from androidx/compose/ui/geometry/Size.kt
- *
- * @see [com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest]
  */
 @JvmInline
 value class SizeCompat internal constructor(@PublishedApi internal val packedValue: Long) {
@@ -171,26 +171,21 @@ fun lerp(start: SizeCompat, stop: SizeCompat, fraction: Float): SizeCompat {
 /**
  * Returns a [SizeCompat] with [size]'s [SizeCompat.width] and [SizeCompat.height] multiplied by [this]
  */
-@Suppress("NOTHING_TO_INLINE")
 inline operator fun Int.times(size: SizeCompat) = size * this.toFloat()
 
 /**
  * Returns a [SizeCompat] with [size]'s [SizeCompat.width] and [SizeCompat.height] multiplied by [this]
  */
-@Suppress("NOTHING_TO_INLINE")
 inline operator fun Double.times(size: SizeCompat) = size * this.toFloat()
 
 /**
  * Convert a [SizeCompat] to a [RectCompat].
  */
-fun SizeCompat.toRect(): RectCompat {
-    return RectCompat(OffsetCompat.Zero, this)
-}
+fun SizeCompat.toRect(): RectCompat = RectCompat(OffsetCompat.Zero, this)
 
 /**
  * Returns a [SizeCompat] with [size]'s [SizeCompat.width] and [SizeCompat.height] multiplied by [this]
  */
-@Suppress("NOTHING_TO_INLINE")
 inline operator fun Float.times(size: SizeCompat) = size * this
 
 /**
@@ -204,23 +199,31 @@ val SizeCompat.center: OffsetCompat get() = OffsetCompat(x = width / 2f, y = hei
 
 /**
  * Return short string descriptions, for example: '100.56x900.45'
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest.testToShortString]
  */
 fun SizeCompat.toShortString(): String =
     if (isSpecified) "${width.format(2)}x${height.format(2)}" else "Unspecified"
 
 /**
  * Return true if the size is not empty
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest.testIsNotEmpty]
  */
 fun SizeCompat.isNotEmpty(): Boolean = width > 0f && height > 0f
 
 /**
  * Round a [SizeCompat] down to the nearest [Int] coordinates.
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest.testRound]
  */
 fun SizeCompat.round(): IntSizeCompat =
     if (isSpecified) IntSizeCompat(width.roundToInt(), height.roundToInt()) else IntSizeCompat.Zero
 
 /**
  * The size after rotating [rotation] degrees
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest.testRotate]
  */
 fun SizeCompat.rotate(rotation: Int): SizeCompat {
     return if (rotation % 180 == 0) this else SizeCompat(width = height, height = width)
@@ -228,6 +231,8 @@ fun SizeCompat.rotate(rotation: Int): SizeCompat {
 
 /**
  * The size after reverse rotating [rotation] degrees
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest.testReverseRotate]
  */
 fun SizeCompat.reverseRotate(rotation: Int): SizeCompat {
     val reverseRotation = (360 - rotation) % 360
@@ -236,6 +241,8 @@ fun SizeCompat.reverseRotate(rotation: Int): SizeCompat {
 
 /**
  * Returns true if the aspect ratio of itself and other is the same
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.SizeCompatTest.testIsSameAspectRatio]
  */
 fun SizeCompat.isSameAspectRatio(other: SizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height

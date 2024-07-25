@@ -30,7 +30,7 @@ actual suspend fun builtinImages(context: PlatformContext): List<ImageFile> {
         ResourceImages.dog,
         ResourceImages.anim,
         ResourceImages.longEnd,
-        ContentImages.with(context).longWhale,
+        ContentImages.create(context).longWhale,
         ComposeResourceImages.hugeChina,
         AndroidResourceImages.hugeCard,
         LocalImages.with(context).hugeLongQmsht,

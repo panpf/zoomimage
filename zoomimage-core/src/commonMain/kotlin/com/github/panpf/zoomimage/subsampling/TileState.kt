@@ -1,7 +1,28 @@
+/*
+ * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.github.panpf.zoomimage.subsampling
 
 import com.github.panpf.zoomimage.annotation.IntDef
 
+/**
+ * Tile state
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest]
+ */
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(
     TileState.STATE_NONE,
@@ -27,4 +48,36 @@ annotation class TileState {
             else -> "UNKNOWN"
         }
     }
+}
+
+private const val TILE_COLOR_RED: Int = 0xFFFF0000.toInt()
+private const val TILE_COLOR_GREEN: Int = 0xFF00FF00.toInt()
+private const val TILE_COLOR_YELLOW_GREEN: Int = 0xFF9ACD32.toInt()
+private const val TILE_COLOR_BLUE: Int = 0xFF0000FF.toInt()
+private const val TILE_COLOR_YELLOW: Int = 0xFFFFFF00.toInt()
+private const val TILE_COLOR_CYAN: Int = 0xFF00FFFF.toInt()
+private const val TILE_COLOR_MAGENTA: Int = 0xFFFF00FF.toInt()
+private const val TILE_COLOR_SKY_BLUE: Int = 0xFF00CCFF.toInt()
+
+/**
+ * Get the color of the tile according to the state
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest.testTileStateColor]
+ */
+fun tileStateColor(
+    @TileState state: Int,
+    bitmapFrom: BitmapFrom?,
+    withinLoadArea: Boolean? = null
+): Int = when {
+    withinLoadArea == false -> TILE_COLOR_SKY_BLUE
+    state == TileState.STATE_LOADED -> {
+        when (bitmapFrom) {
+            BitmapFrom.MEMORY_CACHE -> TILE_COLOR_GREEN
+            BitmapFrom.LOCAL -> TILE_COLOR_YELLOW_GREEN
+            else -> TILE_COLOR_GREEN
+        }
+    }
+
+    state == TileState.STATE_LOADING -> TILE_COLOR_CYAN
+    else -> TILE_COLOR_RED
 }

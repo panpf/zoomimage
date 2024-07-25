@@ -66,28 +66,4 @@ class FileImageSource(val path: Path) : ImageSource {
     override fun toString(): String {
         return "FileImageSource('$path')"
     }
-
-//    class Factory(val path: Path) : ImageSource.Factory {
-//
-//        override val key: String = path.toString()
-//
-//        override suspend fun create(): FileImageSource {
-//            return FileImageSource(path)
-//        }
-//
-//        override fun equals(other: Any?): Boolean {
-//            if (this === other) return true
-//            if (other !is Factory) return false
-//            if (path != other.path) return false
-//            return true
-//        }
-//
-//        override fun hashCode(): Int {
-//            return path.hashCode()
-//        }
-//
-//        override fun toString(): String {
-//            return "FileImageSource.Factory('$path')"
-//        }
-//    }
 }

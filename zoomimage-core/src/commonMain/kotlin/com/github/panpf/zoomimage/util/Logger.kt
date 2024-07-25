@@ -16,6 +16,9 @@
 
 package com.github.panpf.zoomimage.util
 
+/**
+ * Get the platform default log pipeline
+ */
 expect fun defaultLogPipeline(): Logger.Pipeline
 
 /**

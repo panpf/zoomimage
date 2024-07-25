@@ -18,22 +18,22 @@ class AssetImageSourceTest {
     fun testFromAsset() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val resourceImages = ResourceImages
-        val uri1 = resourceImages.cat.uri
-        val uri2 = resourceImages.dog.uri
+        val resourceName1 = resourceImages.cat.resourceName
+        val resourceName2 = resourceImages.dog.resourceName
 
         assertEquals(
-            expected = AssetImageSource(context, uri1),
-            actual = ImageSource.fromAsset(context, uri1)
+            expected = AssetImageSource(context, resourceName1),
+            actual = ImageSource.fromAsset(context, resourceName1)
         )
 
         assertEquals(
-            expected = AssetImageSource(context, uri2),
-            actual = ImageSource.fromAsset(context, uri2)
+            expected = AssetImageSource(context, resourceName2),
+            actual = ImageSource.fromAsset(context, resourceName2)
         )
 
         assertNotEquals(
-            illegal = AssetImageSource(context, uri1),
-            actual = ImageSource.fromAsset(context, uri2)
+            illegal = AssetImageSource(context, resourceName1),
+            actual = ImageSource.fromAsset(context, resourceName2)
         )
     }
 
@@ -41,16 +41,16 @@ class AssetImageSourceTest {
     fun testKey() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val resourceImages = ResourceImages
-        val uri1 = resourceImages.cat.resourceName
-        val uri2 = resourceImages.dog.resourceName
+        val resourceName1 = resourceImages.cat.resourceName
+        val resourceName2 = resourceImages.dog.resourceName
 
         assertEquals(
-            expected = "asset://$uri1",
-            actual = AssetImageSource(context, uri1).key
+            expected = "asset://$resourceName1",
+            actual = AssetImageSource(context, resourceName1).key
         )
         assertEquals(
-            expected = "asset://$uri2",
-            actual = AssetImageSource(context, uri2).key
+            expected = "asset://$resourceName2",
+            actual = AssetImageSource(context, resourceName2).key
         )
     }
 
@@ -58,14 +58,14 @@ class AssetImageSourceTest {
     fun testOpenSource() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val resourceImages = ResourceImages
-        val uri1 = resourceImages.cat.uri
-        val uri2 = resourceImages.dog.uri
+        val resourceName1 = resourceImages.cat.resourceName
+        val resourceName2 = resourceImages.dog.resourceName
 
-        AssetImageSource(context, uri1).openSource().buffer().use {
+        AssetImageSource(context, resourceName1).openSource().buffer().use {
             it.readByteArray()
         }
 
-        AssetImageSource(context, uri2).openSource().buffer().use {
+        AssetImageSource(context, resourceName2).openSource().buffer().use {
             it.readByteArray().decodeToString()
         }
     }
@@ -74,13 +74,13 @@ class AssetImageSourceTest {
     fun testEqualsAndHashCode() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val resourceImages = ResourceImages
-        val uri1 = resourceImages.cat.uri
-        val uri2 = resourceImages.dog.uri
+        val resourceName1 = resourceImages.cat.resourceName
+        val resourceName2 = resourceImages.dog.resourceName
 
-        val source1 = AssetImageSource(context, uri1)
-        val source12 = AssetImageSource(context, uri1)
-        val source2 = AssetImageSource(context, uri2)
-        val source22 = AssetImageSource(context, uri2)
+        val source1 = AssetImageSource(context, resourceName1)
+        val source12 = AssetImageSource(context, resourceName1)
+        val source2 = AssetImageSource(context, resourceName2)
+        val source22 = AssetImageSource(context, resourceName2)
 
         assertEquals(expected = source1, actual = source12)
         assertEquals(expected = source2, actual = source22)
@@ -97,16 +97,16 @@ class AssetImageSourceTest {
     fun testToString() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val resourceImages = ResourceImages
-        val uri1 = resourceImages.cat.uri
-        val uri2 = resourceImages.dog.uri
+        val resourceName1 = resourceImages.cat.resourceName
+        val resourceName2 = resourceImages.dog.resourceName
 
         assertEquals(
-            expected = "AssetImageSource('$uri1')",
-            actual = AssetImageSource(context, uri1).toString()
+            expected = "AssetImageSource('$resourceName1')",
+            actual = AssetImageSource(context, resourceName1).toString()
         )
         assertEquals(
-            expected = "AssetImageSource('$uri2')",
-            actual = AssetImageSource(context, uri2).toString()
+            expected = "AssetImageSource('$resourceName2')",
+            actual = AssetImageSource(context, resourceName2).toString()
         )
     }
 }

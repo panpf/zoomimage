@@ -53,15 +53,15 @@ class AndroidTileBitmapTest {
 
         assertEquals(androidTileBitmap1.width, androidTileBitmap12.width)
         assertEquals(androidTileBitmap1.height, androidTileBitmap12.height)
-        assertEquals(androidTileBitmap1.byteCount, androidTileBitmap12.byteCount)
+        assertNotEquals(androidTileBitmap1.byteCount, androidTileBitmap12.byteCount)
 
-        assertEquals(androidTileBitmap1.width, androidTileBitmap2.width)
-        assertEquals(androidTileBitmap1.height, androidTileBitmap2.height)
-        assertEquals(androidTileBitmap1.byteCount, androidTileBitmap2.byteCount)
+        assertNotEquals(androidTileBitmap1.width, androidTileBitmap2.width)
+        assertNotEquals(androidTileBitmap1.height, androidTileBitmap2.height)
+        assertNotEquals(androidTileBitmap1.byteCount, androidTileBitmap2.byteCount)
 
-        assertEquals(androidTileBitmap12.width, androidTileBitmap2.width)
-        assertEquals(androidTileBitmap12.height, androidTileBitmap2.height)
-        assertEquals(androidTileBitmap12.byteCount, androidTileBitmap2.byteCount)
+        assertNotEquals(androidTileBitmap2.width, androidTileBitmap12.width)
+        assertNotEquals(androidTileBitmap2.height, androidTileBitmap12.height)
+        assertNotEquals(androidTileBitmap2.byteCount, androidTileBitmap12.byteCount)
     }
 
     @Test

@@ -19,7 +19,6 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.annotation.MainThread
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.SamplingTiles
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
@@ -48,7 +47,7 @@ import kotlinx.coroutines.withContext
 /**
  * Manage the loading and release of tiles
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagerTest]
+ * test: desktopTest/com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileManagerTest
  */
 class TileManager constructor(
     private val logger: Logger,

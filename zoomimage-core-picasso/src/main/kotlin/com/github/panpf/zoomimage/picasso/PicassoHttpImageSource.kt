@@ -80,31 +80,4 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
     override fun toString(): String {
         return "PicassoHttpImageSource('$uri')"
     }
-
-//    class Factory(val picasso: Picasso, val uri: Uri) : ImageSource.Factory {
-//
-//        override val key: String = uri.toString()
-//
-//        override suspend fun create(): PicassoHttpImageSource {
-//            return PicassoHttpImageSource(picasso, uri)
-//        }
-//
-//        override fun equals(other: Any?): Boolean {
-//            if (this === other) return true
-//            if (other !is Factory) return false
-//            if (picasso != other.picasso) return false
-//            if (uri != other.uri) return false
-//            return true
-//        }
-//
-//        override fun hashCode(): Int {
-//            var result = picasso.hashCode()
-//            result = 31 * result + uri.hashCode()
-//            return result
-//        }
-//
-//        override fun toString(): String {
-//            return "PicassoHttpImageSource.Factory('$uri')"
-//        }
-//    }
 }

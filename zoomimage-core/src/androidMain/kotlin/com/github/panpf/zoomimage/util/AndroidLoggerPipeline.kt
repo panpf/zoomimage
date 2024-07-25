@@ -19,6 +19,8 @@ package com.github.panpf.zoomimage.util
 import android.util.Log
 
 /**
+ * Get the default log pipeline
+ *
  * @see [com.github.panpf.zoomimage.core.android.test.util.AndroidLoggerPipelineTest.testDefaultLogPipeline]
  */
 actual fun defaultLogPipeline(): Logger.Pipeline = AndroidLogPipeline

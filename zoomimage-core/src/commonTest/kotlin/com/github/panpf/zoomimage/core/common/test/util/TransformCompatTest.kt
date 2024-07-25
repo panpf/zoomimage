@@ -108,7 +108,17 @@ class TransformCompatTest {
     }
 
     @Test
-    fun testToString() {
+    fun testIsEmpty() {
+        // TODO test
+    }
+
+    @Test
+    fun testIsNotEmpty() {
+        // TODO test
+    }
+
+    @Test
+    fun testToShortString() {
         assertEquals(
             "(1.0x1.0,0.0x0.0,0.0,0.0x0.0,0.0x0.0)",
             TransformCompat.Origin.toShortString()

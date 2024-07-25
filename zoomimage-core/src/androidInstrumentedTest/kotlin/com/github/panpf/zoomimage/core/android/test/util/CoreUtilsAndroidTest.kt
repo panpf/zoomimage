@@ -4,7 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.test.platform.app.InstrumentationRegistry
+import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.tools4j.test.ktx.assertThrow
+import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.isAndSupportHardware
 import com.github.panpf.zoomimage.util.requiredMainThread
 import com.github.panpf.zoomimage.util.requiredWorkThread
@@ -13,6 +15,7 @@ import com.github.panpf.zoomimage.util.toLogString
 import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import okio.buffer
 import org.junit.Assert
 import org.junit.Test
 
@@ -93,7 +96,7 @@ class CoreUtilsAndroidTest {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val context = InstrumentationRegistry.getInstrumentation().context
-            context.assets.open("sample_dog.jpg").use {
+            ResourceImages.dog.toImageSource(context).openSource().buffer().inputStream().use {
                 BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply {
                     inPreferredConfig = Bitmap.Config.HARDWARE
                 })

@@ -2,6 +2,11 @@ package com.github.panpf.zoomimage.zoom
 
 import com.github.panpf.zoomimage.annotation.IntDef
 
+/**
+ * Gesture type
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.zoom.GestureTypeTest]
+ */
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(
     GestureType.DRAG,

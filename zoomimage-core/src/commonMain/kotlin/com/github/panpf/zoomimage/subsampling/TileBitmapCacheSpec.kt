@@ -16,6 +16,9 @@
 
 package com.github.panpf.zoomimage.subsampling
 
+/**
+ * Tile bitmap cache configuration
+ */
 class TileBitmapCacheSpec {
     var disabled: Boolean = false
     var tileBitmapCache: TileBitmapCache? = null

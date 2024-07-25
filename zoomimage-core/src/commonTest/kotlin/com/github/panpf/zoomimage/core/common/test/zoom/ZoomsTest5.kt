@@ -22,7 +22,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class CoreZoomUtilsTest5 {
+class ZoomsTest5 {
 
     @Test
     fun testCheckParamsChanges() {

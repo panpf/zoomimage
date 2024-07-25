@@ -33,7 +33,7 @@ actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<
         "FILE" to LocalImages.with(context).cat.uri,
         "ASSET" to ResourceImages.longEnd.uri,
         "BYTES" to HttpImages.hugeLongComic.uri,
-        "CONTENT" to ContentImages.with(context).hugeLongQmsht.uri,
+        "CONTENT" to ContentImages.create(context).hugeLongQmsht.uri,
         "RES" to AndroidResourceImages.hugeCard.uri,
         "RES_COMPOSE" to ComposeResourceImages.hugeChina.uri,
     )

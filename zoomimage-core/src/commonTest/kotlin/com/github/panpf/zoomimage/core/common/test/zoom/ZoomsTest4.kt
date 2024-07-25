@@ -35,7 +35,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class CoreZoomUtilsTest4 {
+class ZoomsTest4 {
 
     @Test
     fun testTouchPointToContainerPoint() {

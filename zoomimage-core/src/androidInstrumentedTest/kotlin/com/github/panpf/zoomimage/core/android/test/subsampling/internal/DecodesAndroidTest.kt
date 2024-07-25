@@ -13,8 +13,6 @@ import com.github.panpf.zoomimage.subsampling.internal.checkSupportSubsamplingBy
 import com.github.panpf.zoomimage.subsampling.internal.createDecodeHelper
 import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
-import com.github.panpf.zoomimage.subsampling.internal.isInBitmapError
-import com.github.panpf.zoomimage.subsampling.internal.isSrcRectError
 import com.github.panpf.zoomimage.subsampling.internal.isSupportInBitmapForRegion
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.test.toIntSizeCompat
@@ -133,40 +131,6 @@ class DecodesAndroidTest {
                 sampleSize = 2,
                 mimeType = "image/jpeg",
             )
-        )
-    }
-
-    @Test
-    fun testIsInBitmapError() {
-        assertTrue(
-            isInBitmapError(IllegalArgumentException("Problem decoding into existing bitmap"))
-        )
-        assertTrue(
-            isInBitmapError(IllegalArgumentException("bitmap"))
-        )
-
-        assertFalse(
-            isInBitmapError(IllegalArgumentException("Problem decoding"))
-        )
-        assertFalse(
-            isInBitmapError(IllegalStateException("Problem decoding into existing bitmap"))
-        )
-    }
-
-    @Test
-    fun testIsSrcRectError() {
-        assertTrue(
-            isSrcRectError(IllegalArgumentException("rectangle is outside the image srcRect"))
-        )
-        assertTrue(
-            isSrcRectError(IllegalArgumentException("srcRect"))
-        )
-
-        assertFalse(
-            isSrcRectError(IllegalStateException("rectangle is outside the image srcRect"))
-        )
-        assertFalse(
-            isSrcRectError(IllegalArgumentException(""))
         )
     }
 

@@ -20,13 +20,31 @@ import android.graphics.Bitmap
 import com.github.panpf.zoomimage.util.toLogString
 
 /**
+ * Create an instance of [AndroidTileBitmap]
+ */
+fun AndroidTileBitmap(
+    bitmap: Bitmap,
+    key: String,
+    bitmapFrom: BitmapFrom
+): AndroidTileBitmap = AndroidTileBitmapImpl(bitmap, key, bitmapFrom)
+
+/**
+ * Android implementation of [TileBitmap]
+ */
+interface AndroidTileBitmap : TileBitmap {
+    val bitmap: Bitmap?
+}
+
+/**
+ * Android implementation of [TileBitmap]
+ *
  * @see [com.github.panpf.zoomimage.core.android.test.subsampling.AndroidTileBitmapTest]
  */
-class AndroidTileBitmap constructor(
-    val bitmap: Bitmap,
+private class AndroidTileBitmapImpl(
+    override val bitmap: Bitmap,
     override val key: String,
     override val bitmapFrom: BitmapFrom,
-) : TileBitmap {
+) : AndroidTileBitmap {
 
     override val width: Int = bitmap.width
 

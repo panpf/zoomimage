@@ -16,14 +16,7 @@
 
 package com.github.panpf.zoomimage.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.ImageSource
-
 /**
- * Create a [DecodeHelper] instance using [ImageSource]
+ * Sampling tiles
  */
-internal expect fun createDecodeHelper(imageSource: ImageSource): DecodeHelper
-
-/**
- * Checks whether the specified image type supports subsampling
- */
-internal expect fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean
+data class SamplingTiles(val sampleSize: Int, val tiles: List<Tile>)

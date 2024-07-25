@@ -32,6 +32,8 @@ fun ImageSource.Companion.fromContent(context: Context, uri: Uri): ContentImageS
 }
 
 /**
+ * An image source that reads from a content URI.
+ *
  * @see [com.github.panpf.zoomimage.core.android.test.subsampling.ContentImageSourceTest]
  */
 class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
@@ -60,31 +62,4 @@ class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
     override fun toString(): String {
         return "ContentImageSource('$uri')"
     }
-
-//    class Factory(val context: Context, val uri: Uri) : ImageSource.Factory {
-//
-//        override val key: String = uri.toString()
-//
-//        override suspend fun create(): ContentImageSource {
-//            return ContentImageSource(context, uri)
-//        }
-//
-//        override fun equals(other: Any?): Boolean {
-//            if (this === other) return true
-//            if (other !is Factory) return false
-//            if (context != other.context) return false
-//            if (uri != other.uri) return false
-//            return true
-//        }
-//
-//        override fun hashCode(): Int {
-//            var result = context.hashCode()
-//            result = 31 * result + uri.hashCode()
-//            return result
-//        }
-//
-//        override fun toString(): String {
-//            return "ContentImageSource.Factory('$uri')"
-//        }
-//    }
 }

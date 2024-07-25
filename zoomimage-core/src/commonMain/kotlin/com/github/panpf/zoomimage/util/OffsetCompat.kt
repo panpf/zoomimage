@@ -55,7 +55,7 @@ fun OffsetCompat(x: Float, y: Float) = OffsetCompat(packFloats(x, y))
  * Creates an offset. The first argument sets [x], the horizontal component,
  * and the second sets [y], the vertical component.
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest]
+ * Copy from androidx/compose/ui/geometry/Offset.kt
  */
 @JvmInline
 value class OffsetCompat internal constructor(internal val packedValue: Long) {
@@ -249,6 +249,8 @@ inline fun OffsetCompat.takeOrElse(block: () -> OffsetCompat): OffsetCompat =
 
 /**
  * Return short string descriptions, for example: '10.01x9.03'
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testToShortString]
  */
 fun OffsetCompat.toShortString(): String =
     if (isSpecified) "${x.format(2)}x${y.format(2)}" else "Unspecified"
@@ -259,6 +261,8 @@ fun OffsetCompat.toShortString(): String =
  * Returns an offset whose coordinates are the coordinates of the
  * left-hand-side operand (an OffsetCompat) multiplied by the scalar
  * right-hand-side operand (a Float).
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testTimes]
  */
 operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat =
     OffsetCompat(x = x * scaleFactor.scaleX, y = y * scaleFactor.scaleY)
@@ -269,12 +273,16 @@ operator fun OffsetCompat.times(scaleFactor: ScaleFactorCompat): OffsetCompat =
  * Returns an offset whose coordinates are the coordinates of the
  * left-hand-side operand (an OffsetCompat) divided by the scalar right-hand-side
  * operand (a Float).
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testDiv]
  */
 operator fun OffsetCompat.div(scaleFactor: ScaleFactorCompat): OffsetCompat =
     OffsetCompat(x = x / scaleFactor.scaleX, y = y / scaleFactor.scaleY)
 
 /**
  * Rotate the space by [rotation] degrees, and then return the rotated coordinates
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testRotateInSpace]
  */
 fun OffsetCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
@@ -288,6 +296,8 @@ fun OffsetCompat.rotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetComp
 
 /**
  * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated coordinates
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testReverseRotateInSpace]
  */
 fun OffsetCompat.reverseRotateInSpace(spaceSize: SizeCompat, rotation: Int): OffsetCompat {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
@@ -297,6 +307,8 @@ fun OffsetCompat.reverseRotateInSpace(spaceSize: SizeCompat, rotation: Int): Off
 
 /**
  * Limit the offset to the rectangular extent
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testLimitToRect]
  */
 fun OffsetCompat.limitTo(rect: RectCompat): OffsetCompat {
     return if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
@@ -311,6 +323,8 @@ fun OffsetCompat.limitTo(rect: RectCompat): OffsetCompat {
 
 /**
  * Limit offset to 0 to the range of size
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.OffsetCompatTest.testLimitToSize]
  */
 fun OffsetCompat.limitTo(size: SizeCompat): OffsetCompat =
     limitTo(RectCompat(0f, 0f, size.width, size.height))

@@ -82,7 +82,7 @@ class BitmapRegionDecoderDecodeHelperTest {
                 key = "",
                 region = IntRectCompat(100, 200, 300, 300),
                 sampleSize = 1
-            ).bitmap
+            ).bitmap!!
             bitmap11.apply {
                 assertEquals(200, width)
                 assertEquals(100, height)
@@ -92,7 +92,7 @@ class BitmapRegionDecoderDecodeHelperTest {
                 key = "",
                 region = IntRectCompat(100, 200, 300, 300),
                 sampleSize = 4
-            ).bitmap
+            ).bitmap!!
             bitmap12.apply {
                 assertEquals(50, width)
                 assertEquals(25, height)
@@ -110,7 +110,7 @@ class BitmapRegionDecoderDecodeHelperTest {
                     key = "",
                     region = IntRectCompat(100, 200, 300, 300),
                     sampleSize = 1
-                ).bitmap
+                ).bitmap!!
             bitmap2.apply {
                 assertEquals(200, width)
                 assertEquals(100, height)

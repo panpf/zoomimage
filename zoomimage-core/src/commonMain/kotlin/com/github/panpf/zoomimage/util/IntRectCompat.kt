@@ -25,8 +25,6 @@ import kotlin.math.roundToInt
  * An immutable, 2D, axis-aligned, integer bounds rectangle whose coordinates are relative to a given origin.
  *
  * Copy from androidx/compose/ui/unit/IntRect.kt
- *
- * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest]
  */
 data class IntRectCompat(
     /**
@@ -322,11 +320,15 @@ fun RectCompat.roundToIntRect(): IntRectCompat = IntRectCompat(
 
 /**
  * Return short string descriptions, for example: '[0x0,500x400]'
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testToShortString]
  */
 fun IntRectCompat.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
 /**
  * Returns an IntRectCompat scaled by multiplying [scale]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testTimes]
  */
 operator fun IntRectCompat.times(scale: Float): IntRectCompat =
     IntRectCompat(
@@ -338,6 +340,8 @@ operator fun IntRectCompat.times(scale: Float): IntRectCompat =
 
 /**
  * Returns an IntRectCompat scaled by multiplying [scaleFactor]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testTimes]
  */
 operator fun IntRectCompat.times(scaleFactor: ScaleFactorCompat): IntRectCompat =
     IntRectCompat(
@@ -349,6 +353,8 @@ operator fun IntRectCompat.times(scaleFactor: ScaleFactorCompat): IntRectCompat 
 
 /**
  * Returns an IntRectCompat scaled by dividing [scale]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testDiv]
  */
 operator fun IntRectCompat.div(scale: Float): IntRectCompat =
     IntRectCompat(
@@ -360,6 +366,8 @@ operator fun IntRectCompat.div(scale: Float): IntRectCompat =
 
 /**
  * Returns an IntRectCompat scaled by dividing [scaleFactor]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testDiv]
  */
 operator fun IntRectCompat.div(scaleFactor: ScaleFactorCompat): IntRectCompat =
     IntRectCompat(
@@ -371,6 +379,8 @@ operator fun IntRectCompat.div(scaleFactor: ScaleFactorCompat): IntRectCompat =
 
 /**
  * Limit the offset to the rectangular extent
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testLimitToRect]
  */
 fun IntRectCompat.limitTo(rect: IntRectCompat): IntRectCompat =
     if (this.left < rect.left || this.left > rect.right
@@ -390,12 +400,16 @@ fun IntRectCompat.limitTo(rect: IntRectCompat): IntRectCompat =
 
 /**
  * Limit Rect to 0 to the range of size
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testLimitToSize]
  */
 fun IntRectCompat.limitTo(size: IntSizeCompat): IntRectCompat =
     limitTo(IntRectCompat(0, 0, size.width, size.height))
 
 /**
  * Rotate the space by [rotation] degrees, and then return the rotated Rect
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testRotateInSpace]
  */
 fun IntRectCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
     require(rotation % 90 == 0) { "rotation must be a multiple of 90, rotation: $rotation" }
@@ -433,6 +447,8 @@ fun IntRectCompat.rotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRec
 
 /**
  * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated Rect
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testRotateInSpace]
  */
 fun IntRectCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int): IntRectCompat {
     val rotatedSpaceSize = spaceSize.rotate(rotation)
@@ -442,6 +458,8 @@ fun IntRectCompat.reverseRotateInSpace(spaceSize: IntSizeCompat, rotation: Int):
 
 /**
  * Flip this rect horizontally or vertically within a given container
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntRectCompatTest.testFlip]
  */
 fun IntRectCompat.flip(spaceSize: IntSizeCompat, vertical: Boolean = false): IntRectCompat {
     return if (!vertical) {

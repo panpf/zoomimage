@@ -113,7 +113,7 @@ class ExifOrientationTestFileHelper(
         val tileBitmap = AndroidTileBitmap(sourceBitmap, "", BitmapFrom.LOCAL)
         val newBitmap =
             ExifOrientationHelper(orientation)
-                .applyToTileBitmap(tileBitmap, reverse = true).bitmap
+                .applyToTileBitmap(tileBitmap, reverse = true).bitmap!!
         file.parentFile?.mkdirs()
         file.createNewFile()
         FileOutputStream(file).use {

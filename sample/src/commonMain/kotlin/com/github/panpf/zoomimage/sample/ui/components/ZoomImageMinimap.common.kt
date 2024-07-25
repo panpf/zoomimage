@@ -39,7 +39,7 @@ import com.github.panpf.zoomimage.sample.ui.util.isNotEmpty
 import com.github.panpf.zoomimage.sample.ui.util.times
 import com.github.panpf.zoomimage.sample.ui.util.toDp
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
-import com.github.panpf.zoomimage.subsampling.tileColor
+import com.github.panpf.zoomimage.subsampling.tileStateColor
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.launch
@@ -171,7 +171,7 @@ private fun ContentDrawScope.drawTilesBounds(
             right = ceil((tileSrcRect.right / widthTargetScale) - strokeHalfWidth).toInt(),
             bottom = ceil((tileSrcRect.bottom / heightTargetScale) - strokeHalfWidth).toInt()
         )
-        val boundsColor = tileColor(
+        val boundsColor = tileStateColor(
             state = tileSnapshot.state,
             bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom,
             withinLoadArea = load

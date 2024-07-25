@@ -25,6 +25,8 @@ import kotlin.math.roundToInt
 /**
  * Constructs a [TransformOriginCompat] from the given fractional values from the Layer's
  * width and height
+ *
+ * Copy from androidx/compose/ui/graphics/TransformOrigin.kt
  */
 fun TransformOriginCompat(pivotFractionX: Float, pivotFractionY: Float): TransformOriginCompat =
     TransformOriginCompat(packFloats(pivotFractionX, pivotFractionY))
@@ -33,8 +35,6 @@ fun TransformOriginCompat(pivotFractionX: Float, pivotFractionY: Float): Transfo
  * A two-dimensional position represented as a fraction of the Layer's width and height
  *
  * Copy from androidx/compose/ui/graphics/TransformOrigin.kt
- *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest]
  */
 @JvmInline
 value class TransformOriginCompat internal constructor(@PublishedApi internal val packedValue: Long) {
@@ -88,6 +88,8 @@ value class TransformOriginCompat internal constructor(@PublishedApi internal va
 
 /**
  * Return short string descriptions, for example: '0.52x0.52'
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest.testToShortString]
  */
 fun TransformOriginCompat.toShortString(): String =
     "${pivotFractionX.format(2)}x${pivotFractionY.format(2)}"
@@ -95,6 +97,8 @@ fun TransformOriginCompat.toShortString(): String =
 /**
  * [TransformOriginCompat] constant to indicate that the top start of the content should
  * be used for rotation and scale transformations
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest.testTopStart]
  */
 val TransformOriginCompat.Companion.TopStart
     get() = transformOriginCompatTopStart
@@ -104,21 +108,19 @@ private val transformOriginCompatTopStart by lazy {
 
 /**
  * Return a new [TransformOriginCompat] with the width and height multiplied by the [operand]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest.testTimes]
  */
 operator fun TransformOriginCompat.times(operand: Float) =
     TransformOriginCompat(pivotFractionX * operand, pivotFractionY * operand)
-
-/**
- * Return a new [TransformOriginCompat] with the width and height dividing by the [operand]
- */
-operator fun TransformOriginCompat.div(operand: Float) =
-    TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
 
 /**
  * Multiplication operator with [IntSizeCompat].
  *
  * Return a new [IntSizeCompat] with the width and height multiplied by the [TransformOriginCompat.pivotFractionX] and
  * [TransformOriginCompat.pivotFractionY] respectively
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest.testTimes]
  */
 operator fun IntSizeCompat.times(origin: TransformOriginCompat): IntSizeCompat =
     IntSizeCompat(
@@ -131,12 +133,22 @@ operator fun IntSizeCompat.times(origin: TransformOriginCompat): IntSizeCompat =
  *
  * Return a new [SizeCompat] with the width and height multiplied by the [TransformOriginCompat.pivotFractionX] and
  * [TransformOriginCompat.pivotFractionY] respectively
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest.testTimes]
  */
 operator fun SizeCompat.times(origin: TransformOriginCompat): SizeCompat =
     SizeCompat(
         width = this.width * origin.pivotFractionX,
         height = this.height * origin.pivotFractionY
     )
+
+/**
+ * Return a new [TransformOriginCompat] with the width and height dividing by the [operand]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest.testDiv]
+ */
+operator fun TransformOriginCompat.div(operand: Float) =
+    TransformOriginCompat(pivotFractionX / operand, pivotFractionY / operand)
 
 /**
  * Linearly interpolate between two [TransformOriginCompat] parameters
@@ -152,6 +164,8 @@ operator fun SizeCompat.times(origin: TransformOriginCompat): SizeCompat =
  *
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.TransformOriginCompatTest.testLerp]
  */
 fun lerp(
     start: TransformOriginCompat,

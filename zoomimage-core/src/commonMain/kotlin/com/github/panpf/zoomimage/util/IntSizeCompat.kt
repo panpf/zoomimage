@@ -33,7 +33,7 @@ fun IntSizeCompat(width: Int, height: Int): IntSizeCompat = IntSizeCompat(packIn
 /**
  * A two-dimensional size class used for measuring in [Int] pixels.
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest]
+ * Copy from androidx/compose/ui/unit/IntSize.kt
  */
 @JvmInline
 value class IntSizeCompat internal constructor(@PublishedApi internal val packedValue: Long) {
@@ -104,21 +104,29 @@ fun IntSizeCompat.toSize(): SizeCompat = SizeCompat(width.toFloat(), height.toFl
 
 /**
  * Return short string descriptions, for example: '100x200'
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testToShortString]
  */
 fun IntSizeCompat.toShortString(): String = "${width}x$height"
 
 /**
  * Return true if the size is empty
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testIsEmpty]
  */
 fun IntSizeCompat.isEmpty(): Boolean = width <= 0 || height <= 0
 
 /**
  * Return true if the size is not empty
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testIsNotEmpty]
  */
 fun IntSizeCompat.isNotEmpty(): Boolean = width > 0 && height > 0
 
 /**
  * Returns an IntSizeCompat scaled by multiplying [this] by [scaleFactor]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testTimes]
  */
 operator fun IntSizeCompat.times(scaleFactor: ScaleFactorCompat): IntSizeCompat {
     return IntSizeCompat(
@@ -128,7 +136,20 @@ operator fun IntSizeCompat.times(scaleFactor: ScaleFactorCompat): IntSizeCompat 
 }
 
 /**
+ * Returns an IntSizeCompat scaled by multiplying [this] by [scale]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testTimes]
+ */
+operator fun IntSizeCompat.times(scale: Float): IntSizeCompat =
+    IntSizeCompat(
+        width = (this.width * scale).roundToInt(),
+        height = (this.height * scale).roundToInt()
+    )
+
+/**
  * Returns an IntSizeCompat scaled by dividing [this] by [scaleFactor]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testDiv]
  */
 operator fun IntSizeCompat.div(scaleFactor: ScaleFactorCompat): IntSizeCompat {
     return IntSizeCompat(
@@ -138,16 +159,9 @@ operator fun IntSizeCompat.div(scaleFactor: ScaleFactorCompat): IntSizeCompat {
 }
 
 /**
- * Returns an IntSizeCompat scaled by multiplying [this] by [scale]
- */
-operator fun IntSizeCompat.times(scale: Float): IntSizeCompat =
-    IntSizeCompat(
-        width = (this.width * scale).roundToInt(),
-        height = (this.height * scale).roundToInt()
-    )
-
-/**
  * Returns an IntSizeCompat scaled by dividing [this] by [scale]
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testDiv]
  */
 operator fun IntSizeCompat.div(scale: Float): IntSizeCompat =
     IntSizeCompat(
@@ -157,6 +171,8 @@ operator fun IntSizeCompat.div(scale: Float): IntSizeCompat =
 
 /**
  * The size after rotating [rotation] degrees
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testRotate]
  */
 fun IntSizeCompat.rotate(rotation: Int): IntSizeCompat {
     return if (rotation % 180 == 0) this else IntSizeCompat(width = height, height = width)
@@ -164,6 +180,8 @@ fun IntSizeCompat.rotate(rotation: Int): IntSizeCompat {
 
 /**
  * The size after reverse rotating [rotation] degrees
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testReverseRotate]
  */
 fun IntSizeCompat.reverseRotate(rotation: Int): IntSizeCompat {
     val reverseRotation = (360 - rotation) % 360
@@ -172,6 +190,8 @@ fun IntSizeCompat.reverseRotate(rotation: Int): IntSizeCompat {
 
 /**
  * Returns true if the aspect ratio of itself and other is the same
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testIsSameAspectRatio]
  */
 fun IntSizeCompat.isSameAspectRatio(other: IntSizeCompat, delta: Float = 0f): Boolean {
     val selfScale = this.width / this.height.toFloat()
@@ -195,6 +215,8 @@ fun IntSizeCompat.isSameAspectRatio(other: IntSizeCompat, delta: Float = 0f): Bo
  * meaning that the interpolation is at the relevant point on the timeline
  * between [start] and [stop]. The interpolation can be extrapolated beyond 0.0 and
  * 1.0, so negative values and values greater than 1.0 are valid.
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testLerp]
  */
 fun lerp(start: IntSizeCompat, stop: IntSizeCompat, fraction: Float): IntSizeCompat =
     IntSizeCompat(
@@ -205,6 +227,8 @@ fun lerp(start: IntSizeCompat, stop: IntSizeCompat, fraction: Float): IntSizeCom
 /**
  * Returns a copy of this IntOffset instance optionally overriding the
  * x or y parameter
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.IntSizeCompatTest.testCopy]
  */
 fun IntSizeCompat.copy(width: Int = this.width, height: Int = this.height) =
     IntSizeCompat(width = width, height = height)

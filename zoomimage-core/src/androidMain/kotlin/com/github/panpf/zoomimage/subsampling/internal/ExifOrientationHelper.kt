@@ -21,7 +21,6 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
-import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -37,7 +36,12 @@ fun ExifOrientationHelper.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
     return imageInfo.copy(size = newSize)
 }
 
-class ExifOrientationHelper constructor(val exifOrientation: Int) {
+/**
+ * Helper class to handle image orientation based on Exif tags.
+ *
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.ExifOrientationHelperTest]
+ */
+class ExifOrientationHelper(val exifOrientation: Int) {
 
     /**
      * Returns if the current image orientation is flipped.
@@ -46,10 +50,10 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
      */
     val isFlipped: Boolean =
         when (exifOrientation) {
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL,
-            ExifInterface.ORIENTATION_TRANSVERSE,
-            ExifInterface.ORIENTATION_FLIP_VERTICAL,
-            ExifInterface.ORIENTATION_TRANSPOSE -> true
+            ORIENTATION_FLIP_HORIZONTAL,
+            ORIENTATION_TRANSVERSE,
+            ORIENTATION_FLIP_VERTICAL,
+            ORIENTATION_TRANSPOSE -> true
 
             else -> false
         }
@@ -67,28 +71,28 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
      */
     val rotationDegrees: Int =
         when (exifOrientation) {
-            ExifInterface.ORIENTATION_ROTATE_90,
-            ExifInterface.ORIENTATION_TRANSVERSE -> 90
+            ORIENTATION_ROTATE_90,
+            ORIENTATION_TRANSVERSE -> 90
 
-            ExifInterface.ORIENTATION_ROTATE_180,
-            ExifInterface.ORIENTATION_FLIP_VERTICAL -> 180
+            ORIENTATION_ROTATE_180,
+            ORIENTATION_FLIP_VERTICAL -> 180
 
-            ExifInterface.ORIENTATION_ROTATE_270,
-            ExifInterface.ORIENTATION_TRANSPOSE -> 270
+            ORIENTATION_ROTATE_270,
+            ORIENTATION_TRANSPOSE -> 270
 
-            ExifInterface.ORIENTATION_UNDEFINED,
-            ExifInterface.ORIENTATION_NORMAL,
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> 0
+            ORIENTATION_UNDEFINED,
+            ORIENTATION_NORMAL,
+            ORIENTATION_FLIP_HORIZONTAL -> 0
 
             else -> 0
         }
 
     val translation: Int =
         when (exifOrientation) {
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL,
-            ExifInterface.ORIENTATION_FLIP_VERTICAL,
-            ExifInterface.ORIENTATION_TRANSPOSE,
-            ExifInterface.ORIENTATION_TRANSVERSE -> -1
+            ORIENTATION_FLIP_HORIZONTAL,
+            ORIENTATION_FLIP_VERTICAL,
+            ORIENTATION_TRANSPOSE,
+            ORIENTATION_TRANSVERSE -> -1
 
             else -> 1
         }
@@ -124,7 +128,7 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
             return tileBitmap
         }
 
-        val bitmap = tileBitmap.bitmap
+        val bitmap = tileBitmap.bitmap!!
 
         val matrix = Matrix().apply {
             if (!reverse) {
@@ -158,21 +162,6 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
         return AndroidTileBitmap(outBitmap, tileBitmap.key, tileBitmap.bitmapFrom)
     }
 
-    fun name(): String {
-        return when (exifOrientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> "ROTATE_90"
-            ExifInterface.ORIENTATION_TRANSPOSE -> "TRANSPOSE"
-            ExifInterface.ORIENTATION_ROTATE_180 -> "ROTATE_180"
-            ExifInterface.ORIENTATION_FLIP_VERTICAL -> "FLIP_VERTICAL"
-            ExifInterface.ORIENTATION_ROTATE_270 -> "ROTATE_270"
-            ExifInterface.ORIENTATION_TRANSVERSE -> "TRANSVERSE"
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> "FLIP_HORIZONTAL"
-            ExifInterface.ORIENTATION_UNDEFINED -> "UNDEFINED"
-            ExifInterface.ORIENTATION_NORMAL -> "NORMAL"
-            else -> exifOrientation.toString()
-        }
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -185,7 +174,7 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
     }
 
     override fun toString(): String {
-        return "ExifOrientationHelper(${name()})"
+        return "ExifOrientationHelper(${name(exifOrientation)})"
     }
 
     companion object {
@@ -230,5 +219,18 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
          * Indicates the image is rotated by 270 degree clockwise.
          */
         const val ORIENTATION_ROTATE_270 = 8
+
+        fun name(exifOrientation: Int): String = when (exifOrientation) {
+            ORIENTATION_ROTATE_90 -> "ROTATE_90"
+            ORIENTATION_TRANSPOSE -> "TRANSPOSE"
+            ORIENTATION_ROTATE_180 -> "ROTATE_180"
+            ORIENTATION_FLIP_VERTICAL -> "FLIP_VERTICAL"
+            ORIENTATION_ROTATE_270 -> "ROTATE_270"
+            ORIENTATION_TRANSVERSE -> "TRANSVERSE"
+            ORIENTATION_FLIP_HORIZONTAL -> "FLIP_HORIZONTAL"
+            ORIENTATION_UNDEFINED -> "UNDEFINED"
+            ORIENTATION_NORMAL -> "NORMAL"
+            else -> exifOrientation.toString()
+        }
     }
 }

@@ -332,7 +332,7 @@ class RectCompatTest {
     }
 
     @Test
-    fun testReverseRotate() {
+    fun testReverseRotateInSpace() {
         val spaceSize = SizeCompat(1000f, 700f)
         val rect = RectCompat(100.2f, 200.7f, 600.9f, 500.4f)
 

@@ -51,28 +51,4 @@ class KotlinResourceImageSource(val resourcePath: String) : ImageSource {
     override fun toString(): String {
         return "KotlinResourceImageSource($resourcePath)"
     }
-
-//    class Factory(val resourcePath: String) : ImageSource.Factory {
-//
-//        override val key: String = resourcePath
-//
-//        override suspend fun create(): KotlinResourceImageSource {
-//            return KotlinResourceImageSource(resourcePath)
-//        }
-//
-//        override fun equals(other: Any?): Boolean {
-//            if (this === other) return true
-//            if (other !is Factory) return false
-//            if (resourcePath != other.resourcePath) return false
-//            return true
-//        }
-//
-//        override fun hashCode(): Int {
-//            return resourcePath.hashCode()
-//        }
-//
-//        override fun toString(): String {
-//            return "KotlinResourceImageSource.Factory($resourcePath)"
-//        }
-//    }
 }

@@ -23,7 +23,9 @@ import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 /**
- * @see [com.github.panpf.zoomimage.core.common.test.util.CoreOtherUtilsTest.testFormat]
+ * Format the float number to the specified number of decimal places
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testFormat]
  */
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
@@ -34,33 +36,26 @@ internal fun Float.format(newScale: Int): Float {
     }
 }
 
+/**
+ * Convert the object to a hexadecimal string
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testToHexString]
+ */
 internal fun Any.toHexString(): String = this.hashCode().toString(16)
 
-// Copy from androidx/compose/ui/geometry/GeometryUtils.kt
-// File of internal utility methods used for the geometry library
-internal fun Float.toStringAsFixed(digits: Int): String {
-    val clampedDigits: Int = kotlin.math.max(digits, 0) // Accept positive numbers and 0 only
-    val pow = 10f.pow(clampedDigits)
-    val shifted = this * pow // shift the given value by the corresponding power of 10
-    val decimal = shifted - shifted.toInt() // obtain the decimal of the shifted value
-    // Manually round up if the decimal value is greater than or equal to 0.5f.
-    // because kotlin.math.round(0.5f) rounds down
-    val roundedShifted = if (decimal >= 0.5f) {
-        shifted.toInt() + 1
-    } else {
-        shifted.toInt()
-    }
-
-    val rounded = roundedShifted / pow // divide off the corresponding power of 10 to shift back
-    return if (clampedDigits > 0) {
-        // If we have any decimal points, convert the float to a string
-        rounded.toString()
-    } else {
-        // If we do not have any decimal points, return the int
-        // based string representation
-        rounded.toInt().toString()
+/**
+ * Close the Closeable quietly
+ *
+ * @see [com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testQuietClose]
+ */
+internal fun Closeable.quietClose() {
+    try {
+        close()
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }
+
 
 /**
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
@@ -89,10 +84,31 @@ internal fun lerp(start: Long, stop: Long, fraction: Float): Long {
     return start + ((stop - start) * fraction.toDouble()).roundToLong()
 }
 
-internal fun Closeable.quietClose() {
-    try {
-        close()
-    } catch (e: Exception) {
-        e.printStackTrace()
+/**
+ * Convert the float to a string with the specified number of decimal places
+ *
+ * Copy from androidx/compose/ui/geometry/GeometryUtils.kt
+ */
+internal fun Float.toStringAsFixed(digits: Int): String {
+    val clampedDigits: Int = kotlin.math.max(digits, 0) // Accept positive numbers and 0 only
+    val pow = 10f.pow(clampedDigits)
+    val shifted = this * pow // shift the given value by the corresponding power of 10
+    val decimal = shifted - shifted.toInt() // obtain the decimal of the shifted value
+    // Manually round up if the decimal value is greater than or equal to 0.5f.
+    // because kotlin.math.round(0.5f) rounds down
+    val roundedShifted = if (decimal >= 0.5f) {
+        shifted.toInt() + 1
+    } else {
+        shifted.toInt()
+    }
+
+    val rounded = roundedShifted / pow // divide off the corresponding power of 10 to shift back
+    return if (clampedDigits > 0) {
+        // If we have any decimal points, convert the float to a string
+        rounded.toString()
+    } else {
+        // If we do not have any decimal points, return the int
+        // based string representation
+        rounded.toInt().toString()
     }
 }

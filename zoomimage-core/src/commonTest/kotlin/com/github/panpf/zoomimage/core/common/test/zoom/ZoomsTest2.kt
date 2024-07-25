@@ -35,7 +35,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class CoreZoomUtilsTest2 {
+class ZoomsTest2 {
 
     @Test
     fun testCalculateContentBaseDisplayRect() {

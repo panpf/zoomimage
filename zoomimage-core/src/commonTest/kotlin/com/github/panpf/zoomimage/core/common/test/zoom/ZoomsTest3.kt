@@ -39,7 +39,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class CoreZoomUtilsTest3 {
+class ZoomsTest3 {
 
     @Test
     fun testCalculateUserOffsetBounds() {

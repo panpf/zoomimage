@@ -31,6 +31,8 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 /**
+ * Create a [DecodeHelper] instance using [ImageSource], on the Android platform, [BitmapRegionDecoderDecodeHelper] will be used
+ *
  * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCreateDecodeHelper]
  */
 internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
@@ -38,6 +40,8 @@ internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
 }
 
 /**
+ * Decode the Exif orientation of the image
+ *
  * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeExifOrientation]
  */
 @WorkerThread
@@ -53,6 +57,8 @@ internal fun ImageSource.decodeExifOrientation(): Int {
 
 
 /**
+ * Decode the image width and height and mimeType
+ *
  * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeImageInfo]
  */
 internal fun ImageSource.decodeImageInfo(): ImageInfo {
@@ -118,28 +124,8 @@ internal fun calculateSampledBitmapSizeForRegion(
 }
 
 /**
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsInBitmapError]
- */
-internal fun isInBitmapError(throwable: Throwable): Boolean =
-    if (throwable is IllegalArgumentException) {
-        val message = throwable.message.orEmpty()
-        (message == "Problem decoding into existing bitmap" || message.contains("bitmap"))
-    } else {
-        false
-    }
-
-/**
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsSrcRectError]
- */
-internal fun isSrcRectError(throwable: Throwable): Boolean =
-    if (throwable is IllegalArgumentException) {
-        val message = throwable.message.orEmpty()
-        message == "rectangle is outside the image srcRect" || message.contains("srcRect")
-    } else {
-        false
-    }
-
-/**
+ * Checks whether the specified image type supports subsampling, on the Android platform, it mainly depends on the types supported by BitmapRegionDecoder.
+ *
  * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsSupportBitmapRegionDecoder]
  */
 @SuppressLint("ObsoleteSdkInt")

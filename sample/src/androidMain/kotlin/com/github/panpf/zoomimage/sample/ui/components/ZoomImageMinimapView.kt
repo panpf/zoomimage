@@ -35,7 +35,7 @@ import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.sketch.util.Size
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
-import com.github.panpf.zoomimage.subsampling.tileColor
+import com.github.panpf.zoomimage.subsampling.tileStateColor
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.isEmpty
 import com.github.panpf.zoomimage.util.isNotEmpty
@@ -96,7 +96,7 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                         ceil((tileSrcRect.bottom / heightTargetScale) - strokeHalfWidth).toInt()
                     )
                 }
-                val boundsColor = tileColor(
+                val boundsColor = tileStateColor(
                     state = tileSnapshot.state,
                     bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom,
                     withinLoadArea = load

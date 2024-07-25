@@ -5,17 +5,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class ContentImages private constructor() {
+class ContentImages private constructor(val context: Context) {
 
     companion object {
 
-        private var instance: ContentImages? = null
-
-        suspend fun with(context: Context): ContentImages {
+        suspend fun create(context: Context): ContentImages {
             saveToExternalFilesDir(context)
-            return instance ?: synchronized(this) {
-                instance ?: ContentImages().also { instance = it }
-            }
+            return ContentImages(context)
         }
 
         suspend fun saveToExternalFilesDir(context: Context) = withContext(Dispatchers.IO) {
@@ -41,8 +37,7 @@ class ContentImages private constructor() {
         }
     }
 
-    private val path =
-        "content://com.github.panpf.zoomimage.sample.fileprovider/asset_images/"
+    private val path = "content://${context.packageName}.fileprovider/asset_images/"
 
     val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("asset://", path)) }
     val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("asset://", path)) }

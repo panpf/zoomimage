@@ -44,7 +44,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
-class CoreZoomUtilsTest {
+class ZoomsTest {
 
     @Test
     fun testCalculateRotatedContentRect() {

@@ -30,6 +30,8 @@ fun ImageSource.Companion.fromAsset(context: Context, assetFileName: String): As
 }
 
 /**
+ * An image source created from an asset file name.
+ *
  * @see [com.github.panpf.zoomimage.core.android.test.subsampling.AssetImageSourceTest]
  */
 class AssetImageSource(val context: Context, val assetFileName: String) : ImageSource {
@@ -57,31 +59,4 @@ class AssetImageSource(val context: Context, val assetFileName: String) : ImageS
     override fun toString(): String {
         return "AssetImageSource('$assetFileName')"
     }
-
-//    class Factory(val context: Context, val assetFileName: String) : ImageSource.Factory {
-//
-//        override val key: String = "asset://$assetFileName"
-//
-//        override suspend fun create(): AssetImageSource {
-//            return AssetImageSource(context, assetFileName)
-//        }
-//
-//        override fun equals(other: Any?): Boolean {
-//            if (this === other) return true
-//            if (other !is Factory) return false
-//            if (context != other.context) return false
-//            if (assetFileName != other.assetFileName) return false
-//            return true
-//        }
-//
-//        override fun hashCode(): Int {
-//            var result = context.hashCode()
-//            result = 31 * result + assetFileName.hashCode()
-//            return result
-//        }
-//
-//        override fun toString(): String {
-//            return "AssetImageSource.Factory('$assetFileName')"
-//        }
-//    }
 }

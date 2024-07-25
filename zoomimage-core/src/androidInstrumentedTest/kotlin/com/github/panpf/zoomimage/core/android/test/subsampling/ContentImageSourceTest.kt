@@ -18,7 +18,7 @@ class ContentImageSourceTest {
     @Test
     fun testFromContent() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImages.with(context)
+        val contentImages = ContentImages.create(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 
@@ -41,7 +41,7 @@ class ContentImageSourceTest {
     @Test
     fun testKey() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImages.with(context)
+        val contentImages = ContentImages.create(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 
@@ -58,7 +58,7 @@ class ContentImageSourceTest {
     @Test
     fun testOpenSource() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImages.with(context)
+        val contentImages = ContentImages.create(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 
@@ -74,7 +74,7 @@ class ContentImageSourceTest {
     @Test
     fun testEqualsAndHashCode() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImages.with(context)
+        val contentImages = ContentImages.create(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 
@@ -97,7 +97,7 @@ class ContentImageSourceTest {
     @Test
     fun testToString() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
-        val contentImages = ContentImages.with(context)
+        val contentImages = ContentImages.create(context)
         val uri1 = contentImages.cat.uri.toUri()
         val uri2 = contentImages.dog.uri.toUri()
 

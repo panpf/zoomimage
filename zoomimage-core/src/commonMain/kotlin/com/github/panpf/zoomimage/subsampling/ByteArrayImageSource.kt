@@ -55,28 +55,4 @@ class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
     override fun toString(): String {
         return "ByteArrayImageSource('$byteArray')"
     }
-
-//    class Factory(val byteArray: ByteArray) : ImageSource.Factory {
-//
-//        override val key: String = byteArray.toString()
-//
-//        override suspend fun create(): ByteArrayImageSource {
-//            return ByteArrayImageSource(byteArray)
-//        }
-//
-//        override fun equals(other: Any?): Boolean {
-//            if (this === other) return true
-//            if (other !is Factory) return false
-//            if (!byteArray.contentEquals(other.byteArray)) return false
-//            return true
-//        }
-//
-//        override fun hashCode(): Int {
-//            return byteArray.hashCode()
-//        }
-//
-//        override fun toString(): String {
-//            return "ByteArrayImageSource.Factory('$byteArray')"
-//        }
-//    }
 }

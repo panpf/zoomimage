@@ -49,6 +49,8 @@ interface ImageSource {
     companion object
 
     /**
+     * Wrapper factory
+     *
      * @see [com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest.testWrapperFactory]
      */
     class WrapperFactory(val imageSource: ImageSource) : Factory {
@@ -75,6 +77,8 @@ interface ImageSource {
 }
 
 /**
+ * Convert [ImageSource] to [ImageSource.Factory]
+ *
  * @see [com.github.panpf.zoomimage.core.common.test.subsampling.ImageSourceTest.testToFactory]
  */
 fun ImageSource.toFactory(): ImageSource.Factory = ImageSource.WrapperFactory(this)
