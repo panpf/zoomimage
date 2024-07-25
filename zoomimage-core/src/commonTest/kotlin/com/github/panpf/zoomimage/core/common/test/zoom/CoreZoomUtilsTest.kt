@@ -1,8 +1,8 @@
 package com.github.panpf.zoomimage.core.common.test.zoom
 
 import com.github.panpf.zoomimage.util.IntSizeCompat as IntSize
-import com.github.panpf.zoomimage.core.common.test.internal.Item
-import com.github.panpf.zoomimage.core.common.test.internal.printlnBatchBuildExpression
+import com.github.panpf.zoomimage.test.Item
+import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
 import com.github.panpf.zoomimage.util.RectCompat

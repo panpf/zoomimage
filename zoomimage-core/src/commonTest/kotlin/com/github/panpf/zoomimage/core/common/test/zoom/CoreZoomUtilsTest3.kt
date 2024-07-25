@@ -5,8 +5,8 @@ import com.github.panpf.zoomimage.util.OffsetCompat as Offset
 import com.github.panpf.zoomimage.util.RectCompat as Rect
 import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
-import com.github.panpf.zoomimage.core.common.test.internal.Item
-import com.github.panpf.zoomimage.core.common.test.internal.printlnBatchBuildExpression
+import com.github.panpf.zoomimage.test.Item
+import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomEnd

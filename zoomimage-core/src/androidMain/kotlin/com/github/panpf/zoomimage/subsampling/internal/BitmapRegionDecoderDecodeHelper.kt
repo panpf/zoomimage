@@ -9,11 +9,8 @@ import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.IntSizeCompat
 import okio.buffer
-import okio.use
 import java.io.BufferedInputStream
 
 /**
@@ -33,7 +30,7 @@ class BitmapRegionDecoderDecodeHelper(
         key: String,
         region: IntRectCompat,
         sampleSize: Int
-    ): TileBitmap {
+    ): AndroidTileBitmap {
         val options = BitmapFactory.Options().apply {
             inSampleSize = sampleSize
         }
@@ -89,9 +86,9 @@ class BitmapRegionDecoderDecodeHelper(
     class Factory : DecodeHelper.Factory {
 
         override fun create(imageSource: ImageSource): BitmapRegionDecoderDecodeHelper {
-            val imageInfo = decodeImageInfo(imageSource)
-            val exifOrientation1 = imageSource.decodeExifOrientation().getOrThrow()
-            val exifOrientationHelper = ExifOrientationHelper(exifOrientation1)
+            val imageInfo = imageSource.decodeImageInfo()
+            val exifOrientation = imageSource.decodeExifOrientation()
+            val exifOrientationHelper = ExifOrientationHelper(exifOrientation)
             val correctedImageInfo = exifOrientationHelper.applyToImageInfo(imageInfo)
             val supportRegion = checkSupportSubsamplingByMimeType(imageInfo.mimeType)
             return BitmapRegionDecoderDecodeHelper(
@@ -100,22 +97,6 @@ class BitmapRegionDecoderDecodeHelper(
                 supportRegion = supportRegion,
                 exifOrientationHelper = exifOrientationHelper
             )
-        }
-
-        private fun decodeImageInfo(imageSource: ImageSource): ImageInfo {
-            val boundOptions = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
-            println("openSource: decodeImageInfo")
-            imageSource.openSource().buffer().inputStream().use {
-                BitmapFactory.decodeStream(it, null, boundOptions)
-            }
-            val mimeType = boundOptions.outMimeType.orEmpty()
-            val imageSize = IntSizeCompat(
-                width = boundOptions.outWidth,
-                height = boundOptions.outHeight
-            )
-            return ImageInfo(size = imageSize, mimeType = mimeType)
         }
     }
 }

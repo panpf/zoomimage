@@ -24,11 +24,16 @@ import java.io.FileNotFoundException
 
 /**
  * Create an image source from a content URI.
+ *
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.ContentImageSourceTest.testFromContent]
  */
 fun ImageSource.Companion.fromContent(context: Context, uri: Uri): ContentImageSource {
     return ContentImageSource(context, uri)
 }
 
+/**
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.ContentImageSourceTest]
+ */
 class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
 
     override val key: String = uri.toString()

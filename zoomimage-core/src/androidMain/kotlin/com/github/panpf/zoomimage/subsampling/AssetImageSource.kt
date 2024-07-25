@@ -22,11 +22,16 @@ import okio.source
 
 /**
  * Create an image source from an asset file name.
+ *
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.AssetImageSourceTest.testFromAsset]
  */
 fun ImageSource.Companion.fromAsset(context: Context, assetFileName: String): AssetImageSource {
     return AssetImageSource(context, assetFileName)
 }
 
+/**
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.AssetImageSourceTest]
+ */
 class AssetImageSource(val context: Context, val assetFileName: String) : ImageSource {
 
     override val key: String = "asset://$assetFileName"

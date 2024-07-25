@@ -37,6 +37,22 @@ class FileImageSourceTest {
     }
 
     @Test
+    fun testKey() = runTest {
+        val localImages = LocalImages.with()
+        val path1 = localImages.cat.uri.replace("file://", "")
+        val path2 = localImages.dog.uri.replace("file://", "")
+
+        assertEquals(
+            expected = path1,
+            actual = FileImageSource(path1.toPath()).key
+        )
+        assertEquals(
+            expected = path2,
+            actual = FileImageSource(path2.toPath()).key
+        )
+    }
+
+    @Test
     fun testOpenSource() = runTest {
         val localImages = LocalImages.with()
         val path1 = localImages.cat.uri.replace("file://", "")

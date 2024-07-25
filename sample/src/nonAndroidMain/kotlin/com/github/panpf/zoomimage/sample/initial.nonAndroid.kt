@@ -14,13 +14,10 @@ fun cleanImageLoaderMemoryCache() {
         val coilContext = CoilPlatformContext.INSTANCE
         val appSettings = sketchContext.appSettings
         appSettings.composeImageLoader.ignoreFirst().collect { newImageLoader ->
-            println("Switch image loader to $newImageLoader")
             if (newImageLoader != "Sketch" && newImageLoader != "Basic") {
-                println("Clean Sketch memory cache")
                 SingletonSketch.get(sketchContext).memoryCache.clear()
             }
             if (newImageLoader != "Coil") {
-                println("Clean Coil memory cache")
                 SingletonImageLoader.get(coilContext).memoryCache?.clear()
             }
         }

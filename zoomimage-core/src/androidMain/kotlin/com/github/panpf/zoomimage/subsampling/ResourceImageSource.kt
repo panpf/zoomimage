@@ -25,6 +25,8 @@ import okio.source
 
 /**
  * Create an image source from a resource id.
+ *
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.ResourceImageSourceTest.testFromResource]
  */
 fun ImageSource.Companion.fromResource(
     resources: Resources,
@@ -35,6 +37,8 @@ fun ImageSource.Companion.fromResource(
 
 /**
  * Create an image source from a resource id.
+ *
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.ResourceImageSourceTest.testFromResource]
  */
 fun ImageSource.Companion.fromResource(
     context: Context,
@@ -43,6 +47,9 @@ fun ImageSource.Companion.fromResource(
     return ResourceImageSource(context, resId)
 }
 
+/**
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.ResourceImageSourceTest]
+ */
 class ResourceImageSource(
     val resources: Resources,
     @RawRes @DrawableRes val resId: Int

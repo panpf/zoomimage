@@ -18,10 +18,15 @@ package com.github.panpf.zoomimage.util
 
 import android.util.Log
 
+/**
+ * @see [com.github.panpf.zoomimage.core.android.test.util.AndroidLoggerPipelineTest.testDefaultLogPipeline]
+ */
 actual fun defaultLogPipeline(): Logger.Pipeline = AndroidLogPipeline
 
 /**
  * The pipeline of the log, which prints the log to the Android logcat
+ *
+ * @see [com.github.panpf.zoomimage.core.android.test.util.AndroidLoggerPipelineTest]
  */
 object AndroidLogPipeline : Logger.Pipeline {
 

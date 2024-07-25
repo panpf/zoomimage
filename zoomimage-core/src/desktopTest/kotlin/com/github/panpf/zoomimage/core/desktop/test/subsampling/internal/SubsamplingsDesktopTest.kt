@@ -5,8 +5,8 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
-import com.github.panpf.zoomimage.test.util.toImageSource
-import com.github.panpf.zoomimage.test.util.toIntSizeCompat
+import com.github.panpf.zoomimage.test.toImageSource
+import com.github.panpf.zoomimage.test.toIntSizeCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.ScaleFactorCompat

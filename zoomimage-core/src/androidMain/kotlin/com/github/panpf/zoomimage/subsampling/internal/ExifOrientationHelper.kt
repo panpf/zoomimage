@@ -24,12 +24,12 @@ import android.graphics.RectF
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
-import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.flip
 import com.github.panpf.zoomimage.util.rotate
 import com.github.panpf.zoomimage.util.rotateInSpace
+import com.github.panpf.zoomimage.util.safeConfig
 import kotlin.math.abs
 
 fun ExifOrientationHelper.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
@@ -116,15 +116,15 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
     }
 
     fun applyToTileBitmap(
-        tileBitmap: TileBitmap,
+        tileBitmap: AndroidTileBitmap,
         reverse: Boolean = false,
-    ): TileBitmap {
+    ): AndroidTileBitmap {
         val isRotated = abs(rotationDegrees % 360) != 0
         if (!isFlipped && !isRotated) {
             return tileBitmap
         }
 
-        val bitmap = (tileBitmap as AndroidTileBitmap).bitmap!!
+        val bitmap = tileBitmap.bitmap
 
         val matrix = Matrix().apply {
             if (!reverse) {
@@ -171,6 +171,17 @@ class ExifOrientationHelper constructor(val exifOrientation: Int) {
             ExifInterface.ORIENTATION_NORMAL -> "NORMAL"
             else -> exifOrientation.toString()
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as ExifOrientationHelper
+        return exifOrientation == other.exifOrientation
+    }
+
+    override fun hashCode(): Int {
+        return exifOrientation
     }
 
     override fun toString(): String {

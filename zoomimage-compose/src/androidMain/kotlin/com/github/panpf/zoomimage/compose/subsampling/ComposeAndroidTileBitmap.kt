@@ -51,7 +51,18 @@ class ComposeAndroidTileBitmap constructor(
         tileBitmap.recycle()
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as ComposeAndroidTileBitmap
+        return tileBitmap == other.tileBitmap
+    }
+
+    override fun hashCode(): Int {
+        return tileBitmap.hashCode()
+    }
+
     override fun toString(): String {
-        return "AndroidComposeTileBitmap($tileBitmap)"
+        return "ComposeAndroidTileBitmap($tileBitmap)"
     }
 }

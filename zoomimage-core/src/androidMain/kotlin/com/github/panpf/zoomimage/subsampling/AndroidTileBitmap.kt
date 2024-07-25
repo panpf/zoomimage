@@ -17,23 +17,16 @@
 package com.github.panpf.zoomimage.subsampling
 
 import android.graphics.Bitmap
-import com.github.panpf.zoomimage.subsampling.internal.toLogString
+import com.github.panpf.zoomimage.util.toLogString
 
-fun AndroidTileBitmap(
-    bitmap: Bitmap,
-    key: String,
-    bitmapFrom: BitmapFrom
-): AndroidTileBitmap = AndroidTileBitmapImpl(bitmap, key, bitmapFrom)
-
-interface AndroidTileBitmap : TileBitmap {
-    val bitmap: Bitmap?
-}
-
-private class AndroidTileBitmapImpl(
-    override val bitmap: Bitmap,
+/**
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.AndroidTileBitmapTest]
+ */
+class AndroidTileBitmap constructor(
+    val bitmap: Bitmap,
     override val key: String,
     override val bitmapFrom: BitmapFrom,
-) : AndroidTileBitmap {
+) : TileBitmap {
 
     override val width: Int = bitmap.width
 
@@ -50,6 +43,23 @@ private class AndroidTileBitmapImpl(
 
     override fun recycle() {
         bitmap.recycle()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as AndroidTileBitmap
+        if (bitmap != other.bitmap) return false
+        if (key != other.key) return false
+        if (bitmapFrom != other.bitmapFrom) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = bitmap.hashCode()
+        result = 31 * result + key.hashCode()
+        result = 31 * result + bitmapFrom.hashCode()
+        return result
     }
 
     override fun toString(): String {

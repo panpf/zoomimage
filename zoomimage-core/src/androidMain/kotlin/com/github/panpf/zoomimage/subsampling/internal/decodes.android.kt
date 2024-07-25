@@ -17,35 +17,57 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import androidx.exifinterface.media.ExifInterface
 import com.github.panpf.zoomimage.annotation.WorkerThread
+import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import okio.buffer
+import okio.use
 import kotlin.math.ceil
 import kotlin.math.floor
 
+/**
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCreateDecodeHelper]
+ */
 internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
     return BitmapRegionDecoderDecodeHelper.Factory().create(imageSource)
 }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testReadExifOrientation]
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeExifOrientation]
  */
 @WorkerThread
-internal fun ImageSource.decodeExifOrientation(): Result<Int> = runCatching {
-    println("openSource: decodeExifOrientation")
-    val source = openSource()
-    val inputStream = source.buffer().inputStream()
-    val exifOrientation = inputStream.use {
+internal fun ImageSource.decodeExifOrientation(): Int {
+    val exifOrientation = openSource().buffer().inputStream().use {
         ExifInterface(it).getAttributeInt(
             /* tag = */ ExifInterface.TAG_ORIENTATION,
             /* defaultValue = */ ExifInterface.ORIENTATION_UNDEFINED
         )
     }
-    exifOrientation
+    return exifOrientation
+}
+
+
+/**
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeImageInfo]
+ */
+internal fun ImageSource.decodeImageInfo(): ImageInfo {
+    val boundOptions = BitmapFactory.Options().apply {
+        inJustDecodeBounds = true
+    }
+    openSource().buffer().inputStream().use {
+        BitmapFactory.decodeStream(it, null, boundOptions)
+    }
+    val mimeType = boundOptions.outMimeType.orEmpty()
+    val imageSize = IntSizeCompat(
+        width = boundOptions.outWidth,
+        height = boundOptions.outHeight
+    )
+    return ImageInfo(size = imageSize, mimeType = mimeType)
 }
 
 /**
@@ -53,7 +75,7 @@ internal fun ImageSource.decodeExifOrientation(): Result<Int> = runCatching {
  *
  * Test results based on the BitmapRegionDecoderTest.testInBitmapAndInSampleSize() method
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSupportInBitmapForRegion]
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsSupportInBitmapForRegion]
  */
 @SuppressLint("ObsoleteSdkInt")
 internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
@@ -72,7 +94,7 @@ internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
 /**
  * Calculate the size of the sampled Bitmap, support for BitmapRegionDecoder
  *
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testCalculateSampledBitmapSizeForRegion]
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCalculateSampledBitmapSizeForRegion]
  */
 internal fun calculateSampledBitmapSizeForRegion(
     regionSize: IntSizeCompat,
@@ -96,7 +118,7 @@ internal fun calculateSampledBitmapSizeForRegion(
 }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsInBitmapError]
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsInBitmapError]
  */
 internal fun isInBitmapError(throwable: Throwable): Boolean =
     if (throwable is IllegalArgumentException) {
@@ -107,7 +129,7 @@ internal fun isInBitmapError(throwable: Throwable): Boolean =
     }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSrcRectError]
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsSrcRectError]
  */
 internal fun isSrcRectError(throwable: Throwable): Boolean =
     if (throwable is IllegalArgumentException) {
@@ -118,7 +140,7 @@ internal fun isSrcRectError(throwable: Throwable): Boolean =
     }
 
 /**
- * @see [com.github.panpf.zoomimage.core.test.subsampling.internal.AndroidTileDecodeUtilsTest.testIsSupportBitmapRegionDecoder]
+ * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsSupportBitmapRegionDecoder]
  */
 @SuppressLint("ObsoleteSdkInt")
 internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =

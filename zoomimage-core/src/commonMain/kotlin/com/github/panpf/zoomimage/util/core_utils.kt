@@ -22,6 +22,9 @@ import kotlin.math.round
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
+/**
+ * @see [com.github.panpf.zoomimage.core.common.test.util.CoreOtherUtilsTest.testFormat]
+ */
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
         this

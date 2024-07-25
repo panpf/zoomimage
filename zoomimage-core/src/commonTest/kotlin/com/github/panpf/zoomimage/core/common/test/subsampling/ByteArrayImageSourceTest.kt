@@ -33,6 +33,23 @@ class ByteArrayImageSourceTest {
     }
 
     @Test
+    fun testKey() {
+        val string1 = "1234567890"
+        val string2 = "abcdefghij"
+
+        val bytes1 = string1.encodeToByteArray()
+        val bytes2 = string2.encodeToByteArray()
+        assertEquals(
+            expected = bytes1.toString(),
+            actual = ByteArrayImageSource(bytes1).key
+        )
+        assertEquals(
+            expected = bytes2.toString(),
+            actual = ByteArrayImageSource(bytes2).key
+        )
+    }
+
+    @Test
     fun testOpenSource() {
         val string1 = "1234567890"
         val string2 = "abcdefghij"

@@ -14,6 +14,10 @@ open class ImageFile(
         size: Size = this.size,
         exifOrientation: Int = this.exifOrientation,
     ): ImageFile = ImageFile(uri, name, size, exifOrientation)
+
+    override fun toString(): String {
+        return "ImageFile(uri='$uri', name='$name', size=$size, exifOrientation=$exifOrientation)"
+    }
 }
 
 class ResourceImageFile(
@@ -26,6 +30,11 @@ class ResourceImageFile(
     name = name,
     size = size,
     exifOrientation = exifOrientation,
-)
+) {
+
+    override fun toString(): String {
+        return "ResourceImageFile(resourceName='$resourceName', uri='$uri', name='$name', size=$size, exifOrientation=$exifOrientation)"
+    }
+}
 
 expect fun resourceNameToUri(name: String): String

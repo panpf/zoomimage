@@ -39,6 +39,23 @@ class SkiaTileBitmap(
 
     override fun recycle() {}
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as SkiaTileBitmap
+        if (bitmap != other.bitmap) return false
+        if (key != other.key) return false
+        if (bitmapFrom != other.bitmapFrom) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = bitmap.hashCode()
+        result = 31 * result + key.hashCode()
+        result = 31 * result + bitmapFrom.hashCode()
+        return result
+    }
+
     override fun toString(): String {
         return "SkiaTileBitmap(key='$key', bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
     }

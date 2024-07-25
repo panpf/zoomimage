@@ -17,43 +17,8 @@
 package com.github.panpf.zoomimage.compose.subsampling
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.github.panpf.zoomimage.compose.internal.toLogString
-import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.TileBitmap
-
-fun ComposeTileBitmap(
-    bitmap: ImageBitmap,
-    key: String,
-    bitmapFrom: BitmapFrom
-): ComposeTileBitmap = ComposeTileBitmapImpl(bitmap, key, bitmapFrom)
 
 interface ComposeTileBitmap : TileBitmap {
     val bitmap: ImageBitmap
-}
-
-private class ComposeTileBitmapImpl(
-    override val bitmap: ImageBitmap,
-    override val key: String,
-    override val bitmapFrom: BitmapFrom,
-) : ComposeTileBitmap {
-
-    override val width: Int = bitmap.width
-
-    override val height: Int = bitmap.height
-
-    override val byteCount: Long = 4L * width * height
-
-    override val isRecycled: Boolean = false
-
-    override fun setIsDisplayed(displayed: Boolean) {
-
-    }
-
-    override fun recycle() {
-
-    }
-
-    override fun toString(): String {
-        return "ComposeTileBitmap(key='$key', bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
-    }
 }
