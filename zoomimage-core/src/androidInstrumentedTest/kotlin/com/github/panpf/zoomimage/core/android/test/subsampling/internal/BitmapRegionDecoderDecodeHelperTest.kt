@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 
 import android.graphics.Bitmap
-import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.internal.BitmapRegionDecoderDecodeHelper
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
@@ -19,10 +18,8 @@ class BitmapRegionDecoderDecodeHelperTest {
 
     @Test
     fun testFactory() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-
         val dogImageFile = ResourceImages.dog
-        val dogImageSource = dogImageFile.toImageSource(context)
+        val dogImageSource = dogImageFile.toImageSource()
         BitmapRegionDecoderDecodeHelper.Factory().create(dogImageSource).apply {
             assertSame(dogImageSource, imageSource)
             assertEquals(dogImageFile.size.toIntSizeCompat(), imageInfo.size)
@@ -34,7 +31,7 @@ class BitmapRegionDecoderDecodeHelperTest {
         }
 
         val animImageFile = ResourceImages.anim
-        val animImageSource = animImageFile.toImageSource(context)
+        val animImageSource = animImageFile.toImageSource()
         BitmapRegionDecoderDecodeHelper.Factory().create(animImageSource).apply {
             assertSame(animImageSource, imageSource)
             assertEquals(animImageFile.size.toIntSizeCompat(), imageInfo.size)
@@ -46,7 +43,7 @@ class BitmapRegionDecoderDecodeHelperTest {
         }
 
         val exifRotate180ImageFile = ResourceImages.exifRotate180
-        val exifRotate180ImageSource = exifRotate180ImageFile.toImageSource(context)
+        val exifRotate180ImageSource = exifRotate180ImageFile.toImageSource()
         BitmapRegionDecoderDecodeHelper.Factory().create(exifRotate180ImageSource).apply {
             assertSame(exifRotate180ImageSource, imageSource)
             assertEquals(exifRotate180ImageFile.size.toIntSizeCompat(), imageInfo.size)
@@ -58,7 +55,7 @@ class BitmapRegionDecoderDecodeHelperTest {
         }
 
         val exifTransposeImageFile = ResourceImages.exifTranspose
-        val exifTransposeImageSource = exifTransposeImageFile.toImageSource(context)
+        val exifTransposeImageSource = exifTransposeImageFile.toImageSource()
         BitmapRegionDecoderDecodeHelper.Factory().create(exifTransposeImageSource).apply {
             assertSame(exifTransposeImageSource, imageSource)
             assertEquals(exifTransposeImageFile.size.toIntSizeCompat(), imageInfo.size)
@@ -72,9 +69,7 @@ class BitmapRegionDecoderDecodeHelperTest {
 
     @Test
     fun test() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-
-        val imageSource1 = ResourceImages.exifNormal.toImageSource(context)
+        val imageSource1 = ResourceImages.exifNormal.toImageSource()
         val decodeHelper1 = BitmapRegionDecoderDecodeHelper.Factory().create(imageSource1)
         val bitmap11: Bitmap
         try {
@@ -101,7 +96,7 @@ class BitmapRegionDecoderDecodeHelperTest {
             decodeHelper1.close()
         }
 
-        val imageSource2 = ResourceImages.exifRotate90.toImageSource(context)
+        val imageSource2 = ResourceImages.exifRotate90.toImageSource()
         val tileDecoder2 = BitmapRegionDecoderDecodeHelper.Factory().create(imageSource2)
         val bitmap2: Bitmap
         try {

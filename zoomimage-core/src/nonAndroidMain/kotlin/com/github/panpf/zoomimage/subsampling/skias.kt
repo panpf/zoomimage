@@ -18,29 +18,21 @@ package com.github.panpf.zoomimage.subsampling
 
 /**
  * Give org.jetbrains.skia.Bitmap an alias called SkiaBitmap
- *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.SkiasTest.testSkiaBitmap
  */
 typealias SkiaBitmap = org.jetbrains.skia.Bitmap
 
 /**
  * Give org.jetbrains.skia.Canvas an alias called SkiaCanvas
- *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.SkiasTest.testSkiaCanvas
  */
 typealias SkiaCanvas = org.jetbrains.skia.Canvas
 
 /**
  * Give org.jetbrains.skia.Rect an alias called SkiaRect
- *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.SkiasTest.testSkiaRect
  */
 typealias SkiaRect = org.jetbrains.skia.Rect
 
 /**
  * Give org.jetbrains.skia.Image an alias called SkiaImage
- *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.SkiasTest.testSkiaImage
  */
 typealias SkiaImage = org.jetbrains.skia.Image
 

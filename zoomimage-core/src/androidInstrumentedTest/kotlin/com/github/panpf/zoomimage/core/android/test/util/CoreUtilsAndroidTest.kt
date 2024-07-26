@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.core.android.test.util
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
-import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.test.toImageSource
@@ -95,8 +94,7 @@ class CoreUtilsAndroidTest {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val context = InstrumentationRegistry.getInstrumentation().context
-            ResourceImages.dog.toImageSource(context).openSource().buffer().inputStream().use {
+            ResourceImages.dog.toImageSource().openSource().buffer().inputStream().use {
                 BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply {
                     inPreferredConfig = Bitmap.Config.HARDWARE
                 })

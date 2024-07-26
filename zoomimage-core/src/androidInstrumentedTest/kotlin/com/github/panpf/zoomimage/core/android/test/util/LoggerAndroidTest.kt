@@ -5,7 +5,7 @@ import com.github.panpf.zoomimage.util.defaultLogPipeline
 import kotlin.test.Test
 import kotlin.test.assertSame
 
-class AndroidLoggerPipelineTest {
+class LoggerAndroidTest {
 
     @Test
     fun testDefaultLogPipeline() {

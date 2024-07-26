@@ -17,14 +17,6 @@
 package com.github.panpf.zoomimage.subsampling.internal
 
 import com.github.panpf.zoomimage.subsampling.ImageSource
-import com.github.panpf.zoomimage.subsampling.SkiaBitmap
-import com.github.panpf.zoomimage.subsampling.SkiaCanvas
-import com.github.panpf.zoomimage.subsampling.SkiaImage
-import com.github.panpf.zoomimage.subsampling.SkiaRect
-import com.github.panpf.zoomimage.util.IntRectCompat
-import com.github.panpf.zoomimage.util.IntSizeCompat
-import com.github.panpf.zoomimage.util.toSkiaRect
-import kotlin.math.ceil
 
 /**
  * Create a [DecodeHelper] instance using [ImageSource], on the non Android platform, [SkiaDecodeHelper] will be used
@@ -43,39 +35,3 @@ internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
  */
 internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
     !"image/gif".equals(mimeType, true)
-
-/**
- * Decode the specified region of the image
- *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testDecodeRegion
- */
-internal fun SkiaImage.decodeRegion(srcRect: IntRectCompat, sampleSize: Int): SkiaBitmap {
-    val bitmapSize =
-        calculateSampledBitmapSize(IntSizeCompat(srcRect.width, srcRect.height), sampleSize)
-    val bitmap = SkiaBitmap().apply {
-        allocN32Pixels(bitmapSize.width, bitmapSize.height)
-    }
-    val canvas = SkiaCanvas(bitmap)
-    canvas.drawImageRect(
-        image = this,
-        src = srcRect.toSkiaRect(),
-        dst = SkiaRect.makeWH(bitmapSize.width.toFloat(), bitmapSize.height.toFloat())
-    )
-    return bitmap
-}
-
-/**
- * Calculate the size of the sampled Bitmap
- *
- * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.DecodesNonAndroidTest.testCalculateSampledBitmapSize
- */
-internal fun calculateSampledBitmapSize(
-    imageSize: IntSizeCompat,
-    sampleSize: Int,
-): IntSizeCompat {
-    val widthValue = imageSize.width / sampleSize.toDouble()
-    val heightValue = imageSize.height / sampleSize.toDouble()
-    val width: Int = ceil(widthValue).toInt()
-    val height: Int = ceil(heightValue).toInt()
-    return IntSizeCompat(width, height)
-}

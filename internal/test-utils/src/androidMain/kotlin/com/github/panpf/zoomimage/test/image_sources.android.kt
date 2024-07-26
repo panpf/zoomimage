@@ -1,10 +1,11 @@
 package com.github.panpf.zoomimage.test
 
-import android.content.Context
+import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImageFile
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 
-fun ResourceImageFile.toImageSource(context: Context): ImageSource {
+actual fun ResourceImageFile.toImageSource(): ImageSource {
+    val context = InstrumentationRegistry.getInstrumentation().context
     return ImageSource.fromAsset(context, resourceName)
 }

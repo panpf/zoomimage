@@ -19,15 +19,19 @@ package com.github.panpf.zoomimage.subsampling.internal
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.subsampling.SkiaBitmap
+import com.github.panpf.zoomimage.subsampling.SkiaCanvas
 import com.github.panpf.zoomimage.subsampling.SkiaImage
+import com.github.panpf.zoomimage.subsampling.SkiaRect
 import com.github.panpf.zoomimage.subsampling.SkiaTileBitmap
-import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.toSkiaRect
 import okio.buffer
 import okio.use
 import org.jetbrains.skia.Codec
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.impl.use
+import kotlin.math.ceil
 
 /**
  * Use [SkiaImage] to decode the image
@@ -48,9 +52,21 @@ class SkiaDecodeHelper(
         key: String,
         region: IntRectCompat,
         sampleSize: Int
-    ): TileBitmap {
+    ): SkiaTileBitmap {
         // SkiaImage will parse exif orientation and does not support closing
-        val skiaBitmap = skiaImage.decodeRegion(region, sampleSize)
+        val widthValue = region.width / sampleSize.toDouble()
+        val heightValue = region.height / sampleSize.toDouble()
+        val bitmapWidth: Int = ceil(widthValue).toInt()
+        val bitmapHeight: Int = ceil(heightValue).toInt()
+        val skiaBitmap = SkiaBitmap().apply {
+            allocN32Pixels(bitmapWidth, bitmapHeight)
+        }
+        val canvas = SkiaCanvas(skiaBitmap)
+        canvas.drawImageRect(
+            image = skiaImage,
+            src = region.toSkiaRect(),
+            dst = SkiaRect.makeWH(bitmapWidth.toFloat(), bitmapHeight.toFloat())
+        )
         return SkiaTileBitmap(skiaBitmap, key, BitmapFrom.LOCAL)
     }
 

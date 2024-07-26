@@ -16,13 +16,16 @@
 
 package com.github.panpf.zoomimage.util
 
-import okio.FileSystem
-import okio.SYSTEM
-
+import com.github.panpf.zoomimage.subsampling.SkiaRect
 
 /**
- * Get default file system.
+ * Convert [IntRectCompat] to [SkiaRect]
  *
- * @see com.github.panpf.zoomimage.core.nonjscommon.test.util.FileSystemsAndroidTest.testDefaultFileSystem
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.util.CoreUtilsNonAndroidTest.testToSkiaRect
  */
-internal actual fun defaultFileSystem(): FileSystem = FileSystem.SYSTEM
+internal fun IntRectCompat.toSkiaRect(): SkiaRect = SkiaRect(
+    left = left.toFloat(),
+    top = top.toFloat(),
+    right = right.toFloat(),
+    bottom = bottom.toFloat(),
+)

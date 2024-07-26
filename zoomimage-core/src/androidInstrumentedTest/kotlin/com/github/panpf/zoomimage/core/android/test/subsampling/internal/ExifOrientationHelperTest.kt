@@ -1,7 +1,6 @@
 package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 
 import android.graphics.BitmapFactory
-import androidx.test.platform.app.InstrumentationRegistry
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
@@ -143,7 +142,8 @@ class ExifOrientationHelperTest {
             100 to IntSizeCompat(100, 50),
         ).forEach { (exifOrientationInt, exceptedSize) ->
             val exifOrientation = ExifOrientationHelper(exifOrientationInt)
-            val message = "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}, exceptedSize=$exceptedSize"
+            val message =
+                "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}, exceptedSize=$exceptedSize"
             val appliedSize = exifOrientation.applyToSize(size)
             Assert.assertEquals(message, exceptedSize, appliedSize)
             val reverseAppliedSize = exifOrientation.applyToSize(appliedSize, reverse = true)
@@ -169,7 +169,8 @@ class ExifOrientationHelperTest {
             100 to IntRectCompat(40, 10, 50, 30),
         ).forEach { (exifOrientationInt, exceptedRect) ->
             val exifOrientation = ExifOrientationHelper(exifOrientationInt)
-            val message = "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}, exceptedRect=$exceptedRect"
+            val message =
+                "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}, exceptedRect=$exceptedRect"
             val appliedRect = exifOrientation.applyToRect(srcRect, imageSize)
             val appliedImageSize = exifOrientation.applyToSize(imageSize)
             Assert.assertEquals(message, exceptedRect, appliedRect)
@@ -181,9 +182,8 @@ class ExifOrientationHelperTest {
 
     @Test
     fun testApplyToBitmap() {
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val inBitmap =
-            ResourceImages.dog.toImageSource(context).openSource().buffer().inputStream().use {
+        val inBitmap = ResourceImages.dog.toImageSource()
+            .openSource().buffer().inputStream().use {
                 BitmapFactory.decodeStream(it)
             }
         listOf(

@@ -31,6 +31,4 @@ fun FileImageSource(file: File): FileImageSource = FileImageSource(file.toOkioPa
  *
  * @see com.github.panpf.zoomimage.core.jvmcommon.test.subsampling.ImageSourceJvmCommonTest.testFromFile
  */
-fun ImageSource.Companion.fromFile(file: File): FileImageSource {
-    return FileImageSource(file)
-}
+fun ImageSource.Companion.fromFile(file: File): FileImageSource = FileImageSource(file)
