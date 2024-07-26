@@ -28,27 +28,32 @@ import kotlinx.atomicfu.locks.synchronized
 /**
  * Decode the tile bitmap of the image
  *
- * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileDecoderTest
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileDecoderTest
  */
 class TileDecoder constructor(
     val logger: Logger,
     val imageSource: ImageSource,
     val rootDecodeHelper: DecodeHelper,
-) {
+) : AutoCloseable {
 
-    private var destroyed = false
+    private var closed = false
     private val decoderPool = mutableListOf<DecodeHelper>()
     private val poolSyncLock = SynchronizedObject()
+
+    val decoderPoolSize: Int
+        get() = decoderPool.size
+
+    val imageInfo: ImageInfo = rootDecodeHelper.imageInfo
 
     init {
         logger.d { "TileDecoder. new DecodeHelper. initialization. '${imageSource.key}'" }
         decoderPool.add(rootDecodeHelper)
     }
 
-    fun getImageInfo(): ImageInfo = rootDecodeHelper.imageInfo
-
     @WorkerThread
     fun decode(key: String, srcRect: IntRectCompat, sampleSize: Int): TileBitmap? {
+        val closed = synchronized(poolSyncLock) { closed }
+        check(!closed) { "TileDecoder is closed" }
         return useDecoder { decoder -> decoder.decodeRegion(key, srcRect, sampleSize) }
     }
 
@@ -56,9 +61,6 @@ class TileDecoder constructor(
     private fun useDecoder(
         block: (decoder: DecodeHelper) -> TileBitmap?
     ): TileBitmap? {
-        val destroyed = synchronized(poolSyncLock) { destroyed }
-        if (destroyed) return null
-
         var decodeHelper: DecodeHelper? = synchronized(poolSyncLock) {
             if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
         }
@@ -70,7 +72,7 @@ class TileDecoder constructor(
         val tileBitmap = block(decodeHelper)
 
         synchronized(poolSyncLock) {
-            if (!destroyed) {
+            if (!closed) {
                 decoderPool.add(decodeHelper)
             } else {
                 decodeHelper.close()
@@ -81,11 +83,11 @@ class TileDecoder constructor(
     }
 
     @WorkerThread
-    fun destroy(caller: String) {
-        val destroyed = synchronized(poolSyncLock) { this@TileDecoder.destroyed }
-        if (!destroyed) {
-            this@TileDecoder.destroyed = true
-            logger.d { "TileDecoder. destroyDecoder:$caller. '${imageSource.key}'" }
+    override fun close() {
+        val closed = synchronized(poolSyncLock) { this@TileDecoder.closed }
+        if (!closed) {
+            this@TileDecoder.closed = true
+            logger.d { "TileDecoder. close. '${imageSource.key}'" }
             synchronized(poolSyncLock) {
                 decoderPool.forEach { it.close() }
                 decoderPool.clear()

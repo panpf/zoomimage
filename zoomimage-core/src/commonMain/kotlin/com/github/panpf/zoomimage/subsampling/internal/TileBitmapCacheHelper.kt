@@ -20,7 +20,6 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
-import com.github.panpf.zoomimage.util.Logger
 
 /**
  * Assist [TileManager] to obtain and store Bitmap from [TileBitmapCache]
@@ -28,8 +27,7 @@ import com.github.panpf.zoomimage.util.Logger
  * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileBitmapCacheHelperTest
  */
 class TileBitmapCacheHelper constructor(
-    @Suppress("UNUSED_PARAMETER") logger: Logger,
-    private val tileBitmapCacheSpec: TileBitmapCacheSpec
+    val tileBitmapCacheSpec: TileBitmapCacheSpec
 ) {
 
     fun get(key: String): TileBitmap? {

@@ -1,8 +1,7 @@
 package com.github.panpf.zoomimage.core.desktop.test.subsampling.internal
 
-import com.github.panpf.zoomimage.subsampling.BitmapFrom
-import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.internal.Tile
+import com.github.panpf.zoomimage.test.TestTileBitmap
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import kotlin.test.Test
@@ -104,28 +103,6 @@ class TileTest {
             assertNotNull(this.tileBitmap)
             assertFalse(animationState.running)
             assertEquals(255, animationState.alpha)
-        }
-    }
-
-    class TestTileBitmap(override val key: String) : TileBitmap {
-        var displayed: Boolean = false
-
-        override val width: Int = 0
-
-        override val height: Int = 0
-
-        override val byteCount: Long = 0
-
-        override val isRecycled: Boolean
-            get() = true
-
-        override val bitmapFrom: BitmapFrom
-            get() = BitmapFrom.LOCAL
-
-        override fun recycle() {}
-
-        override fun setIsDisplayed(displayed: Boolean) {
-            this.displayed = displayed
         }
     }
 }

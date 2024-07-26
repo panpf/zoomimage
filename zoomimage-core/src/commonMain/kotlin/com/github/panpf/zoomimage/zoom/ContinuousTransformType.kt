@@ -58,26 +58,23 @@ annotation class ContinuousTransformType {
         /**
          * User gestures dragging and zooming
          */
-        const val GESTURE =
-            8   // TODO Split GESTURE_DRAG、GESTURE_ONE_FINGER_SCALE、GESTURE_TWO_FINGER_SCALE
+        const val GESTURE = 8
 
         /**
          * User gesture fling
          */
         const val FLING = 16
 
-        fun name(@ContinuousTransformType type: Int): String {
-            return when (type) {
-                SCALE -> "SCALE"
-                OFFSET -> "OFFSET"
-                LOCATE -> "LOCATE"
-                GESTURE -> "GESTURE"
-                FLING -> "FLING"
-                else -> "UNKNOWN"
-            }
-        }
-
         val values = listOf(SCALE, OFFSET, LOCATE, GESTURE, FLING)
+
+        fun name(@ContinuousTransformType type: Int): String = when (type) {
+            SCALE -> "SCALE"
+            OFFSET -> "OFFSET"
+            LOCATE -> "LOCATE"
+            GESTURE -> "GESTURE"
+            FLING -> "FLING"
+            else -> "UNKNOWN"
+        }
 
         fun parse(continuousTransformTypes: Int): List<Int> {
             return values.asSequence().filter { continuousTransformTypes and it != 0 }.toList()

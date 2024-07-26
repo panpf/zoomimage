@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.tileStateColor
@@ -200,8 +201,8 @@ internal class SubsamplingDrawTilesNode(
 
         val boundsColor = tileStateColor(
             state = tileSnapshot.state,
-            bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom,
-            withinLoadArea = null
+            withinLoadArea = true,
+            bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom ?: BitmapFrom.LOCAL,
         )
         boundsPaint.color = Color(boundsColor)
 

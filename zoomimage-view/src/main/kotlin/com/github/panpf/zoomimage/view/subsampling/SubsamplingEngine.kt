@@ -71,7 +71,7 @@ class SubsamplingEngine constructor(
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
     private val tileBitmapCacheSpec = TileBitmapCacheSpec()
-    private var tileBitmapCacheHelper = TileBitmapCacheHelper(this.logger, tileBitmapCacheSpec)
+    private var tileBitmapCacheHelper = TileBitmapCacheHelper(tileBitmapCacheSpec)
     private var lastResetTileDecoderJob: Job? = null
     private val refreshTilesFlow = MutableSharedFlow<String>()
     private val preferredTileSizeState = MutableStateFlow(IntSizeCompat.Zero)
@@ -393,7 +393,7 @@ class SubsamplingEngine constructor(
             }
             val newTileDecoder = result.getOrNull()
             if (newTileDecoder != null) {
-                val imageInfo = newTileDecoder.getImageInfo()
+                val imageInfo = newTileDecoder.imageInfo
                 logger.d {
                     "SubsamplingEngine. resetTileDecoder:$caller. success. " +
                             "contentSize=${contentSize.toShortString()}, " +
@@ -517,7 +517,7 @@ class SubsamplingEngine constructor(
             logger.d { "SubsamplingEngine. cleanTileDecoder:$caller. '${imageKey}'" }
             @Suppress("OPT_IN_USAGE")
             GlobalScope.launch(ioCoroutineDispatcher()) {
-                tileDecoder.destroy("cleanTileDecoder:$caller")
+                tileDecoder.close()
             }
             this@SubsamplingEngine.tileDecoder = null
             refreshReadyState("cleanTileDecoder:$caller")

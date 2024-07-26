@@ -32,17 +32,15 @@ annotation class GestureType {
 
         const val DOUBLE_TAP_SCALE = 8
 
-        fun name(@GestureType type: Int): String {
-            return when (type) {
-                DRAG -> "DRAG"
-                TWO_FINGER_SCALE -> "TWO_FINGER_SCALE"
-                ONE_FINGER_SCALE -> "ONE_FINGER_SCALE"
-                DOUBLE_TAP_SCALE -> "DOUBLE_TAP_SCALE"
-                else -> "UNKNOWN"
-            }
-        }
-
         val values = listOf(DRAG, TWO_FINGER_SCALE, ONE_FINGER_SCALE, DOUBLE_TAP_SCALE)
+
+        fun name(@GestureType type: Int): String = when (type) {
+            DRAG -> "DRAG"
+            TWO_FINGER_SCALE -> "TWO_FINGER_SCALE"
+            ONE_FINGER_SCALE -> "ONE_FINGER_SCALE"
+            DOUBLE_TAP_SCALE -> "DOUBLE_TAP_SCALE"
+            else -> "UNKNOWN"
+        }
 
         fun parse(gestureTypes: Int): List<Int> {
             return values.asSequence().filter { gestureTypes and it != 0 }.toList()

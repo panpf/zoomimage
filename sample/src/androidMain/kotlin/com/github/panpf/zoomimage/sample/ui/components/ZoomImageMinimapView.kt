@@ -35,6 +35,7 @@ import com.github.panpf.sketch.resize.DefaultLongImageDecider
 import com.github.panpf.sketch.util.Size
 import com.github.panpf.tools4a.dimen.ktx.dp2pxF
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.tileStateColor
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.isEmpty
@@ -98,8 +99,8 @@ class ZoomImageMinimapView @JvmOverloads constructor(
                 }
                 val boundsColor = tileStateColor(
                     state = tileSnapshot.state,
-                    bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom,
-                    withinLoadArea = load
+                    withinLoadArea = load,
+                    bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom ?: BitmapFrom.LOCAL,
                 )
                 tileBoundsPaint.color = boundsColor
                 canvas.drawRect(tileDrawRect, tileBoundsPaint)

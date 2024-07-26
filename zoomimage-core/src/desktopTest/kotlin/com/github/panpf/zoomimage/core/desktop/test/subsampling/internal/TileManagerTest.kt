@@ -518,7 +518,7 @@ class TileManagerTest {
         private val logger = Logger("Test").apply {
             level = Logger.Level.Debug
         }
-        private val tileBitmapCacheHelper = TileBitmapCacheHelper(logger, TileBitmapCacheSpec())
+        private val tileBitmapCacheHelper = TileBitmapCacheHelper(TileBitmapCacheSpec())
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
@@ -548,8 +548,8 @@ class TileManagerTest {
         )
 
         override fun close() {
-            runBlocking(Dispatchers.Main) {
-                tileDecoder.destroy("close")
+            runBlocking(Dispatchers.IO) {
+                tileDecoder.close()
             }
         }
 

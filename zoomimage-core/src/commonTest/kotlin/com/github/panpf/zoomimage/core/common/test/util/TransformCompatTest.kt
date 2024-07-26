@@ -5,6 +5,8 @@ import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
 import com.github.panpf.zoomimage.util.div
+import com.github.panpf.zoomimage.util.isEmpty
+import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.util.lerp
 import com.github.panpf.zoomimage.util.minus
 import com.github.panpf.zoomimage.util.plus
@@ -109,12 +111,78 @@ class TransformCompatTest {
 
     @Test
     fun testIsEmpty() {
-        // TODO test
+        assertEquals(
+            expected = true,
+            actual = TransformCompat.Origin.isEmpty()
+        )
+        assertEquals(
+            expected = false,
+            actual = TransformCompat.Origin.let {
+                it.copy(scale = ScaleFactorCompat(it.scaleX + 0.1f, it.scaleY))
+            }.isEmpty()
+        )
+        assertEquals(
+            expected = false,
+            actual = TransformCompat.Origin.let {
+                it.copy(scale = ScaleFactorCompat(it.scaleX, it.scaleY + 0.1f))
+            }.isEmpty()
+        )
+        assertEquals(
+            expected = false,
+            actual = TransformCompat.Origin.let {
+                it.copy(offset = OffsetCompat(it.offsetX + 0.1f, it.offsetY))
+            }.isEmpty()
+        )
+        assertEquals(
+            expected = false,
+            actual = TransformCompat.Origin.let {
+                it.copy(offset = OffsetCompat(it.offsetX, it.offsetY + 0.1f))
+            }.isEmpty()
+        )
+        assertEquals(
+            expected = false,
+            actual = TransformCompat.Origin.let {
+                it.copy(rotation = it.rotation + 0.1f)
+            }.isEmpty()
+        )
     }
 
     @Test
     fun testIsNotEmpty() {
-        // TODO test
+        assertEquals(
+            expected = false,
+            actual = TransformCompat.Origin.isNotEmpty()
+        )
+        assertEquals(
+            expected = true,
+            actual = TransformCompat.Origin.let {
+                it.copy(scale = ScaleFactorCompat(it.scaleX + 0.1f, it.scaleY))
+            }.isNotEmpty()
+        )
+        assertEquals(
+            expected = true,
+            actual = TransformCompat.Origin.let {
+                it.copy(scale = ScaleFactorCompat(it.scaleX, it.scaleY + 0.1f))
+            }.isNotEmpty()
+        )
+        assertEquals(
+            expected = true,
+            actual = TransformCompat.Origin.let {
+                it.copy(offset = OffsetCompat(it.offsetX + 0.1f, it.offsetY))
+            }.isNotEmpty()
+        )
+        assertEquals(
+            expected = true,
+            actual = TransformCompat.Origin.let {
+                it.copy(offset = OffsetCompat(it.offsetX, it.offsetY + 0.1f))
+            }.isNotEmpty()
+        )
+        assertEquals(
+            expected = true,
+            actual = TransformCompat.Origin.let {
+                it.copy(rotation = it.rotation + 0.1f)
+            }.isNotEmpty()
+        )
     }
 
     @Test

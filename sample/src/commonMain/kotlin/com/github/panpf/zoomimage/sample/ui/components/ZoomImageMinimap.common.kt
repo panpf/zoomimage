@@ -38,6 +38,7 @@ import com.github.panpf.zoomimage.sample.ui.util.isEmpty
 import com.github.panpf.zoomimage.sample.ui.util.isNotEmpty
 import com.github.panpf.zoomimage.sample.ui.util.times
 import com.github.panpf.zoomimage.sample.ui.util.toDp
+import com.github.panpf.zoomimage.subsampling.BitmapFrom
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.tileStateColor
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -173,8 +174,8 @@ private fun ContentDrawScope.drawTilesBounds(
         )
         val boundsColor = tileStateColor(
             state = tileSnapshot.state,
-            bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom,
-            withinLoadArea = load
+            withinLoadArea = load,
+            bitmapFrom = tileSnapshot.tileBitmap?.bitmapFrom ?: BitmapFrom.LOCAL,
         )
         drawRect(
             color = Color(boundsColor),

@@ -32,11 +32,11 @@ class SubsamplingDesktopTest {
         ).getOrThrow().apply {
             assertEquals(
                 expected = hugeLongQmshtImageFile.size.toIntSizeCompat(),
-                actual = getImageInfo().size
+                actual = imageInfo.size
             )
             assertEquals(
                 expected = "image/jpeg",
-                actual = getImageInfo().mimeType
+                actual = imageInfo.mimeType
             )
         }
 
