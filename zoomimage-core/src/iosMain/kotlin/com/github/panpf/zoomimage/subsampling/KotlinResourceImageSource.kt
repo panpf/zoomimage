@@ -59,6 +59,6 @@ class KotlinResourceImageSource(val resourcePath: String) : ImageSource {
     }
 
     override fun toString(): String {
-        return "KotlinResourceImageSource($resourcePath)"
+        return "KotlinResourceImageSource('$resourcePath')"
     }
 }
