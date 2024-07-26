@@ -28,7 +28,7 @@ import kotlinx.atomicfu.locks.synchronized
 /**
  * Decode the tile bitmap of the image
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileDecoderTest]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileDecoderTest
  */
 class TileDecoder constructor(
     val logger: Logger,

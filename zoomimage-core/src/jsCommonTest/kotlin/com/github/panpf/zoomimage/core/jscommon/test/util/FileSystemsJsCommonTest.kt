@@ -1,5 +1,11 @@
 package com.github.panpf.zoomimage.core.jscommon.test.util
 
+import kotlin.test.Test
+
 class FileSystemsJsCommonTest {
-    // TODO test
+
+    @Test
+    fun testDefaultFileSystem() {
+        // TODO test
+    }
 }

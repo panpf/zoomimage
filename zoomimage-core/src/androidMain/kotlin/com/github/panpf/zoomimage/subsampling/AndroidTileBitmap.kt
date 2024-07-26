@@ -38,7 +38,7 @@ interface AndroidTileBitmap : TileBitmap {
 /**
  * Android implementation of [TileBitmap]
  *
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.AndroidTileBitmapTest]
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.AndroidTileBitmapTest
  */
 private class AndroidTileBitmapImpl(
     override val bitmap: Bitmap,

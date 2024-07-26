@@ -24,7 +24,7 @@ import android.os.Looper
 /**
  * Check if the current thread is the UI thread
  *
- * @see [com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredMainThread]
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredMainThread
  */
 internal fun requiredMainThread() {
     check(Looper.myLooper() == Looper.getMainLooper()) {
@@ -35,7 +35,7 @@ internal fun requiredMainThread() {
 /**
  * Check if the current thread is the work thread
  *
- * @see [com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredWorkThread]
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testRequiredWorkThread
  */
 internal fun requiredWorkThread() {
     check(Looper.myLooper() != Looper.getMainLooper()) {
@@ -46,21 +46,21 @@ internal fun requiredWorkThread() {
 /**
  * Get a short string description of the Bitmap
  *
- * @see [com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testToShortString]
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testToShortString
  */
 internal fun Bitmap.toShortString(): String = "(${width}x${height},$config)"
 
 /**
  * Get the log string description of Bitmap, it additionally contains the hexadecimal string representation of the Bitmap memory address.
  *
- * @see [com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testToLogString]
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testToLogString
  */
 internal fun Bitmap.toLogString(): String = "Bitmap@${toHexString()}(${width}x${height},$config)"
 
 /**
  * Gets a Bitmap.Config that is always non-null, or returns Bitmap.Config.ARGB_8888 if the original Bitmap.Config is null
  *
- * @see [com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testSafeConfig]
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testSafeConfig
  */
 @Suppress("USELESS_ELVIS")
 internal val Bitmap.safeConfig: Bitmap.Config
@@ -69,7 +69,7 @@ internal val Bitmap.safeConfig: Bitmap.Config
 /**
  * Check if the Bitmap.Config is Bitmap.Config.HARDWARE and the current system supports hardware acceleration
  *
- * @see [com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testIsAndSupportHardware]
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testIsAndSupportHardware
  */
 internal fun Bitmap.Config.isAndSupportHardware(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this == Bitmap.Config.HARDWARE

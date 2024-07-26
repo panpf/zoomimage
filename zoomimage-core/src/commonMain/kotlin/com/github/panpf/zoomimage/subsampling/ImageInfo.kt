@@ -21,7 +21,7 @@ import com.github.panpf.zoomimage.util.IntSizeCompat
 /**
  * Image information
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.ImageInfoTest]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.ImageInfoTest
  */
 data class ImageInfo constructor(
     /**

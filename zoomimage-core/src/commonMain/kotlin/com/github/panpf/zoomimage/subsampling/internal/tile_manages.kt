@@ -33,7 +33,7 @@ import kotlin.math.roundToInt
  *
  * If the size of the thumbnail is the original image divided by 16, then when the scaling factor is from 1.0 to 17.9, the node that changes the sample size is [[1.0:16, 1.5:8, 2.9:4, 5.7:2, 11.1:1]]
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testFindSampleSize]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testFindSampleSize
  */
 internal fun findSampleSize(
     imageSize: IntSizeCompat,
@@ -55,7 +55,7 @@ internal fun findSampleSize(
  *
  * Results from 1.0 to 17.9 are [[1.0:1, 1.5:2, 2.9:4, 5.7:8, 11.4:16]]
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testClosestPowerOfTwo]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testClosestPowerOfTwo
  */
 internal fun closestPowerOfTwo(number: Float): Int {
     val logValue = log2(number) // Takes the logarithm of the input number
@@ -68,7 +68,7 @@ internal fun closestPowerOfTwo(number: Float): Int {
  * Calculates the size of the tile grid based on the [sampleSize] and [preferredTileSize].
  * In addition, the calculation result is not allowed to exceed the [maxGridSize] limit
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateGridSize]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateGridSize
  */
 internal fun calculateGridSize(
     imageSize: IntSizeCompat,
@@ -99,7 +99,7 @@ internal fun calculateGridSize(
 /**
  * Calculate the maximum size of the grid, the larger side of [imageSize] is always [singleDirectionMaxTiles], and the other side is calculated according to the aspect ratio of [imageSize]
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateMaxGridSize]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateMaxGridSize
  */
 internal fun calculateMaxGridSize(
     imageSize: IntSizeCompat,
@@ -122,7 +122,7 @@ internal fun calculateMaxGridSize(
 /**
  * Calculates a list of tiles based on the [gridSize] and [sampleSize]
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateTiles]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateTiles
  */
 internal fun calculateTiles(
     imageSize: IntSizeCompat,
@@ -156,7 +156,7 @@ internal fun calculateTiles(
  * Also, the grid size will never exceed 150x150.
  * The result is a Map sorted by sample size from largest to smallest
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateTileGridMap]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateTileGridMap
  */
 internal fun calculateTileGridMap(
     imageSize: IntSizeCompat,
@@ -182,7 +182,7 @@ internal fun calculateTileGridMap(
 /**
  * The area that needs to be loaded on the original image is calculated from the area currently visible to the thumbnail, which is usually larger than the visible area, usually half the [preferredTileSize].
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateImageLoadRect]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileManagesTest.testCalculateImageLoadRect
  */
 internal fun calculateImageLoadRect(
     imageSize: IntSizeCompat,

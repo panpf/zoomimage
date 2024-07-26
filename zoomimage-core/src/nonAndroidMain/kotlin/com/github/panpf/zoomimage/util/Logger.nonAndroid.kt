@@ -16,10 +16,17 @@
 
 package com.github.panpf.zoomimage.util
 
+/**
+ * Get the platform default log pipeline
+ *
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.util.LoggerNonAndroidTest.testDefaultLogPipeline
+ */
 actual fun defaultLogPipeline(): Logger.Pipeline = PrintlnLogPipeline
 
 /**
  * The pipeline of the log, which prints the log to the println
+ *
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.util.LoggerNonAndroidTest
  */
 object PrintlnLogPipeline : Logger.Pipeline {
 

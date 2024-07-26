@@ -25,7 +25,7 @@ import kotlin.math.roundToLong
 /**
  * Format the float number to the specified number of decimal places
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testFormat]
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testFormat
  */
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
@@ -39,14 +39,14 @@ internal fun Float.format(newScale: Int): Float {
 /**
  * Convert the object to a hexadecimal string
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testToHexString]
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testToHexString
  */
 internal fun Any.toHexString(): String = this.hashCode().toString(16)
 
 /**
  * Close the Closeable quietly
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testQuietClose]
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testQuietClose
  */
 internal fun Closeable.quietClose() {
     try {

@@ -24,7 +24,7 @@ import kotlin.math.min
 /**
  * Represents a rule to apply to scale a source rectangle to be inscribed into a destination
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.ContentScaleCompatTest]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ContentScaleCompatTest
  */
 interface ContentScaleCompat {
 
@@ -184,7 +184,7 @@ private fun computeFillHeight(srcSize: SizeCompat, dstSize: SizeCompat): Float =
 /**
  * Returns the name of [ContentScaleCompat], which can also be converted back via the [valueOf] method
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.ContentScaleCompatTest.testName]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ContentScaleCompatTest.testName
  */
 val ContentScaleCompat.name: String
     get() = when (this) {
@@ -201,7 +201,7 @@ val ContentScaleCompat.name: String
 /**
  * Returns the [ContentScaleCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.ContentScaleCompatTest.testValueOf]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ContentScaleCompatTest.testValueOf
  */
 fun ContentScaleCompat.Companion.valueOf(name: String): ContentScaleCompat {
     return when (name) {

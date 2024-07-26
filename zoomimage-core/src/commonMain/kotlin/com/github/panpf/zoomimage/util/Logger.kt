@@ -24,7 +24,7 @@ expect fun defaultLogPipeline(): Logger.Pipeline
 /**
  * Used to print log
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.LoggerTest]
+ * @see com.github.panpf.zoomimage.core.common.test.util.LoggerTest
  */
 class Logger constructor(
     /**

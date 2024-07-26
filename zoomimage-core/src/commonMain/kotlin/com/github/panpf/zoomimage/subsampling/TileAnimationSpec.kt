@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.subsampling
 /**
  * Tile animation configuration
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.TileAnimationSpecTest]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileAnimationSpecTest
  */
 data class TileAnimationSpec(
     /**

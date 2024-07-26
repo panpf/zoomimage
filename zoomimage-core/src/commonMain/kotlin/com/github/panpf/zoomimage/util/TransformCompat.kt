@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.util
 /**
  * A simple version of a 2D transformation that includes scale, pan, and rotation
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest
  */
 data class TransformCompat(
     /**
@@ -130,7 +130,7 @@ data class TransformCompat(
 /**
  * If the current TransformCompat is empty, return true
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testIsEmpty]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testIsEmpty
  */
 fun TransformCompat.isEmpty(): Boolean {
     return scaleX.format(2) == 1f
@@ -143,14 +143,14 @@ fun TransformCompat.isEmpty(): Boolean {
 /**
  * If the current TransformCompat is not empty, return true
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testIsNotEmpty]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testIsNotEmpty
  */
 fun TransformCompat.isNotEmpty(): Boolean = !isEmpty()
 
 /**
  * Return short string descriptions, for example: '(3.45x9.87,10.56x20.56,45.03,0.52x0.52,0.52x0.52)'
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testToShortString]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testToShortString
  */
 fun TransformCompat.toShortString(): String =
     "(${scale.toShortString()},${offset.toShortString()},$rotation,${scaleOrigin.toShortString()},${rotationOrigin.toShortString()})"
@@ -158,7 +158,7 @@ fun TransformCompat.toShortString(): String =
 /**
  * Returns an TransformCompat scaled by multiplying [scaleFactor]
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testTimes]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testTimes
  */
 operator fun TransformCompat.times(scaleFactor: ScaleFactorCompat): TransformCompat {
     return this.copy(
@@ -176,7 +176,7 @@ operator fun TransformCompat.times(scaleFactor: ScaleFactorCompat): TransformCom
 /**
  * Returns an TransformCompat scaled by multiplying [scaleFactor]
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testDiv]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testDiv
  */
 operator fun TransformCompat.div(scaleFactor: ScaleFactorCompat): TransformCompat {
     return this.copy(
@@ -195,7 +195,7 @@ operator fun TransformCompat.div(scaleFactor: ScaleFactorCompat): TransformCompa
  * Add other TransformCompat to the current TransformCompat, and the scale origin or rotation origin
  * of both must be the same when neither is scaled or rotated equal to the default value
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testPlus]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testPlus
  */
 operator fun TransformCompat.plus(other: TransformCompat): TransformCompat {
     require(
@@ -244,7 +244,7 @@ operator fun TransformCompat.plus(other: TransformCompat): TransformCompat {
  * Subtract other TransformCompat from the current TransformCompat, and the scale origin or rotation
  * origin of both must be the same when neither is scaled or rotated equal to the default value
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testMinus]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testMinus
  */
 operator fun TransformCompat.minus(other: TransformCompat): TransformCompat {
     require(
@@ -304,7 +304,7 @@ operator fun TransformCompat.minus(other: TransformCompat): TransformCompat {
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
  *
- * @see [com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testLerp]
+ * @see com.github.panpf.zoomimage.core.common.test.util.TransformCompatTest.testLerp
  */
 fun lerp(start: TransformCompat, stop: TransformCompat, fraction: Float): TransformCompat {
     require(

@@ -16,9 +16,11 @@
 
 package com.github.panpf.zoomimage.subsampling
 
-import com.github.panpf.zoomimage.SkiaBitmap
-import com.github.panpf.zoomimage.toLogString
-
+/**
+ * A [TileBitmap] implementation based on Skia
+ *
+ * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.SkiaTileBitmapTest
+ */
 class SkiaTileBitmap(
     val bitmap: SkiaBitmap,
     override val key: String,

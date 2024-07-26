@@ -1,6 +1,6 @@
 package com.github.panpf.zoomimage.test
 
-import com.github.panpf.zoomimage.SkiaImage
+import com.github.panpf.zoomimage.subsampling.SkiaImage
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import okio.buffer

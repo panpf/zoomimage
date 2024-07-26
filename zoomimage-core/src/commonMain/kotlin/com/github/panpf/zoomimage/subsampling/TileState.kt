@@ -21,7 +21,7 @@ import com.github.panpf.zoomimage.annotation.IntDef
 /**
  * Tile state
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest
  */
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(
@@ -62,7 +62,7 @@ private const val TILE_COLOR_SKY_BLUE: Int = 0xFF00CCFF.toInt()
 /**
  * Get the color of the tile according to the state
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest.testTileStateColor]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileStateTest.testTileStateColor
  */
 fun tileStateColor(
     @TileState state: Int,

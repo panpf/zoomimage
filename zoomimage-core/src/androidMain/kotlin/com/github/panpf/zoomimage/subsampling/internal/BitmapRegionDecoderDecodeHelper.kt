@@ -33,6 +33,8 @@ import java.io.BufferedInputStream
  * Use [BitmapRegionDecoder] to decode the image
  *
  * *Not thread safe*
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.BitmapRegionDecoderDecodeHelperTest
  */
 class BitmapRegionDecoderDecodeHelper(
     val imageSource: ImageSource,

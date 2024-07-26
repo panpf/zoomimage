@@ -23,6 +23,8 @@ import platform.Foundation.NSBundle
 
 /**
  * Create an image source from a kotlin resource path.
+ *
+ * @see com.github.panpf.zoomimage.core.ios.test.subsampling.KotlinResourceImageSourceTest.testFromKotlinResource
  */
 fun ImageSource.Companion.fromKotlinResource(
     resourcePath: String,
@@ -30,6 +32,11 @@ fun ImageSource.Companion.fromKotlinResource(
     return KotlinResourceImageSource(resourcePath)
 }
 
+/**
+ * An image source that reads images from a kotlin resource path.
+ *
+ * @see com.github.panpf.zoomimage.core.ios.test.subsampling.KotlinResourceImageSourceTest
+ */
 class KotlinResourceImageSource(val resourcePath: String) : ImageSource {
 
     override val key: String = resourcePath

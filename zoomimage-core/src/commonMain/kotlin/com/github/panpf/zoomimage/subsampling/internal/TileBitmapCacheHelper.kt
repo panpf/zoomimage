@@ -25,7 +25,7 @@ import com.github.panpf.zoomimage.util.Logger
 /**
  * Assist [TileManager] to obtain and store Bitmap from [TileBitmapCache]
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileBitmapCacheHelperTest]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.TileBitmapCacheHelperTest
  */
 class TileBitmapCacheHelper constructor(
     @Suppress("UNUSED_PARAMETER") logger: Logger,

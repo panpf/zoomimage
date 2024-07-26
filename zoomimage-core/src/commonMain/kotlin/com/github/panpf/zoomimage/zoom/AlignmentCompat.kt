@@ -24,7 +24,7 @@ import kotlin.math.roundToInt
  * An interface to calculate the position of a sized box inside an available space. [AlignmentCompat] is
  * often used to define the alignment of a layout inside a parent layout.
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest
  */
 fun interface AlignmentCompat {
     /**
@@ -78,7 +78,7 @@ data class BiasAlignmentCompat(
 /**
  * Returns the name of [AlignmentCompat], which can also be converted back via the [valueOf] method
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testName]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testName
  */
 val AlignmentCompat.name: String
     get() = when (this) {
@@ -97,7 +97,7 @@ val AlignmentCompat.name: String
 /**
  * Returns the [AlignmentCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testValueOf]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testValueOf
  */
 fun AlignmentCompat.Companion.valueOf(name: String): AlignmentCompat {
     return when (name) {
@@ -117,7 +117,7 @@ fun AlignmentCompat.Companion.valueOf(name: String): AlignmentCompat {
 /**
  * If true is returned, this [AlignmentCompat] is the horizontal starting position
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsStart]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsStart
  */
 val AlignmentCompat.isStart: Boolean
     get() = this == AlignmentCompat.TopStart
@@ -127,7 +127,7 @@ val AlignmentCompat.isStart: Boolean
 /**
  * If true is returned, this [AlignmentCompat] is the horizontal center position
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsHorizontalCenter]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsHorizontalCenter
  */
 val AlignmentCompat.isHorizontalCenter: Boolean
     get() = this == AlignmentCompat.TopCenter
@@ -137,7 +137,7 @@ val AlignmentCompat.isHorizontalCenter: Boolean
 /**
  * If true is returned, this [AlignmentCompat] is the horizontal ending position
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsEnd]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsEnd
  */
 val AlignmentCompat.isEnd: Boolean
     get() = this == AlignmentCompat.TopEnd
@@ -147,7 +147,7 @@ val AlignmentCompat.isEnd: Boolean
 /**
  * If true is returned, this [AlignmentCompat] is the horizontal and vertical center position
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsCenter]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsCenter
  */
 val AlignmentCompat.isCenter: Boolean
     get() = this == AlignmentCompat.Center
@@ -155,7 +155,7 @@ val AlignmentCompat.isCenter: Boolean
 /**
  * If true is returned, this [AlignmentCompat] is the vertical starting position
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsTop]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsTop
  */
 val AlignmentCompat.isTop: Boolean
     get() = this == AlignmentCompat.TopStart
@@ -165,7 +165,7 @@ val AlignmentCompat.isTop: Boolean
 /**
  * If true is returned, this [AlignmentCompat] is the vertical center position
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsVerticalCenter]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsVerticalCenter
  */
 val AlignmentCompat.isVerticalCenter: Boolean
     get() = this == AlignmentCompat.CenterStart
@@ -175,7 +175,7 @@ val AlignmentCompat.isVerticalCenter: Boolean
 /**
  * If true is returned, this [AlignmentCompat] is the vertical ending position
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsBottom]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.AlignmentCompatTest.testIsBottom
  */
 val AlignmentCompat.isBottom: Boolean
     get() = this == AlignmentCompat.BottomStart

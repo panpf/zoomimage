@@ -27,7 +27,7 @@ import kotlin.time.TimeSource
 /**
  * A tile of the image, store the region, sample multiplier, Bitmap, load status, and other information of the tile
  *
- * test: desktopTest/com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileTest
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileTest
  */
 class Tile constructor(
     /**

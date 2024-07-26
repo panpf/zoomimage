@@ -135,7 +135,7 @@ class DecodesAndroidTest {
     }
 
     @Test
-    fun testIsSupportBitmapRegionDecoder() {
+    fun testCheckSupportSubsamplingByMimeType() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             assertTrue(checkSupportSubsamplingByMimeType("image/heic"))
         } else {

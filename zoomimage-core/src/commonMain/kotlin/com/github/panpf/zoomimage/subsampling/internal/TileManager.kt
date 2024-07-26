@@ -47,7 +47,7 @@ import kotlinx.coroutines.withContext
 /**
  * Manage the loading and release of tiles
  *
- * test: desktopTest/com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileManagerTest
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileManagerTest
  */
 class TileManager constructor(
     private val logger: Logger,

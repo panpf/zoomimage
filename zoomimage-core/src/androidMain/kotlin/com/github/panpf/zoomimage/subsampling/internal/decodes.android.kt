@@ -33,16 +33,29 @@ import kotlin.math.floor
 /**
  * Create a [DecodeHelper] instance using [ImageSource], on the Android platform, [BitmapRegionDecoderDecodeHelper] will be used
  *
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCreateDecodeHelper]
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCreateDecodeHelper
  */
 internal actual fun createDecodeHelper(imageSource: ImageSource): DecodeHelper {
     return BitmapRegionDecoderDecodeHelper.Factory().create(imageSource)
 }
 
 /**
+ * Checks whether the specified image type supports subsampling, on the Android platform, it mainly depends on the types supported by BitmapRegionDecoder.
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCheckSupportSubsamplingByMimeType
+ */
+@SuppressLint("ObsoleteSdkInt")
+internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
+    "image/jpeg".equals(mimeType, true)
+            || "image/png".equals(mimeType, true)
+            || "image/webp".equals(mimeType, true)
+            || ("image/heic".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
+            || ("image/heif".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
+
+/**
  * Decode the Exif orientation of the image
  *
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeExifOrientation]
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeExifOrientation
  */
 @WorkerThread
 internal fun ImageSource.decodeExifOrientation(): Int {
@@ -59,7 +72,7 @@ internal fun ImageSource.decodeExifOrientation(): Int {
 /**
  * Decode the image width and height and mimeType
  *
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeImageInfo]
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testDecodeImageInfo
  */
 internal fun ImageSource.decodeImageInfo(): ImageInfo {
     val boundOptions = BitmapFactory.Options().apply {
@@ -81,7 +94,7 @@ internal fun ImageSource.decodeImageInfo(): ImageInfo {
  *
  * Test results based on the BitmapRegionDecoderTest.testInBitmapAndInSampleSize() method
  *
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsSupportInBitmapForRegion]
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsSupportInBitmapForRegion
  */
 @SuppressLint("ObsoleteSdkInt")
 internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
@@ -100,7 +113,7 @@ internal fun isSupportInBitmapForRegion(mimeType: String?): Boolean =
 /**
  * Calculate the size of the sampled Bitmap, support for BitmapRegionDecoder
  *
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCalculateSampledBitmapSizeForRegion]
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testCalculateSampledBitmapSizeForRegion
  */
 internal fun calculateSampledBitmapSizeForRegion(
     regionSize: IntSizeCompat,
@@ -122,16 +135,3 @@ internal fun calculateSampledBitmapSizeForRegion(
     }
     return IntSizeCompat(width, height)
 }
-
-/**
- * Checks whether the specified image type supports subsampling, on the Android platform, it mainly depends on the types supported by BitmapRegionDecoder.
- *
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.DecodesAndroidTest.testIsSupportBitmapRegionDecoder]
- */
-@SuppressLint("ObsoleteSdkInt")
-internal actual fun checkSupportSubsamplingByMimeType(mimeType: String): Boolean =
-    "image/jpeg".equals(mimeType, true)
-            || "image/png".equals(mimeType, true)
-            || "image/webp".equals(mimeType, true)
-            || ("image/heic".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)
-            || ("image/heif".equals(mimeType, true) && VERSION.SDK_INT >= VERSION_CODES.P)

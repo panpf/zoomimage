@@ -1,11 +1,13 @@
-package com.github.panpf.zoomimage.util
+package com.github.panpf.zoomimage.subsampling.internal
 
 import java.io.InputStream
 
 /**
  * Resource loader based on JVM current context class loader.
  *
- * Copy from compose Resources.kt
+ * Copy from jetbrains compose androidx.compose.ui.res.Resources.desktop.kt
+ *
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.ClassLoaderResourceLoaderTest
  */
 internal class ClassLoaderResourceLoader {
 

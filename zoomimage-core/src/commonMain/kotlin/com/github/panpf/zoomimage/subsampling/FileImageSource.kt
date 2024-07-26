@@ -24,7 +24,7 @@ import okio.Source
 /**
  * Create an image source from a path.
  *
- * test: desktopTest/com.github.panpf.zoomimage.core.desktop.test.subsampling.FileImageSourceTest.testFromFile
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.FileImageSourceTest.testFromFile
  */
 fun ImageSource.Companion.fromFile(path: Path): FileImageSource {
     return FileImageSource(path)
@@ -33,7 +33,7 @@ fun ImageSource.Companion.fromFile(path: Path): FileImageSource {
 /**
  * Create an image source from a file path.
  *
- * test: desktopTest/com.github.panpf.zoomimage.core.desktop.test.subsampling.FileImageSourceTest.testFromFile
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.FileImageSourceTest.testFromFile
  */
 fun ImageSource.Companion.fromFile(path: String): FileImageSource {
     return FileImageSource(path.toPath())
@@ -42,7 +42,7 @@ fun ImageSource.Companion.fromFile(path: String): FileImageSource {
 /**
  * Image source from a file path.
  *
- * test: desktopTest/com.github.panpf.zoomimage.core.desktop.test.subsampling.FileImageSourceTest
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.FileImageSourceTest
  */
 class FileImageSource(val path: Path) : ImageSource {
 

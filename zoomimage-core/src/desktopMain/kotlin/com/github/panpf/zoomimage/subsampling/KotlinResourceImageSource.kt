@@ -16,12 +16,14 @@
 
 package com.github.panpf.zoomimage.subsampling
 
-import com.github.panpf.zoomimage.util.ClassLoaderResourceLoader
+import com.github.panpf.zoomimage.subsampling.internal.ClassLoaderResourceLoader
 import okio.Source
 import okio.source
 
 /**
  * Create an image source from a kotlin resource path.
+ *
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.KotlinResourceImageSourceTest.testFromKotlinResource
  */
 fun ImageSource.Companion.fromKotlinResource(
     resourcePath: String,
@@ -29,6 +31,11 @@ fun ImageSource.Companion.fromKotlinResource(
     return KotlinResourceImageSource(resourcePath)
 }
 
+/**
+ * An image source created from a kotlin resource path.
+ *
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.KotlinResourceImageSourceTest
+ */
 class KotlinResourceImageSource(val resourcePath: String) : ImageSource {
 
     override val key: String = resourcePath

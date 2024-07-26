@@ -26,7 +26,7 @@ import com.github.panpf.zoomimage.zoom.ContinuousTransformType.Companion.SCALE
 /**
  * Continuous transformation type
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.ContinuousTransformTypeTest]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ContinuousTransformTypeTest
  */
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(SCALE, OFFSET, LOCATE, GESTURE, FLING)

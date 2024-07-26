@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.zoom
 /**
  * One finger double-click and slide up and down to scale the configuration of the image
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.OneFingerScaleSpecTest]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.OneFingerScaleSpecTest
  */
 data class OneFingerScaleSpec(
     val panToScaleTransformer: PanToScaleTransformer = PanToScaleTransformer.Default

@@ -23,7 +23,7 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 /**
  * Tile-related information provided to users
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.TileSnapshotTest]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileSnapshotTest
  */
 data class TileSnapshot(
     val coordinate: IntOffsetCompat,
@@ -37,7 +37,7 @@ data class TileSnapshot(
 /**
  * Convert [Tile] to [TileSnapshot]
  *
- * @see [com.github.panpf.zoomimage.core.common.test.subsampling.TileSnapshotTest.testToSnapshot]
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.TileSnapshotTest.testToSnapshot
  */
 fun Tile.toSnapshot(): TileSnapshot = TileSnapshot(
     coordinate = coordinate,

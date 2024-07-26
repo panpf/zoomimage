@@ -39,7 +39,7 @@ fun ExifOrientationHelper.applyToImageInfo(imageInfo: ImageInfo): ImageInfo {
 /**
  * Helper class to handle image orientation based on Exif tags.
  *
- * @see [com.github.panpf.zoomimage.core.android.test.subsampling.internal.ExifOrientationHelperTest]
+ * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.ExifOrientationHelperTest
  */
 class ExifOrientationHelper(val exifOrientation: Int) {
 

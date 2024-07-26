@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.zoom
 /**
  * Edge state for the current offset
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.ScrollEdgeTest]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ScrollEdgeTest
  */
 data class ScrollEdge(val horizontal: Edge, val vertical: Edge) {
 
@@ -31,7 +31,7 @@ data class ScrollEdge(val horizontal: Edge, val vertical: Edge) {
 /**
  * Return short string descriptions, for example: '(START,END)'
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.ScrollEdgeTest.testToShortString]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ScrollEdgeTest.testToShortString
  */
 fun ScrollEdge.toShortString(): String = "(${horizontal.name},${vertical.name})"
 

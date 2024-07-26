@@ -24,7 +24,7 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator.Companion.MULTIPLE
 /**
  * Used to calculate mediumScale and maxScale
  *
- * @see [com.github.panpf.zoomimage.core.common.test.zoom.ScalesCalculatorTest]
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ScalesCalculatorTest
  */
 interface ScalesCalculator {
 
