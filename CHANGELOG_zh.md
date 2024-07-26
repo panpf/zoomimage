@@ -10,6 +10,7 @@
   bug。 [#34](https://github.com/panpf/zoomimage/issues/34)
 * fix: 修复在遇到极端尺寸（一边特别大一边特别小）的图片时导致 Tile 地图计算异常而崩溃的
   bug。 [#32](https://github.com/panpf/zoomimage/issues/32)
+* fix: 修复 ios 版 KotlinResourceImageSource 无法加载图片的 bug。 [#36](https://github.com/panpf/zoomimage/issues/36)
 
 ## 1.1.0-alpha03
 

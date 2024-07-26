@@ -14,6 +14,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * fix: Fixed a bug that caused the Tile map to calculate abnormally and crash when encountering
   images of extreme sizes (one side is extremely large and the other is extremely
   small). [#32](https://github.com/panpf/zoomimage/issues/32)
+* fix: Fixed the bug where KotlinResourceImageSource on ios could not load images. [#36](https://github.com/panpf/zoomimage/issues/36)
 
 ## 1.1.0-alpha03
 

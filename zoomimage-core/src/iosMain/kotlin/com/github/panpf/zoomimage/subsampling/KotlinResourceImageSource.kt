@@ -42,8 +42,8 @@ class KotlinResourceImageSource(val resourcePath: String) : ImageSource {
     override val key: String = resourcePath
 
     override fun openSource(): Source {
-        val resourcePath = NSBundle.mainBundle.resourcePath!!.toPath()
-        val filePath = resourcePath.resolve("compose-resources").resolve(resourcePath)
+        val appResourcePath = NSBundle.mainBundle.resourcePath!!.toPath()
+        val filePath = appResourcePath.resolve("compose-resources").resolve(resourcePath)
         return defaultFileSystem().source(filePath)
     }
 
