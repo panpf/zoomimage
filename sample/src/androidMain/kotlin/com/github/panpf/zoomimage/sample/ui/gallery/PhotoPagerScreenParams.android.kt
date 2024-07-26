@@ -12,4 +12,4 @@ actual class PhotoPagerScreenParams actual constructor(
     actual val totalCount: Int,
     actual val startPosition: Int,
     actual val initialPosition: Int
-) : Parcelable
+) : Parcelable, java.io.Serializable
