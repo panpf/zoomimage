@@ -2,15 +2,18 @@
 
 翻译：[English](CHANGELOG.md)
 
-## new
+## 1.1.0-alpha04
 
-* improve: 现在非 Android 平台在子采样时会直接忽略 gif 图片
-* improve: 现在只要缩略图的任意一边超过原图就无法使用子采样
-* fix: 修复 coil 和 glide 系列组件不支持 '/sdcard/sample.jpeg' 类型 model 的
-  bug。 [#34](https://github.com/panpf/zoomimage/issues/34)
+subsampling:
+
 * fix: 修复在遇到极端尺寸（一边特别大一边特别小）的图片时导致 Tile 地图计算异常而崩溃的
   bug。 [#32](https://github.com/panpf/zoomimage/issues/32)
-* fix: 修复 ios 版 KotlinResourceImageSource 无法加载图片的 bug。 [#36](https://github.com/panpf/zoomimage/issues/36)
+* fix: 修复 coil 和 glide 系列组件不支持 '/sdcard/sample.jpeg' 类型 model 的
+  bug。 [#34](https://github.com/panpf/zoomimage/issues/34)
+* fix: 修复 ios 版 KotlinResourceImageSource 无法加载图片的
+  bug。 [#36](https://github.com/panpf/zoomimage/issues/36)
+* improve: 现在非 Android 平台在子采样时会直接忽略 gif 图片
+* improve: 现在只要缩略图的任意一边超过原图就无法使用子采样
 
 ## 1.1.0-alpha03
 

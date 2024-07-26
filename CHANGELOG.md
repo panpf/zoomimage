@@ -2,19 +2,20 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.1.0-alpha04
 
-* improve: Now non-Android platforms will directly ignore gif images when subsampling panpf Moments
-  ago
-* improve: Now subsampling cannot be used as long as either side of the thumbnail exceeds the
-  original
-  image
+images of extreme sizes (one side is extremely large and the other is extremely
+small). [#32](https://github.com/panpf/zoomimage/issues/32)
+
 * fix: Fix the bug that coil and glide series components do not support '/sdcard/sample.jpeg' type
   model. [#34](https://github.com/panpf/zoomimage/issues/34)
 * fix: Fixed a bug that caused the Tile map to calculate abnormally and crash when encountering
-  images of extreme sizes (one side is extremely large and the other is extremely
-  small). [#32](https://github.com/panpf/zoomimage/issues/32)
-* fix: Fixed the bug where KotlinResourceImageSource on ios could not load images. [#36](https://github.com/panpf/zoomimage/issues/36)
+* fix: Fixed the bug where KotlinResourceImageSource on ios could not load
+  images. [#36](https://github.com/panpf/zoomimage/issues/36)
+* improve: Now non-Android platforms will directly ignore gif images when subsampling panpf Moments
+  ago
+* improve: Now subsampling cannot be used as long as either side of the thumbnail exceeds the
+  original image
 
 ## 1.1.0-alpha03
 
