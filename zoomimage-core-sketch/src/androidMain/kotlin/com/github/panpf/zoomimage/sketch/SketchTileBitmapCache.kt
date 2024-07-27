@@ -25,6 +25,11 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
+/**
+ * Implement [TileBitmapCache] based on Sketch on Android platforms
+ *
+ * @see com.github.panpf.zoomimage.core.sketch.android.test.SketchTileBitmapCacheTest
+ */
 actual class SketchTileBitmapCache actual constructor(
     private val sketch: Sketch,
 ) : TileBitmapCache {

@@ -19,6 +19,11 @@ package com.github.panpf.zoomimage.compose.internal
 import kotlin.math.pow
 import kotlin.math.round
 
+/**
+ * Format the float number to the specified number of decimal places
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.CoreUtilsTest.testFormat
+ */
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
         this
@@ -28,4 +33,9 @@ internal fun Float.format(newScale: Int): Float {
     }
 }
 
+/**
+ * Convert the object to a hexadecimal string
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.CoreUtilsTest.testToHexString
+ */
 internal fun Any.toHexString(): String = this.hashCode().toString(16)

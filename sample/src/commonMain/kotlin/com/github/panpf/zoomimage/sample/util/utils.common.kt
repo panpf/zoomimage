@@ -3,6 +3,11 @@ package com.github.panpf.zoomimage.sample.util
 import kotlin.math.pow
 import kotlin.math.round
 
+/**
+ * Format the float number to the specified number of decimal places
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testFormat
+ */
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
         this

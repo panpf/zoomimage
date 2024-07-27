@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.github.panpf.zoomimage.coil
 
 import com.github.panpf.zoomimage.subsampling.ImageSource as ZoomImageImageSource
@@ -14,10 +30,18 @@ import okio.Path
 import java.io.File
 import java.net.URL
 
+/**
+ * Convert coil model to [ZoomImageImageSource.Factory]
+ */
 interface CoilModelToImageSource {
     fun dataToImageSource(model: Any): ZoomImageImageSource.Factory?
 }
 
+/**
+ * Default implementation of [CoilModelToImageSource]
+ *
+ * @see com.github.panpf.zoomimage.core.coil2.test.CoilModelToImageSourceImplTest
+ */
 class CoilModelToImageSourceImpl constructor(
     private val context: Context,
     private val imageLoader: ImageLoader

@@ -25,7 +25,11 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import okio.Buffer
 import okio.Source
 
-
+/**
+ * [ImageSource] implementation for Coil's HTTP requests.
+ *
+ * @see com.github.panpf.zoomimage.core.coil.common.test.CoilHttpImageSourceTest
+ */
 class CoilHttpImageSource(
     private val url: String,
     private val openSourceFactory: () -> Source

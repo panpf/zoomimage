@@ -21,6 +21,11 @@ import kotlin.math.round
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
+/**
+ * Format the float number to the specified number of decimal places
+ *
+ * @see com.github.panpf.zoomimage.view.test.util.CoreUtilsTest.testFormat
+ */
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
         this
@@ -30,6 +35,11 @@ internal fun Float.format(newScale: Int): Float {
     }
 }
 
+/**
+ * Convert the object to a hexadecimal string
+ *
+ * @see com.github.panpf.zoomimage.view.test.util.CoreUtilsTest.testToHexString
+ */
 internal fun Any.toHexString(): String = this.hashCode().toString(16)
 
 internal fun Float.isSafe(): Boolean {

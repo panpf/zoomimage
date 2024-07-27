@@ -26,6 +26,11 @@ import okio.Source
 import okio.source
 import java.io.IOException
 
+/**
+ * [ImageSource] implementation that uses Picasso to load images over HTTP.
+ *
+ * @see com.github.panpf.zoomimage.core.picasso.test.PicassoHttpImageSourceTest
+ */
 class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
 
     override val key: String = uri.toString()

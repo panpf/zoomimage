@@ -27,6 +27,11 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
+/**
+ * Implement [TileBitmapCache] based on Coil on Android platform
+ *
+ * @see com.github.panpf.zoomimage.core.coil.android.test.CoilTileBitmapCacheTest
+ */
 actual class CoilTileBitmapCache actual constructor(
     private val imageLoader: ImageLoader
 ) : TileBitmapCache {

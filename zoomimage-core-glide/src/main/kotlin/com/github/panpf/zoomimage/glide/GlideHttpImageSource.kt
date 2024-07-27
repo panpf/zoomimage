@@ -42,7 +42,11 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-
+/**
+ * [ImageSource] implementation for Glide's HTTP requests.
+ *
+ * @see com.github.panpf.zoomimage.core.glide.test.GlideHttpImageSourceTest
+ */
 class GlideHttpImageSource(
     val glideUrl: GlideUrl,
     val openSource: () -> Source

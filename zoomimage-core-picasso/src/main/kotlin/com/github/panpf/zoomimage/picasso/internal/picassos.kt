@@ -18,17 +18,17 @@
 
 package com.squareup.picasso
 
-internal val Picasso.downloader: Downloader
-    get() = dispatcher.downloader
-
-internal val Picasso.cache: Cache
-    get() = dispatcher.cache
-
+/**
+ * @see com.github.panpf.zoomimage.core.picasso.test.internal.PicassoTest.testCheckMemoryCacheDisabled
+ */
 fun checkMemoryCacheDisabled(memoryPolicy: Int): Boolean {
     return !MemoryPolicy.shouldReadFromMemoryCache(memoryPolicy)
             || !MemoryPolicy.shouldWriteToMemoryCache(memoryPolicy)
 }
 
+/**
+ * @see com.github.panpf.zoomimage.core.picasso.test.internal.PicassoTest.testInternalMemoryPolicy
+ */
 val RequestCreator.internalMemoryPolicy: Int
     get() = try {
         this.javaClass.getDeclaredField("memoryPolicy").apply {
@@ -38,3 +38,9 @@ val RequestCreator.internalMemoryPolicy: Int
         e.printStackTrace()
         0
     }
+
+internal val Picasso.downloader: Downloader
+    get() = dispatcher.downloader
+
+internal val Picasso.cache: Cache
+    get() = dispatcher.cache

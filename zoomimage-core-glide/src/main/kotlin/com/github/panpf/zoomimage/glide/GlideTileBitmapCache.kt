@@ -27,6 +27,11 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 
+/**
+ * Implement [TileBitmapCache] based on Glide
+ *
+ * @see com.github.panpf.zoomimage.core.glide.test.GlideTileBitmapCacheTest
+ */
 class GlideTileBitmapCache(private val glide: Glide) : TileBitmapCache {
 
     private val glideEngine: GlideEngine? by lazy {

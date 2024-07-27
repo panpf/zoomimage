@@ -21,7 +21,13 @@ import com.github.panpf.sketch.cache.MemoryCache
 import com.github.panpf.zoomimage.sketch.internal.toLogString
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 
+/**
+ * [TileBitmap] implementation based on Sketch
+ *
+ * @see com.github.panpf.zoomimage.core.sketch3.test.SketchTileBitmapTest
+ */
 class SketchTileBitmap constructor(
     private val cacheValue: MemoryCache.Value,
     override val key: String,

@@ -22,6 +22,11 @@ import com.github.panpf.zoomimage.glide.internal.toLogString
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 
+/**
+ * [AndroidTileBitmap] implementation based on Glide
+ *
+ * @see com.github.panpf.zoomimage.core.glide.test.GlideTileBitmapTest
+ */
 internal class GlideTileBitmap(
     private val resource: EngineResourceWrapper,
     override val key: String,

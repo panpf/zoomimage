@@ -24,6 +24,11 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.cache
 
+/**
+ * Implement [TileBitmapCache] based on [Picasso]
+ *
+ * @see com.github.panpf.zoomimage.core.picasso.test.PicassoTileBitmapCacheTest
+ */
 class PicassoTileBitmapCache(private val picasso: Picasso) : TileBitmapCache {
 
     override fun get(key: String): TileBitmap? {

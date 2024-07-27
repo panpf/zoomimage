@@ -3,6 +3,11 @@ package com.github.panpf.zoomimage.sketch
 import com.github.panpf.sketch.SkiaBitmapImage
 import com.github.panpf.sketch.cache.MemoryCache
 
+/**
+ * [SkiaBitmapImage] MemoryCache.Value
+ *
+ * @see com.github.panpf.zoomimage.core.sketch.desktop.test.SkiaBitmapImageValueTest
+ */
 class SkiaBitmapImageValue(
     override val image: SkiaBitmapImage,
     override val extras: Map<String, Any?>? = null,

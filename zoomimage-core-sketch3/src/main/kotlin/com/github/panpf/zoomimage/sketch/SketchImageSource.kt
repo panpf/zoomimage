@@ -26,6 +26,11 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import okio.Source
 import okio.source
 
+/**
+ * [ImageSource] implementation that uses Sketch to load images
+ *
+ * @see com.github.panpf.zoomimage.core.sketch3.test.SketchImageSourceTest
+ */
 class SketchImageSource(
     val imageUri: String,
     val dataSource: BasedStreamDataSource,

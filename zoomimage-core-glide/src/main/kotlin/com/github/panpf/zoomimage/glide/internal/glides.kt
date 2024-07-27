@@ -31,6 +31,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.SingleRequest
 import java.io.File
 
+/**
+ * Get the disk cache from Glide
+ *
+ * @see com.github.panpf.zoomimage.core.glide.test.internal.GlidesTest.testGetDiskCache
+ */
 internal fun getDiskCache(glide: Glide): DiskCache? {
     return try {
         val engine = glide.javaClass.getDeclaredField("engine")
@@ -46,6 +51,9 @@ internal fun getDiskCache(glide: Glide): DiskCache? {
     }
 }
 
+/**
+ * @see com.github.panpf.zoomimage.core.glide.test.internal.GlidesTest.testSingleRequestInternalModel
+ */
 val SingleRequest<*>.internalModel: Any?
     get() {
         return try {
@@ -58,6 +66,9 @@ val SingleRequest<*>.internalModel: Any?
         }
     }
 
+/**
+ * @see com.github.panpf.zoomimage.core.glide.test.internal.GlidesTest.testRequestBuilderInternalModel
+ */
 val RequestBuilder<*>.internalModel: Any?
     get() {
         return try {
