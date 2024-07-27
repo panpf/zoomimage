@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.coil
 
-import com.github.panpf.zoomimage.subsampling.ImageSource as ZoomImageImageSource
 import android.content.Context
 import coil.ImageLoader
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -26,9 +25,15 @@ import com.github.panpf.zoomimage.subsampling.fromContent
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.subsampling.toFactory
-import okio.Path
+import okhttp3.HttpUrl
+import okio.Buffer
+import okio.Path.Companion.toPath
+import okio.Source
+import okio.Timeout
+import okio.buffer
 import java.io.File
-import java.net.URL
+import java.nio.ByteBuffer
+import com.github.panpf.zoomimage.subsampling.ImageSource as ZoomImageImageSource
 
 /**
  * Convert coil model to [ZoomImageImageSource.Factory]
@@ -47,60 +52,40 @@ class CoilModelToImageSourceImpl constructor(
     private val imageLoader: ImageLoader
 ) : CoilModelToImageSource {
 
-    override fun dataToImageSource(model: Any): ZoomImageImageSource.Factory? {
+    override fun dataToImageSource(model: Any): ImageSource.Factory? {
+        val uri = when (model) {
+            is String -> android.net.Uri.parse(model)
+            is android.net.Uri -> model
+            else -> null
+        }
         return when {
-            model is URL -> {
+            model is HttpUrl && (model.scheme == "http" || model.scheme == "https") -> {
                 CoilHttpImageSource.Factory(context, imageLoader, model.toString())
             }
 
-            model is String && (model.startsWith("http://") || model.startsWith("https://")) -> {
+            uri != null && (uri.scheme == "http" || uri.scheme == "https") -> {
                 CoilHttpImageSource.Factory(context, imageLoader, model.toString())
             }
 
-            model is android.net.Uri && (model.scheme == "http" || model.scheme == "https") -> {
-                CoilHttpImageSource.Factory(context, imageLoader, model.toString())
+            uri != null && uri.scheme == "content" -> {
+                val androidUri = android.net.Uri.parse(model.toString())
+                ImageSource.fromContent(context, androidUri).toFactory()
             }
 
-            model is String && model.startsWith("content://") -> {
-                ImageSource.fromContent(context, android.net.Uri.parse(model)).toFactory()
+            // file:///android_asset/image.jpg
+            uri != null && uri.scheme == "file" && uri.pathSegments.firstOrNull() == "android_asset" -> {
+                val assetFileName = uri.pathSegments.drop(1).joinToString("/")
+                ImageSource.fromAsset(context, assetFileName).toFactory()
             }
 
-            model is android.net.Uri && model.scheme == "content" -> {
-                ImageSource.fromContent(context, model).toFactory()
+            // /sdcard/xxx.jpg
+            uri != null && uri.scheme?.takeIf { it.isNotEmpty() } == null && uri.path?.startsWith("/") == true -> {
+                ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
-            model is String && model.startsWith("file:///android_asset/") -> {
-                val assetFileName = android.net.Uri.parse(model).pathSegments
-                    .takeIf { it.size > 1 }
-                    ?.let { it.subList(1, it.size) }
-                    ?.joinToString(separator = "/")
-                assetFileName?.let { ImageSource.fromAsset(context, it).toFactory() }
-            }
-
-            model is android.net.Uri && model.scheme == "file" && model.pathSegments.firstOrNull() == "android_asset" -> {
-                val assetFileName = model.pathSegments
-                    .takeIf { it.size > 1 }
-                    ?.let { it.subList(1, it.size) }
-                    ?.joinToString(separator = "/")
-                assetFileName?.let { ImageSource.fromAsset(context, it).toFactory() }
-            }
-
-            model is Path -> {
-                ZoomImageImageSource.fromFile(model).toFactory()
-            }
-
-            model is String && model.startsWith("/") -> {
-                ImageSource.fromFile(model).toFactory()
-            }
-
-            model is String && model.startsWith("file://") -> {
-                val filePath = android.net.Uri.parse(model).path
-                filePath?.let { ImageSource.fromFile(File(filePath)).toFactory() }
-            }
-
-            model is android.net.Uri && model.scheme == "file" -> {
-                val filePath = model.path
-                filePath?.let { ImageSource.fromFile(File(filePath)).toFactory() }
+            // file:///sdcard/xxx.jpg
+            uri != null && uri.scheme == "file" && uri.path?.startsWith("/") == true -> {
+                ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
             model is File -> {
@@ -111,13 +96,53 @@ class CoilModelToImageSourceImpl constructor(
                 ImageSource.fromResource(context, model).toFactory()
             }
 
+            // android.resource://example.package.name/drawable/image
+            uri != null && uri.scheme == "android.resource" && uri.pathSegments.size == 2 -> {
+                val packageName = uri.authority.orEmpty()
+                val resources = context.packageManager.getResourcesForApplication(packageName)
+                val (type, name) = uri.pathSegments
+                //noinspection DiscouragedApi: Necessary to support resource URIs.
+                val id = resources.getIdentifier(name, type, packageName)
+                ImageSource.fromResource(resources, id).toFactory()
+            }
+
+            // android.resource://example.package.name/4125123
+            uri != null && uri.scheme == "android.resource" && uri.pathSegments.size == 1 -> {
+                val packageName = uri.authority.orEmpty()
+                val resources = context.packageManager.getResourcesForApplication(packageName)
+                val id = uri.pathSegments.first().toInt()
+                ImageSource.fromResource(resources, id).toFactory()
+            }
+
             model is ByteArray -> {
                 ImageSource.fromByteArray(model).toFactory()
+            }
+
+            model is ByteBuffer -> {
+                val byteArray: ByteArray = model.asSource().buffer().use { it.readByteArray() }
+                ImageSource.fromByteArray(byteArray).toFactory()
             }
 
             else -> {
                 null
             }
         }
+    }
+
+    internal fun ByteBuffer.asSource() = object : Source {
+        private val buffer = this@asSource.slice()
+        private val len = buffer.capacity()
+
+        override fun close() = Unit
+
+        override fun read(sink: Buffer, byteCount: Long): Long {
+            if (buffer.position() == len) return -1
+            val pos = buffer.position()
+            val newLimit = (pos + byteCount).toInt().coerceAtMost(len)
+            buffer.limit(newLimit)
+            return sink.write(buffer).toLong()
+        }
+
+        override fun timeout() = Timeout.NONE
     }
 }

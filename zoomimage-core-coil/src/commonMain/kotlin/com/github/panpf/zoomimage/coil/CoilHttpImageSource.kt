@@ -28,7 +28,7 @@ import okio.Source
 /**
  * [ImageSource] implementation for Coil's HTTP requests.
  *
- * @see com.github.panpf.zoomimage.core.coil.common.test.CoilHttpImageSourceTest
+ * @see com.github.panpf.zoomimage.core.coil.desktop.test.CoilHttpImageSourceTest
  */
 class CoilHttpImageSource(
     private val url: String,
@@ -65,17 +65,6 @@ class CoilHttpImageSource(
         override val key: String = url
 
         override suspend fun create(): CoilHttpImageSource {
-            val diskCache = imageLoader.diskCache
-            val openSourceFactory = diskCache?.openSnapshot(url)?.use {
-                val path = it.data
-                CoilHttpImageSource(url) {
-                    diskCache.fileSystem.source(path)
-                }
-            }
-            if (openSourceFactory != null) {
-                return openSourceFactory
-            }
-
             val options = Options(
                 context = context,
                 diskCachePolicy = ENABLED,
@@ -90,6 +79,7 @@ class CoilHttpImageSource(
                 throw IllegalStateException("FetchResult is not SourceFetchResult. data='${url}'")
             }
 
+            val diskCache = imageLoader.diskCache
             val openSourceFactory1 = diskCache?.openSnapshot(url)?.use {
                 val path = it.data
                 CoilHttpImageSource(url) {

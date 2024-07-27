@@ -18,13 +18,13 @@ package com.github.panpf.zoomimage.coil
 
 import coil3.ImageLoader
 import coil3.PlatformContext
-import coil3.Uri
 import coil3.toUri
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromByteArray
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.toFactory
 import okio.Path
+import okio.Path.Companion.toPath
 
 /**
  * Convert coil model to [ImageSource.Factory] for js platform
@@ -37,27 +37,24 @@ actual class CoilModelToImageSourceImpl actual constructor(
 ) : CoilModelToImageSource {
 
     actual override fun dataToImageSource(model: Any): ImageSource.Factory? {
+        val uri = when (model) {
+            is String -> model.toUri()
+            is coil3.Uri -> model
+            else -> null
+        }
         return when {
-            model is String && (model.startsWith("http://") || model.startsWith("https://")) -> {
+            uri != null && (uri.scheme == "http" || uri.scheme == "https") -> {
                 CoilHttpImageSource.Factory(context, imageLoader, model.toString())
             }
 
-            model is Uri && (model.scheme == "http" || model.scheme == "https") -> {
-                CoilHttpImageSource.Factory(context, imageLoader, model.toString())
+            // /sdcard/xxx.jpg
+            uri != null && uri.scheme?.takeIf { it.isNotEmpty() } == null && uri.path?.startsWith("/") == true -> {
+                ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
-            model is String && model.startsWith("/") -> {
-                ImageSource.fromFile(model).toFactory()
-            }
-
-            model is String && model.startsWith("file://") -> {
-                val filePath = model.toUri().path
-                filePath?.let { ImageSource.fromFile(filePath).toFactory() }
-            }
-
-            model is Uri && model.scheme == "file" -> {
-                val filePath = model.path
-                filePath?.let { ImageSource.fromFile(filePath).toFactory() }
+            // file:///sdcard/xxx.jpg
+            uri != null && uri.scheme == "file" && uri.path?.startsWith("/") == true -> {
+                ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
             model is Path -> {
