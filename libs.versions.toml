@@ -123,7 +123,7 @@ ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotia
 ktor-client-contentNegotiation-wasm = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor-wasm" }
 #ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 #ktor-client-core-wasm = { module = "io.ktor:ktor-client-core", version.ref = "ktor-wasm" }
-#ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
+ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 #ktor-client-ios = { module = "io.ktor:ktor-client-ios", version.ref = "ktor" }
 #ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 #ktor-client-logging={ module = "io.ktor:ktor-client-logging", version.ref = "ktor" }

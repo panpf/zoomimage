@@ -1,12 +1,13 @@
-package com.github.panpf.zoomimage.core.coil2.test
+package com.github.panpf.zoomimage.core.coil.desktop.test
 
-import android.graphics.BitmapFactory
-import androidx.test.platform.app.InstrumentationRegistry
-import coil.ImageLoader
+import coil3.ImageLoader
+import coil3.PlatformContext
 import com.github.panpf.zoomimage.coil.CoilHttpImageSource
+import com.github.panpf.zoomimage.subsampling.SkiaImage
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.runBlocking
 import okio.buffer
+import org.jetbrains.skia.impl.use
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -85,7 +86,7 @@ class CoilHttpImageSourceTest {
 
     @Test
     fun testOpenSource() {
-        val context = InstrumentationRegistry.getInstrumentation().context
+        val context = PlatformContext.INSTANCE
         val imageLoader = ImageLoader.Builder(context).build()
         val imageUri =
             "https://images.unsplash.com/photo-1721340143289-94be4f77cda4?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -99,8 +100,7 @@ class CoilHttpImageSourceTest {
             imageSourceFactory.create()
         }
         val bytes = imageSource.openSource().buffer().use { it.readByteArray() }
-        val bitmap = BitmapFactory.decodeStream(bytes.inputStream())
-        val imageSize = bitmap.let { IntSizeCompat(it.width, it.height) }
+        val imageSize = SkiaImage.makeFromEncoded(bytes).use { IntSizeCompat(it.width, it.height) }
         assertEquals(expected = IntSizeCompat(2832, 4240), actual = imageSize)
         assertNotEquals(
             illegal = null,
@@ -110,7 +110,7 @@ class CoilHttpImageSourceTest {
 
     @Test
     fun testFactoryEqualsAndHashCode() {
-        val context = InstrumentationRegistry.getInstrumentation().context
+        val context = PlatformContext.INSTANCE
         val imageLoader = ImageLoader.Builder(context).build()
         val imageUri1 = "https://www.example.com/image1.jpg"
         val imageUri2 = "https://www.example.com/image2.jpg"
@@ -145,7 +145,7 @@ class CoilHttpImageSourceTest {
 
     @Test
     fun testFactoryToString() {
-        val context = InstrumentationRegistry.getInstrumentation().context
+        val context = PlatformContext.INSTANCE
         val imageLoader = ImageLoader.Builder(context).build()
         val imageUri1 = "https://www.example.com/image1.jpg"
         val imageUri2 = "https://www.example.com/image2.jpg"
