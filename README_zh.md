@@ -277,9 +277,9 @@ Apache 2.0. 有关详细信息，请参阅 [LICENSE](LICENSE.txt) 文件.
 
 [version_link]: https://repo1.maven.org/maven2/io/github/panpf/zoomimage/
 
-[min_api_image]: https://img.shields.io/badge/AndroidAPI-16%2B-orange.svg
+[min_api_image]: https://img.shields.io/badge/AndroidAPI-21%2B-orange.svg
 
-[min_api_link]: https://android-arsenal.com/api?level=16
+[min_api_link]: https://android-arsenal.com/api?level=21
 
 [Telephoto]: https://github.com/saket/telephoto
 

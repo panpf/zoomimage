@@ -20,8 +20,7 @@ of images. It has the following features and functions:
 * `Subsampling`. Support for subsampling of very large images to avoid OOM, tile support animation,
   and sharpness gradients
 * `Dynamic scale factor`. Automatically calculates the most appropriate double-click scaling factor
-  based
-  on image size and container size
+  based on image size and container size
 * `Scaling damping`. When manually scaled beyond the maximum or minimum zoom factor, there is a
   damped rubber band effect
 * `One-finger scale`. Double-tap and hold the screen and slide up or down to zoom the image
@@ -299,9 +298,9 @@ Apache 2.0. See the [LICENSE](LICENSE.txt) file for details.
 
 [version_link]: https://repo1.maven.org/maven2/io/github/panpf/zoomimage/
 
-[min_api_image]: https://img.shields.io/badge/AndroidAPI-16%2B-orange.svg
+[min_api_image]: https://img.shields.io/badge/AndroidAPI-21%2B-orange.svg
 
-[min_api_link]: https://android-arsenal.com/api?level=16
+[min_api_link]: https://android-arsenal.com/api?level=21
 
 [Telephoto]: https://github.com/saket/telephoto
 
