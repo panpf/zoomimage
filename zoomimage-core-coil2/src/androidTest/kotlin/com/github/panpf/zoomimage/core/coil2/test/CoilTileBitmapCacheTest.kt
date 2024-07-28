@@ -19,7 +19,7 @@ class CoilTileBitmapCacheTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageLoader = ImageLoader.Builder(context).build()
         try {
-            val helper = CoilTileBitmapCache(imageLoader)
+            val tileBitmapCache = CoilTileBitmapCache(imageLoader)
 
             val key1 = "key1"
             val bitmap1 = Bitmap.createBitmap(100, 100, ARGB_8888)
@@ -28,11 +28,11 @@ class CoilTileBitmapCacheTest {
             val imageInfo1 = ImageInfo(tileBitmap1.width, tileBitmap1.height, "image/jpeg")
             val imageUrl1 = "url1"
 
-            assertEquals(null, helper.get(key1))
-            helper.put(key1, tileBitmap1, imageUrl1, imageInfo1)
+            assertEquals(null, tileBitmapCache.get(key1))
+            tileBitmapCache.put(key1, tileBitmap1, imageUrl1, imageInfo1)
             assertEquals(
                 expected = AndroidTileBitmap(bitmap1, key1, BitmapFrom.MEMORY_CACHE),
-                actual = helper.get(key1)
+                actual = tileBitmapCache.get(key1)
             )
 
             val key2 = "key2"
@@ -42,14 +42,14 @@ class CoilTileBitmapCacheTest {
             val imageInfo2 = ImageInfo(tileBitmap2.width, tileBitmap2.height, "image/jpeg")
             val imageUrl2 = "url2"
 
-            assertEquals(null, helper.get(key2))
-            helper.put(key2, tileBitmap2, imageUrl2, imageInfo2)
+            assertEquals(null, tileBitmapCache.get(key2))
+            tileBitmapCache.put(key2, tileBitmap2, imageUrl2, imageInfo2)
             assertEquals(
                 expected = AndroidTileBitmap(bitmap2, key2, BitmapFrom.MEMORY_CACHE),
-                actual = helper.get(key2)
+                actual = tileBitmapCache.get(key2)
             )
 
-            assertNotEquals(illegal = helper.get(key1), actual = helper.get(key2))
+            assertNotEquals(illegal = tileBitmapCache.get(key1), actual = tileBitmapCache.get(key2))
         } finally {
             imageLoader.shutdown()
         }

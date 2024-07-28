@@ -1,6 +1,6 @@
 package com.githb.panpf.zoomimage.images
 
-import com.github.panpf.sketch.util.Size
+import com.github.panpf.zoomimage.util.IntSizeCompat
 
 object HttpImages {
     private const val PATH = "http://img.panpengfei.com"
@@ -8,6 +8,6 @@ object HttpImages {
     val hugeLongComic: ImageFile = ImageFile(
         uri = "${PATH}/sample_long_comic.jpg",
         name = "COMIC",
-        size = Size(690, 12176)
+        size = IntSizeCompat(690, 12176)
     )
 }

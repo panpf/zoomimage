@@ -14,10 +14,12 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.zoomimageCore)
-            api(libs.panpf.sketch4.core)
         }
         desktopMain {
             resources.srcDirs("files")
+            dependencies {
+                api(libs.appdirs)
+            }
         }
         iosMain {
             resources.srcDirs("files")

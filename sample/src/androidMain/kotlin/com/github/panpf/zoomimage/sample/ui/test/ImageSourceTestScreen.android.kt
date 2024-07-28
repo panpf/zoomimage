@@ -3,7 +3,7 @@ package com.github.panpf.zoomimage.sample.ui.test
 import com.githb.panpf.zoomimage.images.AndroidResourceImages
 import com.githb.panpf.zoomimage.images.ContentImages
 import com.githb.panpf.zoomimage.images.HttpImages
-import com.githb.panpf.zoomimage.images.LocalImages
+import com.githb.panpf.zoomimage.images.AndroidLocalImages
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.fetch.AssetUriFetcher
@@ -30,7 +30,7 @@ import okio.buffer
 
 actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>> {
     return listOf(
-        "FILE" to LocalImages.with(context).cat.uri,
+        "FILE" to AndroidLocalImages.with(context).cat.uri,
         "ASSET" to ResourceImages.longEnd.uri,
         "BYTES" to HttpImages.hugeLongComic.uri,
         "CONTENT" to ContentImages.create(context).hugeLongQmsht.uri,

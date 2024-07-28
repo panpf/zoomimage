@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
 import com.githb.panpf.zoomimage.images.HttpImages
-import com.githb.panpf.zoomimage.images.LocalImages
+import com.githb.panpf.zoomimage.images.IOSLocalImages
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.fetch.ComposeResourceUriFetcher
@@ -25,7 +25,7 @@ import okio.use
 
 actual suspend fun getImageSourceTestItems(context: PlatformContext): List<Pair<String, String>> {
     return listOf(
-        "FILE" to LocalImages.with().cat.uri,
+        "FILE" to IOSLocalImages.with().cat.uri,
         "BYTES" to HttpImages.hugeLongComic.uri,
         "RES_KOTLIN" to ResourceImages.dog.uri,
         "RES_COMPOSE" to ComposeResourceImages.hugeChina.uri,

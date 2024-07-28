@@ -6,16 +6,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class LocalImages private constructor() {
+class AndroidLocalImages private constructor() {
 
     companion object {
 
-        private var instance: LocalImages? = null
+        private var instance: AndroidLocalImages? = null
 
-        suspend fun with(context: Context): LocalImages {
+        suspend fun with(context: Context): AndroidLocalImages {
             saveToExternalFilesDir(context)
             return instance ?: synchronized(this) {
-                instance ?: LocalImages().also { instance = it }
+                instance ?: AndroidLocalImages().also { instance = it }
             }
         }
 

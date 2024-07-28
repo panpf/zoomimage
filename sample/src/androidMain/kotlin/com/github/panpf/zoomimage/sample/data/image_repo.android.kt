@@ -8,7 +8,7 @@ import com.githb.panpf.zoomimage.images.AndroidResourceImages
 import com.githb.panpf.zoomimage.images.ContentImages
 import com.githb.panpf.zoomimage.images.HttpImages
 import com.githb.panpf.zoomimage.images.ImageFile
-import com.githb.panpf.zoomimage.images.LocalImages
+import com.githb.panpf.zoomimage.images.AndroidLocalImages
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
@@ -33,7 +33,7 @@ actual suspend fun builtinImages(context: PlatformContext): List<ImageFile> {
         ContentImages.create(context).longWhale,
         ComposeResourceImages.hugeChina,
         AndroidResourceImages.hugeCard,
-        LocalImages.with(context).hugeLongQmsht,
+        AndroidLocalImages.with(context).hugeLongQmsht,
         HttpImages.hugeLongComic,
     ).plus(ResourceImages.exifs)
 }

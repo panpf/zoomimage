@@ -6,7 +6,6 @@ import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.test.toImageSource
-import com.github.panpf.zoomimage.test.toIntSizeCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
@@ -28,10 +27,10 @@ class SubsamplingDesktopTest {
         decodeAndCreateTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
-            thumbnailSize = hugeLongQmshtImageFile.size.toIntSizeCompat() / 32f,
+            thumbnailSize = hugeLongQmshtImageFile.size / 32f,
         ).getOrThrow().apply {
             assertEquals(
-                expected = hugeLongQmshtImageFile.size.toIntSizeCompat(),
+                expected = hugeLongQmshtImageFile.size,
                 actual = imageInfo.size
             )
             assertEquals(
@@ -57,7 +56,7 @@ class SubsamplingDesktopTest {
         decodeAndCreateTileDecoder(
             logger = logger,
             imageSource = gifImageSource,
-            thumbnailSize = gifImageFile.size.toIntSizeCompat() / 8f,
+            thumbnailSize = gifImageFile.size / 8f,
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             assertEquals(-3, this.code)
             assertEquals(true, this.skipped)
@@ -66,7 +65,7 @@ class SubsamplingDesktopTest {
         }
 
         val errorThumbnailSize =
-            hugeLongQmshtImageFile.size.toIntSizeCompat() / ScaleFactorCompat(1f, 8f)
+            hugeLongQmshtImageFile.size / ScaleFactorCompat(1f, 8f)
         decodeAndCreateTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
@@ -79,7 +78,7 @@ class SubsamplingDesktopTest {
                 this.message
             )
             assertEquals(
-                expected = hugeLongQmshtImageFile.size.toIntSizeCompat(),
+                expected = hugeLongQmshtImageFile.size,
                 actual = this.imageInfo!!.size
             )
             assertEquals(
@@ -89,7 +88,7 @@ class SubsamplingDesktopTest {
         }
 
         val errorThumbnailSize2 =
-            hugeLongQmshtImageFile.size.toIntSizeCompat() / ScaleFactorCompat(8f, 1f)
+            hugeLongQmshtImageFile.size / ScaleFactorCompat(8f, 1f)
         decodeAndCreateTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
@@ -102,7 +101,7 @@ class SubsamplingDesktopTest {
                 this.message
             )
             assertEquals(
-                expected = hugeLongQmshtImageFile.size.toIntSizeCompat(),
+                expected = hugeLongQmshtImageFile.size,
                 actual = this.imageInfo!!.size
             )
             assertEquals(
@@ -112,7 +111,7 @@ class SubsamplingDesktopTest {
         }
 
         val errorThumbnailSize3 =
-            hugeLongQmshtImageFile.size.toIntSizeCompat() / ScaleFactorCompat(32f, 34f)
+            hugeLongQmshtImageFile.size / ScaleFactorCompat(32f, 34f)
         decodeAndCreateTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
@@ -125,7 +124,7 @@ class SubsamplingDesktopTest {
                 this.message
             )
             assertEquals(
-                expected = hugeLongQmshtImageFile.size.toIntSizeCompat(),
+                expected = hugeLongQmshtImageFile.size,
                 actual = this.imageInfo!!.size
             )
             assertEquals(

@@ -7,7 +7,6 @@ import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
 import com.github.panpf.zoomimage.test.hammingDistance
 import com.github.panpf.zoomimage.test.produceFingerPrint
 import com.github.panpf.zoomimage.test.toImageSource
-import com.github.panpf.zoomimage.test.toIntSizeCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -22,7 +21,7 @@ class BitmapRegionDecoderDecodeHelperTest {
         val dogImageSource = dogImageFile.toImageSource()
         BitmapRegionDecoderDecodeHelper.Factory().create(dogImageSource).apply {
             assertSame(dogImageSource, imageSource)
-            assertEquals(dogImageFile.size.toIntSizeCompat(), imageInfo.size)
+            assertEquals(dogImageFile.size, imageInfo.size)
             assertEquals(true, supportRegion)
             assertEquals(
                 expected = ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED),
@@ -34,7 +33,7 @@ class BitmapRegionDecoderDecodeHelperTest {
         val animImageSource = animImageFile.toImageSource()
         BitmapRegionDecoderDecodeHelper.Factory().create(animImageSource).apply {
             assertSame(animImageSource, imageSource)
-            assertEquals(animImageFile.size.toIntSizeCompat(), imageInfo.size)
+            assertEquals(animImageFile.size, imageInfo.size)
             assertEquals(false, supportRegion)
             assertEquals(
                 expected = ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED),
@@ -46,7 +45,7 @@ class BitmapRegionDecoderDecodeHelperTest {
         val exifRotate180ImageSource = exifRotate180ImageFile.toImageSource()
         BitmapRegionDecoderDecodeHelper.Factory().create(exifRotate180ImageSource).apply {
             assertSame(exifRotate180ImageSource, imageSource)
-            assertEquals(exifRotate180ImageFile.size.toIntSizeCompat(), imageInfo.size)
+            assertEquals(exifRotate180ImageFile.size, imageInfo.size)
             assertEquals(true, supportRegion)
             assertEquals(
                 expected = ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_180),
@@ -58,7 +57,7 @@ class BitmapRegionDecoderDecodeHelperTest {
         val exifTransposeImageSource = exifTransposeImageFile.toImageSource()
         BitmapRegionDecoderDecodeHelper.Factory().create(exifTransposeImageSource).apply {
             assertSame(exifTransposeImageSource, imageSource)
-            assertEquals(exifTransposeImageFile.size.toIntSizeCompat(), imageInfo.size)
+            assertEquals(exifTransposeImageFile.size, imageInfo.size)
             assertEquals(true, supportRegion)
             assertEquals(
                 expected = ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSPOSE),

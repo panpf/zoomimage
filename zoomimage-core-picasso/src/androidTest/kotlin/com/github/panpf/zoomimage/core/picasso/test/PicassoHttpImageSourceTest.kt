@@ -27,31 +27,31 @@ class PicassoHttpImageSourceTest {
         val imageUri1 = "https://www.example.com/image1.jpg".toUri()
         val imageUri2 = "https://www.example.com/image2.jpg".toUri()
 
-        val imageSourceFactory1 = PicassoHttpImageSource(picasso, imageUri1)
-        val imageSourceFactory12 = PicassoHttpImageSource(picasso, imageUri1)
-        val imageSourceFactory2 = PicassoHttpImageSource(picasso, imageUri2)
-        val imageSourceFactory22 = PicassoHttpImageSource(picasso, imageUri2)
+        val imageSource1 = PicassoHttpImageSource(picasso, imageUri1)
+        val imageSource12 = PicassoHttpImageSource(picasso, imageUri1)
+        val imageSource2 = PicassoHttpImageSource(picasso, imageUri2)
+        val imageSource22 = PicassoHttpImageSource(picasso, imageUri2)
 
-        assertEquals(expected = imageSourceFactory1, actual = imageSourceFactory12)
-        assertEquals(expected = imageSourceFactory2, actual = imageSourceFactory22)
-        assertNotEquals(illegal = imageSourceFactory1, actual = imageSourceFactory2)
-        assertNotEquals(illegal = imageSourceFactory12, actual = imageSourceFactory22)
+        assertEquals(expected = imageSource1, actual = imageSource12)
+        assertEquals(expected = imageSource2, actual = imageSource22)
+        assertNotEquals(illegal = imageSource1, actual = imageSource2)
+        assertNotEquals(illegal = imageSource12, actual = imageSource22)
 
         assertEquals(
-            expected = imageSourceFactory1.hashCode(),
-            actual = imageSourceFactory12.hashCode()
+            expected = imageSource1.hashCode(),
+            actual = imageSource12.hashCode()
         )
         assertEquals(
-            expected = imageSourceFactory2.hashCode(),
-            actual = imageSourceFactory22.hashCode()
+            expected = imageSource2.hashCode(),
+            actual = imageSource22.hashCode()
         )
         assertNotEquals(
-            illegal = imageSourceFactory1.hashCode(),
-            actual = imageSourceFactory2.hashCode()
+            illegal = imageSource1.hashCode(),
+            actual = imageSource2.hashCode()
         )
         assertNotEquals(
-            illegal = imageSourceFactory12.hashCode(),
-            actual = imageSourceFactory22.hashCode()
+            illegal = imageSource12.hashCode(),
+            actual = imageSource22.hashCode()
         )
     }
 

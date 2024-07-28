@@ -34,12 +34,12 @@ class GlideTileBitmapTest {
             EngineResourceWrapper(glideEngine.newEngineResource(bitmap2, newEngineKey("key1")))
 
         GlideTileBitmap(resource1, "resource1", BitmapFrom.LOCAL).apply {
-            assertSame(resource1.bitmap, bitmap1)
+            assertSame(bitmap1, bitmap)
             assertEquals("resource1", key)
             assertEquals(bitmapFrom, BitmapFrom.LOCAL)
         }
         GlideTileBitmap(resource2, "resource2", BitmapFrom.MEMORY_CACHE).apply {
-            assertSame(resource2.bitmap, bitmap2)
+            assertSame(bitmap2, bitmap)
             assertEquals("resource2", key)
             assertEquals(bitmapFrom, BitmapFrom.MEMORY_CACHE)
         }
@@ -63,34 +63,34 @@ class GlideTileBitmapTest {
         val resource2 =
             EngineResourceWrapper(glideEngine.newEngineResource(bitmap2, newEngineKey("key1")))
 
-        val androidTileBitmap1 = GlideTileBitmap(resource1, "resource1", BitmapFrom.LOCAL).apply {
+        val tileBitmap1 = GlideTileBitmap(resource1, "resource1", BitmapFrom.LOCAL).apply {
             assertEquals(resource1.bitmap.width, width)
             assertEquals(resource1.bitmap.height, height)
             assertEquals(resource1.bitmap.byteCount.toLong(), byteCount)
         }
-        val androidTileBitmap12 =
+        val tileBitmap12 =
             GlideTileBitmap(resource12, "resource12", BitmapFrom.LOCAL).apply {
                 assertEquals(resource12.bitmap.width, width)
                 assertEquals(resource12.bitmap.height, height)
                 assertEquals(resource12.bitmap.byteCount.toLong(), byteCount)
             }
-        val androidTileBitmap2 = GlideTileBitmap(resource2, "resource2", BitmapFrom.LOCAL).apply {
+        val tileBitmap2 = GlideTileBitmap(resource2, "resource2", BitmapFrom.LOCAL).apply {
             assertEquals(resource2.bitmap.width, width)
             assertEquals(resource2.bitmap.height, height)
             assertEquals(resource2.bitmap.byteCount.toLong(), byteCount)
         }
 
-        assertEquals(androidTileBitmap1.width, androidTileBitmap12.width)
-        assertEquals(androidTileBitmap1.height, androidTileBitmap12.height)
-        assertNotEquals(androidTileBitmap1.byteCount, androidTileBitmap12.byteCount)
+        assertEquals(tileBitmap1.width, tileBitmap12.width)
+        assertEquals(tileBitmap1.height, tileBitmap12.height)
+        assertNotEquals(tileBitmap1.byteCount, tileBitmap12.byteCount)
 
-        assertNotEquals(androidTileBitmap1.width, androidTileBitmap2.width)
-        assertNotEquals(androidTileBitmap1.height, androidTileBitmap2.height)
-        assertNotEquals(androidTileBitmap1.byteCount, androidTileBitmap2.byteCount)
+        assertNotEquals(tileBitmap1.width, tileBitmap2.width)
+        assertNotEquals(tileBitmap1.height, tileBitmap2.height)
+        assertNotEquals(tileBitmap1.byteCount, tileBitmap2.byteCount)
 
-        assertNotEquals(androidTileBitmap2.width, androidTileBitmap12.width)
-        assertNotEquals(androidTileBitmap2.height, androidTileBitmap12.height)
-        assertNotEquals(androidTileBitmap2.byteCount, androidTileBitmap12.byteCount)
+        assertNotEquals(tileBitmap2.width, tileBitmap12.width)
+        assertNotEquals(tileBitmap2.height, tileBitmap12.height)
+        assertNotEquals(tileBitmap2.byteCount, tileBitmap12.byteCount)
     }
 
     @Test

@@ -1,7 +1,5 @@
 package com.githb.panpf.zoomimage.images
 
-import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.sketch.util.appCacheDirectory
 import com.github.panpf.zoomimage.subsampling.KotlinResourceImageSource
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
@@ -9,28 +7,33 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import okio.FileSystem
+import okio.Path
+import okio.Path.Companion.toPath
 import okio.buffer
 import okio.use
+import platform.Foundation.NSCachesDirectory
+import platform.Foundation.NSSearchPathForDirectoriesInDomains
+import platform.Foundation.NSUserDomainMask
 
-class LocalImages private constructor() {
+class IOSLocalImages private constructor() {
 
     companion object {
 
-        private var instance: LocalImages? = null
+        private var instance: IOSLocalImages? = null
         private val lock = SynchronizedObject()
 
-        suspend fun with(): LocalImages {
+        suspend fun with(): IOSLocalImages {
             saveToExternalFilesDir()
             return instance ?: synchronized(lock) {
-                instance ?: LocalImages().also { instance = it }
+                instance ?: IOSLocalImages().also { instance = it }
             }
         }
 
         suspend fun saveToExternalFilesDir() = withContext(Dispatchers.IO) {
             val fileSystem = FileSystem.SYSTEM
-            val outDir = PlatformContext.INSTANCE.appCacheDirectory()!!.resolve("zoomimage-files")
+            val outDir = appCacheDirectory()!!.resolve("zoomimage-files")
             if (!fileSystem.exists(outDir)) {
-                fileSystem.createDirectory(outDir)
+                fileSystem.createDirectories(outDir)
             }
             ResourceImages.values.forEach {
                 val file = outDir.resolve(it.resourceName)
@@ -52,7 +55,7 @@ class LocalImages private constructor() {
     }
 
     private val path =
-        "file://${PlatformContext.INSTANCE.appCacheDirectory()!!.resolve("zoomimage-files")}/"
+        "file://${appCacheDirectory()!!.resolve("zoomimage-files")}/"
 
     val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
     val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
@@ -181,4 +184,13 @@ class LocalImages private constructor() {
         exifTranspose,
         exifTransverse,
     )
+}
+
+fun appCacheDirectory(): Path? {
+    return getCacheDirectory().toPath()
+}
+
+private fun getCacheDirectory(): String {
+    val paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, true)
+    return paths.first() as String
 }

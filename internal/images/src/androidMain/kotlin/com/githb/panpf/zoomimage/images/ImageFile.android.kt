@@ -15,8 +15,6 @@
  */
 package com.githb.panpf.zoomimage.images
 
-import com.github.panpf.sketch.fetch.newAssetUri
-
 actual fun resourceNameToUri(name: String): String {
-    return newAssetUri(name)
+    return "asset://$name"
 }

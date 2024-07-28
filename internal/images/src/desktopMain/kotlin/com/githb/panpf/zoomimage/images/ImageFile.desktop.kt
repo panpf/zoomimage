@@ -15,8 +15,6 @@
  */
 package com.githb.panpf.zoomimage.images
 
-import com.github.panpf.sketch.fetch.newKotlinResourceUri
-
 actual fun resourceNameToUri(name: String): String {
-    return newKotlinResourceUri(name)
+    return "kotlin.resource://$name"
 }

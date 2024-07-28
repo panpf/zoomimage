@@ -15,6 +15,7 @@ androidx-test-ext-junit = "1.2.1"
 androidx-test-runner = "1.6.1"
 androidx-test-rules = "1.6.1"
 
+appdirs = "1.2.2"
 cashapp-paging = "3.3.0-alpha02-0.5.1"
 
 coil = "3.0.0-alpha07"
@@ -85,6 +86,7 @@ androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "a
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
 
+appdirs = { module = "net.harawata:appdirs", version.ref = "appdirs" }
 cashapp-paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "cashapp-paging" }
 
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }

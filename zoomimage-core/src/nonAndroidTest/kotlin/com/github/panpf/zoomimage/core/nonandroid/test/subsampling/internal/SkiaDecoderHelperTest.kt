@@ -5,7 +5,6 @@ import com.github.panpf.zoomimage.subsampling.internal.SkiaDecodeHelper
 import com.github.panpf.zoomimage.test.hammingDistance
 import com.github.panpf.zoomimage.test.produceFingerPrint
 import com.github.panpf.zoomimage.test.toImageSource
-import com.github.panpf.zoomimage.test.toIntSizeCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import org.jetbrains.skia.Bitmap
 import kotlin.test.Test
@@ -21,7 +20,7 @@ class SkiaDecoderHelperTest {
         val dogImageSource = dogImageFile.toImageSource()
         SkiaDecodeHelper.Factory().create(dogImageSource).apply {
             assertSame(dogImageSource, imageSource)
-            assertEquals(dogImageFile.size.toIntSizeCompat(), imageInfo.size)
+            assertEquals(dogImageFile.size, imageInfo.size)
             assertEquals(true, supportRegion)
         }
 
@@ -29,7 +28,7 @@ class SkiaDecoderHelperTest {
         val animImageSource = animImageFile.toImageSource()
         SkiaDecodeHelper.Factory().create(animImageSource).apply {
             assertSame(animImageSource, imageSource)
-            assertEquals(animImageFile.size.toIntSizeCompat(), imageInfo.size)
+            assertEquals(animImageFile.size, imageInfo.size)
             assertEquals(false, supportRegion)
         }
 
@@ -37,7 +36,7 @@ class SkiaDecoderHelperTest {
         val exifRotate180ImageSource = exifRotate180ImageFile.toImageSource()
         SkiaDecodeHelper.Factory().create(exifRotate180ImageSource).apply {
             assertSame(exifRotate180ImageSource, imageSource)
-            assertEquals(exifRotate180ImageFile.size.toIntSizeCompat(), imageInfo.size)
+            assertEquals(exifRotate180ImageFile.size, imageInfo.size)
             assertEquals(true, supportRegion)
         }
 
@@ -45,7 +44,7 @@ class SkiaDecoderHelperTest {
         val exifTransposeImageSource = exifTransposeImageFile.toImageSource()
         SkiaDecodeHelper.Factory().create(exifTransposeImageSource).apply {
             assertSame(exifTransposeImageSource, imageSource)
-            assertEquals(exifTransposeImageFile.size.toIntSizeCompat(), imageInfo.size)
+            assertEquals(exifTransposeImageFile.size, imageInfo.size)
             assertEquals(true, supportRegion)
         }
     }

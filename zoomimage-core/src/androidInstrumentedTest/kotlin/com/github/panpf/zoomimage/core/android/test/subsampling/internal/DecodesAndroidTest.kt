@@ -1,8 +1,8 @@
 package com.github.panpf.zoomimage.core.android.test.subsampling.internal
 
 import android.os.Build
+import android.webkit.MimeTypeMap
 import com.githb.panpf.zoomimage.images.ResourceImages
-import com.github.panpf.sketch.util.MimeTypeMap
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.internal.BitmapRegionDecoderDecodeHelper
 import com.github.panpf.zoomimage.subsampling.internal.ExifOrientationHelper
@@ -12,7 +12,6 @@ import com.github.panpf.zoomimage.subsampling.internal.createDecodeHelper
 import com.github.panpf.zoomimage.subsampling.internal.decodeExifOrientation
 import com.github.panpf.zoomimage.subsampling.internal.decodeImageInfo
 import com.github.panpf.zoomimage.test.toImageSource
-import com.github.panpf.zoomimage.test.toIntSizeCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -61,9 +60,10 @@ class DecodesAndroidTest {
     @Test
     fun testDecodeImageInfo() = runTest {
         ResourceImages.values.forEach { imageFile ->
-            val mimeType = MimeTypeMap.getMimeTypeFromUrl(imageFile.uri)!!
+            val extensionFromUrl = getExtensionFromUrl(imageFile.uri)
+            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extensionFromUrl)!!
             assertEquals(
-                expected = ImageInfo(imageFile.size.toIntSizeCompat(), mimeType),
+                expected = ImageInfo(imageFile.size, mimeType),
                 actual = imageFile.toImageSource().decodeImageInfo().let {
                     ExifOrientationHelper(imageFile.exifOrientation).applyToImageInfo(it)
                 },
@@ -78,5 +78,16 @@ class DecodesAndroidTest {
 
     private operator fun IntSizeCompat.plus(other: IntSizeCompat): IntSizeCompat {
         return IntSizeCompat(this.width + other.width, this.height + other.height)
+    }
+
+    private fun getExtensionFromUrl(url: String): String? {
+        if (url.isBlank()) return null
+        return url
+            .substringBeforeLast('#') // Strip the fragment.
+            .substringBeforeLast('?') // Strip the query.
+            .substringAfterLast('/') // Get the last path segment.
+            .substringAfterLast('.', missingDelimiterValue = "") // Get the file extension.
+            .trim()
+            .takeIf { it.isNotEmpty() }
     }
 }

@@ -1,17 +1,17 @@
 package com.githb.panpf.zoomimage.images
 
-import com.github.panpf.sketch.util.Size
+import com.github.panpf.zoomimage.util.IntSizeCompat
 
-open class ImageFile(
+open class ImageFile constructor(
     val uri: String,
     val name: String,
-    val size: Size,
-    val exifOrientation: Int = ExifOrientation.UNDEFINED,
+    val size: IntSizeCompat,
+    val exifOrientation: Int = 0,
 ) {
     fun copy(
         uri: String = this.uri,
         name: String = this.name,
-        size: Size = this.size,
+        size: IntSizeCompat = this.size,
         exifOrientation: Int = this.exifOrientation,
     ): ImageFile = ImageFile(uri, name, size, exifOrientation)
 
@@ -23,7 +23,7 @@ open class ImageFile(
 class ResourceImageFile(
     val resourceName: String,
     name: String,
-    size: Size,
+    size: IntSizeCompat,
     exifOrientation: Int = ExifOrientation.UNDEFINED
 ) : ImageFile(
     uri = resourceNameToUri(resourceName),
