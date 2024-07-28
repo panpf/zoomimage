@@ -47,8 +47,9 @@ class SketchTileBitmap constructor(
     override val isRecycled: Boolean
         get() = bitmap?.isRecycled ?: true
 
-    private val toString =
-        "SketchTileBitmap(key=$key, bitmap=${bitmap!!.toLogString()}, bitmapFrom=$bitmapFrom)"
+    private val toString by lazy {
+        "SketchTileBitmap(key='$key', bitmap=${bitmap!!.toLogString()}, bitmapFrom=$bitmapFrom)"
+    }
 
     override fun recycle() {
         bitmap?.recycle()
@@ -56,6 +57,25 @@ class SketchTileBitmap constructor(
 
     override fun setIsDisplayed(displayed: Boolean) {
         cacheValue.countBitmap.setIsDisplayed(displayed, caller)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as SketchTileBitmap
+        if (bitmap != other.bitmap) return false
+        if (key != other.key) return false
+        if (bitmapFrom != other.bitmapFrom) return false
+        if (caller != other.caller) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = cacheValue.hashCode()
+        result = 31 * result + key.hashCode()
+        result = 31 * result + bitmapFrom.hashCode()
+        result = 31 * result + caller.hashCode()
+        return result
     }
 
     override fun toString(): String {

@@ -6,7 +6,7 @@ import com.github.panpf.sketch.cache.MemoryCache
 /**
  * [SkiaBitmapImage] MemoryCache.Value
  *
- * @see com.github.panpf.zoomimage.core.sketch.desktop.test.SkiaBitmapImageValueTest
+ * @see com.github.panpf.zoomimage.core.sketch.nonandroid.test.SkiaBitmapImageValueTest
  */
 class SkiaBitmapImageValue(
     override val image: SkiaBitmapImage,

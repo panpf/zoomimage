@@ -36,7 +36,6 @@ import com.github.panpf.sketch.AsyncImagePainter
 import com.github.panpf.sketch.AsyncImageState
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PainterState
-import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.internal.AsyncImageContent
@@ -178,13 +177,12 @@ fun SketchZoomAsyncImage(
     zoomState.zoomable.contentScale = contentScale
     zoomState.zoomable.alignment = alignment
 
-    val context = LocalPlatformContext.current
     LaunchedEffect(Unit) {
         zoomState.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
     }
     LaunchedEffect(Unit) {
         snapshotFlow { state.painterState }.collect {
-            onPainterState(context, sketch, zoomState, request, it)
+            onPainterState(sketch, zoomState, request, it)
         }
     }
 
@@ -205,7 +203,6 @@ fun SketchZoomAsyncImage(
 }
 
 private fun onPainterState(
-    context: PlatformContext,
     sketch: Sketch,
     zoomState: SketchZoomState,
     request: ImageRequest,
@@ -225,7 +222,7 @@ private fun onPainterState(
         is PainterState.Success -> {
             subsamplingState.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            val imageSource = SketchImageSource.Factory(context, sketch, request.uri)
+            val imageSource = SketchImageSource.Factory(sketch, request.uri)
             subsamplingState.setImageSource(imageSource)
         }
 

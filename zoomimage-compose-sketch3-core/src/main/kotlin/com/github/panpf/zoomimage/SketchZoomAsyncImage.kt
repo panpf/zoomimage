@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
@@ -359,7 +358,6 @@ fun SketchZoomAsyncImage(
     zoomState.zoomable.contentScale = contentScale
     zoomState.zoomable.alignment = alignment
 
-    val context = LocalContext.current
     LaunchedEffect(Unit) {
         zoomState.subsampling.tileBitmapCache =
             SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
@@ -372,7 +370,7 @@ fun SketchZoomAsyncImage(
         state = state,
         transform = transform,
         onPainterState = { loadState ->
-            onPainterState(context, sketch, zoomState, request, loadState)
+            onPainterState(sketch, zoomState, request, loadState)
             onPainterState?.invoke(loadState)
         },
         contentScale = contentScale,
@@ -387,7 +385,6 @@ fun SketchZoomAsyncImage(
 }
 
 private fun onPainterState(
-    context: Context,
     sketch: Sketch,
     zoomState: SketchZoomState,
     request: DisplayRequest,
@@ -407,7 +404,7 @@ private fun onPainterState(
         is PainterState.Success -> {
             subsamplingState.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            val imageSource = SketchImageSource.Factory(context, sketch, request.uriString)
+            val imageSource = SketchImageSource.Factory(sketch, request.uriString)
             subsamplingState.setImageSource(imageSource)
         }
 

@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.sketch
 
-import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.request.Depth
@@ -58,8 +57,7 @@ class SketchImageSource(
         return "SketchImageSource('$imageUri')"
     }
 
-    class Factory(
-        val context: PlatformContext,
+    class Factory constructor(
         val sketch: Sketch,
         val imageUri: String,
     ) : ImageSource.Factory {
@@ -67,7 +65,7 @@ class SketchImageSource(
         override val key: String = imageUri
 
         override suspend fun create(): SketchImageSource {
-            val request = ImageRequest(context, imageUri) {
+            val request = ImageRequest(sketch.context, imageUri) {
                 downloadCachePolicy(CachePolicy.ENABLED)
                 depth(Depth.NETWORK)
             }
@@ -80,15 +78,13 @@ class SketchImageSource(
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Factory) return false
-            if (context != other.context) return false
             if (sketch != other.sketch) return false
             if (imageUri != other.imageUri) return false
             return true
         }
 
         override fun hashCode(): Int {
-            var result = context.hashCode()
-            result = 31 * result + sketch.hashCode()
+            var result = sketch.hashCode()
             result = 31 * result + imageUri.hashCode()
             return result
         }
