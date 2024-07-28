@@ -39,8 +39,20 @@ val RequestCreator.internalMemoryPolicy: Int
         0
     }
 
-internal val Picasso.downloader: Downloader
+/**
+ * @see com.github.panpf.zoomimage.core.picasso.test.internal.PicassoTest.testInternalDownloader
+ */
+internal val Picasso.internalDownloader: Downloader
     get() = dispatcher.downloader
 
-internal val Picasso.cache: Cache
+/**
+ * @see com.github.panpf.zoomimage.core.picasso.test.internal.PicassoTest.testInternalCache
+ */
+internal val Picasso.internalCache: Cache
     get() = dispatcher.cache
+
+/**
+ * @see com.github.panpf.zoomimage.core.picasso.test.internal.PicassoTest.testInternalIndex
+ */
+internal val MemoryPolicy.internalIndex: Int
+    get() = index

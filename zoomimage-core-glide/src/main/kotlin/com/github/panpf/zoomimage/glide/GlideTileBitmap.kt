@@ -21,9 +21,10 @@ import com.bumptech.glide.load.engine.EngineResourceWrapper
 import com.github.panpf.zoomimage.glide.internal.toLogString
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
+import com.github.panpf.zoomimage.subsampling.TileBitmap
 
 /**
- * [AndroidTileBitmap] implementation based on Glide
+ * [TileBitmap] implementation based on Glide
  *
  * @see com.github.panpf.zoomimage.core.glide.test.GlideTileBitmapTest
  */
@@ -53,7 +54,24 @@ internal class GlideTileBitmap(
         resource.setIsDisplayed(displayed)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as GlideTileBitmap
+        if (resource.bitmap != other.resource.bitmap) return false
+        if (key != other.key) return false
+        if (bitmapFrom != other.bitmapFrom) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = resource.bitmap.hashCode()
+        result = 31 * result + key.hashCode()
+        result = 31 * result + bitmapFrom.hashCode()
+        return result
+    }
+
     override fun toString(): String {
-        return "GlideTileBitmap(bitmap=${bitmap.toLogString()}, key=$key, bitmapFrom=$bitmapFrom)"
+        return "GlideTileBitmap(key='$key', bitmap=${bitmap.toLogString()}, bitmapFrom=$bitmapFrom)"
     }
 }

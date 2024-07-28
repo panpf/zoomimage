@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.core.coil2.test
 
-import android.net.Uri
 import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import coil.ImageLoader
@@ -13,7 +12,6 @@ import com.github.panpf.zoomimage.subsampling.FileImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource.WrapperFactory
 import com.github.panpf.zoomimage.subsampling.ResourceImageSource
 import com.github.panpf.zoomimage.subsampling.toFactory
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okio.Buffer
 import okio.Path.Companion.toPath
@@ -21,6 +19,7 @@ import okio.Source
 import okio.Timeout
 import okio.buffer
 import java.io.File
+import java.net.URL
 import java.nio.ByteBuffer
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -44,6 +43,10 @@ class CoilModelToImageSourceImplTest {
                 actual = modelToImageSource.dataToImageSource(httpUri.toUri())
             )
             assertEquals(
+                expected = null,
+                actual = modelToImageSource.dataToImageSource(URL(httpUri))
+            )
+            assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
                 actual = modelToImageSource.dataToImageSource(httpUri.toHttpUrl())
             )
@@ -56,6 +59,10 @@ class CoilModelToImageSourceImplTest {
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
                 actual = modelToImageSource.dataToImageSource(httpsUri.toUri())
+            )
+            assertEquals(
+                expected = null,
+                actual = modelToImageSource.dataToImageSource(URL(httpsUri))
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),

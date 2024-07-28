@@ -29,11 +29,11 @@ class CoilModelToImageSourceImplTest {
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource.dataToImageSource(platform.Foundation.NSURL(httpUri))
+                actual = modelToImageSource.dataToImageSource(httpUri.toUri())
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource.dataToImageSource(httpUri.toUri())
+                actual = modelToImageSource.dataToImageSource(platform.Foundation.NSURL(httpUri))
             )
 
             val httpsUri = "https://www.example.com/image.jpg"
@@ -43,11 +43,11 @@ class CoilModelToImageSourceImplTest {
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = modelToImageSource.dataToImageSource(platform.Foundation.NSURL(httpsUri))
+                actual = modelToImageSource.dataToImageSource(httpsUri.toUri())
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = modelToImageSource.dataToImageSource(httpsUri.toUri())
+                actual = modelToImageSource.dataToImageSource(platform.Foundation.NSURL(httpsUri))
             )
 
             val pathUri = "/sdcard/image.jpg"

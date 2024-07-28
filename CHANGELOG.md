@@ -2,6 +2,12 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+* new: coil, glide, picasso series components now support 'android.resource:
+  //example.package.name/drawable/image' and 'android.resource://example.package.name/4125123' types
+  of models
+
 ## 1.1.0-alpha04
 
 images of extreme sizes (one side is extremely large and the other is extremely

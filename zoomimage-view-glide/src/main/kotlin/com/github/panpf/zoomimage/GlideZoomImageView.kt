@@ -20,8 +20,8 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.internalModel
-import com.bumptech.glide.load.engine.internalRequestOptions
+import com.bumptech.glide.internalModel
+import com.bumptech.glide.internalRequestOptions
 import com.bumptech.glide.request.SingleRequest
 import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl

@@ -2,6 +2,11 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+* new: coil、glide、picasso 系列组件现在支持 'android.resource://example.package.name/drawable/image'
+  和 'android.resource://example.package.name/4125123' 类型的 model
+
 ## 1.1.0-alpha04
 
 subsampling:

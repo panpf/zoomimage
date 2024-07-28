@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.picasso
 
 import android.content.Context
-import android.net.Uri
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.fromContent
@@ -25,7 +24,7 @@ import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.subsampling.toFactory
 import com.squareup.picasso.Picasso
-import okio.Path.Companion.toOkioPath
+import okio.Path.Companion.toPath
 import java.io.File
 
 /**
@@ -40,42 +39,71 @@ interface PicassoDataToImageSource {
  *
  * @see com.github.panpf.zoomimage.core.picasso.test.PicassoDataToImageSourceImplTest
  */
-class PicassoDataToImageSourceImpl(private val context: Context) : PicassoDataToImageSource {
+class PicassoDataToImageSourceImpl(
+    private val context: Context,
+    private val picasso: Picasso = Picasso.get()
+) : PicassoDataToImageSource {
 
     override fun dataToImageSource(data: Any): ImageSource.Factory? {
-        if (data is Uri) {
-            return when {
-                data.scheme == "http" || data.scheme == "https" -> {
-                    PicassoHttpImageSource(Picasso.get(), data).toFactory()
-                }
+        val uri = when (data) {
+            is String -> android.net.Uri.parse(data)
+            is android.net.Uri -> data
+            else -> null
+        }
+        return when {
+            uri != null && (uri.scheme == "http" || uri.scheme == "https") -> {
+                PicassoHttpImageSource(picasso, uri).toFactory()
+            }
 
-                data.scheme == "content" -> {
-                    ImageSource.fromContent(context, data).toFactory()
-                }
+            uri != null && uri.scheme == "content" -> {
+                ImageSource.fromContent(context, uri).toFactory()
+            }
 
-                data.scheme == "file" && data.pathSegments.firstOrNull() == "android_asset" -> {
-                    val assetFileName = data.pathSegments
-                        .takeIf { it.size > 1 }
-                        ?.let { it.subList(1, it.size) }
-                        ?.joinToString(separator = "/")
-                    assetFileName?.let { ImageSource.fromAsset(context, it).toFactory() }
-                }
+            // file:///android_asset/image.jpg
+            uri != null && uri.scheme == "file" && uri.pathSegments.firstOrNull() == "android_asset" -> {
+                val assetFileName = uri.pathSegments.drop(1).joinToString("/")
+                ImageSource.fromAsset(context, assetFileName).toFactory()
+            }
 
-                data.scheme == "file" -> {
-                    val filePath = data.path
-                    filePath?.let { ImageSource.fromFile(File(filePath).toOkioPath()).toFactory() }
-                }
+            // /sdcard/xxx.jpg
+            uri != null && uri.scheme?.takeIf { it.isNotEmpty() } == null && uri.path?.startsWith("/") == true -> {
+                ImageSource.fromFile(uri.path!!.toPath()).toFactory()
+            }
 
-                else -> {
-                    null
-                }
+            // file:///sdcard/xxx.jpg
+            uri != null && uri.scheme == "file" && uri.path?.startsWith("/") == true -> {
+                ImageSource.fromFile(uri.path!!.toPath()).toFactory()
+            }
+
+            data is File -> {
+                ImageSource.fromFile(data).toFactory()
+            }
+
+            data is Int -> {
+                ImageSource.fromResource(context, data).toFactory()
+            }
+
+            // android.resource://example.package.name/drawable/image
+            uri != null && uri.scheme == "android.resource" && uri.pathSegments.size == 2 -> {
+                val packageName = uri.authority.orEmpty()
+                val resources = context.packageManager.getResourcesForApplication(packageName)
+                val (type, name) = uri.pathSegments
+                //noinspection DiscouragedApi: Necessary to support resource URIs.
+                val id = resources.getIdentifier(name, type, packageName)
+                ImageSource.fromResource(resources, id).toFactory()
+            }
+
+            // android.resource://example.package.name/4125123
+            uri != null && uri.scheme == "android.resource" && uri.pathSegments.size == 1 -> {
+                val packageName = uri.authority.orEmpty()
+                val resources = context.packageManager.getResourcesForApplication(packageName)
+                val id = uri.pathSegments.first().toInt()
+                ImageSource.fromResource(resources, id).toFactory()
+            }
+
+            else -> {
+                null
             }
         }
-
-        if (data is Int && data != 0) {
-            return ImageSource.fromResource(context, data).toFactory()
-        }
-
-        return null
     }
 }

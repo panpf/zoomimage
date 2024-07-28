@@ -22,7 +22,7 @@ import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.cache
+import com.squareup.picasso.internalCache
 
 /**
  * Implement [TileBitmapCache] based on [Picasso]
@@ -32,7 +32,7 @@ import com.squareup.picasso.cache
 class PicassoTileBitmapCache(private val picasso: Picasso) : TileBitmapCache {
 
     override fun get(key: String): TileBitmap? {
-        val bitmap = picasso.cache[key] ?: return null
+        val bitmap = picasso.internalCache[key] ?: return null
         return AndroidTileBitmap(bitmap, key, BitmapFrom.MEMORY_CACHE)
     }
 
@@ -44,7 +44,7 @@ class PicassoTileBitmapCache(private val picasso: Picasso) : TileBitmapCache {
     ): TileBitmap? {
         tileBitmap as AndroidTileBitmap
         val bitmap = tileBitmap.bitmap!!
-        picasso.cache.set(key, bitmap)
+        picasso.internalCache.set(key, bitmap)
         return null
     }
 }

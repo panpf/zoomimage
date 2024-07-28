@@ -20,7 +20,7 @@ import android.net.Uri
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Picasso.LoadedFrom
-import com.squareup.picasso.downloader
+import com.squareup.picasso.internalDownloader
 import okhttp3.Response
 import okio.Source
 import okio.source
@@ -39,7 +39,7 @@ class PicassoHttpImageSource(val picasso: Picasso, val uri: Uri) : ImageSource {
         val downloaderRequest = okhttp3.Request.Builder()
             .url(uri.toString())
             .build()
-        val response: Response = picasso.downloader.load(downloaderRequest)
+        val response: Response = picasso.internalDownloader.load(downloaderRequest)
         val body =
             response.body() ?: throw IOException("HTTP response body is null. uri='$uri'")
 

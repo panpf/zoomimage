@@ -23,7 +23,7 @@ import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.data.DataFetcher
 import com.bumptech.glide.load.data.HttpUrlFetcher
 import com.bumptech.glide.load.engine.cache.DiskCache
-import com.bumptech.glide.load.engine.getDiskCache
+import com.bumptech.glide.load.engine.internalDiskCache
 import com.bumptech.glide.load.model.ByteBufferEncoder
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.stream.HttpGlideUrlLoader
@@ -52,7 +52,7 @@ class GlideHttpImageSource(
     val openSource: () -> Source
 ) : ImageSource {
 
-    override val key: String = glideUrl.cacheKey
+    override val key: String = glideUrl.toString()
 
     override fun openSource(): Source {
         return openSource.invoke()
@@ -82,7 +82,7 @@ class GlideHttpImageSource(
 
         constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
 
-        private val diskCache by lazy { getDiskCache(glide) }
+        private val diskCache by lazy { glide.internalDiskCache }
 
         override suspend fun create(): GlideHttpImageSource {
             val diskCache = diskCache

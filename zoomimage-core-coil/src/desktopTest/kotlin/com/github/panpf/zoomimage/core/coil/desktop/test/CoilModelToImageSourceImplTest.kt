@@ -14,6 +14,7 @@ import okio.Source
 import okio.Timeout
 import okio.buffer
 import java.io.File
+import java.net.URL
 import java.nio.ByteBuffer
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,6 +37,10 @@ class CoilModelToImageSourceImplTest {
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
                 actual = modelToImageSource.dataToImageSource(httpUri.toUri())
             )
+            assertEquals(
+                expected = null,
+                actual = modelToImageSource.dataToImageSource(URL(httpUri))
+            )
 
             val httpsUri = "https://www.example.com/image.jpg"
             assertEquals(
@@ -45,6 +50,10 @@ class CoilModelToImageSourceImplTest {
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
                 actual = modelToImageSource.dataToImageSource(httpsUri.toUri())
+            )
+            assertEquals(
+                expected = null,
+                actual = modelToImageSource.dataToImageSource(URL(httpsUri))
             )
 
             val pathUri = "/sdcard/image.jpg"

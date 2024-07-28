@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage.glide
 
 import android.content.Context
-import android.net.Uri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -27,6 +26,7 @@ import com.github.panpf.zoomimage.subsampling.fromContent
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.subsampling.toFactory
+import okio.Path.Companion.toPath
 import java.io.File
 import java.net.URL
 
@@ -42,62 +42,48 @@ interface GlideModelToImageSource {
  *
  * @see com.github.panpf.zoomimage.core.glide.test.GlideModelToImageSourceImplTest
  */
-class GlideModelToImageSourceImpl(private val context: Context) : GlideModelToImageSource {
+class GlideModelToImageSourceImpl(
+    private val context: Context,
+    private val glide: Glide = Glide.get(context)
+) : GlideModelToImageSource {
 
     override fun dataToImageSource(model: Any): ImageSource.Factory? {
+        val uri = when (model) {
+            is String -> android.net.Uri.parse(model)
+            is android.net.Uri -> model
+            else -> null
+        }
         return when {
             model is GlideUrl -> {
-                GlideHttpImageSource.Factory(Glide.get(context), model)
+                GlideHttpImageSource.Factory(glide, model)
             }
 
             model is URL -> {
-                GlideHttpImageSource.Factory(Glide.get(context), GlideUrl(model))
+                GlideHttpImageSource.Factory(glide, GlideUrl(model))
             }
 
-            model is String && (model.startsWith("http://") || model.startsWith("https://")) -> {
-                GlideHttpImageSource.Factory(Glide.get(context), model)
+            uri != null && (uri.scheme == "http" || uri.scheme == "https") -> {
+                GlideHttpImageSource.Factory(glide, model.toString())
             }
 
-            model is Uri && (model.scheme == "http" || model.scheme == "https") -> {
-                GlideHttpImageSource.Factory(Glide.get(context), model.toString())
+            uri != null && uri.scheme == "content" -> {
+                ImageSource.fromContent(context, uri).toFactory()
             }
 
-            model is String && model.startsWith("content://") -> {
-                ImageSource.fromContent(context, Uri.parse(model)).toFactory()
+            // file:///android_asset/image.jpg
+            uri != null && uri.scheme == "file" && uri.pathSegments.firstOrNull() == "android_asset" -> {
+                val assetFileName = uri.pathSegments.drop(1).joinToString("/")
+                ImageSource.fromAsset(context, assetFileName).toFactory()
             }
 
-            model is Uri && model.scheme == "content" -> {
-                ImageSource.fromContent(context, model).toFactory()
+            // /sdcard/xxx.jpg
+            uri != null && uri.scheme?.takeIf { it.isNotEmpty() } == null && uri.path?.startsWith("/") == true -> {
+                ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
-            model is String && model.startsWith("file:///android_asset/") -> {
-                val assetFileName = Uri.parse(model).pathSegments
-                    .takeIf { it.size > 1 }
-                    ?.let { it.subList(1, it.size) }
-                    ?.joinToString(separator = "/")
-                assetFileName?.let { ImageSource.fromAsset(context, it).toFactory() }
-            }
-
-            model is Uri && model.scheme == "file" && model.pathSegments.firstOrNull() == "android_asset" -> {
-                val assetFileName = model.pathSegments
-                    .takeIf { it.size > 1 }
-                    ?.let { it.subList(1, it.size) }
-                    ?.joinToString(separator = "/")
-                assetFileName?.let { ImageSource.fromAsset(context, it).toFactory() }
-            }
-
-            model is String && model.startsWith("/") -> {
-                ImageSource.fromFile(model).toFactory()
-            }
-
-            model is String && model.startsWith("file://") -> {
-                val filePath = Uri.parse(model).path
-                filePath?.let { ImageSource.fromFile(File(filePath)).toFactory() }
-            }
-
-            model is Uri && model.scheme == "file" -> {
-                val filePath = model.path
-                filePath?.let { ImageSource.fromFile(File(filePath)).toFactory() }
+            // file:///sdcard/xxx.jpg
+            uri != null && uri.scheme == "file" && uri.path?.startsWith("/") == true -> {
+                ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
             model is File -> {
@@ -106,6 +92,24 @@ class GlideModelToImageSourceImpl(private val context: Context) : GlideModelToIm
 
             model is Int -> {
                 ImageSource.fromResource(context, model).toFactory()
+            }
+
+            // android.resource://example.package.name/drawable/image
+            uri != null && uri.scheme == "android.resource" && uri.pathSegments.size == 2 -> {
+                val packageName = uri.authority.orEmpty()
+                val resources = context.packageManager.getResourcesForApplication(packageName)
+                val (type, name) = uri.pathSegments
+                //noinspection DiscouragedApi: Necessary to support resource URIs.
+                val id = resources.getIdentifier(name, type, packageName)
+                ImageSource.fromResource(resources, id).toFactory()
+            }
+
+            // android.resource://example.package.name/4125123
+            uri != null && uri.scheme == "android.resource" && uri.pathSegments.size == 1 -> {
+                val packageName = uri.authority.orEmpty()
+                val resources = context.packageManager.getResourcesForApplication(packageName)
+                val id = uri.pathSegments.first().toInt()
+                ImageSource.fromResource(resources, id).toFactory()
             }
 
             model is ByteArray -> {
