@@ -8,7 +8,7 @@ import com.github.panpf.zoomimage.test.hammingDistance
 import com.github.panpf.zoomimage.test.produceFingerPrint
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntRectCompat
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue

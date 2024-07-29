@@ -17,9 +17,7 @@ kotlin {
             api(libs.kotlinx.coroutines.test)
         }
         jvmCommonMain.dependencies {
-            api(libs.junit)
             api(libs.kotlin.test.junit)
-            api(libs.panpf.tools4j.test)
         }
         androidMain.dependencies {
             api(libs.androidx.test.runner)

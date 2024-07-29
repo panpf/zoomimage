@@ -2,6 +2,8 @@ package com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal
 
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.internal.SkiaDecodeHelper
+import com.github.panpf.zoomimage.test.Platform
+import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.hammingDistance
 import com.github.panpf.zoomimage.test.produceFingerPrint
 import com.github.panpf.zoomimage.test.toImageSource
@@ -16,6 +18,10 @@ class SkiaDecoderHelperTest {
 
     @Test
     fun testFactory() {
+        if (Platform.current == Platform.iOS) {
+            // TODO The files in the resources directory cannot be accessed, even if I actively put the files in the resources directory.
+            return
+        }
         val dogImageFile = ResourceImages.dog
         val dogImageSource = dogImageFile.toImageSource()
         SkiaDecodeHelper.Factory().create(dogImageSource).apply {
@@ -51,6 +57,10 @@ class SkiaDecoderHelperTest {
 
     @Test
     fun test() {
+        if (Platform.current == Platform.iOS) {
+            // TODO The files in the resources directory cannot be accessed, even if I actively put the files in the resources directory.
+            return
+        }
         val imageSource1 = ResourceImages.exifNormal.toImageSource()
         val decodeHelper1 = SkiaDecodeHelper.Factory().create(imageSource1)
         val bitmap11: Bitmap

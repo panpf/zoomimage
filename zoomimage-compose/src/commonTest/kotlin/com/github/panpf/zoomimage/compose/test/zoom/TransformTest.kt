@@ -3,8 +3,6 @@ package com.github.panpf.zoomimage.compose.test.zoom
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ScaleFactor
-import com.github.panpf.tools4j.test.ktx.assertNoThrow
-import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.div
@@ -13,26 +11,25 @@ import com.github.panpf.zoomimage.compose.zoom.minus
 import com.github.panpf.zoomimage.compose.zoom.plus
 import com.github.panpf.zoomimage.compose.zoom.times
 import com.github.panpf.zoomimage.compose.zoom.toShortString
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class TransformTest {
 
     @Test
     fun testConstructor() {
-        assertNoThrow {
-            Transform(
-                ScaleFactor(1.3f, 4.7f),
-                Offset(156f, 97f),
-            )
-        }
-        assertThrow(IllegalArgumentException::class) {
+        Transform(
+            ScaleFactor(1.3f, 4.7f),
+            Offset(156f, 97f),
+        )
+        assertFailsWith(IllegalArgumentException::class) {
             Transform(
                 ScaleFactor.Unspecified,
                 Offset(156f, 97f),
             )
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Transform(
                 ScaleFactor(1.3f, 4.7f),
                 Offset.Unspecified,
@@ -46,15 +43,15 @@ class TransformTest {
             ScaleFactor(1.3f, 4.7f),
             Offset(156f, 97f),
         ).apply {
-            Assert.assertEquals(1.3f, scaleX)
-            Assert.assertEquals(4.7f, scaleY)
-            Assert.assertEquals(156f, offsetX)
-            Assert.assertEquals(97f, offsetY)
-            Assert.assertEquals(0f, rotation)
-            Assert.assertEquals(0.0f, scaleOriginX)
-            Assert.assertEquals(0.0f, scaleOriginY)
-            Assert.assertEquals(0.0f, rotationOriginX)
-            Assert.assertEquals(0.0f, rotationOriginY)
+            assertEquals(1.3f, scaleX)
+            assertEquals(4.7f, scaleY)
+            assertEquals(156f, offsetX)
+            assertEquals(97f, offsetY)
+            assertEquals(0f, rotation)
+            assertEquals(0.0f, scaleOriginX)
+            assertEquals(0.0f, scaleOriginY)
+            assertEquals(0.0f, rotationOriginX)
+            assertEquals(0.0f, rotationOriginY)
         }
 
         Transform(
@@ -64,15 +61,15 @@ class TransformTest {
             scaleOrigin = TransformOrigin(0.3f, 0.7f),
             rotationOrigin = TransformOrigin(0.6f, 0.2f),
         ).apply {
-            Assert.assertEquals(4.7f, scaleX)
-            Assert.assertEquals(1.3f, scaleY)
-            Assert.assertEquals(97f, offsetX)
-            Assert.assertEquals(156f, offsetY)
-            Assert.assertEquals(90f, rotation)
-            Assert.assertEquals(0.3f, scaleOriginX)
-            Assert.assertEquals(0.7f, scaleOriginY)
-            Assert.assertEquals(0.6f, rotationOriginX)
-            Assert.assertEquals(0.2f, rotationOriginY)
+            assertEquals(4.7f, scaleX)
+            assertEquals(1.3f, scaleY)
+            assertEquals(97f, offsetX)
+            assertEquals(156f, offsetY)
+            assertEquals(90f, rotation)
+            assertEquals(0.3f, scaleOriginX)
+            assertEquals(0.7f, scaleOriginY)
+            assertEquals(0.6f, rotationOriginX)
+            assertEquals(0.2f, rotationOriginY)
         }
 
         Transform(
@@ -82,43 +79,43 @@ class TransformTest {
             scaleOrigin = TransformOrigin(0.7f, 0.3f),
             rotationOrigin = TransformOrigin(0.2f, 0.6f),
         ).apply {
-            Assert.assertEquals(4.7f, scaleX)
-            Assert.assertEquals(1.3f, scaleY)
-            Assert.assertEquals(97f, offsetX)
-            Assert.assertEquals(156f, offsetY)
-            Assert.assertEquals(270f, rotation)
-            Assert.assertEquals(0.7f, scaleOriginX)
-            Assert.assertEquals(0.3f, scaleOriginY)
-            Assert.assertEquals(0.2f, rotationOriginX)
-            Assert.assertEquals(0.6f, rotationOriginY)
+            assertEquals(4.7f, scaleX)
+            assertEquals(1.3f, scaleY)
+            assertEquals(97f, offsetX)
+            assertEquals(156f, offsetY)
+            assertEquals(270f, rotation)
+            assertEquals(0.7f, scaleOriginX)
+            assertEquals(0.3f, scaleOriginY)
+            assertEquals(0.2f, rotationOriginX)
+            assertEquals(0.6f, rotationOriginY)
         }
     }
 
     @Test
     fun testOrigin() {
         Transform.Origin.apply {
-            Assert.assertEquals(1f, scaleX)
-            Assert.assertEquals(1f, scaleY)
-            Assert.assertEquals(0f, offsetX)
-            Assert.assertEquals(0f, offsetY)
-            Assert.assertEquals(0f, rotation)
-            Assert.assertEquals(0.0f, scaleOriginX)
-            Assert.assertEquals(0.0f, scaleOriginY)
-            Assert.assertEquals(0.0f, rotationOriginX)
-            Assert.assertEquals(0.0f, rotationOriginY)
+            assertEquals(1f, scaleX)
+            assertEquals(1f, scaleY)
+            assertEquals(0f, offsetX)
+            assertEquals(0f, offsetY)
+            assertEquals(0f, rotation)
+            assertEquals(0.0f, scaleOriginX)
+            assertEquals(0.0f, scaleOriginY)
+            assertEquals(0.0f, rotationOriginX)
+            assertEquals(0.0f, rotationOriginY)
         }
 
-        Assert.assertEquals(Transform.Origin, Transform.Origin)
+        assertEquals(Transform.Origin, Transform.Origin)
     }
 
     @Test
     fun testToString() {
-        Assert.assertEquals(
+        assertEquals(
             "(1.0x1.0,0.0x0.0,0.0,0.0x0.0,0.0x0.0)",
             Transform.Origin.toShortString()
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "(4.7x1.3,97.0x156.0,270.0,0.7x0.3,0.2x0.6)",
             Transform(
                 ScaleFactor(4.7f, 1.3f),
@@ -140,17 +137,17 @@ class TransformTest {
             rotationOrigin = TransformOrigin(0.2f, 0.6f),
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "(4.7x1.3,97.0x156.0,270.0,0.7x0.3,0.2x0.6)",
             transform.toShortString()
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "(9.4x1.95,194.0x234.0,270.0,0.7x0.3,0.2x0.6)",
             (transform * ScaleFactor(2.0f, 1.5f)).toShortString()
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "(7.05x2.6,145.5x312.0,270.0,0.7x0.3,0.2x0.6)",
             (transform * ScaleFactor(1.5f, 2.0f)).toShortString()
         )
@@ -166,17 +163,17 @@ class TransformTest {
             rotationOrigin = TransformOrigin(0.2f, 0.6f),
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "(4.7x1.3,97.0x156.0,270.0,0.7x0.3,0.2x0.6)",
             transform.toShortString()
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "(2.35x0.87,48.5x104.0,270.0,0.7x0.3,0.2x0.6)",
             (transform / ScaleFactor(2.0f, 1.5f)).toShortString()
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "(3.13x0.65,64.67x78.0,270.0,0.7x0.3,0.2x0.6)",
             (transform / ScaleFactor(1.5f, 2.0f)).toShortString()
         )
@@ -184,7 +181,7 @@ class TransformTest {
 
     @Test
     fun testPlus() {
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             // scale origin is different
             Transform.Origin.copy(
                 scale = ScaleFactor(2f),
@@ -196,48 +193,47 @@ class TransformTest {
                 )
             )
         }
-        assertNoThrow {
-            // start scale default
-            Transform.Origin.copy(
-                scale = ScaleFactor(1f),
-                scaleOrigin = TransformOrigin(0.5f, 0.5f),
-            ).plus(
-                Transform.Origin.copy(
-                    scale = ScaleFactor(3f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.2f, 0.2f), scaleOrigin)
-            }
 
-            // end scale default
+        // start scale default
+        Transform.Origin.copy(
+            scale = ScaleFactor(1f),
+            scaleOrigin = TransformOrigin(0.5f, 0.5f),
+        ).plus(
             Transform.Origin.copy(
-                scale = ScaleFactor(2f),
-                scaleOrigin = TransformOrigin(0.5f, 0.5f),
-            ).plus(
-                Transform.Origin.copy(
-                    scale = ScaleFactor(1f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
-            }
-
-            // start and end scale default
-            Transform.Origin.copy(
-                scale = ScaleFactor(1f),
-                scaleOrigin = TransformOrigin(0.5f, 0.5f),
-            ).plus(
-                Transform.Origin.copy(
-                    scale = ScaleFactor(1f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
-            }
+                scale = ScaleFactor(3f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.2f, 0.2f), scaleOrigin)
         }
 
-        assertThrow(IllegalArgumentException::class) {
+        // end scale default
+        Transform.Origin.copy(
+            scale = ScaleFactor(2f),
+            scaleOrigin = TransformOrigin(0.5f, 0.5f),
+        ).plus(
+            Transform.Origin.copy(
+                scale = ScaleFactor(1f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
+        }
+
+        // start and end scale default
+        Transform.Origin.copy(
+            scale = ScaleFactor(1f),
+            scaleOrigin = TransformOrigin(0.5f, 0.5f),
+        ).plus(
+            Transform.Origin.copy(
+                scale = ScaleFactor(1f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
+        }
+
+        assertFailsWith(IllegalArgumentException::class) {
             // rotation origin is different
             Transform.Origin.copy(
                 rotation = 90f,
@@ -249,45 +245,44 @@ class TransformTest {
                 )
             )
         }
-        assertNoThrow {
-            // start rotation default
+
+        // start rotation default
+        Transform.Origin.copy(
+            rotation = 0f,
+            rotationOrigin = TransformOrigin(0.5f, 0.5f),
+        ).plus(
+            Transform.Origin.copy(
+                rotation = 180f,
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.2f, 0.2f), rotationOrigin)
+        }
+
+        // end rotation default
+        Transform.Origin.copy(
+            rotation = 90f,
+            rotationOrigin = TransformOrigin(0.5f, 0.5f),
+        ).plus(
             Transform.Origin.copy(
                 rotation = 0f,
-                rotationOrigin = TransformOrigin(0.5f, 0.5f),
-            ).plus(
-                Transform.Origin.copy(
-                    rotation = 180f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.2f, 0.2f), rotationOrigin)
-            }
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
+        }
 
-            // end rotation default
-            Transform.Origin.copy(
-                rotation = 90f,
-                rotationOrigin = TransformOrigin(0.5f, 0.5f),
-            ).plus(
-                Transform.Origin.copy(
-                    rotation = 0f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
-            }
-
-            // start and end rotation default
+        // start and end rotation default
+        Transform.Origin.copy(
+            rotation = 0f,
+            rotationOrigin = TransformOrigin(0.5f, 0.5f),
+        ).plus(
             Transform.Origin.copy(
                 rotation = 0f,
-                rotationOrigin = TransformOrigin(0.5f, 0.5f),
-            ).plus(
-                Transform.Origin.copy(
-                    rotation = 0f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
-            }
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
         }
 
         val transform1 = Transform(
@@ -297,7 +292,7 @@ class TransformTest {
             rotation = 90f,
             rotationOrigin = TransformOrigin(0.2f, 0.2f),
         )
-        Assert.assertEquals(
+        assertEquals(
             "(2.0x2.0,199.0x563.0,90.0,0.5x0.5,0.2x0.2)",
             transform1.toShortString()
         )
@@ -309,13 +304,13 @@ class TransformTest {
             rotation = 180f,
             rotationOrigin = TransformOrigin(0.2f, 0.2f),
         )
-        Assert.assertEquals(
+        assertEquals(
             "(3.0x3.0,-50.0x1006.0,180.0,0.5x0.5,0.2x0.2)",
             transform2.toShortString()
         )
 
         val transform3 = transform1.plus(transform2)
-        Assert.assertEquals(
+        assertEquals(
             "(6.0x6.0,547.0x2695.0,270.0,0.5x0.5,0.2x0.2)",
             transform3.toShortString()
         )
@@ -323,7 +318,7 @@ class TransformTest {
 
     @Test
     fun testMinus() {
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             // scale origin is different
             Transform.Origin.copy(
                 scale = ScaleFactor(2f),
@@ -335,48 +330,47 @@ class TransformTest {
                 )
             )
         }
-        assertNoThrow {
-            // start scale default
-            Transform.Origin.copy(
-                scale = ScaleFactor(1f),
-                scaleOrigin = TransformOrigin(0.5f, 0.5f),
-            ).minus(
-                Transform.Origin.copy(
-                    scale = ScaleFactor(3f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.2f, 0.2f), scaleOrigin)
-            }
 
-            // end scale default
+        // start scale default
+        Transform.Origin.copy(
+            scale = ScaleFactor(1f),
+            scaleOrigin = TransformOrigin(0.5f, 0.5f),
+        ).minus(
             Transform.Origin.copy(
-                scale = ScaleFactor(2f),
-                scaleOrigin = TransformOrigin(0.5f, 0.5f),
-            ).minus(
-                Transform.Origin.copy(
-                    scale = ScaleFactor(1f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
-            }
-
-            // start and end scale default
-            Transform.Origin.copy(
-                scale = ScaleFactor(1f),
-                scaleOrigin = TransformOrigin(0.5f, 0.5f),
-            ).plus(
-                Transform.Origin.copy(
-                    scale = ScaleFactor(1f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
-            }
+                scale = ScaleFactor(3f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.2f, 0.2f), scaleOrigin)
         }
 
-        assertThrow(IllegalArgumentException::class) {
+        // end scale default
+        Transform.Origin.copy(
+            scale = ScaleFactor(2f),
+            scaleOrigin = TransformOrigin(0.5f, 0.5f),
+        ).minus(
+            Transform.Origin.copy(
+                scale = ScaleFactor(1f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
+        }
+
+        // start and end scale default
+        Transform.Origin.copy(
+            scale = ScaleFactor(1f),
+            scaleOrigin = TransformOrigin(0.5f, 0.5f),
+        ).plus(
+            Transform.Origin.copy(
+                scale = ScaleFactor(1f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
+        }
+
+        assertFailsWith(IllegalArgumentException::class) {
             // rotation origin is different
             Transform.Origin.copy(
                 rotation = 90f,
@@ -388,45 +382,44 @@ class TransformTest {
                 )
             )
         }
-        assertNoThrow {
-            // start rotation default
+
+        // start rotation default
+        Transform.Origin.copy(
+            rotation = 0f,
+            rotationOrigin = TransformOrigin(0.5f, 0.5f),
+        ).minus(
+            Transform.Origin.copy(
+                rotation = 180f,
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.2f, 0.2f), rotationOrigin)
+        }
+
+        // end rotation default
+        Transform.Origin.copy(
+            rotation = 90f,
+            rotationOrigin = TransformOrigin(0.5f, 0.5f),
+        ).minus(
             Transform.Origin.copy(
                 rotation = 0f,
-                rotationOrigin = TransformOrigin(0.5f, 0.5f),
-            ).minus(
-                Transform.Origin.copy(
-                    rotation = 180f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.2f, 0.2f), rotationOrigin)
-            }
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
+        }
 
-            // end rotation default
-            Transform.Origin.copy(
-                rotation = 90f,
-                rotationOrigin = TransformOrigin(0.5f, 0.5f),
-            ).minus(
-                Transform.Origin.copy(
-                    rotation = 0f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
-            }
-
-            // start and end rotation default
+        // start and end rotation default
+        Transform.Origin.copy(
+            rotation = 0f,
+            rotationOrigin = TransformOrigin(0.5f, 0.5f),
+        ).plus(
             Transform.Origin.copy(
                 rotation = 0f,
-                rotationOrigin = TransformOrigin(0.5f, 0.5f),
-            ).plus(
-                Transform.Origin.copy(
-                    rotation = 0f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                )
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
-            }
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            )
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
         }
 
         val transform1 = Transform(
@@ -436,7 +429,7 @@ class TransformTest {
             rotation = 90f,
             rotationOrigin = TransformOrigin(0.2f, 0.2f),
         )
-        Assert.assertEquals(
+        assertEquals(
             "(2.0x2.0,199.0x563.0,90.0,0.5x0.5,0.2x0.2)",
             transform1.toShortString()
         )
@@ -448,19 +441,19 @@ class TransformTest {
             rotation = 180f,
             rotationOrigin = TransformOrigin(0.2f, 0.2f),
         )
-        Assert.assertEquals(
+        assertEquals(
             "(3.0x3.0,-50.0x1006.0,180.0,0.5x0.5,0.2x0.2)",
             transform2.toShortString()
         )
 
         val transform3 = transform1.plus(transform2)
-        Assert.assertEquals(
+        assertEquals(
             "(6.0x6.0,547.0x2695.0,270.0,0.5x0.5,0.2x0.2)",
             transform3.toShortString()
         )
 
         val transform4 = transform3.minus(transform1)
-        Assert.assertEquals(
+        assertEquals(
             transform2.toShortString(),
             transform4.toShortString()
         )
@@ -468,7 +461,7 @@ class TransformTest {
 
     @Test
     fun testLerp() {
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             // scale origin is different
             lerp(
                 start = Transform.Origin.copy(
@@ -482,54 +475,53 @@ class TransformTest {
                 fraction = 0.5f
             )
         }
-        assertNoThrow {
-            // start scale default
-            lerp(
-                start = Transform.Origin.copy(
-                    scale = ScaleFactor(1f),
-                    scaleOrigin = TransformOrigin(0.5f, 0.5f),
-                ),
-                stop = Transform.Origin.copy(
-                    scale = ScaleFactor(3f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                ),
-                fraction = 0.5f
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.2f, 0.2f), scaleOrigin)
-            }
 
-            // end scale default
-            lerp(
-                start = Transform.Origin.copy(
-                    scale = ScaleFactor(2f),
-                    scaleOrigin = TransformOrigin(0.5f, 0.5f),
-                ),
-                stop = Transform.Origin.copy(
-                    scale = ScaleFactor(1f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                ),
-                fraction = 0.5f
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
-            }
-
-            // start and end scale default
-            lerp(
-                start = Transform.Origin.copy(
-                    scale = ScaleFactor(1f),
-                    scaleOrigin = TransformOrigin(0.5f, 0.5f),
-                ),
-                stop = Transform.Origin.copy(
-                    scale = ScaleFactor(1f),
-                    scaleOrigin = TransformOrigin(0.2f, 0.2f),
-                ),
-                fraction = 0.5f
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
-            }
+        // start scale default
+        lerp(
+            start = Transform.Origin.copy(
+                scale = ScaleFactor(1f),
+                scaleOrigin = TransformOrigin(0.5f, 0.5f),
+            ),
+            stop = Transform.Origin.copy(
+                scale = ScaleFactor(3f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            ),
+            fraction = 0.5f
+        ).apply {
+            assertEquals(TransformOrigin(0.2f, 0.2f), scaleOrigin)
         }
 
-        assertThrow(IllegalArgumentException::class) {
+        // end scale default
+        lerp(
+            start = Transform.Origin.copy(
+                scale = ScaleFactor(2f),
+                scaleOrigin = TransformOrigin(0.5f, 0.5f),
+            ),
+            stop = Transform.Origin.copy(
+                scale = ScaleFactor(1f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            ),
+            fraction = 0.5f
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
+        }
+
+        // start and end scale default
+        lerp(
+            start = Transform.Origin.copy(
+                scale = ScaleFactor(1f),
+                scaleOrigin = TransformOrigin(0.5f, 0.5f),
+            ),
+            stop = Transform.Origin.copy(
+                scale = ScaleFactor(1f),
+                scaleOrigin = TransformOrigin(0.2f, 0.2f),
+            ),
+            fraction = 0.5f
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), scaleOrigin)
+        }
+
+        assertFailsWith(IllegalArgumentException::class) {
             // rotation origin is different
             lerp(
                 start = Transform.Origin.copy(
@@ -543,51 +535,50 @@ class TransformTest {
                 fraction = 0.5f
             )
         }
-        assertNoThrow {
-            // start rotation default
-            lerp(
-                start = Transform.Origin.copy(
-                    rotation = 0f,
-                    rotationOrigin = TransformOrigin(0.5f, 0.5f),
-                ),
-                stop = Transform.Origin.copy(
-                    rotation = 180f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                ),
-                fraction = 0.5f
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.2f, 0.2f), rotationOrigin)
-            }
 
-            // end rotation default
-            lerp(
-                start = Transform.Origin.copy(
-                    rotation = 90f,
-                    rotationOrigin = TransformOrigin(0.5f, 0.5f),
-                ),
-                stop = Transform.Origin.copy(
-                    rotation = 0f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                ),
-                fraction = 0.5f
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
-            }
+        // start rotation default
+        lerp(
+            start = Transform.Origin.copy(
+                rotation = 0f,
+                rotationOrigin = TransformOrigin(0.5f, 0.5f),
+            ),
+            stop = Transform.Origin.copy(
+                rotation = 180f,
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            ),
+            fraction = 0.5f
+        ).apply {
+            assertEquals(TransformOrigin(0.2f, 0.2f), rotationOrigin)
+        }
 
-            // start and end rotation default
-            lerp(
-                start = Transform.Origin.copy(
-                    rotation = 0f,
-                    rotationOrigin = TransformOrigin(0.5f, 0.5f),
-                ),
-                stop = Transform.Origin.copy(
-                    rotation = 0f,
-                    rotationOrigin = TransformOrigin(0.2f, 0.2f),
-                ),
-                fraction = 0.5f
-            ).apply {
-                Assert.assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
-            }
+        // end rotation default
+        lerp(
+            start = Transform.Origin.copy(
+                rotation = 90f,
+                rotationOrigin = TransformOrigin(0.5f, 0.5f),
+            ),
+            stop = Transform.Origin.copy(
+                rotation = 0f,
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            ),
+            fraction = 0.5f
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
+        }
+
+        // start and end rotation default
+        lerp(
+            start = Transform.Origin.copy(
+                rotation = 0f,
+                rotationOrigin = TransformOrigin(0.5f, 0.5f),
+            ),
+            stop = Transform.Origin.copy(
+                rotation = 0f,
+                rotationOrigin = TransformOrigin(0.2f, 0.2f),
+            ),
+            fraction = 0.5f
+        ).apply {
+            assertEquals(TransformOrigin(0.5f, 0.5f), rotationOrigin)
         }
 
         val transform1 = Transform(
@@ -597,7 +588,7 @@ class TransformTest {
             rotation = 90f,
             rotationOrigin = TransformOrigin(0.2f, 0.2f),
         )
-        Assert.assertEquals(
+        assertEquals(
             "(2.0x2.0,199.0x563.0,90.0,0.5x0.5,0.2x0.2)",
             transform1.toShortString()
         )
@@ -609,25 +600,25 @@ class TransformTest {
             rotation = 180f,
             rotationOrigin = TransformOrigin(0.2f, 0.2f),
         )
-        Assert.assertEquals(
+        assertEquals(
             "(3.0x3.0,-50.0x1006.0,180.0,0.5x0.5,0.2x0.2)",
             transform2.toShortString()
         )
 
         lerp(transform1, transform2, fraction = 0f).apply {
-            Assert.assertEquals(
+            assertEquals(
                 transform1.toShortString(),
                 this.toShortString()
             )
         }
         lerp(transform1, transform2, fraction = 0.5f).apply {
-            Assert.assertEquals(
+            assertEquals(
                 "(2.5x2.5,74.5x784.5,135.0,0.5x0.5,0.2x0.2)",
                 this.toShortString()
             )
         }
         lerp(transform1, transform2, fraction = 1f).apply {
-            Assert.assertEquals(
+            assertEquals(
                 transform2.toShortString(),
                 this.toShortString()
             )

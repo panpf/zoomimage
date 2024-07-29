@@ -3,8 +3,7 @@ package com.github.panpf.zoomimage.core.glide.test.internal
 import android.graphics.Bitmap
 import com.github.panpf.zoomimage.glide.internal.toHexString
 import com.github.panpf.zoomimage.glide.internal.toLogString
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -31,14 +30,14 @@ class GlideOtherUtilsTest {
     @Test
     fun testToLogString() {
         Bitmap.createBitmap(110, 210, Bitmap.Config.ARGB_8888).apply {
-            Assert.assertEquals(
+            assertEquals(
                 "Bitmap@${Integer.toHexString(this.hashCode())}(110x210,ARGB_8888)",
                 this.toLogString()
             )
         }
 
         Bitmap.createBitmap(210, 110, Bitmap.Config.RGB_565).apply {
-            Assert.assertEquals(
+            assertEquals(
                 "Bitmap@${Integer.toHexString(this.hashCode())}(210x110,RGB_565)",
                 this.toLogString()
             )

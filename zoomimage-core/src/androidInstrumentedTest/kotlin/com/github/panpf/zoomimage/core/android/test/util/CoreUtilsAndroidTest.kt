@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import com.githb.panpf.zoomimage.images.ResourceImages
-import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.isAndSupportHardware
 import com.github.panpf.zoomimage.util.requiredMainThread
@@ -15,14 +14,17 @@ import com.github.panpf.zoomimage.util.toShortString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import okio.buffer
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class CoreUtilsAndroidTest {
 
     @Test
     fun testRequiredMainThread() {
-        assertThrow(IllegalStateException::class) {
+        assertFailsWith(IllegalStateException::class) {
             requiredMainThread()
         }
         runBlocking(Dispatchers.Main) {
@@ -34,7 +36,7 @@ class CoreUtilsAndroidTest {
     fun testRequiredWorkThread() {
         requiredWorkThread()
 
-        assertThrow(IllegalStateException::class) {
+        assertFailsWith(IllegalStateException::class) {
             runBlocking(Dispatchers.Main) {
                 requiredWorkThread()
             }
@@ -43,12 +45,12 @@ class CoreUtilsAndroidTest {
 
     @Test
     fun testSafeConfig() {
-        Assert.assertEquals(
+        assertEquals(
             Bitmap.Config.ARGB_8888,
             Bitmap.createBitmap(110, 210, Bitmap.Config.ARGB_8888).safeConfig
         )
 
-        Assert.assertEquals(
+        assertEquals(
             Bitmap.Config.RGB_565,
             Bitmap.createBitmap(110, 210, Bitmap.Config.RGB_565).safeConfig
         )
@@ -58,12 +60,12 @@ class CoreUtilsAndroidTest {
 
     @Test
     fun testToShortString() {
-        Assert.assertEquals(
+        assertEquals(
             "(110x210,ARGB_8888)",
             Bitmap.createBitmap(110, 210, Bitmap.Config.ARGB_8888).toShortString()
         )
 
-        Assert.assertEquals(
+        assertEquals(
             "(210x110,RGB_565)",
             Bitmap.createBitmap(210, 110, Bitmap.Config.RGB_565).toShortString()
         )
@@ -72,14 +74,14 @@ class CoreUtilsAndroidTest {
     @Test
     fun testToLogString() {
         Bitmap.createBitmap(110, 210, Bitmap.Config.ARGB_8888).apply {
-            Assert.assertEquals(
+            assertEquals(
                 "Bitmap@${Integer.toHexString(this.hashCode())}(110x210,ARGB_8888)",
                 this.toLogString()
             )
         }
 
         Bitmap.createBitmap(210, 110, Bitmap.Config.RGB_565).apply {
-            Assert.assertEquals(
+            assertEquals(
                 "Bitmap@${Integer.toHexString(this.hashCode())}(210x110,RGB_565)",
                 this.toLogString()
             )
@@ -89,8 +91,8 @@ class CoreUtilsAndroidTest {
     @Test
     fun testIsAndSupportHardware() {
         Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888).apply {
-            Assert.assertEquals(Bitmap.Config.ARGB_8888, this.config)
-            Assert.assertFalse(this.config.isAndSupportHardware())
+            assertEquals(Bitmap.Config.ARGB_8888, this.config)
+            assertFalse(this.config.isAndSupportHardware())
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -99,8 +101,8 @@ class CoreUtilsAndroidTest {
                     inPreferredConfig = Bitmap.Config.HARDWARE
                 })
             }!!.apply {
-                Assert.assertEquals(Bitmap.Config.HARDWARE, this.config)
-                Assert.assertTrue(this.config.isAndSupportHardware())
+                assertEquals(Bitmap.Config.HARDWARE, this.config)
+                assertTrue(this.config.isAndSupportHardware())
             }
         }
     }

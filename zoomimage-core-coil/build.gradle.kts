@@ -15,7 +15,6 @@ kotlin {
         }
 
         commonTest.dependencies {
-            implementation(libs.coil.network.ktor)
             implementation(projects.internal.testUtils)
         }
         desktopTest.dependencies {

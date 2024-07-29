@@ -3,11 +3,11 @@ package com.github.panpf.zoomimage.compose.test.internal
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
-import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.valueOf
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class ComposePlatformUtilsContentScaleTest {
 
@@ -25,10 +25,10 @@ class ComposePlatformUtilsContentScaleTest {
             ContentScale.Inside to ScaleFactor(1f, 1f),
             ContentScale.None to ScaleFactor(1f, 1f),
         ).forEach {
-            Assert.assertEquals(
-                "srcSize=$srcSize, dstSize=$dstSize, contentScale=${it.first}",
-                it.second,
-                it.first.computeScaleFactor(srcSize, dstSize)
+            assertEquals(
+                expected = it.second,
+                actual = it.first.computeScaleFactor(srcSize, dstSize),
+                message = "srcSize=$srcSize, dstSize=$dstSize, contentScale=${it.first}",
             )
         }
 
@@ -42,10 +42,10 @@ class ComposePlatformUtilsContentScaleTest {
             ContentScale.Inside to ScaleFactor(1f, 1f),
             ContentScale.None to ScaleFactor(1f, 1f),
         ).forEach {
-            Assert.assertEquals(
-                "srcSize=$srcSize, dstSize=$dstSize, contentScale=${it.first.name}",
-                it.second,
-                it.first.computeScaleFactor(srcSize, dstSize)
+            assertEquals(
+                expected = it.second,
+                actual = it.first.computeScaleFactor(srcSize, dstSize),
+                message = "srcSize=$srcSize, dstSize=$dstSize, contentScale=${it.first.name}",
             )
         }
 
@@ -59,10 +59,10 @@ class ComposePlatformUtilsContentScaleTest {
             ContentScale.Inside to ScaleFactor(0.25f, 0.25f),
             ContentScale.None to ScaleFactor(1f, 1f),
         ).forEach {
-            Assert.assertEquals(
-                "srcSize=$srcSize, dstSize=$dstSize, contentScale=${it.first.name}",
-                it.second,
-                it.first.computeScaleFactor(srcSize, dstSize)
+            assertEquals(
+                expected = it.second,
+                actual = it.first.computeScaleFactor(srcSize, dstSize),
+                message = "srcSize=$srcSize, dstSize=$dstSize, contentScale=${it.first.name}",
             )
         }
 
@@ -76,10 +76,10 @@ class ComposePlatformUtilsContentScaleTest {
             ContentScale.Inside to ScaleFactor(0.25f, 0.25f),
             ContentScale.None to ScaleFactor(1f, 1f),
         ).forEach {
-            Assert.assertEquals(
-                "srcSize=$srcSize, dstSize=$dstSize, contentScale=${it.first.name}",
-                it.second,
-                it.first.computeScaleFactor(srcSize, dstSize)
+            assertEquals(
+                expected = it.second,
+                actual = it.first.computeScaleFactor(srcSize, dstSize),
+                message = "srcSize=$srcSize, dstSize=$dstSize, contentScale=${it.first.name}",
             )
         }
     }
@@ -96,7 +96,7 @@ class ComposePlatformUtilsContentScaleTest {
             ContentScale.None to "None",
             MyContentScale.Default to "Unknown ContentScale: ${MyContentScale.Default}"
         ).forEach {
-            Assert.assertEquals(it.first.name, it.second)
+            assertEquals(it.first.name, it.second)
         }
     }
 
@@ -111,10 +111,10 @@ class ComposePlatformUtilsContentScaleTest {
             ContentScale.Inside to "Inside",
             ContentScale.None to "None",
         ).forEach {
-            Assert.assertEquals(it.first, ContentScale.valueOf(it.second))
+            assertEquals(it.first, ContentScale.valueOf(it.second))
         }
 
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             ContentScale.valueOf(MyContentScale.Default.name)
         }
     }

@@ -8,7 +8,7 @@ import com.github.panpf.zoomimage.subsampling.fromAsset
 import kotlinx.coroutines.test.runTest
 import okio.buffer
 import okio.use
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 

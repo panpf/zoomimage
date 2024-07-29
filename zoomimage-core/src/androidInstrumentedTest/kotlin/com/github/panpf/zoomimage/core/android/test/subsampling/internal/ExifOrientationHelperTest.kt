@@ -10,119 +10,122 @@ import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import okio.buffer
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class ExifOrientationHelperTest {
 
     @Test
     fun testConstructor() {
         ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED).apply {
-            Assert.assertEquals(ExifOrientationHelper.ORIENTATION_UNDEFINED, exifOrientation)
+            assertEquals(ExifOrientationHelper.ORIENTATION_UNDEFINED, exifOrientation)
         }
 
         ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_270).apply {
-            Assert.assertEquals(ExifOrientationHelper.ORIENTATION_ROTATE_270, exifOrientation)
+            assertEquals(ExifOrientationHelper.ORIENTATION_ROTATE_270, exifOrientation)
         }
     }
 
     @Test
     fun testName() {
-        Assert.assertEquals(
+        assertEquals(
             "ROTATE_90",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_ROTATE_90)
         )
-        Assert.assertEquals(
+        assertEquals(
             "TRANSPOSE",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_TRANSPOSE)
         )
-        Assert.assertEquals(
+        assertEquals(
             "ROTATE_180",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_ROTATE_180)
         )
-        Assert.assertEquals(
+        assertEquals(
             "FLIP_VERTICAL",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_FLIP_VERTICAL)
         )
-        Assert.assertEquals(
+        assertEquals(
             "ROTATE_270",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_ROTATE_270)
         )
-        Assert.assertEquals(
+        assertEquals(
             "TRANSVERSE",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_TRANSVERSE)
         )
-        Assert.assertEquals(
+        assertEquals(
             "FLIP_HORIZONTAL",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_FLIP_HORIZONTAL)
         )
-        Assert.assertEquals(
+        assertEquals(
             "UNDEFINED",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_UNDEFINED)
         )
-        Assert.assertEquals(
+        assertEquals(
             "NORMAL",
             ExifOrientationHelper.name(ExifOrientationHelper.ORIENTATION_NORMAL)
         )
-        Assert.assertEquals("-1", ExifOrientationHelper.name(-1))
-        Assert.assertEquals("100", ExifOrientationHelper.name(100))
+        assertEquals("-1", ExifOrientationHelper.name(-1))
+        assertEquals("100", ExifOrientationHelper.name(100))
     }
 
     @Test
     fun testIsFlipped() {
-        Assert.assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_90).isFlipped)
-        Assert.assertTrue(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSPOSE).isFlipped)
-        Assert.assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_180).isFlipped)
-        Assert.assertTrue(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_FLIP_VERTICAL).isFlipped)
-        Assert.assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_270).isFlipped)
-        Assert.assertTrue(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSVERSE).isFlipped)
-        Assert.assertTrue(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_FLIP_HORIZONTAL).isFlipped)
-        Assert.assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED).isFlipped)
-        Assert.assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_NORMAL).isFlipped)
-        Assert.assertFalse(ExifOrientationHelper(-1).isFlipped)
-        Assert.assertFalse(ExifOrientationHelper(100).isFlipped)
+        assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_90).isFlipped)
+        assertTrue(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSPOSE).isFlipped)
+        assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_180).isFlipped)
+        assertTrue(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_FLIP_VERTICAL).isFlipped)
+        assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_270).isFlipped)
+        assertTrue(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSVERSE).isFlipped)
+        assertTrue(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_FLIP_HORIZONTAL).isFlipped)
+        assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED).isFlipped)
+        assertFalse(ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_NORMAL).isFlipped)
+        assertFalse(ExifOrientationHelper(-1).isFlipped)
+        assertFalse(ExifOrientationHelper(100).isFlipped)
     }
 
     @Test
     fun testRotationDegrees() {
-        Assert.assertEquals(
+        assertEquals(
             90,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_90).rotationDegrees
         )
-        Assert.assertEquals(
+        assertEquals(
             270,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSPOSE).rotationDegrees
         )
-        Assert.assertEquals(
+        assertEquals(
             180,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_180).rotationDegrees
         )
-        Assert.assertEquals(
+        assertEquals(
             180,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_FLIP_VERTICAL).rotationDegrees
         )
-        Assert.assertEquals(
+        assertEquals(
             270,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_ROTATE_270).rotationDegrees
         )
-        Assert.assertEquals(
+        assertEquals(
             90,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_TRANSVERSE).rotationDegrees
         )
-        Assert.assertEquals(
+        assertEquals(
             0,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_FLIP_HORIZONTAL).rotationDegrees
         )
-        Assert.assertEquals(
+        assertEquals(
             0,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_UNDEFINED).rotationDegrees
         )
-        Assert.assertEquals(
+        assertEquals(
             0,
             ExifOrientationHelper(ExifOrientationHelper.ORIENTATION_NORMAL).rotationDegrees
         )
-        Assert.assertEquals(0, ExifOrientationHelper(-1).rotationDegrees)
-        Assert.assertEquals(0, ExifOrientationHelper(100).rotationDegrees)
+        assertEquals(0, ExifOrientationHelper(-1).rotationDegrees)
+        assertEquals(0, ExifOrientationHelper(100).rotationDegrees)
     }
 
     @Test
@@ -145,9 +148,9 @@ class ExifOrientationHelperTest {
             val message =
                 "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}, exceptedSize=$exceptedSize"
             val appliedSize = exifOrientation.applyToSize(size)
-            Assert.assertEquals(message, exceptedSize, appliedSize)
+            assertEquals(exceptedSize, appliedSize, message)
             val reverseAppliedSize = exifOrientation.applyToSize(appliedSize, reverse = true)
-            Assert.assertEquals(message, size, reverseAppliedSize)
+            assertEquals(size, reverseAppliedSize, message)
         }
     }
 
@@ -173,10 +176,10 @@ class ExifOrientationHelperTest {
                 "exifOrientationInt=${ExifOrientationHelper.name(exifOrientationInt)}, exceptedRect=$exceptedRect"
             val appliedRect = exifOrientation.applyToRect(srcRect, imageSize)
             val appliedImageSize = exifOrientation.applyToSize(imageSize)
-            Assert.assertEquals(message, exceptedRect, appliedRect)
+            assertEquals(exceptedRect, appliedRect, message)
             val reverseAppliedRect =
                 exifOrientation.applyToRect(appliedRect, appliedImageSize, reverse = true)
-            Assert.assertEquals(message, srcRect, reverseAppliedRect)
+            assertEquals(srcRect, reverseAppliedRect, message)
         }
     }
 
@@ -207,26 +210,26 @@ class ExifOrientationHelperTest {
                 reverse = false
             ).bitmap!!
             if (change) {
-                Assert.assertNotEquals(
-                    message,
-                    produceFingerPrint(inBitmap),
-                    produceFingerPrint(appliedBitmap),
+                assertNotEquals(
+                    illegal = produceFingerPrint(source = inBitmap),
+                    actual = produceFingerPrint(appliedBitmap),
+                    message = message,
                 )
 
                 val reversedBitmap = exifOrientation.applyToTileBitmap(
                     tileBitmap = AndroidTileBitmap(appliedBitmap, "", BitmapFrom.LOCAL),
                     reverse = true
                 ).bitmap
-                Assert.assertEquals(
-                    message,
-                    produceFingerPrint(inBitmap),
-                    produceFingerPrint(reversedBitmap),
+                assertEquals(
+                    expected = produceFingerPrint(source = inBitmap),
+                    actual = produceFingerPrint(reversedBitmap),
+                    message = message,
                 )
             } else {
-                Assert.assertEquals(
-                    message,
-                    produceFingerPrint(inBitmap),
-                    produceFingerPrint(appliedBitmap),
+                assertEquals(
+                    expected = produceFingerPrint(source = inBitmap),
+                    actual = produceFingerPrint(appliedBitmap),
+                    message = message,
                 )
             }
         }

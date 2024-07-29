@@ -4,32 +4,33 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ScaleFactor
-import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.compose.internal.div
 import com.github.panpf.zoomimage.compose.internal.limitTo
 import com.github.panpf.zoomimage.compose.internal.reverseRotateInSpace
 import com.github.panpf.zoomimage.compose.internal.rotateInSpace
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
 
 class ComposePlatformUtilsOffsetTest {
 
     @Test
     fun testToShortString() {
-        Assert.assertEquals("10.34x9.57", Offset(10.342f, 9.567f).toShortString())
-        Assert.assertEquals("9.57x10.34", Offset(9.567f, 10.342f).toShortString())
-        Assert.assertEquals("Unspecified", Offset.Unspecified.toShortString())
+        assertEquals("10.34x9.57", Offset(10.342f, 9.567f).toShortString())
+        assertEquals("9.57x10.34", Offset(9.567f, 10.342f).toShortString())
+        assertEquals("Unspecified", Offset.Unspecified.toShortString())
     }
 
     @Test
     fun testTimes() {
-        Assert.assertEquals(
+        assertEquals(
             "42.9x37.1",
             (Offset(13f, 7f) * ScaleFactor(3.3f, 5.3f)).toShortString()
         )
-        Assert.assertEquals(
+        assertEquals(
             "68.9x23.1",
             (Offset(13f, 7f) * ScaleFactor(5.3f, 3.3f)).toShortString()
         )
@@ -37,11 +38,11 @@ class ComposePlatformUtilsOffsetTest {
 
     @Test
     fun testDiv() {
-        Assert.assertEquals(
+        assertEquals(
             "13.03x6.98",
             (Offset(43f, 37f) / ScaleFactor(3.3f, 5.3f)).toShortString()
         )
-        Assert.assertEquals(
+        assertEquals(
             "8.11x11.21",
             (Offset(43f, 37f) / ScaleFactor(5.3f, 3.3f)).toShortString()
         )
@@ -52,73 +53,73 @@ class ComposePlatformUtilsOffsetTest {
         val spaceSize = Size(1000f, 500f)
 
         listOf(0, 0 - 360, 0 + 360, 0 - 360 - 360).forEach { rotation ->
-            Assert.assertEquals(
-                "rotation: $rotation",
-                Offset(600.6f, 200.4f).toShortString(),
-                Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
+            assertEquals(
+                expected = Offset(x = 600.6f, y = 200.4f).toShortString(),
+                actual = Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString(),
+                message = "rotation: $rotation",
             )
         }
 
         listOf(90, 90 - 360, 90 + 360, 90 - 360 - 360).forEach { rotation ->
-            Assert.assertEquals(
-                "rotation: $rotation",
-                Offset(299.6f, 600.6f).toShortString(),
-                Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
+            assertEquals(
+                expected = Offset(x = 299.6f, y = 600.6f).toShortString(),
+                actual = Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString(),
+                message = "rotation: $rotation",
             )
         }
 
         listOf(180, 180 - 360, 180 + 360, 180 - 360 - 360).forEach { rotation ->
-            Assert.assertEquals(
-                "rotation: $rotation",
-                Offset(399.4f, 299.6f).toShortString(),
-                Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
+            assertEquals(
+                expected = Offset(x = 399.4f, y = 299.6f).toShortString(),
+                actual = Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString(),
+                message = "rotation: $rotation",
             )
         }
 
         listOf(270, 270 - 360, 270 + 360, 270 - 360 - 360).forEach { rotation ->
-            Assert.assertEquals(
-                "rotation: $rotation",
-                Offset(200.4f, 399.4f).toShortString(),
-                Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
+            assertEquals(
+                expected = Offset(x = 200.4f, y = 399.4f).toShortString(),
+                actual = Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString(),
+                message = "rotation: $rotation",
             )
         }
 
         listOf(360, 360 - 360, 360 + 360, 360 - 360 - 360).forEach { rotation ->
-            Assert.assertEquals(
-                "rotation: $rotation",
-                Offset(600.6f, 200.4f).toShortString(),
-                Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString()
+            assertEquals(
+                expected = Offset(x = 600.6f, y = 200.4f).toShortString(),
+                actual = Offset(600.6f, 200.4f).rotateInSpace(spaceSize, rotation).toShortString(),
+                message = "rotation: $rotation",
             )
         }
 
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, -1)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 1)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 89)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 91)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 179)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 191)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 269)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 271)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 359)
         }
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Offset(600.6f, 200.4f).rotateInSpace(spaceSize, 361)
         }
     }
@@ -131,11 +132,15 @@ class ComposePlatformUtilsOffsetTest {
         listOf(90, 180, 270, -90, -180, -270)
             .forEach { rotation ->
                 val rotatedOffset = offset.rotateInSpace(spaceSize, rotation)
-                Assert.assertNotEquals("rotation: $rotation", offset, rotatedOffset)
-                Assert.assertEquals(
-                    "rotation: $rotation",
-                    offset,
-                    rotatedOffset.reverseRotateInSpace(spaceSize, rotation)
+                assertNotEquals(
+                    illegal = offset,
+                    actual = rotatedOffset,
+                    message = "rotation: $rotation",
+                )
+                assertEquals(
+                    expected = offset,
+                    actual = rotatedOffset.reverseRotateInSpace(spaceSize, rotation),
+                    message = "rotation: $rotation",
                 )
             }
 
@@ -143,36 +148,40 @@ class ComposePlatformUtilsOffsetTest {
             .map { if (it > 0) it + 360 else it - 360 }
             .forEach { rotation ->
                 val rotatedOffset = offset.rotateInSpace(spaceSize, rotation)
-                Assert.assertNotEquals("rotation: $rotation", offset, rotatedOffset)
-                Assert.assertEquals(
-                    "rotation: $rotation",
-                    offset,
-                    rotatedOffset.reverseRotateInSpace(spaceSize, rotation)
+                assertNotEquals(
+                    illegal = offset,
+                    actual = rotatedOffset,
+                    message = "rotation: $rotation",
+                )
+                assertEquals(
+                    expected = offset,
+                    actual = rotatedOffset.reverseRotateInSpace(spaceSize, rotation),
+                    message = "rotation: $rotation",
                 )
             }
     }
 
     @Test
     fun testLimitToRect() {
-        Assert.assertEquals(
+        assertEquals(
             Offset(600.4f, 200.7f),
             Offset(600.4f, 200.7f).limitTo(Rect(200.4f, 100.3f, 700.9f, 300.5f))
         )
 
-        Assert.assertEquals(
+        assertEquals(
             Offset(200.4f, 200.7f),
             Offset(100f, 200.7f).limitTo(Rect(200.4f, 100.3f, 700.9f, 300.5f))
         )
-        Assert.assertEquals(
+        assertEquals(
             Offset(700.9f, 200.7f),
             Offset(800.4f, 200.7f).limitTo(Rect(200.4f, 100.3f, 700.9f, 300.5f))
         )
 
-        Assert.assertEquals(
+        assertEquals(
             Offset(600.4f, 100.3f),
             Offset(600.4f, 50.6f).limitTo(Rect(200.4f, 100.3f, 700.9f, 300.5f))
         )
-        Assert.assertEquals(
+        assertEquals(
             Offset(600.4f, 300.5f),
             Offset(600.4f, 400.9f).limitTo(Rect(200.4f, 100.3f, 700.9f, 300.5f))
         )
@@ -180,25 +189,25 @@ class ComposePlatformUtilsOffsetTest {
 
     @Test
     fun testLimitToSize() {
-        Assert.assertEquals(
+        assertEquals(
             Offset(600.4f, 200.7f),
             Offset(600.4f, 200.7f).limitTo(Size(700.9f, 300.5f))
         )
 
-        Assert.assertEquals(
+        assertEquals(
             Offset(0f, 200.7f),
             Offset(-100.2f, 200.7f).limitTo(Size(700.9f, 300.5f))
         )
-        Assert.assertEquals(
+        assertEquals(
             Offset(700.9f, 200.7f),
             Offset(800.4f, 200.7f).limitTo(Size(700.9f, 300.5f))
         )
 
-        Assert.assertEquals(
+        assertEquals(
             Offset(600.4f, 0f),
             Offset(600.4f, -100.2f).limitTo(Size(700.9f, 300.5f))
         )
-        Assert.assertEquals(
+        assertEquals(
             Offset(600.4f, 300.5f),
             Offset(600.4f, 400.9f).limitTo(Size(700.9f, 300.5f))
         )

@@ -4,7 +4,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import com.github.panpf.tools4j.test.ktx.assertThrow
 import com.github.panpf.zoomimage.compose.internal.isBottom
 import com.github.panpf.zoomimage.compose.internal.isCenter
 import com.github.panpf.zoomimage.compose.internal.isEnd
@@ -14,8 +13,9 @@ import com.github.panpf.zoomimage.compose.internal.isTop
 import com.github.panpf.zoomimage.compose.internal.isVerticalCenter
 import com.github.panpf.zoomimage.compose.internal.name
 import com.github.panpf.zoomimage.compose.internal.valueOf
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class ComposePlatformUtilsAlignmentTest {
 
@@ -35,10 +35,10 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to IntOffset(450, 900),
             Alignment.BottomEnd to IntOffset(900, 900),
         ).forEach {
-            Assert.assertEquals(
-                it.first.name,
-                it.first.align(size, space, LayoutDirection.Ltr),
-                it.second
+            assertEquals(
+                expected = it.first.align(size, space, LayoutDirection.Ltr),
+                actual = it.second,
+                message = it.first.name,
             )
         }
     }
@@ -57,7 +57,7 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomEnd to "BottomEnd",
             MyAlignment.Default to "Unknown Alignment: ${MyAlignment.Default}"
         ).forEach {
-            Assert.assertEquals(it.first.name, it.second)
+            assertEquals(it.first.name, it.second)
         }
     }
 
@@ -74,10 +74,10 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to "BottomCenter",
             Alignment.BottomEnd to "BottomEnd",
         ).forEach {
-            Assert.assertEquals(it.first, Alignment.valueOf(it.second))
+            assertEquals(it.first, Alignment.valueOf(it.second))
         }
 
-        assertThrow(IllegalArgumentException::class) {
+        assertFailsWith(IllegalArgumentException::class) {
             Alignment.valueOf(MyAlignment.Default.name)
         }
     }
@@ -95,7 +95,11 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to false,
             Alignment.BottomEnd to false,
         ).forEach {
-            Assert.assertEquals(it.first.name, it.first.isStart, it.second)
+            assertEquals(
+                expected = it.first.isStart,
+                actual = it.second,
+                message = it.first.name,
+            )
         }
     }
 
@@ -112,7 +116,11 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to true,
             Alignment.BottomEnd to false,
         ).forEach {
-            Assert.assertEquals(it.first.name, it.first.isHorizontalCenter, it.second)
+            assertEquals(
+                expected = it.first.isHorizontalCenter,
+                actual = it.second,
+                message = it.first.name,
+            )
         }
     }
 
@@ -129,7 +137,11 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to false,
             Alignment.BottomEnd to false,
         ).forEach {
-            Assert.assertEquals(it.first.name, it.first.isCenter, it.second)
+            assertEquals(
+                expected = it.first.isCenter,
+                actual = it.second,
+                message = it.first.name,
+            )
         }
     }
 
@@ -146,7 +158,11 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to false,
             Alignment.BottomEnd to true,
         ).forEach {
-            Assert.assertEquals(it.first.name, it.first.isEnd, it.second)
+            assertEquals(
+                expected = it.first.isEnd,
+                actual = it.second,
+                message = it.first.name,
+            )
         }
     }
 
@@ -163,7 +179,11 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to false,
             Alignment.BottomEnd to false,
         ).forEach {
-            Assert.assertEquals(it.first.name, it.first.isTop, it.second)
+            assertEquals(
+                expected = it.first.isTop,
+                actual = it.second,
+                message = it.first.name,
+            )
         }
     }
 
@@ -180,7 +200,11 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to false,
             Alignment.BottomEnd to false,
         ).forEach {
-            Assert.assertEquals(it.first.name, it.first.isVerticalCenter, it.second)
+            assertEquals(
+                expected = it.first.isVerticalCenter,
+                actual = it.second,
+                message = it.first.name,
+            )
         }
     }
 
@@ -197,7 +221,11 @@ class ComposePlatformUtilsAlignmentTest {
             Alignment.BottomCenter to true,
             Alignment.BottomEnd to true,
         ).forEach {
-            Assert.assertEquals(it.first.name, it.first.isBottom, it.second)
+            assertEquals(
+                expected = it.first.isBottom,
+                actual = it.second,
+                message = it.first.name,
+            )
         }
     }
 

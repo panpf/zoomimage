@@ -4,6 +4,8 @@ import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.internal.SkiaDecodeHelper
 import com.github.panpf.zoomimage.subsampling.internal.checkSupportSubsamplingByMimeType
 import com.github.panpf.zoomimage.subsampling.internal.createDecodeHelper
+import com.github.panpf.zoomimage.test.Platform
+import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.toImageSource
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -13,6 +15,10 @@ class DecodesNonAndroidTest {
 
     @Test
     fun testCreateDecodeHelper() {
+        if (Platform.current == Platform.iOS) {
+            // TODO The files in the resources directory cannot be accessed, even if I actively put the files in the resources directory.
+            return
+        }
         val decodeHelper = createDecodeHelper(ResourceImages.dog.toImageSource())
         assertTrue(decodeHelper is SkiaDecodeHelper)
     }

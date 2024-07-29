@@ -6,18 +6,18 @@ import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.div
 import com.github.panpf.zoomimage.compose.internal.times
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ComposePlatformUtilsScaleFactorTest {
 
     @Test
     fun testToShortString() {
-        Assert.assertEquals(
+        assertEquals(
             "10.34x9.77",
             ScaleFactor(10.342f, 9.765f).toShortString()
         )
-        Assert.assertEquals(
+        assertEquals(
             "9.77x10.34",
             ScaleFactor(9.765f, 10.342f).toShortString()
         )
@@ -25,11 +25,11 @@ class ComposePlatformUtilsScaleFactorTest {
 
     @Test
     fun testCreate() {
-        Assert.assertEquals(
+        assertEquals(
             "3.3x3.3",
             ScaleFactor(3.3f).toShortString()
         )
-        Assert.assertEquals(
+        assertEquals(
             "5.3x5.3",
             ScaleFactor(5.3f).toShortString()
         )
@@ -37,11 +37,11 @@ class ComposePlatformUtilsScaleFactorTest {
 
     @Test
     fun testOrigin() {
-        Assert.assertEquals(
+        assertEquals(
             "1.0x1.0",
             ScaleFactor.Origin.toShortString()
         )
-        Assert.assertEquals(
+        assertEquals(
             ScaleFactor.Origin,
             ScaleFactor.Origin
         )
@@ -49,11 +49,11 @@ class ComposePlatformUtilsScaleFactorTest {
 
     @Test
     fun testTimes() {
-        Assert.assertEquals(
+        assertEquals(
             "35.97x53.35",
             (ScaleFactor(10.9f, 9.7f) * ScaleFactor(3.3f, 5.5f)).toShortString()
         )
-        Assert.assertEquals(
+        assertEquals(
             "59.95x32.01",
             (ScaleFactor(10.9f, 9.7f) * ScaleFactor(5.5f, 3.3f)).toShortString()
         )
@@ -61,11 +61,11 @@ class ComposePlatformUtilsScaleFactorTest {
 
     @Test
     fun testDiv() {
-        Assert.assertEquals(
+        assertEquals(
             "10.9x9.7",
             (ScaleFactor(35.97f, 53.35f) / ScaleFactor(3.3f, 5.5f)).toShortString()
         )
-        Assert.assertEquals(
+        assertEquals(
             "6.54x16.17",
             (ScaleFactor(35.97f, 53.35f) / ScaleFactor(5.5f, 3.3f)).toShortString()
         )

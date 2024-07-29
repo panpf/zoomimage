@@ -29,8 +29,6 @@ google-material = "1.12.0"
 jetbrains-compose = "1.6.11"
 jetbrains-lifecycle = "2.8.0"
 
-junit = "4.13.2"
-
 kotlin = "2.0.0"
 kotlinx-atomicfu = "0.24.0" # sync with kotlin version
 kotlinx-collections-immutable = "0.3.7"
@@ -109,8 +107,6 @@ glide-ktx = { module = "com.github.bumptech.glide:ktx", version.ref = "glide-ktx
 
 jetbrains-lifecycle-common = { module = "org.jetbrains.androidx.lifecycle:lifecycle-common", version.ref = "jetbrains-lifecycle" }
 
-junit = { module = "junit:junit", version.ref = "junit" }
-
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -168,7 +164,6 @@ panpf-tools4a-run = { module = "io.github.panpf.tools4a:tools4a-run-ktx", versio
 panpf-tools4a-test = { module = "io.github.panpf.tools4a:tools4a-test-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-toast = { module = "io.github.panpf.tools4a:tools4a-toast-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-view = { module = "io.github.panpf.tools4a:tools4a-view-ktx", version.ref = "panpf-tools4a" }
-panpf-tools4j-test = { module = "io.github.panpf.tools4j:tools4j-test-ktx", version.ref = "panpf-tools4j" }
 panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "panpf-tools4k" }
 
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }

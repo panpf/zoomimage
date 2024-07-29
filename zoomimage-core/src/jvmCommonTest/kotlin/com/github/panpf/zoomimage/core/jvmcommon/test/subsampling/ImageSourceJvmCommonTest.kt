@@ -4,8 +4,8 @@ import com.github.panpf.zoomimage.subsampling.FileImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromFile
 import okio.Path.Companion.toOkioPath
-import org.junit.Test
 import java.io.File
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ImageSourceJvmCommonTest {
