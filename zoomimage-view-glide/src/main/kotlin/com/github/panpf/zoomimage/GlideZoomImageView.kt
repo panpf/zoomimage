@@ -39,6 +39,8 @@ import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
  *     .placeholder(R.drawable.placeholder)
  *     .into(glideZoomImageView)
  * ```
+ *
+ * @see com.github.panpf.zoomimage.view.glide.test.GlideZoomImageViewTest
  */
 open class GlideZoomImageView @JvmOverloads constructor(
     context: Context,

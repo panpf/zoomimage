@@ -24,7 +24,7 @@ import kotlin.math.roundToLong
 /**
  * Format the float number to the specified number of decimal places
  *
- * @see com.github.panpf.zoomimage.view.test.util.CoreUtilsTest.testFormat
+ * @see com.github.panpf.zoomimage.view.test.internal.ViewOtherUtilsTest.testFormat
  */
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
@@ -38,16 +38,14 @@ internal fun Float.format(newScale: Int): Float {
 /**
  * Convert the object to a hexadecimal string
  *
- * @see com.github.panpf.zoomimage.view.test.util.CoreUtilsTest.testToHexString
+ * @see com.github.panpf.zoomimage.view.test.internal.ViewOtherUtilsTest.testToHexString
  */
 internal fun Any.toHexString(): String = this.hashCode().toString(16)
 
-internal fun Float.isSafe(): Boolean {
-    return !isNaN() && !isInfinite()
-}
-
 /**
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
+ *
+ * Copy from androidx/compose/ui/util/MathHelpers.kt
  */
 internal fun lerp(start: Float, stop: Float, fraction: Float): Float {
     return (1 - fraction) * start + fraction * stop
@@ -55,6 +53,8 @@ internal fun lerp(start: Float, stop: Float, fraction: Float): Float {
 
 /**
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
+ *
+ * Copy from androidx/compose/ui/util/MathHelpers.kt
  */
 internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
     return start + ((stop - start) * fraction.toDouble()).roundToInt()
@@ -62,6 +62,8 @@ internal fun lerp(start: Int, stop: Int, fraction: Float): Int {
 
 /**
  * Linearly interpolate between [start] and [stop] with [fraction] fraction between them.
+ *
+ * Copy from androidx/compose/ui/util/MathHelpers.kt
  */
 internal fun lerp(start: Long, stop: Long, fraction: Float): Long {
     return start + ((stop - start) * fraction.toDouble()).roundToLong()

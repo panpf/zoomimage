@@ -20,10 +20,20 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * Convert the value of the original [MutableStateFlow] through the specified [convertor]
+ *
+ * @see com.github.panpf.zoomimage.view.test.internal.ConvertorMutableStateFlowTest.testConvert
+ */
 internal fun <T> MutableStateFlow<T>.convert(convertor: (T) -> T): MutableStateFlow<T> {
     return ConvertorMutableStateFlow(this, convertor)
 }
 
+/**
+ * A [MutableStateFlow] that can convert the value of the original [MutableStateFlow] through the specified [convertor]
+ *
+ * @see com.github.panpf.zoomimage.view.test.internal.ConvertorMutableStateFlowTest
+ */
 class ConvertorMutableStateFlow<T>(
     private val state: MutableStateFlow<T>,
     private val convertor: (T) -> T
@@ -42,6 +52,7 @@ class ConvertorMutableStateFlow<T>(
         }
 
     override suspend fun collect(collector: FlowCollector<T>): Nothing {
+        // TODO convert is not used
         return state.collect(collector)
     }
 

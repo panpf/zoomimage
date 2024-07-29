@@ -26,6 +26,7 @@ import com.github.panpf.zoomimage.util.Logger.Pipeline
  * Creates and remember a [Logger]
  *
  * @param tag The tag of the log
+ * @see com.github.panpf.zoomimage.compose.common.test.LoggerComposeTest.testRememberZoomImageLogger
  */
 @Composable
 fun rememberZoomImageLogger(

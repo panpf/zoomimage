@@ -32,6 +32,8 @@ import com.github.panpf.zoomimage.compose.internal.toShortString
 
 /**
  * A simple version of a 2D transformation that includes scale, pan, and rotation
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.internal.TransformTest
  */
 @Immutable
 data class Transform(

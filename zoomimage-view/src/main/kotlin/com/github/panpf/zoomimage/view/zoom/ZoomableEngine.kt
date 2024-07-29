@@ -18,6 +18,7 @@
 
 package com.github.panpf.zoomimage.view.zoom
 
+import android.graphics.Rect
 import android.view.View
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -38,7 +39,6 @@ import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
-import com.github.panpf.zoomimage.view.internal.Rect
 import com.github.panpf.zoomimage.view.internal.convert
 import com.github.panpf.zoomimage.view.internal.format
 import com.github.panpf.zoomimage.view.internal.requiredMainThread
@@ -85,6 +85,8 @@ import kotlin.math.roundToInt
 
 /**
  * Engines that control scale, pan, rotation
+ *
+ * @see com.github.panpf.zoomimage.view.test.zoom.ZoomableEngineTest
  */
 class ZoomableEngine constructor(val logger: Logger, val view: View) {
 
@@ -938,10 +940,10 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
             limitBaseVisibleRect = limitOffsetWithinBaseVisibleRectState.value,
         ).let {
             Rect(
-                it.left.roundToInt(),
-                it.top.roundToInt(),
-                it.right.roundToInt(),
-                it.bottom.roundToInt()
+                /* left = */ it.left.roundToInt(),
+                /* top = */ it.top.roundToInt(),
+                /* right = */ it.right.roundToInt(),
+                /* bottom = */ it.bottom.roundToInt()
             )
         }
         logger.d {

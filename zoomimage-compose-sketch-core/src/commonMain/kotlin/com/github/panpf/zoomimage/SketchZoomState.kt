@@ -13,6 +13,8 @@ import com.github.panpf.zoomimage.util.Logger
 
 /**
  * Creates and remember a [SketchZoomState]
+ *
+ * @see com.github.panpf.zoomimage.compose.sketch.core.test.SketchZoomStateTest.testRememberSketchZoomState
  */
 @Composable
 fun rememberSketchZoomState(logger: Logger = rememberZoomImageLogger(tag = "SketchZoomAsyncImage")): SketchZoomState {
@@ -23,6 +25,14 @@ fun rememberSketchZoomState(logger: Logger = rememberZoomImageLogger(tag = "Sket
     }
 }
 
+/**
+ * [ZoomState] implementation for Sketch
+ *
+ * @see com.github.panpf.zoomimage.compose.sketch.core.test.SketchZoomStateTest
+ */
 @Stable
-class SketchZoomState(logger: Logger, zoomable: ZoomableState, subsampling: SubsamplingState) :
-    ZoomState(logger, zoomable, subsampling)
+class SketchZoomState(
+    logger: Logger,
+    zoomable: ZoomableState,
+    subsampling: SubsamplingState
+) : ZoomState(logger, zoomable, subsampling)

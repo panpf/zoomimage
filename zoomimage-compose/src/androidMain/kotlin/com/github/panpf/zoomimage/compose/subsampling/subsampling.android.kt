@@ -16,4 +16,9 @@
 
 package com.github.panpf.zoomimage.compose.subsampling
 
+/**
+ * Whether to turn off anti-aliasing when drawing Tiles
+ *
+ * @see com.github.panpf.zoomimage.compose.android.test.subsampling.SubsamplingAndroidTest.testIsCloseAntiAliasForDrawTile
+ */
 actual fun isCloseAntiAliasForDrawTile(): Boolean = false

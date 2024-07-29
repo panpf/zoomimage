@@ -19,6 +19,11 @@ package com.github.panpf.zoomimage.view.zoom.internal
 import android.view.View
 import android.view.animation.Interpolator
 
+/**
+ * A simple float animation class that can animate a float value from a start value to an end value.
+ *
+ * @see com.github.panpf.zoomimage.view.test.zoom.internal.FloatAnimatableTest
+ */
 internal class FloatAnimatable(
     private val view: View,
     private val startValue: Float,
@@ -70,7 +75,6 @@ internal class FloatAnimatable(
         }
     }
 
-    @Suppress("UnnecessaryVariable")
     private fun computeProgress(): Float {
         if (durationMillis <= 0) return 1f
         val elapsedTime = (System.currentTimeMillis() - startTime).coerceAtLeast(0)

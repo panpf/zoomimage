@@ -44,6 +44,9 @@ import kotlin.math.roundToInt
 
 /**
  * Whether to turn off anti-aliasing when drawing Tiles
+ *
+ * @see com.github.panpf.zoomimage.compose.android.test.subsampling.SubsamplingAndroidTest.testIsCloseAntiAliasForDrawTile
+ * @see com.github.panpf.zoomimage.compose.nonandroid.test.subsampling.SubsamplingNonAndroidTest.testIsCloseAntiAliasForDrawTile
  */
 expect fun isCloseAntiAliasForDrawTile(): Boolean
 

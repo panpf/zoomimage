@@ -46,7 +46,6 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapCacheSpec
 import com.github.panpf.zoomimage.subsampling.TileSnapshot
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
 import com.github.panpf.zoomimage.subsampling.internal.TileBitmapCacheHelper
-import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
 import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
@@ -72,6 +71,8 @@ import kotlin.math.roundToInt
 
 /**
  * Creates and remember a [SubsamplingState] that can be used to subsampling of the content.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.subsampling.SubsamplingStateTest.testRememberSubsamplingState
  */
 @Composable
 fun rememberSubsamplingState(
@@ -87,6 +88,8 @@ fun rememberSubsamplingState(
 
 /**
  * A state object that can be used to subsampling of the content.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.subsampling.SubsamplingStateTest
  */
 @Stable
 class SubsamplingState constructor(
@@ -102,7 +105,7 @@ class SubsamplingState constructor(
     private var lastResetTileDecoderJob: Job? = null
     private val tileBitmapCacheSpec = TileBitmapCacheSpec()
     private val tileBitmapCacheHelper = TileBitmapCacheHelper(tileBitmapCacheSpec)
-    private val tileBitmapConvertor = createTileBitmapConvertor()
+    private val tileBitmapConvertor = ComposeTileBitmapConvertor()
     private val refreshTilesFlow = MutableSharedFlow<String>()
     private var preferredTileSize: IntSize by mutableStateOf(IntSize.Zero)
     private var contentSize: IntSize by mutableStateOf(IntSize.Zero)
@@ -559,5 +562,3 @@ class SubsamplingState constructor(
         cleanTileDecoder("destroy:$caller")
     }
 }
-
-expect fun createTileBitmapConvertor(): TileBitmapConvertor?

@@ -44,6 +44,8 @@ import java.io.File
  * ```
  *
  * Note: PicassoZoomImageView provides a set of dedicated APIs to listen to load results and get URIs, so please do not use the official API directly to load images
+ *
+ * @see com.github.panpf.zoomimage.view.picasso.test.PicassoZoomImageViewTest
  */
 open class PicassoZoomImageView @JvmOverloads constructor(
     context: Context,

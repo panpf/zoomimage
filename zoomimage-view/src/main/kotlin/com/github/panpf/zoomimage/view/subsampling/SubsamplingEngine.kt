@@ -59,6 +59,8 @@ import kotlin.math.roundToInt
 
 /**
  * Engines that control subsampling
+ *
+ * @see com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
  */
 class SubsamplingEngine constructor(
     val logger: Logger,

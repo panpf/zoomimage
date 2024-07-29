@@ -22,6 +22,8 @@ import androidx.compose.runtime.Immutable
 
 /**
  * Animation-related configurations
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.ZoomAnimationSpecTest
  */
 @Immutable
 data class ZoomAnimationSpec(

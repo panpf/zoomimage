@@ -93,6 +93,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.coil.test.SingletonCoilZoomAsyncImageTest.testCoilZoomAsyncImage1
  */
 @Composable
 @NonRestartableComposable
@@ -177,6 +178,7 @@ fun CoilZoomAsyncImage(
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.coil.test.SingletonCoilZoomAsyncImageTest.testCoilZoomAsyncImage2
  */
 @Composable
 fun CoilZoomAsyncImage(

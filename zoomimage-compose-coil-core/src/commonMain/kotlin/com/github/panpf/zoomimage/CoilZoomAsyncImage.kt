@@ -114,6 +114,7 @@ import kotlin.math.roundToInt
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.coil.core.test.CoilZoomAsyncImageTest.testCoilZoomAsyncImage1
  */
 @Composable
 @NonRestartableComposable
@@ -196,6 +197,7 @@ fun CoilZoomAsyncImage(
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.coil.core.test.CoilZoomAsyncImageTest.testCoilZoomAsyncImage2
  */
 @Composable
 fun CoilZoomAsyncImage(

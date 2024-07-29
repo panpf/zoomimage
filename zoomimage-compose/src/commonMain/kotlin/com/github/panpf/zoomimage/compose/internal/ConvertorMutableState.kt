@@ -20,6 +20,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SnapshotMutationPolicy
 import androidx.compose.runtime.snapshots.SnapshotMutableState
 
+/**
+ * Convert the value of the original [MutableState] through the specified [convertor].
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ConvertorMutableStateTest.testConvert
+ */
 internal fun <T> MutableState<T>.convert(convertor: (T) -> T): MutableState<T> {
     return if (this is SnapshotMutableState) {
         ConvertorSnapshotMutableState(this, convertor)
@@ -28,6 +33,11 @@ internal fun <T> MutableState<T>.convert(convertor: (T) -> T): MutableState<T> {
     }
 }
 
+/**
+ * A [MutableState] that converts the value of the original [MutableState] through the specified [convertor].
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ConvertorMutableStateTest
+ */
 internal class ConvertorMutableState<T>(
     private val state: MutableState<T>,
     private val convertor: (T) -> T
@@ -48,6 +58,11 @@ internal class ConvertorMutableState<T>(
     }
 }
 
+/**
+ * A [SnapshotMutableState] that converts the value of the original [SnapshotMutableState] through the specified [convertor].
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ConvertorMutableStateTest
+ */
 internal class ConvertorSnapshotMutableState<T>(
     private val state: SnapshotMutableState<T>,
     private val convertor: (T) -> T

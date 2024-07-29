@@ -14,6 +14,8 @@ import com.github.panpf.zoomimage.util.Logger
 
 /**
  * Creates and remember a [CoilZoomState]
+ *
+ * @see com.github.panpf.zoomimage.compose.coil2.core.test.CoilZoomStateTest.testRememberCoilZoomState
  */
 @Composable
 fun rememberCoilZoomState(logger: Logger = rememberZoomImageLogger(tag = "CoilZoomAsyncImage")): CoilZoomState {
@@ -24,6 +26,11 @@ fun rememberCoilZoomState(logger: Logger = rememberZoomImageLogger(tag = "CoilZo
     }
 }
 
+/**
+ * A [ZoomState] implementation that supports Coil
+ *
+ * @see com.github.panpf.zoomimage.compose.coil2.core.test.CoilZoomStateTest
+ */
 @Stable
 class CoilZoomState(
     logger: Logger,

@@ -97,6 +97,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Creates and remember a [ZoomableState] that can be used to control the scale, pan, rotation of the content.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.ZoomableStateTest.testRememberZoomableState
  */
 @Composable
 fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableState {
@@ -108,6 +110,8 @@ fun rememberZoomableState(logger: Logger = rememberZoomImageLogger()): ZoomableS
 
 /**
  * A state object that can be used to control the scale, pan, rotation of the content.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.ZoomableStateTest
  */
 @Stable
 class ZoomableState(val logger: Logger) : RememberObserver {

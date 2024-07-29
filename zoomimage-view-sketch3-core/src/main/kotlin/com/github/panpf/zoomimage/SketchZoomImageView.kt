@@ -42,6 +42,8 @@ import com.github.panpf.zoomimage.view.sketch.internal.AbsStateZoomImageView
  *     crossfade()
  * }
  * ```
+ *
+ * @see com.github.panpf.zoomimage.view.sketch3.core.test.SketchZoomImageViewTest
  */
 open class SketchZoomImageView @JvmOverloads constructor(
     context: Context,

@@ -63,6 +63,8 @@ import kotlinx.coroutines.launch
  * val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
  * zoomImageView.subsampling.setImageSource(imageSource)
  * ```
+ *
+ * @see com.github.panpf.zoomimage.view.test.ZoomImageViewTest
  */
 open class ZoomImageView @JvmOverloads constructor(
     context: Context,

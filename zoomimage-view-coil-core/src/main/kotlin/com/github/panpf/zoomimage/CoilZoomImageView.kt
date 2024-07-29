@@ -45,6 +45,8 @@ import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
  *     crossfade(true)
  * }
  * ```
+ *
+ * @see com.github.panpf.zoomimage.view.coil.core.test.CoilZoomImageViewTest
  */
 open class CoilZoomImageView @JvmOverloads constructor(
     context: Context,

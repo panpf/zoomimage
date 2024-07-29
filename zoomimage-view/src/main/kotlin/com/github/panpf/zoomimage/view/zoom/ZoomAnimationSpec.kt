@@ -21,6 +21,8 @@ import android.view.animation.Interpolator
 
 /**
  * Animation-related configurations
+ *
+ * @see com.github.panpf.zoomimage.view.test.zoom.ZoomAnimationSpecTest
  */
 data class ZoomAnimationSpec(
     var durationMillis: Int = 300,

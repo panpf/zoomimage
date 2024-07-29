@@ -22,7 +22,7 @@ import kotlin.math.round
 /**
  * Format the float number to the specified number of decimal places
  *
- * @see com.github.panpf.zoomimage.compose.common.test.util.CoreUtilsTest.testFormat
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeOtherUtilsTest.testFormat
  */
 internal fun Float.format(newScale: Int): Float {
     return if (this.isNaN()) {
@@ -36,6 +36,6 @@ internal fun Float.format(newScale: Int): Float {
 /**
  * Convert the object to a hexadecimal string
  *
- * @see com.github.panpf.zoomimage.compose.common.test.util.CoreUtilsTest.testToHexString
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeOtherUtilsTest.testToHexString
  */
 internal fun Any.toHexString(): String = this.hashCode().toString(16)

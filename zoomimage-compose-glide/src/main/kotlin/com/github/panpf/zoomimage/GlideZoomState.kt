@@ -14,6 +14,8 @@ import com.github.panpf.zoomimage.util.Logger
 
 /**
  * Creates and remember a [GlideZoomState]
+ *
+ * @see com.github.panpf.zoomimage.compose.glide.test.GlideZoomStateTest.testRememberGlideZoomState
  */
 @Composable
 fun rememberGlideZoomState(logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage")): GlideZoomState {
@@ -24,6 +26,11 @@ fun rememberGlideZoomState(logger: Logger = rememberZoomImageLogger(tag = "Glide
     }
 }
 
+/**
+ * A [ZoomState] implementation that supports Glide
+ *
+ * @see com.github.panpf.zoomimage.compose.glide.test.GlideZoomStateTest
+ */
 @Stable
 class GlideZoomState(
     logger: Logger,

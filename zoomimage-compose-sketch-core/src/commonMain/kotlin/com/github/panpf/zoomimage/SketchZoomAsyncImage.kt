@@ -85,6 +85,7 @@ import kotlin.math.roundToInt
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.sketch.core.test.SketchZoomAsyncImageTest.testSketchZoomAsyncImage1
  */
 @Composable
 @NonRestartableComposable
@@ -156,6 +157,7 @@ fun SketchZoomAsyncImage(
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.sketch.core.test.SketchZoomAsyncImageTest.testSketchZoomAsyncImage2
  */
 @Composable
 fun SketchZoomAsyncImage(

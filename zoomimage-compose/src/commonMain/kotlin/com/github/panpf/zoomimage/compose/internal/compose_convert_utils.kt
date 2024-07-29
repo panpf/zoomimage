@@ -42,6 +42,11 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import kotlin.math.roundToInt
 
 
+/**
+ * Convert [ContentScale] to [ContentScaleCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testContentScaleToCompat
+ */
 fun ContentScale.toCompat(): ContentScaleCompat = when (this) {
     ContentScale.Fit -> ContentScaleCompat.Fit
     ContentScale.FillBounds -> ContentScaleCompat.FillBounds
@@ -53,6 +58,11 @@ fun ContentScale.toCompat(): ContentScaleCompat = when (this) {
     else -> throw IllegalArgumentException("Unsupported ContentScale: $this")
 }
 
+/**
+ * Convert [ContentScaleCompat] to [ContentScale]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testContentScaleCompatToPlatform
+ */
 fun ContentScaleCompat.toPlatform(): ContentScale = when (this) {
     ContentScaleCompat.Fit -> ContentScale.Fit
     ContentScaleCompat.FillBounds -> ContentScale.FillBounds
@@ -64,6 +74,11 @@ fun ContentScaleCompat.toPlatform(): ContentScale = when (this) {
     else -> throw IllegalArgumentException("Unsupported ContentScale: $this")
 }
 
+/**
+ * Convert [Alignment] to [AlignmentCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testAlignmentToCompat
+ */
 fun Alignment.toCompat(): AlignmentCompat = when (this) {
     Alignment.TopStart -> AlignmentCompat.TopStart
     Alignment.TopCenter -> AlignmentCompat.TopCenter
@@ -77,6 +92,11 @@ fun Alignment.toCompat(): AlignmentCompat = when (this) {
     else -> throw IllegalArgumentException("Unsupported Alignment: $this")
 }
 
+/**
+ * Convert [AlignmentCompat] to [Alignment]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testAlignmentCompatToPlatform
+ */
 fun AlignmentCompat.toPlatform(): Alignment = when (this) {
     AlignmentCompat.TopStart -> Alignment.TopStart
     AlignmentCompat.TopCenter -> Alignment.TopCenter
@@ -91,41 +111,91 @@ fun AlignmentCompat.toPlatform(): Alignment = when (this) {
 }
 
 
+/**
+ * Convert [Size] to [SizeCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testSizeToCompat
+ */
 fun Size.toCompat(): SizeCompat =
     takeIf { it.isSpecified }
         ?.let { SizeCompat(width = it.width, height = it.height) }
         ?: SizeCompat.Zero
 
+/**
+ * Convert [Size] to [IntSizeCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testSizeRoundToCompat
+ */
 fun Size.roundToCompat(): IntSizeCompat =
     takeIf { it.isSpecified }
         ?.let { IntSizeCompat(width = it.width.roundToInt(), height = it.height.roundToInt()) }
         ?: IntSizeCompat.Zero
 
 
+/**
+ * Convert [IntSize] to [IntSizeCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntSizeToCompat
+ */
 fun IntSize.toCompat(): IntSizeCompat =
     IntSizeCompat(width = width, height = height)
 
+/**
+ * Convert [IntSize] to [SizeCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntSizeToCompatSize
+ */
 fun IntSize.toCompatSize(): SizeCompat =
     SizeCompat(width = width.toFloat(), height = height.toFloat())
 
 
+/**
+ * Convert [SizeCompat] to [Size]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testSizeCompatToPlatform
+ */
 fun SizeCompat.toPlatform(): Size =
     Size(width = width, height = height)
 
+/**
+ * Convert [SizeCompat] to [Size]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testSizeCompatRoundToPlatform
+ */
 fun SizeCompat.roundToPlatform(): IntSize =
     IntSize(width = width.roundToInt(), height = height.roundToInt())
 
 
+/**
+ * Convert [IntSizeCompat] to [IntSize]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntSizeCompatToPlatform
+ */
 fun IntSizeCompat.toPlatform(): IntSize =
     IntSize(width = width, height = height)
 
+/**
+ * Convert [IntSizeCompat] to [Size]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntSizeCompatToPlatformSize
+ */
 fun IntSizeCompat.toPlatformSize(): Size =
     Size(width = width.toFloat(), height = height.toFloat())
 
 
+/**
+ * Convert [Rect] to [RectCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testRectToCompat
+ */
 fun Rect.toCompat(): RectCompat =
     RectCompat(left = left, top = top, right = right, bottom = bottom)
 
+/**
+ * Convert [Rect] to [IntRectCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testRectRoundToCompat
+ */
 fun Rect.roundToCompat(): IntRectCompat =
     IntRectCompat(
         left = left.roundToInt(),
@@ -135,9 +205,19 @@ fun Rect.roundToCompat(): IntRectCompat =
     )
 
 
+/**
+ * Convert [IntRect] to [IntRectCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntRectToCompat
+ */
 fun IntRect.toCompat(): IntRectCompat =
     IntRectCompat(left = left, top = top, right = right, bottom = bottom)
 
+/**
+ * Convert [IntRect] to [RectCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntRectToCompatRect
+ */
 fun IntRect.toCompatRect(): RectCompat =
     RectCompat(
         left = left.toFloat(),
@@ -147,9 +227,19 @@ fun IntRect.toCompatRect(): RectCompat =
     )
 
 
+/**
+ * Convert [RectCompat] to [Rect]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testRectCompatToPlatform
+ */
 fun RectCompat.toPlatform(): Rect =
     Rect(left = left, top = top, right = right, bottom = bottom)
 
+/**
+ * Convert [RectCompat] to [IntRect]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testRectCompatRoundToPlatform
+ */
 fun RectCompat.roundToPlatform(): IntRect =
     IntRect(
         left = left.roundToInt(),
@@ -159,9 +249,19 @@ fun RectCompat.roundToPlatform(): IntRect =
     )
 
 
+/**
+ * Convert [IntRectCompat] to [IntRect]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntRectCompatToPlatform
+ */
 fun IntRectCompat.toPlatform(): IntRect =
     IntRect(left = left, top = top, right = right, bottom = bottom)
 
+/**
+ * Convert [IntRectCompat] to [Rect]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntRectCompatToPlatformRect
+ */
 fun IntRectCompat.toPlatformRect(): Rect =
     Rect(
         left = left.toFloat(),
@@ -171,52 +271,117 @@ fun IntRectCompat.toPlatformRect(): Rect =
     )
 
 
+/**
+ * Convert [Offset] to [OffsetCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testOffsetToCompat
+ */
 fun Offset.toCompat(): OffsetCompat =
     takeIf { it.isSpecified }
         ?.let { OffsetCompat(x = it.x, y = it.y) }
         ?: OffsetCompat.Zero
 
+/**
+ * Convert [Offset] to [IntOffsetCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testOffsetRoundToCompat
+ */
 fun Offset.roundToCompat(): IntOffsetCompat =
     takeIf { it.isSpecified }
         ?.let { IntOffsetCompat(x = it.x.roundToInt(), y = it.y.roundToInt()) }
         ?: IntOffsetCompat.Zero
 
 
+/**
+ * Convert [IntOffset] to [IntOffsetCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntOffsetToCompat
+ */
 fun IntOffset.toCompat(): IntOffsetCompat =
     IntOffsetCompat(x = x, y = y)
 
+/**
+ * Convert [IntOffset] to [OffsetCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntOffsetToCompatOffset
+ */
 fun IntOffset.toCompatOffset(): OffsetCompat =
     OffsetCompat(x = x.toFloat(), y = y.toFloat())
 
 
+/**
+ * Convert [OffsetCompat] to [Offset]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testOffsetCompatToPlatform
+ */
 fun OffsetCompat.toPlatform(): Offset = Offset(x = x, y = y)
 
+/**
+ * Convert [OffsetCompat] to [Offset]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testOffsetCompatRoundToPlatform
+ */
 fun OffsetCompat.roundToPlatform(): IntOffset = IntOffset(x = x.roundToInt(), y = y.roundToInt())
 
 
+/**
+ * Convert [IntOffsetCompat] to [IntOffset]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntOffsetCompatToPlatform
+ */
 fun IntOffsetCompat.toPlatform(): IntOffset = IntOffset(x = x, y = y)
 
+/**
+ * Convert [IntOffsetCompat] to [Offset]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testIntOffsetCompatToPlatformOffset
+ */
 fun IntOffsetCompat.toPlatformOffset(): Offset = Offset(x = x.toFloat(), y = y.toFloat())
 
 
+/**
+ * Convert [TransformOrigin] to [TransformOriginCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testTransformOriginToCompat
+ */
 fun TransformOrigin.toCompat(): TransformOriginCompat {
     return TransformOriginCompat(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
 }
 
+/**
+ * Convert [TransformOriginCompat] to [TransformOrigin]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testTransformOriginCompatToPlatform
+ */
 fun TransformOriginCompat.toPlatform(): TransformOrigin {
     return TransformOrigin(pivotFractionX = pivotFractionX, pivotFractionY = pivotFractionY)
 }
 
 
+/**
+ * Convert [ScaleFactor] to [ScaleFactorCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testScaleFactorToCompat
+ */
 fun ScaleFactor.toCompat(): ScaleFactorCompat {
     return ScaleFactorCompat(scaleX = scaleX, scaleY = scaleY)
 }
 
+/**
+ * Convert [ScaleFactorCompat] to [ScaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testScaleFactorCompatToPlatform
+ */
 fun ScaleFactorCompat.toPlatform(): ScaleFactor {
     return ScaleFactor(scaleX = scaleX, scaleY = scaleY)
 }
 
 
+/**
+ * Convert [Transform] to [TransformCompat]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testTransformToCompat
+ */
 fun Transform.toCompat(): TransformCompat {
     return TransformCompat(
         scale = scale.toCompat(),
@@ -227,6 +392,11 @@ fun Transform.toCompat(): TransformCompat {
     )
 }
 
+/**
+ * Convert [TransformCompat] to [Transform]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testTransformCompatToPlatform
+ */
 fun TransformCompat.toPlatform(): Transform {
     return Transform(
         scale = scale.toPlatform(),

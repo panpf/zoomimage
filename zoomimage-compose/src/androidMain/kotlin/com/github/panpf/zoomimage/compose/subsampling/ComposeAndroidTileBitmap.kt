@@ -21,6 +21,11 @@ import androidx.compose.ui.graphics.asImageBitmap
 import com.github.panpf.zoomimage.subsampling.AndroidTileBitmap
 import com.github.panpf.zoomimage.subsampling.BitmapFrom
 
+/**
+ * [ComposeTileBitmap] implementation based on [AndroidTileBitmap]
+ *
+ * @see com.github.panpf.zoomimage.compose.android.test.subsampling.ComposeAndroidTileBitmapTest
+ */
 class ComposeAndroidTileBitmap constructor(
     private val tileBitmap: AndroidTileBitmap,
 ) : ComposeTileBitmap {

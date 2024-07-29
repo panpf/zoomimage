@@ -75,6 +75,7 @@ import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.sketch3.test.SingletonSketchZoomAsyncImageTest.testSketchZoomAsyncImage1
  */
 @Composable
 @NonRestartableComposable
@@ -162,6 +163,7 @@ fun SketchZoomAsyncImage(
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.sketch3.test.SingletonSketchZoomAsyncImageTest.testSketchZoomAsyncImage2
  */
 @Composable
 @NonRestartableComposable
@@ -243,6 +245,7 @@ fun SketchZoomAsyncImage(
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.sketch3.test.SingletonSketchZoomAsyncImageTest.testSketchZoomAsyncImage3
  */
 @Composable
 @NonRestartableComposable
@@ -320,6 +323,7 @@ fun SketchZoomAsyncImage(
  * @param scrollBar Controls whether scroll bars are displayed and their style
  * @param onLongPress Called when the user long presses the image
  * @param onTap Called when the user taps the image
+ * @see com.github.panpf.zoomimage.compose.sketch3.test.SingletonSketchZoomAsyncImageTest.testSketchZoomAsyncImage4
  */
 @Composable
 @NonRestartableComposable

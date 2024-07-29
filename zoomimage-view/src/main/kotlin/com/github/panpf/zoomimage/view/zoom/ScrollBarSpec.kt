@@ -21,6 +21,8 @@ import android.content.res.Resources
 
 /**
  * Used to configure the style of the scroll bar
+ *
+ * @see com.github.panpf.zoomimage.view.test.zoom.ScrollBarSpecTest
  */
 data class ScrollBarSpec(
     /**

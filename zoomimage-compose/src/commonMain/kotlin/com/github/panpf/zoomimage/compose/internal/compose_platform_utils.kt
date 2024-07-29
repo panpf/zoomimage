@@ -23,7 +23,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
@@ -39,11 +38,21 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 
+/**
+ * Convert Dp to px
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTest.testDpToPx
+ */
 @Composable
 internal fun Dp.toPx(): Float {
     return with(LocalDensity.current) { this@toPx.toPx() }
 }
 
+/**
+ * Convert px to Dp
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTest.testFloatToDp
+ */
 @Composable
 internal fun Float.toDp(): Dp {
     return with(LocalDensity.current) { this@toDp.toDp() }
@@ -54,6 +63,8 @@ internal fun Float.toDp(): Dp {
 
 /**
  * Return short string descriptions, for example: '100.56x900.45'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsSizeTest.testToShortString
  */
 @Stable
 internal fun Size.toShortString(): String =
@@ -61,12 +72,16 @@ internal fun Size.toShortString(): String =
 
 /**
  * Return true if the size is not empty
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsSizeTest.testIsNotEmpty
  */
 @Stable
 internal fun Size.isNotEmpty(): Boolean = width > 0f && height > 0f
 
 /**
  * Round a [Size] down to the nearest [Int] coordinates.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsSizeTest.testRound
  */
 @Stable
 internal fun Size.round(): IntSize =
@@ -74,6 +89,8 @@ internal fun Size.round(): IntSize =
 
 /**
  * The size after rotating [rotation] degrees
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsSizeTest.testRotate
  */
 @Stable
 internal fun Size.rotate(rotation: Int): Size =
@@ -81,6 +98,8 @@ internal fun Size.rotate(rotation: Int): Size =
 
 /**
  * The size after reverse rotating [rotation] degrees
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsSizeTest.testReverseRotate
  */
 @Stable
 internal fun Size.reverseRotate(rotation: Int): Size {
@@ -90,6 +109,8 @@ internal fun Size.reverseRotate(rotation: Int): Size {
 
 /**
  * Returns true if the aspect ratio of itself and other is the same
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsSizeTest.testIsSameAspectRatio
  */
 @Stable
 internal fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
@@ -109,24 +130,32 @@ internal fun Size.isSameAspectRatio(other: Size, delta: Float = 0f): Boolean {
 
 /**
  * Return short string descriptions, for example: '100x200'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testToShortString
  */
 @Stable
 internal fun IntSize.toShortString(): String = "${width}x${height}"
 
 /**
  * Return true if the size is empty
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testIsEmpty
  */
 @Stable
 internal fun IntSize.isEmpty(): Boolean = width <= 0 || height <= 0
 
 /**
  * Return true if the size is not empty
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testIsNotEmpty
  */
 @Stable
 internal fun IntSize.isNotEmpty(): Boolean = width > 0 && height > 0
 
 /**
  * Returns an IntSize scaled by multiplying [this] by [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testTimes
  */
 @Stable
 internal operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
@@ -137,6 +166,8 @@ internal operator fun IntSize.times(scaleFactor: ScaleFactor): IntSize =
 
 /**
  * Returns an IntSize scaled by dividing [this] by [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testDiv
  */
 @Stable
 internal operator fun IntSize.div(scaleFactor: ScaleFactor): IntSize =
@@ -147,6 +178,8 @@ internal operator fun IntSize.div(scaleFactor: ScaleFactor): IntSize =
 
 /**
  * Returns an IntSize scaled by multiplying [this] by [scale]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testTimes
  */
 @Stable
 internal operator fun IntSize.times(scale: Float): IntSize =
@@ -157,6 +190,8 @@ internal operator fun IntSize.times(scale: Float): IntSize =
 
 /**
  * Returns an IntSize scaled by dividing [this] by [scale]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testDiv
  */
 @Stable
 internal operator fun IntSize.div(scale: Float): IntSize =
@@ -167,6 +202,8 @@ internal operator fun IntSize.div(scale: Float): IntSize =
 
 /**
  * The size after rotating [rotation] degrees
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testRotate
  */
 @Stable
 internal fun IntSize.rotate(rotation: Int): IntSize {
@@ -175,6 +212,8 @@ internal fun IntSize.rotate(rotation: Int): IntSize {
 
 /**
  * The size after reverse rotating [rotation] degrees
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testReverseRotate
  */
 @Stable
 internal fun IntSize.reverseRotate(rotation: Int): IntSize {
@@ -184,6 +223,8 @@ internal fun IntSize.reverseRotate(rotation: Int): IntSize {
 
 /**
  * Returns true if the aspect ratio of itself and other is the same
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testIsSameAspectRatio
  */
 @Stable
 internal fun IntSize.isSameAspectRatio(other: IntSize, delta: Float = 0f): Boolean {
@@ -208,6 +249,8 @@ internal fun IntSize.isSameAspectRatio(other: IntSize, delta: Float = 0f): Boole
  * meaning that the interpolation is at the relevant point on the timeline
  * between [start] and [stop]. The interpolation can be extrapolated beyond 0.0 and
  * 1.0, so negative values and values greater than 1.0 are valid.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testLerp
  */
 @Stable
 internal fun lerp(start: IntSize, stop: IntSize, fraction: Float): IntSize =
@@ -219,6 +262,8 @@ internal fun lerp(start: IntSize, stop: IntSize, fraction: Float): IntSize =
 /**
  * Returns a copy of this IntOffset instance optionally overriding the
  * x or y parameter
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntSizeTest.testCopy
  */
 @Stable
 internal fun IntSize.copy(width: Int = this.width, height: Int = this.height) =
@@ -229,6 +274,8 @@ internal fun IntSize.copy(width: Int = this.width, height: Int = this.height) =
 
 /**
  * Return short string descriptions, for example: '10.01x9.03'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsOffsetTest.testToShortString
  */
 @Stable
 internal fun Offset.toShortString(): String =
@@ -240,6 +287,8 @@ internal fun Offset.toShortString(): String =
  * Returns an offset whose coordinates are the coordinates of the
  * left-hand-side operand (an Offset) multiplied by the scalar
  * right-hand-side operand (a Float).
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsOffsetTest.testTimes
  */
 @Stable
 internal operator fun Offset.times(scaleFactor: ScaleFactor): Offset =
@@ -251,6 +300,8 @@ internal operator fun Offset.times(scaleFactor: ScaleFactor): Offset =
  * Returns an offset whose coordinates are the coordinates of the
  * left-hand-side operand (an Offset) divided by the scalar right-hand-side
  * operand (a Float).
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsOffsetTest.testDiv
  */
 @Stable
 internal operator fun Offset.div(scaleFactor: ScaleFactor): Offset =
@@ -258,6 +309,8 @@ internal operator fun Offset.div(scaleFactor: ScaleFactor): Offset =
 
 /**
  * Rotate the space by [rotation] degrees, and then return the rotated coordinates
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsOffsetTest.testRotateInSpace
  */
 @Stable
 internal fun Offset.rotateInSpace(spaceSize: Size, rotation: Int): Offset {
@@ -272,6 +325,8 @@ internal fun Offset.rotateInSpace(spaceSize: Size, rotation: Int): Offset {
 
 /**
  * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated coordinates
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsOffsetTest.testReverseRotateInSpace
  */
 @Stable
 internal fun Offset.reverseRotateInSpace(spaceSize: Size, rotation: Int): Offset {
@@ -282,6 +337,8 @@ internal fun Offset.reverseRotateInSpace(spaceSize: Size, rotation: Int): Offset
 
 /**
  * Limit the offset to the rectangular extent
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsOffsetTest.testLimitToRect
  */
 @Stable
 internal fun Offset.limitTo(rect: Rect): Offset {
@@ -297,6 +354,8 @@ internal fun Offset.limitTo(rect: Rect): Offset {
 
 /**
  * Limit offset to 0 to the range of size
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsOffsetTest.testLimitToSize
  */
 @Stable
 internal fun Offset.limitTo(size: Size): Offset =
@@ -307,6 +366,8 @@ internal fun Offset.limitTo(size: Size): Offset =
 
 /**
  * Return short string descriptions, for example: '10x9'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntOffsetTest.testToShortString
  */
 @Stable
 internal fun IntOffset.toShortString(): String = "${x}x${y}"
@@ -317,6 +378,8 @@ internal fun IntOffset.toShortString(): String = "${x}x${y}"
  * Returns an IntOffset whose coordinates are the coordinates of the
  * left-hand-side operand (an IntOffset) multiplied by the scalar
  * right-hand-side operand (a Float). The result is rounded to the nearest integer.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntOffsetTest.testTimes
  */
 @Stable
 internal operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset =
@@ -331,6 +394,8 @@ internal operator fun IntOffset.times(scaleFactor: ScaleFactor): IntOffset =
  * Returns an IntOffset whose coordinates are the coordinates of the
  * left-hand-side operand (an IntOffset) divided by the scalar right-hand-side
  * operand (a Float). The result is rounded to the nearest integer.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntOffsetTest.testDiv
  */
 @Stable
 internal operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
@@ -341,6 +406,8 @@ internal operator fun IntOffset.div(scaleFactor: ScaleFactor): IntOffset =
 
 /**
  * Rotate the space by [rotation] degrees, and then return the rotated coordinates
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntOffsetTest.testRotateInSpace
  */
 @Stable
 internal fun IntOffset.rotateInSpace(spaceSize: IntSize, rotation: Int): IntOffset {
@@ -355,6 +422,8 @@ internal fun IntOffset.rotateInSpace(spaceSize: IntSize, rotation: Int): IntOffs
 
 /**
  * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated coordinates
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntOffsetTest.testReverseRotateInSpace
  */
 @Stable
 internal fun IntOffset.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): IntOffset {
@@ -365,6 +434,8 @@ internal fun IntOffset.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): 
 
 /**
  * Limit the offset to the rectangular extent
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntOffsetTest.testLimitToRect
  */
 @Stable
 internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
@@ -380,6 +451,8 @@ internal fun IntOffset.limitTo(rect: IntRect): IntOffset {
 
 /**
  * Limit offset to 0 to the range of size
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntOffsetTest.testLimitToSize
  */
 @Stable
 internal fun IntOffset.limitTo(size: IntSize): IntOffset =
@@ -390,6 +463,8 @@ internal fun IntOffset.limitTo(size: IntSize): IntOffset =
 
 /**
  * Return short string descriptions, for example: '[0.01x0.34,100.67x200.02]'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testToShortString
  */
 @Stable
 internal fun Rect.toShortString(): String =
@@ -397,6 +472,8 @@ internal fun Rect.toShortString(): String =
 
 /**
  * Rounds a [Rect] to an [IntRect]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testRound
  */
 @Stable
 internal fun Rect.round(): IntRect = IntRect(
@@ -408,6 +485,8 @@ internal fun Rect.round(): IntRect = IntRect(
 
 /**
  * Returns an Rect scaled by multiplying [scale]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testTimes
  */
 @Stable
 internal operator fun Rect.times(scale: Float): Rect =
@@ -420,6 +499,8 @@ internal operator fun Rect.times(scale: Float): Rect =
 
 /**
  * Returns an Rect scaled by multiplying [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testTimes
  */
 @Stable
 internal operator fun Rect.times(scaleFactor: ScaleFactor): Rect =
@@ -432,6 +513,8 @@ internal operator fun Rect.times(scaleFactor: ScaleFactor): Rect =
 
 /**
  * Returns an Rect scaled by dividing [scale]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testDiv
  */
 @Stable
 internal operator fun Rect.div(scale: Float): Rect =
@@ -444,6 +527,8 @@ internal operator fun Rect.div(scale: Float): Rect =
 
 /**
  * Returns an Rect scaled by dividing [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testDiv
  */
 @Stable
 internal operator fun Rect.div(scaleFactor: ScaleFactor): Rect =
@@ -456,6 +541,8 @@ internal operator fun Rect.div(scaleFactor: ScaleFactor): Rect =
 
 /**
  * Limit the offset to the rectangular extent
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testLimitToRect
  */
 @Stable
 internal fun Rect.limitTo(rect: Rect): Rect =
@@ -476,12 +563,16 @@ internal fun Rect.limitTo(rect: Rect): Rect =
 
 /**
  * Limit Rect to 0 to the range of size
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testLimitToSize
  */
 @Stable
 internal fun Rect.limitTo(size: Size): Rect = limitTo(Rect(0f, 0f, size.width, size.height))
 
 /**
  * Rotate the space by [rotation] degrees, and then return the rotated Rect
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testRotateInSpace
  */
 @Stable
 internal fun Rect.rotateInSpace(spaceSize: Size, rotation: Int): Rect {
@@ -520,6 +611,8 @@ internal fun Rect.rotateInSpace(spaceSize: Size, rotation: Int): Rect {
 
 /**
  * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated Rect
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testReverseRotateInSpace
  */
 @Stable
 internal fun Rect.reverseRotateInSpace(spaceSize: Size, rotation: Int): Rect {
@@ -530,6 +623,8 @@ internal fun Rect.reverseRotateInSpace(spaceSize: Size, rotation: Int): Rect {
 
 /**
  * Flip this rect horizontally or vertically within a given container
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsRectTest.testFlip
  */
 fun Rect.flip(spaceSize: Size, vertical: Boolean = false): Rect {
     return if (!vertical) {
@@ -554,12 +649,16 @@ fun Rect.flip(spaceSize: Size, vertical: Boolean = false): Rect {
 
 /**
  * Return short string descriptions, for example: '[0x0,500x400]'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testToShortString
  */
 @Stable
 internal fun IntRect.toShortString(): String = "[${left}x${top},${right}x${bottom}]"
 
 /**
  * Returns an IntRect scaled by multiplying [scale]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testTimes
  */
 @Stable
 internal operator fun IntRect.times(scale: Float): IntRect =
@@ -572,6 +671,8 @@ internal operator fun IntRect.times(scale: Float): IntRect =
 
 /**
  * Returns an IntRect scaled by multiplying [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testTimes
  */
 @Stable
 internal operator fun IntRect.times(scaleFactor: ScaleFactor): IntRect =
@@ -584,6 +685,8 @@ internal operator fun IntRect.times(scaleFactor: ScaleFactor): IntRect =
 
 /**
  * Returns an IntRect scaled by dividing [scale]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testDiv
  */
 @Stable
 internal operator fun IntRect.div(scale: Float): IntRect =
@@ -596,6 +699,8 @@ internal operator fun IntRect.div(scale: Float): IntRect =
 
 /**
  * Returns an IntRect scaled by dividing [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testDiv
  */
 @Stable
 internal operator fun IntRect.div(scaleFactor: ScaleFactor): IntRect =
@@ -608,6 +713,8 @@ internal operator fun IntRect.div(scaleFactor: ScaleFactor): IntRect =
 
 /**
  * Limit the offset to the rectangular extent
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testLimitToRect
  */
 @Stable
 internal fun IntRect.limitTo(rect: IntRect): IntRect =
@@ -628,6 +735,8 @@ internal fun IntRect.limitTo(rect: IntRect): IntRect =
 
 /**
  * Limit Rect to 0 to the range of size
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testLimitToSize
  */
 @Stable
 internal fun IntRect.limitTo(size: IntSize): IntRect =
@@ -635,6 +744,8 @@ internal fun IntRect.limitTo(size: IntSize): IntRect =
 
 /**
  * Rotate the space by [rotation] degrees, and then return the rotated Rect
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testRotateInSpace
  */
 @Stable
 internal fun IntRect.rotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
@@ -673,6 +784,8 @@ internal fun IntRect.rotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
 
 /**
  * Reverse rotate the space by [rotation] degrees, and then returns the reverse rotated Rect
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsIntRectTest.testReverseRotateInSpace
  */
 @Stable
 internal fun IntRect.reverseRotateInSpace(spaceSize: IntSize, rotation: Int): IntRect {
@@ -707,18 +820,24 @@ fun IntRect.flip(spaceSize: IntSize, vertical: Boolean = false): IntRect {
 
 /**
  * Return short string descriptions, for example: '3.45x9.87'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsScaleFactorTest.testToShortString
  */
 @Stable
 internal fun ScaleFactor.toShortString(): String = "${scaleX.format(2)}x${scaleY.format(2)}"
 
 /**
  * Create a ScaleFactor, scaleX and scaleY are both [scale]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsScaleFactorTest.testCreate
  */
 @Stable
 internal fun ScaleFactor(scale: Float): ScaleFactor = ScaleFactor(scale, scale)
 
 /**
  * The scaling factor that remains the same scale, that is, scaleX and scaleY are both 1f
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsScaleFactorTest.testOrigin
  */
 @Stable
 internal val ScaleFactor.Companion.Origin: ScaleFactor
@@ -727,6 +846,8 @@ private val scaleFactorOrigin by lazy { ScaleFactor(scaleX = 1f, scaleY = 1f) }
 
 /**
  * Returns an ScaleFactor scaled by multiplying [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsScaleFactorTest.testTimes
  */
 @Stable
 internal operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
@@ -734,6 +855,8 @@ internal operator fun ScaleFactor.times(scaleFactor: ScaleFactor) =
 
 /**
  * Returns an ScaleFactor scaled by dividing [scaleFactor]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsScaleFactorTest.testDiv
  */
 @Stable
 internal operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
@@ -744,6 +867,8 @@ internal operator fun ScaleFactor.div(scaleFactor: ScaleFactor) =
 
 /**
  * Return short string descriptions, for example: '0.52x0.52'
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTransformOriginTest.testToShortString
  */
 @Stable
 internal fun TransformOrigin.toShortString(): String =
@@ -752,6 +877,8 @@ internal fun TransformOrigin.toShortString(): String =
 /**
  * [TransformOrigin] constant to indicate that the top start of the content should
  * be used for rotation and scale transformations
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTransformOriginTest.testTopStart
  */
 @Stable
 internal val TransformOrigin.Companion.TopStart: TransformOrigin
@@ -760,6 +887,8 @@ private val transformOriginTopStart by lazy { TransformOrigin(0f, 0f) }
 
 /**
  * Return a new [TransformOrigin] with the width and height multiplied by the [operand]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTransformOriginTest.testTimes
  */
 @Stable
 internal operator fun TransformOrigin.times(operand: Float) =
@@ -767,6 +896,8 @@ internal operator fun TransformOrigin.times(operand: Float) =
 
 /**
  * Return a new [TransformOrigin] with the width and height dividing by the [operand]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTransformOriginTest.testDiv
  */
 @Stable
 internal operator fun TransformOrigin.div(operand: Float) =
@@ -777,6 +908,8 @@ internal operator fun TransformOrigin.div(operand: Float) =
  *
  * Return a new [IntSize] with the width and height multiplied by the [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTransformOriginTest.testTimes
  */
 @Stable
 internal operator fun IntSize.times(origin: TransformOrigin): IntSize =
@@ -790,6 +923,8 @@ internal operator fun IntSize.times(origin: TransformOrigin): IntSize =
  *
  * Return a new [Size] with the width and height multiplied by the [TransformOrigin.pivotFractionX] and
  * [TransformOrigin.pivotFractionY] respectively
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTransformOriginTest.testTimes
  */
 @Stable
 internal operator fun Size.times(origin: TransformOrigin): Size =
@@ -812,6 +947,8 @@ internal operator fun Size.times(origin: TransformOrigin): Size =
  *
  * Values for [fraction] are usually obtained from an [Animation<Float>], such as
  * an `AnimationController`.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTransformOriginTest.testLerp
  */
 @Stable
 internal fun lerp(
@@ -838,6 +975,8 @@ internal fun lerp(
 
 /**
  * Returns the name of [ContentScaleCompat], which can also be converted back via the [valueOf] method
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsContentScaleTest.testName
  */
 @Stable
 internal val ContentScale.name: String
@@ -854,6 +993,8 @@ internal val ContentScale.name: String
 
 /**
  * Returns the [ContentScaleCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsContentScaleTest.testValueOf
  */
 @Stable
 internal fun ContentScale.Companion.valueOf(name: String): ContentScale {
@@ -874,6 +1015,8 @@ internal fun ContentScale.Companion.valueOf(name: String): ContentScale {
 
 /**
  * Returns the name of [AlignmentCompat], which can also be converted back via the [valueOf] method
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testName
  */
 @Stable
 internal val Alignment.name: String
@@ -892,6 +1035,8 @@ internal val Alignment.name: String
 
 /**
  * Returns the [AlignmentCompat] corresponding to the given [name], or throws [IllegalArgumentException]. see [name] property
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testValueOf
  */
 @Stable
 internal fun Alignment.Companion.valueOf(name: String): Alignment {
@@ -911,6 +1056,8 @@ internal fun Alignment.Companion.valueOf(name: String): Alignment {
 
 /**
  * If true is returned, this [AlignmentCompat] is the horizontal starting position
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testIsStart
  */
 @Stable
 internal val Alignment.isStart: Boolean
@@ -920,6 +1067,8 @@ internal val Alignment.isStart: Boolean
 
 /**
  * If true is returned, this [AlignmentCompat] is the horizontal center position
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testIsHorizontalCenter
  */
 @Stable
 internal val Alignment.isHorizontalCenter: Boolean
@@ -929,6 +1078,8 @@ internal val Alignment.isHorizontalCenter: Boolean
 
 /**
  * If true is returned, this [AlignmentCompat] is the horizontal ending position
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testIsEnd
  */
 @Stable
 internal val Alignment.isEnd: Boolean
@@ -938,6 +1089,8 @@ internal val Alignment.isEnd: Boolean
 
 /**
  * If true is returned, this [AlignmentCompat] is the horizontal and vertical center position
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testIsCenter
  */
 @Stable
 internal val Alignment.isCenter: Boolean
@@ -945,6 +1098,8 @@ internal val Alignment.isCenter: Boolean
 
 /**
  * If true is returned, this [AlignmentCompat] is the vertical starting position
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testIsTop
  */
 @Stable
 internal val Alignment.isTop: Boolean
@@ -954,6 +1109,8 @@ internal val Alignment.isTop: Boolean
 
 /**
  * If true is returned, this [AlignmentCompat] is the vertical center position
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testIsVerticalCenter
  */
 @Stable
 internal val Alignment.isVerticalCenter: Boolean
@@ -963,12 +1120,11 @@ internal val Alignment.isVerticalCenter: Boolean
 
 /**
  * If true is returned, this [AlignmentCompat] is the vertical ending position
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsAlignmentTest.testIsBottom
  */
 @Stable
 internal val Alignment.isBottom: Boolean
     get() = this == Alignment.BottomStart
             || this == Alignment.BottomCenter
             || this == Alignment.BottomEnd
-
-fun ImageBitmap.toLogString(): String =
-    "ImageBitmap@${hashCode().toString(16)}(${width.toFloat()}x${height.toFloat()},$config)"

@@ -27,6 +27,8 @@ import com.github.panpf.zoomimage.util.Logger
 
 /**
  * Creates and remember a [ZoomState]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.ZoomStateTest.testRememberZoomState
  */
 @Composable
 fun rememberZoomState(logger: Logger = rememberZoomImageLogger()): ZoomState {
@@ -39,6 +41,8 @@ fun rememberZoomState(logger: Logger = rememberZoomImageLogger()): ZoomState {
 
 /**
  * Used to control the state of scaling, translation, rotation, and subsampling
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.ZoomStateTest
  */
 @Stable
 open class ZoomState(
@@ -61,13 +65,10 @@ open class ZoomState(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
-
         other as ZoomState
-
         if (logger != other.logger) return false
         if (zoomable != other.zoomable) return false
         if (subsampling != other.subsampling) return false
-
         return true
     }
 

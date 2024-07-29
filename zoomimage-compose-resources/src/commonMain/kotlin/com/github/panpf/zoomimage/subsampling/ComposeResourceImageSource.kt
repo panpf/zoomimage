@@ -14,6 +14,8 @@ import org.jetbrains.compose.resources.readResourceBytes
  * * Res.getUri("files/huge_china.jpg") on desktop: 'file:/Users/panpf/Workspace/zoomimage/sample/build/processedResources/desktop/main/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
  * * Res.getUri("files/huge_china.jpg") on js: 'http://localhost:8080/./composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
  * * Res.getUri("files/huge_china.jpg") on ios: 'file:///Users/panpf/Library/Developer/ CoreSimulator/Devices/F828C881-A750-432B-8210-93A84C45E/data/Containers/Bundle/Application/CBD75605-D35E-47A7-B56B-6C5690B062CC/SketchSample.app/compose-resources/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
+ *
+ * @see com.github.panpf.zoomimage.compose.resources.test.ComposeResourceImageSourceTest.testFromComposeResource
  */
 fun ImageSource.Companion.fromComposeResource(
     resourcePath: String,
@@ -31,6 +33,7 @@ fun ImageSource.Companion.fromComposeResource(
  * * Res.getUri("files/huge_china.jpg") on js: 'http://localhost:8080/./composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
  * * Res.getUri("files/huge_china.jpg") on ios: 'file:///Users/panpf/Library/Developer/ CoreSimulator/Devices/F828C881-A750-432B-8210-93A84C45E/data/Containers/Bundle/Application/CBD75605-D35E-47A7-B56B-6C5690B062CC/SketchSample.app/compose-resources/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
  * @return 'composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
+ * @see com.github.panpf.zoomimage.compose.resources.test.ComposeResourceImageSourceTest.testComposeResourceUriToResourcePath
  */
 fun composeResourceUriToResourcePath(resourcePath: String): String {
     if (resourcePath.startsWith("composeResources/")) {
@@ -50,6 +53,8 @@ fun composeResourceUriToResourcePath(resourcePath: String): String {
  * Image source for compose resources.
  * @param resourcePath The path of the file to read in the compose resource's directory. For example:
  * * 'composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
+ *
+ * @see com.github.panpf.zoomimage.compose.resources.test.ComposeResourceImageSourceTest
  */
 class ComposeResourceImageSource(val resourcePath: String, val bytes: ByteArray) : ImageSource {
 
