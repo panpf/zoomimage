@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @see com.github.panpf.zoomimage.view.test.internal.ConvertorMutableStateFlowTest.testConvert
  */
-internal fun <T> MutableStateFlow<T>.convert(convertor: (T) -> T): MutableStateFlow<T> {
+internal fun <T> MutableStateFlow<T>.convert(convertor: (T) -> T): ConvertorMutableStateFlow<T> {
     return ConvertorMutableStateFlow(this, convertor)
 }
 
@@ -52,8 +52,9 @@ class ConvertorMutableStateFlow<T>(
         }
 
     override suspend fun collect(collector: FlowCollector<T>): Nothing {
-        // TODO convert is not used
-        return state.collect(collector)
+        return state.collect {
+            collector.emit(convertor(it))
+        }
     }
 
     override fun compareAndSet(expect: T, update: T): Boolean {

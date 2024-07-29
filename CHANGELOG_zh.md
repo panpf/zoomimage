@@ -6,6 +6,8 @@
 
 * new: coil、glide、picasso 系列组件现在支持 'android.resource://example.package.name/drawable/image'
   和 'android.resource://example.package.name/4125123' 类型的 model
+* fix: 修复 ZoomableEngine 的 contentSizeState 属性 collect 和 value 返回的值不一致的
+  bug 。 [#37](https://github.com/panpf/zoomimage/issues/37)
 
 ## 1.1.0-alpha04
 

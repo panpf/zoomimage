@@ -7,6 +7,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * new: coil, glide, picasso series components now support 'android.resource:
   //example.package.name/drawable/image' and 'android.resource://example.package.name/4125123' types
   of models
+* fix: Fix the bug that the values returned by ZoomableEngine's contentSizeState property collect
+  and value are inconsistent. [#37](https://github.com/panpf/zoomimage/issues/37)
 
 ## 1.1.0-alpha04
 
