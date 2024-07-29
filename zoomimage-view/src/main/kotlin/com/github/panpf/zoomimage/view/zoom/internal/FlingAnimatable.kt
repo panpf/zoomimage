@@ -21,6 +21,11 @@ import android.view.View
 import android.widget.OverScroller
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 
+/**
+ * A simple fling animation class that can animate a value from a start value to an end value.
+ *
+ * @see com.github.panpf.zoomimage.view.test.zoom.internal.FlingAnimatableTest
+ */
 internal class FlingAnimatable(
     private val view: View,
     private val start: IntOffsetCompat,

@@ -29,6 +29,7 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.isNotEmpty
 import com.github.panpf.zoomimage.view.R.styleable
 import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.internal.findLifecycle
@@ -300,7 +301,9 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     private fun resetDrawableSize() {
-        _zoomableEngine?.contentSizeState?.value = drawable?.intrinsicSize() ?: IntSizeCompat.Zero
+        _zoomableEngine?.contentSizeState?.value = drawable?.intrinsicSize()
+            ?.takeIf { it.isNotEmpty() }
+            ?: IntSizeCompat.Zero
     }
 
     private fun resetScrollBarHelper() {

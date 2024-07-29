@@ -25,17 +25,22 @@ import android.view.animation.Interpolator
  * @see com.github.panpf.zoomimage.view.test.zoom.ZoomAnimationSpecTest
  */
 data class ZoomAnimationSpec(
-    var durationMillis: Int = 300,
-    var interpolator: Interpolator = AccelerateDecelerateInterpolator()
+    var durationMillis: Int = DEFAULT_DURATION_MILLIS,
+    var interpolator: Interpolator = DEFAULT_INTERPOLATOR
 ) {
     companion object {
+        val DEFAULT_DURATION_MILLIS = 300
+
+        val DEFAULT_INTERPOLATOR = AccelerateDecelerateInterpolator()
+
         val Default = ZoomAnimationSpec(
-            durationMillis = 300,
-            interpolator = AccelerateDecelerateInterpolator(),
+            durationMillis = DEFAULT_DURATION_MILLIS,
+            interpolator = DEFAULT_INTERPOLATOR,
         )
+
         val None = ZoomAnimationSpec(
             durationMillis = 0,
-            interpolator = AccelerateDecelerateInterpolator(),
+            interpolator = DEFAULT_INTERPOLATOR,
         )
     }
 }

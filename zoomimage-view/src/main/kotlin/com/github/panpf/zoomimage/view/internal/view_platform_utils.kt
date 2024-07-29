@@ -22,7 +22,6 @@ import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Looper
-import android.view.MotionEvent
 import android.widget.ImageView.ScaleType
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -44,19 +43,10 @@ internal fun requiredMainThread() {
     }
 }
 
-//internal fun requiredWorkThread() {
-//    check(Looper.myLooper() != Looper.getMainLooper()) {
-//        "This method must be executed in the work thread"
-//    }
-//}
-
-/**
- * Get the index of the pointer in the action.
- *
- * @see com.github.panpf.zoomimage.view.test.internal.ViewPlatformUtilsTest.testGetPointerIndex
- */
-internal fun getPointerIndex(action: Int): Int {
-    return action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
+internal fun requiredWorkThread() {
+    check(Looper.myLooper() != Looper.getMainLooper()) {
+        "This method must be executed in the work thread"
+    }
 }
 
 /**
@@ -64,29 +54,22 @@ internal fun getPointerIndex(action: Int): Int {
  *
  * @see com.github.panpf.zoomimage.view.test.internal.ViewPlatformUtilsTest.testRectScale
  */
-internal fun Rect.scale(scale: Float): Rect {
-    return Rect(
-        /* left = */ (left * scale).roundToInt(),
-        /* top = */ (top * scale).roundToInt(),
-        /* right = */ (right * scale).roundToInt(),
-        /* bottom = */ (bottom * scale).roundToInt()
-    )
-}
+internal fun Rect.scale(scale: Float): Rect = Rect(
+    /* left = */ (left * scale).roundToInt(),
+    /* top = */ (top * scale).roundToInt(),
+    /* right = */ (right * scale).roundToInt(),
+    /* bottom = */ (bottom * scale).roundToInt()
+)
 
 /**
  * Find [Lifecycle] from [Context].
  *
  * @see com.github.panpf.zoomimage.view.test.internal.ViewPlatformUtilsTest.testContextFindLifecycle
  */
-internal fun Context?.findLifecycle(): Lifecycle? {
-    var context: Context? = this
-    while (true) {
-        when (context) {
-            is LifecycleOwner -> return context.lifecycle
-            is ContextWrapper -> context = context.baseContext
-            else -> return null
-        }
-    }
+internal fun Context.findLifecycle(): Lifecycle? = when (this) {
+    is LifecycleOwner -> this.lifecycle
+    is ContextWrapper -> this.baseContext.findLifecycle()
+    else -> null
 }
 
 /**
@@ -94,27 +77,23 @@ internal fun Context?.findLifecycle(): Lifecycle? {
  *
  * @see com.github.panpf.zoomimage.view.test.internal.ViewPlatformUtilsTest.testDrawableIntrinsicSize
  */
-internal fun Drawable.intrinsicSize(): IntSizeCompat? {
-    if (intrinsicWidth < 0 || intrinsicHeight < 0) return null
-    return IntSizeCompat(intrinsicWidth, intrinsicHeight)
-}
+internal fun Drawable.intrinsicSize(): IntSizeCompat =
+    IntSizeCompat(intrinsicWidth, intrinsicHeight)
 
 /**
  * Convert [ScaleType] to [ContentScaleCompat].
  *
  * @see com.github.panpf.zoomimage.view.test.internal.ViewPlatformUtilsTest.testScaleTypeToContentScale
  */
-internal fun ScaleType.toContentScale(): ContentScaleCompat {
-    return when (this) {
-        ScaleType.MATRIX -> ContentScaleCompat.None
-        ScaleType.FIT_XY -> ContentScaleCompat.FillBounds
-        ScaleType.FIT_START -> ContentScaleCompat.Fit
-        ScaleType.FIT_CENTER -> ContentScaleCompat.Fit
-        ScaleType.FIT_END -> ContentScaleCompat.Fit
-        ScaleType.CENTER -> ContentScaleCompat.None
-        ScaleType.CENTER_CROP -> ContentScaleCompat.Crop
-        ScaleType.CENTER_INSIDE -> ContentScaleCompat.Inside
-    }
+internal fun ScaleType.toContentScale(): ContentScaleCompat = when (this) {
+    ScaleType.MATRIX -> ContentScaleCompat.None
+    ScaleType.FIT_XY -> ContentScaleCompat.FillBounds
+    ScaleType.FIT_START -> ContentScaleCompat.Fit
+    ScaleType.FIT_CENTER -> ContentScaleCompat.Fit
+    ScaleType.FIT_END -> ContentScaleCompat.Fit
+    ScaleType.CENTER -> ContentScaleCompat.None
+    ScaleType.CENTER_CROP -> ContentScaleCompat.Crop
+    ScaleType.CENTER_INSIDE -> ContentScaleCompat.Inside
 }
 
 /**
@@ -122,17 +101,15 @@ internal fun ScaleType.toContentScale(): ContentScaleCompat {
  *
  * @see com.github.panpf.zoomimage.view.test.internal.ViewPlatformUtilsTest.testScaleTypeToAlignment
  */
-internal fun ScaleType.toAlignment(): AlignmentCompat {
-    return when (this) {
-        ScaleType.MATRIX -> AlignmentCompat.TopStart
-        ScaleType.FIT_XY -> AlignmentCompat.TopStart
-        ScaleType.FIT_START -> AlignmentCompat.TopStart
-        ScaleType.FIT_CENTER -> AlignmentCompat.Center
-        ScaleType.FIT_END -> AlignmentCompat.BottomEnd
-        ScaleType.CENTER -> AlignmentCompat.Center
-        ScaleType.CENTER_CROP -> AlignmentCompat.Center
-        ScaleType.CENTER_INSIDE -> AlignmentCompat.Center
-    }
+internal fun ScaleType.toAlignment(): AlignmentCompat = when (this) {
+    ScaleType.MATRIX -> AlignmentCompat.TopStart
+    ScaleType.FIT_XY -> AlignmentCompat.TopStart
+    ScaleType.FIT_START -> AlignmentCompat.TopStart
+    ScaleType.FIT_CENTER -> AlignmentCompat.Center
+    ScaleType.FIT_END -> AlignmentCompat.BottomEnd
+    ScaleType.CENTER -> AlignmentCompat.Center
+    ScaleType.CENTER_CROP -> AlignmentCompat.Center
+    ScaleType.CENTER_INSIDE -> AlignmentCompat.Center
 }
 
 //internal fun ScaleType.computeScaleFactor(

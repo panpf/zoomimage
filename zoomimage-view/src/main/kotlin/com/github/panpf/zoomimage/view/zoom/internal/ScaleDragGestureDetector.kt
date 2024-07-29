@@ -23,7 +23,6 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import com.github.panpf.zoomimage.util.OffsetCompat
-import com.github.panpf.zoomimage.view.internal.getPointerIndex
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
 import kotlin.math.abs
@@ -188,7 +187,7 @@ internal class ScaleDragGestureDetector(
                 // Ignore deprecation, ACTION_POINTER_ID_MASK and
                 // ACTION_POINTER_ID_SHIFT has same value and are deprecated
                 // You can have either deprecation or lint target api warning
-                val pointerIndex = getPointerIndex(ev.action)
+                val pointerIndex = ev.action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
                 val pointerId = ev.getPointerId(pointerIndex)
                 if (pointerId == activePointerId) {
                     // This was our active pointer going up. Choose a new
