@@ -3,7 +3,6 @@ package com.github.panpf.zoomimage.view.test.zoom
 import android.content.res.Resources
 import android.graphics.Color
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec.Companion.DEFAULT_MARGIN
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -56,7 +55,7 @@ class ScrollBarSpecTest {
         )
         assertEquals(
             expected = 6f,
-            actual = DEFAULT_MARGIN
+            actual = ScrollBarSpec.DEFAULT_MARGIN
         )
         assertEquals(
             expected = ScrollBarSpec(),

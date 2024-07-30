@@ -26,10 +26,12 @@ class FlingAnimatableTest {
         val velocity = IntOffsetCompat(-7773, -591)
 
         val values1 = mutableListOf<IntOffsetCompat>()
+        val runnings = mutableListOf<Boolean?>()
         runBlocking {
             withContext(Dispatchers.Main) {
                 suspendCoroutine { continuation ->
-                    val flingAnimatable = FlingAnimatable(
+                    var flingAnimatable: FlingAnimatable? = null
+                    flingAnimatable = FlingAnimatable(
                         view = view,
                         start = start,
                         bounds = bounds,
@@ -38,10 +40,13 @@ class FlingAnimatableTest {
                             values1.add(value)
                         },
                         onEnd = {
+                            runnings.add(flingAnimatable?.running)
                             continuation.resume(Unit)
                         }
                     )
+                    runnings.add(flingAnimatable.running)
                     flingAnimatable.start()
+                    runnings.add(flingAnimatable.running)
                 }
             }
         }
@@ -64,6 +69,10 @@ class FlingAnimatableTest {
                 assertEquals(expected = true, actual = it.y <= lastIt.y)
             }
         }
+        assertEquals(
+            expected = listOf(false, true, false).joinToString(),
+            actual = runnings.joinToString()
+        )
 
         val values2 = mutableListOf<IntOffsetCompat>()
         runBlocking {
@@ -85,7 +94,7 @@ class FlingAnimatableTest {
                             continuation.resume(Unit)
                         }
                     )
-                    flingAnimatable.start()
+                    flingAnimatable?.start()
                 }
             }
         }

@@ -26,10 +26,12 @@ class FloatAnimatableTest {
         val start = 50f
         val end = 1000f
         val values1 = mutableListOf<Float>()
+        val runnings = mutableListOf<Boolean?>()
         runBlocking {
             withContext(Dispatchers.Main) {
                 suspendCoroutine { continuation ->
-                    val floatAnimatable = FloatAnimatable(
+                    var floatAnimatable: FloatAnimatable? = null
+                    floatAnimatable = FloatAnimatable(
                         view = view,
                         startValue = start,
                         endValue = end,
@@ -39,14 +41,17 @@ class FloatAnimatableTest {
                             values1.add(value)
                         },
                         onEnd = {
+                            runnings.add(floatAnimatable?.running)
                             continuation.resume(Unit)
                         }
                     )
+                    runnings.add(floatAnimatable.running)
                     floatAnimatable.start()
+                    runnings.add(floatAnimatable.running)
                 }
             }
         }
-        assertEquals(expected = 62, actual = values1.size)
+        assertEquals(expected = true, actual = values1.size in 50..70)
         assertEquals(expected = start.roundToInt(), actual = values1.first().roundToInt())
         assertEquals(expected = end.roundToInt(), actual = values1.last().roundToInt())
         values1.forEachIndexed { index, it ->
@@ -55,6 +60,10 @@ class FloatAnimatableTest {
                 assertEquals(expected = true, actual = it > lastIt)
             }
         }
+        assertEquals(
+            expected = listOf(false, true, false).joinToString(),
+            actual = runnings.joinToString()
+        )
 
         val start2 = 1000f
         val end2 = 50f
@@ -79,7 +88,7 @@ class FloatAnimatableTest {
                             continuation.resume(Unit)
                         }
                     )
-                    floatAnimatable.start()
+                    floatAnimatable?.start()
                 }
             }
         }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.github.panpf.zoomimage.ZoomImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:disabledScrollBar="true"
+    app:scrollBarColor="#FF0000"
+    app:scrollBarMargin="17px"
+    app:scrollBarSize="55px" />
