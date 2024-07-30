@@ -138,7 +138,7 @@ open class ZoomImageView @JvmOverloads constructor(
             this@ZoomImageView._zoomableEngine = this
             contentScaleState.value = initScaleType.toContentScale()
             alignmentState.value = initScaleType.toAlignment()
-            resetDrawableSize()
+            resetContentSize()
         }
         touchHelper = TouchHelper(this, zoomableEngine)
 
@@ -240,6 +240,18 @@ open class ZoomImageView @JvmOverloads constructor(
                     limitOffsetWithinBaseVisibleRect
             }
 
+            if (array.hasValue(styleable.ZoomImageView_readMode)) {
+                val readModeCode = array.getInt(styleable.ZoomImageView_readMode, -1)
+                zoomable.readModeState.value = when (readModeCode) {
+                    0 -> ReadMode.Default
+                    1 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_HORIZONTAL)
+                    2 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_VERTICAL)
+                    3 -> null
+                    else -> throw IllegalArgumentException("Unknown readModeCode: $readModeCode")
+                }
+            }
+
+
             if (array.hasValue(styleable.ZoomImageView_showTileBounds)) {
                 val showTileBounds = array.getBoolean(styleable.ZoomImageView_showTileBounds, false)
                 subsampling.showTileBoundsState.value = showTileBounds
@@ -264,10 +276,17 @@ open class ZoomImageView @JvmOverloads constructor(
                     if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
             }
 
+
             val disabledScrollBar =
                 array.getBoolean(styleable.ZoomImageView_disabledScrollBar, false)
-            scrollBar = if (!disabledScrollBar) {
-                ScrollBarSpec(
+            if (disabledScrollBar) {
+                scrollBar = null
+            } else if (
+                array.hasValue(styleable.ZoomImageView_scrollBarColor)
+                || array.hasValue(styleable.ZoomImageView_scrollBarSize)
+                || array.hasValue(styleable.ZoomImageView_scrollBarMargin)
+            ) {
+                scrollBar = ScrollBarSpec(
                     color = array.getColor(
                         styleable.ZoomImageView_scrollBarColor,
                         ScrollBarSpec.DEFAULT_COLOR
@@ -281,26 +300,13 @@ open class ZoomImageView @JvmOverloads constructor(
                         ScrollBarSpec.DEFAULT_MARGIN * resources.displayMetrics.density
                     ),
                 )
-            } else {
-                null
-            }
-
-            if (array.hasValue(styleable.ZoomImageView_readMode)) {
-                val readModeCode = array.getInt(styleable.ZoomImageView_readMode, -1)
-                zoomable.readModeState.value = when (readModeCode) {
-                    0 -> ReadMode.Default
-                    1 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_HORIZONTAL)
-                    2 -> ReadMode.Default.copy(sizeType = ReadMode.SIZE_TYPE_VERTICAL)
-                    3 -> null
-                    else -> throw IllegalArgumentException("Unknown readModeCode: $readModeCode")
-                }
             }
         } finally {
             array.recycle()
         }
     }
 
-    private fun resetDrawableSize() {
+    private fun resetContentSize() {
         _zoomableEngine?.contentSizeState?.value = drawable?.intrinsicSize()
             ?.takeIf { it.isNotEmpty() }
             ?: IntSizeCompat.Zero
@@ -334,7 +340,7 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
     open fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        resetDrawableSize()
+        resetContentSize()
     }
 
     override fun setScaleType(scaleType: ScaleType) {
