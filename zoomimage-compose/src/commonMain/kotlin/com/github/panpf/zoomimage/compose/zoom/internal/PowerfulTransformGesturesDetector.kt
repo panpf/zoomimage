@@ -69,6 +69,7 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
         var notInterceptEventsUntilUp: Boolean
         awaitFirstDown(requireUnconsumed = false)
         notInterceptEventsUntilUp = false
+        var maxPointCount = 0
         do {
             val event = awaitPointerEvent()
             val canceled = event.changes.fastAny { it.isConsumed }
@@ -115,10 +116,10 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
                         panChange != Offset.Zero
                     ) {
                         velocityTracker.addPointerInputChange(event.changes.first())
+                        val pointCount = event.changes.size
+                        maxPointCount = maxOf(maxPointCount, pointCount)
                         lastCentroid = centroid
-                        onGesture(
-                            centroid, panChange, zoomChange, effectiveRotation, event.changes.size
-                        )
+                        onGesture(centroid, panChange, zoomChange, effectiveRotation, pointCount)
                     }
                     event.changes.fastForEach {
                         if (it.positionChanged()) {
@@ -130,7 +131,13 @@ internal suspend fun PointerInputScope.detectPowerfulTransformGestures(
         } while (!canceled && event.changes.fastAny { it.pressed })
 
         if (lastCentroid != null) {
-            onEnd(lastCentroid, velocityTracker.calculateVelocity())
+            // Only allows one-finger dragging and flinging
+            val velocity = if (maxPointCount == 1) {
+                velocityTracker.calculateVelocity()
+            } else {
+                Velocity.Zero
+            }
+            onEnd(lastCentroid, velocity)
         }
     }
 }

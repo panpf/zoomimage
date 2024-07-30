@@ -936,6 +936,12 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         stopAllAnimation("fling")
 
         val startUserOffset = currentUserTransform.offset
+        logger.d {
+            "ZoomableState. fling. start. " +
+                    "start=${startUserOffset.toShortString()}, " +
+                    "bounds=${userOffsetBounds.toShortString()}, " +
+                    "velocity=${velocity}"
+        }
         val flingAnimatable = Animatable(
             initialValue = startUserOffset,
             typeConverter = Offset.VectorConverter,

@@ -214,7 +214,8 @@ internal class ZoomableNode(
                     } else {
                         oneFingerScaleExecuted = false
                         if (supportTwoFingerScale || supportDrag) {
-                            val finalPan = if (supportDrag) pan else Offset.Zero
+                            // Only allow one-finger dragging
+                            val finalPan = if (supportDrag && pointCount == 1) pan else Offset.Zero
                             val finalZoom = if (supportTwoFingerScale) zoom else 1f
                             zoomable.continuousTransformType = ContinuousTransformType.GESTURE
                             zoomable.gestureTransform(

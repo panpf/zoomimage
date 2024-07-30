@@ -9,6 +9,9 @@ Translations: [简体中文](CHANGELOG_zh.md)
   of models
 * fix: Fix the bug that the values returned by ZoomableEngine's contentSizeState property collect
   and value are inconsistent. [#37](https://github.com/panpf/zoomimage/issues/37)
+* change: The ZoomImage series components disable two-finger dragging gestures to avoid triggering
+  fling after rapid two-finger zooming, causing the image to
+  drift. [#28](https://github.com/panpf/zoomimage/issues/28)
 
 ## 1.1.0-alpha04
 

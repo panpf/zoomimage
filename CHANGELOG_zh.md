@@ -8,6 +8,8 @@
   和 'android.resource://example.package.name/4125123' 类型的 model
 * fix: 修复 ZoomableEngine 的 contentSizeState 属性 collect 和 value 返回的值不一致的
   bug 。 [#37](https://github.com/panpf/zoomimage/issues/37)
+* change: ZoomImage 系列组件禁用双指拖动手势，避免快速双指缩放后又触发 fling
+  导致图片漂移。 [#28](https://github.com/panpf/zoomimage/issues/28)
 
 ## 1.1.0-alpha04
 
