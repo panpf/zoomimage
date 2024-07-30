@@ -49,7 +49,7 @@ class KotlinResourceImageSourceTest {
 
     @Test
     fun testOpenSource() = runTest {
-        // TODO The files in the resources directory cannot be accessed, even if I actively put the files in the resources directory.
+        // TODO Files in kotlin resources cannot be accessed in ios test environment.
 //        val resourceName1 = ResourceImages.cat.resourceName
 //        val resourceName2 = ResourceImages.dog.resourceName
 //

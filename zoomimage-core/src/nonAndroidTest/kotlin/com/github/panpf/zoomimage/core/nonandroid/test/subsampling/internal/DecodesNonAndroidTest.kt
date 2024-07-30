@@ -16,7 +16,7 @@ class DecodesNonAndroidTest {
     @Test
     fun testCreateDecodeHelper() {
         if (Platform.current == Platform.iOS) {
-            // TODO The files in the resources directory cannot be accessed, even if I actively put the files in the resources directory.
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
         val decodeHelper = createDecodeHelper(ResourceImages.dog.toImageSource())
