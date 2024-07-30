@@ -143,14 +143,14 @@ ZoomImage(
 
 // Use SketchZoomAsyncImage component
 SketchZoomAsyncImage(
-    uri = "http://sample.com/huge_world.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
 
 // Use CoilZoomAsyncImage component
 CoilZoomAsyncImage(
-    model = "http://sample.com/huge_world.jpeg",
+    model = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -165,7 +165,7 @@ Only android compose:
 ```kotlin
 // Use GlideZoomAsyncImage component
 GlideZoomAsyncImage(
-    model = "http://sample.com/huge_world.jpeg",
+    model = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -185,21 +185,21 @@ zoomImageView.subsampling.setImageSource(ImageSource.resource(R.raw.huge_world))
 
 // Use SketchZoomAsyncImage component
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
+sketchZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 // Use CoilZoomImageView component
 val coilZoomImageView = CoilZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
+sketchZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 // Use GlideZoomImageView component
 val glideZoomImageView = GlideZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
-    .load("http://sample.com/huge_world.jpeg")
+    .load("https://sample.com/sample.jpeg")
     .into(glideZoomImageView)
 
 // Use PicassoZoomImageView component
 val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
+picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 ```
 
 ## Document

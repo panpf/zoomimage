@@ -26,7 +26,7 @@ example：
 val zoomState: ZoomState by rememberZoomState()
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/huge_world.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
   zoomState = zoomState,
@@ -77,7 +77,7 @@ LaunchEffect(Unit) {
 }
 
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/huge_world.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
   zoomState = zoomState,

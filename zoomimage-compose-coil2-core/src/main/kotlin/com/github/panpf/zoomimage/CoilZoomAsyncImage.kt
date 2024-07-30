@@ -79,7 +79,7 @@ import kotlin.math.roundToInt
  * ```kotlin
  * CoilZoomAsyncImage(
  *     model = ImageRequest.Builder(LocalContext.current).apply {
- *         data("http://sample.com/huge_world.jpeg")
+ *         data("https://sample.com/sample.jpeg")
  *         placeholder(R.drawable.placeholder)
  *         crossfade(true)
  *     }.build(),
@@ -165,7 +165,7 @@ fun CoilZoomAsyncImage(
  * ```kotlin
  * CoilZoomAsyncImage(
  *     model = ImageRequest.Builder(LocalContext.current).apply {
- *         data("http://sample.com/huge_world.jpeg")
+ *         data("https://sample.com/sample.jpeg")
  *         placeholder(R.drawable.placeholder)
  *         crossfade(true)
  *     }.build(),

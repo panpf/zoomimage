@@ -62,14 +62,14 @@ ZoomImage(
 
 // 使用 SketchZoomAsyncImage 组件
 SketchZoomAsyncImage(
-    uri = "http://sample.com/huge_world.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
 
 // 使用 CoilZoomAsyncImage 组件
 CoilZoomAsyncImage(
-    model = "http://sample.com/huge_world.jpeg",
+    model = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -80,7 +80,7 @@ Only android compose：
 ```kotlin
 // 使用 GlideZoomAsyncImage 组件
 GlideZoomAsyncImage(
-  model = "http://sample.com/huge_world.jpeg",
+  model = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -97,21 +97,21 @@ zoomImageView.subsampling.setImageSource(imageSource)
 
 // 使用 SketchZoomImageView 组件
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
+sketchZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 // 使用 CoilZoomImageView 组件
 val coilZoomImageView = CoilZoomImageView(context)
-coilZoomImageView.load("http://sample.com/huge_world.jpeg")
+coilZoomImageView.load("https://sample.com/sample.jpeg")
 
 // 使用 GlideZoomImageView 组件
 val glideZoomImageView = GlideZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
-  .load("http://sample.com/huge_world.jpeg")
+  .load("https://sample.com/sample.jpeg")
     .into(glideZoomImageView)
 
 // 使用 PicassoZoomImageView 组件
 val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageViewImage.loadImage("http://sample.com/huge_world.jpeg")
+picassoZoomImageViewImage.loadImage("https://sample.com/sample.jpeg")
 ```
 
 > [!TIP]
@@ -132,7 +132,7 @@ picassoZoomImageViewImage.loadImage("http://sample.com/huge_world.jpeg")
 // compose
 val zoomState: ZoomState by rememberZoomState()
 SketchZoomAsyncImage(
-  imageUri = "http://sample.com/huge_world.jpeg",
+  imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
   zoomState = zoomState,

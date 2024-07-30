@@ -59,7 +59,7 @@ import kotlin.math.roundToInt
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     uri = "http://sample.com/huge_world.jpeg",
+ *     uri = "https://sample.com/sample.jpeg",
  *     contentDescription = "view image",
  *     sketch = context.sketch,
  *     modifier = Modifier.fillMaxSize(),
@@ -128,7 +128,7 @@ fun SketchZoomAsyncImage(
  *
  * ```kotlin
  * SketchZoomAsyncImage(
- *     request = ComposableImageRequest("http://sample.com/huge_world.jpeg") {
+ *     request = ComposableImageRequest("https://sample.com/sample.jpeg") {
  *         placeholder(Res.drawable.placeholder)
  *         crossfade()
  *     },

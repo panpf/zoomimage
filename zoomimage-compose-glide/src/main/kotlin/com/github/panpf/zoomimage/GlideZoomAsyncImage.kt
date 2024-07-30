@@ -57,7 +57,7 @@ import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
  *
  * ```kotlin
  * GlideZoomAsyncImage(
- *     model = "http://sample.com/huge_world.jpeg",
+ *     model = "https://sample.com/sample.jpeg",
  *     contentDescription = "view image",
  *     modifier = Modifier.fillMaxSize(),
  * ) {

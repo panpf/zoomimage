@@ -72,14 +72,14 @@ ZoomImage(
 
 // Using the SketchZoomAsyncImage component
 SketchZoomAsyncImage(
-    uri = "http://sample.com/huge_world.jpeg",
+    uri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
 
 // Using the CoilZoomAsyncImage component
 CoilZoomAsyncImage(
-    model = "http://sample.com/huge_world.jpeg",
+    model = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -90,7 +90,7 @@ Only android compose：
 ```kotlin
 // Using the GlideZoomAsyncImage component
 GlideZoomAsyncImage(
-    model = "http://sample.com/huge_world.jpeg",
+    model = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
 )
@@ -107,21 +107,21 @@ zoomImageView.subsampling.setImageSource(imageSource)
 
 // Using the SketchZoomImageView component
 val sketchZoomImageView = SketchZoomImageView(context)
-sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg")
+sketchZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 // Using the CoilZoomImageView component
 val coilZoomImageView = CoilZoomImageView(context)
-coilZoomImageView.load("http://sample.com/huge_world.jpeg")
+coilZoomImageView.load("https://sample.com/sample.jpeg")
 
 // Using the GlideZoomImageView component
 val glideZoomImageView = GlideZoomImageView(context)
 Glide.with(this@GlideZoomImageViewFragment)
-    .load("http://sample.com/huge_world.jpeg")
+    .load("https://sample.com/sample.jpeg")
     .into(glideZoomImageView)
 
 // Using the PicassoZoomImageView component
 val picassoZoomImageView = PicassoZoomImageView(context)
-picassoZoomImageViewImage.loadImage("http://sample.com/huge_world.jpeg")
+picassoZoomImageViewImage.loadImage("https://sample.com/sample.jpeg")
 ```
 
 > [!TIP]
@@ -144,7 +144,7 @@ example：
 // compose
 val zoomState: ZoomState by rememberZoomState()
 SketchZoomAsyncImage(
-    imageUri = "http://sample.com/huge_world.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,

@@ -37,7 +37,7 @@ import com.github.panpf.zoomimage.view.sketch.internal.AbsStateZoomImageView
  *
  * ```kotlin
  * val sketchZoomImageView = SketchZoomImageView(context)
- * sketchZoomImageView.loadImage("http://sample.com/huge_world.jpeg") {
+ * sketchZoomImageView.loadImage("https://sample.com/sample.jpeg") {
  *     placeholder(R.drawable.placeholder)
  *     crossfade()
  * }
