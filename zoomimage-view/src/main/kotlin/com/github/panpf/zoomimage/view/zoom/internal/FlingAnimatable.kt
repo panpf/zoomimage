@@ -38,11 +38,12 @@ internal class FlingAnimatable(
     private val scroller: OverScroller = OverScroller(view.context)
     private val runnable = Runnable { frame() }
 
-    val running: Boolean
-        get() = !scroller.isFinished
+    var running = false
+        private set
 
     fun start() {
         if (running) return
+        running = true
         scroller.fling(
             /* startX = */ start.x,
             /* startY = */ start.y,
@@ -55,21 +56,25 @@ internal class FlingAnimatable(
             /* overX = */ 0,
             /* overY = */ 0
         )
-        view.post(runnable)
+        view.postOnAnimation(runnable)
     }
 
     fun stop() {
         if (!running) return
+        running = false
         view.removeCallbacks(runnable)
         scroller.forceFinished(true)
         onEnd()
     }
 
     private fun frame() {
+        if (!running) return
         if (scroller.computeScrollOffset()) {
-            onUpdateValue(IntOffsetCompat(scroller.currX, scroller.currY))
+            val current = IntOffsetCompat(scroller.currX, scroller.currY)
+            onUpdateValue(current)
             view.postOnAnimation(runnable)
         } else {
+            running = false
             onEnd()
         }
     }

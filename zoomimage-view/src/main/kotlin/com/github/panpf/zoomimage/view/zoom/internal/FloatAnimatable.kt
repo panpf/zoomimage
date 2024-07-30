@@ -44,15 +44,10 @@ internal class FloatAnimatable(
 
     fun start(delay: Int = 0) {
         if (running) return
+        running = true
         value = startValue
         startTime = System.currentTimeMillis() + delay
-        running = true
         view.postDelayed(runnable, delay.toLong())
-    }
-
-    fun restart(delay: Int = 0) {
-        stop()
-        start(delay)
     }
 
     fun stop() {
@@ -62,15 +57,21 @@ internal class FloatAnimatable(
         onEnd()
     }
 
+    fun restart(delay: Int = 0) {
+        stop()
+        start(delay)
+    }
+
     private fun frame() {
+        if (!running) return
         val progress = computeProgress()
         val currentValue = startValue + (progress * (endValue - startValue))
         value = currentValue
         onUpdateValue(currentValue)
-        running = progress < 1f
-        if (running) {
+        if (progress < 1f) {
             view.postOnAnimation(runnable)
         } else {
+            running = false
             onEnd()
         }
     }
