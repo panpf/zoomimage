@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.compose.common.test.zoom.internal
+package com.github.panpf.zoomimage.compose.common.test.zoom
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin

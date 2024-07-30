@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 /**
  * Used to configure the style of the scroll bar
  *
- * @see com.github.panpf.zoomimage.compose.common.test.zoom.internal.ScrollBarSpecTest
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.ScrollBarSpecTest
  */
 @Immutable
 data class ScrollBarSpec(

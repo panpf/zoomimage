@@ -37,6 +37,7 @@ import com.github.panpf.zoomimage.util.ScaleFactorCompat
 import com.github.panpf.zoomimage.util.SizeCompat
 import com.github.panpf.zoomimage.util.TransformCompat
 import com.github.panpf.zoomimage.util.TransformOriginCompat
+import com.github.panpf.zoomimage.util.isSpecified
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import kotlin.math.roundToInt
@@ -117,9 +118,11 @@ fun AlignmentCompat.toPlatform(): Alignment = when (this) {
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testSizeToCompat
  */
 fun Size.toCompat(): SizeCompat =
-    takeIf { it.isSpecified }
-        ?.let { SizeCompat(width = it.width, height = it.height) }
-        ?: SizeCompat.Zero
+    if (isSpecified) {
+        SizeCompat(width = width, height = height)
+    } else {
+        SizeCompat.Unspecified
+    }
 
 /**
  * Convert [Size] to [IntSizeCompat]
@@ -127,9 +130,11 @@ fun Size.toCompat(): SizeCompat =
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testSizeRoundToCompat
  */
 fun Size.roundToCompat(): IntSizeCompat =
-    takeIf { it.isSpecified }
-        ?.let { IntSizeCompat(width = it.width.roundToInt(), height = it.height.roundToInt()) }
-        ?: IntSizeCompat.Zero
+    if (isSpecified) {
+        IntSizeCompat(width = width.roundToInt(), height = height.roundToInt())
+    } else {
+        IntSizeCompat.Zero
+    }
 
 
 /**
@@ -155,7 +160,11 @@ fun IntSize.toCompatSize(): SizeCompat =
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testSizeCompatToPlatform
  */
 fun SizeCompat.toPlatform(): Size =
-    Size(width = width, height = height)
+    if (isSpecified) {
+        Size(width = width, height = height)
+    } else {
+        Size.Unspecified
+    }
 
 /**
  * Convert [SizeCompat] to [Size]
@@ -163,7 +172,11 @@ fun SizeCompat.toPlatform(): Size =
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testSizeCompatRoundToPlatform
  */
 fun SizeCompat.roundToPlatform(): IntSize =
-    IntSize(width = width.roundToInt(), height = height.roundToInt())
+    if (isSpecified) {
+        IntSize(width = width.roundToInt(), height = height.roundToInt())
+    } else {
+        IntSize.Zero
+    }
 
 
 /**
@@ -277,9 +290,11 @@ fun IntRectCompat.toPlatformRect(): Rect =
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testOffsetToCompat
  */
 fun Offset.toCompat(): OffsetCompat =
-    takeIf { it.isSpecified }
-        ?.let { OffsetCompat(x = it.x, y = it.y) }
-        ?: OffsetCompat.Zero
+    if (isSpecified) {
+        OffsetCompat(x = x, y = y)
+    } else {
+        OffsetCompat.Unspecified
+    }
 
 /**
  * Convert [Offset] to [IntOffsetCompat]
@@ -287,9 +302,11 @@ fun Offset.toCompat(): OffsetCompat =
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testOffsetRoundToCompat
  */
 fun Offset.roundToCompat(): IntOffsetCompat =
-    takeIf { it.isSpecified }
-        ?.let { IntOffsetCompat(x = it.x.roundToInt(), y = it.y.roundToInt()) }
-        ?: IntOffsetCompat.Zero
+    if (isSpecified) {
+        IntOffsetCompat(x = x.roundToInt(), y = y.roundToInt())
+    } else {
+        IntOffsetCompat.Zero
+    }
 
 
 /**
@@ -314,14 +331,24 @@ fun IntOffset.toCompatOffset(): OffsetCompat =
  *
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testOffsetCompatToPlatform
  */
-fun OffsetCompat.toPlatform(): Offset = Offset(x = x, y = y)
+fun OffsetCompat.toPlatform(): Offset =
+    if (isSpecified) {
+        Offset(x = x, y = y)
+    } else {
+        Offset.Unspecified
+    }
 
 /**
  * Convert [OffsetCompat] to [Offset]
  *
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposeConvertUtilsTest.testOffsetCompatRoundToPlatform
  */
-fun OffsetCompat.roundToPlatform(): IntOffset = IntOffset(x = x.roundToInt(), y = y.roundToInt())
+fun OffsetCompat.roundToPlatform(): IntOffset =
+    if (isSpecified) {
+        IntOffset(x = x.roundToInt(), y = y.roundToInt())
+    } else {
+        IntOffset.Zero
+    }
 
 
 /**
