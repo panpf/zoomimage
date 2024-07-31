@@ -27,7 +27,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
  */
 actual class ComposeTileBitmapConvertor : TileBitmapConvertor {
 
-    override suspend fun convert(tileBitmap: TileBitmap): TileBitmap {
+    actual override suspend fun convert(tileBitmap: TileBitmap): TileBitmap {
         val androidTileBitmap = tileBitmap as AndroidTileBitmap
         return ComposeAndroidTileBitmap(androidTileBitmap)
     }
