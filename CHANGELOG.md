@@ -2,18 +2,27 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.1.0-alpha05
 
+subsampling:
+
+* change: \*ModelToImageSource for CoilZomState and GlideZoomState changed to provided at create
+  time
 * new: coil, glide, picasso series components now support 'android.resource:
   //example.package.name/drawable/image' and 'android.resource://example.package.name/4125123' types
   of models
+
+zoom:
+
 * fix: Fix the bug that the values returned by ZoomableEngine's contentSizeState property collect
   and value are inconsistent. [#37](https://github.com/panpf/zoomimage/issues/37)
 * change: The ZoomImage series components disable two-finger dragging gestures to avoid triggering
   fling after rapid two-finger zooming, causing the image to
   drift. [#28](https://github.com/panpf/zoomimage/issues/28)
+
+other:
+
 * upgrade: Upgrade sketch to version 4.0.0-alpha05
-* change: \*ModelToImageSource for CoilZomState and GlideZoomState changed to provided at create time
 
 ## 1.1.0-alpha04
 
