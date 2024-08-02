@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -32,12 +31,12 @@ import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.MyImage
 import com.github.panpf.zoomimage.compose.internal.round
+import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
-import com.github.panpf.zoomimage.compose.zoom.zooming
 import kotlin.math.roundToInt
 
 /**
@@ -123,20 +122,9 @@ fun ZoomImage(
             clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
-                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap),
-        )
-
-        // Why are subsampling tiles drawn on separate components?
-        // Because when drawing the bottom and right edge subsampling tiles on the desktop platform,
-        // a drawing failure will occur, resulting in the loss of all component content.
-        // Therefore, if the subsampling tile is drawn on a separate component, when a problem occurs, the user will only see that the problem area is unclear, rather than the entire component content being lost.
-        // issue: https://github.com/JetBrains/compose-multiplatform/issues/3904
-        // TODO fixed in 1.6.0-dev1419
-        Box(
-            Modifier
-                .matchParentSize()
-                .zooming(zoomState.zoomable)
-                .subsampling(zoomState.zoomable, zoomState.subsampling)
+                .thenIfNotNull(scrollBar) { Modifier.zoomScrollBar(zoomState.zoomable, it) }
+                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .subsampling(zoomState.zoomable, zoomState.subsampling),
         )
 
         // TODO Mouse wheel zoom
@@ -144,13 +132,5 @@ fun ZoomImage(
         // TODO Shift plus arrow key to zoom slowly
         // TODO Arrow key to move, Short press to move, long press to move continuously
         // TODO Hold the wheel to move
-
-        if (scrollBar != null) {
-            Box(
-                Modifier
-                    .matchParentSize()
-                    .zoomScrollBar(zoomState.zoomable, scrollBar)
-            )
-        }
     }
 }

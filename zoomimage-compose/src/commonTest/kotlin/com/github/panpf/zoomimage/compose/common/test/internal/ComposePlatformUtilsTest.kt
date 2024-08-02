@@ -13,4 +13,9 @@ class ComposePlatformUtilsTest {
     fun testFloatToDp() {
         // TODO test
     }
+
+    @Test
+    fun thenIfNotNull() {
+        // TODO test
+    }
 }

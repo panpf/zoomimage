@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage.compose.internal
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -56,6 +57,19 @@ internal fun Dp.toPx(): Float {
 @Composable
 internal fun Float.toDp(): Dp {
     return with(LocalDensity.current) { this@toDp.toDp() }
+}
+
+/**
+ * If [t] is not null, create a new Modifier via [block] and combine with the current Modifier, otherwise return the current Modifier
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTest.thenIfNotNull
+ */
+fun <T> Modifier.thenIfNotNull(t: T?, block: (T) -> Modifier): Modifier {
+    return if (t != null) {
+        this.then(block(t))
+    } else {
+        this
+    }
 }
 
 

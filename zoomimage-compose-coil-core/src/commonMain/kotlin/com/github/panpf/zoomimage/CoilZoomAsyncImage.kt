@@ -62,6 +62,7 @@ import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
 import com.github.panpf.zoomimage.compose.coil.internal.requestOf
 import com.github.panpf.zoomimage.compose.coil.internal.toScale
 import com.github.panpf.zoomimage.compose.coil.internal.transformOf
+import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -219,7 +220,7 @@ fun CoilZoomAsyncImage(
     zoomState.zoomable.contentScale = contentScale
     zoomState.zoomable.alignment = alignment
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(zoomState.subsampling) {
         zoomState.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
     }
 
@@ -239,7 +240,7 @@ fun CoilZoomAsyncImage(
         colorFilter = colorFilter,
         filterQuality = filterQuality,
         modifier = modifier
-            .let { if (scrollBar != null) it.zoomScrollBar(zoomState.zoomable, scrollBar) else it }
+            .thenIfNotNull(scrollBar) { Modifier.zoomScrollBar(zoomState.zoomable, it) }
             .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
             .subsampling(zoomState.zoomable, zoomState.subsampling),
     )

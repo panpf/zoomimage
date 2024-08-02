@@ -42,6 +42,7 @@ import com.github.panpf.sketch.internal.AsyncImageContent
 import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -179,7 +180,7 @@ fun SketchZoomAsyncImage(
     zoomState.zoomable.contentScale = contentScale
     zoomState.zoomable.alignment = alignment
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(zoomState.subsampling) {
         zoomState.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
     }
     LaunchedEffect(Unit) {
@@ -198,7 +199,7 @@ fun SketchZoomAsyncImage(
         colorFilter = colorFilter,
         filterQuality = filterQuality,
         modifier = modifier
-            .let { if (scrollBar != null) it.zoomScrollBar(zoomState.zoomable, scrollBar) else it }
+            .thenIfNotNull(scrollBar) { Modifier.zoomScrollBar(zoomState.zoomable, it) }
             .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
             .subsampling(zoomState.zoomable, zoomState.subsampling),
     )

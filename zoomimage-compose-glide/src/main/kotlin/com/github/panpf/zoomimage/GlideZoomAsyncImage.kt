@@ -42,6 +42,7 @@ import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
 import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
 import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
 import com.github.panpf.zoomimage.compose.glide.internal.Transition
+import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -142,10 +143,9 @@ fun GlideZoomAsyncImage(
     zoomState.zoomable.contentScale = contentScale
     zoomState.zoomable.alignment = alignment
 
-
     val context = LocalContext.current
     val glide = Glide.get(context)
-    LaunchedEffect(Unit) {
+    LaunchedEffect(zoomState.subsampling) {
         zoomState.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
     }
 
@@ -174,7 +174,7 @@ fun GlideZoomAsyncImage(
                 )
         },
         modifier = modifier
-            .let { if (scrollBar != null) it.zoomScrollBar(zoomState.zoomable, scrollBar) else it }
+            .thenIfNotNull(scrollBar) { Modifier.zoomScrollBar(zoomState.zoomable, it) }
             .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
             .subsampling(zoomState.zoomable, zoomState.subsampling),
     )
