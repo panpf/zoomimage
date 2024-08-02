@@ -10,7 +10,9 @@ import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.glide.GlideModelToImageSource
+import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.util.Logger
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * Creates and remember a [GlideZoomState]
@@ -18,11 +20,14 @@ import com.github.panpf.zoomimage.util.Logger
  * @see com.github.panpf.zoomimage.compose.glide.test.GlideZoomStateTest.testRememberGlideZoomState
  */
 @Composable
-fun rememberGlideZoomState(logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage")): GlideZoomState {
+fun rememberGlideZoomState(
+    modelToImageSources: ImmutableList<GlideModelToImageSource>? = null,
+    logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage")
+): GlideZoomState {
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(logger, zoomableState)
-    return remember(logger, zoomableState, subsamplingState) {
-        GlideZoomState(logger, zoomableState, subsamplingState)
+    return remember(logger, zoomableState, subsamplingState, modelToImageSources) {
+        GlideZoomState(logger, zoomableState, subsamplingState, modelToImageSources)
     }
 }
 
@@ -35,18 +40,10 @@ fun rememberGlideZoomState(logger: Logger = rememberZoomImageLogger(tag = "Glide
 class GlideZoomState(
     logger: Logger,
     zoomable: ZoomableState,
-    subsampling: SubsamplingState
+    subsampling: SubsamplingState,
+    modelToImageSources: ImmutableList<GlideModelToImageSource>?
 ) : ZoomState(logger, zoomable, subsampling) {
 
-    private var _modelToImageSources = emptyList<GlideModelToImageSource>()
-    val modelToImageSources: List<GlideModelToImageSource>
-        get() = _modelToImageSources
-
-    fun registerModelToImageSource(modelToImageSource: GlideModelToImageSource) {
-        _modelToImageSources += modelToImageSource
-    }
-
-    fun unregisterModelToImageSource(modelToImageSource: GlideModelToImageSource) {
-        _modelToImageSources -= modelToImageSource
-    }
+    val modelToImageSources: List<GlideModelToImageSource> =
+        modelToImageSources.orEmpty().plus(GlideModelToImageSourceImpl())
 }

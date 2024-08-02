@@ -15,6 +15,7 @@ kotlin {
             api(projects.zoomimageCompose)
             api(projects.zoomimageCoreCoil)
             api(libs.coil.compose.core)
+            api(libs.kotlinx.collections.immutable)
         }
 
         commonTest.dependencies {

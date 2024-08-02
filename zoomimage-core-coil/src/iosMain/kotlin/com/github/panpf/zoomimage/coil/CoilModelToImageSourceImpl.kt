@@ -32,12 +32,13 @@ import platform.Foundation.NSURL
  *
  * @see com.github.panpf.zoomimage.core.coil.ios.test.CoilModelToImageSourceImplTest
  */
-actual class CoilModelToImageSourceImpl actual constructor(
-    private val context: PlatformContext,
-    private val imageLoader: ImageLoader
-) : CoilModelToImageSource {
+actual class CoilModelToImageSourceImpl : CoilModelToImageSource {
 
-    actual override fun dataToImageSource(model: Any): ImageSource.Factory? {
+    actual override fun dataToImageSource(
+        context: PlatformContext,
+        imageLoader: ImageLoader,
+        model: Any
+    ): ImageSource.Factory? {
         val uri = when (model) {
             is String -> model.toUri()
             is coil3.Uri -> model

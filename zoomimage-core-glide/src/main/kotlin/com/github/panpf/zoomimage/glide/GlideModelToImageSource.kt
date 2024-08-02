@@ -34,7 +34,7 @@ import java.net.URL
  * Convert the glide model to [ImageSource.Factory]
  */
 interface GlideModelToImageSource {
-    fun dataToImageSource(model: Any): ImageSource.Factory?
+    fun dataToImageSource(context: Context, glide: Glide, model: Any): ImageSource.Factory?
 }
 
 /**
@@ -42,12 +42,9 @@ interface GlideModelToImageSource {
  *
  * @see com.github.panpf.zoomimage.core.glide.test.GlideModelToImageSourceImplTest
  */
-class GlideModelToImageSourceImpl(
-    private val context: Context,
-    private val glide: Glide = Glide.get(context)
-) : GlideModelToImageSource {
+class GlideModelToImageSourceImpl : GlideModelToImageSource {
 
-    override fun dataToImageSource(model: Any): ImageSource.Factory? {
+    override fun dataToImageSource(context: Context, glide: Glide, model: Any): ImageSource.Factory? {
         val uri = when (model) {
             is String -> android.net.Uri.parse(model)
             is android.net.Uri -> model

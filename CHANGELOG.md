@@ -13,6 +13,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
   fling after rapid two-finger zooming, causing the image to
   drift. [#28](https://github.com/panpf/zoomimage/issues/28)
 * upgrade: Upgrade sketch to version 4.0.0-alpha05
+* change: \*ModelToImageSource for CoilZomState and GlideZoomState changed to provided at create time
 
 ## 1.1.0-alpha04
 

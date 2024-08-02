@@ -130,8 +130,10 @@ open class CoilZoomImageView @JvmOverloads constructor(
             return null
         }
         val model = result.request.data
-        val imageSource = convertors.plus(CoilModelToImageSourceImpl(context, imageLoader))
-            .firstNotNullOfOrNull { it.dataToImageSource(model) }
+        val imageSource = convertors.plus(CoilModelToImageSourceImpl())
+            .firstNotNullOfOrNull {
+                it.dataToImageSource(context, imageLoader, model)
+            }
         if (imageSource == null) {
             logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
         }

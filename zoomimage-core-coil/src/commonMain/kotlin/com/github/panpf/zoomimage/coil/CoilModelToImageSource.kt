@@ -16,15 +16,20 @@
 
 package com.github.panpf.zoomimage.coil
 
+import com.github.panpf.zoomimage.subsampling.ImageSource as ZoomImageImageSource
 import coil3.ImageLoader
 import coil3.PlatformContext
-import com.github.panpf.zoomimage.subsampling.ImageSource as ZoomImageImageSource
 
 /**
  * Convert coil model to [ZoomImageImageSource.Factory]
  */
 interface CoilModelToImageSource {
-    fun dataToImageSource(model: Any): ZoomImageImageSource.Factory?
+
+    fun dataToImageSource(
+        context: PlatformContext,
+        imageLoader: ImageLoader,
+        model: Any
+    ): ZoomImageImageSource.Factory?
 }
 
 /**
@@ -35,8 +40,11 @@ interface CoilModelToImageSource {
  * @see com.github.panpf.zoomimage.core.coil.ios.test.CoilModelToImageSourceImplTest
  * @see com.github.panpf.zoomimage.core.coil.jscommon.test.CoilModelToImageSourceImplTest
  */
-expect class CoilModelToImageSourceImpl(context: PlatformContext, imageLoader: ImageLoader) :
-    CoilModelToImageSource {
+expect class CoilModelToImageSourceImpl() : CoilModelToImageSource {
 
-    override fun dataToImageSource(model: Any): ZoomImageImageSource.Factory?
+    override fun dataToImageSource(
+        context: PlatformContext,
+        imageLoader: ImageLoader,
+        model: Any
+    ): ZoomImageImageSource.Factory?
 }

@@ -31,7 +31,7 @@ import java.io.File
  * Convert picasso data to [ImageSource.Factory]
  */
 interface PicassoDataToImageSource {
-    fun dataToImageSource(data: Any): ImageSource.Factory?
+    fun dataToImageSource(context: Context, picasso: Picasso, data: Any): ImageSource.Factory?
 }
 
 /**
@@ -39,12 +39,13 @@ interface PicassoDataToImageSource {
  *
  * @see com.github.panpf.zoomimage.core.picasso.test.PicassoDataToImageSourceImplTest
  */
-class PicassoDataToImageSourceImpl(
-    private val context: Context,
-    private val picasso: Picasso = Picasso.get()
-) : PicassoDataToImageSource {
+class PicassoDataToImageSourceImpl : PicassoDataToImageSource {
 
-    override fun dataToImageSource(data: Any): ImageSource.Factory? {
+    override fun dataToImageSource(
+        context: Context,
+        picasso: Picasso,
+        data: Any
+    ): ImageSource.Factory? {
         val uri = when (data) {
             is String -> android.net.Uri.parse(data)
             is android.net.Uri -> data

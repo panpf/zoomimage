@@ -55,7 +55,6 @@ import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.compose.coil.internal.BaseZoomAsyncImage
 import com.github.panpf.zoomimage.compose.coil.internal.ConstraintsSizeResolver
@@ -286,9 +285,9 @@ private fun onState(
             zoomState.subsampling.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
             val model = request.data
-            val imageSource =
-                zoomState.modelToImageSources.plus(CoilModelToImageSourceImpl(context, imageLoader))
-                    .firstNotNullOfOrNull { it.dataToImageSource(model) }
+            val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {
+                it.dataToImageSource(context, imageLoader, model)
+            }
             if (imageSource == null) {
                 zoomState.subsampling.logger.w { "CoilZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
             }

@@ -39,7 +39,12 @@ import java.nio.ByteBuffer
  * Convert coil model to [ZoomImageImageSource.Factory]
  */
 interface CoilModelToImageSource {
-    fun dataToImageSource(model: Any): ZoomImageImageSource.Factory?
+
+    fun dataToImageSource(
+        context: Context,
+        imageLoader: ImageLoader,
+        model: Any
+    ): ZoomImageImageSource.Factory?
 }
 
 /**
@@ -47,12 +52,13 @@ interface CoilModelToImageSource {
  *
  * @see com.github.panpf.zoomimage.core.coil2.test.CoilModelToImageSourceImplTest
  */
-class CoilModelToImageSourceImpl constructor(
-    private val context: Context,
-    private val imageLoader: ImageLoader
-) : CoilModelToImageSource {
+class CoilModelToImageSourceImpl : CoilModelToImageSource {
 
-    override fun dataToImageSource(model: Any): ImageSource.Factory? {
+    override fun dataToImageSource(
+        context: Context,
+        imageLoader: ImageLoader,
+        model: Any
+    ): ImageSource.Factory? {
         val uri = when (model) {
             is String -> android.net.Uri.parse(model)
             is android.net.Uri -> model

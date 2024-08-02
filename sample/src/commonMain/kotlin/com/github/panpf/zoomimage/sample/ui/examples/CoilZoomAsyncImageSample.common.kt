@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage.sample.ui.examples
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +21,7 @@ import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
+import kotlinx.collections.immutable.toImmutableList
 
 expect fun platformCoilModelToImageSource(): List<CoilModelToImageSource>?
 
@@ -33,14 +33,15 @@ fun CoilZoomAsyncImageSample(
     BaseZoomImageSample(
         photo = photo,
         photoPaletteState = photoPaletteState,
-        createZoomState = { rememberCoilZoomState() }
-    ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
-        LaunchedEffect(Unit) {
-            zoomState.registerModelToImageSource(CoilComposeResourceToImageSource())
-            platformCoilModelToImageSource()?.forEach {
-                zoomState.registerModelToImageSource(it)
+        createZoomState = {
+            val extensionsModelToImageSources = remember {
+                platformCoilModelToImageSource().orEmpty()
+                    .plus(CoilComposeResourceToImageSource())
+                    .toImmutableList()
             }
+            rememberCoilZoomState(modelToImageSources = extensionsModelToImageSources)
         }
+    ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         val context = LocalPlatformContext.current
         val request = remember(key1 = photo) {

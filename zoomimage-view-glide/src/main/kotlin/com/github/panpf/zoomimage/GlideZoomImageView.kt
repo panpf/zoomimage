@@ -97,9 +97,14 @@ open class GlideZoomImageView @JvmOverloads constructor(
             }
             _subsamplingEngine?.disabledTileBitmapCacheState?.value = isDisableMemoryCache(request)
             val model = request.internalModel
-            val imageSource = if (model != null)
-                convertors.plus(GlideModelToImageSourceImpl(context))
-                    .firstNotNullOfOrNull { it.dataToImageSource(model) } else null
+            val imageSource = if (model != null) {
+                convertors.plus(GlideModelToImageSourceImpl())
+                    .firstNotNullOfOrNull {
+                        it.dataToImageSource(context, Glide.get(context), model)
+                    }
+            } else {
+                null
+            }
             if (imageSource == null) {
                 logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
             }
