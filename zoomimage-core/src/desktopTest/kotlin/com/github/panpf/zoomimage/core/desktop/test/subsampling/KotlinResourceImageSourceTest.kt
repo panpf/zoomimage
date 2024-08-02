@@ -56,11 +56,11 @@ class KotlinResourceImageSourceTest {
         val resourceName2 = ResourceImages.dog.resourceName
 
         assertEquals(
-            expected = resourceName1,
+            expected = "file:///kotlin_resource/$resourceName1",
             actual = KotlinResourceImageSource(resourceName1).key
         )
         assertEquals(
-            expected = resourceName2,
+            expected = "file:///kotlin_resource/$resourceName2",
             actual = KotlinResourceImageSource(resourceName2).key
         )
     }

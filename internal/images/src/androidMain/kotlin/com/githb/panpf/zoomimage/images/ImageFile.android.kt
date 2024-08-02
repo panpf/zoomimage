@@ -16,5 +16,5 @@
 package com.githb.panpf.zoomimage.images
 
 actual fun resourceNameToUri(name: String): String {
-    return "asset://$name"
+    return "file:///android_asset/$name"
 }

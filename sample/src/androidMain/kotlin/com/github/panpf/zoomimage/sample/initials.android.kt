@@ -8,6 +8,7 @@ import com.github.panpf.sketch.decode.supportAnimatedGif
 import com.github.panpf.sketch.decode.supportAnimatedWebp
 import com.github.panpf.sketch.decode.supportMovieGif
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriFetcher
+import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriKeyer
 
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
@@ -26,5 +27,6 @@ actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
 actual fun ImageLoader.Builder.platformCoilInitial(context: coil3.PlatformContext) {
     components {
         add(CoilComposeResourceUriFetcher.Factory())
+        add(CoilComposeResourceUriKeyer())
     }
 }

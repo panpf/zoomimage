@@ -26,7 +26,7 @@ class GlidePhotoGridItemFactory : BasePhotoGridItemFactory() {
 
     override fun loadImage(imageView: ImageView, sketchImageUri: String) {
         Glide.with(imageView.context)
-            .load(sketchUri2GlideModel(sketchImageUri))
+            .load(sketchUri2GlideModel(imageView.context, sketchImageUri))
             .placeholder(R.drawable.im_placeholder)
             .error(R.drawable.im_error)
             .transition(DrawableTransitionOptions.withCrossFade())

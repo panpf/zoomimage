@@ -45,11 +45,11 @@ class AssetImageSourceTest {
         val resourceName2 = resourceImages.dog.resourceName
 
         assertEquals(
-            expected = "asset://$resourceName1",
+            expected = "file:///android_asset/$resourceName1",
             actual = AssetImageSource(context, resourceName1).key
         )
         assertEquals(
-            expected = "asset://$resourceName2",
+            expected = "file:///android_asset/$resourceName2",
             actual = AssetImageSource(context, resourceName2).key
         )
     }

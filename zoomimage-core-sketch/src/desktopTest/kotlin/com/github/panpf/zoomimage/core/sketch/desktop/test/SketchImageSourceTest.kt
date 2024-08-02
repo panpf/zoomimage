@@ -42,13 +42,12 @@ class SketchImageSourceTest {
         assertNotEquals(illegal = imageSource1, actual = imageSource2)
         assertNotEquals(illegal = imageSource12, actual = imageSource22)
 
-        // TODO Sketch's KotlinResourceDataSource does not implement equals and hashcode
-        assertNotEquals(
-            illegal = imageSource1.hashCode(),
+        assertEquals(
+            expected = imageSource1.hashCode(),
             actual = imageSource12.hashCode()
         )
-        assertNotEquals(
-            illegal = imageSource2.hashCode(),
+        assertEquals(
+            expected = imageSource2.hashCode(),
             actual = imageSource22.hashCode()
         )
         assertNotEquals(

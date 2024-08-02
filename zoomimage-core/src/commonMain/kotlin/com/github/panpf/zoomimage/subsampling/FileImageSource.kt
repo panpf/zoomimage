@@ -46,7 +46,7 @@ fun ImageSource.Companion.fromFile(path: String): FileImageSource {
  */
 class FileImageSource(val path: Path) : ImageSource {
 
-    override val key: String = path.toString()
+    override val key: String = "file://$path"
 
     override fun openSource(): Source {
         return defaultFileSystem().source(path)

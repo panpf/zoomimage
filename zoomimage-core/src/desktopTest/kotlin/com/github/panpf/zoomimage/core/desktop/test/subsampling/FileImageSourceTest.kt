@@ -43,11 +43,11 @@ class FileImageSourceTest {
         val path2 = localImages.dog.uri.replace("file://", "")
 
         assertEquals(
-            expected = path1,
+            expected = "file://$path1",
             actual = FileImageSource(path1.toPath()).key
         )
         assertEquals(
-            expected = path2,
+            expected = "file://$path2",
             actual = FileImageSource(path2.toPath()).key
         )
     }

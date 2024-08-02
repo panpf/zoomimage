@@ -62,7 +62,7 @@ class ResourceImageSource(
         @RawRes @DrawableRes drawableId: Int
     ) : this(context.resources, drawableId)
 
-    override val key: String = "android.resources://resource?resId=$resId"
+    override val key: String = "android.resources:///$resId"
 
     override fun openSource(): Source {
         return resources.openRawResource(resId).source()

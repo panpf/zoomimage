@@ -78,7 +78,7 @@ class GlideHttpImageSource(
         val glideUrl: GlideUrl
     ) : ImageSource.Factory {
 
-        override val key: String = glideUrl.cacheKey
+        override val key: String = glideUrl.toString()
 
         constructor(glide: Glide, imageUri: String) : this(glide, GlideUrl(imageUri))
 

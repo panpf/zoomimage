@@ -7,9 +7,12 @@ import coil3.decode.ImageSource
 import coil3.fetch.FetchResult
 import coil3.fetch.Fetcher
 import coil3.fetch.SourceFetchResult
+import coil3.pathSegments
 import coil3.request.Options
 import com.github.panpf.sketch.fetch.HttpUriFetcher
+import com.github.panpf.sketch.fetch.isKotlinResourceUri
 import com.github.panpf.sketch.util.MimeTypeMap
+import com.github.panpf.sketch.util.toUri
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.buffer
@@ -19,10 +22,6 @@ class CoilKotlinResourceUriFetcher(
     val fileSystem: FileSystem,
     val resourceName: String,
 ) : Fetcher {
-
-    companion object {
-        const val SCHEME = "kotlin.resource"
-    }
 
     override suspend fun fetch(): FetchResult {
         val resourcePath = NSBundle.mainBundle.resourcePath!!.toPath()
@@ -64,15 +63,12 @@ class CoilKotlinResourceUriFetcher(
             options: Options,
             imageLoader: ImageLoader
         ): CoilKotlinResourceUriFetcher? {
-            return if (SCHEME.equals(data.scheme, ignoreCase = true)) {
-                val resourcePath = "${data.authority.orEmpty()}${data.path.orEmpty()}"
-                CoilKotlinResourceUriFetcher(
-                    fileSystem = imageLoader.diskCache?.fileSystem ?: FileSystem.SYSTEM,
-                    resourceName = resourcePath
-                )
-            } else {
-                null
-            }
+            if (!isKotlinResourceUri(data.toString().toUri())) return null
+            val resourcePath = data.pathSegments.drop(1).joinToString("/")
+            return CoilKotlinResourceUriFetcher(
+                fileSystem = imageLoader.diskCache?.fileSystem ?: FileSystem.SYSTEM,
+                resourceName = resourcePath
+            )
         }
 
         override fun equals(other: Any?): Boolean {

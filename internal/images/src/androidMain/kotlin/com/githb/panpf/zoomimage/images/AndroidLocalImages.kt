@@ -45,34 +45,34 @@ class AndroidLocalImages private constructor() {
     private val path =
         "file://${Environment.getExternalStorageDirectory()}/Android/data/com.github.panpf.zoomimage.sample/files/assets/"
 
-    val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val anim = ResourceImages.anim.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val longEnd = ResourceImages.longEnd.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val longWhale = ResourceImages.longWhale.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val hugeChina = ResourceImages.hugeChina.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val hugeCard = ResourceImages.hugeCard.let { it.copy(uri = it.uri.replace("asset://", path)) }
+    val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val anim = ResourceImages.anim.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val longEnd = ResourceImages.longEnd.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val longWhale = ResourceImages.longWhale.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val hugeChina = ResourceImages.hugeChina.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val hugeCard = ResourceImages.hugeCard.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val hugeLongQmsht =
-        ResourceImages.hugeLongQmsht.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.hugeLongQmsht.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val hugeLongComic =
-        ResourceImages.hugeLongComic.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.hugeLongComic.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
 
     val exifFlipHorizontal =
-        ResourceImages.exifFlipHorizontal.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.exifFlipHorizontal.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val exifFlipVertical =
-        ResourceImages.exifFlipVertical.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.exifFlipVertical.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val exifNormal =
-        ResourceImages.exifNormal.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.exifNormal.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val exifRotate90 =
-        ResourceImages.exifRotate90.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.exifRotate90.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val exifRotate180 =
-        ResourceImages.exifRotate180.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.exifRotate180.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val exifRotate270 =
-        ResourceImages.exifRotate270.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.exifRotate270.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val exifTranspose =
-        ResourceImages.exifTranspose.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.exifTranspose.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val exifTransverse =
-        ResourceImages.exifTransverse.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.exifTransverse.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
 
     val exifs = arrayOf(
         exifFlipHorizontal,

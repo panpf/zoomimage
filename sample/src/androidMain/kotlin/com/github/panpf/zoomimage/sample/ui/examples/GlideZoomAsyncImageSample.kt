@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -37,8 +38,9 @@ fun GlideZoomAsyncImageSample(
         photoPaletteState = photoPaletteState,
         createZoomState = { rememberGlideZoomState() }
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
+        val context = LocalContext.current
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.Loading) }
-        val glideData = remember(key1 = photo) { sketchUri2GlideModel(photo.originalUrl) }
+        val glideData = remember(key1 = photo) { sketchUri2GlideModel(context, photo.originalUrl) }
         GlideZoomAsyncImage(
             model = glideData,
             contentDescription = "view image",

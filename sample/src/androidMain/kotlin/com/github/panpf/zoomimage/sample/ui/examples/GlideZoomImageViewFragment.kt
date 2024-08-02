@@ -46,7 +46,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>
     override fun loadImage(zoomView: GlideZoomImageView, stateView: StateView) {
         stateView.loading()
         Glide.with(this@GlideZoomImageViewFragment)
-            .load(sketchUri2GlideModel(args.imageUri))
+            .load(sketchUri2GlideModel(zoomView.context, args.imageUri))
             .listener(object : RequestListener<Drawable> {
                 override fun onResourceReady(
                     resource: Drawable,
@@ -78,7 +78,7 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>
 
     override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
         Glide.with(minimapView.context)
-            .load(sketchUri2GlideModel(sketchImageUri))
+            .load(sketchUri2GlideModel(minimapView.context, sketchImageUri))
             .placeholder(R.drawable.im_placeholder)
             .error(R.drawable.im_error)
             .override(600, 600)

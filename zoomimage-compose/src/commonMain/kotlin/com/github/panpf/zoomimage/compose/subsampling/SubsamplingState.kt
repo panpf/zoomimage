@@ -221,7 +221,7 @@ class SubsamplingState constructor(
      */
     fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
         if (this.imageSourceFactory == imageSource) return false
-        logger.d { "SubsamplingState. setImageSource. '${this.imageSourceFactory?.key}' -> '${imageSource?.key}'" }
+        logger.d { "SubsamplingState. setImageSource. '${this.imageSourceFactory}' -> '${imageSource}'" }
         clean("setImageSource")
         this.imageSourceFactory = imageSource
         imageKey = imageSource?.key

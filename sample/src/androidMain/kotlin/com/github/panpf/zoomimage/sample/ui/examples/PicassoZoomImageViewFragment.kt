@@ -18,7 +18,6 @@ package com.github.panpf.zoomimage.sample.ui.examples
 
 import android.content.Context
 import android.net.Uri
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
@@ -27,6 +26,7 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.PicassoComposeResourceToImageSource
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
+import com.github.panpf.zoomimage.sample.util.sketchUri2PicassoData
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
@@ -64,66 +64,18 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
             fit()
             centerInside()
         }
-        val sketchImageUri = args.imageUri
-        when {
-            sketchImageUri.startsWith("asset://") ->
-                zoomView.loadImage(
-                    path = sketchImageUri.replace("asset://", "file:///android_asset/"),
-                    callback = callback,
-                    config = config
-                )
-
-            sketchImageUri.startsWith("android.resource://") -> {
-                val resId =
-                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()
-                        ?.toIntOrNull()
-                        ?: throw IllegalArgumentException("Can't use Subsampling, invalid resource uri: '$sketchImageUri'")
-                zoomView.loadImage(
-                    resourceId = resId,
-                    callback = callback,
-                    config = config
-                )
-            }
-
-            sketchImageUri.startsWith("/") -> {
-                zoomView.loadImage(
-                    path = "file://$sketchImageUri",
-                    callback = callback,
-                    config = config
-                )
-            }
-
-            else ->
-                zoomView.loadImage(
-                    uri = Uri.parse(sketchImageUri),
-                    callback = callback,
-                    config = config
-                )
-        }
+        val picassoImageUri = sketchUri2PicassoData(zoomView.context,  args.imageUri)
+        zoomView.loadImage(
+            uri = Uri.parse(picassoImageUri),
+            callback = callback,
+            config = config
+        )
     }
 
     override fun loadMinimap(minimapView: ZoomImageMinimapView, sketchImageUri: String) {
+        val picassoImageUri = sketchUri2PicassoData(minimapView.context, sketchImageUri)
         Picasso.get()
-            .let {
-                when {
-                    sketchImageUri.startsWith("asset://") ->
-                        it.load(sketchImageUri.replace("asset://", "file:///android_asset/"))
-
-                    sketchImageUri.startsWith("android.resource://") -> {
-                        val resId =
-                            sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()
-                                ?.toIntOrNull()
-                                ?: throw IllegalArgumentException("Can't use Subsampling, invalid resource uri: '$sketchImageUri'")
-                        it.load(resId)
-                    }
-
-                    sketchImageUri.startsWith("/") -> {
-                        it.load("file://$sketchImageUri")
-                    }
-
-                    else -> it.load(Uri.parse(sketchImageUri))
-                }
-            }
+            .load(Uri.parse(picassoImageUri))
             .placeholder(R.drawable.im_placeholder)
             .error(R.drawable.im_error)
             .resize(600, 600)

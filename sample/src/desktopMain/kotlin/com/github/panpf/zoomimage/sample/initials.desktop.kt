@@ -6,7 +6,9 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.sketch.decode.supportSkiaAnimatedWebp
 import com.github.panpf.sketch.decode.supportSkiaGif
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriFetcher
+import com.github.panpf.zoomimage.sample.image.CoilComposeResourceUriKeyer
 import com.github.panpf.zoomimage.sample.util.CoilKotlinResourceUriFetcher
+import com.github.panpf.zoomimage.sample.util.CoilKotlinResourceUriKeyer
 import com.github.panpf.zoomimage.sample.util.PexelsCompatibleRequestInterceptor
 
 actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
@@ -22,6 +24,8 @@ actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
 actual fun ImageLoader.Builder.platformCoilInitial(context: coil3.PlatformContext) {
     components {
         add(CoilComposeResourceUriFetcher.Factory())
+        add(CoilComposeResourceUriKeyer())
         add(CoilKotlinResourceUriFetcher.Factory())
+        add(CoilKotlinResourceUriKeyer())
     }
 }

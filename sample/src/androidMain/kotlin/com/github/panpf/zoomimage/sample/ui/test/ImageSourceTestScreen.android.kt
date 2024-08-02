@@ -1,9 +1,9 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
+import com.githb.panpf.zoomimage.images.AndroidLocalImages
 import com.githb.panpf.zoomimage.images.AndroidResourceImages
 import com.githb.panpf.zoomimage.images.ContentImages
 import com.githb.panpf.zoomimage.images.HttpImages
-import com.githb.panpf.zoomimage.images.AndroidLocalImages
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.fetch.AssetUriFetcher
@@ -50,7 +50,7 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
         }
 
         is AssetUriFetcher -> {
-            ImageSource.fromAsset(context, fetcher.assetFileName).toFactory()
+            ImageSource.fromAsset(context, fetcher.fileName).toFactory()
         }
 
         is ContentUriFetcher -> {
@@ -58,7 +58,7 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
         }
 
         is ResourceUriFetcher -> {
-            val resId = fetcher.contentUri.getQueryParameters("resId").firstOrNull()?.toIntOrNull()
+            val resId = fetcher.resourceUri.pathSegments.firstOrNull()?.toIntOrNull()
             if (resId != null) {
                 ImageSource.fromResource(context, resId).toFactory()
             } else {

@@ -36,7 +36,7 @@ fun ImageSource.Companion.fromAsset(context: Context, assetFileName: String): As
  */
 class AssetImageSource(val context: Context, val assetFileName: String) : ImageSource {
 
-    override val key: String = "asset://$assetFileName"
+    override val key: String = "file:///android_asset/$assetFileName"
 
     override fun openSource(): Source {
         return context.assets.open(assetFileName).source()

@@ -39,17 +39,17 @@ class ContentImages private constructor(val context: Context) {
 
     private val path = "content://${context.packageName}.fileprovider/asset_images/"
 
-    val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val anim = ResourceImages.anim.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val longEnd = ResourceImages.longEnd.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val longWhale = ResourceImages.longWhale.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val hugeChina = ResourceImages.hugeChina.let { it.copy(uri = it.uri.replace("asset://", path)) }
-    val hugeCard = ResourceImages.hugeCard.let { it.copy(uri = it.uri.replace("asset://", path)) }
+    val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val anim = ResourceImages.anim.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val longEnd = ResourceImages.longEnd.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val longWhale = ResourceImages.longWhale.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val hugeChina = ResourceImages.hugeChina.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
+    val hugeCard = ResourceImages.hugeCard.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val hugeLongQmsht =
-        ResourceImages.hugeLongQmsht.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.hugeLongQmsht.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
     val hugeLongComic =
-        ResourceImages.hugeLongComic.let { it.copy(uri = it.uri.replace("asset://", path)) }
+        ResourceImages.hugeLongComic.let { it.copy(uri = it.uri.replace("file:///android_asset/", path)) }
 
     val all = listOf(
         cat,

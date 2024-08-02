@@ -17,27 +17,21 @@
 package com.github.panpf.zoomimage.sample.ui.examples
 
 import android.annotation.SuppressLint
-import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.graphics.RectF
 import android.os.Bundle
-import android.util.Log
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnStateChangedListener
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
-import com.github.panpf.sketch.request.ImageRequest
-import com.github.panpf.sketch.sketch
-import com.github.panpf.sketch.util.DownloadData
+import com.github.panpf.sketch.fetch.isAssetUri
+import com.github.panpf.sketch.util.toUri
 import com.github.panpf.zoomimage.sample.databinding.FragmentSubsamplingViewBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 import com.github.panpf.zoomimage.sample.util.format
 import com.github.panpf.zoomimage.sample.util.toShortString
 import com.github.panpf.zoomimage.sample.util.toVeryShortString
-import kotlinx.coroutines.launch
 
 class SubsamplingScaleImageViewFragment : BaseBindingFragment<FragmentSubsamplingViewBinding>() {
 
@@ -69,74 +63,19 @@ class SubsamplingScaleImageViewFragment : BaseBindingFragment<FragmentSubsamplin
     }
 
     private fun setImage(binding: FragmentSubsamplingViewBinding) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val imageSource = newImageSource(binding, args.imageUri)
-            if (imageSource != null) {
-                binding.subsamplingView.setImage(imageSource)
-            }
+        val imageSource = newImageSource(args.imageUri)
+        if (imageSource != null) {
+            binding.subsamplingView.setImage(imageSource)
         }
     }
 
-    private suspend fun newImageSource(
-        binding: FragmentSubsamplingViewBinding,
-        sketchImageUri: String
-    ): ImageSource? {
-        return when {
-            sketchImageUri.startsWith("asset://") -> {
-                ImageSource.asset(sketchImageUri.replace("asset://", ""))
-            }
-
-            sketchImageUri.startsWith("android.resource://") -> {
-                val resId =
-                    sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
-                if (resId != null) {
-                    ImageSource.resource(resId)
-                } else {
-                    Log.e(
-                        "ZoomImageViewFragment",
-                        "newImageSource failed, invalid resource uri: '$sketchImageUri'"
-                    )
-                    null
-                }
-            }
-
-            sketchImageUri.startsWith("http://") || sketchImageUri.startsWith("https://") -> {
-                binding.stateView.loading()
-                val context = binding.subsamplingView.context
-                val result = context.sketch.executeDownload(ImageRequest(context, args.imageUri))
-                val data = result.getOrNull()
-                if (data != null) {
-                    binding.stateView.gone()
-                    when (data) {
-                        is DownloadData.Cache -> {
-                            ImageSource.uri(data.path.toFile().toUri())
-                        }
-
-                        is DownloadData.Bytes -> {
-                            val bitmap =
-                                BitmapFactory.decodeByteArray(data.bytes, 0, data.bytes.size)
-                            ImageSource.bitmap(bitmap)
-                        }
-
-                        else -> {
-                            throw IllegalArgumentException("Unsupported DownloadData type: ${data::class}")
-                        }
-                    }
-                } else {
-                    binding.stateView.error {
-                        message(result.exceptionOrNull())
-                        retryAction {
-                            setImage(binding)
-                        }
-                    }
-                    null
-                }
-            }
-
-            else -> {
-                ImageSource.uri(sketchImageUri)
-            }
+    private fun newImageSource(sketchImageUri: String): ImageSource? {
+        val uri = sketchImageUri.toUri()
+        if (isAssetUri(uri)) {
+            val fileName = uri.pathSegments.drop(1).joinToString("/")
+            return ImageSource.asset(fileName)
         }
+        return null
     }
 
     @SuppressLint("SetTextI18n")

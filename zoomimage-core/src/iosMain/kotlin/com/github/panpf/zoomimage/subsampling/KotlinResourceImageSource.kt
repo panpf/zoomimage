@@ -39,7 +39,7 @@ fun ImageSource.Companion.fromKotlinResource(
  */
 class KotlinResourceImageSource(val resourcePath: String) : ImageSource {
 
-    override val key: String = resourcePath
+    override val key: String = "file:///kotlin_resource/$resourcePath"
 
     override fun openSource(): Source {
         val appResourcePath = NSBundle.mainBundle.resourcePath!!.toPath()

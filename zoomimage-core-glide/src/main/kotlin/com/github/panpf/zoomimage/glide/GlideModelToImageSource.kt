@@ -77,12 +77,16 @@ class GlideModelToImageSourceImpl(
             }
 
             // /sdcard/xxx.jpg
-            uri != null && uri.scheme?.takeIf { it.isNotEmpty() } == null && uri.path?.startsWith("/") == true -> {
+            uri != null && uri.scheme?.takeIf { it.isNotEmpty() } == null
+                    && uri.authority?.takeIf { it.isNotEmpty() } == null
+                    && uri.path?.startsWith("/") == true -> {
                 ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
             // file:///sdcard/xxx.jpg
-            uri != null && uri.scheme == "file" && uri.path?.startsWith("/") == true -> {
+            uri != null && uri.scheme == "file"
+                    && uri.authority?.takeIf { it.isNotEmpty() } == null
+                    && uri.path?.startsWith("/") == true -> {
                 ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
@@ -96,7 +100,7 @@ class GlideModelToImageSourceImpl(
 
             // android.resource://example.package.name/drawable/image
             uri != null && uri.scheme == "android.resource" && uri.pathSegments.size == 2 -> {
-                val packageName = uri.authority.orEmpty()
+                val packageName = uri.authority?.takeIf { it.isNotEmpty() } ?: context.packageName
                 val resources = context.packageManager.getResourcesForApplication(packageName)
                 val (type, name) = uri.pathSegments
                 //noinspection DiscouragedApi: Necessary to support resource URIs.
@@ -106,7 +110,7 @@ class GlideModelToImageSourceImpl(
 
             // android.resource://example.package.name/4125123
             uri != null && uri.scheme == "android.resource" && uri.pathSegments.size == 1 -> {
-                val packageName = uri.authority.orEmpty()
+                val packageName = uri.authority?.takeIf { it.isNotEmpty() } ?: context.packageName
                 val resources = context.packageManager.getResourcesForApplication(packageName)
                 val id = uri.pathSegments.first().toInt()
                 ImageSource.fromResource(resources, id).toFactory()

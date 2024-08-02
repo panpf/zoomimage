@@ -16,5 +16,5 @@
 package com.githb.panpf.zoomimage.images
 
 actual fun resourceNameToUri(name: String): String {
-    return "kotlin.resource://$name"
+    return "file:///kotlin_resource/$name"
 }

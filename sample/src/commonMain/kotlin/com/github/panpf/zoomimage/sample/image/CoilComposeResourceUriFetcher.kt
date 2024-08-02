@@ -7,9 +7,12 @@ import coil3.decode.ImageSource
 import coil3.fetch.FetchResult
 import coil3.fetch.Fetcher
 import coil3.fetch.SourceFetchResult
+import coil3.pathSegments
 import coil3.request.Options
 import com.github.panpf.sketch.fetch.HttpUriFetcher
+import com.github.panpf.sketch.fetch.isComposeResourceUri
 import com.github.panpf.sketch.util.MimeTypeMap
+import com.github.panpf.sketch.util.toUri
 import com.github.panpf.zoomimage.sample.util.ThrowingFileSystem
 import okio.Buffer
 import okio.FileSystem
@@ -20,10 +23,6 @@ class CoilComposeResourceUriFetcher(
     val fileSystem: FileSystem,
     val resourcePath: String,
 ) : Fetcher {
-
-    companion object {
-        const val SCHEME = "compose.resource"
-    }
 
     @OptIn(InternalResourceApi::class)
     override suspend fun fetch(): FetchResult {
@@ -64,15 +63,12 @@ class CoilComposeResourceUriFetcher(
             options: Options,
             imageLoader: ImageLoader
         ): CoilComposeResourceUriFetcher? {
-            return if (SCHEME.equals(data.scheme, ignoreCase = true)) {
-                val resourcePath = "${data.authority.orEmpty()}${data.path.orEmpty()}"
-                CoilComposeResourceUriFetcher(
-                    fileSystem = imageLoader.diskCache?.fileSystem ?: ThrowingFileSystem,
-                    resourcePath = resourcePath
-                )
-            } else {
-                null
-            }
+            if (!isComposeResourceUri(data.toString().toUri())) return null
+            val resourcePath = data.pathSegments.drop(1).joinToString("/")
+            return CoilComposeResourceUriFetcher(
+                fileSystem = imageLoader.diskCache?.fileSystem ?: ThrowingFileSystem,
+                resourcePath = resourcePath
+            )
         }
 
         override fun equals(other: Any?): Boolean {

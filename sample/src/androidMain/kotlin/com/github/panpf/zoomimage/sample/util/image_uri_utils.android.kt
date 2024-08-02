@@ -1,65 +1,69 @@
 package com.github.panpf.zoomimage.sample.util
 
 import android.content.Context
-import android.net.Uri
-import android.util.Log
-import androidx.annotation.DrawableRes
-import androidx.annotation.RawRes
-import androidx.core.net.toUri
-import java.io.File
+import coil3.PlatformContext
+import com.github.panpf.sketch.fetch.isComposeResourceUri
+import com.github.panpf.sketch.util.toUri
 
-
-actual fun sketchUri2CoilModel(context: Context, sketchImageUri: String): Any? {
+actual fun sketchUri2CoilModel(context: PlatformContext, sketchImageUri: String): Any? {
     return when {
-        sketchImageUri.startsWith("asset://") -> {
-            sketchImageUri.replace("asset://", "file://filled/android_asset/").toUri()
+        sketchImageUri.startsWith("android.resource:///") -> {
+            sketchImageUri.replace(
+                oldValue = "android.resource:///",
+                newValue = "android.resource://${context.packageName}/"
+            )
         }
 
-        sketchImageUri.startsWith("file://") -> {
-            File(sketchImageUri.substring("file://".length))
-        }
-
-        sketchImageUri.startsWith("android.resource://") -> {
-            val resId =
-                sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
-            if (resId != null) {
-                "android.resource://${context.packageName}/$resId".toUri()
-            } else {
-                Log.w("sketchUri2CoilModel", "Unsupported sketch resource uri: '$sketchImageUri'")
-                null
-            }
+        sketchImageUri.startsWith("/") -> {
+            "file://$sketchImageUri"
         }
 
         else -> {
-            sketchImageUri.toUri()
+            sketchImageUri
         }
     }
 }
 
-fun sketchUri2GlideModel(sketchImageUri: String): Any {
+fun sketchUri2GlideModel(context: Context, sketchImageUri: String): Any {
+    val uri = sketchImageUri.toUri()
     return when {
-        sketchImageUri.startsWith("asset://") ->
-            sketchImageUri.replace("asset://", "file:///android_asset/")
-
-        sketchImageUri.startsWith("android.resource://") -> {
-            sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()?.toIntOrNull()
-                ?: throw IllegalArgumentException("Can't use Subsampling, invalid resource uri: '$sketchImageUri'")
+        sketchImageUri.startsWith("android.resource:///") -> {
+            sketchImageUri.replace(
+                oldValue = "android.resource:///",
+                newValue = "android.resource://${context.packageName}/"
+            )
         }
 
-        sketchImageUri.startsWith("compose.resource://") -> {
-            val resourceName = sketchImageUri.toUri().lastPathSegment
+        sketchImageUri.startsWith("/") -> {
+            "file://$sketchImageUri"
+        }
+
+        isComposeResourceUri(uri) -> {
+            val resourceName = uri.pathSegments.lastOrNull()
             "file:///android_asset/$resourceName"
         }
 
-        else -> sketchImageUri
+        else -> {
+            sketchImageUri
+        }
     }
 }
 
+fun sketchUri2PicassoData(context: Context, sketchImageUri: String): String {
+    return when {
+        sketchImageUri.startsWith("android.resource:///") -> {
+            sketchImageUri.replace(
+                oldValue = "android.resource:///",
+                newValue = "android.resource://${context.packageName}/"
+            )
+        }
 
-internal fun Context.newCoilResourceUri(@DrawableRes @RawRes id: Int): Uri {
-    return Uri.parse("android.resource://${packageName}/${id}")
-}
+        sketchImageUri.startsWith("/") -> {
+            "file://$sketchImageUri"
+        }
 
-internal fun newCoilAssetUri(@Suppress("SameParameterValue") path: String): Uri {
-    return Uri.parse("file://filled/android_asset/$path")
+        else -> {
+            sketchImageUri
+        }
+    }
 }

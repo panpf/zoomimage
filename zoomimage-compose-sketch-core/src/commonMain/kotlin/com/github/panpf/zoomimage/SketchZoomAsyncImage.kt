@@ -224,7 +224,7 @@ private fun onPainterState(
         is PainterState.Success -> {
             subsamplingState.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            val imageSource = SketchImageSource.Factory(sketch, request.uri)
+            val imageSource = SketchImageSource.Factory(sketch, request.uri.toString())
             subsamplingState.setImageSource(imageSource)
         }
 

@@ -10,6 +10,7 @@
   bug 。 [#37](https://github.com/panpf/zoomimage/issues/37)
 * change: ZoomImage 系列组件禁用双指拖动手势，避免快速双指缩放后又触发 fling
   导致图片漂移。 [#28](https://github.com/panpf/zoomimage/issues/28)
+* upgrade: 升级 sketch 到 4.0.0-alpha05 版本 
 
 ## 1.1.0-alpha04
 

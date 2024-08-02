@@ -63,7 +63,7 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
         }
 
         is KotlinResourceUriFetcher -> {
-            ImageSource.fromKotlinResource(fetcher.resourceName).toFactory()
+            ImageSource.fromKotlinResource(fetcher.resourcePath).toFactory()
         }
 
         is ComposeResourceUriFetcher -> {

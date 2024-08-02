@@ -1,7 +1,7 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
-import com.githb.panpf.zoomimage.images.HttpImages
 import com.githb.panpf.zoomimage.images.DesktopLocalImages
+import com.githb.panpf.zoomimage.images.HttpImages
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.sketch.PlatformContext
 import com.github.panpf.sketch.fetch.ComposeResourceUriFetcher
@@ -62,7 +62,7 @@ actual suspend fun sketchFetcherToZoomImageImageSource(
         }
 
         is KotlinResourceUriFetcher -> {
-            ImageSource.fromKotlinResource(fetcher.resourceName).toFactory()
+            ImageSource.fromKotlinResource(fetcher.resourcePath).toFactory()
         }
 
         is ComposeResourceUriFetcher -> {

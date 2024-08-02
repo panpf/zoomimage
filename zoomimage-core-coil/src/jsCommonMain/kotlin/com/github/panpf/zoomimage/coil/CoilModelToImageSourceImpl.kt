@@ -48,12 +48,16 @@ actual class CoilModelToImageSourceImpl actual constructor(
             }
 
             // /sdcard/xxx.jpg
-            uri != null && uri.scheme?.takeIf { it.isNotEmpty() } == null && uri.path?.startsWith("/") == true -> {
+            uri != null && uri.scheme?.takeIf { it.isNotEmpty() } == null
+                    && uri.authority?.takeIf { it.isNotEmpty() } == null
+                    && uri.path?.startsWith("/") == true -> {
                 ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 
             // file:///sdcard/xxx.jpg
-            uri != null && uri.scheme == "file" && uri.path?.startsWith("/") == true -> {
+            uri != null && uri.scheme == "file"
+                    && uri.authority?.takeIf { it.isNotEmpty() } == null
+                    && uri.path?.startsWith("/") == true -> {
                 ImageSource.fromFile(uri.path!!.toPath()).toFactory()
             }
 

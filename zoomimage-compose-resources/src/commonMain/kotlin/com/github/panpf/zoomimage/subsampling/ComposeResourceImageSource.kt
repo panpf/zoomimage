@@ -58,7 +58,7 @@ fun composeResourceUriToResourcePath(resourcePath: String): String {
  */
 class ComposeResourceImageSource(val resourcePath: String, val bytes: ByteArray) : ImageSource {
 
-    override val key: String = "compose.resource://$resourcePath"
+    override val key: String = "file:///compose_resource/$resourcePath"
 
     override fun openSource(): Source {
         return Buffer().write(bytes)
@@ -76,12 +76,12 @@ class ComposeResourceImageSource(val resourcePath: String, val bytes: ByteArray)
     }
 
     override fun toString(): String {
-        return "ComposeResourceImageSource($resourcePath)"
+        return "ComposeResourceImageSource('$resourcePath')"
     }
 
     class Factory(val resourcePath: String) : ImageSource.Factory {
 
-        override val key: String = "compose.resource://$resourcePath"
+        override val key: String = "file:///compose_resource/$resourcePath"
 
         @OptIn(InternalResourceApi::class)
         override suspend fun create(): ComposeResourceImageSource {
@@ -101,7 +101,7 @@ class ComposeResourceImageSource(val resourcePath: String, val bytes: ByteArray)
         }
 
         override fun toString(): String {
-            return "ComposeResourceImageSource.Factory($resourcePath)"
+            return "ComposeResourceImageSource.Factory('$resourcePath')"
         }
     }
 }

@@ -2,7 +2,8 @@ package com.github.panpf.zoomimage.sample.image
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.github.panpf.sketch.fetch.ComposeResourceUriFetcher.Companion.SCHEME
+import com.github.panpf.sketch.fetch.isComposeResourceUri
+import com.github.panpf.sketch.util.toUri
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.Request
 import com.squareup.picasso.RequestHandler
@@ -19,7 +20,7 @@ class PicassoComposeResourceRequestHandler : RequestHandler() {
 
     override fun canHandleRequest(data: Request?): Boolean {
         data ?: return false
-        return SCHEME.equals(data.uri.scheme, ignoreCase = true)
+        return isComposeResourceUri(data.uri?.toString().orEmpty().toUri())
     }
 
     @Throws(IOException::class)
@@ -30,7 +31,7 @@ class PicassoComposeResourceRequestHandler : RequestHandler() {
     @OptIn(InternalResourceApi::class)
     private fun decodeResource(data: Request): Bitmap {
         val uri = data.uri!!
-        val resourcePath = "${uri.authority.orEmpty()}${uri.path.orEmpty()}"
+        val resourcePath = uri.pathSegments.drop(1).joinToString("/")
         val bytes = runBlocking {
             readResourceBytes(resourcePath)
         }

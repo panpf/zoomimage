@@ -57,22 +57,22 @@ class IOSLocalImages private constructor() {
     private val path =
         "file://${appCacheDirectory()!!.resolve("zoomimage-files")}/"
 
-    val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
-    val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
-    val anim = ResourceImages.anim.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
+    val cat = ResourceImages.cat.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
+    val dog = ResourceImages.dog.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
+    val anim = ResourceImages.anim.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
     val longEnd =
-        ResourceImages.longEnd.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
+        ResourceImages.longEnd.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
     val longWhale =
-        ResourceImages.longWhale.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
+        ResourceImages.longWhale.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
     val hugeChina =
-        ResourceImages.hugeChina.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
+        ResourceImages.hugeChina.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
     val hugeCard =
-        ResourceImages.hugeCard.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
+        ResourceImages.hugeCard.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
     val hugeLongQmsht =
         ResourceImages.hugeLongQmsht.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )
@@ -81,7 +81,7 @@ class IOSLocalImages private constructor() {
         ResourceImages.hugeLongComic.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )
@@ -91,7 +91,7 @@ class IOSLocalImages private constructor() {
         ResourceImages.exifFlipHorizontal.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )
@@ -100,18 +100,18 @@ class IOSLocalImages private constructor() {
         ResourceImages.exifFlipVertical.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )
         }
     val exifNormal =
-        ResourceImages.exifNormal.let { it.copy(uri = it.uri.replace("kotlin.resource://", path)) }
+        ResourceImages.exifNormal.let { it.copy(uri = it.uri.replace("file:///kotlin_resource/", path)) }
     val exifRotate90 =
         ResourceImages.exifRotate90.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )
@@ -120,7 +120,7 @@ class IOSLocalImages private constructor() {
         ResourceImages.exifRotate180.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )
@@ -129,7 +129,7 @@ class IOSLocalImages private constructor() {
         ResourceImages.exifRotate270.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )
@@ -138,7 +138,7 @@ class IOSLocalImages private constructor() {
         ResourceImages.exifTranspose.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )
@@ -147,7 +147,7 @@ class IOSLocalImages private constructor() {
         ResourceImages.exifTransverse.let {
             it.copy(
                 uri = it.uri.replace(
-                    "kotlin.resource://",
+                    "file:///kotlin_resource/",
                     path
                 )
             )

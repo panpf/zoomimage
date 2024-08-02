@@ -32,11 +32,11 @@ class ResourceImageSourceTest {
         val context = InstrumentationRegistry.getInstrumentation().context
 
         assertEquals(
-            expected = "android.resources://resource?resId=111",
+            expected = "android.resources:///111",
             actual = ResourceImageSource(context, 111).key
         )
         assertEquals(
-            expected = "android.resources://resource?resId=222",
+            expected = "android.resources:///222",
             actual = ResourceImageSource(context, 222).key
         )
     }

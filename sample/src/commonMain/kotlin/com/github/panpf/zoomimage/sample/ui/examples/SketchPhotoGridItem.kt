@@ -104,11 +104,11 @@ fun SketchPhotoGridItem(
 }
 
 fun buildImageInfos(result: ImageResult): List<InfoItem> = buildList {
-    add(InfoItem(title = null, content = result.request.uri))
+    add(InfoItem(title = null, content = result.request.uri.toString()))
 
     if (result is ImageResult.Success) {
         val optionsInfo = result.cacheKey
-            .replace(result.request.uri, "")
+            .replace(result.request.uri.toString(), "")
             .let { if (it.startsWith("?")) it.substring(1) else it }
             .split("&")
             .filter { it.trim().isNotEmpty() }

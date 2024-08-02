@@ -16,7 +16,7 @@
 package com.githb.panpf.zoomimage.images
 
 actual fun resourceNameToUri(name: String): String {
-//    return "compose.resource://composeResources/com.github.panpf.zoomimage.sample.resources/files/$name"
+//    return "file:///compose_resource/composeResources/com.github.panpf.zoomimage.sample.resources/files/$name"
     // Because the js version of the image file is added to the files folder during the editing period, the path to the files folder is returned directly here.
-    return "compose.resource://files/$name"
+    return "file:///compose_resource/files/$name"
 }

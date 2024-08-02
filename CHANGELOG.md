@@ -12,6 +12,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: The ZoomImage series components disable two-finger dragging gestures to avoid triggering
   fling after rapid two-finger zooming, causing the image to
   drift. [#28](https://github.com/panpf/zoomimage/issues/28)
+* upgrade: Upgrade sketch to version 4.0.0-alpha05
 
 ## 1.1.0-alpha04
 

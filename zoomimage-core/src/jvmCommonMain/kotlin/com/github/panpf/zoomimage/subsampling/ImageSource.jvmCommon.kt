@@ -24,11 +24,11 @@ import java.io.File
  *
  * @see com.github.panpf.zoomimage.core.jvmcommon.test.subsampling.ImageSourceJvmCommonTest.testFileImageSource
  */
-fun FileImageSource(file: File): FileImageSource = FileImageSource(file.toOkioPath())
+fun FileImageSource(file: File) = FileImageSource(file.toOkioPath())
 
 /**
  * Create a FileImageSource using File
  *
  * @see com.github.panpf.zoomimage.core.jvmcommon.test.subsampling.ImageSourceJvmCommonTest.testFromFile
  */
-fun ImageSource.Companion.fromFile(file: File): FileImageSource = FileImageSource(file)
+fun ImageSource.Companion.fromFile(file: File): FileImageSource = FileImageSource(file.toOkioPath())

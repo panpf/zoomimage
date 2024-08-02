@@ -16,36 +16,18 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples
 
-import android.net.Uri
 import android.widget.ImageView
 import androidx.core.net.toUri
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.util.sketchUri2PicassoData
 import com.squareup.picasso.Picasso
 
 class PicassoPhotoGridItemFactory : BasePhotoGridItemFactory() {
 
     override fun loadImage(imageView: ImageView, sketchImageUri: String) {
+        val picassoImageUri = sketchUri2PicassoData(imageView.context, sketchImageUri)
         Picasso.get()
-            .let {
-                when {
-                    sketchImageUri.startsWith("asset://") ->
-                        it.load(sketchImageUri.replace("asset://", "file:///android_asset/"))
-
-                    sketchImageUri.startsWith("android.resource://") -> {
-                        val resId =
-                            sketchImageUri.toUri().getQueryParameters("resId").firstOrNull()
-                                ?.toIntOrNull()
-                                ?: throw IllegalArgumentException("Can't use Subsampling, invalid resource uri: '$sketchImageUri'")
-                        it.load(resId)
-                    }
-
-                    sketchImageUri.startsWith("/") -> {
-                        it.load("file://$sketchImageUri")
-                    }
-
-                    else -> it.load(Uri.parse(sketchImageUri))
-                }
-            }
+            .load(picassoImageUri.toUri())
             .placeholder(R.drawable.im_placeholder)
             .error(R.drawable.im_error)
             .fit()
