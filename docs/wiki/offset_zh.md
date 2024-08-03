@@ -7,7 +7,7 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-ZoomImage 支持单指拖动、双指拖动、惯性滑动，以及 `offset()` 方法来移动图像。
+ZoomImage 支持单指拖动、惯性滑动，以及 `offset()` 方法来移动图像。
 
 ### offset()
 
@@ -44,7 +44,7 @@ Button(
     onClick = {
         coroutineScope.launch {
             val targetOffset = zoomState.zoomable.transform.offset - Offset(x = 100, y = 200)
-            zoomState.zoomable.offset(targetScale = targetScale, animated = true)
+            zoomState.zoomable.offset(targetOffset = targetOffset, animated = true)
         }
     }
 ) {
@@ -66,10 +66,28 @@ Center，那么默认只显示图像中间的部分，然后你还可以单指�
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
-    zoomState.limitOffsetWithinBaseVisibleRect = true
+LaunchEffect(zoomState.zommable) {
+    zoomState.zommable.limitOffsetWithinBaseVisibleRect = true
 }
 
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+### 关闭拖动手势
+
+ZoomImage 默认开启拖动手势，但你可以关闭它，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.disabledGestureTypes =
+        zoomState.zoomable.disabledGestureTypes or GestureType.DRAG
+}
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",

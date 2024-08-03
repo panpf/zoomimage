@@ -218,15 +218,16 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 ## Document
 
-* [Zoom: scale, double-click scale, duration setting](zoom.md)
-* [Offset: Move to the specified position](offset.md)
+* [Scale: Scale the image to see clearer details](scale.md)
+* [Offset: Move the image to see content outside the container](offset.md)
+* [Rotate: Rotate the image to view content from different angles](rotate.md)
 * [Locate: Locate anywhere in the image](locate.md)
-* [Rotate: Rotate the image](rotate.md)
 * [Read Mode: Long images initially fill the screen for easy reading](readmode.md)
 * [Click: Receive click events](click.md)
-* [Subsampling: Subsampling the display of huge image to avoid OOM](subsampling.md)
+* [Subsampling: Display large images through subsampling to avoid OOM](subsampling.md)
 * [Scroll Bar: Displays horizontal and vertical scroll bars](scrollbar.md)
 * [Log: Modify log level and output pipeline](log.md)
+* [Modifier.zoom()](modifier_zoom.md)
 
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
@@ -238,7 +239,7 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [ZoomImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageSample.kt
 
-[CoilZoomAsyncImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomAsyncImageSample.kt
+[CoilZoomAsyncImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomAsyncImageSample.common.kt
 
 [GlideZoomAsyncImageSample]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/GlideZoomAsyncImageSample.kt
 

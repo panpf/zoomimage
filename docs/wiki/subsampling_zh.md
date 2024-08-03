@@ -97,7 +97,7 @@ ZoomImage 在显示 Tile 的时候支持透明度动画，默认开启动画，�
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     // 关闭动画
     zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
 
@@ -127,7 +127,7 @@ ZoomImage 在兼顾性能和体验的情况默认配置是 `SCALE`, `OFFSET`, `L
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     // 所有连续变换类型都实时加载图块
   zoomState.subsampling.pausedContinuousTransformTypes = 0
 
@@ -154,7 +154,7 @@ ZoomImage 支持停止子采样，停止后会释放已加载的图块并不再�
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     // stop
     zoomState.subsampling.stopped = true
     // restart
@@ -189,7 +189,7 @@ ZoomImage 通过背景图块实现了在切换 sampleSize 时随着 sampleSize
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     zoomState.subsampling.disabledBackgroundTiles = true
 }
 
@@ -213,7 +213,7 @@ SketchZoomAsyncImage(
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     zoomState.subsampling.tileBitmapCache = MyTileBitmapCache()
 }
 
@@ -233,7 +233,7 @@ ZoomImage(
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     // 禁用内存缓存
     zoomState.subsampling.disabledTileBitmapCache = true
     // 允许使用内存缓存

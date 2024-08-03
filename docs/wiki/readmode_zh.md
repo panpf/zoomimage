@@ -17,8 +17,8 @@
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
-    zoomState.zoomable.readmode = ReadMode.Default
+LaunchEffect(zoomState.zommable) {
+    zoomState.zoomable.readMode = ReadMode.Default
 }
 
 SketchZoomAsyncImage(

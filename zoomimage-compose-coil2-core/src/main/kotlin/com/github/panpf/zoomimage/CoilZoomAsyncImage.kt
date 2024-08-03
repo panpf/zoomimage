@@ -33,6 +33,7 @@
 package com.github.panpf.zoomimage
 
 import android.content.Context
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
@@ -62,9 +63,9 @@ import com.github.panpf.zoomimage.compose.coil.internal.onStateOf
 import com.github.panpf.zoomimage.compose.coil.internal.requestOf
 import com.github.panpf.zoomimage.compose.coil.internal.toScale
 import com.github.panpf.zoomimage.compose.coil.internal.transformOf
-import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.mouseScrollScale
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -224,26 +225,37 @@ fun CoilZoomAsyncImage(
         zoomState.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
     }
 
-    val context = LocalContext.current
-    val request = updateRequest(requestOf(model), contentScale)
-    BaseZoomAsyncImage(
-        model = request,
-        contentDescription = contentDescription,
-        imageLoader = imageLoader,
-        transform = transform,
-        onState = { loadState ->
-            onState(context, imageLoader, zoomState, request, loadState)
-            onState?.invoke(loadState)
-        },
-        contentScale = contentScale,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        filterQuality = filterQuality,
-        modifier = modifier
-            .thenIfNotNull(scrollBar) { Modifier.zoomScrollBar(zoomState.zoomable, it) }
-            .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(zoomState.zoomable, zoomState.subsampling),
-    )
+    // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
+    Box(modifier = modifier.mouseScrollScale(zoomState.zoomable)) {
+        val context = LocalContext.current
+        val request = updateRequest(requestOf(model), contentScale)
+        BaseZoomAsyncImage(
+            model = request,
+            contentDescription = contentDescription,
+            imageLoader = imageLoader,
+            transform = transform,
+            onState = { loadState ->
+                onState(context, imageLoader, zoomState, request, loadState)
+                onState?.invoke(loadState)
+            },
+            contentScale = contentScale,
+            alpha = alpha,
+            colorFilter = colorFilter,
+            filterQuality = filterQuality,
+            modifier = Modifier
+                .matchParentSize()
+                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .subsampling(zoomState.zoomable, zoomState.subsampling),
+        )
+
+        if (scrollBar != null) {
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .zoomScrollBar(zoomState.zoomable, scrollBar)
+            )
+        }
+    }
 }
 
 @Composable

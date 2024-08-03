@@ -2,6 +2,13 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+zoom:
+
+* new: Added support for mouse wheel scale
+  function. [#35](https://github.com/panpf/zoomimage/issues/35)
+
 ## 1.1.0-alpha05
 
 subsampling:

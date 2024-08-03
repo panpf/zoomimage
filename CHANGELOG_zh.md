@@ -2,6 +2,12 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+zoom:
+
+* new: 新增支持鼠标滚轮缩放功能。 [#35](https://github.com/panpf/zoomimage/issues/35)
+
 ## 1.1.0-alpha05
 
 subsampling:

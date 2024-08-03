@@ -19,6 +19,7 @@ package com.github.panpf.zoomimage
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -42,9 +43,9 @@ import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
 import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
 import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
 import com.github.panpf.zoomimage.compose.glide.internal.Transition
-import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.mouseScrollScale
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
@@ -149,35 +150,47 @@ fun GlideZoomAsyncImage(
         zoomState.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
     }
 
-    GlideImage(
-        model = model,
-        contentDescription = contentDescription,
-        alignment = Alignment.TopStart,
-        contentScale = ContentScale.None,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        clipToBounds = false,
-        loading = loading,
-        failure = failure,
-        transition = transition,
-        requestBuilderTransform = { requestBuilder ->
-            requestBuilderTransform(requestBuilder)
-                .centerInside()
-                .addListener(
-                    ResetListener(
-                        context = context,
-                        glide = glide,
-                        zoomState = zoomState,
-                        requestBuilder = requestBuilder,
-                        model = model
+
+    // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
+    Box(modifier = modifier.mouseScrollScale(zoomState.zoomable)) {
+        GlideImage(
+            model = model,
+            contentDescription = contentDescription,
+            alignment = Alignment.TopStart,
+            contentScale = ContentScale.None,
+            alpha = alpha,
+            colorFilter = colorFilter,
+            clipToBounds = false,
+            loading = loading,
+            failure = failure,
+            transition = transition,
+            requestBuilderTransform = { requestBuilder ->
+                requestBuilderTransform(requestBuilder)
+                    .centerInside()
+                    .addListener(
+                        ResetListener(
+                            context = context,
+                            glide = glide,
+                            zoomState = zoomState,
+                            requestBuilder = requestBuilder,
+                            model = model
+                        )
                     )
-                )
-        },
-        modifier = modifier
-            .thenIfNotNull(scrollBar) { Modifier.zoomScrollBar(zoomState.zoomable, it) }
-            .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(zoomState.zoomable, zoomState.subsampling),
-    )
+            },
+            modifier = Modifier
+                .matchParentSize()
+                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .subsampling(zoomState.zoomable, zoomState.subsampling),
+        )
+
+        if (scrollBar != null) {
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .zoomScrollBar(zoomState.zoomable, scrollBar)
+            )
+        }
+    }
 }
 
 private class ResetListener(

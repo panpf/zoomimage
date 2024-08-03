@@ -113,7 +113,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     // Turn off animations
   zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
 
@@ -146,7 +146,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     // All continuous transform types load tiles in real time
   zoomState.subsampling.pausedContinuousTransformTypes = 0
 
@@ -174,7 +174,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     // stop
   zoomState.subsampling.stopped = true
     // restart
@@ -213,7 +213,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
   zoomState.subsampling.disabledBackgroundTiles = true
 }
 
@@ -240,7 +240,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
   zoomState.subsampling.tileBitmapCache = MyTileBitmapCache()
 }
 
@@ -261,7 +261,7 @@ example:
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.subsampling) {
     // Disable memory caching
   zoomState.subsampling.disabledTileBitmapCache = true
     // Memory caching is allowed

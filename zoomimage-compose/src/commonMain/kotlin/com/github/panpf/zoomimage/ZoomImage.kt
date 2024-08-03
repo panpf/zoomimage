@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,10 +32,10 @@ import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.internal.MyImage
 import com.github.panpf.zoomimage.compose.internal.round
-import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.mouseScrollScale
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import kotlin.math.roundToInt
@@ -98,7 +99,8 @@ fun ZoomImage(
         painter.intrinsicSize.round()
     }
 
-    BoxWithConstraints(modifier = modifier) {
+    // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
+    BoxWithConstraints(modifier = modifier.mouseScrollScale(zoomState.zoomable)) {
         /*
          * Here use BoxWithConstraints and then actively set containerSize,
          * In order to prepare the transform in advance, so that when the position of the image needs to be adjusted,
@@ -122,15 +124,18 @@ fun ZoomImage(
             clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
-                .thenIfNotNull(scrollBar) { Modifier.zoomScrollBar(zoomState.zoomable, it) }
                 .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
                 .subsampling(zoomState.zoomable, zoomState.subsampling),
         )
 
-        // TODO Mouse wheel zoom
-        // TODO Ctrl plus down arrow key to step zoom
-        // TODO Shift plus arrow key to zoom slowly
-        // TODO Arrow key to move, Short press to move, long press to move continuously
-        // TODO Hold the wheel to move
+        if (scrollBar != null) {
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .zoomScrollBar(zoomState.zoomable, scrollBar)
+            )
+        }
+
+        // TODO Shift plus Arrow key to move, Short press to move, long press to move continuously
     }
 }

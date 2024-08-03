@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
@@ -44,9 +45,9 @@ import com.github.panpf.sketch.compose.internal.transformOf
 import com.github.panpf.sketch.compose.rememberAsyncImagePainter
 import com.github.panpf.sketch.compose.rememberAsyncImageState
 import com.github.panpf.sketch.request.DisplayRequest
-import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
+import com.github.panpf.zoomimage.compose.zoom.mouseScrollScale
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
@@ -368,25 +369,36 @@ fun SketchZoomAsyncImage(
             SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
     }
 
-    BaseZoomAsyncImage(
-        request = request,
-        contentDescription = contentDescription,
-        sketch = sketch,
-        state = state,
-        transform = transform,
-        onPainterState = { loadState ->
-            onPainterState(sketch, zoomState, request, loadState)
-            onPainterState?.invoke(loadState)
-        },
-        contentScale = contentScale,
-        alpha = alpha,
-        colorFilter = colorFilter,
-        filterQuality = filterQuality,
-        modifier = modifier
-            .thenIfNotNull(scrollBar) { Modifier.zoomScrollBar(zoomState.zoomable, it) }
-            .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
-            .subsampling(zoomState.zoomable, zoomState.subsampling),
-    )
+    // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
+    Box(modifier = modifier.mouseScrollScale(zoomState.zoomable)) {
+        BaseZoomAsyncImage(
+            request = request,
+            contentDescription = contentDescription,
+            sketch = sketch,
+            state = state,
+            transform = transform,
+            onPainterState = { loadState ->
+                onPainterState(sketch, zoomState, request, loadState)
+                onPainterState?.invoke(loadState)
+            },
+            contentScale = contentScale,
+            alpha = alpha,
+            colorFilter = colorFilter,
+            filterQuality = filterQuality,
+            modifier = Modifier
+                .matchParentSize()
+                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .subsampling(zoomState.zoomable, zoomState.subsampling),
+        )
+
+        if (scrollBar != null) {
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .zoomScrollBar(zoomState.zoomable, scrollBar)
+            )
+        }
+    }
 }
 
 private fun onPainterState(

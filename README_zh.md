@@ -11,13 +11,12 @@
 ZoomImage 是为 Compose Multiplatform 和 Android View 设计的用于手势缩放查看图像的库，它有以下特点和功能：
 
 * `Compose Multiplatform`. 支持 Compose Multiplatform，可在 Android、macOS、Windows、Linux 等平台使用
-* `功能齐全`. 支持双击缩放、手势缩放、单指拖动、惯性滑动等基础功能
+* `功能齐全`. 支持双击缩放、双指缩放、单指缩放、鼠标滚轮缩放、单指拖动、惯性滑动等基础功能
 * `定位`. 支持定位到图片的任意位置并保持在屏幕中央
 * `旋转`. 支持 0°, 90°, 180°, 270°, 360° 旋转图片
 * `子采样`. 支持对超大图进行子采样显示，避免 OOM，碎片支持动画以及清晰度渐变
 * `动态缩放比例`. 根据图片尺寸和容器尺寸自动计算出最合适的双击缩放比例
 * `缩放阻尼`. 手动缩放超过最大或最小缩放比例后会有带阻尼感的橡皮筋效果
-* `单指缩放`. 双击并按住屏幕上下滑动可缩放图像
 * `滚动条`. 支持显示水平和垂直滚动条，明确当前滚动位置
 * `阅读模式`. 阅读模式下显示长图时初始状态会自动充满屏幕，用户可立即开始阅读图片内容，省去用户双击放大的操作
 * `Exif`. 支持读取 Exif Orientation 信息并自动旋转图片
@@ -193,15 +192,16 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 ## 文档
 
 * [开始使用](docs/wiki/getstarted_zh.md)
-* [Zoom: 缩放、双击缩放、时长设置](docs/wiki/zoom_zh.md)
-* [Offset: 移动到指定位置](docs/wiki/offset_zh.md)
+* [Scale: 缩放图片以查看更清晰的细节](docs/wiki/scale_zh.md)
+* [Offset: 移动图片以查看容器之外的内容](docs/wiki/offset_zh.md)
+* [Rotate: 旋转图片以不同角度查看内容](docs/wiki/rotate_zh.md)
 * [Locate: 定位到图片的任意位置](docs/wiki/locate_zh.md)
-* [Rotate: 旋转图片](docs/wiki/rotate_zh.md)
-* [Read Mode: 长图初始时充满屏幕，方便阅读](docs/wiki/readmode_zh.md)
+* [Read Mode: 长图初始时充满屏幕方便阅读](docs/wiki/readmode_zh.md)
 * [Click: 接收点击事件](docs/wiki/click_zh.md)
-* [Subsampling: 对超大图进行子采样显示，避免 OOM](docs/wiki/subsampling_zh.md)
+* [Subsampling: 通过子采样的方式显示大图避免 OOM](docs/wiki/subsampling_zh.md)
 * [Scroll Bar: 显示水平和垂直滚动条](docs/wiki/scrollbar_zh.md)
 * [Log: 修改日志等级以及输出管道](docs/wiki/log_zh.md)
+* [Modifier.zoom()](docs/wiki/modifier_zoom_zh.md)
 
 ## 示例
 
@@ -245,6 +245,7 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 | 子采样                   |     ✅     |      ✅      |      ❌      |                ✅                 |
 | 子采样动画                 |     ✅     |      ❌      |      ❌      |                ❌                 |
 | 单指缩放                  |     ✅     |      ✅      |      ✅      |                ✅                 |
+| 鼠标滚轮缩放                |     ✅     |      ❌      |      ❌      |                ❌                 |
 | 动态缩放比例                |     ✅     |      ❌      |      ❌      |                ❌                 |
 | 集成图片加载器               |     ✅     |      ✅      |      ❌      |                ❌                 |
 | 丰富的交互接口               |     ✅     |      ❌      |      ✅      |                ✅                 |

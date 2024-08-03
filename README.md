@@ -8,27 +8,26 @@
 
 Translations: [简体中文](README_zh.md)
 
-ZoomImage is a library designed for Compose Multiplatform and Android View for gesture zoom viewing
+ZoomImage is a library designed for Compose Multiplatform and Android View for gesture scale viewing
 of images. It has the following features and functions:
 
 * `Compose Multiplatform`. Support for Compose Multiplatform, which can be used on Android, macOS,
   Windows, Linux and other platforms
-* `Power`. Support basic functions such as double-click zoom, gesture zoom, single-finger drag,
-  and inertial swipe
+* `Power`. Supports basic functions such as double-click scale, two-finger scale, single-finger
+  scale, mouse wheel scale, single-finger drag, and inertial sliding.
 * `Locate`. Support for locate anywhere in the image and keeping it in the center of the screen
 * `Rotate`. Supports 0°, 90°, 180°, 270°, 360° rotation of pictures
 * `Subsampling`. Support for subsampling of very large images to avoid OOM, tile support animation,
   and sharpness gradients
 * `Dynamic scale factor`. Automatically calculates the most appropriate double-click scaling factor
   based on image size and container size
-* `Scaling damping`. When manually scaled beyond the maximum or minimum zoom factor, there is a
+* `Scaling damping`. When manually scaled beyond the maximum or minimum scale factor, there is a
   damped rubber band effect
-* `One-finger scale`. Double-tap and hold the screen and slide up or down to zoom the image
 * `Scroll bar`. Supports displaying horizontal and vertical scroll bars to clarify the current
   scroll position
 * `Read Mode`. When a long image is displayed in reading mode, the initial state automatically fills
   the screen, and the user can immediately start reading the image content, eliminating the need for
-  the user to double-click to zoom in
+  the user to double-click to scale in
 * `Exif`. Support reading Exif Orientation information and automatically rotating images
 * `Image Loader`. Provide support for image loaders such as sketch, coil, glide, picasso, etc., and
   can also customize support for more image loaders
@@ -205,15 +204,16 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 ## Document
 
 * [Get Started](docs/wiki/getstarted.md)
-* [Zoom: scale, double-click scale, duration setting](docs/wiki/zoom.md)
-* [Offset: Move to the specified position](docs/wiki/offset.md)
+* [Scale: Scale the image to see clearer details](docs/wiki/scale.md)
+* [Offset: Move the image to see content outside the container](docs/wiki/offset.md)
+* [Rotate: Rotate the image to view content from different angles](docs/wiki/rotate.md)
 * [Locate: Locate anywhere in the image](docs/wiki/locate.md)
-* [Rotate: Rotate the image](docs/wiki/rotate.md)
 * [Read Mode: Long images initially fill the screen for easy reading](docs/wiki/readmode.md)
 * [Click: Receive click events](docs/wiki/click.md)
-* [Subsampling: Subsampling the display of huge image to avoid OOM](docs/wiki/subsampling.md)
+* [Subsampling: Display large images through subsampling to avoid OOM](docs/wiki/subsampling.md)
 * [Scroll Bar: Displays horizontal and vertical scroll bars](docs/wiki/scrollbar.md)
 * [Log: Modify log level and output pipeline](docs/wiki/log.md)
+* [Modifier.zoom()](docs/wiki/modifier_zoom.md)
 
 ## Samples
 
@@ -263,6 +263,7 @@ Run the sample app:
 | Subsampling           |     ✅     |      ✅      |      ❌      |                ✅                 |
 | Subsampling animation |     ✅     |      ❌      |      ❌      |                ❌                 |
 | One-finger scale      |     ✅     |      ✅      |      ✅      |                ✅                 |
+| Mouse wheel scale     |     ✅     |      ❌      |      ❌      |                ❌                 |
 | Dynamic scale factor  |     ✅     |      ❌      |      ❌      |                ❌                 |
 | Image Loader          |     ✅     |      ✅      |      ❌      |                ❌                 |
 | Rich interfaces       |     ✅     |      ❌      |      ✅      |                ✅                 |

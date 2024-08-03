@@ -32,13 +32,16 @@ annotation class GestureType {
 
         const val DOUBLE_TAP_SCALE = 8
 
-        val values = listOf(DRAG, TWO_FINGER_SCALE, ONE_FINGER_SCALE, DOUBLE_TAP_SCALE)
+        const val MOUSE_SCROLL_SCALE = 16
+
+        val values = listOf(DRAG, TWO_FINGER_SCALE, ONE_FINGER_SCALE, DOUBLE_TAP_SCALE, MOUSE_SCROLL_SCALE)
 
         fun name(@GestureType type: Int): String = when (type) {
             DRAG -> "DRAG"
             TWO_FINGER_SCALE -> "TWO_FINGER_SCALE"
             ONE_FINGER_SCALE -> "ONE_FINGER_SCALE"
             DOUBLE_TAP_SCALE -> "DOUBLE_TAP_SCALE"
+            MOUSE_SCROLL_SCALE -> "MOUSE_SCROLL_SCALE"
             else -> "UNKNOWN"
         }
 

@@ -25,7 +25,7 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
+LaunchEffect(zoomState.logger) {
     zoomState.logger.level = Logger.DEBUG
 }
 
@@ -64,4 +64,4 @@ SketchZoomAsyncImage(
 
 [ZoomState]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/compose/ZoomState.kt
 
-[Logger]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/util/Logger.kt
+[Logger]: ../../zoomimage-core/src/commonMain/kotlin/com/github/panpf/zoomimage/util/Logger.common.kt

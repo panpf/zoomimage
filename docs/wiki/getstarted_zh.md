@@ -188,15 +188,16 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 ## 文档
 
-* [Zoom: 缩放、双击缩放、时长设置](zoom_zh.md)
-* [Offset: 移动到指定位置](offset_zh.md)
+* [Scale: 缩放图片以查看更清晰的细节](scale_zh.md)
+* [Offset: 移动图片以查看容器之外的内容](offset_zh.md)
+* [Rotate: 旋转图片以不同角度查看内容](rotate_zh.md)
 * [Locate: 定位到图片的任意](locate_zh.md)
-* [Rotate: 旋转图片](rotate_zh.md)
-* [Read Mode: 长图初始时充满屏幕，方便阅读](readmode_zh.md)
+* [Read Mode: 长图初始时充满屏幕方便阅读](readmode_zh.md)
 * [Click: 接收点击事件](click_zh.md)
-* [Subsampling: 对超大图进行子采样显示，避免 OOM](subsampling_zh.md)
+* [Subsampling: 通过子采样的方式显示大图避免 OOM](subsampling_zh.md)
 * [Scroll Bar: 显示水平和垂直滚动条](scrollbar_zh.md)
 * [Log: 修改日志等级以及输出管道](log_zh.md)
+* [Modifier.zoom()](modifier_zoom_zh.md)
 
 [ZoomImage]: ../../zoomimage-compose/src/commonMain/kotlin/com/github/panpf/zoomimage/ZoomImage.kt
 
@@ -208,7 +209,7 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 
 [ZoomImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/BasicZoomImageSample.kt
 
-[CoilZoomAsyncImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomAsyncImageSample.kt
+[CoilZoomAsyncImageSample]: ../../sample/src/commonMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/CoilZoomAsyncImageSample.common.kt
 
 [GlideZoomAsyncImageSample]: ../../sample/src/androidMain/kotlin/com/github/panpf/zoomimage/sample/ui/examples/GlideZoomAsyncImageSample.kt
 

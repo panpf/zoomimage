@@ -7,9 +7,8 @@ Translations: [简体中文](offset_zh.md)
 > * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
 > * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
 
-ZoomImage supports one-finger drag, two-finger drag, inertial swipe, and the `offset()` method to
-move
-the image.
+ZoomImage supports one-finger drag, inertial swipe, and the `offset()` method to
+move the image.
 
 ### offset()
 
@@ -29,15 +28,15 @@ SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
 )
 
 val coroutineScope = rememberCoroutineScope()
 Button(
     onClick = {
         coroutineScope.launch {
-          val targetOffset = zoomState.zoomable.transform.offset + Offset(x = 100, y = 200)
-          zoomState.zoomable.offset(targetOffset = targetOffset, animated = true)
+            val targetOffset = zoomState.zoomable.transform.offset + Offset(x = 100, y = 200)
+            zoomState.zoomable.offset(targetOffset = targetOffset, animated = true)
         }
     }
 ) {
@@ -47,8 +46,8 @@ Button(
 Button(
     onClick = {
         coroutineScope.launch {
-          val targetOffset = zoomState.zoomable.transform.offset - Offset(x = 100, y = 200)
-          zoomState.zoomable.offset(targetScale = targetScale, animated = true)
+            val targetOffset = zoomState.zoomable.transform.offset - Offset(x = 100, y = 200)
+            zoomState.zoomable.offset(targetOffset = targetOffset, animated = true)
         }
     }
 ) {
@@ -72,15 +71,33 @@ example：
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
 
-LaunchEffect(Unit) {
-  zoomState.limitOffsetWithinBaseVisibleRect = true
+LaunchEffect(zoomState.zommable) {
+    zoomState.zommable.limitOffsetWithinBaseVisibleRect = true
 }
 
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
+)
+```
+
+### Turn off drag gestures
+
+ZoomImage enables drag gestures by default, but you can turn it off as follows:
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.disabledGestureTypes =
+        zoomState.zoomable.disabledGestureTypes or GestureType.DRAG
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
 )
 ```
 
