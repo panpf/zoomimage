@@ -88,6 +88,9 @@ class AppSettings(val context: PlatformContext) {
     val slowerScaleAnimation by lazy {
         booleanSettingsStateFlow(context, "slowerScaleAnimation", false)
     }
+    val reverseMouseWheelScale by lazy {
+        booleanSettingsStateFlow(context, "reverseMouseWheelScale", false)
+    }
     val scalesCalculator by lazy {
         stringSettingsStateFlow(context, "scalesCalculator", "Dynamic")
     }

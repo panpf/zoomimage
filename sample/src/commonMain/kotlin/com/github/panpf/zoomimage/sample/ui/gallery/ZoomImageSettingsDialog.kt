@@ -132,6 +132,11 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
                     desc = null,
                     state = appSettings.slowerScaleAnimation,
                 )
+                SwitchSettingItem(
+                    title = "Reverse Mouse Wheel Scale",
+                    desc = null,
+                    state = appSettings.reverseMouseWheelScale,
+                )
                 DropdownSettingItem(
                     title = "Scales Calculator",
                     desc = null,

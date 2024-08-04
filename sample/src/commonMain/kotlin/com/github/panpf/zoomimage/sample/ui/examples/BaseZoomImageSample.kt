@@ -110,6 +110,7 @@ fun <T : ZoomState> BaseZoomImageSample(
     val logLevelName by settingsService.logLevel.collectAsState()
     val animateScale by settingsService.animateScale.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
+    val reverseMouseWheelScale by settingsService.reverseMouseWheelScale.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
     val scalesCalculatorName by settingsService.scalesCalculator.collectAsState()
     val scalesMultipleString by settingsService.scalesMultiple.collectAsState()
@@ -161,6 +162,9 @@ fun <T : ZoomState> BaseZoomImageSample(
         }
         LaunchedEffect(zoomAnimationSpec) {
             zoomable.animationSpec = zoomAnimationSpec
+        }
+        LaunchedEffect(reverseMouseWheelScale) {
+            zoomable.reverseMouseWheelScale = reverseMouseWheelScale
         }
         LaunchedEffect(scalesCalculator) {
             zoomable.scalesCalculator = scalesCalculator

@@ -61,7 +61,8 @@ mediumScale, and maxScale:
     ```kotlin
     ContentScale.computeScaleFactor(srcSize, dstSize).scaleX
     ```
-* `mediumScale`：The intermediate scale multiplier is specially used for double-click scaling, and the
+* `mediumScale`：The intermediate scale multiplier is specially used for double-click scaling, and
+  the
   value is controlled by the scalesCalculator parameter
 * `maxScale`：The maximum scale multiplier is used to limit the maximum value of ZoomImage during
   scaling, and the value is controlled by the scalesCalculator parameter
@@ -252,9 +253,26 @@ SketchZoomAsyncImage(
 
 ### Mouse Wheel Scale
 
-ZoomImage supports zooming the image through the mouse wheel. ZoomImage will calculate the scale
-factor based on the rolling direction and distance of the mouse wheel. This feature is enabled by
-default, but you can turn it off as follows:
+ZoomImage supports scaling images through the mouse wheel. ZoomImage takes the current mouse
+position as the scale center and calculates the scale factor based on the rolling direction and
+distance of the mouse wheel.
+
+You can reverse mouse wheel scaling by setting the `reverseMouseWheelScale` property, as follows:
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.reverseMouseWheelScale = true
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+The mouse wheel scale function is enabled by default, but you can turn it off as follows:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()

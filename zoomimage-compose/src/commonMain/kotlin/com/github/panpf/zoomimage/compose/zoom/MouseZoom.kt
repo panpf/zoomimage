@@ -16,40 +16,86 @@
 
 package com.github.panpf.zoomimage.compose.zoom
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
-import com.github.panpf.zoomimage.compose.internal.onPointerEvent
+import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
+import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
+import androidx.compose.ui.node.DelegatingNode
+import androidx.compose.ui.node.ModifierNodeElement
 import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
 
-// TODO Change to MouseScrollScaleElement
-fun Modifier.mouseZoom(zoomableState: ZoomableState): Modifier = composed {
-    val coroutineScope = rememberCoroutineScope()
-    var pointerPosition by remember { mutableStateOf(Offset(0f, 0f)) }
-    this.onPointerEvent(PointerEventType.Scroll) {
-        if (zoomableState.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
-            coroutineScope.launch {
-                val newScale =
-                    zoomableState.transform.scaleX - (it.changes.first().scrollDelta.y * 0.33f)
-                val contentPosition = zoomableState.touchPointToContentPoint(pointerPosition)
-                zoomableState.scale(
-                    newScale,
-                    animated = true,
-                    centroidContentPoint = contentPosition
-                )
+
+/**
+ * Add mouse zoom support
+ */
+fun Modifier.mouseZoom(
+    zoomable: ZoomableState,
+): Modifier = this.then(MouseZoomElement(zoomable))
+
+
+internal data class MouseZoomElement(
+    val zoomable: ZoomableState,
+) : ModifierNodeElement<MouseZoomNode>() {
+
+    override fun create(): MouseZoomNode {
+        return MouseZoomNode(zoomable)
+    }
+
+    override fun update(node: MouseZoomNode) {
+        node.update(zoomable)
+    }
+}
+
+internal class MouseZoomNode(
+    var zoomable: ZoomableState,
+) : DelegatingNode(), CompositionLocalConsumerModifierNode {
+
+    private var pointerPosition = Offset(0f, 0f)
+
+    private val positionDelegate = delegate(SuspendingPointerInputModifierNode {
+        awaitPointerEventScope {
+            while (true) {
+                val event = awaitPointerEvent(PointerEventPass.Main)
+                if (event.type == PointerEventType.Move) {
+                    if (zoomable.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
+                        val position = event.changes.first().position
+                        pointerPosition = position
+                    }
+                }
             }
         }
-    }.onPointerEvent(PointerEventType.Move) {
-        if (zoomableState.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
-            val position = it.changes.first().position
-            pointerPosition = position
+    })
+    private val scrollDelegate = delegate(SuspendingPointerInputModifierNode {
+        awaitPointerEventScope {
+            while (true) {
+                val event = awaitPointerEvent(PointerEventPass.Main)
+                if (event.type == PointerEventType.Scroll) {
+                    if (zoomable.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
+                        coroutineScope.launch {
+                            val newScale = if (!zoomable.reverseMouseWheelScale) {
+                                zoomable.transform.scaleX - (event.changes.first().scrollDelta.y * 0.33f)
+                            } else {
+                                zoomable.transform.scaleX + (event.changes.first().scrollDelta.y * 0.33f)
+                            }
+                            val contentPosition = zoomable.touchPointToContentPoint(pointerPosition)
+                            zoomable.scale(
+                                targetScale = newScale,
+                                animated = true,
+                                centroidContentPoint = contentPosition
+                            )
+                        }
+                    }
+                }
+            }
         }
+    })
+
+    fun update(zoomable: ZoomableState) {
+        this.zoomable = zoomable
+        positionDelegate.resetPointerInputHandler()
+        scrollDelegate.resetPointerInputHandler()
     }
 }

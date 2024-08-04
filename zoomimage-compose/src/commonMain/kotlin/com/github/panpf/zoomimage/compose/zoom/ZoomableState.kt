@@ -197,6 +197,11 @@ class ZoomableState(val logger: Logger) : RememberObserver {
      */
     var disabledGestureTypes: Int by mutableIntStateOf(0)
 
+    /**
+     * Whether to reverse the scale of the mouse wheel, the default is false
+     */
+    var reverseMouseWheelScale: Boolean by mutableStateOf(false)
+
 
     /* *********************************** Information properties ******************************* */
 

@@ -227,7 +227,24 @@ SketchZoomAsyncImage(
 
 ### 鼠标滚轮缩放
 
-ZoomImage 支持通过鼠标滚轮缩放图像，ZoomImage 会根据鼠标滚轮的滚动方向和距离来计算缩放倍数。此功能默认开启，但你可以关闭它，如下：
+ZoomImage 支持通过鼠标滚轮缩放图像，ZoomImage 以当前鼠标位置为缩放中心并根据鼠标滚轮的滚动方向和距离来计算缩放倍数。
+
+你可以通过设置 `reverseMouseWheelScale` 属性来反转鼠标滚轮缩放，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.reverseMouseWheelScale = true
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+鼠标滚轮缩放功能默认开启，但你可以关闭它，如下：
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
