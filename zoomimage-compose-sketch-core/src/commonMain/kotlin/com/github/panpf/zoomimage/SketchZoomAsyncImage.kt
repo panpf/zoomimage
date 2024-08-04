@@ -45,7 +45,7 @@ import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.zoom.mouseScrollScale
+import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.sketch.SketchImageSource
@@ -192,7 +192,7 @@ fun SketchZoomAsyncImage(
 
 
     // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
-    Box(modifier = modifier.mouseScrollScale(zoomState.zoomable)) {
+    Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         BaseZoomAsyncImage(
             request = request,
             contentDescription = contentDescription,

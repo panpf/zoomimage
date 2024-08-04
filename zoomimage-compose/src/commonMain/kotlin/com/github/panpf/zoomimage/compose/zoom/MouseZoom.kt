@@ -30,7 +30,7 @@ import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
 
 // TODO Change to MouseScrollScaleElement
-fun Modifier.mouseScrollScale(zoomableState: ZoomableState): Modifier = composed {
+fun Modifier.mouseZoom(zoomableState: ZoomableState): Modifier = composed {
     val coroutineScope = rememberCoroutineScope()
     var pointerPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     this.onPointerEvent(PointerEventType.Scroll) {

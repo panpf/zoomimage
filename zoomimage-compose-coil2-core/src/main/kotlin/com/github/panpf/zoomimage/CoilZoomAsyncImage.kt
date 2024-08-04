@@ -65,7 +65,7 @@ import com.github.panpf.zoomimage.compose.coil.internal.toScale
 import com.github.panpf.zoomimage.compose.coil.internal.transformOf
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.zoom.mouseScrollScale
+import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -226,7 +226,7 @@ fun CoilZoomAsyncImage(
     }
 
     // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
-    Box(modifier = modifier.mouseScrollScale(zoomState.zoomable)) {
+    Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val context = LocalContext.current
         val request = updateRequest(requestOf(model), contentScale)
         BaseZoomAsyncImage(

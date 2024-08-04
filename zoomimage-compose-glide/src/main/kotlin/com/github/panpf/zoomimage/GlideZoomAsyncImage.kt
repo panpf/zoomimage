@@ -45,7 +45,7 @@ import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
 import com.github.panpf.zoomimage.compose.glide.internal.Transition
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
-import com.github.panpf.zoomimage.compose.zoom.mouseScrollScale
+import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
@@ -152,7 +152,7 @@ fun GlideZoomAsyncImage(
 
 
     // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
-    Box(modifier = modifier.mouseScrollScale(zoomState.zoomable)) {
+    Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         GlideImage(
             model = model,
             contentDescription = contentDescription,
