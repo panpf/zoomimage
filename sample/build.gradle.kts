@@ -137,13 +137,6 @@ kotlin {
             implementation(libs.ktor.client.contentNegotiation.wasm)
             implementation(libs.ktor.serialization.kotlinxJson.wasm)
         }
-
-        commonTest.dependencies {
-            implementation(projects.internal.testUtils)
-        }
-        androidInstrumentedTest.dependencies {
-            implementation(projects.internal.testUtils)
-        }
     }
 }
 

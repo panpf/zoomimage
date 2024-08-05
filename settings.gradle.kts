@@ -51,4 +51,6 @@ include(":zoomimage-view-sketch-core")
  */
 include(":sample")
 include(":internal:images")
-include(":internal:test-utils")
+include(":internal:test-core")
+include(":internal:test-view")
+include(":internal:test-compose")

@@ -15,14 +15,14 @@ kotlin {
         }
 
         commonTest.dependencies {
-            implementation(projects.internal.testUtils)
+            implementation(projects.internal.testCore)
         }
         desktopTest.dependencies {
             implementation(libs.coil.network.ktor)
             implementation(libs.ktor.client.java)
         }
         androidInstrumentedTest.dependencies {
-            implementation(projects.internal.testUtils)
+            implementation(projects.internal.testCore)
         }
     }
 }

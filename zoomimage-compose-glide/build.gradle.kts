@@ -17,5 +17,5 @@ dependencies {
     api(libs.google.drawablepainer)
     api(libs.kotlinx.collections.immutable)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testCompose)
 }

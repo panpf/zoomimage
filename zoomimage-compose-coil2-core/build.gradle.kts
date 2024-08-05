@@ -16,5 +16,5 @@ dependencies {
     api(libs.coil2.compose.base)
     api(libs.kotlinx.collections.immutable)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testCompose)
 }

@@ -9,5 +9,5 @@ dependencies {
     api(projects.zoomimageView)
     api(projects.zoomimageCorePicasso)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testView)
 }

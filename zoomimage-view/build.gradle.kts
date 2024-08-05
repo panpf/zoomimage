@@ -10,5 +10,5 @@ dependencies {
     api(libs.androidx.appcompat)
     api(libs.androidx.lifecycle.runtime)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testView)
 }

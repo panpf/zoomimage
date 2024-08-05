@@ -14,5 +14,5 @@ dependencies {
     api(projects.zoomimageComposeCoil2Core)
     api(libs.coil2.compose)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testCompose)
 }

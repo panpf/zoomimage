@@ -9,5 +9,5 @@ dependencies {
     api(projects.zoomimageViewSketch3Core)
     api(libs.panpf.sketch3)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testView)
 }

@@ -9,5 +9,5 @@ dependencies {
     api(projects.zoomimageViewSketchCore)
     api(libs.panpf.sketch4.view)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testView)
 }

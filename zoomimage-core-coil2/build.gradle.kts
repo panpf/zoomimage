@@ -9,5 +9,5 @@ dependencies {
     api(projects.zoomimageCore)
     api(libs.coil2.base)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testCore)
 }

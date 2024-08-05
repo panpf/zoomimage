@@ -13,5 +13,5 @@ dependencies {
     api(projects.zoomimageCore)
     api(libs.picasso)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testCore)
 }

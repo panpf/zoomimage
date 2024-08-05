@@ -6,7 +6,7 @@ plugins {
 
 addAllMultiplatformTargets()
 
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.utils")
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.core")
 
 kotlin {
     sourceSets {

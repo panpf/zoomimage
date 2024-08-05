@@ -11,5 +11,5 @@ dependencies {
     api(libs.panpf.sketch4.extensions.viewability)
     api(libs.panpf.sketch4.view.core)
 
-    androidTestImplementation(projects.internal.testUtils)
+    androidTestImplementation(projects.internal.testView)
 }
