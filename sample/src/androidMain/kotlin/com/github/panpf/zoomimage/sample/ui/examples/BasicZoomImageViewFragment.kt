@@ -17,7 +17,10 @@
 package com.github.panpf.zoomimage.sample.ui.examples
 
 import android.content.Context
+import android.graphics.drawable.Animatable
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
@@ -47,27 +50,30 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
 
     override fun loadImage(zoomView: ZoomImageView, stateView: StateView) {
         stateView.loading()
-        zoomView.apply {
-            viewLifecycleOwner.lifecycleScope.launch {
-                val request = ImageRequest(requireContext(), sketchImageUri)
-                val sketch = requireContext().sketch
-                val result = sketch.execute(request)
-                if (result is ImageResult.Success) {
-                    setImageDrawable(result.image.asDrawableOrThrow())
-                    val imageSource = sketchImageUriToZoomImageImageSource(
-                        sketch = sketch,
-                        imageUri = sketchImageUri,
-                        http2ByteArray = false
-                    )
-                    subsampling.setImageSource(imageSource)
-                    stateView.gone()
-                } else if (result is ImageResult.Error) {
-                    subsampling.setImageSource(null as ImageSource?)
-                    stateView.error {
-                        message(result.throwable)
-                        retryAction {
-                            loadData()
-                        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val request = ImageRequest(requireContext(), sketchImageUri)
+            val sketch = requireContext().sketch
+            val result = sketch.execute(request)
+            if (result is ImageResult.Success) {
+                val drawable = result.image.asDrawableOrThrow()
+                if (drawable is Animatable) {
+                    drawable.startWithLifecycle(viewLifecycleOwner.lifecycle)
+                }
+                zoomView.setImageDrawable(drawable)
+                val imageSource = sketchImageUriToZoomImageImageSource(
+                    sketch = sketch,
+                    imageUri = sketchImageUri,
+                    http2ByteArray = false
+                )
+                zoomView.subsampling.setImageSource(imageSource)
+                stateView.gone()
+            } else if (result is ImageResult.Error) {
+                zoomView.subsampling.setImageSource(null as ImageSource?)
+                stateView.error {
+                    message(result.throwable)
+                    retryAction {
+                        loadData()
                     }
                 }
             }
@@ -92,4 +98,17 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
             arguments = BasicZoomImageViewFragmentArgs(data).toBundle()
         }
     }
+}
+
+// TODO The new version of Sketch will include this extension function
+fun Animatable.startWithLifecycle(lifecycle: Lifecycle) {
+    val observer = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_START) {
+            start()
+        } else if (event == Lifecycle.Event.ON_STOP) {
+            stop()
+        }
+    }
+    // if the LifecycleOwner is in [State.STARTED] state, the given observer * will receive [Event.ON_CREATE], [Event.ON_START] events.
+    lifecycle.addObserver(observer)
 }
