@@ -18,3 +18,7 @@ kotlin {
         }
     }
 }
+
+compose.resources {
+    packageOfResClass = "com.github.panpf.zoomimage.sample.test.compose"
+}

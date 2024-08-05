@@ -20,33 +20,21 @@ import org.jetbrains.compose.resources.readResourceBytes
 fun ImageSource.Companion.fromComposeResource(
     resourcePath: String,
 ): ComposeResourceImageSource.Factory {
-    return ComposeResourceImageSource.Factory(composeResourceUriToResourcePath(resourcePath))
-}
-
-/**
- * Build a resource path that loads images from the compose resources folder
- *
- * @param resourcePath The path of the file to read in the compose resource's directory. For example:
- * * 'composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
- * * Res.getUri("files/huge_china.jpg") on android: 'jar:file:/data/app/com.github.panpf.sketch4.sample-1==/base.apk!/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
- * * Res.getUri("files/huge_china.jpg") on desktop: 'file:/Users/panpf/Workspace/zoomimage/sample/build/processedResources/desktop/main/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
- * * Res.getUri("files/huge_china.jpg") on js: 'http://localhost:8080/./composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
- * * Res.getUri("files/huge_china.jpg") on ios: 'file:///Users/panpf/Library/Developer/ CoreSimulator/Devices/F828C881-A750-432B-8210-93A84C45E/data/Containers/Bundle/Application/CBD75605-D35E-47A7-B56B-6C5690B062CC/SketchSample.app/compose-resources/composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
- * @return 'composeResources/com.github.panpf.zoomimage.sample.resources/files/huge_china.jpg'
- * @see com.github.panpf.zoomimage.compose.resources.test.ComposeResourceImageSourceTest.testComposeResourceUriToResourcePath
- */
-fun composeResourceUriToResourcePath(resourcePath: String): String {
+    var finalResourcePath: String? = null
     if (resourcePath.startsWith("composeResources/")) {
-        return resourcePath
+        finalResourcePath = resourcePath
     }
-
-    val index = resourcePath.indexOf("/composeResources/")
-    if (index != -1) {
-        val realResourcePath = resourcePath.substring(index + 1)
-        return realResourcePath
+    if (finalResourcePath == null) {
+        val index = resourcePath.indexOf("/composeResources/")
+        if (index != -1) {
+            val realResourcePath = resourcePath.substring(index + 1)
+            finalResourcePath = realResourcePath
+        }
     }
-
-    throw IllegalArgumentException("Unsupported compose resource path: $resourcePath")
+    if (finalResourcePath == null) {
+        throw IllegalArgumentException("Unsupported compose resource path: $resourcePath")
+    }
+    return ComposeResourceImageSource.Factory(finalResourcePath)
 }
 
 /**
