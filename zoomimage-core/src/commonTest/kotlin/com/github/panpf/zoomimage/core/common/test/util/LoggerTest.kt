@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.core.common.test.util
 
+import com.github.panpf.zoomimage.test.ListPipeline
 import com.github.panpf.zoomimage.util.Logger
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -299,28 +300,6 @@ class LoggerTest {
                 listOf("Info-MyTag-Hello", "flush", "flush"),
                 listPipeline.logs
             )
-        }
-    }
-
-    private class ListPipeline : Logger.Pipeline {
-
-        var logs = mutableListOf<String>()
-
-        override fun log(level: Logger.Level, tag: String, msg: String, tr: Throwable?) {
-            val finalMsg = if (tr != null) {
-                "${level}-$tag-$msg-$tr"
-            } else {
-                "${level}-$tag-$msg"
-            }
-            logs.add(finalMsg)
-        }
-
-        override fun flush() {
-            logs.add("flush")
-        }
-
-        override fun toString(): String {
-            return "ListPipeline"
         }
     }
 }

@@ -1,14 +1,10 @@
 package com.github.panpf.zoomimage.view.test.internal
 
 import com.github.panpf.zoomimage.view.internal.convert
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class ConvertorMutableStateFlowTest {
@@ -21,33 +17,54 @@ class ConvertorMutableStateFlowTest {
     @Test
     fun test() {
         val state = MutableStateFlow(0)
-            .convert { it * if (it % 2 == 0) 2 else 3 }
         assertEquals(expected = 0, actual = state.value)
 
-        state.value = 1
-        assertEquals(expected = 3, actual = state.value)
-        state.value = 2
-        assertEquals(expected = 4, actual = state.value)
-        state.value = 3
-        assertEquals(expected = 9, actual = state.value)
-        state.value = 4
-        assertEquals(expected = 8, actual = state.value)
-        state.value = 5
-        assertEquals(expected = 15, actual = state.value)
+        val convertState = state.convert { it * if (it % 2 == 0) 2 else 3 }
+        assertEquals(expected = 0, actual = convertState.value)
 
-        val list = mutableListOf<Int>()
+        convertState.value = 1
+        assertEquals(expected = 1, actual = state.value)
+        assertEquals(expected = 3, actual = convertState.value)
+
+        convertState.value = 2
+        assertEquals(expected = 2, actual = state.value)
+        assertEquals(expected = 4, actual = convertState.value)
+
+        convertState.value = 3
+        assertEquals(expected = 3, actual = state.value)
+        assertEquals(expected = 9, actual = convertState.value)
+
+        convertState.value = 4
+        assertEquals(expected = 4, actual = state.value)
+        assertEquals(expected = 8, actual = convertState.value)
+
+        convertState.value = 5
+        assertEquals(expected = 5, actual = state.value)
+        assertEquals(expected = 15, actual = convertState.value)
+
+        val list1 = mutableListOf<Int>()
         GlobalScope.launch {
             state.collect {
-                list.add(it)
+                list1.add(it)
+            }
+        }
+        val list2 = mutableListOf<Int>()
+        GlobalScope.launch {
+            convertState.collect {
+                list2.add(it)
             }
         }
         repeat(6) {
-            state.value = it
+            convertState.value = it
             Thread.sleep(100)
         }
         assertEquals(
+            expected = listOf(0, 1, 2, 3, 4, 5).joinToString(),
+            actual = list1.toList().joinToString()
+        )
+        assertEquals(
             expected = listOf(0, 3, 4, 9, 8, 15).joinToString(),
-            actual = list.toList().joinToString()
+            actual = list2.toList().joinToString()
         )
     }
 }

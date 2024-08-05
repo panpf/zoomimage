@@ -1,21 +1,67 @@
 package com.github.panpf.zoomimage.compose.common.test.internal
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.runComposeUiTest
+import androidx.compose.ui.unit.dp
+import com.github.panpf.zoomimage.compose.internal.thenIfNotNull
+import com.github.panpf.zoomimage.compose.internal.toDp
+import com.github.panpf.zoomimage.compose.internal.toPx
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
+@OptIn(ExperimentalTestApi::class)
 class ComposePlatformUtilsTest {
 
     @Test
-    fun testDpToPx() {
-        // TODO test
+    fun testDpToPx() = runComposeUiTest {
+        setContent {
+            assertEquals(
+                expected = with(LocalDensity.current) { 13.5f.dp.toPx() },
+                actual = 13.5f.dp.toPx()
+            )
+            assertEquals(
+                expected = with(LocalDensity.current) { 75.3f.dp.toPx() },
+                actual = 75.3f.dp.toPx()
+            )
+        }
     }
 
     @Test
-    fun testFloatToDp() {
-        // TODO test
+    fun testFloatToDp() = runComposeUiTest {
+        setContent {
+            assertEquals(
+                expected = with(LocalDensity.current) { 13.5f.toDp() },
+                actual = 13.5f.toDp()
+            )
+            assertEquals(
+                expected = with(LocalDensity.current) { 75.3f.toDp() },
+                actual = 75.3f.toDp()
+            )
+        }
     }
 
     @Test
     fun thenIfNotNull() {
-        // TODO test
+        val modifier = Modifier.background(Color.Red)
+        val modifier1 = modifier.thenIfNotNull(null as Int?) {
+            Modifier.border(10.dp, Color.Blue)
+        }
+        val modifier2 = modifier.thenIfNotNull(4) {
+            Modifier.border(10.dp, Color.Blue)
+        }
+        assertEquals(
+            expected = modifier,
+            actual = modifier1
+        )
+        assertNotEquals(
+            illegal = modifier2,
+            actual = modifier
+        )
     }
 }
