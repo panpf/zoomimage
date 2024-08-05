@@ -16,6 +16,10 @@ kotlin {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             api(compose.uiTest)
         }
+        androidMain.dependencies {
+            api(libs.androidx.compose.ui.test.junit4.android)
+            api(libs.androidx.compose.ui.test.manifest)
+        }
     }
 }
 

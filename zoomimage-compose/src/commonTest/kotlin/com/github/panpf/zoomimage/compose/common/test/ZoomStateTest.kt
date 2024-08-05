@@ -32,17 +32,4 @@ class ZoomStateTest {
             }
         }
     }
-
-    @Test
-    fun testToString() = runComposeUiTest {
-        setContent {
-            TestLifecycle {
-                val zoomState = rememberZoomState()
-                assertEquals(
-                    expected = "ZoomState(logger=${zoomState.logger}, zoomable=${zoomState.zoomable}, subsampling=${zoomState.subsampling})",
-                    actual = zoomState.toString()
-                )
-            }
-        }
-    }
 }

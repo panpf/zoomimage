@@ -60,9 +60,4 @@ open class ZoomState(
      * Used to control the state of subsampling
      */
     val subsampling: SubsamplingState,
-) {
-
-    override fun toString(): String {
-        return "ZoomState(logger=${logger}, zoomable=${zoomable}, subsampling=${subsampling})"
-    }
-}
+)
