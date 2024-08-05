@@ -19,6 +19,8 @@ val MoveRight = TargetKey(Key.DirectionRight, isShiftPressed = true)
 val ScaleUp = TargetKey(Key.DirectionUp, isAltPressed = true)
 val ScaleDown = TargetKey(Key.DirectionDown, isAltPressed = true)
 
+// TODO KeyZoom: Shift plus Arrow key to move, Short press to move, long press to move continuously
+// TODO KeyZoom: Ctrl plus Up and Down key to scale, Short press to scale, long press to scale continuously
 fun Modifier.keyZoom(
     moveUp: TargetKey = MoveUp,
     moveDown: TargetKey = MoveDown,
@@ -34,32 +36,26 @@ fun Modifier.keyZoom(
         true
 //        when {
 //            moveUp.check(it) -> {
-//                // TODO
 //                true
 //            }
 //
 //            moveDown.check(it) -> {
-//                // TODO
 //                true
 //            }
 //
 //            moveLeft.check(it) -> {
-//                // TODO
 //                true
 //            }
 //
 //            moveRight.check(it) -> {
-//                // TODO
 //                true
 //            }
 //
 //            scaleUp.check(it) -> {
-//                // TODO
 //                true
 //            }
 //
 //            scaleDown.check(it) -> {
-//                // TODO
 //                true
 //            }
 //

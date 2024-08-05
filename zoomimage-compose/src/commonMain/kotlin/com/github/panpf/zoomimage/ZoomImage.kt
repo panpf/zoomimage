@@ -135,7 +135,5 @@ fun ZoomImage(
                     .zoomScrollBar(zoomState.zoomable, scrollBar)
             )
         }
-
-        // TODO Shift plus Arrow key to move, Short press to move, long press to move continuously
     }
 }
