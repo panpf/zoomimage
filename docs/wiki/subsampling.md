@@ -53,16 +53,16 @@ example:
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
-LaunchedEffect(Unit) {
-  val resUri = Res.getUri("files/huge_world.jpeg")
-  val imageSource = ImageSource.fromComposeResource(resUri)
-  zoomState.subsampling.setImageSource(imageSource)
+LaunchedEffect(zoomState.subsampling) {
+    val resUri = Res.getUri("files/huge_world.jpeg")
+    val imageSource = ImageSource.fromComposeResource(resUri)
+    zoomState.subsampling.setImageSource(imageSource)
 }
 ZoomImage(
-  painter = painterResource(Res.drawable.huge_world_thumbnail),
+    painter = painterResource(Res.drawable.huge_world_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
 )
 ```
 
@@ -115,17 +115,17 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // Turn off animations
-  zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
+    zoomState.subsampling.tileAnimationSpec = TileAnimationSpec.None
 
     // Modify the duration and refresh interval of the animation
-  zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
+    zoomState.subsampling.tileAnimationSpec = TileAnimationSpec(duration = 400, interval = 16)
 }
 
 SketchZoomAsyncImage(
-  imageUri = "https://sample.com/sample.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
 )
 ```
 
@@ -148,18 +148,18 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // All continuous transform types load tiles in real time
-  zoomState.subsampling.pausedContinuousTransformTypes = 0
+    zoomState.subsampling.pausedContinuousTransformTypes = 0
 
     // All continuous transform types pause loading of tiles
-  zoomState.subsampling.pausedContinuousTransformTypes =
+    zoomState.subsampling.pausedContinuousTransformTypes =
         TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 }
 
 SketchZoomAsyncImage(
-  imageUri = "https://sample.com/sample.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
 )
 ```
 
@@ -176,16 +176,16 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // stop
-  zoomState.subsampling.stopped = true
+    zoomState.subsampling.stopped = true
     // restart
-  zoomState.subsampling.stopped = false
+    zoomState.subsampling.stopped = false
 }
 
 SketchZoomAsyncImage(
-  imageUri = "https://sample.com/sample.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
 )
 ```
 
@@ -214,14 +214,14 @@ example:
 val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-  zoomState.subsampling.disabledBackgroundTiles = true
+    zoomState.subsampling.disabledBackgroundTiles = true
 }
 
 SketchZoomAsyncImage(
-  imageUri = "https://sample.com/sample.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
 )
 ```
 
@@ -241,14 +241,14 @@ example:
 val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
-  zoomState.subsampling.tileBitmapCache = MyTileBitmapCache()
+    zoomState.subsampling.tileBitmapCache = MyTileBitmapCache()
 }
 
 ZoomImage(
-  imageUri = "https://sample.com/sample.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
 )
 ```
 
@@ -263,16 +263,16 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // Disable memory caching
-  zoomState.subsampling.disabledTileBitmapCache = true
+    zoomState.subsampling.disabledTileBitmapCache = true
     // Memory caching is allowed
-  zoomState.subsampling.disabledTileBitmapCache = false
+    zoomState.subsampling.disabledTileBitmapCache = false
 }
 
 ZoomImage(
-  imageUri = "https://sample.com/sample.jpeg",
+    imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
-  zoomState = zoomState,
+    zoomState = zoomState,
 )
 ```
 

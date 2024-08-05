@@ -48,10 +48,10 @@ Compose multiplatform：
 ```kotlin
 // 使用基础的 ZoomImage 组件
 val zoomState: ZoomState by rememberZoomState()
-LaunchedEffect(Unit) {
+LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
-  val imageSource = ImageSource.fromComposeResource(resUri)
-  zoomState.subsampling.setImageSource(imageSource)
+    val imageSource = ImageSource.fromComposeResource(resUri)
+    zoomState.subsampling.setImageSource(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),

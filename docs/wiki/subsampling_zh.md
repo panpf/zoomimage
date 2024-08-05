@@ -42,13 +42,13 @@
 
 ```kotlin
 val zoomState: ZoomState by rememberZoomState()
-LaunchedEffect(Unit) {
-  val resUri = Res.getUri("files/huge_world.jpeg")
-  val imageSource = ImageSource.fromComposeResource(resUri)
-  zoomState.subsampling.setImageSource(imageSource)
+LaunchedEffect(zoomState.subsampling) {
+    val resUri = Res.getUri("files/huge_world.jpeg")
+    val imageSource = ImageSource.fromComposeResource(resUri)
+    zoomState.subsampling.setImageSource(imageSource)
 }
 ZoomImage(
-  painter = painterResource(Res.drawable.huge_world_thumbnail),
+    painter = painterResource(Res.drawable.huge_world_thumbnail),
     contentDescription = "view image",
     modifier = Modifier.fillMaxSize(),
     zoomState = zoomState,
@@ -129,10 +129,10 @@ val zoomState: ZoomState by rememberZoomState()
 
 LaunchEffect(zoomState.subsampling) {
     // 所有连续变换类型都实时加载图块
-  zoomState.subsampling.pausedContinuousTransformTypes = 0
+    zoomState.subsampling.pausedContinuousTransformTypes = 0
 
     // 所有连续变换类型都暂停加载图块
-  zoomState.subsampling.pausedContinuousTransformTypes =
+    zoomState.subsampling.pausedContinuousTransformTypes =
         TileManager.DefaultPausedContinuousTransformType or ContinuousTransformType.GESTURE or ContinuousTransformType.FLING
 }
 

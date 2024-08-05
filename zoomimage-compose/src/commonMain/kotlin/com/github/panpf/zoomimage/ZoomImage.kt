@@ -46,17 +46,17 @@ import kotlin.math.roundToInt
  * Example usages:
  *
  * ```kotlin
- * val state: ZoomState by rememberZoomState()
+ * val zoomState: ZoomState by rememberZoomState()
  * val context = LocalContext.current
- * LaunchedEffect(Unit) {
+ * LaunchedEffect(zoomState.subsampling) {
  *     val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
- *     state.subsampling.setImageSource(imageSource)
+ *     zoomState.subsampling.setImageSource(imageSource)
  * }
  * ZoomImage(
  *     painter = painterResource(R.drawable.huge_image_thumbnail),
  *     contentDescription = "view image",
  *     modifier = Modifier.fillMaxSize(),
- *     state = state,
+ *     zoomState = zoomState,
  * )
  * ```
  *
