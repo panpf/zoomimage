@@ -33,7 +33,7 @@ import com.github.panpf.zoomimage.util.Logger
 @Composable
 fun rememberZoomState(logger: Logger = rememberZoomImageLogger()): ZoomState {
     val zoomableState = rememberZoomableState(logger)
-    val subsamplingState = rememberSubsamplingState(logger, zoomableState)
+    val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState) {
         ZoomState(logger, zoomableState, subsamplingState)
     }
@@ -61,23 +61,6 @@ open class ZoomState(
      */
     val subsampling: SubsamplingState,
 ) {
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-        other as ZoomState
-        if (logger != other.logger) return false
-        if (zoomable != other.zoomable) return false
-        if (subsampling != other.subsampling) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = logger.hashCode()
-        result = 31 * result + zoomable.hashCode()
-        result = 31 * result + subsampling.hashCode()
-        return result
-    }
 
     override fun toString(): String {
         return "ZoomState(logger=${logger}, zoomable=${zoomable}, subsampling=${subsampling})"

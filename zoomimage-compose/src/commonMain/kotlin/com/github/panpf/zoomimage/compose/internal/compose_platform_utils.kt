@@ -18,21 +18,13 @@ package com.github.panpf.zoomimage.compose.internal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.input.pointer.AwaitPointerEventScope
-import androidx.compose.ui.input.pointer.PointerEvent
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalDensity
@@ -77,28 +69,6 @@ fun <T> Modifier.thenIfNotNull(t: T?, block: (T) -> Modifier): Modifier {
         this.then(block(t))
     } else {
         this
-    }
-}
-
-/**
- * copy from 'ui-desktop/SuspendingPointerInputFilter.skiko.kt/androidx.compose.ui.input.pointer.onPointerEvent'
- */
-internal fun Modifier.onPointerEvent(
-    eventType: PointerEventType,
-    pass: PointerEventPass = PointerEventPass.Main,
-    onEvent: AwaitPointerEventScope.(event: PointerEvent) -> Unit
-): Modifier = composed {
-    val currentEventType by rememberUpdatedState(eventType)
-    val currentOnEvent by rememberUpdatedState(onEvent)
-    pointerInput(pass) {
-        awaitPointerEventScope {
-            while (true) {
-                val event = awaitPointerEvent(pass)
-                if (event.type == currentEventType) {
-                    currentOnEvent(event)
-                }
-            }
-        }
     }
 }
 

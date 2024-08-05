@@ -36,7 +36,6 @@ import com.github.panpf.zoomimage.compose.internal.isEmpty
 import com.github.panpf.zoomimage.compose.internal.toCompat
 import com.github.panpf.zoomimage.compose.internal.toPlatform
 import com.github.panpf.zoomimage.compose.internal.toShortString
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -75,13 +74,10 @@ import kotlin.math.roundToInt
  * @see com.github.panpf.zoomimage.compose.common.test.subsampling.SubsamplingStateTest.testRememberSubsamplingState
  */
 @Composable
-fun rememberSubsamplingState(
-    logger: Logger = rememberZoomImageLogger(),
-    zoomableState: ZoomableState
-): SubsamplingState {
+fun rememberSubsamplingState(zoomableState: ZoomableState): SubsamplingState {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val subsamplingState = remember(logger, zoomableState, lifecycle) {
-        SubsamplingState(logger, zoomableState, lifecycle)
+    val subsamplingState = remember(zoomableState, lifecycle) {
+        SubsamplingState(zoomableState, lifecycle)
     }
     return subsamplingState
 }
@@ -93,10 +89,11 @@ fun rememberSubsamplingState(
  */
 @Stable
 class SubsamplingState constructor(
-    val logger: Logger,
     val zoomableState: ZoomableState,
     val lifecycle: Lifecycle
 ) : RememberObserver {
+
+    val logger: Logger = zoomableState.logger
 
     private var coroutineScope: CoroutineScope? = null
     private var imageSourceFactory: ImageSource.Factory? = null

@@ -25,7 +25,7 @@ fun rememberGlideZoomState(
     logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage")
 ): GlideZoomState {
     val zoomableState = rememberZoomableState(logger)
-    val subsamplingState = rememberSubsamplingState(logger, zoomableState)
+    val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState, modelToImageSources) {
         GlideZoomState(logger, zoomableState, subsamplingState, modelToImageSources)
     }

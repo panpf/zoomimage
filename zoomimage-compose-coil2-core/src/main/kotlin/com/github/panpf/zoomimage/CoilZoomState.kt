@@ -25,7 +25,7 @@ fun rememberCoilZoomState(
     logger: Logger = rememberZoomImageLogger(tag = "CoilZoomAsyncImage"),
 ): CoilZoomState {
     val zoomableState = rememberZoomableState(logger)
-    val subsamplingState = rememberSubsamplingState(logger, zoomableState)
+    val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState, modelToImageSources) {
         CoilZoomState(logger, zoomableState, subsamplingState, modelToImageSources)
     }

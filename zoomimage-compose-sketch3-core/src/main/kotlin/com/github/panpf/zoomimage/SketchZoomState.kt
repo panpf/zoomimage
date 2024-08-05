@@ -19,7 +19,7 @@ import com.github.panpf.zoomimage.util.Logger
 @Composable
 fun rememberSketchZoomState(logger: Logger = rememberZoomImageLogger(tag = "SketchZoomAsyncImage")): SketchZoomState {
     val zoomableState = rememberZoomableState(logger)
-    val subsamplingState = rememberSubsamplingState(logger, zoomableState)
+    val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState) {
         SketchZoomState(logger, zoomableState, subsamplingState)
     }
