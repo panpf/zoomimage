@@ -19,6 +19,9 @@ package com.github.panpf.zoomimage.compose.subsampling
 import androidx.compose.ui.graphics.ImageBitmap
 import com.github.panpf.zoomimage.subsampling.TileBitmap
 
+/**
+ * [TileBitmap] implementation based on [ImageBitmap]
+ */
 interface ComposeTileBitmap : TileBitmap {
     val bitmap: ImageBitmap
 }

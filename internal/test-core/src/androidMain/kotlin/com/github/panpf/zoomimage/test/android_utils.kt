@@ -145,3 +145,17 @@ internal fun Long.formatFileSize(
 @Suppress("USELESS_ELVIS")
 internal val Bitmap.configOrNull: Bitmap.Config?
     get() = config ?: null
+
+/**
+ * Convert the object to a hexadecimal string
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.util.CoreUtilsTest.testToHexString
+ */
+fun Any.toHexString(): String = this.hashCode().toString(16)
+
+/**
+ * Get the log string description of Bitmap, it additionally contains the hexadecimal string representation of the Bitmap memory address.
+ *
+ * @see com.github.panpf.zoomimage.core.android.test.util.CoreUtilsAndroidTest.testToLogString
+ */
+fun Bitmap.toLogString(): String = "Bitmap@${toHexString()}(${width}x${height},$config)"
