@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.core.coil2.test
 import android.graphics.BitmapFactory
 import androidx.test.platform.app.InstrumentationRegistry
 import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
 import com.github.panpf.zoomimage.coil.CoilHttpImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import kotlinx.coroutines.runBlocking
@@ -84,6 +85,7 @@ class CoilHttpImageSourceTest {
     }
 
     @Test
+    @OptIn(ExperimentalCoilApi::class)
     fun testOpenSource() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageLoader = ImageLoader.Builder(context).build()

@@ -34,16 +34,19 @@ class ConvertorMutableStateTest {
         )
 
         val state1 = MyMutableState(1)
+        @Suppress("USELESS_IS_CHECK")
         assertEquals(
             expected = true,
             actual = state1 is MutableState<*>
         )
+        @Suppress("USELESS_IS_CHECK")
         assertEquals(
             expected = false,
             actual = state1 is ConvertorMutableState<*>
         )
 
         val state2 = state1.convert { it + 1 }
+        @Suppress("USELESS_IS_CHECK")
         assertEquals(
             expected = true,
             actual = state2 is MutableState<*>

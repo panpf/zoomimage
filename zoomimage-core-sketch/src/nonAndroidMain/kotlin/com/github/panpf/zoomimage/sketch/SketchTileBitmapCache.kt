@@ -29,6 +29,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapCache
  *
  * @see com.github.panpf.zoomimage.core.sketch.nonandroid.test.SketchTileBitmapCacheTest
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class SketchTileBitmapCache actual constructor(
     private val sketch: Sketch,
 ) : TileBitmapCache {

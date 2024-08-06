@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 
 @Parcelize
 @Serializable
-actual class PhotoPagerScreenParams actual constructor(
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+actual data class PhotoPagerScreenParams actual constructor(
     actual val photos: List<Photo>,
     actual val totalCount: Int,
     actual val startPosition: Int,

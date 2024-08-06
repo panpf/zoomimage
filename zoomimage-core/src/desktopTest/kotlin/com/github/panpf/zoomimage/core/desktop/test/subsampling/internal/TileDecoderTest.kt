@@ -10,6 +10,7 @@ import com.github.panpf.zoomimage.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -20,6 +21,7 @@ import kotlin.test.assertFailsWith
 
 class TileDecoderTest {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun test() {
         val logger = Logger("Test")
@@ -28,7 +30,7 @@ class TileDecoderTest {
         val scope = CoroutineScope(Dispatchers.Main)
         val dispatcher = Dispatchers.IO.limitedParallelism(3)
         val tileDecoder = TileDecoder(logger, imageSource, decodeHelper)
-        tileDecoder.use { tileDecoder ->
+        tileDecoder.use {
             assertEquals(1, tileDecoder.decoderPoolSize)
 
             val results = runBlocking {

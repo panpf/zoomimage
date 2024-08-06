@@ -16,12 +16,14 @@
 package com.github.panpf.zoomimage.sample.ui.model
 
 import android.os.Parcelable
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 @Parcelize
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual data class Photo actual constructor(
     @SerialName("originalUrl") actual val originalUrl: String,
     @SerialName("mediumUrl") actual val mediumUrl: String?,
@@ -31,7 +33,9 @@ actual data class Photo actual constructor(
     @SerialName("index") actual val index: Int?,
 ) : Parcelable, java.io.Serializable {
 
+    @IgnoredOnParcel
     actual val listThumbnailUrl: String = thumbnailUrl ?: mediumUrl ?: originalUrl
 
+    @IgnoredOnParcel
     actual val detailPreviewUrl: String = mediumUrl ?: originalUrl
 }

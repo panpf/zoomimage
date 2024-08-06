@@ -25,6 +25,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileBitmapConvertor
  *
  * @see com.github.panpf.zoomimage.compose.android.test.subsampling.ComposeTileBitmapConvertorTest
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class ComposeTileBitmapConvertor : TileBitmapConvertor {
 
     actual override suspend fun convert(tileBitmap: TileBitmap): TileBitmap {

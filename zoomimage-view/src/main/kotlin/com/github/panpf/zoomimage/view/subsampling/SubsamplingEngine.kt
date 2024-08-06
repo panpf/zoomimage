@@ -279,6 +279,7 @@ class SubsamplingEngine constructor(
         coroutineScope.launch {
             // Changes in viewSize cause a large chain reaction that can cause large memory fluctuations.
             // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
+            @Suppress("OPT_IN_USAGE")
             zoomableEngine.containerSizeState.debounce(80).collect {
                 val newTileSize = calculatePreferredTileSize(it)
                 val preferredTileSize = preferredTileSizeState.value

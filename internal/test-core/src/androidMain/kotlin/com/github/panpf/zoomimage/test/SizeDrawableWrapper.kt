@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.drawable.Drawable
 import android.util.Size
+import java.lang.Deprecated
 
 class SizeDrawableWrapper(
     val drawable: Drawable,
@@ -30,7 +31,10 @@ class SizeDrawableWrapper(
         drawable.colorFilter = colorFilter
     }
 
+    @Deprecated
+    @Suppress("DEPRECATED_JAVA_ANNOTATION")
     override fun getOpacity(): Int {
+        @Suppress("DEPRECATION")
         return drawable.opacity
     }
 }

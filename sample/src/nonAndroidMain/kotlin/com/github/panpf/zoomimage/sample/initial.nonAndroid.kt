@@ -5,9 +5,11 @@ import com.github.panpf.sketch.PlatformContext as SketchPlatformContext
 import coil3.SingletonImageLoader
 import com.github.panpf.sketch.SingletonSketch
 import com.github.panpf.zoomimage.sample.util.ignoreFirst
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
 fun cleanImageLoaderMemoryCache() {
     GlobalScope.launch {
         val sketchContext = SketchPlatformContext.INSTANCE

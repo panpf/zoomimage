@@ -32,6 +32,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapCache
  *
  * @see com.github.panpf.zoomimage.core.coil.nonandroid.test.CoilTileBitmapCacheTest
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class CoilTileBitmapCache actual constructor(
     private val imageLoader: ImageLoader
 ) : TileBitmapCache {

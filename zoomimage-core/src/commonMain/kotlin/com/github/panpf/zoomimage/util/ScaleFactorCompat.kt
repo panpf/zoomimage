@@ -62,8 +62,10 @@ value class ScaleFactorCompat internal constructor(@PublishedApi internal val pa
             return unpackFloat2(packedValue)
         }
 
+    @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
     inline operator fun component1(): Float = scaleX
 
+    @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
     inline operator fun component2(): Float = scaleY
 
     /**

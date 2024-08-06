@@ -24,6 +24,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapCache
 /**
  * Implement [TileBitmapCache] based on Sketch
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect class SketchTileBitmapCache(sketch: Sketch) : TileBitmapCache {
 
     override fun get(key: String): TileBitmap?

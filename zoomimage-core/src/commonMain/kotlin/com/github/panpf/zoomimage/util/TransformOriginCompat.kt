@@ -57,8 +57,10 @@ value class TransformOriginCompat internal constructor(@PublishedApi internal va
     val pivotFractionY: Float
         get() = unpackFloat2(packedValue)
 
+    @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
     inline operator fun component1(): Float = pivotFractionX
 
+    @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
     inline operator fun component2(): Float = pivotFractionY
 
     /**

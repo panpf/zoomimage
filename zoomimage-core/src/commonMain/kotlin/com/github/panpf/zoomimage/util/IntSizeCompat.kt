@@ -50,8 +50,10 @@ value class IntSizeCompat internal constructor(@PublishedApi internal val packed
     val height: Int
         get() = unpackInt2(packedValue)
 
+    @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
     inline operator fun component1(): Int = width
 
+    @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
     inline operator fun component2(): Int = height
 
     /**

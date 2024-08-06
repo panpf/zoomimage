@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
+
 package com.github.panpf.zoomimage.util
 
 import com.github.panpf.zoomimage.util.internal.packFloats

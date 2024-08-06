@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.view.test.internal
 
 import com.github.panpf.zoomimage.view.internal.convert
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -15,6 +16,7 @@ class ConvertorMutableStateFlowTest {
     }
 
     @Test
+    @OptIn(DelicateCoroutinesApi::class)
     fun test() {
         val state = MutableStateFlow(0)
         assertEquals(expected = 0, actual = state.value)

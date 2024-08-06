@@ -286,6 +286,7 @@ class SubsamplingState constructor(
         coroutineScope.launch {
             // Changes in containerSize cause a large chain reaction that can cause large memory fluctuations.
             // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
+            @Suppress("OPT_IN_USAGE")
             snapshotFlow { zoomableState.containerSize }.debounce(80).collect {
                 val newTileSize = calculatePreferredTileSize(it.toCompat())
                 if (preferredTileSize.isEmpty()) {

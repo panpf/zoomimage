@@ -37,6 +37,7 @@ import java.nio.ByteBuffer
  *
  * @see com.github.panpf.zoomimage.core.coil.desktop.test.CoilModelToImageSourceImplTest
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class CoilModelToImageSourceImpl : CoilModelToImageSource {
 
     actual override fun dataToImageSource(
