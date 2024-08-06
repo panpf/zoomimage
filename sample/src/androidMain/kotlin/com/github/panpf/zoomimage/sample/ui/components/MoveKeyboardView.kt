@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
 import com.github.panpf.tools4k.lang.asOrThrow
 import com.github.panpf.zoomimage.sample.R
@@ -57,7 +56,7 @@ class MoveKeyboardView @JvmOverloads constructor(
     override fun computeScroll() {
         super.computeScroll()
         if (dragHelper.continueSettling(true)) {
-            ViewCompat.postInvalidateOnAnimation(this)
+            this.postInvalidateOnAnimation()
         }
     }
 
@@ -136,7 +135,7 @@ class MoveKeyboardView @JvmOverloads constructor(
             val toLeft = (parent.width - releasedChild.width) / 2
             val toTop = (parent.height - releasedChild.height) / 2
             view.dragHelper.smoothSlideViewTo(releasedChild, toLeft, toTop)
-            ViewCompat.postInvalidateOnAnimation(view)
+            view.postInvalidateOnAnimation()
         }
 
         override fun onViewPositionChanged(

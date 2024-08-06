@@ -55,8 +55,8 @@ class PicassoComposeResourceRequestHandler : RequestHandler() {
         if (justBounds || hasConfig || data.purgeable) {
             options = BitmapFactory.Options()
             options.inJustDecodeBounds = justBounds
-            options.inInputShareable = data.purgeable
-            options.inPurgeable = data.purgeable
+//            options.inInputShareable = data.purgeable
+//            options.inPurgeable = data.purgeable
             if (hasConfig) {
                 options.inPreferredConfig = data.config
             }

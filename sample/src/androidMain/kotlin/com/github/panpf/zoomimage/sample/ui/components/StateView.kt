@@ -23,7 +23,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import com.github.panpf.tools4a.network.ktx.isNetworkConnected
 import com.github.panpf.zoomimage.sample.databinding.ViewStateBinding
-import org.apache.http.conn.ConnectTimeoutException
+import io.ktor.client.network.sockets.ConnectTimeoutException
 import java.io.FileNotFoundException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

@@ -16,6 +16,7 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
 import android.app.Application
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.AndroidViewModel
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -38,10 +39,12 @@ class PhotoPaletteViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun getPrimaryColor(): Int {
-        return (getApplication() as Application).resources.getColor(R.color.md_theme_primary)
+        val resources = (getApplication() as Application).resources
+        return ResourcesCompat.getColor(resources, R.color.md_theme_primary, null)
     }
 
     private fun getTertiaryColor(): Int {
-        return (getApplication() as Application).resources.getColor(R.color.md_theme_tertiary)
+        val resources = (getApplication() as Application).resources
+        return ResourcesCompat.getColor(resources, R.color.md_theme_tertiary, null)
     }
 }
