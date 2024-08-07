@@ -29,6 +29,10 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
 import com.squareup.picasso.checkMemoryCacheDisabled
 import com.squareup.picasso.internalMemoryPolicy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 /**
@@ -54,6 +58,7 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val convertors = mutableListOf<PicassoDataToImageSource>()
+    private var coroutineScope: CoroutineScope? = null
 
     init {
         _subsamplingEngine?.tileBitmapCacheState?.value = PicassoTileBitmapCache(Picasso.get())
@@ -158,17 +163,11 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             override fun onSuccess() {
                 _subsamplingEngine?.disabledTileBitmapCacheState?.value =
                     checkMemoryCacheDisabled(creator.internalMemoryPolicy)
-                val imageSource = if (data != null) {
-                    convertors.plus(PicassoDataToImageSourceImpl()).firstNotNullOfOrNull {
-                        it.dataToImageSource(context, Picasso.get(), data)
-                    }
-                } else {
-                    null
+                // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
+                @Suppress("OPT_IN_USAGE")
+                GlobalScope.launch(Dispatchers.Main) {
+                    _subsamplingEngine?.setImageSource(newImageSource(data))
                 }
-                if (imageSource == null) {
-                    logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported data: '$data'" }
-                }
-                _subsamplingEngine?.setImageSource(imageSource)
                 callback?.onSuccess()
             }
 
@@ -177,6 +176,17 @@ open class PicassoZoomImageView @JvmOverloads constructor(
                 callback?.onError(e)
             }
         })
+    }
+
+    private suspend fun newImageSource(data: Any?): ImageSource.Factory? {
+        if (data == null) return null
+        val imageSource = convertors.plus(PicassoDataToImageSourceImpl()).firstNotNullOfOrNull {
+            it.dataToImageSource(context, Picasso.get(), data)
+        }
+        if (imageSource == null) {
+            logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported data: '$data'" }
+        }
+        return imageSource
     }
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {

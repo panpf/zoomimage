@@ -25,7 +25,7 @@ import coil3.PlatformContext
  */
 interface CoilModelToImageSource {
 
-    fun dataToImageSource(
+    suspend fun modelToImageSource(
         context: PlatformContext,
         imageLoader: ImageLoader,
         model: Any
@@ -43,7 +43,7 @@ interface CoilModelToImageSource {
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect class CoilModelToImageSourceImpl() : CoilModelToImageSource {
 
-    override fun dataToImageSource(
+    override suspend fun modelToImageSource(
         context: PlatformContext,
         imageLoader: ImageLoader,
         model: Any

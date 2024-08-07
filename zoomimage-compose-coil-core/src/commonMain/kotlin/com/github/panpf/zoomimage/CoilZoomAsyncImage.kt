@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -69,6 +70,8 @@ import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
@@ -228,6 +231,7 @@ fun CoilZoomAsyncImage(
     // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val context = LocalPlatformContext.current
+        val coroutineScope = rememberCoroutineScope()
         val request = updateRequest(requestOf(model), contentScale)
         BaseZoomAsyncImage(
             model = request,
@@ -235,7 +239,7 @@ fun CoilZoomAsyncImage(
             imageLoader = imageLoader,
             transform = transform,
             onState = { loadState ->
-                onState(context, imageLoader, zoomState, request, loadState)
+                onState(context, coroutineScope, imageLoader, zoomState, request, loadState)
                 onState?.invoke(loadState)
             },
             contentScale = contentScale,
@@ -278,6 +282,7 @@ internal fun updateRequest(request: ImageRequest, contentScale: ContentScale): I
 
 private fun onState(
     context: PlatformContext,
+    coroutineScope: CoroutineScope,
     imageLoader: ImageLoader,
     zoomState: CoilZoomState,
     request: ImageRequest,
@@ -297,14 +302,16 @@ private fun onState(
         is State.Success -> {
             zoomState.subsampling.disabledTileBitmapCache =
                 request.memoryCachePolicy != CachePolicy.ENABLED
-            val model = request.data
-            val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {
-                it.dataToImageSource(context, imageLoader, model)
+            coroutineScope.launch {
+                val model = request.data
+                val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {
+                    it.modelToImageSource(context, imageLoader, model)
+                }
+                if (imageSource == null) {
+                    zoomState.subsampling.logger.w { "CoilZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
+                }
+                zoomState.subsampling.setImageSource(imageSource)
             }
-            if (imageSource == null) {
-                zoomState.subsampling.logger.w { "CoilZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
-            }
-            zoomState.subsampling.setImageSource(imageSource)
         }
 
         else -> {

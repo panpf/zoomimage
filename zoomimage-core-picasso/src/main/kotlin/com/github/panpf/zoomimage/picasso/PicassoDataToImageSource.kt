@@ -31,7 +31,7 @@ import java.io.File
  * Convert picasso data to [ImageSource.Factory]
  */
 interface PicassoDataToImageSource {
-    fun dataToImageSource(context: Context, picasso: Picasso, data: Any): ImageSource.Factory?
+    suspend fun dataToImageSource(context: Context, picasso: Picasso, data: Any): ImageSource.Factory?
 }
 
 /**
@@ -41,7 +41,7 @@ interface PicassoDataToImageSource {
  */
 class PicassoDataToImageSourceImpl : PicassoDataToImageSource {
 
-    override fun dataToImageSource(
+    override suspend fun dataToImageSource(
         context: Context,
         picasso: Picasso,
         data: Any

@@ -11,7 +11,7 @@ import com.github.panpf.zoomimage.subsampling.toFactory
 
 class CoilKotlinResourceToImageSource : CoilModelToImageSource {
 
-    override fun dataToImageSource(
+    override suspend fun modelToImageSource(
         context: PlatformContext,
         imageLoader: ImageLoader,
         model: Any

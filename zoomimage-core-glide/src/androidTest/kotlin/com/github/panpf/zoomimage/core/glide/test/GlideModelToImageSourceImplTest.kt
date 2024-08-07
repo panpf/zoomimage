@@ -13,6 +13,7 @@ import com.github.panpf.zoomimage.subsampling.FileImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource.WrapperFactory
 import com.github.panpf.zoomimage.subsampling.ResourceImageSource
 import com.github.panpf.zoomimage.subsampling.toFactory
+import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
 import java.io.File
 import java.net.URL
@@ -22,7 +23,7 @@ import kotlin.test.assertEquals
 class GlideModelToImageSourceImplTest {
 
     @Test
-    fun test() {
+    fun test() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val glide = Glide.get(context)
         val modelToImageSource = GlideModelToImageSourceImpl()
@@ -30,11 +31,11 @@ class GlideModelToImageSourceImplTest {
         val httpUri = "http://www.example.com/image.jpg"
         assertEquals(
             expected = GlideHttpImageSource.Factory(glide, httpUri),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), httpUri)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), httpUri)
         )
         assertEquals(
             expected = GlideHttpImageSource.Factory(glide, httpUri),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 httpUri.toUri()
@@ -42,11 +43,15 @@ class GlideModelToImageSourceImplTest {
         )
         assertEquals(
             expected = GlideHttpImageSource.Factory(glide, httpUri),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), URL(httpUri))
+            actual = modelToImageSource.modelToImageSource(
+                context,
+                Glide.get(context),
+                URL(httpUri)
+            )
         )
         assertEquals(
             expected = GlideHttpImageSource.Factory(glide, httpUri),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 GlideUrl(httpUri)
@@ -56,11 +61,11 @@ class GlideModelToImageSourceImplTest {
         val httpsUri = "https://www.example.com/image.jpg"
         assertEquals(
             expected = GlideHttpImageSource.Factory(glide, httpsUri),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), httpsUri)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), httpsUri)
         )
         assertEquals(
             expected = GlideHttpImageSource.Factory(glide, httpsUri),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 httpsUri.toUri()
@@ -68,7 +73,7 @@ class GlideModelToImageSourceImplTest {
         )
         assertEquals(
             expected = GlideHttpImageSource.Factory(glide, httpsUri),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 URL(httpsUri)
@@ -76,7 +81,7 @@ class GlideModelToImageSourceImplTest {
         )
         assertEquals(
             expected = GlideHttpImageSource.Factory(glide, httpsUri),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 GlideUrl(httpsUri)
@@ -86,11 +91,11 @@ class GlideModelToImageSourceImplTest {
         val contentUri = "content://myapp/image.jpg"
         assertEquals(
             expected = ContentImageSource(context, contentUri.toUri()).toFactory(),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), contentUri)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), contentUri)
         )
         assertEquals(
             expected = ContentImageSource(context, contentUri.toUri()).toFactory(),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 contentUri.toUri()
@@ -101,11 +106,11 @@ class GlideModelToImageSourceImplTest {
         val assetFileName = assetUri.toUri().pathSegments.drop(1).joinToString("/")
         assertEquals(
             expected = AssetImageSource(context, assetFileName).toFactory(),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), assetUri)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), assetUri)
         )
         assertEquals(
             expected = AssetImageSource(context, assetFileName).toFactory(),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 assetUri.toUri()
@@ -115,11 +120,11 @@ class GlideModelToImageSourceImplTest {
         val pathUri = "/sdcard/image.jpg"
         assertEquals(
             expected = FileImageSource(pathUri.toPath()).toFactory(),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), pathUri)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), pathUri)
         )
         assertEquals(
             expected = FileImageSource(pathUri.toPath()).toFactory(),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 pathUri.toUri()
@@ -129,11 +134,11 @@ class GlideModelToImageSourceImplTest {
         val fileUri = "file:///sdcard/image.jpg"
         assertEquals(
             expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), fileUri)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), fileUri)
         )
         assertEquals(
             expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 fileUri.toUri()
@@ -141,7 +146,7 @@ class GlideModelToImageSourceImplTest {
         )
         assertEquals(
             expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-            actual = modelToImageSource.dataToImageSource(
+            actual = modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 fileUri.toUri()
@@ -151,19 +156,19 @@ class GlideModelToImageSourceImplTest {
         val file = File("/sdcard/image.jpg")
         assertEquals(
             expected = FileImageSource(file).toFactory(),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), file)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), file)
         )
 
         val resourceId = com.github.panpf.zoomimage.images.R.raw.huge_card
         assertEquals(
             expected = ResourceImageSource(context, resourceId).toFactory(),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), resourceId)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), resourceId)
         )
 
         val resourceNameUri = "android.resource://${context.packageName}/raw/huge_card"
         assertEquals(
             expected = resourceId,
-            actual = ((modelToImageSource.dataToImageSource(
+            actual = ((modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 resourceNameUri
@@ -171,7 +176,7 @@ class GlideModelToImageSourceImplTest {
         )
         assertEquals(
             expected = resourceId,
-            actual = ((modelToImageSource.dataToImageSource(
+            actual = ((modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 resourceNameUri.toUri()
@@ -179,7 +184,7 @@ class GlideModelToImageSourceImplTest {
         )
         assertEquals(
             expected = resourceId,
-            actual = ((modelToImageSource.dataToImageSource(
+            actual = ((modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 resourceNameUri.toUri()
@@ -189,7 +194,7 @@ class GlideModelToImageSourceImplTest {
         val resourceIntUri = "android.resource://${context.packageName}/${resourceId}"
         assertEquals(
             expected = resourceId,
-            actual = ((modelToImageSource.dataToImageSource(
+            actual = ((modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 resourceIntUri
@@ -197,7 +202,7 @@ class GlideModelToImageSourceImplTest {
         )
         assertEquals(
             expected = resourceId,
-            actual = ((modelToImageSource.dataToImageSource(
+            actual = ((modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 resourceIntUri.toUri()
@@ -205,7 +210,7 @@ class GlideModelToImageSourceImplTest {
         )
         assertEquals(
             expected = resourceId,
-            actual = ((modelToImageSource.dataToImageSource(
+            actual = ((modelToImageSource.modelToImageSource(
                 context,
                 Glide.get(context),
                 resourceIntUri.toUri()
@@ -215,7 +220,7 @@ class GlideModelToImageSourceImplTest {
         val byteArray = "Hello".toByteArray()
         assertEquals(
             expected = ByteArrayImageSource(byteArray).toFactory(),
-            actual = modelToImageSource.dataToImageSource(context, Glide.get(context), byteArray)
+            actual = modelToImageSource.modelToImageSource(context, Glide.get(context), byteArray)
         )
     }
 }

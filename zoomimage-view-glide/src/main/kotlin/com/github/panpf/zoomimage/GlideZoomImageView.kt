@@ -26,6 +26,11 @@ import com.bumptech.glide.request.SingleRequest
 import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
+import com.github.panpf.zoomimage.subsampling.ImageSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 /**
  * An ImageView that integrates the Glide image loading framework that zoom and subsampling huge images
@@ -49,6 +54,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val convertors = mutableListOf<GlideModelToImageSource>()
+    private var coroutineScope: CoroutineScope? = null
 
     init {
         val glide = Glide.get(context)
@@ -65,9 +71,16 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        coroutineScope = CoroutineScope(Dispatchers.Main)
         if (drawable != null) {
             resetImageSource()
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        coroutineScope?.cancel("onDetachedFromWindow")
+        coroutineScope = null
     }
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
@@ -82,6 +95,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
             if (!isAttachedToWindow) {
                 return@post
             }
+            val coroutineScope = coroutineScope ?: return@post
             val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)
             if (request == null) {
                 logger.d { "GlideZoomImageView. Can't use Subsampling, request is null" }
@@ -96,20 +110,24 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 return@post
             }
             _subsamplingEngine?.disabledTileBitmapCacheState?.value = isDisableMemoryCache(request)
-            val model = request.internalModel
-            val imageSource = if (model != null) {
-                convertors.plus(GlideModelToImageSourceImpl())
-                    .firstNotNullOfOrNull {
-                        it.dataToImageSource(context, Glide.get(context), model)
-                    }
-            } else {
-                null
+            coroutineScope.launch {
+                _subsamplingEngine?.setImageSource(newImageSource(request.internalModel))
             }
-            if (imageSource == null) {
-                logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
-            }
-            _subsamplingEngine?.setImageSource(imageSource)
         }
+    }
+
+    private suspend fun newImageSource(model: Any?): ImageSource.Factory? {
+        if (model == null) {
+            return null
+        }
+        val imageSource = convertors.plus(GlideModelToImageSourceImpl())
+            .firstNotNullOfOrNull {
+                it.modelToImageSource(context, Glide.get(context), model)
+            }
+        if (imageSource == null) {
+            logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
+        }
+        return imageSource
     }
 
     private fun isDisableMemoryCache(request: SingleRequest<*>): Boolean {

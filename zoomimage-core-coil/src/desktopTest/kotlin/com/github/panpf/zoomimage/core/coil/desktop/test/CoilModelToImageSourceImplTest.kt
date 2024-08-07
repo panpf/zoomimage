@@ -31,74 +31,74 @@ class CoilModelToImageSourceImplTest {
             val httpUri = "http://www.example.com/image.jpg"
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, httpUri)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, httpUri)
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, httpUri.toUri())
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, httpUri.toUri())
             )
             assertEquals(
                 expected = null,
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, URL(httpUri))
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, URL(httpUri))
             )
 
             val httpsUri = "https://www.example.com/image.jpg"
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, httpsUri)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, httpsUri)
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, httpsUri.toUri())
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, httpsUri.toUri())
             )
             assertEquals(
                 expected = null,
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, URL(httpsUri))
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, URL(httpsUri))
             )
 
             val pathUri = "/sdcard/image.jpg"
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, pathUri)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, pathUri)
             )
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, pathUri.toUri())
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, pathUri.toUri())
             )
 
             val fileUri = "file:///sdcard/image.jpg"
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, fileUri)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, fileUri)
             )
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, fileUri.toUri())
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, fileUri.toUri())
             )
 
             val path = "/sdcard/image.jpg".toPath()
             assertEquals(
                 expected = FileImageSource(path).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, path)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, path)
             )
 
             val file = File("/sdcard/image.jpg")
             assertEquals(
                 expected = FileImageSource(file).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, file)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, file)
             )
 
             val byteArray = "Hello".toByteArray()
             assertEquals(
                 expected = ByteArrayImageSource(byteArray).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, byteArray)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, byteArray)
             )
 
             val byteBuffer = ByteBuffer.wrap("Hello".toByteArray())
             assertEquals(
                 expected = ByteArrayImageSource(
                     byteBuffer.asSource().buffer().use { it.readByteArray() }).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, byteBuffer)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, byteBuffer)
             )
         } finally {
             imageLoader.shutdown()

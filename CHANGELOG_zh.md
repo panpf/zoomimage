@@ -7,6 +7,7 @@
 zoom:
 
 * new: 新增支持鼠标滚轮缩放功能。 [#35](https://github.com/panpf/zoomimage/issues/35)
+* broken: CoilModelToImageSource、GlideModelToImageSource、PicassoDataToImageSource 接口的 \*ToImageSource 方法添加 suspend 修饰符 
 
 ## 1.1.0-alpha05
 

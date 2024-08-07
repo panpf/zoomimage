@@ -27,6 +27,8 @@ import com.github.panpf.zoomimage.subsampling.fromContent
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.subsampling.toFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okio.Buffer
 import okio.Path
 import okio.Path.Companion.toPath
@@ -44,7 +46,7 @@ import java.nio.ByteBuffer
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class CoilModelToImageSourceImpl : CoilModelToImageSource {
 
-    actual override fun dataToImageSource(
+    actual override suspend fun modelToImageSource(
         context: PlatformContext,
         imageLoader: ImageLoader,
         model: Any
@@ -120,7 +122,9 @@ actual class CoilModelToImageSourceImpl : CoilModelToImageSource {
             }
 
             model is ByteBuffer -> {
-                val byteArray: ByteArray = model.asSource().buffer().use { it.readByteArray() }
+                val byteArray: ByteArray = withContext(Dispatchers.IO) {
+                    model.asSource().buffer().use { it.readByteArray() }
+                }
                 ImageSource.fromByteArray(byteArray).toFactory()
             }
 

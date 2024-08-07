@@ -34,7 +34,7 @@ import java.net.URL
  * Convert the glide model to [ImageSource.Factory]
  */
 interface GlideModelToImageSource {
-    fun dataToImageSource(context: Context, glide: Glide, model: Any): ImageSource.Factory?
+    suspend fun modelToImageSource(context: Context, glide: Glide, model: Any): ImageSource.Factory?
 }
 
 /**
@@ -44,7 +44,7 @@ interface GlideModelToImageSource {
  */
 class GlideModelToImageSourceImpl : GlideModelToImageSource {
 
-    override fun dataToImageSource(context: Context, glide: Glide, model: Any): ImageSource.Factory? {
+    override suspend fun modelToImageSource(context: Context, glide: Glide, model: Any): ImageSource.Factory? {
         val uri = when (model) {
             is String -> android.net.Uri.parse(model)
             is android.net.Uri -> model

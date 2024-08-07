@@ -26,6 +26,8 @@ import com.github.panpf.zoomimage.subsampling.fromContent
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.fromResource
 import com.github.panpf.zoomimage.subsampling.toFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.HttpUrl
 import okio.Buffer
 import okio.Path.Companion.toPath
@@ -40,7 +42,7 @@ import java.nio.ByteBuffer
  */
 interface CoilModelToImageSource {
 
-    fun dataToImageSource(
+    suspend fun modelToImageSource(
         context: Context,
         imageLoader: ImageLoader,
         model: Any
@@ -54,7 +56,7 @@ interface CoilModelToImageSource {
  */
 class CoilModelToImageSourceImpl : CoilModelToImageSource {
 
-    override fun dataToImageSource(
+    override suspend fun modelToImageSource(
         context: Context,
         imageLoader: ImageLoader,
         model: Any
@@ -129,7 +131,9 @@ class CoilModelToImageSourceImpl : CoilModelToImageSource {
             }
 
             model is ByteBuffer -> {
-                val byteArray: ByteArray = model.asSource().buffer().use { it.readByteArray() }
+                val byteArray: ByteArray = withContext(Dispatchers.IO) {
+                    model.asSource().buffer().use { it.readByteArray() }
+                }
                 ImageSource.fromByteArray(byteArray).toFactory()
             }
 

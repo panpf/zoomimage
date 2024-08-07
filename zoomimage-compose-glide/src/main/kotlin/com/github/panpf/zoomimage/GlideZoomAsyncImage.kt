@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -49,6 +50,9 @@ import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.compose.zoom.zoomScrollBar
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
+import com.github.panpf.zoomimage.subsampling.ImageSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
 /**
@@ -150,9 +154,9 @@ fun GlideZoomAsyncImage(
         zoomState.subsampling.tileBitmapCache = GlideTileBitmapCache(glide)
     }
 
-
     // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
+        val coroutineScope = rememberCoroutineScope()
         GlideImage(
             model = model,
             contentDescription = contentDescription,
@@ -170,6 +174,7 @@ fun GlideZoomAsyncImage(
                     .addListener(
                         ResetListener(
                             context = context,
+                            coroutineScope = coroutineScope,
                             glide = glide,
                             zoomState = zoomState,
                             requestBuilder = requestBuilder,
@@ -195,6 +200,7 @@ fun GlideZoomAsyncImage(
 
 private class ResetListener(
     private val context: Context,
+    private val coroutineScope: CoroutineScope,
     private val glide: Glide,
     private val zoomState: GlideZoomState,
     private val requestBuilder: RequestBuilder<Drawable>,
@@ -230,23 +236,28 @@ private class ResetListener(
             ?.takeIf { it.isNotEmpty() }
         zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
-        val imageSource = if (resource != null) {
+        if (resource != null) {
             zoomState.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
-            val imageSource = if (model != null) {
-                zoomState.modelToImageSources.firstNotNullOfOrNull {
-                    it.dataToImageSource(context, glide, model)
-                }
-            } else {
-                null
-            }
-            if (imageSource == null) {
-                zoomState.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
-            }
-            imageSource
-        } else {
-            null
         }
-        zoomState.subsampling.setImageSource(imageSource)
+        coroutineScope.launch {
+            zoomState.subsampling.setImageSource(newImageSource(resource, model))
+        }
+    }
+
+    private suspend fun newImageSource(resource: Drawable?, model: Any?): ImageSource.Factory? {
+        if (resource == null) {
+            return null
+        }
+        if (model == null) {
+            return null
+        }
+        val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {
+            it.modelToImageSource(context, glide, model)
+        }
+        if (imageSource == null) {
+            zoomState.subsampling.logger.w { "GlideZoomAsyncImage. Can't use Subsampling, unsupported model='$model'" }
+        }
+        return imageSource
     }
 }
 

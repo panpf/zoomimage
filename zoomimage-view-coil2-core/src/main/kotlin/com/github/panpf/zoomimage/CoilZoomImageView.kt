@@ -32,6 +32,10 @@ import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 /**
  * An ImageView that integrates the Coil image loading framework that zoom and subsampling huge images
@@ -55,6 +59,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val convertors = mutableListOf<CoilModelToImageSource>()
+    private var coroutineScope: CoroutineScope? = null
 
     fun registerModelToImageSource(convertor: CoilModelToImageSource) {
         convertors.add(0, convertor)
@@ -66,9 +71,16 @@ open class CoilZoomImageView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        coroutineScope = CoroutineScope(Dispatchers.Main)
         if (drawable != null) {
             resetImageSource()
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        coroutineScope?.cancel("onDetachedFromWindow")
+        coroutineScope = null
     }
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
@@ -83,6 +95,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
             if (!isAttachedToWindow) {
                 return@post
             }
+            val coroutineScope = coroutineScope ?: return@post
             val result = CoilUtils.result(this)
             if (result == null) {
                 logger.d { "CoilZoomImageView. Can't use Subsampling, result is null" }
@@ -102,7 +115,9 @@ open class CoilZoomImageView @JvmOverloads constructor(
                     tileBitmapCacheState.value = CoilTileBitmapCache(imageLoader)
                 }
                 disabledTileBitmapCacheState.value = isDisallowMemoryCache(result)
-                setImageSource(newImageSource(imageLoader, result))
+                coroutineScope.launch {
+                    setImageSource(newImageSource(imageLoader, result))
+                }
             }
         }
     }
@@ -111,7 +126,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
         return result.request.memoryCachePolicy != CachePolicy.ENABLED
     }
 
-    private fun newImageSource(
+    private suspend fun newImageSource(
         imageLoader: ImageLoader,
         result: SuccessResult
     ): ImageSource.Factory? {
@@ -132,7 +147,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
         val model = result.request.data
         val imageSource = convertors.plus(CoilModelToImageSourceImpl())
             .firstNotNullOfOrNull {
-                it.dataToImageSource(context, imageLoader, model)
+                it.modelToImageSource(context, imageLoader, model)
             }
         if (imageSource == null) {
             logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }

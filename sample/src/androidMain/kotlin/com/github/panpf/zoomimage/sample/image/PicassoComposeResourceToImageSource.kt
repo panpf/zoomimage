@@ -11,7 +11,7 @@ import com.squareup.picasso.Picasso
 
 class PicassoComposeResourceToImageSource : PicassoDataToImageSource {
 
-    override fun dataToImageSource(
+    override suspend fun dataToImageSource(
         context: Context,
         picasso: Picasso,
         data: Any

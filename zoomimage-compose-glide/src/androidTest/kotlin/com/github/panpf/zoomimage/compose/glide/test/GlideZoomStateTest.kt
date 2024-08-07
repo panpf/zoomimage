@@ -59,7 +59,7 @@ class GlideZoomStateTest {
 
     class TestGlideModelToImageSource : GlideModelToImageSource {
 
-        override fun dataToImageSource(
+        override suspend fun modelToImageSource(
             context: Context,
             glide: Glide,
             model: Any

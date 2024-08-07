@@ -59,7 +59,7 @@ class CoilZoomStateTest {
 
     class TestCoilModelToImageSource : CoilModelToImageSource {
 
-        override fun dataToImageSource(
+        override suspend fun modelToImageSource(
             context: Context,
             imageLoader: ImageLoader,
             model: Any

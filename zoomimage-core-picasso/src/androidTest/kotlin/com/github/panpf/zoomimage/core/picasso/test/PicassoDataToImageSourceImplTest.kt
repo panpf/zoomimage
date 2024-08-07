@@ -11,6 +11,7 @@ import com.github.panpf.zoomimage.subsampling.ImageSource.WrapperFactory
 import com.github.panpf.zoomimage.subsampling.ResourceImageSource
 import com.github.panpf.zoomimage.subsampling.toFactory
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
 import java.io.File
 import java.net.URL
@@ -20,7 +21,7 @@ import kotlin.test.assertEquals
 class PicassoDataToImageSourceImplTest {
 
     @Test
-    fun test() {
+    fun test() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val glide = Picasso.get()
         val modelToImageSource = PicassoDataToImageSourceImpl()

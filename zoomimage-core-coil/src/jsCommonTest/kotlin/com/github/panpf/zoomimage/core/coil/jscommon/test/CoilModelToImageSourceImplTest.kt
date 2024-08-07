@@ -24,21 +24,21 @@ class CoilModelToImageSourceImplTest {
             val httpUri = "http://www.example.com/image.jpg"
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, httpUri)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, httpUri)
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, httpUri.toUri())
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, httpUri.toUri())
             )
 
             val httpsUri = "https://www.example.com/image.jpg"
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, httpsUri)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, httpsUri)
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpsUri),
-                actual = modelToImageSource.dataToImageSource(
+                actual = modelToImageSource.modelToImageSource(
                     context,
                     imageLoader,
                     httpsUri.toUri()
@@ -48,33 +48,33 @@ class CoilModelToImageSourceImplTest {
             val pathUri = "/sdcard/image.jpg"
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, pathUri)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, pathUri)
             )
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, pathUri.toUri())
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, pathUri.toUri())
             )
 
             val fileUri = "file:///sdcard/image.jpg"
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, fileUri)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, fileUri)
             )
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, fileUri.toUri())
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, fileUri.toUri())
             )
 
             val path = "/sdcard/image.jpg".toPath()
             assertEquals(
                 expected = FileImageSource(path).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, path)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, path)
             )
 
             val byteArray = "Hello".encodeToByteArray()
             assertEquals(
                 expected = ByteArrayImageSource(byteArray).toFactory(),
-                actual = modelToImageSource.dataToImageSource(context, imageLoader, byteArray)
+                actual = modelToImageSource.modelToImageSource(context, imageLoader, byteArray)
             )
         } finally {
             imageLoader.shutdown()
