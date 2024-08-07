@@ -10,6 +10,9 @@ import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.toIntRect
+import androidx.compose.ui.unit.toOffset
+import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.internal.ScaleFactor
 import com.github.panpf.zoomimage.compose.internal.TopStart
 import com.github.panpf.zoomimage.compose.internal.format
@@ -1441,12 +1444,9 @@ class ZoomableStateTest {
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBounds.right + 1f
-                    val addOffsetX = targetOffsetX - zoomable.userTransform.offsetX
+                    val addOffset = Offset(targetOffsetX - zoomable.userTransform.offsetX, 0f)
                     zoomable.offset(
-                        targetOffset = zoomable.transform.offset + Offset(
-                            addOffsetX,
-                            0f
-                        ), animated = false
+                        targetOffset = zoomable.transform.offset + addOffset, animated = false
                     )
                 }
             }
@@ -1486,12 +1486,9 @@ class ZoomableStateTest {
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                     val targetOffsetX = zoomable.userOffsetBounds.left - 1f
-                    val addOffsetX = targetOffsetX - zoomable.userTransform.offsetX
+                    val addOffset = Offset(targetOffsetX - zoomable.userTransform.offsetX, 0f)
                     zoomable.offset(
-                        targetOffset = zoomable.transform.offset + Offset(
-                            addOffsetX,
-                            0f
-                        ), animated = false
+                        targetOffset = zoomable.transform.offset + addOffset, animated = false
                     )
                 }
             }
@@ -1531,12 +1528,9 @@ class ZoomableStateTest {
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                     val targetOffsetY = zoomable.userOffsetBounds.bottom + 1f
-                    val addOffsetY = targetOffsetY - zoomable.userTransform.offsetY
+                    val addOffset = Offset(0f, targetOffsetY - zoomable.userTransform.offsetY)
                     zoomable.offset(
-                        targetOffset = zoomable.transform.offset + Offset(
-                            0f,
-                            addOffsetY
-                        ), animated = false
+                        targetOffset = zoomable.transform.offset + addOffset, animated = false
                     )
                 }
             }
@@ -1576,12 +1570,9 @@ class ZoomableStateTest {
                 LaunchedEffect(Unit) {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                     val targetOffsetY = zoomable.userOffsetBounds.top - 1f
-                    val addOffsetY = targetOffsetY - zoomable.userTransform.offsetY
+                    val addOffset = Offset(0f, targetOffsetY - zoomable.userTransform.offsetY)
                     zoomable.offset(
-                        targetOffset = zoomable.transform.offset + Offset(
-                            0f,
-                            addOffsetY
-                        ), animated = false
+                        targetOffset = zoomable.transform.offset + addOffset, animated = false
                     )
                 }
             }
@@ -2186,22 +2177,1426 @@ class ZoomableStateTest {
 
     @Test
     fun testOffset() {
-        // TODO test
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-1, 0, -1, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.34f),
+                    offset = Offset(244.0f, 0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(targetScale = 20f, animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.34f),
+                    offset = Offset(244.0f, 0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(53.09f),
+                    offset = Offset(-13470.12f, -13440.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(18.0f),
+                    offset = Offset(-515.42f, -13440.0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale offset top start in bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(targetScale = 20f, animated = false)
+                    val targetOffsetX = zoomable.userOffsetBounds.right - 1f
+                    val targetOffsetY = zoomable.userOffsetBounds.bottom - 1f
+                    val addOffset = Offset(
+                        x = targetOffsetX - zoomable.userTransform.offsetX,
+                        y = targetOffsetY - zoomable.userTransform.offsetY
+                    )
+                    zoomable.offset(
+                        targetOffset = zoomable.transform.offset + addOffset, animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.34f),
+                    offset = Offset(244.0f, 0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(53.09f),
+                    offset = Offset(-12956.0f, -1.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(18.0f),
+                    offset = Offset(-1.3f, -1.0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale offset top start out bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(targetScale = 20f, animated = false)
+                    val targetOffsetX = zoomable.userOffsetBounds.right + 1f
+                    val targetOffsetY = zoomable.userOffsetBounds.bottom + 1f
+                    val addOffset = Offset(
+                        x = targetOffsetX - zoomable.userTransform.offsetX,
+                        y = targetOffsetY - zoomable.userTransform.offsetY
+                    )
+                    zoomable.offset(
+                        targetOffset = zoomable.transform.offset + addOffset, animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.34f),
+                    offset = Offset(244.0f, 0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(53.09f),
+                    offset = Offset(-12955.0f, 0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(18.0f),
+                    offset = Offset(-0.3f, 0.0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale offset bottom end in bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(targetScale = 20f, animated = false)
+                    val targetOffsetX = zoomable.userOffsetBounds.left + 1f
+                    val targetOffsetY = zoomable.userOffsetBounds.top + 1f
+                    val addOffset = Offset(
+                        x = targetOffsetX - zoomable.userTransform.offsetX,
+                        y = targetOffsetY - zoomable.userTransform.offsetY
+                    )
+                    zoomable.offset(
+                        targetOffset = zoomable.transform.offset + addOffset, animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.34f),
+                    offset = Offset(244.0f, 0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(53.09f),
+                    offset = Offset(-13986.0f, -26879.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(18.0f),
+                    offset = Offset(-1031.3f, -26879.0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale offset top bottom end bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(targetScale = 20f, animated = false)
+                    val targetOffsetX = zoomable.userOffsetBounds.left - 1f
+                    val targetOffsetY = zoomable.userOffsetBounds.top - 1f
+                    val addOffset = Offset(
+                        x = targetOffsetX - zoomable.userTransform.offsetX,
+                        y = targetOffsetY - zoomable.userTransform.offsetY
+                    )
+                    zoomable.offset(
+                        targetOffset = zoomable.transform.offset + addOffset, animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-13987, -26880, -12955, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.34f),
+                    offset = Offset(244.0f, 0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(53.09f),
+                    offset = Offset(-13987.0f, -26880.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(18.0f),
+                    offset = Offset(-1032.3f, -26880.0f),
+                    rotationOrigin = TransformOrigin(0.08f, 1.47f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
     }
 
     @Test
     fun testLocate() {
-        // TODO test
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // locate center, keep scale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().center,
+                        targetScale = zoomable.transform.scaleX,
+                        animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.0f),
+                    offset = Offset(-0.0f, 0.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // locate center, mediumScale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().center,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-516.0f, -515.06f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-516.0f, -257.06f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // locate center, out minScale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().center,
+                        targetScale = zoomable.minScale - 0.1f,
+                        animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.0f),
+                    offset = Offset(-0.0f, 0.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // locate center, out maxScale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().center,
+                        targetScale = zoomable.maxScale + 0.1f,
+                        animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-4128, -3353, 0, -774).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(9.0f),
+                    offset = Offset(-2064.0f, -2061.19f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(4.22f),
+                    offset = Offset(-2064.0f, -1287.19f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, locate top start in bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().center / 2f,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-129.0f, -258.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-129.0f, 0.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, locate top start out bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().center / 2f * -1f,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(0.0f, -258.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(0.0f, 0.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, locate bottom end in bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().center * 1.5f,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-903.0f, -772.59f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-903.0f, -514.59f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, locate bottom end out bounds
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.locate(
+                        contentPoint = zoomable.contentSize.toIntRect().center * 2.5f,
+                        targetScale = zoomable.mediumScale,
+                        animated = false
+                    )
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-1032.0f, -774.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-1032.0f, -516.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // The animation effect of scale cannot be tested because the time delay is invalid in the kotlin test environment
     }
 
     @Test
     fun testRotate() {
-        // TODO test
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // rotate 90
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.rotate(90)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 90f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(-0.08f, 86.08f),
+                    rotation = 90f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // rotate 180
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.rotate(180)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 180f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotation = 180f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // rotate 270
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.rotate(270)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 270f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(-0.08f, 86.08f),
+                    rotation = 270f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.mediumScale, animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-516.0f, -515.37f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-516.0f, -257.37f),
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // rotate 90, scale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.rotate(90)
+                    zoomable.scale(zoomable.mediumScale, animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 90f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-774, -1032, -258, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(-0.08f, 86.08f),
+                    rotation = 90f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-516.31f, -516.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-516.55f, -257.77f),
+                    rotation = 90f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // rotate 180, scale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.rotate(180)
+                    zoomable.scale(zoomable.mediumScale, animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 180f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-1032, -774, 0, -258).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotation = 180f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-516.0f, -516.31f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-516.0f, -258.31f),
+                    rotation = 180f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // rotate 270, scale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.rotate(270)
+                    zoomable.scale(zoomable.mediumScale, animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 270f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(-774, -1032, -258, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(-0.08f, 86.08f),
+                    rotation = 270f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(3.0f),
+                    offset = Offset(-515.37f, -516.0f),
+                ).toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(1.41f),
+                    offset = Offset(-515.61f, -257.77f),
+                    rotation = 270f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, rotate 90
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.mediumScale, animated = false)
+                    zoomable.rotate(90)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 90f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(-0.08f, 86.08f),
+                    rotation = 90f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, rotate 180
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.mediumScale, animated = false)
+                    zoomable.rotate(180)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 180f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(0.0f, 86.0f),
+                    rotation = 180f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
+
+        // scale, rotate 270
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(1100, 733)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.mediumScale, animated = false)
+                    zoomable.rotate(270)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = 270f, actual = zoomable.transform.rotation)
+            assertEquals(
+                expected = IntRect(0, 0, 0, 0).toString(),
+                actual = zoomable.userOffsetBounds.toString()
+            )
+            assertEquals(
+                expected = Transform(
+                    scale = ScaleFactor(0.47f),
+                    offset = Offset(-0.08f, 86.08f),
+                    rotation = 270f,
+                    rotationOrigin = TransformOrigin(1.07f, 0.71f)
+                ).toString(),
+                actual = zoomable.baseTransform.toString()
+            )
+            assertEquals(
+                expected = Transform.Origin.toString(),
+                actual = zoomable.userTransform.toString()
+            )
+            assertEquals(
+                expected = zoomable.baseTransform.toString(),
+                actual = zoomable.transform.toString()
+            )
+        }
     }
 
     @Test
     fun testTouchPointToContentPoint() {
-        // TODO test
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                rememberZoomableState().apply { zoomableHolder = this }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize.Zero, actual = zoomable.containerSize)
+            assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
+            assertEquals(expected = IntSize.Zero, actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0.0f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.0f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
+
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.contentSize)
+            assertEquals(expected = IntSize.Zero, actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0.0f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.0f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 0), (129, 129), (258, 258), (387, 387), (516, 516)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
+
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = IntSize.Zero, actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0.0f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.0f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
+
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.contentOriginSize = IntSize(690, 12176)
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = IntSize(690, 12176), actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0.0f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.0f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
+
+        // contentScale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.contentScale = ContentScale.Crop
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = IntSize(690, 12176), actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Crop, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0.0f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.0f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 0), (22, 381), (43, 761), (65, 1142), (86, 1522)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
+
+        // alignment
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.contentOriginSize = IntSize(690, 12176)
+                zoomable.alignment = Alignment.BottomEnd
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = IntSize(690, 12176), actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.BottomEnd, actual = zoomable.alignment)
+            assertEquals(expected = 0.0f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.0f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 0), (20, 381), (41, 761), (63, 1142), (86, 1522)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
+
+        // rotation
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.contentOriginSize = IntSize(690, 12176)
+                LaunchedEffect(Unit) {
+                    zoomable.rotate(90)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = IntSize(690, 12176), actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 90f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.0f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 1522), (20, 1142), (41, 761), (63, 381), (86, 0)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
+
+        // scale
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.contentOriginSize = IntSize(690, 12176)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = IntSize(690, 12176), actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.5f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 0), (20, 380), (41, 761), (62, 1142), (86, 1522)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
+
+        // offset
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.contentOriginSize = IntSize(690, 12176)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
+                    zoomable.offset(targetOffset = Offset(-180f, -172f), animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
+            assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
+            assertEquals(expected = IntSize(690, 12176), actual = zoomable.contentOriginSize)
+            assertEquals(expected = ContentScale.Fit, actual = zoomable.contentScale)
+            assertEquals(expected = Alignment.Center, actual = zoomable.alignment)
+            assertEquals(expected = 0f, actual = zoomable.transform.rotation)
+            assertEquals(expected = 1.5f, actual = zoomable.userTransform.scaleX.format(2))
+            val contentDisplayCenter = zoomable.contentDisplayRect.center.toOffset()
+            val contentDisplaySize = zoomable.contentDisplayRect.size
+            val add = (contentDisplaySize.toSize() / 4f).let { Offset(it.width, it.height) }
+            assertEquals(
+                expected = "(0, 0), (20, 381), (41, 761), (62, 1142), (86, 1522)",
+                actual = listOf(
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter - add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add),
+                    zoomable.touchPointToContentPoint(contentDisplayCenter + add * 3f)
+                ).joinToString()
+            )
+        }
     }
 
     @Test
@@ -2221,11 +3616,87 @@ class ZoomableStateTest {
 
     @Test
     fun testCheckSupportGestureType() {
-        // TODO test
+        val zoomableState = ZoomableState(Logger("Test"))
+        assertEquals(
+            expected = "[DRAG:true, TWO_FINGER_SCALE:true, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
+
+        zoomableState.disabledGestureTypes = GestureType.DRAG
+        assertEquals(
+            expected = "[DRAG:false, TWO_FINGER_SCALE:true, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
+
+        zoomableState.disabledGestureTypes = GestureType.DRAG or GestureType.TWO_FINGER_SCALE
+        assertEquals(
+            expected = "[DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
+
+        zoomableState.disabledGestureTypes =
+            GestureType.DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE
+        assertEquals(
+            expected = "[DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
+
+        zoomableState.disabledGestureTypes =
+            GestureType.DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
+        assertEquals(
+            expected = "[DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_SCROLL_SCALE:true]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
+
+        zoomableState.disabledGestureTypes =
+            GestureType.DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_SCROLL_SCALE
+        assertEquals(
+            expected = "[DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_SCROLL_SCALE:false]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
     }
 
     @Test
     fun testToString() {
-        // TODO test
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                zoomable.contentOriginSize = IntSize(690, 12176)
+                LaunchedEffect(Unit) {
+                    zoomable.rotate(90)
+                    zoomable.scale(targetScale = 20f, animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = "ZoomableState(" +
+                        "containerSize=516x516, " +
+                        "contentSize=86x1522, " +
+                        "contentOriginSize=690x12176, " +
+                        "contentScale=Fit, " +
+                        "alignment=Center, " +
+                        "minScale=0.339, " +
+                        "mediumScale=8.0233, " +
+                        "maxScale=24.0698, " +
+                        "transform=(20.0x20.0,-602.0x-14961.42,90.0,0.0x0.0,0.08x1.47)" +
+                        ")",
+                actual = zoomable.toString()
+            )
+        }
     }
 }
