@@ -7,7 +7,7 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-有一些图片的尺寸巨大，如果把它们完整的读到内存肯定会让 App
+有一些图片的尺寸巨大，如果把它们完整的读到内存会让 App
 因内存不足而崩溃，图片加载框架通常会采样后再加载，这时图片的尺寸会变小，但是图片的内容也会变的模糊不清
 
 所以就需要 ZoomImage 在缩放时能够支持子采样，用户滑动到哪里就对哪里进行子采样，然后将清晰的原图图块显示到屏幕上，
@@ -28,8 +28,8 @@
 什么情况下才会开启子采样功能？
 
 * contentSize 比 contentOriginSize 小
-* contentSize 的宽高比和 contentOriginSize 的宽高比相差不超过 0.5f
-* Android 上必须是 BitmapRegionDecoder 支持的类型，桌面平台不是 GIF 就可以
+* contentSize 和 contentOriginSize 的边的缩放倍数相差不超过 1f
+* Android 上必须是 BitmapRegionDecoder 支持的类型，非 Android 平台不是 GIF 就可以
 
 ### 使用子采样功能
 
@@ -82,6 +82,86 @@ zoomImageView.subsampling.setImageSource(imageSource)
   资源目录加载图片。[ImageSource.fromKotlinResource("huge_world.jpeg")][KotlinResourceImageSource]
 * [ResourceImageSource]：从 Android 的 res 目录加载图片。[ImageSource.fromResource(context,
   R.raw.huge_world)][ResourceImageSource]
+
+### ModelToImageSource
+
+Coil、Glide、Picasso 系列的组件在设置 ImageSource 时都需要将 model 或 data 转换为
+ImageSource，ZoomImage 为他们提供了各自的 ModelToImageSource 和默认实现，如下：
+
+* [CoilModelToImageSource][CoilModelToImageSource]：[CoilModelToImageSourceImpl][CoilModelToImageSourceImpl]
+* [CoilModelToImageSource][CoilModelToImageSource2] for Coil
+  2：[CoilModelToImageSourceImpl][CoilModelToImageSourceImpl2]  for Coil 2
+* [GlideModelToImageSource]：[GlideModelToImageSourceImpl]
+* [PicassoDataToImageSource]：[PicassoDataToImageSourceImpl]
+
+如果默认实现无法正确的将 model 或 data 转换为 ImageSource 导致无法使用子采样，例如你自定义了 model 或
+data，那么你必须自定义一个 ModelToImageSource 并应用它，如下：
+
+```kotlin
+/*
+ * Coil
+ */
+class MyCoilModelToImageSource : CoilModelToImageSource {
+    override suspend fun modelToImageSource(
+        context: PlatformContext,
+        imageLoader: ImageLoader,
+        model: Any
+    ): ImageSource.Factory? {
+        // ...
+    }
+}
+
+val coilModeToImageSources = remember { listOf(MyCoilModelToImageSource()).toImmutableList() }
+val coilZoomState = rememberCoilZoomState(coilModeToImageSources)
+CoilAsyncZoomImage(
+    zoomState = coilZoomState,
+    ...
+)
+
+val coilZoomImageView = CoilZoomImageView(context)
+coilZoomImageView.registerModelToImageSource(MyCoilModelToImageSource())
+
+/*
+ * Glide
+ */
+class MyGlideModelToImageSource : GlideModelToImageSource {
+    override suspend fun modelToImageSource(
+        context: Context,
+        imageLoader: Glide,
+        model: Any
+    ): ImageSource.Factory? {
+        // ...
+    }
+}
+
+val glideModeToImageSources = remember { listOf(MyGlideModelToImageSource()).toImmutableList() }
+val glideZoomState = rememberGlideZoomState(glideModeToImageSources)
+GlideAsyncZoomImage(
+    zoomState = glideZoomState,
+    ...
+)
+
+val glideZoomImageView = GlideZoomImageView(context)
+glideZoomImageView.registerModelToImageSource(MyGlideModelToImageSource())
+
+/*
+ * Picasso
+ */
+class MyPicassoDataToImageSource : PicassoDataToImageSource {
+    override suspend fun dataToImageSource(
+        context: Context,
+        picasso: Picasso,
+        data: Any
+    ): ImageSource.Factory? {
+        // ...
+    }
+}
+
+val picassoZoomImageView = PicassoZoomImageView(context)
+picassoZoomImageView.registerDataToImageSource(MyPicassoDataToImageSource())
+```
+
+如果你自定义了 mode 或 data，那么你必需要自定义一个 ModelToImageSource 并应用它，否则将无法使用子采样功能
 
 ### Exif Orientation
 
@@ -303,3 +383,19 @@ val subsampling: SubsamplingEngine = sketchZoomImageView.subsampling
 [KotlinResourceImageSource]: ../../zoomimage-core/src/desktopMain/kotlin/com/github/panpf/zoomimage/subsampling/KotlinResourceImageSource.kt
 
 [ResourceImageSource]: ../../zoomimage-core/src/androidMain/kotlin/com/github/panpf/zoomimage/subsampling/ResourceImageSource.kt
+
+[CoilModelToImageSource]: ../../zoomimage-core-coil/src/commonMain/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
+
+[CoilModelToImageSourceImpl]: ../../zoomimage-core-coil/src/commonMain/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
+
+[CoilModelToImageSource2]: ../../zoomimage-core-coil2/src/main/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
+
+[CoilModelToImageSourceImpl2]: ../../zoomimage-core-coil2/src/main/kotlin/com/github/panpf/zoomimage/coil/CoilModelToImageSource.kt
+
+[GlideModelToImageSource]: ../../zoomimage-core-glide/src/main/kotlin/com/github/panpf/zoomimage/glide/GlideModelToImageSource.kt
+
+[GlideModelToImageSourceImpl]: ../../zoomimage-core-glide/src/main/kotlin/com/github/panpf/zoomimage/glide/GlideModelToImageSource.kt
+
+[PicassoDataToImageSource]: ../../zoomimage-core-picasso/src/main/kotlin/com/github/panpf/zoomimage/picasso/PicassoDataToImageSource.kt
+
+[PicassoDataToImageSourceImpl]: ../../zoomimage-core-picasso/src/main/kotlin/com/github/panpf/zoomimage/picasso/PicassoDataToImageSource.kt
