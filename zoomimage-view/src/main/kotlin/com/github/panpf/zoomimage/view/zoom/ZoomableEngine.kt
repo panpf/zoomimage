@@ -231,13 +231,6 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
     val maxScaleState: StateFlow<Float> = _maxScaleState
 
     /**
-     * The type of transformation currently in progress
-     *
-     * @see ContinuousTransformType
-     */
-    val continuousTransformTypeState: StateFlow<Int> = _continuousTransformTypeState
-
-    /**
      * The content region in the container after the baseTransform transformation
      */
     val contentBaseDisplayRectState: StateFlow<IntRectCompat> = _contentBaseDisplayRectState
@@ -258,14 +251,22 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
     val contentVisibleRectState: StateFlow<IntRectCompat> = _contentVisibleRectState
 
     /**
+     * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
+     */
+    val userOffsetBoundsState: StateFlow<IntRectCompat> = _userOffsetBoundsState
+
+    /**
      * Edge state for the current offset
      */
     val scrollEdgeState: StateFlow<ScrollEdge> = _scrollEdgeState
 
     /**
-     * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
+     * The type of transformation currently in progress
+     *
+     * @see ContinuousTransformType
      */
-    val userOffsetBoundsState: StateFlow<IntRectCompat> = _userOffsetBoundsState
+    val continuousTransformTypeState: StateFlow<Int> = _continuousTransformTypeState
+
 
     init {
         view.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {

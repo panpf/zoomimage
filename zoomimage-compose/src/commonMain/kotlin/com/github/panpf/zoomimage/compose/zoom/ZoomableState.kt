@@ -245,14 +245,6 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         private set
 
     /**
-     * The type of transformation currently in progress
-     *
-     * @see ContinuousTransformType
-     */
-    var continuousTransformType: Int by mutableIntStateOf(0)
-        internal set
-
-    /**
      * The content region in the container after the baseTransform transformation
      */
     var contentBaseDisplayRect: IntRect by mutableStateOf(IntRect.Zero)
@@ -277,16 +269,24 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         private set
 
     /**
+     * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
+     */
+    var userOffsetBounds: IntRect by mutableStateOf(IntRect.Zero)
+        private set
+
+    /**
      * Edge state for the current offset
      */
     var scrollEdge: ScrollEdge by mutableStateOf(ScrollEdge.Default)
         private set
 
     /**
-     * The offset boundary of userTransform, affected by scale and limitOffsetWithinBaseVisibleRect
+     * The type of transformation currently in progress
+     *
+     * @see ContinuousTransformType
      */
-    var userOffsetBounds: IntRect by mutableStateOf(IntRect.Zero)
-        private set
+    var continuousTransformType: Int by mutableIntStateOf(0)
+        internal set
 
     private var lastContainerSize: IntSize = containerSize
     private var lastContentSize: IntSize = contentSize
