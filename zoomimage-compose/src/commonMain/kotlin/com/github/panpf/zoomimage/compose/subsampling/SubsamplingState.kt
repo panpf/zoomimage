@@ -93,13 +93,11 @@ class SubsamplingState constructor(
     val lifecycle: Lifecycle
 ) : RememberObserver {
 
-    val logger: Logger = zoomableState.logger
-
     private var coroutineScope: CoroutineScope? = null
     private var imageSourceFactory: ImageSource.Factory? = null
     private var tileManager: TileManager? = null
     private var tileDecoder: TileDecoder? = null
-    private var lastResetTileDecoderJob: Job? = null
+    private var resetTileDecoderJob: Job? = null
     private val tileBitmapCacheSpec = TileBitmapCacheSpec()
     private val tileBitmapCacheHelper = TileBitmapCacheHelper(tileBitmapCacheSpec)
     private val tileBitmapConvertor = ComposeTileBitmapConvertor()
@@ -119,7 +117,10 @@ class SubsamplingState constructor(
     }
 
 
+    val logger: Logger = zoomableState.logger
+
     var imageKey: String? = null
+        private set
 
 
     /* *********************************** Configurable properties ****************************** */
@@ -175,21 +176,15 @@ class SubsamplingState constructor(
         private set
 
     /**
+     * Tile grid size map, key is sample size, value is tile grid size
+     */
+    var tileGridSizeMap: Map<Int, IntOffset> by mutableStateOf(emptyMap())
+        private set
+
+    /**
      * Whether the image is ready for subsampling
      */
     var ready: Boolean by mutableStateOf(false)
-        private set
-
-    /**
-     * Foreground tiles, all tiles corresponding to the current sampleSize, this list will be updated when the sampleSize changes, when the loading state of any of the tiles and the progress of the animation changes
-     */
-    var foregroundTiles: List<TileSnapshot> by mutableStateOf(emptyList())
-        private set
-
-    /**
-     * Background tiles to avoid revealing the basemap during the process of switching sampleSize to load a new tile, the background tile will be emptied after the new tile is fully loaded and the transition animation is complete, the list of background tiles contains only tiles within the currently loaded area
-     */
-    var backgroundTiles: List<TileSnapshot> by mutableStateOf(emptyList())
         private set
 
     /**
@@ -205,9 +200,15 @@ class SubsamplingState constructor(
         private set
 
     /**
-     * Tile grid size map, key is sample size, value is tile grid size
+     * Foreground tiles, all tiles corresponding to the current sampleSize, this list will be updated when the sampleSize changes, when the loading state of any of the tiles and the progress of the animation changes
      */
-    var tileGridSizeMap: Map<Int, IntOffset> by mutableStateOf(emptyMap())
+    var foregroundTiles: List<TileSnapshot> by mutableStateOf(emptyList())
+        private set
+
+    /**
+     * Background tiles to avoid revealing the basemap during the process of switching sampleSize to load a new tile, the background tile will be emptied after the new tile is fully loaded and the transition animation is complete, the list of background tiles contains only tiles within the currently loaded area
+     */
+    var backgroundTiles: List<TileSnapshot> by mutableStateOf(emptyList())
         private set
 
 
@@ -288,19 +289,25 @@ class SubsamplingState constructor(
             // Size animations cause frequent changes in containerSize, so a delayed reset avoids this problem
             @Suppress("OPT_IN_USAGE")
             snapshotFlow { zoomableState.containerSize }.debounce(80).collect {
-                val newTileSize = calculatePreferredTileSize(it.toCompat())
-                if (preferredTileSize.isEmpty()) {
-                    preferredTileSize = newTileSize.toPlatform()
-                } else if (abs(newTileSize.width - preferredTileSize.width) >=
+                val newPreferredTileSize = calculatePreferredTileSize(it.toCompat())
+                val finalPreferredTileSize = if (preferredTileSize.isEmpty()) {
+                    newPreferredTileSize.toPlatform()
+                } else if (abs(newPreferredTileSize.width - preferredTileSize.width) >=
                     // When the width changes by more than 1x, the preferredTileSize is recalculated to reduce the need to reset the TileManager
-                    preferredTileSize.width * (if (newTileSize.width > preferredTileSize.width) 1f else 0.5f)
+                    preferredTileSize.width * (if (newPreferredTileSize.width > preferredTileSize.width) 1f else 0.5f)
                 ) {
-                    preferredTileSize = newTileSize.toPlatform()
-                } else if (abs(newTileSize.height - preferredTileSize.height) >=
-                    preferredTileSize.height * (if (newTileSize.height > preferredTileSize.height) 1f else 0.5f)
+                    newPreferredTileSize.toPlatform()
+                } else if (abs(newPreferredTileSize.height - preferredTileSize.height) >=
+                    preferredTileSize.height * (if (newPreferredTileSize.height > preferredTileSize.height) 1f else 0.5f)
                 ) {
                     // When the height changes by more than 1x, the preferredTileSize is recalculated to reduce the need to reset the TileManager
-                    preferredTileSize = newTileSize.toPlatform()
+                    newPreferredTileSize.toPlatform()
+                } else {
+                    null
+                }
+                logger.d { "SubsamplingState. reset preferredTileSize. finalPreferredTileSize=$finalPreferredTileSize. '${imageKey}" }
+                if (finalPreferredTileSize != null) {
+                    preferredTileSize = finalPreferredTileSize
                 }
             }
         }
@@ -393,13 +400,13 @@ class SubsamplingState constructor(
             logger.d {
                 "SubsamplingState. resetTileDecoder:$caller. failed. " +
                         "imageSource=${imageSourceFactory}, " +
-                        "contentSize=${contentSize.toShortString()}, " +
+                        "contentSize=${contentSize.toShortString()}. " +
                         "'${imageKey}'"
             }
             return
         }
 
-        lastResetTileDecoderJob = coroutineScope?.launch {
+        resetTileDecoderJob = coroutineScope?.launch {
             val result = withContext(ioCoroutineDispatcher()) {
                 val imageSource = imageSourceFactory.create()
                 decodeAndCreateTileDecoder(
@@ -408,30 +415,31 @@ class SubsamplingState constructor(
                     thumbnailSize = contentSize.toCompat(),
                 )
             }
+
             val newTileDecoder = result.getOrNull()
-            if (newTileDecoder != null) {
-                val imageInfo = newTileDecoder.imageInfo
-                logger.d {
-                    "SubsamplingState. resetTileDecoder:$caller. success. " +
-                            "contentSize=${contentSize.toShortString()}, " +
-                            "imageInfo=${imageInfo.toShortString()}. " +
-                            "'${imageKey}'"
-                }
-                this@SubsamplingState.tileDecoder = newTileDecoder
-                this@SubsamplingState.imageInfo = imageInfo
-                resetTileManager(caller)
-            } else {
+            if (newTileDecoder == null) {
                 val exception = result.exceptionOrNull()!! as CreateTileDecoderException
                 this@SubsamplingState.imageInfo = exception.imageInfo
                 val level = if (exception.skipped) Logger.Level.Debug else Logger.Level.Error
                 val type = if (exception.skipped) "skipped" else "error"
                 logger.log(level) {
                     "SubsamplingState. resetTileDecoder:$caller. $type, ${exception.message}. " +
-                            "contentSize: ${contentSize.toShortString()}, " +
+                            "contentSize: ${contentSize.toShortString()}. " +
                             "'${imageKey}'"
                 }
+                return@launch
             }
-            lastResetTileDecoderJob = null
+
+            val imageInfo = newTileDecoder.imageInfo
+            logger.d {
+                "SubsamplingState. resetTileDecoder:$caller. success. " +
+                        "contentSize=${contentSize.toShortString()}, " +
+                        "imageInfo=${imageInfo.toShortString()}. " +
+                        "'${imageKey}'"
+            }
+            this@SubsamplingState.tileDecoder = newTileDecoder
+            this@SubsamplingState.imageInfo = imageInfo
+            resetTileManager(caller)
         }
     }
 
@@ -448,6 +456,7 @@ class SubsamplingState constructor(
                         "contentSize=${contentSize.toShortString()}, " +
                         "preferredTileSize=${preferredTileSize.toShortString()}, " +
                         "tileDecoder=${tileDecoder}, " +
+                        "imageInfo=${imageInfo}. " +
                         "'${imageKey}'"
             }
             return
@@ -471,11 +480,12 @@ class SubsamplingState constructor(
             onImageLoadRectChanged = {
                 imageLoadRect = it.imageLoadRect.toPlatform()
             }
-        ).apply {
-            pausedContinuousTransformTypes = this@SubsamplingState.pausedContinuousTransformTypes
-            disabledBackgroundTiles = this@SubsamplingState.disabledBackgroundTiles
-            tileAnimationSpec = this@SubsamplingState.tileAnimationSpec
-        }
+        )
+        tileManager.pausedContinuousTransformTypes =
+            this@SubsamplingState.pausedContinuousTransformTypes
+        tileManager.disabledBackgroundTiles = this@SubsamplingState.disabledBackgroundTiles
+        tileManager.tileAnimationSpec = this@SubsamplingState.tileAnimationSpec
+
         tileGridSizeMap = tileManager.sortedTileGridMap.associate { entry ->
             entry.sampleSize to entry.tiles.last().coordinate.let { IntOffset(it.x + 1, it.y + 1) }
         }
@@ -522,10 +532,10 @@ class SubsamplingState constructor(
     }
 
     private fun cleanTileDecoder(caller: String) {
-        val lastResetTileDecoderJob = this@SubsamplingState.lastResetTileDecoderJob
-        if (lastResetTileDecoderJob != null) {
-            lastResetTileDecoderJob.cancel("cleanTileDecoder:$caller")
-            this@SubsamplingState.lastResetTileDecoderJob = null
+        val resetTileDecoderJob1 = this@SubsamplingState.resetTileDecoderJob
+        if (resetTileDecoderJob1?.isActive == true) {
+            resetTileDecoderJob1.cancel("cleanTileDecoder:$caller")
+            this@SubsamplingState.resetTileDecoderJob = null
         }
         val tileDecoder = this@SubsamplingState.tileDecoder
         if (tileDecoder != null) {
