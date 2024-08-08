@@ -1,6 +1,7 @@
 package com.github.panpf.zoomimage.compose.common.test.zoom
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
@@ -54,10 +55,12 @@ class ZoomableStateTest {
     }
 
     @Test
-    fun testLogger() {
+    fun testConstructor() {
         val logger = Logger("Test")
         val zoomable = ZoomableState(logger)
         assertEquals(expected = logger, actual = zoomable.logger)
+        @Suppress("USELESS_IS_CHECK")
+        assertEquals(expected = true, actual = zoomable is RememberObserver)
     }
 
     @Test

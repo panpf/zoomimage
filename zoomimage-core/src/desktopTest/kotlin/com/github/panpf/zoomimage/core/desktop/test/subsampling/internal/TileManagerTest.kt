@@ -35,7 +35,7 @@ import kotlin.test.assertTrue
 class TileManagerTest {
 
     @Test
-    fun testCompanion() {
+    fun testDefaultPausedContinuousTransformTypes() {
         assertEquals(
             ContinuousTransformType.SCALE or ContinuousTransformType.OFFSET or ContinuousTransformType.LOCATE,
             TileManager.DefaultPausedContinuousTransformTypes
