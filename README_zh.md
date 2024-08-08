@@ -233,22 +233,22 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 ## 同类库对比
 
-| Function/Library           | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
-|:---------------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
-| Full Compose Multiplatform |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Android Compose            |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Android View               |     ✅     |      ❌      |      ✅      |                ✅                 |
-| 旋转                         |     ✅     |      ❌      |      ✅      |                ❌                 |
-| 定位                         |     ✅     |      ❌      |      ❌      |                ✅                 |
-| 滚动条                        |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 阅读模式                       |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 子采样                        |     ✅     |      ✅      |      ❌      |                ✅                 |
-| 子采样动画                      |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 单指缩放                       |     ✅     |      ✅      |      ✅      |                ✅                 |
-| 鼠标滚轮缩放                     |     ✅     |      ✅      |      ❌      |                ❌                 |
-| 动态缩放比例                     |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 集成图片加载器                    |     ✅     |      ✅      |      ❌      |                ❌                 |
-| 丰富的交互接口                    |     ✅     |      ❌      |      ✅      |                ✅                 |
+| Function/Library      | ZoomImage |           [Telephoto]           | [PhotoView] | [Subsampling<br/>ScaleImageView] |
+|:----------------------|:---------:|:-------------------------------:|:-----------:|:--------------------------------:|
+| Compose Multiplatform |     ✅     | ✅<br>(Only Android and Desktop) |      ❌      |                ❌                 |
+| Android Compose       |     ✅     |                ✅                |      ❌      |                ❌                 |
+| Android View          |     ✅     |                ❌                |      ✅      |                ✅                 |
+| 旋转                    |     ✅     |                ❌                |      ✅      |                ❌                 |
+| 定位                    |     ✅     |                ❌                |      ❌      |                ✅                 |
+| 滚动条                   |     ✅     |                ❌                |      ❌      |                ❌                 |
+| 阅读模式                  |     ✅     |                ❌                |      ❌      |                ❌                 |
+| 子采样                   |     ✅     |                ✅                |      ❌      |                ✅                 |
+| 子采样动画                 |     ✅     |                ❌                |      ❌      |                ❌                 |
+| 单指缩放                  |     ✅     |                ✅                |      ✅      |                ✅                 |
+| 鼠标滚轮缩放                |     ✅     |                ✅                |      ❌      |                ❌                 |
+| 动态缩放比例                |     ✅     |                ❌                |      ❌      |                ❌                 |
+| 集成图片加载器               |     ✅     |                ✅                |      ❌      |                ❌                 |
+| 丰富的交互接口               |     ✅     |                ❌                |      ✅      |                ✅                 |
 
 ## 我的项目
 

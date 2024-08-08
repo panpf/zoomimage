@@ -251,22 +251,22 @@ Run the sample app:
 
 ## Comparison of similar libraries
 
-| Function/Library           | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
-|:---------------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
-| Full Compose Multiplatform |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Android Compose            |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Android View               |     ✅     |      ❌      |      ✅      |                ✅                 |
-| Rotate                     |     ✅     |      ❌      |      ✅      |                ❌                 |
-| Locate                     |     ✅     |      ❌      |      ❌      |                ✅                 |
-| Scroll Bar                 |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Read Mode                  |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Subsampling                |     ✅     |      ✅      |      ❌      |                ✅                 |
-| Subsampling animation      |     ✅     |      ❌      |      ❌      |                ❌                 |
-| One-finger scale           |     ✅     |      ✅      |      ✅      |                ✅                 |
-| Mouse wheel scale          |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Dynamic scale factor       |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Image Loader               |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Rich interfaces            |     ✅     |      ❌      |      ✅      |                ✅                 |
+| Function/Library      | ZoomImage |           [Telephoto]           | [PhotoView] | [Subsampling<br/>ScaleImageView] |
+|:----------------------|:---------:|:-------------------------------:|:-----------:|:--------------------------------:|
+| Compose Multiplatform |     ✅     | ✅<br>(Only Android and Desktop) |      ❌      |                ❌                 |
+| Android Compose       |     ✅     |                ✅                |      ❌      |                ❌                 |
+| Android View          |     ✅     |                ❌                |      ✅      |                ✅                 |
+| Rotate                |     ✅     |                ❌                |      ✅      |                ❌                 |
+| Locate                |     ✅     |                ❌                |      ❌      |                ✅                 |
+| Scroll Bar            |     ✅     |                ❌                |      ❌      |                ❌                 |
+| Read Mode             |     ✅     |                ❌                |      ❌      |                ❌                 |
+| Subsampling           |     ✅     |                ✅                |      ❌      |                ✅                 |
+| Subsampling animation |     ✅     |                ❌                |      ❌      |                ❌                 |
+| One-finger scale      |     ✅     |                ✅                |      ✅      |                ✅                 |
+| Mouse wheel scale     |     ✅     |                ✅                |      ❌      |                ❌                 |
+| Dynamic scale factor  |     ✅     |                ❌                |      ❌      |                ❌                 |
+| Image Loader          |     ✅     |                ✅                |      ❌      |                ❌                 |
+| Rich interfaces       |     ✅     |                ❌                |      ✅      |                ✅                 |
 
 ## My Projects
 
