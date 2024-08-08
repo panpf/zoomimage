@@ -55,16 +55,16 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 Compose multiplatform:
 
 ```kotlin
-// Provides the SketchZoomAsyncImage component adapted to the Sketch image loader (recommended)
+// Provides the SketchZoomAsyncImage component adapted to the Sketch v4+ image loader (recommended)
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch:${LAST_VERSION}")
 
-// Provides SketchZoomAsyncImage component adapted to the old Sketch 3 image loader
+// Provides SketchZoomAsyncImage component adapted to the old Sketch v3 image loader
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch3:${LAST_VERSION}")
 
-// Provides the CoilZoomAsyncImage component adapted to the Coil image loader
+// Provides the CoilZoomAsyncImage component adapted to the Coil v3+ image loader
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}")
 
-// Provides CoilZoomAsyncImage component adapted to the old Coil 2 image loader
+// Provides CoilZoomAsyncImage component adapted to the old Coil v2 image loader
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil2:${LAST_VERSION}")
 
 // Provides basic ZoomImage component, additional work needs to be done to support subsampling, and does not support network images.
@@ -91,16 +91,16 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION
 Android view:
 
 ```kotlin
-// Provides the SketchZoomImageView component adapted to the Sketch image loader (recommended)
+// Provides the SketchZoomImageView component adapted to the Sketch v4+ image loader (recommended)
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch:${LAST_VERSION}")
 
-// Provides SketchZoomImageView component adapted to the old Sketch 3 image loader
+// Provides SketchZoomImageView component adapted to the old Sketch v3 image loader
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch3:${LAST_VERSION}")
 
-// Provides the CoilZoomImageView component adapted to the Coil image loader
+// Provides the CoilZoomImageView component adapted to the Coil v3+ image loader
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil:${LAST_VERSION}")
 
-// Provides CoilZoomImageView component adapted to the old Coil 2 image loader
+// Provides CoilZoomImageView component adapted to the old Coil v2 image loader
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil2:${LAST_VERSION}")
 
 // Provides the GlideZoomImageView component adapted to the Glide image loader
@@ -251,22 +251,22 @@ Run the sample app:
 
 ## Comparison of similar libraries
 
-| Function/Library      | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
-|:----------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
-| Compose Multiplatform |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Android Compose       |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Android View          |     ✅     |      ❌      |      ✅      |                ✅                 |
-| Rotate                |     ✅     |      ❌      |      ✅      |                ❌                 |
-| Locate                |     ✅     |      ❌      |      ❌      |                ✅                 |
-| Scroll Bar            |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Read Mode             |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Subsampling           |     ✅     |      ✅      |      ❌      |                ✅                 |
-| Subsampling animation |     ✅     |      ❌      |      ❌      |                ❌                 |
-| One-finger scale      |     ✅     |      ✅      |      ✅      |                ✅                 |
-| Mouse wheel scale     |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Dynamic scale factor  |     ✅     |      ❌      |      ❌      |                ❌                 |
-| Image Loader          |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Rich interfaces       |     ✅     |      ❌      |      ✅      |                ✅                 |
+| Function/Library           | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
+|:---------------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
+| Full Compose Multiplatform |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Android Compose            |     ✅     |      ✅      |      ❌      |                ❌                 |
+| Android View               |     ✅     |      ❌      |      ✅      |                ✅                 |
+| Rotate                     |     ✅     |      ❌      |      ✅      |                ❌                 |
+| Locate                     |     ✅     |      ❌      |      ❌      |                ✅                 |
+| Scroll Bar                 |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Read Mode                  |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Subsampling                |     ✅     |      ✅      |      ❌      |                ✅                 |
+| Subsampling animation      |     ✅     |      ❌      |      ❌      |                ❌                 |
+| One-finger scale           |     ✅     |      ✅      |      ✅      |                ✅                 |
+| Mouse wheel scale          |     ✅     |      ✅      |      ❌      |                ❌                 |
+| Dynamic scale factor       |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Image Loader               |     ✅     |      ✅      |      ❌      |                ❌                 |
+| Rich interfaces            |     ✅     |      ❌      |      ✅      |                ✅                 |
 
 ## My Projects
 

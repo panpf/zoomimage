@@ -45,16 +45,16 @@ https://github.com/panpf/zoomimage/assets/3250512/f067bed9-24e4-4ab8-a839-0731e1
 Compose multiplatform：
 
 ```kotlin
-// 提供适配了 Sketch 图片加载器的 SketchZoomAsyncImage 组件（推荐使用）
+// 提供适配了 Sketch v4+ 图片加载器的 SketchZoomAsyncImage 组件（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch:${LAST_VERSION}")
 
-// 提供适配了旧版 Sketch 3 图片加载器的 SketchZoomAsyncImage 组件
+// 提供适配了旧版 Sketch v3 图片加载器的 SketchZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-sketch3:${LAST_VERSION}")
 
-// 提供适配了 Coil 图片加载器的 CoilZoomAsyncImage 组件
+// 提供适配了 Coil v3+ 图片加载器的 CoilZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil:${LAST_VERSION}")
 
-// 提供适配了旧版 Coil 2 图片加载器的 CoilZoomAsyncImage 组件
+// 提供适配了旧版 Coil v2 图片加载器的 CoilZoomAsyncImage 组件
 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil2:${LAST_VERSION}")
 
 // 提供基础的 ZoomImage 组件，还需要做额外的工作以支持子采样，不支持网络图片
@@ -81,16 +81,16 @@ implementation("io.github.panpf.zoomimage:zoomimage-compose-glide:${LAST_VERSION
 Android view：
 
 ```kotlin
-// 提供适配了 Sketch 图片加载器的 SketchZoomImageView 组件（推荐使用）
+// 提供适配了 Sketch v4+ 图片加载器的 SketchZoomImageView 组件（推荐使用）
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch:${LAST_VERSION}")
 
-// 提供适配了旧版 Sketch 3 图片加载器的 SketchZoomImageView 组件
+// 提供适配了旧版 Sketch v3 图片加载器的 SketchZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-sketch3:${LAST_VERSION}")
 
-// 提供适配了 Coil 图片加载器的 CoilZoomImageView 组件
+// 提供适配了 Coil v3+ 图片加载器的 CoilZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil:${LAST_VERSION}")
 
-// 提供适配了旧版 Coil 2 图片加载器的 CoilZoomImageView 组件
+// 提供适配了旧版 Coil v2 图片加载器的 CoilZoomImageView 组件
 implementation("io.github.panpf.zoomimage:zoomimage-view-coil2:${LAST_VERSION}")
 
 // 提供适配了 Glide 图片加载器的 GlideZoomImageView 组件
@@ -233,22 +233,22 @@ picassoZoomImageView.loadImage("https://sample.com/sample.jpeg")
 
 ## 同类库对比
 
-| Function/Library      | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
-|:----------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
-| Compose Multiplatform |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Android Compose       |     ✅     |      ✅      |      ❌      |                ❌                 |
-| Android View          |     ✅     |      ❌      |      ✅      |                ✅                 |
-| 旋转                    |     ✅     |      ❌      |      ✅      |                ❌                 |
-| 定位                    |     ✅     |      ❌      |      ❌      |                ✅                 |
-| 滚动条                   |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 阅读模式                  |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 子采样                   |     ✅     |      ✅      |      ❌      |                ✅                 |
-| 子采样动画                 |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 单指缩放                  |     ✅     |      ✅      |      ✅      |                ✅                 |
-| 鼠标滚轮缩放                |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 动态缩放比例                |     ✅     |      ❌      |      ❌      |                ❌                 |
-| 集成图片加载器               |     ✅     |      ✅      |      ❌      |                ❌                 |
-| 丰富的交互接口               |     ✅     |      ❌      |      ✅      |                ✅                 |
+| Function/Library           | ZoomImage | [Telephoto] | [PhotoView] | [Subsampling<br/>ScaleImageView] |
+|:---------------------------|:---------:|:-----------:|:-----------:|:--------------------------------:|
+| Full Compose Multiplatform |     ✅     |      ❌      |      ❌      |                ❌                 |
+| Android Compose            |     ✅     |      ✅      |      ❌      |                ❌                 |
+| Android View               |     ✅     |      ❌      |      ✅      |                ✅                 |
+| 旋转                         |     ✅     |      ❌      |      ✅      |                ❌                 |
+| 定位                         |     ✅     |      ❌      |      ❌      |                ✅                 |
+| 滚动条                        |     ✅     |      ❌      |      ❌      |                ❌                 |
+| 阅读模式                       |     ✅     |      ❌      |      ❌      |                ❌                 |
+| 子采样                        |     ✅     |      ✅      |      ❌      |                ✅                 |
+| 子采样动画                      |     ✅     |      ❌      |      ❌      |                ❌                 |
+| 单指缩放                       |     ✅     |      ✅      |      ✅      |                ✅                 |
+| 鼠标滚轮缩放                     |     ✅     |      ✅      |      ❌      |                ❌                 |
+| 动态缩放比例                     |     ✅     |      ❌      |      ❌      |                ❌                 |
+| 集成图片加载器                    |     ✅     |      ✅      |      ❌      |                ❌                 |
+| 丰富的交互接口                    |     ✅     |      ❌      |      ✅      |                ✅                 |
 
 ## 我的项目
 
