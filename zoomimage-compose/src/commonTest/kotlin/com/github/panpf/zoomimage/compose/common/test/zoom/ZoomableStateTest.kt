@@ -3621,50 +3621,68 @@ class ZoomableStateTest {
     fun testCheckSupportGestureType() {
         val zoomableState = ZoomableState(Logger("Test"))
         assertEquals(
-            expected = "[DRAG:true, TWO_FINGER_SCALE:true, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true]",
+            expected = "[ONE_FINGER_DRAG:true, TWO_FINGER_SCALE:true, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
                 "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
             }
         )
 
-        zoomableState.disabledGestureTypes = GestureType.DRAG
+        zoomableState.disabledGestureTypes = GestureType.ONE_FINGER_DRAG
         assertEquals(
-            expected = "[DRAG:false, TWO_FINGER_SCALE:true, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true]",
+            expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:true, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
                 "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
             }
         )
 
-        zoomableState.disabledGestureTypes = GestureType.DRAG or GestureType.TWO_FINGER_SCALE
+        zoomableState.disabledGestureTypes = GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE
         assertEquals(
-            expected = "[DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true]",
-            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
-                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
-            }
-        )
-
-        zoomableState.disabledGestureTypes =
-            GestureType.DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE
-        assertEquals(
-            expected = "[DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true]",
+            expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
                 "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
             }
         )
 
         zoomableState.disabledGestureTypes =
-            GestureType.DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
+            GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE
         assertEquals(
-            expected = "[DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_SCROLL_SCALE:true]",
+            expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:true, MOUSE_SCROLL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
                 "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
             }
         )
 
         zoomableState.disabledGestureTypes =
-            GestureType.DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_SCROLL_SCALE
+            GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE
         assertEquals(
-            expected = "[DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_SCROLL_SCALE:false]",
+            expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_SCROLL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
+
+        zoomableState.disabledGestureTypes =
+            GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_SCROLL_SCALE
+        assertEquals(
+            expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_SCROLL_SCALE:false, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
+
+        zoomableState.disabledGestureTypes =
+            GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_SCROLL_SCALE or GestureType.KEYBOARD_SCALE
+        assertEquals(
+            expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_SCROLL_SCALE:false, KEYBOARD_SCALE:false, KEYBOARD_DRAG:true]",
+            actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
+                "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
+            }
+        )
+
+        zoomableState.disabledGestureTypes =
+            GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.DOUBLE_TAP_SCALE or GestureType.MOUSE_SCROLL_SCALE or GestureType.KEYBOARD_SCALE or GestureType.KEYBOARD_DRAG
+        assertEquals(
+            expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:false, DOUBLE_TAP_SCALE:false, MOUSE_SCROLL_SCALE:false, KEYBOARD_SCALE:false, KEYBOARD_DRAG:false]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
                 "${GestureType.name(it)}:${zoomableState.checkSupportGestureType(it)}"
             }

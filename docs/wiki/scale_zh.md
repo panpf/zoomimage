@@ -7,12 +7,12 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-ZoomImage 支持多种方式缩放图片，例如双指缩放、单指缩放、双击缩放、鼠标滚轮缩放、scale() 等
+ZoomImage 支持多种方式缩放图片，例如双指缩放、单指缩放、双击缩放、鼠标滚轮缩放、键盘缩放、scale() 等
 
 ### 特点
 
 * 支持[单指缩放](#单指缩放)、[双指缩放](#双指缩放)、[双击缩放](#双击缩放)、
-  [鼠标滚轮缩放](#鼠标滚轮缩放)、以及通过 [scale()](#scale) 方法缩放到指定的倍数
+  [鼠标滚轮缩放](#鼠标滚轮缩放)、[键盘缩放](#键盘缩放)、以及通过 [scale()](#scale) 方法缩放到指定的倍数
 * [支持橡皮筋效果](#橡皮筋效果).
   手势连续缩放时（单指/双指缩放）超过最大或最小范围时可以继续缩放，但有阻尼效果，松手后会回弹到最大或最小缩放倍数
 * [动态缩放范围](#minscale-mediumscale-maxscale). 默认根据
@@ -35,8 +35,8 @@ ZoomImage 支持所有的 [ContentScale] 和 [Alignment]，并且得益于 compo
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.zoomable.contentScale = ContentScaleCompat.None
-sketchZoomImageView.zoomable.alignment = AlignmentCompat.BottomEnd
+sketchZoomImageView.zoomable.contentScaleState.value = ContentScaleCompat.None
+sketchZoomImageView.zoomable.alignmentState.value = AlignmentCompat.BottomEnd
 ```
 
 ### minScale, mediumScale, maxScale
@@ -251,6 +251,51 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_SCROLL_SCALE
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+### 键盘缩放
+
+ZoomImage 支持通过键盘缩放图像，默认注册了以下按键：
+
+* scale in: Key.ZoomIn, Key.Equals + meta/ctrl
+* scale out: Key.ZoomOut, Key.Minus + meta/ctrl
+
+由于键盘缩放功能必须依赖焦点，而焦点管理又非常复杂，所以默认没有开启它，需要你主动配置并请求焦点，如下：
+
+```kotlin
+val focusRequester = remember { FocusRequester() }
+val zoomState = rememberSketchZoomState()
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    zoomState = zoomState,
+    modifier = Modifier.fillMaxSize()
+        .focusRequester(focusRequester)
+        .focusable()
+        .keyboardZoom(zoomState.zoomable),
+)
+LaunchedEffect(Unit) {
+    focusRequester.requestFocus()
+}
+```
+
+> [!TIP]
+> 在 HorizontalPager 中请求焦点时需要注意只能为当前页请求焦点，否则会导致意想不到的意外
+
+你还可以通过手势控制动态关闭它，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.disabledGestureTypes =
+        zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
 }
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",

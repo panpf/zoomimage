@@ -9,7 +9,7 @@ import com.github.panpf.zoomimage.annotation.IntDef
  */
 @Retention(AnnotationRetention.SOURCE)
 @IntDef(
-    GestureType.DRAG,
+    GestureType.ONE_FINGER_DRAG,
     GestureType.TWO_FINGER_SCALE,
     GestureType.ONE_FINGER_SCALE,
     GestureType.DOUBLE_TAP_SCALE,
@@ -24,7 +24,7 @@ import com.github.panpf.zoomimage.annotation.IntDef
 annotation class GestureType {
 
     companion object {
-        const val DRAG = 1
+        const val ONE_FINGER_DRAG = 1
 
         const val TWO_FINGER_SCALE = 2
 
@@ -34,14 +34,28 @@ annotation class GestureType {
 
         const val MOUSE_SCROLL_SCALE = 16
 
-        val values = listOf(DRAG, TWO_FINGER_SCALE, ONE_FINGER_SCALE, DOUBLE_TAP_SCALE, MOUSE_SCROLL_SCALE)
+        const val KEYBOARD_SCALE = 32
+
+        const val KEYBOARD_DRAG = 64
+
+        val values = listOf(
+            ONE_FINGER_DRAG,
+            TWO_FINGER_SCALE,
+            ONE_FINGER_SCALE,
+            DOUBLE_TAP_SCALE,
+            MOUSE_SCROLL_SCALE,
+            KEYBOARD_SCALE,
+            KEYBOARD_DRAG
+        )
 
         fun name(@GestureType type: Int): String = when (type) {
-            DRAG -> "DRAG"
+            ONE_FINGER_DRAG -> "ONE_FINGER_DRAG"
             TWO_FINGER_SCALE -> "TWO_FINGER_SCALE"
             ONE_FINGER_SCALE -> "ONE_FINGER_SCALE"
             DOUBLE_TAP_SCALE -> "DOUBLE_TAP_SCALE"
             MOUSE_SCROLL_SCALE -> "MOUSE_SCROLL_SCALE"
+            KEYBOARD_SCALE -> "KEYBOARD_SCALE"
+            KEYBOARD_DRAG -> "KEYBOARD_DRAG"
             else -> "UNKNOWN"
         }
 

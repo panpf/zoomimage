@@ -9,6 +9,7 @@ zoom:
 * new: Added support for mouse wheel scale
   function. [#35](https://github.com/panpf/zoomimage/issues/35)
 * broken: Add the suspend modifier to the \*ToImageSource methods of the CoilModelToImageSource, GlideModelToImageSource, and PicassoDataToImageSource interfaces
+* new: Added support for keyboard scale and drag functions
 
 ## 1.1.0-alpha05
 

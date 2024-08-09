@@ -76,7 +76,7 @@ internal class MouseZoomNode(
                     if (zoomable.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
                         coroutineScope.launch {
                             val newScale = if (!zoomable.reverseMouseWheelScale) {
-                                zoomable.transform.scaleX - (event.changes.first().scrollDelta.y * 0.33f)
+                                zoomable.transform.scaleX - (event.changes.first().scrollDelta.y * 0.33f)   // TODO Configurable
                             } else {
                                 zoomable.transform.scaleX + (event.changes.first().scrollDelta.y * 0.33f)
                             }

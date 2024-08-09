@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.compose.zoom
+package com.github.panpf.zoomimage.compose.util
 
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.isCtrlPressed
+import java.util.Locale
 
-actual fun checkAssistKeyPressed(event: KeyEvent): Boolean = event.isCtrlPressed
+actual fun platformAssistKey(): AssistKey {
+    val osName = System.getProperty("os.name").lowercase(Locale.getDefault())
+    return if (osName.contains("mac")) AssistKey.Meta else AssistKey.Ctrl
+}

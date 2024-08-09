@@ -14,7 +14,7 @@ of images. It has the following features and functions:
 * `Compose Multiplatform`. Support for Compose Multiplatform, which can be used on Android, macOS,
   Windows, Linux and other platforms
 * `Power`. Supports basic functions such as double-click scale, two-finger scale, single-finger
-  scale, mouse wheel scale, single-finger drag, and inertial sliding.
+  scale, mouse wheel scale, keyboard scale, single-finger drag, inertial sliding, and keyboard drag.
 * `Locate`. Support for locate anywhere in the image and keeping it in the center of the screen
 * `Rotate`. Supports 0°, 90°, 180°, 270°, 360° rotation of pictures
 * `Subsampling`. Support for subsampling of very large images to avoid OOM, tile support animation,
@@ -264,6 +264,7 @@ Run the sample app:
 | Subsampling animation |     ✅     |                ❌                |      ❌      |                ❌                 |
 | One-finger scale      |     ✅     |                ✅                |      ✅      |                ✅                 |
 | Mouse wheel scale     |     ✅     |                ✅                |      ❌      |                ❌                 |
+| Keyboard zoom         |     ✅     |                ❌                |      ❌      |                ❌                 |
 | Dynamic scale factor  |     ✅     |                ❌                |      ❌      |                ❌                 |
 | Image Loader          |     ✅     |                ✅                |      ❌      |                ❌                 |
 | Rich interfaces       |     ✅     |                ❌                |      ✅      |                ✅                 |

@@ -17,6 +17,7 @@ kotlin {
             api(compose.runtime)
             api(compose.ui)
             api(compose.uiUtil)
+            api(libs.kotlinx.collections.immutable)
         }
 
         commonTest.dependencies {

@@ -64,7 +64,7 @@ internal fun Float.toDp(): Dp {
  *
  * @see com.github.panpf.zoomimage.compose.common.test.internal.ComposePlatformUtilsTest.thenIfNotNull
  */
-fun <T> Modifier.thenIfNotNull(t: T?, block: (T) -> Modifier): Modifier {
+internal fun <T> Modifier.thenIfNotNull(t: T?, block: (T) -> Modifier): Modifier {
     return if (t != null) {
         this.then(block(t))
     } else {

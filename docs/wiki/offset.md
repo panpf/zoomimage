@@ -7,8 +7,76 @@ Translations: [简体中文](offset_zh.md)
 > * [ZoomState].zoomable is equivalent to [ZoomImageView].zoomable
 > * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
 
-ZoomImage supports one-finger drag, inertial swipe, and the `offset()` method to
+ZoomImage supports one-finger drag, inertial swipe, keyboard drag, and the `offset()` method to
 move the image.
+
+### One Finger Drag
+
+ZoomImage enables one finger drag gestures by default, but you can turn it off as follows:
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.disabledGestureTypes =
+        zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+### Keyboard drag
+
+ZoomImage supports drag images through the keyboard, and the following keys are registered by
+default:
+
+* move up: Key.DirectionUp + meta/ctrl
+* move down: Key.DirectionDown + meta/ctrl
+* move left: Key.DirectionLeft + meta/ctrl
+* move right: Key.DirectionRight + meta/ctrl
+
+Since the keyboard drag function must rely on focus, and focus management is very complex, it is not
+enabled by default. You need to actively configure and request focus, as follows:
+
+```kotlin
+val focusRequester = remember { FocusRequester() }
+val zoomState = rememberSketchZoomState()
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    zoomState = zoomState,
+    modifier = Modifier.fillMaxSize()
+        .focusRequester(focusRequester)
+        .focusable()
+        .keyboardZoom(zoomState.zoomable),
+)
+LaunchedEffect(Unit) {
+    focusRequester.requestFocus()
+}
+```
+
+> [!TIP]
+> When requesting focus in HorizontalPager, you need to note that you can only request focus for the
+> current page, otherwise it will cause unexpected accidents.
+
+You can also turn it off dynamically via gesture control, as follows:
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.disabledGestureTypes =
+        zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
 
 ### offset()
 
@@ -75,24 +143,6 @@ LaunchEffect(zoomState.zommable) {
     zoomState.zommable.limitOffsetWithinBaseVisibleRect = true
 }
 
-SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    zoomState = zoomState,
-)
-```
-
-### Turn off drag gestures
-
-ZoomImage enables drag gestures by default, but you can turn it off as follows:
-
-```kotlin
-val zoomState: ZoomState by rememberZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.DRAG
-}
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",

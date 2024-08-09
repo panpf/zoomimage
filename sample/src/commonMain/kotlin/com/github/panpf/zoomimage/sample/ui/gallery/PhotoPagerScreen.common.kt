@@ -85,6 +85,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
+                    // TODO open keyboard zoom
                     val photo1 = params.photos[index]
                     PhotoDetail(
                         photo = photo1,

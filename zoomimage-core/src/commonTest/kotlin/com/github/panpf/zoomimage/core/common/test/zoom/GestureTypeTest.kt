@@ -8,25 +8,29 @@ class GestureTypeTest {
 
     @Test
     fun testValue() {
-        assertEquals(1, GestureType.DRAG)
+        assertEquals(1, GestureType.ONE_FINGER_DRAG)
         assertEquals(2, GestureType.TWO_FINGER_SCALE)
         assertEquals(4, GestureType.ONE_FINGER_SCALE)
         assertEquals(8, GestureType.DOUBLE_TAP_SCALE)
         assertEquals(16, GestureType.MOUSE_SCROLL_SCALE)
+        assertEquals(32, GestureType.KEYBOARD_SCALE)
+        assertEquals(64, GestureType.KEYBOARD_DRAG)
     }
 
     @Test
     fun testValues() {
-        assertEquals(listOf(1, 2, 4, 8, 16), GestureType.values)
+        assertEquals(listOf(1, 2, 4, 8, 16, 32, 64), GestureType.values)
     }
 
     @Test
     fun testName() {
-        assertEquals("DRAG", GestureType.name(GestureType.DRAG))
+        assertEquals("ONE_FINGER_DRAG", GestureType.name(GestureType.ONE_FINGER_DRAG))
         assertEquals("TWO_FINGER_SCALE", GestureType.name(GestureType.TWO_FINGER_SCALE))
         assertEquals("ONE_FINGER_SCALE", GestureType.name(GestureType.ONE_FINGER_SCALE))
         assertEquals("DOUBLE_TAP_SCALE", GestureType.name(GestureType.DOUBLE_TAP_SCALE))
         assertEquals("MOUSE_SCROLL_SCALE", GestureType.name(GestureType.MOUSE_SCROLL_SCALE))
+        assertEquals("KEYBOARD_SCALE", GestureType.name(GestureType.KEYBOARD_SCALE))
+        assertEquals("KEYBOARD_DRAG", GestureType.name(GestureType.KEYBOARD_DRAG))
         assertEquals("UNKNOWN", GestureType.name(0))
         assertEquals("UNKNOWN", GestureType.name(-1))
         assertEquals("UNKNOWN", GestureType.name(GestureType.values.last() * 2))
@@ -41,8 +45,8 @@ class GestureTypeTest {
         )
 
         assertEquals(
-            expected = listOf("DRAG"),
-            actual = GestureType.parse(GestureType.DRAG)
+            expected = listOf("ONE_FINGER_DRAG"),
+            actual = GestureType.parse(GestureType.ONE_FINGER_DRAG)
                 .map { GestureType.name(it) }
         )
         assertEquals(
@@ -65,112 +69,285 @@ class GestureTypeTest {
             actual = GestureType.parse(GestureType.MOUSE_SCROLL_SCALE)
                 .map { GestureType.name(it) }
         )
+        assertEquals(
+            expected = listOf("KEYBOARD_SCALE"),
+            actual = GestureType.parse(GestureType.KEYBOARD_SCALE)
+                .map { GestureType.name(it) }
+        )
+        assertEquals(
+            expected = listOf("KEYBOARD_DRAG"),
+            actual = GestureType.parse(GestureType.KEYBOARD_DRAG)
+                .map { GestureType.name(it) }
+        )
 
         assertEquals(
-            expected = listOf("DRAG", "TWO_FINGER_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.TWO_FINGER_SCALE
             ).map { GestureType.name(it) }
         )
         assertEquals(
-            expected = listOf("DRAG", "ONE_FINGER_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "ONE_FINGER_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.ONE_FINGER_SCALE
             ).map { GestureType.name(it) }
         )
         assertEquals(
-            expected = listOf("DRAG", "DOUBLE_TAP_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "DOUBLE_TAP_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.DOUBLE_TAP_SCALE
             ).map { GestureType.name(it) }
         )
         assertEquals(
-            expected = listOf("DRAG", "MOUSE_SCROLL_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "MOUSE_SCROLL_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.MOUSE_SCROLL_SCALE
+            ).map { GestureType.name(it) }
+        )
+        assertEquals(
+            expected = listOf("ONE_FINGER_DRAG", "KEYBOARD_SCALE"),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.KEYBOARD_SCALE
+            ).map { GestureType.name(it) }
+        )
+        assertEquals(
+            expected = listOf("ONE_FINGER_DRAG", "KEYBOARD_DRAG"),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.KEYBOARD_DRAG
             ).map { GestureType.name(it) }
         )
 
         assertEquals(
-            expected = listOf("DRAG", "TWO_FINGER_SCALE", "ONE_FINGER_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "ONE_FINGER_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.TWO_FINGER_SCALE
                         or GestureType.ONE_FINGER_SCALE
             ).map { GestureType.name(it) }
         )
         assertEquals(
-            expected = listOf("DRAG", "TWO_FINGER_SCALE", "DOUBLE_TAP_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "DOUBLE_TAP_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.TWO_FINGER_SCALE
                         or GestureType.DOUBLE_TAP_SCALE
             ).map { GestureType.name(it) }
         )
         assertEquals(
-            expected = listOf("DRAG", "TWO_FINGER_SCALE", "MOUSE_SCROLL_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "MOUSE_SCROLL_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.TWO_FINGER_SCALE
                         or GestureType.MOUSE_SCROLL_SCALE
             ).map { GestureType.name(it) }
         )
+        assertEquals(
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "KEYBOARD_SCALE"),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.KEYBOARD_SCALE
+            ).map { GestureType.name(it) }
+        )
+        assertEquals(
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "KEYBOARD_DRAG"),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.KEYBOARD_DRAG
+            ).map { GestureType.name(it) }
+        )
 
         assertEquals(
-            expected = listOf("DRAG", "TWO_FINGER_SCALE", "ONE_FINGER_SCALE", "DOUBLE_TAP_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "ONE_FINGER_SCALE", "DOUBLE_TAP_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.TWO_FINGER_SCALE
                         or GestureType.ONE_FINGER_SCALE
                         or GestureType.DOUBLE_TAP_SCALE
             ).map { GestureType.name(it) }
         )
         assertEquals(
-            expected = listOf("DRAG", "TWO_FINGER_SCALE", "ONE_FINGER_SCALE", "MOUSE_SCROLL_SCALE"),
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "ONE_FINGER_SCALE", "MOUSE_SCROLL_SCALE"),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.TWO_FINGER_SCALE
                         or GestureType.ONE_FINGER_SCALE
                         or GestureType.MOUSE_SCROLL_SCALE
+            ).map { GestureType.name(it) }
+        )
+        assertEquals(
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "ONE_FINGER_SCALE", "KEYBOARD_SCALE"),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.ONE_FINGER_SCALE
+                        or GestureType.KEYBOARD_SCALE
+            ).map { GestureType.name(it) }
+        )
+        assertEquals(
+            expected = listOf("ONE_FINGER_DRAG", "TWO_FINGER_SCALE", "ONE_FINGER_SCALE", "KEYBOARD_DRAG"),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.ONE_FINGER_SCALE
+                        or GestureType.KEYBOARD_DRAG
             ).map { GestureType.name(it) }
         )
 
         assertEquals(
             expected = listOf(
-                "DRAG",
+                "ONE_FINGER_DRAG",
                 "TWO_FINGER_SCALE",
                 "ONE_FINGER_SCALE",
                 "DOUBLE_TAP_SCALE",
                 "MOUSE_SCROLL_SCALE"
             ),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.TWO_FINGER_SCALE
                         or GestureType.ONE_FINGER_SCALE
                         or GestureType.DOUBLE_TAP_SCALE
                         or GestureType.MOUSE_SCROLL_SCALE
             ).map { GestureType.name(it) }
         )
-
         assertEquals(
             expected = listOf(
-                "DRAG",
+                "ONE_FINGER_DRAG",
                 "TWO_FINGER_SCALE",
                 "ONE_FINGER_SCALE",
                 "DOUBLE_TAP_SCALE",
-                "MOUSE_SCROLL_SCALE"
+                "KEYBOARD_SCALE"
             ),
             actual = GestureType.parse(
-                GestureType.DRAG
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.ONE_FINGER_SCALE
+                        or GestureType.DOUBLE_TAP_SCALE
+                        or GestureType.KEYBOARD_SCALE
+            ).map { GestureType.name(it) }
+        )
+        assertEquals(
+            expected = listOf(
+                "ONE_FINGER_DRAG",
+                "TWO_FINGER_SCALE",
+                "ONE_FINGER_SCALE",
+                "DOUBLE_TAP_SCALE",
+                "KEYBOARD_DRAG"
+            ),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.ONE_FINGER_SCALE
+                        or GestureType.DOUBLE_TAP_SCALE
+                        or GestureType.KEYBOARD_DRAG
+            ).map { GestureType.name(it) }
+        )
+
+        assertEquals(
+            expected = listOf(
+                "ONE_FINGER_DRAG",
+                "TWO_FINGER_SCALE",
+                "ONE_FINGER_SCALE",
+                "DOUBLE_TAP_SCALE",
+                "MOUSE_SCROLL_SCALE",
+                "KEYBOARD_SCALE"
+            ),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
                         or GestureType.TWO_FINGER_SCALE
                         or GestureType.ONE_FINGER_SCALE
                         or GestureType.DOUBLE_TAP_SCALE
                         or GestureType.MOUSE_SCROLL_SCALE
-                        or GestureType.DOUBLE_TAP_SCALE * 2
+                        or GestureType.KEYBOARD_SCALE
+            ).map { GestureType.name(it) }
+        )
+        assertEquals(
+            expected = listOf(
+                "ONE_FINGER_DRAG",
+                "TWO_FINGER_SCALE",
+                "ONE_FINGER_SCALE",
+                "DOUBLE_TAP_SCALE",
+                "MOUSE_SCROLL_SCALE",
+                "KEYBOARD_DRAG"
+            ),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.ONE_FINGER_SCALE
+                        or GestureType.DOUBLE_TAP_SCALE
+                        or GestureType.MOUSE_SCROLL_SCALE
+                        or GestureType.KEYBOARD_DRAG
+            ).map { GestureType.name(it) }
+        )
+
+        assertEquals(
+            expected = listOf(
+                "ONE_FINGER_DRAG",
+                "TWO_FINGER_SCALE",
+                "ONE_FINGER_SCALE",
+                "DOUBLE_TAP_SCALE",
+                "MOUSE_SCROLL_SCALE",
+                "KEYBOARD_SCALE",
+                "KEYBOARD_DRAG",
+            ),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.ONE_FINGER_SCALE
+                        or GestureType.DOUBLE_TAP_SCALE
+                        or GestureType.MOUSE_SCROLL_SCALE
+                        or GestureType.KEYBOARD_SCALE
+                        or GestureType.KEYBOARD_DRAG
+            ).map { GestureType.name(it) }
+        )
+
+        assertEquals(
+            expected = listOf(
+                "ONE_FINGER_DRAG",
+                "TWO_FINGER_SCALE",
+                "ONE_FINGER_SCALE",
+                "DOUBLE_TAP_SCALE",
+                "MOUSE_SCROLL_SCALE",
+                "KEYBOARD_SCALE",
+                "KEYBOARD_DRAG",
+            ),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.ONE_FINGER_SCALE
+                        or GestureType.DOUBLE_TAP_SCALE
+                        or GestureType.MOUSE_SCROLL_SCALE
+                        or GestureType.KEYBOARD_SCALE
+                        or GestureType.KEYBOARD_DRAG
+            ).map { GestureType.name(it) }
+        )
+
+        assertEquals(
+            expected = listOf(
+                "ONE_FINGER_DRAG",
+                "TWO_FINGER_SCALE",
+                "ONE_FINGER_SCALE",
+                "DOUBLE_TAP_SCALE",
+                "MOUSE_SCROLL_SCALE",
+                "KEYBOARD_SCALE",
+                "KEYBOARD_DRAG",
+            ),
+            actual = GestureType.parse(
+                GestureType.ONE_FINGER_DRAG
+                        or GestureType.TWO_FINGER_SCALE
+                        or GestureType.ONE_FINGER_SCALE
+                        or GestureType.DOUBLE_TAP_SCALE
+                        or GestureType.MOUSE_SCROLL_SCALE
+                        or GestureType.KEYBOARD_SCALE
+                        or GestureType.KEYBOARD_DRAG
+                        or GestureType.KEYBOARD_DRAG * 2
             ).map { GestureType.name(it) }
         )
     }

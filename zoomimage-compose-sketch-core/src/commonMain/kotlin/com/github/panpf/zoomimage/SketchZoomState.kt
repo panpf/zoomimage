@@ -25,6 +25,8 @@ fun rememberSketchZoomState(logger: Logger = rememberZoomImageLogger(tag = "Sket
     }
 }
 
+// TODO rememberSketchZoomLogger
+
 /**
  * [ZoomState] implementation for Sketch
  *
@@ -32,7 +34,7 @@ fun rememberSketchZoomState(logger: Logger = rememberZoomImageLogger(tag = "Sket
  */
 @Stable
 class SketchZoomState(
-    logger: Logger,
+    logger: Logger, // TODO SketchZoomLogger
     zoomable: ZoomableState,
     subsampling: SubsamplingState
 ) : ZoomState(logger, zoomable, subsampling)

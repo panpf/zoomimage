@@ -8,12 +8,12 @@ Translations: [简体中文](scale_zh.md)
 > * [ZoomState].subsampling is equivalent to [ZoomImageView].subsampling
 
 ZoomImage supports multiple ways to scale images, such as two-finger scale, single-finger scale,
-double-click scale, mouse wheel scale, scale(), etc.
+double-click scale, mouse wheel scale, keyboard scale, scale(), etc.
 
 ### Features
 
 * Support [One-Finger Scale](#one-finger-scale), [Two-Finger Scale](#two-finger-scale),
-  [Double-click Scale](#double-click-scale), [Mouse Wheel Scale](#mouse-wheel-scale)
+  [Double-click Scale](#double-click-scale), [Mouse Wheel Scale](#mouse-wheel-scale), [Keyboard Scale](#keyboard-scale)
   and scaling to a specified multiple by the [scale()](#scale) method
 * [Supports rubber band effect](#rubber-band-scale).
   When the gesture is continuously zoomed (one-finger/two-finger scale) exceeds the maximum or
@@ -46,8 +46,8 @@ example：
 ```kotlin
 val sketchZoomImageView = SketchZoomImageView(context)
 
-sketchZoomImageView.zoomable.contentScale = ContentScaleCompat.None
-sketchZoomImageView.zoomable.alignment = AlignmentCompat.BottomEnd
+sketchZoomImageView.zoomable.contentScaleState.value = ContentScaleCompat.None
+sketchZoomImageView.zoomable.alignmentState.value = AlignmentCompat.BottomEnd
 ```
 
 ### minScale, mediumScale, maxScale
@@ -279,6 +279,54 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
         zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_SCROLL_SCALE
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+### Keyboard scale
+
+ZoomImage supports scaling images through the keyboard, and the following keys are registered by
+default:
+
+* scale in: Key.ZoomIn, Key.Equals + meta/ctrl
+* scale out: Key.ZoomOut, Key.Minus + meta/ctrl
+
+Since the keyboard zoom function must rely on focus, and focus management is very complex, it is not
+enabled by default. You need to actively configure and request focus, as follows:
+
+```kotlin
+val focusRequester = remember { FocusRequester() }
+val zoomState = rememberSketchZoomState()
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    zoomState = zoomState,
+    modifier = Modifier.fillMaxSize()
+        .focusRequester(focusRequester)
+        .focusable()
+        .keyboardZoom(zoomState.zoomable),
+)
+LaunchedEffect(Unit) {
+    focusRequester.requestFocus()
+}
+```
+
+> [!TIP]
+> When requesting focus in HorizontalPager, you need to note that you can only request focus for the
+> current page, otherwise it will cause unexpected accidents.
+
+You can also turn it off dynamically via gesture control, as follows:
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.disabledGestureTypes =
+        zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_SCALE
 }
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",

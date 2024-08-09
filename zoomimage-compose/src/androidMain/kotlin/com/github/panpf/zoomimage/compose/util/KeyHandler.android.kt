@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.compose.zoom
+package com.github.panpf.zoomimage.compose.util
 
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.isCtrlPressed
-
-actual fun checkAssistKeyPressed(event: KeyEvent): Boolean = event.isCtrlPressed
+actual fun platformAssistKey(): AssistKey = AssistKey.Ctrl

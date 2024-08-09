@@ -59,6 +59,7 @@ import androidx.compose.ui.semantics.semantics
  * @param colorFilter Optional colorFilter to apply for the [Painter] when it is rendered onscreen
  * @param clipToBounds Optional controls whether content that is out of scope should be cropped
  */
+// TODO Everything except MyImage is moved to the util directory
 @Composable
 internal fun MyImage(
     painter: Painter,

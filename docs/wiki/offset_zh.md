@@ -7,7 +7,72 @@
 > * [ZoomState].zoomable 等价于 [ZoomImageView].zoomable
 > * [ZoomState].subsampling 等价于 [ZoomImageView].subsampling
 
-ZoomImage 支持单指拖动、惯性滑动，以及 `offset()` 方法来移动图像。
+ZoomImage 支持单指拖动、惯性滑动、键盘拖动，以及 `offset()` 方法来移动图像。
+
+### 单指拖动
+
+ZoomImage 默认开启单指拖动手势，但你可以关闭它，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.disabledGestureTypes =
+        zoomState.zoomable.disabledGestureTypes or GestureType.ONE_FINGER_DRAG
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
+
+### 键盘拖动
+
+ZoomImage 支持通过键盘拖动图像，默认注册了以下按键：
+
+* move up: Key.DirectionUp + meta/ctrl
+* move down: Key.DirectionDown + meta/ctrl
+* move left: Key.DirectionLeft + meta/ctrl
+* move right: Key.DirectionRight + meta/ctrl
+
+由于键盘拖动功能必须依赖焦点，而焦点管理又非常复杂，所以默认没有开启它，需要你主动配置并请求焦点，如下：
+
+```kotlin
+val focusRequester = remember { FocusRequester() }
+val zoomState = rememberSketchZoomState()
+SketchZoomAsyncImage(
+    uri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    zoomState = zoomState,
+    modifier = Modifier.fillMaxSize()
+        .focusRequester(focusRequester)
+        .focusable()
+        .keyboardZoom(zoomState.zoomable),
+)
+LaunchedEffect(Unit) {
+    focusRequester.requestFocus()
+}
+```
+
+> [!TIP]
+> 在 HorizontalPager 中请求焦点时需要注意只能为当前页请求焦点，否则会导致意想不到的意外
+
+你还可以通过手势控制动态关闭它，如下：
+
+```kotlin
+val zoomState: ZoomState by rememberZoomState()
+LaunchEffect(zoomState.zoomable) {
+    zoomState.zoomable.disabledGestureTypes =
+        zoomState.zoomable.disabledGestureTypes or GestureType.KEYBOARD_DRAG
+}
+SketchZoomAsyncImage(
+    imageUri = "https://sample.com/sample.jpeg",
+    contentDescription = "view image",
+    modifier = Modifier.fillMaxSize(),
+    zoomState = zoomState,
+)
+```
 
 ### offset()
 
@@ -70,24 +135,6 @@ LaunchEffect(zoomState.zommable) {
     zoomState.zommable.limitOffsetWithinBaseVisibleRect = true
 }
 
-SketchZoomAsyncImage(
-    imageUri = "https://sample.com/sample.jpeg",
-    contentDescription = "view image",
-    modifier = Modifier.fillMaxSize(),
-    zoomState = zoomState,
-)
-```
-
-### 关闭拖动手势
-
-ZoomImage 默认开启拖动手势，但你可以关闭它，如下：
-
-```kotlin
-val zoomState: ZoomState by rememberZoomState()
-LaunchEffect(zoomState.zoomable) {
-    zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.DRAG
-}
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",
     contentDescription = "view image",
