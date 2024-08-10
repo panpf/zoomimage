@@ -278,6 +278,7 @@ abstract class BaseOperateKeyHandler(
         val startTimeMark = startTimeMark
         val continuousScaleJob = continuousScaleJob
         if (event.type == KeyEventType.KeyDown) {
+            val motionRange = getContinuousScaleInitAddValue(density) .. getContinuousScaleMaxAddValue(density)
             val finalStartTimeMark = startTimeMark ?: TimeSource.Monotonic.markNow()
                 .apply { this@BaseOperateKeyHandler.startTimeMark = this }
             if (continuousScaleJob == null) {
@@ -285,19 +286,15 @@ abstract class BaseOperateKeyHandler(
                     delay(longPressThreshold)
                     while (isActive) {
                         val elapsedTime = finalStartTimeMark.elapsedNow().inWholeMilliseconds
-                        val progress =
-                            (elapsedTime / continuousScaleDuration.toFloat()).coerceAtMost(1f)
-                        val progressValue =
-                            progress * (getContinuousScaleMaxAddValue(density) - getContinuousScaleInitAddValue(
-                                density
-                            ))
-                        val addScale = getContinuousScaleInitAddValue(density) + progressValue
+                        val progress = (elapsedTime / continuousScaleDuration.toFloat()).coerceAtMost(1f)
+                        val progressValue = progress * (motionRange.endInclusive - motionRange.start)
+                        val addScale = motionRange.start + progressValue
                         updateValue(zoomableState, animated = false, addScale)
                         delay(continuousScaleInterval)
                     }
                 }
             }
-        } else {
+        } else if (event.type == KeyEventType.KeyUp){
             continuousScaleJob?.cancel()
             this.continuousScaleJob = null
             this.startTimeMark = null
@@ -305,15 +302,12 @@ abstract class BaseOperateKeyHandler(
             // short press up
             val elapsedTime = startTimeMark?.elapsedNow()?.inWholeMilliseconds ?: -1
             if (startTimeMark != null && elapsedTime < longPressThreshold) {
-                // If the interval between pressing and lifting is less than 100ms, it is regarded as a quick short press.
+                val motionRange = getShortPressInitAddValue(density) .. getShortPressMaxAddValue(density)
+                    // If the interval between pressing and lifting is less than 100ms, it is regarded as a quick short press.
                 if (elapsedTime < 100) fastShortPressCount++ else fastShortPressCount = -1
-                val progress =
-                    (fastShortPressCount / fastShortPressMaxCount.toFloat()).coerceAtMost(1f)
-                val progressValue =
-                    progress * (getShortPressMaxAddValue(density) - getShortPressInitAddValue(
-                        density
-                    ))
-                val addScale = getShortPressInitAddValue(density) + progressValue
+                val progress = (fastShortPressCount / fastShortPressMaxCount.toFloat()).coerceAtMost(1f)
+                val progressValue = progress * (motionRange.endInclusive - motionRange.start)
+                val addScale = motionRange.start + progressValue
                 coroutineScope.launch {
                     updateValue(zoomableState, animated = true, addScale)
                 }
