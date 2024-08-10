@@ -11,7 +11,7 @@ import androidx.compose.ui.focus.focusRequester
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
-import com.github.panpf.zoomimage.compose.zoom.keyboardZoom
+import com.github.panpf.zoomimage.compose.zoom.keyZoom
 import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.base.ToolbarScaffold
@@ -31,7 +31,7 @@ class KeyTestScreen : BaseScreen() {
                 modifier = Modifier.fillMaxSize()
                     .focusRequester(focusRequester)
                     .focusable()
-                    .keyboardZoom(zoomState.zoomable),
+                    .keyZoom(zoomState.zoomable),
             )
 
             LaunchedEffect(Unit) {

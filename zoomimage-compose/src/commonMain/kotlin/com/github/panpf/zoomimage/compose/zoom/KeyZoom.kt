@@ -60,12 +60,12 @@ import kotlin.time.TimeSource
  * * move right: Key.DirectionRight + meta/ctrl
  */
 @Composable
-fun Modifier.keyboardZoom(
+fun Modifier.keyZoom(
     zoomable: ZoomableState,
     keyHandlers: ImmutableList<KeyHandler> = DefaultKeyZoomHandlers
 ): Modifier {
     val density = LocalDensity.current
-    return this.then(KeyboardZoomElement(zoomable, keyHandlers, density))
+    return this.then(KeyZoomElement(zoomable, keyHandlers, density))
 }
 
 /**
@@ -80,7 +80,7 @@ fun Modifier.keyboardZoom(
  * * move right: Key.DirectionRight + meta/ctrl
  */
 @Composable
-fun keyboardZoom(
+fun keyZoom(
     zoomable: ZoomableState,
     eventFlow: SharedFlow<KeyEvent>,
     keyHandlers: ImmutableList<KeyHandler> = DefaultKeyZoomHandlers,
@@ -339,24 +339,24 @@ abstract class BaseOperateKeyHandler(
 }
 
 
-internal data class KeyboardZoomElement(
+internal data class KeyZoomElement(
     val zoomable: ZoomableState,
     val keyHandlers: ImmutableList<KeyHandler>,
     val density: Density
-) : ModifierNodeElement<KeyboardZoomNode>() {
+) : ModifierNodeElement<KeyZoomNode>() {
 
-    override fun create(): KeyboardZoomNode {
-        return KeyboardZoomNode(zoomable, keyHandlers, density)
+    override fun create(): KeyZoomNode {
+        return KeyZoomNode(zoomable, keyHandlers, density)
     }
 
-    override fun update(node: KeyboardZoomNode) {
+    override fun update(node: KeyZoomNode) {
         node.zoomable = zoomable
         node.keyHandlers = keyHandlers
         node.density = density
     }
 }
 
-internal data class KeyboardZoomNode(
+internal data class KeyZoomNode(
     var zoomable: ZoomableState,
     var keyHandlers: ImmutableList<KeyHandler>,
     var density: Density

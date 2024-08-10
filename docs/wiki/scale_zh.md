@@ -279,7 +279,7 @@ SketchZoomAsyncImage(
     modifier = Modifier.fillMaxSize()
         .focusRequester(focusRequester)
         .focusable()
-        .keyboardZoom(zoomState.zoomable),
+        .keyZoom(zoomState.zoomable),
 )
 LaunchedEffect(Unit) {
     focusRequester.requestFocus()
