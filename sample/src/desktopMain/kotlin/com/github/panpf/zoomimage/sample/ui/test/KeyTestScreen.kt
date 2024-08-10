@@ -10,7 +10,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.zoom.keyZoom
 import com.github.panpf.zoomimage.rememberSketchZoomState
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
@@ -23,7 +22,8 @@ class KeyTestScreen : BaseScreen() {
     override fun DrawContent() {
         ToolbarScaffold("Key", ignoreNavigationBarInsets = true) {
             val focusRequester = remember { FocusRequester() }
-            val zoomState = rememberSketchZoomState(rememberZoomImageLogger(tag = "SketchZoomAsyncImage", level = Logger.Level.Debug))
+            val zoomState = rememberSketchZoomState()
+            zoomState.logger.level = Logger.Level.Debug
             SketchZoomAsyncImage(
                 uri = ResourceImages.hugeChina.uri,
                 contentDescription = "",

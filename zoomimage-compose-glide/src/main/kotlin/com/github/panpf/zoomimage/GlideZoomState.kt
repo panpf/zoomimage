@@ -22,8 +22,8 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun rememberGlideZoomState(
     modelToImageSources: ImmutableList<GlideModelToImageSource>? = null,
-    logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage")
 ): GlideZoomState {
+    val logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage")
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState, modelToImageSources) {

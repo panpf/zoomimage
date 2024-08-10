@@ -22,8 +22,8 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun rememberCoilZoomState(
     modelToImageSources: ImmutableList<CoilModelToImageSource>? = null,
-    logger: Logger = rememberZoomImageLogger(tag = "CoilZoomAsyncImage"),
 ): CoilZoomState {
+    val logger: Logger = rememberZoomImageLogger(tag = "CoilZoomAsyncImage")
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState, modelToImageSources) {

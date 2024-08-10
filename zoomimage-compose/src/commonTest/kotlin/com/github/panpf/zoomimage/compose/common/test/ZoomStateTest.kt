@@ -2,7 +2,6 @@ package com.github.panpf.zoomimage.compose.common.test
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.test.TestLifecycle
 import kotlin.test.Test
@@ -15,18 +14,17 @@ class ZoomStateTest {
     fun testRememberZoomState() = runComposeUiTest {
         setContent {
             TestLifecycle {
-                val logger = rememberZoomImageLogger()
-                val zoomState = rememberZoomState(logger)
+                val zoomState = rememberZoomState()
                 assertEquals(
-                    expected = logger,
-                    actual = zoomState.logger
+                    expected = "ZoomImage",
+                    actual = zoomState.logger.tag
                 )
                 assertEquals(
-                    expected = logger,
+                    expected = zoomState.logger,
                     actual = zoomState.zoomable.logger
                 )
                 assertEquals(
-                    expected = logger,
+                    expected = zoomState.logger,
                     actual = zoomState.subsampling.logger
                 )
             }

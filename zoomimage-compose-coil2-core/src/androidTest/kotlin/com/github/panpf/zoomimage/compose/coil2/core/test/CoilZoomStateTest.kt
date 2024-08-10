@@ -6,7 +6,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import coil.ImageLoader
 import com.github.panpf.zoomimage.coil.CoilModelToImageSource
 import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.subsampling.ImageSource.Factory
 import com.github.panpf.zoomimage.test.TestLifecycle
@@ -34,13 +33,11 @@ class CoilZoomStateTest {
                     actual = zoomState1.modelToImageSources.joinToString { it::class.qualifiedName!! }
                 )
 
-                val logger = rememberZoomImageLogger("Test")
                 val modelToImageSources = remember {
                     listOf(TestCoilModelToImageSource()).toImmutableList()
                 }
                 val zoomState2 = rememberCoilZoomState(
                     modelToImageSources = modelToImageSources,
-                    logger = logger
                 )
                 assertEquals(
                     expected = "Test",

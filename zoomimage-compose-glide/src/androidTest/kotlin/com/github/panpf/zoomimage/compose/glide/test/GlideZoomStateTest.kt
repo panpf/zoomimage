@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.bumptech.glide.Glide
-import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.rememberGlideZoomState
@@ -34,13 +33,11 @@ class GlideZoomStateTest {
                     actual = zoomState1.modelToImageSources.joinToString { it::class.qualifiedName!! }
                 )
 
-                val logger = rememberZoomImageLogger("Test")
                 val modelToImageSources = remember {
                     listOf(TestGlideModelToImageSource()).toImmutableList()
                 }
                 val zoomState2 = rememberGlideZoomState(
                     modelToImageSources = modelToImageSources,
-                    logger = logger
                 )
                 assertEquals(
                     expected = "Test",
