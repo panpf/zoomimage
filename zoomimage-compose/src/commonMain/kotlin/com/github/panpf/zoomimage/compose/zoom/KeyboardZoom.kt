@@ -17,7 +17,9 @@
 package com.github.panpf.zoomimage.compose.zoom
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
@@ -40,6 +42,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
@@ -63,6 +66,34 @@ fun Modifier.keyboardZoom(
 ): Modifier {
     val density = LocalDensity.current
     return this.then(KeyboardZoomElement(zoomable, keyHandlers, density))
+}
+
+/**
+ * To handle key zoom, you just get the key event and pass it to this function
+ *
+ * The registered keys are as follows:
+ * * scale in: Key.ZoomIn, Key.Equals + meta/ctrl
+ * * scale out: Key.ZoomOut, Key.Minus + meta/ctrl
+ * * move up: Key.DirectionUp + meta/ctrl
+ * * move down: Key.DirectionDown + meta/ctrl
+ * * move left: Key.DirectionLeft + meta/ctrl
+ * * move right: Key.DirectionRight + meta/ctrl
+ */
+@Composable
+fun keyboardZoom(
+    zoomable: ZoomableState,
+    eventFlow: SharedFlow<KeyEvent>,
+    keyHandlers: ImmutableList<KeyHandler> = DefaultKeyZoomHandlers,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val density = LocalDensity.current
+    LaunchedEffect(zoomable, keyHandlers) {
+        eventFlow.collect { event ->
+            keyHandlers.any {
+                it.handle(coroutineScope, zoomable, density, event)
+            }
+        }
+    }
 }
 
 
