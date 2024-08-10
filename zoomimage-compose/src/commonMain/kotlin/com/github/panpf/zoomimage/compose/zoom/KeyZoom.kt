@@ -30,8 +30,6 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.compose.util.BaseKeyHandler
 import com.github.panpf.zoomimage.compose.util.KeyHandler
 import com.github.panpf.zoomimage.compose.util.KeyMatcher
@@ -137,29 +135,17 @@ val DefaultKeyZoomHandlers = listOf(
 data class ScaleKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
     val scaleIn: Boolean,
-
-    // Normally this is 500, but here for fast response scaling, it is set to 200
-    override val longPressThreshold: Long = 200L,
-
-    val shortPressInitAddValue: Float = 0.5f,
-    val shortPressMaxAddValue: Float = 2f,
-    override var fastShortPressMaxCount: Int = 6,
-
-    // Change from continuousScaleInitScaleFactor to continuousScaleMaxScaleFactor is expected within 3000 milliseconds when scaling continuously
-    override val continuousScaleDuration: Long = 6000L,
-    val continuousScaleInitAddValue: Float = 0.1f,
-    val continuousScaleMaxAddValue: Float = 2f,
-    override val continuousScaleInterval: Long = 16,
+    override val shortPressReachedMaxValueNumber: Int = 5,
+    override val longPressReachedMaxValueDuration: Int = 3000,
 ) : BaseOperateKeyHandler(keyMatchers) {
 
-    override fun getShortPressInitAddValue(density: Density): Float = shortPressInitAddValue
+    override fun getValue(zoomableState: ZoomableState): Float {
+        return zoomableState.transform.scaleX
+    }
 
-    override fun getShortPressMaxAddValue(density: Density): Float = shortPressMaxAddValue
-
-    override fun getContinuousScaleInitAddValue(density: Density): Float =
-        continuousScaleInitAddValue
-
-    override fun getContinuousScaleMaxAddValue(density: Density): Float = continuousScaleMaxAddValue
+    override fun getValueRange(zoomableState: ZoomableState): ClosedRange<Float> {
+        return zoomableState.minScale..zoomableState.maxScale.coerceAtLeast(0f)
+    }
 
     override fun handle(
         coroutineScope: CoroutineScope,
@@ -174,14 +160,14 @@ data class ScaleKeyHandler(
 
     override suspend fun updateValue(zoomableState: ZoomableState, animated: Boolean, add: Float) {
         zoomableState.scale(
-            targetScale = zoomableState.transform.scaleX * addScale(add),
+            targetScale = zoomableState.transform.scaleX + addScale(add),
             centroidContentPoint = zoomableState.contentVisibleRect.center,
             animated = animated
         )
     }
 
     private fun addScale(scaleStep: Float): Float {
-        return if (scaleIn) (1 + scaleStep) else (1 - scaleStep)
+        return if (scaleIn) scaleStep else -scaleStep
     }
 }
 
@@ -189,32 +175,25 @@ data class ScaleKeyHandler(
 data class MoveKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
     val arrow: Arrow,
-
-    // Normally this is 500, but here for fast response offset, it is set to 200
-    override val longPressThreshold: Long = 200L,
-
-    val shortPressInitAddValueDp: Dp = 200.dp,
-    val shortPressMaxAddValueDp: Dp = 500.dp,
-    override var fastShortPressMaxCount: Int = 6,
-
-    // Change from continuousScaleInitScaleFactor to continuousScaleMaxScaleFactor is expected within 3000 milliseconds when scaling continuously
-    override val continuousScaleDuration: Long = 6000L,
-    val continuousScaleInitAddValueDp: Dp = 100.dp,
-    val continuousScaleMaxAddValueDp: Dp = 500.dp,
-    override val continuousScaleInterval: Long = 16,
+    override val shortPressReachedMaxValueNumber: Int = 10,
+    override val longPressReachedMaxValueDuration: Int = 6000,
 ) : BaseOperateKeyHandler(keyMatchers) {
 
-    override fun getShortPressInitAddValue(density: Density): Float =
-        with(density) { shortPressInitAddValueDp.toPx() }
+    override fun getValue(zoomableState: ZoomableState): Float {
+        return if (arrow == Arrow.Left || arrow == Arrow.Right) {
+            zoomableState.transform.offset.x
+        } else {
+            zoomableState.transform.offset.y
+        }
+    }
 
-    override fun getShortPressMaxAddValue(density: Density): Float =
-        with(density) { shortPressMaxAddValueDp.toPx() }
-
-    override fun getContinuousScaleInitAddValue(density: Density): Float =
-        with(density) { continuousScaleInitAddValueDp.toPx() }
-
-    override fun getContinuousScaleMaxAddValue(density: Density): Float =
-        with(density) { continuousScaleMaxAddValueDp.toPx() }
+    override fun getValueRange(zoomableState: ZoomableState): ClosedRange<Float> {
+        return if (arrow == Arrow.Left || arrow == Arrow.Right) {
+            zoomableState.userOffsetBounds.left.toFloat()..zoomableState.userOffsetBounds.right.toFloat()
+        } else {
+            zoomableState.userOffsetBounds.top.toFloat()..zoomableState.userOffsetBounds.bottom.toFloat()
+        }
+    }
 
     override fun handle(
         coroutineScope: CoroutineScope,
@@ -251,20 +230,21 @@ abstract class BaseOperateKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
 ) : BaseKeyHandler(keyMatchers) {
 
-    abstract val longPressThreshold: Long
+    private var longPressJob: Job? = null
 
-    abstract fun getShortPressInitAddValue(density: Density): Float
-    abstract fun getShortPressMaxAddValue(density: Density): Float
-    abstract var fastShortPressMaxCount: Int
+    /**
+     * How many consecutive short presses are expected to be required to go from minimum to maximum?
+     */
+    abstract val shortPressReachedMaxValueNumber: Int
 
-    abstract fun getContinuousScaleInitAddValue(density: Density): Float
-    abstract fun getContinuousScaleMaxAddValue(density: Density): Float
-    abstract val continuousScaleDuration: Long
-    abstract val continuousScaleInterval: Long
+    /**
+     * How long is expected to take to transition from the minimum to the maximum value on a long press
+     */
+    abstract val longPressReachedMaxValueDuration: Int
 
-    private var fastShortPressCount: Int = -1
-    private var continuousScaleJob: Job? = null
-    private var startTimeMark: TimeSource.Monotonic.ValueTimeMark? = null
+    abstract fun getValue(zoomableState: ZoomableState): Float
+
+    abstract fun getValueRange(zoomableState: ZoomableState): ClosedRange<Float>
 
     override fun onKey(
         coroutineScope: CoroutineScope,
@@ -272,49 +252,75 @@ abstract class BaseOperateKeyHandler(
         density: Density,
         event: KeyEvent
     ) {
-        // TODO Both long press and short press are based on the minimum to maximum value.
-        //  If you expect to reach the end point 5 times during a short press, then the step is the distance divided by 5
-        //  If you expect to reach the end in 5 seconds when long pressing, then divide the time by 5 seconds as the progress, multiply by the distance, and walk step by step from the beginning to the end.
-        val startTimeMark = startTimeMark
-        val continuousScaleJob = continuousScaleJob
         if (event.type == KeyEventType.KeyDown) {
-            val motionRange = getContinuousScaleInitAddValue(density) .. getContinuousScaleMaxAddValue(density)
-            val finalStartTimeMark = startTimeMark ?: TimeSource.Monotonic.markNow()
-                .apply { this@BaseOperateKeyHandler.startTimeMark = this }
-            if (continuousScaleJob == null) {
-                this.continuousScaleJob = coroutineScope.launch {
-                    delay(longPressThreshold)
-                    while (isActive) {
-                        val elapsedTime = finalStartTimeMark.elapsedNow().inWholeMilliseconds
-                        val progress = (elapsedTime / continuousScaleDuration.toFloat()).coerceAtMost(1f)
-                        val progressValue = progress * (motionRange.endInclusive - motionRange.start)
-                        val addScale = motionRange.start + progressValue
-                        updateValue(zoomableState, animated = false, addScale)
-                        delay(continuousScaleInterval)
-                    }
-                }
+            if (longPressJob == null) {
+                performShortPress(coroutineScope, zoomableState)
             }
-        } else if (event.type == KeyEventType.KeyUp){
-            continuousScaleJob?.cancel()
-            this.continuousScaleJob = null
-            this.startTimeMark = null
+            startLongPress(coroutineScope, zoomableState)
+        } else if (event.type == KeyEventType.KeyUp) {
+            cancelLongPress()
+        }
+    }
 
-            // short press up
-            val elapsedTime = startTimeMark?.elapsedNow()?.inWholeMilliseconds ?: -1
-            if (startTimeMark != null && elapsedTime < longPressThreshold) {
-                val motionRange = getShortPressInitAddValue(density) .. getShortPressMaxAddValue(density)
-                    // If the interval between pressing and lifting is less than 100ms, it is regarded as a quick short press.
-                if (elapsedTime < 100) fastShortPressCount++ else fastShortPressCount = -1
-                val progress = (fastShortPressCount / fastShortPressMaxCount.toFloat()).coerceAtMost(1f)
+    private fun performShortPress(
+        coroutineScope: CoroutineScope,
+        zoomableState: ZoomableState,
+    ) {
+        // TODO If you press continuously, the speed should become faster and faster. Record the number of short presses and accelerate according to the number of times.
+        val motionRange = getValueRange(zoomableState)
+        val step = (motionRange.endInclusive - motionRange.start) / shortPressReachedMaxValueNumber
+        val addValue = step
+        zoomableState.logger.d {
+            "BaseOperateKeyHandler. onKey. short press. addValue=$addValue. motionRange=$motionRange"
+        }
+        coroutineScope.launch {
+            updateValue(zoomableState, animated = true, addValue)
+        }
+    }
+
+    private fun startLongPress(
+        coroutineScope: CoroutineScope,
+        zoomableState: ZoomableState,
+    ) {
+        if (longPressJob != null) {
+            return
+        }
+
+        this.longPressJob = coroutineScope.launch {
+            // Normally this is 500, but here for fast response, it is set to 200
+            delay(200)
+
+            val motionRange = getValueRange(zoomableState)
+            val startTimeMark = TimeSource.Monotonic.markNow()
+            var lastProgressValue = 0f
+            while (isActive) {
+                // TODO The speed should be getting faster and faster when long pressed, but now it is getting slower and slower.
+                val elapsedTime = startTimeMark.elapsedNow().inWholeMilliseconds
+                val progress =
+                    (elapsedTime / longPressReachedMaxValueDuration.toFloat()).coerceAtMost(1f)
                 val progressValue = progress * (motionRange.endInclusive - motionRange.start)
-                val addScale = motionRange.start + progressValue
-                coroutineScope.launch {
-                    updateValue(zoomableState, animated = true, addScale)
+                val addValue = progressValue - lastProgressValue
+                lastProgressValue = progressValue
+                zoomableState.logger.d {
+                    "BaseOperateKeyHandler. onKey. long press running. " +
+                            "progress=$progress, " +
+                            "progressValue=$progressValue, " +
+                            "addValue=$addValue, " +
+                            "elapsedTime=$elapsedTime, " +
+                            "motionRange=$motionRange"
                 }
-            } else {
-                fastShortPressCount = -1
+                updateValue(zoomableState, animated = false, addValue)
+
+                // Usually, on a device with a refresh rate of 60 frames, it can be refreshed once every 16 milliseconds,
+                // but considering that most mobile devices already have a refresh rate of 120 frames, so 8
+                delay(8)
             }
         }
+    }
+
+    private fun cancelLongPress() {
+        this.longPressJob?.cancel()
+        this.longPressJob = null
     }
 
     override fun onCanceled(
@@ -323,10 +329,10 @@ abstract class BaseOperateKeyHandler(
         density: Density,
         event: KeyEvent
     ) {
-        this.continuousScaleJob?.cancel()
-        this.continuousScaleJob = null
-        this.startTimeMark = null
-        this.fastShortPressCount = -1
+        cancelLongPress()
+        zoomableState.logger.d {
+            "BaseOperateKeyHandler. onCanceled"
+        }
     }
 
     abstract suspend fun updateValue(zoomableState: ZoomableState, animated: Boolean, add: Float)
