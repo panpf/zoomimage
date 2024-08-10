@@ -53,11 +53,18 @@ abstract class BaseKeyHandler(
         density: Density,
         event: KeyEvent
     ): Boolean {
-        if (keyMatchers.any { it.match(event) }) {
-            onKey(coroutineScope, zoomableState, density, event)
-            return true
+        var matched = false
+        keyMatchers.forEach {
+            if (!matched && it.match(event)) {
+                onKey(coroutineScope, zoomableState, density, event)
+                it.keyed = true
+                matched = true
+            } else if (it.keyed) {
+                it.keyed = false
+                onCanceled(coroutineScope, zoomableState, density, event)
+            }
         }
-        return false
+        return matched
     }
 
     abstract fun onKey(
@@ -67,7 +74,12 @@ abstract class BaseKeyHandler(
         event: KeyEvent
     )
 
-    abstract fun onNotKey()
+    abstract fun onCanceled(
+        coroutineScope: CoroutineScope,
+        zoomableState: ZoomableState,
+        density: Density,
+        event: KeyEvent
+    )
 }
 
 @Stable
@@ -75,6 +87,8 @@ data class KeyMatcher(
     val key: Key,
     val assistKey: AssistKey? = null
 ) {
+
+    var keyed: Boolean = false
 
     fun match(event: KeyEvent): Boolean {
         return event.key == key && (assistKey == null || assistKey.check(event))

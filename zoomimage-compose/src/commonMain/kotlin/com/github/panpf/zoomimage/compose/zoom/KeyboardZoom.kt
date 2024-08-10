@@ -241,6 +241,9 @@ abstract class BaseOperateKeyHandler(
         density: Density,
         event: KeyEvent
     ) {
+        // TODO Both long press and short press are based on the minimum to maximum value.
+        //  If you expect to reach the end point 5 times during a short press, then the step is the distance divided by 5
+        //  If you expect to reach the end in 5 seconds when long pressing, then divide the time by 5 seconds as the progress, multiply by the distance, and walk step by step from the beginning to the end.
         val startTimeMark = startTimeMark
         val continuousScaleJob = continuousScaleJob
         if (event.type == KeyEventType.KeyDown) {
@@ -289,11 +292,16 @@ abstract class BaseOperateKeyHandler(
         }
     }
 
-    override fun onNotKey() {
-        continuousScaleJob?.cancel()
+    override fun onCanceled(
+        coroutineScope: CoroutineScope,
+        zoomableState: ZoomableState,
+        density: Density,
+        event: KeyEvent
+    ) {
+        this.continuousScaleJob?.cancel()
         this.continuousScaleJob = null
         this.startTimeMark = null
-        fastShortPressCount = -1
+        this.fastShortPressCount = -1
     }
 
     abstract suspend fun updateValue(zoomableState: ZoomableState, animated: Boolean, add: Float)
