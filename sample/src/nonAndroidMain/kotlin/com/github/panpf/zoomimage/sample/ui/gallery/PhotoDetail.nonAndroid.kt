@@ -1,5 +1,6 @@
 package com.github.panpf.zoomimage.sample.ui.gallery
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -12,14 +13,19 @@ import com.github.panpf.zoomimage.sample.ui.examples.CoilZoomAsyncImageSample
 import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-actual fun PhotoDetail(photo: Photo, photoPaletteState: MutableState<PhotoPalette>) {
+actual fun PhotoDetail(
+    photo: Photo,
+    photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
+) {
     val appSettings = LocalPlatformContext.current.appSettings
     val composeImageLoader by appSettings.composeImageLoader.collectAsState()
     when (composeImageLoader) {
-        "Sketch" -> SketchZoomAsyncImageSample(photo, photoPaletteState)
-        "Coil" -> CoilZoomAsyncImageSample(photo, photoPaletteState)
-        "Basic" -> BasicZoomImageSample(photo, photoPaletteState)
+        "Sketch" -> SketchZoomAsyncImageSample(photo, photoPaletteState, pageSelected)
+        "Coil" -> CoilZoomAsyncImageSample(photo, photoPaletteState, pageSelected)
+        "Basic" -> BasicZoomImageSample(photo, photoPaletteState, pageSelected)
         else -> throw IllegalArgumentException("Unsupported composeImageLoader: $composeImageLoader")
     }
 }

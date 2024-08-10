@@ -24,11 +24,13 @@ import com.github.panpf.zoomimage.sample.ui.model.Photo
 fun SketchZoomAsyncImageSample(
     photo: Photo,
     photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
 ) {
     BaseZoomImageSample(
         photo = photo,
         photoPaletteState = photoPaletteState,
-        createZoomState = { rememberSketchZoomState() }
+        createZoomState = { rememberSketchZoomState() },
+        pageSelected = pageSelected,
     ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         val imageState = rememberAsyncImageState()
         SketchZoomAsyncImage(

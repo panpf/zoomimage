@@ -24,6 +24,7 @@ private fun CoilZoomAsyncImageSamplePreview() {
     }
     CoilZoomAsyncImageSample(
         photo = photo,
-        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
+        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) },
+        pageSelected = true
     )
 }

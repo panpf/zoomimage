@@ -85,11 +85,16 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
-                    // TODO open keyboard zoom
+                    val pageSelected by remember {
+                        derivedStateOf {
+                            pagerState.currentPage == index
+                        }
+                    }
                     val photo1 = params.photos[index]
                     PhotoDetail(
                         photo = photo1,
-                        photoPaletteState = photoPaletteState
+                        photoPaletteState = photoPaletteState,
+                        pageSelected = pageSelected,
                     )
                 }
             } else {
@@ -98,10 +103,16 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     beyondBoundsPageCount = 0,
                     modifier = Modifier.fillMaxSize()
                 ) { index ->
+                    val pageSelected by remember {
+                        derivedStateOf {
+                            pagerState.currentPage == index
+                        }
+                    }
                     val photo1 = params.photos[index]
                     PhotoDetail(
                         photo = photo1,
-                        photoPaletteState = photoPaletteState
+                        photoPaletteState = photoPaletteState,
+                        pageSelected = pageSelected,
                     )
                 }
             }

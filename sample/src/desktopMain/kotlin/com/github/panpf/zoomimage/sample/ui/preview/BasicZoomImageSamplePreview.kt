@@ -24,6 +24,7 @@ fun BasicZoomImageSamplePreview() {
     }
     BasicZoomImageSample(
         photo = photo,
-        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
+        photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) },
+        pageSelected = true
     )
 }

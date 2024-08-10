@@ -23,7 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
+import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
@@ -36,7 +39,6 @@ import com.github.panpf.zoomimage.sample.resources.ic_arrow_down
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_left
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_right
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_up
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
@@ -47,27 +49,25 @@ fun BoxScope.TurnPageIndicator(
     pagerState: PagerState,
     photoPaletteState: MutableState<PhotoPalette>? = null
 ) {
-    val turnPage = remember { MutableSharedFlow<Boolean>() }
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         EventBus.keyEvent.collect { keyEvent ->
             if (keyEvent.type == KeyEventType.KeyUp && !keyEvent.isMetaPressed) {
-                when (keyEvent.key) {
-                    Key.PageUp, Key.DirectionLeft -> turnPage.emit(true)
-                    Key.PageDown, Key.DirectionRight -> turnPage.emit(false)
+                when {
+                    keyEvent.key == Key.PageUp -> pagerState.previousPage()
+                    keyEvent.key == Key.DirectionLeft
+                            && !keyEvent.isMetaPressed
+                            && !keyEvent.isCtrlPressed
+                            && !keyEvent.isShiftPressed
+                            && !keyEvent.isAltPressed -> pagerState.previousPage()
+
+                    keyEvent.key == Key.PageDown -> pagerState.nextPage()
+                    keyEvent.key == Key.DirectionRight
+                            && !keyEvent.isMetaPressed
+                            && !keyEvent.isCtrlPressed
+                            && !keyEvent.isShiftPressed
+                            && !keyEvent.isAltPressed -> pagerState.nextPage()
                 }
-            }
-        }
-    }
-    LaunchedEffect(Unit) {
-        turnPage.collect { previousPage ->
-            if (previousPage) {
-                val nextPageIndex = (pagerState.currentPage + 1) % pagerState.pageCount
-                pagerState.animateScrollToPage(nextPageIndex)
-            } else {
-                val nextPageIndex =
-                    (pagerState.currentPage - 1).let { if (it < 0) pagerState.pageCount + it else it }
-                pagerState.animateScrollToPage(nextPageIndex)
             }
         }
     }
@@ -81,7 +81,7 @@ fun BoxScope.TurnPageIndicator(
     val photoPalette by photoPaletteState ?: remember { mutableStateOf(PhotoPalette(colorScheme)) }
     if (horizontalLayout) {
         IconButton(
-            onClick = { coroutineScope.launch { turnPage.emit(false) } },
+            onClick = { coroutineScope.launch { pagerState.previousPage() } },
             modifier = turnPageIconModifier.align(Alignment.CenterStart),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = photoPalette.containerColor,
@@ -94,7 +94,7 @@ fun BoxScope.TurnPageIndicator(
             )
         }
         IconButton(
-            onClick = { coroutineScope.launch { turnPage.emit(true) } },
+            onClick = { coroutineScope.launch { pagerState.nextPage() } },
             modifier = turnPageIconModifier.align(Alignment.CenterEnd),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = photoPalette.containerColor,
@@ -108,7 +108,7 @@ fun BoxScope.TurnPageIndicator(
         }
     } else {
         IconButton(
-            onClick = { coroutineScope.launch { turnPage.emit(false) } },
+            onClick = { coroutineScope.launch { pagerState.previousPage() } },
             modifier = turnPageIconModifier.align(Alignment.TopCenter),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = photoPalette.containerColor,
@@ -121,7 +121,7 @@ fun BoxScope.TurnPageIndicator(
             )
         }
         IconButton(
-            onClick = { coroutineScope.launch { turnPage.emit(true) } },
+            onClick = { coroutineScope.launch { pagerState.nextPage() } },
             modifier = turnPageIconModifier.align(Alignment.BottomCenter),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = photoPalette.containerColor,
@@ -134,4 +134,16 @@ fun BoxScope.TurnPageIndicator(
             )
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+suspend fun PagerState.nextPage() {
+    val nextPageIndex = (currentPage + 1) % pageCount
+    animateScrollToPage(nextPageIndex)
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+suspend fun PagerState.previousPage() {
+    val nextPageIndex = (currentPage - 1).let { if (it < 0) pageCount + it else it }
+    animateScrollToPage(nextPageIndex)
 }

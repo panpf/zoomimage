@@ -13,6 +13,9 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,7 +26,7 @@ import kotlinx.coroutines.launch
 data class PagerItem<T>(
     val data: T,
     val titleFactory: (data: T) -> String,
-    val contentFactory: @Composable (data: T, index: Int) -> Unit
+    val contentFactory: @Composable (data: T, index: Int, pageSelected: Boolean) -> Unit
 )
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -67,8 +70,13 @@ fun <T> HorizontalTabPager(pagerItems: Array<PagerItem<T>>) {
                 beyondBoundsPageCount = 0,
                 modifier = Modifier.fillMaxSize()
             ) { index ->
+                val pageSelected by remember {
+                    derivedStateOf {
+                        pagerState.currentPage == index
+                    }
+                }
                 val item = pagerItems[index]
-                item.contentFactory(item.data, index)
+                item.contentFactory(item.data, index, pageSelected)
             }
 
             if (!runtimePlatformInstance.isMobile()) {

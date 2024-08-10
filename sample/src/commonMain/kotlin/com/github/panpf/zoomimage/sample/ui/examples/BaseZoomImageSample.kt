@@ -55,6 +55,8 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
+import com.github.panpf.zoomimage.compose.zoom.keyboardZoom
+import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.resources.Res
@@ -90,6 +92,7 @@ import kotlin.math.roundToInt
 fun <T : ZoomState> BaseZoomImageSample(
     photo: Photo,
     photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
     createZoomState: @Composable () -> T,
     content: @Composable BoxScope.(
         contentScale: ContentScale,
@@ -238,6 +241,10 @@ fun <T : ZoomState> BaseZoomImageSample(
                 ),
                 overflow = TextOverflow.Ellipsis,
             )
+        }
+
+        if (pageSelected) {
+            keyboardZoom(zoomState.zoomable, EventBus.keyEvent)
         }
 
         ZoomImageTool(

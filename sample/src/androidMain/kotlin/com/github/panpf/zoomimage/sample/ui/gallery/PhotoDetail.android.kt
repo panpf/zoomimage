@@ -9,19 +9,23 @@ import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.examples.BasicZoomImageSample
 import com.github.panpf.zoomimage.sample.ui.examples.CoilZoomAsyncImageSample
-import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
 import com.github.panpf.zoomimage.sample.ui.examples.GlideZoomAsyncImageSample
+import com.github.panpf.zoomimage.sample.ui.examples.SketchZoomAsyncImageSample
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 @Composable
-actual fun PhotoDetail(photo: Photo, photoPaletteState: MutableState<PhotoPalette>) {
+actual fun PhotoDetail(
+    photo: Photo,
+    photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
+) {
     val appSettings = LocalPlatformContext.current.appSettings
     val composeImageLoader by appSettings.composeImageLoader.collectAsState()
     when (composeImageLoader) {
-        "Sketch" -> SketchZoomAsyncImageSample(photo, photoPaletteState)
-        "Coil" -> CoilZoomAsyncImageSample(photo, photoPaletteState)
-        "Glide" -> GlideZoomAsyncImageSample(photo, photoPaletteState)
-        "Basic" -> BasicZoomImageSample(photo, photoPaletteState)
+        "Sketch" -> SketchZoomAsyncImageSample(photo, photoPaletteState, pageSelected)
+        "Coil" -> CoilZoomAsyncImageSample(photo, photoPaletteState, pageSelected)
+        "Glide" -> GlideZoomAsyncImageSample(photo, photoPaletteState, pageSelected)
+        "Basic" -> BasicZoomImageSample(photo, photoPaletteState, pageSelected)
         else -> throw IllegalArgumentException("Unsupported composeImageLoader: $composeImageLoader")
     }
 }

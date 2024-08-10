@@ -31,11 +31,16 @@ import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageS
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 
 @Composable
-fun BasicZoomImageSample(photo: Photo, photoPaletteState: MutableState<PhotoPalette>) {
+fun BasicZoomImageSample(
+    photo: Photo,
+    photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
+) {
     BaseZoomImageSample(
         photo = photo,
         photoPaletteState = photoPaletteState,
-        createZoomState = { rememberZoomState() }
+        createZoomState = { rememberZoomState() },
+        pageSelected = pageSelected,
     ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         val context = LocalPlatformContext.current
         val sketch = SingletonSketch.get(context)

@@ -24,6 +24,7 @@ fun SketchZoomAsyncImageSamplePreview() {
     }
     SketchZoomAsyncImageSample(
         photo = photo,
-        photoPaletteState = mutableStateOf(PhotoPalette(colorScheme))
+        photoPaletteState = mutableStateOf(PhotoPalette(colorScheme)),
+        pageSelected = true
     )
 }

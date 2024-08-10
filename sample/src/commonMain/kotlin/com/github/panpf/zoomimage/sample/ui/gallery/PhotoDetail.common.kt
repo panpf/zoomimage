@@ -6,4 +6,8 @@ import com.github.panpf.zoomimage.sample.image.PhotoPalette
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 @Composable
-expect fun PhotoDetail(photo: Photo, photoPaletteState: MutableState<PhotoPalette>)
+expect fun PhotoDetail(
+    photo: Photo,
+    photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
+)

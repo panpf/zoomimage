@@ -31,12 +31,14 @@ import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 @Composable
 fun GlideZoomAsyncImageSample(
     photo: Photo,
-    photoPaletteState: MutableState<PhotoPalette>
+    photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
 ) {
     BaseZoomImageSample(
         photo = photo,
         photoPaletteState = photoPaletteState,
-        createZoomState = { rememberGlideZoomState() }
+        createZoomState = { rememberGlideZoomState() },
+        pageSelected = pageSelected,
     ) { contentScale, alignment, state, scrollBar, onLongClick ->
         val context = LocalContext.current
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.Loading) }
@@ -95,6 +97,7 @@ private fun GlideZoomAsyncImageSamplePreview() {
         photo = photo,
         photoPaletteState = remember {
             mutableStateOf(PhotoPalette(colorScheme))
-        }
+        },
+        pageSelected = true
     )
 }

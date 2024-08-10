@@ -28,7 +28,8 @@ expect fun platformCoilModelToImageSource(): List<CoilModelToImageSource>?
 @Composable
 fun CoilZoomAsyncImageSample(
     photo: Photo,
-    photoPaletteState: MutableState<PhotoPalette>
+    photoPaletteState: MutableState<PhotoPalette>,
+    pageSelected: Boolean,
 ) {
     BaseZoomImageSample(
         photo = photo,
@@ -40,7 +41,8 @@ fun CoilZoomAsyncImageSample(
                     .toImmutableList()
             }
             rememberCoilZoomState(modelToImageSources = extensionsModelToImageSources)
-        }
+        },
+        pageSelected = pageSelected,
     ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
         var myLoadState by remember { mutableStateOf<MyPageState>(MyPageState.None) }
         val context = LocalPlatformContext.current

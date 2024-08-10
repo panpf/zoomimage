@@ -79,10 +79,10 @@ class ImageSourceTestScreen : BaseScreen() {
                             titleFactory = { data ->
                                 data.first
                             },
-                            contentFactory = { data, _ ->
+                            contentFactory = { data, _, pageSelected ->
                                 val photoPaletteState =
                                     remember { mutableStateOf(PhotoPalette(colorScheme)) }
-                                ImageSourceSample(data.second, photoPaletteState)
+                                ImageSourceSample(data.second, photoPaletteState, pageSelected)
                             }
                         )
                     }.toTypedArray()
@@ -95,11 +95,16 @@ class ImageSourceTestScreen : BaseScreen() {
     }
 
     @Composable
-    fun ImageSourceSample(sketchImageUri: String, photoPaletteState: MutableState<PhotoPalette>) {
+    fun ImageSourceSample(
+        sketchImageUri: String,
+        photoPaletteState: MutableState<PhotoPalette>,
+        pageSelected: Boolean,
+    ) {
         BaseZoomImageSample(
             photo = Photo(sketchImageUri),
             photoPaletteState = photoPaletteState,
-            createZoomState = { rememberZoomState() }
+            createZoomState = { rememberZoomState() },
+            pageSelected = pageSelected,
         ) { contentScale, alignment, zoomState, scrollBar, onLongClick ->
             val context = LocalPlatformContext.current
             val sketch = SingletonSketch.get(context)
