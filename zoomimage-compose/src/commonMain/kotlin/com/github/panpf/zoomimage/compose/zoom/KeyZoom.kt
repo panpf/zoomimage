@@ -43,7 +43,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.math.min
 import kotlin.time.TimeSource
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 
 /**
@@ -252,6 +254,7 @@ abstract class BaseOperateKeyHandler(
 ) : BaseKeyHandler(keyMatchers) {
 
     private var longPressJob: Job? = null
+    private var lastShortPressTimeMark: ValueTimeMark? = null
 
     /**
      * How many consecutive short presses are expected to be required to go from minimum to maximum?
@@ -289,18 +292,27 @@ abstract class BaseOperateKeyHandler(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
     ) {
-        // TODO If you press continuously, the speed should become faster and faster. Record the number of short presses and accelerate according to the number of times.
         val motionRange = getValueRange(zoomableState)
+        val twoShortPressInterval = lastShortPressTimeMark?.elapsedNow()?.inWholeMilliseconds ?: -1
+        lastShortPressTimeMark = TimeSource.Monotonic.markNow()
         val step = (motionRange.endInclusive - motionRange.start) / shortPressReachedMaxValueNumber
         val shortStepMinValue = getShortStepMinValue(zoomableState) ?: 0f
         val addValue = step.coerceAtLeast(shortStepMinValue)
         zoomableState.logger.d {
-            "BaseOperateKeyHandler. onKey. short press. addValue=$addValue. motionRange=$motionRange"
+            "BaseOperateKeyHandler. onKey. short press. " +
+                    "addValue=$addValue, " +
+                    "twoShortPressInterval=$twoShortPressInterval. " +
+                    "motionRange=$motionRange"
+        }
+        val animationDurationMillis = if (twoShortPressInterval > 0) {
+            min(twoShortPressInterval.toInt(), zoomableState.animationSpec.durationMillis)
+        } else {
+            zoomableState.animationSpec.durationMillis
         }
         coroutineScope.launch {
             updateValue(
                 zoomableState = zoomableState,
-                animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 150),
+                animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = animationDurationMillis),
                 add = addValue
             )
         }
