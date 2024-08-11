@@ -139,6 +139,7 @@ data class ScaleKeyHandler(
     val scaleIn: Boolean,
     override val shortPressReachedMaxValueNumber: Int = 5,
     override val longPressReachedMaxValueDuration: Int = 3000,
+    override val longPressAccelerate: Boolean = true,
 ) : BaseOperateKeyHandler(keyMatchers) {
 
     override fun getValue(zoomableState: ZoomableState): Float {
@@ -187,6 +188,7 @@ data class MoveKeyHandler(
     override val shortPressReachedMaxValueNumber: Int = 10,
     val shortPressMinStepWithContainerPercentage: Float = 0.25f,
     override val longPressReachedMaxValueDuration: Int = 3000,
+    override val longPressAccelerate: Boolean = true,
 ) : BaseOperateKeyHandler(keyMatchers) {
 
     override fun getValue(zoomableState: ZoomableState): Float {
@@ -263,8 +265,15 @@ abstract class BaseOperateKeyHandler(
 
     /**
      * How long is expected to take to transition from the minimum to the maximum value on a long press
+     *
+     * Note: [longPressAccelerate] will accelerate changes and only takes half the time of [longPressReachedMaxValueDuration] to reach the maximum value
      */
     abstract val longPressReachedMaxValueDuration: Int
+
+    /**
+     * If true, the long press will be accelerated. After acceleration, the long press will only take half the original time to reach the maximum value.
+     */
+    abstract val longPressAccelerate: Boolean
 
     abstract fun getValue(zoomableState: ZoomableState): Float
 
@@ -334,16 +343,18 @@ abstract class BaseOperateKeyHandler(
             val startTimeMark = TimeSource.Monotonic.markNow()
             var lastProgressValue = 0f
             while (isActive) {
-                // TODO The speed should be getting faster and faster when long pressed, but now it is getting slower and slower.
                 val elapsedTime = startTimeMark.elapsedNow().inWholeMilliseconds
                 val progress =
                     (elapsedTime / longPressReachedMaxValueDuration.toFloat()).coerceAtMost(1f)
-                val progressValue = progress * (motionRange.endInclusive - motionRange.start)
+                val acceleratedProgress = accelerateProgress(progress)
+                val progressValue =
+                    acceleratedProgress * (motionRange.endInclusive - motionRange.start)
                 val addValue = progressValue - lastProgressValue
                 lastProgressValue = progressValue
                 zoomableState.logger.d {
                     "BaseOperateKeyHandler. onKey. long press running. " +
                             "progress=$progress, " +
+                            "acceleratedProgress=$acceleratedProgress, " +
                             "progressValue=$progressValue, " +
                             "addValue=$addValue, " +
                             "elapsedTime=$elapsedTime, " +
@@ -355,6 +366,14 @@ abstract class BaseOperateKeyHandler(
                 // but considering that most mobile devices already have a refresh rate of 120 frames, so 8
                 delay(8)
             }
+        }
+    }
+
+    private fun accelerateProgress(fraction: Float): Float {
+        return if (longPressAccelerate) {
+            fraction * ((fraction * 2) + 1)
+        } else {
+            fraction
         }
     }
 
