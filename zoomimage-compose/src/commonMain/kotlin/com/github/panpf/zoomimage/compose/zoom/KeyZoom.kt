@@ -147,6 +147,8 @@ data class ScaleKeyHandler(
         return zoomableState.minScale..zoomableState.maxScale.coerceAtLeast(0f)
     }
 
+    override fun getShortStepMinValue(zoomableState: ZoomableState): Float? = null
+
     override fun handle(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
@@ -158,11 +160,16 @@ data class ScaleKeyHandler(
         false
     }
 
-    override suspend fun updateValue(zoomableState: ZoomableState, animated: Boolean, add: Float) {
+    override suspend fun updateValue(
+        zoomableState: ZoomableState,
+        animationSpec: ZoomAnimationSpec?,
+        add: Float
+    ) {
         zoomableState.scale(
             targetScale = zoomableState.transform.scaleX + addScale(add),
             centroidContentPoint = zoomableState.contentVisibleRect.center,
-            animated = animated
+            animated = animationSpec != null,
+            animationSpec = animationSpec
         )
     }
 
@@ -176,7 +183,8 @@ data class MoveKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
     val arrow: Arrow,
     override val shortPressReachedMaxValueNumber: Int = 10,
-    override val longPressReachedMaxValueDuration: Int = 6000,
+    val shortPressMinStepWithContainerPercentage: Float = 0.25f,
+    override val longPressReachedMaxValueDuration: Int = 3000,
 ) : BaseOperateKeyHandler(keyMatchers) {
 
     override fun getValue(zoomableState: ZoomableState): Float {
@@ -195,6 +203,14 @@ data class MoveKeyHandler(
         }
     }
 
+    override fun getShortStepMinValue(zoomableState: ZoomableState): Float {
+        return if (arrow == Arrow.Left || arrow == Arrow.Right) {
+            zoomableState.containerSize.width * shortPressMinStepWithContainerPercentage
+        } else {
+            zoomableState.containerSize.height * shortPressMinStepWithContainerPercentage
+        }
+    }
+
     override fun handle(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
@@ -206,10 +222,15 @@ data class MoveKeyHandler(
         false
     }
 
-    override suspend fun updateValue(zoomableState: ZoomableState, animated: Boolean, add: Float) {
+    override suspend fun updateValue(
+        zoomableState: ZoomableState,
+        animationSpec: ZoomAnimationSpec?,
+        add: Float
+    ) {
         zoomableState.offset(
             targetOffset = zoomableState.transform.offset + addOffset(add),
-            animated = animated
+            animated = animationSpec != null,
+            animationSpec = animationSpec
         )
     }
 
@@ -246,6 +267,8 @@ abstract class BaseOperateKeyHandler(
 
     abstract fun getValueRange(zoomableState: ZoomableState): ClosedRange<Float>
 
+    abstract fun getShortStepMinValue(zoomableState: ZoomableState): Float?
+
     override fun onKey(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
@@ -269,12 +292,17 @@ abstract class BaseOperateKeyHandler(
         // TODO If you press continuously, the speed should become faster and faster. Record the number of short presses and accelerate according to the number of times.
         val motionRange = getValueRange(zoomableState)
         val step = (motionRange.endInclusive - motionRange.start) / shortPressReachedMaxValueNumber
-        val addValue = step
+        val shortStepMinValue = getShortStepMinValue(zoomableState) ?: 0f
+        val addValue = step.coerceAtLeast(shortStepMinValue)
         zoomableState.logger.d {
             "BaseOperateKeyHandler. onKey. short press. addValue=$addValue. motionRange=$motionRange"
         }
         coroutineScope.launch {
-            updateValue(zoomableState, animated = true, addValue)
+            updateValue(
+                zoomableState = zoomableState,
+                animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = 150),
+                add = addValue
+            )
         }
     }
 
@@ -309,7 +337,7 @@ abstract class BaseOperateKeyHandler(
                             "elapsedTime=$elapsedTime, " +
                             "motionRange=$motionRange"
                 }
-                updateValue(zoomableState, animated = false, addValue)
+                updateValue(zoomableState, animationSpec = null, addValue)
 
                 // Usually, on a device with a refresh rate of 60 frames, it can be refreshed once every 16 milliseconds,
                 // but considering that most mobile devices already have a refresh rate of 120 frames, so 8
@@ -335,7 +363,11 @@ abstract class BaseOperateKeyHandler(
         }
     }
 
-    abstract suspend fun updateValue(zoomableState: ZoomableState, animated: Boolean, add: Float)
+    abstract suspend fun updateValue(
+        zoomableState: ZoomableState,
+        animationSpec: ZoomAnimationSpec? = null,
+        add: Float
+    )
 }
 
 
