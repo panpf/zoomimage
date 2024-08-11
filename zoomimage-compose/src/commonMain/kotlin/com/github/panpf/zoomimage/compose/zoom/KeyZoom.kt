@@ -30,10 +30,11 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import com.github.panpf.zoomimage.compose.util.BaseKeyHandler
-import com.github.panpf.zoomimage.compose.util.KeyHandler
+import com.github.panpf.zoomimage.compose.util.AssistKey
 import com.github.panpf.zoomimage.compose.util.KeyMatcher
 import com.github.panpf.zoomimage.compose.util.platformAssistKey
+import com.github.panpf.zoomimage.compose.zoom.internal.MatcherZoomKeyHandler
+import com.github.panpf.zoomimage.compose.zoom.internal.ZoomKeyHandler
 import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -52,17 +53,17 @@ import kotlin.time.TimeSource.Monotonic.ValueTimeMark
  * Add keyboard zoom support. Note: You must let the current component gain focus to use it
  *
  * The registered keys are as follows:
- * * scale in: Key.ZoomIn, Key.Equals + meta/ctrl
- * * scale out: Key.ZoomOut, Key.Minus + meta/ctrl
- * * move up: Key.DirectionUp + meta/ctrl
- * * move down: Key.DirectionDown + meta/ctrl
- * * move left: Key.DirectionLeft + meta/ctrl
- * * move right: Key.DirectionRight + meta/ctrl
+ * * scale in: Key.ZoomIn, Key.Equals + (meta/ctrl)/alt, Key.DirectionUp + (meta/ctrl)/alt
+ * * scale out: Key.ZoomOut, Key.Minus + (meta/ctrl)/alt, Key.DirectionDown + (meta/ctrl)/alt
+ * * move up: Key.DirectionUp
+ * * move down: Key.DirectionDown
+ * * move left: Key.DirectionLeft
+ * * move right: Key.DirectionRight
  */
 @Composable
 fun Modifier.keyZoom(
     zoomable: ZoomableState,
-    keyHandlers: ImmutableList<KeyHandler> = DefaultKeyZoomHandlers
+    keyHandlers: ImmutableList<ZoomKeyHandler> = DefaultKeyZoomHandlers
 ): Modifier {
     val density = LocalDensity.current
     return this.then(KeyZoomElement(zoomable, keyHandlers, density))
@@ -72,25 +73,24 @@ fun Modifier.keyZoom(
  * To handle key zoom, you just get the key event and pass it to this function
  *
  * The registered keys are as follows:
- * * scale in: Key.ZoomIn, Key.Equals + meta/ctrl
- * * scale out: Key.ZoomOut, Key.Minus + meta/ctrl
- * * move up: Key.DirectionUp + meta/ctrl
- * * move down: Key.DirectionDown + meta/ctrl
- * * move left: Key.DirectionLeft + meta/ctrl
- * * move right: Key.DirectionRight + meta/ctrl
+ * * scale in: Key.ZoomIn, Key.Equals + (meta/ctrl)/alt, Key.DirectionUp + (meta/ctrl)/alt
+ * * scale out: Key.ZoomOut, Key.Minus + (meta/ctrl)/alt, Key.DirectionDown + (meta/ctrl)/alt
+ * * move up: Key.DirectionUp
+ * * move down: Key.DirectionDown
+ * * move left: Key.DirectionLeft
+ * * move right: Key.DirectionRight
  */
 @Composable
 fun keyZoom(
     zoomable: ZoomableState,
     eventFlow: SharedFlow<KeyEvent>,
-    keyHandlers: ImmutableList<KeyHandler> = DefaultKeyZoomHandlers,
+    keyHandlers: ImmutableList<ZoomKeyHandler> = DefaultKeyZoomHandlers,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val density = LocalDensity.current
     LaunchedEffect(zoomable, keyHandlers) {
         eventFlow.collect { event ->
             keyHandlers.any {
-                it.handle(coroutineScope, zoomable, density, event)
+                it.handle(coroutineScope, zoomable, event)
             }
         }
     }
@@ -100,27 +100,33 @@ fun keyZoom(
 val DefaultScaleInKeyMatcher = listOf(
     KeyMatcher(key = Key.ZoomIn),
     KeyMatcher(key = Key.Equals, assistKey = platformAssistKey()),
+    KeyMatcher(key = Key.Equals, assistKey = AssistKey.Alt),
+    KeyMatcher(key = Key.DirectionUp, assistKey = AssistKey.Alt),
+    KeyMatcher(key = Key.DirectionUp, assistKey = platformAssistKey()),
 ).toImmutableList()
 
 val DefaultScaleOutKeyMatcher = listOf(
     KeyMatcher(key = Key.ZoomOut),
     KeyMatcher(key = Key.Minus, assistKey = platformAssistKey()),
+    KeyMatcher(key = Key.Minus, assistKey = AssistKey.Alt),
+    KeyMatcher(key = Key.DirectionDown, assistKey = AssistKey.Alt),
+    KeyMatcher(key = Key.DirectionDown, assistKey = platformAssistKey()),
 ).toImmutableList()
 
 val DefaultMoveUpKeyMatchers = listOf(
-    KeyMatcher(key = Key.DirectionUp, assistKey = platformAssistKey()),
+    KeyMatcher(key = Key.DirectionUp, assistKey = AssistKey.None),
 ).toImmutableList()
 
 val DefaultMoveDownKeyMatchers = listOf(
-    KeyMatcher(key = Key.DirectionDown, assistKey = platformAssistKey())
+    KeyMatcher(key = Key.DirectionDown, assistKey = AssistKey.None)
 ).toImmutableList()
 
 val DefaultMoveLeftKeyMatchers = listOf(
-    KeyMatcher(key = Key.DirectionLeft, assistKey = platformAssistKey())
+    KeyMatcher(key = Key.DirectionLeft, assistKey = AssistKey.None)
 ).toImmutableList()
 
 val DefaultMoveRightKeyMatchers = listOf(
-    KeyMatcher(key = Key.DirectionRight, assistKey = platformAssistKey())
+    KeyMatcher(key = Key.DirectionRight, assistKey = AssistKey.None)
 ).toImmutableList()
 
 val DefaultKeyZoomHandlers = listOf(
@@ -140,7 +146,7 @@ data class ScaleKeyHandler(
     override val shortPressReachedMaxValueNumber: Int = 5,
     override val longPressReachedMaxValueDuration: Int = 3000,
     override val longPressAccelerate: Boolean = true,
-) : BaseOperateKeyHandler(keyMatchers) {
+) : ZoomMatcherKeyHandler(keyMatchers) {
 
     override fun getValue(zoomableState: ZoomableState): Float {
         return zoomableState.transform.scaleX
@@ -155,10 +161,9 @@ data class ScaleKeyHandler(
     override fun handle(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
-        density: Density,
         event: KeyEvent
     ): Boolean = if (zoomableState.disabledGestureTypes and GestureType.KEYBOARD_SCALE == 0) {
-        super.handle(coroutineScope, zoomableState, density, event)
+        super.handle(coroutineScope, zoomableState, event)
     } else {
         false
     }
@@ -189,7 +194,7 @@ data class MoveKeyHandler(
     val shortPressMinStepWithContainerPercentage: Float = 0.25f,
     override val longPressReachedMaxValueDuration: Int = 3000,
     override val longPressAccelerate: Boolean = true,
-) : BaseOperateKeyHandler(keyMatchers) {
+) : ZoomMatcherKeyHandler(keyMatchers) {
 
     override fun getValue(zoomableState: ZoomableState): Float {
         return if (arrow == Arrow.Left || arrow == Arrow.Right) {
@@ -218,10 +223,9 @@ data class MoveKeyHandler(
     override fun handle(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
-        density: Density,
         event: KeyEvent
     ): Boolean = if (zoomableState.disabledGestureTypes and GestureType.KEYBOARD_DRAG == 0) {
-        super.handle(coroutineScope, zoomableState, density, event)
+        super.handle(coroutineScope, zoomableState, event)
     } else {
         false
     }
@@ -251,9 +255,9 @@ data class MoveKeyHandler(
 }
 
 @Stable
-abstract class BaseOperateKeyHandler(
+abstract class ZoomMatcherKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
-) : BaseKeyHandler(keyMatchers) {
+) : MatcherZoomKeyHandler(keyMatchers) {
 
     private var longPressJob: Job? = null
     private var lastShortPressTimeMark: ValueTimeMark? = null
@@ -284,7 +288,6 @@ abstract class BaseOperateKeyHandler(
     override fun onKey(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
-        density: Density,
         event: KeyEvent
     ) {
         if (event.type == KeyEventType.KeyDown) {
@@ -292,7 +295,8 @@ abstract class BaseOperateKeyHandler(
                 performShortPress(coroutineScope, zoomableState)
             }
             startLongPress(coroutineScope, zoomableState)
-        } else if (event.type == KeyEventType.KeyUp) {
+        } else {
+            // KeyEventType.KeyUp
             cancelLongPress()
         }
     }
@@ -308,7 +312,7 @@ abstract class BaseOperateKeyHandler(
         val shortStepMinValue = getShortStepMinValue(zoomableState) ?: 0f
         val addValue = step.coerceAtLeast(shortStepMinValue)
         zoomableState.logger.d {
-            "BaseOperateKeyHandler. onKey. short press. " +
+            "ZoomMatcherKeyHandler. onKey. short press. " +
                     "addValue=$addValue, " +
                     "twoShortPressInterval=$twoShortPressInterval. " +
                     "motionRange=$motionRange"
@@ -352,7 +356,7 @@ abstract class BaseOperateKeyHandler(
                 val addValue = progressValue - lastProgressValue
                 lastProgressValue = progressValue
                 zoomableState.logger.d {
-                    "BaseOperateKeyHandler. onKey. long press running. " +
+                    "ZoomMatcherKeyHandler. onKey. long press running. " +
                             "progress=$progress, " +
                             "acceleratedProgress=$acceleratedProgress, " +
                             "progressValue=$progressValue, " +
@@ -385,12 +389,11 @@ abstract class BaseOperateKeyHandler(
     override fun onCanceled(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
-        density: Density,
         event: KeyEvent
     ) {
         cancelLongPress()
         zoomableState.logger.d {
-            "BaseOperateKeyHandler. onCanceled"
+            "ZoomMatcherKeyHandler. onCanceled"
         }
     }
 
@@ -404,7 +407,7 @@ abstract class BaseOperateKeyHandler(
 
 internal data class KeyZoomElement(
     val zoomable: ZoomableState,
-    val keyHandlers: ImmutableList<KeyHandler>,
+    val keyHandlers: ImmutableList<ZoomKeyHandler>,
     val density: Density
 ) : ModifierNodeElement<KeyZoomNode>() {
 
@@ -421,13 +424,13 @@ internal data class KeyZoomElement(
 
 internal data class KeyZoomNode(
     var zoomable: ZoomableState,
-    var keyHandlers: ImmutableList<KeyHandler>,
+    var keyHandlers: ImmutableList<ZoomKeyHandler>,
     var density: Density
 ) : KeyInputModifierNode, Modifier.Node() {
 
     override fun onPreKeyEvent(event: KeyEvent): Boolean = false
 
     override fun onKeyEvent(event: KeyEvent): Boolean = keyHandlers.any {
-        it.handle(coroutineScope, zoomable, density, event)
+        it.handle(coroutineScope, zoomable, event)
     }
 }

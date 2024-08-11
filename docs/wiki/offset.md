@@ -30,13 +30,13 @@ SketchZoomAsyncImage(
 
 ### Keyboard drag
 
-ZoomImage supports drag images through the keyboard, and the following keys are registered by
-default:
+ZoomImage supports drag images through the keyboard, supports both short press and long press
+operations. And the following keys are registered by default:
 
-* move up: Key.DirectionUp + meta/ctrl
-* move down: Key.DirectionDown + meta/ctrl
-* move left: Key.DirectionLeft + meta/ctrl
-* move right: Key.DirectionRight + meta/ctrl
+* move up: Key.DirectionUp
+* move down: Key.DirectionDown
+* move left: Key.DirectionLeft
+* move right: Key.DirectionRight
 
 Since the keyboard drag function must rely on focus, and focus management is very complex, it is not
 enabled by default. You need to actively configure and request focus, as follows:

@@ -29,12 +29,12 @@ SketchZoomAsyncImage(
 
 ### 键盘拖动
 
-ZoomImage 支持通过键盘拖动图像，默认注册了以下按键：
+ZoomImage 支持通过键盘拖动图像，支持短按和长按两种操作。默认注册了以下按键：
 
-* move up: Key.DirectionUp + meta/ctrl
-* move down: Key.DirectionDown + meta/ctrl
-* move left: Key.DirectionLeft + meta/ctrl
-* move right: Key.DirectionRight + meta/ctrl
+* move up: Key.DirectionUp
+* move down: Key.DirectionDown
+* move left: Key.DirectionLeft
+* move right: Key.DirectionRight
 
 由于键盘拖动功能必须依赖焦点，而焦点管理又非常复杂，所以默认没有开启它，需要你主动配置并请求焦点，如下：
 

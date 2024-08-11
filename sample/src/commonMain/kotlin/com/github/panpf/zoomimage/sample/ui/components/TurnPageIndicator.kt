@@ -23,14 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isAltPressed
-import androidx.compose.ui.input.key.isCtrlPressed
-import androidx.compose.ui.input.key.isMetaPressed
-import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import com.github.panpf.sketch.LocalPlatformContext
+import com.github.panpf.zoomimage.compose.util.AssistKey
+import com.github.panpf.zoomimage.compose.util.KeyMatcher
+import com.github.panpf.zoomimage.compose.util.MatcherKeyHandler
+import com.github.panpf.zoomimage.compose.util.platformAssistKey
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -51,23 +49,37 @@ fun BoxScope.TurnPageIndicator(
 ) {
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
-        EventBus.keyEvent.collect { keyEvent ->
-            if (keyEvent.type == KeyEventType.KeyUp && !keyEvent.isMetaPressed) {
-                when {
-                    keyEvent.key == Key.PageUp -> pagerState.previousPage()
-                    keyEvent.key == Key.DirectionLeft
-                            && !keyEvent.isMetaPressed
-                            && !keyEvent.isCtrlPressed
-                            && !keyEvent.isShiftPressed
-                            && !keyEvent.isAltPressed -> pagerState.previousPage()
-
-                    keyEvent.key == Key.PageDown -> pagerState.nextPage()
-                    keyEvent.key == Key.DirectionRight
-                            && !keyEvent.isMetaPressed
-                            && !keyEvent.isCtrlPressed
-                            && !keyEvent.isShiftPressed
-                            && !keyEvent.isAltPressed -> pagerState.nextPage()
+        val keyHandlers = listOf(
+            MatcherKeyHandler(
+                listOf(
+                    KeyMatcher(Key.PageUp, type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.LeftBracket, AssistKey.Alt, type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.LeftBracket, platformAssistKey(), type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.DirectionLeft, AssistKey.Alt, type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.DirectionLeft, platformAssistKey(), type = KeyEventType.KeyUp),
+                )
+            ) {
+                coroutineScope.launch {
+                    pagerState.previousPage()
                 }
+            },
+            MatcherKeyHandler(
+                listOf(
+                    KeyMatcher(Key.PageDown, type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.RightBracket, AssistKey.Alt, type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.RightBracket, platformAssistKey(), type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.DirectionRight, AssistKey.Alt, type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.DirectionRight, platformAssistKey(), type = KeyEventType.KeyUp),
+                )
+            ) {
+                coroutineScope.launch {
+                    pagerState.nextPage()
+                }
+            }
+        )
+        EventBus.keyEvent.collect { keyEvent ->
+            keyHandlers.any {
+                it.handle(keyEvent)
             }
         }
     }

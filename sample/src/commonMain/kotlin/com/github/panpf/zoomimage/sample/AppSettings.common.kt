@@ -138,4 +138,8 @@ class AppSettings(val context: PlatformContext) {
     val debugLog by lazy {
         booleanSettingsStateFlow(context, "debugLog", isDebugMode())
     }
+
+    val pagerGuideShowed by lazy {
+        booleanSettingsStateFlow(context, "pagerGuideShowed", false)
+    }
 }

@@ -262,10 +262,10 @@ SketchZoomAsyncImage(
 
 ### 键盘缩放
 
-ZoomImage 支持通过键盘缩放图像，默认注册了以下按键：
+ZoomImage 支持通过键盘缩放图像，支持短按和长按两种操作。默认注册了以下按键：
 
-* scale in: Key.ZoomIn, Key.Equals + meta/ctrl
-* scale out: Key.ZoomOut, Key.Minus + meta/ctrl
+* scale in: Key.ZoomIn, Key.Equals + (meta/ctrl)/alt, Key.DirectionUp + (meta/ctrl)/alt
+* scale out: Key.ZoomOut, Key.Minus + (meta/ctrl)/alt, Key.DirectionDown + (meta/ctrl)/alt
 
 由于键盘缩放功能必须依赖焦点，而焦点管理又非常复杂，所以默认没有开启它，需要你主动配置并请求焦点，如下：
 

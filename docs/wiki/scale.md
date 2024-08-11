@@ -290,11 +290,11 @@ SketchZoomAsyncImage(
 
 ### Keyboard scale
 
-ZoomImage supports scaling images through the keyboard, and the following keys are registered by
-default:
+ZoomImage supports scaling images through the keyboard, supports both short press and long press
+operations. And the following keys are registered by default:
 
-* scale in: Key.ZoomIn, Key.Equals + meta/ctrl
-* scale out: Key.ZoomOut, Key.Minus + meta/ctrl
+* scale in: Key.ZoomIn, Key.Equals + (meta/ctrl)/alt, Key.DirectionUp + (meta/ctrl)/alt
+* scale out: Key.ZoomOut, Key.Minus + (meta/ctrl)/alt, Key.DirectionDown + (meta/ctrl)/alt
 
 Since the keyboard zoom function must rely on focus, and focus management is very complex, it is not
 enabled by default. You need to actively configure and request focus, as follows:

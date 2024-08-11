@@ -19,14 +19,13 @@ package com.github.panpf.zoomimage.compose.util
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isAltPressed
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
-import androidx.compose.ui.unit.Density
-import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import kotlinx.coroutines.CoroutineScope
+import androidx.compose.ui.input.key.type
 
 
 expect fun platformAssistKey(): AssistKey
@@ -34,70 +33,101 @@ expect fun platformAssistKey(): AssistKey
 @Stable
 interface KeyHandler {
 
-    fun handle(
-        coroutineScope: CoroutineScope,
-        zoomableState: ZoomableState,
-        density: Density,
-        event: KeyEvent
-    ): Boolean
+    fun handle(event: KeyEvent): Boolean
+}
+
+fun MatcherKeyHandler(
+    keyMatchers: List<KeyMatcher>,
+    onCanceled: ((KeyEvent) -> Unit)? = null,
+    onKey: (KeyEvent) -> Unit,
+): KeyHandler {
+    return object : MatcherKeyHandler(keyMatchers) {
+        override fun onKey(event: KeyEvent) {
+            onKey(event)
+        }
+
+        override fun onCanceled(event: KeyEvent) {
+            onCanceled?.invoke(event)
+        }
+    }
 }
 
 @Stable
-abstract class BaseKeyHandler(
+abstract class MatcherKeyHandler(
     open val keyMatchers: List<KeyMatcher>
 ) : KeyHandler {
 
     override fun handle(
-        coroutineScope: CoroutineScope,
-        zoomableState: ZoomableState,
-        density: Density,
         event: KeyEvent
     ): Boolean {
         var matched = false
         keyMatchers.forEach {
             if (!matched && it.match(event)) {
-                onKey(coroutineScope, zoomableState, density, event)
+                onKey(event)
                 it.keyed = true
                 matched = true
             } else if (it.keyed) {
                 it.keyed = false
-                onCanceled(coroutineScope, zoomableState, density, event)
+                onCanceled(event)
             }
         }
         return matched
     }
 
-    abstract fun onKey(
-        coroutineScope: CoroutineScope,
-        zoomableState: ZoomableState,
-        density: Density,
-        event: KeyEvent
-    )
+    abstract fun onKey(event: KeyEvent)
 
-    abstract fun onCanceled(
-        coroutineScope: CoroutineScope,
-        zoomableState: ZoomableState,
-        density: Density,
-        event: KeyEvent
-    )
+    abstract fun onCanceled(event: KeyEvent)
 }
 
 @Stable
-data class KeyMatcher(
+class KeyMatcher(
     val key: Key,
-    val assistKey: AssistKey? = null
+    val assistKeys: Array<AssistKey>? = null,
+    val type: KeyEventType? = null,
 ) {
+
+    constructor(
+        key: Key,
+        assistKey: AssistKey,
+        type: KeyEventType? = null,
+    ) : this(key, arrayOf(assistKey), type)
 
     var keyed: Boolean = false
 
     fun match(event: KeyEvent): Boolean {
-        return event.key == key && (assistKey == null || assistKey.check(event))
+        return event.key == key
+                && (type == null || event.type == type)
+                && (assistKeys == null || assistKeys.all { it.check(event) })
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as KeyMatcher
+        if (key != other.key) return false
+        if (assistKeys != null) {
+            if (other.assistKeys == null) return false
+            if (!assistKeys.contentEquals(other.assistKeys)) return false
+        } else if (other.assistKeys != null) return false
+        if (type != other.type) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = key.hashCode()
+        result = 31 * result + (assistKeys?.contentHashCode() ?: 0)
+        result = 31 * result + (type?.hashCode() ?: 0)
+        return result
+    }
+
+    override fun toString(): String {
+        return "KeyMatcher(key=$key, assistKeys=${assistKeys?.contentToString()}, type=$type)"
     }
 }
 
 @Stable
 enum class AssistKey {
-    Ctrl, Meta, Alt, Shift;
+    Ctrl, Meta, Alt, Shift, None;
 
     fun check(event: KeyEvent): Boolean {
         return when (this) {
@@ -105,6 +135,14 @@ enum class AssistKey {
             Meta -> event.isMetaPressed
             Alt -> event.isAltPressed
             Shift -> event.isShiftPressed
+            None -> !event.isShiftPressed
+                    && !event.isAltPressed
+                    && !event.isMetaPressed
+                    && !event.isCtrlPressed
         }
+    }
+
+    operator fun plus(assistKey: AssistKey): Array<AssistKey> {
+        return arrayOf(this, assistKey)
     }
 }
