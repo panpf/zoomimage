@@ -18,6 +18,11 @@ package com.github.panpf.zoomimage.compose.util
 
 import java.util.Locale
 
+/**
+ * Get the desktop platform assist key. For example, macOS is usually meta, and other platforms are usually ctrl.
+ *
+ * @see com.github.panpf.zoomimage.compose.desktop.test.util.KeyHandlerDesktopTest.testPlatformAssistKey
+ */
 actual fun platformAssistKey(): AssistKey {
     val osName = System.getProperty("os.name").lowercase(Locale.getDefault())
     return if (osName.contains("mac")) AssistKey.Meta else AssistKey.Ctrl

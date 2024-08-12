@@ -16,4 +16,9 @@
 
 package com.github.panpf.zoomimage.compose.util
 
+/**
+ * Get the ios platform assist key. Usually ctrl
+ *
+ * @see com.github.panpf.zoomimage.compose.jscommon.test.util.KeyHandlerJsCommonTest.testPlatformAssistKey
+ */
 actual fun platformAssistKey(): AssistKey = AssistKey.Ctrl

@@ -16,4 +16,9 @@
 
 package com.github.panpf.zoomimage.compose.util
 
+/**
+ * Get the ios platform assist key. Usually ctrl
+ *
+ * @see com.github.panpf.zoomimage.compose.android.test.util.KeyHandlerAndroidTest.testPlatformAssistKey
+ */
 actual fun platformAssistKey(): AssistKey = AssistKey.Ctrl

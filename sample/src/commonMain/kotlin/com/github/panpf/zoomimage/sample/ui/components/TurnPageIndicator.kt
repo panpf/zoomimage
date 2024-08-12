@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.compose.util.AssistKey
 import com.github.panpf.zoomimage.compose.util.KeyMatcher
-import com.github.panpf.zoomimage.compose.util.MatcherKeyHandler
+import com.github.panpf.zoomimage.compose.util.matcherKeyHandler
 import com.github.panpf.zoomimage.compose.util.platformAssistKey
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
@@ -50,7 +50,7 @@ fun BoxScope.TurnPageIndicator(
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         val keyHandlers = listOf(
-            MatcherKeyHandler(
+            matcherKeyHandler(
                 listOf(
                     KeyMatcher(Key.PageUp, type = KeyEventType.KeyUp),
                     KeyMatcher(Key.LeftBracket, AssistKey.Alt, type = KeyEventType.KeyUp),
@@ -63,7 +63,7 @@ fun BoxScope.TurnPageIndicator(
                     pagerState.previousPage()
                 }
             },
-            MatcherKeyHandler(
+            matcherKeyHandler(
                 listOf(
                     KeyMatcher(Key.PageDown, type = KeyEventType.KeyUp),
                     KeyMatcher(Key.RightBracket, AssistKey.Alt, type = KeyEventType.KeyUp),

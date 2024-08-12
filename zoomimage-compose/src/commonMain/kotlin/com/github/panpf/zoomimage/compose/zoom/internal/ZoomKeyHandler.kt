@@ -21,21 +21,20 @@ abstract class MatcherZoomKeyHandler(
     open val keyMatchers: List<KeyMatcher>
 ) : ZoomKeyHandler {
 
+    private var lastMatched: Boolean = false
+
     override fun handle(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
         event: KeyEvent
     ): Boolean {
-        var matched = false
-        keyMatchers.forEach {
-            if (!matched && it.match(event)) {
-                onKey(coroutineScope, zoomableState, event)
-                it.keyed = true
-                matched = true
-            } else if (it.keyed) {
-                it.keyed = false
-                onCanceled(coroutineScope, zoomableState, event)
-            }
+        val matched = keyMatchers.any { it.match(event) }
+        if (matched) {
+            lastMatched = true
+            onKey(coroutineScope, zoomableState, event)
+        } else if (lastMatched) {
+            lastMatched = false
+            onCanceled(coroutineScope, zoomableState, event)
         }
         return matched
     }

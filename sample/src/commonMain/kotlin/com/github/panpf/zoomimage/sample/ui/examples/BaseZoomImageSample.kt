@@ -55,7 +55,7 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
-import com.github.panpf.zoomimage.compose.zoom.keyZoom
+import com.github.panpf.zoomimage.compose.zoom.bindKeyZoomWithKeyEventFlow
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -244,7 +244,7 @@ fun <T : ZoomState> BaseZoomImageSample(
         }
 
         if (pageSelected) {
-            keyZoom(zoomState.zoomable, EventBus.keyEvent)
+            bindKeyZoomWithKeyEventFlow(EventBus.keyEvent, zoomState.zoomable)
         }
 
         ZoomImageTool(

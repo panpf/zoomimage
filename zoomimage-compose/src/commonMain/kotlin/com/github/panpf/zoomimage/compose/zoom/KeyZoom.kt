@@ -70,7 +70,7 @@ fun Modifier.keyZoom(
 }
 
 /**
- * To handle key zoom, you just get the key event and pass it to this function
+ * Observe the specified key flow and perform zoom operations
  *
  * The registered keys are as follows:
  * * scale in: Key.ZoomIn, Key.Equals + (meta/ctrl)/alt, Key.DirectionUp + (meta/ctrl)/alt
@@ -81,9 +81,9 @@ fun Modifier.keyZoom(
  * * move right: Key.DirectionRight
  */
 @Composable
-fun keyZoom(
-    zoomable: ZoomableState,
+fun bindKeyZoomWithKeyEventFlow(
     eventFlow: SharedFlow<KeyEvent>,
+    zoomable: ZoomableState,
     keyHandlers: ImmutableList<ZoomKeyHandler> = DefaultKeyZoomHandlers,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -114,19 +114,19 @@ val DefaultScaleOutKeyMatcher = listOf(
 ).toImmutableList()
 
 val DefaultMoveUpKeyMatchers = listOf(
-    KeyMatcher(key = Key.DirectionUp, assistKey = AssistKey.None),
+    KeyMatcher(key = Key.DirectionUp),
 ).toImmutableList()
 
 val DefaultMoveDownKeyMatchers = listOf(
-    KeyMatcher(key = Key.DirectionDown, assistKey = AssistKey.None)
+    KeyMatcher(key = Key.DirectionDown)
 ).toImmutableList()
 
 val DefaultMoveLeftKeyMatchers = listOf(
-    KeyMatcher(key = Key.DirectionLeft, assistKey = AssistKey.None)
+    KeyMatcher(key = Key.DirectionLeft)
 ).toImmutableList()
 
 val DefaultMoveRightKeyMatchers = listOf(
-    KeyMatcher(key = Key.DirectionRight, assistKey = AssistKey.None)
+    KeyMatcher(key = Key.DirectionRight)
 ).toImmutableList()
 
 val DefaultKeyZoomHandlers = listOf(

@@ -27,16 +27,33 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 
-
+/**
+ * Get the platform-specific assist key. For example, macOS is usually meta, and other platforms are usually ctrl.
+ *
+ * @see com.github.panpf.zoomimage.compose.android.test.util.KeyHandlerAndroidTest.testPlatformAssistKey
+ * @see com.github.panpf.zoomimage.compose.desktop.test.util.KeyHandlerDesktopTest.testPlatformAssistKey
+ * @see com.github.panpf.zoomimage.compose.jscommon.test.util.KeyHandlerJsCommonTest.testPlatformAssistKey
+ * @see com.github.panpf.zoomimage.compose.ios.test.util.KeyHandlerIosTest.testPlatformAssistKey
+ */
 expect fun platformAssistKey(): AssistKey
 
+/**
+ * For convenient handling of key events, please use its implementation class [MatcherKeyHandler]
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest
+ */
 @Stable
 interface KeyHandler {
 
     fun handle(event: KeyEvent): Boolean
 }
 
-fun MatcherKeyHandler(
+/**
+ * Create MatcherKeyHandler
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest.testMatcherKeyHandler
+ */
+fun matcherKeyHandler(
     keyMatchers: List<KeyMatcher>,
     onCanceled: ((KeyEvent) -> Unit)? = null,
     onKey: (KeyEvent) -> Unit,
@@ -52,24 +69,27 @@ fun MatcherKeyHandler(
     }
 }
 
+/**
+ * Match key events according to KeyMatcher, execute onKey when the match is successful,
+ * execute onCanceled when the current match fails and the previous match was successful.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest.testMatcherKeyHandler
+ */
 @Stable
 abstract class MatcherKeyHandler(
     open val keyMatchers: List<KeyMatcher>
 ) : KeyHandler {
 
-    override fun handle(
-        event: KeyEvent
-    ): Boolean {
-        var matched = false
-        keyMatchers.forEach {
-            if (!matched && it.match(event)) {
-                onKey(event)
-                it.keyed = true
-                matched = true
-            } else if (it.keyed) {
-                it.keyed = false
-                onCanceled(event)
-            }
+    private var lastMatched: Boolean = false
+
+    override fun handle(event: KeyEvent): Boolean {
+        val matched = keyMatchers.any { it.match(event) }
+        if (matched) {
+            lastMatched = true
+            onKey(event)
+        } else if (lastMatched) {
+            lastMatched = false
+            onCanceled(event)
         }
         return matched
     }
@@ -79,6 +99,11 @@ abstract class MatcherKeyHandler(
     abstract fun onCanceled(event: KeyEvent)
 }
 
+/**
+ * Match key events based on conditions such as keys, auxiliary keys, key types, etc.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest.testKeyMatcher
+ */
 @Stable
 class KeyMatcher(
     val key: Key,
@@ -92,12 +117,15 @@ class KeyMatcher(
         type: KeyEventType? = null,
     ) : this(key, arrayOf(assistKey), type)
 
-    var keyed: Boolean = false
-
     fun match(event: KeyEvent): Boolean {
+        val assistKeys = assistKeys ?: emptyArray()
+        val yesAssistKeys: Sequence<AssistKey> = assistKeys.asSequence()
+        val noAssistKeys: Sequence<AssistKey> = AssistKey.entries.asSequence()
+            .filter { !assistKeys.contains(it) }
         return event.key == key
                 && (type == null || event.type == type)
-                && (assistKeys == null || assistKeys.all { it.check(event) })
+                && (yesAssistKeys.all { it.check(event) })
+                && (noAssistKeys.all { !it.check(event) })
     }
 
     override fun equals(other: Any?): Boolean {
@@ -125,9 +153,14 @@ class KeyMatcher(
     }
 }
 
+/**
+ * Ctrl, Alt, Shift, Meta and other assist keys
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest.testAssistKey
+ */
 @Stable
 enum class AssistKey {
-    Ctrl, Meta, Alt, Shift, None;
+    Ctrl, Meta, Alt, Shift;
 
     fun check(event: KeyEvent): Boolean {
         return when (this) {
@@ -135,10 +168,6 @@ enum class AssistKey {
             Meta -> event.isMetaPressed
             Alt -> event.isAltPressed
             Shift -> event.isShiftPressed
-            None -> !event.isShiftPressed
-                    && !event.isAltPressed
-                    && !event.isMetaPressed
-                    && !event.isCtrlPressed
         }
     }
 
