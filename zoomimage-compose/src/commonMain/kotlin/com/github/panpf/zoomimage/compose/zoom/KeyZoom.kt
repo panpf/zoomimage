@@ -161,10 +161,10 @@ val DefaultZoomKeyHandlers = listOf(
 
 
 /**
- * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testScaleKeyHandler
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.ScaleKeyHandlerTest
  */
 @Stable
-data class ScaleKeyHandler(
+open class ScaleKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
     val scaleIn: Boolean,
     override val shortPressReachedMaxValueNumber: Int = 5,
@@ -208,13 +208,38 @@ data class ScaleKeyHandler(
     private fun addScale(scaleStep: Float): Float {
         return if (scaleIn) scaleStep else -scaleStep
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as ScaleKeyHandler
+        if (keyMatchers != other.keyMatchers) return false
+        if (scaleIn != other.scaleIn) return false
+        if (shortPressReachedMaxValueNumber != other.shortPressReachedMaxValueNumber) return false
+        if (longPressReachedMaxValueDuration != other.longPressReachedMaxValueDuration) return false
+        if (longPressAccelerate != other.longPressAccelerate) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = keyMatchers.hashCode()
+        result = 31 * result + scaleIn.hashCode()
+        result = 31 * result + shortPressReachedMaxValueNumber
+        result = 31 * result + longPressReachedMaxValueDuration
+        result = 31 * result + longPressAccelerate.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "ScaleKeyHandler(keyMatchers=$keyMatchers, scaleIn=$scaleIn, shortPressReachedMaxValueNumber=$shortPressReachedMaxValueNumber, longPressReachedMaxValueDuration=$longPressReachedMaxValueDuration, longPressAccelerate=$longPressAccelerate)"
+    }
 }
 
 /**
- * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testMoveKeyHandler
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.MoveKeyHandlerTest
  */
 @Stable
-data class MoveKeyHandler(
+open class MoveKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
     val arrow: Arrow,
     override val shortPressReachedMaxValueNumber: Int = 10,
@@ -276,6 +301,33 @@ data class MoveKeyHandler(
         Arrow.Right -> Offset(-add, 0f)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        other as MoveKeyHandler
+        if (keyMatchers != other.keyMatchers) return false
+        if (arrow != other.arrow) return false
+        if (shortPressReachedMaxValueNumber != other.shortPressReachedMaxValueNumber) return false
+        if (shortPressMinStepWithContainerPercentage != other.shortPressMinStepWithContainerPercentage) return false
+        if (longPressReachedMaxValueDuration != other.longPressReachedMaxValueDuration) return false
+        if (longPressAccelerate != other.longPressAccelerate) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = keyMatchers.hashCode()
+        result = 31 * result + arrow.hashCode()
+        result = 31 * result + shortPressReachedMaxValueNumber
+        result = 31 * result + shortPressMinStepWithContainerPercentage.hashCode()
+        result = 31 * result + longPressReachedMaxValueDuration
+        result = 31 * result + longPressAccelerate.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "MoveKeyHandler(keyMatchers=$keyMatchers, arrow=$arrow, shortPressReachedMaxValueNumber=$shortPressReachedMaxValueNumber, shortPressMinStepWithContainerPercentage=$shortPressMinStepWithContainerPercentage, longPressReachedMaxValueDuration=$longPressReachedMaxValueDuration, longPressAccelerate=$longPressAccelerate)"
+    }
+
     enum class Arrow {
         Up, Down, Left, Right
     }
@@ -284,7 +336,7 @@ data class MoveKeyHandler(
 /**
  * Encapsulates the main logic of button zoom, supporting short press for single zoom and long press for continuous zoom.
  *
- * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testZoomMatcherKeyHandler
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.ZoomMatcherKeyHandlerTest
  */
 @Stable
 abstract class ZoomMatcherKeyHandler(

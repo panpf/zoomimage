@@ -37,11 +37,6 @@ import androidx.compose.ui.input.key.type
  */
 expect fun platformAssistKey(): AssistKey
 
-/**
- * For convenient handling of key events, please use its implementation class [MatcherKeyHandler]
- *
- * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest
- */
 @Stable
 interface KeyHandler {
 
@@ -51,7 +46,7 @@ interface KeyHandler {
 /**
  * Create MatcherKeyHandler
  *
- * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest.testMatcherKeyHandler
+ * @see com.github.panpf.zoomimage.compose.common.test.util.MatcherKeyHandlerTest
  */
 fun matcherKeyHandler(
     keyMatchers: List<KeyMatcher>,
@@ -73,7 +68,7 @@ fun matcherKeyHandler(
  * Match key events according to KeyMatcher, execute onKey when the match is successful,
  * execute onCanceled when the current match fails and the previous match was successful.
  *
- * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest.testMatcherKeyHandler
+ * @see com.github.panpf.zoomimage.compose.common.test.util.MatcherKeyHandlerTest
  */
 @Stable
 abstract class MatcherKeyHandler(
@@ -102,7 +97,7 @@ abstract class MatcherKeyHandler(
 /**
  * Match key events based on conditions such as keys, auxiliary keys, key types, etc.
  *
- * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest.testKeyMatcher
+ * @see com.github.panpf.zoomimage.compose.common.test.util.KeyMatcherTest
  */
 @Stable
 class KeyMatcher(
@@ -156,7 +151,7 @@ class KeyMatcher(
 /**
  * Ctrl, Alt, Shift, Meta and other assist keys
  *
- * @see com.github.panpf.zoomimage.compose.common.test.util.KeyHandlerTest.testAssistKey
+ * @see com.github.panpf.zoomimage.compose.common.test.util.AssistKeyTest
  */
 @Stable
 enum class AssistKey {
