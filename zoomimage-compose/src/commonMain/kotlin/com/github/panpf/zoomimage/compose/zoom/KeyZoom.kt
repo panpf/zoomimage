@@ -63,7 +63,7 @@ import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 @Composable
 fun Modifier.keyZoom(
     zoomable: ZoomableState,
-    keyHandlers: ImmutableList<ZoomKeyHandler> = DefaultKeyZoomHandlers
+    keyHandlers: ImmutableList<ZoomKeyHandler> = DefaultZoomKeyHandlers
 ): Modifier {
     val density = LocalDensity.current
     return this.then(KeyZoomElement(zoomable, keyHandlers, density))
@@ -84,7 +84,7 @@ fun Modifier.keyZoom(
 fun bindKeyZoomWithKeyEventFlow(
     eventFlow: SharedFlow<KeyEvent>,
     zoomable: ZoomableState,
-    keyHandlers: ImmutableList<ZoomKeyHandler> = DefaultKeyZoomHandlers,
+    keyHandlers: ImmutableList<ZoomKeyHandler> = DefaultZoomKeyHandlers,
 ) {
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(zoomable, keyHandlers) {
@@ -97,7 +97,10 @@ fun bindKeyZoomWithKeyEventFlow(
 }
 
 
-val DefaultScaleInKeyMatcher = listOf(
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testDefaultScaleInKeyMatchers
+ */
+val DefaultScaleInKeyMatchers = listOf(
     KeyMatcher(key = Key.ZoomIn),
     KeyMatcher(key = Key.Equals, assistKey = platformAssistKey()),
     KeyMatcher(key = Key.Equals, assistKey = AssistKey.Alt),
@@ -105,7 +108,10 @@ val DefaultScaleInKeyMatcher = listOf(
     KeyMatcher(key = Key.DirectionUp, assistKey = platformAssistKey()),
 ).toImmutableList()
 
-val DefaultScaleOutKeyMatcher = listOf(
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testDefaultScaleOutKeyMatchers
+ */
+val DefaultScaleOutKeyMatchers = listOf(
     KeyMatcher(key = Key.ZoomOut),
     KeyMatcher(key = Key.Minus, assistKey = platformAssistKey()),
     KeyMatcher(key = Key.Minus, assistKey = AssistKey.Alt),
@@ -113,25 +119,40 @@ val DefaultScaleOutKeyMatcher = listOf(
     KeyMatcher(key = Key.DirectionDown, assistKey = platformAssistKey()),
 ).toImmutableList()
 
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testDefaultMoveUpKeyMatchers
+ */
 val DefaultMoveUpKeyMatchers = listOf(
     KeyMatcher(key = Key.DirectionUp),
 ).toImmutableList()
 
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testDefaultMoveDownKeyMatchers
+ */
 val DefaultMoveDownKeyMatchers = listOf(
     KeyMatcher(key = Key.DirectionDown)
 ).toImmutableList()
 
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testDefaultMoveLeftKeyMatchers
+ */
 val DefaultMoveLeftKeyMatchers = listOf(
     KeyMatcher(key = Key.DirectionLeft)
 ).toImmutableList()
 
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testDefaultMoveRightKeyMatchers
+ */
 val DefaultMoveRightKeyMatchers = listOf(
     KeyMatcher(key = Key.DirectionRight)
 ).toImmutableList()
 
-val DefaultKeyZoomHandlers = listOf(
-    ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatcher, scaleIn = true),
-    ScaleKeyHandler(keyMatchers = DefaultScaleOutKeyMatcher, scaleIn = false),
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testDefaultZoomKeyHandlers
+ */
+val DefaultZoomKeyHandlers = listOf(
+    ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatchers, scaleIn = true),
+    ScaleKeyHandler(keyMatchers = DefaultScaleOutKeyMatchers, scaleIn = false),
     MoveKeyHandler(keyMatchers = DefaultMoveUpKeyMatchers, arrow = MoveKeyHandler.Arrow.Up),
     MoveKeyHandler(keyMatchers = DefaultMoveDownKeyMatchers, arrow = MoveKeyHandler.Arrow.Down),
     MoveKeyHandler(keyMatchers = DefaultMoveLeftKeyMatchers, arrow = MoveKeyHandler.Arrow.Left),
@@ -139,6 +160,9 @@ val DefaultKeyZoomHandlers = listOf(
 ).toImmutableList()
 
 
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testScaleKeyHandler
+ */
 @Stable
 data class ScaleKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
@@ -186,6 +210,9 @@ data class ScaleKeyHandler(
     }
 }
 
+/**
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testMoveKeyHandler
+ */
 @Stable
 data class MoveKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
@@ -254,6 +281,11 @@ data class MoveKeyHandler(
     }
 }
 
+/**
+ * Encapsulates the main logic of button zoom, supporting short press for single zoom and long press for continuous zoom.
+ *
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.KeyZoomTest.testZoomMatcherKeyHandler
+ */
 @Stable
 abstract class ZoomMatcherKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
@@ -291,7 +323,7 @@ abstract class ZoomMatcherKeyHandler(
         event: KeyEvent
     ) {
         if (event.type == KeyEventType.KeyDown) {
-            if (longPressJob == null) {
+            if (longPressJob?.isActive != true) {
                 performShortPress(coroutineScope, zoomableState)
             }
             startLongPress(coroutineScope, zoomableState)
@@ -335,7 +367,7 @@ abstract class ZoomMatcherKeyHandler(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
     ) {
-        if (longPressJob != null) {
+        if (longPressJob?.isActive == true) {
             return
         }
 
