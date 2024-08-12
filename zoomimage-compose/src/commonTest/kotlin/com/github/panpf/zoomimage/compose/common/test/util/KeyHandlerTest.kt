@@ -10,6 +10,10 @@ import com.github.panpf.zoomimage.compose.util.AssistKey.Shift
 import com.github.panpf.zoomimage.compose.util.KeyMatcher
 import com.github.panpf.zoomimage.compose.util.matcherKeyHandler
 import com.github.panpf.zoomimage.test.KeyEvent
+import com.github.panpf.zoomimage.test.eventADown
+import com.github.panpf.zoomimage.test.eventAUp
+import com.github.panpf.zoomimage.test.eventBDown
+import com.github.panpf.zoomimage.test.eventBUp
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -441,73 +445,5 @@ class KeyHandlerTest {
         val meta: Boolean = false,
         val alt: Boolean = false,
         val shift: Boolean = false,
-    )
-
-    private fun eventADown(
-        ctrl: Boolean = false,
-        meta: Boolean = false,
-        alt: Boolean = false,
-        shift: Boolean = false,
-        nativeEvent: Any? = null
-    ) = KeyEvent(
-        key = Key.A,
-        type = KeyEventType.KeyDown,
-        codePoint = 0,
-        isCtrlPressed = ctrl,
-        isMetaPressed = meta,
-        isAltPressed = alt,
-        isShiftPressed = shift,
-        nativeEvent = nativeEvent
-    )
-
-    private fun eventAUp(
-        ctrl: Boolean = false,
-        meta: Boolean = false,
-        alt: Boolean = false,
-        shift: Boolean = false,
-        nativeEvent: Any? = null
-    ) = KeyEvent(
-        key = Key.A,
-        type = KeyEventType.KeyUp,
-        codePoint = 0,
-        isCtrlPressed = ctrl,
-        isMetaPressed = meta,
-        isAltPressed = alt,
-        isShiftPressed = shift,
-        nativeEvent = nativeEvent
-    )
-
-    private fun eventBDown(
-        ctrl: Boolean = false,
-        meta: Boolean = false,
-        alt: Boolean = false,
-        shift: Boolean = false,
-        nativeEvent: Any? = null
-    ) = KeyEvent(
-        key = Key.B,
-        type = KeyEventType.KeyDown,
-        codePoint = 0,
-        isCtrlPressed = ctrl,
-        isMetaPressed = meta,
-        isAltPressed = alt,
-        isShiftPressed = shift,
-        nativeEvent = nativeEvent
-    )
-
-    private fun eventBUp(
-        ctrl: Boolean = false,
-        meta: Boolean = false,
-        alt: Boolean = false,
-        shift: Boolean = false,
-        nativeEvent: Any? = null
-    ) = KeyEvent(
-        key = Key.B,
-        type = KeyEventType.KeyUp,
-        codePoint = 0,
-        isCtrlPressed = ctrl,
-        isMetaPressed = meta,
-        isAltPressed = alt,
-        isShiftPressed = shift,
-        nativeEvent = nativeEvent
     )
 }
