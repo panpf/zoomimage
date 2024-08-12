@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.compose.zoom
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -24,6 +25,7 @@ import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.unit.IntOffset
 import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
 
@@ -31,9 +33,14 @@ import kotlinx.coroutines.launch
 /**
  * Add mouse zoom support
  */
+@Composable
 fun Modifier.mouseZoom(
     zoomable: ZoomableState,
-): Modifier = this.then(MouseZoomElement(zoomable))
+): Modifier = if (zoomable.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
+    this.then(MouseZoomElement(zoomable))
+} else {
+    this
+}
 
 
 internal data class MouseZoomElement(
@@ -60,10 +67,8 @@ internal class MouseZoomNode(
             while (true) {
                 val event = awaitPointerEvent(PointerEventPass.Main)
                 if (event.type == PointerEventType.Move) {
-                    if (zoomable.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
-                        val position = event.changes.first().position
-                        pointerPosition = position
-                    }
+                    val position = event.changes.first().position
+                    pointerPosition = position
                 }
             }
         }
@@ -73,20 +78,15 @@ internal class MouseZoomNode(
             while (true) {
                 val event = awaitPointerEvent(PointerEventPass.Main)
                 if (event.type == PointerEventType.Scroll) {
-                    if (zoomable.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
-                        coroutineScope.launch {
-                            val newScale = if (!zoomable.reverseMouseWheelScale) {
-                                zoomable.transform.scaleX - (event.changes.first().scrollDelta.y * 0.33f)   // TODO Configurable
-                            } else {
-                                zoomable.transform.scaleX + (event.changes.first().scrollDelta.y * 0.33f)
-                            }
-                            val contentPosition = zoomable.touchPointToContentPoint(pointerPosition)
-                            zoomable.scale(
-                                targetScale = newScale,
-                                animated = true,
-                                centroidContentPoint = contentPosition
-                            )
-                        }
+                    val scrollDelta = event.changes.first().scrollDelta.y
+                    coroutineScope.launch {
+                        val newScale = newScale(scrollDelta)
+                        val contentPosition = contentPoint(pointerPosition)
+                        zoomable.scale(
+                            targetScale = newScale,
+                            animated = true,
+                            centroidContentPoint = contentPosition
+                        )
                     }
                 }
             }
@@ -97,5 +97,24 @@ internal class MouseZoomNode(
         this.zoomable = zoomable
         positionDelegate.resetPointerInputHandler()
         scrollDelegate.resetPointerInputHandler()
+    }
+
+    /**
+     * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testNewScale
+     */
+    internal fun newScale(scrollDelta: Float): Float {
+        val finalScrollDelta = zoomable.mouseWheelScaleScrollDeltaConverter(scrollDelta)
+        return if (!zoomable.reverseMouseWheelScale) {
+            zoomable.transform.scaleX - finalScrollDelta
+        } else {
+            zoomable.transform.scaleX + finalScrollDelta
+        }
+    }
+
+    /**
+     * @see com.github.panpf.zoomimage.compose.common.test.zoom.MouseZoomTest.testContentPoint
+     */
+    internal fun contentPoint(pointerPosition: Offset): IntOffset {
+        return zoomable.touchPointToContentPoint(pointerPosition)
     }
 }

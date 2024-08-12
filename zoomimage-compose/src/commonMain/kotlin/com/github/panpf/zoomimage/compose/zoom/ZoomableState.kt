@@ -202,6 +202,11 @@ class ZoomableState(val logger: Logger) : RememberObserver {
      */
     var reverseMouseWheelScale: Boolean by mutableStateOf(false)
 
+    /**
+     * Zoom increment converter when zooming with mouse wheel
+     */
+    var mouseWheelScaleScrollDeltaConverter: (Float) -> Float = { it * 0.33f }
+
 
     /* *********************************** Information properties ******************************* */
 
