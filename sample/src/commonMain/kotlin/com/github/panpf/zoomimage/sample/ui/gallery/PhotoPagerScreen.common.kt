@@ -56,6 +56,7 @@ import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
+import com.github.panpf.zoomimage.sample.util.RuntimePlatform
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import org.jetbrains.compose.resources.painterResource
@@ -125,15 +126,17 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                 TurnPageIndicator(pagerState, photoPaletteState)
             }
 
-            val pagerGuideShowed by appSettings.pagerGuideShowed.collectAsState()
-            var showPagerGuide by remember { mutableStateOf(true) }
-            if (!pagerGuideShowed && showPagerGuide) {
-                AlertDialog(
-                    onDismissRequest = { showPagerGuide = false },
-                    title = { Text("Operation gestures") },
-                    text = {
-                        Text(
-                            """The current page supports the following gestures or operations：
+            // TODO Browser, Android, iOS environments are temporarily unavailable
+            if (runtimePlatformInstance == RuntimePlatform.JvmDesktop) {
+                val pagerGuideShowed by appSettings.pagerGuideShowed.collectAsState()
+                var showPagerGuide by remember { mutableStateOf(true) }
+                if (!pagerGuideShowed && showPagerGuide) {
+                    AlertDialog(
+                        onDismissRequest = { showPagerGuide = false },
+                        title = { Text("Operation gestures") },
+                        text = {
+                            Text(
+                                """The current page supports the following gestures or operations：
                             |1. Turn page:
                             |    1.1. Key.PageUp, Key.PageDown
                             |    1.2. Key.LeftBracket + (meta/ctrl)/alt, Key.RightBracket + (meta/ctrl)/alt
@@ -149,19 +152,20 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                             |3. Moving image：
                             |    3.1. Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight
                             """.trimMargin()
-                        )
-                    },
-                    dismissButton = {
-                        Button(onClick = { showPagerGuide = false }) {
-                            Text("I Known")
+                            )
+                        },
+                        dismissButton = {
+                            Button(onClick = { showPagerGuide = false }) {
+                                Text("I Known")
+                            }
+                        },
+                        confirmButton = {
+                            Button(onClick = { appSettings.pagerGuideShowed.value = true }) {
+                                Text("Not prompting")
+                            }
                         }
-                    },
-                    confirmButton = {
-                        Button(onClick = { appSettings.pagerGuideShowed.value = true }) {
-                            Text("Not prompting")
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     }
