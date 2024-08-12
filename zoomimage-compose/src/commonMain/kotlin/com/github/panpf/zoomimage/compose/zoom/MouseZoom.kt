@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Modifier.mouseZoom(
     zoomable: ZoomableState,
-): Modifier = if (zoomable.disabledGestureTypes and GestureType.MOUSE_SCROLL_SCALE == 0) {
+): Modifier = if (zoomable.disabledGestureTypes and GestureType.MOUSE_WHEEL_SCALE == 0) {
     this.then(MouseZoomElement(zoomable))
 } else {
     this

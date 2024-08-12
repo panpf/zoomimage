@@ -278,7 +278,7 @@ The mouse wheel scale function is enabled by default, but you can turn it off as
 val zoomState: ZoomState by rememberZoomState()
 LaunchEffect(zoomState.zoomable) {
     zoomState.zoomable.disabledGestureTypes =
-        zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_SCROLL_SCALE
+        zoomState.zoomable.disabledGestureTypes or GestureType.MOUSE_WHEEL_SCALE
 }
 SketchZoomAsyncImage(
     imageUri = "https://sample.com/sample.jpeg",

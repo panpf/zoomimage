@@ -32,7 +32,7 @@ annotation class GestureType {
 
         const val DOUBLE_TAP_SCALE = 8
 
-        const val MOUSE_SCROLL_SCALE = 16
+        const val MOUSE_WHEEL_SCALE = 16
 
         const val KEYBOARD_SCALE = 32
 
@@ -43,7 +43,7 @@ annotation class GestureType {
             TWO_FINGER_SCALE,
             ONE_FINGER_SCALE,
             DOUBLE_TAP_SCALE,
-            MOUSE_SCROLL_SCALE,
+            MOUSE_WHEEL_SCALE,
             KEYBOARD_SCALE,
             KEYBOARD_DRAG
         )
@@ -53,7 +53,7 @@ annotation class GestureType {
             TWO_FINGER_SCALE -> "TWO_FINGER_SCALE"
             ONE_FINGER_SCALE -> "ONE_FINGER_SCALE"
             DOUBLE_TAP_SCALE -> "DOUBLE_TAP_SCALE"
-            MOUSE_SCROLL_SCALE -> "MOUSE_SCROLL_SCALE"
+            MOUSE_WHEEL_SCALE -> "MOUSE_WHEEL_SCALE"
             KEYBOARD_SCALE -> "KEYBOARD_SCALE"
             KEYBOARD_DRAG -> "KEYBOARD_DRAG"
             else -> "UNKNOWN"
