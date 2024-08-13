@@ -3,6 +3,8 @@ package com.github.panpf.zoomimage.compose.resources.test
 import com.github.panpf.zoomimage.subsampling.ComposeResourceImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromComposeResource
+import com.github.panpf.zoomimage.test.Platform
+import com.github.panpf.zoomimage.test.current
 import kotlinx.coroutines.test.runTest
 import okio.buffer
 import okio.use
@@ -153,12 +155,18 @@ class ComposeResourceImageSourceTest {
     }
 
     @Test
-    fun testFactoryCreate() = runTest {
-        val resourceName1 =
-            "composeResources/com.github.panpf.zoomimage.sample.test.compose/files/dog.jpg"
+    fun testFactoryCreate() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
+        runTest {
+            val resourceName1 =
+                "composeResources/com.github.panpf.zoomimage.sample.test.compose/files/dog.jpg"
 
-        ComposeResourceImageSource.Factory(resourceName1).create().openSource().buffer().use {
-            it.readByteArray()
+            ComposeResourceImageSource.Factory(resourceName1).create().openSource().buffer().use {
+                it.readByteArray()
+            }
         }
     }
 

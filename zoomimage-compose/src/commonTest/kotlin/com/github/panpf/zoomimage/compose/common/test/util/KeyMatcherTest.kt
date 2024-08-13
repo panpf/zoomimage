@@ -288,7 +288,7 @@ class KeyMatcherTest {
     @Test
     fun testToString() {
         assertEquals(
-            expected = "KeyMatcher(key=Key: A, assistKeys=[Shift], type=KeyDown)",
+            expected = "KeyMatcher(key=${Key.A}, assistKeys=[Shift], type=KeyDown)",
             actual = KeyMatcher(
                 key = Key.A,
                 assistKey = Shift,
@@ -296,7 +296,7 @@ class KeyMatcherTest {
             ).toString()
         )
         assertEquals(
-            expected = "KeyMatcher(key=Key: B, assistKeys=[Ctrl, Alt], type=KeyDown)",
+            expected = "KeyMatcher(key=${Key.B}, assistKeys=[Ctrl, Alt], type=KeyDown)",
             actual = KeyMatcher(
                 key = Key.B,
                 assistKeys = arrayOf(Ctrl, Alt),

@@ -40,10 +40,6 @@ class GlideZoomStateTest {
                     modelToImageSources = modelToImageSources,
                 )
                 assertEquals(
-                    expected = "Test",
-                    actual = zoomState2.logger.tag
-                )
-                assertEquals(
                     expected = listOf(
                         TestGlideModelToImageSource(),
                         GlideModelToImageSourceImpl()

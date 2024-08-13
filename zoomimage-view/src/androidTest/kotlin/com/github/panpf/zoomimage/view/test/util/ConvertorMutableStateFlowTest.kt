@@ -44,6 +44,7 @@ class ConvertorMutableStateFlowTest {
         assertEquals(expected = 5, actual = state.value)
         assertEquals(expected = 15, actual = convertState.value)
 
+        Thread.sleep(100)
         val list1 = mutableListOf<Int>()
         GlobalScope.launch {
             state.collect {

@@ -8,6 +8,7 @@ import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.subsampling.ByteArrayImageSource
 import com.github.panpf.zoomimage.subsampling.FileImageSource
 import com.github.panpf.zoomimage.subsampling.toFactory
+import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,7 +16,7 @@ import kotlin.test.assertEquals
 class CoilModelToImageSourceImplTest {
 
     @Test
-    fun test() {
+    fun test() = runTest {
         val context = PlatformContext.INSTANCE
         val imageLoader = ImageLoader.Builder(context).build()
         try {
@@ -28,7 +29,11 @@ class CoilModelToImageSourceImplTest {
             )
             assertEquals(
                 expected = CoilHttpImageSource.Factory(context, imageLoader, httpUri),
-                actual = modelToImageSource.modelToImageSource(context, imageLoader, httpUri.toUri())
+                actual = modelToImageSource.modelToImageSource(
+                    context,
+                    imageLoader,
+                    httpUri.toUri()
+                )
             )
 
             val httpsUri = "https://www.example.com/image.jpg"
@@ -52,7 +57,11 @@ class CoilModelToImageSourceImplTest {
             )
             assertEquals(
                 expected = FileImageSource(pathUri.toPath()).toFactory(),
-                actual = modelToImageSource.modelToImageSource(context, imageLoader, pathUri.toUri())
+                actual = modelToImageSource.modelToImageSource(
+                    context,
+                    imageLoader,
+                    pathUri.toUri()
+                )
             )
 
             val fileUri = "file:///sdcard/image.jpg"
@@ -62,7 +71,11 @@ class CoilModelToImageSourceImplTest {
             )
             assertEquals(
                 expected = FileImageSource(fileUri.toUri().path!!.toPath()).toFactory(),
-                actual = modelToImageSource.modelToImageSource(context, imageLoader, fileUri.toUri())
+                actual = modelToImageSource.modelToImageSource(
+                    context,
+                    imageLoader,
+                    fileUri.toUri()
+                )
             )
 
             val path = "/sdcard/image.jpg".toPath()

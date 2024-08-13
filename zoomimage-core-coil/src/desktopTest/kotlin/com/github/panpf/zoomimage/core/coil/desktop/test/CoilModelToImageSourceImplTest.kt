@@ -8,6 +8,7 @@ import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.subsampling.ByteArrayImageSource
 import com.github.panpf.zoomimage.subsampling.FileImageSource
 import com.github.panpf.zoomimage.subsampling.toFactory
+import kotlinx.coroutines.test.runTest
 import okio.Buffer
 import okio.Path.Companion.toPath
 import okio.Source
@@ -22,7 +23,7 @@ import kotlin.test.assertEquals
 class CoilModelToImageSourceImplTest {
 
     @Test
-    fun test() {
+    fun test() = runTest {
         val context = PlatformContext.INSTANCE
         val imageLoader = ImageLoader.Builder(context).build()
         try {

@@ -17,14 +17,15 @@ import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
+import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.TestImageSource
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.TestTileBitmapCache
+import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.test.waitMillis
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
-import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -176,6 +177,11 @@ class SubsamplingStateTest {
 
     @Test
     fun testImageInfo() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
+
         // basic
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
@@ -233,6 +239,11 @@ class SubsamplingStateTest {
 
     @Test
     fun testTileGridSizeMap() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
+
         // basic
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
@@ -296,6 +307,11 @@ class SubsamplingStateTest {
 
     @Test
     fun testReady() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
+
         // basic
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
@@ -350,7 +366,11 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testForegroundTiles() = runTest {
+    fun testForegroundTiles() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
 //        // basic
 //        runComposeUiTest {
 //            var subsamplingHolder: SubsamplingState? = null
@@ -446,6 +466,11 @@ class SubsamplingStateTest {
 
     @Test
     fun testSampleSize() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
+
         // setImageSource, containerSize, contentSize, scale 10
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
@@ -523,6 +548,11 @@ class SubsamplingStateTest {
 
     @Test
     fun testImageLoadRect() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
+
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -600,6 +630,10 @@ class SubsamplingStateTest {
 
     @Test
     fun testClean() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
         runComposeUiTest {
             var subsamplingHolder: SubsamplingState? = null
             setContent {
@@ -640,6 +674,11 @@ class SubsamplingStateTest {
 
     @Test
     fun testRememberObserver() {
+        if (Platform.current == Platform.iOS) {
+            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
+
         var subsamplingHolder: SubsamplingState? = null
         runComposeUiTest {
             setContent {
