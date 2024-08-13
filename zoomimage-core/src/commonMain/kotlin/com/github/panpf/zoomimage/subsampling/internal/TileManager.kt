@@ -211,7 +211,7 @@ class TileManager constructor(
             }
             if (sampleSizeChanged) {
                 clean("refreshTiles:foregroundTilesEmptyOrOne")
-                updateTileSnapshotList("refreshTiles:foregroundTilesEmptyOrOne")
+                updateTileSnapshotList("refreshTiles:foregroundTilesEmptyOrOne")  // TODO repeated, clean has been executed
             }
             return -3
         }
@@ -227,7 +227,7 @@ class TileManager constructor(
             }
             if (imageLoadRectChanged) {
                 clean("refreshTiles:contentVisibleRectEmpty")
-                updateTileSnapshotList("refreshTiles:contentVisibleRectEmpty")
+                updateTileSnapshotList("refreshTiles:contentVisibleRectEmpty")  // TODO repeated, clean has been executed
             }
             return -4
         }
