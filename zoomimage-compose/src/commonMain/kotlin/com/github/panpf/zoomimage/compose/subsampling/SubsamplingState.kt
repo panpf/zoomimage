@@ -471,14 +471,20 @@ class SubsamplingState constructor(
             tileBitmapCacheHelper = tileBitmapCacheHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
-                backgroundTiles = manager.backgroundTiles
-                foregroundTiles = manager.foregroundTiles
+                if (this@SubsamplingState.tileManager == manager) {
+                    backgroundTiles = manager.backgroundTiles
+                    foregroundTiles = manager.foregroundTiles
+                }
             },
             onSampleSizeChanged = { manager ->
-                sampleSize = manager.sampleSize
+                if (this@SubsamplingState.tileManager == manager) {
+                    sampleSize = manager.sampleSize
+                }
             },
-            onImageLoadRectChanged = {
-                imageLoadRect = it.imageLoadRect.toPlatform()
+            onImageLoadRectChanged = { manager ->
+                if (this@SubsamplingState.tileManager == manager) {
+                    imageLoadRect = manager.imageLoadRect.toPlatform()
+                }
             }
         )
         tileManager.pausedContinuousTransformTypes =
@@ -566,7 +572,7 @@ class SubsamplingState constructor(
     }
 
     private fun clean(@Suppress("SameParameterValue") caller: String) {
-        cleanTileManager("destroy:$caller")
-        cleanTileDecoder("destroy:$caller")
+        cleanTileManager("clean:$caller")
+        cleanTileDecoder("clean:$caller")
     }
 }

@@ -456,19 +456,26 @@ class SubsamplingEngine constructor(
             tileBitmapCacheHelper = tileBitmapCacheHelper,
             imageInfo = imageInfo,
             onTileChanged = { manager ->
-                _backgroundTilesState.value = manager.backgroundTiles
-                _foregroundTilesState.value = manager.foregroundTiles
+                if (this@SubsamplingEngine.tileManager == manager) {
+                    _backgroundTilesState.value = manager.backgroundTiles
+                    _foregroundTilesState.value = manager.foregroundTiles
+                }
             },
             onSampleSizeChanged = { manager ->
-                _sampleSizeState.value = manager.sampleSize
+                if (this@SubsamplingEngine.tileManager == manager) {
+                    _sampleSizeState.value = manager.sampleSize
+                }
             },
             onImageLoadRectChanged = { manager ->
-                _imageLoadRectState.value = manager.imageLoadRect
+                if (this@SubsamplingEngine.tileManager == manager) {
+                    _imageLoadRectState.value = manager.imageLoadRect
+                }
             }
         )
         tileManager.pausedContinuousTransformTypes =
             this@SubsamplingEngine.pausedContinuousTransformTypesState.value
-        tileManager.disabledBackgroundTiles = this@SubsamplingEngine.disabledBackgroundTilesState.value
+        tileManager.disabledBackgroundTiles =
+            this@SubsamplingEngine.disabledBackgroundTilesState.value
         tileManager.tileAnimationSpec = this@SubsamplingEngine.tileAnimationSpecState.value
 
         _tileGridSizeMapState.value = tileManager.sortedTileGridMap.associate { entry ->
