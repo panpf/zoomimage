@@ -204,6 +204,29 @@ class ZoomableStateTest {
     }
 
     @Test
+    fun testMouseWheelScaleScrollDeltaConverter() {
+        val zoomable = ZoomableState(Logger("Test"))
+        assertEquals(
+            expected = 2.31f,
+            actual = zoomable.mouseWheelScaleScrollDeltaConverter(7f).format(2)
+        )
+        assertEquals(
+            expected = 1.65f,
+            actual = zoomable.mouseWheelScaleScrollDeltaConverter(5f).format(2)
+        )
+
+        zoomable.mouseWheelScaleScrollDeltaConverter = { it * 0.5f }
+        assertEquals(
+            expected = 3.5f,
+            actual = zoomable.mouseWheelScaleScrollDeltaConverter(7f).format(2)
+        )
+        assertEquals(
+            expected = 2.5f,
+            actual = zoomable.mouseWheelScaleScrollDeltaConverter(5f).format(2)
+        )
+    }
+
+    @Test
     fun testScales() {
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
@@ -3635,7 +3658,8 @@ class ZoomableStateTest {
             }
         )
 
-        zoomableState.disabledGestureTypes = GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE
+        zoomableState.disabledGestureTypes =
+            GestureType.ONE_FINGER_DRAG or GestureType.TWO_FINGER_SCALE
         assertEquals(
             expected = "[ONE_FINGER_DRAG:false, TWO_FINGER_SCALE:false, ONE_FINGER_SCALE:true, DOUBLE_TAP_SCALE:true, MOUSE_WHEEL_SCALE:true, KEYBOARD_SCALE:true, KEYBOARD_DRAG:true]",
             actual = GestureType.values.joinToString(prefix = "[", postfix = "]") {
