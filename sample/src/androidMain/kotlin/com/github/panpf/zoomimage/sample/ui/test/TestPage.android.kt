@@ -6,4 +6,6 @@ actual fun testItems(): List<TestItem> = listOf(
     TestItem("Exif Orientation", ExifOrientationTestScreen()),
     TestItem("Graphics Layer", GraphicsLayerTestScreen()),
     TestItem("Modifier.zoom()", ModifierZoomTestScreen()),
+    TestItem("Mouse", MouseTestScreen()),
+    TestItem("KeyZoom", KeyTestScreen()),
 )

@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,16 +28,20 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
@@ -46,6 +51,8 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PlatformContext
+import com.github.panpf.zoomimage.sample.AppSettings
+import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
@@ -56,9 +63,9 @@ import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
-import com.github.panpf.zoomimage.sample.util.RuntimePlatform
 import com.github.panpf.zoomimage.sample.util.isMobile
 import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 expect fun getTopMargin(context: PlatformContext): Int
@@ -68,7 +75,14 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun DrawContent() {
-        Box(Modifier.fillMaxSize()) {
+        val coroutineScope = rememberCoroutineScope()
+        val focusRequest = remember { androidx.compose.ui.focus.FocusRequester() }
+        Box(Modifier.fillMaxSize().focusable().focusRequester(focusRequest).onKeyEvent {
+            coroutineScope.launch {
+                EventBus.keyEvent.emit(it)
+            }
+            true
+        }) {
             val appSettings = LocalPlatformContext.current.appSettings
 
             val initialPage = remember { params.initialPosition - params.startPosition }
@@ -126,47 +140,10 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                 TurnPageIndicator(pagerState, photoPaletteState)
             }
 
-            // TODO Browser, Android, iOS environments are temporarily unavailable
-            if (runtimePlatformInstance == RuntimePlatform.JvmDesktop) {
-                val pagerGuideShowed by appSettings.pagerGuideShowed.collectAsState()
-                var showPagerGuide by remember { mutableStateOf(true) }
-                if (!pagerGuideShowed && showPagerGuide) {
-                    AlertDialog(
-                        onDismissRequest = { showPagerGuide = false },
-                        title = { Text("Operation gestures") },
-                        text = {
-                            Text(
-                                """The current page supports the following gestures or operations：
-                            |1. Turn page:
-                            |    1.1. Key.PageUp, Key.PageDown
-                            |    1.2. Key.LeftBracket + (meta/ctrl)/alt, Key.RightBracket + (meta/ctrl)/alt
-                            |    1.3. Key.DirectionLeft + (meta/ctrl)/alt, Key.DirectionRight + (meta/ctrl)/alt
-                            |2. Scaling image：
-                            |    2.1. Double-click the image with one finger
-                            |    2.2. Double-click the image with one finger and slide up and down without letting go.
-                            |    2.3. Pinch with two fingers
-                            |    2.4. Mouse scroll scaling
-                            |    2.5. Key.ZoomIn, Key.ZoomOut, 
-                            |        Key.Equals + (meta/ctrl)/alt, Key.Minus + (meta/ctrl)/alt, 
-                            |        Key.DirectionUp + (meta/ctrl)/alt, Key.DirectionDown + (meta/ctrl)/alt
-                            |3. Moving image：
-                            |    3.1. Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight
-                            """.trimMargin()
-                            )
-                        },
-                        dismissButton = {
-                            Button(onClick = { showPagerGuide = false }) {
-                                Text("I Known")
-                            }
-                        },
-                        confirmButton = {
-                            Button(onClick = { appSettings.pagerGuideShowed.value = true }) {
-                                Text("Not prompting")
-                            }
-                        }
-                    )
-                }
-            }
+            GestureDialog(appSettings)
+        }
+        LaunchedEffect(Unit) {
+            focusRequest.requestFocus()
         }
     }
 
@@ -298,6 +275,48 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     )
                 }
             }
+        }
+    }
+
+    @Composable
+    fun GestureDialog(appSettings: AppSettings) {
+        val pagerGuideShowed by appSettings.pagerGuideShowed.collectAsState()
+        var showPagerGuide by remember { mutableStateOf(true) }
+        if (!pagerGuideShowed && showPagerGuide) {
+            AlertDialog(
+                onDismissRequest = { showPagerGuide = false },
+                title = { Text("Operation gestures") },
+                text = {
+                    Text(
+                        """The current page supports the following gestures or operations：
+                            |1. Turn page:
+                            |    1.1. Key.PageUp, Key.PageDown
+                            |    1.2. Key.LeftBracket + (meta/ctrl)/alt, Key.RightBracket + (meta/ctrl)/alt
+                            |    1.3. Key.DirectionLeft + (meta/ctrl)/alt, Key.DirectionRight + (meta/ctrl)/alt
+                            |2. Scaling image：
+                            |    2.1. Double-click the image with one finger
+                            |    2.2. Double-click the image with one finger and slide up and down without letting go.
+                            |    2.3. Pinch with two fingers
+                            |    2.4. Mouse scroll scaling
+                            |    2.5. Key.ZoomIn, Key.ZoomOut, 
+                            |        Key.Equals + (meta/ctrl)/alt, Key.Minus + (meta/ctrl)/alt, 
+                            |        Key.DirectionUp + (meta/ctrl)/alt, Key.DirectionDown + (meta/ctrl)/alt
+                            |3. Moving image：
+                            |    3.1. Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight
+                            """.trimMargin()
+                    )
+                },
+                dismissButton = {
+                    Button(onClick = { showPagerGuide = false }) {
+                        Text("I Known")
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { appSettings.pagerGuideShowed.value = true }) {
+                        Text("Not prompting")
+                    }
+                }
+            )
         }
     }
 }

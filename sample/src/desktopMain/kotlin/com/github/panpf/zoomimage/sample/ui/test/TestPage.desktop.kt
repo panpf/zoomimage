@@ -7,5 +7,5 @@ actual fun testItems(): List<TestItem> = listOf(
     TestItem("Graphics Layer", GraphicsLayerTestScreen()),
     TestItem("Modifier.zoom()", ModifierZoomTestScreen()),
     TestItem("Mouse", MouseTestScreen()),
-    TestItem("Key", KeyTestScreen()),
+    TestItem("KeyZoom", KeyTestScreen()),
 )
