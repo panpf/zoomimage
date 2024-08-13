@@ -14,12 +14,14 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.test.TestImageSource
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.TestTileBitmapCache
 import com.github.panpf.zoomimage.test.toImageSource
+import com.github.panpf.zoomimage.test.waitMillis
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
 import kotlinx.coroutines.test.runTest
@@ -346,6 +348,7 @@ class SubsamplingStateTest {
             assertEquals(expected = true, actual = subsampling.ready)
         }
     }
+
     @Test
     fun testForegroundTiles() = runTest {
 //        // basic
@@ -520,6 +523,157 @@ class SubsamplingStateTest {
 
     @Test
     fun testImageLoadRect() {
-        // TODO test
+        runComposeUiTest {
+            var subsamplingHolder: SubsamplingState? = null
+            setContent {
+                TestLifecycle {
+                    val logger = rememberZoomImageLogger(level = Logger.Level.Debug)
+                    val zoomable = rememberZoomableState(logger)
+                    zoomable.containerSize = IntSize(516, 516)
+                    zoomable.contentSize = IntSize(86, 1522)
+                    val subsampling = rememberSubsamplingState(zoomable)
+                        .apply { subsamplingHolder = this }
+                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                }
+            }
+            val subsampling = subsamplingHolder!!
+            waitMillis(1000)
+            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(expected = 0, actual = subsampling.sampleSize)
+            assertEquals(expected = "IntRect.fromLTRB(0, 0, 690, 12176)", actual = subsampling.imageLoadRect.toString())
+        }
+
+        runComposeUiTest {
+            var subsamplingHolder: SubsamplingState? = null
+            setContent {
+                TestLifecycle {
+                    val logger = rememberZoomImageLogger(level = Logger.Level.Debug)
+                    val zoomable = rememberZoomableState(logger)
+                    zoomable.containerSize = IntSize(516, 516)
+                    zoomable.contentSize = IntSize(86, 1522)
+                    val subsampling = rememberSubsamplingState(zoomable)
+                        .apply { subsamplingHolder = this }
+                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    LaunchedEffect(Unit) {
+                        snapshotFlow { zoomable.contentOriginSize }.collect {
+                            if (it.isNotEmpty()) {
+                                zoomable.scale(zoomable.mediumScale, animated = false)
+                            }
+                        }
+                    }
+                }
+            }
+            val subsampling = subsamplingHolder!!
+            waitMillis(1000)
+            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(expected = 1, actual = subsampling.sampleSize)
+            assertEquals(expected = "IntRect.fromLTRB(0, 5703, 690, 6473)", actual = subsampling.imageLoadRect.toString())
+        }
+
+        runComposeUiTest {
+            var subsamplingHolder: SubsamplingState? = null
+            setContent {
+                TestLifecycle {
+                    val logger = rememberZoomImageLogger(level = Logger.Level.Debug)
+                    val zoomable = rememberZoomableState(logger)
+                    zoomable.containerSize = IntSize(516, 516)
+                    zoomable.contentSize = IntSize(86, 1522)
+                    val subsampling = rememberSubsamplingState(zoomable)
+                        .apply { subsamplingHolder = this }
+                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    LaunchedEffect(Unit) {
+                        snapshotFlow { zoomable.contentOriginSize }.collect {
+                            if (it.isNotEmpty()) {
+                                zoomable.scale(zoomable.maxScale, animated = false)
+                            }
+                        }
+                    }
+                }
+            }
+            val subsampling = subsamplingHolder!!
+            waitMillis(1000)
+            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(expected = 1, actual = subsampling.sampleSize)
+            assertEquals(expected = "IntRect.fromLTRB(127, 5871, 563, 6305)", actual = subsampling.imageLoadRect.toString())
+        }
+    }
+
+    @Test
+    fun testClean() {
+        runComposeUiTest {
+            var subsamplingHolder: SubsamplingState? = null
+            setContent {
+                TestLifecycle {
+                    val logger = rememberZoomImageLogger(level = Logger.Level.Debug)
+                    val zoomable = rememberZoomableState(logger)
+                    zoomable.containerSize = IntSize(516, 516)
+                    zoomable.contentSize = IntSize(86, 1522)
+                    val subsampling = rememberSubsamplingState(zoomable)
+                        .apply { subsamplingHolder = this }
+                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    LaunchedEffect(Unit) {
+                        snapshotFlow { zoomable.contentOriginSize }.collect {
+                            if (it.isNotEmpty()) {
+                                zoomable.scale(zoomable.maxScale, animated = false)
+                            }
+                        }
+                    }
+                }
+            }
+            val subsampling = subsamplingHolder!!
+            waitMillis(1000)
+            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(expected = 144, actual = subsampling.foregroundTiles.size)
+            assertEquals(expected = 1, actual = subsampling.sampleSize)
+            assertEquals(expected = "IntRect.fromLTRB(127, 5871, 563, 6305)", actual = subsampling.imageLoadRect.toString())
+            assertEquals(expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')", actual = subsampling.imageInfo.toString())
+
+            subsampling.setImageSource(null as ImageSource?)
+            waitMillis(1000)
+            assertEquals(expected = "{}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(expected = 0, actual = subsampling.foregroundTiles.size)
+            assertEquals(expected = 0, actual = subsampling.sampleSize)
+            assertEquals(expected = "IntRect.fromLTRB(0, 0, 0, 0)", actual = subsampling.imageLoadRect.toString())
+            assertEquals(expected = "null", actual = subsampling.imageInfo.toString())
+        }
+    }
+
+    @Test
+    fun testRememberObserver() {
+        var subsamplingHolder: SubsamplingState? = null
+        runComposeUiTest {
+            setContent {
+                TestLifecycle {
+                    val logger = rememberZoomImageLogger(level = Logger.Level.Debug)
+                    val zoomable = rememberZoomableState(logger)
+                    zoomable.containerSize = IntSize(516, 516)
+                    zoomable.contentSize = IntSize(86, 1522)
+                    val subsampling = rememberSubsamplingState(zoomable)
+                        .apply { subsamplingHolder = this }
+                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
+                    LaunchedEffect(Unit) {
+                        snapshotFlow { zoomable.contentOriginSize }.collect {
+                            if (it.isNotEmpty()) {
+                                zoomable.scale(zoomable.maxScale, animated = false)
+                            }
+                        }
+                    }
+                }
+            }
+            val subsampling = subsamplingHolder!!
+            waitMillis(1000)
+            assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
+            assertEquals(expected = 144, actual = subsampling.foregroundTiles.size)
+            assertEquals(expected = 1, actual = subsampling.sampleSize)
+            assertEquals(expected = "IntRect.fromLTRB(127, 5871, 563, 6305)", actual = subsampling.imageLoadRect.toString())
+            assertEquals(expected = "ImageInfo(size=690x12176, mimeType='image/jpeg')", actual = subsampling.imageInfo.toString())
+        }
+
+        val subsampling = subsamplingHolder!!
+        assertEquals(expected = "{}", actual = subsampling.tileGridSizeMap.toString())
+        assertEquals(expected = 0, actual = subsampling.foregroundTiles.size)
+        assertEquals(expected = 0, actual = subsampling.sampleSize)
+        assertEquals(expected = "IntRect.fromLTRB(0, 0, 0, 0)", actual = subsampling.imageLoadRect.toString())
+        assertEquals(expected = "null", actual = subsampling.imageInfo.toString())
     }
 }
