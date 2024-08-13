@@ -3,7 +3,7 @@ package com.github.panpf.zoomimage.compose.common.test.zoom
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ScaleFactor
-import com.github.panpf.zoomimage.compose.internal.ScaleFactor
+import com.github.panpf.zoomimage.compose.util.ScaleFactor
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.div
 import com.github.panpf.zoomimage.compose.zoom.lerp

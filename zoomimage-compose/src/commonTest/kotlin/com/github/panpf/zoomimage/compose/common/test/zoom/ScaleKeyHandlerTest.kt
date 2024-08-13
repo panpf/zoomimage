@@ -6,7 +6,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
-import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.zoom.DefaultScaleInKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultScaleOutKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.ScaleKeyHandler

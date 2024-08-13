@@ -6,12 +6,11 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
-import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveDownKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveLeftKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveRightKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveUpKeyMatchers
-import com.github.panpf.zoomimage.compose.zoom.DefaultScaleOutKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler
 import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler.Arrow.Down
 import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler.Arrow.Up

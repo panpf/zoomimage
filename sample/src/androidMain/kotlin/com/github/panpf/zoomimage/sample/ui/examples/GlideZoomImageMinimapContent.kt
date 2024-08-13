@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.github.panpf.zoomimage.compose.glide.internal.CrossFade
-import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
-import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
+import com.github.panpf.zoomimage.compose.glide.CrossFade
+import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
+import com.github.panpf.zoomimage.compose.glide.GlideImage
 import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 @Composable

@@ -39,10 +39,10 @@ import com.github.panpf.zoomimage.util.toOffset
 import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
-import com.github.panpf.zoomimage.view.internal.convert
-import com.github.panpf.zoomimage.view.internal.format
-import com.github.panpf.zoomimage.view.internal.requiredMainThread
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
+import com.github.panpf.zoomimage.view.util.convert
+import com.github.panpf.zoomimage.view.util.format
+import com.github.panpf.zoomimage.view.util.requiredMainThread
 import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
 import com.github.panpf.zoomimage.view.zoom.internal.FloatAnimatable
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
@@ -88,7 +88,7 @@ import kotlin.math.roundToInt
  *
  * @see com.github.panpf.zoomimage.view.test.zoom.ZoomableEngineTest
  */
-class ZoomableEngine constructor(val logger: Logger, val view: View) {
+class ZoomableEngine(val logger: Logger, val view: View) {
 
     private var coroutineScope: CoroutineScope? = null
     private var lastScaleAnimatable: FloatAnimatable? = null
@@ -832,7 +832,7 @@ class ZoomableEngine constructor(val logger: Logger, val view: View) {
                     durationMillis = animationSpec.durationMillis,
                     interpolator = animationSpec.interpolator,
                     onUpdateValue = { value ->
-                        val frameScale = com.github.panpf.zoomimage.view.internal.lerp(
+                        val frameScale = com.github.panpf.zoomimage.view.util.lerp(
                             start = startScale,
                             stop = endScale,
                             fraction = value

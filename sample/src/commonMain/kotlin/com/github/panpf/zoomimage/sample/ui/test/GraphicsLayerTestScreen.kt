@@ -55,8 +55,8 @@ import com.github.panpf.sketch.request.ComposableImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.size
 import com.github.panpf.sketch.util.toIntSize
-import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.compose.internal.toPlatform
+import com.github.panpf.zoomimage.compose.util.toCompat
+import com.github.panpf.zoomimage.compose.util.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.plus
 import com.github.panpf.zoomimage.sample.image.BitmapScaleTransformation

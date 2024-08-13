@@ -23,12 +23,12 @@ import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.isSpecified
-import com.github.panpf.zoomimage.compose.internal.Origin
-import com.github.panpf.zoomimage.compose.internal.TopStart
-import com.github.panpf.zoomimage.compose.internal.div
-import com.github.panpf.zoomimage.compose.internal.format
-import com.github.panpf.zoomimage.compose.internal.times
-import com.github.panpf.zoomimage.compose.internal.toShortString
+import com.github.panpf.zoomimage.compose.util.Origin
+import com.github.panpf.zoomimage.compose.util.TopStart
+import com.github.panpf.zoomimage.compose.util.div
+import com.github.panpf.zoomimage.compose.util.format
+import com.github.panpf.zoomimage.compose.util.times
+import com.github.panpf.zoomimage.compose.util.toShortString
 
 /**
  * A simple version of a 2D transformation that includes scale, pan, and rotation

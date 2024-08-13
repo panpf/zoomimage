@@ -5,7 +5,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
-import com.github.panpf.zoomimage.compose.internal.format
+import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.zoom.MouseZoomNode
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState

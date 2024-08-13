@@ -44,20 +44,21 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toSize
-import com.github.panpf.zoomimage.compose.internal.convert
-import com.github.panpf.zoomimage.compose.internal.format
-import com.github.panpf.zoomimage.compose.internal.isNotEmpty
-import com.github.panpf.zoomimage.compose.internal.limitTo
-import com.github.panpf.zoomimage.compose.internal.name
-import com.github.panpf.zoomimage.compose.internal.roundToPlatform
-import com.github.panpf.zoomimage.compose.internal.times
-import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.compose.internal.toCompatOffset
-import com.github.panpf.zoomimage.compose.internal.toPlatform
-import com.github.panpf.zoomimage.compose.internal.toPlatformRect
-import com.github.panpf.zoomimage.compose.internal.toShortString
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.util.ScaleFactor
+import com.github.panpf.zoomimage.compose.util.convert
+import com.github.panpf.zoomimage.compose.util.format
+import com.github.panpf.zoomimage.compose.util.isNotEmpty
+import com.github.panpf.zoomimage.compose.util.limitTo
+import com.github.panpf.zoomimage.compose.util.name
+import com.github.panpf.zoomimage.compose.util.roundToPlatform
+import com.github.panpf.zoomimage.compose.util.times
+import com.github.panpf.zoomimage.compose.util.toCompat
+import com.github.panpf.zoomimage.compose.util.toCompatOffset
+import com.github.panpf.zoomimage.compose.util.toPlatform
+import com.github.panpf.zoomimage.compose.util.toPlatformRect
+import com.github.panpf.zoomimage.compose.util.toShortString
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.plus
 import com.github.panpf.zoomimage.util.round
@@ -489,7 +490,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
-            scale = com.github.panpf.zoomimage.compose.internal.ScaleFactor(limitedTargetUserScale),
+            scale = ScaleFactor(limitedTargetUserScale),
             offset = limitedTargetUserOffset
         )
         logger.d {
@@ -632,7 +633,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
-            scale = com.github.panpf.zoomimage.compose.internal.ScaleFactor(limitedTargetUserScale),
+            scale = ScaleFactor(limitedTargetUserScale),
             offset = limitedTargetUserOffset
         )
         logger.d {
@@ -915,7 +916,7 @@ class ZoomableState(val logger: Logger) : RememberObserver {
         ).toPlatform()
         val limitedTargetUserOffset = limitUserOffset(targetUserOffset, limitedTargetUserScale)
         val limitedTargetUserTransform = currentUserTransform.copy(
-            scale = com.github.panpf.zoomimage.compose.internal.ScaleFactor(limitedTargetUserScale),
+            scale = ScaleFactor(limitedTargetUserScale),
             offset = limitedTargetUserOffset
         )
         logger.d {

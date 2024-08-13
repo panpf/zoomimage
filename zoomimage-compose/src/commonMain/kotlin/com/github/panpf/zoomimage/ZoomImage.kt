@@ -22,18 +22,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.ZoomState
-import com.github.panpf.zoomimage.compose.internal.MyImage
-import com.github.panpf.zoomimage.compose.internal.round
 import com.github.panpf.zoomimage.compose.rememberZoomState
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
+import com.github.panpf.zoomimage.compose.util.round
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.zoom
@@ -135,5 +141,44 @@ fun ZoomImage(
                     .zoomScrollBar(zoomState.zoomable, scrollBar)
             )
         }
+    }
+}
+
+@Composable
+private fun MyImage(
+    painter: Painter,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    alignment: Alignment = Alignment.Center,
+    contentScale: ContentScale = ContentScale.Fit,
+    alpha: Float = DefaultAlpha,
+    colorFilter: ColorFilter? = null,
+    clipToBounds: Boolean = true,
+) {
+    val semantics = if (contentDescription != null) {
+        Modifier.semantics {
+            this.contentDescription = contentDescription
+            this.role = Role.Image
+        }
+    } else {
+        Modifier
+    }
+
+    // Explicitly use a simple Layout implementation here as Spacer squashes any non fixed
+    // constraint with zero
+    Layout(
+        {},
+        modifier
+            .then(semantics)
+            .let { if (clipToBounds) it.clipToBounds() else it }
+            .paint(
+                painter,
+                alignment = alignment,
+                contentScale = contentScale,
+                alpha = alpha,
+                colorFilter = colorFilter
+            )
+    ) { _, constraints ->
+        layout(constraints.minWidth, constraints.minHeight) {}
     }
 }

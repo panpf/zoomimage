@@ -14,10 +14,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toSize
-import com.github.panpf.zoomimage.compose.internal.ScaleFactor
-import com.github.panpf.zoomimage.compose.internal.TopStart
-import com.github.panpf.zoomimage.compose.internal.format
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
+import com.github.panpf.zoomimage.compose.util.ScaleFactor
+import com.github.panpf.zoomimage.compose.util.TopStart
+import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState

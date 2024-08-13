@@ -31,8 +31,8 @@ import com.github.panpf.zoomimage.subsampling.TileState
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.isEmpty
-import com.github.panpf.zoomimage.view.internal.applyTransform
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
+import com.github.panpf.zoomimage.view.util.applyTransform
 import com.github.panpf.zoomimage.view.zoom.ZoomableEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

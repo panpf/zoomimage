@@ -32,9 +32,9 @@ import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntRect
-import com.github.panpf.zoomimage.compose.internal.isEmpty
-import com.github.panpf.zoomimage.compose.internal.rotate
-import com.github.panpf.zoomimage.compose.internal.rotateInSpace
+import com.github.panpf.zoomimage.compose.util.isEmpty
+import com.github.panpf.zoomimage.compose.util.rotate
+import com.github.panpf.zoomimage.compose.util.rotateInSpace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

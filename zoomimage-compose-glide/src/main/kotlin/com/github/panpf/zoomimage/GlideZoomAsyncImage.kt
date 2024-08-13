@@ -39,11 +39,11 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.github.panpf.zoomimage.compose.glide.internal.ExperimentalGlideComposeApi
-import com.github.panpf.zoomimage.compose.glide.internal.GlideImage
-import com.github.panpf.zoomimage.compose.glide.internal.Placeholder
-import com.github.panpf.zoomimage.compose.glide.internal.RequestBuilderTransform
-import com.github.panpf.zoomimage.compose.glide.internal.Transition
+import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
+import com.github.panpf.zoomimage.compose.glide.GlideImage
+import com.github.panpf.zoomimage.compose.glide.Placeholder
+import com.github.panpf.zoomimage.compose.glide.RequestBuilderTransform
+import com.github.panpf.zoomimage.compose.glide.Transition
 import com.github.panpf.zoomimage.compose.subsampling.subsampling
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.mouseZoom

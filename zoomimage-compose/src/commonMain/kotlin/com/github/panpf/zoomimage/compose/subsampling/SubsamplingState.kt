@@ -32,10 +32,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.LifecycleEventObserver
-import com.github.panpf.zoomimage.compose.internal.isEmpty
-import com.github.panpf.zoomimage.compose.internal.toCompat
-import com.github.panpf.zoomimage.compose.internal.toPlatform
-import com.github.panpf.zoomimage.compose.internal.toShortString
+import com.github.panpf.zoomimage.compose.util.isEmpty
+import com.github.panpf.zoomimage.compose.util.toCompat
+import com.github.panpf.zoomimage.compose.util.toPlatform
+import com.github.panpf.zoomimage.compose.util.toShortString
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageInfo
 import com.github.panpf.zoomimage.subsampling.ImageSource
@@ -88,7 +88,7 @@ fun rememberSubsamplingState(zoomableState: ZoomableState): SubsamplingState {
  * @see com.github.panpf.zoomimage.compose.common.test.subsampling.SubsamplingStateTest
  */
 @Stable
-class SubsamplingState constructor(
+class SubsamplingState(
     val zoomableState: ZoomableState,
     val lifecycle: Lifecycle
 ) : RememberObserver {
