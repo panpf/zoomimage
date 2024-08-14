@@ -170,7 +170,7 @@ open class ScaleKeyHandler(
     override val shortPressReachedMaxValueNumber: Int = 5,
     override val longPressReachedMaxValueDuration: Int = 3000,
     override val longPressAccelerate: Boolean = true,
-) : ZoomMatcherKeyHandler(keyMatchers) {
+) : RangeStepMatcherZoomKeyHandler(keyMatchers) {
 
     override fun getValue(zoomableState: ZoomableState): Float {
         return zoomableState.transform.scaleX
@@ -246,7 +246,7 @@ open class MoveKeyHandler(
     val shortPressMinStepWithContainerPercentage: Float = 0.25f,
     override val longPressReachedMaxValueDuration: Int = 3000,
     override val longPressAccelerate: Boolean = true,
-) : ZoomMatcherKeyHandler(keyMatchers) {
+) : RangeStepMatcherZoomKeyHandler(keyMatchers) {
 
     override fun getValue(zoomableState: ZoomableState): Float {
         return if (arrow == Arrow.Left || arrow == Arrow.Right) {
@@ -334,17 +334,14 @@ open class MoveKeyHandler(
 }
 
 /**
- * Encapsulates the main logic of button zoom, supporting short press for single zoom and long press for continuous zoom.
+ * Step or continuous change between minimum and maximum range
  *
- * @see com.github.panpf.zoomimage.compose.common.test.zoom.ZoomMatcherKeyHandlerTest
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.RangeStepMatcherZoomKeyHandler
  */
 @Stable
-abstract class ZoomMatcherKeyHandler(
-    override val keyMatchers: ImmutableList<KeyMatcher>,
-) : MatcherZoomKeyHandler(keyMatchers) {
-
-    private var longPressJob: Job? = null
-    private var lastShortPressTimeMark: ValueTimeMark? = null
+abstract class RangeStepMatcherZoomKeyHandler(
+    keyMatchers: ImmutableList<KeyMatcher>,
+) : BaseMatcherZoomKeyHandler(keyMatchers) {
 
     /**
      * How many consecutive short presses are expected to be required to go from minimum to maximum?
@@ -369,6 +366,59 @@ abstract class ZoomMatcherKeyHandler(
 
     abstract fun getShortStepMinValue(zoomableState: ZoomableState): Float?
 
+    override fun calculateShortPressAddValue(zoomableState: ZoomableState): Float {
+        val motionRange = getValueRange(zoomableState)
+        val step = (motionRange.endInclusive - motionRange.start) / shortPressReachedMaxValueNumber
+        val shortStepMinValue = getShortStepMinValue(zoomableState) ?: 0f
+        val addValue = step.coerceAtLeast(shortStepMinValue)
+        return addValue
+    }
+
+    override fun calculateLongPressAddValue(
+        zoomableState: ZoomableState,
+        lastElapsedTime: Long?,
+        elapsedTime: Long,
+    ): Float {
+        val motionRange = getValueRange(zoomableState)
+
+        val lastProgressValue = if (lastElapsedTime != null) {
+            val lastProgress =
+                (lastElapsedTime / longPressReachedMaxValueDuration.toFloat()).coerceAtMost(1f)
+            val lastAcceleratedProgress = accelerateProgress(lastProgress)
+            lastAcceleratedProgress * (motionRange.endInclusive - motionRange.start)
+        } else {
+            0f
+        }
+
+        val progress =
+            (elapsedTime / longPressReachedMaxValueDuration.toFloat()).coerceAtMost(1f)
+        val acceleratedProgress = accelerateProgress(progress)
+        val progressValue = acceleratedProgress * (motionRange.endInclusive - motionRange.start)
+
+        val addValue = progressValue - lastProgressValue
+        return addValue
+    }
+
+    private fun accelerateProgress(fraction: Float): Float {
+        return if (longPressAccelerate) {
+            fraction * ((fraction * 2) + 1)
+        } else {
+            fraction
+        }
+    }
+}
+
+/**
+ * Encapsulates the main logic of button zoom, supporting short press for single zoom and long press for continuous zoom.
+ */
+@Stable
+abstract class BaseMatcherZoomKeyHandler(
+    override val keyMatchers: ImmutableList<KeyMatcher>,
+) : MatcherZoomKeyHandler(keyMatchers) {
+
+    private var longPressJob: Job? = null
+    private var lastShortPressTimeMark: ValueTimeMark? = null
+
     override fun onKey(
         coroutineScope: CoroutineScope,
         zoomableState: ZoomableState,
@@ -385,35 +435,42 @@ abstract class ZoomMatcherKeyHandler(
         }
     }
 
-    private fun performShortPress(
-        coroutineScope: CoroutineScope,
-        zoomableState: ZoomableState,
-    ) {
-        val motionRange = getValueRange(zoomableState)
+    abstract fun calculateShortPressAddValue(zoomableState: ZoomableState): Float
+
+    private fun calculateShortPressAnimationDuration(zoomableState: ZoomableState): Int {
         val twoShortPressInterval = lastShortPressTimeMark?.elapsedNow()?.inWholeMilliseconds ?: -1
         lastShortPressTimeMark = TimeSource.Monotonic.markNow()
-        val step = (motionRange.endInclusive - motionRange.start) / shortPressReachedMaxValueNumber
-        val shortStepMinValue = getShortStepMinValue(zoomableState) ?: 0f
-        val addValue = step.coerceAtLeast(shortStepMinValue)
-        zoomableState.logger.d {
-            "ZoomMatcherKeyHandler. onKey. short press. " +
-                    "addValue=$addValue, " +
-                    "twoShortPressInterval=$twoShortPressInterval. " +
-                    "motionRange=$motionRange"
-        }
-        val animationDurationMillis = if (twoShortPressInterval > 0) {
+        val animationDuration = if (twoShortPressInterval > 0) {
             min(twoShortPressInterval.toInt(), zoomableState.animationSpec.durationMillis)
         } else {
             zoomableState.animationSpec.durationMillis
         }
+        return animationDuration
+    }
+
+    private fun performShortPress(
+        coroutineScope: CoroutineScope,
+        zoomableState: ZoomableState,
+    ) {
+        val addValue = calculateShortPressAddValue(zoomableState)
+        val animationDuration = calculateShortPressAnimationDuration(zoomableState)
+        zoomableState.logger.d {
+            "BaseMatcherZoomKeyHandler. onKey. short press. addValue=$addValue, animationDuration=$animationDuration"
+        }
         coroutineScope.launch {
             updateValue(
                 zoomableState = zoomableState,
-                animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = animationDurationMillis),
+                animationSpec = ZoomAnimationSpec.Default.copy(durationMillis = animationDuration),
                 add = addValue
             )
         }
     }
+
+    abstract fun calculateLongPressAddValue(
+        zoomableState: ZoomableState,
+        lastElapsedTime: Long?,
+        elapsedTime: Long,
+    ): Float
 
     private fun startLongPress(
         coroutineScope: CoroutineScope,
@@ -427,41 +484,28 @@ abstract class ZoomMatcherKeyHandler(
             // Normally this is 500, but here for fast response, it is set to 200
             delay(200)
 
-            val motionRange = getValueRange(zoomableState)
             val startTimeMark = TimeSource.Monotonic.markNow()
-            var lastProgressValue = 0f
+            var lastElapsedTime: Long? = null
             while (isActive) {
                 val elapsedTime = startTimeMark.elapsedNow().inWholeMilliseconds
-                val progress =
-                    (elapsedTime / longPressReachedMaxValueDuration.toFloat()).coerceAtMost(1f)
-                val acceleratedProgress = accelerateProgress(progress)
-                val progressValue =
-                    acceleratedProgress * (motionRange.endInclusive - motionRange.start)
-                val addValue = progressValue - lastProgressValue
-                lastProgressValue = progressValue
+                val addValue = calculateLongPressAddValue(
+                    zoomableState = zoomableState,
+                    lastElapsedTime = lastElapsedTime,
+                    elapsedTime = elapsedTime,
+                )
+                lastElapsedTime = elapsedTime
                 zoomableState.logger.d {
-                    "ZoomMatcherKeyHandler. onKey. long press running. " +
-                            "progress=$progress, " +
-                            "acceleratedProgress=$acceleratedProgress, " +
-                            "progressValue=$progressValue, " +
+                    "BaseMatcherZoomKeyHandler. onKey. long press running. " +
                             "addValue=$addValue, " +
                             "elapsedTime=$elapsedTime, " +
-                            "motionRange=$motionRange"
+                            "lastElapsedTime=$lastElapsedTime"
                 }
-                updateValue(zoomableState, animationSpec = null, addValue)
+                updateValue(zoomableState = zoomableState, animationSpec = null, add = addValue)
 
                 // Usually, on a device with a refresh rate of 60 frames, it can be refreshed once every 16 milliseconds,
                 // but considering that most mobile devices already have a refresh rate of 120 frames, so 8
                 delay(8)
             }
-        }
-    }
-
-    private fun accelerateProgress(fraction: Float): Float {
-        return if (longPressAccelerate) {
-            fraction * ((fraction * 2) + 1)
-        } else {
-            fraction
         }
     }
 
@@ -477,7 +521,7 @@ abstract class ZoomMatcherKeyHandler(
     ) {
         cancelLongPress()
         zoomableState.logger.d {
-            "ZoomMatcherKeyHandler. onCanceled"
+            "BaseMatcherZoomKeyHandler. onCanceled"
         }
     }
 
