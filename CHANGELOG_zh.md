@@ -6,11 +6,11 @@
 
 zoom:
 
-* new: 新增支持鼠标滚轮缩放功能。 [#35](https://github.com/panpf/zoomimage/issues/35)
 * broken: CoilModelToImageSource、GlideModelToImageSource、PicassoDataToImageSource 接口的 \*ToImageSource 方法添加 suspend 修饰符
-* new: 新增支持键盘缩放和拖动功能
 * broken: 移除 'remember\*ZoomState()' 系列函数的 logger 参数
 * broken: 移除 SubsamplingEngine 的构造函数的 view 参数
+* new: 新增支持鼠标滚轮缩放功能。 [#35](https://github.com/panpf/zoomimage/issues/35)
+* new: 新增支持键盘缩放和拖动功能。 [#42](https://github.com/panpf/zoomimage/issues/42)
 
 ## 1.1.0-alpha05
 

@@ -153,12 +153,16 @@ val DefaultMoveRightKeyMatchers = listOf(
 val DefaultZoomKeyHandlers = listOf(
     ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatchers, scaleIn = true),
     ScaleKeyHandler(keyMatchers = DefaultScaleOutKeyMatchers, scaleIn = false),
-    MoveKeyHandler(keyMatchers = DefaultMoveUpKeyMatchers, arrow = MoveKeyHandler.Arrow.Up),
-    MoveKeyHandler(keyMatchers = DefaultMoveDownKeyMatchers, arrow = MoveKeyHandler.Arrow.Down),
-    MoveKeyHandler(keyMatchers = DefaultMoveLeftKeyMatchers, arrow = MoveKeyHandler.Arrow.Left),
-    MoveKeyHandler(keyMatchers = DefaultMoveRightKeyMatchers, arrow = MoveKeyHandler.Arrow.Right),
+    MoveKeyHandler(keyMatchers = DefaultMoveUpKeyMatchers, moveArrow = MoveArrow.Up),
+    MoveKeyHandler(keyMatchers = DefaultMoveDownKeyMatchers, moveArrow = MoveArrow.Down),
+    MoveKeyHandler(keyMatchers = DefaultMoveLeftKeyMatchers, moveArrow = MoveArrow.Left),
+    MoveKeyHandler(keyMatchers = DefaultMoveRightKeyMatchers, moveArrow = MoveArrow.Right),
 ).toImmutableList()
 
+
+enum class MoveArrow {
+    Up, Down, Left, Right
+}
 
 /**
  * @see com.github.panpf.zoomimage.compose.common.test.zoom.ScaleKeyHandlerTest
@@ -167,20 +171,26 @@ val DefaultZoomKeyHandlers = listOf(
 open class ScaleKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
     val scaleIn: Boolean,
-    override val shortPressReachedMaxValueNumber: Int = 5,
-    override val longPressReachedMaxValueDuration: Int = 3000,
-    override val longPressAccelerate: Boolean = true,
-) : RangeStepMatcherZoomKeyHandler(keyMatchers) {
+    val shortPressStepScaleFactor: Float = 2f,
+    val longPressStep: Float = 0.25f,
+    override val longPressAccelerateBase: Float = 0.5f,
+    override val longPressAccelerateInterval: Int = 500
+) : StepMatcherZoomKeyHandler(keyMatchers) {
 
-    override fun getValue(zoomableState: ZoomableState): Float {
-        return zoomableState.transform.scaleX
+    override fun getShortPressStep(zoomableState: ZoomableState): Float {
+        val currentScale = zoomableState.transform.scaleX
+        val nextScale = if (scaleIn) {
+            currentScale * shortPressStepScaleFactor
+        } else {
+            currentScale / shortPressStepScaleFactor
+        }
+        val step = nextScale - currentScale
+        return step
     }
 
-    override fun getValueRange(zoomableState: ZoomableState): ClosedRange<Float> {
-        return zoomableState.minScale..zoomableState.maxScale.coerceAtLeast(0f)
+    override fun getLongPressStep(zoomableState: ZoomableState): Float {
+        return if (scaleIn) longPressStep else -longPressStep
     }
-
-    override fun getShortStepMinValue(zoomableState: ZoomableState): Float? = null
 
     override fun handle(
         coroutineScope: CoroutineScope,
@@ -197,16 +207,14 @@ open class ScaleKeyHandler(
         animationSpec: ZoomAnimationSpec?,
         add: Float
     ) {
+        val newScale = zoomableState.transform.scaleX + add
+        val centroidContentPoint = zoomableState.contentVisibleRect.center
         zoomableState.scale(
-            targetScale = zoomableState.transform.scaleX + addScale(add),
-            centroidContentPoint = zoomableState.contentVisibleRect.center,
+            targetScale = newScale,
+            centroidContentPoint = centroidContentPoint,
             animated = animationSpec != null,
             animationSpec = animationSpec
         )
-    }
-
-    private fun addScale(scaleStep: Float): Float {
-        return if (scaleIn) scaleStep else -scaleStep
     }
 
     override fun equals(other: Any?): Boolean {
@@ -215,23 +223,31 @@ open class ScaleKeyHandler(
         other as ScaleKeyHandler
         if (keyMatchers != other.keyMatchers) return false
         if (scaleIn != other.scaleIn) return false
-        if (shortPressReachedMaxValueNumber != other.shortPressReachedMaxValueNumber) return false
-        if (longPressReachedMaxValueDuration != other.longPressReachedMaxValueDuration) return false
-        if (longPressAccelerate != other.longPressAccelerate) return false
+        if (shortPressStepScaleFactor != other.shortPressStepScaleFactor) return false
+        if (longPressStep != other.longPressStep) return false
+        if (longPressAccelerateBase != other.longPressAccelerateBase) return false
+        if (longPressAccelerateInterval != other.longPressAccelerateInterval) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = keyMatchers.hashCode()
         result = 31 * result + scaleIn.hashCode()
-        result = 31 * result + shortPressReachedMaxValueNumber
-        result = 31 * result + longPressReachedMaxValueDuration
-        result = 31 * result + longPressAccelerate.hashCode()
+        result = 31 * result + shortPressStepScaleFactor.hashCode()
+        result = 31 * result + longPressStep.hashCode()
+        result = 31 * result + longPressAccelerateBase.hashCode()
+        result = 31 * result + longPressAccelerateInterval
         return result
     }
 
     override fun toString(): String {
-        return "ScaleKeyHandler(keyMatchers=$keyMatchers, scaleIn=$scaleIn, shortPressReachedMaxValueNumber=$shortPressReachedMaxValueNumber, longPressReachedMaxValueDuration=$longPressReachedMaxValueDuration, longPressAccelerate=$longPressAccelerate)"
+        return "ScaleKeyHandler(" +
+                "keyMatchers=$keyMatchers, " +
+                "scaleIn=$scaleIn, " +
+                "shortPressStepScaleFactor=$shortPressStepScaleFactor, " +
+                "longPressStep=$longPressStep, " +
+                "longPressAccelerateBase=$longPressAccelerateBase, " +
+                "longPressAccelerateInterval=$longPressAccelerateInterval)"
     }
 }
 
@@ -241,35 +257,33 @@ open class ScaleKeyHandler(
 @Stable
 open class MoveKeyHandler(
     override val keyMatchers: ImmutableList<KeyMatcher>,
-    val arrow: Arrow,
-    override val shortPressReachedMaxValueNumber: Int = 10,
-    val shortPressMinStepWithContainerPercentage: Float = 0.25f,
-    override val longPressReachedMaxValueDuration: Int = 3000,
-    override val longPressAccelerate: Boolean = true,
-) : RangeStepMatcherZoomKeyHandler(keyMatchers) {
+    val moveArrow: MoveArrow,
+    val shortPressStepWithContainerPercentage: Float = 0.33f,
+    val longPressStepWithContainerPercentage: Float = 0.075f,
+    override val longPressAccelerateBase: Float = 0.5f,
+    override val longPressAccelerateInterval: Int = 500,
+) : StepMatcherZoomKeyHandler(keyMatchers) {
 
-    override fun getValue(zoomableState: ZoomableState): Float {
-        return if (arrow == Arrow.Left || arrow == Arrow.Right) {
-            zoomableState.transform.offset.x
+    override fun getShortPressStep(zoomableState: ZoomableState): Float {
+        val step = if (moveArrow == MoveArrow.Left || moveArrow == MoveArrow.Right) {
+            zoomableState.containerSize.width * shortPressStepWithContainerPercentage
         } else {
-            zoomableState.transform.offset.y
+            zoomableState.containerSize.height * shortPressStepWithContainerPercentage
         }
+        val arrowStep = if (moveArrow == MoveArrow.Up || moveArrow == MoveArrow.Left)
+            step else -step
+        return arrowStep
     }
 
-    override fun getValueRange(zoomableState: ZoomableState): ClosedRange<Float> {
-        return if (arrow == Arrow.Left || arrow == Arrow.Right) {
-            zoomableState.userOffsetBounds.left.toFloat()..zoomableState.userOffsetBounds.right.toFloat()
+    override fun getLongPressStep(zoomableState: ZoomableState): Float {
+        val step = if (moveArrow == MoveArrow.Left || moveArrow == MoveArrow.Right) {
+            zoomableState.containerSize.width * longPressStepWithContainerPercentage
         } else {
-            zoomableState.userOffsetBounds.top.toFloat()..zoomableState.userOffsetBounds.bottom.toFloat()
+            zoomableState.containerSize.height * longPressStepWithContainerPercentage
         }
-    }
-
-    override fun getShortStepMinValue(zoomableState: ZoomableState): Float {
-        return if (arrow == Arrow.Left || arrow == Arrow.Right) {
-            zoomableState.containerSize.width * shortPressMinStepWithContainerPercentage
-        } else {
-            zoomableState.containerSize.height * shortPressMinStepWithContainerPercentage
-        }
+        val arrowStep = if (moveArrow == MoveArrow.Up || moveArrow == MoveArrow.Left)
+            step else -step
+        return arrowStep
     }
 
     override fun handle(
@@ -287,18 +301,16 @@ open class MoveKeyHandler(
         animationSpec: ZoomAnimationSpec?,
         add: Float
     ) {
+        val addOffset = when (moveArrow) {
+            MoveArrow.Up, MoveArrow.Down -> Offset(0f, add)
+            MoveArrow.Left, MoveArrow.Right -> Offset(add, 0f)
+        }
+        val newOffset = zoomableState.transform.offset + addOffset
         zoomableState.offset(
-            targetOffset = zoomableState.transform.offset + addOffset(add),
+            targetOffset = newOffset,
             animated = animationSpec != null,
             animationSpec = animationSpec
         )
-    }
-
-    private fun addOffset(add: Float): Offset = when (arrow) {
-        Arrow.Up -> Offset(0f, add)
-        Arrow.Down -> Offset(0f, -add)
-        Arrow.Left -> Offset(add, 0f)
-        Arrow.Right -> Offset(-add, 0f)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -306,72 +318,55 @@ open class MoveKeyHandler(
         if (other == null || this::class != other::class) return false
         other as MoveKeyHandler
         if (keyMatchers != other.keyMatchers) return false
-        if (arrow != other.arrow) return false
-        if (shortPressReachedMaxValueNumber != other.shortPressReachedMaxValueNumber) return false
-        if (shortPressMinStepWithContainerPercentage != other.shortPressMinStepWithContainerPercentage) return false
-        if (longPressReachedMaxValueDuration != other.longPressReachedMaxValueDuration) return false
-        if (longPressAccelerate != other.longPressAccelerate) return false
+        if (moveArrow != other.moveArrow) return false
+        if (shortPressStepWithContainerPercentage != other.shortPressStepWithContainerPercentage) return false
+        if (longPressStepWithContainerPercentage != other.longPressStepWithContainerPercentage) return false
+        if (longPressAccelerateBase != other.longPressAccelerateBase) return false
+        if (longPressAccelerateInterval != other.longPressAccelerateInterval) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = keyMatchers.hashCode()
-        result = 31 * result + arrow.hashCode()
-        result = 31 * result + shortPressReachedMaxValueNumber
-        result = 31 * result + shortPressMinStepWithContainerPercentage.hashCode()
-        result = 31 * result + longPressReachedMaxValueDuration
-        result = 31 * result + longPressAccelerate.hashCode()
+        result = 31 * result + moveArrow.hashCode()
+        result = 31 * result + shortPressStepWithContainerPercentage.hashCode()
+        result = 31 * result + longPressStepWithContainerPercentage.hashCode()
+        result = 31 * result + longPressAccelerateBase.hashCode()
+        result = 31 * result + longPressAccelerateInterval
         return result
     }
 
     override fun toString(): String {
-        return "MoveKeyHandler(keyMatchers=$keyMatchers, arrow=$arrow, shortPressReachedMaxValueNumber=$shortPressReachedMaxValueNumber, shortPressMinStepWithContainerPercentage=$shortPressMinStepWithContainerPercentage, longPressReachedMaxValueDuration=$longPressReachedMaxValueDuration, longPressAccelerate=$longPressAccelerate)"
-    }
-
-    enum class Arrow {
-        Up, Down, Left, Right
+        return "MoveKeyHandler(" +
+                "keyMatchers=$keyMatchers, " +
+                "moveArrow=$moveArrow, shortPressStepWithContainerPercentage=$shortPressStepWithContainerPercentage, " +
+                "longPressStepWithContainerPercentage=$longPressStepWithContainerPercentage, " +
+                "longPressAccelerateBase=$longPressAccelerateBase, " +
+                "longPressAccelerateInterval=$longPressAccelerateInterval)"
     }
 }
 
 /**
- * Step or continuous change between minimum and maximum range
+ * Advance with fixed step length
  *
- * @see com.github.panpf.zoomimage.compose.common.test.zoom.RangeStepMatcherZoomKeyHandler
+ * @see com.github.panpf.zoomimage.compose.common.test.zoom.StepMatcherZoomKeyHandler
  */
 @Stable
-abstract class RangeStepMatcherZoomKeyHandler(
+abstract class StepMatcherZoomKeyHandler(
     keyMatchers: ImmutableList<KeyMatcher>,
 ) : BaseMatcherZoomKeyHandler(keyMatchers) {
 
-    /**
-     * How many consecutive short presses are expected to be required to go from minimum to maximum?
-     */
-    abstract val shortPressReachedMaxValueNumber: Int
+    abstract val longPressAccelerateBase: Float
 
-    /**
-     * How long is expected to take to transition from the minimum to the maximum value on a long press
-     *
-     * Note: [longPressAccelerate] will accelerate changes and only takes half the time of [longPressReachedMaxValueDuration] to reach the maximum value
-     */
-    abstract val longPressReachedMaxValueDuration: Int
+    abstract val longPressAccelerateInterval: Int
 
-    /**
-     * If true, the long press will be accelerated. After acceleration, the long press will only take half the original time to reach the maximum value.
-     */
-    abstract val longPressAccelerate: Boolean
+    abstract fun getShortPressStep(zoomableState: ZoomableState): Float
 
-    abstract fun getValue(zoomableState: ZoomableState): Float
-
-    abstract fun getValueRange(zoomableState: ZoomableState): ClosedRange<Float>
-
-    abstract fun getShortStepMinValue(zoomableState: ZoomableState): Float?
+    abstract fun getLongPressStep(zoomableState: ZoomableState): Float
 
     override fun calculateShortPressAddValue(zoomableState: ZoomableState): Float {
-        val motionRange = getValueRange(zoomableState)
-        val step = (motionRange.endInclusive - motionRange.start) / shortPressReachedMaxValueNumber
-        val shortStepMinValue = getShortStepMinValue(zoomableState) ?: 0f
-        val addValue = step.coerceAtLeast(shortStepMinValue)
-        return addValue
+        val step = getShortPressStep(zoomableState)
+        return step
     }
 
     override fun calculateLongPressAddValue(
@@ -379,32 +374,16 @@ abstract class RangeStepMatcherZoomKeyHandler(
         lastElapsedTime: Long?,
         elapsedTime: Long,
     ): Float {
-        val motionRange = getValueRange(zoomableState)
-
-        val lastProgressValue = if (lastElapsedTime != null) {
-            val lastProgress =
-                (lastElapsedTime / longPressReachedMaxValueDuration.toFloat()).coerceAtMost(1f)
-            val lastAcceleratedProgress = accelerateProgress(lastProgress)
-            lastAcceleratedProgress * (motionRange.endInclusive - motionRange.start)
-        } else {
-            0f
-        }
-
-        val progress =
-            (elapsedTime / longPressReachedMaxValueDuration.toFloat()).coerceAtMost(1f)
-        val acceleratedProgress = accelerateProgress(progress)
-        val progressValue = acceleratedProgress * (motionRange.endInclusive - motionRange.start)
-
-        val addValue = progressValue - lastProgressValue
-        return addValue
+        val step = getLongPressStep(zoomableState)
+        val acceleratedStep = accelerateLongPress(step, elapsedTime)
+        return acceleratedStep
     }
 
-    private fun accelerateProgress(fraction: Float): Float {
-        return if (longPressAccelerate) {
-            fraction * ((fraction * 2) + 1)
-        } else {
-            fraction
-        }
+    private fun accelerateLongPress(value: Float, elapsedTime: Long): Float {
+        val accelerateMultiple = (elapsedTime / longPressAccelerateInterval.toDouble()).toFloat()
+        val accelerate = longPressAccelerateBase * accelerateMultiple
+        val acceleratedValue = value + (accelerate * value)
+        return acceleratedValue
     }
 }
 

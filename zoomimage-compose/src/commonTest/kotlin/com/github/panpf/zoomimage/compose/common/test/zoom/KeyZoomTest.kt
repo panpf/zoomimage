@@ -11,6 +11,7 @@ import com.github.panpf.zoomimage.compose.zoom.DefaultMoveUpKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultScaleInKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultScaleOutKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultZoomKeyHandlers
+import com.github.panpf.zoomimage.compose.zoom.MoveArrow
 import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler
 import com.github.panpf.zoomimage.compose.zoom.ScaleKeyHandler
 import kotlinx.collections.immutable.toImmutableList
@@ -95,19 +96,19 @@ class KeyZoomTest {
                 ScaleKeyHandler(keyMatchers = DefaultScaleOutKeyMatchers, scaleIn = false),
                 MoveKeyHandler(
                     keyMatchers = DefaultMoveUpKeyMatchers,
-                    arrow = MoveKeyHandler.Arrow.Up
+                    moveArrow = MoveArrow.Up
                 ),
                 MoveKeyHandler(
                     keyMatchers = DefaultMoveDownKeyMatchers,
-                    arrow = MoveKeyHandler.Arrow.Down
+                    moveArrow = MoveArrow.Down
                 ),
                 MoveKeyHandler(
                     keyMatchers = DefaultMoveLeftKeyMatchers,
-                    arrow = MoveKeyHandler.Arrow.Left
+                    moveArrow = MoveArrow.Left
                 ),
                 MoveKeyHandler(
                     keyMatchers = DefaultMoveRightKeyMatchers,
-                    arrow = MoveKeyHandler.Arrow.Right
+                    moveArrow = MoveArrow.Right
                 ),
             ).toImmutableList(),
             actual = DefaultZoomKeyHandlers

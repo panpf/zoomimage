@@ -28,53 +28,100 @@ class ScaleKeyHandlerTest {
         ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatchers, scaleIn = true).apply {
             assertEquals(expected = DefaultScaleInKeyMatchers, actual = keyMatchers)
             assertEquals(expected = true, actual = scaleIn)
-            assertEquals(expected = 5, actual = shortPressReachedMaxValueNumber)
-            assertEquals(expected = 3000, actual = longPressReachedMaxValueDuration)
-            assertEquals(expected = true, actual = longPressAccelerate)
+            assertEquals(expected = 2f, actual = shortPressStepScaleFactor)
+            assertEquals(expected = 0.25f, actual = longPressStep)
+            assertEquals(expected = 0.5f, actual = longPressAccelerateBase)
+            assertEquals(expected = 500, actual = longPressAccelerateInterval)
         }
         ScaleKeyHandler(
             keyMatchers = DefaultScaleOutKeyMatchers,
             scaleIn = false,
-            shortPressReachedMaxValueNumber = 10,
-            longPressReachedMaxValueDuration = 6000,
-            longPressAccelerate = false
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         ).apply {
             assertEquals(expected = DefaultScaleOutKeyMatchers, actual = keyMatchers)
             assertEquals(expected = false, actual = scaleIn)
-            assertEquals(expected = 10, actual = shortPressReachedMaxValueNumber)
-            assertEquals(expected = 6000, actual = longPressReachedMaxValueDuration)
-            assertEquals(expected = false, actual = longPressAccelerate)
+            assertEquals(expected = 3f, actual = shortPressStepScaleFactor)
+            assertEquals(expected = 0.5f, actual = longPressStep)
+            assertEquals(expected = 1f, actual = longPressAccelerateBase)
+            assertEquals(expected = 1000, actual = longPressAccelerateInterval)
         }
     }
 
     @Test
     @OptIn(ExperimentalTestApi::class)
-    fun testGetValueGetValueRangeGetShortStepMinValue() {
-        val scaleKeyHandler =
+    fun testGetShortPressStep() {
+        val scaleInKeyHandler =
             ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatchers, scaleIn = true)
+        val scaleOutKeyHandler =
+            ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatchers, scaleIn = false)
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
             setContent {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
-                LaunchedEffect(Unit) {
-                    zoomable.switchScale(animated = false)
-                }
             }
             val zoomable = zoomableHolder!!
             assertEquals(
-                expected = 6.0f,
-                actual = scaleKeyHandler.getValue(zoomable).format(2)
+                expected = 0.34f,
+                actual = zoomable.transform.scaleX.format(2)
             )
             assertEquals(
-                expected = "0.34 .. 18.0",
-                actual = scaleKeyHandler.getValueRange(zoomable)
-                    .let { "${it.start.format(2)} .. ${it.endInclusive.format(2)}" }
+                expected = true,
+                actual = scaleInKeyHandler.scaleIn
             )
             assertEquals(
-                expected = null,
-                actual = scaleKeyHandler.getShortStepMinValue(zoomable)?.format(2)
+                expected = 0.34f,
+                actual = scaleInKeyHandler.getShortPressStep(zoomable).format(2)
+            )
+            assertEquals(
+                expected = false,
+                actual = scaleOutKeyHandler.scaleIn
+            )
+            assertEquals(
+                expected = -0.17f,
+                actual = scaleOutKeyHandler.getShortPressStep(zoomable).format(2)
+            )
+        }
+    }
+
+    @Test
+    @OptIn(ExperimentalTestApi::class)
+    fun testGetLongPressStep() {
+        val scaleInKeyHandler =
+            ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatchers, scaleIn = true)
+        val scaleOutKeyHandler =
+            ScaleKeyHandler(keyMatchers = DefaultScaleInKeyMatchers, scaleIn = false)
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = 0.34f,
+                actual = zoomable.transform.scaleX.format(2)
+            )
+            assertEquals(
+                expected = true,
+                actual = scaleInKeyHandler.scaleIn
+            )
+            assertEquals(
+                expected = 0.25f,
+                actual = scaleInKeyHandler.getLongPressStep(zoomable).format(2)
+            )
+            assertEquals(
+                expected = false,
+                actual = scaleOutKeyHandler.scaleIn
+            )
+            assertEquals(
+                expected = -0.25f,
+                actual = scaleOutKeyHandler.getLongPressStep(zoomable).format(2)
             )
         }
     }
@@ -134,7 +181,24 @@ class ScaleKeyHandlerTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = 6.5f,
-                actual = scaleInKeyHandler.getValue(zoomable).format(2)
+                actual = zoomable.transform.scaleX.format(2)
+            )
+        }
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.switchScale(animated = false)
+                    scaleInKeyHandler.updateValue(zoomable, animationSpec = null, add = -0.5f)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = 5.5f,
+                actual = zoomable.transform.scaleX.format(2)
             )
         }
 
@@ -153,8 +217,25 @@ class ScaleKeyHandlerTest {
             }
             val zoomable = zoomableHolder!!
             assertEquals(
+                expected = 6.5f,
+                actual = zoomable.transform.scaleX.format(2)
+            )
+        }
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.switchScale(animated = false)
+                    scaleOutKeyHandler.updateValue(zoomable, animationSpec = null, add = -0.5f)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
                 expected = 5.5f,
-                actual = scaleOutKeyHandler.getValue(zoomable).format(2)
+                actual = zoomable.transform.scaleX.format(2)
             )
         }
     }
@@ -164,51 +245,66 @@ class ScaleKeyHandlerTest {
         val scaleKeyHandler1 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = true,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         )
         val scaleKeyHandler12 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = true,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         )
         val scaleKeyHandler2 = ScaleKeyHandler(
             keyMatchers = DefaultScaleOutKeyMatchers,
             scaleIn = true,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         )
         val scaleKeyHandler3 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = false,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         )
         val scaleKeyHandler4 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = true,
-            shortPressReachedMaxValueNumber = 10,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            shortPressStepScaleFactor = 4f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         )
         val scaleKeyHandler5 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = true,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 5000,
-            longPressAccelerate = true,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 1f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         )
         val scaleKeyHandler6 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = true,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = false,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 2f,
+            longPressAccelerateInterval = 1000,
+        )
+        val scaleKeyHandler7 = ScaleKeyHandler(
+            keyMatchers = DefaultScaleInKeyMatchers,
+            scaleIn = true,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 2f,
+            longPressAccelerateInterval = 2000,
         )
 
         assertEquals(expected = scaleKeyHandler1, actual = scaleKeyHandler12)
@@ -217,16 +313,22 @@ class ScaleKeyHandlerTest {
         assertNotEquals(illegal = scaleKeyHandler1, actual = scaleKeyHandler4)
         assertNotEquals(illegal = scaleKeyHandler1, actual = scaleKeyHandler5)
         assertNotEquals(illegal = scaleKeyHandler1, actual = scaleKeyHandler6)
+        assertNotEquals(illegal = scaleKeyHandler1, actual = scaleKeyHandler7)
         assertNotEquals(illegal = scaleKeyHandler2, actual = scaleKeyHandler3)
         assertNotEquals(illegal = scaleKeyHandler2, actual = scaleKeyHandler4)
         assertNotEquals(illegal = scaleKeyHandler2, actual = scaleKeyHandler5)
         assertNotEquals(illegal = scaleKeyHandler2, actual = scaleKeyHandler6)
+        assertNotEquals(illegal = scaleKeyHandler2, actual = scaleKeyHandler7)
         assertNotEquals(illegal = scaleKeyHandler3, actual = scaleKeyHandler4)
         assertNotEquals(illegal = scaleKeyHandler3, actual = scaleKeyHandler5)
         assertNotEquals(illegal = scaleKeyHandler3, actual = scaleKeyHandler6)
+        assertNotEquals(illegal = scaleKeyHandler3, actual = scaleKeyHandler7)
         assertNotEquals(illegal = scaleKeyHandler4, actual = scaleKeyHandler5)
         assertNotEquals(illegal = scaleKeyHandler4, actual = scaleKeyHandler6)
+        assertNotEquals(illegal = scaleKeyHandler4, actual = scaleKeyHandler7)
         assertNotEquals(illegal = scaleKeyHandler5, actual = scaleKeyHandler6)
+        assertNotEquals(illegal = scaleKeyHandler5, actual = scaleKeyHandler7)
+        assertNotEquals(illegal = scaleKeyHandler6, actual = scaleKeyHandler7)
 
         assertEquals(expected = scaleKeyHandler1.hashCode(), actual = scaleKeyHandler12.hashCode())
         assertNotEquals(illegal = scaleKeyHandler1.hashCode(), actual = scaleKeyHandler2.hashCode())
@@ -234,16 +336,22 @@ class ScaleKeyHandlerTest {
         assertNotEquals(illegal = scaleKeyHandler1.hashCode(), actual = scaleKeyHandler4.hashCode())
         assertNotEquals(illegal = scaleKeyHandler1.hashCode(), actual = scaleKeyHandler5.hashCode())
         assertNotEquals(illegal = scaleKeyHandler1.hashCode(), actual = scaleKeyHandler6.hashCode())
+        assertNotEquals(illegal = scaleKeyHandler1.hashCode(), actual = scaleKeyHandler7.hashCode())
         assertNotEquals(illegal = scaleKeyHandler2.hashCode(), actual = scaleKeyHandler3.hashCode())
         assertNotEquals(illegal = scaleKeyHandler2.hashCode(), actual = scaleKeyHandler4.hashCode())
         assertNotEquals(illegal = scaleKeyHandler2.hashCode(), actual = scaleKeyHandler5.hashCode())
         assertNotEquals(illegal = scaleKeyHandler2.hashCode(), actual = scaleKeyHandler6.hashCode())
+        assertNotEquals(illegal = scaleKeyHandler2.hashCode(), actual = scaleKeyHandler7.hashCode())
         assertNotEquals(illegal = scaleKeyHandler3.hashCode(), actual = scaleKeyHandler4.hashCode())
         assertNotEquals(illegal = scaleKeyHandler3.hashCode(), actual = scaleKeyHandler5.hashCode())
         assertNotEquals(illegal = scaleKeyHandler3.hashCode(), actual = scaleKeyHandler6.hashCode())
+        assertNotEquals(illegal = scaleKeyHandler3.hashCode(), actual = scaleKeyHandler7.hashCode())
         assertNotEquals(illegal = scaleKeyHandler4.hashCode(), actual = scaleKeyHandler5.hashCode())
         assertNotEquals(illegal = scaleKeyHandler4.hashCode(), actual = scaleKeyHandler6.hashCode())
+        assertNotEquals(illegal = scaleKeyHandler4.hashCode(), actual = scaleKeyHandler7.hashCode())
         assertNotEquals(illegal = scaleKeyHandler5.hashCode(), actual = scaleKeyHandler6.hashCode())
+        assertNotEquals(illegal = scaleKeyHandler5.hashCode(), actual = scaleKeyHandler7.hashCode())
+        assertNotEquals(illegal = scaleKeyHandler6.hashCode(), actual = scaleKeyHandler7.hashCode())
     }
 
     @Test
@@ -251,23 +359,37 @@ class ScaleKeyHandlerTest {
         val scaleKeyHandler1 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = true,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         )
         val scaleKeyHandler2 = ScaleKeyHandler(
             keyMatchers = DefaultScaleInKeyMatchers,
             scaleIn = false,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            shortPressStepScaleFactor = 3f,
+            longPressStep = 0.5f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000,
         )
         assertEquals(
-            expected = "ScaleKeyHandler(keyMatchers=${DefaultScaleInKeyMatchers}, scaleIn=true, shortPressReachedMaxValueNumber=5, longPressReachedMaxValueDuration=3000, longPressAccelerate=true)",
+            expected = "ScaleKeyHandler(" +
+                    "keyMatchers=${DefaultScaleInKeyMatchers}, " +
+                    "scaleIn=true, " +
+                    "shortPressStepScaleFactor=3.0, " +
+                    "longPressStep=0.5, " +
+                    "longPressAccelerateBase=1.0, " +
+                    "longPressAccelerateInterval=1000)",
             actual = scaleKeyHandler1.toString()
         )
         assertEquals(
-            expected = "ScaleKeyHandler(keyMatchers=${DefaultScaleInKeyMatchers}, scaleIn=false, shortPressReachedMaxValueNumber=5, longPressReachedMaxValueDuration=3000, longPressAccelerate=true)",
+            expected = "ScaleKeyHandler(" +
+                    "keyMatchers=${DefaultScaleInKeyMatchers}, " +
+                    "scaleIn=false, " +
+                    "shortPressStepScaleFactor=3.0, " +
+                    "longPressStep=0.5, " +
+                    "longPressAccelerateBase=1.0, " +
+                    "longPressAccelerateInterval=1000)",
             actual = scaleKeyHandler2.toString()
         )
     }

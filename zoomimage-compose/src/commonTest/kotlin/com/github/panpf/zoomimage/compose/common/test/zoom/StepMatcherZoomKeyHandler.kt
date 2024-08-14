@@ -7,9 +7,10 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.zoomimage.compose.util.KeyMatcher
-import com.github.panpf.zoomimage.compose.zoom.DefaultMoveRightKeyMatchers
+import com.github.panpf.zoomimage.compose.util.format
+import com.github.panpf.zoomimage.compose.zoom.DefaultMoveLeftKeyMatchers
+import com.github.panpf.zoomimage.compose.zoom.MoveArrow
 import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler
-import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler.Arrow
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
@@ -23,7 +24,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class RangeStepMatcherZoomKeyHandler {
+class StepMatcherZoomKeyHandler {
 
     @Test
     @OptIn(ExperimentalTestApi::class)
@@ -43,9 +44,8 @@ class RangeStepMatcherZoomKeyHandler {
 
             val coroutineScope = CoroutineScope(Dispatchers.Main)
             val keyHandler = TestMoveKeyHandler(
-                keyMatchers = DefaultMoveRightKeyMatchers,
-                arrow = Arrow.Right,
-                longPressAccelerate = true
+                keyMatchers = DefaultMoveLeftKeyMatchers,
+                arrow = MoveArrow.Left,
             )
             assertEquals(0, keyHandler.values.size)
             assertEquals(0, keyHandler.durations.size)
@@ -53,15 +53,15 @@ class RangeStepMatcherZoomKeyHandler {
             keyHandler.handle(
                 coroutineScope = coroutineScope,
                 zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyDown)
+                event = KeyEvent(Key.DirectionLeft, KeyEventType.KeyDown)
             )
             waitMillis(30)
             keyHandler.handle(
                 coroutineScope = coroutineScope,
                 zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyUp)
+                event = KeyEvent(Key.DirectionLeft, KeyEventType.KeyUp)
             )
-            assertEquals(listOf(129.0f), keyHandler.values)
+            assertEquals(listOf(170.28f), keyHandler.values.map { it.format(2) })
             assertEquals(
                 expected = zoomable.animationSpec.durationMillis,
                 actual = keyHandler.durations.last(),
@@ -75,17 +75,17 @@ class RangeStepMatcherZoomKeyHandler {
             keyHandler.handle(
                 coroutineScope = coroutineScope,
                 zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyDown)
+                event = KeyEvent(Key.DirectionLeft, KeyEventType.KeyDown)
             )
             waitMillis(30)
             keyHandler.handle(
                 coroutineScope = coroutineScope,
                 zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyUp)
+                event = KeyEvent(Key.DirectionLeft, KeyEventType.KeyUp)
             )
             assertContentEquals(
-                expected = listOf(129.0f, 129.0f),
-                actual = keyHandler.values
+                expected = listOf(170.28f, 170.28f),
+                actual = keyHandler.values.map { it.format(2) }
             )
             assertTrue(
                 actual = keyHandler.durations.last() in 0..zoomable.animationSpec.durationMillis,
@@ -97,17 +97,17 @@ class RangeStepMatcherZoomKeyHandler {
             keyHandler.handle(
                 coroutineScope = coroutineScope,
                 zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyDown)
+                event = KeyEvent(Key.DirectionLeft, KeyEventType.KeyDown)
             )
             waitMillis(30)
             keyHandler.handle(
                 coroutineScope = coroutineScope,
                 zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyUp)
+                event = KeyEvent(Key.DirectionLeft, KeyEventType.KeyUp)
             )
             assertContentEquals(
-                expected = listOf(129.0f, 129.0f, 129.0f),
-                actual = keyHandler.values
+                expected = listOf(170.28f, 170.28f, 170.28f),
+                actual = keyHandler.values.map { it.format(2) }
             )
             assertEquals(
                 expected = zoomable.animationSpec.durationMillis,
@@ -121,9 +121,8 @@ class RangeStepMatcherZoomKeyHandler {
     @OptIn(ExperimentalTestApi::class)
     fun testLongPress() {
         val keyHandler1 = TestMoveKeyHandler(
-            keyMatchers = DefaultMoveRightKeyMatchers,
-            arrow = Arrow.Right,
-            longPressAccelerate = true
+            keyMatchers = DefaultMoveLeftKeyMatchers,
+            arrow = MoveArrow.Left,
         )
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
@@ -145,7 +144,7 @@ class RangeStepMatcherZoomKeyHandler {
             keyHandler1.handle(
                 coroutineScope = coroutineScope,
                 zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyDown)
+                event = KeyEvent(Key.DirectionLeft, KeyEventType.KeyDown)
             )
 
             // If the interval between pressing and lifting is greater than 200 milliseconds, it will be treated as a long press.
@@ -154,9 +153,8 @@ class RangeStepMatcherZoomKeyHandler {
             keyHandler1.handle(
                 coroutineScope = coroutineScope,
                 zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyUp)
+                event = KeyEvent(Key.DirectionLeft, KeyEventType.KeyUp)
             )
-            assertEquals(true, keyHandler1.longPressAccelerate)
             assertTrue(
                 actual = keyHandler1.values.size > 50,
                 message = "values.size=${keyHandler1.values.size}"
@@ -171,65 +169,12 @@ class RangeStepMatcherZoomKeyHandler {
                 message = "durations.last()=${keyHandler1.durations.last()}"
             )
         }
-
-        val keyHandler2 = TestMoveKeyHandler(
-            keyMatchers = DefaultMoveRightKeyMatchers,
-            arrow = Arrow.Right,
-            longPressAccelerate = false
-        )
-        runComposeUiTest {
-            var zoomableHolder: ZoomableState? = null
-            setContent {
-                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
-                zoomable.containerSize = IntSize(516, 516)
-                zoomable.contentSize = IntSize(86, 1522)
-                LaunchedEffect(Unit) {
-                    zoomable.scale(zoomable.maxScale, animated = false)
-                }
-            }
-            val zoomable = zoomableHolder!!
-            assertEquals(18.0f, zoomable.transform.scaleX)
-
-            val coroutineScope = CoroutineScope(Dispatchers.Main)
-            assertEquals(0, keyHandler2.values.size)
-            assertEquals(0, keyHandler2.durations.size)
-
-            keyHandler2.handle(
-                coroutineScope = coroutineScope,
-                zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyDown)
-            )
-
-            // If the interval between pressing and lifting is greater than 200 milliseconds, it will be treated as a long press.
-            waitMillis(2000)
-
-            keyHandler2.handle(
-                coroutineScope = coroutineScope,
-                zoomableState = zoomable,
-                event = KeyEvent(Key.DirectionRight, KeyEventType.KeyUp)
-            )
-            assertEquals(false, keyHandler2.longPressAccelerate)
-            assertTrue(
-                actual = keyHandler2.values.size > 50,
-                message = "values.size=${keyHandler2.values.size}"
-            )
-            assertTrue(
-                actual = keyHandler2.values.last() < 6f,
-                message = "values.last()=${keyHandler2.values.last()}"
-            )
-            assertEquals(
-                expected = -1,
-                actual = keyHandler2.durations.last(),
-                message = "durations.last()=${keyHandler2.durations.last()}"
-            )
-        }
     }
 
     private class TestMoveKeyHandler(
         keyMatchers: ImmutableList<KeyMatcher>,
-        arrow: Arrow,
-        longPressAccelerate: Boolean,
-    ) : MoveKeyHandler(keyMatchers, arrow, longPressAccelerate = longPressAccelerate) {
+        arrow: MoveArrow,
+    ) : MoveKeyHandler(keyMatchers, arrow) {
 
         val values = mutableListOf<Float>()
         val durations = mutableListOf<Int>()

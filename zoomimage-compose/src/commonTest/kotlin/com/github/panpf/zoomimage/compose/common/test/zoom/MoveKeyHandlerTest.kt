@@ -11,9 +11,8 @@ import com.github.panpf.zoomimage.compose.zoom.DefaultMoveDownKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveLeftKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveRightKeyMatchers
 import com.github.panpf.zoomimage.compose.zoom.DefaultMoveUpKeyMatchers
+import com.github.panpf.zoomimage.compose.zoom.MoveArrow
 import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler
-import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler.Arrow.Down
-import com.github.panpf.zoomimage.compose.zoom.MoveKeyHandler.Arrow.Up
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.test.KeyEvent
@@ -31,50 +30,50 @@ class MoveKeyHandlerTest {
     fun testConstructor() {
         MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Up
+            moveArrow = MoveArrow.Up
         ).apply {
             assertEquals(expected = DefaultMoveUpKeyMatchers, actual = keyMatchers)
-            assertEquals(expected = MoveKeyHandler.Arrow.Up, actual = arrow)
-            assertEquals(expected = 10, actual = shortPressReachedMaxValueNumber)
-            assertEquals(expected = 0.25f, actual = shortPressMinStepWithContainerPercentage)
-            assertEquals(expected = 3000, actual = longPressReachedMaxValueDuration)
-            assertEquals(expected = true, actual = longPressAccelerate)
+            assertEquals(expected = MoveArrow.Up, actual = moveArrow)
+            assertEquals(expected = 0.33f, actual = shortPressStepWithContainerPercentage)
+            assertEquals(expected = 0.075f, actual = longPressStepWithContainerPercentage)
+            assertEquals(expected = 0.5f, actual = longPressAccelerateBase)
+            assertEquals(expected = 500, actual = longPressAccelerateInterval)
         }
         MoveKeyHandler(
             keyMatchers = DefaultMoveDownKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Down,
-            shortPressReachedMaxValueNumber = 20,
-            shortPressMinStepWithContainerPercentage = 0.1f,
-            longPressReachedMaxValueDuration = 6000,
-            longPressAccelerate = false
+            moveArrow = MoveArrow.Down,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         ).apply {
             assertEquals(expected = DefaultMoveDownKeyMatchers, actual = keyMatchers)
-            assertEquals(expected = MoveKeyHandler.Arrow.Down, actual = arrow)
-            assertEquals(expected = 20, actual = shortPressReachedMaxValueNumber)
-            assertEquals(expected = 0.1f, actual = shortPressMinStepWithContainerPercentage)
-            assertEquals(expected = 6000, actual = longPressReachedMaxValueDuration)
-            assertEquals(expected = false, actual = longPressAccelerate)
+            assertEquals(expected = MoveArrow.Down, actual = moveArrow)
+            assertEquals(expected = 0.66f, actual = shortPressStepWithContainerPercentage)
+            assertEquals(expected = 0.15f, actual = longPressStepWithContainerPercentage)
+            assertEquals(expected = 1f, actual = longPressAccelerateBase)
+            assertEquals(expected = 1000, actual = longPressAccelerateInterval)
         }
     }
 
     @Test
     @OptIn(ExperimentalTestApi::class)
-    fun testGetValueGetValueRangeGetShortStepMinValue() {
+    fun testGetShortPressStep() {
         val upMoveKeyHandler = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Up
+            moveArrow = MoveArrow.Up
         )
         val downMoveKeyHandler = MoveKeyHandler(
             keyMatchers = DefaultMoveDownKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Down
+            moveArrow = MoveArrow.Down
         )
         val leftMoveKeyHandler = MoveKeyHandler(
             keyMatchers = DefaultMoveLeftKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Left
+            moveArrow = MoveArrow.Left
         )
         val rightMoveKeyHandler = MoveKeyHandler(
             keyMatchers = DefaultMoveRightKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Right
+            moveArrow = MoveArrow.Right
         )
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
@@ -88,58 +87,111 @@ class MoveKeyHandlerTest {
             }
             val zoomable = zoomableHolder!!
             assertEquals(
-                expected = -13440.0f,
-                actual = upMoveKeyHandler.getValue(zoomable).format(2)
-            )
-            assertEquals(
-                expected = -13440.0f,
-                actual = downMoveKeyHandler.getValue(zoomable).format(2)
-            )
-            assertEquals(
-                expected = -515.42f,
-                actual = leftMoveKeyHandler.getValue(zoomable).format(2)
-            )
-            assertEquals(
-                expected = -515.42f,
-                actual = rightMoveKeyHandler.getValue(zoomable).format(2)
+                expected = "Offset(-515.4, -13440.0)",
+                actual = zoomable.transform.offset.toString()
             )
 
             assertEquals(
-                expected = "-26880.0 .. 0.0",
-                actual = upMoveKeyHandler.getValueRange(zoomable)
-                    .let { "${it.start.format(2)} .. ${it.endInclusive.format(2)}" }
+                expected = MoveArrow.Up,
+                actual = upMoveKeyHandler.moveArrow,
             )
             assertEquals(
-                expected = "-26880.0 .. 0.0",
-                actual = downMoveKeyHandler.getValueRange(zoomable)
-                    .let { "${it.start.format(2)} .. ${it.endInclusive.format(2)}" }
+                expected = 170.28f,
+                actual = upMoveKeyHandler.getShortPressStep(zoomable).format(2)
             )
             assertEquals(
-                expected = "-13987.0 .. -12955.0",
-                actual = leftMoveKeyHandler.getValueRange(zoomable)
-                    .let { "${it.start.format(2)} .. ${it.endInclusive.format(2)}" }
+                expected = MoveArrow.Down,
+                actual = downMoveKeyHandler.moveArrow,
             )
             assertEquals(
-                expected = "-13987.0 .. -12955.0",
-                actual = rightMoveKeyHandler.getValueRange(zoomable)
-                    .let { "${it.start.format(2)} .. ${it.endInclusive.format(2)}" }
+                expected = -170.28f,
+                actual = downMoveKeyHandler.getShortPressStep(zoomable).format(2)
+            )
+            assertEquals(
+                expected = MoveArrow.Left,
+                actual = leftMoveKeyHandler.moveArrow,
+            )
+            assertEquals(
+                expected = 170.28f,
+                actual = leftMoveKeyHandler.getShortPressStep(zoomable).format(2)
+            )
+            assertEquals(
+                expected = MoveArrow.Right,
+                actual = rightMoveKeyHandler.moveArrow,
+            )
+            assertEquals(
+                expected = -170.28f,
+                actual = rightMoveKeyHandler.getShortPressStep(zoomable).format(2)
+            )
+        }
+    }
+
+    @Test
+    @OptIn(ExperimentalTestApi::class)
+    fun testGetLongPressStep() {
+        val upMoveKeyHandler = MoveKeyHandler(
+            keyMatchers = DefaultMoveUpKeyMatchers,
+            moveArrow = MoveArrow.Up
+        )
+        val downMoveKeyHandler = MoveKeyHandler(
+            keyMatchers = DefaultMoveDownKeyMatchers,
+            moveArrow = MoveArrow.Down
+        )
+        val leftMoveKeyHandler = MoveKeyHandler(
+            keyMatchers = DefaultMoveLeftKeyMatchers,
+            moveArrow = MoveArrow.Left
+        )
+        val rightMoveKeyHandler = MoveKeyHandler(
+            keyMatchers = DefaultMoveRightKeyMatchers,
+            moveArrow = MoveArrow.Right
+        )
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.maxScale, animated = false)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = "Offset(-515.4, -13440.0)",
+                actual = zoomable.transform.offset.toString()
             )
 
             assertEquals(
-                expected = 129.0f,
-                actual = upMoveKeyHandler.getShortStepMinValue(zoomable).format(2)
+                expected = MoveArrow.Up,
+                actual = upMoveKeyHandler.moveArrow,
             )
             assertEquals(
-                expected = 129.0f,
-                actual = downMoveKeyHandler.getShortStepMinValue(zoomable).format(2)
+                expected = 38.7f,
+                actual = upMoveKeyHandler.getLongPressStep(zoomable).format(2)
             )
             assertEquals(
-                expected = 129.0f,
-                actual = leftMoveKeyHandler.getShortStepMinValue(zoomable).format(2)
+                expected = MoveArrow.Down,
+                actual = downMoveKeyHandler.moveArrow,
             )
             assertEquals(
-                expected = 129.0f,
-                actual = rightMoveKeyHandler.getShortStepMinValue(zoomable).format(2)
+                expected = -38.7f,
+                actual = downMoveKeyHandler.getLongPressStep(zoomable).format(2)
+            )
+            assertEquals(
+                expected = MoveArrow.Left,
+                actual = leftMoveKeyHandler.moveArrow,
+            )
+            assertEquals(
+                expected = 38.7f,
+                actual = leftMoveKeyHandler.getLongPressStep(zoomable).format(2)
+            )
+            assertEquals(
+                expected = MoveArrow.Right,
+                actual = rightMoveKeyHandler.moveArrow,
+            )
+            assertEquals(
+                expected = -38.7f,
+                actual = rightMoveKeyHandler.getLongPressStep(zoomable).format(2)
             )
         }
     }
@@ -149,7 +201,7 @@ class MoveKeyHandlerTest {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         val zoomableState = ZoomableState(Logger("Test"))
         val scaleKeyHandler2 =
-            MoveKeyHandler(keyMatchers = DefaultMoveUpKeyMatchers, arrow = MoveKeyHandler.Arrow.Up)
+            MoveKeyHandler(keyMatchers = DefaultMoveUpKeyMatchers, moveArrow = MoveArrow.Up)
         assertEquals(
             expected = true,
             actual = zoomableState.checkSupportGestureType(GestureType.KEYBOARD_DRAG)
@@ -185,7 +237,7 @@ class MoveKeyHandlerTest {
         // updateValue
         val upMoveKeyHandler = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Up
+            moveArrow = MoveArrow.Up
         )
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
@@ -201,13 +253,30 @@ class MoveKeyHandlerTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = -13340.0f,
-                actual = upMoveKeyHandler.getValue(zoomable).format(2)
+                actual = zoomable.transform.offset.y.format(2)
+            )
+        }
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.maxScale, animated = false)
+                    upMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = -100f)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = -13540.0f,
+                actual = zoomable.transform.offset.y.format(2)
             )
         }
 
         val downMoveKeyHandler = MoveKeyHandler(
             keyMatchers = DefaultMoveDownKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Down
+            moveArrow = MoveArrow.Down
         )
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
@@ -222,14 +291,31 @@ class MoveKeyHandlerTest {
             }
             val zoomable = zoomableHolder!!
             assertEquals(
+                expected = -13340.0f,
+                actual = zoomable.transform.offset.y.format(2)
+            )
+        }
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.maxScale, animated = false)
+                    downMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = -100f)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
                 expected = -13540.0f,
-                actual = downMoveKeyHandler.getValue(zoomable).format(2)
+                actual = zoomable.transform.offset.y.format(2)
             )
         }
 
         val leftMoveKeyHandler = MoveKeyHandler(
             keyMatchers = DefaultMoveLeftKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Left
+            moveArrow = MoveArrow.Left
         )
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
@@ -245,13 +331,30 @@ class MoveKeyHandlerTest {
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = -415.42f,
-                actual = leftMoveKeyHandler.getValue(zoomable).format(2)
+                actual = zoomable.transform.offset.x.format(2)
+            )
+        }
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.maxScale, animated = false)
+                    leftMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = -100f)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
+                expected = -615.42f,
+                actual = zoomable.transform.offset.x.format(2)
             )
         }
 
         val rightMoveKeyHandler = MoveKeyHandler(
             keyMatchers = DefaultMoveRightKeyMatchers,
-            arrow = MoveKeyHandler.Arrow.Right
+            moveArrow = MoveArrow.Right
         )
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
@@ -266,8 +369,25 @@ class MoveKeyHandlerTest {
             }
             val zoomable = zoomableHolder!!
             assertEquals(
+                expected = -415.42f,
+                actual = zoomable.transform.offset.x.format(2)
+            )
+        }
+        runComposeUiTest {
+            var zoomableHolder: ZoomableState? = null
+            setContent {
+                val zoomable = rememberZoomableState().apply { zoomableHolder = this }
+                zoomable.containerSize = IntSize(516, 516)
+                zoomable.contentSize = IntSize(86, 1522)
+                LaunchedEffect(Unit) {
+                    zoomable.scale(zoomable.maxScale, animated = false)
+                    rightMoveKeyHandler.updateValue(zoomable, animationSpec = null, add = -100f)
+                }
+            }
+            val zoomable = zoomableHolder!!
+            assertEquals(
                 expected = -615.42f,
-                actual = rightMoveKeyHandler.getValue(zoomable).format(2)
+                actual = zoomable.transform.offset.x.format(2)
             )
         }
     }
@@ -276,52 +396,67 @@ class MoveKeyHandlerTest {
     fun testEqualsAndCode() {
         val moveKeyHandler1 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = Up,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            moveArrow = MoveArrow.Up,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         )
         val moveKeyHandler12 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = Up,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            moveArrow = MoveArrow.Up,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         )
         val moveKeyHandler2 = MoveKeyHandler(
             keyMatchers = DefaultMoveDownKeyMatchers,
-            arrow = Up,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            moveArrow = MoveArrow.Up,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         )
         val moveKeyHandler3 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = Down,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            moveArrow = MoveArrow.Down,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         )
         val moveKeyHandler4 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = Up,
-            shortPressReachedMaxValueNumber = 10,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            moveArrow = MoveArrow.Up,
+            shortPressStepWithContainerPercentage = 2f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         )
         val moveKeyHandler5 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = Up,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 5000,
-            longPressAccelerate = true,
+            moveArrow = MoveArrow.Up,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.8f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         )
         val moveKeyHandler6 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = Up,
-            shortPressReachedMaxValueNumber = 5,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = false,
+            moveArrow = MoveArrow.Up,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 2f,
+            longPressAccelerateInterval = 1000
+        )
+        val moveKeyHandler7 = MoveKeyHandler(
+            keyMatchers = DefaultMoveUpKeyMatchers,
+            moveArrow = MoveArrow.Up,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 2f,
+            longPressAccelerateInterval = 20000
         )
 
         assertEquals(expected = moveKeyHandler1, actual = moveKeyHandler12)
@@ -330,16 +465,22 @@ class MoveKeyHandlerTest {
         assertNotEquals(illegal = moveKeyHandler1, actual = moveKeyHandler4)
         assertNotEquals(illegal = moveKeyHandler1, actual = moveKeyHandler5)
         assertNotEquals(illegal = moveKeyHandler1, actual = moveKeyHandler6)
+        assertNotEquals(illegal = moveKeyHandler1, actual = moveKeyHandler7)
         assertNotEquals(illegal = moveKeyHandler2, actual = moveKeyHandler3)
         assertNotEquals(illegal = moveKeyHandler2, actual = moveKeyHandler4)
         assertNotEquals(illegal = moveKeyHandler2, actual = moveKeyHandler5)
         assertNotEquals(illegal = moveKeyHandler2, actual = moveKeyHandler6)
+        assertNotEquals(illegal = moveKeyHandler2, actual = moveKeyHandler7)
         assertNotEquals(illegal = moveKeyHandler3, actual = moveKeyHandler4)
         assertNotEquals(illegal = moveKeyHandler3, actual = moveKeyHandler5)
         assertNotEquals(illegal = moveKeyHandler3, actual = moveKeyHandler6)
+        assertNotEquals(illegal = moveKeyHandler3, actual = moveKeyHandler7)
         assertNotEquals(illegal = moveKeyHandler4, actual = moveKeyHandler5)
         assertNotEquals(illegal = moveKeyHandler4, actual = moveKeyHandler6)
+        assertNotEquals(illegal = moveKeyHandler4, actual = moveKeyHandler7)
         assertNotEquals(illegal = moveKeyHandler5, actual = moveKeyHandler6)
+        assertNotEquals(illegal = moveKeyHandler5, actual = moveKeyHandler7)
+        assertNotEquals(illegal = moveKeyHandler6, actual = moveKeyHandler7)
 
         assertEquals(expected = moveKeyHandler1.hashCode(), actual = moveKeyHandler12.hashCode())
         assertNotEquals(illegal = moveKeyHandler1.hashCode(), actual = moveKeyHandler2.hashCode())
@@ -347,42 +488,60 @@ class MoveKeyHandlerTest {
         assertNotEquals(illegal = moveKeyHandler1.hashCode(), actual = moveKeyHandler4.hashCode())
         assertNotEquals(illegal = moveKeyHandler1.hashCode(), actual = moveKeyHandler5.hashCode())
         assertNotEquals(illegal = moveKeyHandler1.hashCode(), actual = moveKeyHandler6.hashCode())
+        assertNotEquals(illegal = moveKeyHandler1.hashCode(), actual = moveKeyHandler7.hashCode())
         assertNotEquals(illegal = moveKeyHandler2.hashCode(), actual = moveKeyHandler3.hashCode())
         assertNotEquals(illegal = moveKeyHandler2.hashCode(), actual = moveKeyHandler4.hashCode())
         assertNotEquals(illegal = moveKeyHandler2.hashCode(), actual = moveKeyHandler5.hashCode())
         assertNotEquals(illegal = moveKeyHandler2.hashCode(), actual = moveKeyHandler6.hashCode())
+        assertNotEquals(illegal = moveKeyHandler2.hashCode(), actual = moveKeyHandler7.hashCode())
         assertNotEquals(illegal = moveKeyHandler3.hashCode(), actual = moveKeyHandler4.hashCode())
         assertNotEquals(illegal = moveKeyHandler3.hashCode(), actual = moveKeyHandler5.hashCode())
         assertNotEquals(illegal = moveKeyHandler3.hashCode(), actual = moveKeyHandler6.hashCode())
+        assertNotEquals(illegal = moveKeyHandler3.hashCode(), actual = moveKeyHandler7.hashCode())
         assertNotEquals(illegal = moveKeyHandler4.hashCode(), actual = moveKeyHandler5.hashCode())
         assertNotEquals(illegal = moveKeyHandler4.hashCode(), actual = moveKeyHandler6.hashCode())
+        assertNotEquals(illegal = moveKeyHandler4.hashCode(), actual = moveKeyHandler7.hashCode())
         assertNotEquals(illegal = moveKeyHandler5.hashCode(), actual = moveKeyHandler6.hashCode())
+        assertNotEquals(illegal = moveKeyHandler5.hashCode(), actual = moveKeyHandler7.hashCode())
+        assertNotEquals(illegal = moveKeyHandler6.hashCode(), actual = moveKeyHandler7.hashCode())
     }
 
     @Test
     fun testToString() {
         val moveKeyHandler1 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = Up,
-            shortPressReachedMaxValueNumber = 5,
-            shortPressMinStepWithContainerPercentage = 0.25f,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            moveArrow = MoveArrow.Up,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         )
         val moveKeyHandler2 = MoveKeyHandler(
             keyMatchers = DefaultMoveUpKeyMatchers,
-            arrow = Down,
-            shortPressReachedMaxValueNumber = 5,
-            shortPressMinStepWithContainerPercentage = 0.25f,
-            longPressReachedMaxValueDuration = 3000,
-            longPressAccelerate = true,
+            moveArrow = MoveArrow.Down,
+            shortPressStepWithContainerPercentage = 0.66f,
+            longPressStepWithContainerPercentage = 0.15f,
+            longPressAccelerateBase = 1f,
+            longPressAccelerateInterval = 1000
         )
         assertEquals(
-            expected = "MoveKeyHandler(keyMatchers=${DefaultMoveUpKeyMatchers}, arrow=Up, shortPressReachedMaxValueNumber=5, shortPressMinStepWithContainerPercentage=0.25, longPressReachedMaxValueDuration=3000, longPressAccelerate=true)",
+            expected = "MoveKeyHandler(" +
+                    "keyMatchers=${DefaultMoveUpKeyMatchers}, " +
+                    "moveArrow=Up, " +
+                    "shortPressStepWithContainerPercentage=0.66, " +
+                    "longPressStepWithContainerPercentage=0.15, " +
+                    "longPressAccelerateBase=1.0, " +
+                    "longPressAccelerateInterval=1000)",
             actual = moveKeyHandler1.toString()
         )
         assertEquals(
-            expected = "MoveKeyHandler(keyMatchers=${DefaultMoveUpKeyMatchers}, arrow=Down, shortPressReachedMaxValueNumber=5, shortPressMinStepWithContainerPercentage=0.25, longPressReachedMaxValueDuration=3000, longPressAccelerate=true)",
+            expected = "MoveKeyHandler(" +
+                    "keyMatchers=${DefaultMoveUpKeyMatchers}, " +
+                    "moveArrow=Down, " +
+                    "shortPressStepWithContainerPercentage=0.66, " +
+                    "longPressStepWithContainerPercentage=0.15, " +
+                    "longPressAccelerateBase=1.0, " +
+                    "longPressAccelerateInterval=1000)",
             actual = moveKeyHandler2.toString()
         )
     }
