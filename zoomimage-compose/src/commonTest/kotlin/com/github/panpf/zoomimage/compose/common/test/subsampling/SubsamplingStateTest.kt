@@ -191,6 +191,7 @@ class SubsamplingStateTest {
                     rememberSubsamplingState(zoomable).apply { subsamplingHolder = this }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             assertEquals(expected = null, actual = subsampling.imageInfo)
         }
@@ -207,6 +208,7 @@ class SubsamplingStateTest {
                     subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(1000) { !subsampling.ready }
             assertEquals(expected = null, actual = subsampling.imageInfo)
@@ -228,6 +230,7 @@ class SubsamplingStateTest {
                     subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(1000) { subsampling.ready }
             assertEquals(
@@ -253,6 +256,7 @@ class SubsamplingStateTest {
                     rememberSubsamplingState(zoomable).apply { subsamplingHolder = this }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             assertEquals(
                 expected = "{}",
@@ -272,6 +276,7 @@ class SubsamplingStateTest {
                     subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(1000) { !subsampling.ready }
             assertEquals(
@@ -296,6 +301,7 @@ class SubsamplingStateTest {
                     subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(1000) { subsampling.ready }
             assertEquals(
@@ -321,6 +327,7 @@ class SubsamplingStateTest {
                     rememberSubsamplingState(zoomable).apply { subsamplingHolder = this }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(1000) { !subsampling.ready }
             assertEquals(expected = false, actual = subsampling.ready)
@@ -338,6 +345,7 @@ class SubsamplingStateTest {
                     subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(1000) { !subsampling.ready }
             assertEquals(expected = false, actual = subsampling.ready)
@@ -359,6 +367,7 @@ class SubsamplingStateTest {
                     subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(1000) { subsampling.ready }
             assertEquals(expected = true, actual = subsampling.ready)
@@ -380,6 +389,7 @@ class SubsamplingStateTest {
 //                    rememberSubsamplingState(zoomable).apply { subsamplingHolder = this }
 //                }
 //            }
+//            waitMillis(100)
 //            val subsampling = subsamplingHolder!!
 //            waitUntil(1000) { !subsampling.ready }
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
@@ -401,6 +411,7 @@ class SubsamplingStateTest {
 //                    subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
 //                }
 //            }
+//            waitMillis(100)
 //            val subsampling = subsamplingHolder!!
 //            waitUntil(1000) { subsampling.ready }
 //            assertEquals(expected = emptyList(), actual = subsampling.foregroundTiles)
@@ -427,6 +438,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(expected = 48, actual = subsampling.foregroundTiles.size)
@@ -453,6 +465,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(expected = 144, actual = subsampling.foregroundTiles.size)
@@ -485,6 +498,7 @@ class SubsamplingStateTest {
                     subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(2000) { subsampling.ready }
             assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
@@ -512,6 +526,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
@@ -539,6 +554,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitUntil(2000) { subsampling.foregroundTiles.isNotEmpty() }
             assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
@@ -566,6 +582,7 @@ class SubsamplingStateTest {
                     subsampling.setImageSource(ResourceImages.hugeLongComic.toImageSource())
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
@@ -593,6 +610,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
@@ -620,6 +638,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
@@ -654,6 +673,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())
@@ -699,6 +719,7 @@ class SubsamplingStateTest {
                     }
                 }
             }
+            waitMillis(100)
             val subsampling = subsamplingHolder!!
             waitMillis(1000)
             assertEquals(expected = "{8=(1, 6), 4=(1, 12), 2=(2, 24), 1=(3, 48)}", actual = subsampling.tileGridSizeMap.toString())

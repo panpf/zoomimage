@@ -22,6 +22,7 @@ import com.github.panpf.zoomimage.compose.zoom.Transform
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.test.waitMillis
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.DefaultPanToScaleTransformer
 import com.github.panpf.zoomimage.zoom.Edge
@@ -233,6 +234,7 @@ class ZoomableStateTest {
             setContent {
                 rememberZoomableState().apply { zoomableHolder = this }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize.Zero, actual = zoomable.containerSize)
             assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
@@ -254,6 +256,7 @@ class ZoomableStateTest {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
                 zoomable.containerSize = IntSize(516, 516)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(516, 516), actual = zoomable.contentSize)
@@ -276,6 +279,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -299,6 +303,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 zoomable.contentOriginSize = IntSize(690, 12176)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -324,6 +329,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.contentScale = ContentScale.Crop
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -351,6 +357,7 @@ class ZoomableStateTest {
                     zoomable.rotate(90)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -376,6 +383,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.readMode = ReadMode.Default
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -401,6 +409,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.scalesCalculator = ScalesCalculator.Fixed
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -424,6 +433,7 @@ class ZoomableStateTest {
             setContent {
                 rememberZoomableState().apply { zoomableHolder = this }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize.Zero, actual = zoomable.containerSize)
             assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
@@ -452,6 +462,7 @@ class ZoomableStateTest {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
                 zoomable.containerSize = IntSize(516, 516)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(516, 516), actual = zoomable.contentSize)
@@ -487,6 +498,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -523,6 +535,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 zoomable.contentOriginSize = IntSize(690, 12176)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -561,6 +574,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.contentScale = ContentScale.Crop
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -601,6 +615,7 @@ class ZoomableStateTest {
                     zoomable.rotate(90)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -639,6 +654,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.readMode = ReadMode.Default
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -689,6 +705,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.scalesCalculator = ScalesCalculator.Fixed
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -725,6 +742,7 @@ class ZoomableStateTest {
             setContent {
                 rememberZoomableState().apply { zoomableHolder = this }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize.Zero, actual = zoomable.containerSize)
             assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
@@ -748,6 +766,7 @@ class ZoomableStateTest {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
                 zoomable.containerSize = IntSize(516, 516)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(516, 516), actual = zoomable.contentSize)
@@ -772,6 +791,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -797,6 +817,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 zoomable.contentOriginSize = IntSize(690, 12176)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -824,6 +845,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.contentScale = ContentScale.Crop
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -851,6 +873,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.alignment = Alignment.BottomEnd
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -880,6 +903,7 @@ class ZoomableStateTest {
                     zoomable.rotate(90)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -905,6 +929,7 @@ class ZoomableStateTest {
             setContent {
                 rememberZoomableState().apply { zoomableHolder = this }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize.Zero, actual = zoomable.containerSize)
             assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
@@ -933,6 +958,7 @@ class ZoomableStateTest {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
                 zoomable.containerSize = IntSize(516, 516)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(516, 516), actual = zoomable.contentSize)
@@ -962,6 +988,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -992,6 +1019,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 zoomable.contentOriginSize = IntSize(690, 12176)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1024,6 +1052,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.contentScale = ContentScale.Crop
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1056,6 +1085,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.alignment = Alignment.BottomEnd
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1090,6 +1120,7 @@ class ZoomableStateTest {
                     zoomable.rotate(90)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1124,6 +1155,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1159,6 +1191,7 @@ class ZoomableStateTest {
                     zoomable.offset(targetOffset = Offset(-180f, -172f), animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1189,6 +1222,7 @@ class ZoomableStateTest {
             setContent {
                 rememberZoomableState().apply { zoomableHolder = this }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize.Zero, actual = zoomable.containerSize)
             assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
@@ -1209,6 +1243,7 @@ class ZoomableStateTest {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
                 zoomable.containerSize = IntSize(516, 516)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(516, 516), actual = zoomable.contentSize)
@@ -1230,6 +1265,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1251,6 +1287,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1274,6 +1311,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 zoomable.contentScale = ContentScale.Crop
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1297,6 +1335,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 zoomable.alignment = Alignment.BottomEnd
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1322,6 +1361,7 @@ class ZoomableStateTest {
                     zoomable.rotate(90)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1347,6 +1387,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1373,6 +1414,7 @@ class ZoomableStateTest {
                     zoomable.limitOffsetWithinBaseVisibleRect = true
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1397,6 +1439,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1434,6 +1477,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1476,6 +1520,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1518,6 +1563,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1560,6 +1606,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1602,6 +1649,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1644,6 +1692,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1679,6 +1728,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 20f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1721,6 +1771,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = zoomable.minScale * 0.9f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1763,6 +1814,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = zoomable.maxScale * 1.1f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1809,6 +1861,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1852,6 +1905,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1896,6 +1950,7 @@ class ZoomableStateTest {
                     zoomable.switchScale(animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -1948,6 +2003,7 @@ class ZoomableStateTest {
                     zoomable.switchScale(animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2000,6 +2056,7 @@ class ZoomableStateTest {
                     zoomable.switchScale(animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2053,6 +2110,7 @@ class ZoomableStateTest {
                     zoomable.switchScale(animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2107,6 +2165,7 @@ class ZoomableStateTest {
                     zoomable.switchScale(animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2158,6 +2217,7 @@ class ZoomableStateTest {
                     zoomable.switchScale(animated = false, centroidContentPoint = IntOffset.Zero)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2210,6 +2270,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2249,6 +2310,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = 20f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2304,6 +2366,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2359,6 +2422,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2414,6 +2478,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2469,6 +2534,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -2516,6 +2582,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(1100, 733)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
@@ -2554,6 +2621,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
@@ -2599,6 +2667,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
@@ -2644,6 +2713,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(0, 0, 0, 0).toString(),
@@ -2689,6 +2759,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-4128, -3353, 0, -774).toString(),
@@ -2734,6 +2805,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
@@ -2779,6 +2851,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
@@ -2824,6 +2897,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
@@ -2869,6 +2943,7 @@ class ZoomableStateTest {
                     )
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = IntRect(-1032, -774, 0, -258).toString(),
@@ -2911,6 +2986,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(1100, 733)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -2946,6 +3022,7 @@ class ZoomableStateTest {
                     zoomable.rotate(90)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 90f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -2982,6 +3059,7 @@ class ZoomableStateTest {
                     zoomable.rotate(180)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 180f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3018,6 +3096,7 @@ class ZoomableStateTest {
                     zoomable.rotate(270)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 270f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3054,6 +3133,7 @@ class ZoomableStateTest {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 0f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3097,6 +3177,7 @@ class ZoomableStateTest {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 90f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3142,6 +3223,7 @@ class ZoomableStateTest {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 180f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3187,6 +3269,7 @@ class ZoomableStateTest {
                     zoomable.scale(zoomable.mediumScale, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 270f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3232,6 +3315,7 @@ class ZoomableStateTest {
                     zoomable.rotate(90)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 90f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3269,6 +3353,7 @@ class ZoomableStateTest {
                     zoomable.rotate(180)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 180f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3306,6 +3391,7 @@ class ZoomableStateTest {
                     zoomable.rotate(270)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = 270f, actual = zoomable.transform.rotation)
             assertEquals(
@@ -3339,6 +3425,7 @@ class ZoomableStateTest {
             setContent {
                 rememberZoomableState().apply { zoomableHolder = this }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize.Zero, actual = zoomable.containerSize)
             assertEquals(expected = IntSize.Zero, actual = zoomable.contentSize)
@@ -3368,6 +3455,7 @@ class ZoomableStateTest {
                 val zoomable = rememberZoomableState().apply { zoomableHolder = this }
                 zoomable.containerSize = IntSize(516, 516)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(516, 516), actual = zoomable.contentSize)
@@ -3398,6 +3486,7 @@ class ZoomableStateTest {
                 zoomable.containerSize = IntSize(516, 516)
                 zoomable.contentSize = IntSize(86, 1522)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -3429,6 +3518,7 @@ class ZoomableStateTest {
                 zoomable.contentSize = IntSize(86, 1522)
                 zoomable.contentOriginSize = IntSize(690, 12176)
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -3462,6 +3552,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.contentScale = ContentScale.Crop
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -3495,6 +3586,7 @@ class ZoomableStateTest {
                 zoomable.contentOriginSize = IntSize(690, 12176)
                 zoomable.alignment = Alignment.BottomEnd
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -3530,6 +3622,7 @@ class ZoomableStateTest {
                     zoomable.rotate(90)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -3565,6 +3658,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = zoomable.transform.scaleX * 1.5f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -3601,6 +3695,7 @@ class ZoomableStateTest {
                     zoomable.offset(targetOffset = Offset(-180f, -172f), animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(expected = IntSize(516, 516), actual = zoomable.containerSize)
             assertEquals(expected = IntSize(86, 1522), actual = zoomable.contentSize)
@@ -3727,6 +3822,7 @@ class ZoomableStateTest {
                     zoomable.scale(targetScale = 20f, animated = false)
                 }
             }
+            waitMillis(100)
             val zoomable = zoomableHolder!!
             assertEquals(
                 expected = "ZoomableState(" +
