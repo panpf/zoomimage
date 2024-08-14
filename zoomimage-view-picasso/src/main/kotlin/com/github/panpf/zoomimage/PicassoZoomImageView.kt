@@ -24,12 +24,12 @@ import com.github.panpf.zoomimage.picasso.PicassoDataToImageSource
 import com.github.panpf.zoomimage.picasso.PicassoDataToImageSourceImpl
 import com.github.panpf.zoomimage.picasso.PicassoTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.util.Logger
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
 import com.squareup.picasso.checkMemoryCacheDisabled
 import com.squareup.picasso.internalMemoryPolicy
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -58,7 +58,6 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val convertors = mutableListOf<PicassoDataToImageSource>()
-    private var coroutineScope: CoroutineScope? = null
 
     init {
         _subsamplingEngine?.tileBitmapCacheState?.value = PicassoTileBitmapCache(Picasso.get())
@@ -202,5 +201,5 @@ open class PicassoZoomImageView @JvmOverloads constructor(
         convertors.remove(convertor)
     }
 
-    override fun getLogTag(): String? = "PicassoZoomImageView"
+    override fun newLogger(): Logger = Logger(tag = "PicassoZoomImageView")
 }

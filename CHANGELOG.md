@@ -11,6 +11,7 @@ zoom:
 * broken: Add the suspend modifier to the \*ToImageSource methods of the CoilModelToImageSource, GlideModelToImageSource, and PicassoDataToImageSource interfaces
 * new: Added support for keyboard scale and drag functions
 * broken: Remove the logger parameter of the 'remember\*ZoomState()' series of functions
+* broken: Remove the view parameter of SubsamplingEngine's constructor
 
 ## 1.1.0-alpha05
 

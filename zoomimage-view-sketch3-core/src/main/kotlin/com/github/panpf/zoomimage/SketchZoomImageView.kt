@@ -28,6 +28,7 @@ import com.github.panpf.sketch.util.SketchUtils
 import com.github.panpf.sketch.util.findLeafChildDrawable
 import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.sketch.internal.AbsStateZoomImageView
 
 /**
@@ -50,6 +51,8 @@ open class SketchZoomImageView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : AbsStateZoomImageView(context, attrs, defStyle) {
+
+    override fun newLogger(): Logger = Logger(tag = "SketchZoomImageView")
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -110,6 +113,4 @@ open class SketchZoomImageView @JvmOverloads constructor(
         }
         return SketchImageSource.Factory(sketch, result.request.uriString)
     }
-
-    override fun getLogTag(): String? = "SketchZoomImageView"
 }

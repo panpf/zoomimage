@@ -31,6 +31,7 @@ import com.github.panpf.zoomimage.coil.CoilModelToImageSource
 import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +69,8 @@ open class CoilZoomImageView @JvmOverloads constructor(
     fun unregisterModelToImageSource(convertor: CoilModelToImageSource) {
         convertors.remove(convertor)
     }
+
+    override fun newLogger(): Logger = Logger(tag = "CoilZoomImageView")
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -169,6 +172,4 @@ open class CoilZoomImageView @JvmOverloads constructor(
             else -> drawable
         }
     }
-
-    override fun getLogTag(): String? = "CoilZoomImageView"
 }

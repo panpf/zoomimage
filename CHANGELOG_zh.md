@@ -10,6 +10,7 @@ zoom:
 * broken: CoilModelToImageSource、GlideModelToImageSource、PicassoDataToImageSource 接口的 \*ToImageSource 方法添加 suspend 修饰符
 * new: 新增支持键盘缩放和拖动功能
 * broken: 移除 'remember\*ZoomState()' 系列函数的 logger 参数
+* broken: 移除 SubsamplingEngine 的构造函数的 view 参数
 
 ## 1.1.0-alpha05
 

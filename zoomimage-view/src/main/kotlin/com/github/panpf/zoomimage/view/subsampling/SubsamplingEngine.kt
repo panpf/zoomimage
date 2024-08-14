@@ -62,10 +62,7 @@ import kotlin.math.roundToInt
  *
  * @see com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
  */
-class SubsamplingEngine constructor(
-    val zoomableEngine: ZoomableEngine,
-    val view: View,
-) {
+class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
 
     private var coroutineScope: CoroutineScope? = null
     private var imageSourceFactory: ImageSource.Factory? = null
@@ -90,6 +87,7 @@ class SubsamplingEngine constructor(
     }
 
     val logger: Logger = zoomableEngine.logger
+    val view: View = zoomableEngine.view
 
     var imageKey: String? = null
 

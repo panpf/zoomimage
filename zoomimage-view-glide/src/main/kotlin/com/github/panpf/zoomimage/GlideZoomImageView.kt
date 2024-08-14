@@ -27,6 +27,7 @@ import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
+import com.github.panpf.zoomimage.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -52,7 +53,6 @@ open class GlideZoomImageView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
-
     private val convertors = mutableListOf<GlideModelToImageSource>()
     private var coroutineScope: CoroutineScope? = null
 
@@ -68,6 +68,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
     fun unregisterModelToImageSource(convertor: GlideModelToImageSource) {
         convertors.remove(convertor)
     }
+
+    override fun newLogger(): Logger = Logger(tag = "GlideZoomImageView")
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -134,6 +136,4 @@ open class GlideZoomImageView @JvmOverloads constructor(
         val requestOptions = request.internalRequestOptions
         return !requestOptions.isMemoryCacheable
     }
-
-    override fun getLogTag(): String? = "GlideZoomImageView"
 }
