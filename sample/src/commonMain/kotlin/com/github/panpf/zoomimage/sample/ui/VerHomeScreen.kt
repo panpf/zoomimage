@@ -53,53 +53,49 @@ enum class HomeTab(
     TEST("Test", Res.drawable.ic_debug, { TestPage() }),
 }
 
-object HomeScreen : BaseScreen() {
+object VerHomeScreen : BaseScreen() {
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
+    @OptIn(ExperimentalFoundationApi::class)
     override fun DrawContent() {
-        Column {
+        Column(Modifier.fillMaxSize()) {
             HomeHeader()
 
             val coroutineScope = rememberCoroutineScope()
             val context = LocalPlatformContext.current
             val appSettings = context.appSettings
-            val homeTabs = remember {
-                HomeTab.values()
+            val homeTabs = remember { HomeTab.values() }
+
+            val pagerState = rememberPagerState(
+                initialPage = appSettings.currentPageIndex.value.coerceIn(0, homeTabs.size - 1),
+                pageCount = { homeTabs.size }
+            )
+            LaunchedEffect(Unit) {
+                snapshotFlow { pagerState.currentPage }.collect { index ->
+                    appSettings.currentPageIndex.value = index
+                }
+            }
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize().weight(1f),
+            ) { pageIndex ->
+                homeTabs[pageIndex].content.invoke(this@VerHomeScreen)
             }
 
-            Column {
-                val pagerState = rememberPagerState(
-                    initialPage = appSettings.currentPageIndex.value.coerceIn(0, homeTabs.size - 1),
-                    pageCount = { homeTabs.size }
-                )
-                LaunchedEffect(Unit) {
-                    snapshotFlow { pagerState.currentPage }.collect { index ->
-                        appSettings.currentPageIndex.value = index
-                    }
-                }
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize().weight(1f),
-                ) { pageIndex ->
-                    homeTabs[pageIndex].content.invoke(this@HomeScreen)
-                }
-
-                NavigationBar(Modifier.fillMaxWidth()) {
-                    homeTabs.forEachIndexed { index, homeTab ->
-                        NavigationBarItem(
-                            icon = {
-                                Icon(
-                                    painter = painterResource(homeTab.icon),
-                                    contentDescription = homeTab.title,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            },
-                            label = { Text(homeTab.title) },
-                            selected = pagerState.currentPage == index,
-                            onClick = { coroutineScope.launch { pagerState.scrollToPage(index) } }
-                        )
-                    }
+            NavigationBar(Modifier.fillMaxWidth()) {
+                homeTabs.forEachIndexed { index, homeTab ->
+                    NavigationBarItem(
+                        icon = {
+                            Icon(
+                                painter = painterResource(homeTab.icon),
+                                contentDescription = homeTab.title,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        },
+                        label = { Text(homeTab.title) },
+                        selected = pagerState.currentPage == index,
+                        onClick = { coroutineScope.launch { pagerState.scrollToPage(index) } }
+                    )
                 }
             }
         }

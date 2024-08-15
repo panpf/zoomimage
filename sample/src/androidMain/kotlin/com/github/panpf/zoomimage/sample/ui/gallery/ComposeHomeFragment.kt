@@ -25,7 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import com.github.panpf.zoomimage.sample.EventBus
-import com.github.panpf.zoomimage.sample.ui.HomeScreen
+import com.github.panpf.zoomimage.sample.ui.VerHomeScreen
 import com.github.panpf.zoomimage.sample.ui.base.BaseFragment
 import com.github.panpf.zoomimage.sample.ui.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -42,7 +42,7 @@ class ComposeHomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         (view as ComposeView).setContent {
             AppTheme {
-                Navigator(HomeScreen) { navigator ->
+                Navigator(VerHomeScreen) { navigator ->
                     ScaleTransition(navigator = navigator)
                     lightStatusAndNavigationBar = navigator.lastItem !is PhotoPagerScreen
                 }

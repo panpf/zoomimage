@@ -16,7 +16,7 @@ fun main() {
         Window(
             title = "ZoomImage",
             onCloseRequest = ::exitApplication,
-            state = rememberWindowState(size = DpSize(1000.dp, 800.dp)),
+            state = rememberWindowState(size = DpSize(1200.dp, 800.dp)),
         ) {
             App()
         }

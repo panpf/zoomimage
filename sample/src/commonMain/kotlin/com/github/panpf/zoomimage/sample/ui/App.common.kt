@@ -11,16 +11,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.ui.theme.AppTheme
 
+expect val homeScreen: Screen
+
 @Composable
 fun App() {
     AppTheme {
         Box(Modifier.fillMaxSize()) {
-            Navigator(HomeScreen) { navigator ->
+            Navigator(homeScreen) { navigator ->
                 ScaleTransition(navigator = navigator)
             }
 
