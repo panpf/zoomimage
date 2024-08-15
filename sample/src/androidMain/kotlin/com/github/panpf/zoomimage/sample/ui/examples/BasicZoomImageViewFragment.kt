@@ -19,12 +19,11 @@ package com.github.panpf.zoomimage.sample.ui.examples
 import android.content.Context
 import android.graphics.drawable.Animatable
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.sketch.asDrawableOrThrow
+import com.github.panpf.sketch.drawable.startWithLifecycle
 import com.github.panpf.sketch.loadImage
 import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
@@ -98,17 +97,4 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
             arguments = BasicZoomImageViewFragmentArgs(data).toBundle()
         }
     }
-}
-
-// TODO The new version of Sketch will include this extension function
-fun Animatable.startWithLifecycle(lifecycle: Lifecycle) {
-    val observer = LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_START) {
-            start()
-        } else if (event == Lifecycle.Event.ON_STOP) {
-            stop()
-        }
-    }
-    // if the LifecycleOwner is in [State.STARTED] state, the given observer * will receive [Event.ON_CREATE], [Event.ON_START] events.
-    lifecycle.addObserver(observer)
 }
