@@ -60,6 +60,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.internal.images)
+            implementation(projects.internal.utilsCoil)
             implementation(projects.zoomimageCompose)
             implementation(projects.zoomimageComposeCoil)
             implementation(projects.zoomimageComposeResources)

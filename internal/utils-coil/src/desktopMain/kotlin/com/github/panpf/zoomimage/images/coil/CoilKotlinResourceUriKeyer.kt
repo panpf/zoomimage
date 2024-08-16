@@ -1,10 +1,9 @@
-package com.github.panpf.zoomimage.sample.image
+package com.github.panpf.zoomimage.images.coil
 
 import coil3.Uri
 import coil3.key.Keyer
 import coil3.request.Options
-import com.github.panpf.sketch.fetch.isKotlinResourceUri
-import com.github.panpf.sketch.util.toUri
+import coil3.toUri
 
 class CoilKotlinResourceUriKeyer : Keyer<Uri> {
 

@@ -15,4 +15,5 @@ dependencies {
     api(libs.coil2.compose)
 
     androidTestImplementation(projects.internal.testCompose)
+    androidTestImplementation(projects.internal.testCoil2)
 }

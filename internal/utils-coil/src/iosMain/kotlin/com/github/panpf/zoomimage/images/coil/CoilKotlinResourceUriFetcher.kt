@@ -1,7 +1,8 @@
-package com.github.panpf.zoomimage.sample.util
+package com.github.panpf.zoomimage.images.coil
 
 import coil3.ImageLoader
 import coil3.Uri
+import coil3.annotation.InternalCoilApi
 import coil3.decode.DataSource
 import coil3.decode.ImageSource
 import coil3.fetch.FetchResult
@@ -9,14 +10,11 @@ import coil3.fetch.Fetcher
 import coil3.fetch.SourceFetchResult
 import coil3.pathSegments
 import coil3.request.Options
-import com.github.panpf.sketch.fetch.HttpUriFetcher
-import com.github.panpf.sketch.fetch.isKotlinResourceUri
-import com.github.panpf.sketch.util.MimeTypeMap
-import com.github.panpf.sketch.util.toUri
+import coil3.toUri
+import coil3.util.MimeTypeMap
+import com.github.panpf.zoomimage.subsampling.KotlinResourceImageSource
 import okio.FileSystem
-import okio.Path.Companion.toPath
 import okio.buffer
-import platform.Foundation.NSBundle
 
 class CoilKotlinResourceUriFetcher(
     val fileSystem: FileSystem,
@@ -24,11 +22,8 @@ class CoilKotlinResourceUriFetcher(
 ) : Fetcher {
 
     override suspend fun fetch(): FetchResult {
-        val resourcePath = NSBundle.mainBundle.resourcePath!!.toPath()
-        val filePath = resourcePath.resolve("compose-resources").resolve(resourceName)
-        val source = fileSystem.source(filePath)
         val imageSource = ImageSource(
-            source = source.buffer(),
+            source = KotlinResourceImageSource(resourceName).openSource().buffer(),
             fileSystem = fileSystem,
             metadata = null
         )
@@ -46,10 +41,11 @@ class CoilKotlinResourceUriFetcher(
      * "text/plain" is often used as a default/fallback MIME type.
      * Attempt to guess a better MIME type from the file extension.
      */
+    @OptIn(InternalCoilApi::class)
     private fun getMimeType(url: String, contentType: String?): String? {
         if (contentType == null
             || contentType.trim().isEmpty()
-            || contentType.startsWith(HttpUriFetcher.MIME_TYPE_TEXT_PLAIN)
+            || contentType.startsWith("text/plain")
         ) {
             MimeTypeMap.getMimeTypeFromUrl(url)?.let { return it }
         }

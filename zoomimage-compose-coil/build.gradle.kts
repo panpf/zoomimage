@@ -19,9 +19,11 @@ kotlin {
 
         commonTest.dependencies {
             implementation(projects.internal.testCompose)
+            implementation(projects.internal.testCoil)
         }
         androidInstrumentedTest.dependencies {
             implementation(projects.internal.testCompose)
+            implementation(projects.internal.testCoil)
         }
     }
 }

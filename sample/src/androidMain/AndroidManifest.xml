@@ -66,6 +66,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.github.panpf.zoomimage.sample.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
