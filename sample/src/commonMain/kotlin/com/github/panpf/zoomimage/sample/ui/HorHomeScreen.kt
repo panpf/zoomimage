@@ -98,6 +98,7 @@ object HorHomeScreen : BaseScreen() {
                                 painter = painterResource(homeTab.icon),
                                 contentDescription = homeTab.title,
                                 modifier = Modifier.size(24.dp)
+                                    .padding(homeTab.padding)
                             )
                         },
                         label = { Text(homeTab.title) },
