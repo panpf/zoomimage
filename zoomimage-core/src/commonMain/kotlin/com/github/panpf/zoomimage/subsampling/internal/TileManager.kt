@@ -49,7 +49,7 @@ import kotlinx.coroutines.withContext
  *
  * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileManagerTest
  */
-class TileManager constructor(
+class TileManager(
     private val logger: Logger,
     private val tileDecoder: TileDecoder,
     private val tileBitmapConvertor: TileBitmapConvertor?,
@@ -211,7 +211,7 @@ class TileManager constructor(
             }
             if (sampleSizeChanged) {
                 clean("refreshTiles:foregroundTilesEmptyOrOne")
-                updateTileSnapshotList("refreshTiles:foregroundTilesEmptyOrOne")  // TODO repeated, clean has been executed
+                updateTileSnapshotList("refreshTiles:foregroundTilesEmptyOrOne")
             }
             return -3
         }
@@ -227,7 +227,7 @@ class TileManager constructor(
             }
             if (imageLoadRectChanged) {
                 clean("refreshTiles:contentVisibleRectEmpty")
-                updateTileSnapshotList("refreshTiles:contentVisibleRectEmpty")  // TODO repeated, clean has been executed
+                updateTileSnapshotList("refreshTiles:contentVisibleRectEmpty")
             }
             return -4
         }

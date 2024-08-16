@@ -19,7 +19,7 @@ class SkiaDecoderHelperTest {
     @Test
     fun testFactory() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
         val dogImageFile = ResourceImages.dog
@@ -58,7 +58,7 @@ class SkiaDecoderHelperTest {
     @Test
     fun test() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
         val imageSource1 = ResourceImages.exifNormal.toImageSource()

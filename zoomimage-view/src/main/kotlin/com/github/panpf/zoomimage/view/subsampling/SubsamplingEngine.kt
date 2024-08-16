@@ -60,7 +60,7 @@ import kotlin.math.roundToInt
 /**
  * Engines that control subsampling
  *
- * @see com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
+ * @see com.github.panpf.zoomimage.view.test.subsampling.SubsamplingEngineTest
  */
 class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
 

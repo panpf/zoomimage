@@ -157,7 +157,7 @@ class ComposeResourceImageSourceTest {
     @Test
     fun testFactoryCreate() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
         runTest {

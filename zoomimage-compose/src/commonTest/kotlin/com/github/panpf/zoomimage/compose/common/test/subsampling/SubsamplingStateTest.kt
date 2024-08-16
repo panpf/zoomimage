@@ -178,7 +178,7 @@ class SubsamplingStateTest {
     @Test
     fun testImageInfo() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
 
@@ -243,7 +243,7 @@ class SubsamplingStateTest {
     @Test
     fun testTileGridSizeMap() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
 
@@ -314,7 +314,7 @@ class SubsamplingStateTest {
     @Test
     fun testReady() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
 
@@ -377,7 +377,7 @@ class SubsamplingStateTest {
     @Test
     fun testForegroundTiles() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
 //        // basic
@@ -480,7 +480,7 @@ class SubsamplingStateTest {
     @Test
     fun testSampleSize() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
 
@@ -565,7 +565,7 @@ class SubsamplingStateTest {
     @Test
     fun testImageLoadRect() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
 
@@ -650,7 +650,7 @@ class SubsamplingStateTest {
     @Test
     fun testClean() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
         runComposeUiTest {
@@ -695,7 +695,7 @@ class SubsamplingStateTest {
     @Test
     fun testRememberObserver() {
         if (Platform.current == Platform.iOS) {
-            // TODO Files in kotlin resources cannot be accessed in ios test environment.
+            // Files in kotlin resources cannot be accessed in ios test environment.
             return
         }
 

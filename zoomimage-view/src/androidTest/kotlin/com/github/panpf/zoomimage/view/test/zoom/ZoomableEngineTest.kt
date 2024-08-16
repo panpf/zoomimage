@@ -37,7 +37,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ZoomableEngineTest {
-    // TODO test
 
     @Test
     fun testConstructor() {
