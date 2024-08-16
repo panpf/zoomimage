@@ -2,17 +2,21 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.1.0-alpha06
 
 zoom:
 
-* broken: Add the suspend modifier to the \*ToImageSource methods of the CoilModelToImageSource, GlideModelToImageSource, and PicassoDataToImageSource interfaces
 * broken: Remove the logger parameter of the 'remember\*ZoomState()' series of functions
-* broken: Remove the view parameter of SubsamplingEngine's constructor
 * new: Added support for mouse wheel scale
   function. [#35](https://github.com/panpf/zoomimage/issues/35)
 * new: Added support for keyboard scale and drag
   functions. [#42](https://github.com/panpf/zoomimage/issues/42)
+
+subsampling:
+
+* broken: Add the suspend modifier to the \*ToImageSource methods of the CoilModelToImageSource,
+  GlideModelToImageSource, and PicassoDataToImageSource interfaces
+* broken: Remove the view parameter of SubsamplingEngine's constructor
 
 ## 1.1.0-alpha05
 
