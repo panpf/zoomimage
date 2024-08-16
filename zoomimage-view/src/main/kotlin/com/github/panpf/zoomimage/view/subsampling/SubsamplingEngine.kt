@@ -32,6 +32,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
+import com.github.panpf.zoomimage.subsampling.internal.checkNewPreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntOffsetCompat
@@ -54,7 +55,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -280,26 +280,21 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
             // View size animations cause frequent changes in viewSize, so a delayed reset avoids this problem
             @Suppress("OPT_IN_USAGE")
             zoomableEngine.containerSizeState.debounce(80).collect {
+                val oldPreferredTileSize = preferredTileSizeState.value
                 val newPreferredTileSize = calculatePreferredTileSize(it)
-                val preferredTileSize = preferredTileSizeState.value
-                val finalPreferredTileSize = if (preferredTileSize.isEmpty()) {
-                    newPreferredTileSize
-                } else if (abs(newPreferredTileSize.width - preferredTileSize.width) >=
-                    // When the width changes by more than 1x, the preferredTileSize is recalculated to reduce the need to reset the TileManager
-                    preferredTileSizeState.value.width * (if (newPreferredTileSize.width > preferredTileSize.width) 1f else 0.5f)
-                ) {
-                    newPreferredTileSize
-                } else if (abs(newPreferredTileSize.height - preferredTileSize.height) >=
-                    preferredTileSize.height * (if (newPreferredTileSize.height > preferredTileSize.height) 1f else 0.5f)
-                ) {
-                    // When the height changes by more than 1x, the preferredTileSize is recalculated to reduce the need to reset the TileManager
-                    newPreferredTileSize
-                } else {
-                    null
+                val checkPassed = checkNewPreferredTileSize(
+                    oldPreferredTileSize = oldPreferredTileSize,
+                    newPreferredTileSize = newPreferredTileSize
+                )
+                logger.d {
+                    "SubsamplingEngine. reset preferredTileSize. " +
+                            "oldPreferredTileSize=$oldPreferredTileSize, " +
+                            "newPreferredTileSize=$newPreferredTileSize, " +
+                            "checkPassed=$checkPassed. " +
+                            "'${imageKey}'"
                 }
-                logger.d { "SubsamplingEngine. reset preferredTileSize. finalPreferredTileSize=$finalPreferredTileSize. '${imageKey}" }
-                if (finalPreferredTileSize != null) {
-                    preferredTileSizeState.value = finalPreferredTileSize
+                if (checkPassed) {
+                    preferredTileSizeState.value = newPreferredTileSize
                 }
             }
         }

@@ -110,3 +110,38 @@ fun List<SamplingTiles>.toIntroString(): String {
 fun calculatePreferredTileSize(containerSize: IntSizeCompat): IntSizeCompat {
     return containerSize / 2
 }
+
+/**
+ * Returns true if the new preferred tile size is doubled in width or height or reduced by half, which can significantly reduce the number of times the TileManager is reset when the container size changes frequently (window resizing)
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCheckNewPreferredTileSize
+ */
+fun checkNewPreferredTileSize(
+    oldPreferredTileSize: IntSizeCompat,
+    newPreferredTileSize: IntSizeCompat
+): Boolean {
+    if (newPreferredTileSize.isEmpty()) {
+        return false
+    }
+    if (oldPreferredTileSize.isEmpty()) {
+        return true
+    }
+
+    val widthDifferent = abs(newPreferredTileSize.width - oldPreferredTileSize.width)
+    val widthTargetMultiple =
+        if (newPreferredTileSize.width > oldPreferredTileSize.width) 1f else 0.5f
+    val widthTarget = oldPreferredTileSize.width * widthTargetMultiple
+    if (widthDifferent >= widthTarget) {
+        return true
+    }
+
+    val heightDifferent = abs(newPreferredTileSize.height - oldPreferredTileSize.height)
+    val heightTargetMultiple =
+        if (newPreferredTileSize.height > oldPreferredTileSize.height) 1f else 0.5f
+    val heightTarget = oldPreferredTileSize.height * heightTargetMultiple
+    if (heightDifferent >= heightTarget) {
+        return true
+    }
+
+    return false
+}

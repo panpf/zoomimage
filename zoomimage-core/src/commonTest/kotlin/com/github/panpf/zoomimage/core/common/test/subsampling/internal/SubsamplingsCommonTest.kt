@@ -3,6 +3,7 @@ package com.github.panpf.zoomimage.core.common.test.subsampling.internal
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.calculateTileGridMap
 import com.github.panpf.zoomimage.subsampling.internal.canUseSubsamplingByAspectRatio
+import com.github.panpf.zoomimage.subsampling.internal.checkNewPreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.ScaleFactorCompat
@@ -114,6 +115,181 @@ class SubsamplingsCommonTest {
         assertEquals(
             /* expected = */ IntSizeCompat(1000, 2000) / 2,
             /* actual = */ calculatePreferredTileSize(IntSizeCompat(1000, 2000))
+        )
+    }
+
+    @Test
+    fun testCheckNewPreferredTileSize() {
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(200, 100)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(100, 200)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(200, 200)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(50, 100)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(100, 50)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(50, 50)
+            )
+        )
+
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(0, 0)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(0, 0)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(0, 0)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(0, 0)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(0, 0)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(0, 0)
+            )
+        )
+
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(199, 100)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(100, 199)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(199, 199)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(51, 100)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(100, 51)
+            )
+        )
+        assertEquals(
+            expected = false,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(100, 100),
+                newPreferredTileSize = IntSizeCompat(51, 51)
+            )
+        )
+
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(0, 0),
+                newPreferredTileSize = IntSizeCompat(199, 100)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(0, 0),
+                newPreferredTileSize = IntSizeCompat(100, 199)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(0, 0),
+                newPreferredTileSize = IntSizeCompat(199, 199)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(0, 0),
+                newPreferredTileSize = IntSizeCompat(51, 100)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(0, 0),
+                newPreferredTileSize = IntSizeCompat(100, 51)
+            )
+        )
+        assertEquals(
+            expected = true,
+            checkNewPreferredTileSize(
+                oldPreferredTileSize = IntSizeCompat(0, 0),
+                newPreferredTileSize = IntSizeCompat(51, 51)
+            )
         )
     }
 }
