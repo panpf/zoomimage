@@ -16,4 +16,5 @@ dependencies {
     api(libs.panpf.sketch3.compose.core)
 
     androidTestImplementation(projects.internal.testCompose)
+    androidTestImplementation(projects.internal.testSketch3)
 }

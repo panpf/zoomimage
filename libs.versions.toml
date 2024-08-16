@@ -157,6 +157,7 @@ panpf-sketch4-extensions-view = { module = "io.github.panpf.sketch4:sketch-exten
 panpf-sketch4-extensions-viewability = { module = "io.github.panpf.sketch4:sketch-extensions-viewability", version.ref = "panpf-sketch4" }
 panpf-sketch4-http-ktor = { module = "io.github.panpf.sketch4:sketch-http-ktor", version.ref = "panpf-sketch4" }
 panpf-sketch4-svg = { module = "io.github.panpf.sketch4:sketch-svg", version.ref = "panpf-sketch4" }
+panpf-sketch4-singleton = { module = "io.github.panpf.sketch4:sketch-singleton", version.ref = "panpf-sketch4" }
 panpf-sketch4-view = { module = "io.github.panpf.sketch4:sketch-view", version.ref = "panpf-sketch4" }
 panpf-sketch4-view-core = { module = "io.github.panpf.sketch4:sketch-view-core", version.ref = "panpf-sketch4" }
 panpf-tools4a-activity = { module = "io.github.panpf.tools4a:tools4a-activity-ktx", version.ref = "panpf-tools4a" }

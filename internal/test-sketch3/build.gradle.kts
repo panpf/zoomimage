@@ -3,9 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.coil2")
+androidLibrary(nameSpace = "com.github.panpf.zoomimage.test.sketch3")
 
 dependencies {
     api(projects.internal.testCore)
-    api(libs.coil2)
+    api(libs.panpf.sketch3)
 }
