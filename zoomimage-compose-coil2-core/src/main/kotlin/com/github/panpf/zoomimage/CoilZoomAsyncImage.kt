@@ -248,7 +248,12 @@ fun CoilZoomAsyncImage(
             filterQuality = filterQuality,
             modifier = Modifier
                 .matchParentSize()
-                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .zoom(
+                    zoomable = zoomState.zoomable,
+                    useContainerSizeAsContentSize = false,
+                    onLongPress = onLongPress,
+                    onTap = onTap
+                )
                 .subsampling(zoomState.zoomable, zoomState.subsampling),
         )
 

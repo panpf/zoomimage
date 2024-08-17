@@ -40,7 +40,6 @@ import com.github.panpf.zoomimage.util.toRect
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.util.toSize
 import com.github.panpf.zoomimage.view.subsampling.SubsamplingEngine
-import com.github.panpf.zoomimage.view.util.convert
 import com.github.panpf.zoomimage.view.util.format
 import com.github.panpf.zoomimage.view.util.requiredMainThread
 import com.github.panpf.zoomimage.view.zoom.internal.FlingAnimatable
@@ -106,7 +105,6 @@ class ZoomableEngine(val logger: Logger, val view: View) {
      * The size of the content, this is usually the size of the thumbnail Drawable, setup by the [ZoomImageView] component
      */
     val contentSizeState = MutableStateFlow(IntSizeCompat.Zero)
-        .convert { if (it.isNotEmpty()) it else containerSizeState.value }
 
     /**
      * The original size of the content, it is usually set by [SubsamplingEngine] after parsing the original size of the image
