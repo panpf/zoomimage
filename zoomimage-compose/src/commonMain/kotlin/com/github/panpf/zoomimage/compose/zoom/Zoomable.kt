@@ -49,13 +49,13 @@ import kotlinx.coroutines.launch
  */
 fun Modifier.zoom(
     zoomable: ZoomableState,
-    useContainerSizeAsContentSize: Boolean = true,
+    userSetupContentSize: Boolean = false,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = this
     .zoomable(
         zoomable = zoomable,
-        useContainerSizeAsContentSize = useContainerSizeAsContentSize,
+        userSetupContentSize = userSetupContentSize,
         onLongPress = onLongPress,
         onTap = onTap
     )
@@ -76,13 +76,13 @@ fun Modifier.zoom(
  */
 fun Modifier.zoomable(
     zoomable: ZoomableState,
-    useContainerSizeAsContentSize: Boolean = true,
+    userSetupContentSize: Boolean = false,
     onLongPress: ((Offset) -> Unit)? = null,
     onTap: ((Offset) -> Unit)? = null,
 ): Modifier = this
     .onSizeChanged {
         zoomable.containerSize = it
-        if (useContainerSizeAsContentSize) {
+        if (!userSetupContentSize) {
             zoomable.contentSize = it
         }
     }
