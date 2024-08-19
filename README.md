@@ -180,7 +180,7 @@ Android view:
 // Use basis ZoomImageView component
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
-zoomImageView.subsampling.setImageSource(ImageSource.resource(R.raw.huge_world))
+zoomImageView.subsampling.setImageSource(ImageSource.fromResource(R.raw.huge_world))
 
 // Use SketchZoomAsyncImage component
 val sketchZoomImageView = SketchZoomImageView(context)

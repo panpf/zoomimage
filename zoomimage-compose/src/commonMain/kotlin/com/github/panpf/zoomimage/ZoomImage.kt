@@ -55,11 +55,12 @@ import kotlin.math.roundToInt
  * val zoomState: ZoomState by rememberZoomState()
  * val context = LocalContext.current
  * LaunchedEffect(zoomState.subsampling) {
- *     val imageSource = ImageSource.fromResource(context, R.drawable.huge_image)
+ *     val resUri = Res.getUri("files/huge_world.jpeg")
+ *     val imageSource = ImageSource.fromComposeResource(resUri)
  *     zoomState.subsampling.setImageSource(imageSource)
  * }
  * ZoomImage(
- *     painter = painterResource(R.drawable.huge_image_thumbnail),
+ *     painter = painterResource(Res.drawable.huge_world_thumbnail),
  *     contentDescription = "view image",
  *     modifier = Modifier.fillMaxSize(),
  *     zoomState = zoomState,

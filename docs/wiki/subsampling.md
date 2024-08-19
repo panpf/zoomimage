@@ -72,7 +72,7 @@ view:
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
 
-val imageSource = ImageSource.fromResource(context, R.drawable.huge_world)
+val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
 zoomImageView.subsampling.setImageSource(imageSource)
 ```
 

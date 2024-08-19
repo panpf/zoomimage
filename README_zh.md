@@ -168,7 +168,7 @@ Android view：
 // 使用基础的 ZoomImageView 组件
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
-zoomImageView.subsampling.setImageSource(ImageSource.resource(R.raw.huge_world))
+zoomImageView.subsampling.setImageSource(ImageSource.fromResource(R.raw.huge_world))
 
 // 使用 SketchZoomAsyncImage 组件
 val sketchZoomImageView = SketchZoomImageView(context)
