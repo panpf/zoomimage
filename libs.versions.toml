@@ -170,6 +170,7 @@ panpf-tools4a-run = { module = "io.github.panpf.tools4a:tools4a-run-ktx", versio
 panpf-tools4a-test = { module = "io.github.panpf.tools4a:tools4a-test-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-toast = { module = "io.github.panpf.tools4a:tools4a-toast-ktx", version.ref = "panpf-tools4a" }
 panpf-tools4a-view = { module = "io.github.panpf.tools4a:tools4a-view-ktx", version.ref = "panpf-tools4a" }
+panpf-tools4j-reflect = { module = "io.github.panpf.tools4j:tools4j-reflect-ktx", version.ref = "panpf-tools4j" }
 panpf-tools4k = { module = "io.github.panpf.tools4k:tools4k", version.ref = "panpf-tools4k" }
 
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
