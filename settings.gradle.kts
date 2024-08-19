@@ -53,6 +53,7 @@ include(":sample")
 include(":internal:images")
 include(":internal:test-coil")
 include(":internal:test-coil2")
+//include(":internal:test-compose-screenshot")    // TODO screenshot test
 include(":internal:test-core")
 include(":internal:test-sketch")
 include(":internal:test-sketch3")

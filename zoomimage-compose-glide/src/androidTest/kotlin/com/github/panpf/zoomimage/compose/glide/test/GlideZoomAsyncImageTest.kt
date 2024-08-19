@@ -23,8 +23,6 @@ import kotlin.test.assertNotNull
 
 class GlideZoomAsyncImageTest {
 
-    // TODO screenshot test
-
     @Test
     @OptIn(ExperimentalTestApi::class, ExperimentalGlideComposeApi::class)
     fun testGlideZoomAsyncImage() {

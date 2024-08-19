@@ -29,8 +29,6 @@ import kotlin.test.assertTrue
 
 class SingletonSketchZoomAsyncImageTest {
 
-    // TODO screenshot test
-
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testSketchZoomAsyncImage1() {

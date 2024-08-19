@@ -30,8 +30,6 @@ import kotlin.test.assertTrue
 
 class SingletonCoilZoomAsyncImageTest {
 
-    // TODO screenshot test
-
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testCoilZoomAsyncImage1() {
