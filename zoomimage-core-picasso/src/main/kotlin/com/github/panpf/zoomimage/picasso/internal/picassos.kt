@@ -21,7 +21,8 @@ package com.squareup.picasso
 /**
  * @see com.github.panpf.zoomimage.core.picasso.test.internal.PicassoTest.testCheckMemoryCacheDisabled
  */
-fun checkMemoryCacheDisabled(memoryPolicy: Int): Boolean {
+@Deprecated("No use anymore")
+internal fun checkMemoryCacheDisabled(memoryPolicy: Int): Boolean {
     return !MemoryPolicy.shouldReadFromMemoryCache(memoryPolicy)
             || !MemoryPolicy.shouldWriteToMemoryCache(memoryPolicy)
 }
@@ -29,7 +30,8 @@ fun checkMemoryCacheDisabled(memoryPolicy: Int): Boolean {
 /**
  * @see com.github.panpf.zoomimage.core.picasso.test.internal.PicassoTest.testInternalMemoryPolicy
  */
-val RequestCreator.internalMemoryPolicy: Int
+@Deprecated("No use anymore")
+internal val RequestCreator.internalMemoryPolicy: Int
     get() = try {
         this.javaClass.getDeclaredField("memoryPolicy").apply {
             isAccessible = true

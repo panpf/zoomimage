@@ -200,6 +200,12 @@ class ZoomImageSettingsViewModel(
 
         add(MenuDivider())
 
+        add(
+            SwitchMenuFlow(
+                title = "Tile Memory Cache",
+                data = appSettings.tileMemoryCache,
+            )
+        )
         val continuousTransformTypes = ContinuousTransformType.values
         add(
             MultiChooseMenu(

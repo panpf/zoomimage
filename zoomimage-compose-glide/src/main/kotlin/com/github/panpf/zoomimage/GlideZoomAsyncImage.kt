@@ -177,7 +177,6 @@ fun GlideZoomAsyncImage(
                             coroutineScope = coroutineScope,
                             glide = glide,
                             zoomState = zoomState,
-                            requestBuilder = requestBuilder,
                             model = model
                         )
                     )
@@ -208,7 +207,6 @@ private class ResetListener(
     private val coroutineScope: CoroutineScope,
     private val glide: Glide,
     private val zoomState: GlideZoomState,
-    private val requestBuilder: RequestBuilder<Drawable>,
     private val model: Any?,
 ) : RequestListener<Drawable> {
 
@@ -241,10 +239,6 @@ private class ResetListener(
             ?.takeIf { it.isNotEmpty() }
         zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
-        if (resource != null) {
-            zoomState.subsampling.disabledTileBitmapCache =
-                !requestBuilder.isMemoryCacheable    // TODO remove
-        }
         coroutineScope.launch {
             zoomState.subsampling.setImageSource(newImageSource(resource, model))
         }

@@ -122,6 +122,7 @@ fun <T : ZoomState> BaseZoomImageSample(
     val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.collectAsState()
     val showTileBounds by settingsService.showTileBounds.collectAsState()
     val tileAnimation by settingsService.tileAnimation.collectAsState()
+    val tileMemoryCache by settingsService.tileMemoryCache.collectAsState()
     val horizontalLayout by settingsService.horizontalPagerLayout.collectAsState(initial = true)
 
     val scalesCalculator by remember {
@@ -193,6 +194,9 @@ fun <T : ZoomState> BaseZoomImageSample(
         LaunchedEffect(tileAnimation) {
             subsampling.tileAnimationSpec =
                 if (tileAnimation) TileAnimationSpec.Default else TileAnimationSpec.None
+        }
+        LaunchedEffect(tileMemoryCache) {
+            subsampling.disabledTileBitmapCache = !tileMemoryCache
         }
     }
     val infoDialogState = rememberMyDialogState()

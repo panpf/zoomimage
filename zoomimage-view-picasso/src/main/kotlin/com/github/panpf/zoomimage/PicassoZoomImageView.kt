@@ -28,8 +28,6 @@ import com.github.panpf.zoomimage.util.Logger
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
-import com.squareup.picasso.checkMemoryCacheDisabled
-import com.squareup.picasso.internalMemoryPolicy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -160,8 +158,6 @@ open class PicassoZoomImageView @JvmOverloads constructor(
                     if (tileBitmapCacheState.value == null) {
                         tileBitmapCacheState.value = PicassoTileBitmapCache(Picasso.get())
                     }
-                    disabledTileBitmapCacheState.value =
-                        checkMemoryCacheDisabled(creator.internalMemoryPolicy)    // TODO remove
                     // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
                     @Suppress("OPT_IN_USAGE")
                     GlobalScope.launch(Dispatchers.Main) {

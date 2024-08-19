@@ -35,7 +35,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.compose.AsyncImagePainter
 import com.github.panpf.sketch.compose.AsyncImageState
 import com.github.panpf.sketch.compose.PainterState
@@ -424,8 +423,6 @@ private fun onPainterState(
 
     when (loadState) {
         is PainterState.Success -> {
-            subsamplingState.disabledTileBitmapCache =
-                request.memoryCachePolicy != CachePolicy.ENABLED    // TODO remove
             val imageSource = SketchImageSource.Factory(sketch, request.uriString)
             subsamplingState.setImageSource(imageSource)
         }

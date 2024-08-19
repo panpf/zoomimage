@@ -125,6 +125,9 @@ class AppSettings(val context: PlatformContext) {
     val tileAnimation by lazy {
         booleanSettingsStateFlow(context, "tileAnimation", true)
     }
+    val tileMemoryCache by lazy {
+        booleanSettingsStateFlow(context, "tileMemoryCache", true)
+    }
 
     val scrollBarEnabled by lazy {
         booleanSettingsStateFlow(context, "scrollBarEnabled", true)

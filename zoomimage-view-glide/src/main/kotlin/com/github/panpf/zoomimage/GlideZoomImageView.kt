@@ -21,7 +21,6 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import com.bumptech.glide.Glide
 import com.bumptech.glide.internalModel
-import com.bumptech.glide.internalRequestOptions
 import com.bumptech.glide.request.SingleRequest
 import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
@@ -100,7 +99,6 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 if (tileBitmapCacheState.value == null) {
                     tileBitmapCacheState.value = GlideTileBitmapCache(Glide.get(context))
                 }
-                disabledTileBitmapCacheState.value = isDisableMemoryCache(request)    // TODO remove
                 coroutineScope.launch {
                     setImageSource(newImageSource(request.internalModel))
                 }
@@ -120,10 +118,5 @@ open class GlideZoomImageView @JvmOverloads constructor(
             logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
         }
         return imageSource
-    }
-
-    private fun isDisableMemoryCache(request: SingleRequest<*>): Boolean {
-        val requestOptions = request.internalRequestOptions
-        return !requestOptions.isMemoryCacheable
     }
 }

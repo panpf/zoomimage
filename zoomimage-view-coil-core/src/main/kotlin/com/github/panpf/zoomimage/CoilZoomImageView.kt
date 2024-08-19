@@ -23,7 +23,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
 import coil3.ImageLoader
-import coil3.request.CachePolicy
 import coil3.request.SuccessResult
 import coil3.transition.CrossfadeDrawable
 import coil3.util.CoilUtils
@@ -106,16 +105,11 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 if (tileBitmapCacheState.value == null) {
                     tileBitmapCacheState.value = CoilTileBitmapCache(imageLoader)
                 }
-                disabledTileBitmapCacheState.value = isDisallowMemoryCache(result)    // TODO remove
                 coroutineScope.launch {
                     setImageSource(newImageSource(imageLoader, result))
                 }
             }
         }
-    }
-
-    private fun isDisallowMemoryCache(result: SuccessResult): Boolean {
-        return result.request.memoryCachePolicy != CachePolicy.ENABLED
     }
 
     private suspend fun newImageSource(

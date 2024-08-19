@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.IntSize
 import coil.ImageLoader
 import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State
-import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.compose.coil.internal.BaseZoomAsyncImage
@@ -305,8 +304,6 @@ private fun onState(
 
     when (loadState) {
         is State.Success -> {
-            zoomState.subsampling.disabledTileBitmapCache =
-                request.memoryCachePolicy != CachePolicy.ENABLED    // TODO remove
             coroutineScope.launch {
                 val model = request.data
                 val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {

@@ -38,7 +38,6 @@ import com.github.panpf.sketch.AsyncImageState
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.sketch.PainterState
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.internal.AsyncImageContent
 import com.github.panpf.sketch.rememberAsyncImagePainter
 import com.github.panpf.sketch.rememberAsyncImageState
@@ -240,8 +239,6 @@ private fun onPainterState(
 
     when (loadState) {
         is PainterState.Success -> {
-            subsamplingState.disabledTileBitmapCache =
-                request.memoryCachePolicy != CachePolicy.ENABLED    // TODO remove
             val imageSource = SketchImageSource.Factory(sketch, request.uri.toString())
             subsamplingState.setImageSource(imageSource)
         }

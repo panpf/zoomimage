@@ -55,7 +55,6 @@ import coil3.PlatformContext
 import coil3.compose.AsyncImagePainter
 import coil3.compose.AsyncImagePainter.State
 import coil3.compose.LocalPlatformContext
-import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.compose.coil.internal.BaseZoomAsyncImage
@@ -305,8 +304,6 @@ private fun onState(
 
     when (loadState) {
         is State.Success -> {
-            zoomState.subsampling.disabledTileBitmapCache =
-                request.memoryCachePolicy != CachePolicy.ENABLED    // TODO remove
             coroutineScope.launch {
                 val model = request.data
                 val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {

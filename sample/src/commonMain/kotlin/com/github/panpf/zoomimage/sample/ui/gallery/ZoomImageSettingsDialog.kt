@@ -207,6 +207,12 @@ fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
 
                 DividerSettingItem()
 
+                SwitchSettingItem(
+                    title = "Tile Memory Cache",
+                    desc = null,
+                    state = appSettings.tileMemoryCache,
+                )
+
                 val continuousTransformTypes = remember { ContinuousTransformType.values }
                 val continuousTransformTypeStrings = remember {
                     continuousTransformTypes.map { ContinuousTransformType.name(it) }

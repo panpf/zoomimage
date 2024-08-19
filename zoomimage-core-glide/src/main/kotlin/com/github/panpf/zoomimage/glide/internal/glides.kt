@@ -24,7 +24,8 @@ import com.bumptech.glide.request.SingleRequest
 /**
  * @see com.github.panpf.zoomimage.core.glide.test.internal.GlidesTest.testSingleRequestInternalRequestOptions
  */
-val SingleRequest<*>.internalRequestOptions: BaseRequestOptions<*>
+@Deprecated("No use anymore")
+internal val SingleRequest<*>.internalRequestOptions: BaseRequestOptions<*>
     get() = this.javaClass.getDeclaredField("requestOptions")
         .apply { isAccessible = true }
         .get(this) as BaseRequestOptions<*>

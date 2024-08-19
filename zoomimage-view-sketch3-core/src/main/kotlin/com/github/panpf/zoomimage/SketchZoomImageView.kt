@@ -21,7 +21,6 @@ import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import com.github.panpf.sketch.Sketch
-import com.github.panpf.sketch.cache.CachePolicy
 import com.github.panpf.sketch.displayResult
 import com.github.panpf.sketch.request.DisplayResult
 import com.github.panpf.sketch.util.SketchUtils
@@ -93,8 +92,6 @@ open class SketchZoomImageView @JvmOverloads constructor(
                     tileBitmapCacheState.value =
                         SketchTileBitmapCache(sketch, "SketchZoomImageView")
                 }
-                disabledTileBitmapCacheState.value =
-                    result.request.memoryCachePolicy != CachePolicy.ENABLED    // TODO remove
                 setImageSource(newImageSource(sketch, result))
             }
         }
