@@ -106,7 +106,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
                 if (tileBitmapCacheState.value == null) {
                     tileBitmapCacheState.value = CoilTileBitmapCache(imageLoader)
                 }
-                disabledTileBitmapCacheState.value = isDisallowMemoryCache(result)
+                disabledTileBitmapCacheState.value = isDisallowMemoryCache(result)    // TODO remove
                 coroutineScope.launch {
                     setImageSource(newImageSource(imageLoader, result))
                 }

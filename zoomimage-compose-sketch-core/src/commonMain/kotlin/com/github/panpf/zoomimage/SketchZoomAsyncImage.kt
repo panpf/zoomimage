@@ -241,7 +241,7 @@ private fun onPainterState(
     when (loadState) {
         is PainterState.Success -> {
             subsamplingState.disabledTileBitmapCache =
-                request.memoryCachePolicy != CachePolicy.ENABLED
+                request.memoryCachePolicy != CachePolicy.ENABLED    // TODO remove
             val imageSource = SketchImageSource.Factory(sketch, request.uri.toString())
             subsamplingState.setImageSource(imageSource)
         }

@@ -242,7 +242,8 @@ private class ResetListener(
         zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
         if (resource != null) {
-            zoomState.subsampling.disabledTileBitmapCache = !requestBuilder.isMemoryCacheable
+            zoomState.subsampling.disabledTileBitmapCache =
+                !requestBuilder.isMemoryCacheable    // TODO remove
         }
         coroutineScope.launch {
             zoomState.subsampling.setImageSource(newImageSource(resource, model))

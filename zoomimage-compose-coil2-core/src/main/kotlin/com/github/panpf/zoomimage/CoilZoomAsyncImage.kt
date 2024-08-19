@@ -306,7 +306,7 @@ private fun onState(
     when (loadState) {
         is State.Success -> {
             zoomState.subsampling.disabledTileBitmapCache =
-                request.memoryCachePolicy != CachePolicy.ENABLED
+                request.memoryCachePolicy != CachePolicy.ENABLED    // TODO remove
             coroutineScope.launch {
                 val model = request.data
                 val imageSource = zoomState.modelToImageSources.firstNotNullOfOrNull {

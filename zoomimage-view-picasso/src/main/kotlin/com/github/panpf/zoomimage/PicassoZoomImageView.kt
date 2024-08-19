@@ -59,10 +59,6 @@ open class PicassoZoomImageView @JvmOverloads constructor(
 
     private val convertors = mutableListOf<PicassoDataToImageSource>()
 
-    init {
-        _subsamplingEngine?.tileBitmapCacheState?.value = PicassoTileBitmapCache(Picasso.get())
-    }
-
     /**
      * Start an image request using the specified image file. This is a convenience method for
      * calling load(Uri).
@@ -160,12 +156,17 @@ open class PicassoZoomImageView @JvmOverloads constructor(
     ) {
         creator.into(this, object : Callback {
             override fun onSuccess() {
-                _subsamplingEngine?.disabledTileBitmapCacheState?.value =
-                    checkMemoryCacheDisabled(creator.internalMemoryPolicy)
-                // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
-                @Suppress("OPT_IN_USAGE")
-                GlobalScope.launch(Dispatchers.Main) {
-                    _subsamplingEngine?.setImageSource(newImageSource(data))
+                _subsamplingEngine?.apply {
+                    if (tileBitmapCacheState.value == null) {
+                        tileBitmapCacheState.value = PicassoTileBitmapCache(Picasso.get())
+                    }
+                    disabledTileBitmapCacheState.value =
+                        checkMemoryCacheDisabled(creator.internalMemoryPolicy)    // TODO remove
+                    // Because Picasso may call onSuccess before the ImageView is attached to the window, only GlobalScope can be used here.
+                    @Suppress("OPT_IN_USAGE")
+                    GlobalScope.launch(Dispatchers.Main) {
+                        _subsamplingEngine?.setImageSource(newImageSource(data))
+                    }
                 }
                 callback?.onSuccess()
             }

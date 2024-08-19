@@ -53,11 +53,6 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     private val convertors = mutableListOf<GlideModelToImageSource>()
 
-    init {
-        val glide = Glide.get(context)
-        _subsamplingEngine?.tileBitmapCacheState?.value = GlideTileBitmapCache(glide)
-    }
-
     fun registerModelToImageSource(convertor: GlideModelToImageSource) {
         convertors.add(0, convertor)
     }
@@ -101,9 +96,14 @@ open class GlideZoomImageView @JvmOverloads constructor(
                 logger.d { "GlideZoomImageView. Can't use Subsampling, request is not complete" }
                 return@post
             }
-            _subsamplingEngine?.disabledTileBitmapCacheState?.value = isDisableMemoryCache(request)
-            coroutineScope.launch {
-                _subsamplingEngine?.setImageSource(newImageSource(request.internalModel))
+            _subsamplingEngine?.apply {
+                if (tileBitmapCacheState.value == null) {
+                    tileBitmapCacheState.value = GlideTileBitmapCache(Glide.get(context))
+                }
+                disabledTileBitmapCacheState.value = isDisableMemoryCache(request)    // TODO remove
+                coroutineScope.launch {
+                    setImageSource(newImageSource(request.internalModel))
+                }
             }
         }
     }

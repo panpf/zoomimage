@@ -93,7 +93,7 @@ open class SketchZoomImageView @JvmOverloads constructor(
                     tileBitmapCacheState.value = SketchTileBitmapCache(sketch)
                 }
                 disabledTileBitmapCacheState.value =
-                    result.request.memoryCachePolicy != CachePolicy.ENABLED
+                    result.request.memoryCachePolicy != CachePolicy.ENABLED    // TODO remove
                 setImageSource(newImageSource(sketch, result))
             }
         }
