@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.compose.zoom
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -33,7 +32,6 @@ import kotlinx.coroutines.launch
 /**
  * Add mouse zoom support
  */
-@Composable
 fun Modifier.mouseZoom(
     zoomable: ZoomableState,
 ): Modifier = if (zoomable.disabledGestureTypes and GestureType.MOUSE_WHEEL_SCALE == 0) {

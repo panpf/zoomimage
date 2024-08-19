@@ -1,15 +1,22 @@
 package com.github.panpf.zoomimage.sample.ui.test
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
+import com.github.panpf.zoomimage.compose.zoom.keyZoom
+import com.github.panpf.zoomimage.compose.zoom.mouseZoom
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
@@ -21,8 +28,8 @@ class ModifierZoomTestScreen : BaseScreen() {
     @Composable
     override fun DrawContent() {
         ToolbarScaffold("Modifier.Zoom", ignoreNavigationBarInsets = true) {
-            val zoomState = rememberZoomableState()
-            zoomState.logger.level = Logger.Level.Debug
+            val zoomableState = rememberZoomableState()
+            zoomableState.logger.level = Logger.Level.Debug
             val text = remember {
                 """
             六王毕，四海一，蜀山兀，阿房出。覆压三百余里，隔离天日。骊山北构而西折，直走咸阳。二川溶溶，流入宫墙。五步一楼，十步一阁；廊腰缦回，檐牙高啄；各抱地势，钩心斗角。盘盘焉，囷囷焉，蜂房水涡，矗不知其几千万落。长桥卧波，未云何龙？复道行空，不霁何虹？高低冥迷，不知西东。歌台暖响，春光融融；舞殿冷袖，风雨凄凄。一日之内，一宫之间，而气候不齐。　　
@@ -36,17 +43,30 @@ class ModifierZoomTestScreen : BaseScreen() {
                                         ——唐代·杜牧《阿房宫赋》
         """.trimIndent()
             }
+            val focusRequester = remember { FocusRequester() }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .zoom(zoomState)
+                    .zoom(zoomableState)
+                    .mouseZoom(zoomableState)
+                    .keyZoom(zoomableState)
+                    .focusRequester(focusRequester)
+                    .focusable()
             ) {
                 Text(
                     text = text,
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                        .padding(10.dp)
+                        .padding(100.dp)
+                        .background(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            MaterialTheme.shapes.medium
+                        )
+                        .align(Alignment.Center)
+                        .padding(20.dp)
                 )
+            }
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
             }
         }
     }

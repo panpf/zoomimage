@@ -106,7 +106,7 @@ fun ZoomImage(
         painter.intrinsicSize.round()
     }
 
-    // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
+    // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     BoxWithConstraints(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         /*
          * Here use BoxWithConstraints and then actively set containerSize,
@@ -131,7 +131,12 @@ fun ZoomImage(
             clipToBounds = false,
             modifier = Modifier
                 .matchParentSize()
-                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .zoom(
+                    zoomable = zoomState.zoomable,
+                    userSetupContentSize = true,
+                    onLongPress = onLongPress,
+                    onTap = onTap
+                )
                 .subsampling(zoomState.zoomable, zoomState.subsampling),
         )
 

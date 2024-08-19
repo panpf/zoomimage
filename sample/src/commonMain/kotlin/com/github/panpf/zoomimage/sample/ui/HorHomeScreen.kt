@@ -98,6 +98,7 @@ object HorHomeScreen : BaseScreen() {
                                 painter = painterResource(homeTab.icon),
                                 contentDescription = homeTab.title,
                                 modifier = Modifier.size(24.dp)
+                                    .padding(homeTab.padding)
                             )
                         },
                         label = { Text(homeTab.title) },
@@ -111,6 +112,7 @@ object HorHomeScreen : BaseScreen() {
             VerticalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxHeight().weight(1f),
+                userScrollEnabled = false,
             ) { pageIndex ->
                 homeTabs[pageIndex].content.invoke(this@HorHomeScreen)
             }

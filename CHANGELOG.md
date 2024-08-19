@@ -2,6 +2,10 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
+## new
+
+* change: The `contentSize` properties of ZoomableState and ZoomableEngine now no longer return `containerSize` when empty
+
 ## 1.1.0-alpha06
 
 zoom:

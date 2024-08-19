@@ -2,6 +2,10 @@
 
 翻译：[English](CHANGELOG.md)
 
+## new
+
+* change: ZoomableState 和 ZoomableEngine 的 `contentSize` 属性现在为空时不再返回 `containerSize`
+
 ## 1.1.0-alpha06
 
 zoom:

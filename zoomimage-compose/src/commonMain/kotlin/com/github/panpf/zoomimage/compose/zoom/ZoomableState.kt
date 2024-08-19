@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.toSize
 import com.github.panpf.zoomimage.compose.rememberZoomImageLogger
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.util.ScaleFactor
-import com.github.panpf.zoomimage.compose.util.convert
 import com.github.panpf.zoomimage.compose.util.format
 import com.github.panpf.zoomimage.compose.util.isNotEmpty
 import com.github.panpf.zoomimage.compose.util.limitTo
@@ -133,7 +132,6 @@ class ZoomableState(val logger: Logger) : RememberObserver {
      * The size of the content, usually Painter.intrinsicSize.round(), setup by the ZoomImage component
      */
     var contentSize: IntSize by mutableStateOf(IntSize.Zero)
-        .convert { if (it.isNotEmpty()) it else containerSize }
 
     /**
      * The original size of the content, it is usually set by [SubsamplingState] after parsing the original size of the image

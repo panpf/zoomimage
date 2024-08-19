@@ -228,7 +228,7 @@ fun CoilZoomAsyncImage(
         zoomState.subsampling.tileBitmapCache = CoilTileBitmapCache(imageLoader)
     }
 
-    // It seems that mouseScrollScale must be inside BoxWithConstraints to take effect
+    // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.
     Box(modifier = modifier.mouseZoom(zoomState.zoomable)) {
         val context = LocalPlatformContext.current
         val coroutineScope = rememberCoroutineScope()
@@ -248,7 +248,12 @@ fun CoilZoomAsyncImage(
             filterQuality = filterQuality,
             modifier = Modifier
                 .matchParentSize()
-                .zoom(zoomState.zoomable, onLongPress = onLongPress, onTap = onTap)
+                .zoom(
+                    zoomable = zoomState.zoomable,
+                    userSetupContentSize = true,
+                    onLongPress = onLongPress,
+                    onTap = onTap
+                )
                 .subsampling(zoomState.zoomable, zoomState.subsampling),
         )
 

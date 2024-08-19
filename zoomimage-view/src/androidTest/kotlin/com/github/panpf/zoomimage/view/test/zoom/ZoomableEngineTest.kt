@@ -66,21 +66,30 @@ class ZoomableEngineTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
         val zoomable = ZoomableEngine(Logger("Test"), imageView)
-        assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentSizeState.value)
+        assertEquals(
+            expected = IntSizeCompat.Zero,
+            actual = zoomable.contentSizeState.value
+        )
 
         zoomable.containerSizeState.value = IntSizeCompat(1000, 2000)
         assertEquals(
             expected = IntSizeCompat(1000, 2000),
             actual = zoomable.containerSizeState.value
         )
-        assertEquals(expected = IntSizeCompat(1000, 2000), actual = zoomable.contentSizeState.value)
+        assertEquals(
+            expected = IntSizeCompat.Zero,
+            actual = zoomable.contentSizeState.value
+        )
 
         zoomable.contentSizeState.value = IntSizeCompat(500, 300)
         assertEquals(
             expected = IntSizeCompat(1000, 2000),
             actual = zoomable.containerSizeState.value
         )
-        assertEquals(expected = IntSizeCompat(500, 300), actual = zoomable.contentSizeState.value)
+        assertEquals(
+            expected = IntSizeCompat(500, 300),
+            actual = zoomable.contentSizeState.value
+        )
     }
 
     @Test
@@ -283,10 +292,7 @@ class ZoomableEngineTest {
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
             )
-            assertEquals(
-                expected = IntSizeCompat(516, 516),
-                actual = zoomable.contentSizeState.value
-            )
+            assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentSizeState.value)
             assertEquals(
                 expected = IntSizeCompat.Zero,
                 actual = zoomable.contentOriginSizeState.value
@@ -302,7 +308,7 @@ class ZoomableEngineTest {
                 actual = zoomable.scalesCalculatorState.value
             )
             assertEquals(
-                expected = listOf(1.0f, 3.0f, 9.0f),
+                expected = listOf(1.0f, 1.0f, 1.0f),
                 actual = listOf(
                     zoomable.minScaleState.value,
                     zoomable.mediumScaleState.value,
@@ -649,10 +655,7 @@ class ZoomableEngineTest {
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
             )
-            assertEquals(
-                expected = IntSizeCompat(516, 516),
-                actual = zoomable.contentSizeState.value
-            )
+            assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentSizeState.value)
             assertEquals(
                 expected = IntSizeCompat.Zero,
                 actual = zoomable.contentOriginSizeState.value
@@ -668,13 +671,7 @@ class ZoomableEngineTest {
                 actual = zoomable.scalesCalculatorState.value
             )
             assertEquals(
-                expected = TransformCompat(
-                    scale = ScaleFactorCompat(1.0f),
-                    scaleOrigin = TransformOriginCompat.TopStart,
-                    offset = OffsetCompat(0f, 0f),
-                    rotation = 0f,
-                    rotationOrigin = TransformOriginCompat.Center
-                ).toString(),
+                expected = TransformCompat.Origin.toString(),
                 actual = zoomable.baseTransformState.value.toString()
             )
             assertEquals(
@@ -1089,10 +1086,7 @@ class ZoomableEngineTest {
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
             )
-            assertEquals(
-                expected = IntSizeCompat(516, 516),
-                actual = zoomable.contentSizeState.value
-            )
+            assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentSizeState.value)
             assertEquals(
                 expected = IntSizeCompat.Zero,
                 actual = zoomable.contentOriginSizeState.value
@@ -1104,11 +1098,11 @@ class ZoomableEngineTest {
             assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
             assertEquals(expected = 0.0f, actual = zoomable.transformState.value.rotation)
             assertEquals(
-                expected = IntRectCompat(0, 0, 516, 516).toString(),
+                expected = IntRectCompat.Zero.toString(),
                 actual = zoomable.contentBaseDisplayRectState.value.toString()
             )
             assertEquals(
-                expected = IntRectCompat(0, 0, 516, 516).toString(),
+                expected = IntRectCompat.Zero.toString(),
                 actual = zoomable.contentBaseVisibleRectState.value.toString()
             )
         }
@@ -1386,10 +1380,7 @@ class ZoomableEngineTest {
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
             )
-            assertEquals(
-                expected = IntSizeCompat(516, 516),
-                actual = zoomable.contentSizeState.value
-            )
+            assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentSizeState.value)
             assertEquals(
                 expected = IntSizeCompat.Zero,
                 actual = zoomable.contentOriginSizeState.value
@@ -1409,11 +1400,11 @@ class ZoomableEngineTest {
                 actual = zoomable.userTransformState.value.offset.toString()
             )
             assertEquals(
-                expected = IntRectCompat(0, 0, 516, 516).toString(),
+                expected = IntRectCompat.Zero.toString(),
                 actual = zoomable.contentDisplayRectState.value.toString()
             )
             assertEquals(
-                expected = IntRectCompat(0, 0, 516, 516).toString(),
+                expected = IntRectCompat.Zero.toString(),
                 actual = zoomable.contentVisibleRectState.value.toString()
             )
         }
@@ -1838,10 +1829,7 @@ class ZoomableEngineTest {
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
             )
-            assertEquals(
-                expected = IntSizeCompat(516, 516),
-                actual = zoomable.contentSizeState.value
-            )
+            assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentSizeState.value)
             assertEquals(
                 expected = ContentScaleCompat.Fit,
                 actual = zoomable.contentScaleState.value
@@ -4691,10 +4679,7 @@ class ZoomableEngineTest {
                 expected = IntSizeCompat(516, 516),
                 actual = zoomable.containerSizeState.value
             )
-            assertEquals(
-                expected = IntSizeCompat(516, 516),
-                actual = zoomable.contentSizeState.value
-            )
+            assertEquals(expected = IntSizeCompat.Zero, actual = zoomable.contentSizeState.value)
             assertEquals(
                 expected = IntSizeCompat.Zero,
                 actual = zoomable.contentOriginSizeState.value
@@ -4713,7 +4698,7 @@ class ZoomableEngineTest {
             val contentDisplaySize = zoomable.contentDisplayRectState.value.size
             val add = (contentDisplaySize.toSize() / 4f).let { OffsetCompat(it.width, it.height) }
             assertEquals(
-                expected = "(0, 0), (129, 129), (258, 258), (387, 387), (516, 516)",
+                expected = "(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)",
                 actual = listOf(
                     zoomable.touchPointToContentPoint(contentDisplayCenter - add * 3f),
                     zoomable.touchPointToContentPoint(contentDisplayCenter - add),

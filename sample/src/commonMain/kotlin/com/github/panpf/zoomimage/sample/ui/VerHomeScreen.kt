@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -46,11 +47,25 @@ expect fun HomeHeader()
 enum class HomeTab(
     val title: String,
     val icon: DrawableResource,
+    val padding: Dp,
     val content: @Composable Screen.() -> Unit
 ) {
-    LOCAL("Local", Res.drawable.ic_phone, { LocalPhotoListPage() }),
-    PEXELS("Pexels", Res.drawable.ic_pexels, { PexelsPhotoListPage() }),
-    TEST("Test", Res.drawable.ic_debug, { TestPage() }),
+    PEXELS(
+        title = "Pexels",
+        icon = Res.drawable.ic_pexels,
+        padding = 1.5.dp,
+        content = { PexelsPhotoListPage() }),
+    LOCAL(
+        title = "Local",
+        icon = Res.drawable.ic_phone,
+        padding = 0.dp,
+        content = { LocalPhotoListPage() }),
+    TEST(
+        title = "Test",
+        icon = Res.drawable.ic_debug,
+        padding = 1.dp,
+        content = { TestPage() }
+    ),
 }
 
 object VerHomeScreen : BaseScreen() {
@@ -90,6 +105,7 @@ object VerHomeScreen : BaseScreen() {
                                 painter = painterResource(homeTab.icon),
                                 contentDescription = homeTab.title,
                                 modifier = Modifier.size(24.dp)
+                                    .padding(homeTab.padding)
                             )
                         },
                         label = { Text(homeTab.title) },
