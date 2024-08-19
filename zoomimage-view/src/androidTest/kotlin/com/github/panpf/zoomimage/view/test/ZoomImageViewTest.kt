@@ -1,19 +1,34 @@
 package com.github.panpf.zoomimage.view.test
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView.ScaleType
+import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
+import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
+import com.github.panpf.zoomimage.test.TestActivity
+import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
+import com.github.panpf.zoomimage.util.IntRectCompat
+import com.github.panpf.zoomimage.util.IntSizeCompat
+import com.github.panpf.zoomimage.util.OffsetCompat
+import com.github.panpf.zoomimage.util.times
+import com.github.panpf.zoomimage.view.util.format
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.zoom.AlignmentCompat
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
+import com.github.panpf.zoomimage.zoom.Edge
 import com.github.panpf.zoomimage.zoom.ReadMode
+import com.github.panpf.zoomimage.zoom.ScrollEdge
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
@@ -35,20 +50,59 @@ class ZoomImageViewTest {
 
     @Test
     fun testMatrix() = runTest {
-        withContext(Dispatchers.Main) {
-            val context = InstrumentationRegistry.getInstrumentation().context
-            val zoomImageView = ZoomImageView(context)
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            Thread.sleep(100)
+
+            val zoomable = zoomImageView.zoomable
+            assertEquals(
+                expected = "TransformCompat(scale=1.0x1.0, offset=0.0x0.0, rotation=0.0, scaleOrigin=0.0x0.0, rotationOrigin=0.0x0.0)",
+                actual = zoomable.transformState.value.toString()
+            )
             assertEquals(
                 expected = Matrix(Matrix.IDENTITY_MATRIX),
                 actual = zoomImageView.imageMatrix
+            )
+
+            zoomable.contentOriginSizeState.value = IntSizeCompat(690, 12176)
+            withContext(Dispatchers.Main) {
+                zoomImageView.setImageBitmap(Bitmap.createBitmap(86, 1522, Bitmap.Config.ARGB_8888))
+                zoomable.scale(
+                    targetScale = zoomable.maxScaleState.value,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = "TransformCompat(scale=24.07x24.07, offset=-776.42x-18059.09, rotation=0.0, scaleOrigin=0.0x0.0, rotationOrigin=0.08x1.47)",
+                actual = zoomable.transformState.value.toString()
+            )
+            assertEquals(
+                expected = "Matrix{[24.069765, 0.0, -776.4219][0.0, 24.069765, -18059.092][0.0, 0.0, 1.0]}",
+                actual = zoomImageView.imageMatrix.toString()
             )
 
             zoomImageView.imageMatrix = Matrix().apply {
                 setScale(2f, 2f)
             }
             assertEquals(
-                expected = Matrix(Matrix.IDENTITY_MATRIX),
-                actual = zoomImageView.imageMatrix
+                expected = "Matrix{[24.069765, 0.0, -776.4219][0.0, 24.069765, -18059.092][0.0, 0.0, 1.0]}",
+                actual = zoomImageView.imageMatrix.toString()
             )
         }
     }
@@ -123,6 +177,465 @@ class ZoomImageViewTest {
                     color = Color.BLUE
                 ),
                 actual = zoomImageView.scrollBar
+            )
+        }
+    }
+
+    @Test
+    fun testOnSizeChanged() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = "516 x 516",
+                actual = zoomImageView.zoomable.containerSizeState.value.toString()
+            )
+
+            withContext(Dispatchers.Main) {
+                zoomImageView.layoutParams = FrameLayout.LayoutParams(1000, 511)
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = "1000 x 511",
+                actual = zoomImageView.zoomable.containerSizeState.value.toString()
+            )
+        }
+    }
+
+    @Test
+    fun testOnDrawableChanged() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = "0 x 0",
+                actual = zoomImageView.zoomable.contentSizeState.value.toString()
+            )
+
+            withContext(Dispatchers.Main) {
+                zoomImageView.setImageDrawable(
+                    BitmapDrawable(
+                        zoomImageView.resources,
+                        Bitmap.createBitmap(300, 500, Bitmap.Config.ARGB_8888)
+                    )
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = "300 x 500",
+                actual = zoomImageView.zoomable.contentSizeState.value.toString()
+            )
+
+            withContext(Dispatchers.Main) {
+                zoomImageView.setImageURI("android.resource://com.github.panpf.zoomimage.view.test/raw/dog".toUri())
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = (IntSizeCompat(1100, 733)
+                    .times(zoomImageView.resources.displayMetrics.density)).toString(),
+                actual = zoomImageView.zoomable.contentSizeState.value.toString()
+            )
+        }
+    }
+
+    @Test
+    fun testCanScrollHorizontallyOrVertical() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = zoomImageView.zoomable
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = 1.0f,
+                actual = zoomable.userTransformState.value.scaleX.format(2)
+            )
+            assertEquals(
+                expected = false,
+                actual = zoomable.limitOffsetWithinBaseVisibleRectState.value
+            )
+            assertEquals(
+                expected = IntRectCompat(-1, 0, -1, 0).toString(),
+                actual = zoomable.userOffsetBoundsState.value.toString()
+            )
+            assertEquals(
+                expected = ScrollEdge(horizontal = Edge.BOTH, vertical = Edge.BOTH),
+                actual = zoomable.scrollEdgeState.value
+            )
+            assertEquals(
+                expected = listOf(false, false, false, false),
+                actual = listOf(
+                    zoomImageView.canScrollHorizontally(direction = 1),
+                    zoomImageView.canScrollHorizontally(direction = -1),
+                    zoomImageView.canScrollVertically(direction = 1),
+                    zoomImageView.canScrollVertically(direction = -1),
+                )
+            )
+        }
+
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = zoomImageView.zoomable
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(
+                    targetScale = zoomable.transformState.value.scaleX * 20f,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = 20f,
+                actual = zoomable.userTransformState.value.scaleX.format(2)
+            )
+            assertEquals(
+                expected = false,
+                actual = zoomable.limitOffsetWithinBaseVisibleRectState.value
+            )
+            assertEquals(
+                expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
+                actual = zoomable.userOffsetBoundsState.value.toString()
+            )
+            assertEquals(
+                expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.NONE),
+                actual = zoomable.scrollEdgeState.value,
+            )
+            assertEquals(
+                expected = listOf(true, true, true, true),
+                actual = listOf(
+                    zoomImageView.canScrollHorizontally(direction = 1),
+                    zoomImageView.canScrollHorizontally(direction = -1),
+                    zoomImageView.canScrollVertically(direction = 1),
+                    zoomImageView.canScrollVertically(direction = -1),
+                )
+            )
+        }
+
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = zoomImageView.zoomable
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(
+                    targetScale = zoomable.transformState.value.scaleX * 20f,
+                    animated = false
+                )
+                val targetOffsetX = zoomable.userOffsetBoundsState.value.right + 1f
+                val addOffset =
+                    OffsetCompat(targetOffsetX - zoomable.userTransformState.value.offsetX, 0f)
+                zoomable.offset(
+                    targetOffset = zoomable.transformState.value.offset + addOffset,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = 20f,
+                actual = zoomable.userTransformState.value.scaleX.format(2)
+            )
+            assertEquals(
+                expected = false,
+                actual = zoomable.limitOffsetWithinBaseVisibleRectState.value
+            )
+            assertEquals(
+                expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
+                actual = zoomable.userOffsetBoundsState.value.toString()
+            )
+            assertEquals(
+                expected = ScrollEdge(horizontal = Edge.START, vertical = Edge.NONE),
+                actual = zoomable.scrollEdgeState.value,
+            )
+            assertEquals(
+                expected = listOf(true, false, true, true),
+                actual = listOf(
+                    zoomImageView.canScrollHorizontally(direction = 1),
+                    zoomImageView.canScrollHorizontally(direction = -1),
+                    zoomImageView.canScrollVertically(direction = 1),
+                    zoomImageView.canScrollVertically(direction = -1),
+                )
+            )
+        }
+
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = zoomImageView.zoomable
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(
+                    targetScale = zoomable.transformState.value.scaleX * 20f,
+                    animated = false
+                )
+                val targetOffsetX = zoomable.userOffsetBoundsState.value.left - 1f
+                val addOffset =
+                    OffsetCompat(targetOffsetX - zoomable.userTransformState.value.offsetX, 0f)
+                zoomable.offset(
+                    targetOffset = zoomable.transformState.value.offset + addOffset,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = 20f,
+                actual = zoomable.userTransformState.value.scaleX.format(2)
+            )
+            assertEquals(
+                expected = false,
+                actual = zoomable.limitOffsetWithinBaseVisibleRectState.value
+            )
+            assertEquals(
+                expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
+                actual = zoomable.userOffsetBoundsState.value.toString()
+            )
+            assertEquals(
+                expected = ScrollEdge(horizontal = Edge.END, vertical = Edge.NONE),
+                actual = zoomable.scrollEdgeState.value,
+            )
+            assertEquals(
+                expected = listOf(false, true, true, true),
+                actual = listOf(
+                    zoomImageView.canScrollHorizontally(direction = 1),
+                    zoomImageView.canScrollHorizontally(direction = -1),
+                    zoomImageView.canScrollVertically(direction = 1),
+                    zoomImageView.canScrollVertically(direction = -1),
+                )
+            )
+        }
+
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = zoomImageView.zoomable
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(
+                    targetScale = zoomable.transformState.value.scaleX * 20f,
+                    animated = false
+                )
+                val targetOffsetY = zoomable.userOffsetBoundsState.value.bottom + 1f
+                val addOffset =
+                    OffsetCompat(0f, targetOffsetY - zoomable.userTransformState.value.offsetY)
+                zoomable.offset(
+                    targetOffset = zoomable.transformState.value.offset + addOffset,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = 20f,
+                actual = zoomable.userTransformState.value.scaleX.format(2)
+            )
+            assertEquals(
+                expected = false,
+                actual = zoomable.limitOffsetWithinBaseVisibleRectState.value
+            )
+            assertEquals(
+                expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
+                actual = zoomable.userOffsetBoundsState.value.toString()
+            )
+            assertEquals(
+                expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.START),
+                actual = zoomable.scrollEdgeState.value,
+            )
+            assertEquals(
+                expected = listOf(true, true, true, false),
+                actual = listOf(
+                    zoomImageView.canScrollHorizontally(direction = 1),
+                    zoomImageView.canScrollHorizontally(direction = -1),
+                    zoomImageView.canScrollVertically(direction = 1),
+                    zoomImageView.canScrollVertically(direction = -1),
+                )
+            )
+        }
+
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            val zoomable = zoomImageView.zoomable
+            zoomable.containerSizeState.value = IntSizeCompat(516, 516)
+            zoomable.contentSizeState.value = IntSizeCompat(86, 1522)
+            withContext(Dispatchers.Main) {
+                zoomable.scale(
+                    targetScale = zoomable.transformState.value.scaleX * 20f,
+                    animated = false
+                )
+                val targetOffsetY = zoomable.userOffsetBoundsState.value.top - 1f
+                val addOffset =
+                    OffsetCompat(0f, targetOffsetY - zoomable.userTransformState.value.offsetY)
+                zoomable.offset(
+                    targetOffset = zoomable.transformState.value.offset + addOffset,
+                    animated = false
+                )
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = IntSizeCompat(516, 516),
+                actual = zoomable.containerSizeState.value
+            )
+            assertEquals(
+                expected = IntSizeCompat(86, 1522),
+                actual = zoomable.contentSizeState.value
+            )
+            assertEquals(
+                expected = ContentScaleCompat.Fit,
+                actual = zoomable.contentScaleState.value
+            )
+            assertEquals(expected = AlignmentCompat.Center, actual = zoomable.alignmentState.value)
+            assertEquals(expected = 0f, actual = zoomable.transformState.value.rotation)
+            assertEquals(
+                expected = 20f,
+                actual = zoomable.userTransformState.value.scaleX.format(2)
+            )
+            assertEquals(
+                expected = false,
+                actual = zoomable.limitOffsetWithinBaseVisibleRectState.value
+            )
+            assertEquals(
+                expected = IntRectCompat(-4947, -9804, -4880, 0).toString(),
+                actual = zoomable.userOffsetBoundsState.value.toString()
+            )
+            assertEquals(
+                expected = ScrollEdge(horizontal = Edge.NONE, vertical = Edge.END),
+                actual = zoomable.scrollEdgeState.value,
+            )
+            assertEquals(
+                expected = listOf(true, true, false, true),
+                actual = listOf(
+                    zoomImageView.canScrollHorizontally(direction = 1),
+                    zoomImageView.canScrollHorizontally(direction = -1),
+                    zoomImageView.canScrollVertically(direction = 1),
+                    zoomImageView.canScrollVertically(direction = -1),
+                )
             )
         }
     }

@@ -28,9 +28,6 @@ import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 /**
@@ -53,8 +50,8 @@ open class GlideZoomImageView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : ZoomImageView(context, attrs, defStyle) {
+
     private val convertors = mutableListOf<GlideModelToImageSource>()
-    private var coroutineScope: CoroutineScope? = null
 
     init {
         val glide = Glide.get(context)
@@ -73,16 +70,9 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        coroutineScope = CoroutineScope(Dispatchers.Main)
         if (drawable != null) {
             resetImageSource()
         }
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        coroutineScope?.cancel("onDetachedFromWindow")
-        coroutineScope = null
     }
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {

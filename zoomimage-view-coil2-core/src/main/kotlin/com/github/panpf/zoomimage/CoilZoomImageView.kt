@@ -33,9 +33,6 @@ import com.github.panpf.zoomimage.coil.CoilTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.view.coil.internal.getImageLoader
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 /**
@@ -60,7 +57,6 @@ open class CoilZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val convertors = mutableListOf<CoilModelToImageSource>()
-    private var coroutineScope: CoroutineScope? = null
 
     fun registerModelToImageSource(convertor: CoilModelToImageSource) {
         convertors.add(0, convertor)
@@ -74,16 +70,9 @@ open class CoilZoomImageView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        coroutineScope = CoroutineScope(Dispatchers.Main)
         if (drawable != null) {
             resetImageSource()
         }
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        coroutineScope?.cancel("onDetachedFromWindow")
-        coroutineScope = null
     }
 
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {

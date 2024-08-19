@@ -50,6 +50,7 @@ import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 
@@ -76,7 +77,7 @@ open class ZoomImageView @JvmOverloads constructor(
     protected val _zoomableEngine: ZoomableEngine?  // Used when the overridden method is called by the parent class constructor
     protected val _subsamplingEngine: SubsamplingEngine?  // Used when the overridden method is called by the parent class constructor
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    protected var coroutineScope: CoroutineScope? = null
     private val touchHelper: TouchHelper
     private val tileDrawHelper: TileDrawHelper
     private val cacheImageMatrix = Matrix()
@@ -128,42 +129,48 @@ open class ZoomImageView @JvmOverloads constructor(
         }
 
     init {
-        /* ScaleType */
         val initScaleType = super.getScaleType()
         super.setScaleType(ScaleType.MATRIX)
         wrappedScaleType = initScaleType
 
-        /* ZoomableEngine */
         val zoomableEngine = ZoomableEngine(logger, this).apply {
-            this@ZoomImageView._zoomableEngine = this
             contentScaleState.value = initScaleType.toContentScale()
             alignmentState.value = initScaleType.toAlignment()
-            resetContentSize()
         }
-        touchHelper = TouchHelper(this, zoomableEngine)
+        val subsamplingEngine = SubsamplingEngine(zoomableEngine)
 
-        /* SubsamplingEngine */
-        val subsamplingEngine = SubsamplingEngine(zoomableEngine).apply {
-            this@ZoomImageView._subsamplingEngine = this
-            post {
-                val view = this@ZoomImageView
-                if (view.isAttachedToWindow) {
-                    val lifecycle =
-                        view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
-                    if (lifecycle != null) {
-                        this.lifecycle = lifecycle
-                    }
+        this._subsamplingEngine = subsamplingEngine
+        this._zoomableEngine = zoomableEngine
+        this.tileDrawHelper = TileDrawHelper(logger, this, zoomableEngine, subsamplingEngine)
+        this.touchHelper = TouchHelper(this, zoomableEngine)
+
+        resetScrollBarHelper()
+        parseAttrs(attrs)
+        resetContentSize()
+        setupLifecycle()
+    }
+
+
+    /**************************************** Internal ********************************************/
+
+    private fun setupLifecycle() {
+        post {
+            val view = this@ZoomImageView
+            if (view.isAttachedToWindow) {
+                val lifecycle =
+                    view.findViewTreeLifecycleOwner()?.lifecycle ?: view.context.findLifecycle()
+                if (lifecycle != null) {
+                    _subsamplingEngine?.lifecycle = lifecycle
                 }
             }
         }
-        tileDrawHelper =
-            TileDrawHelper(logger, this@ZoomImageView, zoomableEngine, subsamplingEngine)
+    }
 
-        /* ScrollBar */
-        resetScrollBarHelper()
-
-        parseAttrs(attrs)
-
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        val coroutineScope = CoroutineScope(Dispatchers.Main).apply {
+            this@ZoomImageView.coroutineScope = this
+        }
         // Must be immediate, otherwise the user will see the image move quickly from the top to the center
         coroutineScope.launch(Dispatchers.Main.immediate) {
             zoomable.transformState.collect { transform ->
@@ -176,8 +183,11 @@ open class ZoomImageView @JvmOverloads constructor(
         }
     }
 
-
-    /**************************************** Internal ********************************************/
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        coroutineScope?.cancel("onDetachedFromWindow")
+        coroutineScope = null
+    }
 
     protected open fun newLogger(): Logger = Logger(tag = "ZoomImageView")
 
