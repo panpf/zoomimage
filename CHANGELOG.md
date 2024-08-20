@@ -8,6 +8,8 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: Decisions about whether to disable Tile's memory cache are no longer based on the memory
   cache setting of the thumbnail's image request
 * new: ZoomState and ZoomImageView add `setImageSource()` method for setting ImageSource
+* improve: Improve SketchZoomImageview, CoilZoomImageView, GlideZoomImageView, PicassoZoomImageView.
+  Now when setting ImageSource, the ImageSource will be cleared whenever it fails.
 
 ## 1.1.0-alpha06
 

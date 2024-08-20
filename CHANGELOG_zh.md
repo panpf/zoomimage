@@ -7,6 +7,8 @@
 * change: ZoomableState 和 ZoomableEngine 的 `contentSize` 属性现在为空时不再返回 `containerSize`
 * change: 现在不再根据缩略图的图像请求的内存缓存设置来决定是否禁用 Tile 的内存缓存
 * new: ZoomState 和 ZoomImageView 增加 `setImageSource()` 方法，用于设置 ImageSource
+* improve: 改进 SketchZoomImageview、CoilZoomImageView、GlideZoomImageView、PicassoZoomImageView，现在设置
+  ImageSource 时只要失败就会清空 ImageSource
 
 ## 1.1.0-alpha06
 

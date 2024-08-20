@@ -30,10 +30,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmapCache
  *
  * @see com.github.panpf.zoomimage.core.sketch3.test.SketchTileBitmapCacheTest
  */
-class SketchTileBitmapCache constructor(
-    private val sketch: Sketch,
-    private val caller: String
-) : TileBitmapCache {
+class SketchTileBitmapCache(private val sketch: Sketch) : TileBitmapCache {
 
     override fun get(key: String): TileBitmap? {
         val cache = sketch.memoryCache[key] ?: return null
@@ -41,7 +38,7 @@ class SketchTileBitmapCache constructor(
             cacheValue = cache,
             key = key,
             bitmapFrom = BitmapFrom.MEMORY_CACHE,
-            caller = caller,
+            caller = "SketchTileBitmapCache",
         )
     }
 
@@ -75,6 +72,6 @@ class SketchTileBitmapCache constructor(
         if (!sketch.memoryCache.put(key, newCacheValue)) {
             return null
         }
-        return SketchTileBitmap(newCacheValue, key, tileBitmap.bitmapFrom, caller)
+        return SketchTileBitmap(newCacheValue, key, tileBitmap.bitmapFrom, "SketchTileBitmapCache")
     }
 }

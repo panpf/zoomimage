@@ -20,6 +20,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import com.bumptech.glide.Glide
+import com.bumptech.glide.getRequestFromView
 import com.bumptech.glide.internalModel
 import com.bumptech.glide.request.SingleRequest
 import com.github.panpf.zoomimage.glide.GlideModelToImageSource
@@ -51,6 +52,7 @@ open class GlideZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val convertors = mutableListOf<GlideModelToImageSource>()
+    private var resetImageSourceOnAttachedToWindow: Boolean = false
 
     fun registerModelToImageSource(convertor: GlideModelToImageSource) {
         convertors.add(0, convertor)
@@ -62,52 +64,57 @@ open class GlideZoomImageView @JvmOverloads constructor(
 
     override fun newLogger(): Logger = Logger(tag = "GlideZoomImageView")
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        if (drawable != null) {
-            resetImageSource()
-        }
-    }
-
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         if (isAttachedToWindow) {
+            resetImageSource()
+        } else {
+            resetImageSourceOnAttachedToWindow = true
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (resetImageSourceOnAttachedToWindow) {
+            resetImageSourceOnAttachedToWindow = false
             resetImageSource()
         }
     }
 
     private fun resetImageSource() {
+        // You must use post to delay execution because 'request.isComplete' may not be ready when onDrawableChanged is executed.
         post {
             if (!isAttachedToWindow) {
+                resetImageSourceOnAttachedToWindow = true
                 return@post
             }
-            val coroutineScope = coroutineScope ?: return@post
-            val request = getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag)
-            if (request == null) {
-                logger.d { "GlideZoomImageView. Can't use Subsampling, request is null" }
-                return@post
-            }
-            if (request !is SingleRequest<*>) {
-                logger.d { "GlideZoomImageView. Can't use Subsampling, request is not SingleRequest" }
-                return@post
-            }
-            if (!request.isComplete) {
-                logger.d { "GlideZoomImageView. Can't use Subsampling, request is not complete" }
-                return@post
-            }
+            val coroutineScope = coroutineScope!!
+            val request = getRequestFromView(this@GlideZoomImageView)
             _subsamplingEngine?.apply {
+                // In order to be consistent with other ZoomImageViews, TileBitmapCache is also configured here,
+                // although it can be set in the constructor
                 if (tileBitmapCacheState.value == null) {
                     tileBitmapCacheState.value = GlideTileBitmapCache(Glide.get(context))
                 }
                 coroutineScope.launch {
-                    setImageSource(newImageSource(request.internalModel))
+                    setImageSource(newImageSource(request))
                 }
             }
         }
     }
 
-    private suspend fun newImageSource(model: Any?): ImageSource.Factory? {
+    private suspend fun newImageSource(request: SingleRequest<*>?): ImageSource.Factory? {
+        if (request == null) {
+            logger.d { "GlideZoomImageView. Can't use Subsampling, request is null" }
+            return null
+        }
+        if (!request.isComplete) {
+            logger.d { "GlideZoomImageView. Can't use Subsampling, request is not complete" }
+            return null
+        }
+        val model: Any? = request.internalModel
         if (model == null) {
+            logger.d { "GlideZoomImageView. Can't use Subsampling, model is null" }
             return null
         }
         val imageSource = convertors.plus(GlideModelToImageSourceImpl())

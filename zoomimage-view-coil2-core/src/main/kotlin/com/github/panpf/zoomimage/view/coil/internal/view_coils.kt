@@ -25,6 +25,7 @@ import coil.util.CoilUtils
  *
  * @see com.github.panpf.zoomimage.view.coil2.core.test.internal.ViewCoilsTest.testGetImageLoader
  */
+@Suppress("UnusedReceiverParameter")
 internal fun CoilUtils.getImageLoader(view: View): ImageLoader? {
     val requestManager = view.getTag(coil.base.R.id.coil_request_manager)
     if (requestManager != null) {

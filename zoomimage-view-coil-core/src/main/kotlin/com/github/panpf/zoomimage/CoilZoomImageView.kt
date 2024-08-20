@@ -17,14 +17,11 @@
 package com.github.panpf.zoomimage
 
 import android.content.Context
-import android.graphics.drawable.Animatable
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
 import coil3.ImageLoader
+import coil3.request.ImageResult
 import coil3.request.SuccessResult
-import coil3.transition.CrossfadeDrawable
 import coil3.util.CoilUtils
 import com.github.panpf.zoomimage.coil.CoilModelToImageSource
 import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
@@ -56,6 +53,7 @@ open class CoilZoomImageView @JvmOverloads constructor(
 ) : ZoomImageView(context, attrs, defStyle) {
 
     private val convertors = mutableListOf<CoilModelToImageSource>()
+    private var resetImageSourceOnAttachedToWindow: Boolean = false
 
     fun registerModelToImageSource(convertor: CoilModelToImageSource) {
         convertors.add(0, convertor)
@@ -67,42 +65,35 @@ open class CoilZoomImageView @JvmOverloads constructor(
 
     override fun newLogger(): Logger = Logger(tag = "CoilZoomImageView")
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        if (drawable != null) {
-            resetImageSource()
-        }
-    }
-
     override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
         super.onDrawableChanged(oldDrawable, newDrawable)
         if (isAttachedToWindow) {
+            resetImageSource()
+        } else {
+            resetImageSourceOnAttachedToWindow = true
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (resetImageSourceOnAttachedToWindow) {
+            resetImageSourceOnAttachedToWindow = false
             resetImageSource()
         }
     }
 
     private fun resetImageSource() {
+        // You must use post to delay execution because 'CoilUtils.result' may not be ready when onDrawableChanged is executed.
         post {
             if (!isAttachedToWindow) {
+                resetImageSourceOnAttachedToWindow = true
                 return@post
             }
-            val coroutineScope = coroutineScope ?: return@post
-            val result = CoilUtils.result(this)
-            if (result == null) {
-                logger.d { "CoilZoomImageView. Can't use Subsampling, result is null" }
-                return@post
-            }
-            if (result !is SuccessResult) {
-                logger.d { "CoilZoomImageView. Can't use Subsampling, result is not Success" }
-                return@post
-            }
+            val coroutineScope = coroutineScope!!
             val imageLoader = CoilUtils.getImageLoader(this@CoilZoomImageView)
-            if (imageLoader == null) {
-                logger.d { "CoilZoomImageView. Can't use Subsampling, ImageLoader is null" }
-                return@post
-            }
+            val result = CoilUtils.result(this)
             _subsamplingEngine?.apply {
-                if (tileBitmapCacheState.value == null) {
+                if (tileBitmapCacheState.value == null && imageLoader != null) {
                     tileBitmapCacheState.value = CoilTileBitmapCache(imageLoader)
                 }
                 coroutineScope.launch {
@@ -113,21 +104,20 @@ open class CoilZoomImageView @JvmOverloads constructor(
     }
 
     private suspend fun newImageSource(
-        imageLoader: ImageLoader,
-        result: SuccessResult
+        imageLoader: ImageLoader?,
+        result: ImageResult?
     ): ImageSource.Factory? {
         val drawable = drawable
         if (drawable == null) {
             logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is null" }
             return null
         }
-        val lastChildDrawable = drawable.getLastChildDrawable()
-        if (lastChildDrawable !is BitmapDrawable) {
-            logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is not BitmapDrawable" }
+        if (imageLoader == null) {
+            logger.d { "CoilZoomImageView. Can't use Subsampling, imageLoader is null" }
             return null
         }
-        if (lastChildDrawable is Animatable) {
-            logger.d { "CoilZoomImageView. Can't use Subsampling, drawable is Animatable" }
+        if (result !is SuccessResult) {
+            logger.d { "CoilZoomImageView. Can't use Subsampling, result is not Success" }
             return null
         }
         val model = result.request.data
@@ -139,20 +129,5 @@ open class CoilZoomImageView @JvmOverloads constructor(
             logger.w { "GlideZoomImageView. Can't use Subsampling, unsupported model: '$model'" }
         }
         return imageSource
-    }
-
-    private fun Drawable.getLastChildDrawable(): Drawable? {
-        return when (val drawable = this) {
-            is CrossfadeDrawable -> {
-                drawable.end?.getLastChildDrawable()
-            }
-
-            is LayerDrawable -> {
-                val layerCount = drawable.numberOfLayers.takeIf { it > 0 } ?: return null
-                drawable.getDrawable(layerCount - 1).getLastChildDrawable()
-            }
-
-            else -> drawable
-        }
     }
 }

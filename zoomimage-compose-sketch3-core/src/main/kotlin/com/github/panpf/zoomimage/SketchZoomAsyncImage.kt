@@ -364,8 +364,7 @@ fun SketchZoomAsyncImage(
     zoomState.zoomable.alignment = alignment
 
     LaunchedEffect(zoomState.subsampling) {
-        zoomState.subsampling.tileBitmapCache =
-            SketchTileBitmapCache(sketch, "SketchZoomAsyncImage")
+        zoomState.subsampling.tileBitmapCache = SketchTileBitmapCache(sketch)
     }
 
     // moseZoom directly acts on ZoomAsyncImage, causing the zoom center to be abnormal.

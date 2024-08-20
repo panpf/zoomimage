@@ -18,6 +18,7 @@
 
 package com.bumptech.glide
 
+import android.widget.ImageView
 import com.bumptech.glide.request.BaseRequestOptions
 import com.bumptech.glide.request.SingleRequest
 
@@ -65,3 +66,8 @@ val RequestBuilder<*>.internalModel: Any?
  */
 val Glide.internalGlideContext: GlideContext
     get() = glideContext
+
+fun getRequestFromView(view: ImageView): SingleRequest<*>? {
+    @Suppress("RemoveRedundantQualifierName")
+    return view.getTag(com.bumptech.glide.R.id.glide_custom_view_target_tag) as? SingleRequest<*>
+}
