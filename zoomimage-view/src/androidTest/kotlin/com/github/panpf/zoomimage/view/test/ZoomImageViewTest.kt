@@ -10,10 +10,14 @@ import android.widget.FrameLayout
 import android.widget.ImageView.ScaleType
 import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
+import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.tools4a.test.ktx.getActivitySync
 import com.github.panpf.zoomimage.ZoomImageView
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
+import com.github.panpf.zoomimage.subsampling.fromAsset
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
+import com.github.panpf.zoomimage.subsampling.toFactory
 import com.github.panpf.zoomimage.test.TestActivity
 import com.github.panpf.zoomimage.test.suspendLaunchActivityWithUse
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -34,8 +38,10 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class ZoomImageViewTest {
 
@@ -181,7 +187,85 @@ class ZoomImageViewTest {
         }
     }
 
-    // TODO setImageSource
+    @Test
+    fun testSetImageSource() = runTest {
+        TestActivity::class.suspendLaunchActivityWithUse { scenario ->
+            val activity = scenario.getActivitySync()
+            val zoomImageView = withContext(Dispatchers.Main) {
+                ZoomImageView(activity).apply {
+                    activity.findViewById<ViewGroup>(android.R.id.content)
+                        .addView(this@apply, ViewGroup.LayoutParams(516, 516))
+                }
+            }
+            Thread.sleep(100)
+
+            assertEquals(
+                expected = "516 x 516",
+                actual = zoomImageView.zoomable.containerSizeState.value.toString()
+            )
+            assertEquals(
+                expected = IntSizeCompat.Zero.toString(),
+                actual = zoomImageView.zoomable.contentSizeState.value.toString()
+            )
+            assertFalse(actual = zoomImageView.subsampling.readyState.value)
+
+            val bitmapSize = IntSizeCompat(7557, 5669).div(16)
+            withContext(Dispatchers.Main) {
+                val bitmap = Bitmap
+                    .createBitmap(bitmapSize.width, bitmapSize.height, Bitmap.Config.ARGB_8888)
+                zoomImageView.setImageDrawable(BitmapDrawable(zoomImageView.resources, bitmap))
+            }
+            Thread.sleep(100)
+
+            withContext(Dispatchers.Main) {
+                val imageSource = ImageSource
+                    .fromAsset(zoomImageView.context, ResourceImages.hugeCard.resourceName)
+                zoomImageView.setImageSource(imageSource)
+            }
+            Thread.sleep(500)
+
+            assertEquals(
+                expected = "516 x 516",
+                actual = zoomImageView.zoomable.containerSizeState.value.toString()
+            )
+            assertEquals(
+                expected = bitmapSize.toString(),
+                actual = zoomImageView.zoomable.contentSizeState.value.toString()
+            )
+            assertTrue(actual = zoomImageView.subsampling.readyState.value)
+
+            withContext(Dispatchers.Main) {
+                zoomImageView.setImageSource(null as ImageSource?)
+            }
+            Thread.sleep(500)
+            assertEquals(
+                expected = "516 x 516",
+                actual = zoomImageView.zoomable.containerSizeState.value.toString()
+            )
+            assertEquals(
+                expected = bitmapSize.toString(),
+                actual = zoomImageView.zoomable.contentSizeState.value.toString()
+            )
+            assertFalse(actual = zoomImageView.subsampling.readyState.value)
+
+            withContext(Dispatchers.Main) {
+                val imageSource = ImageSource
+                    .fromAsset(zoomImageView.context, ResourceImages.hugeCard.resourceName)
+                zoomImageView.setImageSource(imageSource.toFactory())
+            }
+            Thread.sleep(500)
+
+            assertEquals(
+                expected = "516 x 516",
+                actual = zoomImageView.zoomable.containerSizeState.value.toString()
+            )
+            assertEquals(
+                expected = bitmapSize.toString(),
+                actual = zoomImageView.zoomable.contentSizeState.value.toString()
+            )
+            assertTrue(actual = zoomImageView.subsampling.readyState.value)
+        }
+    }
 
     @Test
     fun testOnSizeChanged() = runTest {
