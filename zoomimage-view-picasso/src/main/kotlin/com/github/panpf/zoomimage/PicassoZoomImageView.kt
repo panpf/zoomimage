@@ -17,7 +17,6 @@
 package com.github.panpf.zoomimage
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import com.github.panpf.zoomimage.picasso.PicassoDataToImageSource
@@ -183,11 +182,6 @@ open class PicassoZoomImageView @JvmOverloads constructor(
             logger.w { "PicassoZoomImageView. Can't use Subsampling, unsupported data: '$data'" }
         }
         return imageSource
-    }
-
-    override fun onDrawableChanged(oldDrawable: Drawable?, newDrawable: Drawable?) {
-        super.onDrawableChanged(oldDrawable, newDrawable)
-        _subsamplingEngine?.disabledTileBitmapCacheState?.value = false
     }
 
     fun registerDataToImageSource(convertor: PicassoDataToImageSource) {
