@@ -1673,11 +1673,6 @@ class ZoomableStateTest {
     }
 
     @Test
-    fun testContinuousTransformType() {
-        // TODO test
-    }
-
-    @Test
     fun testScale() {
         runComposeUiTest {
             var zoomableHolder: ZoomableState? = null
@@ -3715,21 +3710,6 @@ class ZoomableStateTest {
     }
 
     @Test
-    fun testRollbackScale() {
-        // TODO test
-    }
-
-    @Test
-    fun testGestureTransform() {
-        // TODO test
-    }
-
-    @Test
-    fun testFling() {
-        // TODO test
-    }
-
-    @Test
     fun testCheckSupportGestureType() {
         val zoomableState = ZoomableState(Logger("Test"))
         assertEquals(
@@ -3834,4 +3814,6 @@ class ZoomableStateTest {
             )
         }
     }
+
+    // TODO test rollbackScale, gestureTransform, fling, continuousTransformType
 }

@@ -380,11 +380,6 @@ class SubsamplingEngineTest {
     }
 
     @Test
-    fun testBackgroundTiles() = runTest {
-        // TODO test
-    }
-
-    @Test
     fun testSampleSize() = runTest {
         // setImageSource, containerSizeState.value, contentSizeState.value, scale 10
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
@@ -655,4 +650,6 @@ class SubsamplingEngineTest {
         )
         assertEquals(expected = "null", actual = subsampling.imageInfoState.value.toString())
     }
+
+    // TODO test backgroundTiles
 }

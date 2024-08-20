@@ -473,11 +473,6 @@ class SubsamplingStateTest {
     }
 
     @Test
-    fun testBackgroundTiles() {
-        // TODO test
-    }
-
-    @Test
     fun testSampleSize() {
         if (Platform.current == Platform.iOS) {
             // Files in kotlin resources cannot be accessed in ios test environment.
@@ -736,4 +731,6 @@ class SubsamplingStateTest {
         assertEquals(expected = "IntRect.fromLTRB(0, 0, 0, 0)", actual = subsampling.imageLoadRect.toString())
         assertEquals(expected = "null", actual = subsampling.imageInfo.toString())
     }
+
+    // TODO test backgroundTiles
 }

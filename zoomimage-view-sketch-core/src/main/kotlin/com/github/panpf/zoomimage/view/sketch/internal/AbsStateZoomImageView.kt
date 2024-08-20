@@ -30,9 +30,9 @@ import com.github.panpf.sketch.request.internal.ProgressListeners
 
 
 /**
- * Convert Sketch's Request Listener to StateFlow's ZoomImageView
+ * Convert Sketch's Request Listener to StateFlow's ZoomImageView.
  *
- * @see com.github.panpf.zoomimage.view.sketch.core.test.internal.AbsStateZoomImageViewTest
+ * Copy from Sketch
  */
 open class AbsStateZoomImageView @JvmOverloads constructor(
     context: Context,

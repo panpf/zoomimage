@@ -41,7 +41,7 @@ import com.github.panpf.zoomimage.ZoomImageView
 /**
  * ImageView base class that supports [ViewAbility]
  *
- * @see com.github.panpf.zoomimage.view.sketch.core.test.internal.AbsAbilityZoomImageViewTest
+ * Copy from Sketch
  */
 abstract class AbsAbilityZoomImageView @JvmOverloads constructor(
     context: Context,

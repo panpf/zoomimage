@@ -2545,11 +2545,6 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testContinuousTransformType() = runTest {
-        // TODO test
-    }
-
-    @Test
     fun testScale() = runTest {
         TestActivity::class.suspendLaunchActivityWithUse { scenario ->
             val activity = scenario.getActivitySync()
@@ -5093,21 +5088,6 @@ class ZoomableEngineTest {
     }
 
     @Test
-    fun testRollbackScale() = runTest {
-        // TODO test
-    }
-
-    @Test
-    fun testGestureTransform() = runTest {
-        // TODO test
-    }
-
-    @Test
-    fun testFling() = runTest {
-        // TODO test
-    }
-
-    @Test
     fun testCheckSupportGestureType() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().context
         val imageView = ImageView(context)
@@ -5218,4 +5198,6 @@ class ZoomableEngineTest {
             )
         }
     }
+
+    // TODO test rollbackScale, gestureTransform, fling, continuousTransformType
 }
