@@ -37,7 +37,7 @@ class SketchTileBitmapCacheTest {
     fun test() {
         val context = InstrumentationRegistry.getInstrumentation().context
         val sketch = Sketch.Builder(context).build()
-        val tileBitmapCache = SketchTileBitmapCache(sketch, "caller")
+        val tileBitmapCache = SketchTileBitmapCache(sketch)
 
         val key1 = "key1"
         val bitmap1 = Bitmap.createBitmap(100, 100, ARGB_8888)

@@ -11,4 +11,5 @@ dependencies {
     api(libs.panpf.sketch3.viewability)
 
     androidTestImplementation(projects.internal.testView)
+    androidTestImplementation(libs.panpf.sketch3)
 }

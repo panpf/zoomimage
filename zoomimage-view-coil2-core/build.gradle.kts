@@ -14,4 +14,5 @@ dependencies {
     api(projects.zoomimageCoreCoil2)
 
     androidTestImplementation(projects.internal.testView)
+    androidTestImplementation(projects.internal.testCoil2)
 }
