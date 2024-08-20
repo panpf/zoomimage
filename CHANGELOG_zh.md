@@ -9,6 +9,7 @@
 * new: ZoomState 和 ZoomImageView 增加 `setImageSource()` 方法，用于设置 ImageSource
 * improve: 改进 SketchZoomImageview、CoilZoomImageView、GlideZoomImageView、PicassoZoomImageView，现在设置
   ImageSource 时只要失败就会清空 ImageSource
+* change: 滚动条的最小长度现在是 10.dp
 
 ## 1.1.0-alpha06
 
