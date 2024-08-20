@@ -57,7 +57,7 @@ import kotlin.math.roundToInt
  * LaunchedEffect(zoomState.subsampling) {
  *     val resUri = Res.getUri("files/huge_world.jpeg")
  *     val imageSource = ImageSource.fromComposeResource(resUri)
- *     zoomState.subsampling.setImageSource(imageSource)
+ *     zoomState.setImageSource(imageSource)
  * }
  * ZoomImage(
  *     painter = painterResource(Res.drawable.huge_world_thumbnail),

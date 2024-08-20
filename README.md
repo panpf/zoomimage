@@ -131,7 +131,7 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
     val imageSource = ImageSource.fromComposeResource(resUri)
-    zoomState.subsampling.setImageSource(imageSource)
+    zoomState.setImageSource(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
@@ -180,7 +180,7 @@ Android view:
 // Use basis ZoomImageView component
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
-zoomImageView.subsampling.setImageSource(ImageSource.fromResource(R.raw.huge_world))
+zoomImageView.setImageSource(ImageSource.fromResource(R.raw.huge_world))
 
 // Use SketchZoomAsyncImage component
 val sketchZoomImageView = SketchZoomImageView(context)

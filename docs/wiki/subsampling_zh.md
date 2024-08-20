@@ -45,7 +45,7 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
     val imageSource = ImageSource.fromComposeResource(resUri)
-    zoomState.subsampling.setImageSource(imageSource)
+    zoomState.setImageSource(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
@@ -61,7 +61,7 @@ view:
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
 val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
-zoomImageView.subsampling.setImageSource(imageSource)
+zoomImageView.setImageSource(imageSource)
 ```
 
 ### ImageSource

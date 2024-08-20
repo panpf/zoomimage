@@ -26,6 +26,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.findViewTreeLifecycleOwner
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -63,7 +64,7 @@ import kotlinx.coroutines.launch
  * val zoomImageView = ZoomImageView(context)
  * zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
  * val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
- * zoomImageView.subsampling.setImageSource(imageSource)
+ * zoomImageView.setImageSource(imageSource)
  * ```
  *
  * @see com.github.panpf.zoomimage.view.test.ZoomImageViewTest
@@ -151,7 +152,24 @@ open class ZoomImageView @JvmOverloads constructor(
     }
 
 
-    /**************************************** Internal ********************************************/
+    /* ********************************* Interact with consumers ******************************** */
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
+        return subsampling.setImageSource(imageSource)
+    }
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    fun setImageSource(imageSource: ImageSource?): Boolean {
+        return subsampling.setImageSource(imageSource)
+    }
+
+
+    /* ************************************** Internal ****************************************** */
 
     private fun setupLifecycle() {
         post {

@@ -132,7 +132,7 @@ class ImageSourceTestScreen : BaseScreen() {
                     imageUri = sketchImageUri,
                     http2ByteArray = true
                 )
-                zoomState.subsampling.setImageSource(imageSource)
+                zoomState.setImageSource(imageSource)
             }
 
             val imagePainter1 = imagePainter

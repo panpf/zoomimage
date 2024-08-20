@@ -48,7 +48,7 @@ Android view：
 > * Components with integrated image loaders can support image and subsampling from any source
     without any additional work
 > * Components that do not integrate an image loader can only display local images and require an
-    additional call to the `subsampling.setImageSource(ImageSource)` method to support subsampling
+    additional call to the `setImageSource(ImageSource)` method to support subsampling
     functionality
 
 ## Examples
@@ -61,7 +61,7 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
     val imageSource = ImageSource.fromComposeResource(resUri)
-    zoomState.subsampling.setImageSource(imageSource)
+  zoomState.setImageSource(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
@@ -103,7 +103,7 @@ Android view：
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
 val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
-zoomImageView.subsampling.setImageSource(imageSource)
+zoomImageView.setImageSource(imageSource)
 
 // Using the SketchZoomImageView component
 val sketchZoomImageView = SketchZoomImageView(context)

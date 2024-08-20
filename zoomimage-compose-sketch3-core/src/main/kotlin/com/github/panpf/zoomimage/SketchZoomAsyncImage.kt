@@ -412,23 +412,21 @@ private fun onPainterState(
     loadState: PainterState,
 ) {
     zoomState.zoomable.logger.d { "SketchZoomAsyncImage. onPainterState. state=${loadState.name}. uri='${request.uriString}'" }
-    val zoomableState = zoomState.zoomable
-    val subsamplingState = zoomState.subsampling
     val painterSize = loadState.painter
         ?.intrinsicSize
         ?.takeIf { it.isSpecified }
         ?.roundToIntSize()
         ?.takeIf { it.isNotEmpty() }
-    zoomableState.contentSize = painterSize ?: IntSize.Zero
+    zoomState.zoomable.contentSize = painterSize ?: IntSize.Zero
 
     when (loadState) {
         is PainterState.Success -> {
             val imageSource = SketchImageSource.Factory(sketch, request.uriString)
-            subsamplingState.setImageSource(imageSource)
+            zoomState.setImageSource(imageSource)
         }
 
         else -> {
-            subsamplingState.setImageSource(null as ImageSource?)
+            zoomState.setImageSource(null as ImageSource?)
         }
     }
 }

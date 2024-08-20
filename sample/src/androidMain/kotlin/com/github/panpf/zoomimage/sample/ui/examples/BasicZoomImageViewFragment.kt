@@ -65,10 +65,10 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
                     imageUri = sketchImageUri,
                     http2ByteArray = false
                 )
-                zoomView.subsampling.setImageSource(imageSource)
+                zoomView.setImageSource(imageSource)
                 stateView.gone()
             } else if (result is ImageResult.Error) {
-                zoomView.subsampling.setImageSource(null as ImageSource?)
+                zoomView.setImageSource(null as ImageSource?)
                 stateView.error {
                     message(result.throwable)
                     retryAction {

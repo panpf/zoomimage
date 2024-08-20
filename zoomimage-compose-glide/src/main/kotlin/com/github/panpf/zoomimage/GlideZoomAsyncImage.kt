@@ -240,7 +240,7 @@ private class ResetListener(
         zoomState.zoomable.contentSize = drawableSize ?: IntSize.Zero
 
         coroutineScope.launch {
-            zoomState.subsampling.setImageSource(newImageSource(resource, model))
+            zoomState.setImageSource(newImageSource(resource, model))
         }
     }
 

@@ -39,7 +39,7 @@ Android view：
 > * 不同的组件需要导入不同的依赖，请参考 [README](../../README_zh.md#下载) 导入对应的依赖
 > * 集成了图片加载器的组件无需任何额外的工作即可支持任意来源的图片和子采样功能
 > * 未集成图片加载器的组件只能显示本地图片，以及需要额外调用
-    `subsampling.setImageSource(ImageSource)` 方法以支持子采样功能
+    `setImageSource(ImageSource)` 方法以支持子采样功能
 
 ## 示例
 
@@ -51,7 +51,7 @@ val zoomState: ZoomState by rememberZoomState()
 LaunchedEffect(zoomState.subsampling) {
     val resUri = Res.getUri("files/huge_world.jpeg")
     val imageSource = ImageSource.fromComposeResource(resUri)
-    zoomState.subsampling.setImageSource(imageSource)
+  zoomState.setImageSource(imageSource)
 }
 ZoomImage(
     painter = painterResource(Res.drawable.huge_world_thumbnail),
@@ -93,7 +93,7 @@ Android view：
 val zoomImageView = ZoomImageView(context)
 zoomImageView.setImageResource(R.drawable.huge_world_thumbnail)
 val imageSource = ImageSource.fromResource(context, R.raw.huge_world)
-zoomImageView.subsampling.setImageSource(imageSource)
+zoomImageView.setImageSource(imageSource)
 
 // 使用 SketchZoomImageView 组件
 val sketchZoomImageView = SketchZoomImageView(context)

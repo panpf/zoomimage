@@ -7,6 +7,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * change: The `contentSize` properties of ZoomableState and ZoomableEngine now no longer return `containerSize` when empty
 * change: Decisions about whether to disable Tile's memory cache are no longer based on the memory
   cache setting of the thumbnail's image request
+* new: ZoomState and ZoomImageView add `setImageSource()` method for setting ImageSource
 
 ## 1.1.0-alpha06
 

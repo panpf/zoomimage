@@ -23,6 +23,7 @@ import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
 import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
+import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
 
 /**
@@ -61,4 +62,19 @@ open class ZoomState(
      * Used to control the state of subsampling
      */
     val subsampling: SubsamplingState,
-)
+) {
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    fun setImageSource(imageSource: ImageSource.Factory?): Boolean {
+        return subsampling.setImageSource(imageSource)
+    }
+
+    /**
+     * Set up an image source from which image tile are loaded
+     */
+    fun setImageSource(imageSource: ImageSource?): Boolean {
+        return subsampling.setImageSource(imageSource)
+    }
+}

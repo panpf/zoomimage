@@ -62,7 +62,7 @@ fun BasicZoomImageSample(
                 imageUri = photo.originalUrl,
                 http2ByteArray = false
             )
-            zoomState.subsampling.setImageSource(imageSource)
+            zoomState.setImageSource(imageSource)
         }
 
         val imagePainter1 = imagePainter

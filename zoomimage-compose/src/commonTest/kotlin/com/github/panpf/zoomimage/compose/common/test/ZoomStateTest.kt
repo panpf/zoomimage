@@ -30,4 +30,6 @@ class ZoomStateTest {
             }
         }
     }
+
+    // TODO setImageSource
 }
