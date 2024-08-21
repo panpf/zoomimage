@@ -279,7 +279,10 @@ class SketchTileBitmapTest {
         val tileBitmap3 = SketchTileBitmap(cacheValue1, "key3", BitmapFrom.LOCAL, "caller3")
         val tileBitmap4 = SketchTileBitmap(cacheValue1, "key4", BitmapFrom.MEMORY_CACHE, "caller4")
 
+        assertEquals(expected = tileBitmap1, actual = tileBitmap1)
         assertEquals(expected = tileBitmap1, actual = tileBitmap12)
+        assertNotEquals(illegal = tileBitmap1, actual = null as Any?)
+        assertNotEquals(illegal = tileBitmap1, actual = Any())
         assertNotEquals(illegal = tileBitmap1, actual = tileBitmap2)
         assertNotEquals(illegal = tileBitmap1, actual = tileBitmap3)
         assertNotEquals(illegal = tileBitmap1, actual = tileBitmap4)

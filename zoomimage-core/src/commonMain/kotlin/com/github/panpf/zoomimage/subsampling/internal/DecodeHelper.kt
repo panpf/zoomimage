@@ -24,6 +24,8 @@ import com.github.panpf.zoomimage.util.IntRectCompat
 
 interface DecodeHelper : AutoCloseable {
 
+    val imageSource: ImageSource
+
     val imageInfo: ImageInfo
 
     val supportRegion: Boolean

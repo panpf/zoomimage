@@ -112,7 +112,10 @@ class ComposeSkiaTileBitmapTest {
         val tileBitmap4 =
             ComposeSkiaTileBitmap(SkiaTileBitmap(bitmap1, "bitmap1", BitmapFrom.MEMORY_CACHE))
 
+        assertEquals(expected = tileBitmap1, actual = tileBitmap1)
         assertEquals(expected = tileBitmap1, actual = tileBitmap12)
+        assertNotEquals(illegal = tileBitmap1, actual = null as Any?)
+        assertNotEquals(illegal = tileBitmap1, actual = Any())
         assertNotEquals(illegal = tileBitmap1, actual = tileBitmap2)
         assertNotEquals(illegal = tileBitmap1, actual = tileBitmap3)
         assertNotEquals(illegal = tileBitmap1, actual = tileBitmap4)

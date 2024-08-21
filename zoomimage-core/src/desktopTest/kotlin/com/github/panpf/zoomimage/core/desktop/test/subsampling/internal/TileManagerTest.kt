@@ -229,6 +229,9 @@ class TileManagerTest {
             Thread.sleep(1000)
             assertEquals(emptyList(), tileManager.backgroundTiles)
             assertNotEquals(emptyList(), tileManager.foregroundTiles)
+
+            tileManager.disabledBackgroundTiles = true
+            assertEquals(true, tileManager.disabledBackgroundTiles)
         }
     }
 
@@ -524,7 +527,7 @@ class TileManagerTest {
         val containerSize = IntSizeCompat(1080, 1920)
         val preferredTileSize = calculatePreferredTileSize(containerSize)
         val contentSize = imageInfo.size / 32
-        val tileDecoder = TileDecoder(logger, imageSource, createDecodeHelper(imageSource))
+        val tileDecoder = TileDecoder(logger, createDecodeHelper(imageSource))
         val backgroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val foregroundTilesChangedList = mutableListOf<List<TileSnapshot>>()
         val sampleSizeChangedList = mutableListOf<Int>()

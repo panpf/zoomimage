@@ -27,11 +27,12 @@ import kotlin.math.abs
 
 
 /**
- * Create [TileDecoder]. If the image type is not supported or the thumbnail size is larger than the original image or the aspect ratio of the thumbnail and the original image is inconsistent, the creation will fail.
+ * Create [TileDecoder]. If the image type is not supported or the thumbnail size is larger than the
+ * original image or the aspect ratio of the thumbnail and the original image is inconsistent, the creation will fail.
  *
- * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.SubsamplingDesktopTest.testDecodeAndCreateTileDecoder
+ * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.SubsamplingDesktopTest.testCreateTileDecoder
  */
-fun decodeAndCreateTileDecoder(
+fun createTileDecoder(
     logger: Logger,
     imageSource: ImageSource,
     thumbnailSize: IntSizeCompat,
@@ -39,7 +40,12 @@ fun decodeAndCreateTileDecoder(
     val decodeHelper = try {
         createDecodeHelper(imageSource)
     } catch (e: Exception) {
-        throw CreateTileDecoderException(-1, false, e.message ?: "Create DecodeHelper failed", null)
+        throw CreateTileDecoderException(
+            -1,
+            false,
+            "Create DecodeHelper failed: ${e.message}",
+            null
+        )
     }
     val imageInfo = decodeHelper.imageInfo
     if (imageInfo.size.isEmpty()) {
@@ -60,14 +66,16 @@ fun decodeAndCreateTileDecoder(
     if (!canUseSubsamplingByAspectRatio(imageInfo.size, thumbnailSize = thumbnailSize)) {
         decodeHelper.close()
         val message =
-            "The aspect ratio of the thumbnail is too different from that of the original image. Please refer to the canUseSubsamplingByAspectRatio() function to correct the thumbnail size."
+            "The aspect ratio of the thumbnail is too different from that of the original image. " +
+                    "Please refer to the canUseSubsamplingByAspectRatio() function to correct the thumbnail size."
         throw CreateTileDecoderException(-5, false, message, imageInfo)
     }
-    TileDecoder(logger, imageSource, decodeHelper)
+    TileDecoder(logger, decodeHelper)
 }
 
 /**
- * Determine whether Subsampling can be used based on the difference between the width and height scaling factors of the original image and the thumbnail. The difference cannot exceed [maxDifference]
+ * Determine whether Subsampling can be used based on the difference between the width and height
+ * scaling factors of the original image and the thumbnail. The difference cannot exceed [maxDifference]
  *
  * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCanUseSubsamplingByAspectRatio
  */
@@ -112,7 +120,8 @@ fun calculatePreferredTileSize(containerSize: IntSizeCompat): IntSizeCompat {
 }
 
 /**
- * Returns true if the new preferred tile size is doubled in width or height or reduced by half, which can significantly reduce the number of times the TileManager is reset when the container size changes frequently (window resizing)
+ * Returns true if the new preferred tile size is doubled in width or height or reduced by half,
+ * which can significantly reduce the number of times the TileManager is reset when the container size changes frequently (window resizing)
  *
  * @see com.github.panpf.zoomimage.core.common.test.subsampling.internal.SubsamplingsCommonTest.testCheckNewPreferredTileSize
  */

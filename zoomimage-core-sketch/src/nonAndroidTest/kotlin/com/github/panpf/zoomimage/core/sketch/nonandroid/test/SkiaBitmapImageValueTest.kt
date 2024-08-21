@@ -46,7 +46,10 @@ class SkiaBitmapImageValueTest {
         val imageValue3 =
             SkiaBitmapImageValue(bitmap1.asSketchImage(), mapOf("key" to "value"))
 
+        assertEquals(expected = imageValue1, actual = imageValue1)
         assertEquals(expected = imageValue1, actual = imageValue12)
+        assertNotEquals(illegal = imageValue1, actual = null as Any?)
+        assertNotEquals(illegal = imageValue1, actual = Any())
         assertNotEquals(illegal = imageValue1, actual = imageValue2)
         assertNotEquals(illegal = imageValue1, actual = imageValue3)
         assertNotEquals(illegal = imageValue2, actual = imageValue3)

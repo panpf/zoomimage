@@ -37,8 +37,11 @@ class SketchImageSourceTest {
         val imageSource2 = runBlocking { SketchImageSource.Factory(sketch, imageUri2).create() }
         val imageSource22 = runBlocking { SketchImageSource.Factory(sketch, imageUri2).create() }
 
+        assertEquals(expected = imageSource1, actual = imageSource1)
         assertEquals(expected = imageSource1, actual = imageSource12)
         assertEquals(expected = imageSource2, actual = imageSource22)
+        assertNotEquals(illegal = imageSource1, actual = null as Any?)
+        assertNotEquals(illegal = imageSource1, actual = Any())
         assertNotEquals(illegal = imageSource1, actual = imageSource2)
         assertNotEquals(illegal = imageSource12, actual = imageSource22)
 

@@ -79,6 +79,8 @@ interface ScalesCalculator {
 
 /**
  * Dynamic scales calculator based on content size, content raw size, and container size
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ScalesCalculatorTest.testDynamic
  */
 data class DynamicScalesCalculator(
     /**
@@ -138,6 +140,8 @@ data class DynamicScalesCalculator(
 
 /**
  * Fixed scales calculator, always 'mediumScale = minScale * multiple', 'maxScale = mediumScale * multiple'
+ *
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.ScalesCalculatorTest.testFixed
  */
 data class FixedScalesCalculator(
     /**

@@ -257,6 +257,90 @@ class ZoomsTest5 {
         ).apply {
             assertEquals(-1, this)
         }
+
+        checkParamsChanges(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = rotation,
+            readMode = readMode,
+            scalesCalculator = scalesCalculator,
+            lastContainerSize = IntSizeCompat.Zero,
+            lastContentSize = contentSize,
+            lastContentOriginSize = contentOriginSize,
+            lastContentScale = contentScale,
+            lastAlignment = alignment,
+            lastRotation = rotation,
+            lastReadMode = readMode,
+            lastScalesCalculator = scalesCalculator,
+        ).apply {
+            assertEquals(-1, this)
+        }
+
+        checkParamsChanges(
+            containerSize = containerSize,
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = rotation,
+            readMode = readMode,
+            scalesCalculator = scalesCalculator,
+            lastContainerSize = containerSize,
+            lastContentSize = IntSizeCompat.Zero,
+            lastContentOriginSize = contentOriginSize,
+            lastContentScale = contentScale,
+            lastAlignment = alignment,
+            lastRotation = rotation,
+            lastReadMode = readMode,
+            lastScalesCalculator = scalesCalculator,
+        ).apply {
+            assertEquals(-1, this)
+        }
+
+        checkParamsChanges(
+            containerSize = IntSizeCompat.Zero,
+            contentSize = contentSize,
+            contentOriginSize = contentOriginSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = rotation,
+            readMode = readMode,
+            scalesCalculator = scalesCalculator,
+            lastContainerSize = containerSize,
+            lastContentSize = contentSize,
+            lastContentOriginSize = contentOriginSize,
+            lastContentScale = contentScale,
+            lastAlignment = alignment,
+            lastRotation = rotation,
+            lastReadMode = readMode,
+            lastScalesCalculator = scalesCalculator,
+        ).apply {
+            assertEquals(-1, this)
+        }
+
+        checkParamsChanges(
+            containerSize = containerSize,
+            contentSize = IntSizeCompat.Zero,
+            contentOriginSize = contentOriginSize,
+            contentScale = contentScale,
+            alignment = alignment,
+            rotation = rotation,
+            readMode = readMode,
+            scalesCalculator = scalesCalculator,
+            lastContainerSize = containerSize,
+            lastContentSize = contentSize,
+            lastContentOriginSize = contentOriginSize,
+            lastContentScale = contentScale,
+            lastAlignment = alignment,
+            lastRotation = rotation,
+            lastReadMode = readMode,
+            lastScalesCalculator = scalesCalculator,
+        ).apply {
+            assertEquals(-1, this)
+        }
     }
 
     @Test
@@ -361,52 +445,108 @@ class ZoomsTest5 {
             offset = OffsetCompat(199.9872f, 80.232f),
         )
 
-        transformAboutEquals(one = transform, two = transform.copy()).apply {
-            assertTrue(this)
-        }
-        transformAboutEquals(
-            one = transform,
-            two = transform.copy(
-                scale = ScaleFactorCompat(
-                    transform.scaleX + 0.1f,
-                    transform.scaleY - 0.1f
-                )
+        assertTrue(
+            actual = transformAboutEquals(one = transform, two = transform.copy())
+        )
+
+        assertTrue(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(scale = transform.scale.copy(scaleX = transform.scaleX + 0.1f))
             )
-        ).apply {
-            assertTrue(this)
-        }
-        transformAboutEquals(
-            one = transform,
-            two = transform.copy(
-                scale = ScaleFactorCompat(
-                    transform.scaleX + 0.11f,
-                    transform.scaleY - 0.11f
-                )
+        )
+        assertTrue(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(scale = transform.scale.copy(scaleX = transform.scaleX - 0.1f))
             )
-        ).apply {
-            assertFalse(this)
-        }
-        transformAboutEquals(
-            one = transform,
-            two = transform.copy(
-                offset = OffsetCompat(
-                    transform.offsetX + 1f,
-                    transform.offsetY - 1f
-                )
+        )
+        assertFalse(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(scale = transform.scale.copy(scaleX = transform.scaleX + 0.11f))
             )
-        ).apply {
-            assertTrue(this)
-        }
-        transformAboutEquals(
-            one = transform,
-            two = transform.copy(
-                offset = OffsetCompat(
-                    transform.offsetX + 1.1f,
-                    transform.offsetY - 1.1f
-                )
+        )
+        assertFalse(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(scale = transform.scale.copy(scaleX = transform.scaleX - 0.11f))
             )
-        ).apply {
-            assertFalse(this)
-        }
+        )
+
+        assertTrue(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(scale = transform.scale.copy(scaleY = transform.scaleY + 0.1f))
+            )
+        )
+        assertTrue(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(scale = transform.scale.copy(scaleY = transform.scaleY - 0.1f))
+            )
+        )
+        assertFalse(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(scale = transform.scale.copy(scaleY = transform.scaleY + 0.11f))
+            )
+        )
+        assertFalse(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(scale = transform.scale.copy(scaleY = transform.scaleY - 0.11f))
+            )
+        )
+
+        assertTrue(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(offset = transform.offset.copy(x = transform.offsetX + 1.0f))
+            )
+        )
+        assertTrue(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(offset = transform.offset.copy(x = transform.offsetX - 1.0f))
+            )
+        )
+        assertFalse(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(offset = transform.offset.copy(x = transform.offsetX + 1.1f))
+            )
+        )
+        assertFalse(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(offset = transform.offset.copy(x = transform.offsetX - 1.1f))
+            )
+        )
+
+        assertTrue(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(offset = transform.offset.copy(y = transform.offsetY + 1.0f))
+            )
+        )
+        assertTrue(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(offset = transform.offset.copy(y = transform.offsetY - 1.0f))
+            )
+        )
+        assertFalse(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(offset = transform.offset.copy(y = transform.offsetY + 1.1f))
+            )
+        )
+        assertFalse(
+            actual = transformAboutEquals(
+                one = transform,
+                two = transform.copy(offset = transform.offset.copy(y = transform.offsetY - 1.1f))
+            )
+        )
     }
 }

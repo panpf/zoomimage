@@ -82,8 +82,11 @@ class AssetImageSourceTest {
         val source2 = AssetImageSource(context, resourceName2)
         val source22 = AssetImageSource(context, resourceName2)
 
+        assertEquals(expected = source1, actual = source1)
         assertEquals(expected = source1, actual = source12)
         assertEquals(expected = source2, actual = source22)
+        assertNotEquals(illegal = source1, actual = null as Any?)
+        assertNotEquals(illegal = source1, actual = Any())
         assertNotEquals(illegal = source1, actual = source2)
         assertNotEquals(illegal = source12, actual = source22)
 

@@ -33,7 +33,7 @@ import com.github.panpf.zoomimage.subsampling.internal.TileManager
 import com.github.panpf.zoomimage.subsampling.internal.TileManager.Companion.DefaultPausedContinuousTransformTypes
 import com.github.panpf.zoomimage.subsampling.internal.calculatePreferredTileSize
 import com.github.panpf.zoomimage.subsampling.internal.checkNewPreferredTileSize
-import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.createTileDecoder
 import com.github.panpf.zoomimage.subsampling.internal.toIntroString
 import com.github.panpf.zoomimage.util.IntOffsetCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
@@ -388,7 +388,7 @@ class SubsamplingEngine(val zoomableEngine: ZoomableEngine) {
         resetTileDecoderJob = coroutineScope?.launch(Dispatchers.Main) {
             val result = withContext(ioCoroutineDispatcher()) {
                 val imageSource = imageSourceFactory.create()
-                decodeAndCreateTileDecoder(
+                createTileDecoder(
                     logger = logger,
                     imageSource = imageSource,
                     thumbnailSize = contentSize,

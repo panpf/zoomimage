@@ -37,7 +37,7 @@ import java.io.BufferedInputStream
  * @see com.github.panpf.zoomimage.core.android.test.subsampling.internal.BitmapRegionDecoderDecodeHelperTest
  */
 class BitmapRegionDecoderDecodeHelper(
-    val imageSource: ImageSource,
+    override val imageSource: ImageSource,
     override val imageInfo: ImageInfo,
     override val supportRegion: Boolean,
     val exifOrientationHelper: ExifOrientationHelper,
@@ -96,7 +96,11 @@ class BitmapRegionDecoderDecodeHelper(
     }
 
     override fun toString(): String {
-        return "BitmapFactoryDecodeHelper(imageSource=$imageSource, imageInfo=$imageInfo, supportRegion=$supportRegion, exifOrientationHelper=$exifOrientationHelper)"
+        return "BitmapFactoryDecodeHelper(" +
+                "imageSource=$imageSource, " +
+                "imageInfo=$imageInfo, " +
+                "supportRegion=$supportRegion, " +
+                "exifOrientationHelper=$exifOrientationHelper)"
     }
 
     private fun IntRectCompat.toAndroidRect(): Rect {

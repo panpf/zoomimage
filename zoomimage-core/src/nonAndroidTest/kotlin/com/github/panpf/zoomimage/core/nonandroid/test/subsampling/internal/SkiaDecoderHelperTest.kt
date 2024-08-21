@@ -1,6 +1,9 @@
 package com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal
 
 import com.githb.panpf.zoomimage.images.ResourceImages
+import com.github.panpf.zoomimage.subsampling.ImageInfo
+import com.github.panpf.zoomimage.subsampling.SkiaBitmap
+import com.github.panpf.zoomimage.subsampling.SkiaImage
 import com.github.panpf.zoomimage.subsampling.internal.SkiaDecodeHelper
 import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.current
@@ -109,5 +112,24 @@ class SkiaDecoderHelperTest {
         val bitmap2Finger = produceFingerPrint(bitmap2)
         val hanming2 = hammingDistance(bitmapFinger, bitmap2Finger)
         assertTrue(hanming2 <= 2)
+    }
+
+    @Test
+    fun testToString() {
+        val bitmap = SkiaBitmap().apply {
+            allocN32Pixels(width = 100, height = 100, opaque = true)
+        }
+        val image = SkiaImage.makeFromBitmap(bitmap)
+        val bytes = image.encodeToData()!!.bytes
+        assertEquals(
+            expected = "SkiaDecodeHelper(imageSource=KotlinResourceImageSource('huge_card.jpg'), imageInfo=ImageInfo(size=1100x5321, mimeType='image/jpeg'), supportRegion=true)",
+            actual = SkiaDecodeHelper(
+                imageSource = ResourceImages.hugeCard.toImageSource(),
+                imageInfo = ImageInfo(1100, 5321, "image/jpeg"),
+                supportRegion = true,
+                bytes = bytes,
+                SkiaImage.makeFromEncoded(bytes)
+            ).toString()
+        )
     }
 }

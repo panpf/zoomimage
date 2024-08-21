@@ -4,7 +4,7 @@ import com.githb.panpf.zoomimage.images.ResourceImages
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.subsampling.fromFile
 import com.github.panpf.zoomimage.subsampling.internal.CreateTileDecoderException
-import com.github.panpf.zoomimage.subsampling.internal.decodeAndCreateTileDecoder
+import com.github.panpf.zoomimage.subsampling.internal.createTileDecoder
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.Logger
@@ -13,18 +13,18 @@ import com.github.panpf.zoomimage.util.div
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
 class SubsamplingDesktopTest {
 
     @Test
-    fun testDecodeAndCreateTileDecoder() = runTest {
+    fun testCreateTileDecoder() = runTest {
         val logger = Logger("MyTest")
 
+        // success
         val hugeLongQmshtImageFile = ResourceImages.hugeLongQmsht
         val hugeLongQmshtImageSource = hugeLongQmshtImageFile.toImageSource()
-        decodeAndCreateTileDecoder(
+        createTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
             thumbnailSize = hugeLongQmshtImageFile.size / 32f,
@@ -39,21 +39,26 @@ class SubsamplingDesktopTest {
             )
         }
 
+        // error -1
         val errorImageSource = ImageSource.fromFile("fake_image.jpg")
-        decodeAndCreateTileDecoder(
+        createTileDecoder(
             logger = logger,
             imageSource = errorImageSource,
             thumbnailSize = IntSizeCompat(100, 100),
         ).exceptionOrNull()!!.let { it as CreateTileDecoderException }.apply {
             assertEquals(-1, this.code)
             assertEquals(false, this.skipped)
-            assertNotEquals("", this.message)
+            assertEquals(
+                "Create DecodeHelper failed: fake_image.jpg (No such file or directory)",
+                this.message
+            )
             assertNull(this.imageInfo)
         }
 
+        // error -3
         val gifImageFile = ResourceImages.anim
         val gifImageSource = gifImageFile.toImageSource()
-        decodeAndCreateTileDecoder(
+        createTileDecoder(
             logger = logger,
             imageSource = gifImageSource,
             thumbnailSize = gifImageFile.size / 8f,
@@ -64,9 +69,10 @@ class SubsamplingDesktopTest {
             assertEquals("image/gif", this.imageInfo!!.mimeType)
         }
 
+        // error -4, width
         val errorThumbnailSize =
             hugeLongQmshtImageFile.size / ScaleFactorCompat(1f, 8f)
-        decodeAndCreateTileDecoder(
+        createTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
             thumbnailSize = errorThumbnailSize,
@@ -87,9 +93,10 @@ class SubsamplingDesktopTest {
             )
         }
 
+        // error -4, height
         val errorThumbnailSize2 =
             hugeLongQmshtImageFile.size / ScaleFactorCompat(8f, 1f)
-        decodeAndCreateTileDecoder(
+        createTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
             thumbnailSize = errorThumbnailSize2,
@@ -110,9 +117,10 @@ class SubsamplingDesktopTest {
             )
         }
 
+        // error -5
         val errorThumbnailSize3 =
             hugeLongQmshtImageFile.size / ScaleFactorCompat(32f, 34f)
-        decodeAndCreateTileDecoder(
+        createTileDecoder(
             logger = logger,
             imageSource = hugeLongQmshtImageSource,
             thumbnailSize = errorThumbnailSize3,

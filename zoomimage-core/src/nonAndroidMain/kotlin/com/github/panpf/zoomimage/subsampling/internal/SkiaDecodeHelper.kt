@@ -41,7 +41,7 @@ import kotlin.math.ceil
  * @see com.github.panpf.zoomimage.core.nonandroid.test.subsampling.internal.SkiaDecoderHelperTest
  */
 class SkiaDecodeHelper(
-    val imageSource: ImageSource,
+    override val imageSource: ImageSource,
     override val imageInfo: ImageInfo,
     override val supportRegion: Boolean,
     val bytes: ByteArray,
@@ -85,7 +85,7 @@ class SkiaDecodeHelper(
     }
 
     override fun toString(): String {
-        return "SkiaDecodeHelper(imageSource=$imageSource, imageInfo=$imageInfo,)"
+        return "SkiaDecodeHelper(imageSource=$imageSource, imageInfo=$imageInfo, supportRegion=$supportRegion)"
     }
 
     class Factory : DecodeHelper.Factory {

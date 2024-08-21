@@ -43,10 +43,9 @@ interface PanToScaleTransformer {
 }
 
 /**
- * @see com.github.panpf.zoomimage.core.common.test.zoom.OneFingerScaleSpecTest.testDefaultPanToScaleTransformer
+ * @see com.github.panpf.zoomimage.core.common.test.zoom.DefaultPanToScaleTransformerTest
  */
-class DefaultPanToScaleTransformer(val reference: Int = 200) :
-    PanToScaleTransformer {
+class DefaultPanToScaleTransformer(val reference: Int = 200) : PanToScaleTransformer {
 
     override fun transform(panY: Float): Float {
         return 1f + (panY / reference)

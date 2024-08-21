@@ -260,7 +260,10 @@ class KeyMatcherTest {
         val matcher4 = KeyMatcher(key = Key.A, assistKey = Shift, type = KeyEventType.KeyUp)
         val matcher5 = KeyMatcher(key = Key.B, assistKey = Alt, type = KeyEventType.KeyUp)
 
+        assertEquals(expected = matcher1, actual = matcher1)
         assertEquals(expected = matcher1, actual = matcher12)
+        assertNotEquals(illegal = matcher1, actual = null as Any?)
+        assertNotEquals(illegal = matcher1, actual = Any())
         assertNotEquals(illegal = matcher1, actual = matcher2)
         assertNotEquals(illegal = matcher1, actual = matcher3)
         assertNotEquals(illegal = matcher1, actual = matcher4)

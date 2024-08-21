@@ -1014,7 +1014,8 @@ class ZoomableState(val logger: Logger) : RememberObserver {
             currentScale = userTransform.scaleX,
             targetScale = targetUserScale,
             minScale = minUserScale,
-            maxScale = maxUserScale
+            maxScale = maxUserScale,
+            rubberBandRatio = 2f,
         )
     }
 

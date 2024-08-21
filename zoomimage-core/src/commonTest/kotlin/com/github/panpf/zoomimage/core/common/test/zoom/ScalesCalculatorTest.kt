@@ -20,6 +20,7 @@ class ScalesCalculatorTest {
     fun testFixed() {
         ScalesCalculator.Fixed.also {
             assertEquals(3f, it.multiple)
+            assertEquals("FixedScalesCalculator(multiple=3.0)", it.toString())
         }
 
         ScalesCalculator.fixed().also {
@@ -106,6 +107,7 @@ class ScalesCalculatorTest {
     fun testDynamic() {
         ScalesCalculator.Dynamic.also {
             assertEquals(3f, it.multiple)
+            assertEquals("DynamicScalesCalculator(multiple=3.0)", it.toString())
         }
 
         ScalesCalculator.dynamic().also {

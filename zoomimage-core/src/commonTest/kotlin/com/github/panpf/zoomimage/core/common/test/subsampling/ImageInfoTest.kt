@@ -36,11 +36,26 @@ class ImageInfoTest {
             assertEquals(1200, height)
             assertEquals(IntSizeCompat(100, 1200), size)
             assertEquals("image/jpeg", mimeType)
-        }.copy(width = 200, height = 3200, mimeType = "image/png").apply {
+        }.copy(width = 150).apply {
+            assertEquals(150, width)
+            assertEquals(1200, height)
+            assertEquals(IntSizeCompat(150, 1200), size)
+            assertEquals("image/jpeg", mimeType)
+        }.copy(height = 1300).apply {
+            assertEquals(150, width)
+            assertEquals(1300, height)
+            assertEquals(IntSizeCompat(150, 1300), size)
+            assertEquals("image/jpeg", mimeType)
+        }.copy(mimeType = "image/png").apply {
+            assertEquals(150, width)
+            assertEquals(1300, height)
+            assertEquals(IntSizeCompat(150, 1300), size)
+            assertEquals("image/png", mimeType)
+        }.copy(width = 200, height = 3200, mimeType = "image/webp").apply {
             assertEquals(200, width)
             assertEquals(3200, height)
             assertEquals(IntSizeCompat(200, 3200), size)
-            assertEquals("image/png", mimeType)
+            assertEquals("image/webp", mimeType)
         }
     }
 

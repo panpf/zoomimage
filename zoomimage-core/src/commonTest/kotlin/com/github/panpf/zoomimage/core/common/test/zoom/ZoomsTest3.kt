@@ -7,7 +7,6 @@ import com.github.panpf.zoomimage.zoom.AlignmentCompat as Alignment
 import com.github.panpf.zoomimage.zoom.ContentScaleCompat as ContentScale
 import com.github.panpf.zoomimage.test.Item
 import com.github.panpf.zoomimage.test.printlnBatchBuildExpression
-import com.github.panpf.zoomimage.util.RectCompat
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomCenter
 import com.github.panpf.zoomimage.zoom.AlignmentCompat.Companion.BottomEnd
@@ -1956,15 +1955,27 @@ class ZoomsTest3 {
         if (printBatchBuildExpression) {
             printlnBatchBuildExpression(
                 p1s = listOf(
+                    ScrollEdge(Edge.NONE, Edge.NONE),
+                    ScrollEdge(Edge.NONE, Edge.START),
+                    ScrollEdge(Edge.NONE, Edge.END),
+                    ScrollEdge(Edge.NONE, Edge.BOTH),
+                    ScrollEdge(Edge.START, Edge.NONE),
                     ScrollEdge(Edge.START, Edge.START),
-                    ScrollEdge(Edge.END, Edge.END),
                     ScrollEdge(Edge.START, Edge.END),
+                    ScrollEdge(Edge.START, Edge.BOTH),
+                    ScrollEdge(Edge.END, Edge.NONE),
                     ScrollEdge(Edge.END, Edge.START),
+                    ScrollEdge(Edge.END, Edge.END),
+                    ScrollEdge(Edge.END, Edge.BOTH),
+                    ScrollEdge(Edge.BOTH, Edge.NONE),
+                    ScrollEdge(Edge.BOTH, Edge.START),
+                    ScrollEdge(Edge.BOTH, Edge.END),
+                    ScrollEdge(Edge.BOTH, Edge.BOTH),
                 ),
                 p2s = listOf(false, true),
                 p3s = listOf(-1, 1),
                 buildItem = { p1, p2, p3 ->
-                    Item14(p1, p2, p3, false)
+                    Item14(scrollEdge = p1, horizontal = p2, direction = p3, expected = false)
                 },
             ) { item ->
                 canScrollByEdge(
@@ -1977,22 +1988,70 @@ class ZoomsTest3 {
 
         // @formatter:off. Please turn "Editor | Code Style | Formatter | Turn formatter on/off with markers in code comments" configuration item of IDEA
         listOf(
+            Item14(ScrollEdge(Edge.NONE, Edge.NONE), false, -1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.NONE), false, 1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.NONE), true, -1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.NONE), true, 1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.START), false, -1, false),
+            Item14(ScrollEdge(Edge.NONE, Edge.START), false, 1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.START), true, -1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.START), true, 1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.END), false, -1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.END), false, 1, false),
+            Item14(ScrollEdge(Edge.NONE, Edge.END), true, -1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.END), true, 1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.BOTH), false, -1, false),
+            Item14(ScrollEdge(Edge.NONE, Edge.BOTH), false, 1, false),
+            Item14(ScrollEdge(Edge.NONE, Edge.BOTH), true, -1, true),
+            Item14(ScrollEdge(Edge.NONE, Edge.BOTH), true, 1, true),
+            Item14(ScrollEdge(Edge.START, Edge.NONE), false, -1, true),
+            Item14(ScrollEdge(Edge.START, Edge.NONE), false, 1, true),
+            Item14(ScrollEdge(Edge.START, Edge.NONE), true, -1, false),
+            Item14(ScrollEdge(Edge.START, Edge.NONE), true, 1, true),
             Item14(ScrollEdge(Edge.START, Edge.START), false, -1, false),
             Item14(ScrollEdge(Edge.START, Edge.START), false, 1, true),
             Item14(ScrollEdge(Edge.START, Edge.START), true, -1, false),
             Item14(ScrollEdge(Edge.START, Edge.START), true, 1, true),
-            Item14(ScrollEdge(Edge.END, Edge.END), false, -1, true),
-            Item14(ScrollEdge(Edge.END, Edge.END), false, 1, false),
-            Item14(ScrollEdge(Edge.END, Edge.END), true, -1, true),
-            Item14(ScrollEdge(Edge.END, Edge.END), true, 1, false),
             Item14(ScrollEdge(Edge.START, Edge.END), false, -1, true),
             Item14(ScrollEdge(Edge.START, Edge.END), false, 1, false),
             Item14(ScrollEdge(Edge.START, Edge.END), true, -1, false),
             Item14(ScrollEdge(Edge.START, Edge.END), true, 1, true),
+            Item14(ScrollEdge(Edge.START, Edge.BOTH), false, -1, false),
+            Item14(ScrollEdge(Edge.START, Edge.BOTH), false, 1, false),
+            Item14(ScrollEdge(Edge.START, Edge.BOTH), true, -1, false),
+            Item14(ScrollEdge(Edge.START, Edge.BOTH), true, 1, true),
+            Item14(ScrollEdge(Edge.END, Edge.NONE), false, -1, true),
+            Item14(ScrollEdge(Edge.END, Edge.NONE), false, 1, true),
+            Item14(ScrollEdge(Edge.END, Edge.NONE), true, -1, true),
+            Item14(ScrollEdge(Edge.END, Edge.NONE), true, 1, false),
             Item14(ScrollEdge(Edge.END, Edge.START), false, -1, false),
             Item14(ScrollEdge(Edge.END, Edge.START), false, 1, true),
             Item14(ScrollEdge(Edge.END, Edge.START), true, -1, true),
             Item14(ScrollEdge(Edge.END, Edge.START), true, 1, false),
+            Item14(ScrollEdge(Edge.END, Edge.END), false, -1, true),
+            Item14(ScrollEdge(Edge.END, Edge.END), false, 1, false),
+            Item14(ScrollEdge(Edge.END, Edge.END), true, -1, true),
+            Item14(ScrollEdge(Edge.END, Edge.END), true, 1, false),
+            Item14(ScrollEdge(Edge.END, Edge.BOTH), false, -1, false),
+            Item14(ScrollEdge(Edge.END, Edge.BOTH), false, 1, false),
+            Item14(ScrollEdge(Edge.END, Edge.BOTH), true, -1, true),
+            Item14(ScrollEdge(Edge.END, Edge.BOTH), true, 1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.NONE), false, -1, true),
+            Item14(ScrollEdge(Edge.BOTH, Edge.NONE), false, 1, true),
+            Item14(ScrollEdge(Edge.BOTH, Edge.NONE), true, -1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.NONE), true, 1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.START), false, -1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.START), false, 1, true),
+            Item14(ScrollEdge(Edge.BOTH, Edge.START), true, -1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.START), true, 1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.END), false, -1, true),
+            Item14(ScrollEdge(Edge.BOTH, Edge.END), false, 1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.END), true, -1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.END), true, 1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.BOTH), false, -1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.BOTH), false, 1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.BOTH), true, -1, false),
+            Item14(ScrollEdge(Edge.BOTH, Edge.BOTH), true, 1, false),
         ).forEach { item ->
             val result = canScrollByEdge(
                 scrollEdge = item.scrollEdge,

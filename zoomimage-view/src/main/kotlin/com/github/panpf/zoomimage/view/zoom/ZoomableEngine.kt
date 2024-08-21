@@ -1001,7 +1001,8 @@ class ZoomableEngine(val logger: Logger, val view: View) {
             currentScale = userTransformState.value.scaleX,
             targetScale = targetUserScale,
             minScale = minUserScale,
-            maxScale = maxUserScale
+            maxScale = maxUserScale,
+            rubberBandRatio = 2f,
         )
     }
 

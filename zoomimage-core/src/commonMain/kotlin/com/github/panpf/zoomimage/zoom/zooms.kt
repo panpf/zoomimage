@@ -941,7 +941,7 @@ fun limitScaleWithRubberBand(
     targetScale: Float,
     minScale: Float,
     maxScale: Float,
-    rubberBandRatio: Float = 2f
+    rubberBandRatio: Float
 ): Float = when {
     targetScale > maxScale -> {
         val addScale = targetScale - currentScale
@@ -1231,12 +1231,12 @@ fun contentPointToTouchPoint(
  * @see com.github.panpf.zoomimage.core.common.test.zoom.ZoomsTest5.testTransformAboutEquals
  */
 fun transformAboutEquals(one: TransformCompat, two: TransformCompat): Boolean {
-    return one.scaleX.aboutEquals(two.scaleX, delta = 0.1f)
-            && one.scaleY.aboutEquals(two.scaleY, delta = 0.1f)
-            && one.offsetX.aboutEquals(two.offsetX, delta = 1f)
-            && one.offsetY.aboutEquals(two.offsetY, delta = 1f)
+    return one.scaleX.aboutEquals(two.scaleX, delta = 0.1f, scale = 2)
+            && one.scaleY.aboutEquals(two.scaleY, delta = 0.1f, scale = 2)
+            && one.offsetX.aboutEquals(two.offsetX, delta = 1f, scale = 2)
+            && one.offsetY.aboutEquals(two.offsetY, delta = 1f, scale = 2)
 }
 
-private fun Float.aboutEquals(other: Float, delta: Float, scale: Int = 2): Boolean {
+private fun Float.aboutEquals(other: Float, delta: Float, scale: Int): Boolean {
     return abs(this - other).format(scale) <= delta
 }

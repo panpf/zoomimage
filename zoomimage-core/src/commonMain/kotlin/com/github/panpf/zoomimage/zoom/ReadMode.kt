@@ -88,6 +88,8 @@ data class ReadMode(
      * When contentSize and containerSize are in the same direction,
      * read mode can be used when the difference multiple is greater than [sameDirectionMultiple],
      * otherwise read mode can be used when the difference multiple is greater than [notSameDirectionMultiple]
+     *
+     * @see com.github.panpf.zoomimage.core.common.test.zoom.LongImageDeciderTest
      */
     class LongImageDecider(
         val sameDirectionMultiple: Float = 2.5f,

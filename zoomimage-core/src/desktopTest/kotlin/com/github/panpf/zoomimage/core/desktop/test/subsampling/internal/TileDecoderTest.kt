@@ -29,7 +29,7 @@ class TileDecoderTest {
         val decodeHelper = createDecodeHelper(imageSource)
         val scope = CoroutineScope(Dispatchers.Main)
         val dispatcher = Dispatchers.IO.limitedParallelism(3)
-        val tileDecoder = TileDecoder(logger, imageSource, decodeHelper)
+        val tileDecoder = TileDecoder(logger, decodeHelper)
         tileDecoder.use {
             assertEquals(1, tileDecoder.decoderPoolSize)
 
@@ -53,5 +53,19 @@ class TileDecoderTest {
         assertFailsWith(IllegalStateException::class) {
             tileDecoder.decode("test", IntRectCompat(100, 100, 300, 300), 1)
         }
+
+        tileDecoder.close()
+    }
+
+    @Test
+    fun testToString() {
+        val logger = Logger("Test")
+        val imageSource = ResourceImages.hugeCard.toImageSource()
+        val decodeHelper = createDecodeHelper(imageSource)
+        val tileDecoder = TileDecoder(logger, decodeHelper)
+        assertEquals(
+            expected = "TileDecoder($decodeHelper)",
+            actual = tileDecoder.toString()
+        )
     }
 }

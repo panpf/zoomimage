@@ -30,9 +30,8 @@ import kotlinx.atomicfu.locks.synchronized
  *
  * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileDecoderTest
  */
-class TileDecoder constructor(
+class TileDecoder(
     val logger: Logger,
-    val imageSource: ImageSource,
     val rootDecodeHelper: DecodeHelper,
 ) : AutoCloseable {
 
@@ -45,8 +44,9 @@ class TileDecoder constructor(
 
     val imageInfo: ImageInfo = rootDecodeHelper.imageInfo
 
+    val imageSource: ImageSource = rootDecodeHelper.imageSource
+
     init {
-        logger.d { "TileDecoder. new DecodeHelper. initialization. '${imageSource.key}'" }
         decoderPool.add(rootDecodeHelper)
     }
 
@@ -65,7 +65,6 @@ class TileDecoder constructor(
             if (decoderPool.isNotEmpty()) decoderPool.removeAt(0) else null
         }
         if (decodeHelper == null) {
-            logger.d { "TileDecoder. new DecodeHelper. decode. '${imageSource.key}'" }
             decodeHelper = rootDecodeHelper.copy()
         }
 
@@ -87,7 +86,7 @@ class TileDecoder constructor(
         val closed = synchronized(poolSyncLock) { this@TileDecoder.closed }
         if (!closed) {
             this@TileDecoder.closed = true
-            logger.d { "TileDecoder. close. '${imageSource.key}'" }
+            logger.d { "TileDecoder. close. $rootDecodeHelper" }
             synchronized(poolSyncLock) {
                 decoderPool.forEach { it.close() }
                 decoderPool.clear()
@@ -96,6 +95,6 @@ class TileDecoder constructor(
     }
 
     override fun toString(): String {
-        return "TileDecoder('${imageSource.key}')"
+        return "TileDecoder($rootDecodeHelper)"
     }
 }

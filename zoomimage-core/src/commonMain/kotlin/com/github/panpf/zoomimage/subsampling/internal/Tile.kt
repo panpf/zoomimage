@@ -29,7 +29,7 @@ import kotlin.time.TimeSource
  *
  * @see com.github.panpf.zoomimage.core.desktop.test.subsampling.internal.TileTest
  */
-class Tile constructor(
+class Tile(
     /**
      * Horizontal and vertical coordinates
      */
@@ -80,17 +80,18 @@ class Tile constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Tile) return false
+        if (other == null || this::class != other::class) return false
+        other as Tile
+        if (coordinate != other.coordinate) return false
         if (srcRect != other.srcRect) return false
         if (sampleSize != other.sampleSize) return false
-        if (tileBitmap != other.tileBitmap) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = srcRect.hashCode()
+        var result = coordinate.hashCode()
+        result = 31 * result + srcRect.hashCode()
         result = 31 * result + sampleSize
-        result = 31 * result + (tileBitmap?.hashCode() ?: 0)
         return result
     }
 
