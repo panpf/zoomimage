@@ -21,8 +21,10 @@ import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.images.coil.platformModeToImageSources
 import com.github.panpf.zoomimage.rememberCoilZoomState
+import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.coil.Coils
+import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.waitMillis
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,6 +37,10 @@ class SingletonCoilZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testCoilZoomAsyncImage1() {
+        if (Platform.current == Platform.iOS) {
+            // Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
         Coils.imageLoader()
 
         runComposeUiTest {
@@ -177,6 +183,10 @@ class SingletonCoilZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testCoilZoomAsyncImage2() {
+        if (Platform.current == Platform.iOS) {
+            // Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
         Coils.imageLoader()
 
         runComposeUiTest {

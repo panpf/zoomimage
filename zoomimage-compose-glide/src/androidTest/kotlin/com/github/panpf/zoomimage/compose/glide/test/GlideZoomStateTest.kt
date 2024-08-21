@@ -29,8 +29,8 @@ class GlideZoomStateTest {
                     actual = zoomState1.logger.tag
                 )
                 assertEquals(
-                    expected = listOf(GlideModelToImageSourceImpl()).joinToString { it::class.qualifiedName!! },
-                    actual = zoomState1.modelToImageSources.joinToString { it::class.qualifiedName!! }
+                    expected = listOf(GlideModelToImageSourceImpl()).joinToString { it::class.toString() },
+                    actual = zoomState1.modelToImageSources.joinToString { it::class.toString() }
                 )
 
                 val modelToImageSources = remember {
@@ -43,8 +43,8 @@ class GlideZoomStateTest {
                     expected = listOf(
                         TestGlideModelToImageSource(),
                         GlideModelToImageSourceImpl()
-                    ).joinToString { it::class.qualifiedName!! },
-                    actual = zoomState2.modelToImageSources.joinToString { it::class.qualifiedName!! }
+                    ).joinToString { it::class.toString() },
+                    actual = zoomState2.modelToImageSources.joinToString { it::class.toString() }
                 )
             }
         }

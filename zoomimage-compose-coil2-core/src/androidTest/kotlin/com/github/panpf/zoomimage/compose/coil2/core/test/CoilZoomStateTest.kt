@@ -29,8 +29,8 @@ class CoilZoomStateTest {
                     actual = zoomState1.logger.tag
                 )
                 assertEquals(
-                    expected = listOf(CoilModelToImageSourceImpl()).joinToString { it::class.qualifiedName!! },
-                    actual = zoomState1.modelToImageSources.joinToString { it::class.qualifiedName!! }
+                    expected = listOf(CoilModelToImageSourceImpl()).joinToString { it::class.toString() },
+                    actual = zoomState1.modelToImageSources.joinToString { it::class.toString() }
                 )
 
                 val modelToImageSources = remember {
@@ -43,8 +43,8 @@ class CoilZoomStateTest {
                     expected = listOf(
                         TestCoilModelToImageSource(),
                         CoilModelToImageSourceImpl()
-                    ).joinToString { it::class.qualifiedName!! },
-                    actual = zoomState2.modelToImageSources.joinToString { it::class.qualifiedName!! }
+                    ).joinToString { it::class.toString() },
+                    actual = zoomState2.modelToImageSources.joinToString { it::class.toString() }
                 )
             }
         }

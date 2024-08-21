@@ -28,7 +28,7 @@ import com.github.panpf.zoomimage.subsampling.TileBitmap
  *
  * @see com.github.panpf.zoomimage.core.sketch3.test.SketchTileBitmapTest
  */
-class SketchTileBitmap constructor(
+class SketchTileBitmap(
     private val cacheValue: MemoryCache.Value,
     override val key: String,
     override val bitmapFrom: BitmapFrom,
@@ -47,9 +47,8 @@ class SketchTileBitmap constructor(
     override val isRecycled: Boolean
         get() = bitmap?.isRecycled ?: true
 
-    private val toString by lazy {
-        "SketchTileBitmap(key='$key', bitmap=${bitmap!!.toLogString()}, bitmapFrom=$bitmapFrom)"
-    }
+    private val toString =
+        "SketchTileBitmap(key='$key', bitmap=${bitmap!!.toLogString()}, bitmapFrom=$bitmapFrom, caller='$caller')"
 
     override fun recycle() {
         bitmap?.recycle()

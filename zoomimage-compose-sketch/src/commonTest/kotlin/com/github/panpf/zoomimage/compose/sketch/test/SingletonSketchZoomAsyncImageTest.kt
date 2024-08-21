@@ -18,7 +18,9 @@ import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
 import com.github.panpf.zoomimage.SketchZoomState
 import com.github.panpf.zoomimage.rememberSketchZoomState
+import com.github.panpf.zoomimage.test.Platform
 import com.github.panpf.zoomimage.test.TestLifecycle
+import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.sketch.Sketchs
 import com.github.panpf.zoomimage.test.waitMillis
 import kotlin.test.Test
@@ -31,6 +33,10 @@ class SingletonSketchZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testSketchZoomAsyncImage1() {
+        if (Platform.current == Platform.iOS) {
+            // Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
         Sketchs.sketch()
 
         runComposeUiTest {
@@ -160,6 +166,10 @@ class SingletonSketchZoomAsyncImageTest {
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun testSketchZoomAsyncImage2() {
+        if (Platform.current == Platform.iOS) {
+            // Files in kotlin resources cannot be accessed in ios test environment.
+            return
+        }
         Sketchs.sketch()
 
         runComposeUiTest {

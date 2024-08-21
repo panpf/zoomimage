@@ -68,7 +68,12 @@ class SketchTileBitmapCacheTest {
         assertEquals(null, tileBitmapCache.get(key1))
         tileBitmapCache.put(key1, tileBitmap1, imageUrl1, imageInfo1)
         assertEquals(
-            expected = SketchTileBitmap(cacheValue1, key1, BitmapFrom.MEMORY_CACHE, "caller"),
+            expected = SketchTileBitmap(
+                cacheValue1,
+                key1,
+                BitmapFrom.MEMORY_CACHE,
+                "SketchTileBitmapCache"
+            ),
             actual = tileBitmapCache.get(key1)
         )
 
@@ -101,7 +106,12 @@ class SketchTileBitmapCacheTest {
         assertEquals(null, tileBitmapCache.get(key2))
         tileBitmapCache.put(key2, tileBitmap2, imageUrl2, imageInfo2)
         assertEquals(
-            expected = SketchTileBitmap(cacheValue2, key2, BitmapFrom.MEMORY_CACHE, "caller"),
+            expected = SketchTileBitmap(
+                cacheValue2,
+                key2,
+                BitmapFrom.MEMORY_CACHE,
+                "SketchTileBitmapCache"
+            ),
             actual = tileBitmapCache.get(key2)
         )
 

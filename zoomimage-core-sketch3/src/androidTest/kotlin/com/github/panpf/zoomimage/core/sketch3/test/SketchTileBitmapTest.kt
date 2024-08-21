@@ -348,11 +348,11 @@ class SketchTileBitmapTest {
         val tileBitmap2 = SketchTileBitmap(cacheValue2, "key2", BitmapFrom.MEMORY_CACHE, "caller2")
 
         assertEquals(
-            expected = "SketchTileBitmap(key='key1', bitmap=${bitmap1.toLogString()}, bitmapFrom=LOCAL)",
+            expected = "SketchTileBitmap(key='key1', bitmap=${bitmap1.toLogString()}, bitmapFrom=LOCAL, caller='caller1')",
             actual = tileBitmap1.toString()
         )
         assertEquals(
-            expected = "SketchTileBitmap(key='key2', bitmap=${bitmap2.toLogString()}, bitmapFrom=MEMORY_CACHE)",
+            expected = "SketchTileBitmap(key='key2', bitmap=${bitmap2.toLogString()}, bitmapFrom=MEMORY_CACHE, caller='caller2')",
             actual = tileBitmap2.toString()
         )
     }
