@@ -49,7 +49,7 @@ class KotlinResourceImageSourceTest {
 
     @Test
     fun testOpenSource() = runTest {
-        // TODO Files in kotlin resources cannot be accessed in ios test environment.
+        // TODO test: Files in kotlin resources cannot be accessed in ios test environment.
         //      There are other places where this problem also occurs, search for it
 //        val resourceName1 = ResourceImages.cat.resourceName
 //        val resourceName2 = ResourceImages.dog.resourceName

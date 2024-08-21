@@ -732,5 +732,5 @@ class SubsamplingStateTest {
         assertEquals(expected = "null", actual = subsampling.imageInfo.toString())
     }
 
-    // TODO test backgroundTiles
+    // TODO test: backgroundTiles
 }

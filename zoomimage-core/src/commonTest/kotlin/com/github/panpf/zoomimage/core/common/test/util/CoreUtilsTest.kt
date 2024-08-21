@@ -42,7 +42,7 @@ class CoreUtilsTest {
     @Test
     fun testQuietClose() {
         if (Platform.current == Platform.iOS) {
-            // TODO Will get stuck forever in iOS test environment
+            // TODO test: Will get stuck forever in iOS test environment
             return
         }
 
