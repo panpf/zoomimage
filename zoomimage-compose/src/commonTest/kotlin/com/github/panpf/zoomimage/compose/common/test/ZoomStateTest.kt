@@ -14,6 +14,7 @@ import com.github.panpf.zoomimage.test.TestLifecycle
 import com.github.panpf.zoomimage.test.current
 import com.github.panpf.zoomimage.test.toImageSource
 import com.github.panpf.zoomimage.test.waitMillis
+import com.github.panpf.zoomimage.util.Logger
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -38,6 +39,16 @@ class ZoomStateTest {
                 assertEquals(
                     expected = zoomState.logger,
                     actual = zoomState.subsampling.logger
+                )
+
+                assertEquals(
+                    expected = Logger.Level.Info,
+                    actual = zoomState.logger.level
+                )
+                val zoomState2 = rememberZoomState(logLevel = Logger.Level.Debug)
+                assertEquals(
+                    expected = Logger.Level.Debug,
+                    actual = zoomState2.logger.level
                 )
             }
         }

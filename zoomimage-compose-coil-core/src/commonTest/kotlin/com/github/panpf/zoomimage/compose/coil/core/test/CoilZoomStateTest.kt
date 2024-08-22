@@ -7,6 +7,7 @@ import com.github.panpf.zoomimage.coil.CoilModelToImageSourceImpl
 import com.github.panpf.zoomimage.images.coil.TestCoilModelToImageSource
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.test.TestLifecycle
+import com.github.panpf.zoomimage.util.Logger
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,6 +41,16 @@ class CoilZoomStateTest {
                         CoilModelToImageSourceImpl()
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.modelToImageSources.joinToString { it::class.toString() }
+                )
+
+                assertEquals(
+                    expected = Logger.Level.Info,
+                    actual = zoomState1.logger.level
+                )
+                val zoomState3 = rememberCoilZoomState(logLevel = Logger.Level.Debug)
+                assertEquals(
+                    expected = Logger.Level.Debug,
+                    actual = zoomState3.logger.level
                 )
             }
         }

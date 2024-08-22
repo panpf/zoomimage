@@ -11,6 +11,7 @@ Translations: [简体中文](CHANGELOG_zh.md)
 * improve: Improve SketchZoomImageview, CoilZoomImageView, GlideZoomImageView, PicassoZoomImageView.
   Now when setting ImageSource, the ImageSource will be cleared whenever it fails.
 * change: The minimum length of the scrollbar is now 10.dp
+* new: 'remember\*ZoomState()' series of functions add 'logLevel: Level' parameter
 
 ## 1.1.0-alpha06
 

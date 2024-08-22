@@ -9,6 +9,7 @@ import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.rememberGlideZoomState
 import com.github.panpf.zoomimage.subsampling.ImageSource.Factory
 import com.github.panpf.zoomimage.test.TestLifecycle
+import com.github.panpf.zoomimage.util.Logger
 import kotlinx.collections.immutable.toImmutableList
 import org.junit.Rule
 import kotlin.test.Test
@@ -45,6 +46,16 @@ class GlideZoomStateTest {
                         GlideModelToImageSourceImpl()
                     ).joinToString { it::class.toString() },
                     actual = zoomState2.modelToImageSources.joinToString { it::class.toString() }
+                )
+
+                assertEquals(
+                    expected = Logger.Level.Info,
+                    actual = zoomState1.logger.level
+                )
+                val zoomState3 = rememberGlideZoomState(logLevel = Logger.Level.Debug)
+                assertEquals(
+                    expected = Logger.Level.Debug,
+                    actual = zoomState3.logger.level
                 )
             }
         }

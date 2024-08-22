@@ -12,6 +12,7 @@ import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.glide.GlideModelToImageSource
 import com.github.panpf.zoomimage.glide.GlideModelToImageSourceImpl
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.Logger.Level
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -22,8 +23,9 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun rememberGlideZoomState(
     modelToImageSources: ImmutableList<GlideModelToImageSource>? = null,
+    logLevel: Level? = null,
 ): GlideZoomState {
-    val logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage")
+    val logger: Logger = rememberZoomImageLogger(tag = "GlideZoomAsyncImage", level = logLevel)
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState, modelToImageSources) {

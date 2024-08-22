@@ -10,6 +10,7 @@
 * improve: 改进 SketchZoomImageview、CoilZoomImageView、GlideZoomImageView、PicassoZoomImageView，现在设置
   ImageSource 时只要失败就会清空 ImageSource
 * change: 滚动条的最小长度现在是 10.dp
+* new: 'remember\*ZoomState()' 系列函数增加 'logLevel: Level' 参数
 
 ## 1.1.0-alpha06
 

@@ -25,6 +25,7 @@ import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.Logger.Level
 
 /**
  * Creates and remember a [ZoomState]
@@ -32,8 +33,8 @@ import com.github.panpf.zoomimage.util.Logger
  * @see com.github.panpf.zoomimage.compose.common.test.ZoomStateTest.testRememberZoomState
  */
 @Composable
-fun rememberZoomState(): ZoomState {
-    val logger: Logger = rememberZoomImageLogger()
+fun rememberZoomState(logLevel: Level? = null): ZoomState {
+    val logger = rememberZoomImageLogger(level = logLevel)
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState) {

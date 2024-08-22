@@ -12,6 +12,7 @@ import com.github.panpf.zoomimage.compose.subsampling.rememberSubsamplingState
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.util.Logger.Level
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -22,8 +23,9 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun rememberCoilZoomState(
     modelToImageSources: ImmutableList<CoilModelToImageSource>? = null,
+    logLevel: Level? = null,
 ): CoilZoomState {
-    val logger: Logger = rememberZoomImageLogger(tag = "CoilZoomAsyncImage")
+    val logger: Logger = rememberZoomImageLogger(tag = "CoilZoomAsyncImage", level = logLevel)
     val zoomableState = rememberZoomableState(logger)
     val subsamplingState = rememberSubsamplingState(zoomableState)
     return remember(logger, zoomableState, subsamplingState, modelToImageSources) {
