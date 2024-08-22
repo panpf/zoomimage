@@ -44,7 +44,8 @@ class AssetImageSource(val context: Context, val assetFileName: String) : ImageS
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is AssetImageSource) return false
+        if (other == null || this::class != other::class) return false
+        other as AssetImageSource
         if (context != other.context) return false
         if (assetFileName != other.assetFileName) return false
         return true

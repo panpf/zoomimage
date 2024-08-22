@@ -60,9 +60,9 @@ class GlideHttpImageSource(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is GlideHttpImageSource) return false
-        if (glideUrl != other.glideUrl) return false
-        return true
+        if (other == null || this::class != other::class) return false
+        other as GlideHttpImageSource
+        return glideUrl == other.glideUrl
     }
 
     override fun hashCode(): Int {
@@ -132,7 +132,8 @@ class GlideHttpImageSource(
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (other !is Factory) return false
+            if (other == null || this::class != other::class) return false
+            other as Factory
             if (glide != other.glide) return false
             if (glideUrl != other.glideUrl) return false
             return true

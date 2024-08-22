@@ -70,7 +70,8 @@ class ResourceImageSource(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ResourceImageSource) return false
+        if (other == null || this::class != other::class) return false
+        other as ResourceImageSource
         if (resources != other.resources) return false
         if (resId != other.resId) return false
         return true

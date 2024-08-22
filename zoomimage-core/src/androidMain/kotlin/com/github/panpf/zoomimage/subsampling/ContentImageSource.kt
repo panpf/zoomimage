@@ -47,7 +47,8 @@ class ContentImageSource(val context: Context, val uri: Uri) : ImageSource {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ContentImageSource) return false
+        if (other == null || this::class != other::class) return false
+        other as ContentImageSource
         if (context != other.context) return false
         if (uri != other.uri) return false
         return true

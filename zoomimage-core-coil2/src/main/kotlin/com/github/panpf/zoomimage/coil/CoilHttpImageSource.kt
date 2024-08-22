@@ -44,9 +44,9 @@ class CoilHttpImageSource(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is CoilHttpImageSource) return false
-        if (url != other.url) return false
-        return true
+        if (other == null || this::class != other::class) return false
+        other as CoilHttpImageSource
+        return url == other.url
     }
 
     override fun hashCode(): Int {
@@ -104,7 +104,8 @@ class CoilHttpImageSource(
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (other !is Factory) return false
+            if (other == null || this::class != other::class) return false
+            other as Factory
             if (imageLoader != other.imageLoader) return false
             if (url != other.url) return false
             return true

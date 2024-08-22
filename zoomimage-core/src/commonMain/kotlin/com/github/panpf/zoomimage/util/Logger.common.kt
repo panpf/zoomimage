@@ -256,9 +256,9 @@ class Logger(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Logger) return false
-        if (tag != other.tag) return false
-        return true
+        if (other == null || this::class != other::class) return false
+        other as Logger
+        return tag == other.tag
     }
 
     override fun hashCode(): Int {

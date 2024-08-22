@@ -54,9 +54,9 @@ class FileImageSource(val path: Path) : ImageSource {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is FileImageSource) return false
-        if (path != other.path) return false
-        return true
+        if (other == null || this::class != other::class) return false
+        other as FileImageSource
+        return path == other.path
     }
 
     override fun hashCode(): Int {

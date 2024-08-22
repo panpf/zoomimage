@@ -30,11 +30,9 @@ class SizeColorPainter(val color: Color, val size: Size) : Painter() {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SizeColorPainter) return false
-
-        if (color != other.color) return false
-
-        return true
+        if (other == null || this::class != other::class) return false
+        other as SizeColorPainter
+        return color == other.color
     }
 
     override fun hashCode(): Int {

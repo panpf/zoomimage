@@ -42,9 +42,9 @@ class SketchImageSource(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SketchImageSource) return false
-        if (imageUri != other.imageUri) return false
-        return true
+        if (other == null || this::class != other::class) return false
+        other as SketchImageSource
+        return imageUri == other.imageUri
     }
 
     override fun hashCode(): Int {
@@ -57,7 +57,7 @@ class SketchImageSource(
         return "SketchImageSource('$imageUri')"
     }
 
-    class Factory constructor(
+    class Factory(
         val sketch: Sketch,
         val imageUri: String,
     ) : ImageSource.Factory {
@@ -77,7 +77,8 @@ class SketchImageSource(
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (other !is Factory) return false
+            if (other == null || this::class != other::class) return false
+            other as Factory
             if (sketch != other.sketch) return false
             if (imageUri != other.imageUri) return false
             return true

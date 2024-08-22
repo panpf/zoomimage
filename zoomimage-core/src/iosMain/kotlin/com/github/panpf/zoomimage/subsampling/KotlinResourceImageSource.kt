@@ -49,9 +49,9 @@ class KotlinResourceImageSource(val resourcePath: String) : ImageSource {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is KotlinResourceImageSource) return false
-        if (resourcePath != other.resourcePath) return false
-        return true
+        if (other == null || this::class != other::class) return false
+        other as KotlinResourceImageSource
+        return resourcePath == other.resourcePath
     }
 
     override fun hashCode(): Int {

@@ -43,9 +43,9 @@ class ByteArrayImageSource(val byteArray: ByteArray) : ImageSource {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ByteArrayImageSource) return false
-        if (!byteArray.contentEquals(other.byteArray)) return false
-        return true
+        if (other == null || this::class != other::class) return false
+        other as ByteArrayImageSource
+        return byteArray.contentEquals(other.byteArray)
     }
 
     override fun hashCode(): Int {
