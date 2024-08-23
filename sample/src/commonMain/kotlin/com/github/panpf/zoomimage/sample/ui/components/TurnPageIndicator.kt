@@ -52,7 +52,7 @@ fun BoxScope.TurnPageIndicator(
         val keyHandlers = listOf(
             matcherKeyHandler(
                 listOf(
-                    KeyMatcher(Key.PageUp, type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.PageUp, type = KeyEventType.KeyUp),    // TODO Executed twice
                     KeyMatcher(Key.LeftBracket, AssistKey.Alt, type = KeyEventType.KeyUp),
                     KeyMatcher(Key.LeftBracket, platformAssistKey(), type = KeyEventType.KeyUp),
                     KeyMatcher(Key.DirectionLeft, AssistKey.Alt, type = KeyEventType.KeyUp),
@@ -65,7 +65,7 @@ fun BoxScope.TurnPageIndicator(
             },
             matcherKeyHandler(
                 listOf(
-                    KeyMatcher(Key.PageDown, type = KeyEventType.KeyUp),
+                    KeyMatcher(Key.PageDown, type = KeyEventType.KeyUp),    // TODO Executed twice
                     KeyMatcher(Key.RightBracket, AssistKey.Alt, type = KeyEventType.KeyUp),
                     KeyMatcher(Key.RightBracket, platformAssistKey(), type = KeyEventType.KeyUp),
                     KeyMatcher(Key.DirectionRight, AssistKey.Alt, type = KeyEventType.KeyUp),
