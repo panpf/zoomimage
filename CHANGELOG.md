@@ -2,15 +2,15 @@
 
 Translations: [简体中文](CHANGELOG_zh.md)
 
-## new
+## 1.1.0-beta01
 
 * change: The `contentSize` properties of ZoomableState and ZoomableEngine now no longer return `containerSize` when empty
 * change: Decisions about whether to disable Tile's memory cache are no longer based on the memory
   cache setting of the thumbnail's image request
-* new: ZoomState and ZoomImageView add `setImageSource()` method for setting ImageSource
+* change: The minimum length of the scrollbar is now 10.dp
 * improve: Improve SketchZoomImageview, CoilZoomImageView, GlideZoomImageView, PicassoZoomImageView.
   Now when setting ImageSource, the ImageSource will be cleared whenever it fails.
-* change: The minimum length of the scrollbar is now 10.dp
+* new: ZoomState and ZoomImageView add `setImageSource()` method for setting ImageSource
 * new: 'remember\*ZoomState()' series of functions add 'logLevel: Level' parameter
 
 ## 1.1.0-alpha06
