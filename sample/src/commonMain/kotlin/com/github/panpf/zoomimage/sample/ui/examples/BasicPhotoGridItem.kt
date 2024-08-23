@@ -67,6 +67,7 @@ fun BasicPhotoGridItem(
         crossfade()
         resizeOnDraw()
         sizeMultiplier(2f)  // To get a clearer thumbnail
+        SketchPhotoGridItemImageConfig()
     }
 
     Image(

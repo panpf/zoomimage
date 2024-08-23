@@ -20,6 +20,7 @@ import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.ability.mimeTypeLogo
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ComposableImageRequest
+import com.github.panpf.sketch.request.ImageRequest
 import com.github.panpf.sketch.request.ImageResult
 import com.github.panpf.sketch.request.composableError
 import com.github.panpf.sketch.resize.LongImagePrecisionDecider
@@ -36,6 +37,9 @@ import com.github.panpf.zoomimage.sample.ui.model.InfoItem
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.rememberMimeTypeLogoMap
 import kotlinx.collections.immutable.toImmutableList
+
+@Composable
+expect fun ImageRequest.Builder.SketchPhotoGridItemImageConfig()
 
 @Composable
 fun SketchPhotoGridItem(
@@ -69,6 +73,8 @@ fun SketchPhotoGridItem(
         crossfade()
         resizeOnDraw()
         sizeMultiplier(2f)  // To get a clearer thumbnail
+
+        SketchPhotoGridItemImageConfig()
     }
 
     AsyncImage(
