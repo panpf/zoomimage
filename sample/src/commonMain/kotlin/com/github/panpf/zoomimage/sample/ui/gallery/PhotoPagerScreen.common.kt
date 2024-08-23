@@ -63,8 +63,6 @@ import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
-import com.github.panpf.zoomimage.sample.util.isMobile
-import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
@@ -77,12 +75,17 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
     override fun DrawContent() {
         val coroutineScope = rememberCoroutineScope()
         val focusRequest = remember { androidx.compose.ui.focus.FocusRequester() }
-        Box(Modifier.fillMaxSize().focusable().focusRequester(focusRequest).onKeyEvent {
-            coroutineScope.launch {
-                EventBus.keyEvent.emit(it)
-            }
-            true
-        }) {
+        Box(
+            Modifier.fillMaxSize()
+                .focusable()
+                .focusRequester(focusRequest)
+                .onKeyEvent {
+                    coroutineScope.launch {
+                        EventBus.keyEvent.emit(it)
+                    }
+                    true
+                }
+        ) {
             val appSettings = LocalPlatformContext.current.appSettings
 
             val initialPage = remember { params.initialPosition - params.startPosition }
@@ -134,163 +137,160 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                 }
             }
 
-            Headers(pagerState, horizontalLayout, photoPaletteState)
-
-            if (!runtimePlatformInstance.isMobile()) {
-                TurnPageIndicator(pagerState, photoPaletteState)
-            }
-
+            Headers(params, pagerState, horizontalLayout, photoPaletteState)
+            TurnPageIndicator(pagerState, photoPaletteState)
             GestureDialog(appSettings)
         }
         LaunchedEffect(Unit) {
             focusRequest.requestFocus()
         }
     }
+}
 
-    @Composable
-    @OptIn(ExperimentalFoundationApi::class)
-    fun Headers(
-        pagerState: PagerState,
-        horizontalLayout: Boolean,
-        photoPaletteState: MutableState<PhotoPalette>
-    ) {
-        val context = LocalPlatformContext.current
-        val density = LocalDensity.current
-        val appSettings = context.appSettings
-        val toolbarTopMarginDp = remember {
-            val toolbarTopMargin = getTopMargin(context)
-            with(density) { toolbarTopMargin.toDp() }
-        }
-        val photoPalette by photoPaletteState
-        Box(modifier = Modifier.fillMaxSize().padding(top = toolbarTopMarginDp)) {
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
+@Composable
+@OptIn(ExperimentalFoundationApi::class)
+fun Headers(
+    params: PhotoPagerScreenParams,
+    pagerState: PagerState,
+    horizontalLayout: Boolean,
+    photoPaletteState: MutableState<PhotoPalette>
+) {
+    val context = LocalPlatformContext.current
+    val density = LocalDensity.current
+    val appSettings = context.appSettings
+    val toolbarTopMarginDp = remember {
+        val toolbarTopMargin = getTopMargin(context)
+        with(density) { toolbarTopMargin.toDp() }
+    }
+    val photoPalette by photoPaletteState
+    Box(modifier = Modifier.fillMaxSize().padding(top = toolbarTopMarginDp)) {
+        Row(
+            modifier = Modifier.padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val navigator = LocalNavigator.current!!
+            IconButton(
+                onClick = { navigator.pop() },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = photoPalette.containerColor,
+                    contentColor = photoPalette.contentColor
+                )
             ) {
-                val navigator = LocalNavigator.current!!
-                IconButton(
-                    onClick = { navigator.pop() },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = photoPalette.containerColor,
-                        contentColor = photoPalette.contentColor
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier.size(40.dp).padding(8.dp),
-                    )
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier.size(40.dp).padding(8.dp),
+                )
+            }
+
+            Spacer(Modifier.weight(1f))
+
+            IconButton(
+                onClick = { appSettings.horizontalPagerLayout.value = !horizontalLayout },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = photoPalette.containerColor,
+                    contentColor = photoPalette.contentColor
+                )
+            ) {
+                val icon = if (horizontalLayout) {
+                    painterResource(Res.drawable.ic_swap_ver)
+                } else {
+                    painterResource(Res.drawable.ic_swap_hor)
                 }
+                Icon(
+                    painter = icon,
+                    contentDescription = "orientation",
+                    modifier = Modifier.size(40.dp).padding(8.dp)
+                )
+            }
 
-                Spacer(Modifier.weight(1f))
+            Spacer(modifier = Modifier.size(10.dp))
 
-                IconButton(
-                    onClick = { appSettings.horizontalPagerLayout.value = !horizontalLayout },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = photoPalette.containerColor,
-                        contentColor = photoPalette.contentColor
+            var showSwitchImageLoaderDialog by remember { mutableStateOf(false) }
+            Box(
+                modifier = Modifier.size(40.dp)
+                    .clip(CircleShape)
+                    .background(photoPalette.containerColor)
+                    .clickable { showSwitchImageLoaderDialog = true },
+            ) {
+                val imageLoaderName by appSettings.composeImageLoader.collectAsState()
+                val imageLoaderIcon = getComposeImageLoaderIcon(imageLoaderName)
+                Image(
+                    painter = imageLoaderIcon,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(24.dp).clip(CircleShape).align(Alignment.Center),
+                )
+            }
+            if (showSwitchImageLoaderDialog) {
+                SwitchImageLoaderDialog {
+                    showSwitchImageLoaderDialog = false
+                }
+            }
+
+            Spacer(modifier = Modifier.size(10.dp))
+
+            var showSettingsDialog by remember { mutableStateOf(false) }
+            IconButton(
+                onClick = { showSettingsDialog = true },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = photoPalette.containerColor,
+                    contentColor = photoPalette.contentColor
+                )
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_settings),
+                    contentDescription = "settings",
+                    modifier = Modifier.size(40.dp).padding(8.dp)
+                )
+            }
+            if (showSettingsDialog) {
+                ZoomImageSettingsDialog {
+                    showSettingsDialog = false
+                }
+            }
+
+            Spacer(modifier = Modifier.size(10.dp))
+
+            Box(
+                Modifier
+                    .height(40.dp)
+                    .background(
+                        color = photoPalette.containerColor,
+                        shape = RoundedCornerShape(50)
                     )
-                ) {
-                    val icon = if (horizontalLayout) {
-                        painterResource(Res.drawable.ic_swap_ver)
-                    } else {
-                        painterResource(Res.drawable.ic_swap_hor)
+                    .padding(horizontal = 14.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                val numberText by remember {
+                    derivedStateOf {
+                        val number = params.startPosition + pagerState.currentPage + 1
+                        "${number}/${params.totalCount}"
                     }
-                    Icon(
-                        painter = icon,
-                        contentDescription = "orientation",
-                        modifier = Modifier.size(40.dp).padding(8.dp)
-                    )
                 }
-
-                Spacer(modifier = Modifier.size(10.dp))
-
-                var showSwitchImageLoaderDialog by remember { mutableStateOf(false) }
-                Box(
-                    modifier = Modifier.size(40.dp)
-                        .clip(CircleShape)
-                        .background(photoPalette.containerColor)
-                        .clickable { showSwitchImageLoaderDialog = true },
-                ) {
-                    val imageLoaderName by appSettings.composeImageLoader.collectAsState()
-                    val imageLoaderIcon = getComposeImageLoaderIcon(imageLoaderName)
-                    Image(
-                        painter = imageLoaderIcon,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(24.dp).clip(CircleShape).align(Alignment.Center),
-                    )
-                }
-                if (showSwitchImageLoaderDialog) {
-                    SwitchImageLoaderDialog {
-                        showSwitchImageLoaderDialog = false
-                    }
-                }
-
-                Spacer(modifier = Modifier.size(10.dp))
-
-                var showSettingsDialog by remember { mutableStateOf(false) }
-                IconButton(
-                    onClick = { showSettingsDialog = true },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = photoPalette.containerColor,
-                        contentColor = photoPalette.contentColor
-                    )
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_settings),
-                        contentDescription = "settings",
-                        modifier = Modifier.size(40.dp).padding(8.dp)
-                    )
-                }
-                if (showSettingsDialog) {
-                    ZoomImageSettingsDialog {
-                        showSettingsDialog = false
-                    }
-                }
-
-                Spacer(modifier = Modifier.size(10.dp))
-
-                Box(
-                    Modifier
-                        .height(40.dp)
-                        .background(
-                            color = photoPalette.containerColor,
-                            shape = RoundedCornerShape(50)
-                        )
-                        .padding(horizontal = 14.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val numberText by remember {
-                        derivedStateOf {
-                            val number = params.startPosition + pagerState.currentPage + 1
-                            "${number}/${params.totalCount}"
-                        }
-                    }
-                    Text(
-                        text = numberText,
-                        textAlign = TextAlign.Center,
-                        color = photoPalette.contentColor,
-                        style = TextStyle(lineHeight = 12.sp),
-                    )
-                }
+                Text(
+                    text = numberText,
+                    textAlign = TextAlign.Center,
+                    color = photoPalette.contentColor,
+                    style = TextStyle(lineHeight = 12.sp),
+                )
             }
         }
     }
+}
 
-    @Composable
-    fun GestureDialog(appSettings: AppSettings) {
-        val pagerGuideShowed by appSettings.pagerGuideShowed.collectAsState()
-        var showPagerGuide by remember { mutableStateOf(true) }
-        if (!pagerGuideShowed && showPagerGuide) {
-            AlertDialog(
-                onDismissRequest = { showPagerGuide = false },
-                title = { Text("Operation gestures") },
-                text = {
-                    Text(
-                        """The current page supports the following gestures or operations：
+@Composable
+fun GestureDialog(appSettings: AppSettings) {
+    val pagerGuideShowed by appSettings.pagerGuideShowed.collectAsState()
+    var showPagerGuide by remember { mutableStateOf(true) }
+    if (!pagerGuideShowed && showPagerGuide) {
+        AlertDialog(
+            onDismissRequest = { showPagerGuide = false },
+            title = { Text("Operation gestures") },
+            text = {
+                Text(
+                    text = """The current page supports the following gestures or operations：
                             |1. Turn page:
-                            |    1.1. Key.PageUp, Key.PageDown
                             |    1.2. Key.LeftBracket + (meta/ctrl)/alt, Key.RightBracket + (meta/ctrl)/alt
                             |    1.3. Key.DirectionLeft + (meta/ctrl)/alt, Key.DirectionRight + (meta/ctrl)/alt
                             |2. Scaling image：
@@ -303,20 +303,20 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                             |        Key.DirectionUp + (meta/ctrl)/alt, Key.DirectionDown + (meta/ctrl)/alt
                             |3. Moving image：
                             |    3.1. Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight
-                            """.trimMargin()
-                    )
-                },
-                dismissButton = {
-                    Button(onClick = { showPagerGuide = false }) {
-                        Text("I Known")
-                    }
-                },
-                confirmButton = {
-                    Button(onClick = { appSettings.pagerGuideShowed.value = true }) {
-                        Text("Not prompting")
-                    }
+                            """.trimMargin(),
+                    fontSize = 12.sp
+                )
+            },
+            dismissButton = {
+                Button(onClick = { showPagerGuide = false }) {
+                    Text("I Known")
                 }
-            )
-        }
+            },
+            confirmButton = {
+                Button(onClick = { appSettings.pagerGuideShowed.value = true }) {
+                    Text("Not prompting")
+                }
+            }
+        )
     }
 }

@@ -1,7 +1,8 @@
 package com.github.panpf.zoomimage.sample.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
@@ -37,13 +38,15 @@ import com.github.panpf.zoomimage.sample.resources.ic_arrow_down
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_left
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_right
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_up
+import com.github.panpf.zoomimage.sample.util.isMobile
+import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun BoxScope.TurnPageIndicator(
+fun TurnPageIndicator(
     pagerState: PagerState,
     photoPaletteState: MutableState<PhotoPalette>? = null
 ) {
@@ -52,7 +55,6 @@ fun BoxScope.TurnPageIndicator(
         val keyHandlers = listOf(
             matcherKeyHandler(
                 listOf(
-                    KeyMatcher(Key.PageUp, type = KeyEventType.KeyUp),    // TODO Executed twice
                     KeyMatcher(Key.LeftBracket, AssistKey.Alt, type = KeyEventType.KeyUp),
                     KeyMatcher(Key.LeftBracket, platformAssistKey(), type = KeyEventType.KeyUp),
                     KeyMatcher(Key.DirectionLeft, AssistKey.Alt, type = KeyEventType.KeyUp),
@@ -65,7 +67,6 @@ fun BoxScope.TurnPageIndicator(
             },
             matcherKeyHandler(
                 listOf(
-                    KeyMatcher(Key.PageDown, type = KeyEventType.KeyUp),    // TODO Executed twice
                     KeyMatcher(Key.RightBracket, AssistKey.Alt, type = KeyEventType.KeyUp),
                     KeyMatcher(Key.RightBracket, platformAssistKey(), type = KeyEventType.KeyUp),
                     KeyMatcher(Key.DirectionRight, AssistKey.Alt, type = KeyEventType.KeyUp),
@@ -83,67 +84,72 @@ fun BoxScope.TurnPageIndicator(
             }
         }
     }
-    val turnPageIconModifier = Modifier
-        .padding(50.dp)
-        .size(50.dp)
-        .clip(CircleShape)
-    val appSettings = LocalPlatformContext.current.appSettings
-    val colorScheme = MaterialTheme.colorScheme
-    val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
-    val photoPalette by photoPaletteState ?: remember { mutableStateOf(PhotoPalette(colorScheme)) }
-    if (horizontalLayout) {
-        IconButton(
-            onClick = { coroutineScope.launch { pagerState.previousPage() } },
-            modifier = turnPageIconModifier.align(Alignment.CenterStart),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = photoPalette.containerColor,
-                contentColor = photoPalette.contentColor
-            ),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_left),
-                contentDescription = "Previous",
-            )
-        }
-        IconButton(
-            onClick = { coroutineScope.launch { pagerState.nextPage() } },
-            modifier = turnPageIconModifier.align(Alignment.CenterEnd),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = photoPalette.containerColor,
-                contentColor = photoPalette.contentColor
-            ),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_right),
-                contentDescription = "Next",
-            )
-        }
-    } else {
-        IconButton(
-            onClick = { coroutineScope.launch { pagerState.previousPage() } },
-            modifier = turnPageIconModifier.align(Alignment.TopCenter),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = photoPalette.containerColor,
-                contentColor = photoPalette.contentColor
-            ),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_up),
-                contentDescription = "Previous",
-            )
-        }
-        IconButton(
-            onClick = { coroutineScope.launch { pagerState.nextPage() } },
-            modifier = turnPageIconModifier.align(Alignment.BottomCenter),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = photoPalette.containerColor,
-                contentColor = photoPalette.contentColor
-            ),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_down),
-                contentDescription = "Next",
-            )
+    if (!runtimePlatformInstance.isMobile()) {
+        val turnPageIconModifier = Modifier
+            .padding(50.dp)
+            .size(50.dp)
+            .clip(CircleShape)
+        val appSettings = LocalPlatformContext.current.appSettings
+        val colorScheme = MaterialTheme.colorScheme
+        val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
+        val photoPalette by photoPaletteState
+            ?: remember { mutableStateOf(PhotoPalette(colorScheme)) }
+        Box(Modifier.fillMaxSize()) {
+            if (horizontalLayout) {
+                IconButton(
+                    onClick = { coroutineScope.launch { pagerState.previousPage() } },
+                    modifier = turnPageIconModifier.align(Alignment.CenterStart),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = photoPalette.containerColor,
+                        contentColor = photoPalette.contentColor
+                    ),
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_arrow_left),
+                        contentDescription = "Previous",
+                    )
+                }
+                IconButton(
+                    onClick = { coroutineScope.launch { pagerState.nextPage() } },
+                    modifier = turnPageIconModifier.align(Alignment.CenterEnd),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = photoPalette.containerColor,
+                        contentColor = photoPalette.contentColor
+                    ),
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_arrow_right),
+                        contentDescription = "Next",
+                    )
+                }
+            } else {
+                IconButton(
+                    onClick = { coroutineScope.launch { pagerState.previousPage() } },
+                    modifier = turnPageIconModifier.align(Alignment.TopCenter),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = photoPalette.containerColor,
+                        contentColor = photoPalette.contentColor
+                    ),
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_arrow_up),
+                        contentDescription = "Previous",
+                    )
+                }
+                IconButton(
+                    onClick = { coroutineScope.launch { pagerState.nextPage() } },
+                    modifier = turnPageIconModifier.align(Alignment.BottomCenter),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = photoPalette.containerColor,
+                        contentColor = photoPalette.contentColor
+                    ),
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_arrow_down),
+                        contentDescription = "Next",
+                    )
+                }
+            }
         }
     }
 }
@@ -156,6 +162,6 @@ suspend fun PagerState.nextPage() {
 
 @OptIn(ExperimentalFoundationApi::class)
 suspend fun PagerState.previousPage() {
-    val nextPageIndex = (currentPage - 1).let { if (it < 0) pageCount + it else it }
-    animateScrollToPage(nextPageIndex)
+    val previousPageIndex = (currentPage - 1).let { if (it < 0) pageCount + it else it }
+    animateScrollToPage(previousPageIndex)
 }
