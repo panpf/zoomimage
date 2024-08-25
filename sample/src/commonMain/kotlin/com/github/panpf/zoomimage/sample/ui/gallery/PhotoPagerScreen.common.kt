@@ -62,7 +62,9 @@ import com.github.panpf.zoomimage.sample.resources.ic_swap_hor
 import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
 import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
+import com.github.panpf.zoomimage.sample.ui.components.MyDialog
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
+import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
@@ -230,9 +232,9 @@ fun Headers(
 
             Spacer(modifier = Modifier.size(10.dp))
 
-            var showSettingsDialog by remember { mutableStateOf(false) }
+            val zoomImageSettingsListDialogState = rememberMyDialogState()
             IconButton(
-                onClick = { showSettingsDialog = true },
+                onClick = { zoomImageSettingsListDialogState.show() },
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = photoPalette.containerColor,
                     contentColor = photoPalette.contentColor
@@ -244,10 +246,8 @@ fun Headers(
                     modifier = Modifier.size(40.dp).padding(8.dp)
                 )
             }
-            if (showSettingsDialog) {
-                ZoomImageSettingsDialog {
-                    showSettingsDialog = false
-                }
+            MyDialog(zoomImageSettingsListDialogState) {
+                ZoomImageSettingList()
             }
 
             Spacer(modifier = Modifier.size(10.dp))

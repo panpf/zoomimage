@@ -14,14 +14,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +31,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -41,13 +38,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_expand_more
-import com.github.panpf.zoomimage.sample.ui.util.getSettingsDialogHeight
 import com.github.panpf.zoomimage.sample.ui.util.name
 import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ContinuousTransformType
@@ -58,233 +52,224 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun ZoomImageSettingsDialog(onDismissRequest: () -> Unit) {
-    Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties()) {
-        Surface(
-            Modifier
-                .fillMaxWidth()
-                .height(getSettingsDialogHeight())
-                .clip(RoundedCornerShape(20.dp))
-        ) {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                val appSettings = LocalPlatformContext.current.appSettings
+fun ZoomImageSettingList() {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        val appSettings = LocalPlatformContext.current.appSettings
 
-                val contentScaleValues = remember {
-                    listOf(
-                        ContentScale.Fit,
-                        ContentScale.Crop,
-                        ContentScale.Inside,
-                        ContentScale.FillWidth,
-                        ContentScale.FillHeight,
-                        ContentScale.FillBounds,
-                        ContentScale.None,
-                    ).map { it.name }
-                }
-                DropdownSettingItem(
-                    title = "Content Scale",
-                    desc = null,
-                    values = contentScaleValues,
-                    state = appSettings.contentScale,
-                )
-                val alignmentValues = remember {
-                    listOf(
-                        Alignment.TopStart,
-                        Alignment.TopCenter,
-                        Alignment.TopEnd,
-                        Alignment.CenterStart,
-                        Alignment.Center,
-                        Alignment.CenterEnd,
-                        Alignment.BottomStart,
-                        Alignment.BottomCenter,
-                        Alignment.BottomEnd,
-                    ).map { it.name }
-                }
-                DropdownSettingItem(
-                    title = "Alignment",
-                    desc = null,
-                    values = alignmentValues,
-                    state = appSettings.alignment,
-                )
-
-                DividerSettingItem()
-
-                SwitchSettingItem(
-                    title = "Animate Scale",
-                    desc = null,
-                    state = appSettings.animateScale,
-                )
-                SwitchSettingItem(
-                    title = "Rubber Band Scale",
-                    desc = null,
-                    state = appSettings.rubberBandScale,
-                )
-                SwitchSettingItem(
-                    title = "Three Step Scale",
-                    desc = null,
-                    state = appSettings.threeStepScale,
-                )
-                SwitchSettingItem(
-                    title = "Slower Scale Animation",
-                    desc = null,
-                    state = appSettings.slowerScaleAnimation,
-                )
-                SwitchSettingItem(
-                    title = "Reverse Mouse Wheel Scale",
-                    desc = null,
-                    state = appSettings.reverseMouseWheelScale,
-                )
-                DropdownSettingItem(
-                    title = "Scales Calculator",
-                    desc = null,
-                    values = listOf("Dynamic", "Fixed"),
-                    state = appSettings.scalesCalculator,
-                )
-                val scalesMultipleValues = remember {
-                    listOf(
-                        2.0f.toString(),
-                        2.5f.toString(),
-                        3.0f.toString(),
-                        3.5f.toString(),
-                        4.0f.toString(),
-                    )
-                }
-                DropdownSettingItem(
-                    title = "Scales Multiple",
-                    desc = null,
-                    values = scalesMultipleValues,
-                    state = appSettings.scalesMultiple,
-                )
-
-                val gestureTypes = remember { GestureType.values }
-                val gestureTypeStrings = remember {
-                    gestureTypes.map { GestureType.name(it) }
-                }
-                val disabledGestureTypes by appSettings.disabledGestureTypes.collectAsState()
-                val disabledGestureTypeCheckedList = remember(disabledGestureTypes) {
-                    gestureTypes.map { it and disabledGestureTypes != 0 }
-                }
-                MultiChooseSettingItem(
-                    title = "Disabled Gesture Type",
-                    values = gestureTypeStrings,
-                    checkedList = disabledGestureTypeCheckedList,
-                    onSelected = { which, isChecked ->
-                        val newCheckedList = disabledGestureTypeCheckedList.toMutableList()
-                            .apply { set(which, isChecked) }
-                        val newDisabledGestureType =
-                            newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
-                                if (checked) gestureTypes[index] else null
-                            }.fold(0) { acc, gestureType ->
-                                acc or gestureType
-                            }
-                        appSettings.disabledGestureTypes.value = newDisabledGestureType
-                    }
-                )
-
-                DividerSettingItem()
-
-                SwitchSettingItem(
-                    title = "Limit Offset Within Base Visible Rect",
-                    desc = null,
-                    state = appSettings.limitOffsetWithinBaseVisibleRect,
-                )
-
-                DividerSettingItem()
-
-                SwitchSettingItem(
-                    title = "Read Mode",
-                    desc = null,
-                    state = appSettings.readModeEnabled,
-                )
-                SwitchSettingItem(
-                    title = "Read Mode - Both",
-                    desc = null,
-                    state = appSettings.readModeAcceptedBoth,
-                )
-
-                DividerSettingItem()
-
-                SwitchSettingItem(
-                    title = "Tile Memory Cache",
-                    desc = null,
-                    state = appSettings.tileMemoryCache,
-                )
-
-                val continuousTransformTypes = remember { ContinuousTransformType.values }
-                val continuousTransformTypeStrings = remember {
-                    continuousTransformTypes.map { ContinuousTransformType.name(it) }
-                }
-                val pausedContinuousTransformTypes by appSettings.pausedContinuousTransformTypes.collectAsState()
-                val pausedContinuousTransformTypeCheckedList =
-                    remember(pausedContinuousTransformTypes) {
-                        continuousTransformTypes.map { it and pausedContinuousTransformTypes != 0 }
-                    }
-                MultiChooseSettingItem(
-                    title = "Paused Continuous Transform Type",
-                    values = continuousTransformTypeStrings,
-                    checkedList = pausedContinuousTransformTypeCheckedList,
-                    onSelected = { which, isChecked ->
-                        val newCheckedList =
-                            pausedContinuousTransformTypeCheckedList.toMutableList()
-                                .apply { set(which, isChecked) }
-                        val newContinuousTransformType =
-                            newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
-                                if (checked) continuousTransformTypes[index] else null
-                            }.fold(0) { acc, continuousTransformType ->
-                                acc or continuousTransformType
-                            }
-                        appSettings.pausedContinuousTransformTypes.value =
-                            newContinuousTransformType
-                    }
-                )
-
-                SwitchSettingItem(
-                    title = "Disabled Background Tiles",
-                    desc = null,
-                    state = appSettings.disabledBackgroundTiles,
-                )
-                SwitchSettingItem(
-                    title = "Show Tile Bounds",
-                    desc = null,
-                    state = appSettings.showTileBounds,
-                )
-                SwitchSettingItem(
-                    title = "Tile Animation",
-                    desc = null,
-                    state = appSettings.tileAnimation,
-                )
-
-                DividerSettingItem()
-
-                SwitchSettingItem(
-                    title = "Scroll Bar",
-                    desc = null,
-                    state = appSettings.scrollBarEnabled,
-                )
-
-                DividerSettingItem()
-
-                val logLevelValues = remember {
-                    listOf(
-                        Logger.Level.Verbose,
-                        Logger.Level.Debug,
-                        Logger.Level.Info,
-                        Logger.Level.Warn,
-                        Logger.Level.Error,
-                        Logger.Level.Assert,
-                    ).map { it.name }
-                }
-                DropdownSettingItem(
-                    title = "Log Level",
-                    desc = null,
-                    values = logLevelValues,
-                    state = appSettings.logLevel,
-                )
-            }
+        val contentScaleValues = remember {
+            listOf(
+                ContentScale.Fit,
+                ContentScale.Crop,
+                ContentScale.Inside,
+                ContentScale.FillWidth,
+                ContentScale.FillHeight,
+                ContentScale.FillBounds,
+                ContentScale.None,
+            ).map { it.name }
         }
+        DropdownSettingItem(
+            title = "Content Scale",
+            desc = null,
+            values = contentScaleValues,
+            state = appSettings.contentScale,
+        )
+        val alignmentValues = remember {
+            listOf(
+                Alignment.TopStart,
+                Alignment.TopCenter,
+                Alignment.TopEnd,
+                Alignment.CenterStart,
+                Alignment.Center,
+                Alignment.CenterEnd,
+                Alignment.BottomStart,
+                Alignment.BottomCenter,
+                Alignment.BottomEnd,
+            ).map { it.name }
+        }
+        DropdownSettingItem(
+            title = "Alignment",
+            desc = null,
+            values = alignmentValues,
+            state = appSettings.alignment,
+        )
+
+        DividerSettingItem()
+
+        SwitchSettingItem(
+            title = "Animate Scale",
+            desc = null,
+            state = appSettings.animateScale,
+        )
+        SwitchSettingItem(
+            title = "Rubber Band Scale",
+            desc = null,
+            state = appSettings.rubberBandScale,
+        )
+        SwitchSettingItem(
+            title = "Three Step Scale",
+            desc = null,
+            state = appSettings.threeStepScale,
+        )
+        SwitchSettingItem(
+            title = "Slower Scale Animation",
+            desc = null,
+            state = appSettings.slowerScaleAnimation,
+        )
+        SwitchSettingItem(
+            title = "Reverse Mouse Wheel Scale",
+            desc = null,
+            state = appSettings.reverseMouseWheelScale,
+        )
+        DropdownSettingItem(
+            title = "Scales Calculator",
+            desc = null,
+            values = listOf("Dynamic", "Fixed"),
+            state = appSettings.scalesCalculator,
+        )
+        val scalesMultipleValues = remember {
+            listOf(
+                2.0f.toString(),
+                2.5f.toString(),
+                3.0f.toString(),
+                3.5f.toString(),
+                4.0f.toString(),
+            )
+        }
+        DropdownSettingItem(
+            title = "Scales Multiple",
+            desc = null,
+            values = scalesMultipleValues,
+            state = appSettings.scalesMultiple,
+        )
+
+        val gestureTypes = remember { GestureType.values }
+        val gestureTypeStrings = remember {
+            gestureTypes.map { GestureType.name(it) }
+        }
+        val disabledGestureTypes by appSettings.disabledGestureTypes.collectAsState()
+        val disabledGestureTypeCheckedList = remember(disabledGestureTypes) {
+            gestureTypes.map { it and disabledGestureTypes != 0 }
+        }
+        MultiChooseSettingItem(
+            title = "Disabled Gesture Type",
+            values = gestureTypeStrings,
+            checkedList = disabledGestureTypeCheckedList,
+            onSelected = { which, isChecked ->
+                val newCheckedList = disabledGestureTypeCheckedList.toMutableList()
+                    .apply { set(which, isChecked) }
+                val newDisabledGestureType =
+                    newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
+                        if (checked) gestureTypes[index] else null
+                    }.fold(0) { acc, gestureType ->
+                        acc or gestureType
+                    }
+                appSettings.disabledGestureTypes.value = newDisabledGestureType
+            }
+        )
+
+        DividerSettingItem()
+
+        SwitchSettingItem(
+            title = "Limit Offset Within Base Visible Rect",
+            desc = null,
+            state = appSettings.limitOffsetWithinBaseVisibleRect,
+        )
+
+        DividerSettingItem()
+
+        SwitchSettingItem(
+            title = "Read Mode",
+            desc = null,
+            state = appSettings.readModeEnabled,
+        )
+        SwitchSettingItem(
+            title = "Read Mode - Both",
+            desc = null,
+            state = appSettings.readModeAcceptedBoth,
+        )
+
+        DividerSettingItem()
+
+        SwitchSettingItem(
+            title = "Tile Memory Cache",
+            desc = null,
+            state = appSettings.tileMemoryCache,
+        )
+
+        val continuousTransformTypes = remember { ContinuousTransformType.values }
+        val continuousTransformTypeStrings = remember {
+            continuousTransformTypes.map { ContinuousTransformType.name(it) }
+        }
+        val pausedContinuousTransformTypes by appSettings.pausedContinuousTransformTypes.collectAsState()
+        val pausedContinuousTransformTypeCheckedList =
+            remember(pausedContinuousTransformTypes) {
+                continuousTransformTypes.map { it and pausedContinuousTransformTypes != 0 }
+            }
+        MultiChooseSettingItem(
+            title = "Paused Continuous Transform Type",
+            values = continuousTransformTypeStrings,
+            checkedList = pausedContinuousTransformTypeCheckedList,
+            onSelected = { which, isChecked ->
+                val newCheckedList =
+                    pausedContinuousTransformTypeCheckedList.toMutableList()
+                        .apply { set(which, isChecked) }
+                val newContinuousTransformType =
+                    newCheckedList.asSequence().mapIndexedNotNull { index, checked ->
+                        if (checked) continuousTransformTypes[index] else null
+                    }.fold(0) { acc, continuousTransformType ->
+                        acc or continuousTransformType
+                    }
+                appSettings.pausedContinuousTransformTypes.value =
+                    newContinuousTransformType
+            }
+        )
+
+        SwitchSettingItem(
+            title = "Disabled Background Tiles",
+            desc = null,
+            state = appSettings.disabledBackgroundTiles,
+        )
+        SwitchSettingItem(
+            title = "Show Tile Bounds",
+            desc = null,
+            state = appSettings.showTileBounds,
+        )
+        SwitchSettingItem(
+            title = "Tile Animation",
+            desc = null,
+            state = appSettings.tileAnimation,
+        )
+
+        DividerSettingItem()
+
+        SwitchSettingItem(
+            title = "Scroll Bar",
+            desc = null,
+            state = appSettings.scrollBarEnabled,
+        )
+
+        DividerSettingItem()
+
+        val logLevelValues = remember {
+            listOf(
+                Logger.Level.Verbose,
+                Logger.Level.Debug,
+                Logger.Level.Info,
+                Logger.Level.Warn,
+                Logger.Level.Error,
+                Logger.Level.Assert,
+            ).map { it.name }
+        }
+        DropdownSettingItem(
+            title = "Log Level",
+            desc = null,
+            values = logLevelValues,
+            state = appSettings.logLevel,
+        )
     }
 }
 
