@@ -21,7 +21,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.github.panpf.zoomimage.sample.ui.util.createViewBinding
 
 abstract class BaseBindingFragment<VIEW_BINDING : ViewBinding> : BaseFragment() {
 

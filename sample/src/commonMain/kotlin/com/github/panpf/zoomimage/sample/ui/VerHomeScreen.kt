@@ -33,13 +33,14 @@ import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListPage
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListPage
 import com.github.panpf.zoomimage.sample.ui.test.TestPage
+import com.github.panpf.zoomimage.sample.util.Platform
+import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
-import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
-val gridCellsMinSize: Dp = if (runtimePlatformInstance.isMobile()) 100.dp else 150.dp
+val gridCellsMinSize: Dp = if (Platform.current.isMobile()) 100.dp else 150.dp
 
 @Composable
 expect fun HomeHeader()

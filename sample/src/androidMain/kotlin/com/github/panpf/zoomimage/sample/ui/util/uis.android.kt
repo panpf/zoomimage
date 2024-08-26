@@ -1,11 +1,36 @@
+/*
+ * Copyright (C) 2022 panpf <panpfpanpf@outlook.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.panpf.zoomimage.sample.ui.util
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
+import android.content.res.Resources.Theme
 import android.graphics.Matrix
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Looper
 import android.view.MotionEvent
 import android.widget.ImageView.ScaleType
+import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntSize
+import androidx.core.content.res.ResourcesCompat
 import com.github.panpf.zoomimage.util.IntRectCompat
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import com.github.panpf.zoomimage.util.OffsetCompat
@@ -20,6 +45,42 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
+
+@Composable
+actual fun windowSize(): IntSize {
+    val context = LocalContext.current
+    return context.resources.displayMetrics.let { displayMetrics ->
+        IntSize(displayMetrics.widthPixels, displayMetrics.heightPixels)
+    }
+}
+
+fun Resources.getDrawableCompat(@DrawableRes id: Int, theme: Theme? = null): Drawable {
+    return checkNotNull(ResourcesCompat.getDrawable(this, id, theme)) {
+        "Can't find drawable by id=$id"
+    }
+}
+
+fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable {
+    val drawable = AppCompatResources.getDrawable(this, resId)
+    return checkNotNull(drawable) { "Invalid resource ID: $resId" }
+}
+
+fun Context.isDarkTheme(): Boolean {
+    return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+}
+
+fun Context.getWindowBackgroundColor(): Int {
+    val array = theme.obtainStyledAttributes(
+        intArrayOf(android.R.attr.windowBackground)
+    )
+    val windowBackground = array.getColor(0, 0xFF00FF)
+    array.recycle()
+    return windowBackground
+}
+
+fun Context.isNightMode(): Boolean {
+    return resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+}
 
 
 internal fun requiredMainThread() {
@@ -199,14 +260,13 @@ internal fun Matrix.getScale(): ScaleFactorCompat {
     val scaleY: Float = values[Matrix.MSCALE_Y]
     val skewX: Float = values[Matrix.MSKEW_X]
     val scaleY1 = sqrt(scaleY.toDouble().pow(2.0) + skewX.toDouble().pow(2.0)).toFloat()
-    @Suppress("UnnecessaryVariable") val scaleFactorCompat =
-        ScaleFactorCompat(scaleX = scaleX1, scaleY = scaleY1)
+    val scaleFactorCompat = ScaleFactorCompat(scaleX = scaleX1, scaleY = scaleY1)
     return scaleFactorCompat
 }
 
 internal fun Matrix.getTranslation(): OffsetCompat {
     val values = localValues
-    @Suppress("UnnecessaryVariable") val offsetCompat = OffsetCompat(
+    val offsetCompat = OffsetCompat(
         x = values[Matrix.MTRANS_X],
         y = values[Matrix.MTRANS_Y]
     )

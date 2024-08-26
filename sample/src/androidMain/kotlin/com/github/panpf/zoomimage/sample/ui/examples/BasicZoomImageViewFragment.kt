@@ -32,6 +32,7 @@ import com.github.panpf.sketch.sketch
 import com.github.panpf.zoomimage.ZoomImageView
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.test.sketchImageUriToZoomImageImageSource
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.launch
@@ -87,14 +88,14 @@ class BasicZoomImageViewFragment : BaseZoomImageViewFragment<ZoomImageView>() {
         }
     }
 
-    class ItemFactory : FragmentItemFactory<String>(String::class) {
+    class ItemFactory : FragmentItemFactory<Photo>(Photo::class) {
 
         override fun createFragment(
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
-            data: String
+            data: Photo
         ): Fragment = BasicZoomImageViewFragment().apply {
-            arguments = BasicZoomImageViewFragmentArgs(data).toBundle()
+            arguments = BasicZoomImageViewFragmentArgs(data.originalUrl).toBundle()
         }
     }
 }

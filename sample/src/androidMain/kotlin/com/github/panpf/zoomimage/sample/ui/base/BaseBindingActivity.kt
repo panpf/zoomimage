@@ -24,7 +24,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.viewbinding.ViewBinding
-import com.github.panpf.zoomimage.sample.ui.util.createViewBinding
 
 abstract class BaseBindingActivity<VIEW_BINDING : ViewBinding> : BaseActivity() {
 

@@ -24,9 +24,10 @@ import coil3.request.crossfade
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.CoilZoomImageView
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceToImageSource
+import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>() {
 
@@ -70,14 +71,14 @@ class CoilZoomImageViewFragment : BaseZoomImageViewFragment<CoilZoomImageView>()
         }
     }
 
-    class ItemFactory : FragmentItemFactory<String>(String::class) {
+    class ItemFactory : FragmentItemFactory<Photo>(Photo::class) {
 
         override fun createFragment(
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
-            data: String
+            data: Photo
         ): Fragment = CoilZoomImageViewFragment().apply {
-            arguments = CoilZoomImageViewFragmentArgs(data).toBundle()
+            arguments = CoilZoomImageViewFragmentArgs(data.originalUrl).toBundle()
         }
     }
 }

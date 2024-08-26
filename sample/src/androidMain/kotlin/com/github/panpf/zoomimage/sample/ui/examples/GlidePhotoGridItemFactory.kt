@@ -20,7 +20,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
+import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
 
 class GlidePhotoGridItemFactory : BasePhotoGridItemFactory() {
 

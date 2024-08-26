@@ -53,6 +53,10 @@
             android:name="imageUri"
             app:argType="string"
             app:nullable="false" />
+        <argument
+            android:name="placeholderImageUri"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <fragment

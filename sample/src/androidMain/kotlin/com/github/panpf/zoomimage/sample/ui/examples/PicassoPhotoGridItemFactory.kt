@@ -19,7 +19,7 @@ package com.github.panpf.zoomimage.sample.ui.examples
 import android.widget.ImageView
 import androidx.core.net.toUri
 import com.github.panpf.zoomimage.sample.R
-import com.github.panpf.zoomimage.sample.util.sketchUri2PicassoData
+import com.github.panpf.zoomimage.sample.image.sketchUri2PicassoData
 import com.squareup.picasso.Picasso
 
 class PicassoPhotoGridItemFactory : BasePhotoGridItemFactory() {

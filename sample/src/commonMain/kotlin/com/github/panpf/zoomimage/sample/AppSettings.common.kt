@@ -17,132 +17,83 @@
 package com.github.panpf.zoomimage.sample
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.sketch.PlatformContext
-import com.github.panpf.zoomimage.sample.ui.util.name
-import com.github.panpf.zoomimage.sample.util.ImageLoaderSettingItem
-import com.github.panpf.zoomimage.sample.util.booleanSettingsStateFlow
-import com.github.panpf.zoomimage.sample.util.intSettingsStateFlow
-import com.github.panpf.zoomimage.sample.util.stringSettingsStateFlow
-import com.github.panpf.zoomimage.subsampling.internal.TileManager
+import com.github.panpf.zoomimage.sample.ui.model.ImageLoaderSettingItem
+import com.github.panpf.zoomimage.sample.util.SettingsStateFlow
 import com.github.panpf.zoomimage.util.Logger
+import com.github.panpf.zoomimage.zoom.AlignmentCompat
+import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
+import kotlinx.coroutines.flow.StateFlow
 
 expect val PlatformContext.appSettings: AppSettings
-
-expect fun isDebugMode(): Boolean
 
 expect val composeImageLoaders: List<ImageLoaderSettingItem>
 
 @Composable
 expect fun getComposeImageLoaderIcon(composeImageLoader: String): Painter
 
-class AppSettings(val context: PlatformContext) {
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+expect class AppSettings(context: PlatformContext) {
 
-    // Only for Android
-    val composePage by lazy {
-        booleanSettingsStateFlow(context, "composePage", true)
-    }
+    // ---------------------------------------- ZoomImage ------------------------------------------
 
-    val composeImageLoader by lazy {
-        stringSettingsStateFlow(context, "composeImageLoader", composeImageLoaders.first().name)
-    }
+    val contentScaleName: SettingsStateFlow<String>
+    val contentScale: StateFlow<ContentScaleCompat>
 
-    // Only for Android
-    val viewImageLoader by lazy {
-        stringSettingsStateFlow(context, "viewImageLoader", "Sketch")
-    }
+    val alignmentName: SettingsStateFlow<String>
+    val alignment: StateFlow<AlignmentCompat>
 
-    val currentPageIndex by lazy {
-        intSettingsStateFlow(context, "currentPageIndex", 0)
-    }
-    val horizontalPagerLayout by lazy {
-        booleanSettingsStateFlow(context, "horizontalPagerLayout", true)
-    }
-    val staggeredGridMode by lazy {
-        booleanSettingsStateFlow(
-            context = context,
-            key = "staggeredGridMode",
-            initialize = false,
-        )
-    }
+    val animateScale: SettingsStateFlow<Boolean>
 
-    val contentScale by lazy {
-        stringSettingsStateFlow(context, "contentScale", ContentScale.Fit.name)
-    }
-    val alignment by lazy {
-        stringSettingsStateFlow(context, "alignment", Alignment.Center.name)
-    }
+    val rubberBandScale: SettingsStateFlow<Boolean>
 
-    val animateScale by lazy {
-        booleanSettingsStateFlow(context, "animateScale", true)
-    }
-    val rubberBandScale by lazy {
-        booleanSettingsStateFlow(context, "rubberBandScale", true)
-    }
-    val threeStepScale by lazy {
-        booleanSettingsStateFlow(context, "threeStepScale", false)
-    }
-    val slowerScaleAnimation by lazy {
-        booleanSettingsStateFlow(context, "slowerScaleAnimation", false)
-    }
-    val reverseMouseWheelScale by lazy {
-        booleanSettingsStateFlow(context, "reverseMouseWheelScale", false)
-    }
-    val scalesCalculator by lazy {
-        stringSettingsStateFlow(context, "scalesCalculator", "Dynamic")
-    }
-    val scalesMultiple by lazy {
-        stringSettingsStateFlow(context, "scalesMultiple", ScalesCalculator.MULTIPLE.toString())
-    }
-    val disabledGestureTypes by lazy {
-        intSettingsStateFlow(context, "disabledGestureTypes", 0)
-    }
+    val threeStepScale: SettingsStateFlow<Boolean>
 
-    val limitOffsetWithinBaseVisibleRect by lazy {
-        booleanSettingsStateFlow(context, "limitOffsetWithinBaseVisibleRect", false)
-    }
+    val slowerScaleAnimation: SettingsStateFlow<Boolean>
 
-    val readModeEnabled by lazy {
-        booleanSettingsStateFlow(context, "readModeEnabled", true)
-    }
-    val readModeAcceptedBoth by lazy {
-        booleanSettingsStateFlow(context, "readModeAcceptedBoth", true)
-    }
+    val reverseMouseWheelScale: SettingsStateFlow<Boolean>
 
-    val pausedContinuousTransformTypes by lazy {
-        val initialize = TileManager.DefaultPausedContinuousTransformTypes
-        intSettingsStateFlow(context, "pausedContinuousTransformTypes", initialize)
-    }
-    val disabledBackgroundTiles by lazy {
-        booleanSettingsStateFlow(context, "disabledBackgroundTiles", false)
-    }
-    val showTileBounds by lazy {
-        booleanSettingsStateFlow(context, "showTileBounds", false)
-    }
-    val tileAnimation by lazy {
-        booleanSettingsStateFlow(context, "tileAnimation", true)
-    }
-    val tileMemoryCache by lazy {
-        booleanSettingsStateFlow(context, "tileMemoryCache", true)
-    }
+    val scalesCalculatorName: SettingsStateFlow<String>
+    val scalesMultiple: SettingsStateFlow<String>
+    val scalesCalculator: StateFlow<ScalesCalculator>
 
-    val scrollBarEnabled by lazy {
-        booleanSettingsStateFlow(context, "scrollBarEnabled", true)
-    }
+    val disabledGestureTypes: SettingsStateFlow<Int>
 
-    val logLevel by lazy {
-        val initialize = if (isDebugMode()) Logger.Level.Debug.name else Logger.Level.Info.name
-        stringSettingsStateFlow(context, "logLevel3", initialize)
-    }
+    val limitOffsetWithinBaseVisibleRect: SettingsStateFlow<Boolean>
 
-    val debugLog by lazy {
-        booleanSettingsStateFlow(context, "debugLog", isDebugMode())
-    }
+    val readModeEnabled: SettingsStateFlow<Boolean>
 
-    val pagerGuideShowed by lazy {
-        booleanSettingsStateFlow(context, "pagerGuideShowed", false)
-    }
+    val readModeAcceptedBoth: SettingsStateFlow<Boolean>
+
+    val pausedContinuousTransformTypes: SettingsStateFlow<Int>
+
+    val disabledBackgroundTiles: SettingsStateFlow<Boolean>
+
+    val showTileBounds: SettingsStateFlow<Boolean>
+
+    val tileAnimation: SettingsStateFlow<Boolean>
+
+    val tileMemoryCache: SettingsStateFlow<Boolean>
+
+    val scrollBarEnabled: SettingsStateFlow<Boolean>
+
+
+    // ------------------------------------------ other --------------------------------------------
+
+    val composeImageLoader: SettingsStateFlow<String>
+
+    val currentPageIndex: SettingsStateFlow<Int>
+
+    val horizontalPagerLayout: SettingsStateFlow<Boolean>
+
+    val staggeredGridMode: SettingsStateFlow<Boolean>
+
+    val logLevelName: SettingsStateFlow<String>
+    val logLevel: StateFlow<Logger.Level>
+
+    val debugLog: SettingsStateFlow<Boolean>
+
+    val pagerGuideShowed: SettingsStateFlow<Boolean>
 }

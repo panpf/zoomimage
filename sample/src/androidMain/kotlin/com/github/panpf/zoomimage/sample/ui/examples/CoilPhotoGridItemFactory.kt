@@ -25,9 +25,9 @@ import coil3.request.placeholder
 import coil3.result
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.databinding.GridItemPhotoBinding
+import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.InfoItemsDialogFragment
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 
 class CoilPhotoGridItemFactory(val fragmentManager: FragmentManager) : BasePhotoGridItemFactory() {
 

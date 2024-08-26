@@ -16,7 +16,6 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples
 
-import com.github.panpf.zoomimage.sample.R as CommonR
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -43,19 +42,15 @@ import com.github.panpf.zoomimage.sample.ui.util.parentViewModels
 import com.github.panpf.zoomimage.sample.util.collectWithLifecycle
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.util.toShortString
 import com.github.panpf.zoomimage.view.zoom.OnViewLongPressListener
 import com.github.panpf.zoomimage.view.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.view.zoom.ZoomAnimationSpec
-import com.github.panpf.zoomimage.zoom.AlignmentCompat
-import com.github.panpf.zoomimage.zoom.ContentScaleCompat
 import com.github.panpf.zoomimage.zoom.ReadMode
-import com.github.panpf.zoomimage.zoom.ScalesCalculator
-import com.github.panpf.zoomimage.zoom.valueOf
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import com.github.panpf.zoomimage.sample.R as CommonR
 
 abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     BaseBindingFragment<FragmentZoomViewBinding>() {
@@ -105,17 +100,17 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 }.show(childFragmentManager, null)
             }
             appSettings.logLevel.collectWithLifecycle(viewLifecycleOwner) {
-                logger.level = Logger.Level.valueOf(it)
+                logger.level = it
             }
             appSettings.scrollBarEnabled.collectWithLifecycle(viewLifecycleOwner) {
                 scrollBar = if (it) ScrollBarSpec.Default else null
             }
             zoomable.apply {
                 appSettings.contentScale.collectWithLifecycle(viewLifecycleOwner) {
-                    contentScaleState.value = ContentScaleCompat.valueOf(it)
+                    contentScaleState.value = it
                 }
                 appSettings.alignment.collectWithLifecycle(viewLifecycleOwner) {
-                    alignmentState.value = AlignmentCompat.valueOf(it)
+                    alignmentState.value = it
                 }
                 appSettings.threeStepScale.collectWithLifecycle(viewLifecycleOwner) {
                     threeStepScaleState.value = it
@@ -123,25 +118,9 @@ abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
                 appSettings.rubberBandScale.collectWithLifecycle(viewLifecycleOwner) {
                     rubberBandScaleState.value = it
                 }
-                appSettings.scalesMultiple
-                    .collectWithLifecycle(viewLifecycleOwner) {
-                        val scalesMultiple = appSettings.scalesMultiple.value.toFloat()
-                        val scalesCalculatorName = appSettings.scalesCalculator.value
-                        scalesCalculatorState.value = if (scalesCalculatorName == "Dynamic") {
-                            ScalesCalculator.dynamic(scalesMultiple)
-                        } else {
-                            ScalesCalculator.fixed(scalesMultiple)
-                        }
-                    }
                 appSettings.scalesCalculator
                     .collectWithLifecycle(viewLifecycleOwner) {
-                        val scalesMultiple = appSettings.scalesMultiple.value.toFloat()
-                        val scalesCalculatorName = appSettings.scalesCalculator.value
-                        scalesCalculatorState.value = if (scalesCalculatorName == "Dynamic") {
-                            ScalesCalculator.dynamic(scalesMultiple)
-                        } else {
-                            ScalesCalculator.fixed(scalesMultiple)
-                        }
+                        scalesCalculatorState.value = it
                     }
                 appSettings.limitOffsetWithinBaseVisibleRect
                     .collectWithLifecycle(viewLifecycleOwner) {

@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import com.github.panpf.sketch.LocalPlatformContext
 import com.github.panpf.zoomimage.compose.ZoomState
 import com.github.panpf.zoomimage.compose.subsampling.SubsamplingState
+import com.github.panpf.zoomimage.compose.util.toPlatform
 import com.github.panpf.zoomimage.compose.zoom.ScrollBarSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomAnimationSpec
 import com.github.panpf.zoomimage.compose.zoom.ZoomableState
@@ -65,25 +66,16 @@ import com.github.panpf.zoomimage.sample.resources.ic_more_vert
 import com.github.panpf.zoomimage.sample.resources.ic_rotate_right
 import com.github.panpf.zoomimage.sample.resources.ic_zoom_in
 import com.github.panpf.zoomimage.sample.resources.ic_zoom_out
-import com.github.panpf.zoomimage.sample.ui.components.InfoItems
 import com.github.panpf.zoomimage.sample.ui.components.MoveKeyboard
 import com.github.panpf.zoomimage.sample.ui.components.MyDialog
 import com.github.panpf.zoomimage.sample.ui.components.MyDialogState
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimap
 import com.github.panpf.zoomimage.sample.ui.components.rememberMoveKeyboardState
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
-import com.github.panpf.zoomimage.sample.ui.model.InfoItem
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.ui.util.toShortString
-import com.github.panpf.zoomimage.sample.ui.util.valueOf
-import com.github.panpf.zoomimage.sample.util.format
-import com.github.panpf.zoomimage.sample.util.formatFileSize
 import com.github.panpf.zoomimage.subsampling.TileAnimationSpec
-import com.github.panpf.zoomimage.util.Logger
 import com.github.panpf.zoomimage.zoom.ReadMode
-import com.github.panpf.zoomimage.zoom.ScalesCalculator
-import com.github.panpf.zoomimage.zoom.toShortString
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
@@ -103,40 +95,27 @@ fun <T : ZoomState> BaseZoomImageSample(
     ) -> Unit
 ) {
     val settingsService = LocalPlatformContext.current.appSettings
-    val contentScaleName by settingsService.contentScale.collectAsState()
-    val alignmentName by settingsService.alignment.collectAsState()
+    val contentScale by settingsService.contentScale.collectAsState()
+    val alignment by settingsService.alignment.collectAsState()
     val threeStepScale by settingsService.threeStepScale.collectAsState()
     val rubberBandScale by settingsService.rubberBandScale.collectAsState()
     val readModeEnabled by settingsService.readModeEnabled.collectAsState()
     val readModeAcceptedBoth by settingsService.readModeAcceptedBoth.collectAsState()
     val scrollBarEnabled by settingsService.scrollBarEnabled.collectAsState()
-    val logLevelName by settingsService.logLevel.collectAsState()
+    val logLevel by settingsService.logLevel.collectAsState()
     val animateScale by settingsService.animateScale.collectAsState()
     val slowerScaleAnimation by settingsService.slowerScaleAnimation.collectAsState()
     val reverseMouseWheelScale by settingsService.reverseMouseWheelScale.collectAsState()
     val limitOffsetWithinBaseVisibleRect by settingsService.limitOffsetWithinBaseVisibleRect.collectAsState()
-    val scalesCalculatorName by settingsService.scalesCalculator.collectAsState()
-    val scalesMultipleString by settingsService.scalesMultiple.collectAsState()
+    val scalesCalculator by settingsService.scalesCalculator.collectAsState()
     val pausedContinuousTransformTypes by settingsService.pausedContinuousTransformTypes.collectAsState()
     val disabledGestureTypes by settingsService.disabledGestureTypes.collectAsState()
     val disabledBackgroundTiles by settingsService.disabledBackgroundTiles.collectAsState()
     val showTileBounds by settingsService.showTileBounds.collectAsState()
     val tileAnimation by settingsService.tileAnimation.collectAsState()
     val tileMemoryCache by settingsService.tileMemoryCache.collectAsState()
-    val horizontalLayout by settingsService.horizontalPagerLayout.collectAsState(initial = true)
+    val horizontalLayout by settingsService.horizontalPagerLayout.collectAsState()
 
-    val scalesCalculator by remember {
-        derivedStateOf {
-            val scalesMultiple = scalesMultipleString.toFloat()
-            if (scalesCalculatorName == "Dynamic") {
-                ScalesCalculator.dynamic(scalesMultiple)
-            } else {
-                ScalesCalculator.fixed(scalesMultiple)
-            }
-        }
-    }
-    val contentScale by remember { derivedStateOf { ContentScale.valueOf(contentScaleName) } }
-    val alignment by remember { derivedStateOf { Alignment.valueOf(alignmentName) } }
     val zoomAnimationSpec by remember {
         derivedStateOf {
             val durationMillis = if (animateScale) (if (slowerScaleAnimation) 3000 else 300) else 0
@@ -153,7 +132,6 @@ fun <T : ZoomState> BaseZoomImageSample(
             if (readModeEnabled) ReadMode.Default.copy(sizeType = sizeType) else null
         }
     }
-    val logLevel by remember { derivedStateOf { Logger.Level.valueOf(logLevelName) } }
     val zoomState = createZoomState().apply {
         LaunchedEffect(logLevel) {
             logger.level = logLevel
@@ -203,8 +181,8 @@ fun <T : ZoomState> BaseZoomImageSample(
 
     Box(modifier = Modifier.fillMaxSize()) {
         content(
-            contentScale,
-            alignment,
+            contentScale.toPlatform(),
+            alignment.toPlatform(),
             zoomState,
             if (scrollBarEnabled) ScrollBarSpec.Default.copy(color = photoPaletteState.value.containerColor) else null
         ) { infoDialogState.show() }
@@ -259,12 +237,13 @@ fun <T : ZoomState> BaseZoomImageSample(
             photoPaletteState = photoPaletteState,
         )
 
-        ZoomImageInfoDialog(
-            photo = photo,
-            zoomable = zoomState.zoomable,
-            subsampling = zoomState.subsampling,
-            dialogState = infoDialogState
-        )
+
+        MyDialog(infoDialogState) {
+            ZoomImageInfo(
+                photo = photo,
+                zoomState = zoomState,
+            )
+        }
     }
 }
 
@@ -478,87 +457,5 @@ private fun ButtonPad(
                 tint = photoPalette.contentColor
             )
         }
-    }
-}
-
-@Composable
-fun ZoomImageInfoDialog(
-    photo: Photo,
-    zoomable: ZoomableState,
-    subsampling: SubsamplingState,
-    dialogState: MyDialogState,
-) {
-    MyDialog(dialogState) {
-        val items by remember {
-            derivedStateOf {
-                buildList {
-                    add(InfoItem(null, photo.originalUrl))
-
-                    val imageInfo = subsampling.imageInfo
-                    val baseInfo = """
-                        containerSize: ${zoomable.containerSize.let { "${it.width}x${it.height}" }}
-                        contentSize: ${zoomable.contentSize.let { "${it.width}x${it.height}" }}
-                        contentOriginSize: ${imageInfo?.let { "${it.width}x${it.height}" }}
-                        rotation: ${zoomable.transform.rotation.roundToInt()}
-                    """.trimIndent()
-                    add(InfoItem("Base", baseInfo))
-
-                    val scaleFormatted = zoomable.transform.scale.toShortString()
-                    val baseScaleFormatted = zoomable.baseTransform.scale.toShortString()
-                    val userScaleFormatted = zoomable.userTransform.scale.toShortString()
-                    val scales = floatArrayOf(
-                        zoomable.minScale,
-                        zoomable.mediumScale,
-                        zoomable.maxScale
-                    ).joinToString(prefix = "[", postfix = "]") { it.format(2).toString() }
-                    val scaleInfo = """
-                        scale: $scaleFormatted
-                        baseScale: $baseScaleFormatted
-                        userScale: $userScaleFormatted
-                        scales: $scales
-                    """.trimIndent()
-                    add(InfoItem("Scale：", scaleInfo))
-
-                    val offsetInfo = """
-                        offset: ${zoomable.transform.offset.round().toShortString()}
-                        baseOffset: ${zoomable.baseTransform.offset.round().toShortString()}
-                        userOffset: ${zoomable.userTransform.offset.round().toShortString()}
-                        userOffsetBounds: ${zoomable.userOffsetBounds.toShortString()}
-                        edge: ${zoomable.scrollEdge.toShortString()}
-                    """.trimIndent()
-                    add(InfoItem("Offset：", offsetInfo))
-
-                    val displayAndVisibleInfo = """
-                        contentBaseDisplay: ${zoomable.contentBaseDisplayRect.toShortString()}
-                        contentBaseVisible: ${zoomable.contentBaseVisibleRect.toShortString()}
-                        contentDisplay: ${zoomable.contentDisplayRect.toShortString()}
-                        contentVisible: ${zoomable.contentVisibleRect.toShortString()}
-                    """.trimIndent()
-                    add(InfoItem("Display&Visible：", displayAndVisibleInfo))
-
-                    val foregroundTiles = subsampling.foregroundTiles
-                    val loadedTileCount = foregroundTiles.count { it.tileBitmap != null }
-                    val loadedTileBytes =
-                        foregroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
-                    val backgroundTiles = subsampling.backgroundTiles
-                    val backgroundTilesLoadedCount = backgroundTiles.count { it.tileBitmap != null }
-                    val backgroundTilesLoadedBytes =
-                        backgroundTiles.sumOf { it.tileBitmap?.byteCount ?: 0 }.formatFileSize()
-                    val tileGridSizeMapString = subsampling.tileGridSizeMap.entries
-                        .joinToString(prefix = "[", postfix = "]", separator = ", ") {
-                            "${it.key}:${it.value.toShortString()}"
-                        }
-                    val tileInfo = """
-                        tileGridSizeMap：$tileGridSizeMapString
-                        sampleSize：${subsampling.sampleSize}
-                        imageLoadRect：${subsampling.imageLoadRect.toShortString()}
-                        foreground：size=${foregroundTiles.size}, load=$loadedTileCount, bytes=$loadedTileBytes
-                        background：size=${backgroundTiles.size}, load=$backgroundTilesLoadedCount, bytes=$backgroundTilesLoadedBytes
-                    """.trimIndent()
-                    add(InfoItem("Tiles：", tileInfo))
-                }.toImmutableList()
-            }
-        }
-        InfoItems(items)
     }
 }

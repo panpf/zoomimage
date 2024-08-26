@@ -11,7 +11,7 @@ import com.github.panpf.sketch.ability.progressIndicator
 import com.github.panpf.sketch.painter.rememberSectorProgressPainter
 import com.github.panpf.sketch.rememberAsyncImageState
 import com.github.panpf.sketch.request.ComposableImageRequest
-import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.request.ImageOptions
 import com.github.panpf.sketch.request.LoadState
 import com.github.panpf.sketch.state.ThumbnailMemoryCacheStateImage
 import com.github.panpf.zoomimage.SketchZoomAsyncImage
@@ -21,7 +21,7 @@ import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
-expect fun ImageRequest.Builder.SketchZoomAsyncImageSampleImageConfig()
+expect fun getPlatformSketchZoomAsyncImageSampleImageOptions(): ImageOptions
 
 @Composable
 fun SketchZoomAsyncImageSample(
@@ -40,7 +40,7 @@ fun SketchZoomAsyncImageSample(
             request = ComposableImageRequest(photo.originalUrl) {
                 placeholder(ThumbnailMemoryCacheStateImage(photo.listThumbnailUrl))
                 crossfade(fadeStart = false)
-                SketchZoomAsyncImageSampleImageConfig()
+                merge(getPlatformSketchZoomAsyncImageSampleImageOptions())
             },
             contentDescription = "view image",
             contentScale = contentScale,

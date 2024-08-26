@@ -24,9 +24,10 @@ import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.PicassoZoomImageView
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.PicassoComposeResourceToImageSource
+import com.github.panpf.zoomimage.sample.image.sketchUri2PicassoData
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.sketchUri2PicassoData
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
@@ -83,14 +84,14 @@ class PicassoZoomImageViewFragment : BaseZoomImageViewFragment<PicassoZoomImageV
             .into(minimapView)
     }
 
-    class ItemFactory : FragmentItemFactory<String>(String::class) {
+    class ItemFactory : FragmentItemFactory<Photo>(Photo::class) {
 
         override fun createFragment(
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
-            data: String
+            data: Photo
         ): Fragment = PicassoZoomImageViewFragment().apply {
-            arguments = PicassoZoomImageViewFragmentArgs(data).toBundle()
+            arguments = PicassoZoomImageViewFragmentArgs(data.originalUrl).toBundle()
         }
     }
 }

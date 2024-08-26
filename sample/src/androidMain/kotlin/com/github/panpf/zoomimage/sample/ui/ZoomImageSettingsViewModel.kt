@@ -65,9 +65,9 @@ class ZoomImageSettingsViewModel(
                 title = "Content Scale",
                 desc = null,
                 values = contentScales.map { it.name },
-                getValue = { appSettings.contentScale.value },
+                getValue = { appSettings.contentScaleName.value },
                 onSelected = { _, value ->
-                    appSettings.contentScale.value = value
+                    appSettings.contentScaleName.value = value
                 }
             )
         )
@@ -88,9 +88,9 @@ class ZoomImageSettingsViewModel(
                 title = "Alignment",
                 desc = null,
                 values = alignments.map { it.name },
-                getValue = { appSettings.alignment.value },
+                getValue = { appSettings.alignmentName.value },
                 onSelected = { _, value ->
-                    appSettings.alignment.value = value
+                    appSettings.alignmentName.value = value
                 }
             )
         )
@@ -127,9 +127,9 @@ class ZoomImageSettingsViewModel(
                 title = "Scales Calculator",
                 desc = null,
                 values = scalesCalculators,
-                getValue = { appSettings.scalesCalculator.value },
+                getValue = { appSettings.scalesCalculatorName.value },
                 onSelected = { _, value ->
-                    appSettings.scalesCalculator.value = value
+                    appSettings.scalesCalculatorName.value = value
                 }
             )
         )
@@ -269,9 +269,9 @@ class ZoomImageSettingsViewModel(
                     Logger.Level.Error,
                     Logger.Level.Assert,
                 ).map { it.name },
-                getValue = { appSettings.logLevel.value },
+                getValue = { appSettings.logLevelName.value },
                 onSelected = { _, value ->
-                    appSettings.logLevel.value = value
+                    appSettings.logLevelName.value = value
                 }
             )
         )

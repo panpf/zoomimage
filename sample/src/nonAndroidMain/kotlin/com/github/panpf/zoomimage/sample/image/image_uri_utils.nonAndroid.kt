@@ -1,4 +1,4 @@
-package com.github.panpf.zoomimage.sample.util
+package com.github.panpf.zoomimage.sample.image
 
 import coil3.PlatformContext
 

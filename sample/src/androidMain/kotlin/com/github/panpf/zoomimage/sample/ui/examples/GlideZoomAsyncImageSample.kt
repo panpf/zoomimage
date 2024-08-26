@@ -22,10 +22,10 @@ import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.rememberGlideZoomState
 import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
+import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable

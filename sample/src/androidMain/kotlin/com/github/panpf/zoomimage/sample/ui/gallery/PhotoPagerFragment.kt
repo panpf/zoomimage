@@ -144,7 +144,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
                     adapter = AssemblyFragmentStateAdapter(
                         fragment = this@PhotoPagerFragment,
                         itemFactoryList = listOf(newPhotoDetailItemFactory(requireContext())),
-                        initDataList = photoList.map { it.originalUrl }
+                        initDataList = photoList
                     )
                 }
             }
@@ -233,7 +233,7 @@ class PhotoPagerFragment : BaseBindingFragment<FragmentPhotoPagerBinding>() {
     }
 }
 
-fun newPhotoDetailItemFactory(context: Context): FragmentItemFactory<String> {
+fun newPhotoDetailItemFactory(context: Context): FragmentItemFactory<Photo> {
     return when (val imageLoaderName = context.appSettings.viewImageLoader.value) {
         "Sketch" -> SketchZoomImageViewFragment.ItemFactory()
         "Coil" -> CoilZoomImageViewFragment.ItemFactory()

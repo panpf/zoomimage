@@ -50,7 +50,7 @@ fun BasicZoomImageSample(
         LaunchedEffect(photo) {
             myLoadState = MyPageState.Loading
             val imageResult = ImageRequest(context, photo.originalUrl) {
-                SketchZoomAsyncImageSampleImageConfig()
+                getPlatformSketchZoomAsyncImageSampleImageOptions()
             }.execute()
             myLoadState = if (imageResult is ImageResult.Success) {
                 MyPageState.None

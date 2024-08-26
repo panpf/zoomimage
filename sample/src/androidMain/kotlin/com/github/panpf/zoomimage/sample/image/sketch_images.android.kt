@@ -7,13 +7,13 @@ import com.github.panpf.sketch.drawable.ResizeDrawable
 import com.github.panpf.sketch.painter.ResizePainter
 import com.github.panpf.sketch.util.Size
 import com.github.panpf.sketch.util.toSketchSize
-import com.github.panpf.zoomimage.sample.ui.util.toIntSize
+import com.github.panpf.zoomimage.sample.ui.util.round
 
 actual val Image.realSize: Size
     get() = if (this is PainterImage) {
         val painter = painter
         if (painter is ResizePainter) {
-            painter.painter.intrinsicSize.toIntSize().toSketchSize()
+            painter.painter.intrinsicSize.round().toSketchSize()
         } else {
             Size(width, height)
         }

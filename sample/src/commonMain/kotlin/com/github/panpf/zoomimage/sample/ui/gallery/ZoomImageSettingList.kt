@@ -75,7 +75,7 @@ fun ZoomImageSettingList() {
             title = "Content Scale",
             desc = null,
             values = contentScaleValues,
-            state = appSettings.contentScale,
+            state = appSettings.contentScaleName,
         )
         val alignmentValues = remember {
             listOf(
@@ -94,7 +94,7 @@ fun ZoomImageSettingList() {
             title = "Alignment",
             desc = null,
             values = alignmentValues,
-            state = appSettings.alignment,
+            state = appSettings.alignmentName,
         )
 
         DividerSettingItem()
@@ -128,7 +128,7 @@ fun ZoomImageSettingList() {
             title = "Scales Calculator",
             desc = null,
             values = listOf("Dynamic", "Fixed"),
-            state = appSettings.scalesCalculator,
+            state = appSettings.scalesCalculatorName,
         )
         val scalesMultipleValues = remember {
             listOf(
@@ -268,7 +268,7 @@ fun ZoomImageSettingList() {
             title = "Log Level",
             desc = null,
             values = logLevelValues,
-            state = appSettings.logLevel,
+            state = appSettings.logLevelName,
         )
     }
 }

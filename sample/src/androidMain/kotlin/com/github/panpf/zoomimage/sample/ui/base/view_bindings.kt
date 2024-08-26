@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.panpf.zoomimage.sample.ui.util
+package com.github.panpf.zoomimage.sample.ui.base
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.github.panpf.zoomimage.sample.ui.base.BaseBindingActivity
-import com.github.panpf.zoomimage.sample.ui.base.BaseBindingDialogFragment
-import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
-import com.github.panpf.zoomimage.sample.ui.base.BaseBindingItemFactory
-import com.github.panpf.zoomimage.sample.ui.base.BaseToolbarBindingFragment
 import com.github.panpf.zoomimage.sample.util.getSuperGenericParam
 
 /*

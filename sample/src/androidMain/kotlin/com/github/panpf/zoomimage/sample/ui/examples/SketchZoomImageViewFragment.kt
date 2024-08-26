@@ -31,6 +31,7 @@ import com.github.panpf.zoomimage.SketchZoomImageView
 import com.github.panpf.zoomimage.sample.databinding.FragmentZoomViewBinding
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 import com.github.panpf.zoomimage.sample.util.repeatCollectWithLifecycle
 
 class SketchZoomImageViewFragment : BaseZoomImageViewFragment<SketchZoomImageView>() {
@@ -73,7 +74,7 @@ class SketchZoomImageViewFragment : BaseZoomImageViewFragment<SketchZoomImageVie
 
     override fun loadImage(zoomView: SketchZoomImageView, stateView: StateView) {
         zoomView.loadImage(args.imageUri) {
-            placeholder(ThumbnailMemoryCacheStateImage())
+            placeholder(ThumbnailMemoryCacheStateImage(args.placeholderImageUri))
             crossfade(fadeStart = false)
         }
     }
@@ -86,14 +87,17 @@ class SketchZoomImageViewFragment : BaseZoomImageViewFragment<SketchZoomImageVie
         }
     }
 
-    class ItemFactory : FragmentItemFactory<String>(String::class) {
+    class ItemFactory : FragmentItemFactory<Photo>(Photo::class) {
 
         override fun createFragment(
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
-            data: String
+            data: Photo
         ): Fragment = SketchZoomImageViewFragment().apply {
-            arguments = SketchZoomImageViewFragmentArgs(data).toBundle()
+            arguments = SketchZoomImageViewFragmentArgs(
+                imageUri = data.originalUrl,
+                placeholderImageUri = data.listThumbnailUrl
+            ).toBundle()
         }
     }
 }

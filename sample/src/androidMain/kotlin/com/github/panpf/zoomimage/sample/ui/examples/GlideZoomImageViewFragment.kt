@@ -28,9 +28,10 @@ import com.bumptech.glide.request.target.Target
 import com.github.panpf.assemblyadapter.pager.FragmentItemFactory
 import com.github.panpf.zoomimage.GlideZoomImageView
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
 import com.github.panpf.zoomimage.sample.ui.components.StateView
 import com.github.panpf.zoomimage.sample.ui.components.ZoomImageMinimapView
-import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
+import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>() {
 
@@ -85,14 +86,14 @@ class GlideZoomImageViewFragment : BaseZoomImageViewFragment<GlideZoomImageView>
             .into(minimapView)
     }
 
-    class ItemFactory : FragmentItemFactory<String>(String::class) {
+    class ItemFactory : FragmentItemFactory<Photo>(Photo::class) {
 
         override fun createFragment(
             bindingAdapterPosition: Int,
             absoluteAdapterPosition: Int,
-            data: String
+            data: Photo
         ): Fragment = GlideZoomImageViewFragment().apply {
-            arguments = GlideZoomImageViewFragmentArgs(data).toBundle()
+            arguments = GlideZoomImageViewFragmentArgs(data.originalUrl).toBundle()
         }
     }
 }

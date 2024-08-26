@@ -88,8 +88,6 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                     true
                 }
         ) {
-            val appSettings = LocalPlatformContext.current.appSettings
-
             val initialPage = remember { params.initialPosition - params.startPosition }
             val pagerState = rememberPagerState(initialPage = initialPage) {
                 params.photos.size
@@ -100,6 +98,7 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
             val photoPaletteState = remember { mutableStateOf(PhotoPalette(colorScheme)) }
             PhotoPagerBackground(photo.listThumbnailUrl, photoPaletteState)
 
+            val appSettings = LocalPlatformContext.current.appSettings
             val horizontalLayout by appSettings.horizontalPagerLayout.collectAsState(initial = true)
             if (horizontalLayout) {
                 HorizontalPager(
@@ -139,8 +138,10 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
                 }
             }
 
-            Headers(params, pagerState, horizontalLayout, photoPaletteState)
+            PhotoPagerHeaders(params, pagerState, horizontalLayout, photoPaletteState)
+
             TurnPageIndicator(pagerState, photoPaletteState)
+
             GestureDialog(appSettings)
         }
         LaunchedEffect(Unit) {
@@ -150,8 +151,14 @@ class PhotoPagerScreen(private val params: PhotoPagerScreenParams) : BaseScreen(
 }
 
 @Composable
+expect fun PhotoPagerBackground(
+    sketchImageUri: String,
+    photoPaletteState: MutableState<PhotoPalette>
+)
+
+@Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun Headers(
+fun PhotoPagerHeaders(
     params: PhotoPagerScreenParams,
     pagerState: PagerState,
     horizontalLayout: Boolean,

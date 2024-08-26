@@ -21,7 +21,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.github.panpf.assemblyadapter.BindingItemFactory
-import com.github.panpf.zoomimage.sample.ui.util.createViewBinding
 import kotlin.reflect.KClass
 
 abstract class BaseBindingItemFactory<DATA : Any, VIEW_BINDING : ViewBinding>(dataClass: KClass<DATA>) :

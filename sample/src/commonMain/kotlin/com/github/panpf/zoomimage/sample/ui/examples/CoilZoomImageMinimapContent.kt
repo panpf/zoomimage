@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
+import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 
 @Composable
 fun CoilZoomImageMinimapContent(sketchImageUri: String) {

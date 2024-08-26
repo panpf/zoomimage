@@ -34,8 +34,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_github
 import com.github.panpf.zoomimage.sample.ui.components.AutoLinkText
+import com.github.panpf.zoomimage.sample.util.Platform
+import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
-import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import org.jetbrains.compose.resources.painterResource
 
 expect fun testItems(): List<TestItem>
@@ -47,7 +48,7 @@ fun TestPage() {
     Column(modifier = Modifier.fillMaxSize()) {
         LazyVerticalGrid(
             modifier = Modifier.fillMaxWidth().weight(1f),
-            columns = GridCells.Fixed(if (runtimePlatformInstance.isMobile()) 2 else 4),
+            columns = GridCells.Fixed(if (Platform.current.isMobile()) 2 else 4),
             state = gridState,
             contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 96.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

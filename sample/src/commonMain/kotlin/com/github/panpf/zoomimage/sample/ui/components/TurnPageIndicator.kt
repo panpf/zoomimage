@@ -38,8 +38,9 @@ import com.github.panpf.zoomimage.sample.resources.ic_arrow_down
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_left
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_right
 import com.github.panpf.zoomimage.sample.resources.ic_arrow_up
+import com.github.panpf.zoomimage.sample.util.Platform
+import com.github.panpf.zoomimage.sample.util.current
 import com.github.panpf.zoomimage.sample.util.isMobile
-import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
@@ -84,7 +85,7 @@ fun TurnPageIndicator(
             }
         }
     }
-    if (!runtimePlatformInstance.isMobile()) {
+    if (!Platform.current.isMobile()) {
         val turnPageIconModifier = Modifier
             .padding(50.dp)
             .size(50.dp)

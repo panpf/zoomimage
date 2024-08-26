@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.github.panpf.zoomimage.sample.ui.util
 
 import androidx.compose.runtime.Composable

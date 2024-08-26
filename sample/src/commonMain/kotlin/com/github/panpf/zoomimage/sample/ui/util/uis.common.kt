@@ -6,19 +6,15 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntSize
-import kotlin.math.roundToInt
 
 @Composable
 expect fun windowSize(): IntSize
-
-internal fun Size.toIntSize() = IntSize(width.roundToInt(), height.roundToInt())
 
 /**
  * Create a modifier for processing pointer input within the region of the modified element.

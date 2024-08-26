@@ -22,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.viewbinding.ViewBinding
-import com.github.panpf.zoomimage.sample.ui.util.createViewBinding
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class BaseToolbarBindingFragment<VIEW_BINDING : ViewBinding> : BaseToolbarFragment() {

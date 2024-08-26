@@ -17,10 +17,10 @@ import com.github.panpf.zoomimage.coil.CoilModelToImageSource
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.sample.image.CoilComposeResourceToImageSource
 import com.github.panpf.zoomimage.sample.image.PhotoPalette
+import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.MyPageState
 import com.github.panpf.zoomimage.sample.ui.components.PageState
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import kotlinx.collections.immutable.toImmutableList
 
 expect fun platformCoilModelToImageSource(): List<CoilModelToImageSource>?

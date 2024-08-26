@@ -1,6 +1,5 @@
 package com.github.panpf.zoomimage.sample.ui.examples
 
-import com.github.panpf.sketch.request.ImageRequest
+import com.github.panpf.sketch.request.ImageOptions
 
-actual fun ImageRequest.Builder.SketchZoomAsyncImageSampleImageConfig() {
-}
+actual fun getPlatformSketchZoomAsyncImageSampleImageOptions(): ImageOptions = ImageOptions {}

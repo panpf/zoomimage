@@ -23,12 +23,12 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalPlatformContext
 import coil3.request.ErrorResult
 import coil3.request.SuccessResult
+import com.github.panpf.zoomimage.sample.image.sketchUri2CoilModel
 import com.github.panpf.zoomimage.sample.ui.components.InfoItems
 import com.github.panpf.zoomimage.sample.ui.components.MyDialog
 import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import com.github.panpf.zoomimage.sample.ui.model.InfoItem
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sample.util.sketchUri2CoilModel
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable

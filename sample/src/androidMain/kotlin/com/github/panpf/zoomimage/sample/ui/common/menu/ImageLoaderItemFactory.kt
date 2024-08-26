@@ -20,7 +20,7 @@ import android.content.Context
 import com.github.panpf.zoomimage.sample.databinding.ListItemImageLoaderBinding
 import com.github.panpf.zoomimage.sample.getViewImageLoaderIcon
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingItemFactory
-import com.github.panpf.zoomimage.sample.util.ImageLoaderSettingItem
+import com.github.panpf.zoomimage.sample.ui.model.ImageLoaderSettingItem
 
 class ImageLoaderItemFactory :
     BaseBindingItemFactory<ImageLoaderSettingItem, ListItemImageLoaderBinding>(

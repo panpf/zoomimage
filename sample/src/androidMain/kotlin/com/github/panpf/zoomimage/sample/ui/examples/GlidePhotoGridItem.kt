@@ -11,8 +11,8 @@ import com.github.panpf.zoomimage.compose.glide.CrossFade
 import com.github.panpf.zoomimage.compose.glide.ExperimentalGlideComposeApi
 import com.github.panpf.zoomimage.compose.glide.GlideImage
 import com.github.panpf.zoomimage.sample.R
+import com.github.panpf.zoomimage.sample.image.sketchUri2GlideModel
 import com.github.panpf.zoomimage.sample.ui.model.Photo
-import com.github.panpf.zoomimage.sample.util.sketchUri2GlideModel
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable

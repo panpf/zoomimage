@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,14 +17,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.sample.ui.util.windowSize
-import com.github.panpf.zoomimage.sample.util.RuntimePlatform
-import com.github.panpf.zoomimage.sample.util.runtimePlatformInstance
 
 
 @Composable
 fun rememberMyDialogState(showing: Boolean = false): MyDialogState =
     remember { MyDialogState(showing) }
 
+@Stable
 class MyDialogState(showing: Boolean = false) {
     var showing by mutableStateOf(showing)
 
@@ -45,7 +45,7 @@ fun MyDialog(
                 Surface(
                     Modifier
                         .fillMaxWidth()
-                        .heightIn(max = dialogMaxHeight())
+                        .heightIn(max = getDialogMaxHeight())
                         .clip(RoundedCornerShape(20.dp))
                 ) {
                     content()
@@ -57,18 +57,13 @@ fun MyDialog(
     }
 }
 
-
 @Composable
-fun dialogMaxHeight(): Dp {
-    return if (runtimePlatformInstance == RuntimePlatform.Js) {
-        600.dp
-    } else {
-        val density = LocalDensity.current
-        val windowSize = windowSize()
-        remember(windowSize, density) {
-            with(density) {
-                (windowSize.height * 0.8f).toInt().toDp()
-            }
+fun getDialogMaxHeight(): Dp {
+    val density = LocalDensity.current
+    val windowSize = windowSize()
+    return remember(windowSize, density) {
+        with(density) {
+            (windowSize.height * 0.8f).toInt().toDp()
         }
     }
 }
