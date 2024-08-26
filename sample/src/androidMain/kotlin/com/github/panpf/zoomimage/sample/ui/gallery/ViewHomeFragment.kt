@@ -27,9 +27,9 @@ import com.github.panpf.zoomimage.sample.ui.test.TestHomeFragment
 
 class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
 
-    private val fragmentMap = mapOf(
-        "Local" to LocalPhotoListFragment(),
+    private val fragments = listOf(
         "Pexels" to PexelsPhotoListFragment(),
+        "Local" to LocalPhotoListFragment(),
         "Test" to TestHomeFragment(),
     )
 
@@ -48,31 +48,30 @@ class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
             adapter = ArrayFragmentStateAdapter(
                 fragmentManager = childFragmentManager,
                 lifecycle = viewLifecycleOwner.lifecycle,
-                templateFragmentList = fragmentMap.values.toList()
+                templateFragmentList = fragments.map { it.second }
             )
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     appSettings.currentPageIndex.value = position
                     when (position) {
-                        0 -> binding.navigation.selectedItemId = R.id.local
-                        1 -> binding.navigation.selectedItemId = R.id.pexels
+                        0 -> binding.navigation.selectedItemId = R.id.pexels
+                        1 -> binding.navigation.selectedItemId = R.id.local
                         2 -> binding.navigation.selectedItemId = R.id.test
                     }
                 }
             })
             setCurrentItem(
-                appSettings.currentPageIndex.value.coerceIn(
-                    0,
-                    fragmentMap.size - 1
-                ), false
+                /* item = */ appSettings.currentPageIndex.value
+                    .coerceIn(minimumValue = 0, maximumValue = fragments.size - 1),
+                /* smoothScroll = */ false
             )
         }
 
         binding.navigation.setOnItemSelectedListener {
             when (it.itemId) {
-                R.id.local -> binding.pager.setCurrentItem(0, false)
-                R.id.pexels -> binding.pager.setCurrentItem(1, false)
+                R.id.pexels -> binding.pager.setCurrentItem(0, false)
+                R.id.local -> binding.pager.setCurrentItem(1, false)
                 R.id.test -> binding.pager.setCurrentItem(2, false)
             }
             true
