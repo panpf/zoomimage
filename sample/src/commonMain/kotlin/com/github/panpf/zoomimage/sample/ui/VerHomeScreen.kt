@@ -30,8 +30,10 @@ import com.github.panpf.zoomimage.sample.resources.ic_debug
 import com.github.panpf.zoomimage.sample.resources.ic_pexels
 import com.github.panpf.zoomimage.sample.resources.ic_phone
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
+import com.github.panpf.zoomimage.sample.ui.components.PermissionContainer
 import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListPage
 import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListPage
+import com.github.panpf.zoomimage.sample.ui.gallery.localPhotoListPermission
 import com.github.panpf.zoomimage.sample.ui.test.TestPage
 import com.github.panpf.zoomimage.sample.util.Platform
 import com.github.panpf.zoomimage.sample.util.current
@@ -43,7 +45,7 @@ import org.jetbrains.compose.resources.painterResource
 val gridCellsMinSize: Dp = if (Platform.current.isMobile()) 100.dp else 150.dp
 
 @Composable
-expect fun HomeHeader()
+expect fun VerHomeHeader()
 
 enum class HomeTab(
     val title: String,
@@ -55,12 +57,20 @@ enum class HomeTab(
         title = "Pexels",
         icon = Res.drawable.ic_pexels,
         padding = 1.5.dp,
-        content = { PexelsPhotoListPage() }),
+        content = { PexelsPhotoListPage(this) }
+    ),
     LOCAL(
         title = "Local",
         icon = Res.drawable.ic_phone,
         padding = 0.dp,
-        content = { LocalPhotoListPage() }),
+        content = {
+            PermissionContainer(
+                permission = localPhotoListPermission(),
+                permissionRequired = false,
+                content = { LocalPhotoListPage(this) }
+            )
+        }
+    ),
     TEST(
         title = "Test",
         icon = Res.drawable.ic_debug,
@@ -75,7 +85,7 @@ object VerHomeScreen : BaseScreen() {
     @OptIn(ExperimentalFoundationApi::class)
     override fun DrawContent() {
         Column(Modifier.fillMaxSize()) {
-            HomeHeader()
+            VerHomeHeader()
 
             val coroutineScope = rememberCoroutineScope()
             val context = LocalPlatformContext.current

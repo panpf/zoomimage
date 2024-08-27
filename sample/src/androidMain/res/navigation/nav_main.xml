@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/viewHomeFragment"
-        android:name="com.github.panpf.zoomimage.sample.ui.gallery.ViewHomeFragment"
+        android:name="com.github.panpf.zoomimage.sample.ui.ViewHomeFragment"
         android:label="ViewHomeFragment" />
 
     <fragment

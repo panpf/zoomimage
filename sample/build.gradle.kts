@@ -104,6 +104,7 @@ kotlin {
             implementation(libs.androidx.recyclerview)
             implementation(libs.androidx.swiperefreshlayout)
             implementation(libs.google.material)
+            implementation(libs.moko.permissions)
             implementation(libs.panpf.assemblyadapter4.pager2)
             implementation(libs.panpf.assemblyadapter4.recycler)
             implementation(libs.panpf.assemblyadapter4.recycler.paging)
@@ -128,6 +129,9 @@ kotlin {
             // It has been configured in the internal:images module, but it is still inaccessible in the sample module.
             // This may be a bug of kmp.
             resources.srcDirs("../internal/images/files")
+            dependencies {
+                implementation(libs.moko.permissions)
+            }
         }
         nonJsCommonMain.dependencies {
             implementation(libs.androidx.datastore.core.okio)

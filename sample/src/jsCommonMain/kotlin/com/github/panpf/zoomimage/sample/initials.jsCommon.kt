@@ -12,7 +12,6 @@ actual fun Sketch.Builder.platformSketchInitial(context: PlatformContext) {
     addComponents {
         supportSkiaGif()
         supportSkiaAnimatedWebp()
-        supportSkiaAnimatedWebp()
     }
 }
 

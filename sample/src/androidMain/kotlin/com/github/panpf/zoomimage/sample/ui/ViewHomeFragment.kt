@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.gallery
+package com.github.panpf.zoomimage.sample.ui
 
 import android.os.Bundle
 import android.view.View
@@ -23,13 +23,20 @@ import com.github.panpf.zoomimage.sample.R
 import com.github.panpf.zoomimage.sample.appSettings
 import com.github.panpf.zoomimage.sample.databinding.FragmentViewHomeBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
+import com.github.panpf.zoomimage.sample.ui.base.PermissionContainerFragment
+import com.github.panpf.zoomimage.sample.ui.gallery.LocalPhotoListFragment
+import com.github.panpf.zoomimage.sample.ui.gallery.PexelsPhotoListFragment
 import com.github.panpf.zoomimage.sample.ui.test.TestHomeFragment
 
 class ViewHomeFragment : BaseBindingFragment<FragmentViewHomeBinding>() {
 
     private val fragments = listOf(
         "Pexels" to PexelsPhotoListFragment(),
-        "Local" to LocalPhotoListFragment(),
+        "Local" to PermissionContainerFragment.newInstance(
+            fragment = LocalPhotoListFragment(),
+            permission = android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            permissionRequired = false
+        ),
         "Test" to TestHomeFragment(),
     )
 

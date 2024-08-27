@@ -6,7 +6,7 @@ import androidx.navigation.fragment.findNavController
 import com.github.panpf.zoomimage.sample.databinding.FragmentNavHostBinding
 import com.github.panpf.zoomimage.sample.ui.base.BaseBindingFragment
 
-class NavHostFragment : BaseBindingFragment<FragmentNavHostBinding>() {
+class ViewNavHostFragment : BaseBindingFragment<FragmentNavHostBinding>() {
 
     override fun onViewCreated(binding: FragmentNavHostBinding, savedInstanceState: Bundle?) {
 

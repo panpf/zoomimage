@@ -15,9 +15,9 @@ import com.github.panpf.zoomimage.sample.ui.model.Photo
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-actual fun Screen.PexelsPhotoListPage() {
+actual fun PexelsPhotoListPage(screen: Screen) {
     val navigator = LocalNavigator.current!!
-    val screenModel = rememberScreenModel {
+    val screenModel = screen.rememberScreenModel {
         PexelsPhotoListScreenModel()
     }
     PagingPhotoList(

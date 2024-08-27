@@ -8,8 +8,10 @@ import com.github.panpf.zoomimage.sample.data.builtinImages
 import com.github.panpf.zoomimage.sample.ui.gridCellsMinSize
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
+actual fun localPhotoListPermission(): Any? = null
+
 @Composable
-actual fun Screen.LocalPhotoListPage() {
+actual fun LocalPhotoListPage(screen: Screen) {
     val navigator = LocalNavigator.current!!
     val context = LocalPlatformContext.current
     PhotoList(

@@ -10,7 +10,6 @@ import org.jetbrains.skiko.wasm.onWasmReady
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = onWasmReady {
     initials()
-
     CanvasBasedWindow("ZoomImageSample") {
         App()
     }

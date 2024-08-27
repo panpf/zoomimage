@@ -10,7 +10,7 @@ import com.github.panpf.zoomimage.sample.data.api.pexels.PexelsPhoto
 import com.github.panpf.zoomimage.sample.ui.model.Photo
 
 @Composable
-actual fun Screen.PexelsPhotoListPage() {
+actual fun PexelsPhotoListPage(screen: Screen) {
     val navigator = LocalNavigator.current!!
     PhotoList(
         initialPageStart = 1,

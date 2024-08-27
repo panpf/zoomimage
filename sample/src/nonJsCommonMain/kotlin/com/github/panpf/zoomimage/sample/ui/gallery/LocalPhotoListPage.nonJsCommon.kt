@@ -16,11 +16,11 @@ import com.github.panpf.sketch.Sketch
 import com.github.panpf.zoomimage.sample.ui.gridCellsMinSize
 
 @Composable
-actual fun Screen.LocalPhotoListPage() {
+actual fun LocalPhotoListPage(screen: Screen) {
     val navigator = LocalNavigator.current!!
     val context = LocalPlatformContext.current
     val sketch = SingletonSketch.get(context)
-    val screenModel = rememberScreenModel {
+    val screenModel = screen.rememberScreenModel {
         LocalPhotoListScreenModel(context, sketch)
     }
     PagingPhotoList(

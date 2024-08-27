@@ -9,7 +9,6 @@ import com.github.panpf.zoomimage.sample.ui.App
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     initials()
-
     CanvasBasedWindow("ZoomImageSample-WASM") {
         App()
     }

@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.panpf.zoomimage.sample.ui.gallery
+package com.github.panpf.zoomimage.sample.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.compose.ui.platform.ComposeView
-import androidx.lifecycle.lifecycleScope
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.ScaleTransition
-import com.github.panpf.zoomimage.sample.EventBus
-import com.github.panpf.zoomimage.sample.ui.VerHomeScreen
 import com.github.panpf.zoomimage.sample.ui.base.BaseFragment
-import com.github.panpf.zoomimage.sample.ui.theme.AppTheme
-import kotlinx.coroutines.launch
+import com.github.panpf.zoomimage.sample.ui.gallery.PhotoPagerScreen
 
 class ComposeHomeFragment : BaseFragment() {
 
@@ -41,19 +34,9 @@ class ComposeHomeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (view as ComposeView).setContent {
-            AppTheme {
-                Navigator(VerHomeScreen) { navigator ->
-                    ScaleTransition(navigator = navigator)
-                    lightStatusAndNavigationBar = navigator.lastItem !is PhotoPagerScreen
-                }
-            }
-        }
-
-        val context = view.context
-        viewLifecycleOwner.lifecycleScope.launch {
-            EventBus.toastFlow.collect {
-                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-            }
+            App(onContentChanged = { navigator ->
+                lightStatusAndNavigationBar = navigator.lastItem !is PhotoPagerScreen
+            })
         }
     }
 }

@@ -11,7 +11,6 @@ import com.github.panpf.zoomimage.sample.ui.App
 
 fun main() {
     initials()
-
     application {
         Window(
             title = "ZoomImage",

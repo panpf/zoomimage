@@ -11,20 +11,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.ScaleTransition
 import com.github.panpf.zoomimage.sample.EventBus
 import com.github.panpf.zoomimage.sample.ui.theme.AppTheme
-
-expect val homeScreen: Screen
+import com.github.panpf.zoomimage.sample.util.Platform
+import com.github.panpf.zoomimage.sample.util.current
+import com.github.panpf.zoomimage.sample.util.isMobile
 
 @Composable
-fun App() {
+fun App(onContentChanged: ((Navigator) -> Unit)? = null) {
     AppTheme {
         Box(Modifier.fillMaxSize()) {
+            val homeScreen = if (Platform.current.isMobile()) VerHomeScreen else HorHomeScreen
             Navigator(homeScreen) { navigator ->
                 ScaleTransition(navigator = navigator)
+                onContentChanged?.invoke(navigator)
             }
 
             val snackbarHostState = remember { SnackbarHostState() }

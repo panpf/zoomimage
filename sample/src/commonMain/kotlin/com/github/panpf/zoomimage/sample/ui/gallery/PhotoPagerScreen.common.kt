@@ -60,7 +60,7 @@ import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_settings
 import com.github.panpf.zoomimage.sample.resources.ic_swap_hor
 import com.github.panpf.zoomimage.sample.resources.ic_swap_ver
-import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
+import com.github.panpf.zoomimage.sample.ui.SwitchImageLoader
 import com.github.panpf.zoomimage.sample.ui.base.BaseScreen
 import com.github.panpf.zoomimage.sample.ui.components.MyDialog
 import com.github.panpf.zoomimage.sample.ui.components.TurnPageIndicator
@@ -215,12 +215,12 @@ fun PhotoPagerHeaders(
 
             Spacer(modifier = Modifier.size(10.dp))
 
-            var showSwitchImageLoaderDialog by remember { mutableStateOf(false) }
+            val switchImageLoaderDialogState = rememberMyDialogState()
             Box(
                 modifier = Modifier.size(40.dp)
                     .clip(CircleShape)
                     .background(photoPalette.containerColor)
-                    .clickable { showSwitchImageLoaderDialog = true },
+                    .clickable { switchImageLoaderDialogState.show() },
             ) {
                 val imageLoaderName by appSettings.composeImageLoader.collectAsState()
                 val imageLoaderIcon = getComposeImageLoaderIcon(imageLoaderName)
@@ -231,9 +231,9 @@ fun PhotoPagerHeaders(
                     modifier = Modifier.size(24.dp).clip(CircleShape).align(Alignment.Center),
                 )
             }
-            if (showSwitchImageLoaderDialog) {
-                SwitchImageLoaderDialog {
-                    showSwitchImageLoaderDialog = false
+            MyDialog(switchImageLoaderDialogState) {
+                SwitchImageLoader {
+                    switchImageLoaderDialogState.dismiss()
                 }
             }
 

@@ -8,6 +8,7 @@ import com.github.panpf.sketch.decode.supportSvg
 import com.github.panpf.sketch.fetch.supportComposeResources
 import com.github.panpf.sketch.http.KtorStack
 import com.github.panpf.sketch.util.Logger
+import com.github.panpf.zoomimage.sample.util.ignoreFirst
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -27,7 +28,7 @@ fun newSketch(context: PlatformContext): Sketch {
     }.build().apply {
         @Suppress("OPT_IN_USAGE")
         GlobalScope.launch {
-            appSettings.debugLog.collect { debugLog ->
+            appSettings.debugLog.ignoreFirst().collect { debugLog ->
                 logger.level = if (debugLog) Logger.Level.Debug else Logger.Level.Info
             }
         }

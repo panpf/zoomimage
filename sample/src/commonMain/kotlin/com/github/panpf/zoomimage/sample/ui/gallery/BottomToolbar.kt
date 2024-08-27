@@ -15,9 +15,6 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,7 +26,9 @@ import com.github.panpf.zoomimage.sample.getComposeImageLoaderIcon
 import com.github.panpf.zoomimage.sample.resources.Res
 import com.github.panpf.zoomimage.sample.resources.ic_layout_grid
 import com.github.panpf.zoomimage.sample.resources.ic_layout_grid_staggered
-import com.github.panpf.zoomimage.sample.ui.SwitchImageLoaderDialog
+import com.github.panpf.zoomimage.sample.ui.SwitchImageLoader
+import com.github.panpf.zoomimage.sample.ui.components.MyDialog
+import com.github.panpf.zoomimage.sample.ui.components.rememberMyDialogState
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -59,10 +58,12 @@ fun BottomToolbar(modifier: Modifier) {
             )
         }
 
-        var showSwitchImageLoaderDialog by remember { mutableStateOf(false) }
+        val switchImageLoaderDialogState = rememberMyDialogState()
         Box(
-            modifier = Modifier.size(40.dp).clip(CircleShape)
-                .clickable { showSwitchImageLoaderDialog = true },
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .clickable { switchImageLoaderDialogState.show() },
         ) {
             val imageLoaderName by appSettings.composeImageLoader.collectAsState()
             val imageLoaderIcon = getComposeImageLoaderIcon(imageLoaderName)
@@ -73,9 +74,9 @@ fun BottomToolbar(modifier: Modifier) {
                 modifier = Modifier.size(24.dp).clip(CircleShape).align(Alignment.Center),
             )
         }
-        if (showSwitchImageLoaderDialog) {
-            SwitchImageLoaderDialog {
-                showSwitchImageLoaderDialog = false
+        MyDialog(switchImageLoaderDialogState) {
+            SwitchImageLoader {
+                switchImageLoaderDialogState.dismiss()
             }
         }
     }

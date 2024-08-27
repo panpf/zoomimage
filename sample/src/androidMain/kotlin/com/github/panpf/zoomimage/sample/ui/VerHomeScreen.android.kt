@@ -24,7 +24,7 @@ import com.github.panpf.zoomimage.sample.appSettings
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-actual fun HomeHeader() {
+actual fun VerHomeHeader() {
     Box(modifier = Modifier.fillMaxWidth()) {
         TopAppBar(
             title = {

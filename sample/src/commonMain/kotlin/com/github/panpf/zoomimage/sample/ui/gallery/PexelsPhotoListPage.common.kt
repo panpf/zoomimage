@@ -4,4 +4,4 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 
 @Composable
-expect fun Screen.PexelsPhotoListPage()
+expect fun PexelsPhotoListPage(screen: Screen)
