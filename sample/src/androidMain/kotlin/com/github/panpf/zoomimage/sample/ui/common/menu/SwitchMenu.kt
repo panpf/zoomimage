@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2024 panpf <panpfpanpf@outlook.com>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ interface SwitchMenu {
     val onLongClick: (() -> Unit)?
 }
 
-class SwitchMenuFlow constructor(
+class SwitchMenuFlow(
     override val title: String,
     private val data: SettingsStateFlow<Boolean>,
     override val disabled: Boolean = false,

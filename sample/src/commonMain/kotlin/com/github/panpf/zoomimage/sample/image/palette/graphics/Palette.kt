@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.kmpalette.palette.graphics
 
 import androidx.compose.ui.geometry.Rect
@@ -59,7 +60,7 @@ import kotlin.math.sqrt
  * https://developer.android.com/develop/ui/views/graphics/palette-colors
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-public class Palette internal constructor(
+class Palette internal constructor(
     /**
      * Returns the dominant swatch from the palette.
      *
@@ -67,7 +68,7 @@ public class Palette internal constructor(
      * The dominant swatch is defined as the swatch with the greatest population (frequency)
      * within the palette.
      */
-    public val swatches: List<Swatch>,
+    val swatches: List<Swatch>,
 
     /**
      * Returns all of the swatches which make up the palette.
@@ -78,14 +79,14 @@ public class Palette internal constructor(
     private val selectedSwatches: HashMap<Target, Swatch?> = HashMap()
     private val usedColors: HashMap<Int, Boolean> = HashMap()
 
-    public val dominantSwatch: Swatch? = findDominantSwatch()
+    val dominantSwatch: Swatch? = findDominantSwatch()
 
     /**
      * Returns the most vibrant swatch in the palette. Might be null.
      *
      * @see Target.VIBRANT
      */
-    public val vibrantSwatch: Swatch?
+    val vibrantSwatch: Swatch?
         get() = getSwatchForTarget(Target.VIBRANT)
 
     /**
@@ -93,7 +94,7 @@ public class Palette internal constructor(
      *
      * @see Target.LIGHT_VIBRANT
      */
-    public val lightVibrantSwatch: Swatch?
+    val lightVibrantSwatch: Swatch?
         get() = getSwatchForTarget(Target.LIGHT_VIBRANT)
 
     /**
@@ -101,7 +102,7 @@ public class Palette internal constructor(
      *
      * @see Target.DARK_VIBRANT
      */
-    public val darkVibrantSwatch: Swatch?
+    val darkVibrantSwatch: Swatch?
         get() = getSwatchForTarget(Target.DARK_VIBRANT)
 
     /**
@@ -109,7 +110,7 @@ public class Palette internal constructor(
      *
      * @see Target.MUTED
      */
-    public val mutedSwatch: Swatch?
+    val mutedSwatch: Swatch?
         get() = getSwatchForTarget(Target.MUTED)
 
     /**
@@ -117,7 +118,7 @@ public class Palette internal constructor(
      *
      * @see Target.LIGHT_MUTED
      */
-    public val lightMutedSwatch: Swatch?
+    val lightMutedSwatch: Swatch?
         get() = getSwatchForTarget(Target.LIGHT_MUTED)
 
     /**
@@ -125,7 +126,7 @@ public class Palette internal constructor(
      *
      * @see Target.DARK_MUTED
      */
-    public val darkMutedSwatch: Swatch?
+    val darkMutedSwatch: Swatch?
         get() = getSwatchForTarget(Target.DARK_MUTED)
 
     /**
@@ -135,7 +136,7 @@ public class Palette internal constructor(
      * @see .getVibrantSwatch
      */
     @ColorInt
-    public fun getVibrantColor(@ColorInt defaultColor: Int): Int {
+    fun getVibrantColor(@ColorInt defaultColor: Int): Int {
         return getColorForTarget(Target.VIBRANT, defaultColor)
     }
 
@@ -146,7 +147,7 @@ public class Palette internal constructor(
      * @see .getLightVibrantSwatch
      */
     @ColorInt
-    public fun getLightVibrantColor(@ColorInt defaultColor: Int): Int {
+    fun getLightVibrantColor(@ColorInt defaultColor: Int): Int {
         return getColorForTarget(Target.LIGHT_VIBRANT, defaultColor)
     }
 
@@ -157,7 +158,7 @@ public class Palette internal constructor(
      * @see .getDarkVibrantSwatch
      */
     @ColorInt
-    public fun getDarkVibrantColor(@ColorInt defaultColor: Int): Int {
+    fun getDarkVibrantColor(@ColorInt defaultColor: Int): Int {
         return getColorForTarget(Target.DARK_VIBRANT, defaultColor)
     }
 
@@ -168,7 +169,7 @@ public class Palette internal constructor(
      * @see .getMutedSwatch
      */
     @ColorInt
-    public fun getMutedColor(@ColorInt defaultColor: Int): Int {
+    fun getMutedColor(@ColorInt defaultColor: Int): Int {
         return getColorForTarget(Target.MUTED, defaultColor)
     }
 
@@ -179,7 +180,7 @@ public class Palette internal constructor(
      * @see .getLightMutedSwatch
      */
     @ColorInt
-    public fun getLightMutedColor(@ColorInt defaultColor: Int): Int {
+    fun getLightMutedColor(@ColorInt defaultColor: Int): Int {
         return getColorForTarget(Target.LIGHT_MUTED, defaultColor)
     }
 
@@ -190,7 +191,7 @@ public class Palette internal constructor(
      * @see .getDarkMutedSwatch
      */
     @ColorInt
-    public fun getDarkMutedColor(@ColorInt defaultColor: Int): Int {
+    fun getDarkMutedColor(@ColorInt defaultColor: Int): Int {
         return getColorForTarget(Target.DARK_MUTED, defaultColor)
     }
 
@@ -198,7 +199,7 @@ public class Palette internal constructor(
      * Returns the selected swatch for the given target from the palette, or `null` if one
      * could not be found.
      */
-    public fun getSwatchForTarget(target: Target): Swatch? {
+    fun getSwatchForTarget(target: Target): Swatch? {
         return selectedSwatches[target]
     }
 
@@ -208,7 +209,7 @@ public class Palette internal constructor(
      * @param defaultColor value to return if the swatch isn't available
      */
     @ColorInt
-    public fun getColorForTarget(target: Target, @ColorInt defaultColor: Int): Int {
+    fun getColorForTarget(target: Target, @ColorInt defaultColor: Int): Int {
         val swatch = getSwatchForTarget(target)
         return swatch?.rgb ?: defaultColor
     }
@@ -220,11 +221,11 @@ public class Palette internal constructor(
      * @see .getDominantSwatch
      */
     @ColorInt
-    public fun getDominantColor(@ColorInt defaultColor: Int): Int {
+    fun getDominantColor(@ColorInt defaultColor: Int): Int {
         return dominantSwatch?.rgb ?: defaultColor
     }
 
-    public fun generate() {
+    fun generate() {
         // We need to make sure that the scored targets are generated first. This is so that
         // inherited targets have something to inherit from
         targets.forEach { target ->
@@ -304,17 +305,16 @@ public class Palette internal constructor(
      * Represents a color swatch generated from an image's palette. The RGB color can be retrieved
      * by calling [rgb].
      */
-    public class Swatch(
+    class Swatch(
         /**
          * @return this swatch's RGB color value
          */
-        @get:ColorInt
-        public val rgb: Int,
+        @get:ColorInt val rgb: Int,
 
         /**
          * @return the number of pixels represented by this swatch
          */
-        public val population: Int,
+        val population: Int,
     ) {
 
         private val red: Int = ColorUtils.red(rgb)
@@ -331,7 +331,7 @@ public class Palette internal constructor(
          * hsv[1] is Saturation [0...1]
          * hsv[2] is Lightness [0...1]
          */
-        public var hsl: FloatArray = FloatArray(3)
+        var hsl: FloatArray = FloatArray(3)
             .apply { ColorUtils.convertRGBToHSL(red, green, blue, this) }
             private set
 
@@ -340,7 +340,7 @@ public class Palette internal constructor(
          * [Swatch]'s color. This color is guaranteed to have sufficient contrast.
          */
         @get:ColorInt
-        public val titleTextColor: Int
+        val titleTextColor: Int
             get() {
                 ensureTextColorsGenerated()
                 return _titleTextColor
@@ -351,7 +351,7 @@ public class Palette internal constructor(
          * [Swatch]'s color. This color is guaranteed to have sufficient contrast.
          */
         @get:ColorInt
-        public val bodyTextColor: Int
+        val bodyTextColor: Int
             get() {
                 ensureTextColorsGenerated()
                 return _bodyTextColor
@@ -410,7 +410,7 @@ public class Palette internal constructor(
     /**
      * Builder class for generating [Palette] instances.
      */
-    public class Builder {
+    class Builder {
 
         private val swatches: List<Swatch>?
         private val imageBitmap: Image?
@@ -424,7 +424,7 @@ public class Palette internal constructor(
         /**
          * Construct a new [Builder] using a source [ImageBitmap]
          */
-        public constructor(bitmap: Image) {
+        constructor(bitmap: Image) {
             filters.add(DEFAULT_FILTER)
             imageBitmap = bitmap
             swatches = null
@@ -442,7 +442,7 @@ public class Palette internal constructor(
          * Construct a new [Builder] using a list of [Swatch] instances.
          * Typically only used for testing.
          */
-        public constructor(swatches: List<Swatch>) {
+        constructor(swatches: List<Swatch>) {
             if (swatches.isEmpty()) {
                 throw IllegalArgumentException("List of Swatches is not valid")
             }
@@ -460,7 +460,7 @@ public class Palette internal constructor(
          * the range 10-16. For images which are largely made up of people's faces then this
          * value should be increased to ~24.
          */
-        public fun maximumColorCount(colors: Int): Builder {
+        fun maximumColorCount(colors: Int): Builder {
             maxColors = colors
             return this
         }
@@ -479,7 +479,7 @@ public class Palette internal constructor(
          * @param area the number of pixels that the intermediary scaled down Bitmap should cover,
          * or any value <= 0 to disable resizing.
          */
-        public fun resizeBitmapArea(area: Int): Builder {
+        fun resizeBitmapArea(area: Int): Builder {
             resizeArea = area
             resizeMaxDimension = -1
             return this
@@ -489,7 +489,7 @@ public class Palette internal constructor(
          * Clear all added filters. This includes any default filters added automatically by
          * [Palette].
          */
-        public fun clearFilters(): Builder {
+        fun clearFilters(): Builder {
             filters.clear()
             return this
         }
@@ -500,7 +500,7 @@ public class Palette internal constructor(
          *
          * @param filter filter to add.
          */
-        public fun addFilter(filter: Filter): Builder {
+        fun addFilter(filter: Filter): Builder {
             filters.add(filter)
             return this
         }
@@ -515,7 +515,7 @@ public class Palette internal constructor(
          * @param right The right side of the rectangle used for the region.
          * @param bottom The bottom of the rectangle used for the region.
          */
-        public fun setRegion(left: Int, top: Int, right: Int, bottom: Int): Builder {
+        fun setRegion(left: Int, top: Int, right: Int, bottom: Int): Builder {
             val bitmap = imageBitmap
             if (bitmap != null) {
                 if (region == null) {
@@ -537,7 +537,7 @@ public class Palette internal constructor(
         /**
          * Clear any previously region set via [.setRegion].
          */
-        public fun clearRegion(): Builder {
+        fun clearRegion(): Builder {
             region = null
             return this
         }
@@ -548,7 +548,7 @@ public class Palette internal constructor(
          *
          * You can retrieve the result via [Palette.getSwatchForTarget].
          */
-        public fun addTarget(target: Target): Builder {
+        fun addTarget(target: Target): Builder {
             if (!targets.contains(target)) {
                 targets.add(target)
             }
@@ -559,7 +559,7 @@ public class Palette internal constructor(
          * Clear all added targets. This includes any default targets added automatically by
          * [Palette].
          */
-        public fun clearTargets(): Builder {
+        fun clearTargets(): Builder {
             targets.clear()
             return this
         }
@@ -567,7 +567,7 @@ public class Palette internal constructor(
         /**
          * Generate and return the [Palette] synchronously.
          */
-        public fun generate(): Palette {
+        fun generate(): Palette {
             val swatches: List<Swatch>
             val imageBitmap = imageBitmap
             if (imageBitmap != null) {
@@ -668,7 +668,7 @@ public class Palette internal constructor(
      * A Filter provides a mechanism for exercising fine-grained control over which colors
      * are valid within a resulting [Palette].
      */
-    public fun interface Filter {
+    fun interface Filter {
 
         /**
          * Hook to allow clients to be able filter colors from resulting palette.
@@ -680,20 +680,20 @@ public class Palette internal constructor(
          *
          * @see Builder.addFilter
          */
-        public fun isAllowed(rgb: Int, hsl: FloatArray): Boolean
+        fun isAllowed(rgb: Int, hsl: FloatArray): Boolean
     }
 
-    public companion object {
+    companion object {
 
-        public const val DEFAULT_RESIZE_BITMAP_AREA: Int = 112 * 112
-        public const val DEFAULT_CALCULATE_NUMBER_COLORS: Int = 16
-        public const val MIN_CONTRAST_TITLE_TEXT: Float = 3.0f
-        public const val MIN_CONTRAST_BODY_TEXT: Float = 4.5f
+        const val DEFAULT_RESIZE_BITMAP_AREA: Int = 112 * 112
+        const val DEFAULT_CALCULATE_NUMBER_COLORS: Int = 16
+        const val MIN_CONTRAST_TITLE_TEXT: Float = 3.0f
+        const val MIN_CONTRAST_BODY_TEXT: Float = 4.5f
 
         /**
          * Start generating a [Palette] with the returned [Builder] instance.
          */
-        public fun from(bitmap: Image): Builder {
+        fun from(bitmap: Image): Builder {
             return Builder(bitmap)
         }
 
@@ -702,14 +702,14 @@ public class Palette internal constructor(
          * This is useful for testing, or if you want to resurrect a [Palette] instance from a
          * list of swatches. Will return null if the `swatches` is null.
          */
-        public fun from(swatches: List<Swatch>): Palette {
+        fun from(swatches: List<Swatch>): Palette {
             return Builder(swatches).generate()
         }
 
         /**
          * The default filter.
          */
-        public val DEFAULT_FILTER: Filter = object : Filter {
+        val DEFAULT_FILTER: Filter = object : Filter {
             private val BLACK_MAX_LIGHTNESS = 0.05f
             private val WHITE_MIN_LIGHTNESS = 0.95f
             override fun isAllowed(rgb: Int, hsl: FloatArray): Boolean {

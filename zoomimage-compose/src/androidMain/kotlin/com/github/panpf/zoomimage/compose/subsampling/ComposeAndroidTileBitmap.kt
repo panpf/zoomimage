@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2024 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.github.panpf.zoomimage.subsampling.BitmapFrom
  *
  * @see com.github.panpf.zoomimage.compose.android.test.subsampling.ComposeAndroidTileBitmapTest
  */
-class ComposeAndroidTileBitmap constructor(
+class ComposeAndroidTileBitmap(
     private val tileBitmap: AndroidTileBitmap,
 ) : ComposeTileBitmap {
 

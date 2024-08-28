@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.github.panpf.zoomimage.compose.coil.internal
 
 import androidx.compose.runtime.Composable
@@ -29,7 +30,6 @@ import coil3.request.ImageRequest
 import coil3.request.NullRequestDataException
 import coil3.size.Scale
 import kotlin.math.roundToInt
-
 
 /** Create an [ImageRequest] from the [model]. */
 @Composable

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2024 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ import com.github.panpf.zoomimage.glide.GlideTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
 
 /**
  * An image component that integrates the Glide image loading framework that zoom and subsampling huge images

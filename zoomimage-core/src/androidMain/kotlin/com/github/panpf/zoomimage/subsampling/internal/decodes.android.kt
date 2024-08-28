@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2024 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,6 @@ import com.github.panpf.zoomimage.subsampling.ImageSource
 import com.github.panpf.zoomimage.util.IntSizeCompat
 import okio.buffer
 import okio.use
-import kotlin.math.ceil
-import kotlin.math.floor
 
 /**
  * Create a [DecodeHelper] instance using [ImageSource], on the Android platform, [BitmapRegionDecoderDecodeHelper] will be used

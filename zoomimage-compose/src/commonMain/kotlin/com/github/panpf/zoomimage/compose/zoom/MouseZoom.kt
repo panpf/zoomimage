@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2024 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.unit.IntOffset
 import com.github.panpf.zoomimage.zoom.GestureType
 import kotlinx.coroutines.launch
-
 
 /**
  * Add mouse zoom support

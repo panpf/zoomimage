@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2024 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.github.panpf.zoomimage.sample.ui.examples
 
+import com.github.panpf.zoomimage.sample.R as CommonR
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -50,7 +51,6 @@ import com.github.panpf.zoomimage.zoom.ReadMode
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import com.github.panpf.zoomimage.sample.R as CommonR
 
 abstract class BaseZoomImageViewFragment<ZOOM_VIEW : ZoomImageView> :
     BaseBindingFragment<FragmentZoomViewBinding>() {

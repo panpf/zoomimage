@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2024 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ internal annotation class IntRange(
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.ANNOTATION_CLASS)
-public annotation class IntDef(
+annotation class IntDef(
     /** Defines the allowed constants for this element  */
     vararg val value: Int = [],
     /** Defines whether the constants can be used as a flag, or just as an enum (the default)  */

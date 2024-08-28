@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 panpf <panpfpanpf@outlook.com>
+ * Copyright (C) 2024 panpf <panpfpanpf@outlook.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ import com.github.panpf.zoomimage.sketch.SketchImageSource
 import com.github.panpf.zoomimage.sketch.SketchTileBitmapCache
 import com.github.panpf.zoomimage.subsampling.ImageSource
 import kotlin.math.roundToInt
-
 
 /**
  * An image component that integrates the Sketch image loading framework that zoom and subsampling huge images
