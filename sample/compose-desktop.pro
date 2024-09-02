@@ -49,18 +49,17 @@
 
 
 # ----------------------------------------- ktor ------------------------------------------------- #
--keep class io.ktor.**{*;}
 -keep class io.ktor.** { *; }
--keep class io.ktor.client.engine.cio.** { *; }
 -keepclassmembers class io.ktor.** { volatile <fields>; }
--keep class kotlinx.coroutines.**{*;}
+-keep class io.ktor.client.engine.cio.** { *; }
+-keep class kotlinx.coroutines.** { *; }
 -dontwarn kotlinx.atomicfu.**
 -dontwarn io.netty.**
 -dontwarn com.typesafe.**
 -dontwarn org.slf4j.**
+
 # Obfuscation breaks coroutines/ktor for some reason
 -dontobfuscate
-
 
 # ----------------------------------------- App Ruls --------------------------------------------- #
 # Change here com.github.panpf.zoomimage.sample
