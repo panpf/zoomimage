@@ -163,7 +163,7 @@ compose.desktop {
                     it
                 }
             }
-            vendor = "panpf@outlook.com"
+            vendor = "panpfpanpf@outlook.com"
             description = "Image Zoom Library Sample App"
             macOS {
                 bundleID = "com.github.panpf.zoomimage.sample"
