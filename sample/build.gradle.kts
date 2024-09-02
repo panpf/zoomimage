@@ -149,9 +149,10 @@ compose.resources {
     packageOfResClass = "com.github.panpf.zoomimage.sample.resources"
 }
 
+val appId = "com.github.panpf.zoomimage.sample"
+val appName = "ZoomImage Sample"
 compose.desktop {
     application {
-        val appName = "ZoomImage Sample"
         mainClass = "com.github.panpf.zoomimage.sample.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
@@ -166,7 +167,7 @@ compose.desktop {
             vendor = "panpfpanpf@outlook.com"
             description = "Image Zoom Library Sample App"
             macOS {
-                bundleID = "com.github.panpf.zoomimage.sample"
+                bundleID = appId
                 iconFile.set(project.file("icons/icon.icns"))
             }
             windows {
@@ -175,7 +176,10 @@ compose.desktop {
             linux {
                 iconFile.set(project.file("icons/icon.png"))
             }
-            modules("jdk.unsupported")  // 'sun/misc/Unsafe' and other errors
+            modules(
+                "jdk.unsupported",  // 'sun/misc/Unsafe' error
+                "java.net.http",    // 'java/net/http/HttpClient$Version ' error
+            )
         }
         buildTypes.release.proguard {
 //            obfuscate.set(true) // Obfuscate the code
@@ -184,7 +188,10 @@ compose.desktop {
     }
 }
 
-androidApplication(nameSpace = "com.github.panpf.zoomimage.sample") {
+androidApplication(
+    nameSpace = appId,
+    applicationId = appId
+) {
     defaultConfig {
         buildConfigField("String", "VERSION_NAME", "\"${property("versionName").toString()}\"")
         buildConfigField("int", "VERSION_CODE", property("versionCode").toString())
